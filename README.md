@@ -27,6 +27,12 @@ Features
 - works with node inspector for Javascript debugging
 - interactive Javascript console mode
 
+Documentation
+-------------
+
+Documentation (HTML and Man pages) are included in the docs directory, and can also be found online (along with comment areas) at:
+
+http://ezavada.com/pdg/javascript/html/
 
 Design Goals
 ------------
