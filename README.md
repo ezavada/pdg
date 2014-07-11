@@ -81,14 +81,11 @@ are pretty simple, others rather larger. In no particular order, they are:
 - Pure Javascript HTML5 implementation so you can run your game in a browser
 - Port.drawRadialGradient()
 - Example Code
-- Improved documentation
 - Unit Tests for every part of PDG
 - FluidLayer for simulating floating objects
 - OuterSpaceLayer for simulating gravitational attraction between objects
 - Android port
-- SDL support for graphics on Linux
-- Serialization of Sprites and SpriteLayers
-- SpriteLayer state synchronization across instances via serialized updates and change requests
+- Support for graphics on Linux
 - Support for rotation of TileLayers
 - DiagonalTileLayer for Ultima Online style isometric maps
 - HexGridTileLayer for board games
