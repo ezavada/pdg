@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onErasePort
+
+\brief set event handler for rendering starting events
+
+This happens each frame before any layers start rendering for that frame
+
+\sa SpriteLayerEvent
+\sa IEventHandler
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\var pdg::action_AnimationEnd
+
+\brief eventType_SpriteAnimate action: a sprite animation has completed
+
+\sa Sprite.setWantsAnimEndEvents()
+\sa Sprite.startFrameAnimation()
+\sa action_AnimationLoop
+\sa eventType_SpriteAnimate
+
+\ingroup Animation
+
+**/ }

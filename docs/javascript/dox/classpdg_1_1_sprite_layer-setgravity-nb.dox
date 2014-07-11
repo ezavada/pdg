@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setGravity
+
+\brief set the force of gravity pulling everything downward (*Chipmunk Physics Only*)
+
+If keepItDownward is true (the default), then direction of gravity will be automatically be adjusted to point downward relative to the port if the layer is rotated.
+
+**/ }

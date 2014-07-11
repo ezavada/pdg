@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_8
+
+\brief deserialize 8 signed bytes
+
+Read a signed eight byte value from the data stream. 
+
+\return a number in the range of <b>&minus;9,223,372,036,854,775,807 to 9,223,372,036,854,775,807</b>
+
+\sa Serializer.serialize_8
+
+**/ }

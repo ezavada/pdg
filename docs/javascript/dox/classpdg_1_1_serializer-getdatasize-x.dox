@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::getDataSize
+
+\brief get the size of the serialized data
+
+\returns the number of bytes of data in the serialized data. This is the same value that would be returned by calling the getDataSize() method of the MemBlock returned by getDataPtr()
+
+\note This is really only useful after one or more serialize_X methods have been called to actually write data into the memory block.
+
+\sa getDataPtr
+
+**/ }

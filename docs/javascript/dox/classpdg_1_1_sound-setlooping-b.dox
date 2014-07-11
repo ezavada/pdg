@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sound::setLooping
+
+\brief set if the sound should loop or not
+
+\note Sounds started with play() never loop
+
+**/ }

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::changeCenter
+
+\brief shift the center point of the object over time
+
+Honors delay given by wait()
+
+**/ }

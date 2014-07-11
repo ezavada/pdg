@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onCollideSprite
+
+\brief set event handler for sprite-to-sprite collision events
+
+These happen when a sprite collides with another sprite
+
+\sa SpriteCollideEvent
+\sa IEventHandler
+
+**/ }

@@ -1,0 +1,8 @@
+namespace pdg { /**
+
+\var pdg::key_F11
+
+\ingroup KeyCodes
+
+
+**/ }

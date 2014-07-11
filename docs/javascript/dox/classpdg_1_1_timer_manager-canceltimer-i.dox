@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::cancelTimer
+
+\brief stop and remove a timer
+
+\param id the id number of the timer to stop
+
+\sa cancelAllTimers()
+
+**/ }

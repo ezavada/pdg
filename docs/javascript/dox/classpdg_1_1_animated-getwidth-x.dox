@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getWidth
+
+\brief get the width of the object
+
+**/ }

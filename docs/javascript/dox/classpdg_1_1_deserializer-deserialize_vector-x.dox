@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_vector
+
+\brief deserialize a Vector
+
+Read a Vector value from the data stream. 
+
+\return a Vector
+
+\sa Serializer.serialize_vector
+
+**/ }

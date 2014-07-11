@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::getEventManager
+
+\brief get the singleton instance of the EventManager used by the pdg framework
+
+\return EventManager singleton object
+
+\relatedalso EventManager
+
+
+**/ }

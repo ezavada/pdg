@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_4u
+
+\brief deserialize 4 unsigned bytes
+
+Read an unsigned four byte value from the data stream. 
+
+\return a number in the range of **0 to 4,294,967,295**
+
+\sa Serializer.serialize_4u
+
+**/ }

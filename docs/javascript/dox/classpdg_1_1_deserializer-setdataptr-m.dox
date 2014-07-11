@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::setDataPtr(MemBlock data)
+
+\brief set the serialized data
+
+Set the data block that should be deserialized. It should have been created at some point by a pdg.Serializer.
+
+\param data the MemBlock object with the serialized data
+
+\sa setDataPtr(BinaryString)
+\sa Serializer.getDataPtr
+
+**/ }

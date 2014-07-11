@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::pause
+
+\brief pause all timers indefinitely
+
+Pause all timers in the TimerManager until unpause() or unpauseTimer() are called. When unpaused they continue their behavior as if no time had passed between the pause() and unpause() calls.
+
+\note timers added *after* pause() is called are not paused and will run as normal.
+
+\sa unpause()
+\sa unpauseTimer()
+\sa isPaused()
+
+**/ }

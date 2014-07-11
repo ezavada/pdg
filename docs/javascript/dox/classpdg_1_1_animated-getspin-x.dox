@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getSpin
+
+\brief get how fast the object is spinning in radians per second
+
+**/ }

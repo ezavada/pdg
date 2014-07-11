@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::MemBlock::toBuffer
+
+\brief convert MemBlock to Node.js Buffer object
+
+Converts a MemBlock into a Node.js Buffer object. See Node.js docs for details on the Buffer class. This makes it easier to use a MemBlock with Node.js calls that work with Buffers.
+
+
+
+**/ }

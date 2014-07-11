@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\var pdg::action_PreDrawLayer
+
+\brief eventType_SpriteLayer action: about to render a particular SpriteLayer
+
+Emitted once per layer per frame, before any drawing for that layer is performed.
+
+\sa action_ErasePort
+\sa action_PostDrawLayer
+\sa eventType_SpriteLayer
+
+\ingroup Graphics
+
+
+**/ }

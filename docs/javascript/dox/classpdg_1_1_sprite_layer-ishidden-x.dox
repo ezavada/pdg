@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::isHidden
+
+\brief true if layer is hidden, false if it is visible
+
+**/ }

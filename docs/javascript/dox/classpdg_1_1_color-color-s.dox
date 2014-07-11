@@ -1,0 +1,25 @@
+namespace pdg { /**
+
+\fn pdg::Color::Color(string)
+
+\brief create a color by CSS color string
+
+Creates a color from a CSS color value string (ie: \#FFF or \#FFFFFF); or from a color name. For example:
+
+\code
+	var gray = new pdg.Color('#888');  // a gray color (RGB 888888)
+	var green = new pdg.Color('#008800');  // a green color (RGB 008800)
+	var teal = new pdg.Color('teal');  // the CSS teal color
+\endcode
+
+**Supported Color names:**
+
+![Web Colors][1]
+
+\sa Color(number)
+\sa Color(number, number, number, number)
+
+
+  [1]: /pdg/images/webcolors.png
+
+**/ }

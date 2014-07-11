@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setFriction
+
+\brief set friction for movement, rotation and resizing all at once
+
+**/ }

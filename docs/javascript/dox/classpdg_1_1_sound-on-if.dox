@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Sound::on
+
+\brief set a handler for a particular sound event
+
+\remark Generally you should use the specific on{Event} calls.
+
+\sa onDonePlaying()
+\sa onFailedToPlay()
+\sa onLooping()
+
+**/ }

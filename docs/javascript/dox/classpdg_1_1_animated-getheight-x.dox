@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getHeight
+
+\brief get height of the object
+
+**/ }

@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onPreAnimateLayer
+
+\brief set event handler for layer animation start events
+
+This happens each frame when this particular layer is about to start calculating the changes for the animation step.
+
+\sa SpriteLayerEvent
+\sa IEventHandler
+
+**/ }

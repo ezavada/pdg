@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\var pdg::action_ZoomComplete
+
+\brief eventType_SpriteLayer action: zooming a particular sprite layer is complete
+
+\sa SpriteLayer.zoom()
+\sa eventType_SpriteLayer
+
+\ingroup Animation
+
+
+**/ }

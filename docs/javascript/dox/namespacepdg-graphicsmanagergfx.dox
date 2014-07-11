@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::gfx
+
+\brief the singleton instance of the GraphicsManager
+
+\code
+    var r = new Rect(1024, 768);
+    var port = pdg.gfx.createWindowPort(r, "PDG Test Window");
+\endcode
+ 
+\related pdg::GraphicsManager
+\ingroup Managers
+
+
+**/ }

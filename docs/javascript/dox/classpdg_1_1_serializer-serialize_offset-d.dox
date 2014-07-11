@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_offset
+
+\brief serialize an Offset's (x,y) values
+
+Write an Offset's x and y values into the data stream. This is optimized for certain common cases, such as a (0,0) offset and small positive numbers.
+
+\warning because JavaScript handles floating-point numbers as doubles internally but an Offset is streamed using floats, some precision is lost. If you need that precision you should serialize the Offset's x and y values yourself using serialize_d()
+
+\note data size: varies, call serializedSize(Offset) to determine
+
+\sa serializedSize(Offset)
+\sa Deserializer.deserialize_offset()
+
+
+**/ }

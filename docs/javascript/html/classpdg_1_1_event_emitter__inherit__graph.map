@@ -1,0 +1,8 @@
+<map id="EventEmitter" name="EventEmitter">
+<area shape="rect" id="node2" href="$classpdg_1_1_event_manager.html" title="Distributes events to event handlers." alt="" coords="5,80,112,107"/>
+<area shape="rect" id="node3" href="$classpdg_1_1_sound.html" title="handles both short sounds and music (GUI Only)" alt="" coords="136,80,195,107"/>
+<area shape="rect" id="node4" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="219,80,274,107"/>
+<area shape="rect" id="node5" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="298,80,385,107"/>
+<area shape="rect" id="node7" href="$classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval" alt="" coords="409,80,511,107"/>
+<area shape="rect" id="node6" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="305,155,377,181"/>
+</map>

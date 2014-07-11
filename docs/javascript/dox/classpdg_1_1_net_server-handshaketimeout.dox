@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::handshakeTimeout
+
+\brief the number of milliseconds allowed for handshake. Default is 5000 (5 seconds) 
+
+The connection will be dropped if handshake has not completed in this time. This is to help prevent denial of service attacks. 
+
+This can be changed at any time to affect the timeout for new incoming connections. Changes will not affect existing connections.
+
+**/ }

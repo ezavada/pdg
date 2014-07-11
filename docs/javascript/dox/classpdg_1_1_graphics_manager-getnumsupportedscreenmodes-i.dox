@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getNumSupportedScreenModes
+
+\brief get the total number of display modes available for a screen
+
+\param screen the screen number, defaults to the primary screen if not passed
+
+\return the number of modes
+
+\sa getNthSupportedScreenMode
+\sa getCurrentScreenMode
+\sa setScreenMode
+\sa getNumScreens
+
+**/ }

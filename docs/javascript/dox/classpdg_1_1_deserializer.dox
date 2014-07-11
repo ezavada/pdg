@@ -1,0 +1,53 @@
+namespace pdg { /**
+
+\class Deserializer
+\brief deserialize data from a serialized data stream
+
+\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
+
+Deserializer retrieves and reconstructs complex data from a serialized data stream in memory. The stream must have been created by a Serializer. It will correctly rebuild entire object hierarchies, creating new objects of the correct classes without duplication as needed. In order to deserialize objects, you must register them using pdg.registerSerializableClass. Built in serializable objects, such as Sprites and SpriteLayers are pre-registered.
+
+The data stream format written by Serializer is platform neutral, so it can be decoded on a different platform (or even language) than it was created with. Thus it is suitable for saved game files and network messages between client and server. 
+
+\remark The NetConnection object automatically reconstructs ISerializable objects and gives them to you in your receive callback function.
+
+Deserializer looks for tags written by Serializer at key points in the stream to verify things haven't gotten out of sync. However, if you want your serialized data streams to be versioned, you will have to add that yourself; either on a per object/message basis or for an entire saved stream.
+
+Method Groups
+-----------------
+
+  - **deserialize_x()**: These methods read the given data of type *x* from the stream. Where *x* is a number (ie: deserialize_1 or deserialize_2u) the number represents the number of bytes that will be used from the data stream. Others, such as uint, str, mem and obj are all variable sized based on the actual data that was written.
+  - **deserialize_memGetLen()** - get the size of the next memory block data element that is about to be read from the stream. Intended for cases where you need to know the length of the memory block before reading it from the stream. You generally won't need to use this.
+
+\warning You *must* deserialize data in the same order it was serialized and with the deserialize call that corresponds to the serialize call used. Example:
+
+\code
+    // correct serialization
+    function serializeStuff(ser) {
+       ser.serialize_1u(val1);
+       ser.serialize_2u(val2);
+       ser.serialize_1(signedVal);
+       ser.serialize_uint(unsignedVal);
+       ser.serialize_str(myMessage);
+    }
+    
+    // correct deserialization for above
+    // each call matches in order and type
+    function deserializeStuff(des) {
+       val1 =        des.serialize_1u();
+       val2 =        des.serialize_2u();
+       signedVal =   des.serialize_1();
+       unsignedVal = des.serialize_uint();
+       myMessage =   des.serialize_str();
+    }
+\endcode
+
+\ingroup Serialization
+
+\sa Serializer
+\sa ISerializable
+\sa pdg.registerSerializableClass
+
+
+
+**/ }

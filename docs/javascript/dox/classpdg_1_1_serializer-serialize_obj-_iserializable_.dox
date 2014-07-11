@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_obj
+
+\brief serialize a serializable object
+
+This serializes the object and all its data into the stream. It does this by calling the ISerializable object's serialize method, which would then in turn call serializer methods for each of the object's data members. If the given object's data members include other serializable objects, then serialize_obj() is called recursively to serialize those objects. 
+
+The Serializer keeps track of what objects have already been added to the stream, and simply serializes a reference to any object that has already been serialized if serialize_obj is called for it again.
+
+\note data size: varies, call serializedSize() to determine.
+
+\sa serializedSize(ISerializable)
+\sa Deserializer.deserialize_obj
+\sa ISerializable
+
+
+**/ }

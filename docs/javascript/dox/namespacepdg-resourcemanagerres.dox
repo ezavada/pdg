@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::res
+
+\brief the singleton instance of the ResourceManager
+
+\code
+    pdg.res.openResourceFile('./data');
+    console.log( pdg.res.getResourcePaths() );
+\endcode
+
+\related pdg::ResourceManager
+\ingroup Managers
+
+
+**/ }

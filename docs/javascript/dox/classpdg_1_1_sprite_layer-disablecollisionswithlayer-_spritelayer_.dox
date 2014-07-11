@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::disableCollisionsWithLayer
+
+\brief remove layer from list of layers that do collisions between layers
+
+\note Layers that have Chipmunk Physics enabled handle layer-to-layer collisions differently, they collide automatically even between layers unless you put them in collide groups.
+
+\sa enableCollisionsWithLayer
+\sa Sprite.setCollideGroup()
+\sa Sprite.enableCollisions()
+\sa Sprite.setCollisionHelper()
+
+**/ }

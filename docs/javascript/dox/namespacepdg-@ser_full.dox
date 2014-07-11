@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\var pdg::ser_Full
+
+\brief sprite layer serialization mode for recreating layer
+
+Everything needed to completely recreate the sprite layer. 
+
+\sa ser_Micro
+\sa ser_Update
+\sa SpriteLayer.setSerializationFlags()
+
+\warning Helpers are not recreated.
+
+\todo Support serialization of SCML-based sprites
+
+**/ }

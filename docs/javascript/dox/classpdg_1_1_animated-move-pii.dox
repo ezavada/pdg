@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Animated::move
+
+\brief move the object by a certain amount over time
+
+Honors delay given by wait()
+
+    myAnimated.wait(10).move(offset); // waits 10 ms before move
+
+    myAnimated.move(offset); // move immediately
+
+**/ }

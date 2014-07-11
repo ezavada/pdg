@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::CpArbiter::getNormal
+
+\brief get collision normal for a particular contact point
+
+Get the normal vector (magnitude of 1.0) that expresses the relative x and y direction of the collision for this particular contact point.
+
+\param i index into contact points
+
+\return the collision normal vector for that contact point
+
+**/ }

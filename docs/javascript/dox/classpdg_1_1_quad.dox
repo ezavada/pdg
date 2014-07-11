@@ -1,0 +1,22 @@
+namespace pdg {
+
+/*!
+
+
+\class Quad
+\brief 4 point polygon in 2D system
+
+Quad is a class that provides support for dealing with 4 point
+ploygons in 2 dimensional space
+The PDG coordinate space starts with the top left corner of the drawing port at 
+Point(0,0) and the bottom left corner at Point( width, height );
+\ingroup Graphics
+\ingroup Animation
+
+
+
+*/
+
+
+
+}

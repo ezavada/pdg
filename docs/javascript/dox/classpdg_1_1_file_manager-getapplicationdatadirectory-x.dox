@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::getApplicationDataDirectory
+
+\brief return the path to the location the application should store its user data
+
+\return a full path to the application's user data directory
+
+**/ }

@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Image::getPixel(Point p)
+
+\brief get the pixel data at the given point in the image
+
+The pixel data will be returned as an RGB Color, including the alpha channel if there is one. 
+
+\param p the point in the image to get the data from
+\return a Color object with red, green, blue and alpha values
+
+\note When an image is first drawn into a port, the image is data is converted into an OpenGL texture and the original image data is purged. Once that happens getPixel() will no longer work. If you need to access the image's pixel data even after drawing it, use retainData() to prevent the pixel data from being purged.
+
+\sa getOpacity()
+\sa retainData()
+
+**/ }

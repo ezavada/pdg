@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::Sound::fadeIn
+
+\brief fade the sound in from zero to full volume over time
+
+\param fadeMs the time to take for sound to reach full volume
+\param easing the function that describes how the fading should happen, defaults to linearTween (constant rate of change)
+
+\sa fadeOut
+\sa changeVolume
+\sa Easing
+\sa linearTween
+
+
+**/ }

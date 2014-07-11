@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_uint
+
+\brief serialize up to 4 unsigned bytes
+
+Write a value in the range of **0 to 4,294,967,295** into the data stream. This is optimized for cases where the number is usually small, but can sometimes be quite large. If the number is usually large, you are better off just using serialize_4u.
+
+\note data size: varies, 1 to 5 bytes, call serializedSize() to determine.
+
+\sa serializedSize(uint)
+\sa serialize_4u
+\sa Deserializer.deserialize_uint
+
+
+**/ }

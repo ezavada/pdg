@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::expectClient
+
+\brief make a connection reservation for a client
+
+When a server is created with the reservationRequired flag set to true, the server needs to know how clients are authorized. Use this to make specific reservations for clients by unique key and/or IP address; or a general reservation for all clients using a shared key, perhaps computed based on UTC date and time.
+
+\param clientKey - the key the client(s) must provide
+\param clientIpAddr - the IP address the client is allowed to connect from (defaults to '*', which means any IP address will be accepted)
+\param reservationTTL - how long this reservation is valid (defaults to forever)
+\param singleUse - flag to indicate if the reservation becomes invalid after it is used (default to false, can be used multiple times until expiration)
+
+\returns itself for call chaining
+
+**/ }

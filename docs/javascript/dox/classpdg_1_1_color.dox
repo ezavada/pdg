@@ -1,0 +1,26 @@
+namespace pdg { /**
+
+\class Color
+\brief color in RGB space, with optional alpha
+
+Color is in the global namespace, so you don't need the pdg prefix, even though it will work if you use it
+
+\code
+	var c = new Color();        // this works
+	var c2 = new pdg.Color();   // this works too
+\endcode
+
+RGB Color Space works by mixing red (R), green (G) and blue (B) light to form all possible colors. Here's a nice color wheel to illustrate.
+
+![Color Wheel][1]
+
+The optional Alpha Channel is used to determine how translucent the color is, ie: how much the underlying colors show through. For Alpha, 1.0 is completely solid/opaque, and 0.0 is completely transparent. Whenever an Alpha value is not given, 1.0 is assumed.
+
+\ingroup Graphics
+
+
+  [1]: /pdg/images/rgb-color-mixing.png
+
+
+
+**/ }

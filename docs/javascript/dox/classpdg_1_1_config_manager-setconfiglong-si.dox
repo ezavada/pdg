@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::ConfigManager::setConfigLong
+
+\brief set integer numerical configuration value
+
+Set the integer value for the named configuration item
+
+\param inConfigItemName the name of the configuration item
+\param inValue the value for the config item
+
+**/ }

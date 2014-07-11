@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setOrigin
+
+\brief set the point in the layer that is drawn at 0,0 in the port
+
+**/ }

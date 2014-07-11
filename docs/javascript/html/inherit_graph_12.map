@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="14,56,89,83"/>
+<area shape="rect" id="node2" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="171,56,226,83"/>
+<area shape="rect" id="node3" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="155,5,242,32"/>
+<area shape="rect" id="node4" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="300,5,372,32"/>
+<area shape="rect" id="node5" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,107,97,133"/>
+<area shape="rect" id="node6" href="$classpdg_1_1_event_manager.html" title="Distributes events to event handlers." alt="" coords="145,107,252,133"/>
+<area shape="rect" id="node7" href="$classpdg_1_1_sound.html" title="handles both short sounds and music (GUI Only)" alt="" coords="169,157,228,184"/>
+<area shape="rect" id="node8" href="$classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval" alt="" coords="147,208,250,235"/>
+<area shape="rect" id="node9" href="$classpdg_1_1_i_serializable.html" title="interface for an object which can be serialized" alt="" coords="6,5,97,32"/>
+</map>

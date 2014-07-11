@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\var pdg::action_PostDrawLayer
+
+\brief eventType_SpriteLayer action: completed rendering for a particular SpriteLayer
+
+Emitted once per layer per frame, after all drawing for that layer is complete.
+
+\sa action_DrawPortComplete
+\sa action_PreDrawLayer
+\sa eventType_SpriteLayer
+
+\ingroup Graphics
+
+
+**/ }

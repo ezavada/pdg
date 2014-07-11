@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::getMyClassTag
+
+\brief returns class tag for SpriteLayer, used for serialization
+
+**/ }

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setAutoCenter
+
+\brief keep the center of the layer at the center of the port
+
+When autoCenter is on, it makes rotations always be around the visible center of the layer, rather than around its mathematical center based on the bounds.
+
+**/ }

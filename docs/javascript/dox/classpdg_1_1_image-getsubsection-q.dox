@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Image::getSubsection(Quad quad)
+
+\brief get image that is an arbitrary subsection of this image
+
+\return a new Image object with the sub image
+
+\note this is done by referencing the original, the storage space is not duplicated
+
+\param
+    quad	the sub-region desired 
+
+**/ }

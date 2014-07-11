@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onPreDrawLayer
+
+\brief set event handler for layer rendering start events
+
+This happens each frame before this particular layer starts rendering that frame
+
+\sa SpriteLayerEvent
+\sa IEventHandler
+
+**/ }

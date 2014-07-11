@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getSpringRestLength
+
+\brief get the distance between anchors at which the spring is at rest for a spring joint
+
+\sa setSpringRestLength
+\sa Sprite.springJoint()
+
+
+**/ }

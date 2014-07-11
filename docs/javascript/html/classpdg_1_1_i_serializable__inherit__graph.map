@@ -1,0 +1,5 @@
+<map id="ISerializable" name="ISerializable">
+<area shape="rect" id="node2" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="5,79,61,104"/>
+<area shape="rect" id="node3" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="86,79,176,104"/>
+<area shape="rect" id="node4" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="93,152,169,177"/>
+</map>

@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::snd
+
+\brief the singleton instance of the SoundManager
+
+\code
+    pdg.snd.setVolume(0.5);
+\endcode
+
+\related pdg::SoundManager
+\ingroup Managers
+
+
+**/ }

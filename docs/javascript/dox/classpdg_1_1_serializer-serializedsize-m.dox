@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(MemBlock mem)
+
+\brief get the number of bytes used to serialize the given block of memory
+
+Does not actually write any data to stream
+
+\returns the number of bytes needed
+\sa serialize_mem
+
+**/ }

@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::LogManager::getLogLevel
+
+\brief return the current logging level
+
+\return a numeric value representing the current logging level
+
+\sa setLogLevel()
+
+**/ }

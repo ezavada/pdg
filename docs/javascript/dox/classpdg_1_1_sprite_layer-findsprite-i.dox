@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::findSprite
+
+\brief find a sprite in this layer by user assigned id
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\class FileManager
+\brief extras beyond what Node.js FileSystem provides
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+Most functions for file manipulation are provided by Node.js though the FileSystem class. The PDG FileManager just adds calls to get particular directory paths and to do file searchs.
+
+@see http://nodejs.org/api/fs.html
+\ingroup Managers
+
+**/ }

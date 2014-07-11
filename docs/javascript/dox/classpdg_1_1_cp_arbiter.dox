@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+
+\class CpArbiter
+\brief arbitrates collisions between sprites using Chipmunk Physics (*Chipmunk Physics Only*)
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+@see http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpArbiter
+\ingroup Physics
+
+
+
+
+**/ }

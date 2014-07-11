@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::ConfigManager::useConfig
+
+\brief specify the abstract configuration
+
+Specify an abstract name for the config to be used. Implementations will use this to build the name of a file on disk, a registry entry, or something else that's appropriate for the platform you are running on. 
+
+\param inConfigName Only alpha characters (uppercase and lowercase) are allowed, name is not case sensitive
+\return false if config not found, unusable or empty
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setGearInitialAngle
+
+\brief set the initial angular offset between the two sprites joined with a gear joint
+
+\note This is referred to as "phase" in the Chipmunk docs and this call corresponds to cpGearJointSetPhase() in the Chipmunk API
+
+\sa getGearInitialAngle
+\sa setGearRatio
+\sa Sprite.gear()
+\sa http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint
+
+**/ }

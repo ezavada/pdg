@@ -1,0 +1,19 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::getString
+
+\brief fetch a numbered string from the resources
+
+Get a string by resource number from the first resource file it can be found in. Files are searched in the reverse order they were added, and if a language is set using setLanguage() it will search that localized version first, then fall back to the non-localized string next.
+
+\param id the string id number to find
+\param substring optionally fetch a particular substring from a string list.
+
+\return the desired string, or an empty string if not found
+
+\note in order to locate strings, they must be stored in a strings.txt file (or strings-{lang}.txt for localized strings), either inside the resource zip file or at the top level of the resource directory. See the Detailed Description section for ResourceManager above for details on the strings.txt format.
+
+\sa setLanguage()
+\sa openResourceFile()
+
+**/ }

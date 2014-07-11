@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_color
+
+\brief serialize a Color
+
+Write a Color's RBGA values into the data stream.
+
+\warning the Color is written as a 24 (no alpha channel) or 32 bit color (with alpha channel). If you need to preserve greater color precision than this, you will need to serialize the components yourself.
+
+\note data size: varies, call serializedSize(Color) to determine
+
+\sa serializedSize(Color)
+\sa Deserializer.deserialize_color()
+
+
+**/ }

@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::ImageStrip::setNumFrames
+
+\brief set the number of frames that are in this image strip
+
+The frames are all in a horizontal row within the image strip, and this makes the frame width be the total width divided by number of frames
+
+\param inNumFrames the total number of frames across
+
+\note this is an alternative to setFrameWidth(), for use when it is more convenient to set the frame count rather than the width. You can call either one to set up an ImageStrip's frames.
+
+\sa setFrameWidth()
+\sa getNumFrames()
+\sa getFrameWidth()
+
+**/ }

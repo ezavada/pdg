@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Image::retainAlpha
+
+\brief retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions
+
+Unless retainAlpha is called before the image is converted to an OpenGL texture (ie: the first time it is drawn onscreen), the image alpha channel data will be removed from main memory as soon as it is converted to an OpenGL texture, and getAlphaValue() cannot be used to inspect the contents of the image. Per pixel-sprite collisions won't work either.
+
+\sa getAlphaValue()
+
+**/ }

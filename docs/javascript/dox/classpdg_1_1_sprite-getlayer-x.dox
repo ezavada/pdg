@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getLayer
+
+\brief get the layer that contains this sprite
+
+\return the containing SpriteLayer
+
+**/ }

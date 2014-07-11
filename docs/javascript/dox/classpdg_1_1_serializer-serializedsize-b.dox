@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(boolean)
+
+\brief get the number of bytes used to serialize the given boolean
+
+Does not actually write any data to stream
+
+\return the number of bytes needed (0 or 1)
+
+\note this will often return 0, which simply means that the particular boolean bit is being stored along with other boolean bits in a previously reserved space in the stream, so no additional bytes were needed
+
+\sa serialize_bool
+
+**/ }

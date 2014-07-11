@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\var pdg::all_events
+
+\brief a special catch-all for events that weren't handled by specific event handlers
+
+\sa EventEmitter.addHandler()
+\sa EventEmitter.removeHandler()
+
+
+\ingroup Events
+
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Point::projection
+
+\brief do a projection of a second point onto this point
+
+**/ }

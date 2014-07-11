@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::getApplicationDirectory
+
+\brief return the path to the location the application is installed
+
+\return a full path to the application's directory
+
+\note For Mac OS X this is the location of the application bundle
+
+**/ }

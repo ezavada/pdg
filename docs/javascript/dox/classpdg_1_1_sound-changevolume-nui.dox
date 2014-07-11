@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::Sound::changeVolume
+
+\brief change sounds volume to target level over time
+
+The change can go in either direction, louder or quieter.
+
+\param level the target level
+\param fadeMs the time to take for sound to reach the new volume level
+\param easing the function that describes how the volume change should happen, defaults to linearTween (constant rate of change)
+
+\sa Easing
+\sa linearTween
+
+**/ }

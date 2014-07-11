@@ -1,0 +1,8 @@
+The libjpeg docs are in doc/libjpeg-turbo/docs off the root of this 
+src package, so that they can be more easily referenced from other
+documentation
+
+They can also be found online at: http://www.libjpeg-turbo.org/Documentation/Documentation
+
+Otherwise this distribution of libjpeg-turbo is unaltered.
+

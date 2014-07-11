@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::findNext
+
+\brief return the next matching file or directory
+
+This uses the object returned from a findFirst() call to continue the search and find additional matching files or directories.
+
+\param inFindData the object returned from a prior call to findFirst() or findNext()
+
+\return an object with nodeName, isDirectory, and found fields: **nodeName** is the full path of the next found item; **isDirectory** is true if the node is a directory, false for files; **found** is false if no additional matching item was found.
+
+\sa findFirst
+\sa findClose
+
+**/ }

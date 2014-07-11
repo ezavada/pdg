@@ -1,0 +1,32 @@
+namespace pdg {
+
+/*!
+
+\defgroup Events
+\brief Things used to notify your code of user input or other significant events
+
+\defgroup Graphics
+\brief Things related to drawing graphics on screen
+
+\defgroup Animation
+\brief Things related to animation
+
+\defgroup Sound
+\brief Things used for audio (sound and music)
+
+\defgroup Managers
+\brief The main points of interface to the Pixel Dust Game Framework
+
+\defgroup Serialization
+\brief Things used for serializing and deserializing data
+
+\defgroup Physics
+\brief Things used for handling physics simulation
+
+\defgroup Networking
+\brief Thing used for sending messages over the network
+
+
+*/
+
+}

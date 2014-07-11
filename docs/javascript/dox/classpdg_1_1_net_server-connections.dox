@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::connections
+
+\brief an array of NetConnections made to this server - **Read Only**
+
+**/ }

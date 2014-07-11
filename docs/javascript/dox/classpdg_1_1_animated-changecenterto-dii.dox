@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::changeCenterTo
+
+\brief shift the center point of the object to a particular offset from true center over time
+
+Honors delay given by wait()
+
+**/ }

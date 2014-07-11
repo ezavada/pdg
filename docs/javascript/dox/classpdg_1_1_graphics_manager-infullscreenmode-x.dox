@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::inFullScreenMode
+
+\brief return whether primary graphics port is fullscreen or not
+
+\return true if the main port exists and is in fullscreen mode, false otherwise
+
+\sa switchToFullScreenMode
+\sa switchToWindowMode
+\sa getMainPort
+\sa setScreenMode
+
+**/ }

@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_mem(BinaryString mem)
+
+\brief serialize a binary string
+
+Binary strings are a Node.js way of handling blocks of arbitrary binary data. This serializes that data into the stream. 
+
+\deprecated Node.js maintainers have deprecated BinaryString, so it may not be around in future versions
+
+
+\note data size: varies, call serializedSize(MemBlock) to determine. Because binary strings used 2 bytes for each actual byte stored, the serialized data takes less memory than the original string.
+
+\sa serialize_mem(MemBlock)
+\sa serializedSize(MemBlock)
+\sa Deserializer.deserialize_mem
+
+**/ }

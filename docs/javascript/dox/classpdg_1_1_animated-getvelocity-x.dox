@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getVelocity
+
+\brief get the vector that expresses magnitude and direction of the object's movement in pixels/sec
+
+**/ }

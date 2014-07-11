@@ -1,0 +1,66 @@
+namespace pdg { /**
+
+\class ISpriteCollideHelper
+\brief helper for deciding whether 2 sprites should collide or not
+
+\warning **API Stability: 1 - Experimental**. This API was introduced recently and gotten little or no real use. It may change or be removed in future versions. It may not be completely implemented and may be missing important pieces of functionality. Please try it out and provide feedback.
+
+Implement this interface to do handle special case collision logic between two
+sprites. For example, you might want bullet sprites to collide with enemy sprites
+but not with one another. If a collide helper is installed, then on initial contact
+between two sprites the collide helper for the moving sprite will be called, and
+you the helper can decide if the collision should happen or not. 
+
+For those coding in Javascript, there is an implementation of ISpriteCollideHelper 
+that maps a function definition to the draw call. So to create a helper:
+
+\code
+	var myHelper = new pdg.ISpriteCollideHelper(function(sprite, withSprite) {
+		console.log("in my sprite collide helper for " + sprite );
+		if (withSprite.id == 100) {
+			return true;  // only collide with the player sprite (id 100)
+		}
+		return false;  // don't collide with anything else
+	});
+	mySprite.setCollisionHelper(myHelper);
+\endcode
+
+If you need something more complex, you can also use classify to create a new
+Javascript class that derives from pdg.ISpriteCollideHelper, and it will call the 
+allowCollision() method of your class. For example:
+
+\code
+	classify(pdg.ISpriteCollideHelper, 'MyCollideHelperClass', function() {
+		def('allowCollision', function(sprite, withSprite) {
+			console.log("MyCollideHelperClass.allowCollision(" + sprite + ", " + withSprite + ")" );
+			return true;  // let these sprites collide
+		});
+	});
+	mySprite.setCollisionHelper( new MyDrawHelperClass() );
+\endcode
+
+Your Custom Function:
+---------------------
+
+As you can see from the examples above, your Sprite Collide Helper function (or allowCollision() method) will be called with two parameters, and return a boolean:
+\param sprite the Sprite that is moving
+\param withSprite the Sprite it came in contact with
+\return **true** if the collision should happen; or **false** if the collision should be ignored.
+
+\note You should use other techniques wherever possible to eliminate unnecessary collision helper callback, since these callbacks are relatively expensive. You should turn off collisions for sprites that never collide with anything; put sets of sprites that collide only with each other in separate layers; and use collision groups to set up groups of sprites that collide with other things but not each other.
+
+\sa Sprite.setCollisionHelper()
+\sa Sprite.enableCollisions()
+\sa Sprite.disableCollisions()
+\sa Sprite.setCollideGroup()
+\sa SpriteLayer.enableCollisions()
+\sa SpriteLayer.disableCollisions()
+\sa SpriteLayer.enableCollisionsWithLayer()
+\sa SpriteLayer.disableCollisionsWithLayer()
+
+\related pdg::Sprite
+\ingroup Physics
+
+
+
+**/ }

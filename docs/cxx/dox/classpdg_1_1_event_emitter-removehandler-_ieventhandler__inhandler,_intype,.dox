@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::EventEmitter::removeHandler
+
+\brief Remove a handler for some event type, or for all events if no type specified. 
+
+If the handler is listed multiple times it will only remove it once. 
+
+\note inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing `removeHandler(handler, all_events)` will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not. 
+
+It is safe to call remove handler from within an event handler's handleEvent() call. 
+
+\param inHandler the handler that is no longer handling events
+\param inType the type of events the handler will no longer handle (optional)
+
+**/ }

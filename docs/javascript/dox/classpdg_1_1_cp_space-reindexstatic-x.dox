@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::reindexStatic
+
+\brief Update the collision detection info for the all static shapes in the space
+
+**/ }

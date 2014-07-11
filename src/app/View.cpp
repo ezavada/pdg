@@ -1,0 +1,604 @@
+// -----------------------------------------------
+// View.cpp
+//
+// Implementation for base class View
+//
+// Written by Ed Zavada, 2004-2012
+// Copyright (c) 2012, Dream Rock Studios, LLC
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// -----------------------------------------------
+
+#include "pdg/msvcfix.h"  // fix non-standard MSVC
+
+#include "pdg/sys/resource.h"
+#include "pdg/sys/graphics.h"
+#include "pdg/sys/os.h"
+#include "pdg/app/View.h"
+#include "pdg/app/Controller.h"
+
+namespace pdg {
+
+View::View(Controller* controller, const Rect& rect, int binding)
+ : mController(controller),
+   mPort(controller->getApplication().getGraphicsManager().getMainPort()), // get port from Controller
+   mVisible(true), mIsEnabled(true),
+   mBinding(binding)
+{
+	setViewArea(rect);
+	setMinSize(0, 0);
+	setMaxSize(0, 0);
+}
+
+View::View(Controller* controller, Port* port, const Rect& rect, int binding)
+ : mController(controller),
+   mPort(port),
+   mVisible(true), mIsEnabled(true),
+   mBinding(binding)
+{
+    setViewArea(rect);
+	setMinSize(0, 0);
+	setMaxSize(0, 0);
+}
+
+View::~View()
+{
+
+}
+
+void View::notify(Subject* subject)
+{
+    draw();   // default behavior of a view is to redraw if notified of a change
+}
+
+void View::draw() {
+    if (mVisible) {
+		Rect clipSave = mPort->getClipRect();
+		Rect ourClip;
+	    if (!clipSave.empty()) {
+	       ourClip = mViewArea.intersection(clipSave);
+	    } else {
+	       ourClip = mViewArea;
+	    }
+		if (!ourClip.empty() ) {  
+			// don't draw if everything is clipped
+			mPort->setClipRect(ourClip);
+			drawSelf();
+//			mPort->frameRect(mViewArea, PDG_YELLOW_COLOR);
+			mController->viewRedrawn(this);
+			mPort->setClipRect(clipSave);
+		}
+    }
+}
+	
+void View::hide() {
+    bool wasVisible = mVisible;
+    mVisible = false;
+    if (wasVisible != mVisible) {
+        hideSelf();
+        mController->redraw();  // use redraw because we have to fill in background
+    }
+}
+
+void View::show() {
+    bool wasVisible = mVisible;
+    mVisible = true;
+    if (wasVisible != mVisible) {
+        showSelf();
+        draw();
+    }
+}
+
+void View::setEnabled(bool enabled) {
+    bool wasEnabled = mIsEnabled;
+    mIsEnabled = enabled;
+    if (wasEnabled != mIsEnabled) {
+        draw();
+    }
+}
+
+void View::setDraggable(bool inIsDraggable) {
+	mIsDraggable = inIsDraggable;
+}
+	
+void View::setWantsMouseOvers(bool inWantsMouseOvers) {
+	mWantsMouseOvers = inWantsMouseOvers;
+}
+	
+void View::showSelf()
+{
+}
+
+void View::hideSelf()
+{
+}
+
+// doMouseDown is called whenever the mouse button goes down within the view
+// Override to do something useful
+bool View::doMouseDown(const MouseInfo *mi,  int id, int part)
+{
+	return false;
+}
+
+// doMouseUp is called whenever the mouse button goes up within the view
+// Override to do something useful
+bool View::doMouseUp(const MouseInfo *mi, int id, int part)
+{
+	return false;
+}
+	
+	// doMouseMove is called whenever the mouse moves within the view, if the view wants mouseovers
+	// Override to do something useful
+void View::doMouseMove(const MouseInfo *mi,  int id, int part)
+{
+}
+
+	// doMouseEnter is called whenever the mouse enter the view, if the view wants mouseovers
+	// Override to do something useful
+void View::doMouseLeave(const MouseInfo *mi, int id, int part)
+{
+}
+
+	// doMouseLeave is called whenever the mouse exits the view, if the view wants mouseovers
+	// Override to do something useful
+void View::doMouseEnter(const MouseInfo *mi,  int id, int part)
+{
+}
+
+
+// ============================ Mouse Actions ============================
+bool View::doLeftClick(const MouseInfo *mi, int id, int part)
+{
+	return false;
+}
+bool View::doRightClick(const MouseInfo *mi, int id, int part)
+{
+	return false;
+}
+bool View::doDoubleClick(const MouseInfo *mi, int id, int part, int clickCount)
+{
+	return false;
+}
+
+// ============================ Gestures	============================
+// Gestures are only generated by a TouchController, the base Controller class will not generate them
+
+// doTap is called when a finger goes up and down within the view
+// return true if completely handled, or false if the tap can be passed on to other views
+bool View::doTap( const MouseInfo *mi, int id, int part)
+{
+	return false;
+}
+	
+
+// doTouchMove is called when a finger that went down in the view moves within the view, or
+// after it was released within the view as part of a flick gesture (in which case flick will be true)
+// NOTE: if the finger exits the view while still down, doTouchMove is no longer called. Then doDragMove 
+// is called instead if the view is draggable
+// return true if completely handled, or false if the tap can be passed on to other views
+bool View::doTouchMove( const Point& delta, bool flick, int id, int part)
+{
+	return false;
+}
+
+
+// doSwipeMove happens when two or more fingers are down in the view and move in unison (ie, all in 
+// the same direction)
+// return true if completely handled, or false if the tap can be passed on to other views
+bool View::doSwipeMove( const Point& delta, int fingerCount, int id, int part)
+{
+	return false;
+}
+
+
+// doPinchMove happens when two fingers are down in the view and move together or apart
+// return true if completely handled, or false if the tap can be passed on to other views
+bool View::doPinchMove( const Point& delta1, const Point& delta2, float distance, float deltaDistance, int id, int part)
+{
+	return false;
+}
+
+
+// ============================ Drag Actions ============================ 
+// No drag actions will be called unless the view is set to be draggable
+
+// doDragMove is called when the mouse when down within the view and is now moving while held down
+// it will also be called when the TouchMove gesture exits the view, but the finger remains down
+bool View::doDragMove(const MouseInfo *mi, int id, int part)
+{
+	return false;
+}
+
+
+// doDragIn is called when the mouse when down within the view and first moves over another view (the target view)
+bool View::doDragIn(const MouseInfo* mi, int id, int part, View* targetView, int targetId, int targetPart)
+{
+	return false;
+}
+
+
+// doDragOut is called when the mouse when down within the view and first moves out of another view (the 
+// target view). It is always preceeded by a doDragOut call
+bool View::doDragOut(const MouseInfo* mi, int id, int part, View* targetView, int targetId, int targetPart)
+{
+	return false;
+}
+
+
+// startBeingDragTarget is called when the mouse went down in another view (the dragged view) and first moves 
+// into this view
+bool View::startBeingDragTarget(const MouseInfo* mi, int id, int part, View* draggedView, int draggedId, int draggedPart)
+{
+	return false;
+}
+
+
+// stopBeingDragTarget is called when the mouse went down in another view (the dragged view) and moves out
+// of this view. It is always preceeded by a startBeingDragTarget call
+bool View::stopBeingDragTarget(const MouseInfo* mi, int id, int part, View* draggedView, int draggedId, int draggedPart)
+{
+	return false;
+}
+
+
+// doDragComplete is called with the mouse is released after a series of drag related calls
+bool View::doDragComplete(const MouseInfo *mi, int id, int part)
+{
+	return false;
+}
+
+
+void View::setViewArea(const Rect& rect)
+{
+	mViewArea = rect;
+}
+
+bool View::pointInViewVisibleArea(const Point& screenPoint)
+{
+	return mViewArea.contains( screenPoint );
+}
+
+// if a view returns View::CLICKED_PART_NONE, it is not willing
+// to handle the click, and other views can handle it
+int View::getPartClicked(const Point& screenPoint)
+{
+	Point localPoint = globalToLocal(screenPoint);
+	ClickableList::reverse_iterator itr;  // most recently added first
+	int clickedPartID = CLICKED_PART_NONE;
+
+	for(itr = mClickableParts.rbegin(); itr != mClickableParts.rend(); itr++)
+	{
+		idRectPair val = *itr;
+
+		// Check to see if the point is in this rectangle
+		if( val.first.contains(localPoint) )
+		{
+			// Set the clickedPartID the id of this rect
+			clickedPartID = val.second;
+			break;
+		}
+	}
+
+	return clickedPartID;
+}
+
+// if a view returns an empty rect, then it doesn't know about that part id
+Rect View::getClickableRectFromID(int id)
+{
+	Rect rClickableRect(0,0);
+	ClickableList::reverse_iterator itr;  // most recently added first
+	for( itr = mClickableParts.rbegin(); itr != mClickableParts.rend(); itr++)
+	{
+		idRectPair val = *itr;
+		// Check to see if the point is in this rectangle
+		if(id==val.second)
+		{
+			rClickableRect = val.first;
+			break;
+		}
+	}
+	return rClickableRect;
+}
+
+void View::addClickablePart(const Rect& rect, int id)
+{
+	// Add the ID and name pair to our list
+	idRectPair val( rect, id );
+	mClickableParts.push_back( val );
+}
+
+void View::removeClickablePart(int id)
+{
+	ClickableList::iterator itr;
+	for( itr = mClickableParts.begin(); itr != mClickableParts.end(); itr++)
+	{
+		idRectPair val = *itr;
+		// Check to see if the point is in this rectangle
+		if(id==val.second)
+		{
+			mClickableParts.erase(itr);
+			break;
+		}
+	}
+}
+
+
+
+void View::drawClickableParts()
+{
+	// Used for debug purposes.
+	ClickableList::reverse_iterator itr; // most recently added first
+
+	for(itr = mClickableParts.rbegin(); itr != mClickableParts.rend(); itr++)
+	{
+		idRectPair val = *itr;
+		Rect localArea = val.first;
+		Rect globalArea = localToGlobal(localArea);
+		int id = val.second;
+
+		mPort->frameRect(globalArea, PDG_GREEN_COLOR);
+
+		char text[128];
+		std::snprintf(text, 128, "%d=ID", id);
+        MAKE_STRING_BUFFER_SAFE(text, 128);
+		mPort->drawText(text, globalArea.leftTop(), 12, Graphics::textStyle_Plain, PDG_GREEN_COLOR);
+	}
+	
+	mPort->fillRect(mViewArea, ::pdg::Color(1.0f, 1.0f, 1.0f, 0.25f));
+}
+
+void View::portResized(const Rect& oldDrawingArea, const Rect& newDrawingArea) {
+	if (mBinding == 0) {
+		//mViewArea = newDrawingArea;
+		return; // short circuit
+	}
+	Rect newViewArea = mViewArea;
+	if (mBinding & bind_Left) {
+		// bound to left, always change left to keep distance from left boundry
+		newViewArea.left = newDrawingArea.left + (mViewArea.left - oldDrawingArea.left);
+		if (mBinding & bind_Right) {
+			// also bound to right, need to shrink or grow
+			newViewArea.right = newDrawingArea.right - (oldDrawingArea.right - mViewArea.right );		
+			// make sure we are within or min and max sizes
+			if (mMaxWidth && mViewArea.width() > mMaxWidth) {
+				newViewArea.setWidth( mMaxWidth );
+			}
+			if (mViewArea.width() < mMinWidth) {
+				newViewArea.setWidth( mMinWidth );
+			}
+		} 
+	} else if (mBinding & bind_Right) {
+		// bound to right but not left, maintain width but move with right boundry
+		newViewArea.right = newDrawingArea.right - (oldDrawingArea.right - mViewArea.right );		
+		newViewArea.left = newViewArea.right - mViewArea.width();
+	}
+	if (mBinding & bind_Top) {
+		// bound to top, always change top to keep distance from top boundry
+		newViewArea.top = newDrawingArea.top + (mViewArea.top - oldDrawingArea.top);
+		if (mBinding & bind_Bottom) {
+			// also bound to bottom, need to shrink or grow
+			newViewArea.bottom = newDrawingArea.bottom - (oldDrawingArea.bottom - mViewArea.bottom );		
+			// make sure we are within or min and max sizes
+			if (mMaxHeight && mViewArea.height() > mMaxHeight) {
+				newViewArea.setHeight( mMaxHeight );
+			}
+			if (mViewArea.height() < mMinHeight) {
+				newViewArea.setHeight( mMinHeight );
+			}
+		} 
+	} else if (mBinding & bind_Bottom) {
+		// bound to bottom but not top, maintain height but move with bottom boundry
+		newViewArea.bottom = newDrawingArea.bottom - (oldDrawingArea.bottom - mViewArea.bottom );		
+		newViewArea.top = newViewArea.bottom - mViewArea.height();
+	}
+	mViewArea = newViewArea;
+}
+
+// coordinate transforms, local view coords --> global drawing coords
+Point   View::localToGlobal(Point inPt)
+{
+    return inPt + mViewArea.leftTop();
+}
+
+Rect    View::localToGlobal(Rect inRect)
+{
+    return inRect + mViewArea.leftTop();
+}
+
+// coordinate transforms, global drawing coords --> local view coords
+Point   View::globalToLocal(Point inPt)
+{
+    return inPt - mViewArea.leftTop();
+}
+
+Rect    View::globalToLocal(Rect inRect)
+{
+    return inRect - mViewArea.leftTop();
+}
+	
+
+	// ============================================ BEGIN DEPRECATED =====================================
+#ifdef PDG_ALLOW_DEPRECATED_CALLS
+
+	// returns pixel offset between top of rect passed in and top (not baseline) of next line that would be drawn with
+	// normal line spacing. The typical use for this would be to call textArea.moveDown() by that pixel offset, and
+	// then call drawMultilineText again for the next block/paragraph
+	int View::drawMultilineText(const char* text, int size, Color color, const Rect& textArea, int style)
+	{
+		int len = std::strlen(text);
+		int maxLineWidth = textArea.width();
+		int charsLeftToDraw = len;
+		int voffset = mPort->getCurrentFont(style)->getFontHeight(size, style) + mPort->getCurrentFont(style)->getFontLeading(size, style);
+		int x = textArea.left;
+		if (style & Graphics::textStyle_Centered) {
+			x += textArea.width()/2;
+		} else if (style & Graphics::textStyle_RightJustified) {
+			x = textArea.right;
+		}
+		int y = textArea.top  + mPort->getCurrentFont(style)->getFontAscent(size, style);
+		char* p = new char[len+2]; // create a temporary space for copying
+		bool nospace = false;
+		char* nextSeg = 0;
+		do {
+			if (!nextSeg) {
+				nextSeg = (char*) std::strchr(text, '|'); // find any hard line breaks
+				if (nextSeg) {
+					// replace hard line break with nul character to terminate string
+					*nextSeg = 0;
+					//                --charsLeftToDraw;       // one less character to draw
+				}
+			}
+			if (nextSeg) {
+				len = std::strlen(text); // and our string length has changed
+			}
+			while (len && (maxLineWidth < mPort->getTextWidth(text, size, style, len))) {
+				if (!nospace) {
+					int len_save = len;
+					// look for a space or a hypen to break on
+					while (len > 0) {
+						--len;
+						if ((text[len] == ' ') || (text[len] == '-')) {
+							break;
+						}
+					}
+					if (len == 0) { // if we didn't find a space, start from the previous character
+						len = len_save - 1;
+						nospace = true;
+					}
+				} else {
+					--len;
+				}
+			}
+			if (len && !nospace) {  // if we found a break, we need to include the breaking character
+				++len;              // in the line to draw
+			}
+			std::strncpy(p, text, len); // make a nul terminated copy of just the section we want to draw
+			p[len] = 0;
+			
+			mPort->drawText(p, Point(x, y), size, style, color);
+			text += len;
+			if (nextSeg && (text > nextSeg)) {
+				// if we are at the location of a hard line break,
+				// skip over the nul character we replaced it with
+				*nextSeg = '|'; // restore the vertical bar
+				text = ++nextSeg;
+				nextSeg = 0;
+			}
+			charsLeftToDraw -= len;
+			len = charsLeftToDraw;
+			y += voffset;
+		} while (charsLeftToDraw > 0);
+		delete[] p;
+		return (y - (textArea.top + mPort->getCurrentFont(style)->getFontAscent(size, style)));
+	}
+	
+	
+	Image* View::loadImage(ResourceManager& resMgr, int id, int idx, Color* transparentColor)
+	{
+		const char *artFileName;
+		std::string buffer;
+		Image* pImage = 0;
+		
+		// get the image name from the resources
+		artFileName = resMgr.getString(buffer, id, idx);
+		DEBUG_ONLY( if (!artFileName) {
+			OS::_DOUT("Couldn't find filename for image resource id [%d] idx [%d]", id, idx);
+		} )
+		
+		// load the hex art with that image name
+		pImage = resMgr.getImage(artFileName);
+		if (pImage)
+		{
+			pImage->setPort(mPort); // force them to use our drawing port
+			if (transparentColor) {
+				pImage->setTransparentColor( *transparentColor );
+			}
+		}
+		else
+		{
+			DEBUG_ONLY( OS::_DOUT("Couldn't load image [%s] from resources", artFileName); )
+		}
+		
+		return pImage;
+	}
+	
+	void View::loadImageArray(ResourceManager& resMgr, Image* arr[], int id, int numImages, Color* transparentColor)
+	{
+		for (int i = 0; i < numImages; i++)
+		{
+			arr[i] = loadImage(resMgr, id, i, transparentColor);
+		}
+	}
+	
+	void View::unloadImage(Image* & imagePtr)
+	{
+		if (imagePtr) {
+			imagePtr->release();
+			imagePtr = 0;
+		}
+	}
+	
+	void View::unloadImageArray(Image* arr[], int numImages)
+	{
+		for (int i = 0; i < numImages; i++)
+		{
+			unloadImage(arr[i]);
+		}
+	}
+	
+	void View::scaleImage(Image*& image, float scaleBy, Image::FilterType filter)
+	{
+		Image* temp;
+		if (image)
+		{
+			temp = image->createImageScaled(scaleBy, scaleBy, filter);
+			image->release();
+			image = temp;
+		}
+	}
+	
+	void View::scaleImageArray(Image* arr[], int numImages, float scaleBy, Image::FilterType filter)
+	{
+		for (int i = 0; i < numImages; i++) {
+			if (arr[i]) {
+				Image* newImage = arr[i]->createImageScaled(scaleBy, scaleBy, filter);
+				arr[i]->release();
+				arr[i] = newImage;
+			}
+		}
+	}
+	
+	
+	void View::scaleImageArrayToFit(Image* arr[], int numImages, Rect r, Image::FilterType filter)
+	{
+		for (int i = 0; i < numImages; i++) {
+			if (arr[i]) {
+				Image* newImage = arr[i]->createImageScaledToFit(r, Image::fit_Fill, filter);
+				arr[i]->release();
+				arr[i] = newImage;
+			}
+		}
+	}
+	// ============================================ END DEPRECATED =====================================
+#endif // PDG_ALLOW_DEPRECATED_CALLS
+	
+
+} // namespace pdg

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::serverPort
+
+\brief the port on which the server listens 
+
+This can be changed at any time *before* calling listen(). It should be considered Read Only after calling listen().
+
+**/ }

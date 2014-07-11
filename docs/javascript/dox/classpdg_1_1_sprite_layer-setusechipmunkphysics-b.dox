@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setUseChipmunkPhysics
+
+\brief enable or disable use of Chipmunk Physics for a particular layer
+
+Layers that don't use Chipmunk Physics can still use the cruder physics system offered by the Animated class.
+
+**/ }

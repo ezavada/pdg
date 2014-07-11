@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::switchToFullScreenMode
+
+\brief switch a port to full screen
+
+\param allowResChange if true, the monitor resolution will be changed to match the window size; defaults to false
+\param port the port to change, defaults to the main port if not passed
+
+\return true if mode switch succeeded, false if it did not
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sound::onDonePlaying
+
+\brief set a handler for when the sound finishes playing
+
+**/ }

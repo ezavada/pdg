@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\var pdg::action_FadeOutComplete
+
+\brief eventType_SpriteAnimate action: a sprite fade-out has completed
+
+\sa Sprite.fadeOut()
+\sa action_FadeComplete
+\sa action_FadeInComplete
+\sa eventType_SpriteAnimate
+\sa SpriteAnimateEvent
+
+\ingroup Animation
+
+**/ }

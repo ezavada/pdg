@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\var pdg::action_Offscreen
+
+\brief eventType_SpriteAnimate action: a sprite has gone completely offscreen (*GUI Only*)
+
+This event is only generated for sprites that have setWantsOffscreenEvents(true) called.
+
+\sa Sprite.setWantsOffscreenEvents()
+\sa eventType_SpriteAnimate
+\sa action_Onscreen
+
+\ingroup Animation
+
+**/ }

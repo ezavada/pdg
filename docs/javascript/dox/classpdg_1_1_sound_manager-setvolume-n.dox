@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SoundManager::setVolume
+
+\brief sets the overall volume level
+
+\param level the desired level (0.0 - silent to 1.0 - full volume)
+
+Sets the max volume level for all sounds. Individual sounds can still be played at separate volume levels, but they are scaled to be within the level set by the Sound Manager
+
+\todo NOT IMPLEMENTED
+
+**/ }

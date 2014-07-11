@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::onMessage
+
+\brief set callback to handle receipt of a network message
+
+Whenever the remote end sends a message, you will get an onMessage callback to the function specified with the message that was sent. 
+
+\param callback the function that should be called when a message is received. The message is the first parameter passed to the callback function. Second parameter is the connection object. Third parameter is a string with the transport type (currently either 'upd' or 'tcp', where 'udp' means it was sent via sendDgram() and 'tcp' means it was sent via send() )
+
+**/ }

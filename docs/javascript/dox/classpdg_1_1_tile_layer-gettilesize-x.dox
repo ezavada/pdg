@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::getTileSize
+
+\brief get size of a tile in the image
+
+\return Point with x (width) and y (height) values
+
+**/ }

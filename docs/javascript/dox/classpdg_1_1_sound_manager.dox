@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\class pdg::SoundManager
+
+\warning **API Stability: 1 - Experimental**. This API was introduced recently and gotten little or no real use. It may change or be removed in future versions. It may not be completely implemented and may be missing important pieces of functionality. Please try it out and provide feedback.
+
+\brief used for application wide sound settings and options (*GUI Only*)
+
+
+**/ }

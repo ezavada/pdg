@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::stopStretching
+
+\brief stop any stretching the object was doing
+
+**/ }

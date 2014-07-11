@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_3u
+
+\brief deserialize 3 unsigned bytes
+
+Read an unsigned three byte value from the data stream. 
+
+\return a number in the range of **0 to 16,777,216**
+
+\sa Serializer.serialize_3u
+
+**/ }

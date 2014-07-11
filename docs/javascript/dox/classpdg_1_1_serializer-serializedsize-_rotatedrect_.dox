@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(RotatedRect)
+
+\brief get the number of bytes used to serialize the given RotatedRect
+
+Does not actually write any data to stream
+
+\return the number of bytes needed (4-30)
+
+\sa serialize_rotr
+
+**/ }

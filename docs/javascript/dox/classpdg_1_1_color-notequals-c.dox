@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Color::notEquals
+
+\brief check if this color is different than another color
+
+\return true if the colors are different, false if not
+
+**/ }

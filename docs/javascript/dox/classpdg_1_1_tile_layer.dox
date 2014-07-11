@@ -1,0 +1,32 @@
+namespace pdg { /**
+
+\class TileLayer
+\brief efficiently handles large tile datasets, useful for backgrounds, terrains, etc...
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+Capabilities
+------------
+
+Each TileLayer has a tile set, a set of equal size tiles taken from a single image. There can be at most 256 tiles in an image.
+
+Tile sets can contain transparency, either through a transparent color or via an alpha channel. If a tile set does not contain transparency, then the entire tile world will be filled in solid, there is no way to leave out a tile. In tile sets with transparency, tile type 0 is considered empty, even if the there is no transparency in the actual image.
+
+Tile sets can support tile rotation (facing) or tile flipping (vertical, horizontal, or both). You cannot use both rotation and flipping in the same layer. 
+
+\warning While individual tiles can be rotated, the TileLayer itself cannot. This is a departure from the expected capabilities of SpriteLayers in general, and will be addressed in a future release.
+
+Getting the Results you Want
+----------------------------
+
+For truly impressive maps, you will rarely use just a single TileLayer. Because TileLayers are highly optimized for large areas of transparent/empty tiles, you can use a number of linked TileLayers that each focus on different details: water, terrain, ground cover, flowers and shrubs, trees, etc... 
+
+You can intersperse regular SpriteLayers in between TileLayers to provided animated effects to make your characters move at the right layer (underneath the tree-tops, for example).
+
+Be sure to link together all your layers using SpriteLayer.moveWith().
+
+\sa defineTileSet
+\sa Image.setTransparentColor
+\sa SpriteLayer.moveWith
+
+**/ }

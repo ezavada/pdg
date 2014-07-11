@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::closeResourceFile
+
+\brief stop searching a file or folder for resources
+
+Given the refNum returned by a previous call to openResourceFile() for a file or folder, it removes that file or folder from the search list for resources. 
+
+\param refNum the reference number for the file or folder
+
+
+**/ }

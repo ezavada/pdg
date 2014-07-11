@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::setDataPtr(BinaryString data)
+
+\brief set the serialized data
+
+Set the data block that should be deserialized. It should have been created at some point by a pdg.Serializer.
+
+\deprecated Node.js maintainers have deprecated BinaryString, so it may not be around in future versions
+
+\param data the BinaryString object with the serialized data
+
+\sa setDataPtr(MemBlock)
+\sa Serializer.getDataPtr
+
+**/ }

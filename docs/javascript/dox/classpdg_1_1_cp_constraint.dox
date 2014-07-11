@@ -1,0 +1,30 @@
+namespace pdg { /**
+
+
+\class CpConstraint
+\brief describes how two sprites are connected to one another  (*Chipmunk Physics Only*)
+
+\warning **API Stability: 1 - Experimental**. This API was introduced recently and has gotten little or no real use. It may change or be removed in future versions. It may not be completely implemented and may be missing important pieces of functionality. Please try it out and provide feedback.
+
+
+Setup of joints can be done directly through methods of the Sprite object. The CpConstraint object exists to allow joints to be modified dynamically after they've been set up, such as by changing the range of motion on a damaged joint.
+
+\sa Sprite.gear()
+\sa Sprite.grooveJoint()
+\sa Sprite.motor()
+\sa Sprite.pinJoint()
+\sa Sprite.pivotJoint()
+\sa Sprite.ratchet()
+\sa Sprite.rotaryLimit()
+\sa Sprite.rotarySpring()
+\sa Sprite.slideJoint()
+\sa Sprite.springJoint()
+\sa Sprite.makeJointBreakable()
+\sa Sprite.makeJointUnbreakable()
+\sa Sprite.removeJoint()
+
+\sa http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint
+
+\ingroup Physics
+
+**/ }

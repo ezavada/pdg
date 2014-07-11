@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_3u
+
+\brief serialize 3 unsigned bytes
+
+Write a three byte value in the range of **0 to 16,777,216** into the data stream. 
+
+\warning if the value is outside the range then only the info from the least significant three bytes will be written into the serialized data stream.
+
+\note data size: 3 bytes
+
+\remark there is no serialize_3(signed int); use serialize_4 instead
+
+\sa Deserializer.deserialize_3u
+
+**/ }

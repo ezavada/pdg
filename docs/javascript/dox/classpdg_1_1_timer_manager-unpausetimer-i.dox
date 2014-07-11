@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::unpauseTimer
+
+\brief resume a specific timer
+
+\param id the id number of the timer to be resumed
+
+\sa pauseTimer()
+\sa unpause()
+
+**/ }

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::animate
+
+\brief animate based on the passage of time
+
+\returns true if anything (position, size, movement, etc...) changed
+
+**/ }

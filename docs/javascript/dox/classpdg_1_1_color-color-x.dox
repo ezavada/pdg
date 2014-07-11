@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Color::Color()
+
+\brief create a color
+
+Creates a color with all RGB values set to zero, and Alpha channel set to 1, ie: solid black.
+
+**/ }

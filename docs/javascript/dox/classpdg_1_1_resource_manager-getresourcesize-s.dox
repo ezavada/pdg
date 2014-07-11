@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::getResourceSize
+
+\brief get the size of a resource by name
+
+Get the total number of bytes needed to load a particular named resource. If the resource does not exist this will return zero (0).
+
+\param resourceName the name of the resource to check
+
+\return the size in bytes of the resource
+
+**/ }

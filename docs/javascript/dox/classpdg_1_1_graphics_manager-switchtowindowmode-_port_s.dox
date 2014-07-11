@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::switchToWindowMode
+
+\brief switch a port to be in a window
+
+If the monitor resolution was changed to go into full screen, it will be changed back to it's original value
+
+\param port the port to change, defaults to the main port if not passed
+\param windName the name to give the window (optional)
+
+\return true if mode switch succeeded, false if it did not
+
+**/ }

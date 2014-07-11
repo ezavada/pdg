@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getMovementDirectionInRadians
+
+\brief get the direction the object is moving
+
+**/ }

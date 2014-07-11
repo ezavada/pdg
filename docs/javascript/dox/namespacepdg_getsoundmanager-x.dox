@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::getSoundManager
+
+\brief  get the singleton instance of the SoundManager used by the pdg framework
+
+\return SoundManager singleton object
+
+\relatedalso SoundManager
+
+**/ }

@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_1u
+
+\brief serialize 1 unsigned byte
+
+Write a one byte value in the range of **0 to 255** into the data stream. 
+
+\warning if the value is outside the range then only the info from the least significant byte will be written into the serialized data stream
+
+\note data size: 1 byte
+
+\sa Deserializer.deserialize_1u
+
+**/ }

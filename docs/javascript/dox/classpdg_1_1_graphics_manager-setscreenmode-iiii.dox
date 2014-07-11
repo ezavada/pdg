@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::setScreenMode
+
+\brief changes specified screen to closest matching mode
+
+\param width the desired width in pixels
+\param height the desired height in pixels
+\param screenNum the screen to change, defaults to the primary screen if not passed
+\param bpp the screen depth in bits per pixel, uses current screen depth if not passed
+
+\sa getCurrentScreenMode
+\sa getNumScreens
+
+**/ }

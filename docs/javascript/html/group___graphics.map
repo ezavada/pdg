@@ -1,0 +1,5 @@
+<map id="Graphics" name="Graphics">
+<area shape="rect" id="node1" href="$group___animation.html" title="Things related to animation." alt="" coords="263,75,340,101"/>
+<area shape="rect" id="node2" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="261,135,341,161"/>
+<area shape="rect" id="node3" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="270,195,333,221"/>
+</map>

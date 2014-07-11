@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::shutdown
+
+\brief stop listening for new connections 
+
+This will also do a clean shutdown of all existing connections made through it, unless you tell it not to by passing false for closeExisting.
+      
+\param closeExisting flag for whether existing connections should be closed or not (defaults to true if not passed)     
+\param kill flag for whether existing connections should be killed. True means kill, false means allow to drain normally (defaults to false if not passed).
+
+**/ }

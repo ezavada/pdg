@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::resizeTo
+
+\brief resize the object to a specific size over time
+
+Honors delay given by wait()
+
+**/ }

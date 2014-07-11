@@ -1,0 +1,40 @@
+namespace pdg { /**
+
+\struct pdg::SpriteLayerEvent
+
+\brief something happened to this layer
+
+This event can be generated with #action_LayerFadeInComplete or #action_LayerFadeOutComplete when the layer finishes a fade.
+
+This event can be generated with #action_ZoomComplete with the layer finishes a zoom animation.
+
+These events are also generated regularly by a SpriteLayer to give the application a chance to take action at various stages of sprite animation and rendering.
+
+    { 
+        emitter: {},            // the emitter that generated this event
+        eventType: 18,          // the event type (eventType_SpriteLayer)
+        action: 0,              // one of: action_AnimationStart/Complete, action_Pre/PostAnimateLayer, action_ErasePort, action_Pre/PostDrawLayer, or action_DrawPortComplete
+        actingLayer: {},        // the SpriteLayer that is taking action
+        millisec: 1025448321,   // the millisecond time when this entire animation step started (when action_AnimationStart fired) 
+    }  
+ 
+A single step of animation will generate these events:
+
+ - #action_AnimationStart with actingLayer set to the first layer (Z-order = 0)
+ - for each layer, with actingLayer set to that layer, in Z-order (0...n):
+   - #action_PreAnimateLayer just before animation starts
+   - #action_PostAnimateLayer after all animation is complete
+ - #action_AnimationComplete with actingLayer set to the last layer
+
+In a similar fashion, a rendering a single frame will generate these events:
+
+ - #action_ErasePort with actingLayer set to the first layer (Z-order = 0)
+ - for each layer, with actingLayer set to that layer, in Z-order (0...n):
+   - #action_PreDrawLayer just before layer rendering starts
+   - #action_PostDrawLayer after all sprites in the layer have been drawn
+ - #action_DrawPortComplete with actingLayer set to the last layer
+
+\see eventType_SpriteLayer
+\ingroup Events
+
+**/ }

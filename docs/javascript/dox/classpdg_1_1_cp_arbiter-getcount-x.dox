@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpArbiter::getCount
+
+\brief number of contacts tracked by this arbiter
+
+A collision can involve multiple contact points between objects. This tells you how many different contact points are involved in this collision.
+
+\return number of contact points
+
+**/ }

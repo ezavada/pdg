@@ -1,0 +1,26 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::getResource
+
+\brief get an untyped resource by name
+
+Get a resource by name. The resource is returned as a block of data in a MemBlock object. If the resource doesn't exits, false is returned, so you can check for the resource loading with:
+
+\code
+	var res = pdg.res.getResource('myRes');
+	if (res === false) {
+	    console.log('resource not found!');
+	} else {
+	    // do something with the resource
+	}
+\endcode
+
+\param resourceName the name of the resource
+
+\return a MemBlock with the resource data, or **false** if not found
+
+\note the entire resource is loaded into memory, so you might want to check the size before loading it using getResourceSize() if you are concerned about how large it could be.
+
+\sa getResourceSize()
+
+**/ }

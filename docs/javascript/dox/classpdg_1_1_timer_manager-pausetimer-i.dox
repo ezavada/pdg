@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::pauseTimer
+
+\brief pause a timer indefinitely
+
+Pause the specified timer until unpause() or unpauseTimer() are called. When unpaused, the timer will continue as if no time had passed between the pauseTimer() and unpauseTimer() calls.
+
+\sa unpauseTimer()
+\sa unpause()
+\sa isTimerPaused()
+
+**/ }

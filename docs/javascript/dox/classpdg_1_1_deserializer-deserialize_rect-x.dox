@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_rect
+
+\brief deserialize a Rect
+
+Read a Rect value from the data stream. 
+
+\return a Rect
+
+\sa Serializer.serialize_rect
+
+**/ }

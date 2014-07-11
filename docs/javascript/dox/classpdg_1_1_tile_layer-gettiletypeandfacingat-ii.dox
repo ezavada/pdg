@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::getTileTypeAndFacingAt
+
+\brief get the tile type and the facing/flipped state of the tile
+
+\param x component of x,y coordinates on the map
+\param y component of x,y coordinates on the map
+
+\returns a JavaScript object with tileType and facing. Unlike getTileTypeAt(), this separates the facing/flipping information from the raw tile type, so the tile type is the actual index into your tile set.
+
+    > console.log(myTileLayer.getTileTypeAndFacingAt(0,0);
+    { tileType: 61, facing: 128 }
+
+\sa setTileTypeAt
+\sa getTileTypeAt
+
+**/ }

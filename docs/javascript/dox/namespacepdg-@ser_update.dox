@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\var pdg::ser_Update
+
+\brief sprite layer serialization mode for regular updates
+
+Used to update sprite layers that were created to be identical. Unlike the micro update, the updated info includes all the currently acting animations and forces, so it does not need to be updated every frame like the micro updates.
+
+\sa ser_Micro
+\sa ser_Full
+\sa SpriteLayer.setSerializationFlags()
+
+**/ }

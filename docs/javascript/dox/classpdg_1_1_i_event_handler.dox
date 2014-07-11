@@ -1,0 +1,57 @@
+namespace pdg { /**
+
+\class IEventHandler
+\brief Interface for any class which handles events.
+
+Specific Subclasses should be written to implement particular handlers.
+Typically you would call an onXXX() method of the EventEmitter object that is generating the event you want, and it will take care of creating the event handler for you, and adding a convenient cancel() method to the handler. For example:
+
+\code
+ 	var mySpriteCollisionHandler = mySprite.onCollideSprite(function(event) {
+	   // do something about the collision
+ 	});
+ 	...
+ 	mySpriteCollisionHandler.cancel();   // stop handling collision events with this handler
+\endcode
+
+This cancel() method will only work for a single emitter. So if you may want to create a handler that is used with multiple emitters, you should create it once and then explicitly add it to and remove it from each emitter. Here's how:
+
+\code
+	var mySpriteHandler = new pdg.IEventHandler(function(event) {
+		console.log("in my event handler with "+event);
+	});
+	mySprite.addHandler(mySpriteHandler, pdg.eventType_SpriteCollide);
+	...
+	mySprite.removeHandler(mySpriteHandler, pdg.eventType_SpriteCollide);
+\endcode
+
+Your Custom Function:
+---------------------
+
+As you can see from the examples above, your Event Handler function will be called with a single parameter, and return a boolean:
+\param event the event that occurred (from the See Also list below)
+\return **true** if the event has been completely handled and should not propagate any further; or **false** it should be allowed to continue to propagate through the handler chain.
+
+\related EventEmitter
+\related EventManager
+
+\sa KeyEvent
+\sa KeyPressEvent
+\sa MouseEvent
+\sa MouseTrackingEvent
+\sa PortDrawEvent
+\sa PortResizedEvent
+\sa ScrollWheelEvent
+\sa ShutdownEvent
+\sa SoundEvent
+\sa SpriteAnimateEvent
+\sa SpriteBreakEvent
+\sa SpriteCollideEvent
+\sa SpriteLayerEvent
+\sa SpriteTouchEvent
+
+\ingroup Events
+
+
+
+**/ }

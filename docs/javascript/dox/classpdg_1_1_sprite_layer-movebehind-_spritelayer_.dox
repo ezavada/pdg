@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::moveBehind
+
+\brief change the z-order of this layer to draw it before the given layer
+
+**/ }

@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\var pdg::action_PreAnimateLayer
+
+\brief eventType_SpriteLayer action: about to start animations for a particular SpriteLayer
+
+Emitted once per layer per animation step, before any animation for that layer is performed.
+
+\sa action_AnimationStart
+\sa action_PostAnimateLayer
+\sa eventType_SpriteLayer
+
+\ingroup Animation
+
+
+**/ }

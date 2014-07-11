@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sound::skipTo
+
+\brief skipTo a particular time position in a sound
+
+\param timeMs the location within the sound to skip to 
+
+**/ }

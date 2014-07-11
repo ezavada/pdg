@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onDrawPortComplete
+
+\brief set event handler for rendering complete events
+
+This happens each frame when all layers have finished rendering that frame
+
+\sa SpriteLayerEvent
+\sa IEventHandler
+
+**/ }

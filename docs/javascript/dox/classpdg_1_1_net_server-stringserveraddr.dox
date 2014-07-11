@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::serverAddr
+
+\brief the address (interface) on which the server listens
+
+0.0.0.0 means all interfaces on the computer
+
+**/ }

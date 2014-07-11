@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\var pdg::LogManager::init_StdErr
+
+\brief don't create a file, send log output to stderr
+
+This flag is passed as initMode to LogManager.initialize() to cause the log entries to be sent to stderr instead of to a file. No existing files are altered and no new files are created.
+
+\sa initialize()
+
+
+**/ }

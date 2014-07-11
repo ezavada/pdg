@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::CpArbiter::isFirstContact
+
+\brief is this this first moment of contact in a collision?
+
+\return true if this is the first moment of contact between the objects, false if part of an ongoing collison
+
+
+**/ }

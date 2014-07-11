@@ -1,0 +1,6 @@
+<map id="Events" name="Events">
+<area shape="rect" id="node1" href="$group___sound.html" title="Things used for audio (sound and music)" alt="" coords="263,6,323,34"/>
+<area shape="rect" id="node2" href="$group___animation.html" title="Things related to animation." alt="" coords="253,69,334,97"/>
+<area shape="rect" id="node4" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="256,131,331,159"/>
+<area shape="rect" id="node5" href="$group___network.html" title="Network" alt="" coords="258,226,328,254"/>
+</map>

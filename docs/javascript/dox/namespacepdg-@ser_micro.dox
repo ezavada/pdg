@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\var pdg::ser_Micro
+
+\brief sprite layer serialization mode for minimal size
+
+Only sends position and z-order updates. Ideal for sprite layers that do no animation of their own and are completely driven frame by frame from a master sprite layer, or perhaps for recording the paths of objects in a sprite layer for a rewind/replay.
+
+\sa ser_Update
+\sa ser_Full
+\sa SpriteLayer.setSerializationFlags()
+
+**/ }

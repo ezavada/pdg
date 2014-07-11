@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::ImageStrip::getFrameWidth
+
+\brief get the width in pixels of a single frame of this image 
+
+\return the width in pixels
+
+\note there is no getFrameHeight() method since frames are arranged horizontally in an image strip, so the frame height is the same as the image height.
+
+\sa getHeight()
+\sa getWidth()
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sound::onLooping
+
+\brief set a handler for when the sound reaches the end and loops
+
+**/ }

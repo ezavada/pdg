@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::getZOrder
+
+\brief get the z-order of this layer compared to all others
+
+0 means furthest back (drawn first)
+
+**/ }

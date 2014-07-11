@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::moveToBack
+
+\brief put this sprite behind all others in its layer
+
+**/ }

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::addAnimationHelper
+
+\brief setup a helper to handle custom animation
+
+\sa IAnimationHelper
+
+**/ }

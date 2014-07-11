@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::Point::Point(number x, number y)
+
+\brief create and set x & y values
+
+\param x the horizontal coordinate
+\param y the vertical coordinate
+
+**/ }

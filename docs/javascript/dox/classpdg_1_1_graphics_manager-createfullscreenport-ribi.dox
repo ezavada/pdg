@@ -1,0 +1,24 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::createFullScreenPort
+
+\brief create full screen drawing port with given dimensions on given screen, optionally changing depth 
+
+Unless allowResChange is passed as false, the monitor resolution will be changed to match the closest allowable screen size for the given dimension. If no other port is open, this becomes the main port.
+
+If no is screen specified, the primary screen will be used. If no depth is specified, the current depth of the specified screen will be used.
+
+\param rect the dimensions of the drawing area     
+\param screenNum which screen to work with (optional) 
+\param allowResChange pass false to prevent monitor resolution from changing (optional)
+\param bpp the depth of the drawing buffer in bits per pixel (optional)
+\return the newly created Port
+
+\sa getNumScreens
+\sa createWindowPort
+\sa closeGraphicsPort
+\sa switchToFullScreenMode
+\sa switchToWindowMode
+
+
+**/ }

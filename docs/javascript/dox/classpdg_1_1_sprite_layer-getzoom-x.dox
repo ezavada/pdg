@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::getZoom
+
+\brief get the current zoom factor
+
+**/ }

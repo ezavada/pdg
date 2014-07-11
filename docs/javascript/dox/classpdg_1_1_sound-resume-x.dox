@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sound::resume
+
+\brief unpause a sound that was paused
+
+Play continues from where it was before it was paused.
+
+**/ }

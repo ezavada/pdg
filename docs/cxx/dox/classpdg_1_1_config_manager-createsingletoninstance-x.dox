@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::ConfigManager::createSingletonInstance
+
+\brief create the one and only singleton instance of the ConfigManager used by the pdg engine
+
+\return the ConfigManager singleton instance
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::portToLayerPoint
+
+\brief adjust the point to account for layer transformations
+
+Adjusts for layer rotation, zoom and scrolling (origin) to get layer coordinates for a point on the screen.
+
+\param p Point in port coordinates
+
+\returns Point in layer coordinates
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::getResourcePaths
+
+\brief get the paths that will be searched for resources
+
+Get a semicolon (;) separated list of the paths and zip files that will be searched for resources. They are listed in the order searched.
+
+\return a string with the paths and files
+
+\sa openResourceFile()
+\sa closeResourceFile()
+
+**/ }

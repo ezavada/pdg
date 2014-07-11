@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Sound::stop
+
+\brief stop a sound from playing
+
+This will free buffers and deallocate other memory, so use pause() if you want to restart the sound again.
+
+\sa start
+\sa pause
+
+**/ }

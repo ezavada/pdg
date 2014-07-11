@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setVelocity(number, number)
+
+\brief set the speed and direction the object is moving
+
+**/ }

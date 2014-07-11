@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::getWhenTimerFiresNext
+
+\brief get the millisecond time when the timer will fire
+
+Gets the millisecond time when the timer is set to fire next. If the timer is paused, or is a one-shot timer that is current firing, then it will return pdg.timer_Never.
+
+\return the millisecond time the timer will fire
+
+**/ }

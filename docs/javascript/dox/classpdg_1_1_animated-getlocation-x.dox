@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getLocation
+
+\brief get the position of the object
+
+**/ }

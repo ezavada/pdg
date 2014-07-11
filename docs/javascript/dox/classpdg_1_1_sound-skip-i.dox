@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sound::skip
+
+\brief skip ahead or back in a sound
+
+\param skipMilliseconds the amount of time to skip. Negative values are backwards.
+
+**/ }

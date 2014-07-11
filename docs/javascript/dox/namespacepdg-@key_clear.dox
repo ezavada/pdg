@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\var pdg::key_Clear
+
+\ingroup KeyCodes
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_d
+
+\brief deserialize a double precision floating point value
+
+Read an eight byte double precision floating point value from the data stream. 
+
+\return a number in the range of **10<sup>−308</sup> to 10<sup>308</sup>**, with 17 significant digits
+
+\sa Serializer.serialize_d
+
+
+**/ }

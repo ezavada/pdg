@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::getMilliseconds
+
+\brief get the current time in milliseconds
+
+Gets the current millisecond time, from an arbitrary base time prior to the application start. 
+
+\note Many events and callbacks pass this value (or a ms delta since the last call), so you can often avoid repeated calls to getMilliseconds() by using the value or millisecond delta passed in.
+
+**/ }

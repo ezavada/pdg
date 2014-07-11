@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::setWorldSize
+
+\brief sets the number of tiles in the world map
+
+\param width how many tiles wide the world should be
+\param height how many tiles high the world should be
+\param repeatingX true if the map should wrap around horizontally to appear infinite, defaults to false
+\param repeatingY true if the map should wrap around vertically to appear infinite, defaults to false
+
+**/ }

@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::getResourceManager
+
+\brief get the singleton instance of the ResourceManager used by the pdg framework
+
+\return ResourceManager singleton object
+
+\relatedalso ResourceManager
+
+
+**/ }

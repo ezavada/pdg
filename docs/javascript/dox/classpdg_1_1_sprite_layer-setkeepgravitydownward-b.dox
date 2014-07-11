@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setKeepGravityDownward
+
+\brief keep gravity relative to the port when the layer is rotated (*Chipmunk Physics Only*)
+
+**/ }

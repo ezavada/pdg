@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::fs
+
+\brief the singleton instance of the FileManager
+
+\code
+    var fileList = pdg.fs.findFiles('examples/*.scml');
+\endcode
+
+\related pdg::FileManager
+\ingroup Managers
+
+**/ }

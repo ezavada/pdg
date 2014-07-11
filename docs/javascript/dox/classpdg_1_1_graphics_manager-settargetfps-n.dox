@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::setTargetFPS
+
+\brief  set the frames per second you would like the graphics system to display
+
+The graphics system will attempt to display that many frames per second on most systems. It will issue warnings in the logs if the frame rate falls below 80% of that rate. 
+
+Animations, Sprite movement, Network and other kinds of Events work independently of the display timer, so this will not affect collision detection even at lower frame rates.
+
+\param inTargetFPS the desired frame rate in Frames Per Second
+
+\sa getTargetFPS
+\sa getFPS
+
+**/ }

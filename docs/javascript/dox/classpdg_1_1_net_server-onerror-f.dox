@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::onError
+
+\brief set up callback for handling errors
+
+These will be errors with the listening port, not with the connections themselves; those go to the connection object. The exception is IP mismatch on incoming connections -- those don't generate any errors to avoid spending unnecessary resources in the event of denial of service attacks.
+
+\param  callback the callback function to be notified of errors
+
+\return itself for call chaining
+
+**/ }

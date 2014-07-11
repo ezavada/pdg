@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::moveWith
+
+\brief link this layer to follow another layer's movements
+
+Whenever the given layer is moved, rotated or zoomed, this layer will be transformed in the same way. There is the option for a relative movement and zoom factor, to primarily useful to simulate a crude depth effect. Rotation is always 1:1.
+
+**/ }

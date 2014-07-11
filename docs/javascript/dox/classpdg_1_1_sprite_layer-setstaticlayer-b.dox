@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setStaticLayer
+
+\brief make objects in this layer not subject to physics forces (*Chipmunk Physics Only*)
+
+Other objects can still collide with static object, but they are treated as having infinite mass.
+
+\warning This must be called before you start adding Sprites to the layer
+
+**/ }

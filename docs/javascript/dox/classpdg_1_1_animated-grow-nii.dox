@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Animated::grow
+
+\brief change size of the object by a factor over time
+
+If factor is greater than 1.0, the object will grow, if less than 1.0, the object will shrink.
+
+Honors delay given by wait()
+
+**/ }

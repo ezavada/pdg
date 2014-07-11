@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\var pdg::soundEvent_Looping
+
+\brief sound event type for a sound finishing and starting over
+
+\ingroup Sound
+
+**/ }

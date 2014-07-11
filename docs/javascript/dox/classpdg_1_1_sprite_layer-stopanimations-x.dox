@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::stopAnimations
+
+\brief stop doing animation calculations for this layer
+
+\note this does not stop it from rendering, but all motion in the layer will cease
+
+\warning Chipmunk Physics based movement will continue if this is a layer using Chipmunk Physics
+
+
+**/ }

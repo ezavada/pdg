@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onOffscreen
+
+\brief set event handler for sprite offscreen event
+
+These happen when a sprite moves completely outside the visible area of the port the layer is being rendered in, but only if setWantsOffscreenEvents(true) is called for that sprite.
+
+\sa SpriteAnimateEvent
+\sa IEventHandler
+\sa Sprite.setWantsOffscreenEvents()
+
+**/ }

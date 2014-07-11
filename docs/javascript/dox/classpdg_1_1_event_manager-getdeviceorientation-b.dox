@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::EventManager::getDeviceOrientation
+
+\brief *NOT IMPLEMENTED* get the roll, pitch and yaw of the device
+
+On mobile devices which allow the screen to be oriented different ways, this reports the current relative roll, pitch and yaw of the device. If absolute is if absolute is true, then yaw is compass direction from north around vertical axis, pitch is rotation around E -> W axis, and roll is rotation around N -> S axis 
+
+\param absolute flag to indicate if roll, pitch and yaw are around compass directions (true) or relative (false)
+\return object with roll, pitch and yaw values
+
+\todo NOT IMPLEMENTED
+
+**/ }

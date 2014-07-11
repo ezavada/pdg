@@ -1,0 +1,7 @@
+<map id="Events" name="Events">
+<area shape="rect" id="node1" href="$group___sound.html" title="Things used for audio (sound and music)" alt="" coords="267,8,325,35"/>
+<area shape="rect" id="node2" href="$group___animation.html" title="Things related to animation." alt="" coords="257,59,335,85"/>
+<area shape="rect" id="node3" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="256,119,336,145"/>
+<area shape="rect" id="node5" href="$group___physics.html" title="Things used for handling physics simulation." alt="" coords="263,179,329,205"/>
+<area shape="rect" id="node6" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="259,239,333,265"/>
+</map>

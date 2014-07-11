@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::getCollisionPersistence
+
+\brief get how many steps collision solutions are maintained to prevent jittering
+
+**/ }

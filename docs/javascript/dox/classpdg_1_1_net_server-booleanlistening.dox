@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::listening
+
+\brief flag to indicate if the server is currently listening or not
+
+**/ }

@@ -1,0 +1,25 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::listen
+
+\brief listen and call a function when new connections are established
+
+Starts a listening port for incoming connections, and with each new connection calls the provided callback with a newly created NetConnection.
+
+The callback will be invoked with one parameter, a NetConnection.
+
+\code
+
+    myServer.listen( function(myConnection) {
+        myConnection.send('sorry, too busy to talk');
+        myConnection.close();
+    });
+\endcode
+
+\param callback the callback function
+
+\returns itself for call chaining
+
+\sa NetConnection
+
+**/ }

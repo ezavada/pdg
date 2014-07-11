@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\struct pdg::MouseTrackingEvent
+
+\brief the mouse entered or left a tracking region (*NOT IMPLEMENTED*)
+
+\todo NOT IMPLEMENTED
+
+\related pdg::EventManager
+\related pdg::GraphicsManager
+\ingroup Events
+
+**/ }

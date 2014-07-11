@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::ImageStrip::setFrameWidth
+
+\brief set the width in pixels of a single frame of this image
+
+\return the width in pixels
+
+\note there is no setFrameHeight() method since frames are arranged horizontally in an image strip, so the frame height is the same as the image height.
+
+\note this is an alternative to setNumFrames(), for use when it is more convenient to set the width rather than the frame count. You can call either one to set up an ImageStrip's frames.
+
+\sa setNumFrames()
+\sa getFrameHeight()
+
+
+**/ }

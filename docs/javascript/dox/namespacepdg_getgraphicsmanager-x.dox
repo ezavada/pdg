@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::getGraphicsManager
+
+\brief get the singleton instance of the GraphicsManager used by the pdg framework
+
+\return GraphicsManager singleton object
+
+\relatedalso GraphicsManager
+
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Image::setTransparentColor
+
+\brief set the color that is used to indicate transparency
+
+In many cases an image with a single color that is marked as transparent is more space efficient than an entire alpha channel, since you can use RGB instead of RGBA colors (24 rather than 32 bits per pixel). 
+
+\param inTransparentColor a color object with red, green and blue value that indicates what RGB value should be treated as transparent
+
+\sa getTransparentColor()
+
+**/ }

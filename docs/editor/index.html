@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+	<head>
+        <link rel="stylesheet" type="text/css" href="editor.css" />
+        <link rel="stylesheet" type="text/css" href="../javascript/html/doxygen.css" />
+        
+        <script type="text/javascript" src="Markdown.Converter.js"></script>
+        <script type="text/javascript" src="Markdown.Sanitizer.js"></script>
+        <script type="text/javascript" src="Markdown.DoxyConverter.js"></script>
+        <script type="text/javascript" src="Markdown.Editor.js"></script>
+	</head>
+	<body>
+		<div class="wmd-panel">
+            <div id="wmd-button-bar"></div>
+            <textarea class="wmd-input" id="wmd-input">
+/*
+
+\mainpage %Pixel Dust Game Engine (PDG)
+
+PDG is an open source, professional quality 2D game engine. It provides
+system independent abstractions of common elements needed by game developers. 
+It can be used directly from C++ or used from scripting languages like Javascript.
+
+\fn pdg::EventEmitter::addHandler
+
+\brief add a new handler for some event type, or for all events if no type specified.  
+
+\param inHandler the IEventHandler object which will handle the events 
+\param inEventType the type of event to handle 
+
+\class IEventHandler
+\brief Interface for any class which handles events.
+
+Specific Subclasses should be written to implement particular handlers.
+Typically you would call an onXXX() method of the EventEmitter object
+that is generating the event you want, and it will take care of creating
+the event handler for you, and adding a convenient cancel() method to
+the handler. For example:
+
+      var mySpriteCollisionHandler = mySprite.onCollideSprite(function(event) {
+            // do something about the collision
+      });
+      ...
+      // stop handling collision events with this handler
+      mySpriteCollisionHandler.cancel();   
+
+This cancel() method will only work for a single emitter. So if you may want to create 
+a handler that is used with multiple emitters, you should create it once and then 
+explicitly add it to and remove it from each emitter. Here's how:
+
+      var mySpriteHandler = new pdg.IEventHandler(function(event) {
+            console.log("in my event handler with "+event);
+      });
+      mySprite.addHandler(mySpriteHandler, pdg.eventType_SpriteCollide);
+      ...
+      mySprite.removeHandler(mySpriteHandler, pdg.eventType_SpriteCollide);
+
+\ingroup Events
+\see EventManager
+\see EventEmitter
+*/
+</textarea>
+
+        </div>
+        <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
+        <script type="text/javascript">
+            (function () {
+        	    var converter = Markdown.getDoxygenConverter();
+               	var editor = new Markdown.Editor(converter);
+                editor.run();
+            })();
+        </script>
+
+	</body>
+</html>

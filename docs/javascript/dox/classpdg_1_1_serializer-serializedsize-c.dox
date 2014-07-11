@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(Color)
+
+\brief get the number of bytes used to serialize the given Color
+
+Does not actually write any data to stream
+
+\return the number of bytes needed (3-5)
+
+\sa serialize_color
+
+**/ }

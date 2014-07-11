@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(Vector)
+
+\brief get the number of bytes used to serialize the given Vector
+
+Does not actually write any data to stream
+
+\return the number of bytes needed (0-9)
+
+\note this can return 0 for an vector whose value is (0,0), since a zero vector is optimized to be stored as a single bit.
+
+\sa serialize_vector
+
+**/ }

@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Sound::setVolume
+
+\brief set the volume level for a sound
+
+Sets the volume level for this specific sound. 
+
+\param inVolume a value between 0.0 and 1.0, where 0 is silent and 1.0 is the max volume allowed by the master volume.
+
+\sa getVolume
+\sa SoundManager.setVolume
+\sa SoundManager.setMute
+
+**/ }

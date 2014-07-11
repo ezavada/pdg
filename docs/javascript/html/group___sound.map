@@ -1,0 +1,4 @@
+<map id="Sound" name="Sound">
+<area shape="rect" id="node2" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="229,5,309,32"/>
+<area shape="rect" id="node3" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="238,56,301,83"/>
+</map>

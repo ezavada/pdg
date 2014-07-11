@@ -1,0 +1,35 @@
+namespace pdg { /**
+
+\fn pdg::LogManager::writeLogEntry
+
+\brief write a message to the log, if it is high enough priority
+
+Write a message to the log. If the level is lower priority (higher numeric value) than the current log level, the message will be filtered and not written to the log. Category is a short string used to define the area of functionality the logging is about, useful for debugging to narrow down the number of log entries you need to examine. Message is the actual log message
+
+
+
+\note see binaryDump() for converting binary data to a hex dump
+
+Log levels (highest to lowest priority, lowest to highest numeric value):
+ 
+    fatal = 0, 
+    error = 2, 
+    inform = 4, 
+    detail = 6, 
+    verbose = 8, 
+    trace = 10,
+
+\param level the priority level of this message (see above)
+\param category the category of message
+\param message the actual log message
+\sa binaryDump()
+\sa setLogLevel()
+\sa pdg.fatal()
+\sa pdg.error()
+\sa pdg.warn()
+\sa pdg.log()
+\sa pdg.info()
+\sa pdg.debug()
+\sa pdg.trace()
+
+**/ }

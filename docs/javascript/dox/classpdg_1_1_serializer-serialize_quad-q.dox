@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_quad
+
+\brief serialize a Quad's (x,y) point values
+
+Write a Quad's four sets of x and y values into the data stream.
+
+\warning because JavaScript handles floating-point numbers as doubles internally but a Quad is streamed using floats, some precision is lost. If you need that precision you should serialize the Quad's array of x and y values yourself using serialize_d()
+
+\note data size: varies, call serializedSize(Quad) to determine
+
+\sa serializedSize(Quad)
+\sa Deserializer.deserialize_quad()
+
+
+**/ }

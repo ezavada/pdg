@@ -1,0 +1,11 @@
+<map id="SpriteAnimateInfo" name="SpriteAnimateInfo">
+<area shape="rect" id="node2" href="$classpdg_1_1_sprite.html" title="Sprite" alt="" coords="333,259,389,287"/>
+<area shape="rect" id="node4" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="313,166,409,194"/>
+<area shape="rect" id="node16" href="$classpdg_1_1_sprite_layer.html" title="SpriteLayer" alt="" coords="211,259,300,287"/>
+<area shape="rect" id="node6" href="$classpdg_1_1_animated.html" title="Animated" alt="" coords="211,166,288,194"/>
+<area shape="rect" id="node8" href="$classpdg_1_1_serializable.html" title="Serializable\&lt; Sprite \&gt;" alt="" coords="537,166,684,194"/>
+<area shape="rect" id="node10" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="365,86,459,114"/>
+<area shape="rect" id="node20" href="$classpdg_1_1_serializable.html" title="Serializable\&lt; SpriteLayer \&gt;" alt="" coords="5,166,187,194"/>
+<area shape="rect" id="node12" href="$classpdg_1_1_ref_counted_obj.html" title="RefCountedObj" alt="" coords="355,6,468,34"/>
+<area shape="rect" id="node14" href="$classpdg_1_1_user_data.html" title="UserData" alt="" coords="435,166,512,194"/>
+</map>

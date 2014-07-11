@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(Offset)
+
+\brief get the number of bytes used to serialize the given Offset
+
+Does not actually write any data to stream
+
+\return the number of bytes needed (0-9)
+
+\note this can return 0 for an offset whose value is (0,0), since a zero offset is optimized to be stored as a single bit.
+
+
+\sa serialize_offset
+
+**/ }

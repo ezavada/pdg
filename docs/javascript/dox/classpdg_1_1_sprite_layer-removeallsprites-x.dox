@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::removeAllSprites
+
+\brief remove all sprites in the layer
+
+**/ }

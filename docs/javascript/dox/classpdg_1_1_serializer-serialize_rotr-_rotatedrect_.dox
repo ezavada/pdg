@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_rotr
+
+\brief serialize a RotatedRect's data values
+
+Write a RotatedRect's left, top, right, bottom, radians and centerOffset values into the data stream. This is optimized for certain common cases, such as empty rectangles, small positive numbers, and no center offset.
+
+\warning because JavaScript handles floating-point numbers as doubles internally but a RotatedRect is streamed using floats, some precision is lost. If you need that precision you should serialize the RotatedRect's left, top, right, bottom, radians, centerOffset.x and centerOffset.y values yourself using serialize_d()
+
+\note data size: varies, call serializedSize(RotatedRect) to determine
+
+\sa serializedSize(RotatedRect)
+\sa Deserializer.deserialize_rotr()
+
+
+**/ }

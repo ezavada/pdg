@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::getDataPtr
+
+\brief get the serialized data
+
+\return a MemBlock object with the serialized data.
+
+\note This is really only useful after one or more serialize_X methods have been called to actually write data into the memory block.
+
+\sa getDataSize
+\sa Deserializer.setDataPtr
+
+**/ }

@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::getTileTypeAt
+
+\brief get the tile type at a particular spot on the map
+
+\param x component of x,y coordinates on the map
+\param y component of x,y coordinates on the map
+
+\returns the tile type. This is the raw data as stored in the TileLayer, so it includes rotation/flipping information in the high bits. It can only be used directly as the index into your tile set on TileLayers that aren't using tile rotation or flipping.
+
+\sa getTileTypeAndFacingAt
+\sa setTileTypeAt
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_rotr
+
+\brief deserialize a RotatedRect
+
+Read a RotatedRect value from the data stream. 
+
+\return a RotatedRect
+
+\sa Serializer.serialize_rotr
+
+**/ }

@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::setCollisionPersistence
+
+\brief set how many steps collision solutions are maintained to prevent jittering
+
+From the cpSpace comments:
+
+    Defaults to 3. There is probably never a reason to change this value.
+
+**/ }

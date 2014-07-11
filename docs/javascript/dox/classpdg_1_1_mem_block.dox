@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\class MemBlock
+\brief holds arbitrary blocks of memory
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+Many functions of PDG, such as Image and Resource data, Streaming I/O, and Networking deal with blocks of memory. Since JavaScript has no way to natively deal with these, PDG adds the MemBlock class to pass those blocks of data between various parts of the PDG libraries. 
+
+This class is very similar to the Node.js Buffer class, but has no Node.js dependencies.
+
+\ingroup Serialization
+
+
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Image::getOpacity
+
+\brief get opacity of this image 
+
+0.0 - completely transparent to 1.0 - completely solid
+
+\returns the opacity (0.0 .. 1.0)
+
+\sa setOpacity()
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+
+\class Port
+\brief area in which drawing is done, a viewport (*GUI Only*)
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+A Port can be a full screen drawing context or a window.
+\ingroup Graphics
+
+
+
+**/ }

@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::delayTimer
+
+\brief delay the normal firing by a given amount
+
+Delay a timer's normal firing by the number of milliseconds passed in. If the timer is a repeating timer, this will only delay the next firing time; the interval will return to normal after the next firing.
+
+If the timer is paused, this adds the delay but does not unpause the timer.
+
+\param id the id number of the timer to delay
+\param delay the number of milliseconds to delay
+
+\sa pauseTimer()
+\sa delayTimerUntil()
+
+**/ }

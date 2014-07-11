@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn string pdg::LogManager::binaryDump (MemBlock inData, int length = 0, int bytesPerLine = 20);
+
+\brief get hex and ascii representations in a hex dump format.
+
+\param inData the MemBlock you want to dump
+\param length the number of bytes to dump, or 0 for entire contents of the MemBlock given
+\param bytesPerLine how many bytes should be on each row of the output
+
+**/ }

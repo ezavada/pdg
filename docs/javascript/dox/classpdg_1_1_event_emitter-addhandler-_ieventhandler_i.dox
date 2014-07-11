@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::EventEmitter::addHandler
+
+\brief add a new handler for some event type, or for all events if no type specified.  
+
+\param inHandler the IEventHandler object which will handle the events 
+\param inEventType the type of event to handle 
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::startStretching
+
+\brief set the growth rate of the object in pixels/sec, with varied rates for width and height
+
+**/ }

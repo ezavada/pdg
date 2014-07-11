@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SoundManager::setMute
+
+\brief mutes all sounds from the game
+
+When muted, sounds will all play at volume level 0, including any new sounds, until un-muted, at which point the previous master volume and all individual sound volumes will be restored.
+
+\param muted true to mute, false to unmute
+
+\todo NOT IMPLEMENTED
+
+**/ }

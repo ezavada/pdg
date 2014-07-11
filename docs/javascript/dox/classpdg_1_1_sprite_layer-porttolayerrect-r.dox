@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::portToLayerRect
+
+\brief adjust the rectangle to account for layer transformations
+
+Adjusts for layer rotation, zoom and scrolling (origin) to get layer coordinates for a rectangle on the screen.
+
+\param r Rect in port coordinates
+
+\returns Rect in layer coordinates
+
+**/ }

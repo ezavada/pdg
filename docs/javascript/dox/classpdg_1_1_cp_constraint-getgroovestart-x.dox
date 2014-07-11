@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getGrooveStart
+
+\brief get the position on the primary sprite of the start of the groove for a groove joint
+
+\sa setGrooveStart
+\sa getGrooveEnd
+\sa Sprite.grooveJoint()
+
+
+**/ }

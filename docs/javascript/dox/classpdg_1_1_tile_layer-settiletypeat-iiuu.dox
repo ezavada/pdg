@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::setTileTypeAt
+
+\brief sets the type of tile at a given location on the map
+
+\param x the horizontal tile position on the map (not pixels)
+\param y the vertical tile position on the map (not pixels)
+\param t the type of tile (the tile index in the tile set image)
+\param facing the rotation (or flipping) to use for this tile, defaults to none, ignored on layers that aren't using facing or flipping
+
+**/ }

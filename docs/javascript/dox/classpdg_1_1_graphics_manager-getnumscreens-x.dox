@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getNumScreens
+
+\brief get the total number of display screens available
+
+\sa getCurrentScreenMode
+\sa createFullScreenPort
+\sa setScreenMode
+
+**/ }

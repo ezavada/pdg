@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::allowDatagram
+
+\brief when true, the server tries to establish UDP communications with the client 
+
+This is set based on what you pass in for noDatagram at NetServer initialization. It can be changed at any time to affect new incoming connections. Changes will not affect existing connections.
+
+**/ }

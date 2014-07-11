@@ -1,0 +1,32 @@
+namespace pdg { /**
+
+\class GraphicsManager
+\brief Used to create and track ports (*GUI Only*)
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+Full Screen
+-----------
+
+There are 3 primary ways to deal with fullscreen:
+
+ 1. **Easy**: let the PDG Engine deal with everything, including switching screen resolution to give you what you ask for. Just call createFullScreenPort() with a desired port dimensions and it will just do the right thing. 
+ 2. **Adaptable**: don't allow the PDG engine to change display modes. Instead query the current screen mode and ask for that size (or something that fits within in). This will be more work for your display code since you will need to make all of your drawing calls handle different screen dimensions. This is often best for the end user and also works well with switching back and forth between full screen and running in a window. 
+ 3. **Fine Tuned**: you figure out exactly what you want and manage it yourself, querying the system for available screens, explicitly choosing which screen(s) you want to use and switching screen modes yourself before calling createFullScreenPort() with port dimensions, target screen and even pixel depth. 
+
+
+Running in a Window
+-------------------
+
+Use createWindowPort() to create a window. The window will be movable and resizable, and you'll get eventType_PortResize events if it is resized by the user.
+
+Display Rate
+------------
+
+The Graphics system has the concept of a target display rate in frames per second, which is used to limit the frame rate, particularly important on mobile devices. This is independent of the animation and physics system. See getFPS(), getTargetFPS() and setTargetFPS().
+
+\ingroup Managers
+\ingroup Graphics
+
+
+**/ }

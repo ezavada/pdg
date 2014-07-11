@@ -1,0 +1,46 @@
+namespace pdg { /**
+
+\class IAnimationHelper
+\brief helper for add-on or complex motion during animation
+
+\warning **API Stability: 1 - Experimental**. This API was introduced recently and gotten little or no real use. It may change or be removed in future versions. It may not be completely implemented and may be missing important pieces of functionality. Please try it out and provide feedback.
+
+Implement this interface to do extra animation stuff for a specific Animated object then add by calling the object's addAnimationHelper() method. You can have multiple Animation Helpers attached to the same object. Your helper will then be called every time movement for the object is calculated.
+
+To create a helper:
+
+\code
+	var myHelper = new pdg.IAnimationHelper(function(what, msElapsed) {
+		console.log("in my animation helper for " + what + " after " + msElapsed + "ms" );
+		return true;  // not done, keep helping
+	});
+	myAnimatedObj.addAnimationHelper(myHelper);
+\endcode
+
+If you need something more complex, you can also use classify to create a new
+Javascript class that derives from pdg.IAnimationHelper, and it will call the 
+animated() method of your class. For example:
+
+\code
+	classify(pdg.IAnimationHelper, 'MyAnimationHelperClass', function() {
+		def('animate', function(what, msElapsed) {
+			console.log("MyAnimationHelper.animate(" + what + ", " + msElapsed + "ms)" );
+			return false;  // all done, delete the helper
+		});
+	});
+	myAnimatedObj.addAnimationHelper( new MyAnimationHelperClass() );
+\endcode
+
+Your Custom Function:
+---------------------
+
+As you can see from the examples above, your Animation Helper function (or animate() method) will be called with two parameters, and return a boolean:
+\param what the Animated object that is being animated
+\param msElapsed the number of milliseconds that have elapsed since the last time this object's movement was calculated
+\return **true** if the helper should continue to be called; or **false** if it is done and should be removed from this Animated object.
+
+\ingroup Animation
+
+
+
+**/ }

@@ -1,0 +1,99 @@
+/*!
+
+\mainpage %Pixel Dust Game Engine (PDG)
+
+<hr>
+\section Description
+<hr>
+
+PDG is an open source, professional quality 2D game engine. It provides 
+system independent abstractions of common elements needed by game developers. 
+It can be used directly from C++  or used from scripting languages like 
+Javascript.
+
+This is the documentation for the C++ SDK.
+
+<h2>Features</h2>
+- event driven
+- cross platform
+- 2D OpenGL hardware accelerated graphics
+- resource and file management
+- user input handling
+- timers
+- networking
+- sound
+- animation including jQuery-like easing functions
+- sprites
+- tile based maps
+- physics support using Chipmunk Physics
+
+
+<h2>Design Goals</h2>
+PDG is focused on making a broad array of capabilities available to developers 
+regardless of the OS platform they are targeting. Currently it works on Mac OS X, 
+Windows, and iOS.
+
+The PDG API is designed to make simple things easy to do, without adding undue 
+complexity to more complicated problems.
+
+<h2>History</h2>
+PDG was originally developed in 2003 by Ed Zavada of Pixel Dust Games for use in 
+Catan Online. It was later updated for use by Dream Rock Studios in their game
+Parthenon. Those updates include OpenGL hardware acceleration, a sprite engine,
+and iOS support. In 2012 it was further updated with Chipmunk physics, Javascript
+bindings, and made Open Source under the MIT license.
+
+<h2>Usage assumptions</h2>
+PDG is supplied in several different forms:
+	- an ANSI C++ SDK
+	- a Javascript SDK that includes a binary runtime for Mac OS X and Windows
+	- an npm package for Node.js for server side programming
+
+No languages other than Javascript and C++ are currently supported, though Ruby bindings 
+have been created in the past. The Javascript bindings could serve as a guide for anyone
+wishing to add support for other languages.
+
+<hr>
+\section Overview
+<hr>
+
+<h2>What's In It?</h2>
+
+<br>
+<h2>Roles and Responsibilities</h2>
+
+
+<h2>How Does It Work?</h2>
+
+<h2>What Functions Does PDG Perform?</h2>
+
+<h2>What Are My Game's Responsibilities?</h2>
+
+<h3>Game UI</h3>
+
+<h3>Game AI</h3>
+
+<h3>Network Transport (if applicable)</h3>
+
+<h3>Simulation</h3>
+
+<h3>Persistent Storage</h3>
+
+<h3>Metrics Reporting</h3>
+
+<h3>Logging</h3>
+
+<h2>Clients, Servers and Standalone Operation</h2>
+
+<hr>
+\section Usage
+<hr>
+
+<br>
+<h2>High Level View</h2>
+
+<h2>Using AI Players</h2>
+
+<h2>Message Organization and Routing</h2>
+
+*/

@@ -1,0 +1,6 @@
+<map id="SpriteLayer" name="SpriteLayer">
+<area shape="rect" id="node5" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="118,152,194,177"/>
+<area shape="rect" id="node2" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="5,5,83,31"/>
+<area shape="rect" id="node3" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="107,5,205,31"/>
+<area shape="rect" id="node4" href="$classpdg_1_1_i_serializable.html" title="interface for an object which can be serialized" alt="" coords="229,5,323,31"/>
+</map>

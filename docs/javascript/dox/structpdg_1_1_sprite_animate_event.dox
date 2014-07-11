@@ -1,0 +1,38 @@
+namespace pdg { /**
+
+\struct pdg::SpriteAnimateEvent
+
+\brief a Sprite did some animation (*Optional*)
+
+A Sprite will generate one of these events when it completes an animation including fades (opacity animations), and moving on/offscreen or outside of the layer. 
+
+For frame based animations -- that is, calls to Sprite.startFrameAnimation() -- if it reaches the last frame and is not set to loop, action will be #action_AnimationEnd. For looping animations #action_AnimationLoop will be received each time the animation completes and starts over with the first frame. 
+
+For fades, one of three action types are possible: #action_FadeComplete for calls to Sprite.fadeTo(), #action_FadeInComplete for calls to Sprite.fadeIn(), and #action_FadeOutComplete for calls to Sprite.fadeOut().
+
+When a Sprite has setWantsOffscreenEvents(true), #action_Offscreen and #action_Onscreen events will be generated for that sprite whenever it enters or departs the visible area of the port the layer is being rendered into.
+
+When a Sprite has setWantsCollideWallEvents(true), #action_ExitLayer events will be generated for that sprite whenever it moves completely outside the boundaries of the layer. (It will also get a SpriteCollideEvent when hits the boundary).
+
+    {
+        emitter: {},            // the emitter that generated this event
+        eventType: 17,          // the event type (eventType_SpriteAnimate)
+        action: 0,       	// what happened (action_AnimationEnd/Loop or action_Fade/In/OutComplete)
+        actingSprite: {},       // the Sprite that was animating
+        inLayer: {}             // the SpriteLayer that contains the Sprite
+    }
+
+\note At this time other kinds of animations such as calls to Sprite.startAnimation() do not generate any events.
+
+\see eventType_SpriteAnimate
+\see Sprite.startFrameAnimation()
+\see Sprite.fadeTo()
+\see Sprite.fadeIn()
+\see Sprite.fadeOut()
+\see Sprite.setWantsOffscreenEvents()
+\see Sprite.setWantsCollideWallEvents()
+
+\ingroup Events
+\ingroup Animation
+
+**/ }

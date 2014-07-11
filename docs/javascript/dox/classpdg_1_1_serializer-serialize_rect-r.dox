@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_rect
+
+\brief serialize a Rect's left, top, right, bottom values
+
+Write a Rect's left, top, right, and bottom values into the data stream. This is optimized for certain common cases, such as empty rectangles and small positive numbers.
+
+\warning because JavaScript handles floating-point numbers as doubles internally but a Rect is streamed using floats, some precision is lost. If you need that precision you should serialize the Rect's left, top, right, and bottom values yourself using serialize_d()
+
+\note data size: varies, call serializedSize(Rect) to determine
+
+\sa serializedSize(Rect)
+\sa Deserializer.deserialize_rect()
+
+
+**/ }

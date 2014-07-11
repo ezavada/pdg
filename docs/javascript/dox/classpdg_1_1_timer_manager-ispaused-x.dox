@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::isPaused
+
+\brief check if the TimerManager is paused
+
+\return true if the TimerManager is paused, false if not
+
+\sa pause()
+\sa isTimerPaused()
+
+**/ }

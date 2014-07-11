@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::EventManager::isButtonDown
+
+\brief check if button is down
+
+Check the state of a particular mouse button or finger touch. For touch devices the number represents the order the fingers went down rather than specific physical buttons as on a mouse.
+
+\param buttonNumber the particular mouse button; defaults to zero, the left mouse button or first touch
+
+\returns true if the button down or the finger is touching, or false if not
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::setCollisionBias
+
+\brief set the percentage of overlap between colliding bodies that is left unfixed after each step
+
+From cpSpace comments:
+
+    Determines how fast overlapping shapes are pushed apart.
+    Expressed as a fraction of the error remaining after each second.
+    Defaults to pow(1.0 - 0.1, 60.0) meaning that Chipmunk fixes 10% of overlap each frame at 60Hz
+
+**/ }

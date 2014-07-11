@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getRatchetInterval
+
+\brief get the distance between backstops on a ratchet joint
+
+\sa setRatchetInterval
+\sa getRatchetAngle
+\sa getRatchetPhase
+\sa Sprite.ratchet()
+
+**/ }

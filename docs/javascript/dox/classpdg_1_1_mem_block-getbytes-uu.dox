@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::MemBlock::getBytes
+
+\brief get a subset of the memory block
+
+The data is returned as a JavaScript string with binary data (values from 0..255 represented in JavaScript's native 2 byte per char string format). Use pdg.log.binaryDump() to see the data contents in a human readable hex-dump form.
+
+\param start the offset in the block to start from
+\param len then number of bytes to fetch
+
+\return a JavaScript string with binary data
+
+\sa LogManager.binaryDump
+
+**/ }

@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Color::convertToGrayscale
+
+\brief convert the color to a matching shade of grey
+
+![grayscale][1]
+
+  [1]: /pdg/images/grayscale.gif
+
+**/ }
+

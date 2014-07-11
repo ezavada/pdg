@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Image::getImageBounds
+
+\brief get image boundary rect, optionally with top left at given point
+
+Get a rectangle with the same height and width as the image. The location of the rectangle will either be with the top left at (0,0); or optionally at the point passed in, usually the point at which the image is located in some screen or view coordinate system.
+
+\param at make the top left of the boundary rect be located at this point. If at is not passed in, the top left will be at (0,0)
+\return the bounds rectangle for the image, with top left at (0,0) at at the (at.x, at.y) if at was passed in
+\sa getHeight()
+\sa getWidth()
+
+**/ }

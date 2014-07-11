@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setMinAngle
+
+\brief set the minimum angle allowed by a RotaryLimit joint
+
+\sa getMinAngle
+\sa setMaxAngle
+\sa Sprite.rotaryLimit()
+
+
+**/ }

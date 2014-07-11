@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::MemBlock::getDataSize
+
+\brief get the number of bytes in the block
+
+\return the count of bytes in the block
+
+**/ }

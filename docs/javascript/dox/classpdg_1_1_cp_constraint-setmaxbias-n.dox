@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setMaxBias
+
+\brief set the maximum speed at which a joint can be error corrrected
+
+\sa getMaxBias
+
+**/ }

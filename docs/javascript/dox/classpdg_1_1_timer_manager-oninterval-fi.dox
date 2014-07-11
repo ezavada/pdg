@@ -1,0 +1,25 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::onInterval
+
+\brief setup handler to be called at a regular interval
+
+This creates a handler from your function and automatically assigns a timer id. You can call cancel() on the handler object returned to remove the timer and cleanup the handler. The timer field of the handler object contains the timer's id number for use in other TimerManager calls. 
+
+\code
+	var t = pdg.tm.onInterval( function(evt) {
+		console.log('fired ');
+	}, 1000);
+	pdg.tm.delayTimer(t.timer, 500);  // wait an extra 1/2 second to fire
+	t.cancel();   // removes the timer and the handler for it
+\endcode
+
+\param func the handler function to call
+\param interval the number of milliseconds between calls
+
+\return an IEventHandler object with a cancel() method and a timer value
+
+\sa onTimeout()
+\sa startTimer()
+
+**/ }

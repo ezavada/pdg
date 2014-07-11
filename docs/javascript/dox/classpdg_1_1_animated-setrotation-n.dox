@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setRotation
+
+\brief set the direction the object is facing in radians
+
+**/ }

@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\class pdg::EventEmitter
+
+\brief Distributes events to event handlers. 
+
+The EventEmitter expects the game developer to implement IEventHandler subclasses and register them to handle various events they are interested in. 
+
+\see IEventHandler 
+\see EventManager
+
+**/ }

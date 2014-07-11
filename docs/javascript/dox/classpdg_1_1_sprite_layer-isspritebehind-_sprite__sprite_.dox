@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::isSpriteBehind
+
+\brief returns true if the given sprite will be drawn after the other sprite
+
+**/ }

@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::getLogManager
+
+\brief get the singleton instance of the LogManager used by the pdg framework
+
+\return LogManager singleton object
+
+\relatedalso LogManager
+
+
+**/ }

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::removeAnimationHelper
+
+\brief remove a specific animation helper
+
+\sa addAnimationHelper
+
+**/ }

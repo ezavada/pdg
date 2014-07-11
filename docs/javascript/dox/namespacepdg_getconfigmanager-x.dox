@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::getConfigManager
+
+\brief get the singleton instance of the ConfigManager used by the pdg framework
+
+\return ConfigManager singleton object
+
+\relatedalso ConfigManager
+
+
+**/ }

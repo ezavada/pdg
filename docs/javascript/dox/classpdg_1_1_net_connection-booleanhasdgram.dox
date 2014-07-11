@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::hasDgram
+
+\brief true if the connection supports UDP/Datagram communications
+
+**/ }

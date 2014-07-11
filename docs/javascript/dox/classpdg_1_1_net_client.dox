@@ -1,0 +1,24 @@
+namespace pdg { /**
+
+\class NetClient
+\brief a network endpoint that can initiate a connection
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+NetClient is part of the PDG Engine's custom protocol for games. It handles protocol negotiation and optional connections. It establishes both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server. 
+
+NetClient doesn't actually handle network communication, it only establishes the connection. Once established, it creates NetConnection objects you can use to send and receive data.
+
+\warning NetClient, NetServer, and NetConnection all work together over a custom protocol. Do not attempt to use NetClient to connect to other kinds of servers, such as HTTP or raw TCP sockets. There are perfectly fine [Net][1] and [HTTP][2] modules built-in to Node.js (and thus to PDG) for that. 
+
+\sa NetConnection
+\sa NetServer
+\sa [Node.js Net module][1]
+\sa [Node.js HTTP module][2]
+
+\ingroup Network
+
+  [1]: http://nodejs.org/api/net.html
+  [2]: http://nodejs.org/api/http.html
+
+**/ }

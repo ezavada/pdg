@@ -1,0 +1,21 @@
+namespace pdg { /**
+
+\fn pdg::Color::Color(number)
+
+\brief create a color from a single 32 bit A-RGB color value
+
+Creates a color from a single 32 bit RGB value with an Alpha channel. It's usually most convenient to express the number in hexadecimal, since it's easier to see the components:
+
+\code
+	var col = new pdg.Color(0xff004488);
+\endcode
+
+In the example above, the A-RGB component values are represented as:
+
+    ff 00 44 88
+    A  R  G  B
+
+\sa Color(string)
+\sa Color(number, number, number, number)
+
+**/ }

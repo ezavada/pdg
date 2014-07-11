@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::ConfigManager::setConfigFloat
+
+\brief set floating point numerical configuration value
+
+Set the numeric value for the named configuration item
+
+\param inConfigItemName the name of the configuration item
+\param inValue the value for the config item
+
+**/ }

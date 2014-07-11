@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::localAddr
+
+\brief the ip address of the local end of the connection
+
+**/ }

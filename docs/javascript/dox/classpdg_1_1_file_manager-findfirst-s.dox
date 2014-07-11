@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::findFirst
+
+\brief get the first matching file or directory
+
+This searches for any files or directories that match the name passed in, and returns the first one it finds. The name can contain wildcard characters (*.txt, or f1?.dat). If the name includes a path, it must use Unix format (forward slash "/" as path separators). Colon and backslash are both illegal characters.
+
+\param inFindName the directory or file name to find
+
+\return an object with nodeName, isDirectory, and found fields: **nodeName** is the full path of the found item; **isDirectory** is true if the node is a directory, false for files; **found** is false if no matching item was found.
+
+\sa findNext
+\sa findClose
+
+**/ }

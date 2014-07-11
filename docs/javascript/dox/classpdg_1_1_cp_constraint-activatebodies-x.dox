@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::activateBodies
+
+\brief wake up sleeping or idle parts of a joint
+
+Calls Chipmunk's cpBodyActivate() for both of the joined bodies. 
+
+\note Not sure this ever needs to be called directly, it is marked as private in the Chipmunk headers. However cpBodyActivate is not private, so it's unclear why this would be. It's included in this interface in case it is useful.
+
+**/ }

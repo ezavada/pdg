@@ -1,0 +1,31 @@
+namespace pdg { /**
+
+\class Font
+\brief font for text drawing and measuring (*GUI Only*)
+
+\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
+
+You cannot create fonts directly, they must be loaded by the Graphics Manager. Drawing text is done through the Port class after assigning a font. The Font object is read only, and has methods for getting measurement info (Font Metrics) for the font.
+
+Font Metrics:
+-------------
+
+ - Height: the total height of a line of text, including the normal spacing between lines.
+ - Ascent: the distance from the top of the font to the baseline
+ - Descent: the distance from the baseline to the bottom of the font
+ - Leading: the space between the bottom of one line and the top of the next at normal spacing
+
+![Font Metrics Illustration][1]
+
+\ingroup Graphics
+\sa GraphicsManager.createFont
+\sa Port.getCurrentFont
+\sa Port.setFont
+\sa Port.setFontForStyle
+\sa Port.setFontScalingFactor
+
+  [1]: /pdg/images/FontMetrics.gif
+
+
+
+**/ }

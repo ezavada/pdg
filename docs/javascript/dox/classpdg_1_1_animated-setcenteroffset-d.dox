@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setCenterOffset
+
+\brief set the offset of the center point relative to the true center
+
+**/ }

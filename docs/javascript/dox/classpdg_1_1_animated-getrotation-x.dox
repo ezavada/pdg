@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getRotation
+
+\brief get how much the object is rotated
+
+**/ }

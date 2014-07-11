@@ -1,0 +1,26 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::NetServer(object opts)
+
+\brief constructor for a NetServer, sets server options
+
+Construct a new NetServer with particular options or using default values if no options are specified.
+
+Available options are:
+
+ 1. serverAddr - a string with the IP address (or hostname), defaults to 0.0.0.0 (all interfaces)
+ 2. serverPort - a string with the port to use (defaults to 5000)
+ 3. fixedPort - if false, indicate if we should try sequential ports if the one we asked for is already in use (defaults to false)
+ 4. noDatagram - flag to indicate that we should not try to establish UDP communication with the client (defaults to false)
+ 5. reservationRequired - flag indicating whether clients must be authenticated or not (defaults to false)
+ 6. handshakeTimeout - number of milliseconds to wait for handshake to complete. Connection is killed if handshake not complete by that time. Default is 5000 (5 seconds). Shorter times offer better protection against Denial of Service attacks.
+
+\param opts a Javascript object with the options above
+
+\code
+
+    var myServer = new pdg.NetServer( { serverPort: 6160, noDatagram = true } );
+\endcode
+
+
+**/ }

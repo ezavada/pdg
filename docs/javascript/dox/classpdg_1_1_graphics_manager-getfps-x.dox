@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getFPS
+
+\brief get current frame rate
+
+gets the current frame rate in frames per second that the rendering engine is producing. This should always be at or slightly below the target FPS.
+
+\return current frame rate in frames per second
+
+\sa getTargetFPS
+\sa setTargetFPS
+
+
+**/ }

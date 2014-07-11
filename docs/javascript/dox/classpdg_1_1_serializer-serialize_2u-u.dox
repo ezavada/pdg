@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_2u
+
+\brief serialize 2 unsigned bytes
+
+Write a two byte value in the range of **0 to 65,535** into the data stream. 
+
+\warning if the value is outside the range then only the info from the least significant two bytes will be written into the serialized data stream
+
+\note data size: 2 bytes
+
+\sa Deserializer.deserialize_2u
+
+**/ }

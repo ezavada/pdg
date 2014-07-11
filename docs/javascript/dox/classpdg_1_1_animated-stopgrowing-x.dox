@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::stopGrowing
+
+\brief stop any size change
+
+\sa startGrowing
+
+**/ }

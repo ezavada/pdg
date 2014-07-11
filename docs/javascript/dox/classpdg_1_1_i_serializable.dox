@@ -1,0 +1,150 @@
+namespace pdg { /**
+
+\class ISerializable
+\brief interface for an object which can be serialized
+
+\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
+
+To create a new object or class that is serializable, you must implement these four methods:
+
+
+serialize(Serializer ser)
+-------------------------
+
+Your serialize() function will be passed in a reference to the Serializer that the data will be written to. You should call individual ser.serialize_x() methods to serialize your object's data. No return value is expected.
+
+\code
+    this.serialize = function(Serializer ser) {
+       ser.serialize_1(numCats);
+       ser.serialize_2(poundsCatFood);
+       ser.serialize_1(numHungryCats);
+       ser.serialize_str(favoriteCatName);
+    }
+\endcode
+
+\note it's perfectly safe to serialize other objects inside your serialize method. Even if an object is referenced by many other objects also being streamed, the Serializer will do the right thing and serialize the object the first time it sees it, then just serialize references to it every time thereafter. And nested parent-child cross references are fine too, where then parent has a child object and the child has a reference back to the parent. Just call serialize_obj() on all the references and let the Serializer sort it out.
+
+
+
+getSerializedSize(Serializer ser)
+---------------------------------
+
+Should return the total size of all the data being serialized for this object. See the individual serialize methods for the data size needed for each call. 
+
+\code
+    this.getSerializedSize = function(Serializer ser) {
+       return 1 + 2 + 1 + ser.serializedSize(favoriteCatName);
+    }
+\endcode
+
+
+
+deserialize(Deserializer des)
+-----------------------------
+
+Your deserialize() function will be passed in a reference to the Deserializer that the data will be written read from. You should call individual des.deserialize_x() methods to deserialize your object's data. No return value is expected.
+
+\code
+    this.deserialize = function(Deserializer des) {
+       numCats         = des.deserialize_1();
+       poundsCatFood   = des.deserialize_2();
+       numHungryCats   = des.deserialize_1();
+       favoriteCatName = des.deserialize_str();
+    }
+\endcode
+
+\warning the deserialization calls must be in the same order and for the same type of data as the serialization calls or the deserialization will get out of sync and fail
+
+
+getMyClassTag()
+---------------
+
+Very simple function that does nothing but return a 4 byte hexadecimal number that uniquely represents that class.
+
+\code
+    this.getMyClassTag = function() {
+       return 0x4033;  // unique hexadecimal class tag
+    }
+\endcode
+
+\warning all class tags in the range of (0xFFFFFF00 to 0xFFFFFFFF) are reserved for use by the game engine. Zero (0) is not a valid class tag.
+
+
+Before you can deserialize your object, you must tell the Pixel Dust Game Engine how to instantiate it using pdg.registerSerializableClass()
+
+\code
+    // class declaration
+    function MyClass() {
+        this.getMyClassTag = function() { ... };
+        this.getSerializedSize = function(Serializer ser) { ... };
+        this.serialize = function(Serializer ser) { ... };
+        this.deserialize = function() { ... };       
+    }
+    // then register it
+    pdg.registerSerializableClass(MyClass);
+    // now we can deserialize
+    var myObj = des.deserialize_obj();
+\endcode
+
+Example Code
+============
+
+The following code shows how to declare a class that is an ISerializable subclass, and then actually serialize and deserialize it.
+
+
+\code
+   // declare the class using classify
+    classify(pdg.ISerializable, 'MySerializableClass', function() {
+       def('getSerializedSize', function(serializer) {
+          return 3;
+       });
+       def('serialize', function(serializer) {
+          serializer.serialize_1u(15);
+          serializer.serialize_2u(99);
+       });
+       def('deserialize', function(deserializer) {
+          this.one = deserializer.deserialize_1u();
+          this.two = deserializer.deserialize_2u();
+       });
+       def('getMyClassTag', function() {
+          return 0x4068;
+       });
+    });
+    var myObj = new MySerializableClass;
+    pdg.registerSerializableClass(MySerializableClass);
+    
+    // now serialize it
+    var ser = new pdg.Serializer();
+    ser.serialize_obj(myObj);
+    ser.serialize_obj(myObj);  // serialize it again, will write as reference
+    var mem = ser.getDataPtr();
+    
+    // dump the stream to the console
+    console.binaryDump(mem.getData(), mem.getDataSize());
+    
+    // now recreate objects by deserializing
+    var des = new pdg.Deserializer();
+    des.setDataPtr(mem);
+    var obj1 = des.deserialize_obj();
+    var obj2 = des.deserialize_obj();
+
+    // check that it worked
+    if (typeof obj1 != "object") { console.log('ERROR: obj1 not object'); }
+    if (typeof obj2 != "object") { console.log('ERROR: obj2 not object'); }
+    if (obj1.one != 15) { console.log('ERROR: obj1 data wrong'); }
+    if (obj1.two != 99) { console.log('ERROR: obj1 data wrong'); }
+    if (obj1.__proto__ != myObj.__proto__) { console.log('ERROR: obj1 wrong class'); }
+    if (obj1.__proto__ != myObj.__proto__) { console.log('ERROR: obj1 wrong class'); }
+    if (obj2 !== obj1) { console.log('ERROR: object were duplicated'); }
+    console.log('Done.');
+\endcode
+
+\ingroup Serialization
+
+\sa Serializer
+\sa Deserializer
+\sa pdg.registerSerializableClass
+
+
+
+**/ }

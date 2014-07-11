@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onMouseEnter
+
+\brief set event handler for mouse pointer over a sprite
+
+Only works for Sprites that have setWantsMouseOverEvents(true).
+
+\sa SpriteTouchEvent
+\sa IEventHandler
+\sa Sprite.setWantsMouseOverEvents()
+
+
+**/ }

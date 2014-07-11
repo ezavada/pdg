@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sound::changePitch
+
+\brief change the pitch of a sound over time (NOT IMPLEMENTED)
+
+\todo NOT IMPLEMENTED
+
+**/ }

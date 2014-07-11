@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getGearRatio
+
+\brief get the ratio of rotation between the two sprites joined with a gear joint
+
+\sa setGearRatio
+\sa getGearInitialAngle
+\sa Sprite.gear()
+\sa http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint
+
+
+**/ }

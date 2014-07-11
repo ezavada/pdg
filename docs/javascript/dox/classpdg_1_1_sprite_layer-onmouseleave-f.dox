@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onMouseLeave
+
+\brief set event handler for mouse pointer leaving a sprite it was over
+
+Only works for Sprites that have setWantsMouseOverEvents(true).
+
+\sa SpriteTouchEvent
+\sa IEventHandler
+\sa Sprite.setWantsMouseOverEvents()
+
+**/ }

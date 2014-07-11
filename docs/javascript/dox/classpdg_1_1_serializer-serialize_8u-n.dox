@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_8u
+
+\brief serialize 8 unsigned bytes
+
+Write an eight byte value in the range of **0 to 18,446,744,073,709,551,615** into the data stream. 
+
+\warning  JavaScript doesn't directly support 64-bit Integers, so for very large values expect some precision to be lost in the conversion between JavaScript's native double and 64-bit Integer. You might want to use serialize_d() instead.
+
+\note data size: 8 bytes
+
+\sa Deserializer.deserialize_8u
+
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetClient::connection
+
+\brief reference to the NetConnection, or boolean false if not yet connected
+
+**/ }

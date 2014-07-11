@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::NetConnection
+
+\brief create a new net connection from a socket
+
+\param socket a Node.js net.Socket object
+
+\note you generally won't have to call this directly since NetClient and NetServer both create NetConnection objects for you.
+
+\sa NetClient
+\sa NetServer
+\sa [Node.js net.Socket][1]
+
+  [1]: http://nodejs.org/api/net.html#net_class_net_socket
+
+**/ }

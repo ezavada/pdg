@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::remotePort
+
+\brief the port that the remote end of the connection is communicating over
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::disableCollisions
+
+\brief stop checking for collisions between objects in this layer
+
+**/ }

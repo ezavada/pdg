@@ -1,0 +1,5 @@
+<map id="Animated" name="Animated">
+<area shape="rect" id="node3" href="$classpdg_1_1_sprite.html" title="Sprite" alt="" coords="5,83,61,111"/>
+<area shape="rect" id="node5" href="$classpdg_1_1_sprite_layer.html" title="SpriteLayer" alt="" coords="86,83,175,111"/>
+<area shape="rect" id="node7" href="$classpdg_1_1_tile_layer.html" title="TileLayer" alt="" coords="93,161,168,189"/>
+</map>

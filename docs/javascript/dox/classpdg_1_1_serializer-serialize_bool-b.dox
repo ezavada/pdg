@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_bool
+
+\brief serialize a 1 bit boolean value
+
+Write a one bit boolean value (true or false) into the data stream. This is optimized collect up to 8 bits in a single byte, so writing a number of boolean values is very space efficient.
+
+\note data size: varies, call serializedSize(bool) to determine
+
+\sa serializedSize(bool)
+\sa Deserializer.deserialize_bool()
+
+**/ }

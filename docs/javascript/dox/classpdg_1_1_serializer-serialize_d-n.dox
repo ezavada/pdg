@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_d
+
+\brief serialize a double precision floating point number
+
+Write a double precision floating point value in the range of **10<sup>−308</sup> to 10<sup>308</sup>** with 17 significant digits into the data stream. 
+
+\warning if the value is outside the range then the results are unknown.
+
+\note data size: 8 bytes (IEEE 754-2008 binary64 format)
+
+\sa Deserializer.deserialize_d
+
+**/ }

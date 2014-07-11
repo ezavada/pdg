@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_4
+
+\brief serialize 4 signed bytes
+
+Write a four byte value in the range of <b>&minus;2,147,483,647 to 2,147,483,647</b> into the data stream. 
+
+\warning if the value is outside the range then only the info from the least significant four bytes will be written into the serialized data stream.
+
+\note data size: 4 bytes
+
+\sa Deserializer.deserialize_4
+
+
+**/ }

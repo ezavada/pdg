@@ -1,0 +1,912 @@
+<HTML>
+<HEAD>
+<!--#DECLARE REC-->
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Author" CONTENT="J. C. Daub">
+<META NAME="KeyWords" CONTENT="BMP,file,format,structure,docs,Daub,DaubNet">
+<META NAME="Description" CONTENT="File Format Structure Documentation for BMP files (Windows Bitmap)">
+<TITLE>DaubNET: File Formats Collection: BMP</TITLE>
+</HEAD>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<STYLE type="text/css">
+ a.off {
+   background-color: #FFFFFF
+}
+ a.on {
+   background-color: #C6D6EF
+ }
+</STYLE>
+<BODY BGCOLOR="#F0F1F2"  leftmargin=0 topmargin=0 marginwidth="0" marginheight="0">
+
+<IMG SRC="/img/pix.gif" ALT="" HEIGHT=8 WIDTH=8><BR>
+
+<TABLE WIDTH="100%" border=0 cellspacing=0 cellpadding=0>
+<TR>
+<TD BACKGROUND="/img/bar1.gif" WIDTH=198>
+<IMG SRC="/img/pix.gif" ALT="" HEIGHT=20 WIDTH=1><BR>
+<IMG SRC="/img/pix.gif" ALT="" HEIGHT=25 WIDTH=10><IMG SRC="/img/menutop.gif" ALT="" HEIGHT=25 WIDTH=188><BR>
+<IMG SRC="/img/pix.gif" ALT="" HEIGHT=26 WIDTH=19><A class="off" onmouseover="this.className='on';" onmouseout="this.className='off';" HREF="/english.html" BGCOLOR="#ffffff"><IMG SRC="/img/home1.gif"  border=0 ALT="Homepage" HEIGHT=26 WIDTH=172></A><IMG SRC="/img/menubarshadow.gif" ALT="Startseite" HEIGHT=26 WIDTH=7><BR>
+</TD>
+<TD BACKGROUND="/img/bar1.gif" valign=center WIDTH="99%"><!-- TITELTEXT ? --><IMG align=right WIDTH=190 HEIGHT=13 SRC="/img/daubnetcom.gif">
+<BR>
+</TD>
+</TR>
+
+
+<TR>
+<TD WIDTH=198 valign=top rowspan=2>
+
+<TABLE WIDTH=198 border=0 cellspacing=0 cellpadding=0>
+<TR><TD><IMG SRC="pix.gif" ALT="" WIDTH=19 HEIGHT=1></TD>
+<TD BGCOLOR="#FFFFFF">
+
+
+
+<A class="off" onmouseover="this.className='on';" onmouseout="this.className='off';" HREF="/english/products.html"><IMG SRC="/img/products1.gif" ALT="Products" border=0 HEIGHT=26 WIDTH=172></A><BR>
+
+<A class="off" onmouseover="this.className='on';" onmouseout="this.className='off';" HREF="/english/who.html"><IMG SRC="/img/information1.gif" ALT="Information" border=0 HEIGHT=26 WIDTH=172></A><BR>
+
+
+
+
+
+</TD>
+<TD BACKGROUND="/img/s6.gif">
+<IMG SRC="/img/pix.gif" ALT="" WIDTH=7 HEIGHT=1>
+</TD></TR>
+<TR><TD></TD><TD BACKGROUND="/img/s2.gif"><IMG SRC="/img/menubottomshadow.gif" ALT="" HEIGHT=6 WIDTH=172></TD><TD><IMG ALT="" SRC="/img/s3.gif" WIDTH=7 HEIGHT=6></TD></TR>
+</TABLE>
+<BR><BR>
+<CENTER><IMG SRC="/img/logo.gif"></CENTER>
+</TD>
+
+<TD valign=top></TD><TD rowspan=2>&nbsp;</TD><TD valign=top rowspan=2>
+
+
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>
+<TR><TD WIDTH=8></TD><TD BGCOLOR="#FFFFFF" WIDTH=6> </TD><TD BGCOLOR="#FFFFFF"><FONT FACE="ARIAL, VERDANA, HELVETICA"><B><I><BIG>Family Tree Software</BIG></I></B></FONT></TD><TD BACKGROUND="/IMG/S6.GIF" VALIGN=TOP><TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0><TR><TD BACKGROUND="/IMG/S9.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=7></TD></TR></TABLE></TD></TR><TR><TD WIDTH=8><IMG ALT="" SRC="/IMG/REDBAR1.GIF" WIDTH=9 HEIGHT=11></TD><TD BGCOLOR="#FFFFFF" COLSPAN=2><IMG ALT="" SRC="/IMG/REDBAR2.GIF" WIDTH=157 HEIGHT=11></TD><TD BACKGROUND="/IMG/S6.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=1></TD></TR><TR><TD></TD><TD BGCOLOR="#FFFFFF" WIDTH=6><IMG SRC="PIX.GIF" WIDTH=6 HEIGHT=1 ALT=""></TD><TD BGCOLOR="#FFFFFF"><FONT FACE="ARIAL, VERDANA, HELVETICA">
+Experience <A HREF="/english/ages.html">Ages!</A><BR><BR>
+<B>Genealogy</B> made easy - complete with graphic family trees and easy-to-use interface.<BR>More than 10 languages supported <BR>
+<A HREF="/english/ages.html">Download</A>. <BR><BR>
+</FONT></TD><TD BACKGROUND="/IMG/S6.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=21></TD></TR><TR><TD></TD><TD WIDTH=6 BACKGROUND="/IMG/S1.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" HEIGHT=6 WIDTH=6></TD><TD BACKGROUND="/IMG/S2.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=1 HEIGHT=6></TD><TD><TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0><TR><TD BACKGROUND="/IMG/S3.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=6></TD></TR></TABLE></TD></TR>
+</TABLE>
+</TD>
+</TR>
+<TR><TD valign=top>
+
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>
+<TR><TD WIDTH=8></TD><TD BGCOLOR="#FFFFFF" WIDTH=6> </TD><TD BGCOLOR="#FFFFFF"><FONT FACE="ARIAL, VERDANA, HELVETICA"><B><I><BIG>
+
+</BIG></I></B></FONT></TD><TD BACKGROUND="/IMG/S6.GIF" VALIGN=TOP><TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0><TR><TD BACKGROUND="/IMG/S9.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=7></TD></TR></TABLE></TD></TR><TR><TD WIDTH=8><IMG ALT="" SRC="/IMG/REDBAR1.GIF" WIDTH=9 HEIGHT=11></TD><TD BGCOLOR="#FFFFFF" COLSPAN=2><IMG ALT="" SRC="/IMG/REDBAR2.GIF" WIDTH=157 HEIGHT=11></TD><TD BACKGROUND="/IMG/S6.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=1></TD></TR><TR><TD></TD><TD BGCOLOR="#FFFFFF" WIDTH=6><IMG SRC="PIX.GIF" WIDTH=6 HEIGHT=1 ALT=""></TD><TD BGCOLOR="#FFFFFF"><FONT FACE="ARIAL, VERDANA, HELVETICA">
+
+
+<A HREF=''></A>
+
+<P>
+status of this document: work in progress
+
+
+
+<CENTER><TABLE>
+<TR>
+<TD>
+<CENTER><FONT FACE="Arial,Helvetica">Table of Contents</FONT>&nbsp;</CENTER>
+
+<UL>
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#BasicDescription">Basic Description</A></FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#BasicFileFormat">Basic File
+Format</A></FONT></LI>
+
+<UL>
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#RasterData">Raster Data Encoding</A></FONT></LI>
+</UL>
+
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#Portability">Portability</A></FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#Trademarks">Trademarks, Patents
+and Royalties</A></FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#CrossChecking">Cross Checking
+Software</A></FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;Resources</FONT></LI>
+
+<UL>
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#OnlineResources">Online</A></FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#PaperResources">Paper</A></FONT></LI>
+</UL>
+
+<LI>
+<FONT FACE="Arial,Helvetica">&nbsp;<A HREF="#Disclaimer">Disclaimer</A></FONT></LI>
+</UL>
+
+<CENTER><FONT FACE="Arial,Helvetica">Last updated: Jan 14. 1998</FONT></CENTER>
+</TD>
+</TR>
+</TABLE></CENTER>
+
+<CENTER>
+<HR WIDTH="90%"></CENTER>
+
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H2>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="BasicDescription"></A><FONT FACE="Arial,Helvetica">Basic
+Description</FONT></H2>
+<FONT FACE="Arial,Helvetica">This file format is the MS-Windows standard
+format. It holds black&amp;white-, 16-color, 256-color and Truecolor images.
+The palletized 16-color and 256-color images may be compressed via run
+length encoding. Notice there is also a OS/2-BMP format.</FONT></TD>
+</TR>
+</TABLE></CENTER>
+
+<HR WIDTH="90%">
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H2>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="BasicFileFormat"></A><FONT FACE="Arial,Helvetica">Basic
+File Format</FONT></H2>
+
+<TABLE BORDER>
+<TR>
+<TH COLSPAN="3"><FONT FACE="Arial,Helvetica">Name</FONT></TH>
+
+<TH><FONT FACE="Arial,Helvetica">Size</FONT></TH>
+
+<TH><FONT FACE="Arial,Helvetica">Description</FONT></TH>
+</TR>
+
+<TR>
+<TD COLSPAN="3"><FONT FACE="Arial,Helvetica">Header</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">14 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Windows Structure: BITMAPFILEHEADER</FONT></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN="4"><FONT FACE="Arial,Helvetica">&nbsp;</FONT></TD>
+
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">Signature</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">2 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">'BM'</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">FileSize</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">File size in bytes</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">reserved</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">unused (=0)</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">DataOffset</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">File offset to Raster Data</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="3"><FONT FACE="Arial,Helvetica">InfoHeader</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">40 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Windows Structure: BITMAPINFOHEADER</FONT></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN="11"><FONT FACE="Arial,Helvetica">&nbsp;</FONT></TD>
+
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">Size</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Size of InfoHeader =40&nbsp;</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">Width</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Bitmap Width</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">Height</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Bitmap Height</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">Planes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">2 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Number of Planes (=1)</FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">BitCount</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">2 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Bits per Pixel&nbsp;</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">1 = monochrome palette. NumColors = 1&nbsp;</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">4 = 4bit palletized. NumColors = 16&nbsp;</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">8 = 8bit palletized. NumColors = 256</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">16 = 16bit RGB. NumColors = 65536</FONT>
+(?)&nbsp;
+<BR><FONT FACE="Arial,Helvetica">24 = 24bit RGB. NumColors = 16M</FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">Compression</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Type of Compression&nbsp;</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">0 = BI_RGB&nbsp;&nbsp; <A HREF="#RasterData">no
+compression</A>&nbsp;</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">1 = BI_RLE8 <A HREF="#Raster8RLE">8bit
+RLE encoding</A>&nbsp;</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">2 = BI_RLE4 <A HREF="#Raster4RLE">4bit
+RLE encoding</A></FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">ImageSize</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">(compressed) Size of Image</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">It is valid to set this =0 if Compression
+= 0</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">XpixelsPerM</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">horizontal resolution: Pixels/meter</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">YpixelsPerM</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">vertical resolution: Pixels/meter</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">ColorsUsed</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Number of actually used colors</FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD COLSPAN="2"><FONT FACE="Arial,Helvetica">ColorsImportant</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Number of important colors</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">0 = all</FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD COLSPAN="3"><FONT FACE="Arial,Helvetica">ColorTable</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 * NumColors bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">present only if Info.BitsPerPixel &lt;=
+8&nbsp;</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">colors should be ordered by importance</FONT></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN="5"><FONT FACE="Arial,Helvetica">&nbsp;</FONT></TD>
+
+<TD ROWSPAN="4"></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Red</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">1 byte</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Red intensity</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">Green</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">1 byte</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Green intensity</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">Blue</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">1 byte</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Blue intensity</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">reserved</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">1 byte</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">unused (=0)</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="4"><FONT FACE="Arial,Helvetica">repeated NumColors times</FONT></TD>
+</TR>
+
+<TR>
+<TD COLSPAN="3"><FONT FACE="Arial,Helvetica">Raster Data</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Info.ImageSize bytes</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">The pixel data</FONT></TD>
+</TR>
+</TABLE>
+&nbsp;</TD>
+</TR>
+</TABLE></CENTER>
+
+<HR WIDTH="90%">
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H2>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="RasterData"></A><FONT FACE="Arial,Helvetica">Raster
+Data encoding</FONT></H2>
+<FONT FACE="Arial,Helvetica">Depending on the image's BitCount and on the
+Compression flag there are 6 different encoding schemes. All of them share
+the following:</FONT>&nbsp;
+
+<P><FONT FACE="Arial,Helvetica">Pixels are stored bottom-up, left-to-right.
+Pixel lines are padded with zeros to end on a 32bit (4byte) boundary. For
+uncompressed formats every line will have the same number of bytes. Color
+indices are zero based, meaning a pixel color of 0 represents the first
+color table entry, a pixel color of 255 (if there are that many) represents
+the 256th entry. For images with more than 256 colors there is <B>no</B>
+color table.</FONT>&nbsp;</TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H3>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Raster1"></A><FONT FACE="Arial,Helvetica">Raster
+Data encoding for 1bit / black &amp; white images</FONT></H3>
+<FONT FACE="Arial,Helvetica">BitCount = 1 Compression = 0</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">Every byte holds 8 pixels, its highest
+order bit representing the leftmost pixel of those. There are 2 color table
+entries. Some readers will ignore them though, and assume that 0 is black
+and 1 is white. If you are storing black and white pictures you should
+stick to this, with any other 2 colors this is not an issue. Remember padding
+with zeros up to a 32bit boundary (This can be up to 31 zeros/pixels!)</FONT>&nbsp;</TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H3>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Raster4"></A><FONT FACE="Arial,Helvetica">Raster
+Data encoding for 4bit / 16 color images</FONT></H3>
+<FONT FACE="Arial,Helvetica">BitCount = 4 Compression = 0</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">Every byte holds 2 pixels, its high order
+4 bits representing the left of those. There are 16 color table entries.
+These colors do not have to be the 16 MS-Windows standard colors. Padding
+each line with zeros up to a 32bit boundary will result in up to 28 zeros
+= 7 'wasted pixels'.</FONT></TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H3>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Raster8"></A><FONT FACE="Arial,Helvetica">Raster
+Data encoding for 8bit / 256 color images</FONT></H3>
+<FONT FACE="Arial,Helvetica">BitCount = 8 Compression = 0</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">Every byte holds 1 pixel. There are 256
+color table entries. Padding each line with zeros up to a 32bit boundary
+will result in up to 3 bytes of zeros = 3 'wasted pixels'.</FONT></TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H3>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Raster24"></A><FONT FACE="Arial,Helvetica">Raster
+Data encoding for 16bit / hicolor images</FONT></H3>
+<FONT FACE="Arial,Helvetica">BitCount = 16 Compression = 0</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">Every 2bytes / 16bit holds 1 pixel.&nbsp;</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">&lt;<I>information missing</I>: the 16
+bit was introduced together with Video For Windows? Is it a memory-only-format?></FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">The pixels are no color table pointers.
+There are no color table entries. Padding each line with zeros up to a
+16bit boundary will result in up to 2 zero bytes.</FONT></TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H3>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Raster24"></A><FONT FACE="Arial,Helvetica">Raster
+Data encoding for 24bit / truecolor images</FONT></H3>
+<FONT FACE="Arial,Helvetica">BitCount = 24 Compression = 0</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">Every 4bytes / 32bit holds 1 pixel. The
+first holds its red, the second its green, and the third its blue intensity.
+The fourth byte is reserved and should be zero. There are no color table
+entries. The pixels are no color table pointers. No zero padding necessary.</FONT></TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H3>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Raster4RLE"></A><FONT FACE="Arial,Helvetica">Raster
+Data compression for 4bit / 16 color images</FONT></H3>
+<FONT FACE="Arial,Helvetica">BitCount = 4 Compression = 2</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">The pixel data is stored in 2bytes / 16bit
+chunks.&nbsp; The first of these specifies the number of consecutive pixels
+with the same pair of color. The second byte defines two color indices.
+The resulting pixel pattern will be interleaved high-order 4bits and low
+order 4 bits (ABABA...). If the first byte is zero, the second defines
+an escape code. The End-of-Bitmap is zero padded to end on a 32bit boundary.
+Due to the 16bit-ness of this structure this will always be either two
+zero bytes or none.&nbsp;</FONT>&nbsp;
+<BR>&nbsp;
+<TABLE>
+<TR>
+<TD><FONT FACE="Arial,Helvetica"><B>n</B> (byte 1)</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica"><B>c</B> (Byte 2)</FONT></TD>
+
+<TH><FONT FACE="Arial,Helvetica">Description</FONT></TH>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">>0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">any</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica"><B>n</B> pixels are to be drawn. The 1st,
+3rd, 5th, ... pixels' color is in <B>c</B>'s high-order 4 bits, the even
+pixels' color is in <B>c</B>'s low-order 4 bits. If both color indices
+are the same, it results in just <B>n</B> pixels of color <B>c</B></FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">End-of-line</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">1</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">End-of-Bitmap</FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">2</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Delta. The following 2 bytes define an
+unsigned offset in x and y direction (y being up) The skipped pixels should
+get a color zero.</FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">>=3</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">The following <B>c</B> bytes will be read
+as single pixel colors just as in uncompressed files. up to 12 bits of
+zeros follow, to put the file/memory pointer on a 16bit boundary again.</FONT></TD>
+</TR>
+</TABLE>
+&nbsp;
+<TABLE>
+<CAPTION><B><FONT FACE="Arial,Helvetica">Example for 4bit RLE</FONT></B></CAPTION>
+
+<TR>
+<TH><FONT FACE="Arial,Helvetica">Compressed Data</FONT></TH>
+
+<TH><FONT FACE="Arial,Helvetica">Expanded data</FONT></TH>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">03 04</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">0 4 0</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">05 06</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">0 6 0 6 0</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 06 45 56 67 00</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">4 5 5 6 6 7</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">04 78</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">7 8 7 8</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 02 05 01</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Move 5 right and 1 up. (Windows docs say
+<I>down</I>, which is wrong)</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 00</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">End-of-line</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">09 1E</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">1 E 1 E 1 E 1 E 1</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 01</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">EndofBitmap</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 00</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Zero padding for 32bit boundary</FONT></TD>
+</TR>
+</TABLE>
+&nbsp;</TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H3>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Raster8RLE"></A><FONT FACE="Arial,Helvetica">Raster
+Data compression for 8bit / 256 color images</FONT></H3>
+<FONT FACE="Arial,Helvetica">BitCount = 8 Compression = 1</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">The pixel data is stored in 2bytes / 16bit
+chunks.&nbsp; The first of these specifies the number of consecutive pixels
+with the same color. The second byte defines their color index. If the
+first byte is zero, the second defines an escape code. The End-of-Bitmap
+is zero padded to end on a 32bit boundary. Due to the 16bit-ness of this
+structure this will always be either two zero bytes or none.&nbsp;</FONT>&nbsp;
+<BR>&nbsp;
+<TABLE>
+<TR>
+<TD><FONT FACE="Arial,Helvetica"><B>n</B> (byte 1)</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica"><B>c</B> (Byte 2)</FONT></TD>
+
+<TH><FONT FACE="Arial,Helvetica">Description</FONT></TH>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">>0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">any</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica"><B>n</B> pixels of color number <B>c</B></FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">End-of-line</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">1</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">EndOfBitmap</FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">2</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Delta. The following 2 bytes define an
+unsigned offset in x and y direction (y being up) The skipped pixels should
+get a color zero.</FONT></TD>
+</TR>
+
+<TR VALIGN=TOP>
+<TD><FONT FACE="Arial,Helvetica">0</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">>=3</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">The following <B>c</B> bytes will be read
+as single pixel colors just as in uncompressed files. A zero follows, if
+<B>c</B> is odd, putting the file/memory pointer on a 16bit boundary again.</FONT></TD>
+</TR>
+</TABLE>
+&nbsp;
+<TABLE>
+<CAPTION><B><FONT FACE="Arial,Helvetica">Example for 8bit RLE</FONT></B></CAPTION>
+
+<TR>
+<TH><FONT FACE="Arial,Helvetica">Compressed Data</FONT></TH>
+
+<TH><FONT FACE="Arial,Helvetica">Expanded data</FONT></TH>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">03 04</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">04 04 04</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">05 06</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">06 06 06 06 06</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 03 45 56 67 00</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">45 56 67</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">02 78</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">78 78</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 02 05 01</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Move 5 right and 1 up. (Windows docs say
+<I>down</I>, which is wrong)</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 00</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">End-of-line</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">09 1E</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">1E 1E 1E 1E 1E 1E 1E 1E 1E</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 01</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">End-of-bitmap</FONT></TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Arial,Helvetica">00 00</FONT></TD>
+
+<TD><FONT FACE="Arial,Helvetica">Zero padding for 32bit boundary</FONT></TD>
+</TR>
+</TABLE>
+&nbsp;</TD>
+</TR>
+</TABLE></CENTER>
+
+<HR WIDTH="90%">
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H2>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Portability"></A><FONT FACE="Arial,Helvetica">Portability</FONT></H2>
+<FONT FACE="Arial,Helvetica">Although BMPs were invented by Microsoft for
+its Windows platform, a lot of programs on other platforms are capable
+of reading and writing them. Notice the Intel order in 2byte and 4-byte
+integer values (Least significant byte first). The 16bit BMPs have been
+introduced to Windows after the others, still puzzling many applications.</FONT></TD>
+</TR>
+</TABLE></CENTER>
+
+<HR WIDTH="90%">
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H2>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="Trademarks"></A><FONT FACE="Arial,Helvetica">Trademarks,
+Patents and Royalties</FONT></H2>
+<FONT FACE="Arial,Helvetica">To my knowledge: None.</FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica">(please read the <A HREF="#Disclaimer">disclaimer)</A></FONT>&nbsp;</TD>
+</TR>
+</TABLE></CENTER>
+
+<HR WIDTH="90%">
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H2>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="CrossChecking"></A><FONT FACE="Arial,Helvetica">Cross-Checking
+Software</FONT></H2>
+<FONT FACE="Arial,Helvetica">This section is for programmers, who wish
+to cross-check their implementation with others. This is an incomplete
+list of programs, which are available as freeware / shareware / try-before-buy
+etc.</FONT>&nbsp;
+
+<P><FONT FACE="Arial,Helvetica">The following software is able to decode
+BMPs:</FONT>&nbsp;
+<UL>
+<LI>
+<FONT FACE="Arial,Helvetica">easiest: Make the file the MS-Windows' background.</FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">MS-Paint / Paintbrush</FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">JASC Paint Shop Pro</FONT></LI>
+</UL>
+<FONT FACE="Arial,Helvetica">The following software is able to encode BMPs</FONT>&nbsp;
+<UL>
+<LI>
+<FONT FACE="Arial,Helvetica">JASC Paint Shop Pro</FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">MS-Paint / Paintbrush</FONT></LI>
+</UL>
+</TD>
+</TR>
+</TABLE></CENTER>
+
+<HR WIDTH="90%">
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H2>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="OnlineResources"></A><FONT FACE="Arial,Helvetica">Online
+Resources</FONT></H2>
+<FONT FACE="Arial,Helvetica"><A HREF="http://www.dcs.ed.ac.uk/~mxr/gfx/">http://www.dcs.ed.ac.uk/~mxr/gfx/</A></FONT>&nbsp;
+<BR><FONT FACE="Arial,Helvetica"><A HREF="http://www.r2m.com/windev/">http://www.r2m.com/windev/</A></FONT>&nbsp;<FONT FACE="Arial,Helvetica">
+Internet Resources for Windows Developers</FONT></TD>
+</TR>
+</TABLE></CENTER>
+
+<HR WIDTH="90%">
+<CENTER><TABLE WIDTH="90%">
+<TR>
+<TD>
+<H2>
+<A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A><A NAME="PaperResources"></A><FONT FACE="Arial,Helvetica">Paper
+Resources</FONT></H2>
+<FONT FACE="Arial,Helvetica"></FONT>
+
+<P><FONT FACE="Arial,Helvetica">MS-Windows SDK</FONT><FONT FACE="Arial,Helvetica"></FONT>
+
+<P><FONT FACE="Arial,Helvetica">[German:] Referenzhandbuch Dateiformate
+by G&uuml;nter Born.</FONT>&nbsp;
+
+<P><FONT FACE="Arial,Helvetica">the following suggestions are from the
+Graphics Fileformats FAQ:</FONT>
+<UL>
+<LI>
+<FONT FACE="Arial,Helvetica">Inside Windows File Formats, Tom Swan, Sams
+Publishing 1993.<BR>
+ISBN 0-672-30338-8 $24.95 softcover, 337 pages and 1 disk (3.5 in.).<BR>
+Order: Sams Publishing, 2201 West 103rd Street, Indianapolis,</FONT> <FONT FACE="Arial,Helvetica">IN
+46290</FONT>&nbsp;</LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">Luse, Marv. "The BMP File Format," Dr. Dobb's
+Journal, #219 September<BR>
+1994 (Vol 9, Issue 10), pp. 18-22.<BR>
+code available at: <A HREF="ftp://ftp.mv.com/pub/ddj/1994/1994.09/bmp.zip">ftp://ftp.mv.com/pub/ddj/1994/1994.09/bmp.zip</A></FONT></LI>
+
+<LI>
+<FONT FACE="Arial,Helvetica">The BMP File Format: Part I+II, Dr. Dobb's
+Journal, David Charlap, #228+#229<BR>
+March+April 1995 (Vol. 20, Issue 3+4).<BR>
+code available at: <A HREF="ftp://ftp.mv.com/pub/ddj/1995/1995.03/bmp.zip">ftp://ftp.mv.com/pub/ddj/1995/1995.03/bmp.zip</A></FONT></LI>
+</UL>
+</TD>
+</TR>
+</TABLE></CENTER>
+
+
+</FONT></TD><TD BACKGROUND="/IMG/S6.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=21></TD></TR><TR><TD></TD><TD WIDTH=6 BACKGROUND="/IMG/S1.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" HEIGHT=6 WIDTH=6></TD><TD BACKGROUND="/IMG/S2.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=1 HEIGHT=6></TD><TD><TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0><TR><TD BACKGROUND="/IMG/S3.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=6></TD></TR></TABLE></TD></TR>
+<TR><TD><BR></TD></TR>
+<TR><TD WIDTH=8></TD><TD BGCOLOR="#FFFFFF" WIDTH=6> </TD><TD BGCOLOR="#FFFFFF"><FONT FACE="ARIAL, VERDANA, HELVETICA"><B><I><BIG>
+<A NAME="Disclaimer"></A><A HREF="#Top"><IMG SRC="../img/totop.gif" ALT="to top" NOSAVE BORDER=0 HEIGHT=20 WIDTH=20 ALIGN=RIGHT></A>Disclaimer
+</BIG></I></B></FONT></TD><TD BACKGROUND="/IMG/S6.GIF" VALIGN=TOP><TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0><TR><TD BACKGROUND="/IMG/S9.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=7></TD></TR></TABLE></TD></TR><TR><TD WIDTH=8><IMG ALT="" SRC="/IMG/REDBAR1.GIF" WIDTH=9 HEIGHT=11></TD><TD BGCOLOR="#FFFFFF" COLSPAN=2><IMG ALT="" SRC="/IMG/REDBAR2.GIF" WIDTH=157 HEIGHT=11></TD><TD BACKGROUND="/IMG/S6.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=1></TD></TR><TR><TD></TD><TD BGCOLOR="#FFFFFF" WIDTH=6><IMG SRC="PIX.GIF" WIDTH=6 HEIGHT=1 ALT=""></TD><TD BGCOLOR="#FFFFFF"><FONT FACE="ARIAL, VERDANA, HELVETICA">
+<FONT FACE="Arial,Helvetica">This is not the official format documentation.
+Although we're doing our best to keep this information as accurate as possible,
+there is no way of checking all of it under all possible circumstances.
+We're not taking any responsibility for the results of this information
+or lack thereof. The 'trademarks, patents and royalties' section is here
+just for your convenience, and is in no way complete. Please send us a
+note, if you find any incorrect of missing information to <A HREF="mailto:fileformats@daubnet.com">fileformats@daubnet.com</A>.</FONT>&nbsp;
+</FONT></TD><TD BACKGROUND="/IMG/S6.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=21></TD></TR><TR><TD></TD><TD WIDTH=6 BACKGROUND="/IMG/S1.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" HEIGHT=6 WIDTH=6></TD><TD BACKGROUND="/IMG/S2.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=1 HEIGHT=6></TD><TD><TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0><TR><TD BACKGROUND="/IMG/S3.GIF"><IMG ALT="" SRC="/IMG/PIX.GIF" WIDTH=7 HEIGHT=6></TD></TR></TABLE></TD></TR>
+</TABLE>
+
+</TD></TR>
+
+
+</TABLE>
+
+<CENTER><FONT face="Arial, Helvetica" color="#a0a0a0">&copy; J&ouml;rn Daub EDV-Beratung - Glash&uuml;tter Weg 105 - 22889 Tangstedt - Germany</FONT></CENTER>
+
+</BODY>
+</HTML>

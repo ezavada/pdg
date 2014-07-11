@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::serverAddr
+
+\brief the address (interface) on which the server listens 
+0.0.0.0 means all interfaces on the computer 
+
+This can be changed at any time *before* calling listen(). It should be considered Read Only after calling listen().
+
+**/ }

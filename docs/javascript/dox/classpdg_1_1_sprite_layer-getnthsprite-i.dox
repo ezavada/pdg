@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::getNthSprite
+
+\brief get a sprite by z-order
+
+index 0 is furthest back
+
+**/ }

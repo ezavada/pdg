@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getCurrentFrame
+
+\brief which frame of animation the sprite is currently showing
+
+\return the frame index number (0 based)
+
+**/ }

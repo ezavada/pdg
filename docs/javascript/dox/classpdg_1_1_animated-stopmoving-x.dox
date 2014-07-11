@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::stopMoving
+
+\brief stop any movement the object was doing (except spinning)
+
+**/ }

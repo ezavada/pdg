@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\var pdg::action_CollideWall
+
+\brief eventType_SpriteAnimate action: a sprite has hit the edge of the sprite layer
+
+These events are only sent for sprites that have setWantsCollideWallEvents(true) and where the SpriteLayer has a size explicitly set.
+
+\sa Sprite.setWantsCollideWallEvents()
+\sa SpriteLayer.setSize()
+\sa eventType_SpriteCollide
+\sa action_ExitLayer
+
+\todo the impulse, force and kinetic energy values for the event are not calculated
+
+\ingroup Physics
+
+**/ }

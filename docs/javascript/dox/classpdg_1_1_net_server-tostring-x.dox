@@ -1,0 +1,22 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::toString
+
+\brief returns "[object NetServer]"
+
+(*Waves hand*) This is not the method you are looking for. 
+
+You probably want this:
+
+\code
+
+    function getServerString(ns) {
+        return "NetServer@" + ns.serverAddr + ":" + ns.serverPort;
+    }
+\endcode
+
+Which gives something like this:
+
+    NetServer@127.0.0.1:5000
+
+**/ }

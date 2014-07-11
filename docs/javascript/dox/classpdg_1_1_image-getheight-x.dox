@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Image::getHeight
+
+\brief get the height in pixels of the image
+
+\return the image height in pixels
+
+\sa getWidth()
+\sa getImageBounds()
+
+**/ }

@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::tm
+
+\brief the singleton instance of the TimerManager
+
+\code
+    pdg.tm.pause();
+\endcode
+
+\related pdg::TimerManager
+\ingroup Managers
+
+
+**/ }

@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::getFileManager
+
+\brief get the singleton instance of the FileManager used by the pdg framework
+
+\return FileManager singleton object
+
+\relatedalso FileManager
+
+
+**/ }

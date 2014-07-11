@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::unpause
+
+\brief resume all paused timers
+
+This is the same as calling unpauseTimer() for every timer in the TimerManager.
+
+\sa unpauseTimer()
+\sa pause()
+
+**/ }

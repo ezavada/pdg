@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::getImageStrip
+
+\brief load an image strip by name from the resources
+
+\param imageName The name under which the image strip is stored in the resources
+
+\return the named ImageStrip, or **false** if no found
+
+\sa getImage()
+
+
+**/ }

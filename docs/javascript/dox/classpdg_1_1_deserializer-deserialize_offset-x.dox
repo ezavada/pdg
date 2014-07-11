@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_offset
+
+\brief deserialize an Offset
+
+Read an Offset's x and y values value from the data stream. 
+
+\return an Offset
+
+\sa Serializer.serialize_offset
+
+**/ }

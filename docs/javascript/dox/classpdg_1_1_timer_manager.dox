@@ -1,0 +1,35 @@
+namespace pdg { /**
+
+\class TimerManager
+\brief manages timers that can fire at a particular time, or repeatedly at an interval
+
+\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
+
+The singleton instance of the TimerManager can be accessed at pdg.tm, for example:
+
+\code
+	pdg.tm.onTimeout(function(evt) {
+		console.log(evt);
+	}, 1000);
+\endcode
+
+
+All TimerManager functions are safe to perform while a timer is firing. Functions that alter a timer can be safely used even from within the handler of the timer being changed (ie: while the target timer is in the process of firing)
+
+The TimerManager is an EventEmitter, and will generate pdg.eventType_Timer events:
+
+    { 
+        emitter: {},            // the emitter that generated this event
+        eventType: 3,           // the event type (pdg.eventType_Timer)
+        id: 117440512,          // the timer id (auto-generated up by onTimeout())
+        millisec: 1025448321,   // the millisecond time when the timer fired
+        msElapsed: 18896        // the time elapsed since the timer was started or last fired
+    } 
+
+
+\ingroup Managers
+\ingroup Events
+
+
+
+**/ }

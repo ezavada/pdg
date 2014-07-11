@@ -1,0 +1,25 @@
+namespace pdg { /**
+
+\fn pdg::LogManager::initialize
+
+\brief initialize the LogManager, creating a new log file if necessary
+
+The following information is output to the log whenever the log manager is initialized:
+
+    131023 09:33:51 1382520831167   I4   @LOGINIT    log initialized 2013/10/23 05:33:51 for pdg
+    131023 09:33:51 1382520831168   I4   @BLDINFO    Build: [Oct 20 2013 11:55:02] Compiler: [GNU gcc] Target: [x86_64-apple-darwin]
+
+The @@LOGINT line gives the local Date/Time (YYYY/MM/DD) when the Log Manager was initialized, and the "for {name}" portion echoes the inLogNameBase passed in. The @@BLDINFO reports the PDG version, app build date/time, compiler and target platform.
+
+initMode is one (and only one) of:
+
+ - init_CreateUniqueNewFile  - appends a timestamp to log file base name to ensure a unique file is created 
+ - init_OverwriteExisting - if an existing file is present, overwrite it completely
+ - init_AppendToExisting -  if an existing file is present, append to it
+ - init_StdOut - don't create a file, instead send log output to stdout
+ - init_StdErr - don't create a file, instead send log output to stderr
+
+\param inLogNameBase this is used to help form the log file name
+\param initMode sets the mode the LogManager will use for outputting log entries
+
+**/ }

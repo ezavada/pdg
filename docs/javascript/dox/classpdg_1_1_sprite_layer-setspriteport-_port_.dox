@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setSpritePort
+
+\brief set the port this layer is rendered into
+
+**/ }

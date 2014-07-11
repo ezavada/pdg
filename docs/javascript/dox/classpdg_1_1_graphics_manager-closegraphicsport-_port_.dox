@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::closeGraphicsPort
+
+\brief close given port, along with its window and restore screen mode if changed
+
+\param port the port to close, default to the main port if none passed
+
+\sa Port
+\sa createFullScreenPort
+\sa createWindowPort
+
+\warning closing the main port will quit the application, use setMainPort to change to a new port before closing an old one.
+
+**/ }

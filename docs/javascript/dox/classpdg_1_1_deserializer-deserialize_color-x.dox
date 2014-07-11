@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_color
+
+\brief deserialize a Color
+
+Read a Color value from the data stream. 
+
+\return a Color
+
+\sa Serializer.serialize_color
+
+**/ }

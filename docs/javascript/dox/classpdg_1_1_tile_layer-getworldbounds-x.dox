@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::getWorldBounds
+
+\brief get the size in layer coordinates of the world map
+
+\returns the layer coordinates of the boundaries of the world map
+
+\warning this is not necessarily the pixel location for drawing, since it doesn't account for layer movement, rotation or zoom. You need to call layerToPortRect() on this to get pixel drawing coordinates.
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\var pdg::action_LayerFadeInComplete
+
+\brief eventType_SpriteLayer action: the fade-in of a layer has been completed
+
+\sa SpriteLayer.fadeIn()
+\sa action_LayerFadeOutComplete
+\sa eventType_SpriteLayer
+
+\ingroup Animation
+
+
+**/ }

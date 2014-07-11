@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(string str)
+
+\brief get the number of bytes used to serialize the given string
+
+Does not actually write any data to stream
+
+\return the number of bytes needed
+
+\sa serialize_str
+
+**/ }

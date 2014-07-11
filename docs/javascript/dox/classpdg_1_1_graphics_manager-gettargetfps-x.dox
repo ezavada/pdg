@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getTargetFPS
+
+\brief get the intended frame rate
+
+\return the target frame rate in frames per second
+
+\sa setTargetFPS
+\sa getFPS
+
+
+**/ }

@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::sendDgram(MemBlock message)
+
+\brief send a block of memory to the remote endpoint via UDP
+
+The block will be sent using UDP if it is available. Delivery is not guaranteed and neither is in-order deliver of messages. This is ideal for small bits of information that are frequently resent, such as position or status updates. 
+
+NetConnection handles packet framing for you, so if the packet arrives, the NetConnection on the remote endpoint will receive an onMessage callback with the object you sent. If the message cannot be sent you will not get any notification. It will simply disappear into the ether.
+
+\note sending multiple blocks in a row is fine, they will all be received as separate onMessage callbacks each with the string as sent. They will not be combined.
+
+\param message the MemBlock to send
+
+\return itself (for call chaining)
+
+\sa send(MemBlock)
+
+\remark To guard against out-of-order delivery, you should always use a sequence number so you can drop older updates that arrive after newer ones.
+
+\warning Any block longer than MTU (generally 1500 bytes, but can be smaller) will always fail to send.
+
+**/ }

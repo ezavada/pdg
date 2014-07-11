@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setMoveFriction
+
+\brief set the object's friction for movement
+
+**/ }

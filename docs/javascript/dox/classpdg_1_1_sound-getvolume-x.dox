@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Sound::getVolume
+
+\brief get the current volume level for this sound
+
+\return a number from 0.0 to 1.0 representing the volume level for this sound.
+
+\note This is not the absolute volume of the sound, since even at full volume (1.0) the sound's volume is scaled by the SoundManager's master volume
+
+\sa SoundManager.setVolume
+
+**/ }

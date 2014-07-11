@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setDamping
+
+\brief set the overall resistance to motion over time (*Chipmunk Physics Only*)
+
+**/ }

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::rotate
+
+\brief rotate the object by a specific amount over time
+
+Honors delay given by wait()
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setLocation
+
+\brief place the object at a particular location
+
+**/ }

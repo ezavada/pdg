@@ -1,0 +1,22 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getNthSupportedScreenMode
+
+\brief get the details of the Nth screen mode from the supported ones for a screen
+
+\param n the index into the list of supported screen modes, from 0 to number of support modes &minus; 1
+\param screenNum the screen you are interested in, defaults to the primary screen if not passed
+
+\returns a screen mode object with width, height, depth members
+
+**Example**
+
+    PDG terminal v0.9.4
+    > pdg.gfx.getNthSupportedScreenMode(1);
+    { width: 1440,
+      height: 900,
+      depth: 16 }
+
+
+
+**/ }

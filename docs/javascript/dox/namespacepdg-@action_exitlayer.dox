@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\var pdg::action_ExitLayer
+
+\brief eventType_SpriteAnimate action: a sprite has moved outside the layer boundaries.
+
+These events are only generated for sprites that have setWantsCollideWallEvents(true) called for them, and that the SpriteLayer that holds the sprite has had its size explicitly set.
+
+\sa Sprite.setWantsCollideWallEvents()
+\sa SpriteLayer.setSize()
+\sa eventType_SpriteAnimate
+\sa action_Offscreen
+\sa action_Onscreen
+
+\ingroup Animation
+
+
+**/ }

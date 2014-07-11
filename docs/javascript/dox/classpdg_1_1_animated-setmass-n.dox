@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setMass
+
+\brief set the object's mass, used when forces are applied
+
+**/ }

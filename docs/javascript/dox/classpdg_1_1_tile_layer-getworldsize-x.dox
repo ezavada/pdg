@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::getWorldSize
+
+\brief get the number of tiles in the map
+
+\returns a rectangle with the dimensions of the world map in number of tiles. If you want to get the pixel size for drawing use getWorldBounds() instead.
+
+\sa getWorldBounds
+\sa setWorldSize
+
+**/ }

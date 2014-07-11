@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::evt
+
+\brief the singleton instance of the EventManager
+
+\code
+    var aIsPressed = pdg.evt.isKeyDown('a');
+\endcode
+
+\related pdg::EventManager
+\ingroup Managers
+
+
+**/ }

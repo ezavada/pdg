@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Point::Point(number[] xy)
+
+\brief create and set x & y values
+
+\param xy an array of numbers with x as element 0 and y as element 1
+
+**/ }

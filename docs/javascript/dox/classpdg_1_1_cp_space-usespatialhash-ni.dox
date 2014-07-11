@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::useSpatialHash
+
+\brief use the spacial hash algorithm for collision detection
+
+This can be more efficient when you have a lot of objects that are the same size. See the detailed documentation in Chipmunk docs for more info.
+
+\sa http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpSpace-SpatialHash
+
+**/ }

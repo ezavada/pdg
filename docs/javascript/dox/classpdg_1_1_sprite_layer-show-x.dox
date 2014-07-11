@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::show
+
+\brief start rendering this layer if it was previously hidden
+
+**/ }

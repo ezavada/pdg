@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpArbiter::getDepth
+
+\brief get the depth of penetration for a particular contact point
+
+\param i index into contact points
+
+\returns how far the contact point is inside the other object
+
+**/ }

@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::getApplicationResourceDirectory
+
+\brief return the path to the location where the application's internal resources are stored
+
+\return a full path to the application's resource directory
+
+\note on Mac OS X the is the Contents/Resources directory within the application bundle
+
+**/ }

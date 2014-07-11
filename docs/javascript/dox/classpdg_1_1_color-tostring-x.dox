@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::Color::toString
+
+\brief displays the color as a string
+
+Example:
+
+\code
+	var c = new Color('teal');
+	console.log(c.toString());
+\endcode
+
+Outputs:
+
+    Color(0, 0.5019607843137255, 0.5019607843137255)
+
+**/ }

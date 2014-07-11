@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getRatchetPhase
+
+\brief get the initial offset for the ratchet backstops on a ratchet joint
+
+\sa setRatchetPhase
+\sa getRatchetAngle
+\sa getRatchetInterval
+\sa Sprite.ratchet()
+
+**/ }

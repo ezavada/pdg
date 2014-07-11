@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getMotorSpinRate
+
+\brief get how fast the sprites rotate relative to one another in a motor joint
+
+\sa setMotorSpinRate()
+\sa Sprite.motor()
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::getEnableContactGraph
+
+\brief get if contact graph is rebuilt during each step
+
+From Chipmunk cpSpace comments: 
+
+    Must be enabled to use the cpBodyEachArbiter() function. 
+    Disabled by default for a small performance boost. 
+    Enabled implicitly when the sleeping feature is enabled.
+
+**/ }

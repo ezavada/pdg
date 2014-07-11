@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setSpin
+
+\brief set the rate at which the object is spinning, in radians/sec
+
+**/ }

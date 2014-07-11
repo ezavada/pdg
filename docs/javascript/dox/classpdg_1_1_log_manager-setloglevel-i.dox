@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::LogManager::setLogLevel
+
+\brief set the current logging level
+
+The log level is the lowest priority (highest numerical value) of log message that will actually be logged. Any lower priority (higher numeric value) messages will be filtered.
+
+Whenever the log level is changed, a message reflecting that change in log level is echoed to the log, e.g.:
+
+    131023 09:33:51 1382520831177   I4   @LOGLVL     setting log level to [10]
+
+\sa getLogLevel()
+\sa writeLogEntry()
+
+**/ }

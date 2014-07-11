@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_mem(MemBlock mem)
+
+\brief serialize a block of memory
+
+MemBlocks are the game engine's way of handling blocks of arbitrary binary data in JavaScript. This serializes that data into the stream. 
+
+\note data size: varies, call serializedSize(MemBlock) to determine.
+
+\sa serializedSize(MemBlock)
+\sa Deserializer.deserialize_mem
+
+
+**/ }

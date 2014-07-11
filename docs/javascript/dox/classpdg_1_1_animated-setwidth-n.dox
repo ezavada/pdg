@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setWidth
+
+\brief set the width of the object
+
+**/ }

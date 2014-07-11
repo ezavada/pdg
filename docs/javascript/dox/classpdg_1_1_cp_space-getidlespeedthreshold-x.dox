@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::getIdleSpeedThreshold
+
+\brief get speed threshold for a body to be considered idle
+
+From Chipmunk cpSpace comments:
+
+    The default value of 0 means to let the space guess a good threshold based on gravity.
+
+**/ }

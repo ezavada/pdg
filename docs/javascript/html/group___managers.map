@@ -1,0 +1,5 @@
+<map id="Managers" name="Managers">
+<area shape="rect" id="node1" href="$group___sound.html" title="Things used for audio (sound and music)" alt="" coords="275,5,333,32"/>
+<area shape="rect" id="node3" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="273,65,335,92"/>
+<area shape="rect" id="node4" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="267,125,341,152"/>
+</map>

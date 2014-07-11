@@ -1,0 +1,20 @@
+namespace pdg {
+
+/*!
+
+
+\class Offset
+\brief offset within a 2D coordinate system
+
+Offset provides support for dealing with offsets as x, y floating point values
+in 2 dimensional space. 
+The PDG coordinate space starts with the top left corner of the drawing port at 
+Point(0,0) and the bottom left corner at Point( width, height );
+\ingroup Graphics
+\ingroup Animation
+
+
+
+*/
+
+}

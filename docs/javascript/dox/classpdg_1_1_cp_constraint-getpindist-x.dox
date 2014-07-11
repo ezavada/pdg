@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getPinDist
+
+\brief get the distance between the anchors on a pin joint
+
+\sa setPinDist
+\sa Sprite.pinJoint()
+
+**/ }

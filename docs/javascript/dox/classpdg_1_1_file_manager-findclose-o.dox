@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::findClose
+
+\brief stop and cleanup after a file/directory search
+
+This takes the object returned from a findFirst() or findNext(), and cleans up after the search, releasing all resources used by the search.
+
+\param inFindData the object returned from a prior call to findFirst() or findNext()
+
+\sa findFirst
+\sa findNext
+
+**/ }

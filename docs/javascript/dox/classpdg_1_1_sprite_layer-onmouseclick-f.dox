@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onMouseClick
+
+\brief set event handler for tap or mouse click in a sprite
+
+Only works for Sprites that have setWantsClickEvents(true).
+
+\sa SpriteTouchEvent
+\sa IEventHandler
+\sa Sprite.setWantsClickEvents()
+
+**/ }

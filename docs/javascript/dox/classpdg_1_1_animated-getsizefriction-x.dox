@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getSizeFriction
+
+\brief get the friction applied to size changes (growing or shrinking)
+
+**/ }

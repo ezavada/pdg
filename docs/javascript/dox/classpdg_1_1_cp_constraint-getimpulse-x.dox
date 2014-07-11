@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getImpulse
+
+\brief get the last impulse applied by the joint
+
+\sa http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint
+
+**/ }

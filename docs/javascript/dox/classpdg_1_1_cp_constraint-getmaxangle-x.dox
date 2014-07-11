@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getMaxAngle
+
+\brief get the maximum angle allowed by a RotaryLimit joint
+
+\sa setMaxAngle
+\sa getMinAngle
+\sa Sprite.rotaryLimit()
+
+**/ }

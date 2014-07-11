@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::rotateTo
+
+\brief rotate the object to face a particular direction over time
+
+Honors delay given by wait()
+
+**/ }

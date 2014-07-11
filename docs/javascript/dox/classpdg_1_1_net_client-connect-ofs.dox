@@ -1,0 +1,37 @@
+namespace pdg { /**
+
+\fn pdg::NetClient::connect
+
+\brief establish a connection to a server
+
+Attempts to connect to the given server, and if it succeeds it invokes your callback with a new NetConnection object as the parameter. The If the connection fails, you'll get an error callback if you set one up using the onError() call. 
+
+An option key is passed in to do authentication if the server requires connection reservations. See NetServer.expectClient for more about client reservations.
+
+\param serverInfo an object with host and port that tells us where to find the NetServer
+\param callback the connection established handler for this connection
+\param clientKey [optional] the reservation key to send to the server
+
+\code
+
+    // start trying to connect
+    var myConnection = false;
+    var myKey = '23dj3C340efp';
+    myClient.connect( { host: 208.122.0.12, port: 5000 }, function(connection) {
+        myConnection = connection;
+    }, myKey);
+
+    // now wait for the connection to happen
+    var t = pdg.tm.onInterval( function() {
+        if (myConnection) {
+            console.log('Got connection to '+myConnection.remoteAddr);
+            t.cancel();  // stop checking
+        }
+    }, 100);  // check every 100 milleseconds
+\endcode 
+
+\sa onError
+\sa NetConnection
+\sa NetServer.expectClient
+
+**/ }

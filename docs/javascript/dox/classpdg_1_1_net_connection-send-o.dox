@@ -1,0 +1,19 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::send(object message)
+
+\brief send a JavaScript object to the remote endpoint
+
+The object is sent guaranteed delivery (TCP), and will arrive in the order sent with other messages. 
+
+NetConnection handles packet framing for you, so the NetConnection on the remote endpoint will receive an onMessage callback with the object you sent. If the message cannot be sent, you will eventually get an onClose() callback to indicate that the connection has been lost.
+
+\note the object is converted to JSON before being sent, then back again on the receiving side.
+
+\param message the object to send
+
+\return itself (for call chaining)
+
+\warning Only use this for native JavaScript objects. No PDG objects can be sent over the network this way.
+
+**/ }

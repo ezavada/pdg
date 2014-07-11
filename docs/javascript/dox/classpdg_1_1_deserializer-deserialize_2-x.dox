@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_2
+
+\brief deserialize 2 signed bytes
+
+Read a signed two byte value from the data stream. 
+
+\return a number in the range of <b>&minus;32,767 to 32,767</b> 
+
+\sa Serializer.serialize_2
+
+
+**/ }

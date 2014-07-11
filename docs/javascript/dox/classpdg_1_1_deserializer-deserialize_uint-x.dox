@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_uint
+
+\brief deserialize an unsigned number
+
+Read an unsigned value from the data stream. 
+
+\warning this can only deserialize values encoded with serialize_uint, not with serialize_4u even though the range is identical
+
+\return a number in the range of **0 to 4,294,967,295**
+
+\sa Serializer.serialize_uint
+
+**/ }

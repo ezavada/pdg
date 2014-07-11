@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_mem
+
+\brief deserialize arbitrary binary data
+
+Read a chunk of arbitrary binary data from the stream into a MemBlock. The amount of data that will be read can be discovered by calling deserialize_memGetLen() *before* you call deserialize_mem(). If you want to get the size afterwards, you must call MemBlock.getDataSize() on the data returned
+
+\remark there is no way to read only part of the binary data
+
+\return an arbitrary block of binary data as a MemBlock
+
+\sa Serializer.serialize_mem
+\sa deserialize_memGetLen
+\sa MemBlock.getDataSize
+
+**/ }

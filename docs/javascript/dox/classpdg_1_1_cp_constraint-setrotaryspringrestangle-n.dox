@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setRotarySpringRestAngle
+
+\brief set the angle between sprites at which a rotary spring is at rest on a rotary spring joint
+
+\sa getRotarySpringRestAngle
+\sa Sprite.rotarySpring()
+
+**/ }

@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpArbiter::getPoint
+
+\brief get the location of a particular contact point
+
+\param i index into contact points
+
+\return the location of the contact
+
+**/ }

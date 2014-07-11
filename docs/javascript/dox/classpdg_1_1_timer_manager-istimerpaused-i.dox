@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::isTimerPaused
+
+\brief check if a timer is paused
+
+\param id the id number of the timer to check
+
+\return true if the timer is paused, false if not
+
+\sa pause()
+\sa pauseTimer()
+
+**/ }

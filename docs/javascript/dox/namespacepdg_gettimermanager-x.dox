@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::getTimerManager
+
+\brief get the singleton instance of the TimerManager used by the pdg framework
+
+\return TimerManager singleton object
+
+\relatedalso TimerManager
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Image::setOpacity
+
+\brief set opacity of this image 
+
+Opacity can be used on an Image regardless of whether it has an alpha channel or not. In images with an alpha channel, the transparency of any given pixel is that pixel's alpha channel value * the image opacity (0.0 .. 1.0).
+
+\param opacity the desired opacity as range from either (0-255) or (0.0 to 1.0). 0 is completely transparent, 1.0 or 255 is completely solid.
+
+\sa getOpacity()
+
+**/ }

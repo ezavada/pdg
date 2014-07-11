@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::layerToPortOffset
+
+\brief adjust the offset to account for layer transformations
+
+Since an offset is relative rather than fixed in coordinate space, this means only rotating it around 0,0 to match the layer rotation, and changing the offset length by the layer zoom. The layer origin is not factored in.
+
+\param o Offset in layer coordinates
+
+\returns Offset in port coordinates
+
+
+**/ }

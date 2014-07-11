@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getMainPort
+
+\brief return the primary graphics port
+
+\return the primary Port
+
+\sa Port
+\sa createFullScreenPort
+\sa createWindowPort
+
+**/ }

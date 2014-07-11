@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sound::onFailedToPlay
+
+\brief set a handler for if the sound fails to play
+
+**/ }

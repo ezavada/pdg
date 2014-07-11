@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::reservationRequired
+
+\brief flag to indicate if reservations to the server are required or not
+
+**/ }

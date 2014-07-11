@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_point
+
+\brief deserialize a Point
+
+Read a Point value from the data stream. 
+
+\return a Point
+
+\sa Serializer.serialize_point
+
+**/ }

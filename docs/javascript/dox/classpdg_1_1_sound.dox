@@ -1,0 +1,53 @@
+namespace pdg { /**
+
+\class Sound
+\brief handles both short sounds and music (*GUI Only*)
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+Fire and Forget Playback
+--------------------
+
+This mode is typically used for short sound effects, like a footstep, an explosion, a single note of music, or some other momentary sound that doesn't need to be altered while playing. Use play() for that sort of fire and forget sound.
+
+**Fire and Forget Example:**
+
+\code
+    PDG terminal v0.9.4
+    > pdg.run();  // must be running for sounds to play
+    > var snd = new pdg.Sound("test/clink1.mp3");
+    > snd.play();
+    > snd.play(0.3);
+\endcode
+
+Dynamic Playback
+---------------
+
+For longer sound effects and music, you will often want more dynamic control over the sound as it plays. The hum of a motor might change pitch and location as the sprite that generates it moves around on the screen. Background music may need to be paused or have it's volume changed independent of other sounds as it plays. Use start() to play those sorts of sounds, then call other methods as needed to alter the sound playback.
+
+**Dynamic Playback Example:**
+
+\code
+    PDG terminal v0.9.4
+    > pdg.run();  // must be running for sounds to play
+    > var snd = new pdg.Sound("test/Peppy_The-Firing-Squad_YMXB.mp3");
+    > snd.start();
+    > snd.setVolume(0.3);
+    > snd.skip(2000);
+    > snd.setPitch(1.0);  // doesn't work on Windows
+    > snd.setPitch(0);
+    > snd.setOffsetX(1000); // full right 
+    > snd.setOffsetX(-500); // half left 
+    > snd.setOffsetX(0); // center
+    > snd.fadeOut(10000); // fade out over 10 seconds
+\endcode
+
+\sa play
+\sa start
+
+\ingroup Sound
+
+
+
+
+**/ }

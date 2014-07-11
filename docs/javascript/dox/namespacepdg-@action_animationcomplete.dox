@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\var pdg::action_AnimationComplete
+
+\brief eventType_SpriteLayer action: all animations for every SpriteLayer have completed
+
+Emitted once per animation step, after all animation has completed.
+
+\sa action_AnimationComplete
+\sa eventType_SpriteLayer
+
+\ingroup Animation
+
+
+**/ }

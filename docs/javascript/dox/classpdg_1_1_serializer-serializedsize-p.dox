@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(Point)
+
+\brief get the number of bytes used to serialize the given Point
+
+Does not actually write any data to stream
+
+\return the number of bytes needed (0-9)
+
+\note this can return 0 for a Point whose value is (0,0), since a point at origin is optimized to be stored as a single bit.
+
+\sa serialize_point
+
+**/ }

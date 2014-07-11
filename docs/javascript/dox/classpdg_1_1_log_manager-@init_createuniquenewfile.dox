@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\var pdg::LogManager::init_CreateUniqueNewFile
+
+\brief append a timestamp to the base name to ensure a unique log files is created
+
+This flag is passed as initMode to LogManager.initialize() to cause the a new unique log file to be created.
+
+\sa initialize()
+
+
+**/ }

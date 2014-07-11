@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::enableCollisions
+
+\brief allow collision checking for sprites in this layer
+
+**/ }

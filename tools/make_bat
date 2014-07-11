@@ -1,0 +1,93 @@
+@echo off
+set target=Build
+set config=Release
+set PDG_ROOT=%CD%
+
+set BUILD_STATUS=0
+cd deps\node
+if not exist out\%config%\nodelib.lib (
+	echo Building Node.js as a library...
+	call vcbuild.bat noprojgen nosign
+	set BUILD_STATUS=%ERRORLEVEL%
+	xcopy /D %config%\lib\*.lib out\%config%\
+	xcopy /D build\%config%\lib\*.lib out\%config%\
+) else (
+	echo Skipping Node.js build because deps\node\out\%config%\nodelib.lib already exists.
+)
+cd ..\..
+if not %BUILD_STATUS%==0 goto Error
+if not exist tools\node.exe (
+	copy /Y deps\node\Release\node.exe tools\ 
+)
+
+:msbuild
+if defined MSVS_VERSION goto :msbuild-found
+
+:vc-set-2013
+@rem Look for Visual Studio 2013
+if not defined VS120COMNTOOLS goto vc-set-2012
+if not exist "%VS120COMNTOOLS%\..\..\vc\vcvarsall.bat" goto vc-set-2012
+call "%VS120COMNTOOLS%\..\..\vc\vcvarsall.bat"
+if not defined VCINSTALLDIR goto msbuild-not-found
+set MSVS_VERSION=2013
+goto msbuild-found
+
+:vc-set-2012
+@rem Look for Visual Studio 2012
+if not defined VS110COMNTOOLS goto vc-set-2010
+if not exist "%VS110COMNTOOLS%\..\..\vc\vcvarsall.bat" goto vc-set-2010
+call "%VS110COMNTOOLS%\..\..\vc\vcvarsall.bat"
+if not defined VCINSTALLDIR goto msbuild-not-found
+set MSVS_VERSION=2012
+goto msbuild-found
+
+:vc-set-2010
+if not defined VS100COMNTOOLS goto msbuild-not-found
+if not exist "%VS100COMNTOOLS%\..\..\vc\vcvarsall.bat" goto msbuild-not-found
+call "%VS100COMNTOOLS%\..\..\vc\vcvarsall.bat"
+if not defined VCINSTALLDIR goto msbuild-not-found
+set MSVS_VERSION=2010
+goto msbuild-found
+
+:msbuild-not-found
+echo Could not find Visual Studio. To build, this file needs to run from VS cmd prompt.
+goto Error
+
+:msbuild-found
+echo Building GLFW Library ...
+REM cd deps\glfw\msvc\vc%MSVS_VERSION%
+cd build\win32\glfw
+msbuild GLFW.sln /m /t:%target% /p:Configuration=%config% /clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal /nologo
+copy src\%config%\glfw3.lib src\
+set BUILD_STATUS=%ERRORLEVEL%
+cd ..\..\..
+if not %BUILD_STATUS%==0 goto Error
+
+echo Building Chipmunk Library ...
+cd build\win32\chipmunk
+msbuild chipmunk.sln /m /t:%target% /p:Configuration=%config% /clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal /nologo
+set BUILD_STATUS=%ERRORLEVEL%
+cd ..\..\..
+if not %BUILD_STATUS%==0 goto Error
+copy build\win32\chipmunk\src\%config%\chipmunk.lib build\win32\chipmunk\src\
+
+echo Building PDG ...
+cd msvc
+msbuild PDG.sln /m /t:%target% /p:Configuration=%config% /clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal /nologo
+set BUILD_STATUS=%ERRORLEVEL%
+cd ..\
+if not %BUILD_STATUS%==0 goto Error
+
+copy msvc\src\%config%\pdg.exe test\
+copy msvc\src\%config%\pdg.exe .
+copy tools\debug.html test\
+copy tools\debug.html msvc\src\%config%\
+
+goto Success
+
+:Error
+echo Build Failed
+exit /b 1
+
+:Success
+echo Build Succeeded

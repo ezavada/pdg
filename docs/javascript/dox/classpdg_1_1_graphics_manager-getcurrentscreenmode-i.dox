@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getCurrentScreenMode
+
+\brief get width, height, depth and maxWindowRect for specified screen
+
+\param screenNum the number of the screen, defaults to the primary screen if no screen number given
+
+\return Object with width, height, depth and maxWindowRect members
+
+\sa setScreenMode
+\sa getNumScreens
+
+**/ }

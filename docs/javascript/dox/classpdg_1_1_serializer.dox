@@ -1,0 +1,28 @@
+namespace pdg { /**
+
+\class Serializer
+\brief serialize data into memory
+
+\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
+
+Serializer stores complex data into memory in a way that it can be read back from a Deserializer. It can correctly store entire object hierarchies without duplication. 
+
+The data stream format is platform neutral, so it is suitable for saved game files and network messages between client and server, using NetConnection.send(ISerializable).
+
+Serializer writes tags at key points that the deserialization process can use to be sure things haven't gotten out of sync. However, if you want your serialized data streams to be versioned, you will have to add that yourself; either on a per object/message basis or for an entire saved stream.
+
+Method Groups
+-----------------
+
+  - **serialize_x(x)**: These methods write the given data of type *x* into the stream. When *x* is a number (ie: serialize_1 or serialize_2u) the number represents the number of bytes that will be used in the data stream. Others, such as uint, str, mem and obj are all variable sized based on the actual data passed in.
+  - **serialized_Size(x)** - These methods get the number of bytes of data that would be written into the stream to serialize that particular bit of data. These are only used for the variable size data types.
+
+\ingroup Serialization
+
+\sa Deserializer
+\sa ISerializable
+\sa NetConnection.send(ISerializable)
+
+
+
+**/ }

@@ -1,0 +1,42 @@
+namespace pdg { /**
+
+\class NetServer
+\brief a network endpoint that can accept incoming connections
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+Overview
+--------
+
+NetServer is part of the PDG Engine's custom protocol for games. It handles protocol negotiation and optional connections. It provide a server that listens for connections with a client over both TCP (reliable transport with guaranteed delivery) and UDP (small and unreliable but fast). 
+
+NetServer doesn't actually handle network communication, it only listens for incoming connections. Once a connection is established, it creates a NetConnection object for each connected client that you can use to send and receive data.
+
+In cases where your server consists of multiple processes (most game servers do, especially ones that expect to scale to handle a large number of users) a particular server process may be both a server and a client. For example, it might accept connections from players over the internet using a NetServer, but then connect (using a NetClient) to a central message distribution system to relay chat between players connected to different server nodes.
+
+Authorization & Reservations
+----------------------------
+
+There are 5 different ways you can allow clients to connect:
+
+ 1. **Wide Open** - clients do not require any authorization or reservation to connect. Obviously this is the least secure, but is fine for server processes that are all behind a firewall, or peer to peer connections. This is the default setting for NetServer if no options are used.
+ 2. **Common Key** - clients all send the same static key. To do this, call expectClient() once with the static key and no other parameters. That will allow all clients to call NetClient.connect() with that static key. Attempts to connect without the key will be rejected by the NetServer
+ 3. **Computed Key** - clients and server each compute a key based on some common information that they all have, most likely the UTC date/time. This is nearly the same as a static key, except that the single key doesn't last forever. To do this, all expectClient() with the new key at a regular interval and set a reservationTTL for the keys. Make sure you pass "*" (any ip) for the clientIPAddr. You will probably want the TTL to be slightly longer than the new key interval to give clients a little extra time to connect with the previous computed key, to allow for differences in date/time between different systems.
+ 4. **Per-Client reservation** - Each client gets a unique key for their exclusive use during a session, set on the server side by calling expectClient(). Generally this happens when the user logs in. This is made stronger if the client's IP address is also part of the reservation. The reservation should have a time to live (TTL).
+ 5. **Single Use Reservation** - This is by far the most secure, especially when combined with IP address checking. Any time the client is going to connect to a server, it must be given a key, and the server must be told to expect that key using expectClient(). TTL should be short (10s of seconds) and the singleUse flag should be passed as true to expectClient().
+
+ 
+
+\warning NetClient, NetServer, and NetConnection all work together over a custom protocol. NetServer doesn't handle raw TCP nor any other protocol such as HTTP. There are perfectly fine [Net][1] and [HTTP][2] modules built-in to Node.js (and thus to PDG) for that. 
+
+\sa expectClient
+\sa NetConnection
+\sa NetClient
+\sa [Node.js Net module][1]
+\sa [Node.js HTTP module][2]
+\ingroup Network
+
+  [1]: http://nodejs.org/api/net.html
+  [2]: http://nodejs.org/api/http.html
+
+**/ }

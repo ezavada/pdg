@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::close(bool kill)
+
+\brief close a connection
+
+The remote endpoint of the connection will get their onClose() callback.
+
+\param kill true if the connection should be abruptly dropped rather than cleanly disconnected.
+
+\sa NetConnection.onClose
+
+**/ }

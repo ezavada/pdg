@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setRatchetAngle
+
+\brief set the current angle of a ratchet joint
+
+\sa getRatchetAngle
+\sa setRatchetInterval
+\sa setRatchetPhase
+\sa Sprite.ratchet()
+
+**/ }

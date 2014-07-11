@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::moveToFront
+
+\brief put this sprite in front of all others in its layer
+
+**/ }

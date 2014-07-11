@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::MemBlock::getData
+
+\brief get the data as a JavaScript string
+
+The data is returned as a JavaScript string with binary data (values from 0..255 represented in JavaScript's native 2 byte per char string format). Use pdg.log.binaryDump() to see the data contents in a human readable hex-dump form.
+
+\return a JavaScript string with binary data
+
+\sa LogManager.binaryDump
+
+**/ }

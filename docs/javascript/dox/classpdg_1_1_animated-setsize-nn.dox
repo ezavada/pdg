@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setSize
+
+\brief set the size of the object
+
+**/ }

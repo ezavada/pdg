@@ -1,0 +1,22 @@
+namespace pdg { /**
+
+\fn pdg::NetClient::onError
+
+\brief set the callback function that will handle errors
+
+This function will be called whenever a call to connect() fails. The function will be called with a single parameter, a string of the error message.
+
+\param callback the error handling function for this connection
+
+\return reference to itself for call chaining
+
+\code
+    myClient.onError( function(msg) {
+        console.log("Connection failed: "+msg);
+    }
+\endcode
+
+
+\sa connect
+
+**/ }

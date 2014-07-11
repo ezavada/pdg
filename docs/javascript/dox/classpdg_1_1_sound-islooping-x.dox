@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sound::isLooping
+
+\brief find out if this sound is set to loop
+
+\returns true if the sound will loop when it reaches the end, false if it will not
+
+**/ }

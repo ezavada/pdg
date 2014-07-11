@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Sound::start
+
+\brief start playing a sound
+
+Starts the sound playing. Use start() instead of play() when you want to manipulate the sound as it is playing, since this call allows the use of setVolume(), skip(), skipTo(), pause(), set/changePitch(), and set/changeXOffset() to actually affect playback.
+
+\sa play
+\sa stop
+
+**/ }

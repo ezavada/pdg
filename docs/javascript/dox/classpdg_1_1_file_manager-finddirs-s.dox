@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::findDirs
+
+\brief return a list of directories that match the given name
+
+This uses the findFirst() and findNext() calls to search for any directories that match the name passed in. The name can contain wildcard characters (*.txt, or f1?.dat). If the name includes a path, it must use Unix format (forward slash "/" as path separators). Colon and backslash are both illegal characters.
+
+\param name the directory name to find
+
+\return an array of directories that match the name
+
+\sa findFirst
+\sa findNext
+
+**/ }

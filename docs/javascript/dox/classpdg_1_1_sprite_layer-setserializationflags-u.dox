@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setSerializationFlags
+
+\brief set the mode for sprite layer serialization
+
+\sa ser_Micro
+\sa ser_Update
+\sa ser_Full
+
+
+**/ }

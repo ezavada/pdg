@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::getSleepTimeThreshold
+
+\brief get time a group of bodies must remain idle in order to fall asleep
+
+From Chipmunk cpSpace comments:
+
+    Enabling sleeping also implicitly enables the the contact graph. The default value of INFINITY disables the sleeping algorithm.
+
+**/ }

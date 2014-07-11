@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::getSpriteZOrder
+
+\brief get the z-order of a sprite in this layer
+
+0 means furthest back (drawn first)
+
+\sa getNthSprite
+
+
+**/ }

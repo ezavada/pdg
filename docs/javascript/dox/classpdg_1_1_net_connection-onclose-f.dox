@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::onClose
+
+\brief set callback to handle connection closing
+
+Whenever a network connection is dropped by the remote end (whether cleanly or abrubtly), you will get an onClose callback to the function specified.
+
+\param callback the function that should be called
+
+\todo no parameters are passed to the onClose callback but we should probably indicate if it was an error and pass a reference to the connection object
+
+**/ }

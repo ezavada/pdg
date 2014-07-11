@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::setLanguage
+
+\brief set the currently active language for
+
+Set the language that should be used when searching for string resources.
+
+By convention, inLanguage should be a 2 character language code, such as "en", "fr", "de" or "es", however it can be anything you want. This does nothing to affect previously loaded strings, it only applies to new calls to getString().
+
+\param inLanguage the new language to treat as active
+
+\sa getLanguage()
+\sa getString()
+
+\note This works by getString() calls searching for strings-{lang}.txt instead of strings.txt. If the string is not found, it will try strings.txt as well.
+
+**/ }

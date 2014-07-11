@@ -1,0 +1,24 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::getImage
+
+\brief  load an image by name from the resources
+
+Load an image by name from the resources. Returns an Image object. If the resource doesn't exits, false is returned, so you can check for the image loading with:
+
+\code
+	var img = pdg.res.getImage('myImage.png');
+	if (img === false) {
+		console.log('image not found!');
+	} else {
+		port.drawImage([0,0], img);  // draw the image
+	}
+\endcode
+
+\param imageName The name under which the image is stored in the resources
+
+\return an Image object, or **false** if not found
+
+\sa getImageStrip()
+
+**/ }

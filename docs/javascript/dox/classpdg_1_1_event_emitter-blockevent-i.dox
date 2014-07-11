@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::EventEmitter::blockEvent 
+
+\brief temporarily ignore all events of a particular type.
+
+Events that are blocked are NOT cached for later, they are just dropped. 
+
+\param inEventType the type of event to block
+
+**/ }

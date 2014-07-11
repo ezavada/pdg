@@ -1,0 +1,19 @@
+namespace pdg { /**
+
+\fn pdg::Color::Color(number, number, number, number)
+
+\brief create a color with RGB values
+
+Create a color by giving the Red, Green and Blue values separately, with an optional alpha channel. Values can be given either in the range of 0.0 to 1.0. If no alpha value is given, 1.0 is used, making the color completely solid.
+
+\code
+	var white = new Color(1.0, 1.0, 1.0);
+	var translucentWhite = new Color(1.0, 1.0, 1.0, 0.5);
+\endcode
+
+\sa Color(number)
+\sa Color(string)
+
+
+
+**/ }

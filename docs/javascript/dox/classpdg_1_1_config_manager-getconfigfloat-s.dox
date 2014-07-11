@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::ConfigManager::getConfigFloat
+
+\brief get floating point numerical configuration value
+
+Get the numerical value for a named configuration item. If the item does not exist, undefined will be returned rather than a number.
+
+\param inConfigItemName the name of the configuration item
+
+\return a numerical value, *or* **undefined** if that config item was not set
+
+**/ }

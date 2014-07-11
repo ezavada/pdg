@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Animated::wait
+
+\brief wait before beginning the next animation call that operates over time
+
+Only applies to the next call, and only applies to calls where a duration can be passed in
+
+Works with:  move(), moveTo(), accelerateTo(), resize(), stretch(), grow(), resizeTo(), rotate(), rotateTo(), changeCenter(), changeCenterTo(), applyForce(), applyTorque(),
+
+**/ }

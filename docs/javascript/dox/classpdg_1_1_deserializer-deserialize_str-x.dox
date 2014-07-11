@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_str
+
+\brief deserialize an arbitrary string
+
+Read an arbitrary string from the stream. 
+\return a Unicode string
+
+\sa Serializer.serialize_str
+
+**/ }

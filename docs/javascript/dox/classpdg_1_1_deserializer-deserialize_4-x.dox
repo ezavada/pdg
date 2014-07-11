@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_4
+
+\brief deserialize 4 signed bytes
+
+Read a signed four byte value from the data stream. 
+
+\return a number in the range of <b>&minus;2,147,483,647 to 2,147,483,647</b>
+
+\sa Serializer.serialize_4
+
+
+**/ }

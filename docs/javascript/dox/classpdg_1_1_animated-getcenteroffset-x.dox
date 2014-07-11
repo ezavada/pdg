@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getCenterOffset
+
+\brief get the current offset of the center relative to the true center point
+
+**/ }

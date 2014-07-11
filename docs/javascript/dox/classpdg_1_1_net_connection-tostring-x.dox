@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::toString
+
+\brief returns "[object NetConnection]"
+
+It's not very original, but at least it's honest.
+
+**/ }

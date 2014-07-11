@@ -1,0 +1,7 @@
+The Chipmunk docs are doc/chipmunk off the root of this src package, so that
+they can be more easily referenced from other documentation
+
+They can also be found online at: http://chipmunk-physics.net/release/ChipmunkLatest-Docs/
+
+Otherwise this distribution of Chipmunk is unaltered.
+

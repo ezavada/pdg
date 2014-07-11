@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\class EventManager
+\brief Distributes events to event handlers.
+
+\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
+
+The EventManager is the core ofthe Pixel Dust Games Framework. All inputs to your game arrive as events via the Event Manager. This includes network messages and system level notifications in addition to user inputs such as keystrokes and mouse movements.
+
+The EventManager expects the game developer to implement IEventHandler subclasses and register them to handle various events they are interested in.
+@see IEventHandler
+
+\ingroup Managers
+\ingroup Events
+
+
+
+**/ }

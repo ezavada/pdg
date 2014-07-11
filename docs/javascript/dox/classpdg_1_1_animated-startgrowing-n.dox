@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::startGrowing
+
+\brief set the growth rate of the object in pixels/sec
+
+**/ }

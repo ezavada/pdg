@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_point
+
+\brief serialize a Point's (x,y) values
+
+Write a Point's x and y values into the data stream. This is optimized for certain common cases, such as Point(0,0) and small positive numbers.
+
+\warning because JavaScript handles floating-point numbers as doubles internally but a Point is streamed using floats, some precision is lost. If you need that precision you should serialize the Point's x and y values yourself using serialize_d()
+
+\note data size: varies, call serializedSize(Point) to determine
+
+\sa serializedSize(Point)
+\sa Deserializer.deserialize_point()
+
+
+**/ }

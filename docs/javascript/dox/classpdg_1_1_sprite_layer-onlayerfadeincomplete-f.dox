@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onLayerFadeInComplete
+
+\brief set event handler for layer fade in event
+
+These happen when this layer completes a fade in over time done by fadeIn()
+
+\sa fadeIn()
+\sa SpriteLayerEvent
+\sa IEventHandler
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_1
+
+\brief deserialize 1 signed byte
+
+Read a one byte signed value from the data stream. 
+
+\return a number in the range of <b>&minus;127 to 127</b>
+
+\sa Serializer.serialize_1
+
+**/ }

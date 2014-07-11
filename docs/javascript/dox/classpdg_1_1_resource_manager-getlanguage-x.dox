@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::getLanguage
+
+\brief return the current active language
+
+Returns the last value passed in to setLanguage(). By convention, this would be a 2 character language code, such as "en", "fr", "de" or "es". If there was no prior call to setLanguage() this will return an empty string.
+
+\return the currently active language
+
+**/ }

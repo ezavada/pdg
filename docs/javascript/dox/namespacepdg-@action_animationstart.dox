@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\var pdg::action_AnimationStart
+
+\brief eventType_SpriteLayer action: starting animations for all SpriteLayers
+
+Emitted once per animation step, before any animation is done.
+
+\sa action_AnimationComplete
+\sa eventType_SpriteLayer
+
+\ingroup Animation
+
+
+**/ }

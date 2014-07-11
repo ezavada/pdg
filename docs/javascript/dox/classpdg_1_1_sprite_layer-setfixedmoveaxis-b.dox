@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setFixedMoveAxis
+
+\brief make movement of the layer relative to the port axis
+
+If setFixedMoveAxis is true, move(10, 0) will move the layer 10 pixels to the right in port coordinates. This gives move natural control over movement when the user can spin and move the layer.
+
+**/ }

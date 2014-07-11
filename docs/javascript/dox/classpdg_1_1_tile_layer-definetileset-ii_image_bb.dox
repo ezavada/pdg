@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::defineTileSet
+
+\brief define image and dimensions for the tiles used by this layer
+
+Each TileLayer has a set of equal size tiles taken from a single image.  The tileWidth and tileHeight specify the size of each individual tile in the image, and the image should divide evenly into tiles with no left-over space. There can be at most 256 tiles in an image.
+
+Tile sets can contain transparency, either through a transparent color or via an alpha channel (See Image for more details on transparency). 
+
+Tile sets can support tile rotation (facing) or tile flipping (vertical, horizontal, or both). You cannot use both rotation and flipping in the same layer.
+
+To support rotation, you must have a maximum of 64 tiles in your tile set. Typically the tiles would be arranged in an 8x8 grid, with the top left corner tile being considered tile 0 and then counting left to right, top to bottom.
+
+To support flipping in both directions, your tile set should be laid out just like for rotation, 64 tiles in an 8x8 grid. For horizontal flipping only, you should have 128 tiles in an 8x16 grid, and for vertical flipping only you should have 128 tile in a 16x8 grid. For all kinds of flipping you must pass true for the flipTiles parameter when you call defineTileSet().
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_memGetLen
+
+\brief get size of mem block that is next in the stream
+
+Reports the size of the MemBlock that will be created by an immediate call to deserialize_mem(). If you want to get the size after you've made the deserialize_mem() call, use MemBlock.getDataSize()
+
+\return the size in bytes of the MemBlock that will be created
+
+\sa derserialize_mem
+\sa MemBlock.getDataSize
+
+**/ }

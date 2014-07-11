@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::ConfigManager::setConfigString
+
+\brief set string configuration value
+
+Set the string value for the named configuration item
+
+\param inConfigItemName the name of the configuration item
+\param inValue the value for the config item
+
+**/ }

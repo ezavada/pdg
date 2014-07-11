@@ -1,0 +1,22 @@
+namespace pdg { /**
+
+\class Image
+\brief A bitmap image that can be blitted onto the screen
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+You can create an image directly from a file, or by loading it from resource files with the ResourceManager.
+
+\code
+    var img = new pdg.Image("myImage.png");
+\endcode
+
+Images are just a data object. Methods in Port are used to draw them onscreen.
+
+\sa Port.drawImage()
+\sa ResourceManager.getImage()
+
+\ingroup Graphics
+
+
+
+**/ }

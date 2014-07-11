@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onMouseDown
+
+\brief set event handler for finger down or mouse down in a sprite
+
+Only works for Sprites that have setWantsClickEvents(true).
+
+\sa SpriteTouchEvent
+\sa IEventHandler
+\sa Sprite.setWantsClickEvents()
+
+
+**/ }

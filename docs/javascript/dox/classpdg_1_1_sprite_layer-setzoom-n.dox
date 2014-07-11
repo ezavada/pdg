@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::setZoom
+
+\brief immediately set the zoom level for this layer
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setSpinFriction
+
+\brief set the friction the object faces for spinning
+
+**/ }

@@ -1,0 +1,29 @@
+namespace pdg { /**
+
+\fn pdg::Image::setEdgeClamping
+
+\brief set whether image uses edge clamping or not
+
+\deprecated Edge clamping should be on for images except when they are used as repeating textures. In a forthcoming release the drawing engine will automatically do the right thing with edge clamping, and this function will be removed from the image API.
+
+Edge Clamping is useful for applications where you want a single copy of the texture to appear on a large surface. It makes the edges on a large surface align more cleanly with the edges of the image. You should turn off edge clamping with images you intend to use as repeating textures, such as with calls to Port.drawTexture() or Port.drawTexturedSphere(). 
+
+**Fig. 1: Edge Clamping Off vs Edge Clamping On**
+
+![Fig. 1: Edge Clamping][1]
+
+In the example above you can see faint diagonal white lines on the left hand image (no edge clamping). Those lines are not present in the right hand image after edge clamping is turned on.
+
+\param inUseEdgeClamp true to use it, false to not 
+
+\note Edge Clamping is on by default for images, so you shouldn't need to change this setting in most cases.
+
+\todo Automatically turn off Edge Clamping for images when they are used as textures so setEdgeClamping can be removed from the API.
+
+\sa Port.drawTexture()
+\sa Port.drawTexturedSphere()
+
+
+  [1]: /pdg/images/edge-clamping.png
+
+**/ }

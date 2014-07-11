@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setAnchor
+
+\brief sets the anchor point for the joint on the primary sprite for pin, slide and spring joints
+
+\sa getAnchor
+\sa setOtherAnchor
+\sa Sprite.pinJoint()
+\sa Sprite.slideJoint()
+\sa Sprite.springJoint()
+
+
+**/ }

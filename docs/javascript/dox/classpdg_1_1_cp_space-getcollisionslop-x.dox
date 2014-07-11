@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::getCollisionSlop
+
+\brief get allowed amount of overlap between shapes
+
+**/ }

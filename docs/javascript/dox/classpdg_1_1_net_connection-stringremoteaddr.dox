@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::remoteAddr
+
+\brief the ip address of the remote end of the connection
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sound::pause
+
+\brief stop a sound playing until resumed
+
+**/ }

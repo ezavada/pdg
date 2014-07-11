@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::Font::getFontName
+
+\brief get the name of this font
+
+\return a string with the font name
+
+
+**/ }

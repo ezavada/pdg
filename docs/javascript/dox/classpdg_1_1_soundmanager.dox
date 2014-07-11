@@ -1,0 +1,17 @@
+namespace pdg {
+
+/*!
+
+
+
+\class SoundManager
+\brief used for application wide sound settings and options
+
+\ingroup Managers
+\ingroup Sound
+
+
+
+*/
+
+}

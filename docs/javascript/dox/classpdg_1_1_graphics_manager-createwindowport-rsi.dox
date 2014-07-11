@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::createWindowPort
+
+\brief create windowed drawing port with given dimensions, title and depth
+
+Matches the depth of the screen if depth not given. If no other port is open, this becomes the main port.
+
+\param rect the visible area of the window in screen coordinates
+\param windName the window title (optional)
+\param bpp the depth of the drawing buffer in bits per pixel (optional)
+\return the newly created Port
+
+\sa Port
+\sa createFullScreenPort
+
+**/ }

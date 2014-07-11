@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onPostAnimateLayer
+
+\brief set event handler for layer animation finished events
+
+This happens each frame when this particular layer is has finished calculating the changes for the animation step.
+
+\sa onPreAnimateLayer()
+\sa SpriteLayerEvent
+\sa IEventHandler
+
+
+**/ }

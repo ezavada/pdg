@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::getSpace
+
+\brief get the Chipmunk Physics CpSpace for the layer
+
+Layers generally share the same Chipmunk space so the sprites within them can collide
+
+\sa CpSpace
+
+**/ }

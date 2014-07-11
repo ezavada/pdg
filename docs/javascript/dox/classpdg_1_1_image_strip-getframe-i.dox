@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::ImageStrip::getFrame
+
+\brief get image that is a single frame of this multi-frame image
+
+\return a new Image object with the sub image
+
+\note this is done by referencing the original, the storage space is not duplicated
+
+\param frameNum which frame of the multiframe image to extract
+
+**/ }

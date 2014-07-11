@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::argv
+
+\brief contains the arguments passed on the command line
+
+If this was launched by being double-clicked, or on the command line with no arguments, then it will contain:
+
+    [ "/path/to/pdg", "main.js" ]
+
+pdg.argv[0] will always be the path to the pdg application.
+There will always be a .js file on the path, even if one wasn't specifically passed in main.js will be added.
+
+**/ }

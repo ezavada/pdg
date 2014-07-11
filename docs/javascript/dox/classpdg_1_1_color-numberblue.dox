@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Color::blue
+
+\brief blue component: 0.0 no blue ... 1.0 max blue
+
+**/ }

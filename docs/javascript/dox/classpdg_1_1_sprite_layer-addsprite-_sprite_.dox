@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::addSprite
+
+\brief add an existing sprite to the layer
+
+\warning if the sprite already belongs to another layer this call is ignored
+
+**/ }

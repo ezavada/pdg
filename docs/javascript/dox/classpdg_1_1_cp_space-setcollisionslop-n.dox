@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::setCollisionSlop
+
+\brief set allowed amount of overlap between shapes
+
+    Amount of encouraged penetration between colliding shapes.
+    Used to reduce oscillating contacts and keep the collision cache warm.
+    Defaults to 0.1. If you have poor simulation quality, increase this number as much as possible without allowing visible amounts of overlap.
+
+
+**/ }

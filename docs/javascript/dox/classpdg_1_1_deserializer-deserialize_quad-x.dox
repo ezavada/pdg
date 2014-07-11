@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_quad
+
+\brief deserialize a Quad
+
+Read a Quad (4 point) value from the data stream. 
+
+\return a Quad
+
+\sa Serializer.serialize_quad
+
+**/ }

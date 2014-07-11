@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Image::retainData
+
+\brief retain pixel data for use by Image.getPixel()
+
+Unless retainData is called before the image is converted to an OpenGL texture (ie: the first time it is drawn onscreen), the image data will be removed from main memory as soon as it is converted to an OpenGL texture, and getPixel() cannot be used to inspect the contents of the image.
+
+\sa getPixel()
+
+**/ }

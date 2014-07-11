@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::getTileSetImage
+
+\brief get the Image currently being used as a tile set
+
+**/ }

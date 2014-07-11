@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::CpSpace::getCollisionBias
+
+\brief get the percentage of overlap between colliding bodies that is left unfixed after each step
+
+**/ }

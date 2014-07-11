@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getMaxForce
+
+\brief get the maximum force the joint can apply to the sprites
+
+\sa setMaxForce
+
+**/ }

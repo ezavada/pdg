@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getBoundingBox
+
+\brief get the rectangle that completely encloses the object
+
+**/ }

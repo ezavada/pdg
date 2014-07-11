@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(ISerializable obj)
+
+\brief get the number of bytes used to serialize the given object, including any objects that it serializes
+
+Does not actually write any data to stream
+
+\returns the number of bytes needed
+\sa serialize_obj
+
+**/ }

@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Animated::moveTo
+
+\brief move the object to a particular location over time
+
+Honors delay given by wait()
+
+    myAnimated.wait(10).moveTo(p); // waits 10 ms before move
+
+    myAnimated.moveTo(p); // move immediately
+
+**/ }

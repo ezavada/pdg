@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\var pdg::soundEvent_DonePlaying
+
+\brief sound event type for completion of a sound
+
+\ingroup Sound
+
+**/ }

@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(uint n)
+
+\brief get the number of bytes used to serialize the given unsigned integer
+
+Does not actually write any data to stream.
+
+\returns the number of bytes needed (1-5)
+\sa serialize_uint
+
+**/ }

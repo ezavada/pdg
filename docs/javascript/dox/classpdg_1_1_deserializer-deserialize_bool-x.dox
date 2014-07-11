@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_bool
+
+\brief deserialize a 1 bit boolean value
+
+Read an one bit boolean (true/false) value from the data stream. 
+
+\return a boolean, either true or false
+
+\sa Serializer.serialize_bool
+
+**/ }

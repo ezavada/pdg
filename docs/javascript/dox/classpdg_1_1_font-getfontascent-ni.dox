@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Font::getFontAscent
+
+\brief get the distance from the top of the font to the baseline
+
+\param size the font size you are getting the ascent for
+\param style (optional) the Font Style, defaults to textStyle_Plain if not passed 
+
+\return the distance in pixels
+
+
+**/ }

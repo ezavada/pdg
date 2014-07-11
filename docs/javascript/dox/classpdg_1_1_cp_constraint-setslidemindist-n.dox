@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setSlideMinDist
+
+\brief set the minimum distance apart for the anchors of a slide joint
+
+\sa getSlideMinDist
+\sa setSlideMaxDist
+\sa Sprite.slideJoint()
+
+
+**/ }

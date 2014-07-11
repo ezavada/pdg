@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onAnimationStart
+
+\brief set event handler for layer animation complete events
+
+This happens just before the sprite system starts calculating animation changes for the layers
+
+\sa SpriteLayerEvent
+\sa IEventHandler
+
+**/ }

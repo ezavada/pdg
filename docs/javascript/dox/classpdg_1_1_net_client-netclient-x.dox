@@ -1,0 +1,19 @@
+namespace pdg { /**
+
+\fn pdg::NetClient::NetClient( object opts )
+
+\brief constructor for NetClient, sets client options
+
+Construct a new NetClient with particular options or using default values if no options are specified.
+
+Available options are:
+
+ 1. noDatagram - flag to indicate that we should not try to establish UDP communication with the server (defaults to false, allowing UDP)
+
+\param opts a Javascript object with the options above
+
+\code 
+    var myClient = new pdg.NetClient( {noDatagram = true} );
+\endcode
+
+**/ }

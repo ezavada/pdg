@@ -1,0 +1,25 @@
+namespace pdg { /**
+
+\fn pdg::Color::assign
+
+\brief copy a color
+
+Sets this color to be the same as another color
+
+\code
+	var c1 = new Color('teal');
+	var c2 = new Color('black');
+
+	c1.assign(c2);
+	console.log('c1 is now '+c1);
+\endcode
+
+Output:
+
+    c1 is now Color(0,0,0)
+
+\returns the color (c1 in the example)
+
+\note Unlike a simple assignment (c1 = c2), assign() copies the values but leaves c1 and c2 independent. Simple assignment causes c1 and c2 to point to the same data, so changing one changes the other.
+
+**/ }

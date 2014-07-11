@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(Rect)
+
+\brief get the number of bytes used to serialize the given Rect
+
+Does not actually write any data to stream
+
+\return the number of bytes needed (0-17)
+
+\note this can return 0 under some conditions, such as an Rect located at (0,0) with zero width or height, which is optimized to be stored in 2 bits.
+
+\sa serialize_rect
+
+**/ }

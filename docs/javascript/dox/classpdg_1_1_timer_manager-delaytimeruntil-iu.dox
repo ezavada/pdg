@@ -1,0 +1,19 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::delayTimerUntil
+
+\brief postpone the normal firing of a timer until a specific time
+
+Sets the specific time in milliseconds (as returned by getMilliseconds() ) at which the timer should fire. If the timer is a repeating timer, this will only postpone the next firing time; it will fire at it's normal interval from then on.
+
+If the timer is paused, this un-pauses the timer so it can fire at the specified time.
+
+\param id the id number of the timer to postpone
+\param msTime the millisecond time when it should fire
+
+\note Millisecond accuracy is attempted but not guaranteed. An additional delay of several milliseconds is common.
+
+\sa delayTimer()
+\sa pauseTimer()
+
+**/ }

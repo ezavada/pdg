@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\class Vector
+\brief vector (magnitude and direction) within a 2D coordinate system.
+
+Point provides support for dealing with vectors as x, y floating point values
+in 2 dimensional space. A vector is similar to an Offset but can be treated as
+a magnitude and direction where an Offset can't. 
+The PDG coordinate space starts with the top left corner of the drawing port at 
+Point(0,0) and the bottom left corner at Point( width, height );
+\ingroup Graphics
+\ingroup Animation
+
+
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onMouseUp
+
+\brief set event handler for finger up or mouse up in a sprite
+
+Only works for Sprites that have setWantsClickEvents(true).
+
+\sa SpriteTouchEvent
+\sa IEventHandler
+\sa Sprite.setWantsClickEvents()
+
+
+**/ }

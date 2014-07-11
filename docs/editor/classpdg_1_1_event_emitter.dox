@@ -1,0 +1,6 @@
+\brief Distributes events to event handlers.
+
+\details The EventEmitter expects the game developer to implement IEventHandler subclasses and register them to handle various events they are interested in. 
+
+\See IEventHandler
+\see Events

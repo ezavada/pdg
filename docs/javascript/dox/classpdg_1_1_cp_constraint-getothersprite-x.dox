@@ -1,0 +1,25 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getOtherSprite
+
+\brief get the secondary Sprite for the joint
+
+When you create a joint in the PDG Engine, you do this by calling one of the Joint or Limit functions of a Sprite, and passing in another Sprite as a parameter. The sprite that you passed in as a parameter is the secondary Sprite.
+
+\note The secondary sprite is the one represented by the cpBody in Chipmunk retrieved calling cpConstraintGetB()
+
+\returns the secondary Sprite for the joint
+
+\sa Sprite.gear()
+\sa Sprite.grooveJoint()
+\sa Sprite.motor()
+\sa Sprite.pinJoint()
+\sa Sprite.pivotJoint()
+\sa Sprite.ratchet()
+\sa Sprite.rotaryLimit()
+\sa Sprite.rotarySpring()
+\sa Sprite.slideJoint()
+\sa Sprite.springJoint()
+
+
+**/ }

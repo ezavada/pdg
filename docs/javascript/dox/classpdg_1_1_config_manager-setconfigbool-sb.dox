@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::ConfigManager::setConfigBool
+
+\brief set boolean configuration value
+
+Set the boolean value for the named configuration item
+
+\param inConfigItemName the name of the configuration item
+\param inValue the value for the config item
+
+**/ }

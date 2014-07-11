@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::createFont
+
+\brief get a font with optional scaling adjust
+
+\param fontName the name of the font (ie: "Arial" or "Times")
+\param scalingFactor an across-the-board amount to adjust the normal size of the font by
+\return the Font requested
+
+\sa Font
+
+**/ }

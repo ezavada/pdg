@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\var pdg::LogManager::init_AppendToExisting
+
+\brief if an existing file is present, append to it
+
+This flag is passed as initMode to LogManager.initialize() to cause the new log entries to be appended to an existing file. If no file exists, a new one will be created.
+
+\sa initialize()
+
+**/ }

@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Image::getSubsection(Rect quad)
+
+\brief get image that is a rectangular subsection of this image
+
+\return a new Image object with the sub image
+
+\note this is done by referencing the original, the storage space is not duplicated
+
+\param
+    quad	the rectangular sub-region desired 
+
+**/ }

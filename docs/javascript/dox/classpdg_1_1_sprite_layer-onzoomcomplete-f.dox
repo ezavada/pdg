@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::onZoomComplete
+
+\brief set event handler for this layer finishing zoom animation
+
+\sa zoom()
+\sa zoomTo()
+\sa SpriteLayerEvent
+\sa IEventHandler
+
+
+**/ }

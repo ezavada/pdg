@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Animated::accelerate
+
+\brief change the object's speed over time
+
+Change the speed of an object in the current direction of motion. 
+
+Honors delay given by wait()
+
+**/ }

@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::Sound::setOffsetX
+
+\brief set the left/right positioning of the sound's origin
+
+Set the apparent left/right positioning of the sound to make the sound appear to be coming from a particular location in the view port.
+
+\note Since different speaker setups and screen sizes can change the apparent location, this is a relative location only.
+
+\warning On Mac OS X this only works if the sound is in stereo, and the OS is version 10.7 (aka Lion) or later. It will fail silently on earlier versions or with mono or multichannel sounds; and the sound will play with center balance.
+
+\param offsetX the target X offset from the center of the main view port
+
+\sa changeOffsetX
+\sa GraphicsManager.getMainPort
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::stopAllForces
+
+\brief remove all forces that were acting on the object (except friction)
+
+**/ }

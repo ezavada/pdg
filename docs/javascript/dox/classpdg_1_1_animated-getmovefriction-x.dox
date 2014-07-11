@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::getMoveFriction
+
+\brief get the amount of friction for movement
+
+**/ }

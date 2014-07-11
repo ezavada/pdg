@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Point::Point()
+
+\brief create with x = 0, y = 0
+
+**/ }

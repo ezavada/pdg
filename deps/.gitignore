@@ -1,0 +1,13 @@
+glfw/examples/*.app
+glfw/examples/listmodes
+glfw/examples/*.dSYM
+glfw/examples/mtbench
+glfw/examples/mthello
+glfw/lib/cocoa/libglfw.a
+glfw/lib/cocoa/libglfw.dylib
+glfw/tests/*.app
+glfw/tests/defaults
+glfw/tests/*.dSYM
+glfw/tests/events
+glfw/tests/joysticks
+glfw/tests/version

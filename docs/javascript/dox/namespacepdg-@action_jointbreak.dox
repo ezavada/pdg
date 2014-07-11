@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\var pdg::action_JointBreak
+
+\brief 
+
+\ingroup Physics
+
+**/ }

@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serializedSize(Quad)
+
+\brief get the number of bytes used to serialize the given Quad
+
+Does not actually write any data to stream
+
+\return the number of bytes needed (0-34)
+
+\note this can return 0 under some conditions, such as a Quad made up of 4 points at the origin, which is optimized to be stored in 4 bits.
+
+\sa serialize_quad
+
+**/ }

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Point::Point(object xy)
+
+\brief create and set x & y values
+
+\param xy an object with x and y members, for example: {x: 1, y: 4}
+
+**/ }

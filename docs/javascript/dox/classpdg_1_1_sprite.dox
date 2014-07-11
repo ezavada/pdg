@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+
+\class Sprite
+\brief animated, moving image that is automatically moved, animated, and drawn
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+Things that happen to a sprite that might require intervention, such as collisions
+completed animations, going offscreen, etc... will generate events 
+\ingroup Animation
+
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::stopSpinning
+
+\brief stop any spinning the object was doing
+
+**/ }

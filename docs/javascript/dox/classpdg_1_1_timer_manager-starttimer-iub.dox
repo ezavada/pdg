@@ -1,0 +1,24 @@
+namespace pdg { /**
+
+\fn pdg::TimerManager::startTimer
+
+\brief create and start a new timer
+
+Create a new timer and start it running. If the timer is a one-shot timer, it will wait *delay* ms then fire off a pdg.eventType_Timer event. If it is a repeating timer it will fire repeatedly at the **delay** ms interval until canceled by a call to cancelTimer(). 
+
+If there is already a timer with the given id, it will be removed and the new timer will replace it. 
+
+You must install an event handler to get the timer events, either in the TimerManager itself, or in the EventManager. For that reason it is often more convenient to use onTimeout() or onInterval(), since they set up the event handler for you.
+
+\param id the id number of the timer to start or reset
+\param delay the time before the timer should fire (or the firing interval if this is a repeating timer)
+\param oneShot true mean
+
+\note This is a safe to do even if from within the handler of a timer with the same id
+
+\sa cancelTimer()
+\sa onTimeout()
+\sa onInterval()
+
+
+**/ }

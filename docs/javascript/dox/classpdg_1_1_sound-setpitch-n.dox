@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Sound::setPitch
+
+\brief set the pitch of a sound
+
+Raise or lower the pitch of a sound by up to an octave.
+
+\param pitchOffset a value between -1.0 and 1.0, with -1.0 meaning down an octave, and +1.0 being up an octave.
+
+\sa changePitch
+
+\todo Not implemented on Windows
+
+**/ }

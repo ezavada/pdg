@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::moveToFront
+
+\brief move this layer in front of all other layers
+
+**/ }

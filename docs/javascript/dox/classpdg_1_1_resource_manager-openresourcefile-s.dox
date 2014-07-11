@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::ResourceManager::openResourceFile
+
+\brief add a zip file or a directory to the resource search path
+
+Add a zip file or a resource directory to the list of locations searched for resources. Returns a resource file reference number, which can be passed to closeResourceFile() to remove it from the list.
+
+\param filename the name of a zip file; or the name of a directory that contains non-zip resources
+
+\return a resource file reference number
+
+\note the ref number returned is not a file system ref number, and cannot be used for any file system operations. It can only be passed to closeResourceFile()
+
+\sa closeResourceFile()
+
+**/ }

@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Sound::isPaused
+
+\brief find out if a sound is paused
+
+\returns true if the sound is currently paused, false if not
+
+\note a sound that was never started is not considered paused
+
+**/ }

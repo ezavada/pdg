@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::portToLayerVector
+
+\brief adjust the vector to account for layer transformations
+
+Since a vector is relative rather than fixed in coordinate space, this means only rotating it around 0,0 to match the layer rotation, and changing the vector length by the layer zoom. The layer origin is not factored in.
+
+\param o Vector in port coordinates
+
+\returns Vector in layer coordinates
+
+**/ }

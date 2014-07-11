@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::serverPort
+
+\brief the port on which the server listens
+
+**/ }

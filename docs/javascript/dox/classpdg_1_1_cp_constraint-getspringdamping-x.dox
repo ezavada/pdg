@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getSpringDamping
+
+\brief get the damping for a rotary spring or a spring joint
+
+\sa setSpringDamping
+\sa getSpringStiffness
+\sa Sprite.rotarySpring()
+\sa Sprite.springJoint()
+
+**/ }

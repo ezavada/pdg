@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::NetConnection::send(ISerializable message)
+
+\brief send a serializable object to the remote endpoint
+
+The object is sent guaranteed delivery (TCP), and will arrive in the order sent with other messages. 
+
+NetConnection handles packet framing for you, so the NetConnection on the remote endpoint will receive an onMessage callback with the object you sent. If the message cannot be sent, you will eventually get an onClose() callback to indicate that the connection has been lost.
+
+\param message the serializable object to send
+
+\return itself (for call chaining)
+
+\sa ISerializable
+
+**/ }

@@ -1,0 +1,23 @@
+namespace pdg { /* *
+
+\fn pdg::ResourceManager::getSound
+
+\brief load a sound from resources
+
+Load a sound with the given name. Returns a Sound object.  If the resource doesn't exits, false is returned, so you can check for the sound loading with:
+
+\code
+	var snd = pdg.res.getSound('myMusic.snd');
+	if (snd === false) {
+		console.log('sound not found!');
+	} else {
+		snd.play();  // play the sound
+	}
+\endcode
+
+
+\param soundName the name of the sound resource.
+\return a Sound object, or **false** if not found
+
+
+* */ }

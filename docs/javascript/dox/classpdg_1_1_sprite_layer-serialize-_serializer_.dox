@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::serialize
+
+\brief serialize the sprite layer and all the sprites in it
+
+\note uses setting from setSerializationFlags() to determine how to optimize serialization for particular needs
+
+\sa setSerializationFlags()
+
+**/ }

@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::registerSerializableClass
+
+\brief register a particular class as implementing ISerializable interface
+
+\relatedalso ISerializable
+
+\ingroup Serialization
+
+**/ }

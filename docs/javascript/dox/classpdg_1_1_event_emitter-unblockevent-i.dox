@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::EventEmitter::unblockEvent 
+
+\brief stop ignoring events of a particular type
+      
+\param inEventType the type of event to unblock   
+
+**/ }

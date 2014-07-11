@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setOtherAnchor
+
+\brief sets the anchor point for the joint on the secondary sprite
+
+\sa getOtherAnchor
+\sa Sprite.grooveJoint()
+\sa Sprite.pinJoint()
+\sa Sprite.slideJoint()
+\sa Sprite.springJoint()
+
+
+**/ }

@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::hide
+
+\brief stop rendering this layer. 
+
+Layer continues doing animation calculations and generating events from animation.
+
+**/ }

@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setSlideMaxDist
+
+\brief set the maximum disable apart for the anchors of a slide joint
+
+\sa getSlideMaxDist
+\sa setSlideMinDist
+\sa Sprite.slideJoint()
+
+**/ }

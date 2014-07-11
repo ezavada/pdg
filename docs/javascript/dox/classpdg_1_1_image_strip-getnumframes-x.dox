@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::ImageStrip::getNumFrames
+
+\brief how many frames in this multi-frame image
+
+Frames are arranged horizontally within an ImageStrip, so this is the same as setting the number of horizontal slices the image is divided into, one frame per slice, like a filmstrip.
+
+\return the number of frames
+
+\sa setNumFrames()
+\sa setFrameWidth()
+
+**/ }

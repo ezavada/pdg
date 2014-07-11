@@ -1,0 +1,8 @@
+<map id="SpriteLayer" name="SpriteLayer">
+<area shape="rect" id="node13" href="$classpdg_1_1_tile_layer.html" title="TileLayer" alt="" coords="127,315,203,343"/>
+<area shape="rect" id="node2" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,161,101,189"/>
+<area shape="rect" id="node4" href="$classpdg_1_1_animated.html" title="Animated" alt="" coords="127,161,204,189"/>
+<area shape="rect" id="node6" href="$classpdg_1_1_serializable.html" title="Serializable\&lt; SpriteLayer \&gt;" alt="" coords="228,161,409,189"/>
+<area shape="rect" id="node8" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="272,83,365,111"/>
+<area shape="rect" id="node10" href="$classpdg_1_1_ref_counted_obj.html" title="RefCountedObj" alt="" coords="262,6,375,34"/>
+</map>

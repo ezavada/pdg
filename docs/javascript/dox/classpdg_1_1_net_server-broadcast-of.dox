@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::broadcast
+
+\brief send a message to all connected clients
+
+Go through all the NetConnections in the connections array send the message to each of them. If a filter function is used, instead of sending to all, only send to the ones that filter function returns true for. 
+
+The filter function should take one parameter, a Net Connection, and should return true if the connection passes the filter, and false if it is excluded by the filter.
+
+\param message the message to send
+\param filter the filter function. If not passed, all connections will be sent the message.
+
+\return the number of connections that were actually sent a message
+
+**/ }

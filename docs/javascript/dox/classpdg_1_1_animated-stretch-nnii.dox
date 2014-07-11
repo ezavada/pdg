@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Animated::stretch
+
+\brief change the dimensions of the object over time
+
+Honors delay given by wait()
+
+**/ }

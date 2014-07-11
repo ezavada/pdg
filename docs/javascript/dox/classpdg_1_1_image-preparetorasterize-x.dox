@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Image::prepareToRasterize
+
+\brief bind the image into an OpenGL texture and free image data from main memory
+
+You usually won't need to do this explicitly, it is done automatically the first time an image is drawn. This is here to allow you to convert images ahead of time if needed to prevent frame rate hits from conversion while drawing.
+
+\see retainAlpha()
+\see retainData()
+
+**/ }

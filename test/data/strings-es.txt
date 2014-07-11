@@ -1,0 +1,28 @@
+#################################
+#
+# Test String File
+#
+# Note: Only one tab must follow after the ID number 
+#       otherwise the line will be ignored.
+#
+# This is a Unicode UTF-8 file
+#
+# If the following symbols don't look like a copyright
+# symbol inside double quotes then you are not using
+# a UTF-8 editor and should not continue to edit this file
+# nor save any changes
+#
+#    “©”
+#
+#################################
+
+200	Granos|grain.png
+201	Uvas|grapes.png
+202	Aceitunas|olives.png
+203	Minerales|ore.png
+204	Madera|timber.png
+205	Lana|wool.png
+
+300	¡Oh, Romeo, Romeo! ¿Por qué eres Romeo? Renuncia a tu padre, abjura tu nombre; o, si no quieres esto, jura solamente amarme y ceso de ser una Capuleto.
+
+500	No hay versión zip de este mensaje

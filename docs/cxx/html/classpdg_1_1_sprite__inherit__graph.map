@@ -1,0 +1,7 @@
+<map id="Sprite" name="Sprite">
+<area shape="rect" id="node2" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,161,101,189"/>
+<area shape="rect" id="node4" href="$classpdg_1_1_animated.html" title="Animated" alt="" coords="127,161,204,189"/>
+<area shape="rect" id="node6" href="$classpdg_1_1_serializable.html" title="Serializable\&lt; Sprite \&gt;" alt="" coords="229,161,376,189"/>
+<area shape="rect" id="node8" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="256,83,349,111"/>
+<area shape="rect" id="node10" href="$classpdg_1_1_ref_counted_obj.html" title="RefCountedObj" alt="" coords="246,6,359,34"/>
+</map>

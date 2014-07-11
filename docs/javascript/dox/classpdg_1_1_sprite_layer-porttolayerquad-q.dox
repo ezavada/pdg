@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::portToLayerQuad
+
+\brief adjust the quad to account for layer transformations
+
+Adjusts for layer rotation, zoom and scrolling (origin) to get layer coordinates for the quad on the screen.
+
+\param q Quad in port coordinates
+
+\returns Quad in layer coordinates
+
+**/ }

@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getMouse
+
+\brief get mouse position
+
+Gets the screen location of the given mouse or finger touch. For touch devices the number represents the order the fingers went down rather than specific numbered devices.
+
+\param mouseNumber the particular mouse; defaults to zero, the primary mouse or first touch
+
+\returns the Point location of the mouse or touch
+
+\note this relies on events from the OS, so you must be calling pdg.idle() or be in a pdg.run() loop to get mouse data.
+
+**/ }

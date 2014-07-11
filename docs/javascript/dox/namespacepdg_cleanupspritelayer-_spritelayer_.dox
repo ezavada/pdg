@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::cleanupSpriteLayer
+
+\brief free all the memory used by a SpriteLayer
+
+\related SpriteLayer
+
+**/ }

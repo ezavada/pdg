@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::getType
+
+\brief returns a string for the type of joint
+
+\return one of: "PinJoint", "SlideJoint", "PivotJoint", "GrooveJoint", "SpringJoint", "RotarySpring", "RotaryLimit", "Ratchet", "Gear",  "Motor"
+
+
+**/ }

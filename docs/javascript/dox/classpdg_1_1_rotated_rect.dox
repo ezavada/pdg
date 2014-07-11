@@ -1,0 +1,18 @@
+namespace pdg {
+
+/*!
+
+
+\class RotatedRect
+\brief rectangle with rotation for 2D coordinate system.
+
+RotatedRect is a class that provides support for dealing with rotating
+rectangles in 2 dimensional space.
+\ingroup Graphics
+\ingroup Animation
+
+
+
+*/
+
+}

@@ -1,0 +1,21 @@
+namespace pdg { /**
+
+\class Point
+\brief point for 2D coordinate system
+
+Point provides support for dealing with points as x, y floating point values
+in 2 dimensional space. The PDG coordinate space starts with the top left corner of the drawing port at 
+Point(0,0) and the bottom left corner at Point( width, height );
+
+![Coordinates Diagram][1]
+
+
+\ingroup Graphics
+\ingroup Animation
+
+
+  [1]: /pdg/images/coordinates.gif
+
+
+
+**/ }

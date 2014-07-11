@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::CpConstraint::setErrorBias
+
+\brief set the percentage of joint error than remains unfixed after one second
+
+\sa getErrorBias
+\sa http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint
+
+
+**/ }

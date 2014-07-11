@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::zoom
+
+\brief animated zoom by a particular factor over time
+
+Generates SpriteLayerEvent with #action_ZoomComplete when done
+
+\sa zoomTo()
+\sa SpriteLayerEvent
+
+**/ }

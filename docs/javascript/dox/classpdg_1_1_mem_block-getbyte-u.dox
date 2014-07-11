@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::MemBlock::getByte
+
+\brief get a single byte from an specific location in the block
+
+\param i the offset to the desired byte within the block
+
+\return the byte value stored at the offset (0..255)
+
+**/ }

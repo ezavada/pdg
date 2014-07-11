@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_str
+
+\brief serialize a JavaScript string
+
+Writes the string into the data stream. 
+
+\note data size: varies, call serializedSize() to determine. Format is Unicode UTF-8.
+
+\sa serializedSize(string)
+\sa Deserializer.deserialize_str
+
+
+**/ }

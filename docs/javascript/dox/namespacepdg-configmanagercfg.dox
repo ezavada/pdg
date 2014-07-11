@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::cfg
+
+\brief the singleton instance of the ConfigManager
+
+\code
+	var username = pdg.cfg.getConfigString('username');
+\endcode
+
+\related pdg::ConfigManager
+\ingroup Managers
+
+
+**/ }

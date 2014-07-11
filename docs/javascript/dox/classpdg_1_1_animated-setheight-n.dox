@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setHeight
+
+\brief set the object's height
+
+**/ }

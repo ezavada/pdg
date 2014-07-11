@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::layerToPortVector
+
+\brief translate the point to account for layer transformations
+
+Adjusts for layer rotation, zoom to get drawing coordinates. As with offset, vectors are not fixed in space, so origin is not considered.
+
+\param v Vector in layer coordinates
+
+\returns Vector in port coordinates
+
+
+**/ }

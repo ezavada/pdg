@@ -1,0 +1,57 @@
+namespace pdg { /**
+
+\class ISpriteDrawHelper
+\brief helper for drawing sprite overlays and add-on effects
+
+\warning **API Stability: 1 - Experimental**. This API was introduced recently and gotten little or no real use. It may change or be removed in future versions. It may not be completely implemented and may be missing important pieces of functionality. Please try it out and provide feedback.
+
+Implement this interface to do extra drawing stuff for a specific Sprite
+then start using it by calling the sprite's setDrawHelper() method.
+You can only have one Sprite Draw Helper attached to a particular sprite
+for normal drawing (before the sprite would normally draw) and one for 
+post draw (after the sprite has been drawn)
+
+For those coding in Javascript, there is an implementation of ISpriteDrawHelper 
+that maps a function definition to the draw call. So to create a helper:
+
+\code
+	var myHelper = new pdg.ISpriteDrawHelper(function(sprite, port) {
+		console.log("in my sprite draw helper for " + sprite );
+		var r = sprite.getLayer().layerToPortRect(sprite.getFrameRotatedBounds());
+		port.fillRect(r, "black");
+		port.frameRect(r, "white");
+		return false;  // don't let sprite draw itself (ignored for post draw)
+	});
+	mySprite.setDrawHelper(myHelper);
+\endcode
+
+If you need something more complex, you can also use classify to create a new
+Javascript class that derives from pdg.ISpriteDrawHelper, and it will call the 
+draw() method of your class. For example:
+
+\code
+	classify(pdg.ISpriteDrawHelper, 'MyDrawHelperClass', function() {
+		def('draw', function(sprite, port) {
+			console.log("MyDrawHelperClass.draw(" + sprite + ")" );
+			return true;  // let sprite draw itself (ignored for post draw)
+		});
+	});
+	mySprite.setDrawHelper( new MyDrawHelperClass() );
+\endcode
+
+Your Custom Function:
+---------------------
+
+As you can see from the examples above, your Sprite Draw Helper function (or draw() method) will be called with two parameters, and return a boolean:
+\param sprite the Sprite that is being drawn
+\param port the Port where the sprite should be drawn
+\return **true** if the normal Sprite drawing should happen; or **false** if the normal Sprite drawing should be skipped. This return result only applies when called for pre-draw. If the helper is installed for as a post-draw helper, using setSpritePostDraw(), then the return result is ignored.
+
+\sa Sprite.setDrawHelper()
+
+\related pdg::Sprite
+\ingroup Graphics
+
+
+
+**/ }

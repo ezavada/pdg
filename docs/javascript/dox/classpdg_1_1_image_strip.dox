@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\class ImageStrip
+\brief bitmap image containing a number of frames that can be blitted onto the screen
+
+\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+You can create an image strip directly from a file, or by loading it from resource files with the ResourceManager.
+
+\ingroup Graphics
+
+
+
+**/ }

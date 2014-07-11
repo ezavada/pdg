@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::fadeOut
+
+\brief fade out the entire layer to full transparency over time
+
+Generates an eventType_SpriteLayer action_FadeOutComplete event when done.
+
+\warning does not honor delay specified by wait()
+
+**/ }

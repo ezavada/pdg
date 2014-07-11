@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::Image::getAlphaValue(int x, int y)
+
+\brief get the value for the alpha channel at the given x, y coordinates in the image
+
+The alpha channel is the transparency of the image. An alpha channel value of 0 is completely transparent, 255 is completely opaque. If the image does not have an alpha channel, then it will return the overall image opacity, as if you had called getOpacity() * 255. 
+
+\param x the x coordinate of the point in the image to get the data from
+\param y the y coordinate of the point in the image to get the data from
+\return alpha channel value from 0..255
+
+\note When an image is first drawn into a port, the image is data is converted into an OpenGL texture and the original image data is purged. Once that happens getAlphaValue() will no longer work. If you need to access the image's alpha channel even after drawing it, use retainAlpha() to prevent the alpha channel from being purged.
+
+\sa getOpacity()
+\sa retainAlpha()
+
+**/ }
