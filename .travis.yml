@@ -4,3 +4,8 @@ compiler:
   - clang
 # Change this to your needs
 script: ./configure && make
+
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq xorg-dev libglu1-mesa-dev 
+ 
