@@ -1,9 +1,9 @@
 @echo off
 set NODE_DEBUG=
 
-echo Starting echo server ...
-start /B %PDG_ROOT%\tools\node.exe %PDG_ROOT%\tools\echo_tcp.js
-for /F "TOKENS=1,2,*" %%a in ('tasklist /FI "IMAGENAME eq node.exe"') do set ECHOSERVER_PID=%%b
+echo SKIPPED - Starting echo server ...
+REM start /B %PDG_ROOT%\tools\node.exe %PDG_ROOT%\tools\echo_tcp.js
+REM for /F "TOKENS=1,2,*" %%a in ('tasklist /FI "IMAGENAME eq node.exe"') do set ECHOSERVER_PID=%%b
 
 echo Running Tests ...
 cd %PDG_ROOT%\test
