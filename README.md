@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.org/ezavada/pdg.svg)](https://travis-ci.org/ezavada/pdg/) - linux
+
 Pixel Dust Game Engine (PDG)
 ============================
 
