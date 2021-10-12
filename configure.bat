@@ -10,8 +10,14 @@ reg query "HKEY_CLASSES_ROOT\VisualStudio.DTE.11.0" >> nul 2>&1
 if "%ERRORLEVEL%" NEQ "1" (set MODE=12)
 reg query "HKEY_LOCAL_MACHINE\Software\Microsoft\VisualStudio\12.0" >> nul 2>&1
 if "%ERRORLEVEL%" NEQ "1" (set MODE=12)
+reg query "HKEY_CLASSES_ROOT\VisualStudio.DTE.15.0" >> nul 2>&1
+if "%ERRORLEVEL%" NEQ "1" (set MODE=15)
+reg query "HKEY_LOCAL_MACHINE\Software\Microsoft\VisualStudio\15.0" >> nul 2>&1
 if "%MODE%" NEQ "0" ( 
-  if "%MODE%" NEQ "10" ( 
+  if "%MODE%" == "15" ( 
+    echo Creating Project Files for Visual Studio 15...
+    cmake -G "Visual Studio 15" .. -DCAN_BUILD_INTERFACES=OFF
+  ) else if "%MODE%" == "12" ( 
     echo Creating Project Files for Visual Studio 12...
     cmake -G "Visual Studio 12" .. -DCAN_BUILD_INTERFACES=OFF
   ) else ( 
