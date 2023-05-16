@@ -138,17 +138,17 @@ void
 Serializer::serialize_uint(uint32 len) {
 	ensureSpace(5);
 	SERIALIZE_START;
-	if (len < tag_smallestLenTag) {
-		serialize_1(len);
-	} else if (len <= USHRT_MAX) {
-		// large value
-		serialize_1(tag_longLen);
-		serialize_2(len);
-	} else {
-		// very large value
-		serialize_1(tag_veryLongLen);
-		serialize_4(len);
-	}
+		if (len < tag_smallestLenTag) {
+			serialize_1u(len);
+		} else if (len <= USHRT_MAX) {
+			// large value
+			serialize_1u(tag_longLen);
+			serialize_2u(len);
+		} else {
+			// very large value
+			serialize_1u(tag_veryLongLen);
+			serialize_4u(len);
+		}
 	SERIALIZED("uint", 0);
 }
 
@@ -208,7 +208,7 @@ Serializer::serialize_obj(const ISerializable* obj) {
 //	obj->addRef();
 	serialize_3u(tag_object);
 	uint32 tag = obj->getMyClassTag();
-	serialize_4(tag);
+	serialize_4u(tag);
 	SERIALIZED("obj ", 0);   // stop here so we can see the object being serialized
 #ifdef SERIALIZER_SANITY_CHECKS
 	serialize_2(mSerializedInstances.size());

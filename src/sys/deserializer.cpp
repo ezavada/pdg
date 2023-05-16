@@ -166,9 +166,9 @@ uint32 Deserializer::deserialize_uint() {
 	if (p + 1 > mDataEnd) return 0;
 	uint32 val = *p++;
 	if (val == tag_longLen) {
-		val = deserialize_2();
+		val = deserialize_2u();
 	} else if (val == tag_veryLongLen) {
-		val = deserialize_4();
+		val = deserialize_4u();
 	}
 	DESERIALIZE_OUT;
 	return val;
