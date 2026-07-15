@@ -38,10 +38,26 @@
 
 #define PDG_USING_V8
 
+// Undefine Windows min/max macros that conflict with V8
+#ifdef _WIN32
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+#endif
+
 #include <v8.h>
 
-#define SCRIPT_OBJECT_REF   	v8::Persistent<v8::Object>
-#define SCRIPT_CLEANUP_PARAM	v8::Handle<v8::Object> obj
+// Using v8::UniquePersistent instead of v8::Persistent to avoid copy constructor issues
+// in newer V8 versions. UniquePersistent is movable and can be used in classes that
+// need copy semantics.
+// rules here:
+// https://developers.google.com/v8/embed#handles-and-garbage-collection
+
+#define SCRIPT_OBJECT_REF   	v8::UniquePersistent<v8::Object>
+#define SCRIPT_CLEANUP_PARAM	v8::UniquePersistent<v8::Object> &obj
 #define INIT_SCRIPT_OBJECT(obj)
 
 namespace pdg {
@@ -67,9 +83,14 @@ void CleanupISpriteDrawHelperScriptObject(SCRIPT_CLEANUP_PARAM);
 void CleanupISerializableScriptObject(SCRIPT_CLEANUP_PARAM);
 void CleanupSerializerScriptObject(SCRIPT_CLEANUP_PARAM);
 void CleanupDeserializerScriptObject(SCRIPT_CLEANUP_PARAM);
+void CleanupDrawingScriptObject(SCRIPT_CLEANUP_PARAM);
+void CleanupElementRefScriptObject(SCRIPT_CLEANUP_PARAM);
+void CleanupAttributesScriptObject(SCRIPT_CLEANUP_PARAM);
+void CleanupPolygonScriptObject(SCRIPT_CLEANUP_PARAM);
+void CleanupSplineScriptObject(SCRIPT_CLEANUP_PARAM);
 
 // initializes the bindings for the pdg module
-void initBindings(v8::Handle<v8::Object> target);
+void initBindings(v8::Local<v8::Object> target);
 
 } // end namespace pdg
 
