@@ -10,9 +10,9 @@ directly into both open source and proprietary projects without restriction.  A
 Java archive (JAR) file containing these classes is also shipped with the
 "official" distribution packages of libjpeg-turbo.
 
-TJExample.java, which should also be located in the same directory as this
-README file, demonstrates how to use the TurboJPEG Java API to compress and
-decompress JPEG images in memory.
+TJComp.java, TJDecomp.java, and TJTran.java, which should be located in the
+same directory as this README file, demonstrate how to use the TurboJPEG Java
+API to compress, decompress, and transform JPEG images in memory.
 
 
 Performance Pitfalls
@@ -38,7 +38,7 @@ Installation Directory
 ----------------------
 
 The TurboJPEG Java Wrapper will look for the TurboJPEG JNI library
-(libturbojpeg.so, libturbojpeg.jnilib, or turbojpeg.dll) in the system library
+(libturbojpeg.so, libturbojpeg.dylib, or turbojpeg.dll) in the system library
 paths or in any paths specified in LD_LIBRARY_PATH (Un*x), DYLD_LIBRARY_PATH
 (Mac), or PATH (Windows.)  Failing this, on Un*x and Mac systems, the wrapper
 will look for the JNI library under the library directory configured when
