@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::height()
+
+\brief get the height of this rectangle
+
+**/ }

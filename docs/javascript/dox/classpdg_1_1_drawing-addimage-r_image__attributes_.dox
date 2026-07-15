@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addImage(rect, image, attrs)
+
+\brief adds an image element to the drawing
+
+**/ }

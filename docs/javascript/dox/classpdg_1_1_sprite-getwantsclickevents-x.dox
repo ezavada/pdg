@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getWantsClickEvents()
+
+\brief returns true if click events are enabled for this sprite
+
+**/ }

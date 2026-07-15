@@ -34,6 +34,7 @@
 #include "pdg_project.h"
 
 #include "pdg/sys/sound.h"
+#include "audio_cleanup_manager.h"
 
 #include <vector>
 
@@ -58,6 +59,10 @@ public:
     virtual void    setMute(bool muted);
     // give time to the sound layer to do anything it may need to do, such as refilling buffers
     virtual void    idle();
+    // stop all currently playing sounds
+    virtual void    stopAllSounds();
+    // check if we're in shutdown mode (uses pdg_LibIsQuitting())
+    virtual bool    isShuttingDown() const;
 
     void            soundPlaying(Sound* sound); // inform the Sound Manager there is a new sound playing
     void            soundStopped(Sound* sound); // the sound is no longer playing

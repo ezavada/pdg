@@ -152,7 +152,7 @@ namespace pdg {
                             sleepTime = AQUIRE_USEC_INTERVAL;   // sleep for a bit and see if we can get it later
                             waitMilliseconds -= AQUIRE_MILLISEC_INTERVAL;
                         }
-                        PosixAPI::usleep(sleepTime);  // note: don't call this with sleepTime >= 1,000,000 
+                        PosixAPI::usleep((useconds_t)sleepTime);  // note: don't call this with sleepTime >= 1,000,000
                     }
                 }
                 return true;   // we got the lock
@@ -269,19 +269,19 @@ public:
 
 class timeout : public std::exception {	
 public:
-	virtual const char* what() const throw() { return "timeout"; }
+	virtual const char* what() const noexcept { return "timeout"; }
 };
 
 // for exception safe Mutexes
 class AutoMutex {
 public:
-    AutoMutex(Mutex* inMutex) throw()
+    AutoMutex(Mutex* inMutex) noexcept
         : mMutex(inMutex) {
             if (mMutex) { 
                 inMutex->aquire();  // don't do a potentially costly tryAquire() if aquire is good enough
             }
         }
-    AutoMutex(Mutex* inMutex, int32 millisecondWait) throw(timeout)
+    AutoMutex(Mutex* inMutex, int32 millisecondWait) noexcept(false)
         : mMutex(inMutex) {
             if (mMutex) { 
                 if (millisecondWait == FOREVER) {
@@ -305,7 +305,7 @@ public:
 // for exception safe Mutexes in situations where we can't throw an exception
 class AutoMutexNoThrow {
 public:
-    AutoMutexNoThrow(Mutex* inMutex) throw() : mMutex(inMutex), mAquired(false) {}
+    AutoMutexNoThrow(Mutex* inMutex) noexcept : mMutex(inMutex), mAquired(false) {}
     ~AutoMutexNoThrow() {
             if (mMutex && mAquired) {
                 mMutex->release();
@@ -317,7 +317,7 @@ public:
                 mAquired = true;
             }
         }
-    bool tryAquire(int32 waitNanosecs) throw() {
+    bool tryAquire(int32 waitNanosecs) noexcept {
             if (mMutex) {
                 mAquired = mMutex->tryAquire(waitNanosecs);
                 return mAquired;

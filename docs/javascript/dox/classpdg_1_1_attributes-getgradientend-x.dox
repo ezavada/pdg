@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getGradientEnd()
+
+\brief returns the gradient end point
+
+**/ }

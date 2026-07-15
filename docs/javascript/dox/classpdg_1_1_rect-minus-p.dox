@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::minus(Point p)
+
+\brief Subtract a point from this rectangle, shifting its position
+
+**/ }

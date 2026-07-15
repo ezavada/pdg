@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::roundedCorners(radius)
+
+\brief sets the radius for rounded corners
+
+**/ }

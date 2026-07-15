@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setWantsClickEvents(wantsThem)
+
+\brief enables or disables click event generation for this sprite
+
+**/ }

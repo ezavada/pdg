@@ -1,14 +1,14 @@
-.TH "Offset" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Offset" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Offset \- 
-.PP
-offset within a 2D coordinate system  
+Offset \- offset within a 2D coordinate system  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .PP
 Inherited by \fBPoint\fP, and \fBVector\fP\&.
 .SS "Public Member Functions"
@@ -29,39 +29,51 @@ Inherited by \fBPoint\fP, and \fBVector\fP\&.
 .ti -1c
 .RI "\fBOffset\fP \fBadd\fP (\fBOffset\fP offset)"
 .br
+.RI "add an offset to this one "
 .ti -1c
 .RI "\fBOffset\fP \fBassign\fP (\fBOffset\fP offset)"
 .br
+.RI "set this offset equal to the given offset "
 .ti -1c
 .RI "\fBOffset\fP \fBdiv\fP (\fBOffset\fP offset)"
 .br
+.RI "divide this offset by the given one "
 .ti -1c
 .RI "\fBOffset\fP \fBdividedby\fP (\fBOffset\fP offset)"
 .br
+.RI "return new offset that is this offset divided by given offset "
 .ti -1c
 .RI "boolean \fBequals\fP (\fBOffset\fP offset)"
 .br
+.RI "return true if this point is equal to the other "
 .ti -1c
 .RI "\fBOffset\fP \fBminus\fP (\fBOffset\fP offset)"
 .br
+.RI "return new offset that is this offset minus given offset "
 .ti -1c
 .RI "\fBOffset\fP \fBmul\fP (\fBOffset\fP offset)"
 .br
+.RI "multiply this offset by the given one "
 .ti -1c
 .RI "boolean \fBnotEquals\fP (\fBOffset\fP offset)"
 .br
+.RI "return true if this point is not equal to the other "
 .ti -1c
 .RI "\fBOffset\fP \fBplus\fP (\fBOffset\fP offset)"
 .br
+.RI "return new offset that is this offset plus given offset "
 .ti -1c
 .RI "\fBOffset\fP \fBsub\fP (\fBOffset\fP offset)"
 .br
+.RI "subtract an offset from this one "
 .ti -1c
 .RI "\fBOffset\fP \fBtimes\fP (\fBOffset\fP offset)"
 .br
+.RI "return new offset that is this offset multiplied by given offset "
 .ti -1c
-.RI "string \fBtoString\fP ()"
+.RI "\fBVector\fP \fBvector\fP ()"
 .br
+.RI "return a new vector from this offset "
 .in -1c
 .SS "Public Attributes"
 
@@ -82,44 +94,100 @@ offset within a 2D coordinate system
 .PP 
 .SS "\fBOffset\fP ()"
 
-.SS "\fBOffset\fP (numberx, numbery)"
+.PP
+Referenced by \fBadd()\fP, \fBassign()\fP, \fBdiv()\fP, \fBdividedby()\fP, \fBequals()\fP, \fBminus()\fP, \fBmul()\fP, \fBnotEquals()\fP, \fBPoint::offset()\fP, \fBplus()\fP, \fBsub()\fP, and \fBtimes()\fP\&.
+.SS "\fBOffset\fP (number x, number y)"
 
-.SS "\fBOffset\fP (number[]xy)"
+.PP
+References \fBx\fP, and \fBy\fP\&.
+.SS "\fBOffset\fP (number[] xy)"
 
-.SS "\fBOffset\fP (objectxy)"
+.SS "\fBOffset\fP (object xy)"
 
 .SH "Member Function Documentation"
 .PP 
-.SS "\fBOffset\fP add (\fBOffset\fPoffset)"
+.SS "\fBOffset\fP add (\fBOffset\fP offset)"
 
-.SS "\fBOffset\fP assign (\fBOffset\fPoffset)"
+.PP
+add an offset to this one 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBOffset\fP assign (\fBOffset\fP offset)"
 
-.SS "\fBOffset\fP div (\fBOffset\fPoffset)"
+.PP
+set this offset equal to the given offset 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBOffset\fP div (\fBOffset\fP offset)"
 
-.SS "\fBOffset\fP dividedby (\fBOffset\fPoffset)"
+.PP
+divide this offset by the given one 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBOffset\fP dividedby (\fBOffset\fP offset)"
 
-.SS "boolean equals (\fBOffset\fPoffset)"
+.PP
+return new offset that is this offset divided by given offset 
+.PP
+References \fBOffset()\fP\&.
+.SS "boolean equals (\fBOffset\fP offset)"
 
-.SS "\fBOffset\fP minus (\fBOffset\fPoffset)"
+.PP
+return true if this point is equal to the other 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBOffset\fP minus (\fBOffset\fP offset)"
 
-.SS "\fBOffset\fP mul (\fBOffset\fPoffset)"
+.PP
+return new offset that is this offset minus given offset 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBOffset\fP mul (\fBOffset\fP offset)"
 
-.SS "boolean notEquals (\fBOffset\fPoffset)"
+.PP
+multiply this offset by the given one 
+.PP
+References \fBOffset()\fP\&.
+.SS "boolean notEquals (\fBOffset\fP offset)"
 
-.SS "\fBOffset\fP plus (\fBOffset\fPoffset)"
+.PP
+return true if this point is not equal to the other 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBOffset\fP plus (\fBOffset\fP offset)"
 
-.SS "\fBOffset\fP sub (\fBOffset\fPoffset)"
+.PP
+return new offset that is this offset plus given offset 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBOffset\fP sub (\fBOffset\fP offset)"
 
-.SS "\fBOffset\fP times (\fBOffset\fPoffset)"
+.PP
+subtract an offset from this one 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBOffset\fP times (\fBOffset\fP offset)"
 
-.SS "string toString ()"
+.PP
+return new offset that is this offset multiplied by given offset 
+.PP
+References \fBOffset()\fP\&.
+.SS "\fBVector\fP vector ()"
 
+.PP
+return a new vector from this offset 
+.PP
+Referenced by \fBVector::dotProduct()\fP\&.
 .SH "Member Data Documentation"
 .PP 
 .SS "number x"
 
+.PP
+Referenced by \fBOffset()\fP\&.
 .SS "number y"
 
+.PP
+Referenced by \fBOffset()\fP\&.
 
 .SH "Author"
 .PP 

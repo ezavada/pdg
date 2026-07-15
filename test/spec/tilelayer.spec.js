@@ -94,4 +94,77 @@ describe("TileLayer", function() {
 	});
   });
 
+  it("can be cleaned up", function() {
+    pdg.cleanupLayer(tl);
+    tl = null;
+  });
+
+  describe("convenience event methods", function() {
+    
+    var tileLayer;
+    
+    beforeEach(function() {
+      tileLayer = pdg.createTileLayer();
+    });
+    
+    afterEach(function() {
+      if (tileLayer) {
+        pdg.cleanupLayer(tileLayer);
+        tileLayer = null;
+      }
+    });
+
+    it("should have all expected convenience methods available", function() {
+      // Test that all the convenience methods exist
+      expect(typeof tileLayer.onCollideSprite).toBe('function');
+      expect(typeof tileLayer.onCollideWall).toBe('function');
+      expect(typeof tileLayer.onOffscreen).toBe('function');
+      expect(typeof tileLayer.onOnscreen).toBe('function');
+      expect(typeof tileLayer.onExitLayer).toBe('function');
+      expect(typeof tileLayer.onAnimationLoop).toBe('function');
+      expect(typeof tileLayer.onAnimationEnd).toBe('function');
+      expect(typeof tileLayer.onFadeComplete).toBe('function');
+      expect(typeof tileLayer.onFadeInComplete).toBe('function');
+      expect(typeof tileLayer.onFadeOutComplete).toBe('function');
+      expect(typeof tileLayer.onMouseEnter).toBe('function');
+      expect(typeof tileLayer.onMouseLeave).toBe('function');
+      expect(typeof tileLayer.onMouseDown).toBe('function');
+      expect(typeof tileLayer.onMouseUp).toBe('function');
+      expect(typeof tileLayer.onMouseClick).toBe('function');
+      expect(typeof tileLayer.onErasePort).toBe('function');
+      expect(typeof tileLayer.onPreDrawLayer).toBe('function');
+      expect(typeof tileLayer.onPostDrawLayer).toBe('function');
+      expect(typeof tileLayer.onDrawPortComplete).toBe('function');
+      expect(typeof tileLayer.onAnimationStart).toBe('function');
+      expect(typeof tileLayer.onPreAnimateLayer).toBe('function');
+      expect(typeof tileLayer.onPostAnimateLayer).toBe('function');
+      expect(typeof tileLayer.onAnimationComplete).toBe('function');
+      expect(typeof tileLayer.onZoomComplete).toBe('function');
+      expect(typeof tileLayer.onLayerFadeInComplete).toBe('function');
+      expect(typeof tileLayer.onLayerFadeOutComplete).toBe('function');
+    });
+
+    it("should return handler objects from convenience methods", function() {
+      // Test that the convenience methods return handlers
+      var handler = tileLayer.onCollideSprite(function(event) {
+        return true;
+      });
+      expect(handler).toBeDefined();
+      expect(typeof handler).toBe('object');
+      
+      var drawHandler = tileLayer.onPreDrawLayer(function(event) {
+        return true;
+      });
+      expect(drawHandler).toBeDefined();
+      expect(typeof drawHandler).toBe('object');
+      
+      var zoomHandler = tileLayer.onZoomComplete(function(event) {
+        return true;
+      });
+      expect(zoomHandler).toBeDefined();
+      expect(typeof zoomHandler).toBe('object');
+    });
+
+  });
+
 });

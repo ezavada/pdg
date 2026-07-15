@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::shrink(delta)
+
+\brief reduce the height and width of the rectangle while leaving the center point unchanged
+
+**/ }

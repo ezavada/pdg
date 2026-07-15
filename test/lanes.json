@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "lanes": [
+    {
+      "id": "windows-headless-client",
+      "name": "Windows headless client suite",
+      "category": "test",
+      "targetPlatform": "win32",
+      "automation": "automated",
+      "stopOnFailure": false,
+      "notes": [
+        "Runs the pure native client checks that do not require any UI features.",
+        "If the required runtime is missing, this lane will print the Windows build commands to run."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "Windows native runtime",
+          "paths": [
+            "pdg.exe"
+          ],
+          "freshnessPath": "pdg.exe",
+          "staleInputs": [
+            "CMakeLists.txt",
+            "src",
+            "configure.ps1",
+            "make.ps1"
+          ],
+          "buildCommands": [
+            ".\\configure.ps1 -SkipInstall",
+            ".\\make.ps1 -Target pdg -Config Release"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "name": "Client log spec",
+          "command": ".\\test\\client.bat log --verbose"
+        },
+        {
+          "name": "Client color spec",
+          "command": ".\\test\\client.bat color"
+        }
+      ]
+    },
+    {
+      "id": "windows-headless-node",
+      "name": "Windows headless node suite",
+      "category": "test",
+      "targetPlatform": "win32",
+      "automation": "automated",
+      "stopOnFailure": true,
+      "notes": [
+        "Runs the headless Node-based spec suite on Windows.",
+        "If the required runtime or plugin is missing, this lane will print the Windows build commands to run."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "Windows native runtime",
+          "paths": [
+            "pdg.exe"
+          ],
+          "freshnessPath": "pdg.exe",
+          "staleInputs": [
+            "CMakeLists.txt",
+            "src",
+            "configure.ps1",
+            "make.ps1"
+          ],
+          "buildCommands": [
+            ".\\configure.ps1 -SkipInstall",
+            ".\\make.ps1 -Target pdg -Config Release"
+          ]
+        },
+        {
+          "label": "Windows Node plugin",
+          "paths": [
+            "node_modules/pdg/package.json",
+            "node_modules/pdg/lib/pdg.js",
+            "node_modules/pdg/build/Release/pdg.node"
+          ],
+          "freshnessPath": "node_modules/pdg/build/Release/pdg.node",
+          "staleInputs": [
+            "src",
+            "tools/node-pdg",
+            "tools/make-node-module.ps1",
+            "tools/copy-node-module-source.ps1",
+            "tools/make_ps1"
+          ],
+          "buildCommands": [
+            ".\\configure.ps1 -SkipInstall",
+            ".\\make.ps1 -Target pdg-node -Config Release"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "name": "Node spec suite",
+          "command": ".\\test\\node-pdg.bat"
+        }
+      ]
+    },
+    {
+      "id": "windows-gui",
+      "name": "Windows GUI suite",
+      "category": "test",
+      "targetPlatform": "win32",
+      "automation": "manual",
+      "notes": [
+        "Requires an interactive desktop session.",
+        "Covers the Windows GUI-capable runtime path."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "Windows native runtime",
+          "paths": [
+            "pdg.exe"
+          ],
+          "freshnessPath": "pdg.exe",
+          "staleInputs": [
+            "CMakeLists.txt",
+            "src",
+            "configure.ps1",
+            "make.ps1"
+          ],
+          "buildCommands": [
+            ".\\configure.ps1 -SkipInstall",
+            ".\\make.ps1 -Target pdg -Config Release"
+          ]
+        }
+      ],
+      "checklist": [
+        "Run .\\test\\ui.bat from a desktop session.",
+        "Confirm the port, font, drawing, shape fill, image, and animation scripts all pass.",
+        "Spot-check that the rendered windows and visual output look correct, not just that the scripts exit cleanly."
+      ]
+    },
+    {
+      "id": "linux-headless-client",
+      "name": "Linux headless client suite",
+      "category": "test",
+      "targetPlatform": "linux",
+      "automation": "automated",
+      "stopOnFailure": false,
+      "notes": [
+        "Runs the pure native client checks that do not require any UI features.",
+        "Linux is treated as a headless/server target with no graphics support.",
+        "If the required runtime is missing, this lane will print the Linux build commands to run."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "Linux native runtime",
+          "paths": [
+            "pdg"
+          ],
+          "freshnessPath": "pdg",
+          "staleInputs": [
+            "CMakeLists.txt",
+            "src",
+            "configure"
+          ],
+          "buildCommands": [
+            "./configure --headless --use-system-node",
+            "make pdg"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "name": "Client log spec",
+          "command": "./test/client log --verbose"
+        },
+        {
+          "name": "Client color spec",
+          "command": "./test/client color"
+        }
+      ]
+    },
+    {
+      "id": "linux-headless-node",
+      "name": "Linux headless node suite",
+      "category": "test",
+      "targetPlatform": "linux",
+      "automation": "automated",
+      "stopOnFailure": true,
+      "notes": [
+        "This is the primary Linux validation lane for headless/server usage.",
+        "If the required runtime or plugin is missing, this lane will print the Linux build commands to run."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "Linux native runtime",
+          "paths": [
+            "pdg"
+          ],
+          "freshnessPath": "pdg",
+          "staleInputs": [
+            "CMakeLists.txt",
+            "src",
+            "configure"
+          ],
+          "buildCommands": [
+            "./configure --headless --use-system-node",
+            "make pdg"
+          ]
+        },
+        {
+          "label": "Linux Node plugin",
+          "paths": [
+            "node_modules/pdg/package.json",
+            "node_modules/pdg/lib/pdg.js",
+            "node_modules/pdg/build/Release/pdg.node"
+          ],
+          "freshnessPath": "node_modules/pdg/build/Release/pdg.node",
+          "staleInputs": [
+            "src",
+            "tools/node-pdg",
+            "tools/make-node-module.sh",
+            "tools/copy-node-module-source.sh"
+          ],
+          "buildCommands": [
+            "./configure --headless --use-system-node",
+            "make pdg",
+            "make pdg-node"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "name": "Node spec suite",
+          "command": "./test/node"
+        }
+      ]
+    },
+    {
+      "id": "macos-headless-client",
+      "name": "macOS headless client suite",
+      "category": "test",
+      "targetPlatform": "darwin",
+      "automation": "automated",
+      "stopOnFailure": false,
+      "notes": [
+        "Runs the pure native client checks that do not require any UI features.",
+        "These are the SSH-safe headless client checks for macOS.",
+        "If the required runtime is missing, this lane will print the macOS build commands to run."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "macOS native runtime",
+          "paths": [
+            "pdg"
+          ],
+          "freshnessPath": "pdg",
+          "staleInputs": [
+            "CMakeLists.txt",
+            "src",
+            "configure",
+            "tools/make-idl-javascript.sh"
+          ],
+          "buildCommands": [
+            "./configure --use-system-node",
+            "make pdg"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "name": "Client log spec",
+          "command": "./test/client log --verbose"
+        },
+        {
+          "name": "Client color spec",
+          "command": "./test/client color"
+        }
+      ]
+    },
+    {
+      "id": "macos-headless-node",
+      "name": "macOS headless node suite",
+      "category": "test",
+      "targetPlatform": "darwin",
+      "automation": "automated",
+      "stopOnFailure": true,
+      "notes": [
+        "Runs the headless Node-based suite over SSH.",
+        "Use this lane before asking for local GUI verification.",
+        "If the required runtime or plugin is missing, this lane will print the macOS build commands to run."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "macOS native runtime",
+          "paths": [
+            "pdg"
+          ],
+          "freshnessPath": "pdg",
+          "staleInputs": [
+            "CMakeLists.txt",
+            "src",
+            "configure",
+            "tools/make-idl-javascript.sh"
+          ],
+          "buildCommands": [
+            "./configure --use-system-node",
+            "make pdg"
+          ]
+        },
+        {
+          "label": "macOS Node plugin",
+          "paths": [
+            "node_modules/pdg/package.json",
+            "node_modules/pdg/lib/pdg.js",
+            "node_modules/pdg/build/Release/pdg.node"
+          ],
+          "freshnessPath": "node_modules/pdg/build/Release/pdg.node",
+          "staleInputs": [
+            "src",
+            "tools/node-pdg",
+            "tools/make-node-module.sh",
+            "tools/copy-node-module-source.sh"
+          ],
+          "buildCommands": [
+            "./configure --use-system-node",
+            "make pdg",
+            "make pdg-node"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "name": "Node spec suite",
+          "command": "./test/node"
+        }
+      ]
+    },
+    {
+      "id": "macos-gui",
+      "name": "macOS GUI suite",
+      "category": "test",
+      "targetPlatform": "darwin",
+      "automation": "manual",
+      "notes": [
+        "Requires a logged-in macOS desktop session.",
+        "Covers the macOS GUI-capable runtime path."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "macOS native runtime",
+          "paths": [
+            "pdg"
+          ],
+          "freshnessPath": "pdg",
+          "staleInputs": [
+            "CMakeLists.txt",
+            "src",
+            "configure",
+            "tools/make-idl-javascript.sh"
+          ],
+          "buildCommands": [
+            "./configure --use-system-node",
+            "make pdg"
+          ]
+        }
+      ],
+      "checklist": [
+        "Run ./test/ui from a local macOS desktop session.",
+        "Confirm the port, font, drawing, shape fill, image, and animation scripts all pass.",
+        "Spot-check that window creation, rendering, and animation behavior match expectations."
+      ]
+    }
+  ]
+}

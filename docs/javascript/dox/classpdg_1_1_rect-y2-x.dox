@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::y2()
+
+\brief alias for Rect.bottom
+
+**/ }

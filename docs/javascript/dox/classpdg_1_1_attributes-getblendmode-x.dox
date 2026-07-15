@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getBlendMode()
+
+\brief returns the current blend mode
+
+**/ }

@@ -37,6 +37,7 @@
 #include "pdg/msvcfix.h"
 #include "image-opengl.h"
 #include "graphics-opengl.h"
+#include "imagecache-opengl.h"
 #include "pdg/sys/os.h"
 #include "internals.h"
 
@@ -66,6 +67,20 @@
 namespace pdg {
 	
     GLuint gBoundTexture;   // this gets cleared by graphics_startDrawing
+    
+	Port*
+	ImageOpenGL::setPort(Port* newPort) {
+		if (newPort != mPort && mCacheKey != 0) {
+			// Release cache entry from old port
+			if (mPort) {
+				PortImpl& oldPort = static_cast<PortImpl&>(*mPort);
+				oldPort.releaseCachedEntry(mCacheKey);
+			}
+			// Reset cache key - will be acquired from new port on first use
+			mCacheKey = 0;
+		}
+		return ImageImpl::setPort(newPort);
+	}
 
 	void       
 	ImageOpenGL::draw(const Point& loc) {
@@ -122,18 +137,6 @@ namespace pdg {
 			fr.center(r.centerPoint());
 			// TODO: make clipOverflow
 			draw( Quad(fr) );
-		} else if (fitType == fit_FillKeepProportions) {
-			Rect fr(width, height);
-			float wRatio = r.width() / width;
-			float hRatio = r.height() / height;
-			if (wRatio > hRatio) {
-				fr.scale(wRatio);
-			} else {
-				fr.scale(hRatio);
-			}
-			fr.center(r.centerPoint());
-			// TODO: make clipOverflow
-			draw( Quad(fr) );
 		} else if (fitType == fit_Inside) {
 			Rect fr(width, height);
 			float wRatio = r.width() / width;
@@ -145,6 +148,25 @@ namespace pdg {
 			}
 			fr.center(r.centerPoint());
 			draw( Quad(fr) );
+		} else if (fitType == fit_Overflow) {
+			Rect fr(width, height);
+			float wRatio = r.width() / width;
+			float hRatio = r.height() / height;
+			if (wRatio > hRatio) {
+				fr.scale(wRatio);
+			} else {
+				fr.scale(hRatio);
+			}
+			fr.center(r.centerPoint());
+			draw( Quad(fr) );
+		} else if (fitType == fit_Clipped) {
+			// TODO: implement
+		} else if (fitType == fit_TileX) {
+			// TODO: implement
+		} else if (fitType == fit_TileY) {
+			// TODO: implement
+		} else if (fitType == fit_Tile) {
+			// TODO: implement
 		}
 	}
 	
@@ -309,13 +331,13 @@ namespace pdg {
 	
     //! draws image as texture wrapped around a sphere
     void	
-	ImageOpenGL::drawTexturedSphere(const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians) {
+	ImageOpenGL::drawTexturedSphere(const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight) {
 		if (mSuperImage) {
 			// pass to super image
             uint8 opac = mSuperImage->getOpacity();
             mSuperImage->setOpacity(opacity);
 			if (mFrameNum >= 0) {
-				mSuperImage->drawTexturedSphereFrame(loc, mFrameNum, radius, rotation, polarOffsetRadians, lightOffsetRadians);
+				mSuperImage->drawTexturedSphereFrame(loc, mFrameNum, radius, rotation, polarOffsetRadians, lightOffsetRadians, ambientLight);
 			} else if (mIsQuadSection) {
 //				mSuperImage->drawSection(r, mSectionQuad);
 			} else {
@@ -324,7 +346,7 @@ namespace pdg {
             mSuperImage->setOpacity(opac);
 		} else {
             // decide how many slices to draw (very crude LOD)
-            long slices = log2f(radius) * 4;
+            GLint slices = log2f(radius) * 4;
             if (slices < 5) slices = 5;
 
 			bindTexture();
@@ -334,8 +356,19 @@ namespace pdg {
 
             float degreesRot = rotation * 180.0 / M_PI;
             static GLfloat light_position[] = { 0, 0, -10, 1 };
-            static GLfloat model_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
+            GLfloat model_ambient[] = { ambientLight.red, ambientLight.green, ambientLight.blue, ambientLight.alpha };
             glLightModelfv(GL_LIGHT_MODEL_AMBIENT, model_ambient);
+            
+            // Set white material colors so texture shows properly without colorization
+            GLfloat mat_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            GLfloat mat_ambient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            GLfloat mat_specular[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+            GLfloat mat_shininess[] = { 20.0f };
+            
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+            glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+            glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+            glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
             glEnable(GL_LIGHTING);
             glEnable(GL_LIGHT0);
@@ -383,7 +416,7 @@ namespace pdg {
     
     //! draws single frame of multiframe image as texture wrapped around a sphere
     void	
-	ImageOpenGL::drawTexturedSphereFrame(const Point& loc, int frame, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians) {
+	ImageOpenGL::drawTexturedSphereFrame(const Point& loc, int frame, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight) {
     }
 
 	void	
@@ -534,15 +567,38 @@ namespace pdg {
 	}
 
 	void    
-	ImageOpenGL::bindTexture(uint32 mipMode) {
+	ImageOpenGL::bindTexture(GLint mipMode) {
 		if (mSuperImage) return;  // don't do for subimage
-		if (mTexture == 0 && data) {
-			glGenTextures(1, &mTexture);
-			glBindTexture(GL_TEXTURE_2D, mTexture);
-            gBoundTexture = mTexture;
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipMode);  // defaults to GL_LINEAR
+		
+		PortImpl& port = static_cast<PortImpl&>(*mPort);
+		
+		// Get cache key on first use
+		if (mCacheKey == 0) {
+			mCacheKey = port.getCacheKey(mSourceName.c_str(), width, height, mUseEdgeClamp);
+		}
+		
+		// Request texture from cache each frame
+		GLuint texture = port.getTexture(mCacheKey);
+		
+		// If texture is missing (evicted or not yet created), we need to upload it
+		if (texture == 0) {
+			// Check if we have data to upload
+			if (!data) {
+				// Try to reload the image data from the original file
+				if (!reloadData()) {
+					// Failed to reload - can't render
+					DEBUG_PRINT("IMAGE ERROR: Cannot reload texture for %s", mSourceName.c_str());
+					return;
+				}
+			}
+			
+			// Create and upload new texture
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			gBoundTexture = texture;
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipMode);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mipMode);
-//			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);  // no lighting or colorization effects
+			
 			if (mUseEdgeClamp) {
 				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
@@ -550,44 +606,67 @@ namespace pdg {
 				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
 				glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 			}
+			
 			GLint glMaxTexDim;
-			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &glMaxTexDim);			// Get Maximum Texture Size Supported
+			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &glMaxTexDim);
 			if (mBufferWidth > glMaxTexDim) {
 				DEBUG_PRINT("IMAGE ERROR: buffer width %ld > max GL Texture Dim %ld", mBufferWidth, glMaxTexDim);
-//				mBufferWidth = glMaxTexDim;
 			}
 			if (mBufferHeight > glMaxTexDim) {
 				DEBUG_PRINT("IMAGE ERROR: buffer height %ld > max GL Texture Dim %ld", mBufferHeight, glMaxTexDim);
-//				mBufferHeight = glMaxTexDim;
 			}
+			
 			if (mTextureFormat == GL_RGBA) {
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 			} else {
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			}
-			glTexImage2D(GL_TEXTURE_2D, 0, mTextureFormat, mBufferWidth, mBufferHeight, 0, 
+			
+			glTexImage2D(GL_TEXTURE_2D, 0, mTextureFormat, (GLsizei)mBufferWidth, (GLsizei)mBufferHeight, 0,
 						 mTextureFormat, GL_UNSIGNED_BYTE, data);
+			
+			// Store the texture in the cache
+			port.setTexture(mCacheKey, texture);
+			
 			if (!mRetainData && !mRetainAlpha) {
 				std::free(data);
 				data = 0;
 			}
 		}
-		glColor4f(1.0f,1.0f,1.0f, (float) opacity / 255.0f );
+		
+		// Bind the texture for rendering
 		glEnable(GL_TEXTURE_2D);
-        if (gBoundTexture != mTexture) {
-            glBindTexture(GL_TEXTURE_2D, mTexture);
-            gBoundTexture = mTexture;
-        }
+		port.mStateCache.bindTexture(texture);
+		gBoundTexture = texture;
+		glColor4f(1.0f,1.0f,1.0f, (float) opacity / 255.0f );
+	}
+
+	GLuint
+	ImageOpenGL::getCachedTexture() {
+		if (mSuperImage) return 0;  // don't do for subimage
+		
+		// Get cache key if we don't have one yet
+		if (mCacheKey == 0) {
+			PortImpl& port = static_cast<PortImpl&>(*mPort);
+			mCacheKey = port.getCacheKey(mSourceName.c_str(), width, height, mUseEdgeClamp);
+		}
+		
+		// Request texture from cache
+		PortImpl& port = static_cast<PortImpl&>(*mPort);
+		return port.getTexture(mCacheKey);
 	}
 
 	ImageOpenGL::~ImageOpenGL() {
 		if (mSuperImage) {
-			DEBUG_ASSERT(mTexture == 0, "Error: Sub-Image has GL Texture! Should not be!!");
+			DEBUG_ASSERT(mCacheKey == 0, "Error: Sub-Image has cache key! Should not be!!");
 			mSuperImage->release();	// one fewer reference to the super image
 			mSuperImage = 0;
-		} else if (mTexture != 0)  {
-			glDeleteTextures(1, &mTexture);
-			mTexture = 0;
+		} else if (mCacheKey != 0)  {
+			// Release our reference to the cached texture
+			// Cache owns the texture and will delete it when appropriate
+			PortImpl& port = static_cast<PortImpl&>(*mPort);
+			port.releaseCachedEntry(mCacheKey);
+			mCacheKey = 0;
 		}
 /*		if (mTransparentMaskData) {
 			std::free(mTransparentMaskData);

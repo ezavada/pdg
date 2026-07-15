@@ -1,0 +1,26 @@
+wabbit.png - Bunnymark Test Sprite
+===================================
+
+This is the classic bunny sprite used in the original Bunnymark benchmark
+created by Iain Lobb.
+
+Source: OpenFL Samples
+URL: https://github.com/openfl/openfl-samples/tree/master/demos/BunnyMark
+File: Assets/wabbit_alpha.png
+
+Size: 26x37 pixels
+Format: PNG with alpha channel
+
+This image is used across multiple Bunnymark implementations including:
+- OpenFL
+- HaxeFlixel  
+- Godot Engine
+- Phaser
+- Cocos2d-x
+- And many others
+
+Using the same sprite ensures our benchmark results are directly comparable
+to other engine implementations.
+
+License: Public Domain / freely redistributable as part of Bunnymark tests
+

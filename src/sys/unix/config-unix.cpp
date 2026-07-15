@@ -84,7 +84,9 @@ bool ConfigManagerUnix::getConfigFloat(const char* configItemName, float& outLon
 	Record data;
 	if(getRecord(configItemName,data))
 	{
-		sscanf(data.mValue.c_str(),"%f",&outLongValue);
+		if (sscanf(data.mValue.c_str(), "%f", &outLongValue) != 1) {
+			outLongValue = 0.0f;
+		}
 		return true;
 	}
 	return false;
@@ -124,7 +126,7 @@ void ConfigManagerUnix::setConfigLong(const char* configItemName, long outLongVa
 	if(NULL == configItemName)
 		return;
 	char buffer[40];
-	std::sprintf(buffer,"%ld\n",outLongValue);
+	std::snprintf(buffer, sizeof(buffer), "%ld\n", outLongValue);
 	if(recordExists(configItemName))
 	{
 		std::string str = configItemName;
@@ -140,7 +142,7 @@ void ConfigManagerUnix::setConfigFloat(const char* configItemName, float outLong
 	if(NULL == configItemName)
 		return;
 	char buffer[40];
-	sprintf(buffer,"%f\n",outLongValue);//long d = std::_ftoa(outLongValue,buffer,10);
+	snprintf(buffer, sizeof(buffer), "%f\n", outLongValue);//long d = std::_ftoa(outLongValue,buffer,10);
 	if(recordExists(configItemName))
 	{
 		std::string str = configItemName;

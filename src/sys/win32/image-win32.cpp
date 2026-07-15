@@ -37,6 +37,13 @@
 #include "png/png.h"
 #include "internals.h"
 
+// Forward declaration for JPEG support
+namespace pdg {
+    void platform_initJPEGData(unsigned char* imageData, long imageDataLen, unsigned char** outDataPtr, 
+        long* outWidth, long* outHeight, long* outBufferWidth, long* outBufferHeight, long* outBufferPitch, 
+        int* outFormat);
+}
+
 extern "C" {
 void pdg_png_read_data(png_structp png_ptr, png_bytep data, png_size_t length);
 void pdg_png_write_data(png_structp png_ptr, png_bytep data, png_size_t length);
@@ -65,6 +72,15 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen,
 	*outBufferPitch = 0;
 	*outFormat = GL_RGBA;
 
+	// Check for JPEG signature first
+	if (imageDataLen >= 2 && imageData[0] == 0xFF && imageData[1] == 0xD8) {
+		// This is a JPEG file, use JPEG decoder
+		platform_initJPEGData(imageData, imageDataLen, outDataPtr, outWidth, outHeight, 
+			outBufferWidth, outBufferHeight, outBufferPitch, outFormat);
+		return;
+	}
+
+	// Check for PNG signature
 	bool is_png = !png_sig_cmp(imageData, 0, PNG_SIG_BYTES);
 	if (!is_png) return;
 

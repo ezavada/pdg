@@ -1,0 +1,34 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setCollisionHelper
+
+\brief set a helper to filter out some collisions for this sprite
+
+Sets up a handler to do special case collision logic between two sprites. For example, you might want bullet sprites to collide with enemy sprites but not with one another. If a collide helper is installed, then on initial contact between two sprites the collide helper for the moving sprite will be called, and your helper can decide if the collision should happen or not.
+
+\param helper an ISpriteCollideHelper instance that will filter some collisions.
+
+\note You should use other techniques wherever possible to eliminate unnecessary collision helper callbacks, since these callbacks are relatively expensive. You should turn off collisions for sprites that never collide with anything; put sets of sprites that collide only with each other in separate layers; and use collision groups to set up groups of sprites that collide with other things but not each other.
+
+\code
+	var myHelper = new pdg.ISpriteCollideHelper(function(sprite, withSprite) {
+		console.log("in my sprite collide helper for " + sprite );
+		if (withSprite.id == 100) {
+			return true;  // only collide with the player sprite (id 100)
+		}
+		return false;  // don't collide with anything else
+	});
+	mySprite.setCollisionHelper(myHelper);
+\endcode
+
+\sa ISpriteCollideHelper
+\sa setCollisionHelper()
+\sa enableCollisions()
+\sa disableCollisions()
+\sa setCollideGroup()
+\sa SpriteLayer.enableCollisions()
+\sa SpriteLayer.disableCollisions()
+\sa SpriteLayer.enableCollisionsWithLayer()
+\sa SpriteLayer.disableCollisionsWithLayer()
+
+**/ }

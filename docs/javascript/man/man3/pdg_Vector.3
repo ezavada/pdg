@@ -1,14 +1,14 @@
-.TH "Vector" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Vector" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Vector \- 
-.PP
-vector (magnitude and direction) within a 2D coordinate system\&.  
+Vector \- vector (magnitude and direction) within a 2D coordinate system\&.  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .PP
 Inherits \fBOffset\fP\&.
 .SS "Public Member Functions"
@@ -27,17 +27,106 @@ Inherits \fBOffset\fP\&.
 .RI "\fBVector\fP (object xy)"
 .br
 .ti -1c
-.RI "number \fBdotProduct\fP (\fBVector\fP vector)"
+.RI "number \fBdotProduct\fP (\fBVector\fP \fBvector\fP)"
 .br
+.RI "get dot product for this vector with a 2nd vector "
+.ti -1c
+.RI "\fBVector\fP \fBnormal\fP ()"
+.br
+.RI "get the normal of this vector, ie: A\&.normal() = (-A\&.y, A\&.x) "
+.ti -1c
+.RI "\fBPoint\fP \fBprojection\fP (\fBPoint\fP point)"
+.br
+.RI "do a projection of a point onto this vector "
+.ti -1c
+.RI "\fBVector\fP \fBunit\fP ()"
+.br
+.RI "get the unit vector of this vector, ie: A\&.unit() = (A\&.x / |A|, A\&.y / |A|) "
 .ti -1c
 .RI "number \fBvectorAngle\fP ()"
 .br
+.RI "get angle (in radians) for this vector "
 .ti -1c
 .RI "number \fBvectorLength\fP ()"
 .br
+.RI "get length as a vector (distance from origin) "
+.in -1c
+
+Public Member Functions inherited from \fBOffset\fP
+.in +1c
+.ti -1c
+.RI "\fBOffset\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP (number \fBx\fP, number \fBy\fP)"
+.br
+.ti -1c
+.RI "\fBOffset\fP (number[] xy)"
+.br
+.ti -1c
+.RI "\fBOffset\fP (object xy)"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBadd\fP (\fBOffset\fP offset)"
+.br
+.RI "add an offset to this one "
+.ti -1c
+.RI "\fBOffset\fP \fBassign\fP (\fBOffset\fP offset)"
+.br
+.RI "set this offset equal to the given offset "
+.ti -1c
+.RI "\fBOffset\fP \fBdiv\fP (\fBOffset\fP offset)"
+.br
+.RI "divide this offset by the given one "
+.ti -1c
+.RI "\fBOffset\fP \fBdividedby\fP (\fBOffset\fP offset)"
+.br
+.RI "return new offset that is this offset divided by given offset "
+.ti -1c
+.RI "boolean \fBequals\fP (\fBOffset\fP offset)"
+.br
+.RI "return true if this point is equal to the other "
+.ti -1c
+.RI "\fBOffset\fP \fBminus\fP (\fBOffset\fP offset)"
+.br
+.RI "return new offset that is this offset minus given offset "
+.ti -1c
+.RI "\fBOffset\fP \fBmul\fP (\fBOffset\fP offset)"
+.br
+.RI "multiply this offset by the given one "
+.ti -1c
+.RI "boolean \fBnotEquals\fP (\fBOffset\fP offset)"
+.br
+.RI "return true if this point is not equal to the other "
+.ti -1c
+.RI "\fBOffset\fP \fBplus\fP (\fBOffset\fP offset)"
+.br
+.RI "return new offset that is this offset plus given offset "
+.ti -1c
+.RI "\fBOffset\fP \fBsub\fP (\fBOffset\fP offset)"
+.br
+.RI "subtract an offset from this one "
+.ti -1c
+.RI "\fBOffset\fP \fBtimes\fP (\fBOffset\fP offset)"
+.br
+.RI "return new offset that is this offset multiplied by given offset "
+.ti -1c
+.RI "\fBVector\fP \fBvector\fP ()"
+.br
+.RI "return a new vector from this offset "
 .in -1c
 .SS "Public Attributes"
 
+.in +1c
+.ti -1c
+.RI "number \fBx\fP"
+.br
+.ti -1c
+.RI "number \fBy\fP"
+.br
+.in -1c
+
+Public Attributes inherited from \fBOffset\fP
 .in +1c
 .ti -1c
 .RI "number \fBx\fP"
@@ -55,26 +144,58 @@ vector (magnitude and direction) within a 2D coordinate system\&.
 .PP 
 .SS "\fBVector\fP ()"
 
-.SS "\fBVector\fP (numberx, numbery)"
+.PP
+Referenced by \fBdotProduct()\fP, \fBnormal()\fP, and \fBunit()\fP\&.
+.SS "\fBVector\fP (number x, number y)"
 
-.SS "\fBVector\fP (number[]xy)"
+.PP
+References \fBx\fP, and \fBy\fP\&.
+.SS "\fBVector\fP (number[] xy)"
 
-.SS "\fBVector\fP (objectxy)"
+.SS "\fBVector\fP (object xy)"
 
 .SH "Member Function Documentation"
 .PP 
-.SS "number dotProduct (\fBVector\fPvector)"
+.SS "number dotProduct (\fBVector\fP vector)"
 
+.PP
+get dot product for this vector with a 2nd vector 
+.PP
+References \fBVector()\fP, and \fBOffset::vector()\fP\&.
+.SS "\fBVector\fP normal ()"
+
+.PP
+get the normal of this vector, ie: A\&.normal() = (-A\&.y, A\&.x) 
+.PP
+References \fBVector()\fP\&.
+.SS "\fBPoint\fP projection (\fBPoint\fP point)"
+
+.PP
+do a projection of a point onto this vector 
+.SS "\fBVector\fP unit ()"
+
+.PP
+get the unit vector of this vector, ie: A\&.unit() = (A\&.x / |A|, A\&.y / |A|) 
+.PP
+References \fBVector()\fP\&.
 .SS "number vectorAngle ()"
 
+.PP
+get angle (in radians) for this vector 
 .SS "number vectorLength ()"
 
+.PP
+get length as a vector (distance from origin) 
 .SH "Member Data Documentation"
 .PP 
 .SS "number x"
 
+.PP
+Referenced by \fBVector()\fP\&.
 .SS "number y"
 
+.PP
+Referenced by \fBVector()\fP\&.
 
 .SH "Author"
 .PP 

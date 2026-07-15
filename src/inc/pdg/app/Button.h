@@ -19,12 +19,12 @@ namespace pdg {
 
 
 class View;
-class ToolTipCtrl;
+//class ToolTipCtrl;
 
 const int MAX_BUTTON_IMAGES = 3;
 #define RES_DEFAULT_BUTTON_IMAGE	103
 
-class Button : public View
+class Button : public View, public Subject
 {
 public:
 
@@ -70,7 +70,7 @@ private:
 	bool mIsButtonPressed;
 // for tooltip window
 	bool mIsToolTipEnabled;
-	ToolTipCtrl*	mToolTipCtrl;		
+	//ToolTipCtrl*	mToolTipCtrl;		
 	int				nHasChangedAreaHit;
 	Point   mTextBaselineCenterPoint;
 	int     mButtonTextSize;

@@ -2,14 +2,21 @@
 {
 	height: 21px;
 	width: 49px;
-	background-image: url('edit.gif');
+/*  background-image: url('edit.gif'); */
 	cursor: pointer;
-	position: relative;
-	margin-right: 6px;
-	margin-top: 4px;
-	float: right;
+    position: relative;
+    margin-right: 6px;
+    margin-top: 4px;
+    float: right;
 }
-
+.doxyedit-button:after {
+    content: "Edit";
+    background-color: black;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 1px gray;
+}
 .memdoc {
 	min-height: 20px;
 }

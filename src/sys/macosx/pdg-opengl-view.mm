@@ -212,10 +212,15 @@ unichar remapKeyboardChar(unichar character, int modifierFlags, BOOL& shift, BOO
 {
     NSString *characters = [theEvent characters];
 	BOOL repeat = [theEvent isARepeat];
-	BOOL shift, control, alt, cmd;
+	BOOL shift = NO, control = NO, alt = NO, cmd = NO;
 	unichar character = 0;
-    if ([characters length]) {
-		character = remapKeyboardChar([characters characterAtIndex:0], [theEvent modifierFlags], shift, control, alt, cmd);
+	
+	// When control/command keys are held, [characters] is often empty,
+	// so we use charactersIgnoringModifiers to get the actual character
+	NSString *charsToUse = ([characters length] > 0) ? characters : [theEvent charactersIgnoringModifiers];
+	
+    if ([charsToUse length]) {
+		character = remapKeyboardChar([charsToUse characterAtIndex:0], [theEvent modifierFlags], shift, control, alt, cmd);
 	}
 	if (!repeat) {
 		int keyCode = [theEvent keyCode];
@@ -229,10 +234,15 @@ unichar remapKeyboardChar(unichar character, int modifierFlags, BOOL& shift, BOO
 - (void)keyUp:(NSEvent *)theEvent
 {
     NSString *characters = [theEvent characters];
-	BOOL shift, control, alt, cmd;
+	BOOL shift = NO, control = NO, alt = NO, cmd = NO;
 	unichar character = 0;
-    if ([characters length]) {
-		character = remapKeyboardChar([characters characterAtIndex:0], [theEvent modifierFlags], shift, control, alt, cmd);
+	
+	// When control/command keys are held, [characters] is often empty,
+	// so we use charactersIgnoringModifiers to get the actual character
+	NSString *charsToUse = ([characters length] > 0) ? characters : [theEvent charactersIgnoringModifiers];
+	
+    if ([charsToUse length]) {
+		character = remapKeyboardChar([charsToUse characterAtIndex:0], [theEvent modifierFlags], shift, control, alt, cmd);
 	}
 	int keyCode = [theEvent keyCode];
     pdg::main_handleKeyUp(keyCode, character);
@@ -365,9 +375,16 @@ unichar remapKeyboardChar(unichar character, int modifierFlags, BOOL& shift, BOO
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-	float wheelDelta = [theEvent deltaX] +[theEvent deltaY] + [theEvent deltaZ];
-	if (wheelDelta)
+	int modifierFlags = [theEvent modifierFlags];
+	BOOL shift = ((modifierFlags & NSShiftKeyMask) != 0);
+	BOOL control = ((modifierFlags & NSControlKeyMask) != 0);
+	BOOL alt = ((modifierFlags & NSAlternateKeyMask) != 0);
+	BOOL cmd = ((modifierFlags & NSCommandKeyMask) != 0);
+	int horizDelta = (int)[theEvent deltaX];
+	int vertDelta = (int)[theEvent deltaY];
+	if (horizDelta != 0 || vertDelta != 0)
 	{
+		pdg::main_handleScrollWheel(horizDelta, vertDelta, shift, control, alt, cmd);
 		[self setNeedsDisplay: YES];
 	}
 }
@@ -512,6 +529,8 @@ unichar remapKeyboardChar(unichar character, int modifierFlags, BOOL& shift, BOO
 // called after context is created
 - (void) prepareOpenGL
 {
+    [super prepareOpenGL];
+    
 #ifndef PDG_NO_DOUBLE_BUFFER
     GLint swapInt = 1;
     [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval]; // set to vbl sync

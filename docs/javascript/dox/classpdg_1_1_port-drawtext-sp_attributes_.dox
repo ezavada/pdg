@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawText(string text, Point loc, Attributes attrs)
+
+\brief Draws text at the specified location with styling attributes
+
+**/ }

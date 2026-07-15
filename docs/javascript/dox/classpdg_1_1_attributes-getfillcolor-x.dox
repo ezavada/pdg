@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getFillColor()
+
+\brief returns the current fill color
+
+**/ }

@@ -37,6 +37,9 @@
 #include "pdg/sys/imagestrip.h"
 #include "pdg/sys/color.h"
 
+#include <cstring>
+#include <string>
+
 #ifdef PDG_NO_GUI
   // not really using GL textures, just need to keep track 
   // of what format the image data is stored in
@@ -58,9 +61,6 @@ namespace pdg {
 		uint32  dataSize;           // total size as allocated of the data ptr in memory
 		bool	mRetainData;
 		bool	mRetainAlpha;
-	  #ifdef DEBUG
-		char	mFilename[256];
-	  #endif
 
 		SERIALIZABLE_TAG( CLASSTAG_IMAGE );
 		SERIALIZABLE_METHODS();
@@ -70,7 +70,7 @@ namespace pdg {
 	  #endif
 
 		virtual Image*  createImageFromFrame(int frame);
-		
+
 		virtual Image*  getFrame(int frame);
 		virtual Image*  getSubsection(Rect& r);
 		virtual Image*  getSubsection(Quad& quad);
@@ -94,8 +94,10 @@ namespace pdg {
 		
 		virtual void	setEdgeClamping(bool inUseEdgeClamp);
 
-		virtual void	initFromData(char* imageData, long imageDataLen, const char* filename);
-    	virtual void    initEmpty(int width, int height, uint8 inBitsPerPixel = 32);
+		virtual void	initFromFile(const char* imageFileName, const char* sourceName);
+		virtual void	initFromData(char* imageData, long imageDataLen, const char* sourceName);
+    	virtual void    initEmpty(long width, long height, uint8 inBitsPerPixel = 32);
+    	virtual bool    reloadData();  // Reload image data from original source, if possible
 
 		ImageImpl();
 		virtual ~ImageImpl();
@@ -114,6 +116,7 @@ namespace pdg {
 		Rect    mSectionRect;	// only valid when (mFrameNum < 0 && !mIsQuadSection)
 		Quad	mSectionQuad;	// only valid when (mFrameNum < 0 && mIsQuadSection)
 
+		std::string	mSourceName;  // used for error messages and reloading
 	};
 
 

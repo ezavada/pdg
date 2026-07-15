@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::getPoint(index)
+
+\brief gets the point at the specified index
+
+**/ }

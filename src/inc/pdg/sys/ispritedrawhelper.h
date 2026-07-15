@@ -66,16 +66,16 @@ class Port;
  *      });
  *		mySprite.setDrawHelper(myHelper);
  *
- * If you need something more complex, you can also use classify to create a new
+ * If you need something more complex, you can also use modern ES6 classes to create a new
  * Javascript class that derives from pdg.ISpriteDrawHelper, and it will call the 
  * draw() method of your class. For example:
  *
- *      classify(pdg.ISpriteDrawHelper, 'MyDrawHelperClass', function() {
- *			def('draw', function(sprite, port) {
+ *      class MyDrawHelperClass extends pdg.ISpriteDrawHelper {
+ *			draw(sprite, port) {
  *            console.log("MyDrawHelperClass.draw(" + sprite + ")" );
  *            return true; // let sprite draw itself (ignored for post draw)
- *			});
- *		});
+ *			}
+ *		}
  *		mySprite.setDrawHelper( new MyDrawHelperClass() );
  */
 
@@ -103,7 +103,9 @@ public:
 
     virtual ~ISpriteDrawHelper() {
 				#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-					CleanupISpriteDrawHelperScriptObject(mISpriteDrawHelperScriptObj);
+					#ifndef PDG_NO_GUI
+						CleanupISpriteDrawHelperScriptObject(mISpriteDrawHelperScriptObj);
+					#endif
 				#endif
 			}
 

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Offset::vector()
+
+\brief return a new vector from this offset
+
+**/ }

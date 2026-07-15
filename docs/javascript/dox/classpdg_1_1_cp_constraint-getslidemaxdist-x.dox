@@ -2,7 +2,7 @@ namespace pdg { /**
 
 \fn pdg::CpConstraint::getSlideMaxDist
 
-\brief get the maximum disable apart for the anchors of a slide joint
+\brief get the maximum distance apart for the anchors of a slide joint
 
 \sa setSlideMaxDist
 \sa getSlideMinDist

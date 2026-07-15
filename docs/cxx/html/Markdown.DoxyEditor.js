@@ -4,6 +4,7 @@
 	var activeDoxyInput = false;
 	var doxyConverter;
 	var doxyClassName;
+	var doxyGroupName;
 	var jsClassName;
 
 	$(document).ready(function() {
@@ -14,6 +15,12 @@
 		doxyConverter = Markdown.getDoxygenConverter();
 		var s = window.location.pathname;
 		doxyClassName = s.substring(s.lastIndexOf('/')+1).replace('.html', '');
+		if (doxyClassName.substring(0, 8) == 'group___') {
+			doxyGroupName = doxyClassName.replace('group___', 'group');
+			doxyClassName = 'namespacepdg';
+		} else {
+			doxyGroupName = '';
+		}
 		jsClassName = $('#nav-path li:last-child').text();
 		installDoxyEditButtons();
 	}
@@ -21,8 +28,10 @@
 	function funcPrototypeToMangledName(ps) {
 		if (!ps.match(/\(/)) {
 			// not actually a function prototype, probably a class constant
-			ps = ps.toLowerCase().replace(/(\S+) = \S+/g,'@$1');  // mark as @constantname
+			ps = ps.toLowerCase().replace(/\s+related/g, ''); // removed "related" postfix
+			ps = ps.replace(/(\S+) = \S+/g,'@$1');  // mark as @constantname
 			ps = ps.replace(/ /g, ''); //get rid of all remaining spaces
+			ps = ps.replace(/const@/g, '@'); //get rid of const prefix
 		} else {
 			// used: bcd f i  mnopqrs uv x 0 8 @
 			ps = ps.replace(/\).*/, ''); // get rid of trailing paren and anything after it
@@ -55,33 +64,45 @@
 	
 	function installDoxyEditButtons() {
 		// setup the class documentation block
-		$('.textblock').before('<div class="doxyedit-button" id="'+doxyClassName+'"></div>');
+		$('.contents > .textblock').before('<div class="doxyedit-button" id="'+doxyClassName+'"></div>');
 		// setup the member documentation blocks
 		$('.memdoc').each( function(index) {
-			var ps = $(this).parent().find('.memproto').text();
-			ps = ps.replace(/\s\s+/g, ' ');
-			ps = ps.replace(/\s*\)\s*/, ')');
-			ps = ps.replace(/\s*\(\s*/, '(');
-			ps = funcPrototypeToMangledName(ps);
-			var memberName = doxyClassName + '-' + ps;
-			memberName = memberName.replace(/-pdg::/g, '_'); // get rid of any extra namespace stuff
-			var jsName = $(this).parent().find('td.memname').text();
-			jsName = jsName.replace(/\s$/, '');  // trim trailing whitespace
-			if (ps.indexOf('@') < 0) {
-				// function or class
-				var i = jsName.lastIndexOf(' ');
-				if (i != -1) {
-					jsName = jsName.slice(i+1);
+			// could be a structure or class embedded in a group
+			var priorEl = $(this).parent().prev();
+			var jsMemberName;
+			var memberName;
+			if (priorEl[0].tagName == 'A') {
+				memberName = priorEl.attr('name');
+				jsMemberName = '';
+			} 
+			if (!memberName) {
+				var ps = $(this).parent().find('.memproto').text();
+				ps = ps.replace(/\s\s+/g, ' ');
+				ps = ps.replace(/\s*\)\s*/, ')');
+				ps = ps.replace(/\s*\(\s*/, '(');
+				ps = funcPrototypeToMangledName(ps);
+				memberName = doxyClassName + '-' + ps;
+				memberName = memberName.replace(/-pdg::/g, '_'); // get rid of any extra namespace stuff
+				var jsName = $(this).parent().find('td.memname').text();
+				jsName = jsName.replace(/\s$/, '');  // trim trailing whitespace
+				if (ps.indexOf('@') < 0) {
+					// function or class
+					var i = jsName.lastIndexOf(' ');
+					if (i != -1) {
+						jsName = jsName.slice(i+1);
+					}
+				} else {
+					// constant
+					jsName = jsName.replace(/\s*const\s+/, '');
+					var i = jsName.indexOf(' ');
+					if (i != -1) {
+						jsName = jsName.slice(0, i);
+					}
 				}
-			} else {
-				// constant
-				var i = jsName.indexOf(' ');
-				if (i != -1) {
-					jsName = jsName.slice(0, i);
-				}
+				jsMemberName = 'pdg::' + jsClassName + '::' + jsName;
+				jsMemberName = jsMemberName.replace(/::::pdg/g, ''); // get rid of any extra namespace stuff
+				jsMemberName = jsMemberName.replace(/pdg::::/g, 'pdg::'); // get rid of empty classname
 			}
-			var jsMemberName = 'pdg::' + jsClassName + '::' + jsName;
-			jsMemberName = jsMemberName.replace(/::::pdg/g, ''); // get rid of any extra namespace stuff
 			if (!memberName.match(/related$/)) {  // don't add button for related methods
 				$(this).before('<div class="doxyedit-button" id="'+memberName+'" title="'+jsMemberName+'"></div>');
 			}
@@ -140,7 +161,7 @@
 		}
 		if (item.indexOf('-') < 0) {
 			// find the class info or insert it if missing
-			if (!data.match(/\\class /)) {
+			if (!data.match(/\\class /) && !data.match(/\\struct /)) {
 				data = data.replace(/^namespace pdg \{ \/\*\*/, 
 					'namespace pdg { /**\n\n\\class pdg::'+jsClassName);
 			}
@@ -202,3 +223,4 @@
 	}
 	
 })();
+

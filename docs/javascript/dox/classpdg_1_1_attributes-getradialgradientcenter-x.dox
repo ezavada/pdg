@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getRadialGradientCenter()
+
+\brief returns the radial gradient center point
+
+**/ }

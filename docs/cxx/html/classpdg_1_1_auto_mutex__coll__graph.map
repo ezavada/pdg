@@ -1,3 +1,5 @@
 <map id="AutoMutex" name="AutoMutex">
-<area shape="rect" id="node2" href="$classpdg_1_1_mutex.html" title="Mutex" alt="" coords="18,6,75,34"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,102,90,128"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_mutex.html" title=" " alt="" coords="19,5,76,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="50,46,50,101,45,101,45,46"/>
 </map>

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getLineOpacity()
+
+\brief Get the current line opacity value
+
+**/ }

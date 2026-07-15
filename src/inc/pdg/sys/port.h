@@ -41,6 +41,9 @@
 #include "pdg/sys/image.h"
 #include "pdg/sys/imagestrip.h"
 #include "pdg/sys/font.h"
+#include "pdg/sys/spline.h"
+#include "pdg/sys/polygon.h"
+#include "pdg/sys/renderer.h"
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 #include "pdg_script_bindings.h"
@@ -59,22 +62,8 @@ class Image;
 //! \ingroup Graphics
 // -----------------------------------------------------------------------------------
 
-namespace Graphics {
-
-	//extended drawing, with bit patterns, line thickness, and opacity
-	//thickness: width of line (0 - 255), 0 means no line
-	//pattern: a bit mask for which pixels are drawn and which are skipped. 0xff is solid, 0xf0 is dashed, 0x11 is dotted, etc..
-	//patternShift: how much to shift the pattern for each successive line. pattern = 0x66 and shift = 1 gives 50% grey pattern
-
-	enum {
-		solidPat = 0xffffffff,
-		greyPat  = 0x66666666,
-		emptyPat = 0x00000000,
-		dashPat  = 0xff00ff00,
-		dotPat   = 0x10101010
-	};
-
-};
+//extended drawing, with line thickness and opacity
+//thickness: width of line (0 - 255), 0 means no line
 
 
 
@@ -85,116 +74,38 @@ namespace Graphics {
 //! \ingroup Graphics
 // -----------------------------------------------------------------------------------
 
-class Port {
+class Port : public Renderer {
 public:
+
+    // Renderer interface implementation
+    virtual void drawLine(const Point& from, const Point& to, const Attributes& attrs) override;
+    virtual void drawRect(const Rect& rect, const Attributes& attrs) override;
+    virtual void drawQuad(const Quad& quad, const Attributes& attrs) override;
+    virtual void drawPolygon(const Polygon& polygon, const Attributes& attrs) override;
+    virtual void drawSpline(const Spline& spline, const Attributes& attrs) override;
+    virtual void drawEllipse(const Point& center, float xRadius, float yRadius, const Attributes& attrs) override;
+    virtual void drawArc(const Point& center, float xRadius, float yRadius, float startAngle, float endAngle, const Attributes& attrs) override;
+
+    // New Renderer interface methods
+    virtual void drawImage(Image* img, const Point& loc, const Attributes& attrs) override;
+    virtual void drawImage(Image* img, const Rect& rect, const Attributes& attrs) override;
+    virtual void drawImage(Image* img, const Quad& quad, const Attributes& attrs) override;
+    virtual void drawDrawing(const Drawing& drawing, const Point& loc, const Attributes& attrs) override;
+    virtual void drawDrawing(const Drawing& drawing, const Rect& rect, const Attributes& attrs) override;
+    virtual void drawText(const char* text, const Point& loc, const Attributes& attrs) override;
+    virtual void drawText(const char* text, const Rect& rect, const Attributes& attrs) override;
+    virtual void drawSphere(const Point& center, float radius, const Attributes& attrs) override;
 
     Rect     getDrawingArea();
     Rect     getClipRect();
     void     setClipRect(const Rect& rect);
 
-    // normal drawing
-	//! you can also pass in a RotatedRect instead of a Quad, since the conversion is automatic
-	void     fillRect(const Rect& r, Color rgba = PDG_BLACK_COLOR);
-	void     fillRect(const RotatedRect& rr, Color rgba = PDG_BLACK_COLOR);
-    void     fillRect(const Quad& quad, Color rgba = PDG_BLACK_COLOR);
-	void     frameRect(const Rect& r, Color rgba = PDG_BLACK_COLOR);
-	void     frameRect(const RotatedRect& rr, Color rgba = PDG_BLACK_COLOR);
-    void     frameRect(const Quad& quad, Color rgba = PDG_BLACK_COLOR);
-
-    void     drawLine(const Point& from, const Point& to, Color rgba = PDG_BLACK_COLOR);
-
-    void     frameOval(const Point& centerPt, float xRadius, float yRadius, Color rgba = PDG_BLACK_COLOR);
-    void     fillOval(const Point& centerPt, float xRadius, float yRadius, Color rgba = PDG_BLACK_COLOR);
-
-    void     frameCircle(const Point& centerPt, float radius, Color rgba = PDG_BLACK_COLOR);
-    void     fillCircle(const Point& centerPt, float radius, Color rgba = PDG_BLACK_COLOR);
-
-    void     frameRoundRect(const Rect& rect, float radius, Color rgba = PDG_BLACK_COLOR);
-    void     fillRoundRect(const Rect& rect, float radius, Color rgba = PDG_BLACK_COLOR);
-
-    // extended drawing, with bit patterns, line thickness
-    // thickness: width of line (0 - 255), 0 means no line
-    // pattern: a bit mask for which pixels are drawn and which are skipped.
-    //    0xff is solid, 0xf0 is dashed, 0x11 is dotted, etc..
-    // patternShift: how much to shift the pattern for each successive line.
-    //    pattern = 0x66 and shift = 1 gives 50% grey pattern
-
-	//! you can also pass in a Rect or a RotatedRect instead of a Quad, since the conversion is automatic
-    void     fillRectEx(const Rect& r, uint32 pattern, uint8 patternShift, Color rgba);
-    void     fillRectEx(const RotatedRect& rr, uint32 pattern, uint8 patternShift, Color rgba);
-    void     fillRectEx(const Quad& quad, uint32 pattern, uint8 patternShift, Color rgba);
-
-    void     frameRectEx(const Rect& r, uint8 thickness, uint32 pattern, uint8 patternShift, Color rgba);
-    void     frameRectEx(const RotatedRect& rr, uint8 thickness, uint32 pattern, uint8 patternShift, Color rgba);
-    void     frameRectEx(const Quad& quad, uint8 thickness, uint32 pattern,
-								uint8 patternShift, Color rgba);
-
-    void     drawLineEx(const Point& from, const Point& to, uint8 thickness,
-                                uint32 pattern, uint8 patternShift, Color rgba);
-
-	// Fill rectangle with gradient of start to end colors from top to bottom
-	//! you can also pass in a Rect or a RotatedRect instead of a Quad, since the conversion is automatic
-	void	 fillRectWithGradient(const Rect& r, Color startColor, Color endColor);
-	void	 fillRectWithGradient(const RotatedRect& rr, Color startColor, Color endColor);
-	void	 fillRectWithGradient(const Quad& quad, Color startColor, Color endColor);
-
-	// image drawing
-	
-    //! draws image at given location
-	void     drawImage(Image* img, const Point& loc);
-    //! draws image into a given rectangle, scaling as needed
-	void     drawImage(Image* img, const Rect& r);
-    //! draws image into a given rectangle, scaling as specified to fit, with optional clipping
-	void     drawImage(Image* img, const Rect& r, Image::FitType fitType, bool clipOverflow = false);
-    //! draws image at given location, scaling if necessary to fit
-	void     drawImage(Image* img, const RotatedRect& rr);
-    //! draws image into a given quad-polygon, mapping each of the corners to the corresponding points
-	void     drawImage(Image* img, const Quad& quad);	
-
-    //! draws single frame of multiframe image at given location
-	void     drawImage(ImageStrip* img, int frame, const Point& loc);
-    //! draws single frame of multiframe image into a given rectangle, scaling as needed
-	void     drawImage(ImageStrip* img, int frame, const Rect& r);
-    //! draws single frame of multiframe image into a given rectangle, scaling as specified to fit, with optional clipping
-	void     drawImage(ImageStrip* img, int frame, const Rect& r, Image::FitType fitType, bool clipOverflow = false);
-    //! draws single frame of multiframe image at given location, scaling if necessary to fit
-	void     drawImage(ImageStrip* img, int frame, const RotatedRect& rr);
-    //! draws single frame of multiframe image into a given quad-polygon, mapping each of the corners to the corresponding points
-	void     drawImage(ImageStrip* img, int frame, const Quad& quad);	
-
-	// texture drawing
-
-    //! draws image as texture filling given area, replicating as needed to fill entire area
-    void    drawTexture(Image* img, const Rect& r);
-    //! draws single frame of multiframe image as texture filling given area, replicating as needed to fill entire area
-    void    drawTexture(ImageStrip* img, int frame, const Rect& r);
-    //! draws image as texture wrapped around a sphere
-    void    drawTexturedSphere(Image* img, const Point& loc, float radius, float rotation = 0.0f, const Offset& polarOffsetRadians = Offset(0,0), const Offset& lightOffsetRadians = Offset(0,0));
-    //! draws single frame of multiframe image as texture wrapped around a sphere
-    void    drawTexturedSphere(ImageStrip* img, int frame, const Point& loc, float radius, float rotation = 0.0f, const Offset& polarOffsetRadians = Offset(0,0), const Offset& lightOffsetRadians = Offset(0,0));
-
-    // text drawing and measurement
-
-    void     drawText(const char* text, const Point& loc, int size,
-                            uint32 style = Graphics::textStyle_Plain,
-                            Color rgba = PDG_BLACK_COLOR);
-
-	void	 drawText(const char* text, const Rect& r, int size,
-							uint32 style = Graphics::textStyle_Plain,
-							Color rgba = PDG_BLACK_COLOR);
-	void	 drawText(const char* text, const RotatedRect& rr, int size,
-                            uint32 style = Graphics::textStyle_Plain,
-                            Color rgba = PDG_BLACK_COLOR);
-	void	 drawText(const char* text, const Quad& quad, int size,
-							uint32 style = Graphics::textStyle_Plain,
-							Color rgba = PDG_BLACK_COLOR);
-
     int      getTextWidth(const char* text, int size,
-                            uint32 style = Graphics::textStyle_Plain,
+                            uint32 style = textStyle_Plain,
                             int len = -1);
 
 	// returns the current font used to draw
-	Font*    getCurrentFont(uint32 style = Graphics::textStyle_Plain);
+	Font*    getCurrentFont(uint32 style = textStyle_Plain);
 
     // set the font used for this port
 	// with no params it sets the font to the default font for the port, which is Arial
@@ -235,57 +146,69 @@ protected:
     virtual ~Port(); // protected destructor, Ports can't be deleted directly
     bool mClipChanged;
 /// @endcond
+
+private:
+	// image drawing
+	
+    //! draws image at given location
+	void     drawImage(Image* img, const Point& loc);
+    //! draws image into a given rectangle, scaling as needed
+	void     drawImage(Image* img, const Rect& r);
+    //! draws image into a given rectangle, scaling as specified to fit, with optional clipping
+	void     drawImage(Image* img, const Rect& r, FitType fitType, bool clipOverflow = false);
+    //! draws image at given location, scaling if necessary to fit
+	void     drawImage(Image* img, const RotatedRect& rr);
+    //! draws image into a given quad-polygon, mapping each of the corners to the corresponding points
+	void     drawImage(Image* img, const Quad& quad);	
+
+    //! draws single frame of multiframe image at given location
+	void     drawImage(ImageStrip* img, int frame, const Point& loc);
+    //! draws single frame of multiframe image into a given rectangle, scaling as needed
+	void     drawImage(ImageStrip* img, int frame, const Rect& r);
+    //! draws single frame of multiframe image into a given rectangle, scaling as specified to fit, with optional clipping
+	void     drawImage(ImageStrip* img, int frame, const Rect& r, FitType fitType, bool clipOverflow = false);
+    //! draws single frame of multiframe image at given location, scaling if necessary to fit
+	void     drawImage(ImageStrip* img, int frame, const RotatedRect& rr);
+    //! draws single frame of multiframe image into a given quad-polygon, mapping each of the corners to the corresponding points
+	void     drawImage(ImageStrip* img, int frame, const Quad& quad);	
+
+	// texture drawing
+
+
+//! draws image as texture filling given area, replicating as needed to fill entire area (deprecated)
+   void    drawTexture(Image* img, const Rect& r); // Deprecated
+   //! draws single frame of multiframe image as texture filling given area, replicating as needed to fill entire area (deprecated)
+   void    drawTexture(ImageStrip* img, int frame, const Rect& r); // Deprecated
+   //! draws image as texture wrapped around a sphere (deprecated)
+   void    drawTexturedSphere(Image* img, const Point& loc, float radius, float rotation = 0.0f, const Offset& polarOffsetRadians = Offset(0,0), const Offset& lightOffsetRadians = Offset(0,0), const Color& ambientLight = Color(0.5f, 0.5f, 0.5f, 1.0f));
+   //! draws single frame of multiframe image as texture wrapped around a sphere (deprecated)
+   void    drawTexturedSphere(ImageStrip* img, int frame, const Point& loc, float radius, float rotation = 0.0f, const Offset& polarOffsetRadians = Offset(0,0), const Offset& lightOffsetRadians = Offset(0,0), const Color& ambientLight = Color(0.5f, 0.5f, 0.5f, 1.0f));
+   //! draws a solid colored sphere with 3D lighting
+   void    drawColoredSphere(const Color& color, const Point& loc, float radius, float rotation = 0.0f, const Offset& polarOffsetRadians = Offset(0,0), const Offset& lightOffsetRadians = Offset(0,0), const Color& ambientLight = Color(0.5f, 0.5f, 0.5f, 1.0f));
+
+   //! draws texture on a polygon with proper texture coordinate mapping (deprecated)
+   void    drawTexturedPolygon(Image* img, const Polygon& transformedPolygon, const Polygon& untransformedPolygon, const Rect& bounds, FitType fitType = fit_Fill);
+
+   // text drawing and measurement
+
+   // private (deprecated) methods
+   void     drawText(const char* text, const Point& loc, int size,
+                           uint32 style = textStyle_Plain,
+                           Color rgba = PDG_BLACK_COLOR);
+
+    // private (deprecated) methods
+   void	 drawText(const char* text, const Rect& r, int size,
+                           uint32 style = textStyle_Plain,
+                           Color rgba = PDG_BLACK_COLOR);
+   void	 drawText(const char* text, const RotatedRect& rr, int size,
+                           uint32 style = textStyle_Plain,
+                           Color rgba = PDG_BLACK_COLOR);
+   void	 drawText(const char* text, const Quad& quad, int size,
+                           uint32 style = textStyle_Plain,
+                           Color rgba = PDG_BLACK_COLOR);
+
+
 };
-
-inline void 
-Port::fillRect(const Rect& r, Color rgba) {
-	fillRect((const Quad)r, rgba);
-}
-
-inline void 
-Port::fillRect(const RotatedRect& rr, Color rgba) {
-	fillRect((const Quad)rr, rgba);
-}
-
-inline void 
-Port::frameRect(const Rect& r, Color rgba) {
-	frameRect((const Quad)r, rgba);
-}
-
-inline void 
-Port::frameRect(const RotatedRect& rr, Color rgba) {
-	frameRect((const Quad)rr, rgba);
-}
-
-inline void 
-Port::fillRectEx(const Rect& r, uint32 pattern, uint8 patternShift, Color rgba) {
-	fillRectEx((const Quad)r, pattern, patternShift, rgba);
-}
-
-inline void 
-Port::fillRectEx(const RotatedRect& rr, uint32 pattern, uint8 patternShift, Color rgba) {
-	fillRectEx((const Quad)rr, pattern, patternShift, rgba);
-}
-
-inline void 
-Port::frameRectEx(const Rect& r, uint8 thickness, uint32 pattern, uint8 patternShift, Color rgba) {
-	frameRectEx((const Quad)r, thickness, pattern, patternShift, rgba);
-}
-
-inline void 
-Port::frameRectEx(const RotatedRect& rr, uint8 thickness, uint32 pattern, uint8 patternShift, Color rgba) {
-	frameRectEx((const Quad)rr, thickness, pattern, patternShift, rgba);
-}
-
-inline void 
-Port::fillRectWithGradient(const Rect& r, Color startColor, Color endColor) {
-	fillRectWithGradient((const Quad)r, startColor, endColor);
-}
-
-inline void 
-Port::fillRectWithGradient(const RotatedRect& rr, Color startColor, Color endColor) {
-	fillRectWithGradient((const Quad)rr, startColor, endColor);
-}
 
 inline void
 Port::drawImage(Image* img, const Rect& r) {

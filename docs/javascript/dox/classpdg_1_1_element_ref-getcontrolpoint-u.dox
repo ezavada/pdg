@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::ElementRef::getControlPoint(controlPointIndex)
+
+\brief returns the control point at the specified index
+
+**/ }

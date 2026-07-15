@@ -31,6 +31,7 @@
 
 #include "pdg/app/Scrollbar.h"
 #include "pdg/framework.h"
+#include "pdg/sys/attributes.h"
 #include "timerids.h"
 
 #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
@@ -76,11 +77,11 @@ Scrollbar::Scrollbar(Controller* controller, const Rect& scrollBarRect, Orientat
 	// Load default images for now. 
 	// Call loadImages explictly after you create the scrollbar and pass in 
 	// a different resource ID for different scrollbar images.
-	if(mOrientation == HORIZONTAL)
+	if (mOrientation == HORIZONTAL)
 	{
 		loadImages(RES_DEFAULT_HORIZONTAL_SCROLLBAR_IMAGES);
 	}
-	else if( (mOrientation == VERTICAL) || (mOrientation == VERTICAL_UP_IS_BIGGER) )
+	else if ( (mOrientation == VERTICAL) || (mOrientation == VERTICAL_UP_IS_BIGGER) )
 	{
 		loadImages(RES_DEFAULT_VERTICAL_SCROLLBAR_IMAGES);
 	}
@@ -100,7 +101,7 @@ Scrollbar::~Scrollbar()
 void Scrollbar::loadImages(int scrollbarImagesResourceID)
 {
 	// Load scroll bar images
-//	loadImageArray(mResMgr, mpScrollBarImages, scrollbarImagesResourceID, MAX_SCROLL_BAR_IMAGES);
+	loadImageArray(mResMgr, mpScrollBarImages, scrollbarImagesResourceID, MAX_SCROLL_BAR_IMAGES);
 
 	// Calc areas
 	calcClickableAreas();
@@ -113,10 +114,10 @@ void Scrollbar::calcClickableAreas()
 	Point viewAreaTLPoint;
 	Point viewAreaBRPoint;
 
-	if(mOrientation == HORIZONTAL)
+	if (mOrientation == HORIZONTAL)
 	{
 		// Calc right button areas
-		if(mpScrollBarImages[SCROLL_UP])
+		if (mpScrollBarImages[SCROLL_UP])
 		{
 			viewAreaBRPoint = Point(mViewArea.width(), mpScrollBarImages[SCROLL_UP]->height);
 			mUpButtonPoint = Point(mViewArea.width(), 0);
@@ -132,7 +133,7 @@ void Scrollbar::calcClickableAreas()
 		}
 
 		// Calc left button areas
-		if(mpScrollBarImages[SCROLL_DOWN])
+		if (mpScrollBarImages[SCROLL_DOWN])
 		{
 			mDownButtonPoint = Point(0, 0);
 			viewAreaTLPoint = mDownButtonPoint;
@@ -146,10 +147,10 @@ void Scrollbar::calcClickableAreas()
 			sliderAreaTLPoint.x += mpScrollBarImages[SCROLL_DOWN]->width; 
 		}
 	}
-	else if( (mOrientation == VERTICAL) || (mOrientation == VERTICAL_UP_IS_BIGGER) )
+	else if ( (mOrientation == VERTICAL) || (mOrientation == VERTICAL_UP_IS_BIGGER) )
 	{
 		// Calc top button areas
-		if(mpScrollBarImages[SCROLL_UP])
+		if (mpScrollBarImages[SCROLL_UP])
 		{
 			mUpButtonPoint = Point(0,0);
 			viewAreaTLPoint = mUpButtonPoint;
@@ -164,7 +165,7 @@ void Scrollbar::calcClickableAreas()
 		}
 
 		// Calc bottom button areas
-		if(mpScrollBarImages[SCROLL_DOWN])
+		if (mpScrollBarImages[SCROLL_DOWN])
 		{
 			mDownButtonPoint = Point(0, mViewArea.height());
 			viewAreaBRPoint = Point(mpScrollBarImages[SCROLL_DOWN]->width, mViewArea.height());
@@ -196,7 +197,7 @@ void Scrollbar::calcClickableAreas()
 	    mSliderPoint = mSliderArea.rightBottom();
 	}
 	
-	if(	mpScrollBarImages[SCROLL_SLIDER])
+	if (	mpScrollBarImages[SCROLL_SLIDER])
 	{
 		mSliderPoint.x -= mpScrollBarImages[SCROLL_SLIDER]->width;
 		mSliderPoint.y -= mpScrollBarImages[SCROLL_SLIDER]->height;
@@ -206,47 +207,47 @@ void Scrollbar::calcClickableAreas()
 void Scrollbar::drawSelf()
 {
 	// draw top button
-	if(mScrollUpClicked)
+	if (mScrollUpClicked)
 	{
-		if(mpScrollBarImages[SCROLL_UP_CLICKED])
+		if (mpScrollBarImages[SCROLL_UP_CLICKED])
 		{
 			mpScrollBarImages[SCROLL_UP_CLICKED]->draw(localToGlobal(mUpButtonPoint));
 		}
 	}
 	else
 	{
-		if(mpScrollBarImages[SCROLL_UP])
+		if (mpScrollBarImages[SCROLL_UP])
 		{
 			mpScrollBarImages[SCROLL_UP]->draw(localToGlobal(mUpButtonPoint));
 		}
 	}
 
 	// draw bottom button
-	if(mScrollDownClicked)
+	if (mScrollDownClicked)
 	{
-		if(mpScrollBarImages[SCROLL_DOWN_CLICKED])
+		if (mpScrollBarImages[SCROLL_DOWN_CLICKED])
 		{
 			mpScrollBarImages[SCROLL_DOWN_CLICKED]->draw(localToGlobal(mDownButtonPoint));
 		}
 	}
 	else
 	{
-		if(mpScrollBarImages[SCROLL_DOWN])
+		if (mpScrollBarImages[SCROLL_DOWN])
 		{
 			mpScrollBarImages[SCROLL_DOWN]->draw(localToGlobal(mDownButtonPoint));
 		}
 	}
 
 	// draw grey slider area
-	mPort->fillRect(localToGlobal(mSliderArea), SCROLLBAR_SLIDER_BG_COLOR);
+	mPort->drawRect(localToGlobal(mSliderArea), Attributes().fillColor(SCROLLBAR_SLIDER_BG_COLOR));
 
 	int scrollRange = mMaxRange - mMinRange;
 	int sliderPos = 0;
 	int sliderTravelHeight = 0;
-	if(mpScrollBarImages[SCROLL_SLIDER])
+	if (mpScrollBarImages[SCROLL_SLIDER])
 	{
 		// Compute Current Position if slider is moving
-		if(mScrollSliderClicked)
+		if (mScrollSliderClicked)
 		{
 			if (mOrientation == HORIZONTAL)
 			{
@@ -303,12 +304,12 @@ void Scrollbar::drawSelf()
 	Point br = textPt;
 	br = br + Point(90, 0);
 	Rect hi(tl, br);
-	mPort->fillRect(localToGlobal(hi), PDG_WHITE_COLOR); 
-	mPort->drawText(text, localToGlobal(textPt), 12);
+	mPort->drawRect(localToGlobal(hi), Attributes().fillColor(PDG_WHITE_COLOR)); 
+	mPort->drawText(text, localToGlobal(textPt), Attributes().textSize(12));
 	
 	this->drawClickableParts();
 	Rect viewArea(0,0,mViewArea.width(),mViewArea.height());
-	mPort->frameRect(localToGlobal(viewArea), PDG_RED_COLOR);
+	mPort->drawRect(localToGlobal(viewArea), Attributes().lineColor(PDG_RED_COLOR).lineThickness(1));
 	*/
 }
 
@@ -406,7 +407,7 @@ void Scrollbar::scrollSliderAreaPressed(Point& clickPoint)
 
 	// Find thumb/slider area
 	Rect thumbArea(0, 0);
-	if(mpScrollBarImages[SCROLL_SLIDER])
+	if (mpScrollBarImages[SCROLL_SLIDER])
 	{
 		Point thumbDim(mpScrollBarImages[SCROLL_SLIDER]->width, mpScrollBarImages[SCROLL_SLIDER]->height);
 		Point sliderPt = mSliderPoint;
@@ -417,39 +418,39 @@ void Scrollbar::scrollSliderAreaPressed(Point& clickPoint)
 	Rect upperSliderArea = mSliderArea;
 	Rect lowerSliderArea = mSliderArea;
 
-	if(mOrientation == HORIZONTAL)
+	if (mOrientation == HORIZONTAL)
 	{
 		upperSliderArea.left = thumbArea.right + 1;
 		lowerSliderArea.right = thumbArea.left - 1;
 	}
-	else if(mOrientation == VERTICAL)
+	else if (mOrientation == VERTICAL)
 	{
 		upperSliderArea.bottom = thumbArea.top - 1;
 		lowerSliderArea.top = thumbArea.bottom + 1;
 	}
 
 	// Check to see if the clicked point is above, on, or below the slider.
-	if(upperSliderArea.contains(clickPoint))
+	if (upperSliderArea.contains(clickPoint))
 	{
 		mScrollUpFullWindowClicked = true;
 		scrollUpFullWindow();
 		mTimerMgr.startTimer(PDG_SCROLLBAR_CLICK_PAUSE, SCROLLBAR_CLICK_PAUSE_MSTIME, timer_OneShot, UserData::makeUserDataFromPointer(this, data_DoNothing) );
 	}
-	else if(thumbArea.contains(clickPoint))
+	else if (thumbArea.contains(clickPoint))
 	{
 		mScrollSliderClicked = true;
 		mOldMousePoint = mSliderStartTrackPoint = clickPoint;
-		if(mOrientation == HORIZONTAL)
+		if (mOrientation == HORIZONTAL)
 		{
 			mSliderStartTrackHeight = mSliderStartTrackPoint.x - mSliderPoint.x;
 		}
-		else if(mOrientation == VERTICAL)
+		else if (mOrientation == VERTICAL)
 		{
 			mSliderStartTrackHeight = mSliderStartTrackPoint.y - mSliderPoint.y;
 		}
 		mTimerMgr.startTimer(PDG_SCROLLBAR_TRACKER, SCROLLBAR_TRACKER_MSTIME, timer_Repeating, UserData::makeUserDataFromPointer(this, data_DoNothing) );
 	}
-	else if(lowerSliderArea.contains(clickPoint))
+	else if (lowerSliderArea.contains(clickPoint))
 	{
 		mScrollDownFullWindowClicked = true;
 		scrollDownFullWindow();
@@ -518,31 +519,31 @@ void Scrollbar::trackScrollSlider()
 {
 	Point newMousePoint = globalToLocal(OS::getMouse());
 	
-	if( newMousePoint != mOldMousePoint )
+	if ( newMousePoint != mOldMousePoint )
 	{
-		if(mpScrollBarImages[SCROLL_SLIDER])
+		if (mpScrollBarImages[SCROLL_SLIDER])
 		{
 			// The mouse moved, check to see if the mouse is in a good range otherwise 
 			// go back to our point where the user started.
 			Rect goodRangeRect = this->mSliderArea;
 			goodRangeRect = goodRangeRect + goodRangeOffset;
 			//mPort->frameRect(localToGlobal(goodRangeRect), PDG_GREEN_COLOR);
-			if(!goodRangeRect.contains(newMousePoint))
+			if (!goodRangeRect.contains(newMousePoint))
 			{
 				newMousePoint = mSliderStartTrackPoint;
 			}
 			else
 			{
 				// Check to see if the point is above or below the slider area...if so clamp it
-				if(mOrientation == HORIZONTAL)
+				if (mOrientation == HORIZONTAL)
 				{
 					int absLeft = this->mSliderArea.left + mSliderStartTrackHeight;
 					int absRight = this->mSliderArea.right - (mpScrollBarImages[SCROLL_SLIDER]->width - mSliderStartTrackHeight);
-					if(newMousePoint.x < absLeft)
+					if (newMousePoint.x < absLeft)
 					{
 						newMousePoint.x = absLeft;
 					}
-					else if(newMousePoint.x > absRight)
+					else if (newMousePoint.x > absRight)
 					{
 						newMousePoint.x = absRight;
 					}
@@ -552,11 +553,11 @@ void Scrollbar::trackScrollSlider()
 				{
 					int absTop = this->mSliderArea.top + mSliderStartTrackHeight;
 					int absBottom = this->mSliderArea.bottom - (mpScrollBarImages[SCROLL_SLIDER]->height - mSliderStartTrackHeight);
-					if(newMousePoint.y < absTop)
+					if (newMousePoint.y < absTop)
 					{
 						newMousePoint.y = absTop;
 					}
-					else if(newMousePoint.y > absBottom)
+					else if (newMousePoint.y > absBottom)
 					{
 						newMousePoint.y = absBottom;
 					}
@@ -585,7 +586,7 @@ bool Scrollbar::handleEvent(EventEmitter* inEmitter, long inEventType, void* inE
 	{
         TimerInfo* ti = static_cast<TimerInfo*>(inEventData);
 //		OS::_DOUT( " got eventType_Timer: id [%d] ms [%d]\n", ti->inID, ti->inMillisec );
-		if(this == (Scrollbar*)(ti->userData))
+		if (this == (Scrollbar*)(ti->userData))
 		{
 			switch( ti->id )
 			{
@@ -595,19 +596,19 @@ bool Scrollbar::handleEvent(EventEmitter* inEmitter, long inEventType, void* inE
 				break;
 
 			case PDG_SCROLLBAR_REPEATER:
-				if( mScrollUpClicked )
+				if ( mScrollUpClicked )
 				{
 					scrollUp();
 				}
-				else if( mScrollDownClicked )
+				else if ( mScrollDownClicked )
 				{
 					scrollDown();
 				}
-				else if( mScrollUpFullWindowClicked )
+				else if ( mScrollUpFullWindowClicked )
 				{
 					scrollUpFullWindow();
 				}
-				else if( mScrollDownFullWindowClicked )
+				else if ( mScrollDownFullWindowClicked )
 				{
 					scrollDownFullWindow();
 				}
@@ -616,7 +617,7 @@ bool Scrollbar::handleEvent(EventEmitter* inEmitter, long inEventType, void* inE
 				break;
 
 			case PDG_SCROLLBAR_TRACKER:
-				if( mScrollSliderClicked )
+				if ( mScrollSliderClicked )
 				{
 					trackScrollSlider();
 				}
@@ -631,17 +632,17 @@ bool Scrollbar::handleEvent(EventEmitter* inEmitter, long inEventType, void* inE
 
 bool Scrollbar::doMouseUp(const MouseInfo *mi, int id, int part)
 {
-	if(mScrollUpClicked)
+	if (mScrollUpClicked)
 	{
 		scrollUpReleased();
 	}
 
-	if(mScrollDownClicked)
+	if (mScrollDownClicked)
 	{
 		scrollDownReleased();
 	}
 
-	if(mScrollSliderClicked || mScrollDownFullWindowClicked || mScrollUpFullWindowClicked)
+	if (mScrollSliderClicked || mScrollDownFullWindowClicked || mScrollUpFullWindowClicked)
 	{
 		scrollSliderAreaReleased();
 	}
@@ -650,15 +651,15 @@ bool Scrollbar::doMouseUp(const MouseInfo *mi, int id, int part)
 
 bool Scrollbar::doMouseDown(const MouseInfo *mi, int id, int part)
 {
-	if(part == Scrollbar::CLICK_ID_SCROLL_UP)
+	if (part == Scrollbar::CLICK_ID_SCROLL_UP)
 	{
 		scrollUpPressed();
 	}
-	else if(part == Scrollbar::CLICK_ID_SCROLL_DOWN)
+	else if (part == Scrollbar::CLICK_ID_SCROLL_DOWN)
 	{
 		scrollDownPressed();
 	}
-	else if(part == Scrollbar::CLICK_ID_SLIDER_AREA)
+	else if (part == Scrollbar::CLICK_ID_SLIDER_AREA)
 	{
 		Point clickPoint = mi->mousePos;
 		scrollSliderAreaPressed(clickPoint);

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::sub(Rect r2)
+
+\brief sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point; sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates
+
+**/ }

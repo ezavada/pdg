@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['fadein_0',['fadeIn',['../classpdg_1_1_sound.html#a1b41bd279e2a5ed2958f4cce09057a58',1,'pdg::Sound::fadeIn()'],['../classpdg_1_1_sprite.html#a8211e63a577f3494cba0a639b4d7e945',1,'pdg::Sprite::fadeIn()'],['../classpdg_1_1_sprite_layer.html#a95f82545ffec90a3710ec23e360dac06',1,'pdg::SpriteLayer::fadeIn()']]],
+  ['fadeout_1',['fadeOut',['../classpdg_1_1_sound.html#a3601c02c1d17d714905f1efcbd70cd5e',1,'pdg::Sound::fadeOut()'],['../classpdg_1_1_sprite.html#a341ee79347c4f342c7fca94bf6f36438',1,'pdg::Sprite::fadeOut()'],['../classpdg_1_1_sprite_layer.html#ab609063fc08c8b1dce939a5825f7edc9',1,'pdg::SpriteLayer::fadeOut()']]],
+  ['fadeto_2',['fadeTo',['../classpdg_1_1_sprite.html#a113b8825fa904406349ef3f5c3ea8d58',1,'pdg::Sprite']]],
+  ['fillcircle_3',['fillCircle',['../classpdg_1_1_port.html#ae8b5adcccd20a2b185cbe118bce8dead',1,'pdg::Port']]],
+  ['fillcolor_4',['fillColor',['../classpdg_1_1_attributes.html#a79d3c43a1c3b68b25ea7203c39954d44',1,'pdg::Attributes']]],
+  ['fillgradient_5',['fillGradient',['../classpdg_1_1_attributes.html#a0b6f9bf0d72afc98e1c1f109284747bf',1,'pdg::Attributes']]],
+  ['fillopacity_6',['fillOpacity',['../classpdg_1_1_attributes.html#a2a9a6fa84c16db1d8f64320ab121ad93',1,'pdg::Attributes']]],
+  ['filloval_7',['fillOval',['../classpdg_1_1_port.html#aed5f04e4c1285c45098b4b6558a85cc0',1,'pdg::Port']]],
+  ['fillpolygon_8',['fillPolygon',['../classpdg_1_1_port.html#a7768c5aaa187ebe28f8a7f9ebabceef0',1,'pdg::Port']]],
+  ['fillradialgradient_9',['fillRadialGradient',['../classpdg_1_1_attributes.html#a810dcbbab3e96e2351c4da3244f2f0b3',1,'pdg::Attributes']]],
+  ['fillrect_10',['fillRect',['../classpdg_1_1_port.html#a3a82a506c2db6c34c2fe7d4926c52cf5',1,'pdg::Port::fillRect(const Rect &amp;r, Color rgba=PDG_BLACK_COLOR)'],['../classpdg_1_1_port.html#a001b06b371e9f5abb60fc0da6d8143db',1,'pdg::Port::fillRect(const RotatedRect &amp;rr, Color rgba=PDG_BLACK_COLOR)'],['../classpdg_1_1_port.html#a5cdd846c958f30a27ddd88820e1a2e53',1,'pdg::Port::fillRect(const Quad &amp;quad, Color rgba=PDG_BLACK_COLOR)']]],
+  ['fillrectwithgradient_11',['fillRectWithGradient',['../classpdg_1_1_port.html#a96ac941b157dd61b3294a9c38c2ac657',1,'pdg::Port::fillRectWithGradient(const Rect &amp;r, Color startColor, Color endColor)'],['../classpdg_1_1_port.html#a739ecaf3c7cffd90dfb39d852dbedda5',1,'pdg::Port::fillRectWithGradient(const RotatedRect &amp;rr, Color startColor, Color endColor)'],['../classpdg_1_1_port.html#a3ae88ee0b18e8395b2979b26d114a76a',1,'pdg::Port::fillRectWithGradient(const Quad &amp;quad, Color startColor, Color endColor)']]],
+  ['fillroundrect_12',['fillRoundRect',['../classpdg_1_1_port.html#aff3bbd7fa67a7f594cb732b4c29a94f0',1,'pdg::Port']]],
+  ['findclose_13',['findClose',['../classpdg_1_1_o_s.html#a2091fd78e7301f30abf37536cf6b029a',1,'pdg::OS']]],
+  ['findfirst_14',['findFirst',['../classpdg_1_1_o_s.html#afb210643d8de35cc3d3cf7dab9ddcda5',1,'pdg::OS']]],
+  ['findnext_15',['findNext',['../classpdg_1_1_o_s.html#a0a6f0961d8c76ef16fdf4985fab6dd8f',1,'pdg::OS']]],
+  ['findsprite_16',['findSprite',['../classpdg_1_1_sprite_layer.html#a902f9b80368ec2c93e972af9e51f4a71',1,'pdg::SpriteLayer']]],
+  ['flipx_17',['flipX',['../classpdg_1_1_animated.html#a3332237c694905bbf9ad7f30eea5790b',1,'pdg::Animated']]],
+  ['flipy_18',['flipY',['../classpdg_1_1_animated.html#a7af3e101486ffdc5e97dc00e760d3c1e',1,'pdg::Animated']]],
+  ['framecircle_19',['frameCircle',['../classpdg_1_1_port.html#abf72a5ece48dc5b0bbad9946d18aa6d2',1,'pdg::Port']]],
+  ['frameoval_20',['frameOval',['../classpdg_1_1_port.html#a0e420b55bcaab5a20c73e006864539b4',1,'pdg::Port']]],
+  ['framepolygon_21',['framePolygon',['../classpdg_1_1_port.html#a184f4849872a3f151130f964fba199c9',1,'pdg::Port']]],
+  ['framerect_22',['frameRect',['../classpdg_1_1_port.html#a03935d591de06cead8a96c7ac03d6e26',1,'pdg::Port::frameRect(const Rect &amp;r, Color rgba=PDG_BLACK_COLOR, float thickness=1.0f)'],['../classpdg_1_1_port.html#ab69962fdb29bea4ae6b4966322c1ca32',1,'pdg::Port::frameRect(const RotatedRect &amp;rr, Color rgba=PDG_BLACK_COLOR, float thickness=1.0f)'],['../classpdg_1_1_port.html#a1f0b0b4ea2381d5a3ad86d58f8296c65',1,'pdg::Port::frameRect(const Quad &amp;quad, Color rgba=PDG_BLACK_COLOR, float thickness=1.0f)']]],
+  ['frameroundrect_23',['frameRoundRect',['../classpdg_1_1_port.html#a960cd994bfbe29e102d188c054a3f0e7',1,'pdg::Port']]],
+  ['freeuserdata_24',['freeUserData',['../classpdg_1_1_sprite.html#acb729056025792431b47b9a5c26cd0d6',1,'pdg::Sprite']]]
+];

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::RotatedRect::getQuad()
+
+\brief create a Quad by applying the rectangle's rotation around the center point with offset
+
+**/ }

@@ -4,7 +4,7 @@ namespace pdg { /**
 
 \brief set event handler for sprite-to-sprite collision events
 
-These happen when a sprite collides with another sprite
+These happen when a sprite collides with another sprite. Collisions must be enabled for the sprite and the layer.
 
 \sa SpriteCollideEvent
 \sa IEventHandler

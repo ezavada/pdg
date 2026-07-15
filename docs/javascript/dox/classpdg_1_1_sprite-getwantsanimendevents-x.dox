@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getWantsAnimEndEvents()
+
+\brief returns true if animation end events are enabled for this sprite
+
+**/ }

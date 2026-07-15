@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::attachSprite(sprite, attachPointName)
+
+\brief attaches another sprite to this sprite at the specified attach point
+
+**/ }

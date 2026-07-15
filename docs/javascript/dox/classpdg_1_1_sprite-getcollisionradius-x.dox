@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getCollisionRadius
+
+\brief get the collision radius for this sprite
+
+\sa setCollisionRadius()
+\sa enableCollisions()
+
+**/ }

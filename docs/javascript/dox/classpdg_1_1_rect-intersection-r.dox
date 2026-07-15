@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::intersection(r)
+
+\brief get a new rectangle that is the overlapping area of the the rectangles
+
+**/ }

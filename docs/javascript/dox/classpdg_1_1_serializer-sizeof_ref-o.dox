@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::sizeof_ref(object val)
+
+\brief Calculate the number of bytes needed to serialize an object reference
+
+**/ }

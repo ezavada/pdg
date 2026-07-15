@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::y1()
+
+\brief alias for Rect.top
+
+**/ }

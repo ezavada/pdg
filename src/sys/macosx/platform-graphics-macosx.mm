@@ -36,7 +36,7 @@
 #include "pdg/sys/platform.h"
 #include "pdg/sys/os.h"
 #import "pdg/sys/events.h"
-
+#include "pdg/sys/graphicsmanager.h"
 
 #import "internals-macosx.h"
 #include "internals.h"
@@ -173,6 +173,22 @@ void platform_getScreenSize(long* outWidth, long* outHeight, int screenNum) {
 	}
 }
 
+void platform_getScreenBounds(long* outX, long* outY, long* outWidth, long* outHeight, int screenNum) {
+	if (screenNum >= pdg::screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
+        CGDirectDisplayID dispId = screenNumToDisplayID(screenNum);
+		CGRect bounds = CGDisplayBounds(dispId);
+		*outX = (long)bounds.origin.x;
+		*outY = (long)bounds.origin.y;
+		*outWidth = (long)bounds.size.width;
+		*outHeight = (long)bounds.size.height;
+	} else {
+		*outX = 0;
+		*outY = 0;
+		*outWidth = 0;
+		*outHeight = 0;
+	}
+}
+
 void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum) {
     platform_getScreenSize(outWidth, outHeight, screenNum);
 	if ( (screenNum == pdg::screenNum_PrimaryScreen) || (screenNum == platform_getPrimaryScreen()) ) {
@@ -208,8 +224,26 @@ void* platform_createWindow(long width, long height, long x, long y, int bpp, co
     myView->onScreenNum = platform_getPrimaryScreen();
     [myView retain];    // we are passing it back to someone who is keeping a pointer to it
 
-    [myWindow center];
+    // center the window if no position is specified
+    if (x <= 0 && y <= 0) {
+        [myWindow center];
+    } else {
+        [myWindow setFrameOrigin:NSMakePoint(x, y)];
+    }
+    
+    // Set a high window level to ensure it appears on top
+    [myWindow setLevel:NSFloatingWindowLevel];
+    
+    // Force the window to be visible and on top
+    [myWindow orderFront:nil];
     [myWindow makeKeyAndOrderFront:nil];
+    [NSApp activateIgnoringOtherApps:YES];
+    
+    // Force a redraw of the window
+    [myView setNeedsDisplay:YES];
+    
+    // Debug output to confirm window creation
+    DEBUG_ONLY( OS::_DOUT("Window created successfully: %s at (%d, %d) [%d x %d]", title, x, y, width, height); )
     return myView;
 }
 

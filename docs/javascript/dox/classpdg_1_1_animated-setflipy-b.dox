@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setFlipY(inFlipY)
+
+\brief sets whether the object is flipped vertically
+
+**/ }

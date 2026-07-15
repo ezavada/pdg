@@ -77,8 +77,10 @@
     run. This is needed when the OS and CPU support more than one runtime
     (e.g. MacOS on 68K supports CFM68K and Classic 68k).
 
-        PLATFORM_LITTLE_ENDIAN - Generated code uses little endian format for integers
-        PLATFORM_BIG_ENDIAN    - Generated code uses big endian format for integers
+        PLATFORM_LITTLE_ENDIAN    - Generated code uses little endian format for integers
+        PLATFORM_BIG_ENDIAN       - Generated code uses big endian format for integers
+        PLATFORM_RUNTIME_IS_LITTLE_ENDIAN - Generated code is using little endian format for integers (Runtime check)
+        PLATFORM_RUNTIME_IS_BIG_ENDIAN    - Generated code is using big endian format for integers (Runtime check)
      
         PLATFORM_MAC_CFM       - PLATFORM_MAC is true and CFM68K or PowerPC CFM (TVectors) are used
         PLATFORM_MAC_MACHO     - PLATFORM_MAC is true and Mach-O style runtime
@@ -200,13 +202,37 @@
     #endif
 
 
+#elif defined(__EMSCRIPTEN__)
+    /* 
+        a llvcc-gcc varient for compiling C/C++/Objective C into JavaScript
+    */
+
+	#define API_DEPRECATED __attribute__((deprecated,visibility("default")))
+
+    #define COMPILER_EMCC          __EMSCRIPTEN__  /* special gcc varient */
+    #define COMPILER_STR "emcc"
+    #define COMPILER_VERSION       (void*)__EMSCRIPTEN__
+
+    #define PLATFORM_JAVASCRIPT    1
+    #define PLATFORM_UNIX          1
+    #define PLATFORM_LINUX         1    /* runtime behaves like linux */
+    #define PLATFORM_POSIX         1
+
+    #define PLATFORM_RUNTIME_IS_BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
+    #define PLATFORM_RUNTIME_IS_LITTLE_ENDIAN (*(uint16_t *)"\0\xff" > 0x100)
+
+    #define PLATFORM_STR "javascript-ecma-emscripten"
+
+
 
 #elif defined(__GNUC__) 
     /*
         gcc from GNU
     */
 
-	#define API_DEPRECATED __attribute__((deprecated,visibility("default")))
+	#ifndef API_DEPRECATED
+		#define API_DEPRECATED __attribute__((deprecated,visibility("default")))
+	#endif
 
     #define COMPILER_GCC              __GNUC__
     #define COMPILER_STR "GNU gcc"
@@ -238,6 +264,11 @@
             #define PLATFORM_LITTLE_ENDIAN 1
             #define PLATFORM_64_BIT        1
             #define PLATFORM_STR "x86_64-apple-darwin"
+        #elif defined(__arm64__)
+            #define PLATFORM_ARM64	       1
+            #define PLATFORM_LITTLE_ENDIAN 1
+            #define PLATFORM_64_BIT        1
+            #define PLATFORM_STR "arm64-apple-darwin"
         #else
             #error unrecognized gcc compiler
         #endif
@@ -348,7 +379,9 @@
         Visual Studio C/C++ from Microsoft, Inc.
     */
     
-    #define API_DEPRECATED __declspec(deprecated)
+    #ifndef API_DEPRECATED
+        #define API_DEPRECATED __declspec(deprecated)
+    #endif
     
     #define COMPILER_MSVC             _MSC_VER
     #define COMPILER_STR "Microsoft Visual C++"
@@ -406,6 +439,50 @@
         #define PLATFORM_LITTLE_ENDIAN     1
         #define PLATFORM_STR "mips-microsoft-win32"
 
+    #elif defined(_M_X64) || defined(_M_AMD64)  /* MSVC x64 (native or clang-cl) */
+        #define PLATFORM_X64               1
+        #define PLATFORM_WIN32             1
+        #define PLATFORM_LITTLE_ENDIAN     1
+        #define PRAGMA_STRUCT_PACK         1
+        #define PRAGMA_STRUCT_PACKPUSH     1
+        #ifndef COMPILER_FUNCTION_DECLSPEC
+            #define COMPILER_FUNCTION_DECLSPEC       1
+        #endif
+        #ifndef COMPILER_FUNCTION_WIN32CC
+            #define COMPILER_FUNCTION_WIN32CC        1
+        #endif
+        #define PLATFORM_STR "x64-microsoft-win32"
+
+    #elif defined(_M_ARM64)  /* MSVC ARM64 */
+        #define PLATFORM_ARM64             1
+        #define PLATFORM_WIN32             1
+        #define PLATFORM_LITTLE_ENDIAN     1
+        #define PLATFORM_STR "arm64-microsoft-win32"
+
+    #elif defined(_M_ARM)  /* MSVC ARM */
+        #define PLATFORM_ARM               1
+        #define PLATFORM_WIN32             1
+        #define PLATFORM_LITTLE_ENDIAN     1
+        #define PLATFORM_STR "arm-microsoft-win32"
+
+    #elif defined(__clang__) && defined(_MSC_VER)  /* clang-cl (legacy path; x64/ARM handled above) */
+        #if defined(_M_IX86)
+            #define PLATFORM_X86               1
+            #define PLATFORM_WIN32             1
+            #define PLATFORM_LITTLE_ENDIAN     1
+            #define PRAGMA_STRUCT_PACK         1
+            #define PRAGMA_STRUCT_PACKPUSH     1
+            #define PLATFORM_STR "x86-clang-win32"
+        #else
+            /* Fallback for clang-cl if no specific architecture matched above */
+            #define PLATFORM_X64               1
+            #define PLATFORM_WIN32             1
+            #define PLATFORM_LITTLE_ENDIAN     1
+            #define PRAGMA_STRUCT_PACK         1
+            #define PRAGMA_STRUCT_PACKPUSH     1
+            #define PLATFORM_STR "x64-clang-win32"
+        #endif
+
     #else
         #error unrecognized microsoft visual c++ compiler
     #endif
@@ -416,7 +493,9 @@
         SPARCompiler or SPARCWorks C++ compiler from Sun Microsystems Inc.
     */
     
-    #define API_DEPRECATED 
+    #ifndef API_DEPRECATED
+        #define API_DEPRECATED 
+    #endif
     
     #define COMPILER_SUNSW             1
     #define COMPILER_STR "Sun SPARCWorks"
@@ -493,14 +572,14 @@ const char* demangleSymbol(const char* mangled_name);
 /* cheezy hack to allow me to embed development notes into the code */
 /* only tested with CodeWarrior */
 #ifdef DEBUG
-    #define TODO(message )              int _TODO; " TODO: "message
-    #define FIXME(message )             int _FIXME; " FIXME: "message
-    #define CRITICAL(message )          int _CRITICAL; " CRITICAL: "message
-    #define DEBUG_ONLY( operations )    operations
+    #define TODO(message)              int _TODO; " TODO: " message
+    #define FIXME(message)             int _FIXME; " FIXME: " message
+    #define CRITICAL(message)          int _CRITICAL; " CRITICAL: " message
+    #define DEBUG_ONLY( operations )   operations
 #else
     #define TODO(message)
-    #define FIXME(message)              int _FIXME; " FIXME: "message
-    #define CRITICAL(message)           $% " CRITICAL: "message
+    #define FIXME(message)              int _FIXME; " FIXME: " message
+    #define CRITICAL(message)           $% " CRITICAL: " message
     #define DEBUG_ONLY( operations )
 #endif
 
@@ -539,49 +618,16 @@ const char* demangleSymbol(const char* mangled_name);
     #define PLATFORM_OPENGLES 1
 #endif
 
-#define Endian16_Swizzle(n)                         \
-            (((((unsigned short)n)<<8) & 0xff00)  | \
-             ((((unsigned short)n)>>8) & 0x00ff))
-
-#define Endian32_Swizzle(n)                             \
-            (((((unsigned long)n)<<24) & 0xff000000)  | \
-             ((((unsigned long)n)<<8)  & 0x00ff0000)  | \
-             ((((unsigned long)n)>>8)  & 0x0000ff00)  | \
-             ((((unsigned long)n)>>24) & 0x000000ff))
-
-float Float_Swizzle(float f);
-
-inline float Float_Swizzle(float f) {
-    unsigned long n = *(unsigned long*)&f;
-    n = Endian32_Swizzle(n);
-    return *(float*)&n;
-}
-
-#if PLATFORM_LITTLE_ENDIAN
-    #define BigEndian16_ToNative(n) Endian16_Swizzle(n)
-    #define BigEndian32_ToNative(n) Endian32_Swizzle(n)
-    #define Native_ToBigEndian16(n) Endian16_Swizzle(n)
-    #define Native_ToBigEndian32(n) Endian32_Swizzle(n)
-    #define Native_ToBigEndianFloat(n) Float_Swizzle(n)
-    #define LittleEndian16_ToNative(n) n
-    #define LittleEndian32_toNative(n) n
-    #define Native_ToLittleEndian16(n) n
-    #define Native_ToLittleEndian32(n) n
-    #define Native_ToLittleEndianFloat(n) n
-#else
-    #define BigEndian16_ToNative(n) n
-    #define BigEndian32_ToNative(n) n
-    #define Native_ToBigEndian16(n) n
-    #define Native_ToBigEndian32(n) n
-    #define Native_ToBigEndianFloat(n) n
-    #define LittleEndian16_ToNative(n) Endian16_Swizzle(n)
-    #define LittleEndian32_toNative(n) Endian32_Swizzle(n)
-    #define Native_ToLittleEndian16(n) Endian16_Swizzle(n)
-    #define Native_ToLittleEndian32(n) Endian32_Swizzle(n)
-    #define Native_ToLittleEndianFloat(n) Float_Swizzle(n)
+#ifndef PLATFORM_RUNTIME_IS_BIG_ENDIAN
+    #define PLATFORM_RUNTIME_IS_BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
+    #define PLATFORM_RUNTIME_IS_LITTLE_ENDIAN (*(uint16_t *)"\0\xff" > 0x100)
 #endif
 
 //! @endcond
+
+#ifndef API_DEPRECATED
+#define API_DEPRECATED
+#endif
 
 #endif /* PLATFORM_H_INCLUDED */
 

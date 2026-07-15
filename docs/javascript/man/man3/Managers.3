@@ -1,46 +1,49 @@
-.TH "Managers" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Managers" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Managers \- 
+Managers \- Managers
 .PP
-The main points of interface to the Pixel Dust Game Framework\&.  
+ \- The main points of interface to the Pixel Dust Game Framework\&.  
 
+.SH SYNOPSIS
+.br
+.PP
 .SS "Classes"
 
 .in +1c
 .ti -1c
 .RI "class \fBConfigManager\fP"
 .br
-.RI "\fIused for loading and saving application configuration info \fP"
+.RI "used for loading and saving application configuration info "
 .ti -1c
 .RI "class \fBEventManager\fP"
 .br
-.RI "\fIDistributes events to event handlers\&. \fP"
+.RI "Distributes events to event handlers\&. "
 .ti -1c
 .RI "class \fBFileManager\fP"
 .br
-.RI "\fIextras beyond what Node\&.js FileSystem provides \fP"
+.RI "extras beyond what Node\&.js FileSystem provides "
 .ti -1c
 .RI "class \fBGraphicsManager\fP"
 .br
-.RI "\fIUsed to create and track ports (\fIGUI Only\fP) \fP"
+.RI "Used to create and track ports (\fIGUI Only\fP) "
 .ti -1c
 .RI "class \fBLogManager\fP"
 .br
-.RI "\fIused for doing logging with variable debug levels \fP"
+.RI "used for doing logging with variable debug levels "
 .ti -1c
 .RI "class \fBResourceManager\fP"
 .br
-.RI "\fIused for loading resources \fP"
+.RI "used for loading resources "
 .ti -1c
 .RI "class \fBSoundManager\fP"
 .br
-.RI "\fIused for application wide sound settings and options (\fIGUI Only\fP) \fP"
+.RI "used for application wide sound settings and options (\fIGUI Only\fP) "
 .ti -1c
 .RI "class \fBTimerManager\fP"
 .br
-.RI "\fImanages timers that can fire at a particular time, or repeatedly at an interval \fP"
+.RI "manages timers that can fire at a particular time, or repeatedly at an interval "
 .in -1c
 .SS "Functions"
 
@@ -48,31 +51,31 @@ The main points of interface to the Pixel Dust Game Framework\&.
 .ti -1c
 .RI "\fBcfg\fP"
 .br
-.RI "\fIthe singleton instance of the \fBConfigManager\fP \fP"
+.RI "the singleton instance of the \fBConfigManager\fP "
 .ti -1c
 .RI "\fBevt\fP"
 .br
-.RI "\fIthe singleton instance of the \fBEventManager\fP \fP"
+.RI "the singleton instance of the \fBEventManager\fP "
 .ti -1c
 .RI "\fBfs\fP"
 .br
-.RI "\fIthe singleton instance of the \fBFileManager\fP \fP"
+.RI "the singleton instance of the \fBFileManager\fP "
 .ti -1c
 .RI "\fBgfx\fP"
 .br
-.RI "\fIthe singleton instance of the \fBGraphicsManager\fP \fP"
+.RI "the singleton instance of the \fBGraphicsManager\fP "
 .ti -1c
 .RI "\fBres\fP"
 .br
-.RI "\fIthe singleton instance of the \fBResourceManager\fP \fP"
+.RI "the singleton instance of the \fBResourceManager\fP "
 .ti -1c
 .RI "\fBsnd\fP"
 .br
-.RI "\fIthe singleton instance of the \fBSoundManager\fP \fP"
+.RI "the singleton instance of the \fBSoundManager\fP "
 .ti -1c
 .RI "\fBtm\fP"
 .br
-.RI "\fIthe singleton instance of the \fBTimerManager\fP \fP"
+.RI "the singleton instance of the \fBTimerManager\fP "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -81,71 +84,113 @@ The main points of interface to the Pixel Dust Game Framework\&.
 
 .SH "Function Documentation"
 .PP 
-.SS "cfg\fC [related]\fP"
+.SS "cfg\fR [related]\fP"
 
 .PP
-the singleton instance of the \fBConfigManager\fP .PP
+the singleton instance of the \fBConfigManager\fP 
+.PP
 .nf
 var username = pdg\&.cfg\&.getConfigString('username');
+
 .fi
 .PP
  
-.SS "evt\fC [related]\fP"
+.PP
+References \fBcfg()\fP\&.
+.PP
+Referenced by \fBcfg()\fP\&.
+.SS "evt\fR [related]\fP"
 
 .PP
-the singleton instance of the \fBEventManager\fP .PP
+the singleton instance of the \fBEventManager\fP 
+.PP
 .nf
 var aIsPressed = pdg\&.evt\&.isKeyDown('a');
+
 .fi
 .PP
  
-.SS "fs\fC [related]\fP"
+.PP
+References \fBevt()\fP\&.
+.PP
+Referenced by \fBevt()\fP\&.
+.SS "fs\fR [related]\fP"
 
 .PP
-the singleton instance of the \fBFileManager\fP .PP
+the singleton instance of the \fBFileManager\fP 
+.PP
 .nf
 var fileList = pdg\&.fs\&.findFiles('examples/*\&.scml');
+
 .fi
 .PP
  
-.SS "gfx\fC [related]\fP"
+.PP
+References \fBfs()\fP\&.
+.PP
+Referenced by \fBfs()\fP\&.
+.SS "gfx\fR [related]\fP"
 
 .PP
-the singleton instance of the \fBGraphicsManager\fP .PP
+the singleton instance of the \fBGraphicsManager\fP 
+.PP
 .nf
 var r = new Rect(1024, 768);
-var port = pdg\&.gfx\&.createWindowPort(r, 'PDG Test Window');
+var port = pdg\&.gfx\&.createWindowPort(r, "PDG Test Window");
+
 .fi
 .PP
  
-.SS "res\fC [related]\fP"
+.PP
+References \fBgfx()\fP\&.
+.PP
+Referenced by \fBgfx()\fP\&.
+.SS "res\fR [related]\fP"
 
 .PP
-the singleton instance of the \fBResourceManager\fP .PP
+the singleton instance of the \fBResourceManager\fP 
+.PP
 .nf
 pdg\&.res\&.openResourceFile('\&./data');
 console\&.log( pdg\&.res\&.getResourcePaths() );
+
 .fi
 .PP
  
-.SS "snd\fC [related]\fP"
+.PP
+References \fBres()\fP\&.
+.PP
+Referenced by \fBres()\fP\&.
+.SS "snd\fR [related]\fP"
 
 .PP
-the singleton instance of the \fBSoundManager\fP .PP
+the singleton instance of the \fBSoundManager\fP 
+.PP
 .nf
 pdg\&.snd\&.setVolume(0\&.5);
+
 .fi
 .PP
  
-.SS "tm\fC [related]\fP"
+.PP
+References \fBsnd()\fP\&.
+.PP
+Referenced by \fBsnd()\fP\&.
+.SS "tm\fR [related]\fP"
 
 .PP
-the singleton instance of the \fBTimerManager\fP .PP
+the singleton instance of the \fBTimerManager\fP 
+.PP
 .nf
 pdg\&.tm\&.pause();
+
 .fi
 .PP
  
+.PP
+References \fBtm()\fP\&.
+.PP
+Referenced by \fBtm()\fP\&.
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

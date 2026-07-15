@@ -54,14 +54,13 @@ if [ ! -z "$1" ]; then
 	DOXYGEN="sudo -u $1 $DOXYGEN"
 fi
 
-
 cd $PDG_DOCS_DIR
 
-echo "Excuting: $DOXYGEN DoxyFile | grep"
-$DOXYGEN DoxyFile | grep -v "..."
+echo "Excuting: $DOXYGEN Doxyfile | grep"
+$DOXYGEN Doxyfile | grep -v "..."
 
-echo "Excuting: $DOXYGEN DoxyFile-man | grep"
-$DOXYGEN DoxyFile-man | grep -v "..."
+echo "Excuting: $DOXYGEN Doxyfile-man | grep"
+$DOXYGEN Doxyfile-man | grep -v "..."
 
 echo "Done."
 

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getAnimationProgress()
+
+\brief returns the current progress of the animation (0.0 to 1.0)
+
+**/ }

@@ -41,10 +41,6 @@
 
 #include "image-impl.h"
 
-#ifdef PDG_SCML_SUPPORT
-#include "SCML_pdg.h"
-#endif
-
 #ifndef PDG_NO_GUI
   #include "pdg/sys/port.h"
 #endif
@@ -52,12 +48,24 @@
 #include "collisiondetection.h"
 #include "spritemanager.h"
 
+#ifdef PDG_SPRITER_SUPPORT
+    #include "spriter/pdg_box_instance_info.h"
+#endif
+
+// Spriter includes
+#ifdef PDG_SPRITER_SUPPORT
+  #include "spriterengine/objectinfo/boxinstanceinfo.h"
+#endif // PDG_SPRITER_SUPPORT
+
 #include <cmath>
 #include <limits>
+#include <algorithm>
+#include <vector>
+#include <string>
 
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
   #define USE_CHIPMUNK (mLayer && mLayer->mUseChipmunkPhysics)
-  #define CONSTRAINT_IS_CLASS(constraint, _klass)  constraint->CP_PRIVATE(klass) == cp##_klass##GetClass()
+  #define CONSTRAINT_IS_CLASS(constraint, _klass)  cpConstraintIs##_klass(constraint)
 #else
   #define USE_CHIPMUNK false
 #endif
@@ -66,11 +74,26 @@
 //   #define SPRITE_INTERNAL_DEBUG 1
 //   #define SPRITE_MOTION_DEBUG 1
 //   #define SPRITE_DEBUG_COLLISIONS 1
-//	#define SPRITEANIMATE_DEBUG_ONLY( ops ) ops
+//	 #define DEBUG_SPRITE_ANIMATE 1
 // #endif
 
-#ifndef SPRITEANIMATE_DEBUG_ONLY
+#ifndef DEBUG_SPRITE_ANIMATE
   #define SPRITEANIMATE_DEBUG_ONLY( ops )
+#else
+  #define SPRITEANIMATE_DEBUG_ONLY( ops ) ops
+#endif
+
+#ifndef DEBUG_EVENTS
+  #define EVENTS_DEBUG_ONLY( ops )
+#else
+  #define EVENTS_DEBUG_ONLY( ops ) ops
+#endif
+
+#ifndef PDG_DEBUG_SPRITER_COLLISIONS
+  #define SPRITER_COLLISION_DEBUG_ONLY( ops )
+#else
+  // Spriter collision tracing is opt-in so debug/test builds stay quiet by default.
+  #define SPRITER_COLLISION_DEBUG_ONLY( ops ) DEBUG_ONLY( ops )
 #endif
 
 #ifndef PI
@@ -113,17 +136,23 @@ enum {
 
 static uint32 sUniqueSpriteId = 1;
 
-#ifdef PDG_USE_CHIPMUNK_PHYSICS
-uint8 getJointTypeId(cpConstraint* constraint);
-cpConstraint* allocConstraintByJointTypeId(uint8 jointTypeId);
-Point convertPoint(const cpVect& v);
-cpVect convertPoint(const Point& p);
-
+// Joint type IDs - defined outside #ifdef so serialization can work with/without Chipmunk
 enum { 
 	PinJointId = 1, SlideJointId = 2, PivotJointId = 3, GrooveJointId = 4, DampedSpringId = 5,
 	DampedRotarySpringId = 6, RotaryLimitJointId = 7, RatchetJointId = 8, GearJointId = 9, 
 	SimpleMotorId = 10
 };
+
+// cpFloat type - defined for serialization compatibility even without Chipmunk
+#ifndef PDG_USE_CHIPMUNK_PHYSICS
+typedef double cpFloat;  // Chipmunk uses double by default
+#endif
+
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+uint8 getJointTypeId(cpConstraint* constraint);
+cpConstraint* allocConstraintByJointTypeId(uint8 jointTypeId);
+Point convertPoint(const cpVect& v);
+cpVect convertPoint(const Point& p);
 	
 uint8 getJointTypeId(cpConstraint* constraint) {
 	if (CONSTRAINT_IS_CLASS(constraint, PinJoint) ) {
@@ -217,9 +246,9 @@ uint32 Sprite::getSerializedSize(ISerializer* serializer) const {
 	  #endif
 		totalSize += 2; // size of spriteFlags
 		if (serFlags & ser_InitialData) {
-			totalSize += serializer->serializedSize((uint32)iid);
-			totalSize += serializer->serializedSize((uint32)spriteId);
-			totalSize += serializer->serializedSize((uint32)mMouseDetectMode);
+			totalSize += serializer->sizeof_uint(iid);
+			totalSize += serializer->sizeof_uint((uint32)spriteId);
+			totalSize += serializer->sizeof_uint(mMouseDetectMode);
 		}
 		if (serFlags & (ser_InitialData | ser_Animations) ) {
 			totalSize += 1;		
@@ -264,20 +293,20 @@ uint32 Sprite::getSerializedSize(ISerializer* serializer) const {
 						// send all the data for the image, probably need to make ImageImpl serializable
 					}
 					totalSize += 8; // mFrames[i].center;
-					totalSize += serializer->serializedSize((uint32)mFrames[i].imageFrameNum);
+					totalSize += serializer->sizeof_uint(mFrames[i].imageFrameNum);
 					totalSize += 4; // mFrames[i].centerOffsetX, mFrames[i].centerOffsetY);
 				}
 			}
 			totalSize += 4; // 1 byte each for mCurrFrame, mFirstFrame, mLastFrame, mFadeCompleteAction
-			uint32 numAnims = mAnimations.size();
-			totalSize += serializer->serializedSize(numAnims);
+			size_t numAnims = mAnimations.size();
+			totalSize += serializer->sizeof_uint((uint32)numAnims);
 			for (uint32 i = 0; i < numAnims; i++) {
-				totalSize += serializer->serializedSize((uint32)mAnimations[i].delayMs);
+				totalSize += serializer->sizeof_uint((uint32)mAnimations[i].delayMs);
 				totalSize += 6; // easingId, variableId, anim.targetVal
-				totalSize += serializer->serializedSize(mAnimations[i].durationMs);
+				totalSize += serializer->sizeof_uint((uint32)mAnimations[i].durationMs);
 				if (mAnimations[i].delayMs <= 0) {
-					// these are only sent if animation is actually running
-					totalSize += serializer->serializedSize(mAnimations[i].currMs);
+					// this is currMs within the animation, not system time, so we can safely trucate it
+                    totalSize += serializer->sizeof_uint((uint32)mAnimations[i].currMs);
 					totalSize += 8; // anim.beginVal, anim.deltaVal
 				}
 			}
@@ -288,11 +317,11 @@ uint32 Sprite::getSerializedSize(ISerializer* serializer) const {
 // 	float					mEntityScaleY;
 //   #endif // PDG_SCML_SUPPORT
 		if (serFlags & ser_Forces) {
-			uint32 numForces = mForces.size();
-			totalSize += serializer->serializedSize(numForces);
+			uint32 numForces = (uint32)mForces.size();
+			totalSize += serializer->sizeof_uint(numForces);
 			for (uint32 i = 0; i < numForces; i++) {
-				totalSize += serializer->serializedSize((uint32)mForces[i].delayRemaining);
-				totalSize += serializer->serializedSize((uint32)mForces[i].milliRemaining);
+				totalSize += serializer->sizeof_uint((uint32)mForces[i].delayRemaining);
+				totalSize += serializer->sizeof_uint((uint32)mForces[i].milliRemaining);
 				SIZE_FLOAT_LIST_START(1, 3);
 				SIZE_NON_ZERO_F(mForces[i].xAccelerationPerMs2, 0);
 				SIZE_NON_ZERO_F(mForces[i].yAccelerationPerMs2, 1);
@@ -302,20 +331,24 @@ uint32 Sprite::getSerializedSize(ISerializer* serializer) const {
 		}
 		if (serFlags & ser_Physics) {
 			if (serFlags & ser_InitialData) {
-				totalSize += serializer->serializedSize((uint32)mCollideGroup) + 4;  // mElasticity float
+			  #ifdef PDG_USE_CHIPMUNK_PHYSICS
+				totalSize += serializer->sizeof_uint(mCollideGroup) + 4;  // mElasticity float
+			  #else
+				totalSize += serializer->sizeof_uint(0) + 4;  // dummy collide group + mElasticity float
+			  #endif
 			}
-			totalSize += serializer->serializedSize((uint32)mDoCollisions);
+			totalSize += serializer->sizeof_uint(mDoCollisions);
 			if (mDoCollisions == collide_CollisionRadius) {
 				totalSize += 4;  // mCollisionRadius
 			};
           #ifndef PDG_USE_CHIPMUNK_PHYSICS
-          	totalSize += serializer->serializedSize((uint32)0);
+          	totalSize += serializer->sizeof_uint(0);
           #else
-          	totalSize += serializer->serializedSize((uint32)mNumBreakableJoints);
+          	totalSize += serializer->sizeof_uint(mNumBreakableJoints);
 			for (int i = 0; i < mNumBreakableJoints; i++) {
 				cpConstraint* constraint = mBreakableJoints[i];
 				uint8 jti = getJointTypeId(constraint);
-				cpBody* b = cpConstraintGetB(constraint);
+				cpBody* b = cpConstraintGetBodyB(constraint);
                 Sprite* otherSprite = (Sprite*) cpBodyGetUserData(b);
                 uint32 siid = otherSprite->iid;
 				cpFloat maxForce = cpConstraintGetMaxForce(constraint);  // inf
@@ -324,10 +357,10 @@ uint32 Sprite::getSerializedSize(ISerializer* serializer) const {
 				bool hasMaxForce = (maxForce != (cpFloat)INFINITY);
 				bool hasErrorBias = (errorBias != (cpFloat)0.1f);
 				bool hasMaxBias = (maxBias != (cpFloat)INFINITY);		
-				totalSize += 1 + serializer->serializedSize(siid);  // joint type id
-				totalSize += serializer->serializedSize(hasMaxForce);
-				totalSize += serializer->serializedSize(hasErrorBias);
-				totalSize += serializer->serializedSize(hasMaxBias);
+				totalSize += 1 + serializer->sizeof_uint(siid);  // joint type id
+				totalSize += serializer->sizeof_bool(hasMaxForce);
+				totalSize += serializer->sizeof_bool(hasErrorBias);
+				totalSize += serializer->sizeof_bool(hasMaxBias);
 				if (hasMaxForce) {
 					totalSize += 4; // maxForce)
 				}
@@ -338,27 +371,27 @@ uint32 Sprite::getSerializedSize(ISerializer* serializer) const {
 					totalSize += 4; // maxBias
 				}
 				if ( jti == PinJointId ) {
-					totalSize += serializer->serializedSize(convertPoint(cpPinJointGetAnchr1(constraint)));
-					totalSize += serializer->serializedSize(convertPoint(cpPinJointGetAnchr2(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpPinJointGetAnchorA(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpPinJointGetAnchorB(constraint)));
 					totalSize += 4; // Dist
 				}
 				if ( jti == SlideJointId ) {
-					totalSize += serializer->serializedSize(convertPoint(cpSlideJointGetAnchr1(constraint)));
-					totalSize += serializer->serializedSize(convertPoint(cpSlideJointGetAnchr2(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpSlideJointGetAnchorA(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpSlideJointGetAnchorB(constraint)));
 					totalSize += 8; // Min, Max
 				}
 				if ( jti == PivotJointId ) {
-					totalSize += serializer->serializedSize(convertPoint(cpPivotJointGetAnchr1(constraint)));
-					totalSize += serializer->serializedSize(convertPoint(cpPivotJointGetAnchr2(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpPivotJointGetAnchorA(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpPivotJointGetAnchorB(constraint)));
 				}
 				if ( jti == GrooveJointId ) {
-					totalSize += serializer->serializedSize(convertPoint(cpGrooveJointGetAnchr2(constraint)));
-					totalSize += serializer->serializedSize(convertPoint(cpGrooveJointGetGrooveA(constraint)));
-					totalSize += serializer->serializedSize(convertPoint(cpGrooveJointGetGrooveB(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpGrooveJointGetAnchorB(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpGrooveJointGetGrooveA(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpGrooveJointGetGrooveB(constraint)));
 				}
 				if ( jti == DampedSpringId ) {
-					totalSize += serializer->serializedSize(convertPoint(cpDampedSpringGetAnchr1(constraint)));
-					totalSize += serializer->serializedSize(convertPoint(cpDampedSpringGetAnchr2(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpDampedSpringGetAnchorA(constraint)));
+					totalSize += serializer->sizeof_point(convertPoint(cpDampedSpringGetAnchorB(constraint)));
 					totalSize += 12; // RestLength, Stiffness, Damping
 				}
 				if ( jti == DampedRotarySpringId ) {
@@ -424,7 +457,7 @@ void Sprite::serialize(ISerializer* serializer) const {
 	  	serializer->serialize_2u(spriteFlags);
 		if (serFlags & ser_InitialData) {
 			serializer->serialize_uint(iid);
-			serializer->serialize_uint(spriteId);
+			serializer->serialize_uint((uint32)spriteId);
 			serializer->serialize_uint(mMouseDetectMode);
 		}
 		if (serFlags & (ser_InitialData | ser_Animations) ) {
@@ -485,7 +518,7 @@ void Sprite::serialize(ISerializer* serializer) const {
 			serializer->serialize_1u(mLastFrame);
 			serializer->serialize_1(mFadeCompleteAction);
 			// serializer->serialize_uint(mDelayMs);  don't actually send this, it is only used for building series of animations
-			uint32 numAnims = mAnimations.size();
+			uint32 numAnims = (uint32)mAnimations.size();
 			serializer->serialize_uint(numAnims);
 			for (uint32 i = 0; i < numAnims; i++) {
 				Animation anim = mAnimations[i];
@@ -512,14 +545,14 @@ void Sprite::serialize(ISerializer* serializer) const {
 				} else if (anim.value == &mOpacity) {
 					variableId = var_Opacity;
 				}
-				serializer->serialize_uint(anim.delayMs);
+				serializer->serialize_uint((uint32)anim.delayMs);
 				serializer->serialize_1u(easingId);
 				serializer->serialize_1u(variableId);
 				serializer->serialize_f(anim.targetVal);
-				serializer->serialize_uint(anim.durationMs);
+				serializer->serialize_uint((uint32)anim.durationMs);
 				if (anim.delayMs <= 0) {
 					// only send these if animation is actually running, they will be sent at start
-					serializer->serialize_uint(anim.currMs);
+					serializer->serialize_uint((uint32)anim.currMs);  // this is time within animation, not sys timestamp
 					serializer->serialize_f(anim.beginVal);
 					serializer->serialize_f(anim.deltaVal);
 				}
@@ -532,11 +565,11 @@ void Sprite::serialize(ISerializer* serializer) const {
 // 	float					mEntityScaleY;
 //   #endif // PDG_SCML_SUPPORT
 		if (serFlags & ser_Forces) {
-			uint32 numForces = mForces.size();
+			uint32 numForces = (uint32)mForces.size();
 			serializer->serialize_uint(numForces);
 			for (uint32 i = 0; i < numForces; i++) {
-				serializer->serialize_uint(mForces[i].delayRemaining);
-				serializer->serialize_uint(mForces[i].milliRemaining);
+				serializer->serialize_uint((uint32)mForces[i].delayRemaining);
+				serializer->serialize_uint((uint32)mForces[i].milliRemaining);
 				SERIALIZE_FLOAT_LIST_START(1, 3);
 				SERIALIZE_NON_ZERO_F(mForces[i].xAccelerationPerMs2, 0);
 				SERIALIZE_NON_ZERO_F(mForces[i].yAccelerationPerMs2, 1);
@@ -546,7 +579,11 @@ void Sprite::serialize(ISerializer* serializer) const {
 		}
 		if (serFlags & ser_Physics) {
 			if (serFlags & ser_InitialData) {
+			  #ifdef PDG_USE_CHIPMUNK_PHYSICS
 				serializer->serialize_uint(mCollideGroup);
+			  #else
+				serializer->serialize_uint(0);  // dummy collide group
+			  #endif
 				serializer->serialize_f(mElasticity);
 			}
 			serializer->serialize_uint(mDoCollisions);
@@ -560,7 +597,7 @@ void Sprite::serialize(ISerializer* serializer) const {
 			for (int i = 0; i < mNumBreakableJoints; i++) {
 				cpConstraint* constraint = mBreakableJoints[i];
 				uint8 jti = getJointTypeId(constraint);
-				cpBody* b = cpConstraintGetB(constraint);
+				cpBody* b = cpConstraintGetBodyB(constraint);
                 Sprite* otherSprite = (Sprite*) cpBodyGetUserData(b);
                 uint32 siid = otherSprite->iid;
 				cpFloat maxForce = cpConstraintGetMaxForce(constraint);  // inf
@@ -584,28 +621,28 @@ void Sprite::serialize(ISerializer* serializer) const {
 					serializer->serialize_f(maxBias);
 				}
 				if ( jti == PinJointId ) {
-					serializer->serialize_point(convertPoint(cpPinJointGetAnchr1(constraint)));
-					serializer->serialize_point(convertPoint(cpPinJointGetAnchr2(constraint)));
+					serializer->serialize_point(convertPoint(cpPinJointGetAnchorA(constraint)));
+					serializer->serialize_point(convertPoint(cpPinJointGetAnchorB(constraint)));
 					serializer->serialize_f(cpPinJointGetDist(constraint));
 				}
 				if ( jti == SlideJointId ) {
-					serializer->serialize_point(convertPoint(cpSlideJointGetAnchr1(constraint)));
-					serializer->serialize_point(convertPoint(cpSlideJointGetAnchr2(constraint)));
+					serializer->serialize_point(convertPoint(cpSlideJointGetAnchorA(constraint)));
+					serializer->serialize_point(convertPoint(cpSlideJointGetAnchorB(constraint)));
 					serializer->serialize_f(cpSlideJointGetMin(constraint));
 					serializer->serialize_f(cpSlideJointGetMax(constraint));
 				}
 				if ( jti == PivotJointId ) {
-					serializer->serialize_point(convertPoint(cpPivotJointGetAnchr1(constraint)));
-					serializer->serialize_point(convertPoint(cpPivotJointGetAnchr2(constraint)));
+					serializer->serialize_point(convertPoint(cpPivotJointGetAnchorA(constraint)));
+					serializer->serialize_point(convertPoint(cpPivotJointGetAnchorB(constraint)));
 				}
 				if ( jti == GrooveJointId ) {
-					serializer->serialize_point(convertPoint(cpGrooveJointGetAnchr2(constraint)));
+					serializer->serialize_point(convertPoint(cpGrooveJointGetAnchorB(constraint)));
 					serializer->serialize_point(convertPoint(cpGrooveJointGetGrooveA(constraint)));
 					serializer->serialize_point(convertPoint(cpGrooveJointGetGrooveB(constraint)));
 				}
 				if ( jti == DampedSpringId ) {
-					serializer->serialize_point(convertPoint(cpDampedSpringGetAnchr1(constraint)));
-					serializer->serialize_point(convertPoint(cpDampedSpringGetAnchr2(constraint)));
+					serializer->serialize_point(convertPoint(cpDampedSpringGetAnchorA(constraint)));
+					serializer->serialize_point(convertPoint(cpDampedSpringGetAnchorB(constraint)));
 					serializer->serialize_f(cpDampedSpringGetRestLength(constraint));
 					serializer->serialize_f(cpDampedSpringGetStiffness(constraint));
 					serializer->serialize_f(cpDampedSpringGetDamping(constraint));
@@ -716,7 +753,7 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 		if (serFlags & ser_InitialData) {
 			iid = deserializer->deserialize_uint();
 			spriteId = deserializer->deserialize_uint();
-			mMouseDetectMode = deserializer->deserialize_uint();
+			mMouseDetectMode = (int)deserializer->deserialize_uint();
 		}
 		if (serFlags & (ser_InitialData | ser_Animations) ) {
 			uint8 opacity = deserializer->deserialize_1u();
@@ -766,7 +803,7 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 					}
 					mFrames[i].center.x = deserializer->deserialize_f();
 					mFrames[i].center.y = deserializer->deserialize_f();
-					mFrames[i].imageFrameNum = deserializer->deserialize_uint();
+					mFrames[i].imageFrameNum = (int)deserializer->deserialize_uint();
 					mFrames[i].centerOffsetX = deserializer->deserialize_2();
 					mFrames[i].centerOffsetY = deserializer->deserialize_2();
 				}
@@ -848,16 +885,20 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 		}
 		if (serFlags & ser_Physics) {
 			if (serFlags & ser_InitialData) {
+			  #ifdef PDG_USE_CHIPMUNK_PHYSICS
 				mCollideGroup = deserializer->deserialize_uint();
+			  #else
+				deserializer->deserialize_uint();  // read and discard collide group
+			  #endif
 				mElasticity = deserializer->deserialize_f();
 			}
-			mDoCollisions = deserializer->deserialize_uint();
+			mDoCollisions = (int)deserializer->deserialize_uint();
 			if (mDoCollisions == collide_CollisionRadius) {
 				mCollisionRadius = deserializer->deserialize_f();
 			};
 			// even if this isn't a Chipmunk build, read the data and just drop it
 			// so we can still work with the Sprite
-          	int numJoints = deserializer->deserialize_uint();
+          	int numJoints = (int)deserializer->deserialize_uint();
 			for (int i = 0; i < numJoints; i++) {
 				uint8 jti = deserializer->deserialize_1u();
 				uint32 siid = deserializer->deserialize_uint();
@@ -870,7 +911,7 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 					uint32 curr_siid = 0;
 					constraint = mBreakableJoints[i];
 					curr_jti = getJointTypeId(constraint);
-					cpBody* b = cpConstraintGetB(constraint);
+					cpBody* b = cpConstraintGetBodyB(constraint);
                 	otherSprite = (Sprite*) cpBodyGetUserData(b);
                 	curr_siid = otherSprite->iid;
                 	if ((siid != curr_siid) || (jti != curr_jti)) {
@@ -916,8 +957,8 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 				  	if (!constraint) {
 						constraint = pinJoint(p1, otherSprite, p2);
 					}
-					cpPinJointSetAnchr1(constraint, convertPoint(p1));
-					cpPinJointSetAnchr2(constraint, convertPoint(p2));
+					cpPinJointSetAnchorA(constraint, convertPoint(p1));
+					cpPinJointSetAnchorB(constraint, convertPoint(p2));
 					cpPinJointSetDist(constraint, f1);
 				  #endif  // PDG_USE_CHIPMUNK_PHYSICS
 				}
@@ -930,8 +971,8 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 				  	if (!constraint) {
 						constraint = slideJoint(p1, otherSprite, p2, f1, f2);
 					}
-					cpSlideJointSetAnchr1(constraint, convertPoint(p1));
-					cpSlideJointSetAnchr2(constraint, convertPoint(p2));
+					cpSlideJointSetAnchorA(constraint, convertPoint(p1));
+					cpSlideJointSetAnchorB(constraint, convertPoint(p2));
 					cpSlideJointSetMin(constraint, f1);
 					cpSlideJointSetMax(constraint, f2);
 				  #endif  // PDG_USE_CHIPMUNK_PHYSICS
@@ -943,8 +984,8 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 				  	if (!constraint) {
 						constraint = pivotJoint(otherSprite, p1);
 					}
-					cpPivotJointSetAnchr1(constraint, convertPoint(p1));
-					cpPivotJointSetAnchr2(constraint, convertPoint(p2));
+					cpPivotJointSetAnchorA(constraint, convertPoint(p1));
+					cpPivotJointSetAnchorB(constraint, convertPoint(p2));
 				  #endif  // PDG_USE_CHIPMUNK_PHYSICS
 				}
 				if ( jti == GrooveJointId ) {
@@ -955,7 +996,7 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 				  	if (!constraint) {
 						constraint = grooveJoint(p2, p3, otherSprite, p1);
 				  	}
-					cpGrooveJointSetAnchr2(constraint, convertPoint(p1));
+					cpGrooveJointSetAnchorB(constraint, convertPoint(p1));
 					cpGrooveJointSetGrooveA(constraint, convertPoint(p2));
 					cpGrooveJointSetGrooveB(constraint, convertPoint(p3));
 				  #endif  // PDG_USE_CHIPMUNK_PHYSICS
@@ -970,8 +1011,8 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 				  	if (!constraint) {
 						constraint = springJoint(p1, otherSprite, p2, f1, f2, f3);
 					}
-					cpDampedSpringSetAnchr1(constraint, convertPoint(p1));
-					cpDampedSpringSetAnchr2(constraint, convertPoint(p2));
+					cpDampedSpringSetAnchorA(constraint, convertPoint(p1));
+					cpDampedSpringSetAnchorB(constraint, convertPoint(p2));
 					cpDampedSpringSetRestLength(constraint, f1);
 					cpDampedSpringSetStiffness(constraint, f2);
 					cpDampedSpringSetDamping(constraint, f3);
@@ -1180,24 +1221,28 @@ void	Sprite::addFramesImage(Image* image, int startingFrame, int numFrames) {
 }
 
 
-#ifdef PDG_SCML_SUPPORT
+#ifdef PDG_SPRITER_SUPPORT
 bool	Sprite::hasAnimation(const char* animationName) {
-	return mEntity ? mEntity->getAnimation(animationName) != 0 : false;
+	// For now, return true - we'll need to check if the animation exists
+	// This is a simplified implementation
+	return mEntityInstance != nullptr;
 }
 
 bool	Sprite::hasAnimation(int animationId) {
-	return mEntity ? mEntity->getAnimation(animationId) != 0 : false;
+	// For now, return true - we'll need to check if the animation exists
+	// This is a simplified implementation
+	return mEntityInstance != nullptr;
 }
 
 void	Sprite::startAnimation(const char* animationName) {
-	if (mEntity) {
-		mEntity->startAnimation(animationName);
+	if (mEntityInstance) {
+		mEntityInstance->setCurrentAnimation(animationName);
 	}
 }
 
 void	Sprite::startAnimation(int animationId) {
-	if (mEntity) {
-		mEntity->startAnimation(animationId);
+	if (mEntityInstance) {
+		mEntityInstance->setCurrentAnimation(animationId);
 	}
 }
 
@@ -1207,7 +1252,208 @@ Sprite&	Sprite::setEntityScale(int xScale, int yScale) {
 	return *this;
 }
 
-#endif // PDG_SCML_SUPPORT
+// Character Maps
+void Sprite::applyCharacterMap(const char* mapName) {
+	if (mEntityInstance && mapName) {
+		// Apply character map to the entity instance using SpriterPlusPlus
+		mEntityInstance->applyCharacterMap(mapName);
+		// Track the applied map in our list
+		mAppliedCharacterMaps.push_back(std::string(mapName));
+	}
+}
+
+void Sprite::removeCharacterMap(const char* mapName) {
+	if (mEntityInstance && mapName) {
+		// Remove character map from the entity instance using SpriterPlusPlus
+		mEntityInstance->removeCharacterMap(mapName);
+		// Remove from our tracking list
+		std::string mapNameStr(mapName);
+		auto it = std::find(mAppliedCharacterMaps.begin(), mAppliedCharacterMaps.end(), mapNameStr);
+		if (it != mAppliedCharacterMaps.end()) {
+			mAppliedCharacterMaps.erase(it);
+		}
+	}
+}
+
+void Sprite::removeAllCharacterMaps() {
+	if (mEntityInstance) {
+		// Remove all character maps from the entity instance using SpriterPlusPlus
+		mEntityInstance->removeAllCharacterMaps();
+	}
+	// Clear our tracking list
+	mAppliedCharacterMaps.clear();
+}
+
+std::vector<std::string> Sprite::getAppliedCharacterMaps() const {
+	return mAppliedCharacterMaps;
+}
+
+// Event System (basic, triggers only)
+void Sprite::enableSpriterEvents(bool enable) {
+	mSpriterEventsEnabled = enable;
+}
+
+bool Sprite::areSpriterEventsEnabled() const {
+	return mSpriterEventsEnabled;
+}
+
+// Animation blending
+void Sprite::blendToAnimation(const char* animationName, float blendTime) {
+	if (mEntityInstance && animationName) {
+		mIsBlending = true;
+		mBlendTime = blendTime;
+		mBlendProgress = 0.0f;
+		mTargetAnimation = std::string(animationName);
+		mEntityInstance->setCurrentAnimation(animationName, blendTime);
+	}
+}
+
+void Sprite::blendToAnimation(int animationId, float blendTime) {
+	if (mEntityInstance && animationId >= 0 && animationId < mEntityInstance->animationCount()) {
+		// Store the current animation name
+		std::string currentAnimName = mEntityInstance->currentAnimationName();
+		
+		// Temporarily set the animation to the requested ID to get its name
+		mEntityInstance->setCurrentAnimation(animationId);
+		std::string targetAnimName = mEntityInstance->currentAnimationName();
+		
+		// Restore the original animation
+		if (!currentAnimName.empty()) {
+			mEntityInstance->setCurrentAnimation(currentAnimName);
+		}
+		
+		// Now use the proper blending with the real animation name
+		mIsBlending = true;
+		mBlendTime = blendTime;
+		mBlendProgress = 0.0f;
+		mTargetAnimation = targetAnimName;
+		mEntityInstance->setCurrentAnimation(targetAnimName, blendTime);
+	}
+}
+
+bool Sprite::isBlending() const {
+	return mIsBlending;
+}
+
+float Sprite::getBlendProgress() const {
+	return mBlendProgress;
+}
+
+void Sprite::pauseAnimation() {
+	if (mEntityInstance) {
+		mEntityInstance->pausePlayback();
+		mIsAnimationPaused = true;
+	}
+}
+
+void Sprite::resumeAnimation() {
+	if (mEntityInstance) {
+		mEntityInstance->startResumePlayback();
+		mIsAnimationPaused = false;
+	}
+}
+
+void Sprite::stopAnimation() {
+	if (mEntityInstance) {
+		mEntityInstance->pausePlayback();
+		mIsAnimationPaused = true;
+	}
+}
+
+bool Sprite::isAnimationPlaying() const {
+	return mEntityInstance && !mIsAnimationPaused;
+}
+
+bool Sprite::isAnimationPaused() const {
+	return mIsAnimationPaused;
+}
+
+float Sprite::getAnimationProgress() const {
+	if (mEntityInstance) {
+		return mEntityInstance->getTimeRatio();
+	}
+	return 0.0f;
+}
+
+bool Sprite::hasAttachPoint(const char* attachPointName) const {
+	if (mEntityInstance && attachPointName) {
+		// Check if the AttachPoint exists by trying to get the object instance
+		SpriterEngine::UniversalObjectInterface* obj = mEntityInstance->getObjectInstance(attachPointName);
+		return obj != nullptr;
+	}
+	return false;
+}
+
+Offset Sprite::getAttachPoint(const char* attachPointName) const {
+	if (mEntityInstance && attachPointName) {
+		// Get the object instance for the attach point
+		SpriterEngine::UniversalObjectInterface* obj = mEntityInstance->getObjectInstance(attachPointName);
+		if (obj) {
+			// Get the position of the attach point
+			SpriterEngine::point pos = obj->getPosition();
+			// Return as an Offset relative to the sprite's location
+			return Offset(pos.x, pos.y);
+		}
+	}
+	// Return NAN offset if attach point doesn't exist
+	return Offset(NAN, NAN);
+}
+
+void Sprite::attachSprite(Sprite* sprite, const char* attachPointName) {
+	if (mEntityInstance && attachPointName) {
+		// Check if the AttachPoint exists
+		if (hasAttachPoint(attachPointName)) {
+			std::string attachPointStr(attachPointName);
+			
+			// If the same sprite is already attached to this point, do nothing
+			auto it = mAttachedSprites.find(attachPointStr);
+			if (it != mAttachedSprites.end() && it->second == sprite) {
+				return; // Already attached to this point
+			}
+			
+			// If there's already a sprite attached to this point, detach it first
+			if (it != mAttachedSprites.end()) {
+				// Detach the old sprite
+				it->second->release();
+				it->second = nullptr;
+			}
+			
+			// Attach this sprite to the attach point
+			mAttachedSprites[attachPointStr] = sprite;
+			sprite->addRef();
+		}
+	}
+}
+
+void Sprite::detachSprite(Sprite* sprite) {
+	// Remove this sprite from all attach points
+	for (auto it = mAttachedSprites.begin(); it != mAttachedSprites.end(); ++it) {
+		if (it->second == sprite) {
+			it->second->release();
+			it->second = nullptr;
+		}
+	}
+}
+
+void Sprite::activateSubEntity(const char* entityName, const char* animationName) {
+	if (mEntityInstance && mSpriterModel && entityName) {
+		// Use the sprite's model for auto-append functionality
+		mEntityInstance->setCurrentEntity(entityName, animationName ? animationName : "idle", mSpriterModel);
+	}
+}
+
+Sprite* Sprite::getAttachedSprite(const char* attachPointName) const {
+	if (attachPointName) {
+		std::string attachPointStr(attachPointName);
+		auto it = mAttachedSprites.find(attachPointStr);
+		if (it != mAttachedSprites.end()) {
+			return it->second;
+		}
+	}
+	return nullptr;
+}
+
+#endif // PDG_SPRITER_SUPPORT
 
 
 #ifndef PDG_NO_GUI
@@ -1250,10 +1496,13 @@ void	Sprite::changeFramesImage(Image* oldImage, Image* newImage) {
 }
 
 RotatedRect
-Sprite::getFrameRotatedBounds(int frame) {
-    Rect r = mFrames[frame].image->getImageBounds();
+Sprite::getFrameRotatedBounds(int frameNum) {
+	if ( (frameNum <= 0) || (frameNum > mNumFrames) ) {
+		frameNum = mCurrFrame;
+	}
+    Rect r = mFrames[frameNum].image->getImageBounds();
     r.center(mLocation);
-    Offset coff(mFrames[frame].centerOffsetX, mFrames[frame].centerOffsetY);
+    Offset coff(mFrames[frameNum].centerOffsetX, mFrames[frameNum].centerOffsetY);
     RotatedRect rr(r, mFacing, coff);
     return rr;
 }
@@ -1302,9 +1551,9 @@ void	Sprite::offsetFrameCenters(int offsetX, int offsetY, Image* image, int star
 
 
 // fetch the offsets set above, but only for a single frame
-void	Sprite::getFrameCenterOffset(int &offsetX, int &offsetY, Image* image, int frameNum) {
-	offsetX = 0;
-	offsetY = 0;
+Offset	Sprite::getFrameCenterOffset(Image* image, int frameNum) {
+	int offsetX = 0;
+	int offsetY = 0;
 	if (frameNum >= 0) {
 		if (image == 0) {
 			if (frameNum < mNumFrames) {
@@ -1324,6 +1573,7 @@ void	Sprite::getFrameCenterOffset(int &offsetX, int &offsetY, Image* image, int 
 			}
 		}
 	}
+	return Offset(offsetY, offsetY);
 }
 
 
@@ -1382,7 +1632,7 @@ float Sprite::getOpacity() {
 	return mOpacity;
 }
 
-void Sprite::fadeTo(float targetOpacity, int32 msDuration, EasingFunc easing) {
+void Sprite::fadeTo(float targetOpacity, ms_delta msDuration, EasingFunc easing) {
 	if (targetOpacity > 1.0) {
 		targetOpacity = 1.0;
 	} else if (targetOpacity < 0.0) {
@@ -1394,7 +1644,7 @@ void Sprite::fadeTo(float targetOpacity, int32 msDuration, EasingFunc easing) {
     mDelayMs = 0;
 }
 
-void Sprite::fadeIn(int32 msDuration, EasingFunc easing)  {
+void Sprite::fadeIn(ms_delta msDuration, EasingFunc easing)  {
 	if (mOpacity == 1.0) {  // if we are at our default full opacity, then set to transparent
 		mOpacity = 0.0;     // this handles common case where we create a new sprite and want it
 	}                       // to fade in, but don't want to manually set opacity to 0 first
@@ -1402,7 +1652,7 @@ void Sprite::fadeIn(int32 msDuration, EasingFunc easing)  {
 	mFadeCompleteAction = action_FadeInComplete;
 }
 
-void Sprite::fadeOut(int32 msDuration, EasingFunc easing) {
+void Sprite::fadeOut(ms_delta msDuration, EasingFunc easing) {
 	fadeTo(0.0, msDuration, easing);
 	mFadeCompleteAction = action_FadeOutComplete;
 }
@@ -1431,16 +1681,23 @@ Sprite&	Sprite::enableCollisions(int collisionType) {
                 cpSpaceRemoveShape(getSpace(), mCollideShape);
                 cpShapeFree(mCollideShape);
             }
-            cpFloat hw = mWidth/2.0f;
-            cpFloat hh = mHeight/2.0f;
-            cpBB box = cpBBNew(-hw, -hh, hw, hh);
-            cpVect verts[] = {
-                cpv(box.l, box.b),
-                cpv(box.l, box.t),
-                cpv(box.r, box.t),
-                cpv(box.r, box.b),
-            };
-            mCollideShape = cpPolyShapeNew(mBody, 4, verts, cpv(-mCenterOffset.x, -mCenterOffset.y));
+            cpFloat radius = 0.0; // Use 0 radius for precise collision detection
+            if (mCenterOffset.zero()) {
+                mCollideShape = cpBoxShapeNew(mBody, mWidth, mHeight, radius);
+            } else {
+                cpFloat hw = mWidth/2.0f;
+                cpFloat hh = mHeight/2.0f;
+                cpBB box = cpBBNew(-hw, -hh, hw, hh);
+                cpVect verts[] = {
+                    cpv(box.l, box.b),
+                    cpv(box.l, box.t),
+                    cpv(box.r, box.t),
+                    cpv(box.r, box.b),
+                };
+                // TODO: this x, y center offset might need to be positive instead of negative, test to be certain
+                cpTransform trf = cpTransformNew(1, 0, 0, 1, -mCenterOffset.x, -mCenterOffset.y);
+                mCollideShape = cpPolyShapeNew(mBody, 4, verts, trf, radius);
+            }
             cpSpaceAddShape(getSpace(), mCollideShape);
             cpShapeSetCollisionType(mCollideShape, CP_COLLIDE_TYPE_SPRITE);
             cpShapeSetElasticity(mCollideShape, mElasticity);
@@ -1458,6 +1715,21 @@ Sprite&	Sprite::enableCollisions(int collisionType) {
             }
             setCollisionRadius(mCollisionRadius);
             break;
+  #ifdef PDG_SPRITER_SUPPORT
+        case collide_SpriterCollisionBox:
+            // Spriter collision boxes need to be set up separately
+			// because they have not necessarily been created yet
+			// and they can turn on and off dynamically in animations
+            if (mCollideShape) {
+                cpSpaceRemoveShape(getSpace(), mCollideShape);
+                cpShapeFree(mCollideShape);
+                mCollideShape = 0;
+            }
+            // make sure collision box cache is invalidated
+            mSpriterCollisionBoxCacheValid = false;
+            mColliderBoundsValid = false;
+            break;
+  #endif // PDG_SPRITER_SUPPORT
     }
 
 #endif
@@ -1497,7 +1769,9 @@ Sprite&	Sprite::setCollisionRadius(float pixelRadius) {
         mCollideShape = cpCircleShapeNew(mBody, mCollisionRadius, cpv(-mCenterOffset.x, -mCenterOffset.y));
         cpSpaceAddShape(getSpace(), mCollideShape);
         cpShapeSetCollisionType(mCollideShape, CP_COLLIDE_TYPE_SPRITE);
-        cpShapeSetElasticity(mCollideShape, mElasticity);
+        if (mElasticity > 0) {
+            cpShapeSetElasticity(mCollideShape, mElasticity);
+        }
         cpShapeSetFriction(mCollideShape, mMoveFriction);
       #endif
 	} else if (mCollisionRadius <= 0.0f) {
@@ -1550,32 +1824,29 @@ float	Sprite::getElasticity() {
 }
 	
 #ifndef PDG_NO_GUI
-bool Sprite::setWantsMouseOverEvents(bool wantsThem) { 
-	bool didWant = wantsMouseOver; 
+Sprite& Sprite::setWantsMouseOverEvents(bool wantsThem) { 
 	wantsMouseOver = wantsThem; 
 	if (wantsThem) {
 		mLayer->wantMouseOverEvents();
 	} else {
 		mLayer->checkIfMouseOverEventsStillWanted();
 	}
-	return didWant; 
+	return *this; 
 }
 	
-bool Sprite::setWantsClickEvents(bool wantsThem) { 
-	bool didWant = wantsClicks; 
+Sprite& Sprite::setWantsClickEvents(bool wantsThem) { 
 	wantsClicks = wantsThem;
 	if (wantsThem) {
 		mLayer->wantClickEvents();
 	} else {
 		mLayer->checkIfClickEventsStillWanted();
 	}
-	return didWant; 
+	return *this; 
 }
 
-int Sprite::setMouseDetectMode(int collisionType) {
-	int t = mMouseDetectMode;
+Sprite& Sprite::setMouseDetectMode(int collisionType) {
 	mMouseDetectMode = collisionType;
-	return t;
+	return *this;
 }
 #endif // ! PDG_NO_GUI
 
@@ -1620,6 +1891,12 @@ bool Sprite::collidesWith(Sprite* sprite) {
 		return CollisionDetection::detectPixelCollision(rectA, rectB, imageA, imageB, imageBoundsA, imageBoundsB);
 	}
 
+  #ifdef PDG_SPRITER_SUPPORT
+	// Spriter collision box collision detection
+	else if (mDoCollisions == collide_SpriterCollisionBox) {
+		return checkSpriterCollisionBoxCollision(sprite);
+	}
+  #endif // PDG_SPRITER_SUPPORT
 	
 	return false;
 }
@@ -1663,7 +1940,13 @@ bool Sprite::collidesWith(const Point& p) {
 		Rect imageBoundsB(p, 1, 1);
 		return CollisionDetection::detectPixelCollision(rectA, rectB, imageA, 0, imageBoundsA, imageBoundsB);
 	}
-	
+
+  #ifdef PDG_SPRITER_SUPPORT
+	// Spriter collision box collision detection
+	else if (mDoCollisions == collide_SpriterCollisionBox) {
+		return checkSpriterCollisionBoxPointCollision(p);
+	}
+  #endif // PDG_SPRITER_SUPPORT
 	
 	return false;
 }
@@ -1727,13 +2010,11 @@ void	Sprite::draw() {
 		shouldDraw = mDrawHelper->draw(this, mPort);
 	}
 
-  #ifdef PDG_SCML_SUPPORT
-  	if (shouldDraw && mEntity) {
-  		// since we don't have a preset size, we work with the scaling rect
-        RotatedRect r = RotatedRect( Rect(mLocation, mEntityScaleX, mEntityScaleY), mFacing);
-        RotatedRect pr = mLayer->layerToPort(r);
-  		mEntity->draw(pr.centerPoint().x, pr.centerPoint().y, (180.0f/M_PI)*pr.radians, 
-  			pr.width(), pr.height() ); // width and height is entity scale * layer zoom
+  #ifdef PDG_SPRITER_SUPPORT
+  	if (mEntityInstance) {
+		if (!shouldDraw) return; // early exit if we shouldn't draw
+  		mEntityInstance->render(); // SpriterPlusPlus handles its own rendering
+ 		return;
   	}
   #endif
 
@@ -1750,11 +2031,11 @@ void	Sprite::draw() {
         RotatedRect r = RotatedRect(image->getImageBounds(p), mFacing);
         r.setCenterOffset(Point(mFrames[mCurrFrame].centerOffsetX, mFrames[mCurrFrame].centerOffsetY));
         RotatedRect pr = mLayer->layerToPort(r);
-        
+       
         if (image->frames > 1) {
             image->drawFrame(pr, mFrames[mCurrFrame].imageFrameNum );
         } else {
-            mPort->drawImage(image, pr);
+            mPort->drawImage(image, pr, Attributes().rotation(mFacing, pr.centerPoint()));
         }
         image->setOpacity(opacitySave);
         image->setPort(oldPort);
@@ -1772,6 +2053,39 @@ void	Sprite::draw() {
         cp = mLayer->layerToPort(cp);
         mPort->frameCircle(cp, mCollisionRadius, PDG_RED_COLOR);
     } else if (mDoCollisions == collide_BoundingBox) {
+        // Draw the actual Chipmunk collision bounds in red first
+        #ifdef PDG_USE_CHIPMUNK_PHYSICS
+        if (USE_CHIPMUNK && mCollideShape) {
+            // Get the shape's local bounding box (relative to the body)
+            cpBB localBB = cpShapeGetBB(mCollideShape);
+            
+            // Get the body's position
+            cpVect bodyPos = cpBodyGetPosition(mBody);
+            
+            // Calculate the actual collision bounds in world coordinates
+            // The shape's BB is already in world coordinates, so we need to account for the body position
+            float left = localBB.l;
+            float right = localBB.r;
+            float bottom = localBB.b;
+            float top = localBB.t;
+            
+            //DEBUG_ONLY(OS::_DOUT("Chipmunk local BB: l=%.1f, b=%.1f, r=%.1f, t=%.1f", left, bottom, right, top));
+            //DEBUG_ONLY(OS::_DOUT("Body position: x=%.1f, y=%.1f", bodyPos.x, bodyPos.y));
+            
+            // Convert to PDG coordinate system and create bounds
+            Rect chipmunkBounds(left, bottom, right, top);
+            //DEBUG_ONLY(OS::_DOUT("Chipmunk bounds before transform: [%.1f,%.1f,%.1f,%.1f]", chipmunkBounds.left, chipmunkBounds.top, chipmunkBounds.right, chipmunkBounds.bottom));
+            
+            // Transform to port coordinates
+            chipmunkBounds = mLayer->layerToPort(chipmunkBounds);
+            //DEBUG_ONLY(OS::_DOUT("Chipmunk bounds after transform: [%.1f,%.1f,%.1f,%.1f]", chipmunkBounds.left, chipmunkBounds.top, chipmunkBounds.right, chipmunkBounds.bottom));
+            
+            // Draw with a thicker line to make it more visible
+            mPort->frameRect(chipmunkBounds, PDG_RED_COLOR);
+        }
+        #endif
+        
+        // Then draw the visual bounds in red on top
         RotatedRect crr = getRotatedBounds();
         crr = mLayer->layerToPort(crr);
         mPort->frameRect(crr, PDG_RED_COLOR);
@@ -1800,11 +2114,11 @@ Sprite::easingCompleted(const Animation& a) {
 
 
 void
-Sprite::doAnimate(int msElapsed, bool layerDoCollisions) {
+Sprite::doAnimate(ms_delta msElapsed, bool layerDoCollisions) {
     
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
     if (USE_CHIPMUNK && !cpBodyIsSleeping(mBody)) {
-        cpVect v = cpBodyGetPos(mBody);
+        cpVect v = cpBodyGetPosition(mBody);
         cpFloat angle = cpBodyGetAngle(mBody);
         mLocation.x = v.x - mCenterOffset.x;
         mLocation.y = v.y - mCenterOffset.y;
@@ -1827,8 +2141,8 @@ Sprite::doAnimate(int msElapsed, bool layerDoCollisions) {
   		SPRITEANIMATE_DEBUG_ONLY( OS::_DOUT("Sprite [%p] fixing chipmunk pos", this); )
         // animate() call changed the location or center offset, so update the physics engine
         cpVect v;
-        v.x = mLocation.y + mCenterOffset.x; v.y = mLocation.y + mCenterOffset.y;
-        cpBodySetPos(mBody, v);
+        v.x = mLocation.x + mCenterOffset.x; v.y = mLocation.y + mCenterOffset.y;
+        cpBodySetPosition(mBody, v);
         cpSpaceReindexShapesForBody(getSpace(), mBody);
         // TODO: do something other than cpSpaceReindexShapesForBody for static sprites;
         if (mCenterOffset != saveOffset) {
@@ -1837,10 +2151,51 @@ Sprite::doAnimate(int msElapsed, bool layerDoCollisions) {
     }
   #endif
 
-  #ifdef PDG_SCML_SUPPORT
-  	if (mEntity) {
-  		SPRITEANIMATE_DEBUG_ONLY( OS::_DOUT("Sprite [%p] doing SCML animation", this); )
-  		mEntity->update(msElapsed);
+  #ifdef PDG_SPRITER_SUPPORT
+  	if (mEntityInstance) {
+  		SPRITEANIMATE_DEBUG_ONLY( OS::_DOUT("Sprite [%p] doing SpriterPlusPlus animation", this); )
+  		mEntityInstance->setTimeElapsed((int)msElapsed);
+  		
+  		// Update blending state
+  		if (mIsBlending) {
+  			mBlendProgress += elapsed;
+  			if (mBlendProgress >= mBlendTime) {
+  				// Blending is complete
+  				mIsBlending = false;
+  				mBlendProgress = 1.0f;
+  				mCurrentAnimation = mTargetAnimation;
+  				
+  				// Trigger blend complete event
+  				if (mLayer) {
+  					mLayer->notifyAnimationAction(action_AnimationBlendComplete, this);
+  				}
+  			}
+  		}
+  		
+  		// Update attached sprite positions
+		for (auto& attachPair : mAttachedSprites) {
+			if (attachPair.second) {
+				// Get the AttachPoint position and update the attached sprite
+				SpriterEngine::UniversalObjectInterface* obj = mEntityInstance->getObjectInstance(attachPair.first);
+				if (obj) {
+					SpriterEngine::point pos = obj->getPosition();
+					float angle = obj->getAngle();
+					Sprite* attachedSprite = attachPair.second;
+					attachedSprite->setLocation(this->getLocation() + Offset(pos.x, pos.y));
+					attachedSprite->rotateTo(angle);
+				}
+			}
+		}
+  		
+  		// Invalidate collision bounds each frame since animation may change them
+  		mColliderBoundsValid = false;
+  		mSpriterCollisionBoxCacheValid = false;
+
+		  int i = getSpriterCollisionBoxCount();
+		  for (int j = 0; j < i; j++) {
+			  const char* name = getSpriterCollisionBoxName(j);
+		  }
+
   	}
   #endif
 
@@ -1929,11 +2284,18 @@ Sprite::doAnimate(int msElapsed, bool layerDoCollisions) {
                     float kineticEnergy;
                     impartCollisionImpulse(otherSprite, normal, impulse, kineticEnergy);
                     float force = impulse.vectorLength() / elapsed;
+					EVENTS_DEBUG_ONLY(OS::_DOUT("Sprite::doAnimate calling notifyCollisionAction sprite"));
 					mLayer->notifyCollisionAction(Sprite::action_CollideSprite, this, normal, impulse, force, kineticEnergy, 
                             #ifdef PDG_USE_CHIPMUNK_PHYSICS
                                 0,  // need to pass in something for cpArbiter param
                             #endif
-								otherSprite);
+                            #ifdef PDG_SPRITER_SUPPORT
+                                mLastCollisionName.c_str(),
+                                otherSprite->mLastCollisionName.c_str(),
+                                mIsFirstContact,
+                            #endif // PDG_SPRITER_SUPPORT
+								otherSprite,
+								false); // queue up all the collision events for later
 				}
 			}
 			otherSprite = nextOther;
@@ -1953,7 +2315,7 @@ Sprite::doAnimate(int msElapsed, bool layerDoCollisions) {
             cpFloat breakingForce = BREAK_COEFFICIENT * maxForce;
             // If the force is almost as big as the joint's max force, break it.
             if (force > breakingForce) {
-                cpBody* b = cpConstraintGetB(mBreakableJoints[i]);
+                cpBody* b = cpConstraintGetBodyB(mBreakableJoints[i]);
                 Sprite* otherSprite = (Sprite*) cpBodyGetUserData(b);
                 SpriteJointBreakInfo si;
                 si.action = action_JointBreak;
@@ -2013,12 +2375,20 @@ Sprite::doAnimate(int msElapsed, bool layerDoCollisions) {
 				// TODO: calculate real values for these things, but don't apply them
 				Vector impulse;
 				float kineticEnergy = 0;
-				float force = impulse.vectorLength() / elapsed;  // TODO: not sure why we divide by elapsed, collision force is instantaneous
+				float force = impulse.vectorLength(); // / elapsed;  // TODO: not sure why we divide by elapsed, collision force is instantaneous
+				EVENTS_DEBUG_ONLY(OS::_DOUT("Sprite::doAnimate calling notifyCollisionAction wall"));
 				mLayer->notifyCollisionAction(Sprite::action_CollideWall, this, normal, impulse, force, kineticEnergy, 
 						#ifdef PDG_USE_CHIPMUNK_PHYSICS
 							0,  // need to pass in something for cpArbiter param
 						#endif
-							0); // no other sprite
+						#ifdef PDG_SPRITER_SUPPORT
+							nullptr,
+							nullptr,
+							true,
+						#endif // PDG_SPRITER_SUPPORT
+							0,
+							false // queue up all the collision events for later
+						); // no other sprite
 				if (refs == 1) dead = true;
 				release();
 			}
@@ -2034,18 +2404,32 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
 	if (fromEmitter == 0) {
 		fromEmitter = this;
 	}
+	EVENTS_DEBUG_ONLY(
+		if (inEventType == eventType_SpriteCollide) {
+			SpriteCollideInfo* si = static_cast<SpriteCollideInfo*>(inEventData);
+			OS::_DOUT("Sprite::postEvent sending unhandled collision event id: %d to layer", si->id);
+		}
+	)
 	bool wasHandled = emitEvent(fromEmitter, inEventType, inEventData);
+	EVENTS_DEBUG_ONLY(
+	if (inEventType == eventType_SpriteCollide) {
+		SpriteCollideInfo* si = static_cast<SpriteCollideInfo*>(inEventData);
+		OS::_DOUT("Sprite::postEvent  id: %d inEventType: %d wasHandled: %d", si->id, inEventType, wasHandled);
+		}
+	)
 	cleanupRemovedHandlers();
 	// special case for collision events because we want to give both objects in the
 	// collision a chance to respond
 	if (inEventType == eventType_SpriteCollide) {
 		SpriteCollideInfo* si = static_cast<SpriteCollideInfo*>(inEventData);
+		EVENTS_DEBUG_ONLY(OS::_DOUT("Sprite::postEvent id: %d targetSprite: %p this: %p", si->id, si->targetSprite, this));
 		if (this == si->targetSprite) {
 			// nothing more to do if we are the target sprite
 			// we don't want to pass this message on to the layer
 			// since the acting sprite will do that
 			return wasHandled;
 		} else if (si->targetSprite) {
+			EVENTS_DEBUG_ONLY(OS::_DOUT("Sprite::postEvent sending unhandled collision event id: %d to target sprite", si->id));
 			// not the target sprite, give the target a chance do something
 			wasHandled |= si->targetSprite->postEvent(inEventType, inEventData);
 		}
@@ -2054,6 +2438,12 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
 		// not handled locally, try the sprite layer, which will pass it on to
 		// the event manager if needed
 		if (mLayer) {
+			EVENTS_DEBUG_ONLY(
+				if (inEventType == eventType_SpriteCollide) {
+					SpriteCollideInfo* si = static_cast<SpriteCollideInfo*>(inEventData);
+					OS::_DOUT("Sprite::postEvent sending unhandled collision event id: %d to layer", si->id);
+				}
+			)
 			wasHandled = mLayer->postEvent(inEventType, inEventData, fromEmitter);
 		}
 	}
@@ -2098,13 +2488,18 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
         if (USE_CHIPMUNK && !mAnimating) {
             // only do when not changed by animate() call because we
             // don't want to recalc this multiple times if center changes too
-            cpBodySetPos(mBody, cpv(mLocation.x + mCenterOffset.x, mLocation.y + mCenterOffset.y));
+            cpBodySetPosition(mBody, cpv(mLocation.x + mCenterOffset.x, mLocation.y + mCenterOffset.y));
             if (mStatic) {
                 cpSpaceReindexStatic(getSpace());
             } else {
                 cpSpaceReindexShapesForBody(getSpace(), mBody);
             }
         }
+	  #ifdef PDG_SPRITER_SUPPORT
+		if (mEntityInstance) {
+			mEntityInstance->setPosition(SpriterEngine::point(mLocation.x, mLocation.y));
+		}
+	  #endif
     }
 
     void	
@@ -2114,7 +2509,27 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
             if (moment > 0) {
                 cpBodySetMoment(mBody, moment);
             }
+            
+            // Update collision shape when sprite size changes
+            if (mDoCollisions > 0 && mCollideShape) {
+                // Re-enable collisions to recreate the collision shape with new dimensions
+                int currentCollisionType = mDoCollisions;
+                enableCollisions(currentCollisionType);
+            }
         }
+	  #ifdef PDG_SPRITER_SUPPORT
+        if (mEntityInstance) {
+			// Properly handle scaling of Spriter entities
+			// Calculate the scale factor based on the change in dimensions
+			float scaleX = (mWidth > 0) ? (float)mWidth / (float)(mWidth - deltaW) : 1.0f;
+			float scaleY = (mHeight > 0) ? (float)mHeight / (float)(mHeight - deltaH) : 1.0f;
+			
+			// Get current scale and apply the change
+			SpriterEngine::point currentScale = mEntityInstance->getScale();
+			SpriterEngine::point newScale(currentScale.x * scaleX, currentScale.y * scaleY);
+			mEntityInstance->setScale(newScale);
+        }
+      #endif
     }
 
     void	
@@ -2126,7 +2541,12 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
             cpSpaceReindexStatic(getSpace());
         } else {
             cpSpaceReindexShapesForBody(getSpace(), mBody);
+        }  
+      #ifdef PDG_SPRITER_SUPPORT
+        if (mEntityInstance) {
+            mEntityInstance->setAngle(mFacing);
         }
+      #endif
     }
 
     void	
@@ -2135,8 +2555,8 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
             // only do when not changed by animate() call because we
             // don't want to recalc this multiple times if location changes too
             cpVect v;
-            v.x = mLocation.y + mCenterOffset.x; v.y = mLocation.y + mCenterOffset.y;
-            cpBodySetPos(mBody, v);
+            v.x = mLocation.x + mCenterOffset.x; v.y = mLocation.y + mCenterOffset.y;
+            cpBodySetPosition(mBody, v);
             if (mStatic) {
                 cpSpaceReindexStatic(getSpace());
             } else {
@@ -2144,9 +2564,30 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
             }
         }
     }
+
+	void
+	Sprite::flipChanged(bool xFlipped, bool yFlipped) {
+	  #ifdef PDG_SPRITER_SUPPORT
+		if (mEntityInstance) {
+			bool changed = false;
+			SpriterEngine::point scale = mEntityInstance->getScale();
+			if (xFlipped) {
+				scale.x = -scale.x;
+				changed = true;
+			}
+			if (yFlipped) {
+				scale.y = -scale.y;
+				changed = true;
+			}
+			if (changed) {
+				mEntityInstance->setScale(scale);
+			}
+		}
+	  #endif
+	}
     
     void		
-    Sprite::applyForce(const Vector& force, int32 msDuration) {
+    Sprite::applyForce(const Vector& force, ms_delta msDuration) {
     	if (!USE_CHIPMUNK) {
     		Animated::applyForce(force, msDuration);
     		return;
@@ -2154,14 +2595,14 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
         cpVect v;
         v.x = force.x; v.y = force.y;
         if (msDuration == duration_Instantaneous) {
-            cpBodyApplyImpulse(mBody, v, cpvzero);
+            cpBodyApplyImpulseAtLocalPoint(mBody, v, cpvzero);
         } else {
-            cpBodyApplyForce(mBody, v, cpvzero);
+            cpBodyApplyForceAtLocalPoint(mBody, v, cpvzero);
         }
     }
 
     void		
-    Sprite::applyTorque(float forceSpin, int32 msDuration) {
+    Sprite::applyTorque(float forceSpin, ms_delta msDuration) {
     	if (!USE_CHIPMUNK) {
     		Animated::applyTorque(forceSpin, msDuration);
     		return;
@@ -2181,7 +2622,7 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
     		Animated::stopAllForces();
     		return;
     	}
-        cpBodyResetForces(mBody);
+        cpBodySetForce(mBody, cpvzero);
     }
 
     Animated&
@@ -2193,7 +2634,7 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
         cpVect v;
         v.x = delta.x;
         v.y = delta.y;
-        cpBodySetVel(mBody, v);
+        cpBodySetVelocity(mBody, v);
         return *this;
     }
     
@@ -2202,7 +2643,7 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
     	if (!USE_CHIPMUNK) {
     		return Animated::getVelocity();
     	}
-        cpVect v = cpBodyGetVel(mBody);
+        cpVect v = cpBodyGetVelocity(mBody);
         return Vector(v.x, v.y);
     }
 
@@ -2213,6 +2654,7 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
         if (!mCollideGroup) mCollideGroup = otherSprite->mCollideGroup; // maybe the other sprite has it set?
         if (!mCollideGroup) mCollideGroup = spriteId;               // grab a possibly usable value
         if (!mCollideGroup) mCollideGroup = otherSprite->spriteId;
+        if (!mCollideGroup) mCollideGroup = iid;  // this should always be set
         DEBUG_ONLY(
             if (mCollideShape && otherSprite->mCollideShape) {
                 DEBUG_ASSERT(mCollideGroup != 0, "Must have a collideGroup (or spriteId) assigned to use joints with collisions enabled!!");
@@ -2220,11 +2662,12 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
         )
         if (mCollideGroup) {
             otherSprite->mCollideGroup = mCollideGroup; // make sure both sprites agree on the collide group
+            cpShapeFilter filter = cpShapeFilterNew(mCollideGroup, CP_ALL_CATEGORIES, CP_ALL_CATEGORIES);
             if (mCollideShape) {
-                cpShapeSetGroup(mCollideShape, mCollideGroup);
+                cpShapeSetFilter(mCollideShape, filter);
             }
             if (otherSprite->mCollideShape) {
-                cpShapeSetGroup(otherSprite->mCollideShape, mCollideGroup); // use our spriteId
+                cpShapeSetFilter(otherSprite->mCollideShape, filter); // use our spriteId
             }
         }
     }
@@ -2358,7 +2801,7 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
         return con;
     }
 
-    // like a socket wrench. ratchetInterval is the distance between “clicks”, phase is the initial 
+    // like a socket wrench. ratchetInterval is the distance between "clicks", phase is the initial 
     // angular offset to use when deciding where the ratchet angles are.
     cpConstraint*            
     Sprite::ratchet(Sprite* otherSprite, float rachetInterval, float phase, float breakingForce) {
@@ -2400,8 +2843,8 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
     
     static void RemoveConstraint(cpBody* body, cpConstraint* constraint, void* data);
     static void RemoveConstraint(cpBody* body, cpConstraint* constraint, void* data) {
-        cpBody* a = cpConstraintGetA(constraint);
-        cpBody* b = cpConstraintGetB(constraint);
+        cpBody* a = cpConstraintGetBodyA(constraint);
+        cpBody* b = cpConstraintGetBodyB(constraint);
         if (data && (b != ((Sprite*)data)->mBody)) {
             return;
         }
@@ -2430,13 +2873,10 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
     Sprite&
     Sprite::makeStatic() {
     	if (!USE_CHIPMUNK) return *this;
-        DEBUG_ASSERT(cpBodyIsStatic(mBody) == false, "Sprite::makeStatic called twice on same sprite!");
-        DEBUG_ASSERT(mCollideShape == 0, "You must call Sprite::makeStatic before setting up collisions");
-        disconnect();
-        cpSpace* space = getSpace();
-        cpSpaceRemoveBody(space, mBody);
-        cpBodyInitStatic(mBody); // re-initialize as a static
-        cpBodySetUserData(mBody, this);
+        DEBUG_ASSERT(cpBodyGetType(mBody) != CP_BODY_TYPE_STATIC, "Sprite::makeStatic called twice on same sprite!");
+//        DEBUG_ASSERT(mCollideShape == 0, "You must call Sprite::makeStatic before setting up collisions");
+//        disconnect();
+        cpBodySetType(mBody, CP_BODY_TYPE_STATIC); // re-initialize as a static
         mStatic = true;
         return *this;
     }
@@ -2444,11 +2884,11 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
     cpSpace*
     Sprite::getSpace() {
     	if (!USE_CHIPMUNK) return 0;
-        if (cpBodyIsStatic(mBody) || cpBodyIsRogue(mBody)) {
-            return mLayer->getSpace();
-        } else {
-            return cpBodyGetSpace(mBody);
+        cpSpace* space = cpBodyGetSpace(mBody);
+        if (!space) {
+            space = mLayer->getSpace();
         }
+        return space;
     }
 
     void
@@ -2456,11 +2896,11 @@ Sprite::postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter
     	if (!mBody) {
     		if (!mLayer->mIsStaticLayer) {
 				mBody = cpBodyNew(1, 1);
-				cpSpaceAddBody(getSpace(), mBody);
 			} else {
 				mBody = cpBodyNewStatic(); // initialize as a static
 				mStatic = true;		
 			}
+            cpSpaceAddBody(getSpace(), mBody);
 			cpBodySetUserData(mBody, this);
 		}
     }
@@ -2503,8 +2943,25 @@ Sprite::recalcOnscreenAndInBounds() {
 	}
 }
 
-
+#ifdef PDG_SPRITER_SUPPORT
+Sprite::Sprite() : Sprite(nullptr, nullptr) {
+}
+Sprite::Sprite(SpriterEngine::EntityInstance* entityInstance, SpriterEngine::SpriterModel* spriterModel) : 
+    mEntityInstance(entityInstance),
+	mSpriterModel(spriterModel),
+	mEntityScaleX(1.0f),
+	mEntityScaleY(1.0f),
+	mSpriterEventsEnabled(false),
+	mIsBlending(false),
+	mBlendTime(0.0f),
+	mBlendProgress(0.0f),
+	mIsAnimationPaused(false),
+	mSpriterCollisionBoxCacheValid(false),
+	mIsFirstContact(false),
+	mColliderBoundsValid(false),
+#else
 Sprite::Sprite() : 
+#endif // PDG_SPRITER_SUPPORT
     spriteId(0), 
     wantsMouseOver(false), 
     wantsClicks(false), 
@@ -2526,11 +2983,6 @@ Sprite::Sprite() :
 	mSpriteAnimatingBackwardsNow(false),
 	mDoCollisions(false),
 	mMouseDetectMode(collide_BoundingBox),
-  #ifdef PDG_SCML_SUPPORT
-	mEntity(0),
-	mEntityScaleX(1.0f),
-	mEntityScaleY(1.0f),
-  #endif
   #ifndef PDG_NO_GUI
 	mPort(0),
   #endif
@@ -2560,6 +3012,7 @@ Sprite::Sprite() :
     mCollideShape = 0; // only create this when we set collisions
     mNumBreakableJoints = 0;
     mStatic = false;
+    mElasticity = 1.0f;  // initialize elasticity to 1.0 (full bounce)
 #endif
 //	mBounds = Rect(20, 20);
 //	DEBUG_PRINT("Constructed Sprite [%p]", this);
@@ -2573,6 +3026,14 @@ Sprite::Sprite() :
 //
 Sprite::~Sprite() {
     //                DEBUG_ONLY( OS::_DOUT("dt Sprite %p", this) = 0; )
+	mDoCollisions = false; // make sure any collisions are ignored
+  #ifndef PDG_NO_EVENT_QUEUE
+	EventManager* eventMgr = EventManager::getSingletonInstance();
+	if (eventMgr) {
+		// make sure we don't have any events queued up for this sprite
+		eventMgr->RemoveEnqueuedEventsForEmitter(this);
+	}
+  #endif // ! PDG_NO_EVENT_QUEUE
   #ifndef PDG_NO_GUI
 	if (mDrawHelper && mDrawHelper->ownedBySprite()) {
 		delete mDrawHelper;
@@ -2587,16 +3048,24 @@ Sprite::~Sprite() {
         userData->release();
         userData = 0;
     }
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    if (mLayer && USE_CHIPMUNK) {
-		disconnect();   // remove all constraints
-		freeCpBody();
-    }
-  #endif
-  #ifdef PDG_SCML_SUPPORT
-	if (mEntity) {
-		delete mEntity;
-		mEntity = 0;
+	if (mLayer) {
+	  #ifdef PDG_USE_CHIPMUNK_PHYSICS
+		if (mLayer && USE_CHIPMUNK) {
+			disconnect();   // remove all constraints
+			freeCpBody();
+		}
+		// this will do another release() on this sprite, but the refcount
+		// should already be 0 so it won't get deleted again
+		// and it ensures that the layer and other sprites don't have
+		// references to this sprite
+		mLayer->removeSprite(this);
+		mLayer = 0; // remove the reference to the layer
+	  #endif
+	}
+  #ifdef PDG_SPRITER_SUPPORT
+	if (mEntityInstance) {
+		delete mEntityInstance;
+		mEntityInstance = nullptr;
 	}
   #endif
   #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
@@ -2604,6 +3073,390 @@ Sprite::~Sprite() {
   #endif
 //	DEBUG_PRINT("Destroyed Sprite [%p]", this);
 }
+
+#ifdef PDG_SPRITER_SUPPORT
+void Sprite::calcColliderBounds() const {
+	if (!mEntityInstance) {
+		mColliderBounds = Rect();
+		mColliderBoundsValid = true;
+		return;
+	}
+	
+	// Get all active objects from the current frame
+	auto zOrder = mEntityInstance->getZOrder();
+	if (!zOrder || zOrder->empty()) {
+		mColliderBounds = Rect();
+		mColliderBoundsValid = true;
+		return;
+	}
+	
+	// Calculate bounding box that encompasses all collision boxes
+	float minX = FLT_MAX, minY = FLT_MAX;
+	float maxX = -FLT_MAX, maxY = -FLT_MAX;
+	
+	for (auto obj : *zOrder) {
+		if (!obj) {
+			continue;
+		}
+		auto boxObj = dynamic_cast<SpriterEngine::BoxInstanceInfo*>(obj);
+		if (!boxObj) {
+			continue;
+		}
+		SpriterEngine::point size = obj->getSize();
+		if (size.x > 0 && size.y > 0) {
+			SpriterEngine::point pos = obj->getPosition();
+			
+			// Convert to PDG RotatedRect
+			RotatedRect rect;
+			rect.setWidth(size.x);
+			rect.setHeight(size.y);
+			rect.moveTo(mLocation + Offset(pos.x, pos.y));
+			rect.setRotation(obj->getAngle());
+			
+			// Get the four corners of the rotated rectangle using getQuad()
+			Quad quad = rect.getQuad();
+			
+			for (int i = 0; i < 4; i++) {
+				minX = std::min(minX, quad.points[i].x);
+				minY = std::min(minY, quad.points[i].y);
+				maxX = std::max(maxX, quad.points[i].x);
+				maxY = std::max(maxY, quad.points[i].y);
+			}
+		}
+	}
+	
+	// Create bounding rectangle
+	mColliderBounds.left = minX;
+	mColliderBounds.top = minY;
+	mColliderBounds.right = maxX;
+	mColliderBounds.bottom = maxY;
+	mColliderBoundsValid = true;
+}
+
+
+
+
+
+RotatedRect Sprite::getSpriterCollisionBox(const char* boxName) const {
+	if (!mEntityInstance) {
+		return RotatedRect();
+	}
+	
+	auto obj = mEntityInstance->getObjectInstance(boxName);
+	if (!obj && boxName && strncmp(boxName, "collision_box_", 14) == 0) {
+		char* endPtr = nullptr;
+		long targetIndex = strtol(boxName + 14, &endPtr, 10);
+		if (endPtr && *endPtr == '\0' && targetIndex >= 0) {
+			auto zOrder = mEntityInstance->getZOrder();
+			if (zOrder) {
+				int currentIndex = 0;
+				for (auto zObj : *zOrder) {
+					auto boxObj = dynamic_cast<SpriterEngine::BoxInstanceInfo*>(zObj);
+					if (!boxObj) {
+						continue;
+					}
+					if (currentIndex == targetIndex) {
+						obj = zObj;
+						break;
+					}
+					currentIndex++;
+				}
+			}
+		}
+	}
+	if (obj) {
+		SpriterEngine::point pos = obj->getPosition();
+		float angle = obj->getAngle();
+		SpriterEngine::point size = obj->getSize();
+		
+		RotatedRect rect;
+		rect.setWidth(size.x);
+		rect.setHeight(size.y);
+		rect.moveTo(mLocation + Offset(pos.x, pos.y));
+		rect.setRotation(angle);
+		
+		return rect;
+	}
+	return RotatedRect();
+}
+
+bool Sprite::isSpriterCollisionActive(const char* boxName) const {
+	if (!mEntityInstance) {
+		return false;
+	}
+	
+	auto obj = mEntityInstance->getObjectInstance(boxName);
+	if (!obj && boxName && strncmp(boxName, "collision_box_", 14) == 0) {
+		char* endPtr = nullptr;
+		long targetIndex = strtol(boxName + 14, &endPtr, 10);
+		if (endPtr && *endPtr == '\0' && targetIndex >= 0) {
+			auto zOrder = mEntityInstance->getZOrder();
+			if (zOrder) {
+				int currentIndex = 0;
+				for (auto zObj : *zOrder) {
+					if (!dynamic_cast<SpriterEngine::BoxInstanceInfo*>(zObj)) {
+						continue;
+					}
+					if (currentIndex == targetIndex) {
+						obj = zObj;
+						break;
+					}
+					currentIndex++;
+				}
+			}
+		}
+	}
+	return (obj != nullptr);
+}
+
+int Sprite::getSpriterCollisionBoxCount() const {
+	if (!mEntityInstance) {
+		return 0;
+	}
+	
+	// Get all active objects from the current frame
+	auto zOrder = mEntityInstance->getZOrder();
+	if (!zOrder) {
+		return 0;
+	}
+	
+	// Count collision boxes
+	int count = 0;
+	for (auto obj : *zOrder) {
+		if (obj && dynamic_cast<SpriterEngine::BoxInstanceInfo*>(obj)) {
+			count++;
+		}
+	}
+	
+	return count;
+}
+
+const char* Sprite::getSpriterCollisionBoxName(int index) const {
+	if (!mEntityInstance || index < 0) {
+		return nullptr;
+	}
+	
+	// Get all active objects from the current frame
+	auto zOrder = mEntityInstance->getZOrder();
+	if (!zOrder) {
+		return nullptr;
+	}
+	
+	// Find collision box at the specified index
+	int currentIndex = 0;
+	for (auto obj : *zOrder) {
+		if (!obj) {
+			continue;
+		}
+		// Support box names in both GUI and non-GUI modes
+		auto boxObj = dynamic_cast<SpriterEngine::BoxInstanceInfo*>(obj);
+		if (!boxObj) {
+			continue;
+		}
+		if (currentIndex == index) {
+			// Try to return the authored box name first, but preserve a stable
+			// fallback identifier when the source file leaves the name blank.
+			auto pdgBoxObj = dynamic_cast<pdg::PDGBoxInstanceInfo*>(boxObj);
+			if (pdgBoxObj) {
+				const std::string& boxName = pdgBoxObj->getBoxName();
+				if (!boxName.empty()) {
+					return boxName.c_str();
+				}
+			}
+			mFallbackCollisionBoxName = "collision_box_" + std::to_string(index);
+			return mFallbackCollisionBoxName.c_str();
+		}
+		currentIndex++;
+	}
+	
+	return nullptr;
+}
+
+
+
+bool Sprite::checkSpriterCollisionBoxCollision(Sprite* otherSprite) {
+	SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: checking collision between sprites"); )
+	if (!mEntityInstance || !otherSprite->mEntityInstance) {
+		SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: one or both entity instances are null"); )
+		return false;
+	}
+	
+	// Step 1: Quick bounds check
+	SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: checking bounds"); )
+	try {
+		if (!mColliderBoundsValid) {
+			SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: calculating collider bounds for self"); )
+			calcColliderBounds();
+		}
+		if (!otherSprite->mColliderBoundsValid) {
+			SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: calculating collider bounds for other sprite"); )
+			otherSprite->calcColliderBounds();
+		}
+	} catch (...) {
+		SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: exception during bounds calculation"); )
+		return false;
+	}
+	
+	// If bounds don't intersect, no collision possible
+	if (!mColliderBounds.overlaps(otherSprite->mColliderBounds)) {
+		// If we were previously colliding, this is a separation
+		if (!mLastCollisionName.empty()) {
+			mLastCollisionName.clear();
+			mIsFirstContact = false;
+		}
+		return false;
+	}
+
+	// common case: ongoing collision between same collision boxes as last frame
+	RotatedRect myBox = getSpriterCollisionBox(mLastCollisionName.c_str());
+	RotatedRect otherBox = otherSprite->getSpriterCollisionBox(otherSprite->mLastCollisionName.c_str());
+	if (CollisionDetection::detectBoundingBoxCollision(myBox, otherBox)) {
+		// This is an ongoing collision, not the first contact
+		mIsFirstContact = false;
+		return true;
+	}
+
+	// we are going to have to do the more expensive check
+	SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: doing expensive collision box check"); )
+	
+	// Get all active objects from both sprites
+	auto myZOrder = mEntityInstance->getZOrder();
+	auto otherZOrder = otherSprite->mEntityInstance->getZOrder();
+	
+	if (!myZOrder || !otherZOrder) {
+		SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: no z-order available"); )
+		return false;
+	}
+	
+	// Check for overlaps between any collision boxes
+	SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: checking collision box overlaps"); )
+	int myBoxIndex = 0;
+	for (auto myObj : *myZOrder) {
+		if (myObj) {
+			// Check if this object has size and position (indicating it's a collision box)
+			SpriterEngine::point mySize = myObj->getSize();
+			if (mySize.x > 0 && mySize.y > 0) {
+				SpriterEngine::point myPos = myObj->getPosition();
+				
+				// Convert to PDG RotatedRect
+				RotatedRect myRect;
+				myRect.setWidth(mySize.x);
+				myRect.setHeight(mySize.y);
+				myRect.moveTo(mLocation + Offset(myPos.x, myPos.y));
+				myRect.setRotation(myObj->getAngle());
+				
+				// if my collision box doesn't overlap with the other sprite's bounds, then skip my next collision box
+				if (!myRect.overlaps(otherSprite->mColliderBounds)) {
+					SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: my box doesn't overlap with other sprite bounds"); )
+					myBoxIndex++;
+					continue;
+				}
+				
+				// this collision box overlaps with the other sprite's bounds, so we need to do the expensive
+				// check against all of the other sprite's collision boxes
+				int otherBoxIndex = 0;
+				for (auto otherObj : *otherZOrder) {
+					if (otherObj) {
+						// Check if this object has size and position (indicating it's a collision box)
+						SpriterEngine::point otherSize = otherObj->getSize();
+						if (otherSize.x > 0 && otherSize.y > 0) {
+							SpriterEngine::point otherPos = otherObj->getPosition();
+							
+							// Convert to PDG RotatedRect
+							RotatedRect otherRect;
+							otherRect.setWidth(otherSize.x);
+							otherRect.setHeight(otherSize.y);
+							otherRect.moveTo(otherSprite->mLocation + Offset(otherPos.x, otherPos.y));
+							otherRect.setRotation(otherObj->getAngle());
+							
+							if (!otherRect.overlaps(myRect)) {
+								SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: boxes don't overlap"); )
+								otherBoxIndex++;
+								continue;
+							}
+							if (CollisionDetection::detectBoundingBoxCollision(myRect, otherRect)) {
+								SPRITER_COLLISION_DEBUG_ONLY( OS::_DOUT("checkSpriterCollisionBoxCollision: collision detected between boxes %d and %d", myBoxIndex, otherBoxIndex); )
+								// Preserve the actual SCML box names so ongoing collisions
+								// can be recognized on later frames and surfaced in events.
+								const char* myCollisionName = getSpriterCollisionBoxName(myBoxIndex);
+								const char* otherCollisionName = otherSprite->getSpriterCollisionBoxName(otherBoxIndex);
+								if (myCollisionName) {
+									mLastCollisionName = myCollisionName;
+								} else {
+									mLastCollisionName.clear();
+								}
+								if (otherCollisionName) {
+									otherSprite->mLastCollisionName = otherCollisionName;
+								} else {
+									otherSprite->mLastCollisionName.clear();
+								}
+								mIsFirstContact = true;				
+								return true;
+							}
+							otherBoxIndex++;
+						}
+					}
+				}
+				myBoxIndex++;
+			}
+		}
+	}
+	return false;
+}
+
+bool Sprite::checkSpriterCollisionBoxPointCollision(const Point& p) {
+	if (!mEntityInstance) {
+		return false;
+	}
+	
+	// Step 1: Quick bounds check
+	if (!mColliderBoundsValid) {
+		calcColliderBounds();
+	}
+	
+	// If point is outside bounds, no collision possible
+	if (!mColliderBounds.contains(p)) {
+		return false;
+	}
+	
+	// Step 2: Detailed collision box check (only if point is within bounds)
+	auto zOrder = mEntityInstance->getZOrder();
+	if (!zOrder) {
+		return false;
+	}
+	
+	// Check if point is inside any collision box
+	int boxIndex = 0;
+	for (auto obj : *zOrder) {
+		if (obj) {
+			// Check if this object has size and position (indicating it's a collision box)
+			SpriterEngine::point size = obj->getSize();
+			if (size.x > 0 && size.y > 0) {
+				SpriterEngine::point pos = obj->getPosition();
+				
+				// Convert to PDG RotatedRect
+				RotatedRect rect;
+				rect.setWidth(size.x);
+				rect.setHeight(size.y);
+				rect.moveTo(mLocation + Offset(pos.x, pos.y));
+				rect.setRotation(obj->getAngle());
+				
+				if (rect.contains(p)) {
+					const char* collisionName = getSpriterCollisionBoxName(boxIndex);
+					if (collisionName) {
+						mLastCollisionName = collisionName;
+					} else {
+						mLastCollisionName.clear();
+					}
+					return true;
+				}
+				boxIndex++;
+			}
+		}
+	}
+	return false;
+}
+#endif // PDG_SPRITER_SUPPORT
 
 
 	

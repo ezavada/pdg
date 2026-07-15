@@ -27,9 +27,8 @@
 //
 // -----------------------------------------------
 
-#include "pdg_project.h"
-
-#define PDG_DEBUG_KEYBOARD
+// NOTE: this isn't used for JavaScript apps, only for C++ apps
+// see pdg_node.cpp and pdg_main_v24.js for JavaScript apps
 
 #include "pdg_project.h"
 
@@ -57,6 +56,9 @@
 
 #ifndef PDG_NO_SOUND
   #include "pdg/sys/sound.h"
+  #ifdef PLATFORM_MACOSX
+    #include "audio_cleanup_manager.h"
+  #endif
 #endif
 
 #include "pdg-main.h"
@@ -69,13 +71,25 @@
 #include <cstdlib>
 #include <cmath>
 #include <limits>
+#include <signal.h>
+
+// Linux-specific headers
+#ifndef _WIN32
+#include <execinfo.h>
+#include <cxxabi.h>
+#include <dlfcn.h>
+#endif
+#include <vector>
+
+// Global flag to prevent double cleanup
+static bool gCleanupCalled = false;
 
 using std::cout;
 using std::endl;
 
 //#define DEBUG_EVENTS
 //#define DEBUG_MOUSE_EVENTS
-
+//#define PDG_DEBUG_KEYBOARD
 //#define PDG_DEBUG_RUN_LOOP
 
 #ifdef PDG_NO_GUI
@@ -124,17 +138,6 @@ namespace std {
 // Globals
 // -----------------------------------------------
 
-//#define HACK_TEST_SCML_PDG
-
-#ifdef HACK_TEST_SCML_PDG
-	#include "SCML_pdg.h"
-	using namespace std;
-	using namespace SCML_pdg;
-	extern list<Entity*> entities;
-	uint32 gLastMs = 0;
-#endif
-
-
 namespace pdg {
 
 bool gExit = false;
@@ -163,14 +166,14 @@ bool gCharKeyStates[MAX_CHAR_KEYS];
 // click tracking
 Point   gMouseLoc[MAX_POINTERS];
 Point   gLastClickPos;
-uint32  gLastClickMillisec;
-uint32  gFPSBaseMs = 0;
+unsigned long  gLastClickMillisec;
+unsigned long gFPSBaseMs = 0;
 int gMaxAttachedMouse = 0;
 
 int gFPSFrameCount = 0;
 float gCurrentFPS = 0;
 float gTargetFPS = 40; // fps
-uint32 gNextRedrawMillisec = 0;
+unsigned long gNextRedrawMillisec = 0;
 uint32 gFrameNum = 0;
 
 #endif // PDG_NO_GUI
@@ -226,7 +229,7 @@ int main_getLogLevelFromArgs(int argc, const char* argv[], int defaultLevel) {
                 loglevel = log::trace;
             }
             if (loglevel == LOG_LEVEL_NOT_SPECIFIED) {
-                loglevel = std::atol(&argv[i][10]);
+                loglevel = std::atoi(&argv[i][10]);
             }
             DEBUG_ONLY( OS::_DOUT("Using log level specified by -loglevel=%d", loglevel); )
         }
@@ -389,11 +392,11 @@ int main_init(int argc, const char* argv[], bool isInitialized) {
  		gFullScreen = Initializer::getGraphicsEnvironmentDimensions(
                             maxWindowDim, maxFullScreenDim, gWindWidth, gWindHeight, gScreenDepth);
 		if (gFullScreen) {
-			gWindWidth = std::min(gWindWidth, (int32)maxFullScreenDim.width());
-			gWindHeight = std::min(gWindHeight, (int32)maxFullScreenDim.height());
+			gWindWidth = std::min(gWindWidth, (long)maxFullScreenDim.width());
+			gWindHeight = std::min(gWindHeight, (long)maxFullScreenDim.height());
 		} else {
-			gWindWidth = std::min(gWindWidth, (int32)maxWindowDim.width());
-			gWindHeight = std::min(gWindHeight, (int32)maxWindowDim.height());
+			gWindWidth = std::min(gWindWidth, (long)maxWindowDim.width());
+			gWindHeight = std::min(gWindHeight, (long)maxWindowDim.height());
 		}
 	  #else
 		gScreenDepth = 32;		
@@ -448,10 +451,10 @@ int main_init(int argc, const char* argv[], bool isInitialized) {
 // -----------------------------------------------
 void main_run() {
 
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u - ENTERING main_run()", OS::getMilliseconds()); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld - ENTERING main_run()", OS::getMilliseconds()); )
 
   #ifndef PDG_NO_GUI
-	uint32 currMs = OS::getMilliseconds();
+	ms_time currMs = OS::getMilliseconds();
 
 	DRAWING_DEBUG_ONLY(
 		static int mainLoopCounter = 0;
@@ -481,26 +484,32 @@ void main_run() {
 				DEBUG_ONLY( 
 					float warnFps = 0.8f * gTargetFPS;
 					if (gCurrentFPS < warnFps) {
-						OS::_DOUT("WARNING: FPS drop!!! FPS: %01.2f", gCurrentFPS);
+						OS::_DOUT("WARNING: FPS drop!!! FPS: %01.2f @ %ld", gCurrentFPS, OS::getMilliseconds());
 					}
 				)
 			}
 			gNextRedrawMillisec = currMs + std::floor(1000.0 / gTargetFPS);
 			gFPSFrameCount++; gFrameNum++;
 
-			RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u -    About to Draw", OS::getMilliseconds()); )
-			graphics_startDrawing(mainPort);
+			RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    About to Draw", OS::getMilliseconds()); )
+			
+			// Get all active ports and post draw events for each one
+			std::vector<Port*> activePorts = GraphicsManager::instance().getAllActivePorts();
+			for (size_t i = 0; i < activePorts.size(); i++) {
+				Port* port = activePorts[i];
+				if (port) {
+					graphics_startDrawing(port);
 
-			// post an event to the application so it can draw the contents of the main port
-			// TODO: let the graphics manager do this instead
-			PortDrawInfo pdi;
-			pdi.port = mainPort;
-			pdi.frameNum = gFrameNum;
-			EventManager::instance().postEvent(eventType_PortDraw, &pdi);
+					// post an event to the application so it can draw the contents of this port
+					PortDrawInfo pdi;
+					pdi.port = port;
+					pdi.frameNum = gFrameNum;
+					EventManager::instance().postEvent(eventType_PortDraw, &pdi);
 
-			graphics_finishDrawing(mainPort);
-			RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u -    Drawing Event complete", OS::getMilliseconds()); )
-	
+					graphics_finishDrawing(port);
+					RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Drawing Event complete for port %zu", OS::getMilliseconds(), i); )
+				}
+			}
 		}
 	} else {
 		gCurrentFPS = 0.0;
@@ -509,14 +518,14 @@ void main_run() {
 
 	TimerManager::instance().checkTimers();
 
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u -    Timer check/fire complete", OS::getMilliseconds()); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Timer check/fire complete", OS::getMilliseconds()); )
 
   #ifndef PDG_NO_SLEEP
 	// now figure out how long we need to sleep and block for that long
 	// but make it interruptable by a semaphore
-	long maxSleepMs = TimerManager::instance().msTillNextFire();
+	ms_delta maxSleepMs = TimerManager::instance().msTillNextFire();
   #ifndef PDG_NO_GUI
-	long redrawDelay = gNextRedrawMillisec - OS::getMilliseconds();
+	ms_delta redrawDelay = gNextRedrawMillisec - OS::getMilliseconds();
 	if (maxSleepMs > redrawDelay) {
 		maxSleepMs = redrawDelay;
 	}
@@ -529,10 +538,10 @@ void main_run() {
     //            OS::_DOUT("Sleeping for %d ms", maxSleepMs);
 	// most likely reason for a signal will be data on the network
 	// network events will be on the event queue, so we don't need to do anything special
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u -    About to sleep for %ld ms", OS::getMilliseconds(), maxSleepMs); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    About to sleep for %ld ms", OS::getMilliseconds(), maxSleepMs); )
 	
 	/* bool signaled = */ gWakeupSemaphore.awaitSignal( maxSleepMs );
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u -    Awakened from sleep", OS::getMilliseconds()); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Awakened from sleep", OS::getMilliseconds()); )
   #endif
 
   #ifndef PDG_NO_EVENT_QUEUE
@@ -541,29 +550,40 @@ void main_run() {
 	long eventType;
 	UserData* eventData;
 	EventEmitter* eventEmitter;
-	int eventCount = 0;
+	RUN_LOOP_DEBUG_ONLY(int eventCount = 0;)
 	while (EventManager::instance().getQueuedEvent(eventType, eventData, eventEmitter)) {
+		DEBUG_ONLY(
+			ms_time eventTime = OS::getMilliseconds();
+		)
 		EventManager::instance().postEventToEmitter(
 			eventType, eventData->getData(), eventEmitter);
+		DEBUG_ONLY(
+			ms_time eventPostTime = OS::getMilliseconds();
+			ms_delta eventDuration = eventPostTime - eventTime;
+			RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Posted event %s at %ld, took %ld ms", eventTime, getEventName(eventType), eventPostTime, eventDuration); )
+			if (eventDuration > 100) {
+				DEBUG_ONLY(OS::_DOUT("%12ld -    Posted event %s at %ld, took %ld ms", eventTime, getEventName(eventType), eventPostTime, eventDuration); )
+			}
+		)
 		eventData->release();
 		eventData = 0;
 		eventEmitter = 0;
-		eventCount++;
+		RUN_LOOP_DEBUG_ONLY(eventCount++;)
 	}
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u -    Dequeued %d event(s) queued during sleep", OS::getMilliseconds(), eventCount); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Dequeued %d event(s) queued during sleep", OS::getMilliseconds(), eventCount); )
   #endif // NO_EVENT_QUEUE
 
   #ifndef PDG_NO_NETWORK
     NetworkManager::instance().idle();
-    RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u -    Network Idle complete", OS::getMilliseconds()); )
+    RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Network Idle complete", OS::getMilliseconds()); )
   #endif // PDG_NO_NETWORK
 
   #ifndef PDG_NO_SOUND
     SoundManager::instance().idle();
-    RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u -    Sound Manager Idle complete", OS::getMilliseconds()); )
+    RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Sound Manager Idle complete", OS::getMilliseconds()); )
   #endif // PDG_NO_SOUND
 
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12u - EXITING main_run()", OS::getMilliseconds()); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld - EXITING main_run()", OS::getMilliseconds()); )
 }
 
 // -----------------------------------------------
@@ -571,12 +591,19 @@ void main_run() {
 // -----------------------------------------------
 	
 int main_cleanup(bool* dontExit) {
+	// Prevent double cleanup
+	if (gCleanupCalled) {
+		return gExitCode;
+	}
+	gCleanupCalled = true;
+	
 	DEBUG_ONLY( OS::_DOUT("Posting Shutdown event to application layer"); )
 		
 	ShutdownInfo xi;
 	xi.exitReason = 0;
 	xi.exitCode = gExitCode;
 	EventManager::instance().postEvent(eventType_Shutdown, &xi);
+	gExit = true; // set the global exit flag so the run loop will exit
 
 	if ((dontExit != NULL) && *dontExit) {
 		if (gExitCode == 0) {
@@ -605,7 +632,17 @@ int main_cleanup(bool* dontExit) {
     delete NetworkManager::getSingletonInstance(); // cleanup network manager
   #endif // PDG_NO_NETWORK
 
-  #ifndef PDG_NO_SOUND
+  #ifndef PDG_NO_SOUND    
+    // Gracefully stop all sounds before cleanup to prevent audio pops/clicks
+    DEBUG_ONLY( OS::_DOUT("Stopping all sounds for graceful shutdown"); )
+    SoundManager::getSingletonInstance()->stopAllSounds();
+    
+  #ifdef PLATFORM_MACOSX
+    // Force cleanup of any pending audio resources on macOS
+    DeferredAudioCleanup::getInstance().forceCleanup();
+  #endif
+    
+    DEBUG_ONLY( OS::_DOUT("Deleting Sound Manager"); )
     delete SoundManager::getSingletonInstance();
   #endif
 	
@@ -614,7 +651,8 @@ int main_cleanup(bool* dontExit) {
   #endif // PDG_NO_GUI
 
     delete TimerManager::getSingletonInstance();  // clean up timer manager
-	delete EventManager::getSingletonInstance(); // clean up event manager
+	// deleting event manager is causing a crash
+	// delete EventManager::getSingletonInstance(); // clean up event manager
 	delete ResourceManager::getSingletonInstance();  // clean up resource manager
 	delete ConfigManager::getSingletonInstance();    // clean up config manager
 	delete LogManager::getSingletonInstance();   // clean up the log manager
@@ -639,7 +677,7 @@ void main_handleKeyPress(utf16char keyChar, bool repeat, bool shift, bool contro
 
 void main_handleKeyDown(int keyCode, utf16char keyChar) {
   #ifdef PDG_DEBUG_KEYBOARD
-    std::cout << "main_handleKeyDown("<<keyCode<<", "<<(void*)keyChar<<" ("<<(char)keyChar<<")\n";
+    std::cout << "main_handleKeyDown("<<keyCode<<", "<<std::hex<<keyChar<<" ("<<(char)keyChar<<")\n";
   #endif
 	if (keyCode >= 0 && keyCode < MAX_RAW_KEYS) {
 		gRawKeyStates[keyCode] = true;
@@ -654,7 +692,7 @@ void main_handleKeyDown(int keyCode, utf16char keyChar) {
 	
 void main_handleKeyUp(int keyCode, utf16char keyChar) {
   #ifdef PDG_DEBUG_KEYBOARD
-    std::cout << "main_handleKeyUp("<<keyCode<<", "<<(void*)keyChar<<" ("<<(char)keyChar<<")\n";
+    std::cout << "main_handleKeyUp("<<keyCode<<", "<<std::hex<<keyChar<<" ("<<(char)keyChar<<")\n";
   #endif
 	if (keyCode >= 0 && keyCode < MAX_RAW_KEYS) {
 		gRawKeyStates[keyCode] = false;
@@ -720,7 +758,7 @@ void main_handleMouse(int action, float x, float y, int button, bool shift, bool
 		}
 	}
 	MouseInfo mi;
-	unsigned long ms = OS::getMilliseconds();
+	ms_time ms = OS::getMilliseconds();
 	mi.lastClickElapsed = ms - gLastClickMillisec;
 	Point pdgfMousePoint( (PDG_BASE_COORD_TYPE) std::floor(x), (PDG_BASE_COORD_TYPE) std::floor(y) );  
 	if (screenPos == screenPos_Normal) {
@@ -752,7 +790,7 @@ void main_handleMouse(int action, float x, float y, int button, bool shift, bool
 	if (button >= 0 && button <= gMaxAttachedMouse) {
 		gMouseLoc[button] = mi.mousePos;
 	}
-	long eventType;
+	long eventType = eventType_MouseMove;  // Default to MouseMove
 	if (action == mouseEventType_MouseDown) {
 		gLastClickMillisec = ms;
 		gLastClickPos = mi.mousePos;
@@ -763,6 +801,17 @@ void main_handleMouse(int action, float x, float y, int button, bool shift, bool
 		eventType = eventType_MouseMove;
 	}
 	EventManager::instance().postEvent(eventType, &mi);
+}
+
+void main_handleScrollWheel(int horizDelta, int vertDelta, bool shift, bool control, bool alt, bool cmd) {
+	ScrollWheelInfo swi;
+	swi.horizDelta = horizDelta;
+	swi.vertDelta = vertDelta;
+	swi.shift = shift;
+	swi.ctrl = control;
+	swi.alt = alt;
+	swi.meta = cmd;
+	EventManager::instance().postEvent(eventType_ScrollWheel, &swi);
 }
 #endif // !PDG_NO_GUI
 

@@ -1,0 +1,270 @@
+.TH "Polygon" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Polygon \- Geometric shape defined by a collection of points with support for transformations and boolean operations\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBaddPoint\fP (\fBPoint\fP point)"
+.br
+.RI "adds a point to the end of the polygon "
+.ti -1c
+.RI "\fBaddSpline\fP (\fBSpline\fP spline)"
+.br
+.RI "adds a spline curve to the polygon "
+.ti -1c
+.RI "\fBcenter\fP (\fBPoint\fP point)"
+.br
+.RI "centers the polygon at the specified point "
+.ti -1c
+.RI "\fBPoint\fP \fBcenterPoint\fP ()"
+.br
+.RI "returns the center point of the polygon "
+.ti -1c
+.RI "\fBclearPoints\fP ()"
+.br
+.RI "removes all points from the polygon "
+.ti -1c
+.RI "boolean \fBcontains\fP (\fBPoint\fP point)"
+.br
+.RI "returns true if the specified point is inside the enclosed area of the \fBPolygon\fP "
+.ti -1c
+.RI "boolean \fBempty\fP ()"
+.br
+.RI "returns true if the polygon has no points "
+.ti -1c
+.RI "boolean \fBequals\fP (\fBPolygon\fP other)"
+.br
+.RI "returns true if this polygon equals another polygon "
+.ti -1c
+.RI "\fBRect\fP \fBgetBounds\fP ()"
+.br
+.RI "returns the bounding rectangle of the polygon "
+.ti -1c
+.RI "\fBPoint\fP \fBgetPoint\fP (uint index)"
+.br
+.RI "gets the point at the specified index "
+.ti -1c
+.RI "uint \fBgetPointCount\fP ()"
+.br
+.RI "returns the number of points in the polygon "
+.ti -1c
+.RI "\fBhorzScale\fP (number factor)"
+.br
+.RI "scales the polygon horizontally by the specified factor "
+.ti -1c
+.RI "\fBinsertPoint\fP (uint index, \fBPoint\fP point)"
+.br
+.RI "inserts a point at the specified index "
+.ti -1c
+.RI "\fBPolygon\fP \fBintersection\fP (\fBPolygon\fP other)"
+.br
+.RI "returns the intersection of this polygon with another polygon "
+.ti -1c
+.RI "\fBPolygon\fP \fBmove\fP (\fBOffset\fP offset)"
+.br
+.RI "moves the polygon by the specified offset vector "
+.ti -1c
+.RI "\fBPolygon\fP \fBmoveDown\fP (number delta)"
+.br
+.RI "moves the polygon down by the specified amount "
+.ti -1c
+.RI "\fBmoveLeft\fP (number delta)"
+.br
+.RI "moves the polygon left by the specified amount "
+.ti -1c
+.RI "\fBPolygon\fP \fBmoveRight\fP (number delta)"
+.br
+.RI "moves the polygon right by the specified amount "
+.ti -1c
+.RI "\fBmoveTo\fP (number x, number y)"
+.br
+.RI "moves the polygon to the specified coordinates "
+.ti -1c
+.RI "\fBPolygon\fP \fBmoveUp\fP (number delta)"
+.br
+.RI "moves the polygon up by the specified amount "
+.ti -1c
+.RI "\fBmoveXTo\fP (number x)"
+.br
+.RI "moves the polygon to the specified x coordinate "
+.ti -1c
+.RI "\fBmoveYTo\fP (number y)"
+.br
+.RI "moves the polygon to the specified y coordinate "
+.ti -1c
+.RI "\fBremovePoint\fP (uint index)"
+.br
+.RI "removes the point at the specified index "
+.ti -1c
+.RI "\fBrotate\fP (number radians)"
+.br
+.RI "rotates the polygon by the specified angle in radians "
+.ti -1c
+.RI "\fBrotateAround\fP (number radians, \fBPoint\fP \fBcenterPoint\fP)"
+.br
+.RI "rotates the polygon around the specified center point "
+.ti -1c
+.RI "\fBscale\fP (number factor)"
+.br
+.RI "scales the polygon by the specified factor "
+.ti -1c
+.RI "\fBscaleAround\fP (number factor, \fBPoint\fP \fBcenterPoint\fP)"
+.br
+.RI "scales the polygon around the specified center point "
+.ti -1c
+.RI "\fBsetPoint\fP (uint index, \fBPoint\fP point)"
+.br
+.RI "sets the point at the specified index "
+.ti -1c
+.RI "\fBPolygon\fP \fBunionWith\fP (\fBPolygon\fP other)"
+.br
+.RI "returns the union of this polygon with another polygon "
+.ti -1c
+.RI "\fBvertScale\fP (number factor)"
+.br
+.RI "scales the polygon vertically by the specified factor "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Geometric shape defined by a collection of points with support for transformations and boolean operations\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "addPoint (\fBPoint\fP point)"
+
+.PP
+adds a point to the end of the polygon 
+.SS "addSpline (\fBSpline\fP spline)"
+
+.PP
+adds a spline curve to the polygon 
+.SS "center (\fBPoint\fP point)"
+
+.PP
+centers the polygon at the specified point 
+.SS "\fBPoint\fP centerPoint ()"
+
+.PP
+returns the center point of the polygon 
+.PP
+Referenced by \fBrotateAround()\fP, and \fBscaleAround()\fP\&.
+.SS "clearPoints ()"
+
+.PP
+removes all points from the polygon 
+.SS "boolean contains (\fBPoint\fP point)"
+
+.PP
+returns true if the specified point is inside the enclosed area of the \fBPolygon\fP 
+.SS "boolean empty ()"
+
+.PP
+returns true if the polygon has no points 
+.SS "boolean equals (\fBPolygon\fP other)"
+
+.PP
+returns true if this polygon equals another polygon 
+.SS "\fBRect\fP getBounds ()"
+
+.PP
+returns the bounding rectangle of the polygon 
+.SS "\fBPoint\fP getPoint (uint index)"
+
+.PP
+gets the point at the specified index 
+.SS "uint getPointCount ()"
+
+.PP
+returns the number of points in the polygon 
+.SS "horzScale (number factor)"
+
+.PP
+scales the polygon horizontally by the specified factor 
+.SS "insertPoint (uint index, \fBPoint\fP point)"
+
+.PP
+inserts a point at the specified index 
+.SS "\fBPolygon\fP intersection (\fBPolygon\fP other)"
+
+.PP
+returns the intersection of this polygon with another polygon 
+.SS "\fBPolygon\fP move (\fBOffset\fP offset)"
+
+.PP
+moves the polygon by the specified offset vector 
+.SS "\fBPolygon\fP moveDown (number delta)"
+
+.PP
+moves the polygon down by the specified amount 
+.SS "moveLeft (number delta)"
+
+.PP
+moves the polygon left by the specified amount 
+.SS "\fBPolygon\fP moveRight (number delta)"
+
+.PP
+moves the polygon right by the specified amount 
+.SS "moveTo (number x, number y)"
+
+.PP
+moves the polygon to the specified coordinates 
+.SS "\fBPolygon\fP moveUp (number delta)"
+
+.PP
+moves the polygon up by the specified amount 
+.SS "moveXTo (number x)"
+
+.PP
+moves the polygon to the specified x coordinate 
+.SS "moveYTo (number y)"
+
+.PP
+moves the polygon to the specified y coordinate 
+.SS "removePoint (uint index)"
+
+.PP
+removes the point at the specified index 
+.SS "rotate (number radians)"
+
+.PP
+rotates the polygon by the specified angle in radians 
+.SS "rotateAround (number radians, \fBPoint\fP centerPoint)"
+
+.PP
+rotates the polygon around the specified center point 
+.PP
+References \fBcenterPoint()\fP\&.
+.SS "scale (number factor)"
+
+.PP
+scales the polygon by the specified factor 
+.SS "scaleAround (number factor, \fBPoint\fP centerPoint)"
+
+.PP
+scales the polygon around the specified center point 
+.PP
+References \fBcenterPoint()\fP\&.
+.SS "setPoint (uint index, \fBPoint\fP point)"
+
+.PP
+sets the point at the specified index 
+.SS "\fBPolygon\fP unionWith (\fBPolygon\fP other)"
+
+.PP
+returns the union of this polygon with another polygon 
+.SS "vertScale (number factor)"
+
+.PP
+scales the polygon vertically by the specified factor 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

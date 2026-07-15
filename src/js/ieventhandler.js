@@ -28,7 +28,6 @@
 //
 // -----------------------------------------------
 
-require('./classify');
 
 // -----------------------------------------------------------------------------------
 // EventHandler
@@ -41,21 +40,20 @@ require('./classify');
  * @see EventManager
  * \ingroup Events
  */
-classify('IEventHandler', function() {
-
+class IEventHandler {
     //! constructor for new event emitter
-    def('initialize', function(func) {
-    		this.func = func;
-    	});
+    constructor(func) {
+        this.func = func;
+    }
 
 	//! handle an event
-    def('handleEvent', function(emitter, inEventType, inEventData) {
-    		var event = (typeof inEventData == 'undefined') ? {} : inEventData;
-    		event.emitter = emitter;
-    		event.eventType = inEventType;
-    		return this.func(event);
-    	});
-});
+    handleEvent(emitter, inEventType, inEventData) {
+        var event = (typeof inEventData == 'undefined') ? {} : inEventData;
+        event.emitter = emitter;
+        event.eventType = inEventType;
+        return this.func(event);
+    }
+}
 
 
 if(!(typeof exports === 'undefined')) {

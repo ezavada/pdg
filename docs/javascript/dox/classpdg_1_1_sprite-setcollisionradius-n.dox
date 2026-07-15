@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setCollisionRadius
+
+\brief set the radius of the collision boundary circle of the sprite
+
+The boundary circle is centered at the sprite's location.
+
+\note Calling this enables collisions and sets the collision mode to collide_collisionRadius, so you don't need to call enableCollisions(). 
+
+\sa enableCollisions()
+
+**/ }

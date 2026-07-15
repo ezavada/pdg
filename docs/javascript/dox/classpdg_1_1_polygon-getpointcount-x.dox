@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::getPointCount()
+
+\brief returns the number of points in the polygon
+
+**/ }

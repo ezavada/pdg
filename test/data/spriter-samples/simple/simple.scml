@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="b6.1">
+    <folder id="0">
+        <file id="0" name="torso.png" width="102" height="79" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <entity id="0" name="entity_000">
+        <animation id="0" name="NewAnimation" length="1000">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="0" z_index="1"/>
+                </key>
+                <key id="1" time="241">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="0" z_index="1"/>
+                </key>
+                <key id="2" time="464">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="0" z_index="1"/>
+                </key>
+                <key id="3" time="886">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="1" z_index="1"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="torso">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" x="-201" y="41"/>
+                </key>
+                <key id="1" time="241" spin="0">
+                    <object folder="0" file="0" x="-198.16608" y="45.881894"/>
+                </key>
+                <key id="2" time="464" spin="0">
+                    <object folder="0" file="0" x="-193.61851" y="90.8307"/>
+                </key>
+                <key id="3" time="886" spin="0">
+                    <object folder="0" file="0" x="-206" y="287"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="torso_000">
+                <key id="0" spin="0">
+                    <object folder="0" file="0" x="78" y="42"/>
+                </key>
+                <key id="1" time="886" spin="0">
+                    <object folder="0" file="0" x="69" y="290"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

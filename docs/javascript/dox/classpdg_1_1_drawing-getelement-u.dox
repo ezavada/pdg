@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::getElement(index)
+
+\brief returns the element at the specified index
+
+**/ }

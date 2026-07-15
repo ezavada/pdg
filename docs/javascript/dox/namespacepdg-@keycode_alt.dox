@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_Alt
+
+\brief platform-specific keycode for the Alt/Option key (generic, may not distinguish left/right)
+
+This constant contains the keycode value for detecting either Alt (Windows/Linux) or Option (Mac) key on the current platform. On Windows, this is the generic VK_MENU code that doesn't distinguish between left and right. On other platforms, it equals #keyCode_LeftAlt.
+
+**Platform values:**
+- Mac OS X: 58 (same as keyCode_LeftAlt)
+- Windows: 18 (0x12 - VK_MENU, generic alt key)
+- Linux/GLFW: 342 (same as keyCode_LeftAlt)
+
+\see keyCode_LeftAlt
+\see keyCode_RightAlt
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

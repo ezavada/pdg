@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::isBehind
+
+\brief returns true if this sprite will be drawn before the given sprite
+
+\sa getZOrder()
+\sa SpriteLayer.isSpriteBehind()
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::removeAllCharacterMaps()
+
+\brief removes all applied character maps from the sprite
+
+**/ }

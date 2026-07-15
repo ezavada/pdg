@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::lightOffset(Offset offset)
+
+\brief Sets light source with spherical coordinates in radians
+
+The lightOffset is an Offset with two values representing spherical coordinates in radians:
+offset.x (ρ/rho): Horizontal angle (azimuth) - rotation around the vertical axis
+offset.y (θ/theta): Vertical angle (elevation/polar angle) - angle from the horizontal plane
+
+Key Points
+Offset(0, 0): Light directly in front at horizon level
+Offset(π/2, 0): Light from the right side at horizon level
+Offset(0, π/2): Light from directly above
+Offset(π, 0): Light from behind at horizon level
+The values are relative to the sphere's center, with the light positioned at a distance proportional to the sphere's radius.
+
+**/ }

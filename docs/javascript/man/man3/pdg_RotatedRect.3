@@ -1,14 +1,14 @@
-.TH "RotatedRect" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "RotatedRect" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-RotatedRect \- 
-.PP
-rectangle with rotation for 2D coordinate system\&.  
+RotatedRect \- rectangle with rotation for 2D coordinate system\&.  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .PP
 Inherits \fBRect\fP\&.
 .SS "Public Member Functions"
@@ -20,15 +20,278 @@ Inherits \fBRect\fP\&.
 .ti -1c
 .RI "\fBQuad\fP \fBgetQuad\fP ()"
 .br
+.RI "create a \fBQuad\fP by applying the rectangle's rotation around the center point with offset "
 .ti -1c
 .RI "\fBrotate\fP (number rotateRadians)"
 .br
+.RI "change the rotation of this rectangle by some number of radians "
 .ti -1c
 .RI "\fBsetCenterOffset\fP (\fBOffset\fP cpOffset)"
 .br
+.RI "set an offset for point around which rotation is applied "
 .ti -1c
 .RI "\fBsetRotation\fP (number rotationRadians, \fBOffset\fP cpOffset=null)"
 .br
+.RI "set the rotation of this rectangle to a particular amount in radians "
+.in -1c
+
+Public Member Functions inherited from \fBRect\fP
+.in +1c
+.ti -1c
+.RI "\fBRect\fP ()"
+.br
+.ti -1c
+.RI "\fBRect\fP (number \fBleft\fP, number \fBtop\fP, number \fBright\fP, number \fBbottom\fP)"
+.br
+.ti -1c
+.RI "\fBRect\fP (number w, number h)"
+.br
+.ti -1c
+.RI "\fBRect\fP (\fBPoint\fP \fBleftTop\fP, \fBPoint\fP \fBrightBottom\fP)"
+.br
+.ti -1c
+.RI "\fBRect\fP (\fBPoint\fP topLeft, number w, number h)"
+.br
+.ti -1c
+.RI "\fBRect\fP \fBadd\fP (\fBPoint\fP p)"
+.br
+.RI "add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates "
+.ti -1c
+.RI "\fBRect\fP \fBadd\fP (\fBRect\fP r2)"
+.br
+.RI "add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates "
+.ti -1c
+.RI "\fBRect\fP \fBassign\fP (\fBRect\fP r2)"
+.br
+.RI "set this rectangle equal to the given one "
+.ti -1c
+.RI "\fBcenter\fP (\fBPoint\fP p)"
+.br
+.RI "center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle "
+.ti -1c
+.RI "\fBcenter\fP (\fBRect\fP r)"
+.br
+.RI "center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle "
+.ti -1c
+.RI "\fBPoint\fP \fBcenterPoint\fP ()"
+.br
+.RI "get center point of this rectangle "
+.ti -1c
+.RI "boolean \fBcontains\fP (\fBPoint\fP p)"
+.br
+.RI "contains([Point] p) return true if the point is inside this rectangle; contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle "
+.ti -1c
+.RI "boolean \fBcontains\fP (\fBRect\fP r)"
+.br
+.RI "contains([Point] p) return true if the point is inside this rectangle; contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle "
+.ti -1c
+.RI "\fBRect\fP \fBdiv\fP (\fBPoint\fP p)"
+.br
+.RI "div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point; div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle "
+.ti -1c
+.RI "\fBRect\fP \fBdiv\fP (\fBRect\fP r2)"
+.br
+.RI "div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point; div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle "
+.ti -1c
+.RI "\fBRect\fP \fBdividedby\fP (\fBPoint\fP p)"
+.br
+.RI "Divide this rectangle by a point, returning a new rectangle with scaled dimensions\&. "
+.ti -1c
+.RI "\fBRect\fP \fBdividedby\fP (\fBRect\fP r2)"
+.br
+.RI "Divide this rectangle by another rectangle, returning a new rectangle with scaled dimensions\&. "
+.ti -1c
+.RI "boolean \fBempty\fP ()"
+.br
+.RI "return true if this rectangle is empty (no width or no height) "
+.ti -1c
+.RI "boolean \fBequals\fP (\fBRect\fP r2)"
+.br
+.RI "return true if this rectangle is equal to the given one "
+.ti -1c
+.RI "\fBgrow\fP (number delta)"
+.br
+.RI "increase the height and width of the rectangle while leaving the center point unchanged "
+.ti -1c
+.RI "number \fBheight\fP ()"
+.br
+.RI "get the height of this rectangle "
+.ti -1c
+.RI "\fBhorzGrow\fP (number delta)"
+.br
+.RI "increase the width of the rectangle while leaving the center point unchanged "
+.ti -1c
+.RI "\fBhorzScale\fP (number f)"
+.br
+.RI "change the x coordinates of the rectangle by a multiplier "
+.ti -1c
+.RI "\fBhorzShrink\fP (number delta)"
+.br
+.RI "reduce the width of the rectangle while leaving the center point unchanged "
+.ti -1c
+.RI "\fBRect\fP \fBintersection\fP (\fBRect\fP r)"
+.br
+.RI "get a new rectangle that is the overlapping area of the the rectangles "
+.ti -1c
+.RI "\fBPoint\fP \fBleftBottom\fP ()"
+.br
+.RI "get bottom left corner point of this rectangle "
+.ti -1c
+.RI "\fBPoint\fP \fBleftTop\fP ()"
+.br
+.RI "get top left corner point of this rectangle "
+.ti -1c
+.RI "\fBRect\fP \fBminus\fP (\fBPoint\fP p)"
+.br
+.RI "Subtract a point from this rectangle, shifting its position\&. "
+.ti -1c
+.RI "\fBRect\fP \fBminus\fP (\fBRect\fP r2)"
+.br
+.RI "Subtract another rectangle from this rectangle, returning the difference\&. "
+.ti -1c
+.RI "\fBmoveDown\fP (number delta)"
+.br
+.RI "move the rectangle down by some amount "
+.ti -1c
+.RI "\fBmoveLeft\fP (number delta)"
+.br
+.RI "move the rectangle to the left by some amount "
+.ti -1c
+.RI "\fBmoveRight\fP (number delta)"
+.br
+.RI "move the rectangle to the right by some amount "
+.ti -1c
+.RI "\fBmoveTo\fP (number x, number y)"
+.br
+.RI "moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point "
+.ti -1c
+.RI "\fBmoveTo\fP (\fBPoint\fP p)"
+.br
+.RI "moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point "
+.ti -1c
+.RI "\fBmoveUp\fP (number delta)"
+.br
+.RI "move the rectangle up by some amount "
+.ti -1c
+.RI "\fBmoveXTo\fP (number x)"
+.br
+.RI "move the rectangle to a particular x location, leaving y unchanged "
+.ti -1c
+.RI "\fBmoveYTo\fP (number y)"
+.br
+.RI "move the rectangle to a particular y location, leaving x unchanged "
+.ti -1c
+.RI "\fBRect\fP \fBmul\fP (\fBPoint\fP p)"
+.br
+.RI "mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point; mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle "
+.ti -1c
+.RI "\fBRect\fP \fBmul\fP (\fBRect\fP r2)"
+.br
+.RI "mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point; mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle "
+.ti -1c
+.RI "boolean \fBnotEquals\fP (\fBRect\fP r2)"
+.br
+.RI "return true if this rectangle is not equal to the given one "
+.ti -1c
+.RI "boolean \fBoverlaps\fP (\fBRect\fP r)"
+.br
+.RI "return true if this rectangle overlaps the other rectangle at all (sharing an edge is not overlapping) "
+.ti -1c
+.RI "\fBRect\fP \fBplus\fP (\fBPoint\fP p)"
+.br
+.RI "Add a point to this rectangle, shifting its position\&. "
+.ti -1c
+.RI "\fBRect\fP \fBplus\fP (\fBRect\fP r2)"
+.br
+.RI "Add another rectangle to this rectangle, returning the combined result\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBrightBottom\fP ()"
+.br
+.RI "get bottom right corner point of this rectangle "
+.ti -1c
+.RI "\fBPoint\fP \fBrightTop\fP ()"
+.br
+.RI "get top right corner point of this rectangle "
+.ti -1c
+.RI "\fBround\fP ()"
+.br
+.RI "round the coordinates to closest whole number "
+.ti -1c
+.RI "\fBscale\fP (number f)"
+.br
+.RI "change the coordinates of the rectangle by a multiplier "
+.ti -1c
+.RI "\fBsetHeight\fP (number h)"
+.br
+.RI "Set the height of this rectangle, keeping the top edge fixed\&. "
+.ti -1c
+.RI "\fBsetSize\fP (number n)"
+.br
+.RI "set the size (width & height) of the rectangle "
+.ti -1c
+.RI "\fBsetWidth\fP (number w)"
+.br
+.RI "Set the width of this rectangle, keeping the left edge fixed\&. "
+.ti -1c
+.RI "\fBshrink\fP (number delta)"
+.br
+.RI "reduce the height and width of the rectangle while leaving the center point unchanged "
+.ti -1c
+.RI "\fBRect\fP \fBsub\fP (\fBPoint\fP p)"
+.br
+.RI "sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point; sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates "
+.ti -1c
+.RI "\fBRect\fP \fBsub\fP (\fBRect\fP r2)"
+.br
+.RI "sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point; sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates "
+.ti -1c
+.RI "\fBRect\fP \fBtimes\fP (\fBPoint\fP p)"
+.br
+.RI "Multiply this rectangle by a point, scaling its dimensions\&. "
+.ti -1c
+.RI "\fBRect\fP \fBtimes\fP (\fBRect\fP r2)"
+.br
+.RI "Multiply this rectangle by another rectangle, scaling its dimensions\&. "
+.ti -1c
+.RI "\fBQuad\fP \fBtoQuad\fP ()"
+.br
+.RI "convert rectangle to a \fBQuad\fP "
+.ti -1c
+.RI "\fBRect\fP \fBunionWith\fP (\fBRect\fP r)"
+.br
+.RI "get the smallest possible new rectangle that contains both rectangles "
+.ti -1c
+.RI "\fBvertGrow\fP (number delta)"
+.br
+.RI "increase the height of the rectangle while leaving the center point unchanged "
+.ti -1c
+.RI "\fBvertScale\fP (number f)"
+.br
+.RI "change the y coordinates of the rectangle by a multiplier "
+.ti -1c
+.RI "\fBvertShrink\fP (number delta)"
+.br
+.RI "reduce the height of the rectangle while leaving the center point unchanged "
+.ti -1c
+.RI "number \fBwidth\fP ()"
+.br
+.RI "get the width of this rectangle "
+.ti -1c
+.RI "number \fBx1\fP ()"
+.br
+.RI "alias for \fBRect\&.left\fP "
+.ti -1c
+.RI "number \fBx2\fP ()"
+.br
+.RI "alias for \fBRect\&.right\fP "
+.ti -1c
+.RI "number \fBy1\fP ()"
+.br
+.RI "alias for \fBRect\&.top\fP "
+.ti -1c
+.RI "number \fBy2\fP ()"
+.br
+.RI "alias for \fBRect\&.bottom\fP "
 .in -1c
 .SS "Public Attributes"
 
@@ -38,6 +301,25 @@ Inherits \fBRect\fP\&.
 .br
 .ti -1c
 .RI "\fBPoint\fP \fBcenterOffset\fP"
+.br
+.ti -1c
+.RI "number \fBleft\fP"
+.br
+.ti -1c
+.RI "number \fBradians\fP"
+.br
+.ti -1c
+.RI "number \fBright\fP"
+.br
+.ti -1c
+.RI "number \fBtop\fP"
+.br
+.in -1c
+
+Public Attributes inherited from \fBRect\fP
+.in +1c
+.ti -1c
+.RI "number \fBbottom\fP"
 .br
 .ti -1c
 .RI "number \fBleft\fP"
@@ -56,18 +338,28 @@ rectangle with rotation for 2D coordinate system\&.
 \fBRotatedRect\fP is a class that provides support for dealing with rotating rectangles in 2 dimensional space\&. 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBRotatedRect\fP (\fBRect\fPrect = \fC\fBRect\fP(0, 0)\fP, numberrotationRadians = \fC0\&.0\fP, \fBOffset\fPcpOffset = \fCnull\fP)"
+.SS "\fBRotatedRect\fP (\fBRect\fP rect = \fR\fBRect\fP(0, 0)\fP, number rotationRadians = \fR0\&.0\fP, \fBOffset\fP cpOffset = \fRnull\fP)"
 
+.PP
+References \fBRect::Rect()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBQuad\fP getQuad ()"
 
-.SS "rotate (numberrotateRadians)"
+.PP
+create a \fBQuad\fP by applying the rectangle's rotation around the center point with offset 
+.SS "rotate (number rotateRadians)"
 
-.SS "setCenterOffset (\fBOffset\fPcpOffset)"
+.PP
+change the rotation of this rectangle by some number of radians 
+.SS "setCenterOffset (\fBOffset\fP cpOffset)"
 
-.SS "setRotation (numberrotationRadians, \fBOffset\fPcpOffset = \fCnull\fP)"
+.PP
+set an offset for point around which rotation is applied 
+.SS "setRotation (number rotationRadians, \fBOffset\fP cpOffset = \fRnull\fP)"
 
+.PP
+set the rotation of this rectangle to a particular amount in radians 
 .SH "Member Data Documentation"
 .PP 
 .SS "number bottom"
@@ -75,6 +367,8 @@ rectangle with rotation for 2D coordinate system\&.
 .SS "\fBPoint\fP centerOffset"
 
 .SS "number left"
+
+.SS "number radians"
 
 .SS "number right"
 

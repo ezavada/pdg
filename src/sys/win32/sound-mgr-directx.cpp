@@ -36,6 +36,7 @@
 #include "sound-mgr-directx.h"
 #include "pdg/framework.h"
 #include "sound-directx.h"
+#include "pdg-lib.h"
 #include <tchar.h>
 
 #define PDG_WIN32_MAX_VOLUME 0xFFFFFFFF
@@ -144,6 +145,33 @@ void SoundManagerDirectX::stopAllSoundsAndMusic()
 			(*itr)->stop();
         }
     }
+}
+
+// check if we're in shutdown mode (uses pdg_LibIsQuitting())
+bool SoundManagerDirectX::isShuttingDown() const {
+	return pdg_LibIsQuitting();
+}
+
+// stop all currently playing sounds (implements base class method)
+void SoundManagerDirectX::stopAllSounds()
+{
+    SoundsList sounds = mSounds; // Make a copy so we don't stomp ourselves when we stop the sounds.
+	SoundsList::iterator itr;
+	
+	// Set all volumes to 0 to prevent pops/clicks
+	for(itr=sounds.begin(); itr != sounds.end(); itr++) 
+	{
+        if(*itr) 
+		{
+			(*itr)->setVolume(0.0f);
+        }
+    }
+    
+    // Wait for volume change to propagate through the audio pipeline
+    Sleep(500); // 500ms
+    
+    // Now stop all sounds
+	stopAllSoundsAndMusic();
 }
 
 void SoundManagerDirectX::mute(bool muteOn)

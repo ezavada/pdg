@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::times(Rect r2)
+
+\brief Multiply this rectangle by another rectangle, scaling its dimensions
+
+**/ }

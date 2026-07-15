@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::gear
+
+\brief join two sprites as if they were geared together (*Chipmunk Physics Only*)
+
+Whenever this sprite spins, it will force the other to spin the same amount (adjusted by the gear ratio). 
+
+If a breaking force is given, then the joint will break, generating a SpriteBreakEvent, if greater than that amount of rotational force (torque) is applied to the joint.
+
+\returns the cpConstraint for the Joint in case you want to do anything special with it
+
+\note this only affects rotation, it does not join them in any other way, so they are still free to move around independently otherwise. 
+
+**/ }

@@ -30,6 +30,21 @@
 #ifndef PDG_MSVCFIX_H_INCLUDED
 #define PDG_MSVCFIX_H_INCLUDED
 
+// Prevent Windows from defining min/max macros that conflict with std::min/std::max
+#define NOMINMAX
+
+// Enable math constants like M_PI on Windows
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#endif
+
+#include <math.h>
+
+// Fallback definition for M_PI if not defined by math.h
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #define MSVC_VERSION_2012 1700
 
 // ---------------------------------------------------
@@ -100,6 +115,10 @@ namespace std {
 
 #include <stdio.h>
 #include <stdarg.h>
+
+// Define snprintf in std namespace for older MSVC versions
+// Modern compilers (including clang-cl) already have snprintf in std namespace
+#if defined(_MSC_VER) && _MSC_VER < 1900
 namespace std {
     inline int snprintf(char* str, size_t size, const char* format, ...) {
         int count;
@@ -109,7 +128,8 @@ namespace std {
         va_end(ap);
         return count;
     }
-} // end namespace std
+}
+#endif
 
 #endif // _MSC_VER 2012 and later
 

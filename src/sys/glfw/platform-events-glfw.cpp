@@ -145,10 +145,21 @@ void handle_cursorenter_callback(GLFWwindow* window, int entered) {
 }
 
 void handle_scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	// got scrolling
+	// Convert scroll deltas to integers (GLFW uses floating point, PDG uses int)
+	int horizDelta = (int)xoffset;
+	int vertDelta = (int)yoffset;
+	if (horizDelta != 0 || vertDelta != 0) {
+		main_handleScrollWheel(horizDelta, vertDelta, sShift, sControl, sAlt, sCmd);
+	}
 }
 
 void handle_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	// Update modifier state first
+	sShift = ((mods & GLFW_MOD_SHIFT) != 0);
+	sControl = ((mods & GLFW_MOD_CONTROL) != 0);
+	sAlt = ((mods & GLFW_MOD_ALT) != 0);
+	sCmd = ((mods & GLFW_MOD_SUPER) != 0);
+	
 	unichar character = remapKeyboardChar(key, mods, sShift, sControl, sAlt, sCmd);
 	if (action == GLFW_PRESS) {
 		main_handleKeyDown(scancode, character ? character : key);
@@ -156,7 +167,18 @@ void handle_key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 		sRepeat = (action == GLFW_REPEAT);
 		if (character) {
+			// Special keys (arrows, F-keys, etc.) generate KeyPress from here
 			main_handleKeyPress(character, sRepeat, sShift, sControl, sAlt, sCmd);
+		} else if (key >= GLFW_KEY_SPACE && key <= GLFW_KEY_GRAVE_ACCENT) {
+			// For normal printable keys with control modifiers, handle_char_callback won't be called
+			// (GLFW only calls char callback for printable characters, not control characters)
+			// So we need to generate KeyPress here if control/alt/cmd modifiers are active
+			if (sControl || sAlt || sCmd) {
+				// Generate the character that would be typed (for letters, use the key code as-is)
+				unichar charCode = key;
+				main_handleKeyPress(charCode, sRepeat, sShift, sControl, sAlt, sCmd);
+			}
+			// If no modifiers (or only shift), handle_char_callback will handle it
 		}
 	}
 	if (action == GLFW_RELEASE) {
@@ -229,6 +251,8 @@ unichar keyMap[SIZE_OF_KEY_MAP][6] = {
 // };
 
 unichar remapKeyboardChar(unichar character, int modifierFlags, bool& shift, bool& control, bool& alt, bool& cmd) {
+	// Note: modifier flags are now set in handle_key_callback before calling this,
+	// but we still set them here for consistency
 	shift = ((modifierFlags & GLFW_MOD_SHIFT) != 0);
 	control = ((modifierFlags & GLFW_MOD_CONTROL) != 0);
 	alt = ((modifierFlags & GLFW_MOD_ALT) != 0);

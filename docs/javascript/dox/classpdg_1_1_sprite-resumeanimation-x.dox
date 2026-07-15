@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::resumeAnimation()
+
+\brief resumes the paused animation playback
+
+**/ }

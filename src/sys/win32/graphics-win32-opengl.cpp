@@ -41,6 +41,7 @@
 #include "graphics-win32.h"
 #include "pdg-main.h"
 #include "textcache-opengl.h"
+#include "font-fallback.h"
 #include "pdg/sys/resource.h"
 #include "internals.h"
 
@@ -53,12 +54,39 @@ namespace pdg {
 #define PDG_ITALICS_FACTOR 3.333f
 
 // some routines to deal with the low level OS cursor
-
-void platform_setHardwareCursorVisible(bool inVisible) {
-	WinAPI::ShowCursor(inVisible);
-}
+// Note: platform_setHardwareCursorVisible is now handled by GLFW
 
 HCURSOR gHourGlassCursor = NULL;
+
+static WinAPI::HFONT createWindowsFontHandle(const char* inFontName, int size, uint32 style) {
+    WinAPI::LOGFONTA lf; // NO UNICODE ON WIN98, so using Ascii version
+    std::memset(&lf, 0, sizeof(WinAPI::LOGFONTA));
+	std::strncpy(lf.lfFaceName, inFontName, LF_FACESIZE);
+
+	// we use this calculation because we assume the screen is 72 DPI
+    lf.lfHeight = -size;
+
+    // default to plain
+    lf.lfWeight = FW_NORMAL;
+    lf.lfItalic = 0;
+    lf.lfUnderline = 0;
+   #ifdef PDG_NO_WIN32_GDI
+    lf.lfQuality = NONANTIALIASED_QUALITY;
+   #endif   // can't use antialiasing if we aren't using GDI to draw directly into the back buffer
+
+    // add styles as appropriate
+    if (style & textStyle_Bold) {
+	   lf.lfWeight = FW_BOLD;
+    }
+    if (style & textStyle_Italic) {
+       lf.lfItalic = 1;
+    }
+    if (style & textStyle_Underline) {
+       lf.lfUnderline = 1;
+    }
+
+    return WinAPI::CreateFontIndirectA(&lf); // NO UNICODE ON WIN98
+}
 
 void platform_setHardwareBusyCursor() {
     if (!gHourGlassCursor) {
@@ -81,19 +109,33 @@ HBITMAP CreateOffscreenBitmap8( HDC hDC, int width, int height ) {
 
     width = ((width+3)/4)*4;
 
-    // Initilize DIBINFO structure
-    BITMAPINFO dibInfo;
-    ZeroMemory( &dibInfo, sizeof(BITMAPINFO) );
+    // Create a grayscale palette for the 8-bit bitmap
+    struct {
+        BITMAPINFOHEADER bmiHeader;
+        RGBQUAD bmiColors[256];
+    } dibInfo;
+    
+    ZeroMemory( &dibInfo, sizeof(dibInfo) );
 
-    dibInfo.bmiHeader.biSize = sizeof(BITMAPINFO);
+    dibInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     dibInfo.bmiHeader.biWidth = width;
     dibInfo.bmiHeader.biHeight = height;
     dibInfo.bmiHeader.biBitCount = 8;
     dibInfo.bmiHeader.biPlanes = 1;
     dibInfo.bmiHeader.biSizeImage = width * height;
+    dibInfo.bmiHeader.biClrUsed = 256;
+    dibInfo.bmiHeader.biClrImportant = 256;
+
+    // Set up grayscale palette
+    for (int i = 0; i < 256; i++) {
+        dibInfo.bmiColors[i].rgbRed = i;
+        dibInfo.bmiColors[i].rgbGreen = i;
+        dibInfo.bmiColors[i].rgbBlue = i;
+        dibInfo.bmiColors[i].rgbReserved = 0;
+    }
 
     // Create bitmap and receive pointer to points into pBuffer
-    hTargetBitmap = WinAPI::CreateDIBSection( hDC, &dibInfo, DIB_RGB_COLORS, (void**)&pBuffer, NULL, 0);
+    hTargetBitmap = WinAPI::CreateDIBSection( hDC, (BITMAPINFO*)&dibInfo, DIB_RGB_COLORS, (void**)&pBuffer, NULL, 0);
 
     return hTargetBitmap;
 }
@@ -111,7 +153,7 @@ void graphics_drawText(PortImpl& portimpl, const char* text, int len, const Quad
  	FontImplWin* font = dynamic_cast<FontImplWin*> ( port.getCurrentFont(style) );
 	if (!font) return;
 
-	TextCacheEntry* textInfo = TextCacheEntry::findTextInCache(text, len, font, size, style);  // creates an entry if one doesn't already exist
+	TextCacheEntry* textInfo = port.getTextFromCache(text, len, font, size, style);  // creates an entry if one doesn't already exist
 	if (!textInfo) return;
 
 	// it's possible that we've never measured this text
@@ -127,35 +169,51 @@ void graphics_drawText(PortImpl& portimpl, const char* text, int len, const Quad
 		len = wtext.length();
 		const WCHAR* theText = (WCHAR*)wtext.c_str();
 		WinAPI::HDC dc = graphics_getPortDC(&port);
+		if (!dc) return;
 		// create font
 		WinAPI::HFONT wfont = font->getWindowsFont(size, style);
 
 		// create memory dc
 		HDC hMemDC	= WinAPI::CreateCompatibleDC(dc);
+		if (!hMemDC) return;
 		WinAPI::SelectObject(hMemDC, wfont);
 
-		int glBufferWidth = pow2(textInfo->width);
+		// Add extra width for italic text to prevent clipping of the last character
+		int extraWidth = 0;
+		if (style & textStyle_Italic) {
+			extraWidth = size; // Add full character width (font size) for italic overhang
+		}
+		int glBufferWidth = pow2(textInfo->width + extraWidth);
 		int glBufferHeight = pow2(textInfo->charHeight);
 
 		HBITMAP hBitmap = CreateOffscreenBitmap8(hMemDC, glBufferWidth, glBufferHeight);
+		if (!hBitmap) {
+			WinAPI::DeleteDC(hMemDC);
+			return;
+		}
 		WinAPI::SelectObject(hMemDC, hBitmap);
 
-		BITMAP      bm;
-		GetObject(hBitmap, sizeof(BITMAP), (LPSTR)&bm);
+		// GetObject with BITMAP returns null bmBits for DIB sections; use DIBSECTION to get the bits pointer.
+		DIBSECTION ds;
+		if (GetObject(hBitmap, sizeof(DIBSECTION), &ds) != sizeof(DIBSECTION) || !ds.dsBm.bmBits) {
+			WinAPI::DeleteObject(hBitmap);
+			WinAPI::DeleteDC(hMemDC);
+			return;
+		}
 		RECT rRect;
 		rRect.left = 0;
-		rRect.top =0;
-		rRect.bottom = bm.bmHeight;
-		rRect.right = bm.bmWidth;
-		char* imageData = (char*) bm.bmBits;
-		size_t dataSize = bm.bmHeight * bm.bmWidth;
+		rRect.top = 0;
+		rRect.bottom = ds.dsBm.bmHeight;
+		rRect.right = ds.dsBm.bmWidth;
+		char* imageData = (char*) ds.dsBm.bmBits;
+		size_t dataSize = (size_t)ds.dsBm.bmHeight * ds.dsBm.bmWidth;
 		std::memset( imageData, 0x00, dataSize );
 		int yOffset = glBufferHeight - textInfo->charHeight;
 
 		HBRUSH hBrush = CreateSolidBrush(RGB(10,10,10));
 //		WinAPI::FillRect(hMemDC, &rRect, hBrush);
 		WinAPI::SetBkMode(hMemDC, TRANSPARENT);
-		WinAPI::SetTextColor(hMemDC, RGB(128, 128, 128) );
+		WinAPI::SetTextColor(hMemDC, RGB(255, 255, 255) );
 		WinAPI::ExtTextOutW(hMemDC, 0, yOffset, ETO_CLIPPED, &rRect, theText, len, NULL);  // Unicode vers supported on Win98
 
 		// create the Open GL texture
@@ -173,13 +231,18 @@ void graphics_drawText(PortImpl& portimpl, const char* text, int len, const Quad
 //		std::free(imageData);
 //		imageData = 0;
 
-		textInfo->tx = (float)textInfo->width/(float)glBufferWidth;
+		// For texture coordinates, use the expanded width (original + extra for italic)
+		int textureWidth = textInfo->width + extraWidth;
+		textInfo->tx = (float)textureWidth/(float)glBufferWidth;
 		textInfo->ty = (float)textInfo->charHeight/(float)glBufferHeight;
-		if (style & Graphics::textStyle_Italic ) {
+		if (style & textStyle_Italic ) {
 			textInfo->tx_topoffset = -(font->getFontHeight(size, style) / (PDG_ITALICS_FACTOR * (float)glBufferWidth));
 		} else {
 			textInfo->tx_topoffset = 0;
 		}
+		
+		// Add the new text entry to the port's cache
+		port.addTextToCache(textInfo);
 	}
 
 	Point topLeft, topRight, bottomLeft, bottomRight;
@@ -191,15 +254,18 @@ void graphics_drawText(PortImpl& portimpl, const char* text, int len, const Quad
 	port.setOpenGLModesForDrawing(true); // must use alpha for text
 	glColor4f(rgba.red, rgba.green, rgba.blue, rgba.alpha);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textInfo->texture);
+	// Use state cache to avoid redundant texture binds
+	port.mStateCache.bindTexture(textInfo->texture);
+	extern GLuint gBoundTexture;
+	gBoundTexture = textInfo->texture;
 	glBegin(GL_TRIANGLE_STRIP);
-	glTexCoord2f (0.0, textInfo->ty);
+	glTexCoord2f (0.0, 0.0);
 	glVertex2f( bottomLeft.x, bottomLeft.y );
-	glTexCoord2f (textInfo->tx_topoffset, 0.0);
+	glTexCoord2f (textInfo->tx_topoffset, textInfo->ty);
 	glVertex2f( topLeft.x, topLeft.y );
-	glTexCoord2f (textInfo->tx, textInfo->ty);
+	glTexCoord2f (textInfo->tx, 0.0);
 	glVertex2f( bottomRight.x, bottomRight.y );
-	glTexCoord2f (textInfo->tx + textInfo->tx_topoffset, 0.0);
+	glTexCoord2f (textInfo->tx + textInfo->tx_topoffset, textInfo->ty);
 	glVertex2f( topRight.x, topRight.y );
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
@@ -225,6 +291,7 @@ Port::getTextWidth(const char* text, int size, uint32 style, int len) {
 	if (!font) return 0;
     int textWidth = 0;
   	WinAPI::HDC dc = graphics_getPortDC(this);
+	if (!dc) return 0;
 	// create font
 	WinAPI::HFONT wfont = font->getWindowsFont(size, style);
 
@@ -258,13 +325,32 @@ FontImplWin::~FontImplWin() {
 }
 
 FontMetricsInfo* FontImplWin::getFontMetrics(int size, uint32 style) {
+	WinAPI::HDC dc = graphics_getPortDC(mPort);
+	bool releaseFallbackDC = false;
+	if (!dc) {
+		dc = WinAPI::GetDC(NULL);
+		releaseFallbackDC = (dc != NULL);
+	}
+	if (!dc) return 0;
 	WinFontMetricsInfo* mfmi = (WinFontMetricsInfo*) std::malloc(sizeof(WinFontMetricsInfo));
-	PortImplWin& port = static_cast<PortImplWin&> (*mPort);
+	if (!mfmi) {
+		if (releaseFallbackDC) {
+			WinAPI::ReleaseDC(NULL, dc);
+		}
+		return 0;
+	}
 	mfmi->size = size;
 	mfmi->style = style;
-	WinAPI::HDC dc = graphics_getPortDC(mPort);
-	// create font
-	mfmi->mWinFont = port.createWindowsFont(mFontName.c_str(), size, style);
+	// create font with scaling factor applied
+	int scaledSize = (int)(size * mScalingFactor);
+	mfmi->mWinFont = createWindowsFontHandle(mFontName.c_str(), scaledSize, style);
+	if (!mfmi->mWinFont) {
+		std::free(mfmi);
+		if (releaseFallbackDC) {
+			WinAPI::ReleaseDC(NULL, dc);
+		}
+		return 0;
+	}
 	// set the new font, preserving old
 	WinAPI::HGDIOBJ oldFont = WinAPI::SelectObject(dc, mfmi->mWinFont);
 	// get the text metrics
@@ -272,9 +358,13 @@ FontMetricsInfo* FontImplWin::getFontMetrics(int size, uint32 style) {
 	WinAPI::GetTextMetricsA(dc, &textinfo); // calling ASCII version on Win98 will be ok
 	// put back the font and clean up created font
 	WinAPI::SelectObject(dc, oldFont);
-	float ascent = (float)textinfo.tmAscent * mScalingFactor;
-	float descent = std::abs( (float) textinfo.tmDescent * mScalingFactor );
-	float leading = (float)textinfo.tmExternalLeading * mScalingFactor;
+	if (releaseFallbackDC) {
+		WinAPI::ReleaseDC(NULL, dc);
+	}
+	// Use actual metrics from the scaled font (no additional scaling needed)
+	float ascent = (float)textinfo.tmAscent;
+	float descent = std::abs( (float) textinfo.tmDescent );
+	float leading = (float)textinfo.tmExternalLeading;
 	mfmi->height = ascent + descent + leading;
 	mfmi->ascent = ascent;
 	mfmi->descent = descent;
@@ -308,40 +398,7 @@ PortImplWin::~PortImplWin()
 
 WinAPI::HFONT
 PortImplWin::createWindowsFont(const char* inFontName, int size, uint32 style) {
-    // create font
-    WinAPI::LOGFONTA LF; // NO UNICODE ON WIN98, so using Ascii version
-    WinAPI::LOGFONTA* pLF = &LF;
-    std::memset(pLF, 0, sizeof(WinAPI::LOGFONTA));
-	std::strncpy(pLF->lfFaceName, inFontName, LF_FACESIZE);
-
-	// we use this calculation if we are on a device other than the screen
-//	HDC hMainDC = mBackBuffer.GetDC();
-//	int logpixelsy = WinAPI::GetDeviceCaps(hMainDC, LOGPIXELSY);
-//	pLF->lfHeight = -(size * logpixelsy)/72;
-
-	// we use this calculation because we assume the screen is 72 DPI
-    pLF->lfHeight = -size;
-
-    // default to plain
-    pLF->lfWeight = FW_NORMAL;
-    pLF->lfItalic=0;
-    pLF->lfUnderline=0;
-   #ifdef PDG_NO_WIN32_GDI
-    pLF->lfQuality = NONANTIALIASED_QUALITY;
-   #endif   // can't use antialiasing if we aren't using GDI to draw directly into the back buffer
-
-    // add styles as appropriate
-    if (style & Graphics::textStyle_Bold) {
-	   pLF->lfWeight = FW_BOLD;
-    }
-    if (style & Graphics::textStyle_Italic) {
-       pLF->lfItalic=1;
-    }
-    if (style & Graphics::textStyle_Underline) {
-       pLF->lfUnderline=1;
-    }
-    WinAPI::HFONT font = WinAPI::CreateFontIndirectA(pLF); // NO UNICODE ON WIN98
-    return font;
+    return createWindowsFontHandle(inFontName, size, style);
 }
 
 
@@ -354,12 +411,15 @@ PortImplWin::createWindowsFont(const char* inFontName, int size, uint32 style) {
 
 Font*
 GraphicsManagerWin::createFont(const char* fontName, float scalingFactor) {
-	if (!getMainPort()) return 0;  // can't create a font unless main port is set
 	FontCacheEntry* fontInfo = FontCacheEntry::findFontInCache(fontName, scalingFactor);
 	if (fontInfo->mFont == 0) {
 		FontImplWin* font = new FontImplWin(getMainPort(), fontName, scalingFactor);
 		font->addRef();
 		fontInfo->mFont = font;
+	}
+	FontImpl* cachedFont = dynamic_cast<FontImpl*>(fontInfo->mFont);
+	if (cachedFont && getMainPort()) {
+		cachedFont->mPort = getMainPort();
 	}
 	fontInfo->mFont->addRef();
 	return fontInfo->mFont;
@@ -406,6 +466,8 @@ GraphicsManagerWin::GraphicsManagerWin(HINSTANCE appInstance, LRESULT (CALLBACK 
    mIconId16Bit(0),
    mIconId4Bit(0)
 {
+    // Initialize font fallback manager
+    FontFallbackManager::getInstance().initialize(this);
 }
 
 GraphicsManagerWin::~GraphicsManagerWin() {

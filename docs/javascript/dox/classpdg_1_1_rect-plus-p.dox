@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::plus(Point p)
+
+\brief Add a point to this rectangle, shifting its position
+
+**/ }

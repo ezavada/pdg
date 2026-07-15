@@ -16,7 +16,7 @@
 
 namespace pdg {
 
-class RadioButton : public View
+class RadioButton : public View, public Subject
 {
 public:
 

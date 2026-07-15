@@ -1,0 +1,8 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::createSpriteFromSpriterFile
+
+\brief create a single sprite from SCML data
+
+
+**/ }

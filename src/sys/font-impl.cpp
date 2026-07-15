@@ -82,6 +82,7 @@ namespace pdg {
 		}
 		// not found, must ask font system to generate them for us
 		FontMetricsInfo* fmi = getFontMetrics(size, style);
+		if (!fmi) return 0;
 		fmi->usedWhen = mCacheWhen++;
 		// and then add them to the cache
 		if (mCacheIndex < TEXT_INFO_CACHE_SIZE) {

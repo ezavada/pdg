@@ -187,22 +187,22 @@ describe("NetConnection", function() {
 
   it("can send and receive pdg.ISerializable objects", function() {
 
-	classify(pdg.ISerializable, 'MySerializableClass', function() {
-		def('getSerializedSize', function(serializer) {
-			return 3;
-		});
-		def('serialize', function(serializer) {
-			serializer.serialize_1u(15);
-			serializer.serialize_2u(99);
-		});
-		def('deserialize', function(deserializer) {
-			this.one = deserializer.deserialize_1u();
-			this.two = deserializer.deserialize_2u();
-		});
-		def('getMyClassTag', function() {
-			return 4068;
-		});
-	});
+	class MySerializableClass extends pdg.ISerializable {
+		constructor() {
+			super(
+				function(serializer) { return 3; },
+				function(serializer) {
+					serializer.serialize_1u(15);
+					serializer.serialize_2u(99);
+				},
+				function(deserializer) {
+					this.one = deserializer.deserialize_1u();
+					this.two = deserializer.deserialize_2u();
+				},
+				function() { return 4068; }
+			);
+		}
+	}
 	var obj = new MySerializableClass;
 	pdg.registerSerializableClass(MySerializableClass);
 

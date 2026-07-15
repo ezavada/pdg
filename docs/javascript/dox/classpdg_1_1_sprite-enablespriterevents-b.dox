@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::enableSpriterEvents(enable)
+
+\brief enables or disables spriter-specific events for this sprite
+
+**/ }

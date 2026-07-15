@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\class pdg::Drawing
+
+\brief Container for drawing elements (lines, shapes, images) that can be rendered to a Port
+
+**/ }

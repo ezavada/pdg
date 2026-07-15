@@ -43,6 +43,7 @@
 // need multithreaded safe event queues
 #ifndef PDG_NO_EVENT_QUEUE
 #include <queue>
+#include <functional>
 #include "pdg/sys/mutex.h"
 #endif // PDG_NO_EVENT_QUEUE
 
@@ -72,7 +73,6 @@ class UserData;
 class EventManager : public EventEmitter, public Singleton<EventManager> {
 friend class Singleton<EventManager>;
 public:
-
 	//! remove all handlers and also removes unprocessed enqueued events
 	// if doRelease is false then release is not called on handlers
 	virtual void clear(bool doRelease = true);
@@ -93,13 +93,30 @@ public:
 	virtual bool postEventToEmitter(long inEventType, void* inEventData, EventEmitter* toEmitter);
 
 #ifndef PDG_NO_EVENT_QUEUE
-    //! mutexed for posting events between threads, makes copy of the data
+	struct EventQueueEntry {
+		long			eventType;
+		UserData*   	userData;
+		EventEmitter*	emitter;
+		EventQueueEntry(long inEventType, UserData* inUserData, EventEmitter* inEmitter) 
+			: eventType(inEventType), userData(inUserData), emitter(inEmitter) {}
+		EventQueueEntry() : eventType(0), userData(0), emitter(0) {}
+	};
+	//! mutexed for posting events between threads, makes copy of the data
     void enqueueEvent(long inEventType, UserData* inEventData, EventEmitter* inEmitter);
     
 	//! mutexed for posting events between threads, must call std::free() on the data
     //! returns false when there are no more events in the queue
     bool getQueuedEvent(long& outEventType, UserData*& outEventData, EventEmitter*& outEmitter);
-  #endif // PDG_NO_EVENT_QUEUE
+
+	//! remove all events for a given emitter
+	void RemoveEnqueuedEventsForEmitter(EventEmitter* emitter);
+
+	//! remove all events from the queue that match
+	void RemoveEnqueuedEvents(std::function<bool(EventQueueEntry)> predicate);
+
+	//! remove all events from the queue that match a given event type
+	void RemoveEnqueuedEventsByType(long eventType);
+#endif // PDG_NO_EVENT_QUEUE
 
 // lifecycle
 /// @cond C++
@@ -113,14 +130,6 @@ protected:
     EventManager() {};
 
   #ifndef PDG_NO_EVENT_QUEUE
-	struct EventQueueEntry {
-		long			eventType;
-		UserData*   	userData;
-		EventEmitter*	emitter;
-		EventQueueEntry(long inEventType, UserData* inUserData, EventEmitter* inEmitter) 
-			: eventType(inEventType), userData(inUserData), emitter(inEmitter) {}
-		EventQueueEntry() : eventType(0), userData(0), emitter(0) {}
-	};
 	typedef std::queue<EventQueueEntry> EventQueueT;
 
     EventQueueT     mEventQueue;

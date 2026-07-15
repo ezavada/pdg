@@ -1,0 +1,31 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::activateSubEntity(entityName, animationName)
+
+\brief activates a sub-entity with the specified name and animation
+
+This function activates a sub-entity within the Spriter animation system. Sub-entities are 
+additional animated components that can be controlled independently of the main Spriter animation.
+
+\param entityName The name of the sub-entity to activate
+\param animationName The name of the animation to play on the sub-entity
+
+\details
+Sub-entities are typically used in complex character animations where different parts of the 
+character (like arms, legs, or accessories) need to be animated independently. Each sub-entity 
+can have its own set of animations and can be controlled separately from the main sprite.
+
+When a sub-entity is activated, it will start playing the specified animation. The sub-entity 
+will continue playing until it's deactivated or another animation is specified.
+
+\warning If the entityName or animationName is invalid, the function will fail silently
+\note Sub-entities are only available for sprites that support them (typically Spriter animations)
+\note The sub-entity will be positioned relative to the main sprite's position and rotation
+
+\return true if the sub-entity was successfully activated, false otherwise
+
+\sa Sprite::deactivateSubEntity()
+\sa Sprite::isSubEntityActive()
+
+
+**/ }

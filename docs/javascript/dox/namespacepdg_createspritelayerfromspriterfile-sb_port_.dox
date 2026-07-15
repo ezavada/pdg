@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::createSpriteLayerFromSpriterFile(string layerSpriterFilename, boolean addSprites = true, Port port = null)
+
+\brief create a new SpriteLayer from an Spriter SCML file
+
+\param layerSpriterFilename the path and name of the SCML file
+\param addSprites if true, all entities found in the SCML file will be added as sprites to the layer. If false, the SCML file will be loaded and all it's data will be cached for layer use by pdg.SpriteLayer.createSpriteFromSpriterEntity()
+\param port if passed, associate with a specific port, otherwise, associate with the main port
+
+\relatedalso SpriteLayer
+
+\see GraphicsManager.getMainPort()
+\sa SpriteLayer.createSpriteFromSCMLEntity()
+
+**/ }

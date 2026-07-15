@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getSerializedSize
+
+\brief get the bytes needed to serialize the layer
+
+Takes into account the serialization mode of the layer it is in
+
+\sa SpriteLayer.setSerializationFlags()
+
+**/ }

@@ -11,6 +11,7 @@
 #define PDG_ZOOMING_VIEW_H_INCLUDED
 
 #include "pdg/app/ScrollingView.h"
+#include "pdg/sys/image.h"
 
 namespace pdg {
 
@@ -28,7 +29,7 @@ public:
 	
 	// Scale the view (and relocate it if needed) to fit into the frame
 	// Return true if the view was actually resized, false if it was unchanged
-	bool fitViewAreaToFrame(Image::FitType fitType = Image::fit_FillKeepProportions); // scale the 
+	bool fitViewAreaToFrame(FitType fitType = fit_Fill); // scale the 
 
 	void scaleView(float amount, pdg::Point center);
 	

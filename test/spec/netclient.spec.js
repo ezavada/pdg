@@ -48,7 +48,7 @@ describe("NetClient", function() {
 
   it("can chain calls", function() {
   	var client = new pdg.NetClient();
-	client.onError(function() {}).connect(function() {}, { addr: "localhost", port: 5454 });
+	client.onError(function() {}).connect({ host: "localhost", port: 5454 }, function() {});
   });
 
   it("can have an error handler assigned", function() {
@@ -79,7 +79,7 @@ if (typeof process != 'undefined') {
   	runs(function() {
   		client.onError(myHandler);
 		expect(client._errorCallback).toBe(myHandler);
-		client.connect({ host: '127.0.0.1', port: 9999 }, function() {
+		client.connect({ host: '127.0.0.1', port: 9999, timeout: 250 }, function() {
 			connectCalled = true;
 		});
 	});

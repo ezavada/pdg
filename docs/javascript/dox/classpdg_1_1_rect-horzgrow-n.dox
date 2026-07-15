@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::horzGrow(delta)
+
+\brief increase the width of the rectangle while leaving the center point unchanged
+
+**/ }

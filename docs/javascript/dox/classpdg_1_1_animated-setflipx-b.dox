@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::setFlipX(inFlipX)
+
+\brief sets whether the object is flipped horizontally
+
+**/ }

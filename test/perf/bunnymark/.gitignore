@@ -1,0 +1,9 @@
+# Ignore test results (keep baseline for comparison)
+bunnymark_results.json
+
+# Keep baseline files for comparison
+!bunnymark_baseline.json
+
+# Keep the bunny sprite
+!wabbit.png
+

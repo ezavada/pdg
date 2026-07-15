@@ -1,3 +1,5 @@
 <map id="SoundManager" name="SoundManager">
-<area shape="rect" id="node2" href="$classpdg_1_1_singleton.html" title="Singleton\&lt; SoundManager \&gt;" alt="" coords="4,6,195,34"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="44,79,153,105"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_singleton.html" title=" " alt="" coords="5,5,192,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,46,101,79,96,79,96,46"/>
 </map>

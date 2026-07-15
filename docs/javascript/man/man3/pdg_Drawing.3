@@ -1,0 +1,160 @@
+.TH "Drawing" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Drawing \- Container for drawing elements (lines, shapes, images) that can be rendered to a \fBPort\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBElementRef\fP \fBaddArc\fP (\fBPoint\fP center, number xRadius, number yRadius, number startAngle, number endAngle, \fBAttributes\fP attrs)"
+.br
+.RI "adds an arc element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddDrawing\fP (\fBRect\fP rect, \fBDrawing\fP drawing, \fBAttributes\fP attrs)"
+.br
+.RI "adds a nested drawing element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddEllipse\fP (\fBPoint\fP center, number xRadius, number yRadius, \fBAttributes\fP attrs)"
+.br
+.RI "adds an ellipse element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddImage\fP (\fBRect\fP rect, \fBImage\fP image, \fBAttributes\fP attrs)"
+.br
+.RI "adds an image element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddImageStrip\fP (\fBRect\fP rect, \fBImageStrip\fP imageStrip, \fBAttributes\fP attrs)"
+.br
+.RI "adds an image strip element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddLine\fP (\fBPoint\fP from, \fBPoint\fP to, \fBAttributes\fP attrs)"
+.br
+.RI "adds a line element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddPolygon\fP (\fBPolygon\fP polygon, \fBAttributes\fP attrs)"
+.br
+.RI "adds a polygon element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddQuad\fP (\fBQuad\fP quad, \fBAttributes\fP attrs)"
+.br
+.RI "adds a quad element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddRect\fP (\fBRect\fP rect, \fBAttributes\fP attrs)"
+.br
+.RI "adds a rectangle element to the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBaddSpline\fP (\fBSpline\fP spline, \fBAttributes\fP attrs)"
+.br
+.RI "adds a spline element to the drawing "
+.ti -1c
+.RI "\fBPoint\fP \fBcenterPoint\fP ()"
+.br
+.RI "returns the center point of the drawing "
+.ti -1c
+.RI "\fBdraw\fP (\fBPort\fP port)"
+.br
+.RI "draws the drawing to the specified port "
+.ti -1c
+.RI "boolean \fBempty\fP ()"
+.br
+.RI "returns true if the drawing has no elements "
+.ti -1c
+.RI "\fBRect\fP \fBgetBounds\fP ()"
+.br
+.RI "returns the bounding rectangle of the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBgetElement\fP (uint index)"
+.br
+.RI "returns the element at the specified index "
+.ti -1c
+.RI "uint \fBgetElementCount\fP ()"
+.br
+.RI "returns the number of elements in the drawing "
+.ti -1c
+.RI "\fBElementRef\fP \fBgetElementHitBy\fP (\fBPoint\fP point)"
+.br
+.RI "returns the element hit by the specified point, or null if none "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Container for drawing elements (lines, shapes, images) that can be rendered to a \fBPort\fP\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBElementRef\fP addArc (\fBPoint\fP center, number xRadius, number yRadius, number startAngle, number endAngle, \fBAttributes\fP attrs)"
+
+.PP
+adds an arc element to the drawing 
+.SS "\fBElementRef\fP addDrawing (\fBRect\fP rect, \fBDrawing\fP drawing, \fBAttributes\fP attrs)"
+
+.PP
+adds a nested drawing element to the drawing 
+.SS "\fBElementRef\fP addEllipse (\fBPoint\fP center, number xRadius, number yRadius, \fBAttributes\fP attrs)"
+
+.PP
+adds an ellipse element to the drawing 
+.SS "\fBElementRef\fP addImage (\fBRect\fP rect, \fBImage\fP image, \fBAttributes\fP attrs)"
+
+.PP
+adds an image element to the drawing 
+.SS "\fBElementRef\fP addImageStrip (\fBRect\fP rect, \fBImageStrip\fP imageStrip, \fBAttributes\fP attrs)"
+
+.PP
+adds an image strip element to the drawing 
+.SS "\fBElementRef\fP addLine (\fBPoint\fP from, \fBPoint\fP to, \fBAttributes\fP attrs)"
+
+.PP
+adds a line element to the drawing 
+.SS "\fBElementRef\fP addPolygon (\fBPolygon\fP polygon, \fBAttributes\fP attrs)"
+
+.PP
+adds a polygon element to the drawing 
+.SS "\fBElementRef\fP addQuad (\fBQuad\fP quad, \fBAttributes\fP attrs)"
+
+.PP
+adds a quad element to the drawing 
+.SS "\fBElementRef\fP addRect (\fBRect\fP rect, \fBAttributes\fP attrs)"
+
+.PP
+adds a rectangle element to the drawing 
+.SS "\fBElementRef\fP addSpline (\fBSpline\fP spline, \fBAttributes\fP attrs)"
+
+.PP
+adds a spline element to the drawing 
+.SS "\fBPoint\fP centerPoint ()"
+
+.PP
+returns the center point of the drawing 
+.SS "draw (\fBPort\fP port)"
+
+.PP
+draws the drawing to the specified port 
+.SS "boolean empty ()"
+
+.PP
+returns true if the drawing has no elements 
+.SS "\fBRect\fP getBounds ()"
+
+.PP
+returns the bounding rectangle of the drawing 
+.SS "\fBElementRef\fP getElement (uint index)"
+
+.PP
+returns the element at the specified index 
+.SS "uint getElementCount ()"
+
+.PP
+returns the number of elements in the drawing 
+.SS "\fBElementRef\fP getElementHitBy (\fBPoint\fP point)"
+
+.PP
+returns the element hit by the specified point, or null if none 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

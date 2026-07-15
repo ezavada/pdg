@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getCollisionType()
+
+\brief get the current collision type
+
+**/ }

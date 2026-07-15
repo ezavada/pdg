@@ -33,6 +33,7 @@
 #include "pdg/app/Dialog.h"
 #include "pdg/app/Button.h"
 #include "pdg/app/View.h"
+#include "pdg/sys/attributes.h"
 
 // TODO: remove these catan specific things
 #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
@@ -65,8 +66,8 @@ public:
     }
 
     void drawSelf() {
-        mPort->fillRect(mViewArea, mFillColor);
-        mPort->frameRectEx(mViewArea, mBorderWidth, Graphics::solidPat, 0, mBorderColor);
+        mPort->drawRect(mViewArea, Attributes().fillColor(mFillColor));
+        mPort->drawRect(mViewArea, Attributes().lineColor(mBorderColor).lineThickness(mBorderWidth));
         Color ltLnColor = mBorderColor;
         BRIGHTEN(ltLnColor.red);
         BRIGHTEN(ltLnColor.green);
@@ -76,11 +77,11 @@ public:
         DARKEN(dkLnColor.green);
         DARKEN(dkLnColor.blue);
         // light lines at top and left
-        mPort->drawLine(mViewArea.leftTop(), mViewArea.rightTop(), ltLnColor);
-        mPort->drawLine(mViewArea.leftTop(), mViewArea.leftBottom(), ltLnColor);
+        mPort->drawLine(mViewArea.leftTop(), mViewArea.rightTop(), Attributes().lineColor(ltLnColor));
+        mPort->drawLine(mViewArea.leftTop(), mViewArea.leftBottom(), Attributes().lineColor(ltLnColor));
         // dark lines at bottom and right
-        mPort->drawLine(mViewArea.leftBottom(), mViewArea.rightBottom(), dkLnColor);
-        mPort->drawLine(mViewArea.rightTop(), mViewArea.rightBottom(), dkLnColor);
+        mPort->drawLine(mViewArea.leftBottom(), mViewArea.rightBottom(), Attributes().lineColor(dkLnColor));
+        mPort->drawLine(mViewArea.rightTop(), mViewArea.rightBottom(), Attributes().lineColor(dkLnColor));
 //        mController->viewRedrawn();
     }
 
@@ -201,7 +202,7 @@ void Dialog::portWasResized(Port* resizedPort) {
 #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
 	// If the water is being shown draw all dialogs over the center otherwise center over just board.
 	GameController& gc = static_cast<GameController&>(getTopController());
-	if(!gc.isGameBoardAndControlsHidden())
+	if (!gc.isGameBoardAndControlsHidden())
 	{
 	    long dividerX = (long)(CONTROL_DIVIDER_X * (float)resizedPort->getDrawingArea().width() / 1280.0f);
 		topLeft.x = (dividerX - width) / 2;
@@ -246,7 +247,6 @@ void Dialog::doClose(bool cancelled) {
         delete this;
 		if (parent) {
 			parent->setActive(true);    // reactivate the parent
-			parent->redraw();
 		}
     }
 }
@@ -257,14 +257,13 @@ void Dialog::showDialog()
     if (!mViewVisibilitySave) {
         return;     // we never hid this dialog
     }
-	bool wasDrawing = startDrawing();
 
 	ViewList::iterator itr;
 	int i=0;
 	for(itr = mViews.begin(); itr != mViews.end(); itr++) {
 		idViewPair val = *itr;
         View* view = val.first;
-		if(mViewVisibilitySave[i++])
+		if (mViewVisibilitySave[i++])
 		{
 			view->show();
 		}
@@ -273,17 +272,15 @@ void Dialog::showDialog()
 	delete [] mViewVisibilitySave;
 	mViewVisibilitySave = 0;
 
-	doneDrawing(wasDrawing);
 }
 
 // Hides dialog from view but doesn't close it.
 void Dialog::hideDialog()
 {
-	if(mViewVisibilitySave) // Don't hide if we are already hidden, it will overwrite our view visibility array.
+	if (mViewVisibilitySave) // Don't hide if we are already hidden, it will overwrite our view visibility array.
 	{
 		return;
 	}
-	bool wasDrawing = startDrawing();
 
 	ViewList::iterator itr;
 	int i=0;
@@ -293,16 +290,12 @@ void Dialog::hideDialog()
 		idViewPair val = *itr;
         View* view = val.first;
 		mViewVisibilitySave[i++] = view->isVisible();
-		if(view->isVisible())
+		if (view->isVisible())
 		{
 			view->hide();
 		}
 	}
 
-	// Redraw background
-	redrawAll();
-
-	doneDrawing(wasDrawing);
 }
 
 void Dialog::setDialogRect(const Rect& dialogRect)
@@ -316,7 +309,7 @@ void Dialog::setDialogRect(const Rect& dialogRect)
       #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
 		// If the water is being shown draw all dialogs over the center otherwise center over just board.
 	    GameController& gc = static_cast<GameController&>(mParentController->getTopController());
-		if(!gc.isGameBoardAndControlsHidden())
+		if (!gc.isGameBoardAndControlsHidden())
 		{
 		    long dividerX = (long)(CONTROL_DIVIDER_X * (float)port->getDrawingArea().width() / 1280.0f);
 			topLeft.x = (dividerX - dialogRect.width()) / 2;

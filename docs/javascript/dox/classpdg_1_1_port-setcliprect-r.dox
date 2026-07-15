@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::setClipRect(inClipRect)
+
+\brief Set the clipping rectangle to limit drawing operations to a specific area
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::addPoint(point)
+
+\brief adds a point to the end of the polygon
+
+**/ }

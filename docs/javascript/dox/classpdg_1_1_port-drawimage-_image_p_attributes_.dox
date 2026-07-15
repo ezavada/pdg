@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawImage(Image img, Point loc, Attributes attrs)
+
+\brief Draws an image at the specified location with styling attributes
+
+**/ }

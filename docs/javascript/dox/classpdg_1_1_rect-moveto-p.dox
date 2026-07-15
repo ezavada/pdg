@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::moveTo(Point p)
+
+\brief moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point
+
+**/ }

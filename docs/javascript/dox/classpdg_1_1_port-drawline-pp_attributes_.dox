@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawLine(from, to, attrs)
+
+\brief draws a line from one point to another with the specified attributes
+
+**/ }

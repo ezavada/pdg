@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::changeFramesImage
+
+\brief replace all references in the sprite to one image with another image
+
+**/ }

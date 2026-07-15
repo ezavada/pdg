@@ -40,6 +40,9 @@
 #include "include-opengl.h"
 #include "font-impl.h"
 
+// Forward declaration
+class PortImpl;
+
 namespace pdg {
 
 	
@@ -92,7 +95,12 @@ struct TextCacheEntry {
 	
 	TextCacheEntry( const char* inText, int inLen, FontImpl* font, int inSize, uint32 inStyle);
 	
-	static TextCacheEntry*   findTextInCache(const char* text, int len, FontImpl* font, int size, uint32 style);
+	// Global cache methods removed - each port has its own cache now
+	
+	// Non-static methods for port-specific cache
+	TextCacheEntry*          findTextInPortCache(const char* text, int len, FontImpl* font, int size, uint32 style);
+	void                     addEntryToPortCache(TextCacheEntry* textInfo);
+	void                     invalidatePortTextures();
 	
 private:
 	TextCacheEntry() {}

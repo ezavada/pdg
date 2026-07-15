@@ -2,6 +2,13 @@ namespace pdg { /**
 
 \fn pdg::Sprite::getFrameRotatedBounds
 
-\brief 
+\brief get the bounds of the sprite, including rotation, for a given frame, in layer coordinates. If no frameNum is passed in, or the frame is not present, the bounds of the current frame are returned.
+
+\returns a RotatedRect with the bounds of the frame in layer coordinates, rotated to match the sprite
+
+\note use SpriteLayer.layerToPortRect() to convert to drawing coordinates.
+
+\sa SpriteLayer.layerToPortRect()
+**/ }
 
 **/ }

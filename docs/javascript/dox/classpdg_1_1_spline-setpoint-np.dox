@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Spline::setPoint(pointIndex, point)
+
+\brief sets the control point at the specified index
+
+**/ }

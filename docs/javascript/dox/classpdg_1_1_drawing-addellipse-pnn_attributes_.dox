@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addEllipse(center, xRadius, yRadius, attrs)
+
+\brief adds an ellipse element to the drawing
+
+**/ }

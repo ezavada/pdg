@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getOpacity
+
+\brief get the level of opacity for this sprite
+
+\returns opacity, 1.0 being complete opaque and 0.0 being completely transparent
+
+\sa setOpacity()
+\sa fadeIn()
+\sa fadeOut()
+\sa fadeTo()
+
+**/ }

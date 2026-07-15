@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::plus(Rect r2)
+
+\brief Add another rectangle to this rectangle, returning the combined result
+
+**/ }

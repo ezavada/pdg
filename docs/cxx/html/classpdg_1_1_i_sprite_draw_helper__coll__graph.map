@@ -1,0 +1,7 @@
+<map id="ISpriteDrawHelper" name="ISpriteDrawHelper">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,153,134,178"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="23,79,116,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="72,120,72,152,67,152,67,120"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="14,5,125,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="72,46,72,79,67,79,67,46"/>
+</map>

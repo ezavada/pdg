@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_LeftControl
+
+\brief platform-specific keycode for the left Control key
+
+This constant contains the correct keycode value for the left Control key on the current platform. Use this when checking #KeyEvent.keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect left Control key presses in a cross-platform way.
+
+**Platform values:**
+- Mac OS X: 59 (0x3B - NSEvent hardware keycode)
+- Windows: 162 (0xA2 - VK_LCONTROL virtual keycode)
+- Linux/GLFW: 341 (GLFW_KEY_LEFT_CONTROL)
+
+\see keyCode_RightControl
+\see keyCode_Control
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

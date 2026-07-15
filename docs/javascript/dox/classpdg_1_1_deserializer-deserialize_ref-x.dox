@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Deserializer::deserialize_ref()
+
+\brief Deserialize an object reference from the stream
+
+**/ }

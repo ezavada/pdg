@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Vector::dotProduct(vector)
+
+\brief get dot product for this vector with a 2nd vector
+
+**/ }

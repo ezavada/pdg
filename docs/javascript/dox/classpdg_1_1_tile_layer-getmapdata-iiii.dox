@@ -1,0 +1,28 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::getMapData(mapWidth, mapHeight, srcX, srcY)
+
+\brief Extract a rectangular region of tile data from the layer
+
+This function extracts a rectangular region of tile data from the TileLayer and returns it as a BinaryString containing the tile indices.
+
+\param mapWidth The width of the region to extract (number of tiles horizontally)
+\param mapHeight The height of the region to extract (number of tiles vertically)
+\param srcX The X coordinate of the top-left corner of the region to extract
+\param srcY The Y coordinate of the top-left corner of the region to extract
+
+\details
+The function returns a BinaryString containing tile indices arranged in row-major order (left to right, top to bottom). Each byte in the returned data represents a tile index from the specified region.
+
+The extracted data can be used with TileLayer::loadMapData() to copy tile data between layers or save it for later use.
+
+\return A BinaryString containing the tile indices from the specified region
+
+\warning If the requested region extends beyond the layer boundaries, the behavior is undefined
+\note The returned data format is compatible with TileLayer::loadMapData(BinaryString, int, int, int, int)
+
+\sa TileLayer::loadMapData(BinaryString, int, int, int, int)
+\sa TileLayer::loadMapData(MemBlock, int, int, int, int)
+\sa BinaryString
+
+**/ }

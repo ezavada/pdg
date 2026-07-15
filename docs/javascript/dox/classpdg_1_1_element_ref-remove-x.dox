@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::ElementRef::remove()
+
+\brief removes the element from the drawing
+
+**/ }

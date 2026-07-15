@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getTextStyle()
+
+\brief Gets text style flags (bold, italic, underline, alignment)
+
+**/ }

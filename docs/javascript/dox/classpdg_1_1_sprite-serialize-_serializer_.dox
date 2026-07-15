@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::serialize
+
+\brief serialize this sprite into a data stream
+
+\note uses the SpriteLayer's serialization mode to determine exactly what is serialized
+
+\sa getSerializedSize()
+\sa SpriteLayer.setSerializationFlags()
+
+
+**/ }

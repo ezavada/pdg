@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onMouseDown
+
+\brief set event handler for finger down or mouse down in this sprite
+
+Only works if you first call setWantsClickEvents(true).
+
+\note if you are just looking for a click on a sprite-base button, see onMouseClick(), which handles the mouse down and mouse up events for you.
+
+\sa setWantsClickEvents()
+\sa onMouseUp()
+\sa onMouseClick()
+\sa SpriteTouchEvent
+\sa IEventHandler
+
+**/ }

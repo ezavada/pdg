@@ -141,7 +141,7 @@ Card
 Deck::returnCard()
 {
 	Card card;
-	FIXME("Since Card is unsigned the following if() is always false");
+	FIXME("Since Card is unsigned the following if () is always false");
 #ifdef DEBUG
    if (discard_top < 0) 
    {

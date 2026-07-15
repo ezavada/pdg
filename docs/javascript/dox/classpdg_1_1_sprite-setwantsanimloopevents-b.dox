@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setWantsAnimLoopEvents(wantsThem)
+
+\brief enables or disables animation loop event generation for this sprite
+
+**/ }

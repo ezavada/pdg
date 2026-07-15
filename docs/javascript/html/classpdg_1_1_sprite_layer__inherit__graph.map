@@ -1,6 +1,11 @@
 <map id="SpriteLayer" name="SpriteLayer">
-<area shape="rect" id="node5" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="118,152,194,177"/>
-<area shape="rect" id="node2" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="5,5,83,31"/>
-<area shape="rect" id="node3" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="107,5,205,31"/>
-<area shape="rect" id="node4" href="$classpdg_1_1_i_serializable.html" title="interface for an object which can be serialized" alt="" coords="229,5,323,31"/>
+<area shape="rect" id="Node000001" title="creates and tracks collections of sprites" alt="" coords="110,79,198,105"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="117,153,191,178"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="157,120,157,152,152,152,152,120"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="5,5,82,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="76,37,137,76,134,81,73,42"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="106,5,203,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="157,46,157,79,152,79,152,46"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_i_serializable.html" title="interface for an object which can be serialized" alt="" coords="227,5,319,31"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="241,42,176,81,173,76,238,37"/>
 </map>

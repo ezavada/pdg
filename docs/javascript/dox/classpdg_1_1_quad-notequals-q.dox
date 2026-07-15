@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Quad::notEquals(q2)
+
+\brief return true if this quad is not equal to the given one
+
+**/ }

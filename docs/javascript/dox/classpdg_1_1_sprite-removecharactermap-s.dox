@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::removeCharacterMap(mapName)
+
+\brief removes a previously applied character map from the sprite
+
+**/ }

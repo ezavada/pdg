@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::pauseAnimation()
+
+\brief pauses the current animation playback
+
+**/ }

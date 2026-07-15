@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::sizeof_d(val)
+
+\brief Calculate the number of bytes needed to serialize a double-precision floating point number
+
+**/ }

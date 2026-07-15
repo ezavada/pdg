@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::grow(delta)
+
+\brief increase the height and width of the rectangle while leaving the center point unchanged
+
+**/ }

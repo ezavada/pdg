@@ -1,0 +1,35 @@
+namespace pdg { /**
+
+\fn pdg::Spline::addPoint(point)
+
+\brief adds a control point to the spline
+
+This low-level method adds a single control point to the spline. The meaning and usage
+of control points depends on the spline type:
+
+\par Hermite Splines (spline_Hermite):
+Points are added in groups of 4: position1, position2, tangent_vector1, tangent_vector2.
+For Hermite splines, tangent points (3rd and 4th in each group) should be **direction vectors**,
+not positions. Use \ref addSegment() instead for easier Hermite spline creation.
+
+\par Cubic Bezier Splines (spline_CubicBezier):
+Points are added in groups of 4: start, control1, control2, end. Additional segments share
+the endpoint of the previous segment.
+
+\par Cardinal/Catmull-Rom Splines (spline_Cardinal):
+Each point is a position that the curve passes through. The curve is calculated using a
+sliding window of 4 consecutive points.
+
+\par Uniform B-Splines (spline_UniformB):
+Each point is a control point. The curve approximates the shape defined by these points
+but doesn't necessarily pass through them.
+
+\note For most use cases, \ref addSegment() provides a more intuitive interface, especially
+for Hermite and Bezier splines. Use addPoint() when you need fine-grained control over
+individual points or when building multi-segment Cardinal or B-splines.
+
+\param point the control point to add (interpretation depends on spline type)
+
+\see addSegment(), getPoint(), setPoint(), getPointCount()
+
+**/ }

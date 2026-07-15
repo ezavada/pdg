@@ -33,10 +33,14 @@
 #include "pdg/msvcfix.h"
 #include "image-impl.h"
 #include "pdg/sys/os.h"
+#include "pdg/sys/resource.h"
 #include "internals.h"
 
 #include <fstream>
 #include <cstdlib>
+#include <cstring>
+#include <sstream>
+#include <iostream>
 
 #ifdef PDG_GFX_POINTER_SAFETY_CHECKS
     #define GFX_CHECK_PTR(ptr, block, block_size) CHECK_PTR(ptr, block, block_size)
@@ -86,10 +90,9 @@ Image*  ImageImpl::getFrame(int frame) {
 	img->mSuperImage = this;
 	img->mFrameNum = frame;
 	addRef();
-  #ifdef DEBUG
-	std::strncpy(img->mFilename, mFilename, 255);
-	std::strncat(img->mFilename, " (sub-frame)", 255);
-  #endif
+	std::stringstream ss;
+	ss << mSourceName << " (frame " << frame << ")";
+	img->mSourceName = ss.str().c_str();
 	return img;
 }
 
@@ -102,10 +105,9 @@ Image*  ImageImpl::getSubsection(Rect& r) {
 	img->mSectionRect = r;
 	img->height = r.height();
 	img->width = r.width();
-  #ifdef DEBUG
-	std::strncpy(img->mFilename, mFilename, 255);
-	std::strncat(img->mFilename, " (sub-rect)", 255);
-  #endif
+	std::stringstream ss;
+	ss << mSourceName << " (sub-rect)";
+	img->mSourceName = ss.str().c_str();
 	return img;
 }
 
@@ -119,10 +121,9 @@ Image*  ImageImpl::getSubsection(Quad& quad) {
 	Rect r = quad.getBounds();
 	img->height = r.height();
 	img->width = r.width();
-  #ifdef DEBUG
-	std::strncpy(img->mFilename, mFilename, 255);
-	std::strncat(img->mFilename, " (sub-quad)", 255);
-  #endif
+	std::stringstream ss;
+	ss << mSourceName << " (sub-quad)";
+	img->mSourceName = ss.str().c_str();
 	return img;
 }
 
@@ -195,7 +196,8 @@ ImageImpl::getOpacity() const {
 uint8 ImageImpl::getAlphaValue(int32 x, int32 y) const {
 	DEBUG_ONLY(
 	   if (data == 0) {
-		   DEBUG_PRINT("ERROR: Image [%s]", mFilename);
+		   const char* sourceName = this->mSourceName.c_str();
+		   DEBUG_PRINT("ERROR: Image [%s]", sourceName);
 		   DEBUG_BREAK("Attempted to getAlphaValue when no data available. Do you need to call retainAlpha()?");
 	   }
 	);
@@ -215,7 +217,8 @@ uint8 ImageImpl::getAlphaValue(int32 x, int32 y) const {
 Color ImageImpl::getPixel(int32 x, int32 y) const {
 	DEBUG_ONLY(
 		if (data == 0) {
-			DEBUG_PRINT("ERROR: Image [%s]", mFilename);
+			const char* sourceName = this->mSourceName.c_str();
+			DEBUG_PRINT("ERROR: Image [%s]", sourceName);
 			DEBUG_BREAK("Attempted to getPixel when no pixel data available. Do you need to call retainData()?");
 		}
 	);
@@ -231,12 +234,12 @@ Color ImageImpl::getPixel(int32 x, int32 y) const {
 }
 
 void 
-ImageImpl::initFromData(char* imageData, long imageDataLen, const char* filename) {
+ImageImpl::initFromData(char* imageData, long imageDataLen, const char* sourceName) {
+	std::string sourceNameStr = sourceName;
 	if (mSuperImage) return;  // don't do for subimage
-  #ifdef DEBUG
-	std::strncpy(mFilename, filename, 255);
-  #endif
+	// Store filename with "file:" prefix for direct file loading
 	// pass this on to our platform code
+	mSourceName = sourceName;
 	platform_initImageData((unsigned char*)imageData, imageDataLen, (unsigned char**)&data, &width, 
 			&height, &mBufferWidth, &mBufferHeight, &pitch, &mTextureFormat);
 	if (mTextureFormat == GL_RGBA) {
@@ -257,9 +260,34 @@ ImageImpl::initFromData(char* imageData, long imageDataLen, const char* filename
 //			BlueMaskOff  =  0;
 	}
 }
+
+void
+ImageImpl::initFromFile(const char* imageFileName, const char* sourceName) {
+	// Always set the source name, even if file loading fails
+	// This ensures error messages are informative
+	mSourceName = sourceName;
+	
+	std::ifstream file;
+	file.open(imageFileName, std::ios::binary);
+	file.seekg(0, std::ios::end);
+    long len = file.tellg();
+	if (len != -1) {
+		char* imageData = (char*) std::malloc(len);
+		if (imageData != NULL) {
+			file.seekg(0, std::ios::beg);
+			file.read(imageData, len);
+			initFromData(imageData, len, sourceName);
+			std::free(imageData);  // always free the file data, initFromData() will copy it if necessary
+		}
+	}
+	DEBUG_ONLY( else {
+		OS::_DOUT("Couldn't read image file: [%s]", imageFileName);
+	} )
+	file.close();
+}
 	
 void
-ImageImpl::initEmpty(int w, int h, uint8 inBitsPerPixel) {
+ImageImpl::initEmpty(long w, long h, uint8 inBitsPerPixel) {
     // set the output params
     width = w;
     height = h;
@@ -270,7 +298,7 @@ ImageImpl::initEmpty(int w, int h, uint8 inBitsPerPixel) {
 
 	pitch = row_size;
     
-    long bufsize =  row_size * h;
+    size_t bufsize =  row_size * h;
 	data = (uint8*) std::malloc(bufsize);
     dataSize = bufsize;
 }
@@ -283,63 +311,191 @@ ImageImpl::ImageImpl()
 	   mBufferHeight(0), mUseEdgeClamp(true), mSuperImage(0), mFrameNum(-1), 
 	   mIsQuadSection(false) 
 {
-  #ifdef DEBUG
-	mFilename[0] = 0;
-  #endif
+	mSourceName = "";
 }
 
 
 ImageImpl::~ImageImpl() {
-	if (!data) {
+	if (data) {
 		std::free(data);
 		data = 0;
 	}
 }
 
 Image* 
-Image::createImageFromData(const char* imageName, char* imageData, long imageDataLen) {
+Image::createImageFromData(char* imageData, long imageDataLen) {
 	// create a new image and initialize it from the data
   #ifndef PDG_NO_GUI
 	Port* port = GraphicsManager::getSingletonInstance()->getMainPort();
   #endif // ! PDG_NO_GUI
 	ImageImpl *img = NEW_IMAGE(port);
-	img->initFromData(imageData, imageDataLen, imageName);
+	img->initFromData(imageData, imageDataLen, "");
 	img->addRef();
 	return img;
 }
 
 Image* 
 Image::createImageFromFile(const char* imageFileName) {
-	Image *img = 0;
-	std::ifstream file;
-	file.open(imageFileName, std::ios::binary);
-	file.seekg(0, std::ios::end);
-	int len = file.tellg();
-	if (len != -1) {
-		char* imageData = (char*) std::malloc(len);
-		if (imageData != NULL) {
-			file.seekg(0, std::ios::beg);
-			file.read(imageData, len);
-			img = Image::createImageFromData(imageFileName, imageData, len);
-			std::free(imageData);  // always free the data, the image will have copied it if necessary
-		}
-	}
-	DEBUG_ONLY( else {
-		OS::_DOUT("Couldn't read image file: [%s]", imageFileName);
-	} )
-	file.close();
+  #ifndef PDG_NO_GUI
+	Port* port = GraphicsManager::getSingletonInstance()->getMainPort();
+  #endif // ! PDG_NO_GUI
+	ImageImpl *img = NEW_IMAGE(port);
+	std::string sourceNameStr = "file:";
+	sourceNameStr += imageFileName;
+	// create a new image and initialize it from the data
+	img->initFromFile(imageFileName, sourceNameStr.c_str());
+	img->addRef();
 	return img;
 }
 
+Image* 
+Image::createImageFromResourceData(const char* resourceName, char* imageData, long imageDataLen) {
+	// create a new image and initialize it from the data
+  #ifndef PDG_NO_GUI
+	Port* port = GraphicsManager::getSingletonInstance()->getMainPort();
+  #endif // ! PDG_NO_GUI
+	ImageImpl *img = NEW_IMAGE(port);
+	std::string resourceNameStr = "res:" + std::string(resourceName);
+	img->initFromData(imageData, imageDataLen, resourceNameStr.c_str());
+	img->addRef();
+	return img;
+}
+
+Image* 
+Image::createImageFromResourceFile(const char* resourceName, const char* imageFileName) {
+  #ifndef PDG_NO_GUI
+	Port* port = GraphicsManager::getSingletonInstance()->getMainPort();
+  #endif // ! PDG_NO_GUI
+	ImageImpl *img = NEW_IMAGE(port);
+	std::string sourceNameStr = "res:";
+	sourceNameStr += imageFileName;
+	img->initFromFile(imageFileName, sourceNameStr.c_str());
+	img->addRef();
+	return img;
+}
+
+bool
+ImageImpl::reloadData() {
+	if (data) return true;  // already have data, no need to reload
+	if (mSuperImage) return dynamic_cast<ImageImpl*>(mSuperImage)->reloadData();
+	if (mSourceName.empty()) return false;  // no original source name
+	std::string sourceName = mSourceName;
+	
+	// Check the prefix to determine how to reload
+	if (sourceName.substr(0, 4) == "res:") {
+		// This is a ResourceManager image - reload through ResourceManager
+		ResourceManager* resMgr = ResourceManager::getSingletonInstance();
+		if (resMgr) {
+			// Extract the original filename (remove "res:" prefix)
+			std::string originalName = sourceName.substr(4);
+			resMgr->removeImageFromCache(originalName.c_str()); // we can't use the cached image, we need to reload
+			Image* newImg = resMgr->getImage(originalName.c_str());
+			if (newImg) {
+				// Copy the data from the new image
+				ImageImpl* newImgImpl = dynamic_cast<ImageImpl*>(newImg);
+				if (newImgImpl && newImgImpl->data) {
+					// Copy the image data and properties
+					width = newImgImpl->width;
+					height = newImgImpl->height;
+					mBufferWidth = newImgImpl->mBufferWidth;
+					mBufferHeight = newImgImpl->mBufferHeight;
+					pitch = newImgImpl->pitch;
+					mTextureFormat = newImgImpl->mTextureFormat;
+					bpp = newImgImpl->bpp;
+					dataSize = newImgImpl->dataSize;
+					
+					// Allocate and copy the data
+					data = std::malloc(dataSize);
+					if (data) {
+						std::memcpy(data, newImgImpl->data, dataSize);
+						newImg->release();
+						return true;
+					}
+				}
+				newImg->release();
+			}
+		}
+	} else if (sourceName.substr(0, 5) == "file:") {
+		// This is a direct file image - reload from filesystem
+		// Extract the original filename (remove "file:" prefix)
+		std::string originalPath = sourceName.substr(5);
+		std::ifstream file;
+		file.open(originalPath.c_str(), std::ios::binary);
+		if (!file.is_open()) {
+			return false;
+		}
+		
+		file.seekg(0, std::ios::end);
+		long len = file.tellg();
+		if (len <= 0) {
+			file.close();
+			return false;
+		}
+		
+		char* imageData = (char*) std::malloc(len);
+		if (!imageData) {
+			file.close();
+			return false;
+		}
+		
+		file.seekg(0, std::ios::beg);
+		file.read(imageData, len);
+		file.close();
+		
+		// Reinitialize from the loaded data
+		initFromData(imageData, len, sourceName.c_str());
+		std::free(imageData);  // Free the temporary buffer
+		
+		return true;
+	}
+	
+	// was created from data, so we can't reload.
+	// user needs to use image.retainData() to keep the data around
+	DEBUG_ONLY(
+		if (data == 0) {
+			const char* sourceName = this->mSourceName.c_str();
+			DEBUG_PRINT("ERROR: Image [%s]", sourceName);
+			DEBUG_BREAK("Attempted to reloadData() when no pixel data available. "
+				"This usually means you are trying to reuse an image created from a resource in a different port after the resource was closed."
+				"Do you need to call retainData()?");
+		}
+	);
+	return false;
+}
+
+#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+Image* Image::createEmptyImageForIntrospection() {
+	#ifndef PDG_NO_GUI
+	Port* port = GraphicsManager::getSingletonInstance()->getMainPort();
+  #endif // ! PDG_NO_GUI
+	return NEW_IMAGE(port);
+}
+
+ImageStrip* ImageStrip::createEmptyImageStripForIntrospection() {
+	return dynamic_cast<ImageStrip*>(Image::createEmptyImageForIntrospection());
+}
+#endif
+
 ImageStrip* 
-ImageStrip::createImageStripFromData(const char* imageName, char* imageData, long imageDataLen) {
-	return dynamic_cast<ImageStrip*>(Image::createImageFromData(imageName, imageData, imageDataLen));
+ImageStrip::createImageStripFromData(char* imageData, long imageDataLen) {
+	return dynamic_cast<ImageStrip*>(Image::createImageFromData(imageData, imageDataLen));
 }
 
 ImageStrip* 
 ImageStrip::createImageStripFromFile(const char* imageFileName) {
 	return dynamic_cast<ImageStrip*>(Image::createImageFromFile(imageFileName));
 }
+
+ImageStrip* 
+ImageStrip::createImageStripFromResourceData(const char* resourceName, char* imageData, long imageDataLen) {
+	return dynamic_cast<ImageStrip*>(Image::createImageFromResourceData(resourceName, imageData, imageDataLen));
+}
+
+ImageStrip* 
+ImageStrip::createImageStripFromResourceFile(const char* resourceName, const char* imageFileName) {
+	return dynamic_cast<ImageStrip*>(Image::createImageFromResourceFile(resourceName, imageFileName));
+}
+
 
 struct uintColor {
 	uint8  red;
@@ -526,7 +682,7 @@ ImageImpl::createImageScaledToFit(Rect r, FitType fitType, FilterType filterType
                 return this;
             }
         }
-    } else if (fitType == fit_FillKeepProportions) {
+    } else if (fitType == fit_Overflow || fitType == fit_Clipped) {
         if (xscale > yscale) {
             yscale = xscale;
             if (width == r.width()) {
@@ -792,7 +948,9 @@ zoom(ImageImpl *dst, ImageImpl *src, double (*filterf)(double), double fwidth)
 
 	/* pre-calculate filter contributions for a row */
 	contrib = (CLIST *)std::calloc(dst->xsize, sizeof(CLIST));
+#ifdef PDG_GFX_POINTER_SAFETY_CHECKS
 	uint32 contribsize = dst->xsize * sizeof(CLIST);
+#endif
 	if(xscale < 1.0) {
 		width = fwidth / xscale;
 		fscale = 1.0 / xscale;
@@ -811,7 +969,7 @@ zoom(ImageImpl *dst, ImageImpl *src, double (*filterf)(double), double fwidth)
 				if(j < 0) {
 					n = -j;
 				} else if(j >= src->xsize) {
-					n = (src->xsize - j) + src->xsize - 1;
+					n = (int)((src->xsize - j) + src->xsize - 1);
 				} else {
 					n = j;
 				}
@@ -838,7 +996,7 @@ zoom(ImageImpl *dst, ImageImpl *src, double (*filterf)(double), double fwidth)
 				if(j < 0) {
 					n = -j;
 				} else if(j >= src->xsize) {
-					n = (src->xsize - j) + src->xsize - 1;
+					n = (int)((src->xsize - j) + src->xsize - 1);
 				} else {
 					n = j;
 				}
@@ -927,7 +1085,9 @@ zoom(ImageImpl *dst, ImageImpl *src, double (*filterf)(double), double fwidth)
 
 	/* pre-calculate filter contributions for a column */
 	contrib = (CLIST *)std::calloc(dst->ysize, sizeof(CLIST));
+#ifdef PDG_GFX_POINTER_SAFETY_CHECKS
 	contribsize = dst->ysize * sizeof(CLIST);
+#endif
 	if(yscale < 1.0) {
 		width = fwidth / yscale;
 		fscale = 1.0 / yscale;
@@ -947,7 +1107,7 @@ zoom(ImageImpl *dst, ImageImpl *src, double (*filterf)(double), double fwidth)
 				if(j < 0) {
 					n = -j;
 				} else if(j >= tmp->ysize) {
-					n = (tmp->ysize - j) + tmp->ysize - 1;
+					n = (int)((tmp->ysize - j) + tmp->ysize - 1);
 				} else {
 					n = j;
 				}
@@ -975,7 +1135,7 @@ zoom(ImageImpl *dst, ImageImpl *src, double (*filterf)(double), double fwidth)
 				if(j < 0) {
 					n = -j;
 				} else if(j >= tmp->ysize) {
-					n = (tmp->ysize - j) + tmp->ysize - 1;
+					n = (int)((tmp->ysize - j) + tmp->ysize - 1);
 				} else {
 					n = j;
 				}
@@ -989,7 +1149,7 @@ zoom(ImageImpl *dst, ImageImpl *src, double (*filterf)(double), double fwidth)
 	}
 
 	/* apply filter to zoom vertically from tmp to dst */
-	uint32 bufsize = tmp->ysize * (tmp->bpp >> 3);
+	size_t bufsize = tmp->ysize * (tmp->bpp >> 3);
 	raster = (addr) std::malloc(bufsize);
     long dstHeight = dst->getHeight();
 	for(k = 0; k < dst->xsize; ++k) {

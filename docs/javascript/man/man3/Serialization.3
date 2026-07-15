@@ -1,30 +1,33 @@
-.TH "Serialization" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Serialization" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Serialization \- 
+Serialization \- Serialization
 .PP
-Things used for serializing and deserializing data\&.  
+ \- Things used for serializing and deserializing data\&.  
 
+.SH SYNOPSIS
+.br
+.PP
 .SS "Classes"
 
 .in +1c
 .ti -1c
 .RI "class \fBDeserializer\fP"
 .br
-.RI "\fIdeserialize data from a serialized data stream \fP"
+.RI "deserialize data from a serialized data stream "
 .ti -1c
 .RI "class \fBISerializable\fP"
 .br
-.RI "\fIinterface for an object which can be serialized \fP"
+.RI "interface for an object which can be serialized "
 .ti -1c
 .RI "class \fBMemBlock\fP"
 .br
-.RI "\fIholds arbitrary blocks of memory \fP"
+.RI "holds arbitrary blocks of memory "
 .ti -1c
 .RI "class \fBSerializer\fP"
 .br
-.RI "\fIserialize data into memory \fP"
+.RI "serialize data into memory "
 .in -1c
 .SS "Functions"
 
@@ -32,7 +35,7 @@ Things used for serializing and deserializing data\&.
 .ti -1c
 .RI "\fBregisterSerializableClass\fP"
 .br
-.RI "\fIregister a particular class as implementing \fBISerializable\fP interface \fP"
+.RI "register a particular class as implementing \fBISerializable\fP interface "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -41,7 +44,7 @@ Things used for serializing and deserializing data\&.
 
 .SH "Function Documentation"
 .PP 
-.SS "registerSerializableClass\fC [related]\fP"
+.SS "registerSerializableClass\fR [related]\fP"
 
 .PP
 register a particular class as implementing \fBISerializable\fP interface 

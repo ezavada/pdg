@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_RightControl
+
+\brief platform-specific keycode for the right Control key
+
+This constant contains the correct keycode value for the right Control key on the current platform. Use this when checking #KeyEvent.keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect right Control key presses in a cross-platform way.
+
+**Platform values:**
+- Mac OS X: 62 (0x3E - NSEvent hardware keycode)
+- Windows: 163 (0xA3 - VK_RCONTROL virtual keycode)
+- Linux/GLFW: 345 (GLFW_KEY_RIGHT_CONTROL)
+
+\see keyCode_LeftControl
+\see keyCode_Control
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

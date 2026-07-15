@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getRoundedCornerRadius()
+
+\brief returns the rounded corner radius
+
+**/ }

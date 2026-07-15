@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::transform(matrix)
+
+\brief sets the transformation matrix directly
+
+**/ }

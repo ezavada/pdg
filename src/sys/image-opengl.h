@@ -40,12 +40,17 @@
 
 #include "include-opengl.h"
 
+// Forward declare CacheKey from imagecache-opengl-v2.h
+namespace pdg { typedef uint32 CacheKey; }
+
 namespace pdg {
 
 	class ImageOpenGL : public ImageImpl {
 	public:
 
 		static pdg::ISerializable* CreateInstance() { return new ImageOpenGL(); }
+
+		virtual Port*   setPort(Port* newPort);
 
 		virtual void    draw(const Point& loc);
 		virtual void    draw(const Rect& r, FitType fitType = fit_Fill, bool clipOverflow = false);
@@ -59,28 +64,38 @@ namespace pdg {
 		virtual void	drawSection(const Quad& r, const Rect& section);
 		virtual void	drawSection(const Rect& r, const Quad& section);
 		virtual void	drawSection(const Quad& r, const Quad& section);
-        virtual void    drawTexturedSphere(const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians);
-        virtual void    drawTexturedSphereFrame(const Point& loc, int frame, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians);
+        virtual void    drawTexturedSphere(const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight = Color(0.5f, 0.5f, 0.5f, 1.0f));
+        virtual void    drawTexturedSphereFrame(const Point& loc, int frame, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight = Color(0.5f, 0.5f, 0.5f, 1.0f));
 
 		virtual void	prepareToRasterize();
 		
-		void	bindTexture(uint32 mipMode = GL_LINEAR);
+		void	bindTexture(GLint mipMode = GL_LINEAR);
+		
+		// Invalidate OpenGL texture when graphics context is destroyed
+		void	invalidateOpenGLTexture();
+		
+		// Get the cached texture for this image
+		GLuint getCachedTexture();
 		
 		ImageOpenGL() 
- 		     : ImageImpl(),  mTexture(0)
+ 		     : ImageImpl(),  mCacheKey(0)
 		{
 		}
 
 		ImageOpenGL(Port* port) 
- 		     : ImageImpl(),  mTexture(0)
+ 		     : ImageImpl(),  mCacheKey(0)
 		{
 			setPort(port); 
 		}
 
 		virtual ~ImageOpenGL();
 
-		GLuint   mTexture;
+		// Cache key for looking up texture in port's cache
+		// Images no longer own textures - cache does
+		CacheKey mCacheKey;
+		
 	};
+
 
 } // end namespace pdg
 

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::stopFrameAnimation()
+
+\brief stops all frame animation, keeping the current frame as the sprite's image
+
+**/ }

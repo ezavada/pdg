@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::skew(xSkew, ySkew)
+
+\brief sets the skew transformation for x and y axes
+
+**/ }

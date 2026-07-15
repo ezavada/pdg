@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::setWidth(w)
+
+\brief Set the width of this rectangle, keeping the left edge fixed
+
+**/ }

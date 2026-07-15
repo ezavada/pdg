@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::fillOpacity(float opacity)
+
+\brief Set the opacity of filled areas (0.0 = transparent, 1.0 = opaque)
+
+**/ }

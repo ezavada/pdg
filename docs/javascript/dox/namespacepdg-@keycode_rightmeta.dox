@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_RightMeta
+
+\brief platform-specific keycode for the right Meta/Command/Windows key
+
+This constant contains the correct keycode value for the right Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform. Use this when checking #KeyEvent.keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect right Meta/Command/Windows key presses in a cross-platform way.
+
+**Platform values:**
+- Mac OS X: 54 (0x36 - NSEvent hardware keycode for right Command)
+- Windows: 92 (0x5C - VK_RWIN virtual keycode for right Windows key)
+- Linux/GLFW: 347 (GLFW_KEY_RIGHT_SUPER)
+
+\see keyCode_LeftMeta
+\see keyCode_Meta
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

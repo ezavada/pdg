@@ -12,6 +12,13 @@
 
 #include "pdg/app/Dice.h"
 #include "pdg/app/View.h"
+#include "pdg/app/Observer.h"
+#include "pdg/sys/events.h"
+#include "pdg/sys/ieventhandler.h"
+#include "pdg/sys/eventmanager.h"
+#include "pdg/sys/timermanager.h"
+#include "pdg/sys/refcounted.h"
+#include "pdg/sys/resource.h"
 
 #define DICE_IMAGE_NUM		3		// Three image files, small and large static die of 6 frames + anim with 15 frames
 #define DICE_IDX			0		// The array index of the Image* for the static die image
@@ -41,6 +48,7 @@
 //	#define DICE_ANIM_Y			260		// 1/2 screen height - 1/2 dice height
 #endif
 
+// Forward declarations outside pdg namespace
 #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
 class Game;
 #endif
@@ -49,7 +57,7 @@ namespace pdg {
 
 class ToolTipCtrl;
 
-class DiceView : public RefCountedImpl<IEventHandler>, public View {
+class DiceView : public RefCountedImpl<IEventHandler>, public View, public IObserver {
 public:
 	enum ClickIds
 	{
@@ -75,19 +83,23 @@ public:
 
 	void reset();	// this method re-initializes the DiceView for new games
 
-    DiceView(Controller* controller, const Rect& rect, Game* game, Dice* theDice, View* normalBkgndView, View *animBkgndView = 0);
+    DiceView(Controller* controller, const Rect& rect, 
+#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
+             ::Game* game, 
+#endif
+             Dice* theDice, View* normalBkgndView, View *animBkgndView = 0);
 	~DiceView();
 	bool IsMouseOnDiceView(Point mousePts, Rect & rToolRect);// to check if mouse on the diceview area
 protected:
 #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-	Game* mpGame;
+	::Game* mpGame;
 #endif
     EventManager& mEventMgr;
     TimerManager& mTimerMgr;
     ResourceManager& mResMgr;
 	Dice* mDice;
 	bool mRolling;
-	int mAnimIdx[MAX_DICE];
+	long mRollStartTime;  // Time when rolling started for real-time animation
 	Point mDiceXY[MAX_DICE];
 	Point mDiceAnimXY[MAX_DICE];
 	Image* mDiceImage[DICE_IMAGE_NUM];

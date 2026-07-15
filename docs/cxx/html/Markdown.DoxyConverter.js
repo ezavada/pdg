@@ -54,8 +54,6 @@
 		text = text.replace(/[\\@]relatedalso .*/ig, "");
 		text = text.replace(/[\\@]relates .*/ig, "");
 		text = text.replace(/[\\@]relatesalso .*/ig, "");
-		// hide \bug lines, since we aren't showing them in the docs
-		text = text.replace(/[\\@]bug .*/ig, "");
 		// hide \brief command
 		text = text.replace(/[\\@]brief/ig, "");
 		// hide \details command
@@ -71,6 +69,8 @@
 		html = html.replace(/[\\@]note\s+(.*)/g, "<dl class=\"section note\"><dt>Note</dt><dd>$1</dd></dl>");
 		// handle @warning sections
 		html = html.replace(/[\\@]warning\s+(.*)/g, "<dl class=\"section warning\"><dt>Warning</dt><dd>$1</dd></dl>");
+		// handle @bug sections
+		html = html.replace(/[\\@]bug\s+(.*)/g, "<dl class=\"section bug\"><dt>Bug</dt><dd>$1</dd></dl>");
 		// handle @author section
 		html = html.replace(/[\\@]author\s+(.*)/g, "<dl class=\"section author\"><dt>Author</dt><dd>$1</dd></dl>");
 		// handle @copyright section
@@ -111,6 +111,8 @@
 					"<td>$2</td></tr></tbody></table></dd></dl>");                    		
 			}
 		} while(!done);
+		// handle #entityName sections (explicit references)
+		html = html.replace(/\#(\S+)/g, "<a class=\"el\">$1</a>");
 		// setup see also block at first \see or \sa command, and prep it for conversion
 		saPattern = /[\\@]see |[\\@]sa /i;
 		html = html.replace(saPattern, "<dl class=\"section see\"><dt>See Also</dt><dd>@@_SA ");

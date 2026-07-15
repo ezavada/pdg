@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::equals(r2)
+
+\brief return true if this rectangle is equal to the given one
+
+**/ }

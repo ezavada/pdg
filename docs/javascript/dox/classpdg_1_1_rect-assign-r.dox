@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::assign(r2)
+
+\brief set this rectangle equal to the given one
+
+**/ }

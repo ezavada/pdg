@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getLineThickness()
+
+\brief returns the current line thickness
+
+**/ }

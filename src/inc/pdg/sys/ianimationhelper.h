@@ -60,16 +60,16 @@ class Animated;
  *      });
  *		myAnimatedObj.addAnimationHelper(myHelper);
  *
- * If you need something more complex, you can also use classify to create a new
+ * If you need something more complex, you can also use modern ES6 classes to create a new
  * Javascript class that derives from pdg.IAnimationHelper, and it will call the 
  * animated() method of your class. For example:
  *
- *      classify(pdg.IAnimationHelper, 'MyAnimationHelperClass', function() {
- *			def('animate', function(what, msElapsed) {
+ *      class MyAnimationHelperClass extends pdg.IAnimationHelper {
+ *			animate(what, msElapsed) {
  *            console.log("MyAnimationHelper.animate(" + what + ", " + msElapsed + "ms)" );
  *            return false; // all done, delete the helper
- *			});
- *		});
+ *			}
+ *		}
  *		myAnimatedObj.addAnimationHelper( new MyAnimationHelperClass() );
  */
 
@@ -82,7 +82,7 @@ public:
 	// msElapsed is time (milliseconds) since last call to animate
 	// return true if this helper should continue to be used, false
 	// if it should be removed from the helper list
-    virtual bool animate(Animated* what, uint32 msElapsed) = 0;
+    virtual bool animate(Animated* what, ms_delta msElapsed) = 0;
     
     // returning true means Animated should delete the helper when it removes it
     // from the helper list
@@ -100,7 +100,9 @@ public:
 
     virtual ~IAnimationHelper() {
 				#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-					CleanupIAnimationHelperScriptObject(mIAnimationHelperScriptObj);
+					#ifndef PDG_NO_GUI
+						CleanupIAnimationHelperScriptObject(mIAnimationHelperScriptObj);
+					#endif
 				#endif
 			}
 

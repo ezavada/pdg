@@ -1,4 +1,7 @@
 <map id="EventManager" name="EventManager">
-<area shape="rect" id="node2" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,6,101,34"/>
-<area shape="rect" id="node4" href="$classpdg_1_1_singleton.html" title="Singleton\&lt; EventManager \&gt;" alt="" coords="127,6,312,34"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="83,79,188,105"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,5,103,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="81,39,123,77,120,81,77,43"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_singleton.html" title=" " alt="" coords="126,5,310,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="194,44,151,81,147,77,191,39"/>
 </map>

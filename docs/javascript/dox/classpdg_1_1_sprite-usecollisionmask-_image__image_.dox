@@ -1,0 +1,28 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::useCollisionMask(frameImage, maskImage)
+
+\brief sets collision masks for precise collision detection using image data
+
+This function enables pixel-perfect collision detection for the sprite by using image data to define 
+collision areas. This provides more accurate collision detection than simple rectangular bounds.
+
+\param frameImage The image containing the frame data to use for collision detection
+\param maskImage The image containing the collision mask (white pixels = collision, black pixels = no collision)
+
+\details
+The collision mask system uses the alpha channel or brightness of the maskImage to determine collision 
+areas. White pixels (or pixels with alpha > 0) are considered solid collision areas, while black pixels 
+(or pixels with alpha = 0) are considered empty space.
+
+This allows for precise collision detection that matches the visual appearance of the sprite, rather 
+than using simple rectangular bounds.
+
+\warning Collision mask detection is more computationally expensive than rectangular collision detection
+\note The maskImage should be the same size as the frameImage
+\note Only the alpha channel or brightness of the maskImage is used for collision detection
+
+\sa Sprite::setCollisionBounds()
+\sa Sprite::getCollisionBounds()
+
+**/ }

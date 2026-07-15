@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::sizeof_mem(MemBlock mem)
+
+\brief Calculate the number of bytes needed to serialize a MemBlock object
+
+**/ }

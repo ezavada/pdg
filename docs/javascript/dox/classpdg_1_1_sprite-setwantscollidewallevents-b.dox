@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setWantsCollideWallEvents(wantsThem)
+
+\brief enables or disables wall collision event generation for this sprite
+
+**/ }

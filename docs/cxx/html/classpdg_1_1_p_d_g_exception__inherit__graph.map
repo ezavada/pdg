@@ -1,3 +1,13 @@
 <map id="PDGException" name="PDGException">
-<area shape="rect" id="node2" title="STL class." alt="" coords="19,6,97,34"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="142,79,250,105"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1bad__tag.html" title=" " alt="" coords="5,153,73,178"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="157,114,67,154,65,150,155,109"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1out__of__data.html" title=" " alt="" coords="97,153,186,178"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="180,118,153,154,149,151,176,115"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1sync__error.html" title=" " alt="" coords="210,153,292,178"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="217,115,244,151,240,154,212,118"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1unknown__object.html" title=" " alt="" coords="316,153,431,178"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="241,108,344,150,342,155,239,113"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="158,5,235,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="199,46,199,79,194,79,194,46"/>
 </map>

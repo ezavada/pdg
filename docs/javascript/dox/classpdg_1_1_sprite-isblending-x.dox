@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::isBlending()
+
+\brief returns true if the sprite is currently blending between animations
+
+**/ }

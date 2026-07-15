@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# test the Model View Controller JavaScript app in src/js/mvc-app
+
+echo "Running MVC App Jasmine tests"
+test/node mvc-app
+test/client mvc-app
+
+cd src/js/mvc-app
+
+#echo "Testing with Node"
+#node test.js # commented out because it doesn't work without require('pdg') in Button.js, which breaks when run under pdg
+
+#echo "Testing with PDG"
+#../../../pdg test.js # commented out because it is handled by the test/node command
+
+echo "Running the MVC app sample"
+NODE_DEBUG=pdg ../../../pdg sample.js
+
+cd ../../../

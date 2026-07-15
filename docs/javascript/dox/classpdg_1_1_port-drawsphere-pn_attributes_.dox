@@ -1,0 +1,38 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawSphere(Point center, float radius, Attributes attrs)
+
+\brief Draws a textured sphere at the specified center point with given radius and styling attributes
+
+This function renders a 3D sphere with a texture applied from a single Image. The sphere is drawn using perspective projection and includes lighting calculations for realistic 3D appearance.
+
+\param center The center point of the sphere in screen coordinates
+\param radius The radius of the sphere in pixels
+\param attrs The attributes to use to draw the sphere
+
+Attributes
+- texture() The Image containing the texture to apply to the sphere
+- sphereRotation() The rotation angle of the sphere around its vertical axis in radians
+- polarOffset() The offset for the polar coordinates (latitude/longitude mapping) in radians
+- lightOffset() The offset for the lighting calculation in radians
+
+\details
+The function creates a 3D sphere by mapping the 2D texture from the Image provided by attrs.texture onto a spherical surface. 
+The texture is wrapped around the sphere using spherical coordinates, offset by attrs.sphereRotation, with the rotation happening
+around the pole define at attrs.polarOffset.
+
+The lighting calculation uses the attrs.lightOffset parameter to determine how light falls on the sphere, creating a realistic 
+3D appearance with highlights and shadows.
+
+\warning Very large texture (image) or radius values may impact rendering performance
+
+\sa Attributes.texture
+\sa Attributes.sphereRotation
+\sa Attributes.lightOffset
+\sa Attributes.polarOffset
+\sa Image
+\sa Point
+\sa Offset
+\sa Attributes
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getFillOpacity()
+
+\brief returns the current fill opacity
+
+**/ }

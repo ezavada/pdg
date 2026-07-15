@@ -39,14 +39,20 @@
 
 #include "internals.h"
 #include "pdg-main.h"
+#include "pdg-lib.h"
+#include "internals-macosx.h"
 
 #import <OpenGL/gl.h>
+
+#ifdef PDG_USE_GLFW
+#error "Use main-unix.cpp instead of main-macosx.mm for GLFW"
+#endif
 
 // use a custom run loop
 #define PDG_CUSTOM_RUN_LOOP
 
 // ----------- AppDelegate
-@interface AppDelegate : NSObject
+@interface AppDelegate : NSObject <NSApplicationDelegate>
 {
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
@@ -80,6 +86,13 @@ int main(int argc, char *argv[])
 	gOSversMinor = minor;
     
 	bool noExit = pdg::main_getNoExitFromArgs(argc, (const char**) argv);
+	pdg_LibSaveArgs(argc, (const char**) argv);
+	
+	// Instantiate and register the AppDelegate
+	AppDelegate * delegate = [[AppDelegate alloc] init];
+	[NSApplication sharedApplication];
+	[NSApp setDelegate:delegate];
+	
 	do {
 		gArgv = (const char**)argv;
 		gArgc = argc;

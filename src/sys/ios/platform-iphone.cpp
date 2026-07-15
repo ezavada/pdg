@@ -58,7 +58,7 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 	appDir = workingDir;
 	std::string appName = argv[0];
 	appName.replace(0, workingDir.length(), "");
-	int pos = appName.find('/');
+	unsigned long pos = appName.find('/');
 	if (pos != std::string::npos) {
 		appName.replace(pos, std::string::npos, "");
 	}
@@ -68,7 +68,7 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 	} else {
 		appDataDir = workingDir;
 	}
-	resourceDir = workingDir + appName + "/Contents/Resources/";
+	resourceDir = workingDir;
 
 	os_setApplicationDirectory(appDir.c_str());
 	os_setApplicationDataDirectory(appDataDir.c_str());

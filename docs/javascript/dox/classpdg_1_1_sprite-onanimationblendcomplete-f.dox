@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onAnimationBlendComplete(func)
+
+\brief Register a callback function to be called when an animation blend completes
+
+**/ }

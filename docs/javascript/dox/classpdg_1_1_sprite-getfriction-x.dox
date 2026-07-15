@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getFriction
+
+\brief get the friction used for movement calculations for this sprite (*Chipmunk Physics Only*)
+
+\note Chipmunk Physics uses a single friction value, so this replaces Animated's getMove/Spin/SizeFriction() which all just return 0 for Sprite's in builds that are compiled with Chipmunk physics.
+
+\todo rethink hiding set/get of Move/Spin/Size friction since we might still want friction in a Chipmunk enabled build for layers that have chipmunk physics turned off.
+
+**/ }

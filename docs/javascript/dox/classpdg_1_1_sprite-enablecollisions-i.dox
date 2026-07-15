@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::enableCollisions
+
+\brief start checking for collisions with this sprite
+
+Collision Types are:
+
+  - #collide_None -- actually calls disableCollisions()
+  - #collide_Point -- just collide with the centerpoint of the sprite. Very fast.
+  - #collide_BoundingBox -- collide with the boundaries of the sprite (rotated if necessary). Reasonably fast.
+  - #collide_CollisionRadius -- collide with all points within a given radius of the sprite (best guess at radius based on sprite height and width is used unless setCollisionRadius() is called. Very fast.
+  - #collide_AlphaChannel -- per-pixel collision based on the alpha channel of the sprite's current frame. This is the most accurate, but also the slowest. Avoid it if another collision check gives acceptable results, especially with fast-moving items where the difference between a hit and near miss is not obviously visible to the player.
+
+\warning you must have called Image.retainAlpha() on the sprite's image(s) in order to use #collide_AlphaChannel
+
+**/ }

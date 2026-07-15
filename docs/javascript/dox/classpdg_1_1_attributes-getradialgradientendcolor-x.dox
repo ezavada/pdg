@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getRadialGradientEndColor()
+
+\brief returns the radial gradient end color
+
+**/ }

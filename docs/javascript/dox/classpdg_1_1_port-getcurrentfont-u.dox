@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::getCurrentFont(style)
+
+\brief returns the current font for the specified style
+
+**/ }

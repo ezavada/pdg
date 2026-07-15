@@ -2412,7 +2412,8 @@ static int _lookup_machine(char *machine, unsigned short default_port, struct so
    */
   needPort = default_port;
 
-  strcpy(trimmedHost, machine);
+  strncpy(trimmedHost, machine, sizeof(trimmedHost) - 1);
+  trimmedHost[sizeof(trimmedHost) - 1] = '\0';
 
   /* find first colon */
   colon_pos = strchr(trimmedHost, ':');
@@ -3146,9 +3147,9 @@ internally_handled_datagram(NMEndpointRef endpoint)
 static NMErr _wait_for_open_complete(NMEndpointRef Endpoint)
 {
 	int done = 0;
-	long entry_time;
-	long elapsed_time = 0;
-	long max_wait_time = 10 * MACHINE_TICKS_PER_SECOND;
+	ms_time entry_time;
+	ms_delta elapsed_time = 0;
+	ms_delta max_wait_time = 10 * MACHINE_TICKS_PER_SECOND;
 
 	DEBUG_ENTRY_EXIT("_wait_for_open_complete");
 
@@ -3264,7 +3265,8 @@ NMErr NMOpen(NMConfigRef Config,
 	if (!err)
 	{
 		/* copy the name */
-		strcpy((*Endpoint)->name, Config->name);
+		strncpy((*Endpoint)->name, Config->name, sizeof((*Endpoint)->name) - 1);
+		(*Endpoint)->name[sizeof((*Endpoint)->name) - 1] = '\0';
 
 		err = _wait_for_open_complete(*Endpoint);
 	}
@@ -3480,7 +3482,8 @@ NMAcceptConnection(
 			// copy whatever we need from the original endpoint...
 			new_endpoint->host= inEndpoint->host;
 			new_endpoint->port= inEndpoint->port;
-			strcpy(new_endpoint->name, inEndpoint->name);
+			strncpy(new_endpoint->name, inEndpoint->name, sizeof(new_endpoint->name) - 1);
+			new_endpoint->name[sizeof(new_endpoint->name) - 1] = '\0';
 //			new_endpoint->status_proc= inEndpoint->status_proc;
 
 			// if we are uber, send our datagram port..
@@ -3618,7 +3621,7 @@ NMGetIdentifier(NMEndpointRef inEndpoint,  char * outIdStr, int16 inMaxLen)
     
     in_addr addr = remote_address.sin_addr;
 
-    sprintf(result, "%s", inet_ntoa(addr));
+    snprintf(result, sizeof(result), "%s", inet_ntoa(addr));
 	
     strncpy(outIdStr, result, inMaxLen - 1);
     outIdStr[inMaxLen - 1] = 0;

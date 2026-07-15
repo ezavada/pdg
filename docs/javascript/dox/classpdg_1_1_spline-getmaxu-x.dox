@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Spline::getMaxU()
+
+\brief returns the maximum valid u parameter for curve evaluation
+
+**/ }

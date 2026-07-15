@@ -1,4 +1,17 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classpdg_1_1_i_serializer.html" title="ISerializer" alt="" coords="5,5,86,33"/>
-<area shape="rect" id="node3" href="$classpdg_1_1_serializer.html" title="A container for static methods that do the actual serialization." alt="" coords="134,5,210,33"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,128,83,154"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_p_d_g_exception.html" title=" " alt="" coords="133,79,241,104"/>
+<area shape="poly" id="edge25_Node000000_Node000001" title=" " alt="" coords="97,120,147,102,148,107,98,125"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_timer_exception.html" title=" " alt="" coords="131,128,243,154"/>
+<area shape="poly" id="edge30_Node000000_Node000006" title=" " alt="" coords="98,138,130,138,130,144,98,144"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1timeout.html" title=" " alt="" coords="155,177,219,203"/>
+<area shape="poly" id="edge31_Node000000_Node000007" title=" " alt="" coords="98,157,155,177,153,182,96,162"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1bad__tag.html" title=" " alt="" coords="315,5,382,31"/>
+<area shape="poly" id="edge26_Node000001_Node000002" title=" " alt="" coords="227,69,290,40,314,29,316,34,292,45,230,74"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1out__of__data.html" title=" " alt="" coords="304,55,393,80"/>
+<area shape="poly" id="edge27_Node000001_Node000003" title=" " alt="" coords="256,79,303,71,304,77,257,84"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1sync__error.html" title=" " alt="" coords="308,104,390,130"/>
+<area shape="poly" id="edge28_Node000001_Node000004" title=" " alt="" coords="257,100,307,108,306,113,256,105"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1unknown__object.html" title=" " alt="" coords="291,153,406,179"/>
+<area shape="poly" id="edge29_Node000001_Node000005" title=" " alt="" coords="235,109,244,113,292,140,315,150,313,155,290,145,242,118,233,114"/>
 </map>

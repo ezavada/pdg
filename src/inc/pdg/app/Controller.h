@@ -53,23 +53,15 @@ public:
 	void removeView(int id) { removeView(getUntypedView(id)); }	
 	void removeAllViews();  // remove absolutely all the views from the controller
 	
+    virtual void drawViews(Port* port, long frameNum); // also draws our children
+
 	View* getUntypedView(int id); // will only fetch views that were assigned non-zero id
 
     template <class T> T* getView(int id) { return dynamic_cast<T*>(getUntypedView(id)); }
 
-	Application& getApplication() throw(no_manager) { if (!mApp) throw no_manager(); return *mApp; }
+	Application& getApplication() noexcept(false) { if (!mApp) throw no_manager(); return *mApp; }
 	
 	Controller& getTopController(); // traverse the parents until a controller with no parent is found and return it
-
-    virtual bool startDrawing();    // don't do any redraws for a while, we are drawing
-    virtual void doneDrawing(bool wasDrawing);     // do needed redraws now, we are done drawing
-    
-	virtual void redraw();      // standard redraw of all views in this controller
-	
-    virtual void viewRedrawn(View* view); // one or more views in this controller were redrawn, fix children
-	virtual void redrawAll();   // redraw entire controller heirarchy
-
-	virtual void redrawSelf(Rect areaAffected = Rect(0,0));  // don't call, just extend if needed to draw special stuff
 
 	virtual bool doMouseDown(const MouseInfo *mi, View* view, int id, int part);
 	virtual bool doMouseUp(const MouseInfo *mi, View* view, int id, int part);
@@ -131,7 +123,6 @@ protected:
     int         mClickCount;
     bool        mRightClick;
     bool        mActive;
-    bool        mDrawing;
     bool        mWantsAllEvents;
 	bool        mDrawInactive;
 	View *		mViewOnLastMouseMoved;// last view on which mouse moved

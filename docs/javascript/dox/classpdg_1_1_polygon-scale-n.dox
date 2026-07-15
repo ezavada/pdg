@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::scale(factor)
+
+\brief scales the polygon by the specified factor
+
+**/ }

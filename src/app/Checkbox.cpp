@@ -30,6 +30,7 @@
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
 
 #include "pdg/app/Checkbox.h"
+#include "pdg/sys/attributes.h"
 
 #ifndef PDG_ALLOW_DEPRECATED_CALLS
 #error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use Checkbox.cpp
@@ -38,7 +39,7 @@
 
 namespace pdg {
 
-const int RES_CHECKBOX_IMAGES = 127;
+const char* RES_CHECKBOX_IMAGES = "checkbox";
 
 const int OPEN_CHECKBOX_OFFSET_Y = 8;
 const int OPEN_CHECKBOX_WIDTH  = 19;
@@ -46,7 +47,7 @@ const int OPEN_CHECKBOX_HEIGHT = 19;
 const int CHECKBOX_TEXT_SIZE = 16;
 const int SPACE_BETWEEN_BOX_AND_TEXT = -3;
 const int SPACE_UP_FROM_BOTTOM = 5;
-const Graphics::Style checkboxTextStyle = Graphics::textStyle_Bold;
+const Style checkboxTextStyle = textStyle_Bold;
 
 Checkbox::Checkbox(Controller* controller, const Rect& viewArea) :
 	View(controller, viewArea),
@@ -62,14 +63,17 @@ Checkbox::Checkbox(Controller* controller, const Rect& viewArea) :
 
 Checkbox::~Checkbox()
 {
-	unloadImageArray(mpCheckboxImages, NUM_CHECKBOX_IMAGES);
     mpClickSound = 0;
 }
 
 
 void Checkbox::loadImages()
 {
-	loadImageArray(mResMgr, mpCheckboxImages, RES_CHECKBOX_IMAGES, NUM_CHECKBOX_IMAGES);
+	mpCheckboxImages = mResMgr.getImageStrip(RES_CHECKBOX_IMAGES);
+	// If image loading fails, mpCheckboxImages will be null and we'll use fallback drawing
+	if (mpCheckboxImages) {
+		mpCheckboxImages->setNumFrames(NUM_CHECKBOX_IMAGES);
+	}
 }
 	
 void Checkbox::setClickSound(Sound* clickSound)
@@ -79,7 +83,7 @@ void Checkbox::setClickSound(Sound* clickSound)
 
 void Checkbox::calcClickableAreas()
 {
-	if(mpCheckboxImages[OPEN])
+	if (mpCheckboxImages && mpCheckboxImages->getFrame(OPEN))
 	{
 		Rect clickArea(OPEN_CHECKBOX_WIDTH, OPEN_CHECKBOX_HEIGHT);
 		clickArea = clickArea + Point(0, OPEN_CHECKBOX_OFFSET_Y);
@@ -91,49 +95,67 @@ void Checkbox::drawSelf()
 {
 	Point checkPt(0,0);
 
-	if(isChecked())
+	if (isChecked())
 	{
-		if(mpCheckboxImages[CLOSED])
+		if (mpCheckboxImages)
 		{
-			mpCheckboxImages[CLOSED]->draw(localToGlobal(checkPt));
+			mpCheckboxImages->getFrame(CLOSED)->draw(localToGlobal(checkPt));
+		} else {
+			checkPt = localToGlobal(checkPt);
+
+			Rect checkRect(0, 0, OPEN_CHECKBOX_WIDTH, OPEN_CHECKBOX_HEIGHT);
+			checkPt.y += OPEN_CHECKBOX_OFFSET_Y;
+			checkRect = checkRect.moveTo(checkPt);
+			mPort->drawRect(checkRect, Attributes().fillColor(PDG_BLACK_COLOR));
 		}
 	}
 	else
 	{
-		if(mpCheckboxImages[OPEN])
+		if (mpCheckboxImages)
 		{
-			mpCheckboxImages[OPEN]->draw(localToGlobal(checkPt));
+			mpCheckboxImages->getFrame(OPEN)->draw(localToGlobal(checkPt));
+		} else {
+			checkPt = localToGlobal(checkPt);
+
+			Rect checkRect(0, 0, OPEN_CHECKBOX_WIDTH, OPEN_CHECKBOX_HEIGHT);
+			checkPt.y += OPEN_CHECKBOX_OFFSET_Y;
+			checkRect = checkRect.moveTo(checkPt);
+			mPort->drawRect(checkRect, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1.0f));
 		}
 	}
 
 	Point textPt(0, 0);
 	// Draw Text if there is any
-	if(!mString.empty())
+	if (!mString.empty())
 	{
-		if(mpCheckboxImages[OPEN])
+		if (mpCheckboxImages)
 		{
-			textPt.x += mpCheckboxImages[OPEN]->width + SPACE_BETWEEN_BOX_AND_TEXT;
-			textPt.y += mpCheckboxImages[OPEN]->height - SPACE_UP_FROM_BOTTOM;
+			textPt.x += mpCheckboxImages->getFrame(OPEN)->width + SPACE_BETWEEN_BOX_AND_TEXT;
+			textPt.y += mpCheckboxImages->getFrame(OPEN)->height - SPACE_UP_FROM_BOTTOM;
+		}
+		else
+		{
+			// Fallback positioning when images aren't loaded
+			textPt.x += OPEN_CHECKBOX_WIDTH + SPACE_BETWEEN_BOX_AND_TEXT;
+			textPt.y += OPEN_CHECKBOX_HEIGHT - SPACE_UP_FROM_BOTTOM;
 		}
 
-		mPort->drawText(mString.c_str(), localToGlobal(textPt), mTextSize, checkboxTextStyle);
+		mPort->drawText(mString.c_str(), localToGlobal(textPt), Attributes().textSize(mTextSize).textStyle(checkboxTextStyle));
 	}
 	//this->drawClickableParts();
 }
 
 void Checkbox::doClick(int part)
 {
-	if(part == CLICK_ID_CHECKBOX)
+	if (part == CLICK_ID_CHECKBOX)
 	{
 		mIsChecked = !mIsChecked;
-#ifndef PDG_NO_SOUND
+      #ifndef PDG_NO_SOUND
 		if (mpClickSound) {
 		    mpClickSound->play();
 		}
-#endif
-//		GameController& gc = static_cast<GameController&>(mController->getTopController());
-//		gc.getSound(GameController::SND7_BUTTON_CLICK)->play();
-		mController->redraw();
+      #endif
+		notifyObservers();
 	}
 }
 
@@ -142,10 +164,10 @@ void Checkbox::setString(const std::string& str)
 	mString = str; 
 	int textWidth = mPort->getTextWidth(mString.c_str(), mTextSize, checkboxTextStyle);
 	Rect newClickArea(mViewArea);
-	if(mpCheckboxImages[OPEN])
+	if (mpCheckboxImages)
 	{
-		newClickArea.bottom = newClickArea.top + mpCheckboxImages[OPEN]->height;
-		newClickArea.right = newClickArea.left + mpCheckboxImages[OPEN]->width;
+		newClickArea.bottom = newClickArea.top + mpCheckboxImages->getFrame(OPEN)->height;
+		newClickArea.right = newClickArea.left + mpCheckboxImages->getFrame(OPEN)->width;
 	}
 	newClickArea.right += SPACE_BETWEEN_BOX_AND_TEXT + textWidth;
 	setViewArea(newClickArea);

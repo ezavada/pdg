@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::width()
+
+\brief get the width of this rectangle
+
+**/ }

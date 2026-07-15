@@ -5,7 +5,7 @@ var searchData=
   ['infullscreenmode',['inFullScreenMode',['../classpdg_1_1_graphics_manager.html#a2dd38de3af0a29c0d911678c16d205be',1,'pdg::GraphicsManager']]],
   ['initialize',['initialize',['../classpdg_1_1_log_manager.html#a2bd69db5ae34acce85e4d643a21ad741',1,'pdg::LogManager']]],
   ['intersection',['intersection',['../classpdg_1_1_rect.html#a0bb3d481344656f39403bb680bf1fa74',1,'pdg::Rect']]],
-  ['isbehind',['isBehind',['../classpdg_1_1_sprite.html#ad4e9b49ed0795b3f283e5364a8e328df',1,'pdg::Sprite']]],
+  ['isbehind',['isBehind',['../classpdg_1_1_sprite.html#a0860ad0c3da994fcba1599eaa64cb5a9',1,'pdg::Sprite']]],
   ['isbuttondown',['isButtonDown',['../classpdg_1_1_event_manager.html#ae544f683f6e39ce32d71bebf17a76941',1,'pdg::EventManager']]],
   ['isfirstcontact',['isFirstContact',['../classpdg_1_1_cp_arbiter.html#a4d2d94b707e4c15ef6d182fbd1fce5f6',1,'pdg::CpArbiter']]],
   ['ishidden',['isHidden',['../classpdg_1_1_sprite_layer.html#acbd42dc98fc1c0649ae7b1aeaf842b3d',1,'pdg::SpriteLayer']]],

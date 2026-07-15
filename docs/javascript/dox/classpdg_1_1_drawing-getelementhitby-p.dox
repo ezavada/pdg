@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::getElementHitBy(point)
+
+\brief returns the element hit by the specified point, or null if none
+
+**/ }

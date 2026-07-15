@@ -40,23 +40,29 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+cd $PDG_ROOT
+
 TARGET_DIR=$1
 mkdir -p $TARGET_DIR/deps/chipmunk/include
 mkdir -p $TARGET_DIR/deps/glfw/include
 mkdir -p $TARGET_DIR/deps/glfw/src
+mkdir -p $TARGET_DIR/deps/glm/detail
+mkdir -p $TARGET_DIR/deps/minizip
 mkdir -p $TARGET_DIR/src
 mkdir -p $TARGET_DIR/man
 
 RSYNC="rsync -t"
 
-echo "Collecting all the files for the module..."
+echo -e "${HEAD}Collecting all the files for the module${BOLD_BLUE}"
 # put everything into the package
 echo " * src/bindings/common ==> $TARGET_DIR/src/bindings/common"
 $RSYNC -r --delete --force src/bindings/common $TARGET_DIR/src/bindings/
 echo " * src/bindings/javascript/v8 ==> $TARGET_DIR/src/bindings/javascript/v8"
 $RSYNC -r --delete --force src/bindings/javascript/v8 $TARGET_DIR/src/bindings/javascript/
-echo " * src/bindings/javascript/memblock.h ==> $TARGET_DIR/src/bindings/javascript/memblock.h"
-$RSYNC src/bindings/javascript/memblock.h $TARGET_DIR/src/bindings/javascript/memblock.h
+echo " * src/bindings/generated ==> $TARGET_DIR/src/bindings/generated"
+$RSYNC -r --delete --force src/bindings/generated $TARGET_DIR/src/bindings/
+echo " * src/bindings/javascript/memblock.* ==> $TARGET_DIR/src/bindings/javascript/"
+$RSYNC src/bindings/javascript/memblock.* $TARGET_DIR/src/bindings/javascript/
 echo " * src/bindings/node ==> $TARGET_DIR/src/bindings/node"
 $RSYNC -r --delete --force src/bindings/node $TARGET_DIR/src/bindings/
 echo " * src/bindings/javascript/pdg.js ==> $TARGET_DIR/lib/pdg.js"
@@ -71,8 +77,8 @@ $RSYNC src/sys/macosx/platform-image-macosx.mm $TARGET_DIR/src/sys/macosx/platfo
 echo " * tools/node-pdg/* ==> $TARGET_DIR/"
 $RSYNC -d --delete --force tools/node-pdg/* $TARGET_DIR/
 mv -f $TARGET_DIR/npm_ignore $TARGET_DIR/.npmignore
-echo " * deps/chipmunk/include/chipmunk ==> $TARGET_DIR/deps/chipmunk/include"
-$RSYNC -r --delete --force deps/chipmunk/include/chipmunk/* $TARGET_DIR/deps/chipmunk/include/
+echo " * deps/chipmunk/include ==> $TARGET_DIR/deps/chipmunk/include"
+$RSYNC -r --delete --force deps/chipmunk/include/* $TARGET_DIR/deps/chipmunk/include/
 echo " * deps/chipmunk/src ==> $TARGET_DIR/deps/chipmunk/src"
 $RSYNC -r --delete --force deps/chipmunk/src $TARGET_DIR/deps/chipmunk/
 echo " * deps/chipmunk/LICENSE.txt ==> $TARGET_DIR/deps/chipmunk/LICENSE.txt"
@@ -81,15 +87,19 @@ echo " * deps/glfw/include ==> $TARGET_DIR/deps/glfw/include"
 $RSYNC -r --delete --force deps/glfw/include/* $TARGET_DIR/deps/glfw/include/
 echo " * deps/glfw/src ==> $TARGET_DIR/deps/glfw/src"
 $RSYNC -r --delete --force deps/glfw/src/* $TARGET_DIR/deps/glfw/src/
-echo " * deps/glfw/COPYING.txt ==> $TARGET_DIR/deps/glfw/COPYING.txt"
-$RSYNC deps/glfw/COPYING.txt $TARGET_DIR/deps/glfw/
-echo " * deps/scml-pp ==> $TARGET_DIR/deps/scml-pp"
-$RSYNC -r --delete --force deps/scml-pp $TARGET_DIR/deps/
+echo " * deps/glm ==> $TARGET_DIR/deps/glm"
+$RSYNC -r --delete --force deps/glm $TARGET_DIR/deps/glm
+echo " * deps/SpriterPlusPlus ==> $TARGET_DIR/deps/SpriterPlusPlus"
+$RSYNC -r --delete --force deps/SpriterPlusPlus $TARGET_DIR/deps/
 echo " * deps/node/deps/zlib ==> $TARGET_DIR/deps/zlib"
 $RSYNC -r --delete --force deps/node/deps/zlib $TARGET_DIR/deps/
+echo " * deps/minizip ==> $TARGET_DIR/deps/minizip"
+$RSYNC -r --delete --force deps/minizip $TARGET_DIR/deps/
 echo " * deps/png ==> $TARGET_DIR/deps/png"
 $RSYNC -r --delete --force deps/png $TARGET_DIR/deps/
+touch "$TARGET_DIR/deps/png/.npmignore"
 echo " * docs/javascript/man/* ==> $TARGET_DIR/"
 $RSYNC -r --delete --force docs/javascript/man/* $TARGET_DIR/man/
 echo " * VERSION ==> $TARGET_DIR/"
 $RSYNC VERSION $TARGET_DIR/
+echo -e "${RESET} Copied all source files to $TARGET_DIR."

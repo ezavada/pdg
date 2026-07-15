@@ -1,11 +1,14 @@
-.TH "Key Code Constants" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "KeyCodes" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Key Code Constants \- 
+KeyCodes \- Key Code Constants
 .PP
-Constants that represent special key codes\&.  
+ \- Constants that represent special key codes\&.  
 
+.SH SYNOPSIS
+.br
+.PP
 .SS "Variables"
 
 .in +1c
@@ -114,6 +117,54 @@ Constants that represent special key codes\&.
 .ti -1c
 .RI "const \fBkey_UpArrow\fP = 30"
 .br
+.ti -1c
+.RI "const \fBkeyCode_Alt\fP = 58"
+.br
+.RI "platform-specific keycode for the Alt/Option key (generic, may not distinguish left/right) "
+.ti -1c
+.RI "const \fBkeyCode_Control\fP = 59"
+.br
+.RI "platform-specific keycode for the Control key (generic, may not distinguish left/right) "
+.ti -1c
+.RI "const \fBkeyCode_LeftAlt\fP = 58"
+.br
+.RI "platform-specific keycode for the left Alt/Option key "
+.ti -1c
+.RI "const \fBkeyCode_LeftControl\fP = 59"
+.br
+.RI "platform-specific keycode for the left Control key "
+.ti -1c
+.RI "const \fBkeyCode_LeftMeta\fP = 55"
+.br
+.RI "platform-specific keycode for the left Meta/Command/Windows key "
+.ti -1c
+.RI "const \fBkeyCode_LeftShift\fP = 56"
+.br
+.RI "platform-specific keycode for the left Shift key "
+.ti -1c
+.RI "const \fBkeyCode_Meta\fP = 55"
+.br
+.RI "platform-specific keycode for the Meta/Command/Windows key (generic) "
+.ti -1c
+.RI "const \fBkeyCode_RightAlt\fP = 61"
+.br
+.RI "platform-specific keycode for the right Alt/Option key "
+.ti -1c
+.RI "const \fBkeyCode_RightControl\fP = 62"
+.br
+.RI "platform-specific keycode for the right Control key "
+.ti -1c
+.RI "const \fBkeyCode_RightMeta\fP = 54"
+.br
+.RI "platform-specific keycode for the right Meta/Command/Windows key "
+.ti -1c
+.RI "const \fBkeyCode_RightShift\fP = 60"
+.br
+.RI "platform-specific keycode for the right Shift key "
+.ti -1c
+.RI "const \fBkeyCode_Shift\fP = 56"
+.br
+.RI "platform-specific keycode for the Shift key (generic, may not distinguish left/right) "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -122,75 +173,485 @@ Constants that represent special key codes\&.
 
 .SH "Variable Documentation"
 .PP 
-.SS "key_Backspace = 8"
+.SS "const key_Backspace = 8"
 
-.SS "key_Break = 1"
+.SS "const key_Break = 1"
 
-.SS "key_Clear = 4"
+.SS "const key_Clear = 4"
 
-.SS "key_Delete = 127"
+.SS "const key_Delete = 127"
 
-.SS "key_DownArrow = 31"
+.SS "const key_DownArrow = 31"
 
-.SS "key_End = 3"
+.SS "const key_End = 3"
 
-.SS "key_Enter = 13"
+.SS "const key_Enter = 13"
 
-.SS "key_Escape = 27"
+.SS "const key_Escape = 27"
 
-.SS "key_F1 = 14"
+.SS "const key_F1 = 14"
 
-.SS "key_F10 = 23"
+.SS "const key_F10 = 23"
 
-.SS "key_F11 = 24"
+.SS "const key_F11 = 24"
 
-.SS "key_F12 = 25"
+.SS "const key_F12 = 25"
 
-.SS "key_F2 = 15"
+.SS "const key_F2 = 15"
 
-.SS "key_F3 = 16"
+.SS "const key_F3 = 16"
 
-.SS "key_F4 = 17"
+.SS "const key_F4 = 17"
 
-.SS "key_F5 = 18"
+.SS "const key_F5 = 18"
 
-.SS "key_F6 = 19"
+.SS "const key_F6 = 19"
 
-.SS "key_F7 = 20"
+.SS "const key_F7 = 20"
 
-.SS "key_F8 = 21"
+.SS "const key_F8 = 21"
 
-.SS "key_F9 = 22"
+.SS "const key_F9 = 22"
 
-.SS "key_FirstF = 14"
+.SS "const key_FirstF = 14"
 
-.SS "key_FirstPrintable = 32"
+.SS "const key_FirstPrintable = 32"
 
-.SS "key_Help = 5"
+.SS "const key_Help = 5"
 
-.SS "key_Home = 2"
+.SS "const key_Home = 2"
 
-.SS "key_Insert = 26"
+.SS "const key_Insert = 26"
 
-.SS "key_LastF = 25"
+.SS "const key_LastF = 25"
 
-.SS "key_LeftArrow = 28"
+.SS "const key_LeftArrow = 28"
 
-.SS "key_Mute = 7"
+.SS "const key_Mute = 7"
 
-.SS "key_PageDown = 12"
+.SS "const key_PageDown = 12"
 
-.SS "key_PageUp = 11"
+.SS "const key_PageUp = 11"
 
-.SS "key_Pause = 6"
+.SS "const key_Pause = 6"
 
-.SS "key_Return = 13"
+.SS "const key_Return = 13"
 
-.SS "key_RightArrow = 29"
+.SS "const key_RightArrow = 29"
 
-.SS "key_Tab = 9"
+.SS "const key_Tab = 9"
 
-.SS "key_UpArrow = 30"
+.SS "const key_UpArrow = 30"
+
+.SS "const keyCode_Alt = 58"
+
+.PP
+platform-specific keycode for the Alt/Option key (generic, may not distinguish left/right) This constant contains the keycode value for detecting either Alt (Windows/Linux) or Option (Mac) key on the current platform\&. On Windows, this is the generic VK_MENU code that doesn't distinguish between left and right\&. On other platforms, it equals \fBkeyCode_LeftAlt\fP\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 58 (same as keyCode_LeftAlt)
+.IP "\(bu" 2
+Windows: 18 (0x12 - VK_MENU, generic alt key)
+.IP "\(bu" 2
+Linux/GLFW: 342 (same as keyCode_LeftAlt)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_LeftAlt\fP 
+
+.PP
+\fBkeyCode_RightAlt\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_Control = 59"
+
+.PP
+platform-specific keycode for the Control key (generic, may not distinguish left/right) This constant contains the keycode value for detecting either Control key on the current platform\&. On Windows, this is the generic VK_CONTROL code that doesn't distinguish between left and right\&. On other platforms, it equals \fBkeyCode_LeftControl\fP\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 59 (same as keyCode_LeftControl)
+.IP "\(bu" 2
+Windows: 17 (0x11 - VK_CONTROL, generic control key)
+.IP "\(bu" 2
+Linux/GLFW: 341 (same as keyCode_LeftControl)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_LeftControl\fP 
+
+.PP
+\fBkeyCode_RightControl\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_LeftAlt = 58"
+
+.PP
+platform-specific keycode for the left Alt/Option key This constant contains the correct keycode value for the left Alt (Windows/Linux) or Option (Mac) key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Alt/Option key presses in a cross-platform way\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 58 (0x3A - NSEvent hardware keycode for left Option)
+.IP "\(bu" 2
+Windows: 164 (0xA4 - VK_LMENU virtual keycode for left Alt)
+.IP "\(bu" 2
+Linux/GLFW: 342 (GLFW_KEY_LEFT_ALT)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_RightAlt\fP 
+
+.PP
+\fBkeyCode_Alt\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_LeftControl = 59"
+
+.PP
+platform-specific keycode for the left Control key This constant contains the correct keycode value for the left Control key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Control key presses in a cross-platform way\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 59 (0x3B - NSEvent hardware keycode)
+.IP "\(bu" 2
+Windows: 162 (0xA2 - VK_LCONTROL virtual keycode)
+.IP "\(bu" 2
+Linux/GLFW: 341 (GLFW_KEY_LEFT_CONTROL)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_RightControl\fP 
+
+.PP
+\fBkeyCode_Control\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_LeftMeta = 55"
+
+.PP
+platform-specific keycode for the left Meta/Command/Windows key This constant contains the correct keycode value for the left Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Meta/Command/Windows key presses in a cross-platform way\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 55 (0x37 - NSEvent hardware keycode for left Command)
+.IP "\(bu" 2
+Windows: 91 (0x5B - VK_LWIN virtual keycode for left Windows key)
+.IP "\(bu" 2
+Linux/GLFW: 343 (GLFW_KEY_LEFT_SUPER)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_RightMeta\fP 
+
+.PP
+\fBkeyCode_Meta\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_LeftShift = 56"
+
+.PP
+platform-specific keycode for the left Shift key This constant contains the correct keycode value for the left Shift key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Shift key presses in a cross-platform way\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 56 (0x38 - NSEvent hardware keycode)
+.IP "\(bu" 2
+Windows: 160 (0xA0 - VK_LSHIFT virtual keycode) 
+.br
+
+.IP "\(bu" 2
+Linux/GLFW: 340 (GLFW_KEY_LEFT_SHIFT)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_RightShift\fP 
+
+.PP
+\fBkeyCode_Shift\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_Meta = 55"
+
+.PP
+platform-specific keycode for the Meta/Command/Windows key (generic) This constant contains the keycode value for detecting the Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform\&. This always equals \fBkeyCode_LeftMeta\fP on all platforms\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 55 (same as keyCode_LeftMeta)
+.IP "\(bu" 2
+Windows: 91 (same as keyCode_LeftMeta)
+.IP "\(bu" 2
+Linux/GLFW: 343 (same as keyCode_LeftMeta)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_LeftMeta\fP 
+
+.PP
+\fBkeyCode_RightMeta\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_RightAlt = 61"
+
+.PP
+platform-specific keycode for the right Alt/Option key This constant contains the correct keycode value for the right Alt (Windows/Linux) or Option (Mac) key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Alt/Option key presses in a cross-platform way\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 61 (0x3D - NSEvent hardware keycode for right Option)
+.IP "\(bu" 2
+Windows: 165 (0xA5 - VK_RMENU virtual keycode for right Alt)
+.IP "\(bu" 2
+Linux/GLFW: 346 (GLFW_KEY_RIGHT_ALT)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_LeftAlt\fP 
+
+.PP
+\fBkeyCode_Alt\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_RightControl = 62"
+
+.PP
+platform-specific keycode for the right Control key This constant contains the correct keycode value for the right Control key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Control key presses in a cross-platform way\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 62 (0x3E - NSEvent hardware keycode)
+.IP "\(bu" 2
+Windows: 163 (0xA3 - VK_RCONTROL virtual keycode)
+.IP "\(bu" 2
+Linux/GLFW: 345 (GLFW_KEY_RIGHT_CONTROL)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_LeftControl\fP 
+
+.PP
+\fBkeyCode_Control\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_RightMeta = 54"
+
+.PP
+platform-specific keycode for the right Meta/Command/Windows key This constant contains the correct keycode value for the right Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Meta/Command/Windows key presses in a cross-platform way\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 54 (0x36 - NSEvent hardware keycode for right Command)
+.IP "\(bu" 2
+Windows: 92 (0x5C - VK_RWIN virtual keycode for right Windows key)
+.IP "\(bu" 2
+Linux/GLFW: 347 (GLFW_KEY_RIGHT_SUPER)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_LeftMeta\fP 
+
+.PP
+\fBkeyCode_Meta\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_RightShift = 60"
+
+.PP
+platform-specific keycode for the right Shift key This constant contains the correct keycode value for the right Shift key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Shift key presses in a cross-platform way\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 60 (0x3C - NSEvent hardware keycode)
+.IP "\(bu" 2
+Windows: 161 (0xA1 - VK_RSHIFT virtual keycode)
+.IP "\(bu" 2
+Linux/GLFW: 344 (GLFW_KEY_RIGHT_SHIFT)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_LeftShift\fP 
+
+.PP
+\fBkeyCode_Shift\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
+
+.SS "const keyCode_Shift = 56"
+
+.PP
+platform-specific keycode for the Shift key (generic, may not distinguish left/right) This constant contains the keycode value for detecting either Shift key on the current platform\&. On Windows, this is the generic VK_SHIFT code that doesn't distinguish between left and right\&. On other platforms, it equals \fBkeyCode_LeftShift\fP\&.
+
+.PP
+Platform values:**
+.IP "\(bu" 2
+Mac OS X: 56 (same as keyCode_LeftShift)
+.IP "\(bu" 2
+Windows: 16 (0x10 - VK_SHIFT, generic shift key)
+.IP "\(bu" 2
+Linux/GLFW: 340 (same as keyCode_LeftShift)
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBkeyCode_LeftShift\fP 
+
+.PP
+\fBkeyCode_RightShift\fP 
+
+.PP
+\fBKeyEvent\fP 
+
+.PP
+\fBeventType_KeyDown\fP 
+
+.PP
+\fBeventType_KeyUp\fP 
+.RE
+.PP
 
 .SH "Author"
 .PP 

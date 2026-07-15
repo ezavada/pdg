@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::empty()
+
+\brief return true if this rectangle is empty (no width or no height)
+
+**/ }

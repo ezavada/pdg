@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structpdg_1_1_key_info.html" title="KeyInfo" alt="" coords="5,5,72,33"/>
+<area shape="rect" id="Node000000" href="$classpdg_1_1_i_deserializer.html" title=" " alt="" coords="5,5,100,31"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_deserializer.html" title=" " alt="" coords="148,5,238,31"/>
+<area shape="poly" id="edge32_Node000000_Node000001" title=" " alt="" coords="115,16,147,16,147,21,115,21"/>
 </map>

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::texture(Image texture)
+
+\brief Sets the texture image to use for drawing a sphere
+
+**/ }

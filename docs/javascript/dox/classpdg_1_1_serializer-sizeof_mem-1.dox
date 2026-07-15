@@ -1,0 +1,26 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::sizeof_mem(BinaryString mem)
+
+\brief Calculate the number of bytes needed to serialize a BinaryString object
+
+This function calculates the total number of bytes that would be required to serialize a BinaryString object using the serializer. This is useful for determining buffer sizes needed for serialization operations.
+
+\param mem The BinaryString object to calculate the serialization size for
+
+\details
+The function returns the exact number of bytes that would be written to the serialization stream when serializing the given BinaryString. This includes any overhead for type information and length prefixes.
+
+This is particularly useful when you need to pre-allocate buffers for serialization or when implementing custom serialization logic that needs to know the exact size requirements.
+
+\return The number of bytes required to serialize the BinaryString
+
+\note The returned size includes all serialization overhead (type info, length prefixes, etc.)
+\note This is a calculation function and does not actually perform serialization
+
+\sa Serializer::serialize_mem()
+\sa Serializer::sizeof_mem(MemBlock)
+\sa BinaryString
+
+
+**/ }

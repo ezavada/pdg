@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::setPoint(index, point)
+
+\brief sets the point at the specified index
+
+**/ }

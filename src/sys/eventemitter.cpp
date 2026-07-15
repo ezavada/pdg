@@ -30,12 +30,13 @@
 
 #include "pdg_project.h"
 
+#ifdef _MSC_VER
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
+#endif
 
 #include "pdg/sys/core.h"
 #include "pdg/sys/os.h"
-
-#include <typeinfo>
+#include "pdg/sys/events.h"
 
 // define the following in your build environment, or uncomment it here to get
 // debug output for the core events and timers
@@ -147,12 +148,25 @@ EventEmitter::postEvent(long inEventType, void* inEventData, EventEmitter* fromE
 	if (fromEmitter == 0) {
 		fromEmitter = this;
 	}
-	bool wasHandled = emitEvent(fromEmitter, inEventType, inEventData);
+    DEBUG_ONLY(
+        ms_time eventTime = OS::getMilliseconds();
+    )
+    bool wasHandled = emitEvent(fromEmitter, inEventType, inEventData);
 	if (!wasHandled) {
         EVENT_DEBUG_ONLY( OS::_DOUT("EventEmitter::postEvent event [%d][%s] unhandled, passing to EventManager", 
         					inEventType,  getEventName(inEventType)); )
-		wasHandled = EventManager::getSingletonInstance()->postEvent(inEventType, inEventData, fromEmitter);
+        wasHandled = EventManager::getSingletonInstance()->postEvent(inEventType, inEventData, fromEmitter);
 	}
+    DEBUG_ONLY(
+        ms_time eventPostTime = OS::getMilliseconds();
+        ms_delta eventDuration = eventPostTime - eventTime;
+        EVENT_DEBUG_ONLY( OS::_DOUT("EventEmitter::postEvent event [%d][%s] took %ld ms", inEventType, 
+                                    getEventName(inEventType), eventDuration); )
+        if (eventDuration > 100) {
+            DEBUG_ONLY( OS::_DOUT("EventEmitter::postEvent event [%d][%s] took %ld ms, data: %p", inEventType, 
+                                    getEventName(inEventType), eventDuration, inEventData); )
+        }
+    )
 	return wasHandled;
 }
 

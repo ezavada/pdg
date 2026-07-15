@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawEllipse(Point center, float xRadius, float yRadius, Attributes attrs)
+
+\brief Draw an ellipse at the specified center point with given x and y radii
+
+**/ }

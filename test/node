@@ -1,8 +1,8 @@
 #!/bin/bash
 # -------------------------------------------
-# run.sh
+# node.sh
 #
-# a Node.js app for running the PDG test suite
+# Invokes a Node.js app for running the PDG test suite
 #
 # Written by Ed Zavada, 2012
 # Copyright (c) 2012, Dream Rock Studios, LLC
@@ -33,45 +33,52 @@ unset NODE_DEBUG
 
 # load pdgrc
 _SD=`pwd`;while [ "`pwd`" != '/' ];do { if [ -e ".pdgrc" ];then { source .pdgrc;break; } fi;cd ..; } done;cd $_SD
+if [ -z "$PDG_ROOT" ]; then
+    PDG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+    export PDG_ROOT
+fi
+source "$PDG_ROOT/test/lib/test_env.sh"
+pdg_test_prepare_env "node"
+
+NODE_BIN="$PDG_ROOT/tools/node"
+if [ ! -x "$NODE_BIN" ]; then
+    NODE_BIN="$(command -v node)"
+fi
+
+if [ -z "$NODE_BIN" ]; then
+    echo "Error: could not find a Node.js executable."
+    exit 1
+fi
+
+# ensure we're in the PDG_ROOT directory
+if [ -n "$PDG_ROOT" ]; then
+    cd "$PDG_ROOT"
+elif [ -f "tools/echo_tcp.js" ]; then
+    # we're already in the right place
+    :
+else
+    # try to find the PDG_ROOT by looking for tools/echo_tcp.js
+    _SD=`pwd`
+    while [ "`pwd`" != '/' ]; do
+        if [ -f "tools/echo_tcp.js" ]; then
+            break
+        fi
+        cd ..
+    done
+    if [ ! -f "tools/echo_tcp.js" ]; then
+        echo "Error: Could not find tools/echo_tcp.js. Please run from PDG_ROOT directory or set PDG_ROOT environment variable."
+        exit 1
+    fi
+    cd "$_SD"
+fi
 
 # start an echo server
-node tools/echo_tcp.js > /dev/null &
+"$NODE_BIN" "$PDG_ROOT/tools/echo_tcp.js" > /dev/null &
 
-cd test
+PDG_DEBUG="$PDG_DEBUG" NODE_DEBUG="$NODE_DEBUG" "$NODE_BIN" "$PDG_ROOT/test/node_test.js" "$@"
+EXIT_CODE=$?
 
-if [ "$1" = "--debug" ]; then
-
-	# check if we passed a specific test file
-	if [ -z "$2" ]; then
-		TARGET=spec
-	else
-		TARGET=$2
-	fi 
-	# start the debugger
-	node-inspector &
-
-	# run the tests, some of which use the echo server
-	node --debug-brk $PDG_ROOT/node_modules/jasmine-node/lib/jasmine-node/cli.js --verbose --forceexit $TARGET
-	EXIT_CODE=$?
-
-	# kill the echo server and node-inspector
-	kill %1
-	kill %2
-else
-
-	# check if we passed a specific test file
-	if [ -z "$1" ]; then
-		TARGET=spec
-	else
-		TARGET=$1
-	fi
-
-	# run the tests, some of which use the echo server
-	jasmine-node --verbose --forceexit $TARGET
-	EXIT_CODE=$?
-
-	# kill the echo server
-	kill %1
-fi
+# kill the echo server
+kill %1
 
 exit $EXIT_CODE

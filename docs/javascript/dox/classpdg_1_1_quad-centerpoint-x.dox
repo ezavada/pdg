@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Quad::centerPoint()
+
+\brief return the calculated centerpoint of the quad
+
+**/ }

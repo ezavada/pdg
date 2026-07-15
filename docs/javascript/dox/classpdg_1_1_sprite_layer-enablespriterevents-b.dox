@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::enableSpriterEvents(enable)
+
+\brief Enables or disables Spriter animation events for this layer
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::addFramesImage
+
+\brief add one or more frames to the sprite from an Image or ImageStrip
+
+**/ }

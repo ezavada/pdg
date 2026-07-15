@@ -1,0 +1,19 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::makeStatic
+
+\brief make this sprite unaffected by physics (*Chipmunk Physics Only*)
+
+This sprite becomes a static body that isn't affected by physics, though non-static objects can collide with it. This would be used for walls or platforms.
+
+\warning This should be done before setting anything else about the sprite
+
+\returns itself so you can call it on creation
+
+
+\code
+var sprite = layer.createSprite().makeStatic();
+\endcode
+
+
+**/ }

@@ -48,10 +48,9 @@
 #endif
 
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-typedef struct cpConstraint cpConstraint;
-typedef struct cpArbiter cpArbiter;
+  #include "chipmunk/chipmunk_private.h"
 #endif
-	
+
 
 //! \defgroup Events
 //! Collection of classes, types and constants used by the Event Manager
@@ -97,6 +96,7 @@ enum {
 	eventType_MouseEnter	= 22,		// the mouse entered a tracking area
 	eventType_MouseLeave	= 23,		// the mouse left a tracking area
 	eventType_PortDraw		= 24,		// a port wants to be redrawn
+	eventType_SpriteTriggerEvent = 25,	// Spriter trigger events (only when PDG is compiled with Spriter support)
 
     eventType_last
 };
@@ -164,6 +164,76 @@ enum {
     key_FirstPrintable = 32 // ASCII Space -- first printable character 
 };
 
+// ====================
+// Platform Raw Keycodes
+// ====================
+
+//! Platform-specific raw keycodes for modifier keys
+//! These are the actual hardware keycodes that will be returned in KeyInfo->keyCode
+//! for eventType_KeyDown and eventType_KeyUp events
+//! \ingroup Events
+enum {
+    // Shift Keys
+#if defined(PLATFORM_MACOSX)
+    keyCode_LeftShift   = 56,   // 0x38 - Mac hardware keycode for left shift
+    keyCode_RightShift  = 60,   // 0x3C - Mac hardware keycode for right shift
+#elif defined(PLATFORM_WIN32)
+    keyCode_LeftShift   = 160,  // 0xA0 - Windows VK_LSHIFT virtual keycode
+    keyCode_RightShift  = 161,  // 0xA1 - Windows VK_RSHIFT virtual keycode
+#else
+    keyCode_LeftShift   = 340,  // GLFW_KEY_LEFT_SHIFT (cross-platform default)
+    keyCode_RightShift  = 344,  // GLFW_KEY_RIGHT_SHIFT (cross-platform default)
+#endif
+
+    // Control Keys
+#if defined(PLATFORM_MACOSX)
+    keyCode_LeftControl  = 59,   // 0x3B - Mac hardware keycode for left control
+    keyCode_RightControl = 62,   // 0x3E - Mac hardware keycode for right control
+#elif defined(PLATFORM_WIN32)
+    keyCode_LeftControl  = 162,  // 0xA2 - Windows VK_LCONTROL virtual keycode
+    keyCode_RightControl = 163,  // 0xA3 - Windows VK_RCONTROL virtual keycode
+#else
+    keyCode_LeftControl  = 341,  // GLFW_KEY_LEFT_CONTROL (cross-platform default)
+    keyCode_RightControl = 345,  // GLFW_KEY_RIGHT_CONTROL (cross-platform default)
+#endif
+
+    // Alt/Option Keys
+#if defined(PLATFORM_MACOSX)
+    keyCode_LeftAlt   = 58,   // 0x3A - Mac hardware keycode for left option/alt
+    keyCode_RightAlt  = 61,   // 0x3D - Mac hardware keycode for right option/alt
+#elif defined(PLATFORM_WIN32)
+    keyCode_LeftAlt   = 164,  // 0xA4 - Windows VK_LMENU virtual keycode
+    keyCode_RightAlt  = 165,  // 0xA5 - Windows VK_RMENU virtual keycode
+#else
+    keyCode_LeftAlt   = 342,  // GLFW_KEY_LEFT_ALT (cross-platform default)
+    keyCode_RightAlt  = 346,  // GLFW_KEY_RIGHT_ALT (cross-platform default)
+#endif
+
+    // Meta/Cmd/Win Keys
+#if defined(PLATFORM_MACOSX)
+    keyCode_LeftMeta   = 55,   // 0x37 - Mac hardware keycode for left command
+    keyCode_RightMeta  = 54,   // 0x36 - Mac hardware keycode for right command
+#elif defined(PLATFORM_WIN32)
+    keyCode_LeftMeta   = 91,   // 0x5B - Windows VK_LWIN virtual keycode
+    keyCode_RightMeta  = 92,   // 0x5C - Windows VK_RWIN virtual keycode
+#else
+    keyCode_LeftMeta   = 343,  // GLFW_KEY_LEFT_SUPER (cross-platform default)
+    keyCode_RightMeta  = 347,  // GLFW_KEY_RIGHT_SUPER (cross-platform default)
+#endif
+
+    // Generic modifier key codes (may not distinguish left/right)
+#if defined(PLATFORM_WIN32)
+    keyCode_Shift    = 16,   // 0x10 - Windows VK_SHIFT (generic, doesn't distinguish left/right)
+    keyCode_Control  = 17,   // 0x11 - Windows VK_CONTROL (generic)
+    keyCode_Alt      = 18,   // 0x12 - Windows VK_MENU (generic)
+#else
+    keyCode_Shift    = keyCode_LeftShift,
+    keyCode_Control  = keyCode_LeftControl,
+    keyCode_Alt      = keyCode_LeftAlt,
+#endif
+    keyCode_Meta     = keyCode_LeftMeta
+};
+
 // for indicating how a device that can detect its orientation in
 // real world space is actually positioned
 enum {
@@ -209,9 +279,9 @@ struct TimerInfo {
 	//! this id tells us which timer fired
     long            id;           
 	//! the current millisecond timestamp, as if you had called OS::getMilliseconds()
-    unsigned long   millisec;     
+    ms_time         millisec;
 	//! how long (excluding pause time) since last firing, or since started if first firing
-	uint32			msElapsed;
+	ms_delta		msElapsed;
 	//! the data associated with this timer, passed in by app when timer was created
     void*           userData;
 };
@@ -346,6 +416,8 @@ struct SoundEventInfo {
 };
 PDG_CLASS_TYPEDEF(SoundEventInfo)
 
+extern long gNextSpriteEventId;
+
 //! Event Data for eventType_SpriteAnimate.
 //! \ingroup Events
 //! \ingroup Animation
@@ -356,6 +428,8 @@ struct SpriteAnimateInfo {
     Sprite*   	actingSprite;
 	//! what layer the action happened in
 	SpriteLayer* inLayer;
+    //! a sequential id for the event since these are often enqueued
+    long       id;
 };
 PDG_CLASS_TYPEDEF(SpriteAnimateInfo)
 
@@ -380,6 +454,14 @@ struct SpriteCollideInfo PDG_SUBCLASS_OF( SpriteAnimateInfo ) {
     //! the Chipmunk Collision Arbiter (only when PDG is compiled with Chipmunk physics support)
     cpArbiter*  arbiter;
 #endif
+#ifdef PDG_SPRITER_SUPPORT
+    //! name of collision box that was hit (null for non-spriter collisions)
+    const char* collisionName;
+    //! name of other sprite's collision box (null for non-spriter collisions)
+    const char* withCollisionName;
+    //! true if this is the first contact in a collision sequence (only meaningful for spriter collisions)
+    bool isFirstContact;
+#endif // PDG_SPRITER_SUPPORT
 };
 PDG_CLASS_TYPEDEF(SpriteCollideInfo)
 
@@ -415,7 +497,7 @@ struct SpriteLayerInfo {
     //! which layer is doing the action
 	SpriteLayer*    actingLayer;
     //! the time stamp at which the action occurred
-	uint32          millisec;  
+	ms_time          millisec;
 };
 PDG_CLASS_TYPEDEF(SpriteLayerInfo)
 
@@ -432,6 +514,21 @@ struct SpriteTouchInfo PDG_SUBCLASS_OF(  MouseInfo ) {
 	SpriteLayer*	inLayer;
 };
 PDG_CLASS_TYPEDEF(SpriteTouchInfo)
+
+#ifdef PDG_SPRITER_SUPPORT
+//! Event Data for eventType_SpriteTriggerEvent
+//! \ingroup Events
+//! \ingroup Animation
+//! \ingroup Sprites
+struct SpriteTriggerEventInfo PDG_SUBCLASS_OF( SpriteAnimateInfo ) {
+    PDG_INHERITED_FIELDS_FROM(SpriteAnimateInfo)
+    //! name of the Spriter trigger that fired
+    const char* triggerName;
+    //! frame time when the trigger occurred
+    int frameTime;
+};
+PDG_CLASS_TYPEDEF(SpriteTriggerEventInfo)
+#endif // PDG_SPRITER_SUPPORT
 
 
 #ifdef __cplusplus

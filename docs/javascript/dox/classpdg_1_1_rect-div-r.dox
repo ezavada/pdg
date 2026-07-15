@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::div(Rect r2)
+
+\brief div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point; div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle
+
+**/ }

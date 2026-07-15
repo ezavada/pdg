@@ -31,6 +31,7 @@
 
 #include "pdg/app/RadioButton.h"
 #include "pdg/app/Controller.h"
+#include "pdg/sys/attributes.h"
 
 #ifndef PDG_ALLOW_DEPRECATED_CALLS
 #error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use RadioButton.cpp
@@ -102,9 +103,9 @@ void RadioButton::drawSelf()
 	{
 		textPoint = buttonPoint;
 		Point imagePoint = buttonPoint;
-		if( i == mSelectedIndex )
+		if ( i == mSelectedIndex )
 		{
-			if(mpRadioImages[RADIO_CLOSED])
+			if (mpRadioImages[RADIO_CLOSED])
 			{
 				imagePoint.y += (mViewArea.height() - mpRadioImages[RADIO_CLOSED]->height)/2;
 				mpRadioImages[RADIO_CLOSED]->draw(localToGlobal(imagePoint));
@@ -114,17 +115,17 @@ void RadioButton::drawSelf()
 		}
 		else
 		{
-			if(mpRadioImages[RADIO_OPEN])
+			if (mpRadioImages[RADIO_OPEN])
 			{
 				imagePoint.y += (mViewArea.height() - mpRadioImages[RADIO_OPEN]->height)/2;
 				mpRadioImages[RADIO_OPEN]->draw(localToGlobal(imagePoint));
 				textPoint.x += mpRadioImages[RADIO_OPEN]->width + 5;
-				textPoint.y += fontHeight;
-			}
+			textPoint.y += fontHeight;
 		}
+	}
 
-		mPort->drawText(mStrings[i].c_str(), localToGlobal(textPoint), RADIO_TEXT_SIZE);
-		buttonPoint.x += buttonSpace;
+	mPort->drawText(mStrings[i].c_str(), localToGlobal(textPoint), Attributes().textSize(RADIO_TEXT_SIZE));
+	buttonPoint.x += buttonSpace;
 	}
 
 	//this->drawClickableParts();
@@ -132,7 +133,7 @@ void RadioButton::drawSelf()
 
 void RadioButton::doClick(int part)
 {
-	if(part >= 0 && part < mMaxStrings)
+	if (part >= 0 && part < mMaxStrings)
 	{
 		mSelectedIndex = part;
 	}

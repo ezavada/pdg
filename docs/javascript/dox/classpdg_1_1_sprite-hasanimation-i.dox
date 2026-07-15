@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::hasAnimation(int)
+
+\brief check if a sprite has a particular SCML animation by ID
+
+**/ }

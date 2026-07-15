@@ -1,0 +1,11 @@
+# Ignore test results but keep baseline
+pdgmark_results.json
+
+# Keep baseline for reference
+!pdgmark_baseline.json
+
+# Ignore any temporary or debug files
+*.log
+*.tmp
+debug_*.json
+

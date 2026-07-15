@@ -25,62 +25,31 @@
 //
 // -----------------------------------------------
 
-var path = require('path');
 var pdg = require('pdg');
+var fs = require('fs');
+var specRunner = require('./lib/spec_runner');
 
 if( !process.env.NODE_ENV ) process.env.NODE_ENV = 'test';
 
-if( !process.env.PDG_ROOT ) {
-	console.error('PDG_ROOT is not defined in the environment variables. Define it and try again.');
-	process.exit(1);
-} else {
-	console.log('PDG_ROOT = '+process.env.PDG_ROOT);
+if( !process.env.PDG_ROOT && process.ios ) {
+    console.log('Defining PDG_ROOT for iOS');
+    process.env.PDG_ROOT = process.cwd();
+    process.env.PDG_DEBUG = "VERBOSE";
 }
 
-var target = './spec';
+var envInfo = specRunner.ensureTestEnvironment(process, fs);
+var runConfig = specRunner.parseRunnerArgs(process.argv, envInfo.specDir, fs);
 
-var debug = false;
-var help = false;
+console.log('PDG_ROOT = ' + envInfo.repoRoot);
+console.log('PDG_TEST_ARTIFACTS_DIR = ' + envInfo.artifactsDir);
 
-for (var i = 1; i<process.argv.length; i++) {
-	if (process.argv[i] == '--debug') {
-		debug = true;
-	} else if (process.argv[i] == '--help') {
-		help = true;
-	} else if (process.argv[i] == '-h') {
-		help = true;
-	} else if (process.argv[i] == '/?') {
-		help = true;
-	} else if (process.argv[i].match(/^spec/)) {
-		target = process.argv[i];
-		console.log('Test Target: '+target); 
-	}
-}
-
-if (help) {
-	if (process.platform == 'win32') {
-		console.log('Usage: test\\client [--debug] [testfile]\n');
-	} else {
-		console.log('Usage: test/client [--debug] [testfile]\n');
-	}
-	console.log('Runs tests against the pdg client app\n');
-	console.log('Options:');
-	console.log('  -h, /?        this help message');
-	console.log('  --debug       launch the debugger');
-	if (process.platform == 'win32') {
-		console.log('  [testfile]    must be spec\\{filename}.spec.js - single test to run');
-	} else {
-		console.log('  [testfile]    must be spec/{filename}.spec.js - single test to run');
-	}
+if (runConfig.help) {
+	specRunner.printClientHelp(process.platform);
 	process.exit(0);
 }
 
-process.argv[2] = "--verbose";
-process.argv[3] = "--forceexit";
-process.argv[4] = target;
-
 var delay;
-if (debug) {
+if (runConfig.debug) {
 	pdg.openDebugger();
 	delay = 10000;
 } else {
@@ -89,9 +58,14 @@ if (debug) {
 
 pdg.tm.onTimeout(function() {
 	try {
-		require(process.env.PDG_ROOT+'/node_modules/jasmine-node/lib/jasmine-node/cli.js');
+		console.log('Running jasmine-node on:', envInfo.specDir);
+		if (runConfig.requestedTarget) {
+			console.log('Target spec:', runConfig.requestedTarget);
+		}
+		specRunner.runJasmineSpecs(envInfo, runConfig, process);
 	} catch(e) {
-		console.error(e);
+		console.error('Error running jasmine-node:', e);
+		process.exit(1);
 	}
 }, delay);
 pdg.run();

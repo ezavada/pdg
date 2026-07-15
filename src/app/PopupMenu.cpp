@@ -30,6 +30,7 @@
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
 
 #include "pdg/app/PopupMenu.h"
+#include "pdg/sys/attributes.h"
 
 #ifndef PDG_ALLOW_DEPRECATED_CALLS
 #error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use PopupMenu.cpp
@@ -87,7 +88,7 @@ void PopupMenu::sanitiseViewArea()
 {
     // figure out how big we need to be
 	int fontHeight = mPort->getCurrentFont()->getFontHeight(mTextSize) + ITEM_SIZE_OFFSET;
-	int requiredWidth = TEXT_WIDTH_OFFSET + mPort->getTextWidth(mLongestText.c_str(),mTextSize,(Graphics::Style)(Graphics::textStyle_Bold + Graphics::textStyle_Italic + Graphics::textStyle_Underline),mLongestText.length()); 
+	int requiredWidth = TEXT_WIDTH_OFFSET + mPort->getTextWidth(mLongestText.c_str(),mTextSize,(Style)(textStyle_Bold + textStyle_Italic + textStyle_Underline),mLongestText.length()); 
     if (mMinWidth && (requiredWidth < mMinWidth)) {
         requiredWidth = mMinWidth;
     }
@@ -118,11 +119,11 @@ void PopupMenu::sanitiseViewArea()
 		int viewHeight = mViewArea.height();
 		int viewWidth = mViewArea.width();
 		
-		if(parentHeight < viewHeight) // adjust menu view Height
+		if (parentHeight < viewHeight) // adjust menu view Height
 		{
 			mViewArea.setHeight(parentHeight);
 		}
-		if(parentWidth < viewWidth) // adjust menu view width
+		if (parentWidth < viewWidth) // adjust menu view width
 		{
 			mViewArea.setWidth(parentWidth - VIEW_WIDTH_OFFSET);
 		}
@@ -166,14 +167,14 @@ void PopupMenu::sanitiseViewArea()
 
 void PopupMenu::scrollMenu(int nItems) 
 {
-/*	if(mNeedScrolling)
+/*	if (mNeedScrolling)
 	{
-		if(nItems < 0)
+		if (nItems < 0)
 		{
 			for(int i = nItems; i< 0 && mStartIndex != 1; i++)
 				mStartIndex -= 1;
 		}
-		else if(nItems > 0)
+		else if (nItems > 0)
 		{
 			for(int i = 1; i <= nItems && ( mItemList.size()  != (mStartIndex - 1) + (mItemShowable) ) ; i++)
 				mStartIndex += 1;
@@ -187,13 +188,13 @@ void PopupMenu::scrollMenu(int nItems)
 
 void PopupMenu::drawSelf()
 {
-	if(mDrawableItemList.size() == 0)
+	if (mDrawableItemList.size() == 0)
 	{
 		return;
 	}
 
 	Point leftTop,rightTop,leftBottom,rightBottom; // used to draw border for menu
-//	if(!mNeedScrolling)
+//	if (!mNeedScrolling)
 	{
 		itemRectPair val = mDrawableItemList.front();
 		Rect tempRect = localToGlobal(val.first);
@@ -232,21 +233,21 @@ void PopupMenu::drawSelf()
 		ItemInfo item = val.second;
 
 // to highlight item
-		if(mHotItem == item.mItemID)
+		if (mHotItem == item.mItemID)
 		{
-			mPort->fillRect(tempRect,mbkColor);
+			mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
 			tempRect.shrink(HIGHLIGHT_AREA_MARGIN);
-			mPort->fillRect(tempRect,mhighlightColor);
+			mPort->drawRect(tempRect, Attributes().fillColor(mhighlightColor));
 		}
 		else
 		{
-			mPort->fillRect(tempRect,mbkColor);
+			mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
 			tempRect.shrink(HIGHLIGHT_AREA_MARGIN);
 		}
 		// Draw down arrow if this if the first item
-		if(itr == mDrawableItemList.begin())
+		if (itr == mDrawableItemList.begin())
 		{
-			if(mPullArrowImage)
+			if (mPullArrowImage)
 			{
 				Point arrowPt(tempRect.right - mPullArrowImage->width - 2, 
 					(tempRect.height() - mPullArrowImage->height)/2 + tempRect.top);
@@ -260,7 +261,7 @@ void PopupMenu::drawSelf()
 		textPoint.x += HIGHLIGHT_AREA_MARGIN + TEXT_LEFT_MARGIN;
 // check if text is crossing width of menu, if yes, draw cliped text
 		int fontWidth = mPort->getTextWidth(item.mItemString.c_str(),mTextSize,item.mStyle,item.mItemString.length());
-		if(fontWidth > mViewArea.width() - HIGHLIGHT_AREA_MARGIN + TEXT_LEFT_MARGIN)
+		if (fontWidth > mViewArea.width() - HIGHLIGHT_AREA_MARGIN + TEXT_LEFT_MARGIN)
 		{
 			int clipTextWidth = mPort->getTextWidth(CLIP_TEXT,mTextSize,item.mStyle);
 			int drawableTextWidth = mViewArea.width() - clipTextWidth - (HIGHLIGHT_AREA_MARGIN *4) - TEXT_LEFT_MARGIN;
@@ -269,22 +270,22 @@ void PopupMenu::drawSelf()
 			{
 				aString = item.mItemString.substr(0,i);
 				fontWidth = mPort->getTextWidth(aString.c_str(),mTextSize,item.mStyle,aString.length());
-				if(fontWidth >= drawableTextWidth)
+				if (fontWidth >= drawableTextWidth)
 					break;
 			}
 			aString += CLIP_TEXT;
-			mPort->drawText(aString.c_str(), textPoint, mTextSize,item.mStyle,mTextColor);
+			mPort->drawText(aString.c_str(), textPoint, Attributes().textSize(mTextSize).textStyle(item.mStyle).fillColor(mTextColor));
 		}
 		else
-			mPort->drawText(item.mItemString.c_str(), textPoint, mTextSize,item.mStyle,mTextColor);
+			mPort->drawText(item.mItemString.c_str(), textPoint, Attributes().textSize(mTextSize).textStyle(item.mStyle).fillColor(mTextColor));
 	}
 
-/*	if(mNeedScrolling && mScrollImages[0] && mScrollImages[1] && mScrollImages[2] && mScrollImages[3])
+/*	if (mNeedScrolling && mScrollImages[0] && mScrollImages[1] && mScrollImages[2] && mScrollImages[3])
 	{
 // for up arrow
 		Rect tempRect = localToGlobal(View::getClickableRectFromID(ITEM_UP_ARROW));
 			mPort->fillRect(tempRect,mbkColor);
-		if(mShowUpArrow) // draw enabled up arrow
+		if (mShowUpArrow) // draw enabled up arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[0]->width) /2 ;
@@ -302,7 +303,7 @@ void PopupMenu::drawSelf()
 // for down arrow
 		tempRect = localToGlobal(View::getClickableRectFromID(ITEM_DOWN_ARROW));
 		mPort->fillRect(tempRect,mbkColor);
-		if(mShowDownArrow) // draw enabled down arrow
+		if (mShowDownArrow) // draw enabled down arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[2]->width) /2 ;
@@ -318,12 +319,12 @@ void PopupMenu::drawSelf()
 		}
 	} */
 
-	if(mItemList.size() > 0)// draw menu border
+	if (mItemList.size() > 0)// draw menu border
 	{
-		mPort->drawLine(leftTop,rightTop, PDG_GRAY_50_COLOR);
-		mPort->drawLine(leftTop,leftBottom, PDG_GRAY_50_COLOR);
-		mPort->drawLine(rightTop,rightBottom, PDG_BLACK_COLOR);
-		mPort->drawLine(leftBottom,rightBottom, PDG_BLACK_COLOR);
+		mPort->drawLine(leftTop,rightTop, Attributes().lineColor(PDG_GRAY_50_COLOR).lineThickness(1));
+		mPort->drawLine(leftTop,leftBottom, Attributes().lineColor(PDG_GRAY_50_COLOR).lineThickness(1));
+		mPort->drawLine(rightTop,rightBottom, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1));
+		mPort->drawLine(leftBottom,rightBottom, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1));
 	}
 }
 
@@ -341,7 +342,7 @@ void PopupMenu::calcClickableAreas()
 	mDrawableItemList.clear();
 
 // for menu items
-/*	if(mNeedScrolling)
+/*	if (mNeedScrolling)
 	{
 // advance in itemlist till we will not reach the item representing start index.
 		itr = mItemList.begin();
@@ -375,7 +376,7 @@ void PopupMenu::calcClickableAreas()
 	}
 
 // for up and down arrow
-/*	if(mNeedScrolling && mScrollImages[0])
+/*	if (mNeedScrolling && mScrollImages[0])
 	{
 // we are advanced points by font height, as here we are dealing with images. 
 // add image height to itemTLPoint to get new bottom,right points
@@ -416,7 +417,7 @@ void PopupMenu::showSelf()
 	{
 		if (mStartIndex > 1)
 		{
-			if((int)mItemList.size()  == (mStartIndex - 1) + (mItemShowable)) {
+			if ((int)mItemList.size()  == (mStartIndex - 1) + (mItemShowable)) {
 				mShowDownArrow = false;
 			} else {
 				mShowDownArrow = true;
@@ -463,7 +464,7 @@ void PopupMenu::loadString(std::string& aString,int resourceID, int numSubstr)
 	mResMgr.getString(aString, resourceID, numSubstr);	
 }
 
-int PopupMenu::addMenuItem(int itemID, const char* text, Graphics::Style textStyle, int index)
+int PopupMenu::addMenuItem(int itemID, const char* text, Style textStyle, int index)
 {
 // itemID must be greater than 2, we are using 1 for ITEM_UP_ARROW and 2 for ITEM_DOWN_ARROW for scrolling purpose
 	if (itemID <= 2) {
@@ -472,11 +473,11 @@ int PopupMenu::addMenuItem(int itemID, const char* text, Graphics::Style textSty
 
 // Make sure the text style is always left justified, Otherwise text will be drawn 
 // outside menu area
-	if (Graphics::textStyle_Centered == (textStyle & Graphics::textStyle_Centered)) {
-		textStyle = (Graphics::Style)(textStyle & (~Graphics::textStyle_Centered));
+	if (textStyle_Centered == (textStyle & textStyle_Centered)) {
+		textStyle = (Style)(textStyle & (~textStyle_Centered));
 	}
-	if (Graphics::textStyle_RightJustified == (textStyle & Graphics::textStyle_RightJustified)) {
-		textStyle = (Graphics::Style)(textStyle & (~Graphics::textStyle_RightJustified));
+	if (textStyle_RightJustified == (textStyle & textStyle_RightJustified)) {
+		textStyle = (Style)(textStyle & (~textStyle_RightJustified));
 	}
 
 
@@ -513,7 +514,7 @@ int PopupMenu::addMenuItem(int itemID, const char* text, Graphics::Style textSty
 	return nCount+1;
 }
 
-int PopupMenu::addMenuItem(int itemID, int resourceID, Graphics::Style textStyle, int index)
+int PopupMenu::addMenuItem(int itemID, int resourceID, Style textStyle, int index)
 {
 // itemID must be greater than 2, we are using 1 for ITEM_UP_ARROW and 2 for ITEM_DOWN_ARROW for scrolling purpose
 	if (itemID <= 2) {
@@ -522,11 +523,11 @@ int PopupMenu::addMenuItem(int itemID, int resourceID, Graphics::Style textStyle
 
 // Make sure the text style is always left justified, Otherwise text will be drawn 
 // outside menu area
-	if (Graphics::textStyle_Centered == (textStyle & Graphics::textStyle_Centered)) {
-		textStyle = (Graphics::Style)(textStyle & (~Graphics::textStyle_Centered));
+	if (textStyle_Centered == (textStyle & textStyle_Centered)) {
+		textStyle = (Style)(textStyle & (~textStyle_Centered));
 	}
-	if (Graphics::textStyle_RightJustified == (textStyle & Graphics::textStyle_RightJustified)) {
-		textStyle = (Graphics::Style)(textStyle & (~Graphics::textStyle_RightJustified));
+	if (textStyle_RightJustified == (textStyle & textStyle_RightJustified)) {
+		textStyle = (Style)(textStyle & (~textStyle_RightJustified));
 	}
 
 

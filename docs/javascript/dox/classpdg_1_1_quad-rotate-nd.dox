@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Quad::rotate(rotationRadians, centerPtOffset)
+
+\brief rotate(n): rotate the quad by a rotation in radians (around the calculated center point of the quad); rotate(n, [Offset] o): rotate the quad by a rotation in radians around an offset center point
+
+**/ }

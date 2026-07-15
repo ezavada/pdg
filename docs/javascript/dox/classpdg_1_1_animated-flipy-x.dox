@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::flipY()
+
+\brief flips the object vertically, center offset is flipped too. Applied before other transformations.
+
+**/ }

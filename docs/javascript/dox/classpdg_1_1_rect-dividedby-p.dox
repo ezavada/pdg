@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::dividedby(Point p)
+
+\brief Divide this rectangle by a point, returning a new rectangle with scaled dimensions
+
+**/ }

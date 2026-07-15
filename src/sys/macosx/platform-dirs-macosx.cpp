@@ -36,6 +36,8 @@
 
 #include <iostream>
 #include <string>
+#include <unistd.h>
+
 
 //#define DEBUG_DIRECTORY_SETUP
 
@@ -47,12 +49,13 @@
 
 namespace pdg {
 
-const char* macosx_setupWorkingDirectory(int argc, const char* argv[], bool& isBundle);
+const char* macosx_setupWorkingDirectory(int argc, const char* argv[], bool& isBundle, std::string& bundleName);
 
 const char* platform_setupDirectories(int argc, const char* argv[]) {
 		// make sure our working directory is the directory the app was launched from
 	bool isBundle;
-	const char* cwd = macosx_setupWorkingDirectory(argc, argv, isBundle);
+	std::string bundleName;  // Will be set if running from a bundle (e.g., "Catan.app")
+	const char* cwd = macosx_setupWorkingDirectory(argc, argv, isBundle, bundleName);
 	std::string workingDir = OS::makeCanonicalPath(cwd, true);
 	std::string appDir;
 	std::string appDataDir;
@@ -86,8 +89,8 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 	} else {
 		appDataDir = workingDir;
 	}
-	if (isBundle) {
-		resourceDir = workingDir + appName + "/Contents/Resources/";
+	if (isBundle &&!bundleName.empty()) {
+		resourceDir = workingDir + bundleName + "/Contents/Resources/";
 	} else {
 		resourceDir = workingDir;
 	}
@@ -106,8 +109,9 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 	return cwd;
 }
 
-const char* macosx_setupWorkingDirectory(int argc, const char* argv[], bool& isBundle) {
+const char* macosx_setupWorkingDirectory(int argc, const char* argv[], bool& isBundle, std::string& bundleName) {
 	isBundle = false;
+	bundleName = "";
     char* buf = (char*) std::malloc(1024);
     getcwd(buf, 1024);
     MAKE_STRING_BUFFER_SAFE(buf, 1024);
@@ -128,18 +132,50 @@ const char* macosx_setupWorkingDirectory(int argc, const char* argv[], bool& isB
 	    DIR_SETUP_DEBUG_ONLY( OS::_DOUT("added argv[0] but removed command name: [%s]", wdstr.c_str()); )
 	}
 	wdstr += '/'; // add back in the trailing path character
-	// check to see if the working directory was inside a bundle (this seems 
-	// to happen during normal finder launch but not during launch from XCode)
+	
+	// check to see if we're running from inside a bundle
+	// This can happen in two ways:
+	// 1. Working directory is inside bundle (normal Finder launch)
+	// 2. argv[0] contains the bundle path (debugger or command line launch)
 	std::string::size_type pos2 = wdstr.rfind(".app/Contents/MacOS/");
-	if (pos2 != std::string::npos) {
-		// found it, remove it
-		isBundle = true;
-		wdstr.resize(pos2);
-		pos2 = wdstr.find_last_of('/');
+	if (pos2 == std::string::npos && argc > 0) {
+		// Not found in wdstr, check argv[0]
+		std::string argv0Str(argv[0]);
+		pos2 = argv0Str.rfind(".app/Contents/MacOS/");
 		if (pos2 != std::string::npos) {
-			wdstr.resize(pos2 + 1);
+			// Found bundle path in argv[0]
+			// Extract the bundle name (e.g., "Catan.app")
+			std::string bundlePath = argv0Str.substr(0, pos2 + 4);  // Include ".app"
+			std::string::size_type slashPos = bundlePath.find_last_of('/');
+			if (slashPos != std::string::npos) {
+				bundleName = bundlePath.substr(slashPos + 1);  // e.g., "Catan.app"
+				wdstr = bundlePath.substr(0, slashPos + 1);     // Parent dir with trailing /
+			}
+			pos2 = 0; // Set to trigger bundle mode below
+			DIR_SETUP_DEBUG_ONLY( OS::_DOUT("found bundle in argv[0]: name=[%s], parent=[%s]", bundleName.c_str(), wdstr.c_str()); )
 		}
-	    DIR_SETUP_DEBUG_ONLY( OS::_DOUT("in bundle, adjusted working dir: [%s]", wdstr.c_str()); )
+	}
+	
+	if (pos2 != std::string::npos) {
+		// found bundle marker
+		isBundle = true;
+		// If pos2 > 0, it means we found it in wdstr originally (Finder launch), need to process it
+		if (pos2 > 0) {
+			// Extract bundle name from wdstr before modifying it
+			std::string tempStr = wdstr.substr(0, pos2 + 4);  // Include ".app"
+			std::string::size_type slashPos = tempStr.find_last_of('/');
+			if (slashPos != std::string::npos) {
+				bundleName = tempStr.substr(slashPos + 1);  // e.g., "Catan.app"
+			}
+			// Now extract parent directory
+			wdstr.resize(pos2);
+			pos2 = wdstr.find_last_of('/');
+			if (pos2 != std::string::npos) {
+				wdstr.resize(pos2 + 1);
+			}
+		}
+		// otherwise we already processed it from argv[0] above
+	    DIR_SETUP_DEBUG_ONLY( OS::_DOUT("in bundle: name=[%s], working dir=[%s]", bundleName.c_str(), wdstr.c_str()); )
 	}
 
 	// eliminate unnecessary "///" from front if present

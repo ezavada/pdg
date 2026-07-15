@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onExitLayer
+
+\brief set event handler for sprite out of bounds event
+
+These happen whenever this sprite moves completely outside the boundaries of the layer, but only if setWantsCollideWallEvents(true) was called.
+
+\sa setWantsCollideWallEvents()
+\sa onOffscreen()
+\sa onOnscreen()
+\sa SpriteAnimateEvent
+\sa IEventHandler
+
+**/ }

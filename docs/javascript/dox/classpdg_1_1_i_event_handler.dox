@@ -33,7 +33,6 @@ As you can see from the examples above, your Event Handler function will be call
 \return **true** if the event has been completely handled and should not propagate any further; or **false** it should be allowed to continue to propagate through the handler chain.
 
 \related EventEmitter
-\related EventManager
 
 \sa KeyEvent
 \sa KeyPressEvent

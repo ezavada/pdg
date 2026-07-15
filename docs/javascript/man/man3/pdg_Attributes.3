@@ -1,0 +1,501 @@
+.TH "Attributes" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Attributes \- Container for styling and transformation attributes used in drawing operations\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBambientLight\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBblendMode\fP (int blendMode)"
+.br
+.RI "sets the blend mode for rendering operations "
+.ti -1c
+.RI "\fBclipOverflow\fP ()"
+.br
+.RI "Sets whether image overflow should be clipped when drawn\&. "
+.ti -1c
+.RI "\fBfillColor\fP (\fBColor\fP color)"
+.br
+.RI "sets the fill color for shapes and drawings "
+.ti -1c
+.RI "\fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.RI "sets a linear gradient fill from start point to end point "
+.ti -1c
+.RI "\fBfillOpacity\fP (number float opacity)"
+.br
+.RI "sets the opacity for fill operations (0\&.0 to 1\&.0) "
+.ti -1c
+.RI "\fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
+.br
+.RI "Create a radial gradient fill from center point to outer radius\&. "
+.ti -1c
+.RI "\fBfitType\fP (int fit)"
+.br
+.RI "Sets how an image should be fitted into a target rectangle\&. "
+.ti -1c
+.RI "\fBfont\fP (\fBFont\fP font)"
+.br
+.RI "Sets the font to use for drawing text\&. "
+.ti -1c
+.RI "\fBframe\fP (int frame)"
+.br
+.RI "Sets which frame of an \fBImageStrip\fP to draw\&. "
+.ti -1c
+.RI "\fBColor\fP \fBgetAmbientLight\fP ()"
+.br
+.ti -1c
+.RI "int \fBgetBlendMode\fP ()"
+.br
+.RI "returns the current blend mode "
+.ti -1c
+.RI "boolean \fBgetClipOverflow\fP ()"
+.br
+.RI "Gets whether image overflow should be clipped when drawn\&. "
+.ti -1c
+.RI "\fBColor\fP \fBgetFillColor\fP ()"
+.br
+.RI "returns the current fill color "
+.ti -1c
+.RI "number float \fBgetFillOpacity\fP ()"
+.br
+.RI "returns the current fill opacity "
+.ti -1c
+.RI "int \fBgetFitType\fP ()"
+.br
+.RI "Gets how an image should be fitted into a target rectangle\&. "
+.ti -1c
+.RI "\fBFont\fP \fBgetFont\fP ()"
+.br
+.RI "Gets the font to use for drawing text\&. "
+.ti -1c
+.RI "int \fBgetFrame\fP ()"
+.br
+.RI "Gets which frame of an \fBImageStrip\fP to draw\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetGradientEnd\fP ()"
+.br
+.RI "returns the gradient end point "
+.ti -1c
+.RI "\fBColor\fP \fBgetGradientEndColor\fP ()"
+.br
+.RI "returns the gradient end color "
+.ti -1c
+.RI "\fBPoint\fP \fBgetGradientStart\fP ()"
+.br
+.RI "returns the gradient start point "
+.ti -1c
+.RI "\fBColor\fP \fBgetGradientStartColor\fP ()"
+.br
+.RI "returns the gradient start color "
+.ti -1c
+.RI "int \fBgetGradientType\fP ()"
+.br
+.RI "returns the current gradient type "
+.ti -1c
+.RI "\fBOffset\fP \fBgetLightOffset\fP ()"
+.br
+.RI "Gets the light source offset in spherical coordinates (radians) for sphere lighting\&. "
+.ti -1c
+.RI "\fBColor\fP \fBgetLineColor\fP ()"
+.br
+.RI "returns the current line color "
+.ti -1c
+.RI "number float \fBgetLineOpacity\fP ()"
+.br
+.RI "Get the current line opacity value\&. "
+.ti -1c
+.RI "uint \fBgetLineStyle\fP ()"
+.br
+.RI "returns the current line style "
+.ti -1c
+.RI "number float \fBgetLineThickness\fP ()"
+.br
+.RI "returns the current line thickness "
+.ti -1c
+.RI "\fBOffset\fP \fBgetPolarOffset\fP ()"
+.br
+.RI "Gets the polar offset for rotating a textured sphere\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetRadialGradientCenter\fP ()"
+.br
+.RI "returns the radial gradient center point "
+.ti -1c
+.RI "\fBColor\fP \fBgetRadialGradientCenterColor\fP ()"
+.br
+.RI "returns the radial gradient center color "
+.ti -1c
+.RI "\fBColor\fP \fBgetRadialGradientEndColor\fP ()"
+.br
+.RI "returns the radial gradient end color "
+.ti -1c
+.RI "number float \fBgetRadialGradientRadius\fP ()"
+.br
+.RI "returns the radial gradient radius "
+.ti -1c
+.RI "number float \fBgetRoundedCornerRadius\fP ()"
+.br
+.RI "returns the rounded corner radius "
+.ti -1c
+.RI "number float \fBgetSphereRotation\fP ()"
+.br
+.RI "Gets the rotation angle in radians for a textured sphere\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetSubsection\fP ()"
+.br
+.RI "Gets the subsection of an image to draw\&. "
+.ti -1c
+.RI "number float \fBgetTextSize\fP ()"
+.br
+.RI "Gets the text size in points for drawing text\&. "
+.ti -1c
+.RI "int \fBgetTextStyle\fP ()"
+.br
+.RI "Gets text style flags (bold, italic, underline, alignment) "
+.ti -1c
+.RI "\fBImage\fP \fBgetTexture\fP ()"
+.br
+.RI "Gets the texture image to use for drawing a sphere\&. "
+.ti -1c
+.RI "array number \fBgetTransform\fP ()"
+.br
+.RI "returns the current transformation matrix "
+.ti -1c
+.RI "\fBlightOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Sets light source with spherical coordinates in radians\&. "
+.ti -1c
+.RI "\fBlineColor\fP (\fBColor\fP color)"
+.br
+.RI "sets the line color for strokes and outlines "
+.ti -1c
+.RI "\fBlineOpacity\fP (number float opacity)"
+.br
+.RI "sets the opacity for line strokes (0\&.0 to 1\&.0) "
+.ti -1c
+.RI "\fBlineStyle\fP (int lineStyle)"
+.br
+.RI "sets the style of line strokes (solid, dashed, etc\&.) "
+.ti -1c
+.RI "\fBlineThickness\fP (number float thickness)"
+.br
+.RI "sets the thickness of line strokes in pixels "
+.ti -1c
+.RI "\fBpolarOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Sets the polar offset for rotating a textured sphere\&. "
+.ti -1c
+.RI "\fBrotation\fP (number float radians, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.RI "sets the rotation angle and center point for transformations "
+.ti -1c
+.RI "\fBroundedCorners\fP (number float radius)"
+.br
+.RI "sets the radius for rounded corners "
+.ti -1c
+.RI "\fBscale\fP (number float xFactor, number float yFactor=xFactor)"
+.br
+.RI "sets the scaling factors for x and y axes "
+.ti -1c
+.RI "\fBskew\fP (number float xSkew, number float ySkew)"
+.br
+.RI "sets the skew transformation for x and y axes "
+.ti -1c
+.RI "\fBsphereRotation\fP (number float \fBrotation\fP)"
+.br
+.RI "Sets the rotation angle in radians for a textured sphere\&. "
+.ti -1c
+.RI "\fBsubsection\fP (\fBRect\fP section)"
+.br
+.RI "Sets a subsection of an image to draw\&. "
+.ti -1c
+.RI "\fBtextSize\fP (number float size)"
+.br
+.RI "Sets the text size in points for drawing text\&. "
+.ti -1c
+.RI "\fBtextStyle\fP (int style)"
+.br
+.RI "Sets text style flags (bold, italic, underline, alignment) "
+.ti -1c
+.RI "\fBtexture\fP (\fBImage\fP texture)"
+.br
+.RI "Sets the texture image to use for drawing a sphere\&. "
+.ti -1c
+.RI "\fBtransform\fP (array number matrix)"
+.br
+.RI "sets the transformation matrix directly "
+.ti -1c
+.RI "\fBtranslation\fP (\fBOffset\fP offset)"
+.br
+.RI "sets the translation offset for transformations "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Container for styling and transformation attributes used in drawing operations\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "ambientLight (\fBColor\fP color)"
+
+.SS "blendMode (int blendMode)"
+
+.PP
+sets the blend mode for rendering operations 
+.PP
+References \fBblendMode()\fP\&.
+.PP
+Referenced by \fBblendMode()\fP\&.
+.SS "clipOverflow ()"
+
+.PP
+Sets whether image overflow should be clipped when drawn\&. 
+.SS "fillColor (\fBColor\fP color)"
+
+.PP
+sets the fill color for shapes and drawings 
+.SS "fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+
+.PP
+sets a linear gradient fill from start point to end point 
+.SS "fillOpacity (number float opacity)"
+
+.PP
+sets the opacity for fill operations (0\&.0 to 1\&.0) Set the opacity of filled areas (0\&.0 = transparent, 1\&.0 = opaque) 
+.SS "fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
+
+.PP
+Create a radial gradient fill from center point to outer radius\&. 
+.SS "fitType (int fit)"
+
+.PP
+Sets how an image should be fitted into a target rectangle\&. 
+.SS "font (\fBFont\fP font)"
+
+.PP
+Sets the font to use for drawing text\&. 
+.PP
+References \fBfont()\fP\&.
+.PP
+Referenced by \fBfont()\fP\&.
+.SS "frame (int frame)"
+
+.PP
+Sets which frame of an \fBImageStrip\fP to draw\&. 
+.PP
+References \fBframe()\fP\&.
+.PP
+Referenced by \fBframe()\fP\&.
+.SS "\fBColor\fP getAmbientLight ()"
+
+.SS "int getBlendMode ()"
+
+.PP
+returns the current blend mode 
+.SS "boolean getClipOverflow ()"
+
+.PP
+Gets whether image overflow should be clipped when drawn\&. 
+.SS "\fBColor\fP getFillColor ()"
+
+.PP
+returns the current fill color 
+.SS "number float getFillOpacity ()"
+
+.PP
+returns the current fill opacity 
+.SS "int getFitType ()"
+
+.PP
+Gets how an image should be fitted into a target rectangle\&. 
+.SS "\fBFont\fP getFont ()"
+
+.PP
+Gets the font to use for drawing text\&. 
+.SS "int getFrame ()"
+
+.PP
+Gets which frame of an \fBImageStrip\fP to draw\&. 
+.SS "\fBPoint\fP getGradientEnd ()"
+
+.PP
+returns the gradient end point 
+.SS "\fBColor\fP getGradientEndColor ()"
+
+.PP
+returns the gradient end color 
+.SS "\fBPoint\fP getGradientStart ()"
+
+.PP
+returns the gradient start point 
+.SS "\fBColor\fP getGradientStartColor ()"
+
+.PP
+returns the gradient start color 
+.SS "int getGradientType ()"
+
+.PP
+returns the current gradient type 
+.SS "\fBOffset\fP getLightOffset ()"
+
+.PP
+Gets the light source offset in spherical coordinates (radians) for sphere lighting\&. 
+.SS "\fBColor\fP getLineColor ()"
+
+.PP
+returns the current line color 
+.SS "number float getLineOpacity ()"
+
+.PP
+Get the current line opacity value\&. 
+.SS "uint getLineStyle ()"
+
+.PP
+returns the current line style 
+.SS "number float getLineThickness ()"
+
+.PP
+returns the current line thickness 
+.SS "\fBOffset\fP getPolarOffset ()"
+
+.PP
+Gets the polar offset for rotating a textured sphere\&. 
+.SS "\fBPoint\fP getRadialGradientCenter ()"
+
+.PP
+returns the radial gradient center point 
+.SS "\fBColor\fP getRadialGradientCenterColor ()"
+
+.PP
+returns the radial gradient center color 
+.SS "\fBColor\fP getRadialGradientEndColor ()"
+
+.PP
+returns the radial gradient end color 
+.SS "number float getRadialGradientRadius ()"
+
+.PP
+returns the radial gradient radius 
+.SS "number float getRoundedCornerRadius ()"
+
+.PP
+returns the rounded corner radius 
+.SS "number float getSphereRotation ()"
+
+.PP
+Gets the rotation angle in radians for a textured sphere\&. 
+.SS "\fBRect\fP getSubsection ()"
+
+.PP
+Gets the subsection of an image to draw\&. 
+.SS "number float getTextSize ()"
+
+.PP
+Gets the text size in points for drawing text\&. 
+.SS "int getTextStyle ()"
+
+.PP
+Gets text style flags (bold, italic, underline, alignment) 
+.SS "\fBImage\fP getTexture ()"
+
+.PP
+Gets the texture image to use for drawing a sphere\&. 
+.SS "array number getTransform ()"
+
+.PP
+returns the current transformation matrix 
+.SS "lightOffset (\fBOffset\fP offset)"
+
+.PP
+Sets light source with spherical coordinates in radians\&. The lightOffset is an \fBOffset\fP with two values representing spherical coordinates in radians: offset\&.x (ρ/rho): Horizontal angle (azimuth) - rotation around the vertical axis offset\&.y (θ/theta): Vertical angle (elevation/polar angle) - angle from the horizontal plane
+
+.PP
+Key Points Offset(0, 0): Light directly in front at horizon level \fBOffset\fP(π/2, 0): Light from the right side at horizon level \fBOffset\fP(0, π/2): Light from directly above \fBOffset\fP(π, 0): Light from behind at horizon level The values are relative to the sphere's center, with the light positioned at a distance proportional to the sphere's radius\&. 
+.SS "lineColor (\fBColor\fP color)"
+
+.PP
+sets the line color for strokes and outlines 
+.SS "lineOpacity (number float opacity)"
+
+.PP
+sets the opacity for line strokes (0\&.0 to 1\&.0) 
+.SS "lineStyle (int lineStyle)"
+
+.PP
+sets the style of line strokes (solid, dashed, etc\&.) 
+.PP
+References \fBlineStyle()\fP\&.
+.PP
+Referenced by \fBlineStyle()\fP\&.
+.SS "lineThickness (number float thickness)"
+
+.PP
+sets the thickness of line strokes in pixels 
+.SS "polarOffset (\fBOffset\fP offset)"
+
+.PP
+Sets the polar offset for rotating a textured sphere\&. 
+.SS "rotation (number float radians, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
+
+.PP
+sets the rotation angle and center point for transformations 
+.PP
+Referenced by \fBsphereRotation()\fP\&.
+.SS "roundedCorners (number float radius)"
+
+.PP
+sets the radius for rounded corners 
+.SS "scale (number float xFactor, number float yFactor = \fRxFactor\fP)"
+
+.PP
+sets the scaling factors for x and y axes 
+.SS "skew (number float xSkew, number float ySkew)"
+
+.PP
+sets the skew transformation for x and y axes 
+.SS "sphereRotation (number float rotation)"
+
+.PP
+Sets the rotation angle in radians for a textured sphere\&. 
+.PP
+References \fBrotation()\fP\&.
+.SS "subsection (\fBRect\fP section)"
+
+.PP
+Sets a subsection of an image to draw\&. 
+.SS "textSize (number float size)"
+
+.PP
+Sets the text size in points for drawing text\&. 
+.SS "textStyle (int style)"
+
+.PP
+Sets text style flags (bold, italic, underline, alignment) 
+.SS "texture (\fBImage\fP texture)"
+
+.PP
+Sets the texture image to use for drawing a sphere\&. 
+.PP
+References \fBtexture()\fP\&.
+.PP
+Referenced by \fBtexture()\fP\&.
+.SS "transform (array number matrix)"
+
+.PP
+sets the transformation matrix directly 
+.SS "translation (\fBOffset\fP offset)"
+
+.PP
+sets the translation offset for transformations 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

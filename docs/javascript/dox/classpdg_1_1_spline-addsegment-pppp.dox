@@ -1,0 +1,62 @@
+namespace pdg { /**
+
+\fn pdg::Spline::addSegment(p1, p2, p3, p4)
+
+\brief adds a spline segment with four control points
+
+The meaning of the four points depends on the spline type:
+
+\par Hermite Splines (spline_Hermite):
+- **p1** - Start position (Point)
+- **p2** - End position (Point)
+- **p3** - Tangent **vector** at start (NOT a position, but a direction vector)
+- **p4** - Tangent **vector** at end (NOT a position, but a direction vector)
+
+\warning For Hermite splines, p3 and p4 are **tangent vectors** (directions), not positions.
+They control the direction and speed of the curve at the start and end points. To create
+identical curves that are offset in position, use the same tangent vectors with different
+start/end positions.
+
+\par Cubic Bezier Splines (spline_CubicBezier):
+- **p1** - Start position
+- **p2** - First control point (handle)
+- **p3** - Second control point (handle)
+- **p4** - End position
+
+\par Cardinal/Catmull-Rom Splines (spline_Cardinal):
+- **p1**, **p2**, **p3**, **p4** - Four consecutive control points
+- The curve passes through p2 and p3, using p1 and p4 to calculate tangents
+
+\par Other Spline Types:
+The four points serve as control points according to each spline type's mathematical definition.
+
+\par Example - Hermite with tangent vectors:
+\code
+var spline = new pdg.Spline(pdg.spline_Hermite);
+spline.addSegment(
+    new pdg.Point(0, 0),     // p1: start position
+    new pdg.Point(100, 50),  // p2: end position
+    new pdg.Point(30, 20),   // p3: tangent vector (go right 30, up 20)
+    new pdg.Point(30, -10)   // p4: tangent vector (arrive going right 30, down 10)
+);
+\endcode
+
+\par Example - Cubic Bezier:
+\code
+var bezier = new pdg.Spline(pdg.spline_CubicBezier);
+bezier.addSegment(
+    new pdg.Point(0, 0),     // start point
+    new pdg.Point(25, 75),   // first control handle
+    new pdg.Point(75, 25),   // second control handle
+    new pdg.Point(100, 100)  // end point
+);
+\endcode
+
+\param p1 first control point (meaning depends on spline type)
+\param p2 second control point (meaning depends on spline type)
+\param p3 third control point (meaning depends on spline type)
+\param p4 fourth control point (meaning depends on spline type)
+
+\see addPoint(), getFirstOrder(), getSecondOrder()
+
+**/ }

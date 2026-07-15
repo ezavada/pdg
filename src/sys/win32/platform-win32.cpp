@@ -56,7 +56,7 @@
 #include <iostream>
 #include <string>
 #include "internals.h"
-#include "configResource.h"
+#include "ConfigResource.h"
 #include "pdg/sys/os.h"
 #include "graphics-win32.h"
 
@@ -88,6 +88,7 @@ HINSTANCE gAppInstance = NULL;
 HWND gMainHWND = NULL;
 
 //#define DEBUG_DIRECTORY_SETUP
+//#define DEBUG_EVENTS  // Uncomment to log window messages (WM_close, WM_destroy, etc.) via OS::_DOUT (requires DEBUG build; see EARLY_EXIT_INVESTIGATION.md)
 
 #ifndef DEBUG_DIRECTORY_SETUP
 	#define DIR_SETUP_DEBUG_ONLY( exp )
@@ -229,8 +230,8 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 					buffer[0] = 0;
             		// we load the install directory string from a resource so it can be easily changed
             		WinAPI::LoadStringA(gAppInstance, IDS_INSTALLDIRSTR, buffer, 1024);
-					std::strncat(szPath, "\\", 1024);
-					std::strncat(szPath, buffer, 1024);
+					std::strncat(szPath, "\\", sizeof(szPath) - strlen(szPath) - 1);
+					std::strncat(szPath, buffer, sizeof(szPath) - strlen(szPath) - 1);
 					MAKE_STRING_BUFFER_SAFE(szPath, 1024);
 					appDataPath.assign(szPath);
 				}
@@ -264,13 +265,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	//DEBUG_ONLY( OS::_DOUT("winproc msg(%d) wparam(%d) lparam(%d)", msg, wparam, lparam); )
 
 	switch(msg) {
+#ifndef PDG_NO_GUI
 		case WM_SETCURSOR:
 			{
 				if (winGfxMgr->privateMaintainWin32HardwareCursor() ) {
-				    return true;  // TODO: why do we return true here when we return 0 everywhere else?
+				    return TRUE;  // Let windows know we handled this message
 				}
 			}
 			break;
+#endif // !PDG_NO_GUI
 #ifndef PDG_NO_SOUND
   #if !defined (PDG_DONT_USE_DIRECTSHOW_SOUND)
 		case WM_PDG_SOUND_NOTIFY:
@@ -472,7 +475,7 @@ void pauseGame()
 		Rect screenDim(mainPort->getDrawingArea());
 		gHatchImage->drawTexture(screenDim);
 		Point textPt(screenDim.width()/2, screenDim.height()/2);
-		Graphics::Style style = (Graphics::Style)(Graphics::textStyle_Bold + Graphics::textStyle_Centered);
+		Style style = (Style)(textStyle_Bold + textStyle_Centered);
 		const int PAUSE_FONT_SIZE = 45;
 		int fontHeight = mainPort->getCurrentFont()->getFontHeight(PAUSE_FONT_SIZE, style);
 		mainPort->drawText(gPausedStr.c_str(), textPt, PAUSE_FONT_SIZE, style, Color(0xff, 0xff, 0xff));
@@ -1017,7 +1020,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     				thePortWin->mBackBuffer.updateFrontBuffer();
     				WinAPI::EndPaint(thePortWin->mWindow, &ps);
 				}
-				return true;  // TODO: why do we return true here when we return 0 everywhere else?
+				return TRUE;  // Let windows know we handled this message
 			}
 			break;
 		case WM_SIZE:
@@ -1187,15 +1190,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			thePortWin->resetCursor();
 			WinAPI::DestroyWindow(thePortWin->mWindow);
 			return 0;
-		case WM_DESTROY:
+		case WM_DESTROY: {
 		  #ifdef DEBUG_EVENTS
             OS::_DOUT("got WM_destroy");
           #endif
-			thePortWin->resetCursor();
-			thePortWin->mWindow = NULL;
-			thePortWin->mBackBuffer.destroy();
-			WinAPI::PostQuitMessage(0);
+			size_t activeCount = winGfxMgr->getAllActivePorts().size();
+			// thePortWin can be null if we just closed the main port (gMainPort was cleared in closeGraphicsPort)
+			if (thePortWin) {
+				thePortWin->resetCursor();
+				thePortWin->mWindow = NULL;
+				thePortWin->mBackBuffer.destroy();
+			}
+			// Only quit when the last window is closed. Skip when PDG_NO_QUIT_ON_WINDOW_CLOSE is set (test harness).
+			if (activeCount == 0) {
+				WinAPI::PostQuitMessage(0);
+			}
 			return 0;
+		}
 	  #endif // PDG_NO_GUI
 		default:
 		    break;

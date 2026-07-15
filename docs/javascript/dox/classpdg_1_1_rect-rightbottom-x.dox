@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::rightBottom()
+
+\brief get bottom right corner point of this rectangle
+
+**/ }

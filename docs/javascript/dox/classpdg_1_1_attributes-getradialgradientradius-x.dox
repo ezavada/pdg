@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getRadialGradientRadius()
+
+\brief returns the radial gradient radius
+
+**/ }

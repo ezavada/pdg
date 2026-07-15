@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::scale(xFactor, yFactor)
+
+\brief sets the scaling factors for x and y axes
+
+**/ }

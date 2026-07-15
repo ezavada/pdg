@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::detachSprite(sprite)
+
+\brief detaches the specified sprite from this sprite
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::lineColor(color)
+
+\brief sets the line color for strokes and outlines
+
+**/ }

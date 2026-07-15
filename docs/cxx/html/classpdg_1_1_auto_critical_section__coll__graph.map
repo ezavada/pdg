@@ -1,3 +1,5 @@
 <map id="AutoCriticalSection" name="AutoCriticalSection">
-<area shape="rect" id="node2" href="$classpdg_1_1_critical_section.html" title="CriticalSection" alt="" coords="19,6,124,34"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,102,139,128"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_critical_section.html" title=" " alt="" coords="19,5,125,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="75,46,75,101,69,101,69,46"/>
 </map>

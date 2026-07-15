@@ -1,0 +1,19 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::fadeIn
+
+\brief fade in to full opacity over time 
+
+Generates an #eventType_SpriteAnimate #action_FadeInComplete event when done.
+
+\note if a previous call was made to wait() the fade animation will not start until the wait is complete
+
+    mySprite.fadeIn(1000);   // immediately start to fade in over the next second
+    myOtherSprite.wait(2000).fadeIn(1000);  // wait 2 seconds, then fade in
+
+\sa SpriteAnimateEvent
+\sa fadeOut()
+\sa fadeTo()
+\sa wait()
+
+**/ }

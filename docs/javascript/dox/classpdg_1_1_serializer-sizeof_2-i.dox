@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::sizeof_2(val)
+
+\brief Calculate the number of bytes needed to serialize a signed 16-bit integer
+
+**/ }

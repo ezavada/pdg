@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::serialize_ref(object obj)
+
+\brief Serialize an object reference to the stream
+
+**/ }

@@ -48,7 +48,7 @@
 #define PDG_CUSTOM_RUN_LOOP
 
 // ----------- AppDelegate
-@interface AppDelegate : NSObject
+@interface AppDelegate : NSObject <NSApplicationDelegate>
 {
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
@@ -142,7 +142,13 @@ void pdg_LibAppInit() {
 	AppDelegate * delegate = [[AppDelegate alloc] init];
 	[NSApplication sharedApplication];
 	[NSApp setDelegate:delegate];
+	
+	// Force the application to be a GUI application, even when launched from command line
+	// This is crucial for window creation to work properly on macOS
 	[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+	
+	// Activate the app to bring it to the foreground
+	[NSApp activateIgnoringOtherApps:YES];
 }
 
 // these are for managing the pool when this is a library
@@ -228,6 +234,9 @@ void pdg_LibRun() {
 }
 
 void pdg_LibQuit() {
+	if (gPDG_Quitting) {
+		return;  // Already quitting, don't do cleanup twice
+	}
 	gPDG_Quitting = true;
 	if (!gPDG_InRunLoop) {	// run loop calls this itself
     	pdg::main_cleanup();

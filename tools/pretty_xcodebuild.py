@@ -22,7 +22,7 @@ import tempfile
 #MAKEPROG = "make"
 # Comment the previous line and uncomment the next line if you name your pretty-make.py 
 # program 'make', to avoid recursion
-MAKEPROG = "xcodebuild"
+MAKEPROG = "xcodebuild"   # '--makeprog command' to override
 
 ### Default values for command-line options:
 SCREENWIDTH = 80 	# Fallback value, current value is deduced from resize

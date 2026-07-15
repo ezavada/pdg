@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::empty()
+
+\brief returns true if the drawing has no elements
+
+**/ }

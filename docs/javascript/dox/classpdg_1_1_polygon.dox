@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\class pdg::Polygon
+
+\brief Geometric shape defined by a collection of points with support for transformations and boolean operations
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::setFontScalingFactor(scaleBy)
+
+\brief Set a scaling factor to adjust the size of all rendered text
+
+**/ }

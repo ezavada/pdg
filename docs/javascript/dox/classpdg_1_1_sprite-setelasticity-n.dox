@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setElasticity(elasticity)
+
+\brief sets the elasticity (bounce) factor for this sprite's physics body
+
+**/ }

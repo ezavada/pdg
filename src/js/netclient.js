@@ -31,76 +31,98 @@
 // to the pdg standalone app but also part of the pure 
 // javascript implementation
 
-if ((typeof process != "undefined") && (typeof process.pdg != "undefined")) {
-	// node in standalone, classify becomes a built-in
-	require('netconnection');
-} else {
-	require('./netconnection');
-}
+
 var net = require('net');
 
-classify('NetClient', function() {
-
+class NetClient {
 	//! new Client(): create a network client for your game
-    def('initialize', function(opts) {
-			if ((arguments.length == 1) && (arguments[0] == null)) { 
-				return methodSignature("create a network client", arguments, "undefined", 0, "(object opts = null)");
-			}
-			this.connection = false;
-			this._errorCallback = false;
-			this._connectCallback = false;
-			this._allowDatagram = true;
-			if (typeof opts != 'undefined') {
-				if (typeof opts.noDatagram != 'undefined') {
-					this._allowDatagram = !opts.noDatagram
-				}
-			}
-		});
+    constructor(opts) {
+        this.connection = false;
+        this._errorCallback = false;
+        this._connectCallback = false;
+        this._allowDatagram = true;
+        if (typeof opts != 'undefined' && opts !== null) {
+            if (typeof opts.noDatagram != 'undefined') {
+                this._allowDatagram = !opts.noDatagram
+            }
+        }
+    }
 
 	//! attempt to connect to a server for your game
 	//! /param serverInfo the info for the server you want to connect to. Should be an object with
 	//! /param clientKey the private key that identifies this as an authorized client
 	//!        addr and port members, ie: { host: "localhost", port: 5454 }
-	def('connect', function(serverInfo, callback, clientKey) {
-			if ((arguments.length == 1) && (arguments[0] == null)) { 
-				return methodSignature("connect to a server for your game", arguments, "[object NetClient]", 2, "(object serverInfo, function callback, string clientKey = '')");
-			}
-			// have serverInfo, try to connect to it via TCP
-			this._connectCallback = callback;
-			var socket = net.connect({port: serverInfo.port, host: serverInfo.host},
-				function() { //'connect' listener
-				  try {
-					this.connection = new pdg.NetConnection(socket);
-					this.connection._clientInit(this, clientKey);
-				  } catch(e) { 
-				    if (this._errorCallback) {
-				      this._errorCallback(e);
-				    } else {
-				  	  console.error("NetClient Exception connecting to "+serverInfo.host+":"+serverInfo.port+": "+JSON.stringify(e)); 
-				  	}
-				  }
-				}.bind(this));
-			socket.on('error', function(error) {
-			  socket.end();
-			  if (this.connection) {
-				this.connection._handleError(error);
-			  } else if (this._errorCallback) {
-				this._errorCallback(error, this);
-			  }
-			}.bind(this));				
-			return this;
-		});
+	connect(serverInfo, callback, clientKey) {
+        if ((arguments.length == 1) && (arguments[0] == null)) { 
+            return methodSignature("connect to a server for your game", arguments, "[object NetClient]", 2, "(object serverInfo, function callback, string clientKey = \"\")");
+        }
+        // have serverInfo, try to connect to it via TCP
+        this._connectCallback = callback;
+        var connectFinished = false;
+        var connectTimer = false;
+        var finishConnect = function() {
+            if (connectFinished) {
+                return false;
+            }
+            connectFinished = true;
+            if (connectTimer) {
+                clearTimeout(connectTimer);
+                connectTimer = false;
+            }
+            return true;
+        };
+        var reportConnectError = function(error, socket) {
+            if (!finishConnect()) {
+                return;
+            }
+            if (socket && !socket.destroyed) {
+                socket.destroy();
+            }
+            if (this.connection) {
+                this.connection._handleError(error);
+            } else if (this._errorCallback) {
+                this._errorCallback(error, this);
+            }
+        }.bind(this);
+        var socket = net.connect({port: serverInfo.port, host: serverInfo.host},
+            function() { //'connect' listener
+              if (!finishConnect()) {
+                return;
+              }
+              try {
+                this.connection = new pdg.NetConnection(socket);
+                this.connection._clientInit(this, clientKey);
+              } catch(e) { 
+                if (this._errorCallback) {
+                  this._errorCallback(e);
+                } else {
+                  console.error("NetClient Exception connecting to "+serverInfo.host+":"+serverInfo.port+": "+JSON.stringify(e)); 
+                }
+              }
+            }.bind(this));
+        if (serverInfo && typeof serverInfo.timeout === 'number' && serverInfo.timeout > 0) {
+          connectTimer = setTimeout(function() {
+            reportConnectError({
+              code: 'ERR_CONNECT_TIMEOUT',
+              message: 'Timed out connecting to ' + serverInfo.host + ':' + serverInfo.port
+            }, socket);
+          }, serverInfo.timeout);
+        }
+        socket.on('error', function(error) {
+          reportConnectError(error, socket);
+        }.bind(this));
+        return this;
+    }
 
 	//! setup error handler
-	def('onError', function(callback) {
-			if ((arguments.length == 1) && (arguments[0] == null)) { 
-				return methodSignature("setup error handler", arguments, "[object NetClient]", 1, "(function callback)");
-			}
-			this._errorCallback = callback;
-			return this;
-		});
-
-});
+	onError(callback) {
+        if ((arguments.length == 1) && (arguments[0] == null)) { 
+            return methodSignature("setup error handler", arguments, "[object NetClient]", 1, "(function callback)");
+        }
+        this._errorCallback = callback;
+        return this;
+    }
+}
 
 if(!(typeof exports === 'undefined')) {
     exports.NetClient = NetClient;

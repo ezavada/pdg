@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::cleanupLayer
+
+\brief free all the memory used by a pdg.SpriteLayer or pdg.TileLayer
+
+\relatedalso SpriteLayer
+
+**/ }

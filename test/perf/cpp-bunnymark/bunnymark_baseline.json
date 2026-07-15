@@ -1,0 +1,22 @@
+{
+  "testName": "PDG Bunnymark (C++)",
+  "timestamp": "2025-10-20T19:28:07Z",
+  "testDurationSeconds": 659.166,
+  "totalFrames": 49928,
+  "frameTime": {
+    "meanMs": 7.89587,
+    "minMs": 0,
+    "maxMs": 154,
+    "percentile95Ms": 16,
+    "percentile99Ms": 21
+  },
+  "performance": {
+    "averageFPS": 126.648,
+    "droppedFrames": 2130,
+    "droppedFramePercent": 4.26614,
+    "maxBunniesAt60FPS": 31500,
+    "maxBunniesAt30FPS": 31500,
+    "finalBunnyCount": 31500
+  },
+  "bunnymarkScore": 31500
+}

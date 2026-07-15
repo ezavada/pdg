@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::makeJointUnbreakable
+
+\brief make the joint impossible to break (*Chipmunk Physics Only*)
+
+\note sufficient force can still incorrectly stretch a joint, adjust contraint's error bias to fix.
+
+\sa makeJointBreakable()
+\sa CpConstraint.setErrorBias()
+
+**/ }

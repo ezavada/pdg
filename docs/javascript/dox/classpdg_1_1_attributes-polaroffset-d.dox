@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::polarOffset(Offset offset)
+
+\brief Sets the polar offset for rotating a textured sphere
+
+**/ }

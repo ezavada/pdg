@@ -1,252 +1,268 @@
-.TH "CpConstraint" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "CpConstraint" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-CpConstraint \- 
-.PP
-describes how two sprites are connected to one another (\fIChipmunk Physics Only\fP)  
+CpConstraint \- describes how two sprites are connected to one another (\fIChipmunk Physics Only\fP)  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
 .RI "\fBactivateBodies\fP ()"
 .br
-.RI "\fIwake up sleeping or idle parts of a joint \fP"
+.RI "wake up sleeping or idle parts of a joint "
 .ti -1c
 .RI "\fBOffset\fP \fBgetAnchor\fP ()"
 .br
-.RI "\fIgets the anchor point for the joint on the primary sprite for pin, slide and spring joints \fP"
+.RI "gets the anchor point for the joint on the primary sprite for pin, slide and spring joints "
 .ti -1c
 .RI "number \fBgetErrorBias\fP ()"
 .br
-.RI "\fIget the percentage of joint error than remains unfixed after one second \fP"
+.RI "get the percentage of joint error than remains unfixed after one second "
 .ti -1c
 .RI "number \fBgetGearInitialAngle\fP ()"
 .br
-.RI "\fIget the initial angular offset between the two sprites joined with a gear joint \fP"
+.RI "get the initial angular offset between the two sprites joined with a gear joint "
 .ti -1c
 .RI "number \fBgetGearRatio\fP ()"
 .br
-.RI "\fIget the ratio of rotation between the two sprites joined with a gear joint \fP"
+.RI "get the ratio of rotation between the two sprites joined with a gear joint "
 .ti -1c
 .RI "\fBOffset\fP \fBgetGrooveEnd\fP ()"
 .br
-.RI "\fIget the position on the primary sprite of the end of the groove for a groove joint \fP"
+.RI "get the position on the primary sprite of the end of the groove for a groove joint "
 .ti -1c
 .RI "\fBOffset\fP \fBgetGrooveStart\fP ()"
 .br
-.RI "\fIget the position on the primary sprite of the start of the groove for a groove joint \fP"
+.RI "get the position on the primary sprite of the start of the groove for a groove joint "
 .ti -1c
 .RI "number \fBgetImpulse\fP ()"
 .br
-.RI "\fIget the last impulse applied by the joint \fP"
+.RI "get the last impulse applied by the joint "
 .ti -1c
 .RI "number \fBgetMaxAngle\fP ()"
 .br
-.RI "\fIget the maximum angle allowed by a RotaryLimit joint \fP"
+.RI "get the maximum angle allowed by a RotaryLimit joint "
 .ti -1c
 .RI "number \fBgetMaxBias\fP ()"
 .br
-.RI "\fIget the maximum speed at which a joint can be error corrrected \fP"
+.RI "get the maximum speed at which a joint can be error corrrected "
 .ti -1c
 .RI "number \fBgetMaxForce\fP ()"
 .br
-.RI "\fIget the maximum force the joint can apply to the sprites \fP"
+.RI "get the maximum force the joint can apply to the sprites "
 .ti -1c
 .RI "number \fBgetMinAngle\fP ()"
 .br
-.RI "\fIget the minimum angle allowed by a RotaryLimit joint \fP"
+.RI "get the minimum angle allowed by a RotaryLimit joint "
 .ti -1c
 .RI "number \fBgetMotorSpinRate\fP ()"
 .br
-.RI "\fIget how fast the sprites rotate relative to one another in a motor joint \fP"
+.RI "get how fast the sprites rotate relative to one another in a motor joint "
 .ti -1c
 .RI "\fBOffset\fP \fBgetOtherAnchor\fP ()"
 .br
-.RI "\fIgets the anchor point for the joint on the secondary sprite \fP"
+.RI "gets the anchor point for the joint on the secondary sprite "
 .ti -1c
 .RI "\fBSprite\fP \fBgetOtherSprite\fP ()"
 .br
-.RI "\fIget the secondary \fBSprite\fP for the joint \fP"
+.RI "get the secondary \fBSprite\fP for the joint "
 .ti -1c
 .RI "number \fBgetPinDist\fP ()"
 .br
-.RI "\fIget the distance between the anchors on a pin joint \fP"
+.RI "get the distance between the anchors on a pin joint "
 .ti -1c
 .RI "number \fBgetRatchetAngle\fP ()"
 .br
-.RI "\fIget the current angle of a ratchet joint \fP"
+.RI "get the current angle of a ratchet joint "
 .ti -1c
 .RI "number \fBgetRatchetInterval\fP ()"
 .br
-.RI "\fIget the distance between backstops on a ratchet joint \fP"
+.RI "get the distance between backstops on a ratchet joint "
 .ti -1c
 .RI "number \fBgetRatchetPhase\fP ()"
 .br
-.RI "\fIget the initial offset for the ratchet backstops on a ratchet joint \fP"
+.RI "get the initial offset for the ratchet backstops on a ratchet joint "
 .ti -1c
 .RI "number \fBgetRotarySpringRestAngle\fP ()"
 .br
-.RI "\fIget the angle between sprites at which a rotary spring is at rest on a rotary spring joint \fP"
+.RI "get the angle between sprites at which a rotary spring is at rest on a rotary spring joint "
 .ti -1c
 .RI "number \fBgetSlideMaxDist\fP ()"
 .br
-.RI "\fIget the maximum disable apart for the anchors of a slide joint \fP"
+.RI "get the maximum distance apart for the anchors of a slide joint "
 .ti -1c
 .RI "number \fBgetSlideMinDist\fP ()"
 .br
-.RI "\fIget the minimum distance apart for the anchors of a slide joint \fP"
+.RI "get the minimum distance apart for the anchors of a slide joint "
 .ti -1c
 .RI "number \fBgetSpringDamping\fP ()"
 .br
-.RI "\fIget the damping for a rotary spring or a spring joint \fP"
+.RI "get the damping for a rotary spring or a spring joint "
 .ti -1c
 .RI "number \fBgetSpringRestLength\fP ()"
 .br
-.RI "\fIget the distance between anchors at which the spring is at rest for a spring joint \fP"
+.RI "get the distance between anchors at which the spring is at rest for a spring joint "
 .ti -1c
 .RI "number \fBgetSpringStiffness\fP ()"
 .br
-.RI "\fIget the stiffness for a rotary spring or a spring joint \fP"
+.RI "get the stiffness for a rotary spring or a spring joint "
 .ti -1c
 .RI "\fBSprite\fP \fBgetSprite\fP ()"
 .br
-.RI "\fIget the primary \fBSprite\fP for the joint \fP"
+.RI "get the primary \fBSprite\fP for the joint "
 .ti -1c
 .RI "string \fBgetType\fP ()"
 .br
-.RI "\fIreturns a string for the type of joint \fP"
+.RI "returns a string for the type of joint "
 .ti -1c
-.RI "cpConstraint \fBsetAnchor\fP (\fBOffset\fP inAnchor)"
+.RI "\fBCpConstraint\fP \fBsetAnchor\fP (\fBOffset\fP inAnchor)"
 .br
-.RI "\fIsets the anchor point for the joint on the primary sprite for pin, slide and spring joints \fP"
+.RI "sets the anchor point for the joint on the primary sprite for pin, slide and spring joints "
 .ti -1c
-.RI "cpConstraint \fBsetErrorBias\fP (number inErrorBias)"
+.RI "\fBCpConstraint\fP \fBsetErrorBias\fP (number inErrorBias)"
 .br
-.RI "\fIset the percentage of joint error than remains unfixed after one second \fP"
+.RI "set the percentage of joint error than remains unfixed after one second "
 .ti -1c
-.RI "cpConstraint \fBsetGearInitialAngle\fP (number inGearInitialAngle)"
+.RI "\fBCpConstraint\fP \fBsetGearInitialAngle\fP (number inGearInitialAngle)"
 .br
-.RI "\fIset the initial angular offset between the two sprites joined with a gear joint \fP"
+.RI "set the initial angular offset between the two sprites joined with a gear joint "
 .ti -1c
-.RI "cpConstraint \fBsetGearRatio\fP (number inGearRatio)"
+.RI "\fBCpConstraint\fP \fBsetGearRatio\fP (number inGearRatio)"
 .br
-.RI "\fIset the ratio of rotation between the two sprites joined with a gear joint \fP"
+.RI "set the ratio of rotation between the two sprites joined with a gear joint "
 .ti -1c
-.RI "cpConstraint \fBsetGrooveEnd\fP (\fBOffset\fP inGrooveEnd)"
+.RI "\fBCpConstraint\fP \fBsetGrooveEnd\fP (\fBOffset\fP inGrooveEnd)"
 .br
-.RI "\fIset the position on the primary sprite of the end of the groove for a groove joint \fP"
+.RI "set the position on the primary sprite of the end of the groove for a groove joint "
 .ti -1c
-.RI "cpConstraint \fBsetGrooveStart\fP (\fBOffset\fP inGrooveStart)"
+.RI "\fBCpConstraint\fP \fBsetGrooveStart\fP (\fBOffset\fP inGrooveStart)"
 .br
-.RI "\fIset the position on the primary sprite of the start of the groove for a groove joint \fP"
+.RI "set the position on the primary sprite of the start of the groove for a groove joint "
 .ti -1c
-.RI "cpConstraint \fBsetMaxAngle\fP (number inMaxAngle)"
+.RI "\fBCpConstraint\fP \fBsetMaxAngle\fP (number inMaxAngle)"
 .br
-.RI "\fIset the maximum angle allowed by a RotaryLimit joint \fP"
+.RI "set the maximum angle allowed by a RotaryLimit joint "
 .ti -1c
-.RI "cpConstraint \fBsetMaxBias\fP (number inMaxBias)"
+.RI "\fBCpConstraint\fP \fBsetMaxBias\fP (number inMaxBias)"
 .br
-.RI "\fIset the maximum speed at which a joint can be error corrrected \fP"
+.RI "set the maximum speed at which a joint can be error corrrected "
 .ti -1c
-.RI "cpConstraint \fBsetMaxForce\fP (number inMaxForce)"
+.RI "\fBCpConstraint\fP \fBsetMaxForce\fP (number inMaxForce)"
 .br
-.RI "\fIset the maximum force the joint can apply to the sprites \fP"
+.RI "set the maximum force the joint can apply to the sprites "
 .ti -1c
-.RI "cpConstraint \fBsetMinAngle\fP (number inMinAngle)"
+.RI "\fBCpConstraint\fP \fBsetMinAngle\fP (number inMinAngle)"
 .br
-.RI "\fIset the minimum angle allowed by a RotaryLimit joint \fP"
+.RI "set the minimum angle allowed by a RotaryLimit joint "
 .ti -1c
-.RI "cpConstraint \fBsetMotorSpinRate\fP (number inMotorSpinRate)"
+.RI "\fBCpConstraint\fP \fBsetMotorSpinRate\fP (number inMotorSpinRate)"
 .br
-.RI "\fIset how fast the sprites rotate relative to one another in a motor joint \fP"
+.RI "set how fast the sprites rotate relative to one another in a motor joint "
 .ti -1c
-.RI "cpConstraint \fBsetOtherAnchor\fP (\fBOffset\fP inOtherAnchor)"
+.RI "\fBCpConstraint\fP \fBsetOtherAnchor\fP (\fBOffset\fP inOtherAnchor)"
 .br
-.RI "\fIsets the anchor point for the joint on the secondary sprite \fP"
+.RI "sets the anchor point for the joint on the secondary sprite "
 .ti -1c
-.RI "cpConstraint \fBsetPinDist\fP (number inPinDist)"
+.RI "\fBCpConstraint\fP \fBsetPinDist\fP (number inPinDist)"
 .br
-.RI "\fIset the distance between the anchors on a pin joint \fP"
+.RI "set the distance between the anchors on a pin joint "
 .ti -1c
-.RI "cpConstraint \fBsetRatchetAngle\fP (number inRatchetAngle)"
+.RI "\fBCpConstraint\fP \fBsetRatchetAngle\fP (number inRatchetAngle)"
 .br
-.RI "\fIset the current angle of a ratchet joint \fP"
+.RI "set the current angle of a ratchet joint "
 .ti -1c
-.RI "cpConstraint \fBsetRatchetInterval\fP (number inRatchetInterval)"
+.RI "\fBCpConstraint\fP \fBsetRatchetInterval\fP (number inRatchetInterval)"
 .br
-.RI "\fIset the distance between backstops on a ratchet joint \fP"
+.RI "set the distance between backstops on a ratchet joint "
 .ti -1c
-.RI "cpConstraint \fBsetRatchetPhase\fP (number inRatchetPhase)"
+.RI "\fBCpConstraint\fP \fBsetRatchetPhase\fP (number inRatchetPhase)"
 .br
-.RI "\fIset the initial offset for the ratchet backstops on a ratchet joint \fP"
+.RI "set the initial offset for the ratchet backstops on a ratchet joint "
 .ti -1c
-.RI "cpConstraint \fBsetRotarySpringRestAngle\fP (number inRotarySpringRestAngle)"
+.RI "\fBCpConstraint\fP \fBsetRotarySpringRestAngle\fP (number inRotarySpringRestAngle)"
 .br
-.RI "\fIset the angle between sprites at which a rotary spring is at rest on a rotary spring joint \fP"
+.RI "set the angle between sprites at which a rotary spring is at rest on a rotary spring joint "
 .ti -1c
-.RI "cpConstraint \fBsetSlideMaxDist\fP (number inSlideMaxDist)"
+.RI "\fBCpConstraint\fP \fBsetSlideMaxDist\fP (number inSlideMaxDist)"
 .br
-.RI "\fIset the maximum disable apart for the anchors of a slide joint \fP"
+.RI "set the maximum disable apart for the anchors of a slide joint "
 .ti -1c
-.RI "cpConstraint \fBsetSlideMinDist\fP (number inSlideMinDist)"
+.RI "\fBCpConstraint\fP \fBsetSlideMinDist\fP (number inSlideMinDist)"
 .br
-.RI "\fIset the minimum distance apart for the anchors of a slide joint \fP"
+.RI "set the minimum distance apart for the anchors of a slide joint "
 .ti -1c
-.RI "cpConstraint \fBsetSpringDamping\fP (number inSpringDamping)"
+.RI "\fBCpConstraint\fP \fBsetSpringDamping\fP (number inSpringDamping)"
 .br
-.RI "\fIset the damping for a rotary spring or a spring joint \fP"
+.RI "set the damping for a rotary spring or a spring joint "
 .ti -1c
-.RI "cpConstraint \fBsetSpringRestLength\fP (number inSpringRestLength)"
+.RI "\fBCpConstraint\fP \fBsetSpringRestLength\fP (number inSpringRestLength)"
 .br
-.RI "\fIset the distance between anchors at which the spring is at rest for a spring joint \fP"
+.RI "set the distance between anchors at which the spring is at rest for a spring joint "
 .ti -1c
-.RI "cpConstraint \fBsetSpringStiffness\fP (number inSpringStiffness)"
+.RI "\fBCpConstraint\fP \fBsetSpringStiffness\fP (number inSpringStiffness)"
 .br
-.RI "\fIset the stiffness for a rotary spring or a spring joint \fP"
+.RI "set the stiffness for a rotary spring or a spring joint "
 .in -1c
 .SH "Detailed Description"
 .PP 
 describes how two sprites are connected to one another (\fIChipmunk Physics Only\fP) 
 
-\fBWarning:\fP
+
+.PP
+\fBWarning\fP
 .RS 4
 \fBAPI Stability: 1 - Experimental\fP\&. This API was introduced recently and has gotten little or no real use\&. It may change or be removed in future versions\&. It may not be completely implemented and may be missing important pieces of functionality\&. Please try it out and provide feedback\&.
 .RE
 .PP
 Setup of joints can be done directly through methods of the \fBSprite\fP object\&. The \fBCpConstraint\fP object exists to allow joints to be modified dynamically after they've been set up, such as by changing the range of motion on a damaged joint\&.
+
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBSprite\&.gear()\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
+
 .PP
 \fBSprite\&.motor()\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
+
 .PP
 \fBSprite\&.pivotJoint()\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
+
 .PP
 \fBSprite\&.rotaryLimit()\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
+
 .PP
 \fBSprite\&.makeJointBreakable()\fP 
+
 .PP
 \fBSprite\&.makeJointUnbreakable()\fP 
+
 .PP
 \fBSprite\&.removeJoint()\fP
+
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
 .RE
@@ -258,694 +274,899 @@ http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint
 
 .PP
 wake up sleeping or idle parts of a joint Calls Chipmunk's cpBodyActivate() for both of the joined bodies\&.
+
 .PP
-\fBNote:\fP
+\fBNote\fP
 .RS 4
 Not sure this ever needs to be called directly, it is marked as private in the Chipmunk headers\&. However cpBodyActivate is not private, so it's unclear why this would be\&. It's included in this interface in case it is useful\&. 
 .RE
 .PP
 
-.SS "getAnchor ()"
+.SS "\fBOffset\fP getAnchor ()"
 
 .PP
-gets the anchor point for the joint on the primary sprite for pin, slide and spring joints \fBSee Also:\fP
+gets the anchor point for the joint on the primary sprite for pin, slide and spring joints 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetAnchor\fP 
+
 .PP
 \fBgetOtherAnchor\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "getErrorBias ()"
+.SS "number getErrorBias ()"
 
 .PP
-get the percentage of joint error than remains unfixed after one second \fBSee Also:\fP
+get the percentage of joint error than remains unfixed after one second 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetErrorBias\fP 
+
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
 .RE
 .PP
 
-.SS "getGearInitialAngle ()"
+.SS "number getGearInitialAngle ()"
 
 .PP
-get the initial angular offset between the two sprites joined with a gear joint \fBNote:\fP
+get the initial angular offset between the two sprites joined with a gear joint 
+.PP
+\fBNote\fP
 .RS 4
-This is referred to as 'phase' in the Chipmunk docs and this call corresponds to cpGearJointGetPhase() in the Chipmunk API
+This is referred to as "phase" in the Chipmunk docs and this call corresponds to cpGearJointGetPhase() in the Chipmunk API
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBsetGearInitialAngle\fP 
+
 .PP
 \fBgetGearRatio\fP 
+
 .PP
 \fBSprite\&.gear()\fP 
+
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
 .RE
 .PP
 
-.SS "getGearRatio ()"
+.SS "number getGearRatio ()"
 
 .PP
-get the ratio of rotation between the two sprites joined with a gear joint \fBSee Also:\fP
+get the ratio of rotation between the two sprites joined with a gear joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetGearRatio\fP 
+
 .PP
 \fBgetGearInitialAngle\fP 
+
 .PP
 \fBSprite\&.gear()\fP 
+
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
 .RE
 .PP
 
-.SS "getGrooveEnd ()"
+.SS "\fBOffset\fP getGrooveEnd ()"
 
 .PP
-get the position on the primary sprite of the end of the groove for a groove joint \fBSee Also:\fP
+get the position on the primary sprite of the end of the groove for a groove joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetGrooveEnd\fP 
+
 .PP
 \fBgetGrooveStart\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
 .RE
 .PP
 
-.SS "getGrooveStart ()"
+.SS "\fBOffset\fP getGrooveStart ()"
 
 .PP
-get the position on the primary sprite of the start of the groove for a groove joint \fBSee Also:\fP
+get the position on the primary sprite of the start of the groove for a groove joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetGrooveStart\fP 
+
 .PP
 \fBgetGrooveEnd\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
 .RE
 .PP
 
-.SS "getImpulse ()"
+.SS "number getImpulse ()"
 
 .PP
-get the last impulse applied by the joint \fBSee Also:\fP
+get the last impulse applied by the joint 
+.PP
+\fBSee also\fP
 .RS 4
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
 .RE
 .PP
 
-.SS "getMaxAngle ()"
+.SS "number getMaxAngle ()"
 
 .PP
-get the maximum angle allowed by a RotaryLimit joint \fBSee Also:\fP
+get the maximum angle allowed by a RotaryLimit joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetMaxAngle\fP 
+
 .PP
 \fBgetMinAngle\fP 
+
 .PP
 \fBSprite\&.rotaryLimit()\fP 
 .RE
 .PP
 
-.SS "getMaxBias ()"
+.SS "number getMaxBias ()"
 
 .PP
-get the maximum speed at which a joint can be error corrrected \fBSee Also:\fP
+get the maximum speed at which a joint can be error corrrected 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetMaxBias\fP 
 .RE
 .PP
 
-.SS "getMaxForce ()"
+.SS "number getMaxForce ()"
 
 .PP
-get the maximum force the joint can apply to the sprites \fBSee Also:\fP
+get the maximum force the joint can apply to the sprites 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetMaxForce\fP 
 .RE
 .PP
 
-.SS "getMinAngle ()"
+.SS "number getMinAngle ()"
 
 .PP
-get the minimum angle allowed by a RotaryLimit joint \fBSee Also:\fP
+get the minimum angle allowed by a RotaryLimit joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetMinAngle\fP 
+
 .PP
 \fBgetMaxAngle\fP 
+
 .PP
 \fBSprite\&.rotaryLimit()\fP 
 .RE
 .PP
 
-.SS "getMotorSpinRate ()"
+.SS "number getMotorSpinRate ()"
 
 .PP
-get how fast the sprites rotate relative to one another in a motor joint \fBSee Also:\fP
+get how fast the sprites rotate relative to one another in a motor joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetMotorSpinRate()\fP 
+
 .PP
 \fBSprite\&.motor()\fP 
 .RE
 .PP
 
-.SS "getOtherAnchor ()"
+.SS "\fBOffset\fP getOtherAnchor ()"
 
 .PP
-gets the anchor point for the joint on the secondary sprite \fBSee Also:\fP
+gets the anchor point for the joint on the secondary sprite 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetOtherAnchor\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "getOtherSprite ()"
+.SS "\fBSprite\fP getOtherSprite ()"
 
 .PP
 get the secondary \fBSprite\fP for the joint When you create a joint in the PDG Engine, you do this by calling one of the Joint or Limit functions of a \fBSprite\fP, and passing in another \fBSprite\fP as a parameter\&. The sprite that you passed in as a parameter is the secondary \fBSprite\fP\&.
+
 .PP
-\fBNote:\fP
+\fBNote\fP
 .RS 4
 The secondary sprite is the one represented by the cpBody in Chipmunk retrieved calling cpConstraintGetB()
 .RE
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 the secondary \fBSprite\fP for the joint
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBSprite\&.gear()\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
+
 .PP
 \fBSprite\&.motor()\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
+
 .PP
 \fBSprite\&.pivotJoint()\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
+
 .PP
 \fBSprite\&.rotaryLimit()\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "getPinDist ()"
+.SS "number getPinDist ()"
 
 .PP
-get the distance between the anchors on a pin joint \fBSee Also:\fP
+get the distance between the anchors on a pin joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetPinDist\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
 .RE
 .PP
 
-.SS "getRatchetAngle ()"
+.SS "number getRatchetAngle ()"
 
 .PP
-get the current angle of a ratchet joint \fBSee Also:\fP
+get the current angle of a ratchet joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetRatchetAngle\fP 
+
 .PP
 \fBgetRatchetInterval\fP 
+
 .PP
 \fBgetRatchetPhase\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
 .RE
 .PP
 
-.SS "getRatchetInterval ()"
+.SS "number getRatchetInterval ()"
 
 .PP
-get the distance between backstops on a ratchet joint \fBSee Also:\fP
+get the distance between backstops on a ratchet joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetRatchetInterval\fP 
+
 .PP
 \fBgetRatchetAngle\fP 
+
 .PP
 \fBgetRatchetPhase\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
 .RE
 .PP
 
-.SS "getRatchetPhase ()"
+.SS "number getRatchetPhase ()"
 
 .PP
-get the initial offset for the ratchet backstops on a ratchet joint \fBSee Also:\fP
+get the initial offset for the ratchet backstops on a ratchet joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetRatchetPhase\fP 
+
 .PP
 \fBgetRatchetAngle\fP 
+
 .PP
 \fBgetRatchetInterval\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
 .RE
 .PP
 
-.SS "getRotarySpringRestAngle ()"
+.SS "number getRotarySpringRestAngle ()"
 
 .PP
-get the angle between sprites at which a rotary spring is at rest on a rotary spring joint \fBSee Also:\fP
+get the angle between sprites at which a rotary spring is at rest on a rotary spring joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetRotarySpringRestAngle\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
 .RE
 .PP
 
-.SS "getSlideMaxDist ()"
+.SS "number getSlideMaxDist ()"
 
 .PP
-get the maximum disable apart for the anchors of a slide joint \fBSee Also:\fP
+get the maximum distance apart for the anchors of a slide joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetSlideMaxDist\fP 
+
 .PP
 \fBgetSlideMinDist\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
 .RE
 .PP
 
-.SS "getSlideMinDist ()"
+.SS "number getSlideMinDist ()"
 
 .PP
-get the minimum distance apart for the anchors of a slide joint \fBSee Also:\fP
+get the minimum distance apart for the anchors of a slide joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetSlideMinDist\fP 
+
 .PP
 \fBgetSlideMaxDist\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
 .RE
 .PP
 
-.SS "getSpringDamping ()"
+.SS "number getSpringDamping ()"
 
 .PP
-get the damping for a rotary spring or a spring joint \fBSee Also:\fP
+get the damping for a rotary spring or a spring joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetSpringDamping\fP 
+
 .PP
 \fBgetSpringStiffness\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "getSpringRestLength ()"
+.SS "number getSpringRestLength ()"
 
 .PP
-get the distance between anchors at which the spring is at rest for a spring joint \fBSee Also:\fP
+get the distance between anchors at which the spring is at rest for a spring joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetSpringRestLength\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "getSpringStiffness ()"
+.SS "number getSpringStiffness ()"
 
 .PP
-get the stiffness for a rotary spring or a spring joint \fBSee Also:\fP
+get the stiffness for a rotary spring or a spring joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBsetSpringStiffness\fP 
+
 .PP
 \fBgetSpringDamping\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "getSprite ()"
+.SS "\fBSprite\fP getSprite ()"
 
 .PP
 get the primary \fBSprite\fP for the joint When you create a joint in the PDG Engine, you do this by calling one of the Joint or Limit functions of a \fBSprite\fP\&. The sprite that you called the Joint function for is the primary \fBSprite\fP\&.
+
 .PP
-\fBNote:\fP
+\fBNote\fP
 .RS 4
 The primary sprint is the one represented by the cpBody in Chipmunk retrieved calling cpConstraintGetA()
 .RE
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 the primary \fBSprite\fP in the joint
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBSprite\&.gear()\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
+
 .PP
 \fBSprite\&.motor()\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
+
 .PP
 \fBSprite\&.pivotJoint()\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
+
 .PP
 \fBSprite\&.rotaryLimit()\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "getType ()"
+.SS "string getType ()"
 
 .PP
-returns a string for the type of joint \fBReturns:\fP
+returns a string for the type of joint 
+.PP
+\fBReturns\fP
 .RS 4
-one of: 'PinJoint', 'SlideJoint', 'PivotJoint', 'GrooveJoint', 'SpringJoint', 'RotarySpring', 'RotaryLimit', 'Ratchet', 'Gear', 'Motor' 
+one of: "PinJoint", "SlideJoint", "PivotJoint", "GrooveJoint", "SpringJoint", "RotarySpring", "RotaryLimit", "Ratchet", "Gear", "Motor" 
 .RE
 .PP
 
-.SS "setAnchor (\fBOffset\fPinAnchor)"
+.SS "\fBCpConstraint\fP setAnchor (\fBOffset\fP inAnchor)"
 
 .PP
-sets the anchor point for the joint on the primary sprite for pin, slide and spring joints \fBSee Also:\fP
+sets the anchor point for the joint on the primary sprite for pin, slide and spring joints 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetAnchor\fP 
+
 .PP
 \fBsetOtherAnchor\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "setErrorBias (numberinErrorBias)"
+.SS "\fBCpConstraint\fP setErrorBias (number inErrorBias)"
 
 .PP
-set the percentage of joint error than remains unfixed after one second \fBSee Also:\fP
+set the percentage of joint error than remains unfixed after one second 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetErrorBias\fP 
+
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
 .RE
 .PP
 
-.SS "setGearInitialAngle (numberinGearInitialAngle)"
+.SS "\fBCpConstraint\fP setGearInitialAngle (number inGearInitialAngle)"
 
 .PP
-set the initial angular offset between the two sprites joined with a gear joint \fBNote:\fP
+set the initial angular offset between the two sprites joined with a gear joint 
+.PP
+\fBNote\fP
 .RS 4
-This is referred to as 'phase' in the Chipmunk docs and this call corresponds to cpGearJointSetPhase() in the Chipmunk API
+This is referred to as "phase" in the Chipmunk docs and this call corresponds to cpGearJointSetPhase() in the Chipmunk API
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBgetGearInitialAngle\fP 
+
 .PP
 \fBsetGearRatio\fP 
+
 .PP
 \fBSprite\&.gear()\fP 
+
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
 .RE
 .PP
 
-.SS "setGearRatio (numberinGearRatio)"
+.SS "\fBCpConstraint\fP setGearRatio (number inGearRatio)"
 
 .PP
-set the ratio of rotation between the two sprites joined with a gear joint \fBSee Also:\fP
+set the ratio of rotation between the two sprites joined with a gear joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetGearRatio\fP 
+
 .PP
 \fBsetGearInitialAngle\fP 
+
 .PP
 \fBSprite\&.gear()\fP 
+
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
 .RE
 .PP
 
-.SS "setGrooveEnd (\fBOffset\fPinGrooveEnd)"
+.SS "\fBCpConstraint\fP setGrooveEnd (\fBOffset\fP inGrooveEnd)"
 
 .PP
-set the position on the primary sprite of the end of the groove for a groove joint \fBSee Also:\fP
+set the position on the primary sprite of the end of the groove for a groove joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetGrooveEnd\fP 
+
 .PP
 \fBsetGrooveStart\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
 .RE
 .PP
 
-.SS "setGrooveStart (\fBOffset\fPinGrooveStart)"
+.SS "\fBCpConstraint\fP setGrooveStart (\fBOffset\fP inGrooveStart)"
 
 .PP
-set the position on the primary sprite of the start of the groove for a groove joint \fBSee Also:\fP
+set the position on the primary sprite of the start of the groove for a groove joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetGrooveStart\fP 
+
 .PP
 \fBsetGrooveEnd\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
 .RE
 .PP
 
-.SS "setMaxAngle (numberinMaxAngle)"
+.SS "\fBCpConstraint\fP setMaxAngle (number inMaxAngle)"
 
 .PP
-set the maximum angle allowed by a RotaryLimit joint \fBSee Also:\fP
+set the maximum angle allowed by a RotaryLimit joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetMaxAngle\fP 
+
 .PP
 \fBsetMinAngle\fP 
+
 .PP
 \fBSprite\&.rotaryLimit()\fP 
 .RE
 .PP
 
-.SS "setMaxBias (numberinMaxBias)"
+.SS "\fBCpConstraint\fP setMaxBias (number inMaxBias)"
 
 .PP
-set the maximum speed at which a joint can be error corrrected \fBSee Also:\fP
+set the maximum speed at which a joint can be error corrrected 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetMaxBias\fP 
 .RE
 .PP
 
-.SS "setMaxForce (numberinMaxForce)"
+.SS "\fBCpConstraint\fP setMaxForce (number inMaxForce)"
 
 .PP
-set the maximum force the joint can apply to the sprites \fBSee Also:\fP
+set the maximum force the joint can apply to the sprites 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetMaxForce\fP 
 .RE
 .PP
 
-.SS "setMinAngle (numberinMinAngle)"
+.SS "\fBCpConstraint\fP setMinAngle (number inMinAngle)"
 
 .PP
-set the minimum angle allowed by a RotaryLimit joint \fBSee Also:\fP
+set the minimum angle allowed by a RotaryLimit joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetMinAngle\fP 
+
 .PP
 \fBsetMaxAngle\fP 
+
 .PP
 \fBSprite\&.rotaryLimit()\fP 
 .RE
 .PP
 
-.SS "setMotorSpinRate (numberinMotorSpinRate)"
+.SS "\fBCpConstraint\fP setMotorSpinRate (number inMotorSpinRate)"
 
 .PP
-set how fast the sprites rotate relative to one another in a motor joint \fBSee Also:\fP
+set how fast the sprites rotate relative to one another in a motor joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetMotorSpinRate()\fP 
+
 .PP
 \fBSprite\&.motor()\fP 
 .RE
 .PP
 
-.SS "setOtherAnchor (\fBOffset\fPinOtherAnchor)"
+.SS "\fBCpConstraint\fP setOtherAnchor (\fBOffset\fP inOtherAnchor)"
 
 .PP
-sets the anchor point for the joint on the secondary sprite \fBSee Also:\fP
+sets the anchor point for the joint on the secondary sprite 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetOtherAnchor\fP 
+
 .PP
 \fBSprite\&.grooveJoint()\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "setPinDist (numberinPinDist)"
+.SS "\fBCpConstraint\fP setPinDist (number inPinDist)"
 
 .PP
-set the distance between the anchors on a pin joint \fBSee Also:\fP
+set the distance between the anchors on a pin joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetPinDist\fP 
+
 .PP
 \fBSprite\&.pinJoint()\fP 
 .RE
 .PP
 
-.SS "setRatchetAngle (numberinRatchetAngle)"
+.SS "\fBCpConstraint\fP setRatchetAngle (number inRatchetAngle)"
 
 .PP
-set the current angle of a ratchet joint \fBSee Also:\fP
+set the current angle of a ratchet joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetRatchetAngle\fP 
+
 .PP
 \fBsetRatchetInterval\fP 
+
 .PP
 \fBsetRatchetPhase\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
 .RE
 .PP
 
-.SS "setRatchetInterval (numberinRatchetInterval)"
+.SS "\fBCpConstraint\fP setRatchetInterval (number inRatchetInterval)"
 
 .PP
-set the distance between backstops on a ratchet joint \fBSee Also:\fP
+set the distance between backstops on a ratchet joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetRatchetInterval\fP 
+
 .PP
 \fBsetRatchetAngle\fP 
+
 .PP
 \fBsetRatchetPhase\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
 .RE
 .PP
 
-.SS "setRatchetPhase (numberinRatchetPhase)"
+.SS "\fBCpConstraint\fP setRatchetPhase (number inRatchetPhase)"
 
 .PP
-set the initial offset for the ratchet backstops on a ratchet joint \fBSee Also:\fP
+set the initial offset for the ratchet backstops on a ratchet joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetRatchetPhase\fP 
+
 .PP
 \fBsetRatchetAngle\fP 
+
 .PP
 \fBsetRatchetInterval\fP 
+
 .PP
 \fBSprite\&.ratchet()\fP 
 .RE
 .PP
 
-.SS "setRotarySpringRestAngle (numberinRotarySpringRestAngle)"
+.SS "\fBCpConstraint\fP setRotarySpringRestAngle (number inRotarySpringRestAngle)"
 
 .PP
-set the angle between sprites at which a rotary spring is at rest on a rotary spring joint \fBSee Also:\fP
+set the angle between sprites at which a rotary spring is at rest on a rotary spring joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetRotarySpringRestAngle\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
 .RE
 .PP
 
-.SS "setSlideMaxDist (numberinSlideMaxDist)"
+.SS "\fBCpConstraint\fP setSlideMaxDist (number inSlideMaxDist)"
 
 .PP
-set the maximum disable apart for the anchors of a slide joint \fBSee Also:\fP
+set the maximum disable apart for the anchors of a slide joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetSlideMaxDist\fP 
+
 .PP
 \fBsetSlideMinDist\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
 .RE
 .PP
 
-.SS "setSlideMinDist (numberinSlideMinDist)"
+.SS "\fBCpConstraint\fP setSlideMinDist (number inSlideMinDist)"
 
 .PP
-set the minimum distance apart for the anchors of a slide joint \fBSee Also:\fP
+set the minimum distance apart for the anchors of a slide joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetSlideMinDist\fP 
+
 .PP
 \fBsetSlideMaxDist\fP 
+
 .PP
 \fBSprite\&.slideJoint()\fP 
 .RE
 .PP
 
-.SS "setSpringDamping (numberinSpringDamping)"
+.SS "\fBCpConstraint\fP setSpringDamping (number inSpringDamping)"
 
 .PP
-set the damping for a rotary spring or a spring joint \fBSee Also:\fP
+set the damping for a rotary spring or a spring joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetSpringDamping\fP 
+
 .PP
 \fBsetSpringStiffness\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "setSpringRestLength (numberinSpringRestLength)"
+.SS "\fBCpConstraint\fP setSpringRestLength (number inSpringRestLength)"
 
 .PP
-set the distance between anchors at which the spring is at rest for a spring joint \fBSee Also:\fP
+set the distance between anchors at which the spring is at rest for a spring joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetSpringRestLength\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE
 .PP
 
-.SS "setSpringStiffness (numberinSpringStiffness)"
+.SS "\fBCpConstraint\fP setSpringStiffness (number inSpringStiffness)"
 
 .PP
-set the stiffness for a rotary spring or a spring joint \fBSee Also:\fP
+set the stiffness for a rotary spring or a spring joint 
+.PP
+\fBSee also\fP
 .RS 4
 \fBgetSpringStiffness\fP 
+
 .PP
 \fBsetSpringDamping\fP 
+
 .PP
 \fBSprite\&.rotarySpring()\fP 
+
 .PP
 \fBSprite\&.springJoint()\fP 
 .RE

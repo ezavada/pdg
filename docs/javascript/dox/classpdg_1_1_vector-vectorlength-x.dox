@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Vector::vectorLength()
+
+\brief get length as a vector (distance from origin)
+
+**/ }

@@ -4,7 +4,7 @@ namespace pdg { /**
 
 \brief fade entire layer to full opacity over time
 
-Generates an eventType_SpriteLayer action_FadeInComplete event when done.
+Generates an #eventType_SpriteLayer #action_LayerFadeInComplete event when done.
 
 \warning does not honor delay specified by wait()
 

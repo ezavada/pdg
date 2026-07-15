@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::isSpriterCollisionActive(boxName)
+
+\brief check if a Spriter collision box is active
+
+**/ }

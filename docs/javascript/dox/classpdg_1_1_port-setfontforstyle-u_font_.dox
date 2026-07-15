@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::setFontForStyle(style, font)
+
+\brief Set a custom font for a specific text style (bold, italic, etc.)
+
+**/ }

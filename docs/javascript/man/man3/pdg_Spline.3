@@ -1,0 +1,290 @@
+.TH "Spline" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Spline \- Curved path defined by control points, supporting multiple spline types including cubic Bezier curves\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBaddPoint\fP (\fBPoint\fP point)"
+.br
+.RI "adds a control point to the spline "
+.ti -1c
+.RI "\fBaddSegment\fP (\fBPoint\fP p1, \fBPoint\fP p2, \fBPoint\fP p3, \fBPoint\fP p4)"
+.br
+.RI "adds a spline segment with four control points "
+.ti -1c
+.RI "\fBRect\fP \fBgetBounds\fP ()"
+.br
+.RI "returns the bounding rectangle of the spline curve "
+.ti -1c
+.RI "\fBPoint\fP \fBgetFirstOrder\fP (number u)"
+.br
+.RI "evaluates the spline at parameter u and returns the position "
+.ti -1c
+.RI "number \fBgetMaxU\fP ()"
+.br
+.RI "returns the maximum valid u parameter for curve evaluation "
+.ti -1c
+.RI "\fBPoint\fP \fBgetPoint\fP (number pointIndex)"
+.br
+.RI "returns the control point at the specified index "
+.ti -1c
+.RI "number \fBgetPointCount\fP ()"
+.br
+.RI "returns the number of control points in the spline "
+.ti -1c
+.RI "\fBPoint\fP \fBgetSecondOrder\fP (number u)"
+.br
+.RI "evaluates the spline at parameter u and returns the second derivative "
+.ti -1c
+.RI "\fBsetPoint\fP (number pointIndex, \fBPoint\fP point)"
+.br
+.RI "sets the control point at the specified index "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Curved path defined by control points, supporting multiple spline types including cubic Bezier curves\&. 
+
+Splines are mathematical curves defined by control points\&. PDG supports several spline types:
+
+.PP
+.IP "\(bu" 2
+\fBspline_Hermite\fP - Hermite spline using position and tangent vector parameters
+.IP "\(bu" 2
+\fBspline_Cardinal\fP - Cardinal (Catmull-Rom) spline that passes through all control points
+.IP "\(bu" 2
+\fBspline_UniformB\fP - Uniform B-spline for smooth curves
+.IP "\(bu" 2
+\fBspline_CubicBezier\fP - Cubic Bezier curves with control handles
+.IP "\(bu" 2
+\fBspline_TCB\fP - Tension-Continuity-Bias spline for animation curves
+.IP "\(bu" 2
+\fBspline_NaturalCubic\fP - Natural cubic spline with continuous second derivatives
+.PP
+.SH "Hermite Spline Parameters"
+.PP
+When using \fBspline_Hermite\fP, the four parameters to \fBaddSegment()\fP are:
+.IP "\(bu" 2
+\fBp1\fP - Start position (\fBPoint\fP)
+.IP "\(bu" 2
+\fBp2\fP - End position (\fBPoint\fP)
+.IP "\(bu" 2
+\fBp3\fP - Tangent \fBvector\fP at start (\fBPoint\fP used as a direction vector, not a position)
+.IP "\(bu" 2
+\fBp4\fP - Tangent \fBvector\fP at end (\fBPoint\fP used as a direction vector, not a position)
+.PP
+
+.PP
+\fBNote\fP
+.RS 4
+The tangent parameters (p3, p4) are \fBdirection vectors\fP, not positions\&. They control the direction and speed of the curve as it leaves the start point and approaches the end point\&.
+.RE
+.PP
+\fBHermite Example:\fP
+.RS 4
+
+.PP
+.nf
+var spline = new pdg\&.Spline(pdg\&.spline_Hermite);
+spline\&.addSegment(
+    new pdg\&.Point(10, 10),   // p1: start position
+    new pdg\&.Point(100, 50),  // p2: end position  
+    new pdg\&.Point(30, 0),    // p3: tangent vector (direction/speed leaving start)
+    new pdg\&.Point(30, 0)     // p4: tangent vector (direction/speed approaching end)
+);
+
+.fi
+.PP
+ 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "addPoint (\fBPoint\fP point)"
+
+.PP
+adds a control point to the spline This low-level method adds a single control point to the spline\&. The meaning and usage of control points depends on the spline type:
+
+.PP
+\fBHermite Splines (spline_Hermite):\fP
+.RS 4
+Points are added in groups of 4: position1, position2, tangent_vector1, tangent_vector2\&. For Hermite splines, tangent points (3rd and 4th in each group) should be \fBdirection vectors\fP, not positions\&. Use \fBaddSegment()\fP instead for easier Hermite spline creation\&.
+.RE
+.PP
+\fBCubic Bezier Splines (spline_CubicBezier):\fP
+.RS 4
+Points are added in groups of 4: start, control1, control2, end\&. Additional segments share the endpoint of the previous segment\&.
+.RE
+.PP
+\fBCardinal/Catmull-Rom Splines (spline_Cardinal):\fP
+.RS 4
+Each point is a position that the curve passes through\&. The curve is calculated using a sliding window of 4 consecutive points\&.
+.RE
+.PP
+\fBUniform B-Splines (spline_UniformB):\fP
+.RS 4
+Each point is a control point\&. The curve approximates the shape defined by these points but doesn't necessarily pass through them\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+For most use cases, \fBaddSegment()\fP provides a more intuitive interface, especially for Hermite and Bezier splines\&. Use \fBaddPoint()\fP when you need fine-grained control over individual points or when building multi-segment Cardinal or B-splines\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoint\fP the control point to add (interpretation depends on spline type)
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddSegment()\fP, \fBgetPoint()\fP, \fBsetPoint()\fP, \fBgetPointCount()\fP 
+.RE
+.PP
+
+.SS "addSegment (\fBPoint\fP p1, \fBPoint\fP p2, \fBPoint\fP p3, \fBPoint\fP p4)"
+
+.PP
+adds a spline segment with four control points The meaning of the four points depends on the spline type:
+
+.PP
+\fBHermite Splines (spline_Hermite):\fP
+.RS 4
+
+.IP "\(bu" 2
+\fBp1\fP - Start position (\fBPoint\fP)
+.IP "\(bu" 2
+\fBp2\fP - End position (\fBPoint\fP)
+.IP "\(bu" 2
+\fBp3\fP - Tangent \fBvector\fP at start (NOT a position, but a direction vector)
+.IP "\(bu" 2
+\fBp4\fP - Tangent \fBvector\fP at end (NOT a position, but a direction vector)
+.PP
+.RE
+.PP
+\fBWarning\fP
+.RS 4
+For Hermite splines, p3 and p4 are \fBtangent vectors\fP (directions), not positions\&. They control the direction and speed of the curve at the start and end points\&. To create identical curves that are offset in position, use the same tangent vectors with different start/end positions\&.
+.RE
+.PP
+\fBCubic Bezier Splines (spline_CubicBezier):\fP
+.RS 4
+
+.IP "\(bu" 2
+\fBp1\fP - Start position
+.IP "\(bu" 2
+\fBp2\fP - First control point (handle)
+.IP "\(bu" 2
+\fBp3\fP - Second control point (handle)
+.IP "\(bu" 2
+\fBp4\fP - End position
+.PP
+.RE
+.PP
+\fBCardinal/Catmull-Rom Splines (spline_Cardinal):\fP
+.RS 4
+
+.IP "\(bu" 2
+\fBp1\fP, \fBp2\fP, \fBp3\fP, \fBp4\fP - Four consecutive control points
+.IP "\(bu" 2
+The curve passes through p2 and p3, using p1 and p4 to calculate tangents
+.PP
+.RE
+.PP
+\fBOther Spline Types:\fP
+.RS 4
+The four points serve as control points according to each spline type's mathematical definition\&.
+.RE
+.PP
+\fBExample - Hermite with tangent vectors:\fP
+.RS 4
+
+.PP
+.nf
+var spline = new pdg\&.Spline(pdg\&.spline_Hermite);
+spline\&.addSegment(
+    new pdg\&.Point(0, 0),     // p1: start position
+    new pdg\&.Point(100, 50),  // p2: end position
+    new pdg\&.Point(30, 20),   // p3: tangent vector (go right 30, up 20)
+    new pdg\&.Point(30, \-10)   // p4: tangent vector (arrive going right 30, down 10)
+);
+
+.fi
+.PP
+.RE
+.PP
+\fBExample - Cubic Bezier:\fP
+.RS 4
+
+.PP
+.nf
+var bezier = new pdg\&.Spline(pdg\&.spline_CubicBezier);
+bezier\&.addSegment(
+    new pdg\&.Point(0, 0),     // start point
+    new pdg\&.Point(25, 75),   // first control handle
+    new pdg\&.Point(75, 25),   // second control handle
+    new pdg\&.Point(100, 100)  // end point
+);
+
+.fi
+.PP
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIp1\fP first control point (meaning depends on spline type) 
+.br
+\fIp2\fP second control point (meaning depends on spline type) 
+.br
+\fIp3\fP third control point (meaning depends on spline type) 
+.br
+\fIp4\fP fourth control point (meaning depends on spline type)
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddPoint()\fP, \fBgetFirstOrder()\fP, \fBgetSecondOrder()\fP 
+.RE
+.PP
+
+.SS "\fBRect\fP getBounds ()"
+
+.PP
+returns the bounding rectangle of the spline curve 
+.SS "\fBPoint\fP getFirstOrder (number u)"
+
+.PP
+evaluates the spline at parameter u and returns the position 
+.SS "number getMaxU ()"
+
+.PP
+returns the maximum valid u parameter for curve evaluation 
+.SS "\fBPoint\fP getPoint (number pointIndex)"
+
+.PP
+returns the control point at the specified index 
+.SS "number getPointCount ()"
+
+.PP
+returns the number of control points in the spline 
+.SS "\fBPoint\fP getSecondOrder (number u)"
+
+.PP
+evaluates the spline at parameter u and returns the second derivative 
+.SS "setPoint (number pointIndex, \fBPoint\fP point)"
+
+.PP
+sets the control point at the specified index 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

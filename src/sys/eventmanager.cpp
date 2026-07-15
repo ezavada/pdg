@@ -30,7 +30,9 @@
 
 #include "pdg_project.h"
 
+#ifdef _MSC_VER
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
+#endif
 
 #include "pdg/sys/eventmanager.h"
 #include "pdg/sys/os.h"
@@ -210,13 +212,63 @@ EventManager::getQueuedEvent(long& outEventType, UserData*& outEventData, EventE
         return true;
     }
 }
+
+void 
+EventManager::RemoveEnqueuedEventsForEmitter(EventEmitter* emitter) {
+    AutoMutex mutex(&mEventQueueMutex);
+    if (mEventQueue.empty()) {
+        return;
+    }
+    std::queue<EventQueueEntry> temp_q;
+    while (!mEventQueue.empty()) {
+        EventQueueEntry entry = mEventQueue.front();
+        mEventQueue.pop();
+        if (entry.emitter != emitter) {
+            temp_q.push(entry);
+        }
+    }
+    mEventQueue = temp_q; // Transfer elements back
+}
+
+void
+EventManager::RemoveEnqueuedEvents(std::function<bool(EventQueueEntry)> predicate) {
+    AutoMutex mutex(&mEventQueueMutex);
+    if (mEventQueue.empty()) {
+        return;
+    }
+    std::queue<EventQueueEntry> temp_q;
+    while (!mEventQueue.empty()) {
+        EventQueueEntry entry = mEventQueue.front();
+        mEventQueue.pop();
+        if (!predicate(entry)) {
+            temp_q.push(entry);
+        }
+    }
+    mEventQueue = temp_q; // Transfer elements back
+}
+
+void
+EventManager::RemoveEnqueuedEventsByType(long eventType) {
+    AutoMutex mutex(&mEventQueueMutex);
+    if (mEventQueue.empty()) {
+        return;
+    }
+    std::queue<EventQueueEntry> temp_q;
+    while (!mEventQueue.empty()) {
+        EventQueueEntry entry = mEventQueue.front();
+        mEventQueue.pop();
+        if (entry.eventType != eventType) {
+            temp_q.push(entry);
+        }
+    }
+    mEventQueue = temp_q; // Transfer elements back
+}
+
 #endif // PDG_NO_EVENT_QUEUE
 
 EventManager* EventManager::createSingletonInstance() {
 	return new EventManager();
 }
-
-
 
 } // end namespace pdg
 

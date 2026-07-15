@@ -45,9 +45,9 @@ public:
 	std::string mItemString;
 	int mResourceID;
 	int mItemID;
-	Graphics::Style mStyle;
+	Style mStyle;
 
-	ItemInfo(int itemID, std::string& text ,int resourceID = -1, Graphics::Style textStyle = (Graphics::Style)(Graphics::textStyle_Plain + Graphics::textStyle_LeftJustified))
+	ItemInfo(int itemID, std::string& text ,int resourceID = -1, Style textStyle = (Style)(textStyle_Plain + textStyle_LeftJustified))
 	:mItemString(text.c_str()),mResourceID(resourceID),mItemID(itemID),mStyle(textStyle){}
 
 	~ItemInfo() {}
@@ -78,7 +78,7 @@ public:
 };
 
 
-class PopupMenu : public View
+class PopupMenu : public View, public Subject
 {
 private:
 
@@ -116,10 +116,10 @@ public:
 	~PopupMenu();
 
 	int addMenuItem(int itemID, int resourceID,
-		Graphics::Style textStyle = (Graphics::Style)(Graphics::textStyle_Plain + Graphics::textStyle_LeftJustified), int index = -1);
+		Style textStyle = (Style)(textStyle_Plain + textStyle_LeftJustified), int index = -1);
 
 	int addMenuItem(int itemID, const char* text,
-		Graphics::Style textStyle = (Graphics::Style)(Graphics::textStyle_Plain + Graphics::textStyle_LeftJustified), int index = -1);
+		Style textStyle = (Style)(textStyle_Plain + textStyle_LeftJustified), int index = -1);
 
 	bool deleteMenuItemByItemID(int itemID);
 	bool deleteMenuItemByIndex(int index);

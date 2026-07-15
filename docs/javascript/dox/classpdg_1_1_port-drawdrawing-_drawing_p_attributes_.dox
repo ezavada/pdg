@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawDrawing(Drawing drawing, Point loc, Attributes attrs)
+
+\brief Draws a Drawing object at the specified location with styling attributes
+
+**/ }

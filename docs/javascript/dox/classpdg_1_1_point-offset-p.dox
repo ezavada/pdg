@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Point::offset(point)
+
+\brief get the offset of this point from another point
+
+**/ }

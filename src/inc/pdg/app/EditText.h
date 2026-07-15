@@ -19,7 +19,7 @@
 
 namespace pdg {
 
-class EditText : public RefCountedImpl<IEventHandler>, public View
+class EditText : public RefCountedImpl<IEventHandler>, public View, public Subject
 {
 public:
 	enum ClickIDs
@@ -32,7 +32,7 @@ private:
 	Color mbkColor;
 	Color mTextColor;	
 	int mFontSize;
-	Graphics::Style mStyle;
+	Style mStyle;
 	bool mbShowCaret;
 	bool mbHasFocus;
 //	bool mbIsDragging;
@@ -48,7 +48,7 @@ public:
 
 	EditText(Controller* controller, Rect viewArea, int resourceID, int fontSize = 10,
 	            Color bkColor = Color(0xFF,0xFF,0xFF), Color sTextColor = Color(0x00,0x00,0x00), 
-	            Graphics::Style textStyle = (Graphics::Style)(Graphics::textStyle_Plain + Graphics::textStyle_LeftJustified));
+	            Style textStyle = (Style)(textStyle_Plain + textStyle_LeftJustified));
 	~EditText();
 	void drawSelf();     
 	void getText(std::string& outString);

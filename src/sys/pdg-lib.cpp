@@ -111,6 +111,9 @@ void pdg_LibRun() {
 }
 
 void pdg_LibQuit() {
+	if (gPDG_Quitting) {
+		return;  // Already quitting, don't do cleanup twice
+	}
 	gPDG_Quitting = true;
 	if (!gPDG_InRunLoop) {	// run loop calls this itself
     	pdg::main_cleanup();

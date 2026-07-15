@@ -40,6 +40,10 @@
 #include "internals.h"
 
 #include "font-impl.h"
+#include "imagecache-opengl.h"
+#include "imagecache-opengl-v2.h"
+#include "textcache-opengl.h"
+#include "opengl-state-cache.h"
 
 #include <string>
 
@@ -58,10 +62,27 @@ public:
     virtual bool        lockDrawingSurface();
     virtual void        unlockDrawingSurface();
     void        resizePort(long width, long height);
-	void		setOpenGLModesForDrawing(bool useAlpha);
+	void		setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode = blendMode_Normal);
 	const pdg::Rect&  drawableRect() { return mClipRect.empty() ? mDrawingRect : mClipRect; }
 
     void setPortRects(Rect portRect) { mDrawingRect = portRect; mClipRect = portRect; }
+
+    // Image cache management (new key-based system)
+    CacheKey getCacheKey(const char* sourceName, int width, int height, bool useEdgeClamp);
+    GLuint getTexture(CacheKey key);
+    void setTexture(CacheKey key, GLuint texture);
+    void releaseCachedEntry(CacheKey key);
+    void beginFrame();
+    
+    // Legacy image cache methods (deprecated)
+    ImageCacheEntry* getImageFromCache(const char* sourceName, int width, int height, bool useEdgeClamp);
+    void addImageToCache(ImageCacheEntry* entry);
+    void invalidateImageCache();
+    
+    // Text cache management
+    TextCacheEntry* getTextFromCache(const char* text, int len, FontImpl* font, int size, uint32 style);
+    void addTextToCache(TextCacheEntry* entry);
+    void invalidateTextCache();
 
 public: // public for sys framework implementation, nobody else
 	GraphicsManager* mGraphicsMgr;
@@ -77,6 +98,11 @@ public: // public for sys framework implementation, nobody else
 
 	Font*			mFontForStyle[NUM_TEXT_STYLES];
 	float			mFontScalingFactor;
+
+	ImageCache*		mImageCache;       // hash-based image cache for this port
+	TextCacheEntry* mTextCache;        // text cache for this port
+	int				mPortIndex;        // unique index for this port
+	OpenGLStateCache mStateCache;      // OpenGL texture binding cache for this port
 
     void* 			mPlatformWindowRef;  // we don't know what this is, we just carry it around
     									// and pass it to platform_xxx calls

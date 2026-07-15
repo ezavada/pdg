@@ -44,6 +44,33 @@
 
 namespace pdg {
 
+static std::string getLogDirectoryPrefix() {
+    std::string logDir = OS::getApplicationDirectory();
+    if (!logDir.empty() && logDir[logDir.length() - 1] != '/' &&
+        logDir[logDir.length() - 1] != '\\') {
+        logDir += '/';
+    }
+    return logDir;
+}
+
+static std::string trimLogBaseName(const char* inLogNameBase, const std::string& logDir, size_t suffixLen) {
+    std::string logBase = inLogNameBase ? inLogNameBase : "";
+    const size_t maxFilenameLen = MAX_LOG_FILENAME_LEN - 1;
+    if (logDir.length() + suffixLen >= maxFilenameLen) {
+        logBase.clear();
+        return logBase;
+    }
+    const size_t maxBaseLen = maxFilenameLen - logDir.length() - suffixLen;
+    if (logBase.length() > maxBaseLen) {
+        logBase.resize(maxBaseLen);
+    }
+    return logBase;
+}
+
+static std::string buildLogFilename(const std::string& logDir, const char* inLogNameBase, const char* suffix, size_t suffixLen) {
+    return logDir + trimLogBaseName(inLogNameBase, logDir, suffixLen) + suffix;
+}
+
 // LogManagerImpl methods
 void 
 LogManagerImpl::initialize(const char* inLogNameBase, int initMode) {
@@ -54,46 +81,39 @@ LogManagerImpl::initialize(const char* inLogNameBase, int initMode) {
 		mBaseLogName = inLogNameBase;
 		mInitMode = initMode;
 		if (mLevel > 0) { // only create the file if log level is something higher than none
-			char logname[MAX_LOG_FILENAME_LEN];
+            std::string logDir = getLogDirectoryPrefix();
     		std::time_t lclTime;
     		struct std::tm *now;
     		lclTime = std::time(NULL);
     		now = std::localtime(&lclTime);
 			if (initMode == init_CreateUniqueNewFile) {
-				// most OS's won't handle longer than 256 char filename
-				// and we want to preserve the uniqueness, so truncate 
-				// the input string if it is longer than 256 chars
-				std::strncpy(logname, inLogNameBase, MAX_LOG_FILENAME_LEN - 18);  // we are adding 18 chars
-          		logname[MAX_LOG_FILENAME_LEN - 18] = 0;
-          		// we have a truncated name, put that name into a format string
-				char formatstr[MAX_LOG_FILENAME_LEN];
-          		std::snprintf(formatstr, MAX_LOG_FILENAME_LEN, "%s%s_%%y%%m%%d_%%H%%M%%S.log", OS::getApplicationDirectory(), logname);
-          		MAKE_STRING_BUFFER_SAFE(formatstr, MAX_LOG_FILENAME_LEN);
-          		// get the date time info that will make this filename unique
-        		// use the format string to add in the data time info
+				const size_t uniqueSuffixLen = sizeof("_YYMMDD_HHMMSS.log") - 1;
+				const std::string uniqueBaseName = trimLogBaseName(inLogNameBase, logDir, uniqueSuffixLen);
+				char timestamp[32];
 				bool exists = false;
 				do {
-        			std::strftime(logname, MAX_LOG_FILENAME_LEN, formatstr, now);
-          			MAKE_STRING_BUFFER_SAFE(logname, MAX_LOG_FILENAME_LEN);
+        			std::strftime(timestamp, sizeof(timestamp), "%y%m%d_%H%M%S", now);
+          			MAKE_STRING_BUFFER_SAFE(timestamp, sizeof(timestamp));
+                    std::string logname = logDir + uniqueBaseName + "_" + timestamp + ".log";
 					// keep trying new filenames until there is no existing one
 					++now->tm_sec;
 					FindDataT fd;
-					exists = OS::findFirst(logname, fd);
+					exists = OS::findFirst(logname.c_str(), fd);
 					OS::findClose(fd);
+                    if (!exists) {
+        				mFile.open(logname.c_str());
+        				mLogFilename = logname;
+        				mStream = &mFile;
+                    }
 				} while (exists);
-				mFile.open(logname);
-				mLogFilename = logname;
-				mStream = &mFile;
 			} else if (initMode == init_OverwriteExisting) {
-          		std::snprintf(logname, MAX_LOG_FILENAME_LEN, "%s%s.log", OS::getApplicationDirectory(), inLogNameBase);
-          		MAKE_STRING_BUFFER_SAFE(logname, MAX_LOG_FILENAME_LEN);
-				mFile.open(logname);
+                std::string logname = buildLogFilename(logDir, inLogNameBase, ".log", sizeof(".log") - 1);
+				mFile.open(logname.c_str());
 				mLogFilename = logname;
 				mStream = &mFile;
 			} else if (initMode == init_AppendToExisting) {
-          		std::snprintf(logname, MAX_LOG_FILENAME_LEN, "%s%s.log", OS::getApplicationDirectory(), inLogNameBase);
-          		MAKE_STRING_BUFFER_SAFE(logname, MAX_LOG_FILENAME_LEN);
-				mFile.open(logname, std::ios::app);
+                std::string logname = buildLogFilename(logDir, inLogNameBase, ".log", sizeof(".log") - 1);
+				mFile.open(logname.c_str(), std::ios::app);
 				mLogFilename = logname;
 				mStream = &mFile;
 			} else if (initMode == init_StdOut) {
@@ -138,9 +158,9 @@ LogManagerImpl::writeLogEntry(int8 level, const char* category, const char* mess
         	if (level > log::trace) {
         	    level = log::trace;
         	}
-            unsigned long mstime = OS::getMilliseconds();
+            ms_time msTime = OS::getMilliseconds();
         	char msStr[40];
-        	std::snprintf(msStr, 40, "%.10lu\t", mstime);
+        	std::snprintf(msStr, 40, "%.10lu\t", msTime);
             MAKE_STRING_BUFFER_SAFE(msStr, 40);
         	// following section is mutexed so we don't have multiple threads
         	// attempting to alter the file at once
@@ -163,6 +183,9 @@ LogManagerImpl::writeLogEntry(int8 level, const char* category, const char* mess
 
 void  
 LogManagerImpl::setLogLevel(int8 level) {
+	if (level > log::trace) {
+		level = log::trace;
+	}
 	if ((mLevel <= 0) && (level > log::none)) {
 		// we are turning on logging where before it was set to none
 		mLevel = level + 1;
@@ -177,10 +200,8 @@ LogManagerImpl::setLogLevel(int8 level) {
 		catch(...) {
 		}
         mInited = false;
-    } else {
-        if (level > log::trace) {
-            level = log::trace;
-        } else if (level < log::none) {
+	} else {
+        if (level < log::none) {
             level = log::fatal;
         }
         // log the change to the log level so it is obvious

@@ -42,6 +42,7 @@ describe("SpriteLayer", function() {
 	expect(sprite1).toBeDefined();
 	expect(sprite2).toBeDefined();
 	expect(sprite1).not.toBe(sprite2);
+	pdg.cleanupLayer(layer);
   });
 
   it("can iterate through sprites", function() {
@@ -59,7 +60,7 @@ describe("SpriteLayer", function() {
   		var same = sprite.getLocation().equals(p);
   		expect(same).toBeTruthy();
   	  }
-	  pdg.cleanupSpriteLayer(layer);
+	  pdg.cleanupLayer(layer);
   });
 
   describe("can serialize and deserialize position micro updates", function() {
@@ -85,6 +86,7 @@ describe("SpriteLayer", function() {
   		var size = layer.getSerializedSize(ser);
   		layer.serialize(ser);
   		expect(size).toEqual(103); // 10 bytes per sprite for first 254 sprites, + 3 bytes layer overhead
+                                    // no 3 byte stream tag here because this is a micro update
   		buffer = ser.getDataPtr();
   		expect(buffer.getDataSize()).toEqual(size);
 		console.log('Micro Stream Out:');
@@ -109,7 +111,7 @@ describe("SpriteLayer", function() {
   		var same = sprite.getLocation().equals(p);
   		expect(same).toBeTruthy();
   	  }
-	  pdg.cleanupSpriteLayer(layer);
+	  pdg.cleanupLayer(layer);
   	});
 
   }); // end micro updates
@@ -141,7 +143,7 @@ describe("SpriteLayer", function() {
   		layer.serialize(ser);
   		expect(size).toEqual(557); // 11 bytes for layer, + data for 10 sprites
   		buffer = ser.getDataPtr();
-  		expect(buffer.getDataSize()).toEqual(size);
+  		expect(buffer.getDataSize()).toEqual(size + 3);  // + 3 bytes for stream header
 		console.log('Update Stream Out: '+buffer.getDataSize()+' bytes');
 		console.binaryDump(buffer.getData(), buffer.getDataSize(), 16);
   	});
@@ -184,11 +186,55 @@ describe("SpriteLayer", function() {
 			var r = sprite.getRotation();
 			expect(r).toBeCloseTo(Math.PI);
 		}
-	  	pdg.cleanupSpriteLayer(layer);
+	  	pdg.cleanupLayer(layer);
       });
   	});
 
   });  // end normal updates
+
+  describe("convenience event methods", function() {
+    
+    var layer;
+    
+    beforeEach(function() {
+      layer = pdg.createSpriteLayer();
+    });
+    
+    afterEach(function() {
+      pdg.cleanupLayer(layer);
+    });
+
+    it("should have all expected convenience methods available", function() {
+      // Test that all the convenience methods exist
+      expect(typeof layer.onCollideSprite).toBe('function');
+      expect(typeof layer.onCollideWall).toBe('function');
+      expect(typeof layer.onOffscreen).toBe('function');
+      expect(typeof layer.onOnscreen).toBe('function');
+      expect(typeof layer.onExitLayer).toBe('function');
+      expect(typeof layer.onAnimationLoop).toBe('function');
+      expect(typeof layer.onAnimationEnd).toBe('function');
+      expect(typeof layer.onFadeComplete).toBe('function');
+      expect(typeof layer.onFadeInComplete).toBe('function');
+      expect(typeof layer.onFadeOutComplete).toBe('function');
+      expect(typeof layer.onMouseEnter).toBe('function');
+      expect(typeof layer.onMouseLeave).toBe('function');
+      expect(typeof layer.onMouseDown).toBe('function');
+      expect(typeof layer.onMouseUp).toBe('function');
+      expect(typeof layer.onMouseClick).toBe('function');
+      expect(typeof layer.onErasePort).toBe('function');
+      expect(typeof layer.onPreDrawLayer).toBe('function');
+      expect(typeof layer.onPostDrawLayer).toBe('function');
+      expect(typeof layer.onDrawPortComplete).toBe('function');
+      expect(typeof layer.onAnimationStart).toBe('function');
+      expect(typeof layer.onPreAnimateLayer).toBe('function');
+      expect(typeof layer.onPostAnimateLayer).toBe('function');
+      expect(typeof layer.onAnimationComplete).toBe('function');
+      expect(typeof layer.onZoomComplete).toBe('function');
+      expect(typeof layer.onLayerFadeInComplete).toBe('function');
+      expect(typeof layer.onLayerFadeOutComplete).toBe('function');
+    });
+
+  });
 
  
 });

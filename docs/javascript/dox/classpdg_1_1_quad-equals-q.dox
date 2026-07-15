@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Quad::equals(q2)
+
+\brief return true if this quad is equal to the given one
+
+**/ }

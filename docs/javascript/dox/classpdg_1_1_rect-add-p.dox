@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::add(Point p)
+
+\brief add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates
+
+**/ }

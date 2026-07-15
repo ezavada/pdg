@@ -1,3 +1,48 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classpdg_1_1_i_event_handler.html" title="IEventHandler" alt="" coords="6,5,112,33"/>
+<area shape="rect" id="Node000000" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="356,156,453,182"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_event_manager.html" title=" " alt="" coords="559,12,664,38"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="433,144,550,60,587,36,590,41,553,64,436,149"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_network_manager.html" title=" " alt="" coords="551,75,672,100"/>
+<area shape="poly" id="edge2_Node000000_Node000003" title=" " alt="" coords="453,147,575,98,577,103,454,152"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_sound.html" title=" " alt="" coords="582,149,641,175"/>
+<area shape="poly" id="edge3_Node000000_Node000005" title=" " alt="" coords="469,164,582,160,582,166,469,169"/>
+<area shape="rect" id="Node000013" href="$classpdg_1_1_sprite.html" title=" " alt="" coords="584,284,639,310"/>
+<area shape="poly" id="edge4_Node000000_Node000013" title=" " alt="" coords="469,176,505,191,521,204,531,217,553,247,594,281,590,285,549,251,527,220,517,207,502,195,467,180"/>
+<area shape="rect" id="Node000010" href="$classpdg_1_1_sprite_layer.html" title=" " alt="" coords="568,353,655,379"/>
+<area shape="poly" id="edge5_Node000000_Node000010" title=" " alt="" coords="469,172,488,179,505,191,519,207,528,222,533,254,537,286,543,303,553,321,570,337,588,351,585,355,566,341,549,324,538,305,532,288,528,255,522,224,515,210,502,195,485,184,467,177"/>
+<area shape="rect" id="Node000020" href="$classpdg_1_1_timer_manager.html" title=" " alt="" coords="559,211,664,236"/>
+<area shape="poly" id="edge7_Node000000_Node000020" title=" " alt="" coords="469,181,504,190,566,208,564,213,503,195,467,186"/>
+<area shape="rect" id="Node000011" href="$classpdg_1_1_tile_layer.html" title=" " alt="" coords="720,353,794,379"/>
+<area shape="poly" id="edge6_Node000010_Node000011" title=" " alt="" coords="671,364,719,364,719,369,671,369"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,243,117,268"/>
+<area shape="poly" id="edge21_Node000006_Node000005" title=" " alt="" coords="94,232,186,183,244,159,304,141,383,132,461,134,530,143,583,153,581,158,529,148,460,139,383,137,306,146,246,164,188,188,97,237"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_font.html" title=" " alt="" coords="187,243,234,268"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="132,253,187,253,187,258,132,258"/>
+<area shape="rect" id="Node000008" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="165,377,257,403"/>
+<area shape="poly" id="edge9_Node000006_Node000008" title=" " alt="" coords="90,277,197,375,193,379,86,281"/>
+<area shape="rect" id="Node000009" href="$classpdg_1_1_serializable.html" title=" " alt="" coords="315,403,493,428"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="273,396,315,401,314,406,272,401"/>
+<area shape="rect" id="Node000012" href="$classpdg_1_1_animated.html" title=" " alt="" coords="366,353,442,379"/>
+<area shape="poly" id="edge12_Node000008_Node000012" title=" " alt="" coords="272,380,365,368,366,373,273,385"/>
+<area shape="rect" id="Node000014" href="$classpdg_1_1_i_animation_helper.html" title=" " alt="" coords="344,501,465,527"/>
+<area shape="poly" id="edge15_Node000008_Node000014" title=" " alt="" coords="231,414,263,453,284,472,306,488,344,503,342,508,304,493,280,476,259,456,227,417"/>
+<area shape="rect" id="Node000015" href="$classpdg_1_1_i_sprite_collide_helper.html" title=" " alt="" coords="336,551,473,576"/>
+<area shape="poly" id="edge16_Node000008_Node000015" title=" " alt="" coords="224,416,255,478,278,510,307,537,336,552,334,557,303,542,274,514,250,481,219,419"/>
+<area shape="rect" id="Node000016" href="$classpdg_1_1_i_sprite_draw_helper.html" title=" " alt="" coords="340,205,468,231"/>
+<area shape="poly" id="edge17_Node000008_Node000016" title=" " alt="" coords="220,361,250,300,274,267,304,240,339,224,341,229,306,244,278,271,255,303,224,364"/>
+<area shape="rect" id="Node000017" href="$classpdg_1_1_image.html" title=" " alt="" coords="376,452,433,478"/>
+<area shape="poly" id="edge18_Node000008_Node000017" title=" " alt="" coords="247,409,306,438,376,457,374,463,304,443,244,414"/>
+<area shape="rect" id="Node000019" href="$classpdg_1_1_serializable.html" title=" " alt="" coords="344,255,464,280"/>
+<area shape="poly" id="edge20_Node000008_Node000019" title=" " alt="" coords="227,363,260,325,281,305,304,289,343,274,345,279,306,294,284,310,264,328,232,366"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="475,396,567,374,568,379,477,401"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="456,353,502,340,582,307,584,312,504,345,458,358"/>
+<area shape="poly" id="edge14_Node000012_Node000010" title=" " alt="" coords="458,364,567,364,567,369,458,369"/>
+<area shape="rect" id="Node000018" href="$classpdg_1_1_image_strip.html" title=" " alt="" coords="569,452,654,478"/>
+<area shape="poly" id="edge19_Node000017_Node000018" title=" " alt="" coords="448,462,569,462,569,468,448,468"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_singleton.html" title=" " alt="" coords="312,5,496,31"/>
+<area shape="poly" id="edge22_Node000002_Node000001" title=" " alt="" coords="511,19,558,20,558,26,511,24"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_singleton.html" title=" " alt="" coords="305,55,503,80"/>
+<area shape="poly" id="edge23_Node000004_Node000003" title=" " alt="" coords="519,76,551,79,551,84,519,81"/>
+<area shape="rect" id="Node000021" href="$classpdg_1_1_singleton.html" title=" " alt="" coords="313,304,495,330"/>
+<area shape="poly" id="edge24_Node000021_Node000020" title=" " alt="" coords="487,296,502,290,552,263,592,235,595,239,555,267,504,295,489,301"/>
 </map>

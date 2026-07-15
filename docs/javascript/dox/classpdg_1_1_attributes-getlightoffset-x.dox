@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getLightOffset()
+
+\brief Gets the light source offset in spherical coordinates (radians) for sphere lighting
+
+**/ }

@@ -19,17 +19,18 @@
     "Spriter",
     "serialize",
     "serialization",
-    "SCML"
+    "SCML",
+    "Chipmunk Physics"
   ],
   "main": "lib/pdg.js",
-  "version": "0.9.4",
+  "version": "0.10.0",
   "author": {
     "name": "Ed Zavada",
     "url": "http://www.ezavada.com/pdg/javascript/html/",
     "email": "ed.zavada@gmail.com"
   },
   "engines": {
-    "node": ">= 0.8.0"
+    "node": ">= 24.0.0"
   },
   "licenses": [
     {
@@ -50,12 +51,13 @@
   	"lib":"./lib"
   },
   "scripts": {
-    "install": "make build",
+    "install": "node ./install.js",
+    "xinstall": "make build",
     "test": "node test.js"
   },
   "devDependencies": {
-    "jasmine-node": ">=0",
-    "node-gyp": ">=0.13"
+    "jasmine-node": ">=1.16",
+    "node-gyp": ">=11.3.0"
   },
   "readmeFilename": "README.md",
   "contributors": [
@@ -64,7 +66,8 @@
       "email": "ed.zavada@gmail.com"
     },
     {
-      "name": "Alan Davies"
+      "name": "Alan Davies",
+      "email": "adavies25@gmail.com"
     },
     {
       "name": "Ariel Butler",
@@ -80,7 +83,9 @@
     }
   ],
   "dependencies": {},
-  "optionalDependencies": {},
+  "optionalDependencies": {
+    "net-repl": ">=0.1"
+  },
   "dist": {
   }
 }

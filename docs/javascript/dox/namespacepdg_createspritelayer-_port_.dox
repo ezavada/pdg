@@ -1,14 +1,15 @@
 namespace pdg { /**
 
-\fn pdg::createSpriteLayer
+\fn pdg::createSpriteLayer(Port port = nullptr)
 
 \brief create a new SpriteLayer attached to a particular port
 
 \param port if passed, associate with a specific port, otherwise, associate with the main port
 
-\related SpriteLayer
+\relatedalso SpriteLayer
 
-\see GraphicsManager::getMainPort
+\see pdg.Port
+\see pdg.GraphicsManager.getMainPort()
 
 
 **/ }

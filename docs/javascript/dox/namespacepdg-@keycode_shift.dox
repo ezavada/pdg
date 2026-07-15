@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_Shift
+
+\brief platform-specific keycode for the Shift key (generic, may not distinguish left/right)
+
+This constant contains the keycode value for detecting either Shift key on the current platform. On Windows, this is the generic VK_SHIFT code that doesn't distinguish between left and right. On other platforms, it equals #keyCode_LeftShift.
+
+**Platform values:**
+- Mac OS X: 56 (same as keyCode_LeftShift)
+- Windows: 16 (0x10 - VK_SHIFT, generic shift key)
+- Linux/GLFW: 340 (same as keyCode_LeftShift)
+
+\see keyCode_LeftShift
+\see keyCode_RightShift
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

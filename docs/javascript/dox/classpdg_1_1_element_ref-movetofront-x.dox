@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::ElementRef::moveToFront()
+
+\brief moves the element to the front of the drawing (top layer)
+
+**/ }

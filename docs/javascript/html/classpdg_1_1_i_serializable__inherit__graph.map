@@ -1,5 +1,9 @@
 <map id="ISerializable" name="ISerializable">
-<area shape="rect" id="node2" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="5,79,61,104"/>
-<area shape="rect" id="node3" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="86,79,176,104"/>
-<area shape="rect" id="node4" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="93,152,169,177"/>
+<area shape="rect" id="Node000001" title="interface for an object which can be serialized" alt="" coords="35,5,127,31"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="5,79,61,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="67,45,43,80,39,77,62,42"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="85,79,173,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="100,42,123,77,119,80,95,45"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="92,153,166,178"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="132,120,132,152,126,152,126,120"/>
 </map>

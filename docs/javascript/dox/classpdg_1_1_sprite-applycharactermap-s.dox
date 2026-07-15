@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::applyCharacterMap(mapName)
+
+\brief applies a character map to the sprite for visual customization
+
+**/ }

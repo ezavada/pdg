@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getSpriterCollisionBoxName(index)
+
+\brief get the name of a Spriter collision box by index
+
+**/ }

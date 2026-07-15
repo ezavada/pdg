@@ -44,11 +44,13 @@
 #define THIS_FILE __FILE__
 #endif
 
+//#include <iostream>
 
 namespace pdg {
 
 
 UserData* UserData::makeUserDataViaCopy(void* ptr, long dataSize, UserFreeFuncT freeFunc) {
+    //std::cerr << "UserData::makeUserDataViaCopy data: " << ptr << " freeFunc: " << typeid(freeFunc).name() << std::endl;
 	UserData* userData = new UserData();
 	userData->data = std::malloc(dataSize);
 	std::memcpy(userData->data, ptr, dataSize);

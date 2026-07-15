@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawVector(vector, attrs)
+
+\brief Draw a vector (arrow) from origin to the specified endpoint
+
+**/ }

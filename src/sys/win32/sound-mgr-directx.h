@@ -70,6 +70,8 @@ public:
     void soundStopped(Sound* sound); // the sound is no longer playing
 	void stopAllSoundsExceptMusic(); // Stop sounds except music from playing
 	void stopAllSoundsAndMusic(); // Stop sounds including music from playing
+	virtual void stopAllSounds(); // Stop all currently playing sounds (overrides base class)
+	virtual bool isShuttingDown() const; // Check if we're in shutdown mode (uses pdg_LibIsQuitting())
 	void setMusic(Sound* music) { mMusicSound = music; }
 	Sound* getMusic() { return mMusicSound; }
 	bool isMuted() { return mIsMuted; }

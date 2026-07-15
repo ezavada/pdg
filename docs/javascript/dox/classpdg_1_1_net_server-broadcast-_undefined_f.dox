@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetServer::broadcast(message, filter)
+
+\brief send a message to all connections, with optional filter
+
+**/ }

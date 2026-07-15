@@ -33,30 +33,6 @@
 
 namespace pdg {
 
-// redraw all of the views for active controllers, starting with
-// our deepest descendents and working our way up.
-void ModalController::redrawAll() {
-
-	if (!isActive()) return;
-	
-	pdg::Controller::redrawAll();
-
-#if 0
-	// recursively traverse to the deepest controller child
-	Children::iterator citr;
-	for(citr = mChildren.begin(); citr != mChildren.end(); citr++) {
-		Controller* child = *citr;
-		if( child->isActive() ) 
-			child->redrawAll();
-	}
-	
-	// render this controller and all its views
-	if( isActive() ) 
-		redrawSelf(mPort->getDrawingArea());
-#endif
-
-}
-
 ModalController::ModalController(Application* app, bool wantKeyUpDown, bool wantKeyPress, 
 								 bool wantMouseEnterLeave, bool wantAll)
 	: pdg::Controller(app,wantKeyUpDown,wantKeyPress,wantMouseEnterLeave,wantAll, kDontDrawWhileInactive) {

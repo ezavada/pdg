@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::rotation(radians, center)
+
+\brief sets the rotation angle and center point for transformations
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawText(string text, Rect rect, Attributes attrs)
+
+\brief Draws text within the specified rectangle with styling attributes
+
+**/ }

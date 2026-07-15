@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getSpriterCollisionBoxCount()
+
+\brief get the number of active Spriter collision boxes
+
+**/ }

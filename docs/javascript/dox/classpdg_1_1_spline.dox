@@ -1,0 +1,38 @@
+namespace pdg { /**
+
+\class pdg::Spline
+
+\brief Curved path defined by control points, supporting multiple spline types including cubic Bezier curves
+
+Splines are mathematical curves defined by control points. PDG supports several spline types:
+
+- **spline_Hermite** - Hermite spline using position and tangent vector parameters
+- **spline_Cardinal** - Cardinal (Catmull-Rom) spline that passes through all control points
+- **spline_UniformB** - Uniform B-spline for smooth curves
+- **spline_CubicBezier** - Cubic Bezier curves with control handles
+- **spline_TCB** - Tension-Continuity-Bias spline for animation curves
+- **spline_NaturalCubic** - Natural cubic spline with continuous second derivatives
+
+\section hermite_params Hermite Spline Parameters
+
+When using **spline_Hermite**, the four parameters to \ref addSegment() are:
+- **p1** - Start position (Point)
+- **p2** - End position (Point)
+- **p3** - Tangent **vector** at start (Point used as a direction vector, not a position)
+- **p4** - Tangent **vector** at end (Point used as a direction vector, not a position)
+
+\note The tangent parameters (p3, p4) are **direction vectors**, not positions. They control
+the direction and speed of the curve as it leaves the start point and approaches the end point.
+
+\par Hermite Example:
+\code
+var spline = new pdg.Spline(pdg.spline_Hermite);
+spline.addSegment(
+    new pdg.Point(10, 10),   // p1: start position
+    new pdg.Point(100, 50),  // p2: end position  
+    new pdg.Point(30, 0),    // p3: tangent vector (direction/speed leaving start)
+    new pdg.Point(30, 0)     // p4: tangent vector (direction/speed approaching end)
+);
+\endcode
+
+**/ }

@@ -64,16 +64,16 @@ class Port;
  *      });
  *		mySprite.setCollideHelper(myHelper);
  *
- * If you need something more complex, you can also use classify to create a new
+ * If you need something more complex, you can also use modern ES6 classes to create a new
  * Javascript class that derives from pdg.ISpriteCollideHelper, and it will call the 
  * allowCollision() method of your class. For example:
  *
- *      classify(pdg.ISpriteCollideHelper, 'MyCollideHelperClass', function() {
- *			def('allowCollision', function(sprite, withSprite) {
+ *      class MyCollideHelperClass extends pdg.ISpriteCollideHelper {
+ *			allowCollision(sprite, withSprite) {
  *            console.log("MyCollideHelperClass.allowCollision(" + sprite + ")" );
  *            return true; // let collision happen (ignored for post draw)
- *			});
- *		});
+ *			}
+ *		}
  *		mySprite.setCollideHelper( new MyCollideHelperClass() );
  */
 
@@ -102,7 +102,9 @@ public:
 
     virtual ~ISpriteCollideHelper() {
 				#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-					CleanupISpriteCollideHelperScriptObject(mISpriteCollideHelperScriptObj);
+					#ifndef PDG_NO_GUI
+						CleanupISpriteCollideHelperScriptObject(mISpriteCollideHelperScriptObj);
+					#endif
 				#endif
 			}
 

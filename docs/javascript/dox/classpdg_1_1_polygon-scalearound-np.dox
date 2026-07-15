@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::scaleAround(factor, centerPoint)
+
+\brief scales the polygon around the specified center point
+
+**/ }

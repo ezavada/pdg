@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::moveInFrontOf
+
+\brief make this sprite be drawn just after another sprite (visually in front of)
+
+\sa moveBehind()
+\sa isBehind()
+\sa getZOrder()
+\sa moveToBack()
+\sa moveToFront()
+\sa SpriteLayer.getSpriteZOrder()
+\sa SpriteLayer.getNthSprite()
+
+**/ }

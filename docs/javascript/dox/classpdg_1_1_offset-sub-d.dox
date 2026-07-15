@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Offset::sub(offset)
+
+\brief subtract an offset from this one
+
+**/ }

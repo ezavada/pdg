@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::findNext(inFindData)
+
+\brief finds the next file matching the search criteria
+
+**/ }

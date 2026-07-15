@@ -4,4 +4,12 @@ namespace pdg { /**
 
 \brief put this sprite in front of all others in its layer
 
+\sa moveToBack()
+\sa getZOrder()
+\sa moveBehind()
+\sa moveInFrontOf()
+\sa SpriteLayer.getSpriteZOrder()
+\sa SpriteLayer.getNthSprite()
+**/ }
+
 **/ }

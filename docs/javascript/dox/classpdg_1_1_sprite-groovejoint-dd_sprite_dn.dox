@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::grooveJoint
+
+\brief join groove on this sprite to an anchor point on another (*Chipmunk Physics Only*)
+
+optional breaking force at which the joint (and and any other connections to that sprite) are broken
+
+If a breaking force is given, then the joint will break, generating a SpriteBreakEvent, if greater than that amount of force is applied to the joint.
+
+\returns the cpConstraint for the Joint in case you want to do anything special with it
+
+**/ }

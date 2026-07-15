@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::SoundManager::on(eventCode, func)
+
+\brief Register an event handler for sound events with the specified event code
+
+**/ }

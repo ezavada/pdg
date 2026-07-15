@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$group___events.html#structpdg_1_1_port_resized_event" title="a port has been resized (GUI Only)" alt="" coords="5,5,129,32"/>
+<area shape="rect" id="Node000000" href="$classpdg_1_1_offset.html" title="offset within a 2D coordinate system" alt="" coords="5,31,63,56"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_point.html" title="point for 2D coordinate system" alt="" coords="115,5,166,31"/>
+<area shape="poly" id="edge12_Node000000_Node000001" title=" " alt="" coords="77,31,114,22,115,27,78,36"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_vector.html" title="vector (magnitude and direction) within a 2D coordinate system." alt="" coords="111,55,170,80"/>
+<area shape="poly" id="edge13_Node000000_Node000002" title=" " alt="" coords="78,51,111,58,109,63,77,56"/>
 </map>

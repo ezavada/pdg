@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addImageStrip(rect, imageStrip, attrs)
+
+\brief adds an image strip element to the drawing
+
+**/ }

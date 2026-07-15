@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_LeftMeta
+
+\brief platform-specific keycode for the left Meta/Command/Windows key
+
+This constant contains the correct keycode value for the left Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform. Use this when checking #KeyEvent.keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect left Meta/Command/Windows key presses in a cross-platform way.
+
+**Platform values:**
+- Mac OS X: 55 (0x37 - NSEvent hardware keycode for left Command)
+- Windows: 91 (0x5B - VK_LWIN virtual keycode for left Windows key)
+- Linux/GLFW: 343 (GLFW_KEY_LEFT_SUPER)
+
+\see keyCode_RightMeta
+\see keyCode_Meta
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

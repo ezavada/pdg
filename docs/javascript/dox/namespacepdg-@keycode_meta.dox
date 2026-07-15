@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_Meta
+
+\brief platform-specific keycode for the Meta/Command/Windows key (generic)
+
+This constant contains the keycode value for detecting the Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform. This always equals #keyCode_LeftMeta on all platforms.
+
+**Platform values:**
+- Mac OS X: 55 (same as keyCode_LeftMeta)
+- Windows: 91 (same as keyCode_LeftMeta)
+- Linux/GLFW: 343 (same as keyCode_LeftMeta)
+
+\see keyCode_LeftMeta
+\see keyCode_RightMeta
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::centerPoint()
+
+\brief returns the center point of the drawing
+
+**/ }

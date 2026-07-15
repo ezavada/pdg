@@ -50,21 +50,33 @@
   #include "pdg/sys/ispritedrawhelper.h"
 #endif
 
-#include <cmath>  // for sin() and cos()
 #include <limits> // for infinity()
+#include <map>    // for std::map
+#include <string> // for std::string
+#include <vector> // for std::vector
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 #include "pdg_script_bindings.h"
 #endif
 
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-#include "chipmunk.h"
+#include "chipmunk/chipmunk_private.h"
 #define CP_COLLIDE_TYPE_SPRITE 1111
 #define CP_COLLIDE_TYPE_WALL   1212
+#define CP_COLLIDE_TYPE_SPRITER_BOX 1313
 #endif
 
-#ifdef PDG_SCML_SUPPORT
-#include "SCML_pdg.h"
+#ifdef PDG_SPRITER_SUPPORT
+// Suppress SpriterPlusPlus virtual function warnings (Clang only; MSVC does not use these pragmas)
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif
+#include "spriterengine/entity/entity.h"
+#include "spriterengine/entity/entityinstance.h"
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 #endif
 
 #define MAX_FRAMES_PER_SPRITE 256
@@ -123,7 +135,9 @@ public:
 		action_FadeComplete = 10,
 		action_FadeInComplete = 11,
 		action_FadeOutComplete = 12,
-        action_JointBreak = 13,     // only available with chipmunk physics
+		action_JointBreak = 13, // only available with chipmunk physics
+        action_SpriterTrigger = 14, // Spriter trigger events (only when PDG is compiled with Spriter support)
+        action_AnimationBlendComplete = 15, // Animation blending completed
 
 		// touch types for SpritTouchInfo
 		touch_MouseEnter = 20, /** NOT IMPLEMENTED **/
@@ -138,11 +152,12 @@ public:
 		collide_BoundingBox = 2,
 		collide_CollisionRadius = 3,
 		collide_AlphaChannel = 4,
-		collide_Last = collide_AlphaChannel
+		collide_SpriterCollisionBox = 5, // Animated collision boxes from Spriter
+		collide_Last = collide_SpriterCollisionBox
 	};
 
-    // get the bounds for the current frame including rotation
-    RotatedRect	getFrameRotatedBounds(int frame);
+    // get the bounds for a frame including rotation, or current frame if no frameNum given
+    RotatedRect	getFrameRotatedBounds(int frameNum = -1);
 
     // sets current frame of Sprite to a given frame number
     Sprite& setFrame(int frame);
@@ -163,8 +178,11 @@ public:
 	void	stopFrameAnimation();
 	
 	// controls whether the sprite should generate action_AnimationLoop or action_AnimationEnd events, default is no
-	bool	setWantsAnimLoopEvents(bool wantsThem = true);
-	bool	setWantsAnimEndEvents(bool wantsThem = true);
+	bool	getWantsAnimLoopEvents() { return wantsAnimLoop; }
+	bool	getWantsAnimEndEvents() { return wantsAnimEnd; }
+
+	Sprite&	setWantsAnimLoopEvents(bool wantsThem = true);
+	Sprite&	setWantsAnimEndEvents(bool wantsThem = true);
 
     // adds an image that is used for one or more frames
     // since an image itself can have multiple frames, all frames of the image are added
@@ -172,13 +190,52 @@ public:
     // the frames are added to the end of the frame list, unless startingFrame is passed in 
     void	addFramesImage(Image* image, int startingFrame = start_FromFirstFrame, int numFrames = all_Frames);
 	
-  #ifdef PDG_SCML_SUPPORT
+  #ifdef PDG_SPRITER_SUPPORT
+    bool	isSpriterSprite() const;
   	bool	hasAnimation(const char* animationName);
   	bool	hasAnimation(int animationId);
   	void	startAnimation(const char* animationName);
   	void	startAnimation(int animationId);
   	Sprite& setEntityScale(int xScale, int yScale);
-  #endif // PDG_SCML_SUPPORT
+  	
+  	// Character Maps
+  	void applyCharacterMap(const char* mapName);
+  	void removeCharacterMap(const char* mapName);
+  	void removeAllCharacterMaps();
+  	std::vector<std::string> getAppliedCharacterMaps() const;
+  	
+  	// Event System (basic, triggers only)
+  	void enableSpriterEvents(bool enable = true);
+  	bool areSpriterEventsEnabled() const;
+  	
+  	// Animation blending
+  	void blendToAnimation(const char* animationName, float blendTime);
+  	void blendToAnimation(int animationId, float blendTime);
+  	bool isBlending() const;
+  	float getBlendProgress() const;
+  	void pauseAnimation();
+  	void resumeAnimation();
+  	void stopAnimation();
+  	bool isAnimationPlaying() const;
+  	bool isAnimationPaused() const;
+  	float getAnimationProgress() const;
+  	
+  	// Attachment Points
+	bool hasAttachPoint(const char* attachPointName) const;
+	Offset getAttachPoint(const char* attachPointName) const;
+	void attachSprite(Sprite* sprite, const char* attachPointName);
+	void detachSprite(Sprite* sprite);
+	Sprite* getAttachedSprite(const char* attachPointName) const;
+	
+	// Sub-Entity Management
+	void activateSubEntity(const char* entityName, const char* animationName = "idle");
+	
+	// Spriter Collision Box Methods
+	RotatedRect getSpriterCollisionBox(const char* boxName) const;
+	bool isSpriterCollisionActive(const char* boxName) const;
+	int getSpriterCollisionBoxCount() const;
+	const char* getSpriterCollisionBoxName(int index) const;
+  #endif // PDG_SPRITER_SUPPORT
 
   #ifndef PDG_NO_GUI
 	// set a drawing helper that will be called before the sprite is drawn
@@ -208,16 +265,16 @@ public:
     void	offsetFrameCenters(int offsetX, int offsetY, Image* image = 0, 
     						int startingFrame = start_FromFirstFrame, int numFrames = all_Frames);
 	// fetch the offsets set above, but only for a single frame
-    void	getFrameCenterOffset(int &offsetX, int &offsetY, Image* image = 0, int frameNum = 0);
+    Offset	getFrameCenterOffset(Image* image = 0, int frameNum = 0);
 
 	// fading, with 1.0 being complete opaque and 0.0 being completely transparent
 	Sprite& setOpacity(float opacity);
 	float	getOpacity();
-	void	fadeTo(float targetOpacity, int32 msDuration, 
+	void	fadeTo(float targetOpacity, ms_delta msDuration, 
                             EasingFunc easing = linearTween);  // fadeComplete notification when done
-	void	fadeIn(int32 msDuration, 
+	void	fadeIn(ms_delta msDuration, 
                             EasingFunc easing = linearTween);  // fadeInComplete notification when done
-	void	fadeOut(int32 msDuration, 
+	void	fadeOut(ms_delta msDuration, 
                             EasingFunc easing = linearTween);  // fadeOutComplete notification when done
 
 	// arrange sprites within the layer
@@ -229,9 +286,11 @@ public:
 	bool	isBehind(Sprite* sprite);
 	
 	// collisions
+	bool getWantsCollideWallEvents() { return wantsWallCollide; }
 	Sprite& setWantsCollideWallEvents(bool wantsThem = true); // collisions for hitting bounds of sprite layer
 	Sprite& enableCollisions(int collisionType = collide_AlphaChannel);
 	Sprite& disableCollisions();
+	int		getCollisionType() const { return mDoCollisions; }
 	// calling setCollisionRadius > 0 when collision are off is same as calling enableCollisions(collide_CollisionRadious)
 	Sprite& setCollisionRadius(float pixelRadius);
 	float	getCollisionRadius();	
@@ -246,17 +305,21 @@ public:
 	float	getElasticity();
 
   #ifndef PDG_NO_GUI
+	bool    getWantsMouseOverEvents() { return wantsMouseOver; }
+	bool    getWantsClickEvents() { return wantsClicks; }
+	int     getMouseDetectMode() { return mMouseDetectMode; }
+	bool    getWantsOffscreenEvents() { return wantsOffscreen; }
 	// controls whether the sprite wants to get mouse events
-	bool    setWantsMouseOverEvents(bool wantsThem = true);
-	bool    setWantsClickEvents(bool wantsThem = true);
-	int     setMouseDetectMode(int collisionType = collide_BoundingBox); // how we detect when the mouse is over a sprite
-	bool    setWantsOffscreenEvents(bool wantsThem = true); // events for when sprite moves offscreen
+	Sprite& setWantsMouseOverEvents(bool wantsThem = true);
+	Sprite& setWantsClickEvents(bool wantsThem = true);
+	Sprite& setMouseDetectMode(int collisionType = collide_BoundingBox); // how we detect when the mouse is over a sprite
+	Sprite& setWantsOffscreenEvents(bool wantsThem = true); // events for when sprite moves offscreen
   #endif // ! PDG_NO_GUI
 
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
 	// override of what is provided by Animated
-	virtual void	applyForce(const Vector& force, int32 msDuration = duration_Instantaneous);
-	virtual void	applyTorque(float forceSpin, int32 msDuration = duration_Instantaneous);
+	virtual void	applyForce(const Vector& force, ms_delta msDuration = duration_Instantaneous);
+	virtual void	applyTorque(float forceSpin, ms_delta msDuration = duration_Instantaneous);
 	virtual void	stopAllForces();  // removes all forces that were set by applyForce (but not friction)
     virtual Animated&    setVelocity(const Vector& deltaPerSec);
 	virtual Vector  getVelocity();
@@ -289,7 +352,7 @@ public:
     // this sprite becomes a static body that isn't affected by physics, though
     // non-static objects can collide with it. This would be used for walls or platforms.
     // This should be done before setting anything else about the sprite
-    // returns itself so you can call Sprite* sprite = layer->createSprite().makeStatic();
+    // returns itself so you can call Sprite* sprite = layer->createSprite()->makeStatic();
     Sprite&         makeStatic();
 
 	virtual Animated&	setMass(float mass);  // override
@@ -359,7 +422,6 @@ public:
     cpConstraint*   gear(Sprite* otherSprite, float gearRatio, float initialAngle = 0.0f, float breakingForce = 0.0f);
 
     // keep spin of another sprite at a constant rate compared to this one
-    // optional breaking force at which the joint (and and any other connections to that sprite) are broken
     // returns the cpConstraint pointer in case you want to do anything special with it
     
     cpConstraint*   motor(Sprite* otherSprite, float spin, float maxTorque = std::numeric_limits<float>::infinity());
@@ -381,17 +443,23 @@ protected:
 /// @cond INTERNAL
     Sprite();
 
+  #ifdef PDG_SPRITER_SUPPORT
+    // for use by SpriteLayer::createSpriteFromSpriter functions
+    Sprite(SpriterEngine::EntityInstance* entityInstance, SpriterEngine::SpriterModel* spriterModel);
+  #endif
+
     virtual void easingCompleted(const Animation& a);
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
     
     cpSpace*        getSpace();
     
-    // override these to set values in chipmunk
+    // override these to set values in chipmunk or spriter
 	virtual void	locationChanged(const Offset& delta);
 	virtual void	sizeChanged(float deltaW, float deltaH);
 	virtual void	rotationChanged(float deltaRadians);
 	virtual void	centerChanged(const Offset& delta);
-    
+	virtual void	flipChanged(bool xFlipped, bool yFlipped);
+
     // hide these since they don't do what is expected
 	Animated&     	setMoveFriction(float frictionCoefficient) { return *this; }
 	Animated&    	setSpinFriction(float frictionCoefficient) { return *this; }
@@ -437,7 +505,7 @@ protected:
     
 	// functions called from the layer
 	virtual void	draw();
-	virtual void	doAnimate(int msElapsed, bool layerDoCollisions);
+	virtual void	doAnimate(ms_delta msElapsed, bool layerDoCollisions);
     
  	int mNumFrames;
 
@@ -469,11 +537,45 @@ protected:
 	float			mElasticity;
 	int				mMouseDetectMode;
 
-  #ifdef PDG_SCML_SUPPORT
-	SCML_pdg::Entity*		mEntity;
+  #ifdef PDG_SPRITER_SUPPORT
+	SpriterEngine::EntityInstance*	mEntityInstance;
+	SpriterEngine::SpriterModel*	mSpriterModel;
 	float					mEntityScaleX;
 	float					mEntityScaleY;
-  #endif // PDG_SCML_SUPPORT
+	
+	// Character maps
+	std::vector<std::string> mAppliedCharacterMaps;
+	
+	// Event system
+	bool mSpriterEventsEnabled;
+	
+	// Animation state
+	bool mIsBlending;
+	float mBlendTime;
+	float mBlendProgress;
+	std::string mCurrentAnimation;
+	std::string mTargetAnimation;
+	bool mIsAnimationPaused;
+	
+	// AttachPoint tracking
+	std::map<std::string, Sprite*> mAttachedSprites;
+	
+	// Collision box cache and bounds optimization
+	mutable std::map<std::string, RotatedRect> mSpriterCollisionBoxCache;
+	mutable bool mSpriterCollisionBoxCacheValid;
+	mutable std::string mFallbackCollisionBoxName;
+	std::string mLastCollisionName; // For collision event info
+	bool mIsFirstContact; // Track if this is the first contact in a collision sequence
+	mutable Rect mColliderBounds;
+	mutable bool mColliderBoundsValid;
+
+	// Private helper methods for Spriter collision boxes
+	void calcColliderBounds() const;
+	std::map<std::string, RotatedRect> getActiveSpriterCollisionBoxes() const;
+	std::vector<std::string> getActiveSpriterCollisionBoxNames() const;
+	bool checkSpriterCollisionBoxCollision(Sprite* otherSprite);
+	bool checkSpriterCollisionBoxPointCollision(const Point& p);
+  #endif // PDG_SPRITER_SUPPORT
 
   #ifndef PDG_NO_GUI
 	// control which port this sprite draws into
@@ -530,29 +632,32 @@ Sprite::setWantsCollideWallEvents(bool wantsThem) {
 	return *this;
 }
 
-inline bool	
+inline Sprite&	
 Sprite::setWantsAnimLoopEvents(bool wantsThem) { 
-	bool didWant = wantsAnimLoop; 
 	wantsAnimLoop = wantsThem; 
-	return didWant; 
+	return *this; 
 }
 
-inline bool	
+inline Sprite&	
 Sprite::setWantsAnimEndEvents(bool wantsThem) {
-	bool didWant = wantsAnimEnd; 
 	wantsAnimEnd = wantsThem; 
-	return didWant; 
+	return *this; 
 }
 
 #ifndef PDG_NO_GUI
-inline bool	
+inline Sprite&	
 Sprite::setWantsOffscreenEvents(bool wantsThem) {
-	bool didWant = wantsOffscreen; 
 	wantsOffscreen = wantsThem; 
 	if (wantsThem) recalcOnscreenAndInBounds();
-	return didWant; 
+	return *this; 
 }
 #endif // PDG_NO_GUI
+
+#ifdef PDG_SPRITER_SUPPORT
+inline bool	Sprite::isSpriterSprite() const {
+	return mEntityInstance != nullptr;
+}
+#endif // PDG_SPRITER_SUPPORT
 
 
 } // end namespace pdg

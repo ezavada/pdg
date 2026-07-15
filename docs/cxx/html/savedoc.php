@@ -4,6 +4,9 @@
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
+$log_everything = false;
+$auto_commit = true;
+
   function getRemoteIP () {
     // check to see whether the user is behind a proxy - if so,
     // we need to use the HTTP_X_FORWARDED_FOR address (assuming it's available)
@@ -52,20 +55,64 @@ $docContents = str_replace('\\"', '"', $docContents);  // remove escapes from do
 file_put_contents ( "save.log", " rawDocName: " . $rawDocName . "\n", FILE_APPEND);
 file_put_contents ( "save.log", " docContents: " . $docContents . "\n", FILE_APPEND);
 
+// preserve bold tags
+$docContents = str_replace('<b>', '(__BOLD__)', $docContents);
+$docContents = str_replace('</b>', '(__ENDBOLD__)', $docContents);
+
+// strip out any html in the contents
+$docContents = strip_tags($docContents);
+
+// restore bold tags
+$docContents = str_replace('(__BOLD__)', '<b>', $docContents);
+$docContents = str_replace('(__ENDBOLD__)', '</b>', $docContents);
+
 // extremely simple safety check, limit us to the javascript/dox directory, and add .dox extension
 $docNameArray = explode('/', $rawDocName);
 $docName = '../dox/' . $docNameArray[count($docNameArray) - 1] . '.dox';
+// also remove potentially harmful characters
+$docName = str_replace(' ','_', $docName);
+$docName = str_replace('\\','_', $docName);
+$docName = str_replace(':','_', $docName);
+$docName = str_replace(';','_', $docName);
+$docName = str_replace('$','_', $docName);
+$docName = str_replace('#','_', $docName);
+$docName = str_replace('%','_', $docName);
+$docName = str_replace('!','_', $docName);
+$docName = str_replace('&','_', $docName);
+$docName = str_replace('^','_', $docName);
+$docName = str_replace('(','_', $docName);
+$docName = str_replace(')','_', $docName);
+$docName = str_replace('*','_', $docName);
+$docName = str_replace('?','_', $docName);
+$docName = str_replace('"','_', $docName);
+$docName = str_replace('\'','_', $docName);
+$docName = str_replace('\t','_', $docName);
+$docName = str_replace('\r','_', $docName);
+$docName = str_replace('\n','_', $docName);
+
 file_put_contents ( "save.log", " docName: " . $docName . "\n", FILE_APPEND);
 file_put_contents ( "save.log", " writing file : " . $docName . "\n", FILE_APPEND);
 file_put_contents ( $docName , $docContents );
-$cmd = 'sudo -u ezavada /sw/bin/git add ' . $docName . ' 2>&1';
-//file_put_contents ( "save.log", " > " . $cmd . "\n", FILE_APPEND);
+
+// regen the docs
+$cmd = '/usr/share/nginx/pdg/tools/regen-doxygen-docs.sh 2>&1'; 
+if ($log_everything) { file_put_contents ( "save.log", " > " . $cmd . "\n", FILE_APPEND); }
 $output = shell_exec($cmd);
-//file_put_contents ( "save.log", " git said : " . $output . "\n", FILE_APPEND);
-$cmd = 'sudo -u ezavada /sw/bin/git commit -o ' . $docName . ' -m "update from ' . getRemoteIP() . 
-	'"  --no-status 2>&1 | tail -1';
-file_put_contents ( "save.log", " > " . $cmd . "\n", FILE_APPEND);
+if ($log_everything) { file_put_contents ( "save.log", " doxygen said : " . $output . "\n", FILE_APPEND); }
+
+// do a git add to stage the files
+$cmd = 'sudo  /usr/bin/git add *.html ' . $docName . ' 2>&1';
+if ($log_everything) { file_put_contents ( "save.log", " > " . $cmd . "\n", FILE_APPEND); }
 $output = shell_exec($cmd);
-file_put_contents ( "save.log", $output . "\n", FILE_APPEND);
+if ($log_everything) { file_put_contents ( "save.log", " git said : " . $output . "\n", FILE_APPEND); }
+
+// commit the files to the repository
+if ($auto_commit) {
+	$cmd = 'sudo /usr/bin/git commit -o *.html ' . $docName . ' -m "update from ' . getRemoteIP() . 
+		'"  --no-status 2>&1 | tail -1';
+	if ($log_everything) { file_put_contents ( "save.log", " > " . $cmd . "\n", FILE_APPEND); }
+	$output = shell_exec($cmd);
+	file_put_contents ( "save.log", $output . "\n", FILE_APPEND);
+}
 
 ?>

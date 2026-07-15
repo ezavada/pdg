@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::x2()
+
+\brief alias for Rect.right
+
+**/ }

@@ -37,16 +37,21 @@ configure:
 
 compile: configure
 	node-gyp build
-ifeq ($(PLATFORM),Darwin)
-	-@nm -mu build/Release/pdg.node | grep "dynamically looked" | grep -v "__ZNK2v8" \
-		| grep -v "__ZN4node" | grep -v "__ZN2v8" | grep -v "_ev_" | grep -v "_MOZ_Z_"
-else
-	-@nm -u build/Release/pdg.node | grep -v "@@" | grep -v "_ZNK2v8" \
-		| grep -v "_ZN4node" | grep -v "_ZN2v8" | grep -v " ev_" | grep -v "^[ \t]*w "
-endif
 
 compile-verbose: 
 	node-gyp -verbose build
+
+check-dylib:
+    ifeq ($(PLATFORM),Darwin)
+	    -@nm -mu $(PDG_ROOT)/node_modules/pdg/build/Release/pdg.node | grep "dynamically looked" | grep -v "__ZNK2v8" \
+		    | grep -v "__ZN4node" | grep -v "__ZN2v8" | grep -v "_ev_" | grep -v "_MOZ_Z_" | grep -v "_objc_msgSend" \
+		    | grep -v "_node_module_register"
+    else
+	    -@nm -u $(PDG_ROOT)/node_modules/pdg/build/Release/pdg.node | grep -v "@@" | grep -v "_ZNK2v8" \
+		    | grep -v "_ZN4node" | grep -v "_ZN2v8" | grep -v " ev_" | grep -v " EVP_" | grep -v " deflate" | grep -v " inflate" \
+			| grep -v "@GLIBC" | grep -v "@GCC" | grep -v "@CXXABI" \
+			| grep -v "^[ \t]*w " | grep -v "node_module_register"
+    endif
 
 test: 
 	echo "TODO: add tests to node package"
@@ -58,5 +63,5 @@ clean:
 	rm -f src/.lock-wscript
 
 
-.PHONY: all clean test build configure compile compile-verbose
+.PHONY: all clean test build configure compile compile-verbose check-dylib
 

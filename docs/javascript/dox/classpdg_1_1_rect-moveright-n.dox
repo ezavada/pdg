@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::moveRight(delta)
+
+\brief move the rectangle to the right by some amount
+
+**/ }

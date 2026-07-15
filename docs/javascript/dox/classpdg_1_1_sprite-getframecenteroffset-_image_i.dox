@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getFrameCenterOffset
+
+\brief get the offset to the center-point from the true image center for a given frame
+
+If image is passed in, then frameNum is for that the Nth frame of that image, otherwise frameNum indicates which frame for the sprite
+
+\returns an Offset
+
+**/ }

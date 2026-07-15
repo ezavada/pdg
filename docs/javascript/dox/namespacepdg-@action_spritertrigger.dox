@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\var pdg::action_SpriterTrigger
+
+\brief eventType_SpriteAnimate action: a Spriter animation trigger fired
+
+Emitted whenever a Spriter animation is playing and it encounter a trigger.
+
+\see pdg.Sprite.startAnimation()
+\sa pdg.eventType_SpriteAnimation
+
+\ingroup Animation
+
+
+**/ }

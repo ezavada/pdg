@@ -45,7 +45,7 @@ Controller::Controller(Application* app, bool wantKeyUpDown, bool wantKeyPress,
  : mApp(app), mViews(), mChildren(), mParent(0), 
    mPort(app->getGraphicsManager().getMainPort()),
    mLastClicked(0), mClickCount(0), 
-   mRightClick(false), mActive(true), mDrawing(false), mWantsAllEvents(wantAll), mDrawInactive(drawInactive),
+   mRightClick(false), mActive(true), mWantsAllEvents(wantAll), mDrawInactive(drawInactive),
    mViewOnLastMouseMoved(0),
    mLasthitViewID(-1),
    mLasthitViewPart(-1) 
@@ -54,6 +54,7 @@ Controller::Controller(Application* app, bool wantKeyUpDown, bool wantKeyPress,
     emgr.addHandler(this, eventType_MouseUp);       // we always get clicks
     emgr.addHandler(this, eventType_MouseDown);
 	emgr.addHandler(this, eventType_MouseMove);
+    emgr.addHandler(this, eventType_PortDraw);      // frame-based rendering
     if (wantKeyUpDown) {
         emgr.addHandler(this, eventType_KeyUp);
         emgr.addHandler(this, eventType_KeyDown);
@@ -97,6 +98,7 @@ Controller::~Controller() {
     emgr.removeHandler(this, eventType_MouseUp);
     emgr.removeHandler(this, eventType_MouseDown);
 	emgr.removeHandler(this, eventType_MouseMove);
+    emgr.removeHandler(this, eventType_PortDraw);
     if (mWantsAllEvents) {
         emgr.removeHandler(this, all_events);
     }
@@ -183,137 +185,6 @@ View* Controller::getUntypedView(int id) {
     return 0;
 } 
 
-// don't do any redraws for a while, we are drawing
-bool Controller::startDrawing() {
-    bool result = mDrawing;
-    mDrawing = true;
-    return result;
-}
-
-// do needed redraws now, we are done drawing
-void Controller::doneDrawing(bool wasDrawing) {
-    if (mDrawing) {
-        mDrawing = wasDrawing;
-    }
-    // only if we are really and truely done with the batch drawing do we
-    // do the redraw of all the children
-    if (!mDrawing) {
-        viewRedrawn(0);
-    }
-}
-
-// redraws any children or overlapping views if needed
-void Controller::viewRedrawn(View* redrawnView) {
-	if (!mDrawInactive && !mActive) return; // don't draw if we are inactive unless we draw while inactive
-    // ignore if we are in the middle of a big redraw
-    if (mDrawing) return;
-	
-//    Rect areaAffected;
-//    if (redrawnView) {
-//        areaAffected = redrawnView->getViewArea();
-//    }
-//    if (areaAffected.empty()) {
-//        // if no area specified, assume everything is affected
-//        DEBUG_ASSERT(mPort, "Drawing before mPort initialized!");
-//        areaAffected = mPort->getDrawingArea();
-//    }
-    // first redraw all of our views that are on top of this one
-    // draw back to front, so most recently added overlays oldest
-    // ERZ, 6/23/04, need to add this back in at some point,
-    // but for now it causes too many redraw problems
-//    bool wasDrawing = mDrawing;
-//    mDrawing = true;    // prevent infinite loops
-//	ViewList::iterator itr;
-//	bool passedRedrawnView = redrawnView ? false : true;    // if there wasn't one, we already passed it
-//	for(itr = mViews.begin(); itr != mViews.end(); itr++) {
-//		idViewPair val = *itr;
-//        View* view = val.first;
-//        if (view == redrawnView) {
-//            passedRedrawnView = true;
-//        } else if (passedRedrawnView && view->isVisible()) {
-//		    Rect viewRect = view->getViewArea();
-//		    if (areaAffected.overlaps(viewRect)) {
-//    			view->draw();
-//			}
-//		}
-//	}
-//    mDrawing = wasDrawing;
-	
-    // if the controller has children, then they may have been overdrawn by
-    // what just happened, so redraw all the children in the affected area
-	Children::iterator citr;
-	for(citr = mChildren.begin(); citr != mChildren.end(); citr++) {
-		Controller* child = *citr;
-//        child->redrawSelf(areaAffected);
-		child->redraw();
-	}
-}
-
-// redraws everything in this controller hiearchy
-void Controller::redrawAll() {
-	if (!mDrawInactive && !mActive) return; // don't draw if we are inactive unless we draw while inactive
-    if (mParent) {
-        mParent->redrawAll(); // pass off to our parent if we have one
-    } else {
-        redraw();   // if not, start drawing ourself and our children
-    }
-}
-
-// redraw ourself and our children
-void Controller::redraw() {
-	if (!mDrawInactive && !mActive) return; // don't draw if we are inactive unless we draw while inactive
-    if (!mDrawing) {    // don't do this if we are being batched
-        redrawSelf();
-    	// now redraw any children
-    	viewRedrawn(0);
-	}
-}
-
-void Controller::redrawSelf(Rect areaAffected) {
-	if (!mDrawInactive && !mActive) return; // don't draw if we are inactive unless we draw while inactive
-    Rect clipSave = mPort->getClipRect();
-    bool clipped = false;
-    if (areaAffected.empty()) {
-        // if no area specified, assume everything is affected
-        areaAffected = mPort->getDrawingArea();
-    } else if (!clipSave.empty()) {
-        // if an affected area was specified, then make sure
-        // we clip to the affected area so we don't accidentially
-        // erase stuff we don't need to erase.
-		Rect ourClip = areaAffected.intersection(clipSave);
-		if (ourClip.empty()) return;   // there is nothin to draw, the clip rect turned up empty after
-		                               // the intersection with the affected area
-		
-		mPort->setClipRect(ourClip);
-
-		// test code here
-//		mPort->frameRectEx(ourClip, 2, Graphics::solidPat, 0, PDG_WHITE_COLOR);
-//		ourClip.shrink(2);
-//		mPort->setClipRect(ourClip);
-		
-		clipped = true;
-    }
-    // draw back to front, so most recently added overlays oldest
-	ViewList::iterator itr;
-	for(itr = mViews.begin(); itr != mViews.end(); itr++) {
-		idViewPair val = *itr;
-        View* view = val.first;
-		if(view->isVisible())
-		{
-		    Rect viewRect = view->getViewArea();
-		    if (areaAffected.overlaps(viewRect)) {
-    		    bool wasDrawing = mDrawing;
-    		    mDrawing = true;
-    			view->draw();
-    			mDrawing = wasDrawing;
-			}
-		}
-	}
-	// restore the clip rect
-	if (clipped) {
-	    mPort->setClipRect(clipSave);
-	}
-}
 
 bool Controller::doMouseDown(const MouseInfo *mi, View* view, int id, int part) {
     // override to do something when mouse button transistions from up to down
@@ -339,12 +210,12 @@ void Controller::doMouseEnter(const MouseInfo *mi, View* view, int id, int part)
 void Controller::doMouseLeave(const MouseInfo *mi, View* view, int id, int part) {
     // override to do something when the mouse leaves a view
     // check the MouseInfo struct to see if the mouse button is up or down
-//	if(view)
+//	if (view)
 //	view->doMouseLeave(mi->mousePos, id, part);
 }
 
 void Controller::doMouseMove(const MouseInfo *mi, View* view, int id, int part){
-//	if(view)
+//	if (view)
 //	view->doMouseMove(mi->mousePos, id, part);
 }
 
@@ -534,11 +405,18 @@ void Controller::portWasResized(Port* resizedPort) {
 bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw() {
 
     // we handle port resized events even when we are inactive
-    if(inEventType == eventType_PortResized) {
+    if (inEventType == eventType_PortResized) {
 
         portWasResized(static_cast<PortResizeInfo*>(inEventData)->port);
         return false;   // we never handle a resized event completely ourselves, others must be informed of it
     
+    }
+    
+    // handle PortDraw events for frame-based rendering
+    if (inEventType == eventType_PortDraw) {
+        PortDrawInfo* pdi = static_cast<PortDrawInfo*>(inEventData);
+        drawViews(pdi->port, pdi->frameNum);
+        return false;   // don't consume event - let it propagate to other controllers
     }
     
     // don't handle any mouse or keyboard events if controller is inactive
@@ -614,7 +492,7 @@ bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* in
             }
         } else if (inEventType == eventType_MouseMove) { // check the mousemove event
 		    //suraj add
-			if ((mViewOnLastMouseMoved != hitView) || (hitViewID != hitViewID) ||
+			if ((mViewOnLastMouseMoved != hitView) || (hitViewID != mLasthitViewID) ||
 				(hitViewPart != mLasthitViewPart)) { // check if any part, ID, or view has changed
 				if (mViewOnLastMouseMoved) {         // if changed, call the mouseleave for left place
 					doMouseLeave(mi, mViewOnLastMouseMoved, mLasthitViewID, mLasthitViewPart);
@@ -658,6 +536,34 @@ bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* in
     }
 	
     return false;  // we didn't handle this event
+}
+
+void Controller::drawViews(Port* port, long frameNum) {
+    if (!mDrawInactive && !mActive) return; // don't draw if we are inactive unless we draw while inactive
+
+    Rect portRect = port->getDrawingArea();
+
+    // Draw all views
+    // draw back to front, so most recently added overlays oldest
+	ViewList::iterator itr;
+	for(itr = mViews.begin(); itr != mViews.end(); itr++) {
+		idViewPair val = *itr;
+        View* view = val.first;
+		if (view->isVisible())
+		{
+		    Rect viewRect = view->getViewArea();
+		    if (portRect.overlaps(viewRect)) {
+     			view->draw();
+			}
+		}
+	}
+
+    // Draw all children
+    Children::iterator citr;
+    for(citr = mChildren.begin(); citr != mChildren.end(); citr++) {
+        Controller* child = *citr;
+        child->drawViews(port, frameNum);
+    }
 }
 
 } // namespace pdg

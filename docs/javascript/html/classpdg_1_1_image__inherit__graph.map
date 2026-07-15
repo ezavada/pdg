@@ -1,3 +1,5 @@
 <map id="Image" name="Image">
-<area shape="rect" id="node2" href="$classpdg_1_1_image_strip.html" title="bitmap image containing a number of frames that can be blitted onto the screen" alt="" coords="5,79,91,104"/>
+<area shape="rect" id="Node000001" title="A bitmap image that can be blitted onto the screen." alt="" coords="19,5,76,31"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_image_strip.html" title="bitmap image containing a number of frames that can be blitted onto the screen" alt="" coords="5,79,90,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="50,46,50,79,45,79,45,46"/>
 </map>

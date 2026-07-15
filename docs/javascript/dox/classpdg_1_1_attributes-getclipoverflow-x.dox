@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getClipOverflow()
+
+\brief Gets whether image overflow should be clipped when drawn
+
+**/ }

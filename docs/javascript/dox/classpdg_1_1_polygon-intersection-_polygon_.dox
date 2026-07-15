@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::intersection(other)
+
+\brief returns the intersection of this polygon with another polygon
+
+**/ }

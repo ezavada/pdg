@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::ElementRef::setAttributes(attrs)
+
+\brief sets the attributes of the element
+
+**/ }

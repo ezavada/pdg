@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onFadeOutComplete
+
+\brief set event handler for sprite fade out event
+
+This happens whenever this sprite completes a fade out over time done by a call to fadeOut()
+
+\sa fadeOut()
+\sa SpriteAnimateEvent
+\sa IEventHandler
+
+
+**/ }

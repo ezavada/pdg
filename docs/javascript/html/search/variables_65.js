@@ -45,6 +45,5 @@ var searchData=
   ['eventtype_5fspritelayer',['eventType_SpriteLayer',['../group___events.html#gab7455c3c750889e20da1627c0ee6a031',1,'pdg']]],
   ['eventtype_5fspritetouch',['eventType_SpriteTouch',['../group___events.html#gad870c3a675480eaa955bc4e2458f7f29',1,'pdg']]],
   ['eventtype_5ftimer',['eventType_Timer',['../group___events.html#ga9df8b53cac973c65e9ee504391065134',1,'pdg']]],
-  ['evt',['evt',['../namespacepdg.html#a63dd247c3a6e5669abc7b38f891b01de',1,'pdg']]],
-  ['exception',['Exception',['../classpdg_1_1_rect.html#afcfb20d98ac997f8c48397973d9eefa1',1,'pdg::Rect']]]
+  ['evt',['evt',['../namespacepdg.html#a63dd247c3a6e5669abc7b38f891b01de',1,'pdg']]]
 ];

@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::makeJointBreakable
+
+\brief set or change force at which the joint between sprites will break (*Chipmunk Physics Only*)
+
+\sa makeJointUnbreakable()
+\sa SpriteBreakEvent
+
+**/ }

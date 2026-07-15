@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Quad::getBounds()
+
+\brief return a rectangle that bounds the quad
+
+**/ }

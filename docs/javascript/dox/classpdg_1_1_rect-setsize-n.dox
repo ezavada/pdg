@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::setSize(n)
+
+\brief set the size (width & height) of the rectangle
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawImage(Image img, Rect rect, Attributes attrs)
+
+\brief Draws an image within the specified rectangle with styling attributes
+
+**/ }

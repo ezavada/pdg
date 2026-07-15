@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::lineThickness(thickness)
+
+\brief sets the thickness of line strokes in pixels
+
+**/ }

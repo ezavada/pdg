@@ -54,6 +54,20 @@ namespace pdg {
 class Port;
 #endif
 
+//! how images should fit into rectangles
+enum FitType {
+    fit_None,
+    fit_Fill,       // scale both dimensions to match target height and width, can change proportions
+    fit_Height,     // scale to match target height (center horizontally)
+    fit_Width,      // scale to match target width (center vertically)
+    fit_Inside,     // scale to match smaller of target height or width, keeping image entirely inside rect
+    fit_Overflow,   // scale to match larger of height or width, overflow the image in the smaller dimension
+    fit_Clipped,    // scale to match larger of height or width, but clip the image to the rect
+    fit_TileX,      // preserve image size, repeat horizontally to fit target width (center vertically)
+    fit_TileY,      // preserve image size, repeat vertically to fit target height (center horizontally)
+    fit_Tile,       // tile the image both horizontally and vertically
+};
+
 // -----------------------------------------------------------------------------------
 //! Image
 //! A bit image that can be blitted onto the screen
@@ -74,15 +88,6 @@ public:
 	//! if the image has multiple frames, it returns the bounds as the frame width, not the total width
 	virtual Rect getImageBounds();
 	virtual Rect getImageBounds( Point& at );
-
-    enum FitType {
-		fit_None,
-        fit_Height,             // match heights, don't change proportions
-        fit_Width,              // match widths, don't change proportions
-        fit_Inside,             // match height or width, but keep image entirely inside rect
-        fit_Fill,               // match both height and width, change proportions if needed
-        fit_FillKeepProportions // match height or width so that entire rect is filled with image, image size may be larger than rect
-    };
 
 	virtual long 	getHeight();
 	virtual long	getWidth();
@@ -143,11 +148,23 @@ public:
     virtual Port*   setPort(Port* newPort);
 #endif
 
-    static Image* createImageFromData(const char* imageName, char* imageData, long imageDataLen);
+    enum ImageSerializationMode {
+        ser_Nothing,        // ignore images entirely
+        ser_ByReference,     // only serialize references to the images
+    };
+    static int    registerImageForSerialization(Image* img); // returns reference number
+    static bool   setImageSerializationMode(ImageSerializationMode mode);
+
     static Image* createImageFromFile(const char* imageFileName);
+    static Image* createImageFromData(char* imageData, long imageDataLen);
+
+    static Image* createImageFromResourceFile(const char* resourceName, const char* imageFileName);
+    static Image* createImageFromResourceData(const char* resourceName, char* imageData, long imageDataLen);
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-	SCRIPT_OBJECT_REF mImageScriptObj;
+    static Image* createEmptyImageForIntrospection();
+
+    SCRIPT_OBJECT_REF mImageScriptObj;
 #endif
 
 #ifndef PDG_INTERNAL_LIB
@@ -191,9 +208,9 @@ protected:
  	virtual void    drawTextureFrame(const Rect& r, int frame) = 0;
 
     //! draws image as texture wrapped around a sphere
-    virtual void    drawTexturedSphere(const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians) = 0;
+    virtual void    drawTexturedSphere(const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight = Color(0.5f, 0.5f, 0.5f, 1.0f)) = 0;
     //! draws single frame of multiframe image as texture wrapped around a sphere
-    virtual void    drawTexturedSphereFrame(const Point& loc, int frame, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians)= 0;
+    virtual void    drawTexturedSphereFrame(const Point& loc, int frame, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight = Color(0.5f, 0.5f, 0.5f, 1.0f))= 0;
 
 	//! draws a subsection of the image by scaling to fit the destination rectangle
 	virtual void	drawSection(const Rect& r, const Rect& section) = 0;
@@ -231,7 +248,9 @@ inline
 Image::~Image() {
 //                DEBUG_ONLY( OS::_DOUT("dt Image %p", this); )
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+	#ifndef PDG_NO_GUI
 	CleanupImageScriptObject(mImageScriptObj);
+	#endif
 #endif
 }
 

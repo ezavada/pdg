@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::sphereRotation(float rotation)
+
+\brief Sets the rotation angle in radians for a textured sphere
+
+**/ }

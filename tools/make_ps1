@@ -1,0 +1,885 @@
+# PDG Build Script (PowerShell)
+# PowerShell version of make.bat that works with configure.ps1 results
+
+param(
+    [string]$Target = "pdg",
+    [string]$Config = "Release",
+    [switch]$Help,
+    [switch]$Clean,
+    [switch]$Verbose
+)
+
+# Note: Removed global MSBuild environment variable overrides to allow GLFW to use default settings
+
+# Function to display help
+function Show-Help {
+    Write-Host "PDG Build Script (PowerShell)" -ForegroundColor Cyan
+    Write-Host "=============================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Usage: .\make.ps1 [options]" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "Options:" -ForegroundColor Yellow
+    Write-Host "  -Target <name>    Build target (default: pdg)" -ForegroundColor White
+    Write-Host "  -Config <name>    Build configuration (default: Release)" -ForegroundColor White
+    Write-Host "  -Clean            Clean build before building" -ForegroundColor White
+    Write-Host "  -Verbose          Show full compiler/linker command lines (MSBuild detailed)" -ForegroundColor White
+    Write-Host "  -Help             Show this help message" -ForegroundColor White
+    Write-Host ""
+    Write-Host "Available Targets:" -ForegroundColor Yellow
+    Write-Host "  pdg               PDG app with Node.js JavaScript support (default)" -ForegroundColor White
+    Write-Host "  pdg-node          PDG engine as a Node.js plugin" -ForegroundColor White
+    Write-Host "  pdg-tests         C++ performance test suite (Bunnymark & PDGMark)" -ForegroundColor White
+    Write-Host "  pdg-libs          C++ library suite (debug and optimized)" -ForegroundColor White
+    Write-Host "  chipmunk          Chipmunk physics library" -ForegroundColor White
+    Write-Host "  glfw              GLFW low level OpenGL graphics library" -ForegroundColor White
+    Write-Host "  libjpeg-turbo     libjpeg-turbo JPEG image library" -ForegroundColor White
+    Write-Host "  node              Node.js as a library and executable tool" -ForegroundColor White
+    Write-Host "  clean             Clean everything except Node.js" -ForegroundColor White
+    Write-Host ""
+    Write-Host "This script builds PDG and all its dependencies using MSBuild." -ForegroundColor White
+    Write-Host "Make sure to run .\configure.ps1 first to set up the build environment." -ForegroundColor White
+}
+
+# Show help if requested
+if ($Help) {
+    Show-Help
+    exit 0
+}
+
+# Function to write colored output
+function Write-Status {
+    param([string]$Message, [string]$Color = "White")
+    Write-Host $Message -ForegroundColor $Color
+}
+
+function Write-Error-Status {
+    param([string]$Message)
+    Write-Host "ERROR: $Message" -ForegroundColor Red
+}
+
+function Write-Success-Status {
+    param([string]$Message)
+    Write-Host "SUCCESS: $Message" -ForegroundColor Green
+}
+
+function Write-Warning-Status {
+    param([string]$Message)
+    Write-Host "WARNING: $Message" -ForegroundColor Yellow
+}
+
+# Function to check if a command exists
+function Test-Command {
+    param([string]$Command)
+    try {
+        Get-Command $Command -ErrorAction Stop | Out-Null
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
+# Function to find MSBuild
+function Find-MSBuild {
+    # Check if MSBuild is in PATH
+    if (Test-Command "msbuild") {
+        return "msbuild"
+    }
+    
+    # Check for Visual Studio installations using vswhere
+    $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+    if (Test-Path $vsWhere) {
+        try {
+            # Look for Visual Studio with C++ tools
+            $vsInstall = & $vsWhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+            if ($vsInstall) {
+                $msbuildPath = Join-Path $vsInstall "MSBuild\Current\Bin\MSBuild.exe"
+                if (Test-Path $msbuildPath) {
+                    return $msbuildPath
+                }
+                
+                # Try older MSBuild versions
+                $msbuildPath = Join-Path $vsInstall "MSBuild\15.0\Bin\MSBuild.exe"
+                if (Test-Path $msbuildPath) {
+                    return $msbuildPath
+                }
+            }
+            
+            # Look for Build Tools
+            $buildToolsInstall = & $vsWhere -latest -products * -requires Microsoft.VisualStudio.Workload.VCTools -property installationPath
+            if ($buildToolsInstall) {
+                $msbuildPath = Join-Path $buildToolsInstall "MSBuild\Current\Bin\MSBuild.exe"
+                if (Test-Path $msbuildPath) {
+                    return $msbuildPath
+                }
+            }
+        }
+        catch {
+            Write-Warning-Status "Error checking Visual Studio installations: $($_)"
+        }
+    }
+    
+    # Check common MSBuild locations
+    $commonPaths = @(
+        "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+        "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
+        "C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe",
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe",
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\MSBuild.exe",
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
+    )
+    
+    foreach ($path in $commonPaths) {
+        if (Test-Path $path) {
+            return $path
+        }
+    }
+    
+    return $null
+}
+
+# Function to run MSBuild
+function Invoke-MSBuild {
+    param(
+        [string]$ProjectPath,
+        [string]$Target = "Build",
+        [string]$Configuration = "Release",
+        [string]$MSBuildPath,
+        [switch]$Verbose = $false,
+        [int]$TimeoutMinutes = 30
+    )
+    
+    $args = @(
+        $ProjectPath,
+        "/m", # Allow multiple processes (original behavior)
+        "/t:$Target",
+        "/p:Configuration=$Configuration",
+        "/p:TreatWarningsAsErrors=false",
+        "/clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal",
+        "/nologo"
+    )
+    
+    if ($Verbose) {
+        # detailed = show full cl.exe/link.exe command lines with all parameters
+        $args = $args -replace "Verbosity=minimal", "Verbosity=detailed"
+    }
+    
+    Write-Status "Running: $MSBuildPath $($args -join ' ')" "Gray"
+    Write-Status "Timeout set to $TimeoutMinutes minutes" "Gray"
+    
+    try {
+        $process = Start-Process -FilePath $MSBuildPath -ArgumentList $args -PassThru -NoNewWindow
+        $timeout = $TimeoutMinutes * 60 * 1000  # Convert to milliseconds
+        
+    if ($process.WaitForExit($timeout)) {
+        # Clean up after successful build
+        Cleanup-BuildProcesses
+        return $process.ExitCode
+        } else {
+            Write-Error-Status "MSBuild timed out after $TimeoutMinutes minutes. Terminating process..."
+            $process.Kill()
+            $process.WaitForExit(5000)  # Wait up to 5 seconds for graceful termination
+            if (!$process.HasExited) {
+                Write-Warning-Status "Process did not terminate gracefully, forcing kill..."
+                Stop-Process -Id $process.Id -Force
+            }
+            Cleanup-BuildProcesses
+            return 1
+        }
+    }
+    catch {
+        Write-Error-Status "Failed to run MSBuild: $($_)"
+        return 1
+    }
+}
+
+# Function to kill stuck MSBuild processes
+function Stop-StuckMSBuildProcesses {
+    Write-Status "Checking for stuck MSBuild processes..." "Yellow"
+    $msbuildProcesses = Get-Process | Where-Object {$_.ProcessName -eq "MSBuild"}
+    
+    if ($msbuildProcesses.Count -gt 0) {
+        Write-Warning-Status "Found $($msbuildProcesses.Count) MSBuild processes running"
+        foreach ($proc in $msbuildProcesses) {
+            $runningTime = (Get-Date) - $proc.StartTime
+            Write-Status "MSBuild PID $($proc.Id) running for $($runningTime.ToString('hh\:mm\:ss'))" "Gray"
+            
+            #if ($runningTime.TotalMinutes -gt 2) {
+                Write-Warning-Status "Terminating stuck MSBuild process PID $($proc.Id)"
+                try {
+                    Stop-Process -Id $proc.Id -Force
+                } catch {
+                    Write-Error-Status "Failed to terminate process $($proc.Id): $($_)"
+                }
+            #}
+        } 
+    } else {
+        Write-Success-Status "No MSBuild processes found"
+    }
+}
+
+# Function to cleanup build processes after each build step
+function Cleanup-BuildProcesses {
+    Write-Status "Cleaning up build processes..." "Yellow"
+    
+    # Kill any lingering MSBuild processes
+    $msbuildProcesses = Get-Process | Where-Object {$_.ProcessName -eq "MSBuild"} -ErrorAction SilentlyContinue
+    if ($msbuildProcesses) {
+        foreach ($process in $msbuildProcesses) {
+                try {
+                    $runningTime = (Get-Date) - $process.StartTime
+                    Write-Status "Terminating MSBuild process PID $($process.Id) (running for $($runningTime.ToString('hh\:mm\:ss')))" "Gray"
+                    Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+                } catch {
+                    Write-Warning-Status "Failed to terminate MSBuild process PID $($process.Id): $($_)"
+                }
+        }
+    }
+    
+    # Kill any mspdbsrv processes (symbol server)
+    $symbolProcesses = Get-Process | Where-Object {$_.ProcessName -eq "mspdbsrv"} -ErrorAction SilentlyContinue
+    if ($symbolProcesses) {
+        foreach ($process in $symbolProcesses) {
+            try {
+                Write-Status "Terminating symbol server process PID $($process.Id)" "Gray"
+                Stop-Process -Id $process.Id -Force
+            } catch {
+                Write-Warning-Status "Failed to terminate symbol server process PID $($process.Id): $($_)"
+            }
+        }
+    }
+    
+    # Kill any hanging conhost processes
+    $conhostProcesses = Get-Process | Where-Object {$_.ProcessName -eq "conhost" -and $_.CPU -eq 0} -ErrorAction SilentlyContinue
+    if ($conhostProcesses) {
+        foreach ($process in $conhostProcesses) {
+            try {
+                $runningTime = (Get-Date) - $process.StartTime
+                if ($runningTime.TotalMinutes -gt 5) {
+                    Write-Status "Terminating hanging conhost process PID $($process.Id)" "Gray"
+                    Stop-Process -Id $process.Id -Force
+                }
+            } catch {
+                Write-Warning-Status "Failed to terminate conhost process PID $($process.Id): $($_)"
+            }
+        }
+    }
+    
+    # Brief pause to ensure cleanup
+    Start-Sleep -Milliseconds 500
+    
+    Write-Success-Status "Build process cleanup completed"
+}
+
+# Function to copy file if source exists
+function Copy-File-If-Exists {
+    param(
+        [string]$Source,
+        [string]$Destination
+    )
+    
+    if (Test-Path $Source) {
+        Copy-Item $Source $Destination -Force
+        Write-Status "Copied $Source to $Destination" "Gray"
+        return $true
+    }
+    else {
+        Write-Warning-Status "Source file not found: $Source"
+        return $false
+    }
+}
+
+# Function to clean build directories
+function Invoke-Clean {
+    Write-Status "Cleaning build directories..." "Yellow"
+    
+    $cleanPaths = @(
+        "msvc\src\Debug",
+        "msvc\src\Release",
+        "build\win32\glfw\src\Debug",
+        "build\win32\glfw\src\Release",
+        "build\win32\chipmunk\src\Debug",
+        "build\win32\chipmunk\src\Release",
+        "build\win32\libjpeg-turbo\Debug",
+        "build\win32\libjpeg-turbo\Release",
+        "test\perf\cpp-bunnymark\bunnymark.exe",
+        "test\perf\cpp-pdgmark\pdgmark.exe"
+    )
+    
+    foreach ($path in $cleanPaths) {
+        if (Test-Path $path) {
+            Write-Status "Cleaning: $path" "Gray"
+            Remove-Item "$path\*" -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+    
+    Write-Success-Status "Clean completed"
+}
+
+# Function to build Node.js library
+function Build-Node {
+    param(
+        [string]$Config,
+        [string]$MSBUILD_PATH,
+        [switch]$Verbose
+    )
+    
+    Write-Status "Checking Node.js library..." "Cyan"
+    $nodeLibPath = "deps\node\out\$Config\lib\libnode.lib"
+    $nodeExePath = "deps\node\out\$Config\node.exe"
+
+    # Check if both required files exist
+    $nodeLibExists = Test-Path $nodeLibPath
+    $nodeExeExists = Test-Path $nodeExePath
+
+    if (-not $nodeLibExists -or -not $nodeExeExists) {
+        Write-Status "Building Node.js as a library..." "Yellow"
+        
+        Push-Location "deps\node"
+        try {
+            # Set environment to force single-threaded build to avoid hanging
+            Write-Status "Running: cmd /c vcbuild.bat noprojgen nosign" "Gray"
+            Write-Status "Using single-threaded build to prevent MSBuild hanging issues" "Yellow"
+            $originalProcessors = $env:NUMBER_OF_PROCESSORS
+            $env:NUMBER_OF_PROCESSORS = "1"
+            $process = Start-Process -FilePath "cmd" -ArgumentList @("/c", "vcbuild.bat", "noprojgen", "nosign") -PassThru -NoNewWindow
+            $timeout = 60 * 60 * 1000  # 60 minutes timeout for single-threaded Node.js build
+            
+            if ($process.WaitForExit($timeout)) {
+                $BUILD_STATUS = $process.ExitCode
+            } else {
+                Write-Error-Status "Node.js build timed out after 60 minutes. Terminating process..."
+                $process.Kill()
+                $process.WaitForExit(10000)  # Wait up to 10 seconds for graceful termination
+                if (!$process.HasExited) {
+                    Write-Warning-Status "Process did not terminate gracefully, forcing kill..."
+                    Stop-Process -Id $process.Id -Force
+                }
+                $BUILD_STATUS = 1
+            }
+            
+            # Restore original processor count
+            $env:NUMBER_OF_PROCESSORS = $originalProcessors
+            
+            if ($BUILD_STATUS -eq 0) {
+                # Copy library files
+                if (Test-Path "$Config\lib\*.lib") {
+                    Copy-Item "$Config\lib\*.lib" "out\$Config\" -Force
+                }
+                if (Test-Path "build\$Config\lib\*.lib") {
+                    Copy-Item "build\$Config\lib\*.lib" "out\$Config\" -Force
+                }
+            }
+        }
+        finally {
+            Pop-Location
+        }
+        
+        # Verify Node.js build actually succeeded by checking for required files
+        $requiredFiles = @(
+            "deps\node\out\$Config\lib\libnode.lib",
+            "deps\node\out\$Config\node.exe"
+        )
+        
+        $buildActuallySucceeded = $true
+        foreach ($file in $requiredFiles) {
+            if (-not (Test-Path $file)) {
+                Write-Error-Status "Required Node.js file missing: $file"
+                $buildActuallySucceeded = $false
+            }
+        }
+        
+        if ($buildActuallySucceeded) {
+            Write-Success-Status "Node.js build verification passed - all required files present"
+            $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+        } else {
+            Write-Error-Status "Node.js build failed - missing required files"
+            $BUILD_STATUS = 1
+        }
+        
+        if ($BUILD_STATUS -ne 0) {
+            Write-Error-Status "Node.js build failed"
+            return 1
+        }
+        
+        # Clean up after Node.js build
+        Cleanup-BuildProcesses
+    }
+    else {
+        Write-Status "Skipping Node.js build because libnode.lib and node.exe already exist:" "Green"
+        Write-Status "   libnode.lib" "Gray"
+        Write-Status "   node.exe" "Gray"
+    }
+
+    # Copy node.exe to tools if needed
+    if (-not (Test-Path "tools\node.exe")) {
+        $null = Copy-File-If-Exists "deps\node\Release\node.exe" "tools\node.exe"
+    }
+    
+    return 0
+}
+
+# Function to build the PDG Node.js module package
+function Build-PDG-Node {
+    param(
+        [string]$Config,
+        [string]$MSBUILD_PATH,
+        [switch]$Verbose
+    )
+
+    Write-Host ""
+    Write-Status "Building PDG Node.js module..." "Cyan"
+
+    $status = Build-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+
+    $moduleScript = Join-Path $PDG_ROOT "tools\make-node-module.ps1"
+    if (-not (Test-Path $moduleScript)) {
+        Write-Error-Status "Missing script: $moduleScript"
+        return 1
+    }
+
+    try {
+        & $moduleScript -Config $Config
+    }
+    catch {
+        Write-Error-Status "PDG Node.js module build failed: $($_.Exception.Message)"
+        return 1
+    }
+
+    Write-Host ""
+    Write-Success-Status "PDG Node.js module built successfully!"
+    return 0
+}
+
+# Function to build GLFW library
+function Build-GLFW {
+    param(
+        [string]$Config,
+        [string]$MSBUILD_PATH,
+        [switch]$Verbose
+    )
+    
+    Write-Status "Building GLFW Library..." "Yellow"
+    Push-Location "build\win32\glfw"
+    try {
+        $BUILD_STATUS = Invoke-MSBuild -ProjectPath "GLFW.sln" -Target "Build" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
+        
+        if ($BUILD_STATUS -eq 0) {
+            # Copy glfw3.lib to src directory
+            $null = Copy-File-If-Exists "src\$Config\glfw3.lib" "src\glfw3.lib"
+        }
+    }
+    finally {
+        Pop-Location
+    }
+
+    # Verify GLFW build actually succeeded by checking for the library file
+    $glfwLibPath = "build\win32\glfw\src\$Config\glfw3.lib"
+    if (Test-Path $glfwLibPath) {
+        Write-Success-Status "GLFW build verification passed - glfw3.lib exists"
+        $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+    }
+
+    if ($BUILD_STATUS -ne 0) {
+        Write-Error-Status "GLFW build failed"
+        return 1
+    }
+
+    # Clean up after GLFW build
+    Cleanup-BuildProcesses
+    return 0
+}
+
+# Function to build Chipmunk library
+function Build-Chipmunk {
+    param(
+        [string]$Config,
+        [string]$MSBUILD_PATH,
+        [switch]$Verbose
+    )
+    
+    Write-Status "Building Chipmunk Library..." "Yellow"
+    Push-Location "build\win32\chipmunk"
+    try {
+        $BUILD_STATUS = Invoke-MSBuild -ProjectPath "chipmunk.sln" -Target "Build" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
+    }
+    finally {
+        Pop-Location
+    }
+
+    # Verify Chipmunk build actually succeeded by checking for the library file
+    $chipmunkLibPath = "build\win32\chipmunk\src\$Config\chipmunk.lib"
+    if (Test-Path $chipmunkLibPath) {
+        Write-Success-Status "Chipmunk build verification passed - chipmunk.lib exists"
+        $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+    }
+
+    if ($BUILD_STATUS -ne 0) {
+        Write-Error-Status "Chipmunk build failed"
+        return 1
+    }
+
+    # Copy chipmunk.lib to src directory
+    $null = Copy-File-If-Exists "build\win32\chipmunk\src\$Config\chipmunk.lib" "build\win32\chipmunk\src\chipmunk.lib"
+
+    # Clean up after Chipmunk build
+    Cleanup-BuildProcesses
+    return 0
+}
+
+# Function to build libjpeg-turbo library
+function Build-LibjpegTurbo {
+    param(
+        [string]$Config,
+        [string]$MSBUILD_PATH,
+        [switch]$Verbose
+    )
+    
+    Write-Status "Building libjpeg-turbo Library..." "Yellow"
+    Push-Location "build\win32\libjpeg-turbo"
+    try {
+        $BUILD_STATUS = Invoke-MSBuild -ProjectPath "libjpeg-turbo.sln" -Target "Build" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
+    }
+    finally {
+        Pop-Location
+    }
+
+    # Verify libjpeg-turbo build actually succeeded by checking for the library file
+    $jpegLibPath = "build\win32\libjpeg-turbo\$Config\jpeg.lib"
+    if (Test-Path $jpegLibPath) {
+        Write-Success-Status "libjpeg-turbo build verification passed - jpeg.lib exists"
+        $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+    }
+
+    if ($BUILD_STATUS -ne 0) {
+        Write-Error-Status "libjpeg-turbo build failed"
+        return 1
+    }
+
+    # Clean up after libjpeg-turbo build
+    Cleanup-BuildProcesses
+    return 0
+}
+
+# Function to build PDG executable
+function Build-PDG {
+    param(
+        [string]$Config,
+        [string]$MSBUILD_PATH,
+        [switch]$Verbose,
+        [string]$MSBuildTarget = "Build"
+    )
+    
+    $pdgExePath = "src\$Config\pdg.exe"
+    Write-Status "Building PDG..." "Yellow"
+    Push-Location "msvc"
+    #delete the pdg.exe file
+    Remove-Item $pdgExePath -Force -ErrorAction SilentlyContinue
+    try {
+        $BUILD_STATUS = Invoke-MSBuild -ProjectPath "PDG.sln" -Target $MSBuildTarget -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
+    }
+    finally {
+        Pop-Location
+    }
+
+    # Verify PDG build actually succeeded by checking for the executable file
+    $pdgExePath = "msvc\src\$Config\pdg.exe"
+    if (Test-Path $pdgExePath) {
+        Write-Success-Status "PDG build verification passed - pdg.exe exists"
+        $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+    } else {
+        Write-Error-Status "PDG build verification failed - pdg.exe not found"
+        $BUILD_STATUS = 1
+    }
+
+    if ($BUILD_STATUS -ne 0) {
+        Write-Error-Status "PDG build failed"
+        return 1
+    }
+
+    # Clean up after PDG build
+    Cleanup-BuildProcesses
+    
+    # Copy final executables and files
+    Write-Status "Copying final files..." "Yellow"
+
+    # Copy pdg.exe to the locations the Windows test/debug workflows use
+    $null = Copy-File-If-Exists "msvc\src\$Config\pdg.exe" "test\pdg-run.exe"
+    $null = Copy-File-If-Exists "msvc\src\$Config\pdg.exe" "pdg.exe"
+
+    # Copy debug.html
+    $null = Copy-File-If-Exists "tools\debug.html" "test\debug.html"
+    $null = Copy-File-If-Exists "tools\debug.html" "msvc\src\$Config\debug.html"
+    
+    return 0
+}
+
+# Function to build pdg-tests target
+function Build-PDG-Tests {
+    param(
+        [string]$Config,
+        [string]$MSBUILD_PATH,
+        [switch]$Verbose
+    )
+    
+    Write-Host ""
+    Write-Status "Building C++ performance tests..." "Cyan"
+    
+    # Build dependencies first
+    $status = Build-GLFW -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+    
+    $status = Build-Chipmunk -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+    
+    $status = Build-LibjpegTurbo -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+    
+    $status = Build-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+    
+    # Build the bunnymark and pdgmark targets
+    Write-Status "Building bunnymark and pdgmark..." "Yellow"
+    Push-Location "msvc"
+    try {
+        # Build bunnymark (MSBuild may return non-zero for warnings e.g. LNK4098; verify exe exists)
+        $BUILD_STATUS = Invoke-MSBuild -ProjectPath "PDG.sln" -Target "bunnymark" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
+        $bunnymarkExe = "src\$Config\bunnymark.exe"
+        if ($BUILD_STATUS -ne 0 -and -not (Test-Path $bunnymarkExe)) {
+            Write-Error-Status "bunnymark build failed"
+            return 1
+        }
+        if ($BUILD_STATUS -ne 0 -and (Test-Path $bunnymarkExe)) {
+            Write-Warning-Status "bunnymark had warnings but executable was produced"
+        }
+
+        # Build pdgmark (same: verify by output file)
+        $BUILD_STATUS = Invoke-MSBuild -ProjectPath "PDG.sln" -Target "pdgmark" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
+        $pdgmarkExe = "src\$Config\pdgmark.exe"
+        if ($BUILD_STATUS -ne 0 -and -not (Test-Path $pdgmarkExe)) {
+            Write-Error-Status "pdgmark build failed"
+            return 1
+        }
+        if ($BUILD_STATUS -ne 0 -and (Test-Path $pdgmarkExe)) {
+            Write-Warning-Status "pdgmark had warnings but executable was produced"
+        }
+    }
+    finally {
+        Pop-Location
+    }
+    
+    Cleanup-BuildProcesses
+    
+    # Create symlinks/copies to test directory
+    Remove-Item "test\perf\cpp-bunnymark\bunnymark.exe" -Force -ErrorAction SilentlyContinue
+    Remove-Item "test\perf\cpp-pdgmark\pdgmark.exe" -Force -ErrorAction SilentlyContinue
+
+    function Copy-ExeIfFound {
+        param([string]$ExeName, [string]$DestPath)
+        $expected = "msvc\src\$Config\$ExeName.exe"
+        if (Test-Path $expected) {
+            Copy-Item $expected $DestPath -Force
+            return $true
+        }
+        $found = Get-ChildItem -Path "msvc" -Filter "$ExeName.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($found) {
+            Copy-Item $found.FullName $DestPath -Force
+            return $true
+        }
+        return $false
+    }
+    $bunOk = Copy-ExeIfFound "bunnymark" "test\perf\cpp-bunnymark\bunnymark.exe"
+    $pdgOk = Copy-ExeIfFound "pdgmark" "test\perf\cpp-pdgmark\pdgmark.exe"
+    if (-not $bunOk) { Write-Warning "bunnymark.exe not found under msvc\ (expected msvc\src\$Config\bunnymark.exe)" }
+    if (-not $pdgOk) { Write-Warning "pdgmark.exe not found under msvc\ (expected msvc\src\$Config\pdgmark.exe)" }
+    
+    Write-Host ""
+    Write-Success-Status "C++ performance tests built successfully!"
+    Write-Status "libpdg-lib.a created (pure C++ framework library)" "Green"
+    Write-Host ""
+    Write-Host "Run C++ Bunnymark:      .\test\perf\cpp-bunnymark\bunnymark.exe" -ForegroundColor White
+    Write-Host "Run JS Bunnymark:       .\pdg test\perf\bunnymark\bunnymark.js" -ForegroundColor White
+    Write-Host "Run C++ PDGMark:        .\test\perf\cpp-pdgmark\pdgmark.exe" -ForegroundColor White
+    Write-Host "Run JS PDGMark:         .\pdg test\perf\pdgmark\pdgmark.js" -ForegroundColor White
+    Write-Host ""
+    
+    return 0
+}
+
+# Function to build pdg-libs target
+function Build-PDG-Libs {
+    param(
+        [string]$Config,
+        [string]$MSBUILD_PATH,
+        [switch]$Verbose
+    )
+    
+    Write-Host ""
+    Write-Status "Building PDG C++ libraries (debug and optimized)..." "Cyan"
+    
+    # Build dependencies first
+    $status = Build-GLFW -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+    
+    $status = Build-Chipmunk -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+    
+    $status = Build-LibjpegTurbo -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+    
+    $status = Build-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+    if ($status -ne 0) { return $status }
+    
+    # Build the pdg-libs target
+    Write-Status "Building pdg-libs..." "Yellow"
+    Push-Location "msvc"
+    try {
+        $BUILD_STATUS = Invoke-MSBuild -ProjectPath "PDG.sln" -Target "pdg-libs" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
+        if ($BUILD_STATUS -ne 0) {
+            Write-Error-Status "pdg-libs build failed"
+            return 1
+        }
+    }
+    finally {
+        Pop-Location
+    }
+    
+    Cleanup-BuildProcesses
+    
+    Write-Host ""
+    Write-Success-Status "PDG C++ libraries built successfully!"
+    Write-Host "  - libpdg-lib.a (optimized, NDEBUG, -O3)" -ForegroundColor White
+    Write-Host "  - libpdgd.a    (debug, DEBUG=1, -O0 -g3)" -ForegroundColor White
+    Write-Host ""
+    
+    return 0
+}
+
+# Main script execution
+Write-Host ""
+Write-Host "PDG Build Script (PowerShell)" -ForegroundColor Cyan
+Write-Host "=============================" -ForegroundColor Cyan
+Write-Host ""
+
+# Set up environment
+$PDG_ROOT = Get-Location
+$BUILD_STATUS = 0
+
+# Clean if requested
+if ($Clean) {
+    Invoke-Clean
+}
+
+# Find MSBuild
+Write-Status "Looking for MSBuild..." "Cyan"
+$MSBUILD_PATH = Find-MSBuild
+
+if (-not $MSBUILD_PATH) {
+    Write-Error-Status "Could not find MSBuild. Please run .\configure.ps1 first or ensure Visual Studio is installed."
+    exit 1
+}
+
+Write-Status "Found MSBuild at: $MSBUILD_PATH" "Green"
+
+# Clean up any stuck MSBuild processes before starting
+Stop-StuckMSBuildProcesses
+
+# Handle different targets
+switch ($Target.ToLower()) {
+    "pdg" {
+        # Build all dependencies and PDG
+        $status = Build-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        $status = Build-GLFW -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        $status = Build-Chipmunk -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        $status = Build-LibjpegTurbo -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        $status = Build-PDG -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        $status = Build-PDG-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        # Final cleanup to ensure all processes are terminated
+        Cleanup-BuildProcesses
+        
+        Write-Host ""
+        Write-Success-Status "Build Succeeded"
+        Write-Host ""
+        Write-Status "Build Summary:" "Cyan"
+        Write-Host "- Main executable: pdg.exe" -ForegroundColor White
+        Write-Host "- Test executable: test\pdg-run.exe" -ForegroundColor White
+        Write-Host "- Configuration: $Config" -ForegroundColor White
+        Write-Host "- Target: $Target" -ForegroundColor White
+        Write-Host ""
+        Write-Status "You can now run tests with: .\test\client or .\test\node" "Green"
+    }
+
+    "pdg-node" {
+        $status = Build-PDG-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+    }
+    
+    "pdg-tests" {
+        $status = Build-PDG-Tests -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+    }
+    
+    "pdg-libs" {
+        $status = Build-PDG-Libs -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+    }
+    
+    "node" {
+        $status = Build-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        Write-Host ""
+        Write-Success-Status "Node.js build completed"
+    }
+    
+    "glfw" {
+        $status = Build-GLFW -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        Write-Host ""
+        Write-Success-Status "GLFW build completed"
+    }
+    
+    "chipmunk" {
+        $status = Build-Chipmunk -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        Write-Host ""
+        Write-Success-Status "Chipmunk build completed"
+    }
+    
+    "libjpeg-turbo" {
+        $status = Build-LibjpegTurbo -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
+        Write-Host ""
+        Write-Success-Status "libjpeg-turbo build completed"
+    }
+    
+    "clean" {
+        Invoke-Clean
+        Write-Success-Status "Clean completed"
+    }
+    
+    default {
+        Write-Error-Status "Unknown target: $Target"
+        Write-Host ""
+        Show-Help
+        exit 1
+    }
+}

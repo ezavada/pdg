@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::centerPoint()
+
+\brief returns the center point of the polygon
+
+**/ }

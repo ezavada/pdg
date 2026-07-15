@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::ElementRef::getAttributes()
+
+\brief returns the attributes of the element
+
+**/ }

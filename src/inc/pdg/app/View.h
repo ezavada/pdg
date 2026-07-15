@@ -25,7 +25,7 @@ namespace pdg {
 class ResourceManager;
 class Controller;
 
-class View : public RefCountedObj, public IObserver
+class View : public RefCountedObj
 {
 public:
 
@@ -126,9 +126,6 @@ public:
 	// doDragComplete is called with the mouse is released after a series of drag related calls
 	virtual bool doDragComplete(const MouseInfo *mi, int id, int part);
 
-
-    virtual void notify(Subject* subject);  // override to handle when a thing we are observing changes
-
 	void setViewArea(const Rect& rect); // in global/port coordinates
 	const Rect& getViewArea() const { return mViewArea; } // in global/port coordinates
 	Rect& getModifiableViewAreaRect() { return mViewArea; } // in global/port coordinates
@@ -165,7 +162,7 @@ public:
 	
 #ifdef PDG_ALLOW_DEPRECATED_CALLS
 	// FIXME: drawMultilineText() belongs in port, not in view
-	int drawMultilineText(const char* text, int size, Color color, const Rect& textArea, int style = Graphics::textStyle_Plain + Graphics::textStyle_Centered);
+	int drawMultilineText(const char* text, int size, Color color, const Rect& textArea, int style = textStyle_Plain + textStyle_Centered);
 #endif
 
 	// About Coordinate Systems:

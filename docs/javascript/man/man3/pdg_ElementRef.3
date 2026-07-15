@@ -1,0 +1,112 @@
+.TH "ElementRef" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ElementRef \- Reference to a drawing element that allows modification of its properties and control points\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBchangeControlPoint\fP (uint controlPointIndex, \fBPoint\fP controlPoint)"
+.br
+.RI "changes the control point at the specified index "
+.ti -1c
+.RI "\fBAttributes\fP \fBgetAttributes\fP ()"
+.br
+.RI "returns the attributes of the element "
+.ti -1c
+.RI "\fBPoint\fP \fBgetControlPoint\fP (uint controlPointIndex)"
+.br
+.RI "returns the control point at the specified index "
+.ti -1c
+.RI "array \fBgetControlPoints\fP ()"
+.br
+.RI "returns all control points of the element "
+.ti -1c
+.RI "\fBmoveBackward\fP ()"
+.br
+.RI "moves the element one layer backward in the drawing "
+.ti -1c
+.RI "\fBmoveForward\fP ()"
+.br
+.RI "moves the element one layer forward in the drawing "
+.ti -1c
+.RI "\fBmoveToBack\fP ()"
+.br
+.RI "moves the element to the back of the drawing (bottom layer) "
+.ti -1c
+.RI "\fBmoveToFront\fP ()"
+.br
+.RI "moves the element to the front of the drawing (top layer) "
+.ti -1c
+.RI "\fBremove\fP ()"
+.br
+.RI "removes the element from the drawing "
+.ti -1c
+.RI "\fBsetAttributes\fP (\fBAttributes\fP attrs)"
+.br
+.RI "sets the attributes of the element "
+.ti -1c
+.RI "uint \fBtype\fP ()"
+.br
+.RI "returns the type of the element "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Reference to a drawing element that allows modification of its properties and control points\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "changeControlPoint (uint controlPointIndex, \fBPoint\fP controlPoint)"
+
+.PP
+changes the control point at the specified index 
+.SS "\fBAttributes\fP getAttributes ()"
+
+.PP
+returns the attributes of the element 
+.SS "\fBPoint\fP getControlPoint (uint controlPointIndex)"
+
+.PP
+returns the control point at the specified index 
+.SS "array getControlPoints ()"
+
+.PP
+returns all control points of the element 
+.SS "moveBackward ()"
+
+.PP
+moves the element one layer backward in the drawing 
+.SS "moveForward ()"
+
+.PP
+moves the element one layer forward in the drawing 
+.SS "moveToBack ()"
+
+.PP
+moves the element to the back of the drawing (bottom layer) 
+.SS "moveToFront ()"
+
+.PP
+moves the element to the front of the drawing (top layer) 
+.SS "remove ()"
+
+.PP
+removes the element from the drawing 
+.SS "setAttributes (\fBAttributes\fP attrs)"
+
+.PP
+sets the attributes of the element 
+.SS "uint type ()"
+
+.PP
+returns the type of the element 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

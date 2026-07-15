@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_RightAlt
+
+\brief platform-specific keycode for the right Alt/Option key
+
+This constant contains the correct keycode value for the right Alt (Windows/Linux) or Option (Mac) key on the current platform. Use this when checking #KeyEvent.keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect right Alt/Option key presses in a cross-platform way.
+
+**Platform values:**
+- Mac OS X: 61 (0x3D - NSEvent hardware keycode for right Option)
+- Windows: 165 (0xA5 - VK_RMENU virtual keycode for right Alt)
+- Linux/GLFW: 346 (GLFW_KEY_RIGHT_ALT)
+
+\see keyCode_LeftAlt
+\see keyCode_Alt
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

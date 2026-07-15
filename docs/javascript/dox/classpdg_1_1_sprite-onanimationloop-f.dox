@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onAnimationLoop
+
+\brief set event handler for sprite animation loop events
+
+These happen when this sprite finishes a particular frame animation sequence and is restarting it because it is set to loop, but only if setWantsAnimLoopEvents(true) was called.
+
+\sa setWantsAnimLoopEvents()
+\sa SpriteAnimateEvent
+\sa IEventHandler
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawDrawing(Drawing drawing, Rect rect, Attributes attrs)
+
+\brief Draws a Drawing object within the specified rectangle with styling attributes
+
+**/ }

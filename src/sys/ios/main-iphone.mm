@@ -36,6 +36,7 @@
 #define PDG_DECORATE_GLOBAL_TYPES
 #include "pdg/sys/platform.h"
 #import "pdg/sys/events.h"
+#include "pdg/sys/graphicsmanager.h"
 
 #import "pdg-main.h"
 #include "pdg-lib.h"
@@ -48,7 +49,7 @@
 
 #define kAccelerometerUpdateFrequency    60.0
 
-extern "C" int pow2(int n);
+extern "C" size_t pow2(size_t n);
 
 float gLastOrientationAngle = 0.0f;
 int gLastScreenPosition = -1;
@@ -71,8 +72,8 @@ int main(int argc, char *argv[])
 	return result;
 }
 
-extern "C" int pow2(int n) {
-	int x = 1;
+extern "C" size_t pow2(size_t n) {
+	size_t x = 1;
 	while(x < n) {
 		x <<= 1;
 	}
@@ -128,6 +129,25 @@ void platform_getScreenSize(long* outWidth, long* outHeight, int screenNum) {
 //	}
 }
 
+void platform_getScreenBounds(long* outX, long* outY, long* outWidth, long* outHeight, int screenNum) {
+	UIScreen* screen = [UIScreen mainScreen];
+	CGRect rect = [screen bounds];
+	UIDevice* uiDevice = [UIDevice currentDevice];
+
+    if (UIDeviceOrientationIsLandscape([uiDevice orientation]) || !pdg::graphics_allowVerticalOrientation()) {
+		// landscape, swap height and width
+		*outX = (long)rect.origin.x;
+		*outY = (long)rect.origin.y;
+		*outWidth = rect.size.height;
+		*outHeight = rect.size.width;
+	} else {
+		*outX = (long)rect.origin.x;
+		*outY = (long)rect.origin.y;
+		*outWidth = rect.size.width;
+		*outHeight = rect.size.height;		
+	}
+}
+
 void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum) {
 	platform_getScreenSize(outWidth, outHeight, screenNum); // no difference between windowed and full screen on iPhone/iPad
 }
@@ -172,13 +192,13 @@ void platform_resizeWindow(void* windRef, long width, long height, bool fullscre
 }
 
 void platform_captureScreen(int screenNum) {
-	// always captured
-	// TODO: make this actually be what hides the top battery and signal indicators
+	// Hide status bar to capture full screen
+	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
 }
 
 void platform_releaseScreen(int screenNum) {
-	// always captured
-	// TODO: make this actually be what shows the top battery and signal indicators
+	// Show status bar when releasing screen
+	[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
 }
 
 int platform_closestScreenTo(long width, long height, int bpp) {
@@ -263,10 +283,10 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 		image = [[UIImage alloc] initWithData:data];
 		CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 
-		int width   = CGImageGetWidth(image.CGImage);
-		int height  = CGImageGetHeight(image.CGImage);
-		int pitch   = CGImageGetBytesPerRow(image.CGImage);
-		int bpp     = CGImageGetBitsPerPixel(image.CGImage);
+		size_t width   = CGImageGetWidth(image.CGImage);
+		size_t height  = CGImageGetHeight(image.CGImage);
+		size_t pitch   = CGImageGetBytesPerRow(image.CGImage);
+		int bpp        = (int)CGImageGetBitsPerPixel(image.CGImage);
 		
 		// see if we have an alpha channel
 //		CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(image.CGImage);
@@ -285,9 +305,9 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 		CGContextTranslateCTM( context, 0, height - height );
 		CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), image.CGImage );
 	
-		int glBufferWidth = pow2(width);
-		int glBufferHeight = pow2(height);
-		int glBufferPitch = ((glBufferWidth * bpp/2) + 3) / 4;
+		size_t glBufferWidth = pow2(width);
+		size_t glBufferHeight = pow2(height);
+		size_t glBufferPitch = ((glBufferWidth * bpp/2) + 3) / 4;
 		
 		*outDataPtr = (unsigned char*) malloc(glBufferPitch * glBufferHeight);
 		// copy the image bitmap data line by line into the new malloc'd buffer

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::NetClient::connect(serverInfo, callback, clientKey)
+
+\brief connect to a server for your game
+
+**/ }

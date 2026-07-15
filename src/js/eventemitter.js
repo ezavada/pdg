@@ -28,7 +28,6 @@
 //
 // -----------------------------------------------
 
-require('./classify');
 require('./pdg-defs.js');
 
 // -----------------------------------------------------------------------------------
@@ -53,31 +52,30 @@ function debug(str) {
  * @see IEventHandler
  * \ingroup Managers
  */
-classify('EventEmitter', function() {
-
+class EventEmitter {
     //! constructor for new event emitter
-    def('initialize', function(parentEmitter) {
-    		this.mHandlers = new Array();
-    		if (typeof parentEmitter != 'undefined') {
-    			this.mParent = parentEmitter;
-    		} else {
-    			this.mParent = false;
-    		}
-    	});
+    constructor(parentEmitter) {
+        this.mHandlers = new Array();
+        if (typeof parentEmitter != 'undefined') {
+            this.mParent = parentEmitter;
+        } else {
+            this.mParent = false;
+        }
+    }
 
 	//! add a new handler for some event type, or for all events if no type specified
-    def('addHandler', function(inHandler, inType) {
-    		var handlerType = (inType) ? inType : all_events;
-    		var handlers = this.mHandlers[handlerType];
-    		if (!handlers) {
-    			// type wasn't previously registered -- add it to mHandlers
-    			handlers = new Array();
-    			this.mHandlers[handlerType] = handlers;
-    		}
-    		handlers.push(inHandler);
-    		debug("EventEmitter::addHandler: registered handler "+inHandler+
-    				" for event type "+handlerType+" ["+this._getEventName(handlerType)+"]");
-    	});
+    addHandler(inHandler, inType) {
+        var handlerType = (inType) ? inType : all_events;
+        var handlers = this.mHandlers[handlerType];
+        if (!handlers) {
+            // type wasn't previously registered -- add it to mHandlers
+            handlers = new Array();
+            this.mHandlers[handlerType] = handlers;
+        }
+        handlers.push(inHandler);
+        debug("EventEmitter::addHandler: registered handler "+inHandler+
+                " for event type "+handlerType+" ["+this._getEventName(handlerType)+"]");
+    }
 
 	/** Remove a handler for some event type, or for all events if no type specified.
 	 * If the handler is listed multiple times it will only remove it once.
@@ -88,139 +86,138 @@ classify('EventEmitter', function() {
  	 * considering whether to invoke a handler or not.
 	 * It is safe to call remove handler from within an event handler's handleEvent() call.
 	 */
-	def('removeHandler', function(inHandler, inType) {
-    		var handlerType = (inType) ? inType : all_events;
-    		var handlers = this.mHandlers[handlerType];
-    		if (!handlers) {
-    			warn("EventEmitter::removeHandler could not find inType "+
-    					handlerType+" ["+this._getEventName(handlerType)+"] in mHandlers");
-    			return;
-    		}
-    		var idx = handlers.lastIndexOf(inHandler);
-    		if (idx == -1) {
-    			warn("EventEmitter::removeHandler could not find handler "+inHandler+
-    					" for event type "+ handlerType+" ["+this._getEventName(handlerType)+
-    					"] in mHandlers");
-    			return;
-    		}
-			this.handlerRemoved = true;
-			handlers.handlerRemoved = true;
-			handlers[idx].removed = true;
-			debug("EventEmitter::removeHandler: marked handler " + inHandler +
-					" for type "+ handlerType+" ["+this._getEventName(handlerType)+"] as removed");
-		});
+	removeHandler(inHandler, inType) {
+        var handlerType = (inType) ? inType : all_events;
+        var handlers = this.mHandlers[handlerType];
+        if (!handlers) {
+            warn("EventEmitter::removeHandler could not find inType "+
+                    handlerType+" ["+this._getEventName(handlerType)+"] in mHandlers");
+            return;
+        }
+        var idx = handlers.lastIndexOf(inHandler);
+        if (idx == -1) {
+            warn("EventEmitter::removeHandler could not find handler "+inHandler+
+                    " for event type "+ handlerType+" ["+this._getEventName(handlerType)+
+                    "] in mHandlers");
+            return;
+        }
+        this.handlerRemoved = true;
+        handlers.handlerRemoved = true;
+        handlers[idx].removed = true;
+        debug("EventEmitter::removeHandler: marked handler " + inHandler +
+                " for type "+ handlerType+" ["+this._getEventName(handlerType)+"] as removed");
+    }
 
 	//! remove all handlers
-	def('clear', function() {
-    		this.mHandlers = new Array();
-		});
+	clear() {
+        this.mHandlers = new Array();
+    }
 
 	//! temporarily ignore all events of a particular type, just drop them on the floor
-	def('blockEvent', function(inEventType) {
-    		var handlerType = (inType) ? inType : all_events;
-    		var handlers = this.mHandlers[handlerType];
-    		if (!handlers) {
-    			// type wasn't previously registered -- add it to mHandlers so we can record the block
-    			handlers = new Array();
-    			this.mHandlers[handlerType] = handlers;
-    		}
-    		handlers.blocked = true;
-		});
+	blockEvent(inEventType) {
+        var handlerType = (inEventType) ? inEventType : all_events;
+        var handlers = this.mHandlers[handlerType];
+        if (!handlers) {
+            // type wasn't previously registered -- add it to mHandlers so we can record the block
+            handlers = new Array();
+            this.mHandlers[handlerType] = handlers;
+        }
+        handlers.blocked = true;
+    }
 
 	//! stop ignoring events of a particular type, no recovery of previously ignored events
-    def('unblockEvent', function(inEventType) {
-    		var handlerType = (inType) ? inType : all_events;
-    		var handlers = this.mHandlers[handlerType];
-    		if (handlers) {
-    			// only unblock if it actually exists
-    			handlers.blocked = false;
-    		}
-		});
+    unblockEvent(inEventType) {
+        var handlerType = (inEventType) ? inEventType : all_events;
+        var handlers = this.mHandlers[handlerType];
+        if (handlers) {
+            // only unblock if it actually exists
+            handlers.blocked = false;
+        }
+    }
 
 	//! post an event for immediate handling locally, or relay it to the EventManger
 	// singleton to see if it can be handled by global handlers if it isn't handled locally
 	// returns true if event handled
-	def('postEvent', function(inEventType, inEventData, fromEmitter) {
-			if (!fromEmitter) {
-				fromEmitter = this;
-			}
-			if (!this._emitEvent(fromEmitter, inEventType, inEventData)) {
-				// relay to our parent if we have one
-				if (this.mParent) {
-					mParent.postEvent(inEventType, inEventData, fromEmitter);
-				}
-			}
-		});
+	postEvent(inEventType, inEventData, fromEmitter) {
+        if (!fromEmitter) {
+            fromEmitter = this;
+        }
+        if (!this._emitEvent(fromEmitter, inEventType, inEventData)) {
+            // relay to our parent if we have one
+            if (this.mParent) {
+                this.mParent.postEvent(inEventType, inEventData, fromEmitter);
+            }
+        }
+    }
 
 
 
 // ==============================================================
 // protected - you shouldn't need to call these directly, call postEvent instead
 
-	def('_emitEvent', function(emitter, inEventType, inEventData) {
-			var wasHandled = false;
-			// --- typed handlers ---
-			var handlers = this.mHandlers[inEventType];
-			if (handlers) {
-				if (handlers.blocked) {
-					return false; // go no further with this event
-				}
-				for (var i = 0; i < handlers.length; i++) {
-					var handler = handlers[i];
-					if (!handler.removed) {
-						wasHandled = handler.handleEvent(emitter, inEventType, inEventData);
-						if (typeof wasHandled != 'boolean') {
-							throw('Handler must return true if event handled or false if unhandled');
-						}
-						if (wasHandled) {
-							break;
-						}
-					}
-				}
-			}
-			// --- untyped handlers ---
-			if (!wasHandled) {
-				handlers = this.mHandlers[all_events];
-				if (handlers) {
-					for (var i = 0; i < handlers.length; i++) {
-						var handler = handlers[i];
-						wasHandled = handler.handleEvent(emitter, inEventType, inEventData);
-						if (typeof wasHandled != 'boolean') {
-							throw('Handler must return true if event handled or false if unhandled');
-						}
-						if (wasHandled) {
-							break;
-						}
-					}
-				}
-			}
-			this._cleanupRemovedHandlers();
-			return wasHandled;
-		});
+	_emitEvent(emitter, inEventType, inEventData) {
+        var wasHandled = false;
+        // --- typed handlers ---
+        var handlers = this.mHandlers[inEventType];
+        if (handlers) {
+            if (handlers.blocked) {
+                return false; // go no further with this event
+            }
+            for (var i = 0; i < handlers.length; i++) {
+                var handler = handlers[i];
+                if (!handler.removed) {
+                    wasHandled = handler.handleEvent(emitter, inEventType, inEventData);
+                    if (typeof wasHandled != 'boolean') {
+                        throw('Handler must return true if event handled or false if unhandled');
+                    }
+                    if (wasHandled) {
+                        break;
+                    }
+                }
+            }
+        }
+        // --- untyped handlers ---
+        if (!wasHandled) {
+            handlers = this.mHandlers[all_events];
+            if (handlers) {
+                for (var i = 0; i < handlers.length; i++) {
+                    var handler = handlers[i];
+                    wasHandled = handler.handleEvent(emitter, inEventType, inEventData);
+                    if (typeof wasHandled != 'boolean') {
+                        throw('Handler must return true if event handled or false if unhandled');
+                    }
+                    if (wasHandled) {
+                        break;
+                    }
+                }
+            }
+        }
+        this._cleanupRemovedHandlers();
+        return wasHandled;
+    }
 	
-	def('_cleanupRemovedHandlers', function() {
-			if (this.handlerRemoved) {
-				for (var i = 0; i < this.mHandlers.length; i++) {
-					var handlers = this.mHandlers[i];
-					if (handlers.handlerRemoved) {
-						for (var i = 0; i < handlers.length; i++) {
-							if (handlers[i].removed) {
-								handlers.splice(i, 1);  // remove the handler at idx
-							}
-							i--;
-						}
-						handlers.handlerRemoved = false;
-					}
-				}
-			}
-			this.handlerRemoved = false;
-		});
+	_cleanupRemovedHandlers() {
+        if (this.handlerRemoved) {
+            for (var i = 0; i < this.mHandlers.length; i++) {
+                var handlers = this.mHandlers[i];
+                if (handlers.handlerRemoved) {
+                    for (var i = 0; i < handlers.length; i++) {
+                        if (handlers[i].removed) {
+                            handlers.splice(i, 1);  // remove the handler at idx
+                        }
+                        i--;
+                    }
+                    handlers.handlerRemoved = false;
+                }
+            }
+        }
+        this.handlerRemoved = false;
+    }
 		
-	def('_getEventName', function(eventType) {
-			return ""+eventType;
-		});
-
-});
+	_getEventName(eventType) {
+        return ""+eventType;
+    }
+}
 
 if(!(typeof exports === 'undefined')) {
     exports.EventEmitter = EventEmitter;

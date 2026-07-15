@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::overlaps(r)
+
+\brief return true if this rectangle overlaps the other rectangle at all (sharing an edge is not overlapping)
+
+**/ }

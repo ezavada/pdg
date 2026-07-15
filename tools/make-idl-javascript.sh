@@ -40,20 +40,88 @@ fi
 
 PDG_BUILD_DIR="$PDG_ROOT/build"
 PDG_TOOLS_DIR="$PDG_ROOT/tools"
+PDG_BINDING_DIR="$PDG_ROOT/src/bindings/emscripten/"
+
 if [ -z "$1" ]; then
 	PDG_DOCS_DIR="$PDG_ROOT/docs/javascript"
 else
 	PDG_DOCS_DIR="$1"
 fi
 
-cd $PDG_TOOLS_DIR
-$PDG_ROOT/pdg make-idl.js
-cd ..
-if [ -z "`diff $PDG_BUILD_DIR/pdg-js.out $PDG_DOCS_DIR/pdg-js.i`" ]; then
-	echo "-- IDL was unchanged --"
-else
-	mv $PDG_BUILD_DIR/pdg-js.out $PDG_DOCS_DIR/pdg-js.i
-	ls -l $PDG_DOCS_DIR/pdg-js.i
+PDG_IDL_AUTO_EXIT_TIMEOUT_SECONDS="${PDG_IDL_AUTO_EXIT_TIMEOUT_SECONDS:-60}"
+PDG_IDL_WATCHDOG_SECONDS="${PDG_IDL_WATCHDOG_SECONDS:-75}"
+PDG_IDL_FORCE_KILL_GRACE_SECONDS="${PDG_IDL_FORCE_KILL_GRACE_SECONDS:-5}"
 
-	$PDG_TOOLS_DIR/make-pdg-js-header.sh
+run_pdg_idl() {
+	local format="$1"
+	local output_file="$2"
+	local stderr_file="${output_file}.stderr.log"
+	local watchdog_note_file="${output_file}.watchdog.log"
+	local pdg_pid
+	local watchdog_pid
+	local exit_code
+
+	rm -f "$stderr_file" "$watchdog_note_file"
+
+	(
+		export PDG_AUTO_EXIT_TIMEOUT="$PDG_IDL_AUTO_EXIT_TIMEOUT_SECONDS"
+		"$PDG_ROOT/pdg" tools/make-idl.js "$format" > "$output_file" 2> "$stderr_file"
+	) &
+	pdg_pid=$!
+
+	(
+		sleep "$PDG_IDL_WATCHDOG_SECONDS"
+		if kill -0 "$pdg_pid" 2>/dev/null; then
+			echo "[make-idl] Terminating hung pdg process after ${PDG_IDL_WATCHDOG_SECONDS}s: $format" > "$watchdog_note_file"
+			kill -TERM "$pdg_pid" 2>/dev/null || true
+			sleep "$PDG_IDL_FORCE_KILL_GRACE_SECONDS"
+			if kill -0 "$pdg_pid" 2>/dev/null; then
+				echo "[make-idl] Forcing kill after ${PDG_IDL_FORCE_KILL_GRACE_SECONDS}s grace period: $format" >> "$watchdog_note_file"
+				kill -KILL "$pdg_pid" 2>/dev/null || true
+			fi
+		fi
+	) &
+	watchdog_pid=$!
+
+	wait "$pdg_pid"
+	exit_code=$?
+
+	kill "$watchdog_pid" 2>/dev/null || true
+	wait "$watchdog_pid" 2>/dev/null || true
+
+	if [ -f "$watchdog_note_file" ]; then
+		cat "$watchdog_note_file" >&2
+		rm -f "$watchdog_note_file"
+	fi
+	if [ -s "$stderr_file" ]; then
+		cat "$stderr_file" >&2
+	fi
+	rm -f "$stderr_file"
+
+	return "$exit_code"
+}
+
+cd $PDG_ROOT
+
+run_pdg_idl --doxygen-h-format "$PDG_BUILD_DIR/pdg-js.h" || { exit 1; }
+
+cd $PDG_ROOT
+if [ -z "`diff $PDG_BUILD_DIR/pdg-js.h $PDG_DOCS_DIR/pdg-js.h`" ]; then
+	echo "-- JavaScript Interface was unchanged --"
+else
+    diff $PDG_BUILD_DIR/pdg-js.h $PDG_DOCS_DIR/pdg-js.h
+	cp $PDG_BUILD_DIR/pdg-js.h $PDG_DOCS_DIR/pdg-js.h
+	ls -l $PDG_DOCS_DIR/pdg-js.h
+	echo "To rebuild docs use: tools/regen-doxygen-docs.sh"
+fi
+
+run_pdg_idl --json-format "$PDG_BUILD_DIR/pdg-js.json" || { exit 1; }
+
+cd $PDG_ROOT
+if [ -z "`diff --ignore-matching-lines=\"\\\"when\\\":\\ \" $PDG_BUILD_DIR/pdg-js.json $PDG_DOCS_DIR/pdg-js.json`" ]; then
+	echo "-- JSON IDL was unchanged --"
+else
+    diff --ignore-matching-lines="\"when\": " $PDG_BUILD_DIR/pdg-js.json $PDG_DOCS_DIR/pdg-js.json
+	cp $PDG_BUILD_DIR/pdg-js.json $PDG_DOCS_DIR/pdg-js.json
+	ls -l $PDG_DOCS_DIR/pdg-js.json
 fi

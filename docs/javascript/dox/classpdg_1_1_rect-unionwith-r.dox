@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::unionWith(r)
+
+\brief get the smallest possible new rectangle that contains both rectangles
+
+**/ }

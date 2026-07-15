@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::rotateAround(radians, centerPoint)
+
+\brief rotates the polygon around the specified center point
+
+**/ }

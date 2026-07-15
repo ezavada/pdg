@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addPolygon(polygon, attrs)
+
+\brief adds a polygon element to the drawing
+
+**/ }

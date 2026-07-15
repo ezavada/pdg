@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::deserialize
+
+\brief update this sprite from the data in stream
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Serializer::sizeof_2u(val)
+
+\brief Calculate the number of bytes needed to serialize an unsigned 16-bit integer
+
+**/ }

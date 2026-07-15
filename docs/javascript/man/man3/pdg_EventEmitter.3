@@ -1,14 +1,14 @@
-.TH "EventEmitter" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "EventEmitter" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-EventEmitter \- 
-.PP
-Distributes events to event handlers\&.  
+EventEmitter \- Distributes events to event handlers\&.  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .PP
 Inherited by \fBEventManager\fP, \fBSound\fP, \fBSprite\fP, \fBSpriteLayer\fP, and \fBTimerManager\fP\&.
 .SS "Public Member Functions"
@@ -17,38 +17,41 @@ Inherited by \fBEventManager\fP, \fBSound\fP, \fBSprite\fP, \fBSpriteLayer\fP, a
 .ti -1c
 .RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
 .br
-.RI "\fIadd a new handler for some event type, or for all events if no type specified\&. \fP"
+.RI "add a new handler for some event type, or for all events if no type specified\&. "
 .ti -1c
 .RI "\fBblockEvent\fP (int inEventType)"
 .br
-.RI "\fItemporarily ignore all events of a particular type\&. \fP"
+.RI "temporarily ignore all events of a particular type\&. "
 .ti -1c
 .RI "\fBclear\fP ()"
 .br
-.RI "\fIremove all handlers \fP"
+.RI "remove all handlers "
 .ti -1c
 .RI "\fBremoveHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
 .br
-.RI "\fIremove a handler for some event type, or for all events (see note) if no type specified\&. \fP"
+.RI "remove a handler for some event type, or for all events (see note) if no type specified\&. "
 .ti -1c
 .RI "\fBunblockEvent\fP (int inEventType)"
 .br
-.RI "\fIstop ignoring events of a particular type \fP"
+.RI "stop ignoring events of a particular type "
 .in -1c
 .SH "Detailed Description"
 .PP 
 Distributes events to event handlers\&. 
 
-\fBPrecondition:\fP
+
+.PP
+\fBPrecondition\fP
 .RS 4
 \fBAPI Stability: 3 - Stable\fP\&. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes\&. Backwards-compatibility is guaranteed\&.
 .RE
 .PP
 The \fBEventEmitter\fP expects the game developer to implement \fBIEventHandler\fP subclasses and register them to handle various events they are interested in\&. 
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBIEventHandler\fP 
+
 .PP
 \fBEvents\fP 
 .RE
@@ -56,10 +59,12 @@ The \fBEventEmitter\fP expects the game developer to implement \fBIEventHandler\
 
 .SH "Member Function Documentation"
 .PP 
-.SS "addHandler (\fBIEventHandler\fPinHandler, intinEventType = \fC\fBall_events\fP\fP)"
+.SS "addHandler (\fBIEventHandler\fP inHandler, int inEventType = \fR\fBall_events\fP\fP)"
 
 .PP
-add a new handler for some event type, or for all events if no type specified\&. \fBParameters:\fP
+add a new handler for some event type, or for all events if no type specified\&. 
+.PP
+\fBParameters\fP
 .RS 4
 \fIinHandler\fP the \fBIEventHandler\fP object which will handle the events 
 .br
@@ -67,12 +72,15 @@ add a new handler for some event type, or for all events if no type specified\&.
 .RE
 .PP
 
-.SS "blockEvent (intinEventType)"
+.PP
+References \fBpdg::all_events\fP\&.
+.SS "blockEvent (int inEventType)"
 
 .PP
 temporarily ignore all events of a particular type\&. Events that are blocked are NOT cached for later, they are just dropped\&.
+
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIinEventType\fP the type of event to block 
 .RE
@@ -82,30 +90,36 @@ temporarily ignore all events of a particular type\&. Events that are blocked ar
 
 .PP
 remove all handlers 
-.SS "removeHandler (\fBIEventHandler\fPinHandler, intinEventType = \fC\fBall_events\fP\fP)"
+.SS "removeHandler (\fBIEventHandler\fP inHandler, int inEventType = \fR\fBall_events\fP\fP)"
 
 .PP
 remove a handler for some event type, or for all events (see note) if no type specified\&. If the handler is listed multiple times it will only remove it once\&.
+
 .PP
 It is safe to call remove handler from within an event handler's handleEvent() call\&.
+
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIinHandler\fP the object to handle events 
 .br
 \fIinEventType\fP the type of event to stop handling
 .RE
 .PP
-\fBNote:\fP
+\fBNote\fP
 .RS 4
-inType == all_events doesn't work quite like you might expect\&. If you have registered a handler for multiple events, but not with all_events, doing \fCremoveHandler(handler, all_events)\fP will do nothing\&. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not\&. 
+inType == all_events doesn't work quite like you might expect\&. If you have registered a handler for multiple events, but not with all_events, doing \fRremoveHandler(handler, all_events)\fP will do nothing\&. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not\&. 
 .RE
 .PP
 
-.SS "unblockEvent (intinEventType)"
+.PP
+References \fBpdg::all_events\fP\&.
+.SS "unblockEvent (int inEventType)"
 
 .PP
-stop ignoring events of a particular type \fBParameters:\fP
+stop ignoring events of a particular type 
+.PP
+\fBParameters\fP
 .RS 4
 \fIinEventType\fP the type of event to unblock 
 .RE

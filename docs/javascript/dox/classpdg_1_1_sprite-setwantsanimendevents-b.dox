@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setWantsAnimEndEvents(wantsThem)
+
+\brief enables or disables animation end event generation for this sprite
+
+**/ }

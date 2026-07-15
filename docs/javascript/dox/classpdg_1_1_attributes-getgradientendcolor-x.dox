@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getGradientEndColor()
+
+\brief returns the gradient end color
+
+**/ }

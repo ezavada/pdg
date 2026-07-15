@@ -104,6 +104,7 @@ namespace pdg {
     int platform_getPrimaryScreen();
 	void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum);
 	void platform_getScreenSize(long* outWidth, long* outHeight, int screenNum);
+	void platform_getScreenBounds(long* outX, long* outY, long* outWidth, long* outHeight, int screenNum);
     int platform_getCurrentScreenDepth(int screenNum);
     int platform_closestScreenTo(long width, long height, int bpp);
 	int platform_getNumSupportedScreenModes(int screenNum);

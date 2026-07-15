@@ -33,6 +33,7 @@
 #include "pdg/app/ListBox.h"
 #include "pdg/app/Scrollbar.h"
 #include "pdg/app/Controller.h"
+#include "pdg/sys/attributes.h"
 
 namespace pdg {
 
@@ -78,7 +79,7 @@ void ListBox::calcClickableAreas()
 {
 	// Reset the view area to the number of visible lines.
 	Rect newViewArea(mViewArea.width(), mViewArea.height());
-    Graphics::Style style = Graphics::textStyle_Plain;
+    Style style = textStyle_Plain;
 	int voffset = mPort->getCurrentFont(style)->getFontHeight(DESC_TEXT_SIZE, style) + 
 					mPort->getCurrentFont(style)->getFontLeading(DESC_TEXT_SIZE, style);
 	newViewArea.bottom = voffset * mVisibleTextLines + 1;
@@ -110,17 +111,17 @@ void ListBox::drawSelf()
 
 	// Erase old text
 	Rect boxRect = Rect(mViewArea.width(), mViewArea.height());
-	mPort->frameRect(localToGlobal(boxRect), PDG_BLACK_COLOR);
+	mPort->drawRect(localToGlobal(boxRect), Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1));
 	boxRect.left +=1;
 	boxRect.top +=1;
 	boxRect.right -=0;
 	boxRect.bottom -=0;
-    mPort->fillRect(localToGlobal(boxRect), mBkColor);
+    mPort->drawRect(localToGlobal(boxRect), Attributes().fillColor(mBkColor));
 
 	// draw scroll bar
 	mScrollbar->draw();
 
-    Graphics::Style style = Graphics::textStyle_Plain;
+    Style style = textStyle_Plain;
 	int voffset = mPort->getCurrentFont(style)->getFontHeight(DESC_TEXT_SIZE, style) + 
 					mPort->getCurrentFont(style)->getFontLeading(DESC_TEXT_SIZE, style);
 	Point textPoint = Point(1, voffset-2);
@@ -141,7 +142,7 @@ void ListBox::drawSelf()
     			std::string command = CMD_BREAK2;
     			if (command == textLine.text)
     			{
-    				if(!firstTime)
+    				if (!firstTime)
     				{
     					textPoint.y += 4;
     				}
@@ -154,14 +155,14 @@ void ListBox::drawSelf()
     		else
     		{
     			Rect textRect(textPoint.x, textPoint.y - voffset + DESC_TEXT_DECENT, mViewArea.width() - 16, textPoint.y + DESC_TEXT_DECENT);
-    			mPort->fillRect(localToGlobal(textRect), textLine.bgcolor);
+    			mPort->drawRect(localToGlobal(textRect), Attributes().fillColor(textLine.bgcolor));
     			Point textTextPoint = textPoint;
     			textTextPoint.x += 5; 
     			// clip text if exceeds view area
     			int fontWidth = mPort->getTextWidth(textLine.text,DESC_TEXT_SIZE,style,std::strlen(textLine.text));
     			
     			int scrollbarWidth = 0;
-    			if(mScrollbar)
+    			if (mScrollbar)
     				scrollbarWidth = mScrollbar->getViewArea().width();
 
     			if (fontWidth > mViewArea.width())
@@ -174,16 +175,16 @@ void ListBox::drawSelf()
     				{
     					aString = textStr.substr(0,i);
     					fontWidth = mPort->getTextWidth(aString.c_str(),DESC_TEXT_SIZE,style,aString.length());
-    					if(fontWidth >= drawableTextWidth)
+    					if (fontWidth >= drawableTextWidth)
     						break;
-    				}
-    				aString += CLIP_TEXT;
-    				mPort->drawText(aString.c_str(), localToGlobal(textTextPoint), DESC_TEXT_SIZE, style, textLine.fgcolor);
-               	}
-    			else
-    			{		
-    				mPort->drawText(textLine.text, localToGlobal(textTextPoint), DESC_TEXT_SIZE, style, textLine.fgcolor);
-    			}
+   				}
+   				aString += CLIP_TEXT;
+   				mPort->drawText(aString.c_str(), localToGlobal(textTextPoint), Attributes().textSize(DESC_TEXT_SIZE).textStyle(style).fillColor(textLine.fgcolor));
+              	}
+   			else
+   			{		
+   				mPort->drawText(textLine.text, localToGlobal(textTextPoint), Attributes().textSize(DESC_TEXT_SIZE).textStyle(style).fillColor(textLine.fgcolor));
+   			}
     			textPoint.y += voffset;
     			firstTime = false;
     		}
@@ -257,7 +258,7 @@ void ListBox::notify(Subject* subject)
 	{
 		mWindowTopLineIndex = 0;
 	}
-	View::notify(subject);
+	// View::notify(subject); // View doesn't have notify method
 }
 
 const char* ListBox::getTextFromIndex(int index)

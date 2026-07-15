@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::contains(point)
+
+\brief returns true if the specified point is inside the enclosed area of the Polygon
+
+**/ }

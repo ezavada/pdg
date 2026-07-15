@@ -1,14 +1,14 @@
-.TH "ImageStrip" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ImageStrip" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-ImageStrip \- 
-.PP
-bitmap image containing a number of frames that can be blitted onto the screen  
+ImageStrip \- bitmap image containing a number of frames that can be blitted onto the screen  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .PP
 Inherits \fBImage\fP\&.
 .SS "Public Member Functions"
@@ -17,29 +17,103 @@ Inherits \fBImage\fP\&.
 .ti -1c
 .RI "\fBImage\fP \fBgetFrame\fP (int frameNum)"
 .br
-.RI "\fIget image that is a single frame of this multi-frame image \fP"
+.RI "get image that is a single frame of this multi-frame image "
 .ti -1c
 .RI "number \fBgetFrameWidth\fP ()"
 .br
-.RI "\fIget the width in pixels of a single frame of this image \fP"
+.RI "get the width in pixels of a single frame of this image "
 .ti -1c
 .RI "number \fBgetNumFrames\fP ()"
 .br
-.RI "\fIhow many frames in this multi-frame image \fP"
+.RI "how many frames in this multi-frame image "
 .ti -1c
 .RI "\fBImageStrip\fP \fBsetFrameWidth\fP (int inFrameWidth)"
 .br
-.RI "\fIset the width in pixels of a single frame of this image \fP"
+.RI "set the width in pixels of a single frame of this image "
 .ti -1c
 .RI "\fBImageStrip\fP \fBsetNumFrames\fP (int inNumFrames)"
 .br
-.RI "\fIset the number of frames that are in this image strip \fP"
+.RI "set the number of frames that are in this image strip "
+.in -1c
+
+Public Member Functions inherited from \fBImage\fP
+.in +1c
+.ti -1c
+.RI "number \fBgetAlphaValue\fP (int x, int y)"
+.br
+.RI "get the value for the alpha channel at the given x, y coordinates in the image "
+.ti -1c
+.RI "number \fBgetAlphaValue\fP (\fBPoint\fP p)"
+.br
+.RI "get the value for the alpha channel at the given point in the image "
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.RI "get the height in pixels of the image "
+.ti -1c
+.RI "\fBRect\fP \fBgetImageBounds\fP (\fBPoint\fP at)"
+.br
+.RI "get image boundary rect, optionally with top left at given point "
+.ti -1c
+.RI "number \fBgetOpacity\fP ()"
+.br
+.RI "get opacity of this image "
+.ti -1c
+.RI "\fBColor\fP \fBgetPixel\fP (int x, int y)"
+.br
+.RI "get the pixel data at the given x, y coordinates in the image "
+.ti -1c
+.RI "\fBColor\fP \fBgetPixel\fP (\fBPoint\fP p)"
+.br
+.RI "get the pixel data at the given point in the image "
+.ti -1c
+.RI "\fBImage\fP \fBgetSubsection\fP (\fBQuad\fP quad)"
+.br
+.RI "get image that is an arbitrary subsection of this image "
+.ti -1c
+.RI "\fBImage\fP \fBgetSubsection\fP (\fBRect\fP quad)"
+.br
+.RI "get image that is a rectangular subsection of this image "
+.ti -1c
+.RI "\fBColor\fP \fBgetTransparentColor\fP ()"
+.br
+.RI "get the color that is used to indicate transparency "
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.RI "get the width in pixels of the image "
+.ti -1c
+.RI "number \fBprepareToRasterize\fP ()"
+.br
+.RI "bind the image into an OpenGL texture and free image data from main memory "
+.ti -1c
+.RI "\fBretainAlpha\fP ()"
+.br
+.RI "retain alpha data for use by \fBImage\&.getAlphaValue()\fP or per-pixel sprite collisions "
+.ti -1c
+.RI "\fBretainData\fP ()"
+.br
+.RI "retain pixel data for use by \fBImage\&.getPixel()\fP "
+.ti -1c
+.RI "\fBsetEdgeClamping\fP (boolean inUseEdgeClamp)"
+.br
+.RI "set whether image uses edge clamping or not "
+.ti -1c
+.RI "\fBsetOpacity\fP (number opacity)"
+.br
+.RI "set opacity of this image "
+.ti -1c
+.RI "\fBImage\fP \fBsetTransparentColor\fP (\fBColor\fP inTransparentColor)"
+.br
+.RI "sets the color that should be treated as transparent in the image "
 .in -1c
 .SH "Detailed Description"
 .PP 
 bitmap image containing a number of frames that can be blitted onto the screen 
 
-\fBNote:\fP
+
+.PP
+\fBNote\fP
 .RS 4
 \fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
 .RE
@@ -47,107 +121,121 @@ bitmap image containing a number of frames that can be blitted onto the screen
 You can create an image strip directly from a file, or by loading it from resource files with the \fBResourceManager\fP\&. 
 .SH "Member Function Documentation"
 .PP 
-.SS "getFrame (intframeNum)"
+.SS "\fBImage\fP getFrame (int frameNum)"
 
 .PP
-get image that is a single frame of this multi-frame image \fBReturns:\fP
+get image that is a single frame of this multi-frame image 
+.PP
+\fBReturns\fP
 .RS 4
 a new \fBImage\fP object with the sub image
 .RE
 .PP
-\fBNote:\fP
+\fBNote\fP
 .RS 4
 this is done by referencing the original, the storage space is not duplicated
 .RE
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIframeNum\fP which frame of the multiframe image to extract 
 .RE
 .PP
 
-.SS "getFrameWidth ()"
+.SS "number getFrameWidth ()"
 
 .PP
-get the width in pixels of a single frame of this image \fBReturns:\fP
+get the width in pixels of a single frame of this image 
+.PP
+\fBReturns\fP
 .RS 4
 the width in pixels
 .RE
 .PP
-\fBNote:\fP
+\fBNote\fP
 .RS 4
 there is no getFrameHeight() method since frames are arranged horizontally in an image strip, so the frame height is the same as the image height\&.
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBgetHeight()\fP 
+
 .PP
 \fBgetWidth()\fP 
 .RE
 .PP
 
-.SS "getNumFrames ()"
+.SS "number getNumFrames ()"
 
 .PP
 how many frames in this multi-frame image Frames are arranged horizontally within an \fBImageStrip\fP, so this is the same as setting the number of horizontal slices the image is divided into, one frame per slice, like a filmstrip\&.
+
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 the number of frames
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBsetNumFrames()\fP 
+
 .PP
 \fBsetFrameWidth()\fP 
 .RE
 .PP
 
-.SS "setFrameWidth (intinFrameWidth)"
+.SS "\fBImageStrip\fP setFrameWidth (int inFrameWidth)"
 
 .PP
-set the width in pixels of a single frame of this image \fBReturns:\fP
+set the width in pixels of a single frame of this image 
+.PP
+\fBReturns\fP
 .RS 4
 the width in pixels
 .RE
 .PP
-\fBNote:\fP
+\fBNote\fP
 .RS 4
 there is no setFrameHeight() method since frames are arranged horizontally in an image strip, so the frame height is the same as the image height\&.
+
 .PP
 this is an alternative to \fBsetNumFrames()\fP, for use when it is more convenient to set the width rather than the frame count\&. You can call either one to set up an \fBImageStrip\fP's frames\&.
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBsetNumFrames()\fP 
+
 .PP
 getFrameHeight() 
 .RE
 .PP
 
-.SS "setNumFrames (intinNumFrames)"
+.SS "\fBImageStrip\fP setNumFrames (int inNumFrames)"
 
 .PP
 set the number of frames that are in this image strip The frames are all in a horizontal row within the image strip, and this makes the frame width be the total width divided by number of frames
+
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIinNumFrames\fP the total number of frames across
 .RE
 .PP
-\fBNote:\fP
+\fBNote\fP
 .RS 4
 this is an alternative to \fBsetFrameWidth()\fP, for use when it is more convenient to set the frame count rather than the width\&. You can call either one to set up an \fBImageStrip\fP's frames\&.
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBsetFrameWidth()\fP 
+
 .PP
 \fBgetNumFrames()\fP 
+
 .PP
 \fBgetFrameWidth()\fP 
 .RE

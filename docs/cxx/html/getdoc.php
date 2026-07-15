@@ -5,6 +5,27 @@ $rawDocName = $_GET['name'];
 // extremely simple safety check, limit us to the javascript/dox directory, and add .dox extension
 $docNameArray = explode('/', $rawDocName);
 $docName = '../dox/' . $docNameArray[count($docNameArray) - 1] . '.dox';
+// also remove potentially harmful characters
+$docName = str_replace(' ','_', $docName);
+$docName = str_replace('\\','_', $docName);
+$docName = str_replace(':','_', $docName);
+$docName = str_replace(';','_', $docName);
+$docName = str_replace('$','_', $docName);
+$docName = str_replace('#','_', $docName);
+$docName = str_replace('%','_', $docName);
+$docName = str_replace('!','_', $docName);
+$docName = str_replace('&','_', $docName);
+$docName = str_replace('^','_', $docName);
+$docName = str_replace('(','_', $docName);
+$docName = str_replace(')','_', $docName);
+$docName = str_replace('*','_', $docName);
+$docName = str_replace('?','_', $docName);
+$docName = str_replace('"','_', $docName);
+$docName = str_replace('\'','_', $docName);
+$docName = str_replace('\t','_', $docName);
+$docName = str_replace('\r','_', $docName);
+$docName = str_replace('\n','_', $docName);
+
 if (!file_exists($docName)) {
 	header('HTTP/1.0 404 Not Found');
 } else {

@@ -37,18 +37,33 @@ if [ -z "$PDG_ROOT" ]; then
 fi
 
 NODE_VERS=0.10.28
-NODE_GYP_VERS=0.13.0
-NODE_INSPECTOR_VERS=0.7.3
+NODE_GYP_VERS=11.3.0
 NPM_VERS=1.4.10
-JASMINE_NODE_VER=1.14.2
+JASMINE_NODE_VER=1.16.0
 NET_REPL_VERS=0.1.2
 
 OK=1
 NEED_NPM=0
 NEED_NODE_GYP=0
-NEED_NODE_INSPECTOR=0
 NEED_JASMINE_NODE=0
 NEED_NET_REPL=0
+
+if [ -n "$PYTHON" ]; then
+	PYTHON_BIN="$PYTHON"
+elif command -v python3 >/dev/null 2>&1; then
+	PYTHON_BIN="$(command -v python3)"
+elif command -v python >/dev/null 2>&1; then
+	PYTHON_BIN="$(command -v python)"
+else
+	PYTHON_BIN=""
+fi
+
+package_version() {
+	local package_json="$1"
+	if [ -f "$package_json" ]; then
+		node -p "require(process.argv[1]).version" "$package_json" 2>/dev/null | tr -d '\r\n'
+	fi
+}
 
 if [ ! -d "$PDG_ROOT/node_modules" ]; then
 	OK=0
@@ -63,26 +78,19 @@ if [ "$LINK" != "file" ]; then
 		NEED_NPM=1
 	fi
 fi
-LINK=`type -t $PDG_NODE_GYP`
-if [ "$LINK" != "file" ]; then
-	if [ -e "$PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js" ]; then
-		ln -sf $PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js $PDG_ROOT/tools/node-gyp
+LOCAL_NODE_GYP_VERS="$(package_version "$PDG_ROOT/node_modules/node-gyp/package.json")"
+if [ "$LOCAL_NODE_GYP_VERS" != "$NODE_GYP_VERS" ]; then
+	if [ -n "$LOCAL_NODE_GYP_VERS" ]; then
+		echo "node-gyp $LOCAL_NODE_GYP_VERS is installed but $NODE_GYP_VERS is required"
 	else
 		echo "$PDG_NODE_GYP not found"
-		OK=0
-		NEED_NODE_GYP=1
 	fi
+	OK=0
+	NEED_NODE_GYP=1
+elif [ -e "$PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js" ]; then
+	ln -sf $PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js $PDG_ROOT/tools/node-gyp
 fi
-LINK=`type -t $PDG_NODE_INSPECTOR`
-if [ "$LINK" != "file" ]; then
-	if [ -e "$PDG_ROOT/node_modules/node-inspector/bin/inspector.js" ]; then
-		ln -sf $PDG_ROOT/node_modules/node-inspector/bin/inspector.js $PDG_ROOT/tools/node-inspector
-	else
-		echo "$PDG_NODE_INSPECTOR not found"
-		OK=0
-		NEED_NODE_INSPECTOR=1
-	fi
-fi
+
 LINK=`type -t $PDG_JASMINE_NODE`
 if [ "$LINK" != "file" ]; then
 	if [ -e "$PDG_ROOT/node_modules/jasmine-node/bin/jasmine-node" ]; then
@@ -108,36 +116,42 @@ if [ "$OK" == "1" ]; then
 	exit 0
 fi
 if [ "$NEED_NPM" == "1" ]; then
-	echo "Installing Node Package Manager -> $PDG_ROOT/node_modules..."
+	echo -e "${HEAD}Installing Node Package Manager -> $PDG_ROOT/node_modules...${RESET}"
 	mkdir -p $PDG_ROOT/node_modules
 	rm -rf $PDG_ROOT/node_modules/npm
 	mkdir -p $PDG_ROOT/share/man
 	mkdir -p $PDG_ROOT/bin
 	mkdir -p $PDG_ROOT/lib/node
 	export clean=yes
-	$PDG_ROOT/deps/node/deps/npm/scripts/install.sh > /dev/null
+	curl -L https://npmjs.com/install.sh | sh
+#	$PDG_ROOT/deps/node/deps/npm/scripts/install.sh > /dev/null
 	mv $PDG_ROOT/lib/node_modules/npm $PDG_ROOT/node_modules
 	rm -rf share/ bin/ lib/
 	ln -sf $PDG_ROOT/node_modules/npm/bin/npm-cli.js $PDG_ROOT/tools/npm
 fi
+LOGLEVEL=`$PDG_NPM config get loglevel`
+$PDG_NPM config set loglevel error
+if [ -n "$PYTHON_BIN" ]; then
+	export PYTHON="$PYTHON_BIN"
+	export npm_config_python="$PYTHON_BIN"
+fi
 if [ "$NEED_NODE_GYP" == "1" ]; then
-	echo "Installing node-gyp $NODE_GYP_VERS -> $PDG_ROOT/node_modules..."
-	$PDG_NPM install node-gyp@$NODE_GYP_VERS
+	echo -e "${HEAD}Installing node-gyp tool $NODE_GYP_VERS -> $PDG_ROOT/node_modules...${RESET}"
+	rm -rf "$PDG_ROOT/node_modules/node-gyp" "$PDG_ROOT/node_modules/.bin/node-gyp" "$PDG_ROOT/tools/node-gyp"
+	$PDG_NPM install --no-save --package-lock=false node-gyp@$NODE_GYP_VERS
 	ln -sf $PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js $PDG_ROOT/tools/node-gyp
 fi
 if [ "$NEED_JASMINE_NODE" == "1" ]; then
-	echo "Installing jasmine-node $JASMINE_NODE_VER -> $PDG_ROOT/node_modules..."
+	echo -e "${HEAD}Installing jasmine-node $JASMINE_NODE_VER -> $PDG_ROOT/node_modules...${RESET}"
 	$PDG_NPM install jasmine-node@$JASMINE_NODE_VER
 	ln -sf $PDG_ROOT/node_modules/jasmine-node/bin/jasmine-node $PDG_ROOT/tools/jasmine-node
 fi
-if [ "$NEED_NODE_INSPECTOR" == "1" ]; then
-	echo "Installing node-inspector $NODE_INSPECTOR_VERS -> $PDG_ROOT/node_modules..."
-	$PDG_NPM install node-inspector@$NODE_INSPECTOR_VERS
-	ln -sf $PDG_ROOT/node_modules/node-inspector/bin/inspector.js $PDG_ROOT/tools/node-inspector
-fi
+
 if [ "$NEED_NET_REPL" == "1" ]; then
-	echo "Installing net-repl $NET_REPL_VERS -> $PDG_ROOT/node_modules..."
+	echo -e "${HEAD}Installing net-repl $NET_REPL_VERS -> $PDG_ROOT/node_modules...${RESET}"
 	$PDG_NPM install net-repl@$NET_REPL_VERS
 	ln -sf $PDG_ROOT/node_modules/net-repl/bin/repl.js $PDG_ROOT/tools/repl
 fi
+# restore npm warning level
+$PDG_NPM config set loglevel $LOGLEVEL
 echo "Done."

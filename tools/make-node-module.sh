@@ -35,21 +35,76 @@ if [ -z "$PDG_ROOT" ]; then
 	exit 1
 fi
 
-# !!! use npm pack instead !!!
+VERSION="$(tr -d '\r\n' < "$PDG_ROOT/VERSION")"
+TARGET="$PDG_ROOT/build/node-pdg/pdg-$VERSION.tgz"
+INSTALL_DIR="$PDG_ROOT/build/node-pdg-install"
+CACHE_DIR="$PDG_ROOT/build/npm-cache"
 
-TARGET_NAME=node-pdg-`cat VERSION`
-TARGET_DIR=$PDG_ROOT/build/package/$TARGET_NAME
-TARGET=$TARGET_NAME-src.tar
+if [ -n "$PYTHON" ]; then
+	PYTHON_BIN="$PYTHON"
+elif command -v python3 >/dev/null 2>&1; then
+	PYTHON_BIN="$(command -v python3)"
+elif command -v python >/dev/null 2>&1; then
+	PYTHON_BIN="$(command -v python)"
+else
+	PYTHON_BIN=""
+fi
 
-rm -rf build/package/$TARGET.gz 
-rm -rf build/package/$TARGET.bz2 
-$PDG_ROOT/tools/copy-node-module-source.sh $TARGET_DIR
+initialize_install_workspace() {
+	rm -rf "$INSTALL_DIR"
+	mkdir -p "$INSTALL_DIR"
+	cat > "$INSTALL_DIR/package.json" <<'EOF'
+{
+  "name": "pdg-node-install",
+  "private": true
+}
+EOF
+}
 
-cd $PDG_ROOT/build/package/
-echo "Building tar.gz and tar.bz2 files..."
-tar -czf $TARGET.gz $TARGET_NAME/
-tar -cyf $TARGET.bz2 $TARGET_NAME/
-echo "Done:"
-ls -lh $TARGET.*
+$PDG_ROOT/tools/copy-node-module-source.sh $PDG_ROOT/build/node-pdg
+
+# npm puts out too many warnings that have nothing to do with us
+LOGLEVEL=`$PDG_NPM config get loglevel`
+$PDG_NPM config set loglevel error
+export npm_config_nodedir="$PDG_ROOT/deps/node"
+export npm_config_build_from_source=true
+rm -rf "$CACHE_DIR"
+mkdir -p "$CACHE_DIR"
+export npm_config_cache="$CACHE_DIR"
+if [ -n "$PYTHON_BIN" ]; then
+	export PYTHON="$PYTHON_BIN"
+	export npm_config_python="$PYTHON_BIN"
+fi
+
+echo -e "${HEAD}Packing the module${RESET}"
+cd $PDG_ROOT/build/node-pdg
+$PDG_NPM pack
+cd $PDG_ROOT
+rm -rf "$PDG_ROOT/node_modules/pdg"
+echo "Done packing the module"
+
+echo -e "${HEAD}Installing the pdg Node.js module (native build via node-gyp)${RESET}"
+initialize_install_workspace
+cd "$INSTALL_DIR"
+$PDG_NPM --foreground-scripts install --no-save --package-lock=false "$TARGET" || exit 1
+$PDG_NPM list pdg
+cd "$PDG_ROOT"
+mkdir -p "$PDG_ROOT/node_modules"
+cp -a "$INSTALL_DIR/node_modules/pdg" "$PDG_ROOT/node_modules/" || exit 1
+echo "Done installing the module"
+
+# restore log level
+$PDG_NPM config set loglevel $LOGLEVEL
+
+echo -e "${HEAD}Testing the module${RESET}"
+cd $PDG_ROOT/tools/node-pdg
+make check-dylib
+cd $PDG_ROOT/node_modules/pdg
+$PDG_NPM test || exit 1
+echo "Done testing the module"
+
+echo ""
+echo -e "${GOOD}Done with PDG Node.js Module${RESET}"
+ls -lh $TARGET
 echo "Shasums:"
-shasum $TARGET.*
+shasum $TARGET

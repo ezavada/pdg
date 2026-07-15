@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getGradientStart()
+
+\brief returns the gradient start point
+
+**/ }

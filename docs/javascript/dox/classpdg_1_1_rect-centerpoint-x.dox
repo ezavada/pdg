@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::centerPoint()
+
+\brief get center point of this rectangle
+
+**/ }

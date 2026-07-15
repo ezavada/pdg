@@ -136,6 +136,64 @@ Bail:
 // returns a malloc'd block with the result, must be freed when you are done with it
 char* 
 Internet::httpPost(const char* url, const char* postData, uint32 timeoutMs) {
+	// Basic implementation using CFNetwork
+	CFURLRef urlRef = CFURLCreateWithBytes(kCFAllocatorDefault, (const UInt8*)url, strlen(url), kCFStringEncodingUTF8, NULL);
+	if (!urlRef) return NULL;
+	
+	CFHTTPMessageRef messageRef = CFHTTPMessageCreateRequest(kCFAllocatorDefault, CFSTR("POST"), urlRef, kCFHTTPVersion1_1);
+	if (!messageRef) {
+		CFRelease(urlRef);
+		return NULL;
+	}
+	
+	// Set POST data
+	if (postData) {
+		CFDataRef postDataRef = CFDataCreate(kCFAllocatorDefault, (const UInt8*)postData, strlen(postData));
+		CFHTTPMessageSetBody(messageRef, postDataRef);
+		CFRelease(postDataRef);
+	}
+	
+	// Create read stream
+	CFReadStreamRef readStreamRef = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, messageRef);
+	if (!readStreamRef) {
+		CFRelease(messageRef);
+		CFRelease(urlRef);
+		return NULL;
+	}
+	
+	// Open stream
+	if (!CFReadStreamOpen(readStreamRef)) {
+		CFRelease(readStreamRef);
+		CFRelease(messageRef);
+		CFRelease(urlRef);
+		return NULL;
+	}
+	
+	// Read data
+	CFMutableDataRef dataRef = CFDataCreateMutable(kCFAllocatorDefault, 0);
+	UInt8 buffer[4096];
+	CFIndex bytesRead;
+	
+	while ((bytesRead = CFReadStreamRead(readStreamRef, buffer, sizeof(buffer))) > 0) {
+		CFDataAppendBytes(dataRef, buffer, bytesRead);
+	}
+	
+	// Convert to C string
+	CFIndex dataLength = CFDataGetLength(dataRef);
+	char* result = (char*)malloc(dataLength + 1);
+	if (result) {
+		CFDataGetBytes(dataRef, CFRangeMake(0, dataLength), (UInt8*)result);
+		result[dataLength] = '\0';
+	}
+	
+	// Cleanup
+	CFRelease(dataRef);
+	CFReadStreamClose(readStreamRef);
+	CFRelease(readStreamRef);
+	CFRelease(messageRef);
+	CFRelease(urlRef);
+	
+	return result;
 }
 
 
@@ -153,7 +211,48 @@ Internet::httpGetEx(const char* url, char* buffer, size_t buffSize,
     					ReceiveFunc func, void* userContext,
     					uint32 timeoutMs, uint32 maxBps)
 {
-	return -1; // not implemented
+	// Basic implementation using CFNetwork
+	CFURLRef urlRef = CFURLCreateWithBytes(kCFAllocatorDefault, (const UInt8*)url, strlen(url), kCFStringEncodingUTF8, NULL);
+	if (!urlRef) return -1;
+	
+	CFHTTPMessageRef messageRef = CFHTTPMessageCreateRequest(kCFAllocatorDefault, CFSTR("GET"), urlRef, kCFHTTPVersion1_1);
+	if (!messageRef) {
+		CFRelease(urlRef);
+		return -1;
+	}
+	
+	// Create read stream
+	CFReadStreamRef readStreamRef = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, messageRef);
+	if (!readStreamRef) {
+		CFRelease(messageRef);
+		CFRelease(urlRef);
+		return -1;
+	}
+	
+	// Open stream
+	if (!CFReadStreamOpen(readStreamRef)) {
+		CFRelease(readStreamRef);
+		CFRelease(messageRef);
+		CFRelease(urlRef);
+		return -1;
+	}
+	
+	// Read data
+	CFIndex bytesRead = CFReadStreamRead(readStreamRef, (UInt8*)buffer, buffSize - 1);
+	if (bytesRead > 0) {
+		buffer[bytesRead] = '\0';
+		if (func) {
+			func(buffer, bytesRead, userContext);
+		}
+	}
+	
+	// Cleanup
+	CFReadStreamClose(readStreamRef);
+	CFRelease(readStreamRef);
+	CFRelease(messageRef);
+	CFRelease(urlRef);
+	
+	return (bytesRead >= 0) ? 0 : -1;
 }
     
     
@@ -170,7 +269,55 @@ Internet::httpPostEx(const char* url, char* buffer, size_t buffSize,
     					const char* postData, size_t postDataSize, 
     					uint32 timeoutMs, uint32 maxBps) 
 {
-	return -1; // not implemented
+	// Basic implementation using CFNetwork
+	CFURLRef urlRef = CFURLCreateWithBytes(kCFAllocatorDefault, (const UInt8*)url, strlen(url), kCFStringEncodingUTF8, NULL);
+	if (!urlRef) return -1;
+	
+	CFHTTPMessageRef messageRef = CFHTTPMessageCreateRequest(kCFAllocatorDefault, CFSTR("POST"), urlRef, kCFHTTPVersion1_1);
+	if (!messageRef) {
+		CFRelease(urlRef);
+		return -1;
+	}
+	
+	// Set POST data
+	if (postData && postDataSize > 0) {
+		CFDataRef postDataRef = CFDataCreate(kCFAllocatorDefault, (const UInt8*)postData, postDataSize);
+		CFHTTPMessageSetBody(messageRef, postDataRef);
+		CFRelease(postDataRef);
+	}
+	
+	// Create read stream
+	CFReadStreamRef readStreamRef = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, messageRef);
+	if (!readStreamRef) {
+		CFRelease(messageRef);
+		CFRelease(urlRef);
+		return -1;
+	}
+	
+	// Open stream
+	if (!CFReadStreamOpen(readStreamRef)) {
+		CFRelease(readStreamRef);
+		CFRelease(messageRef);
+		CFRelease(urlRef);
+		return -1;
+	}
+	
+	// Read data
+	CFIndex bytesRead = CFReadStreamRead(readStreamRef, (UInt8*)buffer, buffSize - 1);
+	if (bytesRead > 0) {
+		buffer[bytesRead] = '\0';
+		if (func) {
+			func(buffer, bytesRead, userContext);
+		}
+	}
+	
+	// Cleanup
+	CFReadStreamClose(readStreamRef);
+	CFRelease(readStreamRef);
+	CFRelease(messageRef);
+	CFRelease(urlRef);
+	
+	return (bytesRead >= 0) ? 0 : -1;
 }
 
 

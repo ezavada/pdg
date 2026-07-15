@@ -1,0 +1,15 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onOnscreen
+
+\brief set event handler for sprite onscreen event
+
+This happens whenever this sprite moves into the visible area of the port the layer is being rendered into, but only if you first call setWantsOffscreenEvents(true)
+
+\sa setWantsOffscreenEvents()
+\sa onOffscreen()
+\sa SpriteAnimateEvent
+\sa IEventHandler
+
+
+**/ }

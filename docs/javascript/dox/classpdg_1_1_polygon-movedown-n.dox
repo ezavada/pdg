@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::moveDown(delta)
+
+\brief moves the polygon down by the specified amount
+
+**/ }

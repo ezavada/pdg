@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Offset::mul(offset)
+
+\brief multiply this offset by the given one
+
+**/ }

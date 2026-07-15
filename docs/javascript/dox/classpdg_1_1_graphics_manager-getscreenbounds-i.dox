@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::GraphicsManager::getScreenBounds(screenNum)
+
+\brief returns the bounds (position and size) of a screen in the global coordinate space
+
+**/ }

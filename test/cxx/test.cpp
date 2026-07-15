@@ -84,6 +84,38 @@ int gCollisionCount = 0;
 
 float gWorldRot = 0.0f;
 
+void do_QuickTest();
+
+void do_QuickTest() {
+
+//    // timeMs: current time offset since start of animation,
+//    // beginVal: beginning value at start of animation,
+//    // change: complete change in value over entire animation,
+//    // durationMs: duration for entire animation
+//    // returns new value as of current time offset
+//    // typedef float (*EasingFunc)(uint32 timeOffsetMs, float beginVal, float change, uint32 durationMs);
+//
+////    float linearTween(uint32 ut, float b, float c, uint32 ud);
+////    float easeInOutQuad(uint32 ut, float b, float c, uint32 ud);
+//
+//    // broken (now fixed): easeInOutQuad easeOutCubic easeOutQuart easeOutQuint easeOutCirc easeOutBack
+//    
+//    pdg::OS::_DOUT("tm   line  io^2   o^3   o^4   o^5    oπ   obk");
+//    for (int t = 0; t<=10; t++) {
+//        float n0 = pdg::linearTween(t, 0.10, 1.0, 10);
+//        float n1 = pdg::easeInOutQuad(t, 0.10, 1.0, 10);
+//        float n2 = pdg::easeOutCubic(t, 0.10, 1.0, 10);
+//        float n3 = pdg::easeOutQuart(t, 0.10, 1.0, 10);
+//        float n4 = pdg::easeOutQuint(t, 0.10, 1.0, 10);
+//        float n5 = pdg::easeOutCirc(t, 0.10, 1.0, 10);
+//        float n6 = pdg::easeOutBack(t, 0.10, 1.0, 10);
+//        pdg::OS::_DOUT("%02d:  %1.2f  %1.2f  %1.2f  %1.2f  %1.2f  %1.2f  %1.2f", t, n0, n1, n2, n3, n4, n5, n6);
+//    }
+//    pdg::OS::_DOUT("Done with quick tests");
+//    exit(0);
+}
+
+
 ///--------------------------------------------------------------------------------------
 // main
 ///--------------------------------------------------------------------------------------
@@ -91,6 +123,7 @@ float gWorldRot = 0.0f;
 bool 
 MyHandler::handleEvent(pdg::EventEmitter* inEmitter, long inEventType, void* inEventData) throw() {
     if (inEventType == pdg::eventType_Startup) {
+        do_QuickTest();
         do_Init();
         return true;
     }
@@ -211,11 +244,11 @@ void  SetUpSpriteWorld() {
     	// Set the background color
     gSpriteLayer->addHandler(gMyHandler, pdg::eventType_SpriteLayer);
 
-    std::string spritePath = pdg::OS::getApplicationDataDirectory();
+    std::string spritePath = pdg::OS::getApplicationResourceDirectory();
     spritePath += "/";
     spritePath += gSpriteFilename;
 	gBallImage = pdg::Image::createImageFromFile(spritePath.c_str());
-    std::string earthPath = pdg::OS::getApplicationDataDirectory();
+    std::string earthPath = pdg::OS::getApplicationResourceDirectory();
     earthPath += "/";
     earthPath += gEarthTextureFilename;
     gEarthTextureImage = pdg::Image::createImageFromFile(earthPath.c_str());
@@ -224,7 +257,9 @@ void  SetUpSpriteWorld() {
 bool do_ErasePort() {
     static char s[256];
     pdg::Rect portRect = gPort->getDrawingArea();
-//    gPort->fillRect( portRect, gBackgroundColor );
+//    pdg::Attributes backgroundAttrs;
+//    backgroundAttrs.fillColor(gBackgroundColor);
+//    gPort->drawRect(portRect, backgroundAttrs);
     std::string fps = "FPS: ";
     std::sprintf(s, "%i", (int)pdg::GraphicsManager::instance().getFPS());
     fps += s;
@@ -280,8 +315,14 @@ bool
 MyDrawHelper::draw(pdg::Sprite* sprite, pdg::Port* port) {
     pdg::RotatedRect bounds = sprite->getRotatedBounds();
     pdg::RotatedRect r = sprite->getLayer()->layerToPort(bounds);
-    port->fillRect(r, PDG_BLACK_COLOR);
-    port->frameRect(r, PDG_WHITE_COLOR);
+    pdg::Attributes fillAttrs;
+    fillAttrs.fillColor(PDG_BLACK_COLOR);
+    port->drawRect(r, fillAttrs);
+    
+    pdg::Attributes frameAttrs;
+    frameAttrs.lineColor(PDG_WHITE_COLOR);
+    frameAttrs.lineThickness(1.0f);
+    port->drawRect(r, frameAttrs);
     return false; // don't let sprite draw itself (ignored for post draw)
 }
 

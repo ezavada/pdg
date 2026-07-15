@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::toQuad()
+
+\brief convert rectangle to a Quad
+
+**/ }

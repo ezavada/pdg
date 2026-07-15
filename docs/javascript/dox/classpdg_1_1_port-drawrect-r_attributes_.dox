@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawRect(rect, attrs)
+
+\brief draws a rectangle with the specified attributes
+
+**/ }

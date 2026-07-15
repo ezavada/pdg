@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::textSize(float size)
+
+\brief Sets the text size in points for drawing text
+
+**/ }

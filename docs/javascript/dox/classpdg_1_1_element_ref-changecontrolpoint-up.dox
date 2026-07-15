@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::ElementRef::changeControlPoint(controlPointIndex, controlPoint)
+
+\brief changes the control point at the specified index
+
+**/ }

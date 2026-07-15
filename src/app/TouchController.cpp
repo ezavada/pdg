@@ -114,8 +114,8 @@ bool TouchController::doMouseUp(const pdg::MouseInfo *mi, pdg::View* view, int i
 void TouchController::doMouseMove(const pdg::MouseInfo *mi, pdg::View* view, int id, int part) {
 	TODO("Implement calls to doPinchMove() and doSwipeMove()");
 	uint32 now = pdg::OS::getMilliseconds();
-	if( mMouseDown ) {
-		if( mLastMousePositionRecorded ) {
+	if ( mMouseDown ) {
+		if ( mLastMousePositionRecorded ) {
 			Point delta = mi->mousePos;
 			delta -= mLastMousePosition;
 			doTouchMove(delta, false, view, id, part);

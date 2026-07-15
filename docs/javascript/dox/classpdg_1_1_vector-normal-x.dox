@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Vector::normal()
+
+\brief get the normal of this vector, ie: A.normal() = (-A.y, A.x)
+
+**/ }

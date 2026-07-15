@@ -1,0 +1,29 @@
+namespace pdg { /**
+
+\fn pdg::TileLayer::loadMapData(MemBlock data, int mapWidth, int mapHeight, int dstX, int dstY)
+
+\brief Load tile data from a MemBlock into the specified region of the layer
+
+This function loads tile data from a MemBlock into a specific rectangular region of the TileLayer. The data is interpreted as a 2D array of tile indices.
+
+\param data The MemBlock containing the tile data to load
+\param mapWidth The width of the tile map in the data (number of tiles horizontally)
+\param mapHeight The height of the tile map in the data (number of tiles vertically)
+\param dstX The X coordinate where to place the top-left corner of the loaded data in the layer
+\param dstY The Y coordinate where to place the top-left corner of the loaded data in the layer
+
+\details
+The MemBlock data should contain tile indices arranged in row-major order (left to right, top to bottom). Each tile index corresponds to a tile in the TileLayer's tile set.
+
+The function will load the specified rectangular region from the data into the layer starting at the destination coordinates (dstX, dstY).
+
+\warning The function will overwrite existing tile data in the destination region
+\warning If the data size doesn't match mapWidth * mapHeight, the behavior is undefined
+\note Tile indices in the data should be valid for the layer's tile set
+
+\sa TileLayer::loadMapData(BinaryString, int, int, int, int)
+\sa TileLayer::getMapData()
+\sa MemBlock
+
+
+**/ }

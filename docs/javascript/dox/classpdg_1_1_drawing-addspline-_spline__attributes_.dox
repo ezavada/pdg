@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addSpline(spline, attrs)
+
+\brief adds a spline element to the drawing
+
+**/ }

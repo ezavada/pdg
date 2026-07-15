@@ -50,7 +50,7 @@
 //#define PDG_USE_CHIPMUNK_PHYSICS	// use Chipmunk library for sprite physics
 //#define PDG_HACK_GL_QUAD_SUPPORT	// emulate support for GL_QUADS when using OpenGL ES
 //#define PDG_NO_MERSENNE_TWISTER	// disable built-in Mersenne Twister algorithm for OS::gameCriticalRandom()
-//#define PDG_SCML_SUPPORT          // enable Spriter SCML animation support
+//#define PDG_SPRITER_SUPPORT     // enable Spriter animation support
 
 // Build Environment/Target:
 //#define PDG_NO_64BIT							// don't add support for int64, uint64
@@ -88,6 +88,7 @@
 //#define SPRITE_INTERNAL_DEBUG			// draw sprite frame borders
 //#define SPRITE_MOTION_DEBUG			// draw sprite motion vector lines
 //#define SPRITE_DEBUG_COLLISIONS		// draw sprite collision boxes
+//#define PDG_DEBUG_SPRITER_COLLISIONS	// detailed trace logging for Spriter collision checks
 //#define SPRITELAYER_INTERNAL_DEBUG	// draw sprite layer origin and center point
 //#define TILING_INTERNAL_DEBUG			// visual aids for tile layer debugging
 //#define DEBUG_PIXEL_COLLISIONS     	// only when compiling Parthenon
@@ -109,6 +110,7 @@
 #include "pdg/sys/log.h"
 #include "pdg/sys/config.h"
 #include "pdg/sys/spline.h"
+#include "pdg/sys/polygon.h"
 #include "pdg/sys/animated.h"
 #include "pdg/sys/serializer.h"
 #include "pdg/sys/deserializer.h"

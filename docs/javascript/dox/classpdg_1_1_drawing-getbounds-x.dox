@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::getBounds()
+
+\brief returns the bounding rectangle of the drawing
+
+**/ }

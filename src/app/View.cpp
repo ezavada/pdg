@@ -32,6 +32,7 @@
 #include "pdg/sys/resource.h"
 #include "pdg/sys/graphics.h"
 #include "pdg/sys/os.h"
+#include "pdg/sys/attributes.h"
 #include "pdg/app/View.h"
 #include "pdg/app/Controller.h"
 
@@ -64,11 +65,6 @@ View::~View()
 
 }
 
-void View::notify(Subject* subject)
-{
-    draw();   // default behavior of a view is to redraw if notified of a change
-}
-
 void View::draw() {
     if (mVisible) {
 		Rect clipSave = mPort->getClipRect();
@@ -83,7 +79,7 @@ void View::draw() {
 			mPort->setClipRect(ourClip);
 			drawSelf();
 //			mPort->frameRect(mViewArea, PDG_YELLOW_COLOR);
-			mController->viewRedrawn(this);
+			// No need to call viewRedrawn() - we're doing full-frame redraws
 			mPort->setClipRect(clipSave);
 		}
     }
@@ -94,7 +90,6 @@ void View::hide() {
     mVisible = false;
     if (wasVisible != mVisible) {
         hideSelf();
-        mController->redraw();  // use redraw because we have to fill in background
     }
 }
 
@@ -103,7 +98,6 @@ void View::show() {
     mVisible = true;
     if (wasVisible != mVisible) {
         showSelf();
-        draw();
     }
 }
 
@@ -111,7 +105,7 @@ void View::setEnabled(bool enabled) {
     bool wasEnabled = mIsEnabled;
     mIsEnabled = enabled;
     if (wasEnabled != mIsEnabled) {
-        draw();
+        // No immediate drawing - will be drawn on next frame
     }
 }
 
@@ -289,7 +283,7 @@ int View::getPartClicked(const Point& screenPoint)
 		idRectPair val = *itr;
 
 		// Check to see if the point is in this rectangle
-		if( val.first.contains(localPoint) )
+		if ( val.first.contains(localPoint) )
 		{
 			// Set the clickedPartID the id of this rect
 			clickedPartID = val.second;
@@ -309,7 +303,7 @@ Rect View::getClickableRectFromID(int id)
 	{
 		idRectPair val = *itr;
 		// Check to see if the point is in this rectangle
-		if(id==val.second)
+		if (id==val.second)
 		{
 			rClickableRect = val.first;
 			break;
@@ -332,7 +326,7 @@ void View::removeClickablePart(int id)
 	{
 		idRectPair val = *itr;
 		// Check to see if the point is in this rectangle
-		if(id==val.second)
+		if (id==val.second)
 		{
 			mClickableParts.erase(itr);
 			break;
@@ -351,18 +345,18 @@ void View::drawClickableParts()
 	{
 		idRectPair val = *itr;
 		Rect localArea = val.first;
-		Rect globalArea = localToGlobal(localArea);
-		int id = val.second;
+	Rect globalArea = localToGlobal(localArea);
+	int id = val.second;
 
-		mPort->frameRect(globalArea, PDG_GREEN_COLOR);
+	mPort->drawRect(globalArea, Attributes().lineColor(PDG_GREEN_COLOR).lineThickness(1));
 
-		char text[128];
-		std::snprintf(text, 128, "%d=ID", id);
+	char text[128];
+	std::snprintf(text, 128, "%d=ID", id);
         MAKE_STRING_BUFFER_SAFE(text, 128);
-		mPort->drawText(text, globalArea.leftTop(), 12, Graphics::textStyle_Plain, PDG_GREEN_COLOR);
+	mPort->drawText(text, globalArea.leftTop(), Attributes().textSize(12).textStyle(textStyle_Plain).fillColor(PDG_GREEN_COLOR));
 	}
 	
-	mPort->fillRect(mViewArea, ::pdg::Color(1.0f, 1.0f, 1.0f, 0.25f));
+	mPort->drawRect(mViewArea, Attributes().fillColor(::pdg::Color(1.0f, 1.0f, 1.0f, 0.25f)));
 }
 
 void View::portResized(const Rect& oldDrawingArea, const Rect& newDrawingArea) {
@@ -448,9 +442,9 @@ Rect    View::globalToLocal(Rect inRect)
 		int charsLeftToDraw = len;
 		int voffset = mPort->getCurrentFont(style)->getFontHeight(size, style) + mPort->getCurrentFont(style)->getFontLeading(size, style);
 		int x = textArea.left;
-		if (style & Graphics::textStyle_Centered) {
+		if (style & textStyle_Centered) {
 			x += textArea.width()/2;
-		} else if (style & Graphics::textStyle_RightJustified) {
+		} else if (style & textStyle_RightJustified) {
 			x = textArea.right;
 		}
 		int y = textArea.top  + mPort->getCurrentFont(style)->getFontAscent(size, style);
@@ -490,11 +484,11 @@ Rect    View::globalToLocal(Rect inRect)
 			if (len && !nospace) {  // if we found a break, we need to include the breaking character
 				++len;              // in the line to draw
 			}
-			std::strncpy(p, text, len); // make a nul terminated copy of just the section we want to draw
-			p[len] = 0;
-			
-			mPort->drawText(p, Point(x, y), size, style, color);
-			text += len;
+		std::strncpy(p, text, len); // make a nul terminated copy of just the section we want to draw
+		p[len] = 0;
+		
+		mPort->drawText(p, Point(x, y), Attributes().textSize(size).textStyle(style).fillColor(color));
+		text += len;
 			if (nextSeg && (text > nextSeg)) {
 				// if we are at the location of a hard line break,
 				// skip over the nul character we replaced it with
@@ -591,7 +585,7 @@ Rect    View::globalToLocal(Rect inRect)
 	{
 		for (int i = 0; i < numImages; i++) {
 			if (arr[i]) {
-				Image* newImage = arr[i]->createImageScaledToFit(r, Image::fit_Fill, filter);
+				Image* newImage = arr[i]->createImageScaledToFit(r, fit_Fill, filter);
 				arr[i]->release();
 				arr[i] = newImage;
 			}

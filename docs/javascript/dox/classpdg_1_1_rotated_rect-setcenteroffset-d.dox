@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::RotatedRect::setCenterOffset(cpOffset)
+
+\brief set an offset for point around which rotation is applied
+
+**/ }

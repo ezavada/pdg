@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getTextSize()
+
+\brief Gets the text size in points for drawing text
+
+**/ }

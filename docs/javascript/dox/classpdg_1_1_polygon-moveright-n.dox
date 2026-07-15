@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::moveRight(delta)
+
+\brief moves the polygon right by the specified amount
+
+**/ }

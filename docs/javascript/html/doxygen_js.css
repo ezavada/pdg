@@ -2,12 +2,79 @@
 
 /* 
 356E30 - dk green
+40813B - med green
 45993D - green
 C6FF00 - fluorescent
 8B40FF - purplish
 2A14CC - dark blue
  */
 
+/* CSS Custom Properties for Search Functionality */
+:root {
+    /* Search box colors */
+    --search-background-color: #f8f8f8;
+    --search-box-border-color: #cccccc;
+    --search-foreground-color: #333333;
+    --search-active-color: #000000;
+    
+    /* Search icon colors */
+    --search-close-icon-bg-color: #cccccc;
+    --search-close-icon-fg-color: #666666;
+    
+    /* Search filter dropdown colors */
+    --search-filter-border-color: #cccccc;
+    --search-filter-background-color: rgba(248, 248, 248, 0.95);
+    --search-filter-backdrop-filter: blur(10px);
+    --search-filter-foreground-color: #333333;
+    --search-filter-highlight-text-color: #ffffff;
+    --search-filter-highlight-bg-color: #2A14CC;
+    
+    /* Search results colors */
+    --search-results-border-color: #cccccc;
+    --search-results-background-color: rgba(248, 248, 248, 0.95);
+    --search-results-backdrop-filter: blur(10px);
+    --search-results-foreground-color: #333333;
+    
+    /* Font family for search */
+    --font-family-search: "Roboto", sans-serif;
+}
+
+/* Hide class type icons (C, N, etc.) in class lists */
+.directory .icona .icon {
+    display: none;
+}
+
+/* Search box positioning fixes */
+#navrow1 .tablist > li:last-child {
+    float: right !important;
+    margin-right: 1em !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 36px !important;
+}
+
+#navrow1 .tablist {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#navrow1 .tablist > li:not(:last-child) {
+    flex: 1;
+}
+
+#MSearchBox {
+    position: relative;
+    z-index: 102;
+}
+
+.doxyedit-button:after {
+    background-color: #356E30 !important;
+}
+.doxyedit-button:hover:after {
+    background-color: #40813B !important;
+}
 
 body, table, div, p, dl {
 	font: 400 14px/19px Roboto,sans-serif;
@@ -15,6 +82,10 @@ body, table, div, p, dl {
 
 div.image img {
 	max-width: 100%;
+}
+
+.contents > p, .contents > .dynheader {
+    padding: 0px 10px;
 }
 
 /* @group Heading Levels */
@@ -30,16 +101,13 @@ h1.groupheader {
 }
 
 h2.groupheader {
-	border-top: 1px solid #2A14CC;
-	border-bottom: 1px solid #2A14CC;
-	color: white;
-	text-shadow: black -1px 0px 5px, black 1px 0px 5px;
+	color: rgb(239, 239, 239);
+	text-shadow: 0 1px 1px rgba(0,0,0,0.25);
 	background-color: #2A14CC;
-	font-size: 150%;
-	font-weight: normal;
+	font-size: 130%;
+	font-weight: bold;
 	margin-top: 1.75em;
 	padding: 10px;
-	margin-left: -10px;
 	width: 100%;
 }
 
@@ -108,13 +176,17 @@ div.qindex, div.navtab{
 	text-align: center;
 }
 
-div.qindex a, div.navtab a {
+div.qindex a, div.qindex a:visited, div.navtab a {
 	color: white;
 }
 
 div.qindex, div.navpath {
 	width: 100%;
 	line-height: 140%;
+}
+
+div.qindex {
+    color: #2a14cc;
 }
 
 div.navtab {
@@ -139,6 +211,8 @@ a:hover {
 
 a.qindex {
 	font-weight: bold;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 a.qindexHL {
@@ -174,20 +248,14 @@ dl.el {
 }
 
 pre.fragment {
-        border: 1px solid #C4CFE5;
-        background-color: #FBFCFD;
-        padding: 4px 6px;
-        margin: 4px 8px 4px 2px;
-        overflow: hidden;
-        font-size:  9pt;
-        line-height: 125%;
-        font-family: monospace, fixed;
-        font-size: 105%;
+    border: 1px solid #C4CFE5;
+    background-color: #FBFCFD;
+    padding: 4px 6px;
+    line-height: 125%;
+    font-family: monospace, fixed;
+    font-size: 105%;
 	word-wrap: break-word;
-/* 
-	white-space: normal;
- */
-        max-width: 860px;
+	white-space: pre-wrap;
 	-ms-word-break: break-all;
 	word-break: break-all;
 }
@@ -204,6 +272,10 @@ div.fragment {
 	margin: 4px;
 	background-color: #FBFCFD;
 	border: 1px solid #C4CFE5;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+	-ms-word-break: break-all;
+	word-break: break-all;
 }
 
 div.line {
@@ -265,11 +337,6 @@ div.ah {
 	border-radius: 0.5em;
 	-webkit-border-radius: .5em;
 	-moz-border-radius: .5em;
-	box-shadow: 2px 2px 3px #999;
-	-webkit-box-shadow: 2px 2px 3px #999;
-	-moz-box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 2px;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#000),color-stop(0.3, #444));
-	background-image: -moz-linear-gradient(center top, #eee 0%, #444 40%, #000);
 }
 
 div.groupHeader {
@@ -295,15 +362,16 @@ html {
 
 div.contents {
 	background-color: white;
-	padding: 10px 10px;
+	padding: 10px 0px;
 	margin-left: auto;
 	margin-right: auto;
 	max-width: 900px;
 	min-height: 400px;
+	overflow-x: hidden;
 }
 
-div.textblock {
-	margin-left: 10px;
+.contents > .textblock {
+	padding: 0px 10px;
 }
 
 td.indexkey {
@@ -451,9 +519,8 @@ th.dirtab {
 }
 
 hr {
-	height: 0px;
+	height: 20px;
 	border: none;
-	border-top: 1px solid #28411E;
 }
 
 hr.footer {
@@ -577,8 +644,12 @@ table.memberdecls {
 }
 
 .memdoc, dl.reflist dd {
-	padding: 6px 10px 30px 10px;
+/*	padding: 6px 10px 30px 10px; */
     background-color: white;
+}
+
+.memitem > .memdoc {
+	padding: 0px 10px;
 }
 
 dl.reflist dt {
@@ -739,7 +810,7 @@ div.dynheader {
 
 address {
 	font-style: normal;
-	color: #0B1208;
+	color: #B1C3AA;
 }
 
 table.doxtable {
@@ -898,6 +969,7 @@ div.ingroups
 	font-size: 8pt;
 	width: 50%;
 	text-align: left;
+	text-shadow: none;
 }
 
 div.ingroups a
@@ -907,18 +979,16 @@ div.ingroups a
 
 div.header
 {
-        background-image:url('nav_h.png');
-        background-repeat:repeat-x;
-	background-color: #F4F9F2;
 	margin:  0px;
-	border-bottom: 1px solid #9CC98A;
+	border-top: 2px solid #545454
 }
 
 div.headertitle
 {
 	padding: 5px 5px 5px 10px;
 	background-color: #8B40FF;
-	text-shadow: #D0D0FB -5px 0px 20px, #D0D0FB 5px 0px 20px;
+    color: rgb(236, 236, 236);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.25);
 }
 
 dl
@@ -1015,21 +1085,16 @@ dl.section dd {
  
 #projectname
 {
-font: 22px Palatino, Times, serif;
-margin-left: 95px;
-margin-top: 13px;
-margin-right: 150px;
-padding-top: 5px;
-padding-left: 3px;
-color: black;
-text-shadow: white -1px 0px 2px, white 1px 0px 2px;
-border-top: 2px solid;
-border-bottom: 2px solid;
-min-width: 174px;
-max-width: 300px;
-line-height: 19px;
-overflow: hidden;
-text-transform: uppercase;
+    font-size: 38px;
+    font-weight: bold;
+    margin-left: 112px;
+    margin-top: 19px;
+    margin-right: 150px;
+    color: #555580;
+    text-align: left;
+    line-height: 19px;
+    text-transform: lowercase;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.25);
 }
     
 #projectbrief
@@ -1041,10 +1106,12 @@ text-transform: uppercase;
 
 #projectnumber
 {
-    position: absolute;
-    top: 4px;
-    margin-left: -46px;
-	font: 11px Tahoma, Arial,sans-serif;
+    display: block;
+    margin-top: 7px;
+    margin-left: 3px;
+    font-size: 11px;
+    text-shadow: none;
+    font-weight: 400;
 }
 
 #titlearea
@@ -1053,6 +1120,12 @@ text-transform: uppercase;
 	padding: 5px;
 	text-align: center;
 	height: 55px;
+	border-bottom: 1px solid black;
+}
+
+div.navpath {
+    border-top: 1px solid black;
+    display: none;
 }
 
 .image
@@ -1166,8 +1239,7 @@ div.toc li.level4 {
 }
 
 tr.heading h2 {
-        margin-top: 12px;
-        margin-bottom: 4px;
+        margin-bottom: 0px;
 }
 
 @media print
@@ -1197,11 +1269,15 @@ tr.heading h2 {
 
 .tabs, .tabs2, .tabs3 {
     background-color: #356E30;
-    border-bottom: 1px solid #295525;
+    border-top: 1px solid black;
     width: 100%;
     z-index: 101;
     font-size: 13px;
     font-family: 'Lucida Grande',Geneva,Helvetica,Arial,sans-serif;
+}
+
+.tabs2, .tabs3 {
+    border-top-color: rgb(6, 100, 0);
 }
 
 .tabs2 {
@@ -1219,20 +1295,39 @@ tr.heading h2 {
 
 .tablist li {
     float: left;
-    border-radius: 3px;
     display: table-cell;
     line-height: 36px;
     list-style: none;
+    padding: 0 10px;
+}
+
+.tabs3 .tablist li {
+    padding: 0;
+}
+
+.tablist li:hover {
+    background-color: #40813B;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+ul.tablist li.current {
+    background-color: #45993D;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .tablist a {
     display: block;
-    padding: 0 20px;
     font-weight: bold;
     color: white;
-    text-shadow: 0px 0px 3px black;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.25);   
     text-decoration: none;
     outline: none;
+}
+
+@media screen and (max-width: 500px) {
+    padding: 0 10px;
 }
 
 .tabs3 .tablist a {
@@ -1240,24 +1335,24 @@ tr.heading h2 {
 }
 
 .tablist a:hover {
-    text-decoration: underline;
-    
 }
 
 .tablist li.current a {
-	background-color: #45993D;
 	font-size: 18px;
-    color: #C6FF00;
+    color: #FCFFF3;
+/* 
+    margin-top: -2px;
+ */
 }
 
 .tabs2 li.current a {
-	font-size: 15px;
+    font-size: 120%;
 }
 
 .tabs3 li.current a {
 	font-size: 14px;
 }
 
-#MSearchBox {
-    top: 15px;
+div#disqus_thread {
+    padding: 0px 10px;
 }

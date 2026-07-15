@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::on
+
+\brief set event handler for all different sprite events
+
+\sa IEventHandler
+
+**/ }

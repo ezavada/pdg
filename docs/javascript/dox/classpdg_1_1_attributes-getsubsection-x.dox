@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getSubsection()
+
+\brief Gets the subsection of an image to draw
+
+**/ }

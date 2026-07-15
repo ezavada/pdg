@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::lineStyle(lineStyle)
+
+\brief sets the style of line strokes (solid, dashed, etc.)
+
+**/ }

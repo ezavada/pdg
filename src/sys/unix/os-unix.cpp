@@ -41,6 +41,7 @@
 #include <iostream>
 #include <cstdarg>
 
+#include <unistd.h>
 #include <assert.h>
 #include <dirent.h>
 #include <string.h>
@@ -69,7 +70,8 @@ bool os_path2native(const char *inStdFileName, char* outNativeFileName, int len)
     if (std::strchr(inStdFileName+2, ':')) {
         return false;   // colon is an illegal character after 2nd position
     }
-    std::strncpy(outNativeFileName, inStdFileName, len);
+    std::strncpy(outNativeFileName, inStdFileName, len - 1);
+    outNativeFileName[len - 1] = '\0';
     MAKE_STRING_BUFFER_SAFE(outNativeFileName, len);
     return true;
 }
@@ -80,14 +82,16 @@ std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks) {
 	if (fromPath) {
 		// make an absolute path
 		if (fromPath[0] != '/') {
-			std::strncpy(workingBuf, OS::getApplicationDirectory(), MAX_PATH);
+			std::strncpy(workingBuf, OS::getApplicationDirectory(), MAX_PATH - 1);
+			workingBuf[MAX_PATH - 1] = '\0';
 			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-			std::strncat(workingBuf, "/", MAX_PATH); 
+			std::strncat(workingBuf, "/", sizeof(workingBuf) - strlen(workingBuf) - 1); 
 			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-			std::strncat(workingBuf, fromPath, MAX_PATH);
+			std::strncat(workingBuf, fromPath, sizeof(workingBuf) - strlen(workingBuf) - 1);
 			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
 		} else {
-			std::strncpy(workingBuf, fromPath, MAX_PATH);
+			std::strncpy(workingBuf, fromPath, MAX_PATH - 1);
+			workingBuf[MAX_PATH - 1] = '\0';
 			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
 		}
 		// remove double slashes '//', empty path segments '/./', and backtracking '/<dir>/../'
@@ -99,22 +103,31 @@ std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks) {
 				// found a slash, see what follows it
 				if (p[1] == '/') {
 					// another slash, remove
-					std::strcpy(p, &p[1]);
+					char* q = p;
+					while(q[1]) {
+					    q[0] = q[1];
+					    q++;
+					}
+					*q = 0;
 				} else if (std::strncmp(p, "/./", 3) == 0) {
 					// an empty segment, remove
-					std::strcpy(p, &p[2]);
+					char* q = p;
+					while(q[2]) {
+					    q[0] = q[2];
+					    q++;
+					}
+					*q = 0;
 				} else if (std::strncmp(p, "/../", 4) == 0) {
 					// a backtrack, remove along with the prior directory segment
-					std::strcpy(lastSlash, &p[3]);
-					// now search backwards for prev segment
-					p = lastSlash;
-					while (p > workingBuf) {
-						p--;
-						if (*p == '/') {
-							lastSlash = p;
-							break;
-						}
+					char* q = p+3;  // skip over the backtrack section
+					p = lastSlash+1; // go back to the start of the prior segment
+					while(q[1]) {   // copy everything from after the backtrack
+					    *p++ = q[1];  // into the prior segment
+					    q++;
 					}
+					*p = 0;
+					p = lastSlash+1;
+					// now search backwards for prev segment
 				} else {
 					// something else, so we are starting a new path segment
 					// save this as the new last slash
@@ -124,14 +137,16 @@ std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks) {
 				if (resolveSimLinks && (*p == '/')) {
 					char buf[MAX_PATH];
 					*p = 0;
-					int len = readlink(workingBuf, buf, MAX_PATH);
+					ssize_t len = readlink(workingBuf, buf, MAX_PATH);
 					if (len > 0 && len < MAX_PATH) {
 						char buf2[MAX_PATH];
-						std::strcpy(buf2, &p[1]); // this is safe because p[1] starts a string that is always shorter than MAX_PATH
-						std::strcpy(workingBuf, buf); // also safe, buf always shorter than MAX_PATH
-						std::strncat(workingBuf, "/", MAX_PATH);
+						std::strncpy(buf2, &p[1], sizeof(buf2) - 1); // this is safe because p[1] starts a string that is always shorter than MAX_PATH
+						buf2[sizeof(buf2) - 1] = '\0';
+						std::strncpy(workingBuf, buf, sizeof(workingBuf) - 1); // also safe, buf always shorter than MAX_PATH
+						workingBuf[sizeof(workingBuf) - 1] = '\0';
+						std::strncat(workingBuf, "/", sizeof(workingBuf) - strlen(workingBuf) - 1);
 						MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-						std::strncat(workingBuf, buf2, MAX_PATH);
+						std::strncat(workingBuf, buf2, sizeof(workingBuf) - strlen(workingBuf) - 1);
 						MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
 						p = workingBuf; p += len;
 					}
@@ -144,9 +159,10 @@ std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks) {
 		if (resolveSimLinks) {
 			// final resolution of sim link
 			char buf[MAX_PATH];
-			int len = readlink(workingBuf, buf, MAX_PATH);
+			ssize_t len = readlink(workingBuf, buf, MAX_PATH);
 			if (len > 0 && len < MAX_PATH) {
-				std::strcpy(workingBuf, buf); // also safe, buf always shorter than MAX_PATH
+				std::strncpy(workingBuf, buf, sizeof(workingBuf) - 1); // also safe, buf always shorter than MAX_PATH
+				workingBuf[sizeof(workingBuf) - 1] = '\0';
 			}
 		}
 	}
@@ -174,6 +190,9 @@ bool OS::findFirst(const char* inFindName, FindDataT& outFindData) {
   if (end != 0) {
     char* start = (char*)inFindName;
 
+    if (start[0] == '/') {
+      dirName = '/';
+    }
     while(start != end) {
       dirName += *start;
       start++;
@@ -260,14 +279,18 @@ OS::renameFile(const char* inFileName, const char* inNewFileName) {
 	return (rename (inFileName, inNewFileName) == 0);
 }
 	
-unsigned long 
+ms_time
 OS::getMilliseconds() {
+	static ms_time firstTime = 0;
     unsigned long mstime = 0;
     // this is a more accurate way on Unix to get this
     struct timeval currTime;
     gettimeofday( &currTime, NULL );
     mstime = (currTime.tv_usec/1000) + (currTime.tv_sec*1000);
-    return mstime;
+	if (firstTime == 0) {
+		firstTime = mstime;
+	}
+    return mstime - firstTime;
 }
 
 } // end namespace pdg 
@@ -292,7 +315,7 @@ namespace std {
 #endif // COMPILER_GCC
 
 void pdg::OS::_DOUT( const char * fmt, ...) {
-    static const int bufsize = 1024;
+    static const int bufsize = 4068;
 	static char buf[bufsize];
 	std::va_list lst;
 	va_start(lst, fmt);

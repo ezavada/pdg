@@ -1,0 +1,10 @@
+# Bunnymark binary is a symlink from the CMake build, keep it
+!bunnymark
+
+# Ignore test results
+bunnymark_results.json
+
+# Ignore debug symbols if generated here
+*.dSYM/
+
+/bunnymark.exe

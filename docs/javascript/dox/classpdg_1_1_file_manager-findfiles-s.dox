@@ -2,13 +2,13 @@ namespace pdg { /**
 
 \fn pdg::FileManager::findFiles
 
-\brief return a list of files that match the given name
+\brief return a sorted list of files that match the given name
 
-This uses the findFirst() and findNext() calls to search for any files that match the name passed in. The name can contain wildcard characters (*.txt, or f1?.dat). If the name includes a path, it must use Unix format (forward slash "/" as path separators). Colon and backslash are both illegal characters.
+This uses the findFirst() and findNext() calls to search for any files that match the name passed in. The name can contain wildcard characters (*.txt, or f1?.dat). If the name includes a path, it must use Unix format (forward slash "/" as path separators). Colon and backslash are both illegal characters. The returned array is sorted lexicographically by node name to provide deterministic cross-platform results.
 
 \param name the filename to find
 
-\return an array of files that match the name
+\return a lexicographically sorted array of files that match the name
 
 \sa findFirst
 \sa findNext

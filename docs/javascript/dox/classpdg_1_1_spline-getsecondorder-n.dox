@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Spline::getSecondOrder(u)
+
+\brief evaluates the spline at parameter u and returns the second derivative
+
+**/ }

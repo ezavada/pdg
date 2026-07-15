@@ -1,0 +1,11 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::slideJoint
+
+\brief join sprites together via a slider between anchor points that has a min/max distance (*Chipmunk Physics Only*)
+
+If a breaking force is given, then the joint will break, generating a SpriteBreakEvent, if greater than that amount of force is applied to the joint.
+
+\returns the cpConstraint for the Joint in case you want to do anything special with it
+
+**/ }

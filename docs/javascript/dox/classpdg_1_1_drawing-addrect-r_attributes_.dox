@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addRect(rect, attrs)
+
+\brief adds a rectangle element to the drawing
+
+**/ }

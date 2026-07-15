@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getGradientStartColor()
+
+\brief returns the gradient start color
+
+**/ }

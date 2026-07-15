@@ -1,0 +1,7 @@
+<map id="IDeserializer" name="IDeserializer">
+<area shape="rect" id="Node000001" title=" " alt="" coords="14,218,108,243"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="15,80,107,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,121,64,217,58,217,58,121"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,5,117,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="64,46,64,80,58,80,58,46"/>
+</map>

@@ -37,9 +37,9 @@
 #include "pdg/sys/global_types.h"
 #include "pdg/sys/image.h"
 #include "pdg/sys/imagestrip.h"
-#ifndef PDG_NO_GUI
+#ifndef PDG_NO_SOUND
 #include "pdg/sys/sound.h"
-#endif // !PDG_NO_GUI
+#endif // !PDG_NO_SOUND
 
 #include <cctype>
 #include <cstdarg>
@@ -51,21 +51,24 @@
 #include "internals.h"
 
 #ifndef PDG_NO_ZIP
-#include "unzip.h"
+#include "../../deps/minizip/compat/unzip.h"
 zlib_filefunc_def* gZLibFileFuncs = 0;
 #endif // PDG_NO_ZIP
 
 
-#ifdef LEAK_AND_EXCEPTION_CHECKS
-#include "..\LeakCheck\LeakCheck.h"
-#define DEBUG_NEW new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
-#define THIS_FILE __FILE__
-#endif
+// define the following in your build environment, or uncomment it here to get
+// debug output for the core events and timers
+//#define PDG_DEBUG_RESOURCES
 
+#ifndef PDG_DEBUG_RESOURCES
+  #define RESOURCE_DEBUG_ONLY(_expression)
+#else
+  #define RESOURCE_DEBUG_ONLY DEBUG_ONLY
+#endif
 
 namespace pdg {
 
-long gLastRefNum = 0;
+int gLastRefNum = 0;
 
 struct FileInfo {
 	long ref;
@@ -89,7 +92,7 @@ bool fileExists(const char* path) {
 	std::ifstream file;
 	file.open(path, std::ios::binary);
 	file.seekg(0, std::ios::end);
-	int len = file.tellg();
+    std::streamsize len = file.tellg();
 	file.close();
 	return (len != -1);
 }
@@ -97,30 +100,44 @@ size_t fileSize(const char* path) {
 	std::ifstream file;
 	file.open(path, std::ios::binary);
 	file.seekg(0, std::ios::end);
-	int len = file.tellg();
+	std::streamsize len = file.tellg();
 	file.close();
 	return (len != -1) ? (size_t)len : 0;
 }
 
 const char* localizedName(const char* filename, const char* lang) {
 	static char outName[256];
-	std::strcpy(outName, filename);
+	std::strncpy(outName, filename, sizeof(outName) - 1);
+	outName[sizeof(outName) - 1] = '\0';
 	char* p = std::strrchr(outName, '.');
 	if (p) *p = 0;
-	std::strcat(outName, "-");
-	std::strcat(outName, lang);
+	std::strncat(outName, "-", sizeof(outName) - strlen(outName) - 1);
+	std::strncat(outName, lang, sizeof(outName) - strlen(outName) - 1);
 	if (p) {
 		size_t idx = (size_t) p - (size_t)&outName;
-		std::strcat(outName, &filename[idx]);
+		std::strncat(outName, &filename[idx], sizeof(outName) - strlen(outName) - 1);
 	}
 	return outName;
+}
+
+// resource name can't be empty or contain any ../ segments
+bool isValidResourceName(const char* resourceName) {
+    // check if the resource name is empty
+    if (resourceName == nullptr || resourceName[0] == '\0') {
+        return false;
+    }
+    // check if the resource name contains any ../ segments
+    if (std::strstr(resourceName, "../") != nullptr) {
+        return false;
+    }
+    return true;
 }
 
 // finds a string by id (or substring from a multipart string) in a data block
 // returns empty string if there is no such string or string & substring
 // input string data block must be nul terminated
 void 
-ResourceManager::getStringFromDataBlock( char* stringData, int len, std::string& outStr, short id, short substring) {
+ResourceManager::getStringFromDataBlock( char* stringData, size_t len, std::string& outStr, short id, short substring) {
     // read the data, now find the string in question
     char* p = stringData;
     char* start = 0;
@@ -185,7 +202,7 @@ ResourceManager::getStringFromDataBlock( char* stringData, int len, std::string&
 // substring elements are separated by vertical bars "|"
 // no vertical bar at begining or end, must be nul terminated
 // WARNING! alters string passed in
-char* ResourceManager::getNthSubstring(int n, char* s, int bufflen)
+char* ResourceManager::getNthSubstring(int n, char* s, size_t bufflen)
 {
     char* p = s;
     char* ep = s;
@@ -213,30 +230,37 @@ char* ResourceManager::getNthSubstring(int n, char* s, int bufflen)
 
 void	    
 ResourceManager::setLanguage(const char* langCode) {
-	if (std::strcmp(mLanguage.c_str(), langCode) == 0) {
-		// destroy cache entries that were language specific
-		const char* lang = mLanguage.c_str();
-		std::vector<void*>::iterator p = mFiles.begin();
-		while (p != mFiles.end()) {
-			FileInfo* fip = (FileInfo*)*p;
-			if (fip->stringLangCache) {
-				DEBUG_ONLY( OS::_DOUT("Freeing strings-%s.txt file cache (size [%d])", lang, fip->stringLangCacheSize); )
-				std::free((void*)fip->stringLangCache);
-				fip->stringLangCache = 0;
-			}
-			++p;
+    if (langCode == 0) {
+        langCode = "";
+    }
+    const char* lang = mLanguage.c_str();
+    if (std::strcmp(lang, langCode) == 0) {
+        return;
+    }
+	// destroy cache entries that were language specific
+	std::vector<void*>::iterator p = mFiles.begin();
+	while (p != mFiles.end()) {
+		FileInfo* fip = (FileInfo*)*p;
+		if (fip->stringLangCache) {
+			RESOURCE_DEBUG_ONLY( OS::_DOUT("Freeing strings-%s.txt file cache (size [%d])", lang, fip->stringLangCacheSize); )
+			std::free((void*)fip->stringLangCache);
+			fip->stringLangCache = 0;
+            fip->stringLangCacheSize = 0;
 		}
-		// remove language specific images from cache
-		for (int i = 0; i < MAX_CACHED_IMAGES; i++) {
-			if (mImagesCacheHasLang[i] && mImagesNamesCache[i] && mImagesCache[i]) {  
-				DEBUG_ONLY( OS::_DOUT("Releasing Image [%s] [%p] from cache", 
-									  mImagesNamesCache[i], mImagesCache[i]); )
-				Image* img = mImagesCache[i];
-				char* name = mImagesNamesCache[i];
-				img->release();
-				std::free( name );  // this was malloc'd in getImage()
-				mImagesNamesCache[i] = 0;
-			}
+		++p;
+	}
+	// remove language specific images from cache
+	for (int i = 0; i < MAX_CACHED_IMAGES; i++) {
+		if (mImagesCacheHasLang[i] && mImagesNamesCache[i] && mImagesCache[i]) {
+			RESOURCE_DEBUG_ONLY( OS::_DOUT("Releasing Image [%s] [%p] from cache",
+								  mImagesNamesCache[i], mImagesCache[i]); )
+			Image* img = mImagesCache[i];
+			char* name = mImagesNamesCache[i];
+			img->release();
+			std::free(name);  // this was malloc'd in getImage()
+			mImagesNamesCache[i] = 0;
+            mImagesCache[i] = 0;
+            mImagesCacheHasLang[i] = false;
 		}
 	}
 	mLanguage = langCode;
@@ -261,9 +285,9 @@ ResourceManager::openResourceFile(const char* filename) {
     fip->stringCacheSize = 0;
     fip->stringLangCacheSize = 0;
     std::string fullpathstr = "";
-    DEBUG_PRINT( "Adding resource file [%s]", filename );
+    RESOURCE_DEBUG_ONLY( OS::_DOUT( "Adding resource file [%s]", filename ); )
     if (!os_isAbsolutePath(filename)) {
-    	DEBUG_PRINT( " App Resource Directory [%s]", OS::getApplicationResourceDirectory() );
+    	RESOURCE_DEBUG_ONLY( OS::_DOUT( " App Resource Directory [%s]", OS::getApplicationResourceDirectory() ); )
     	fullpathstr.append(OS::getApplicationResourceDirectory());
     	fullpathstr.append("/");
     	fullpathstr.append(filename);
@@ -271,31 +295,42 @@ ResourceManager::openResourceFile(const char* filename) {
     	fullpathstr = filename;
     }
     fip->fullpath = OS::makeCanonicalPath(fullpathstr.c_str());
-    DEBUG_PRINT( " Canonical resource file [%s]", fip->fullpath.c_str() );
+    RESOURCE_DEBUG_ONLY( OS::_DOUT( " Canonical resource file [%s]", fip->fullpath.c_str() ); )
+    
+    // First check if the path is a directory using findFirst
+    FindDataT findData;
+    bool isDirectory = false;
+    bool found = OS::findFirst(fip->fullpath.c_str(), findData);
+	OS::findClose(findData);
+	if (!found) {
+		fip->file = 0;
+        DEBUG_ONLY( OS::_DOUT("Resource Error: openResourceFile() failed to find resource file or directory [%s]", fip->fullpath.c_str()); )
+    } else if (findData.isDirectory) {
+        // It's a directory, treat it as such
+        fip->isDir = true;
+        fip->file = 0;
+        ref = ++gLastRefNum;
+        fip->ref = ref;
+        mFiles.insert(mFiles.begin(), (void*)fip);
+        RESOURCE_DEBUG_ONLY( OS::_DOUT("Added Resource directory to list [%s]", fip->fullpath.c_str()); )
 #ifndef PDG_NO_ZIP
-    unzFile file = unzOpen2(fip->fullpath.c_str(), gZLibFileFuncs);
-    if (file) {
-    	ref = ++gLastRefNum;
-    	fip->isDir = false;
-    	fip->file = file;
-    	fip->ref = ref;
-        // add it to the list
-        mFiles.insert(mFiles.begin(), (void*)fip);
-		DEBUG_ONLY( OS::_DOUT("Added Resource file to list [%s]", fip->fullpath.c_str()); )
-	} else {
-    	fip->file = 0;
-		DEBUG_ONLY( OS::_DOUT("Resource Error: failed to find file [%s]", fip->fullpath.c_str()); )
-	}
+    } else {
+        // Not a directory, try to open as zip file
+        unzFile file = unzOpen2(fip->fullpath.c_str(), gZLibFileFuncs);
+        if (file) {
+            ref = ++gLastRefNum;
+            fip->isDir = false;
+            fip->file = file;
+            fip->ref = ref;
+            // add it to the list
+            mFiles.insert(mFiles.begin(), (void*)fip);
+            RESOURCE_DEBUG_ONLY( OS::_DOUT("Added Resource file to list [%s]", fip->fullpath.c_str()); )
+        } else {
+            fip->file = 0;
+            DEBUG_ONLY( OS::_DOUT("Resource Error: openResourceFile() failed to open resource zip file [%s]", fip->fullpath.c_str()); )
+        }
 #endif // PDG_NO_ZIP
-	if (ref == 0) {
-		// not yet found
-		fip->isDir = true;
-		// TODO: validate that this is really a directory that exists
-    	ref = ++gLastRefNum;
-    	fip->ref = ref;
-        mFiles.insert(mFiles.begin(), (void*)fip);
-		DEBUG_ONLY( OS::_DOUT("Added Resource directory to list [%s]", fip->fullpath.c_str()); )
-	}
+    }
     return ref;
 }
 
@@ -309,7 +344,7 @@ ResourceManager::closeResourceFile(int refNum) {
     while (!found && (p != mFiles.end())) {
     	FileInfo* fip = (FileInfo*)*p;
     	if (fip->ref == refNum) {
-			DEBUG_ONLY( OS::_DOUT("Removing Resource [%s] from list", fip->fullpath.c_str()); )
+			RESOURCE_DEBUG_ONLY( OS::_DOUT("Removing Resource [%s] from list", fip->fullpath.c_str()); )
         	mFiles.erase(p);
         	return;
     	}
@@ -322,10 +357,15 @@ Image*
 ResourceManager::getImage(const char* imageName) {
     Image* img = NULL;
     DEBUG_ASSERT(mFiles.size() > 0, "ResourceManager::getImage() called but no resources files open");
+	// make sure the resource name is valid
+	if (!isValidResourceName(imageName)) {
+		DEBUG_ONLY( OS::_DOUT("Resource Error: getImage() invalid resource name [%s]", imageName); )
+		return nullptr;
+	}
 	// check the cache first, reuse image resources if possible
-    for (int i = 0; i < MAX_CACHED_IMAGES; i++) {
-        if (!mImagesNamesCache[i]) {
-			break;
+    for (int i = 0; i < mNumCachedImages; i++) {
+        if (!mImagesNamesCache[i] || !mImagesCache[i]) {
+			continue;
 		} else if (std::strcmp(mImagesNamesCache[i], imageName) == 0) {
 			img = mImagesCache[i];
 			img->addRef();
@@ -341,17 +381,29 @@ ResourceManager::getImage(const char* imageName) {
             s += '/';
             s += imageName;
 			if (fileExists(s.c_str())) {
-				img = Image::createImageFromFile(s.c_str());
+				img = Image::createImageFromResourceFile(imageName, s.c_str());
 				if (img) {
 					found = true;
 					if (mNumCachedImages < MAX_CACHED_IMAGES) {
 						// cache the image
 						img->addRef();
-						mImagesCache[mNumCachedImages] = img;
-						mImagesCacheHasLang[mNumCachedImages] = false;
-						mImagesNamesCache[mNumCachedImages] = (char*) std::malloc( std::strlen(imageName) + 1 );
-						std::strcpy(mImagesNamesCache[mNumCachedImages], imageName);
-						mNumCachedImages++;
+						int cacheIndex = -1;
+						// find the first empty slot in the cache
+						for (int i = 0; i < mNumCachedImages; i++) {
+							if (!mImagesNamesCache[i]) {
+								cacheIndex = i;
+								break;
+							}
+						} 
+						if (cacheIndex == -1) {
+							cacheIndex = mNumCachedImages;
+							mNumCachedImages++;
+						}
+						mImagesCache[cacheIndex] = img;
+						mImagesCacheHasLang[cacheIndex] = false;
+                        size_t imageNameLen = std::strlen(imageName);
+						mImagesNamesCache[cacheIndex] = (char*) std::malloc(imageNameLen + 1);
+						std::memcpy(mImagesNamesCache[cacheIndex], imageName, imageNameLen + 1);
 					}
 				}
 			}
@@ -363,14 +415,14 @@ ResourceManager::getImage(const char* imageName) {
                 unz_file_info info;
                 if (unzGetCurrentFileInfo(fip->file, &info, NULL, 0, NULL, 0, NULL, 0) == UNZ_OK) {
                     // allocate space to hold the file contents
-                    int len = info.uncompressed_size;
+                    size_t len = info.uncompressed_size;
                     char* imageData = (char*) std::malloc(len);
                     if (imageData != NULL) {
                         if (unzOpenCurrentFile(fip->file) == UNZ_OK) {
-                            int bytesRead = unzReadCurrentFile(fip->file, imageData, len);
-                            if (bytesRead == len) {
+                            int bytesRead = unzReadCurrentFile(fip->file, imageData, (unsigned int)len);
+                            if ((size_t)bytesRead == len) {
                                 // read the data, now create the Image
-                                img = Image::createImageFromData(imageName, imageData, len);
+                                img = Image::createImageFromResourceData(imageName, imageData, len);
 								found = true;
                             } else {
  								DEBUG_ONLY( OS::_DOUT("Resource Error: failed to read image [%s], "
@@ -401,7 +453,12 @@ ResourceManager::getSound(const char* soundName) {
     // load a WAV or some other kind of file
     Sound* snd = NULL;
     DEBUG_ASSERT(mFiles.size() > 0, "ResourceManager::getSound() called but no resources files open");
-#ifndef PDG_NO_SOUND
+	// make sure the resource name is valid
+	if (!isValidResourceName(soundName)) {
+		DEBUG_ONLY( OS::_DOUT("Resource Error: getSound() invalid resource name [%s]", soundName); )
+		return nullptr;
+	}
+  #ifndef PDG_NO_SOUND
     std::vector<void*>::iterator p = mFiles.begin();
     bool found = false;
     while (!found && (p != mFiles.end())) {
@@ -422,12 +479,12 @@ ResourceManager::getSound(const char* soundName) {
                 unz_file_info info;
                 if (unzGetCurrentFileInfo(fip->file, &info, NULL, 0, NULL, 0, NULL, 0) == UNZ_OK) {
                     // allocate space to hold the file contents
-                    int len = info.uncompressed_size;
+                    size_t len = info.uncompressed_size;
                     char* soundData = (char*) std::malloc(len);
                     if (soundData != NULL) {
                         if (unzOpenCurrentFile(fip->file) == UNZ_OK) {
-                            int bytesRead = unzReadCurrentFile(fip->file, soundData, len);
-                            if (bytesRead == len) {
+                            int bytesRead = unzReadCurrentFile(fip->file, soundData, (unsigned int)len);
+                            if ((size_t)bytesRead == len) {
                                 // read the data, now create the Sound
 								snd = Sound::createSoundFromData(soundName, soundData, len);
 								found = true;
@@ -454,7 +511,7 @@ ResourceManager::getSound(const char* soundName) {
 const char*
 ResourceManager::getString(std::string& outStr, short id, short substring) {
     outStr.assign("");
-    DEBUG_ASSERT(mFiles.size() > 0, "ResourceManager::getString() called but no resources files open");
+    //DEBUG_ASSERT(mFiles.size() > 0, "ResourceManager::getString() called but no resources files open");
     std::vector<void*>::iterator p = mFiles.begin();
     bool found = false;
 	while (!found && (p != mFiles.end())) {
@@ -464,10 +521,10 @@ ResourceManager::getString(std::string& outStr, short id, short substring) {
 		char* stringsFileData = 0;
 		while (!found && !done) {
 			FileInfo* fip = (FileInfo*)*p;
-//			DEBUG_ONLY( OS::_DOUT(" Checking %s", fip->fullpath.c_str()); )
+			RESOURCE_DEBUG_ONLY( OS::_DOUT(" Checking %s", fip->fullpath.c_str()); )
     		// check for language specific items first, then default language items
 			stringsFileData = (char*) ((checkLang) ? fip->stringLangCache : fip->stringCache);
-			int len = (checkLang) ? fip->stringLangCacheSize : fip->stringCacheSize;
+			size_t len = (checkLang) ? fip->stringLangCacheSize : fip->stringCacheSize;
 			if (!stringsFileData) {
 				// not in the cache, need to load it
 				std::string fname;
@@ -476,7 +533,7 @@ ResourceManager::getString(std::string& outStr, short id, short substring) {
 				} else {
 					fname = STRINGS_FILENAME;
 				}
-//				DEBUG_ONLY( OS::_DOUT("  Looking for file %s", fname.c_str()); )
+				RESOURCE_DEBUG_ONLY( OS::_DOUT("  Looking for file %s", fname.c_str()); )
 				if (fip->isDir) {
 					// the current resource is a directory, try to 
 					// load the strings.txt file from there
@@ -484,10 +541,10 @@ ResourceManager::getString(std::string& outStr, short id, short substring) {
 					std::ifstream file;
 					file.open(s.c_str(), std::ios::binary);
 					file.seekg(0, std::ios::end);
-					len = file.tellg();
-//					DEBUG_ONLY( OS::_DOUT("  Checking file [%s] size [%d]", s.c_str(), len); )
-					if (len != -1) {  // fileExists
-						++len;
+                    long flen = file.tellg();
+					RESOURCE_DEBUG_ONLY( OS::_DOUT("  Checking file [%s] size [%d]", s.c_str(), len); )
+					if (flen != -1) {  // fileExists
+                        len = ((size_t)flen) + 1;
 						stringsFileData = (char*) std::malloc(len);
 						if (stringsFileData) {
 							file.seekg(0, std::ios::beg);
@@ -499,7 +556,7 @@ ResourceManager::getString(std::string& outStr, short id, short substring) {
 				}
 			  #ifndef PDG_NO_ZIP
 				else if (fip->file) {
-//					DEBUG_ONLY( OS::_DOUT("  Checking for file [%s] inside zip file [%s]", fname.c_str(), fip->name.c_str()); )
+					RESOURCE_DEBUG_ONLY( OS::_DOUT("  Checking for file [%s] inside zip file [%s]", fname.c_str(), fip->name.c_str()); )
 					if (unzLocateFile (fip->file, fname.c_str(), false) == UNZ_OK) {
 						// found the file, now need to load it
 						unz_file_info info;
@@ -509,7 +566,7 @@ ResourceManager::getString(std::string& outStr, short id, short substring) {
 								len = info.uncompressed_size + 1;
 								stringsFileData = (char*) std::malloc(len);
 								if (stringsFileData) {
-									unzReadCurrentFile(fip->file, stringsFileData, len-1);
+									unzReadCurrentFile(fip->file, stringsFileData, (unsigned int)len);
 									stringsFileData[len-1] = 0; // make sure it is nul terminated
 								}
 								unzCloseCurrentFile(fip->file);
@@ -526,12 +583,12 @@ ResourceManager::getString(std::string& outStr, short id, short substring) {
 					found = true;
 				}
 				if (!checkLang && fip->stringCache == 0) {
-					DEBUG_ONLY( OS::_DOUT("Adding strings.txt file (size [%d]) to cache", 
+					RESOURCE_DEBUG_ONLY( OS::_DOUT("Adding strings.txt file (size [%d]) to cache", 
 						len); )
 					fip->stringCache = stringsFileData;
 					fip->stringCacheSize = len;
 				} else if (checkLang && fip->stringLangCache == 0) {
-					DEBUG_ONLY( OS::_DOUT("Adding strings-%s.txt file (size [%d]) to cache", 
+					RESOURCE_DEBUG_ONLY( OS::_DOUT("Adding strings-%s.txt file (size [%d]) to cache", 
 						mLanguage.c_str(), len); )
 					fip->stringLangCache = stringsFileData;
 					fip->stringLangCacheSize = len;
@@ -550,10 +607,16 @@ ResourceManager::getString(std::string& outStr, short id, short substring) {
 
 
 // find out how big a resource is
-unsigned long  
+size_t
 ResourceManager::getResourceSize(const char* resourceName)
 {
-	unsigned long len = 0;
+    //DEBUG_ASSERT(mFiles.size() > 0, "ResourceManager::getResourceSize() called but no resources files open");
+	// make sure the resource name is valid
+	if (!isValidResourceName(resourceName)) {
+		DEBUG_ONLY( OS::_DOUT("Resource Error: getResourceSize() invalid resource name [%s]", resourceName); )
+		return 0;
+	}
+	size_t len = 0;
     std::vector<void*>::iterator p = mFiles.begin();
     bool found = false;
     while (!found && (p != mFiles.end())) {
@@ -586,9 +649,14 @@ ResourceManager::getResourceSize(const char* resourceName)
 
 // load a resource
 bool    
-ResourceManager::getResource(const char* resourceName, void* buffer, unsigned long bufferSize)
+ResourceManager::getResource(const char* resourceName, void* buffer, size_t bufferSize)
 {	
     DEBUG_ASSERT(mFiles.size() > 0, "ResourceManager::getResource() called but no resources files open");
+	// make sure the resource name is valid
+	if (!isValidResourceName(resourceName)) {
+		DEBUG_ONLY( OS::_DOUT("Resource Error: getResource() invalid resource name [%s]", resourceName); )
+		return false;
+	}
 	bool ret = false;
     std::vector<void*>::iterator p = mFiles.begin();
     bool found = false;
@@ -611,8 +679,8 @@ ResourceManager::getResource(const char* resourceName, void* buffer, unsigned lo
             if (unzLocateFile (fip->file, resourceName, false) == UNZ_OK) {
                 // found the file, now need to load it
                 if (unzOpenCurrentFile(fip->file) == UNZ_OK) {
-                    int bytesRead = unzReadCurrentFile(fip->file, buffer, bufferSize);
-                    if ((unsigned long)bytesRead == bufferSize) {
+                    int bytesRead = unzReadCurrentFile(fip->file, buffer, (unsigned int)bufferSize);
+                    if ((size_t)bytesRead == bufferSize) {
 						ret = true;
 					} else {
 						ret = false;
@@ -714,7 +782,7 @@ ResourceManager::snprintfLoc(char* dst, int maxlen, const char * fmt, ...)
 			if (std::isdigit(pos)) {
 				uint8 idx = pos - 48;	// 48 is base for ASCII '0'
 				if (idx < MAX_ARGS) {
-					int len = cp - sp - 1;	// the length of the fmt substr prior to the '%'
+					int len = (int)(cp - sp) - 1;	// the length of the fmt substr prior to the '%'
 					if (len > 0) {
 						outstr.append( sp, len );	// Append the fmt str portion first..
 					}
@@ -747,34 +815,23 @@ ResourceManager::ResourceManager() :
     for (int i = 0; i < MAX_CACHED_IMAGES; i++) {
 		mImagesNamesCache[i] = 0;
 		mImagesCache[i] = 0;
-		mImagesCacheHasLang[i] = false;
+		mImagesCacheHasLang[i] = false; // FIXME: language specific images not implemented yet
 	}
 }
 
 ResourceManager::~ResourceManager() {
-	const char* lang = mLanguage.c_str();
     // clean up cached images
-    for (int i = 0; i < MAX_CACHED_IMAGES; i++) {
-        if (mImagesNamesCache[i] && mImagesCache[i]) {  
-            DEBUG_ONLY( OS::_DOUT("Releasing Image [%s] [%p] from cache", 
-								  mImagesNamesCache[i], mImagesCache[i]); )
-			Image* img = mImagesCache[i];
-			char* name = mImagesNamesCache[i];
-			img->release();
-			std::free( name );  // this was malloc'd in getImage()
-			mImagesNamesCache[i] = 0;
-        }
-    }
+	clearImageCache();
     // clean up cached string files and any files left open
     std::vector<void*>::iterator p = mFiles.begin();
     while (p != mFiles.end()) {
     	FileInfo* fip = (FileInfo*)*p;
     	if (fip->stringCache) {
-            DEBUG_ONLY( OS::_DOUT("Freeing strings.txt file cache (size [%d])", fip->stringCacheSize); )
+            RESOURCE_DEBUG_ONLY( OS::_DOUT("Freeing strings.txt file cache (size [%d])", fip->stringCacheSize); )
     		std::free((void*)fip->stringCache);
     	}
     	if (fip->stringLangCache) {
-            DEBUG_ONLY( OS::_DOUT("Freeing strings-%s.txt file cache (size [%d])", lang, fip->stringLangCacheSize); )
+            RESOURCE_DEBUG_ONLY( OS::_DOUT("Freeing strings-%s.txt file cache (size [%d])", mLanguage.c_str(), fip->stringLangCacheSize); )
     		std::free((void*)fip->stringLangCache);
     	}
 #ifndef PDG_NO_ZIP
@@ -799,6 +856,38 @@ ResourceManager::~ResourceManager() {
 ResourceManager* ResourceManager::createSingletonInstance() {
 	ResourceManager* resMgr = new ResourceManager();
 	return resMgr;
+}
+
+void ResourceManager::removeImageFromCache(const char* imageName) {
+	for (int i = 0; i < mNumCachedImages; i++) {
+		if (mImagesNamesCache[i] && mImagesCache[i]) {
+			if (std::strcmp(mImagesNamesCache[i], imageName) == 0) {
+				Image* img = mImagesCache[i];
+				img->release();
+				std::free(mImagesNamesCache[i]);
+				mImagesNamesCache[i] = 0;
+				mImagesCache[i] = 0;
+                mImagesCacheHasLang[i] = false;
+			}
+		}
+	}
+}
+
+void ResourceManager::clearImageCache() {
+    for (int i = 0; i < mNumCachedImages; i++) {
+        if (mImagesNamesCache[i] && mImagesCache[i]) {  
+            RESOURCE_DEBUG_ONLY( OS::_DOUT("Releasing Image [%s] [%p] from cache", 
+								  mImagesNamesCache[i], mImagesCache[i]); )
+			Image* img = mImagesCache[i];
+			char* name = mImagesNamesCache[i];
+			img->release();
+			std::free( name );  // this was malloc'd in getImage()
+			mImagesNamesCache[i] = 0;
+            mImagesCache[i] = 0;
+            mImagesCacheHasLang[i] = false;
+        }
+    }
+	mNumCachedImages = 0;
 }
 
 

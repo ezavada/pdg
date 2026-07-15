@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::startAnimation(string animationName)
+
+\brief Start playing an animation by its name
+
+**/ }

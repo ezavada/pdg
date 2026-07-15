@@ -131,7 +131,7 @@ bool ConfigManagerWin32::getConfigString(const char* configItemName, std::string
 	if ( -1 == size)
         return false;
 
-	char* buffer = new char[size + 1];
+	char* buffer = new char[size + 1]();
 	dwSize = size;
 
 	//if(RegOpenKeyEx(mHKEY, tempString.c_str(), 0,KEY_READ, &hKey) != ERROR_SUCCESS)
@@ -148,6 +148,7 @@ bool ConfigManagerWin32::getConfigString(const char* configItemName, std::string
 		delete [] buffer;
 		return false;
 	}	
+	buffer[dwSize] = '\0';
 	outString = buffer;
 	RegCloseKey(hKey);	
 	delete [] buffer;
@@ -233,7 +234,13 @@ void ConfigManagerWin32::setConfigString(const char* configItemName, std::string
 
 	if (RegOpenKeyExA(mHKEY, mKeyPath.c_str(), 0,KEY_WRITE, &hKey) != ERROR_SUCCESS)
 		return;
-	RegSetValueExA(hKey, configItemName, 0,REG_SZ, (LPBYTE)outString.c_str(), outString.length());
+	RegSetValueExA(
+			hKey,
+			configItemName,
+			0,
+			REG_SZ,
+			(LPBYTE)outString.c_str(),
+			static_cast<DWORD>(outString.length() + 1));
 	// if not able to set value, do nothing
 	RegCloseKey(hKey);	
 }

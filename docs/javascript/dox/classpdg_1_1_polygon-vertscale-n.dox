@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::vertScale(factor)
+
+\brief scales the polygon vertically by the specified factor
+
+**/ }

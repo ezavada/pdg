@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::moveXTo(x)
+
+\brief moves the polygon to the specified x coordinate
+
+**/ }

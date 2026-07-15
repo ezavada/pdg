@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawPolygon(polygon, attrs)
+
+\brief draws a polygon with the specified attributes
+
+**/ }

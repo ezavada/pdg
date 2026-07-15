@@ -92,10 +92,10 @@ void MessageDialog::setupDialog(std::string& message, std::string& buttonText1, 
 	int middleY = messageViewArea.height() - BUTTON_V_OFFSET - BUTTON_SIZE_Y;
 	Point middlePoint(middleX, middleY);
 
-	if(!buttonText1.empty())
+	if (!buttonText1.empty())
 	{
 		Point button1Point = middlePoint;
-		if(!buttonText2.empty())
+		if (!buttonText2.empty())
 		{
 			// setup for 2 buttons
 			button1Point.x -= BUTTON_SIZE_X + BUTTON_SPACE/2;
@@ -110,7 +110,7 @@ void MessageDialog::setupDialog(std::string& message, std::string& buttonText1, 
 		button1->setText(buttonText1.c_str());
 		addView(button1, VIEW_ID_BUTTON_1);
 
-		if(!buttonText2.empty())
+		if (!buttonText2.empty())
 		{
 			Point button2Point = middlePoint;
 			button2Point.x += BUTTON_SPACE/2;
@@ -129,7 +129,6 @@ void MessageDialog::setupDialog(std::string& message, std::string& buttonText1, 
 	addView(borderView, VIEW_ID_BORDER);
 #endif
 
-	redraw();
 }
 
 void MessageDialog::getTextForButton(std::string& buttonStr, BUTTON_TEXT button)
@@ -170,7 +169,7 @@ void MessageDialog::getTextForButton(std::string& buttonStr, BUTTON_TEXT button)
 		break;
 	}
 
-	if(resId != -1 && resSubId != -1)
+	if (resId != -1 && resSubId != -1)
 	{
 		mResMgr.getString(buttonStr, resId, resSubId);
 	}
@@ -178,16 +177,16 @@ void MessageDialog::getTextForButton(std::string& buttonStr, BUTTON_TEXT button)
 
 
 bool MessageDialog::doLeftClick(const MouseInfo *mi, View* view, int id, int part) {
-	if( id == VIEW_ID_MESSAGE_VIEW )
+	if ( id == VIEW_ID_MESSAGE_VIEW )
 	{	
 	}
-	else if( id == VIEW_ID_BUTTON_1 )
+	else if ( id == VIEW_ID_BUTTON_1 )
 	{
 		mButtonClickedId = VIEW_ID_BUTTON_1;
 	    Dialog::doLeftClick(mi, view, id, part);
         // WARNING: don't do anything after calling Dialog::doLeftClick, it can delete the object
 	}
-	else if( id == VIEW_ID_BUTTON_2 )
+	else if ( id == VIEW_ID_BUTTON_2 )
 	{
 		mButtonClickedId = VIEW_ID_BUTTON_2;
 	    Dialog::doLeftClick(mi, view, id, part);

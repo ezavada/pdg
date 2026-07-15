@@ -1,3 +1,5 @@
 <map id="Sound" name="Sound">
-<area shape="rect" id="node2" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,5,103,31"/>
+<area shape="rect" id="Node000001" title="handles both short sounds and music (GUI Only)" alt="" coords="25,79,83,105"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,5,103,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="57,46,57,79,51,79,51,46"/>
 </map>

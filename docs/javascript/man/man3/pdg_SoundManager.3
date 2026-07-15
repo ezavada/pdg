@@ -1,78 +1,116 @@
-.TH "SoundManager" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "SoundManager" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-SoundManager \- 
-.PP
-used for application wide sound settings and options (\fIGUI Only\fP)  
+SoundManager \- used for application wide sound settings and options (\fIGUI Only\fP)  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
+.RI "\fBIEventHandler\fP \fBon\fP (int eventCode, function func)"
+.br
+.RI "Register an event handler for sound events with the specified event code\&. "
+.ti -1c
+.RI "\fBIEventHandler\fP \fBonDonePlaying\fP (function func)"
+.br
+.RI "Register a callback function to be called when a sound finishes playing\&. "
+.ti -1c
+.RI "\fBIEventHandler\fP \fBonFailedToPlay\fP (function func)"
+.br
+.RI "Register a callback function to be called when a sound fails to play\&. "
+.ti -1c
+.RI "\fBIEventHandler\fP \fBonLooping\fP (function func)"
+.br
+.RI "Register a callback function to be called when a sound loops\&. "
+.ti -1c
 .RI "\fBsetMute\fP (boolean muted)"
 .br
-.RI "\fImutes all sounds from the game \fP"
+.RI "mutes all sounds from the game "
 .ti -1c
 .RI "\fBsetVolume\fP (number level)"
 .br
-.RI "\fIsets the overall volume level \fP"
+.RI "sets the overall volume level "
 .in -1c
-.SS "Related Functions"
-(Note that these are not member functions\&.) 
+.SS "Related Symbols"
+(Note that these are not member symbols\&.) 
 .in +1c
 .ti -1c
 .RI "\fBgetSoundManager\fP"
 .br
-.RI "\fIget the singleton instance of the \fBSoundManager\fP used by the pdg framework \fP"
+.RI "get the singleton instance of the \fBSoundManager\fP used by the pdg framework "
 .ti -1c
 .RI "\fBsnd\fP"
 .br
-.RI "\fIthe singleton instance of the \fBSoundManager\fP \fP"
+.RI "the singleton instance of the \fBSoundManager\fP "
 .in -1c
 .SH "Detailed Description"
 .PP 
 used for application wide sound settings and options (\fIGUI Only\fP) 
 
 used for application wide sound settings and options
+
 .PP
-\fBWarning:\fP
+\fBWarning\fP
 .RS 4
-\fBAPI Stability: 1 - Experimental\fP\&. This API was introduced recently and gotten little or no real use\&. It may change or be removed in future versions\&. It may not be completely implemented and may be missing important pieces of functionality\&. Please try it out and provide feedback\&. 
+\fBAPI Stability: 1 - Experimental\fP\&. This API was introduced recently and gotten little or no real use\&. It may change or be removed in future versions\&. It may not be completely implemented and may be missing important pieces of functionality\&. Please try it out and provide feedback\&.
 .RE
 .PP
 
 .SH "Member Function Documentation"
 .PP 
-.SS "setMute (booleanmuted)"
+.SS "\fBIEventHandler\fP on (int eventCode, function func)"
+
+.PP
+Register an event handler for sound events with the specified event code\&. 
+.SS "\fBIEventHandler\fP onDonePlaying (function func)"
+
+.PP
+Register a callback function to be called when a sound finishes playing\&. 
+.SS "\fBIEventHandler\fP onFailedToPlay (function func)"
+
+.PP
+Register a callback function to be called when a sound fails to play\&. 
+.SS "\fBIEventHandler\fP onLooping (function func)"
+
+.PP
+Register a callback function to be called when a sound loops\&. 
+.SS "setMute (boolean muted)"
 
 .PP
 mutes all sounds from the game When muted, sounds will all play at volume level 0, including any new sounds, until un-muted, at which point the previous master volume and all individual sound volumes will be restored\&.
+
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fImuted\fP true to mute, false to unmute
 .RE
 .PP
 
-.SS "setVolume (numberlevel)"
+.SS "setVolume (number level)"
 
 .PP
-sets the overall volume level \fBParameters:\fP
+sets the overall volume level 
+.PP
+\fBParameters\fP
 .RS 4
 \fIlevel\fP the desired level (0\&.0 - silent to 1\&.0 - full volume)
 .RE
 .PP
 Sets the max volume level for all sounds\&. Individual sounds can still be played at separate volume levels, but they are scaled to be within the level set by the \fBSound\fP Manager
-.SH "Friends And Related Function Documentation"
+.SH "Friends And Related Symbol Documentation"
 .PP 
-.SS "getSoundManager\fC [related]\fP"
+.SS "getSoundManager\fR [related]\fP"
 
 .PP
-get the singleton instance of the \fBSoundManager\fP used by the pdg framework \fBReturns:\fP
+get the singleton instance of the \fBSoundManager\fP used by the pdg framework 
+.PP
+\fBReturns\fP
 .RS 4
 \fBSoundManager\fP singleton object 
 .RE

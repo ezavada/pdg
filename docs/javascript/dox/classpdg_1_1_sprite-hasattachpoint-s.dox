@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::hasAttachPoint(attachPointName)
+
+\brief returns true if the sprite has the specified attach point
+
+**/ }

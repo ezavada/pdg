@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\var pdg::action_AnimationBlendComplete
+
+\brief eventType_SpriteAnimate action: a Spriter animation blend completed. 
+
+Emitted after pdg.Sprite.blendToAnimation is called and the blend has completed.
+
+\sa pdg.Sprite.blendToAnimation
+\sa pdg.eventType_SpriteAnimate
+
+\ingroup Animation
+
+**/ }

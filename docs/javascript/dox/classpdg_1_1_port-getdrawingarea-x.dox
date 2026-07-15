@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::getDrawingArea()
+
+\brief Get the total drawing area rectangle for this port
+
+**/ }

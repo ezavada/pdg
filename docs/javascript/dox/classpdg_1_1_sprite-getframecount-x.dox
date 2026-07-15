@@ -2,7 +2,7 @@ namespace pdg { /**
 
 \fn pdg::Sprite::getFrameCount
 
-\brief 
+\brief get number of frames of animation for this sprite
 
 \return total number of frames of animation for this sprite
 

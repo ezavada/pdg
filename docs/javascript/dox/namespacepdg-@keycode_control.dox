@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_Control
+
+\brief platform-specific keycode for the Control key (generic, may not distinguish left/right)
+
+This constant contains the keycode value for detecting either Control key on the current platform. On Windows, this is the generic VK_CONTROL code that doesn't distinguish between left and right. On other platforms, it equals #keyCode_LeftControl.
+
+**Platform values:**
+- Mac OS X: 59 (same as keyCode_LeftControl)
+- Windows: 17 (0x11 - VK_CONTROL, generic control key)
+- Linux/GLFW: 341 (same as keyCode_LeftControl)
+
+\see keyCode_LeftControl
+\see keyCode_RightControl
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

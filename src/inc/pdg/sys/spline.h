@@ -35,9 +35,16 @@
 #include "pdg/sys/global_types.h"
 #include <vector>
 
+#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+  #include "pdg_script_bindings.h"
+#endif 
+
 #define SPLINE_HERMITE		1
 #define SPLINE_CARDINAL		2
-#define SPLINE_UNIFORM_B	3	
+#define SPLINE_UNIFORM_B	3
+#define SPLINE_CUBIC_BEZIER	4
+#define SPLINE_TCB			5
+#define SPLINE_NATURAL_CUBIC	6
 
 
 namespace pdg {
@@ -47,27 +54,63 @@ namespace pdg {
 	class Spline
 	{
 	public:	
-		Spline(int type) : mType(type) {};
-		~Spline() {};
+		Spline(int type = SPLINE_CUBIC_BEZIER);
+		~Spline() {
+			#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+				#ifndef PDG_NO_GUI
+					CleanupSplineScriptObject(mSplineScriptObj);
+				#endif
+			#endif
+		};
 		
-		Point getFirstOrder(float u);
-		Point getSecondOrder(float u);
+		// Move constructor and assignment operator
+		Spline(Spline&& other) noexcept;
+		Spline& operator=(Spline&& other) noexcept;
 		
-		void initialize(Point a, Point b, Point c, Point d);
+		// Delete copy constructor and assignment operator
+		Spline(const Spline&) = delete;
+		Spline& operator=(const Spline&) = delete;
 		
-		void pushBackPoint(Point p);
-		void setIndex(unsigned long i);
-		void incrementIndex();
+		// Evaluation - u parameter ranges from 0.0 to getMaxU()
+		Point getFirstOrder(float u) const;
+		Point getSecondOrder(float u) const;
 		
+		// High-level segment API
+		void addSegment(Point p1, Point p2, Point p3, Point p4);
+		
+		// Low-level point API
+		void addPoint(Point p);
+		Point getPoint(int pointIndex) const;
+		void setPoint(int pointIndex, Point p);
+		int getPointCount() const;
+		
+		// Query methods
+		float getMaxU() const;  // Maximum valid u parameter (equals number of segments)
+		Rect getBounds() const;  // Get bounding rectangle of the spline
+
+	  #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+		SCRIPT_OBJECT_REF mSplineScriptObj;
+	  #endif
 	private:
 		int mType;
 		std::vector< Point > mPoints;
 		bool mLooping;
-		unsigned long mIndex[4];
-	};	
-	
+		unsigned long mCurrentSegmentIndices[4];  // Indices into mPoints for current segment
+		int mCurrentSegment;  // Which segment (0, 1, 2...) is currently active
+		
+		// Bounds caching
+		mutable Rect mCachedBounds;
+		mutable bool mBoundsDirty;
+		
+		void invalidateBounds() const { mBoundsDirty = true; }
+		
+		// Internal helpers
+		void updateSegmentIndices(int segmentNum);
+		int getSegmentCount() const;
+		int getPointsPerSegment() const;
+		bool isMultiSegmentSplineType() const;
+	};
 	
 }
 
 #endif // SPLINE_H_INCLUDED
-

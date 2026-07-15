@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::horzScale(f)
+
+\brief change the x coordinates of the rectangle by a multiplier
+
+**/ }

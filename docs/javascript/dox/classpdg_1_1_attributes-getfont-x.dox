@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getFont()
+
+\brief Gets the font to use for drawing text
+
+**/ }

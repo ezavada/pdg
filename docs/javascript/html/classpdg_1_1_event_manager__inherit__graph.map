@@ -1,3 +1,5 @@
 <map id="EventManager" name="EventManager">
-<area shape="rect" id="node2" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="11,5,108,31"/>
+<area shape="rect" id="Node000001" title="Distributes events to event handlers." alt="" coords="5,79,111,105"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="9,5,107,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="61,46,61,79,55,79,55,46"/>
 </map>

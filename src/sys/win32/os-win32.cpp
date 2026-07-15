@@ -71,7 +71,7 @@ namespace pdg {
 
 struct PrivateFindData {
     WinAPI::_finddata_t findData;
-    long                findRef;
+    intptr_t            findRef;
 };
 
 std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks = true);  // assumes relative to application if relative path
@@ -81,13 +81,13 @@ const char* os_getPlatformErrorMessage(long err) {
 	static char sHresultMsgBuf[1024];
 	LPVOID a_pvMsgBuf;
 	LPCSTR a_pszMsg = NULL;
-	std::sprintf(sHresultMsgBuf, "Windows Error: 0X%.8X", err);
+	std::snprintf(sHresultMsgBuf, sizeof(sHresultMsgBuf), "Windows Error: 0X%.8X", err);
 	if (WinAPI::FormatMessageA( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, (DWORD)err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 			(LPSTR) &a_pvMsgBuf, 0, NULL )) {
 	   a_pszMsg = (LPSTR)a_pvMsgBuf;
 	   // Do something with the error message.
-	   std::strcat(sHresultMsgBuf, a_pszMsg );
+	   std::strncat(sHresultMsgBuf, a_pszMsg, sizeof(sHresultMsgBuf) - strlen(sHresultMsgBuf) - 1);
 	   LocalFree(a_pvMsgBuf);
 	}
 	return sHresultMsgBuf;
@@ -97,22 +97,27 @@ const char* os_getPlatformErrorMessage(long err) {
 bool os_path2native(const char *inStdFileName, char* outNativeFileName, int len) {
     DEBUG_ASSERT(len > 0, "PRECONDITION: length must not be zero or negative");
     outNativeFileName[0] = 0;
-    if (std::strchr(inStdFileName, '\\')) {
-        return false;   // backslash is an illegal character
-    }
+    
+    // Check for illegal characters: colon after 2nd position
     if (std::strchr(inStdFileName+2, ':')) {
         return false;   // colon is an illegal character after 2nd position
     }
+    
     char tempname[MAX_PATH];
-    std::strncpy(tempname, inStdFileName, MAX_PATH);
+    std::strncpy(tempname, inStdFileName, MAX_PATH - 1);
+    tempname[MAX_PATH - 1] = '\0';
     MAKE_STRING_BUFFER_SAFE(tempname, MAX_PATH); // make string buffer safe also alerts us to when inStdFileName is too long and gets truncated
+    
+    // Convert forward slashes to backslashes for Windows
+    // Always do this conversion regardless of whether backslashes are already present
     char * p;
     p = std::strchr(tempname,'/');
     while (p) {
         *p = '\\';
         p = std::strchr(p,'/');
     }
-    std::strncpy(outNativeFileName, tempname, len);
+    std::strncpy(outNativeFileName, tempname, len - 1);
+    outNativeFileName[len - 1] = '\0';
     MAKE_STRING_BUFFER_SAFE(outNativeFileName, len);
     return true;
 }
@@ -124,7 +129,8 @@ bool native2path(const char *inNativeFileName, char* outStdFileName, int len) {
         return false;   // forward slash is an illegal character
     }
     char tempname[1024];
-    std::strncpy(tempname, inNativeFileName, 1024);
+    std::strncpy(tempname, inNativeFileName, 1023);
+    tempname[1023] = '\0';
     MAKE_STRING_BUFFER_SAFE(tempname, 1024); // make string buffer safe also alerts us to when inStdFileName is too long and gets truncated
 	// now that we got the drive spec, there is no other place were colon is legal
 	if (std::strchr(tempname+2, ':')) {
@@ -136,7 +142,8 @@ bool native2path(const char *inNativeFileName, char* outStdFileName, int len) {
         *p = '/';
         p = std::strchr(p+1,'\\');
     }
-    std::strncpy(outStdFileName, tempname, len);
+    std::strncpy(outStdFileName, tempname, len - 1);
+    outStdFileName[len - 1] = '\0';
     MAKE_STRING_BUFFER_SAFE(outStdFileName, len);
     return true;
 }
@@ -151,21 +158,24 @@ std::string os_makeCanonicalPath(const char* inFromPath, bool resolveSimLinks) {
 		}
 //		DEBUG_PRINT("os_makeCanonicalPath convert to native path [%s]", fromPath);
 	} else {
-		std::strncpy(fromPath, inFromPath, MAX_PATH);
+		std::strncpy(fromPath, inFromPath, MAX_PATH - 1);
+		fromPath[MAX_PATH - 1] = '\0';
 		MAKE_STRING_BUFFER_SAFE(fromPath, MAX_PATH);
 //		DEBUG_PRINT("os_makeCanonicalPath given native path [%s]", fromPath);
 	}
 	if (fromPath[0] != 0) {
 		// make an absolute path
 		if (!os_isAbsolutePath(fromPath)) {
-			std::strncpy(workingBuf, OS::getApplicationDirectory(), MAX_PATH);
+			std::strncpy(workingBuf, OS::getApplicationDirectory(), MAX_PATH - 1);
+			workingBuf[MAX_PATH - 1] = '\0';
 			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-			std::strncat(workingBuf, "\\", MAX_PATH); 
+			std::strncat(workingBuf, "\\", sizeof(workingBuf) - strlen(workingBuf) - 1); 
 			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-			std::strncat(workingBuf, fromPath, MAX_PATH);
+			std::strncat(workingBuf, fromPath, sizeof(workingBuf) - strlen(workingBuf) - 1);
 			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
 		} else {
-			std::strncpy(workingBuf, fromPath, MAX_PATH);
+			std::strncpy(workingBuf, fromPath, MAX_PATH - 1);
+			workingBuf[MAX_PATH - 1] = '\0';
 			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
 		}
 		// remove double backslashes '\\', empty path segments '\.\', and backtracking '\<dir>\..\'
@@ -176,23 +186,32 @@ std::string os_makeCanonicalPath(const char* inFromPath, bool resolveSimLinks) {
 			if (*p == '\\') {
 				// found a backslash, see what follows it
 				if (p[1] == '\\') {
-					// another backslash, remove
-					std::strcpy(p, &p[1]);
+					// another slash, remove
+					char* q = p;
+					while(q[1]) {
+					    q[0] = q[1];
+					    q++;
+					}
+					*q = 0;
 				} else if (std::strncmp(p, "\\.\\", 3) == 0) {
 					// an empty segment, remove
-					std::strcpy(p, &p[2]);
+					char* q = p;
+					while(q[2]) {
+					    q[0] = q[2];
+					    q++;
+					}
+					*q = 0;
 				} else if (std::strncmp(p, "\\..\\", 4) == 0) {
 					// a backtrack, remove along with the prior directory segment
-					std::strcpy(lastSlash, &p[3]);
-					// now search backwards for prev segment
-					p = lastSlash;
-					while (p > workingBuf) {
-						p--;
-						if (*p == '\\') {
-							lastSlash = p;
-							break;
-						}
+					char* q = p+3;  // skip over the backtrack section
+					p = lastSlash+1; // go back to the start of the prior segment
+					while(q[1]) {   // copy everything from after the backtrack
+					    *p++ = q[1];  // into the prior segment
+					    q++;
 					}
+					*p = 0;
+					p = lastSlash+1;
+					// now search backwards for prev segment
 				} else {
 					// something else, so we are starting a new path segment
 					// save this as the new last slash
@@ -247,6 +266,8 @@ OS::findFirst(const char* inFindName, FindDataT& outFindData) {
     outFindData.privateData = new PrivateFindData;
     DEBUG_ASSERT(outFindData.privateData, "New failed but didn't throw an exception. Turn exceptions on in the compiler");
     PrivateFindData* pData = static_cast<PrivateFindData*>(outFindData.privateData);
+    // Initialize the findData structure to avoid garbage data
+    memset(&pData->findData, 0, sizeof(pData->findData));
     pData->findRef = WinAPI::_findfirst(searchName, &pData->findData);
 	if(pData->findRef != -1)
 	{
@@ -261,6 +282,12 @@ OS::findFirst(const char* inFindName, FindDataT& outFindData) {
 bool
 OS::findNext(FindDataT& ioFindData) {
     PrivateFindData* pData = static_cast<PrivateFindData*>(ioFindData.privateData);
+    if (!pData) {
+        return false; // Invalid private data
+    }
+    if (pData->findRef == -1) {
+        return false; // Invalid file handle
+    }
     int result = WinAPI::_findnext(pData->findRef, &pData->findData);
 	if(result != -1)
 	{
@@ -297,7 +324,7 @@ OS::renameFile(const char* inFileName, const char* inNewFileName)
 	return (WinAPI::rename(inFileName, inNewFileName) != 0);
 }
 
-unsigned long OS::getMilliseconds() {
+ms_time OS::getMilliseconds() {
     return WinAPI::GetTickCount();
 }
 

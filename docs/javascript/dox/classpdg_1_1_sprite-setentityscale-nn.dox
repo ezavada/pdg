@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setEntityScale(xScale, yScale)
+
+\brief sets the scale factors for the sprite's entity (x and y scaling)
+
+**/ }

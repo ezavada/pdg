@@ -1,13 +1,32 @@
 <map id="RefCountedObj" name="RefCountedObj">
-<area shape="rect" id="node3" href="$classpdg_1_1_font.html" title="Font" alt="" coords="53,83,101,111"/>
-<area shape="rect" id="node5" href="$classpdg_1_1_image.html" title="Image" alt="" coords="125,83,183,111"/>
-<area shape="rect" id="node9" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="208,83,301,111"/>
-<area shape="rect" id="node23" href="$classpdg_1_1_sound.html" title="Sound" alt="" coords="326,83,385,111"/>
-<area shape="rect" id="node7" href="$classpdg_1_1_image_strip.html" title="ImageStrip" alt="" coords="5,161,91,189"/>
-<area shape="rect" id="node11" href="$classpdg_1_1_serializable.html" title="Serializable\&lt; T \&gt;" alt="" coords="115,161,236,189"/>
-<area shape="rect" id="node13" href="$classpdg_1_1_serializable.html" title="Serializable\&lt; Sprite \&gt;" alt="" coords="261,161,408,189"/>
-<area shape="rect" id="node17" href="$classpdg_1_1_serializable.html" title="Serializable\&lt; SpriteLayer \&gt;" alt="" coords="433,161,615,189"/>
-<area shape="rect" id="node15" href="$classpdg_1_1_sprite.html" title="Sprite" alt="" coords="307,238,363,266"/>
-<area shape="rect" id="node19" href="$classpdg_1_1_sprite_layer.html" title="SpriteLayer" alt="" coords="479,238,568,266"/>
-<area shape="rect" id="node21" href="$classpdg_1_1_tile_layer.html" title="TileLayer" alt="" coords="486,315,561,343"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,153,117,179"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_font.html" title=" " alt="" coords="187,104,234,130"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="116,145,186,122,188,127,118,150"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="165,153,257,179"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="132,164,164,164,164,169,132,169"/>
+<area shape="rect" id="Node000015" href="$classpdg_1_1_sound.html" title=" " alt="" coords="182,203,240,228"/>
+<area shape="poly" id="edge15_Node000001_Node000015" title=" " alt="" coords="117,182,182,204,181,209,116,187"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_serializable.html" title=" " alt="" coords="305,5,483,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="254,142,255,141,271,115,277,90,284,65,303,40,321,29,323,34,307,44,289,67,282,91,276,117,259,144,257,146"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_animated.html" title=" " alt="" coords="356,55,432,80"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="252,143,255,140,269,127,278,114,288,102,304,89,329,78,355,70,356,76,331,83,306,94,292,105,282,117,273,130,259,144,255,147"/>
+<area shape="rect" id="Node000009" href="$classpdg_1_1_i_animation_helper.html" title=" " alt="" coords="334,104,455,130"/>
+<area shape="poly" id="edge9_Node000003_Node000009" title=" " alt="" coords="271,147,343,128,345,133,273,152"/>
+<area shape="rect" id="Node000010" href="$classpdg_1_1_i_sprite_collide_helper.html" title=" " alt="" coords="326,153,463,179"/>
+<area shape="poly" id="edge10_Node000003_Node000010" title=" " alt="" coords="272,164,325,164,325,169,272,169"/>
+<area shape="rect" id="Node000011" href="$classpdg_1_1_i_sprite_draw_helper.html" title=" " alt="" coords="330,203,458,228"/>
+<area shape="poly" id="edge11_Node000003_Node000011" title=" " alt="" coords="273,180,345,200,343,205,271,185"/>
+<area shape="rect" id="Node000012" href="$classpdg_1_1_image.html" title=" " alt="" coords="366,252,423,278"/>
+<area shape="poly" id="edge12_Node000003_Node000012" title=" " alt="" coords="255,185,259,188,273,202,282,215,292,227,306,239,336,251,366,259,365,264,334,256,304,243,288,231,278,218,269,206,255,192,252,189"/>
+<area shape="rect" id="Node000014" href="$classpdg_1_1_serializable.html" title=" " alt="" coords="334,301,454,327"/>
+<area shape="poly" id="edge14_Node000003_Node000014" title=" " alt="" coords="257,187,259,189,276,215,282,241,289,265,307,288,335,303,332,308,303,292,284,267,277,242,271,217,255,192,254,191"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_sprite_layer.html" title=" " alt="" coords="531,5,619,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="499,16,531,16,531,21,499,21"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_tile_layer.html" title=" " alt="" coords="667,5,741,31"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="634,16,666,16,666,21,634,21"/>
+<area shape="poly" id="edge8_Node000007_Node000005" title=" " alt="" coords="447,51,483,41,530,28,532,33,484,46,448,56"/>
+<area shape="rect" id="Node000008" href="$classpdg_1_1_sprite.html" title=" " alt="" coords="547,55,603,80"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="448,65,547,65,547,70,448,70"/>
+<area shape="rect" id="Node000013" href="$classpdg_1_1_image_strip.html" title=" " alt="" coords="533,252,617,278"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="439,262,532,262,532,268,439,268"/>
 </map>

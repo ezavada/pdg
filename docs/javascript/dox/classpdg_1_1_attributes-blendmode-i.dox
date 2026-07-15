@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::blendMode(blendMode)
+
+\brief sets the blend mode for rendering operations
+
+**/ }

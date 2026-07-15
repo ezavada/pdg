@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getRadialGradientCenterColor()
+
+\brief returns the radial gradient center color
+
+**/ }

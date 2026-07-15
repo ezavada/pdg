@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Offset::dividedby(offset)
+
+\brief return new offset that is this offset divided by given offset
+
+**/ }

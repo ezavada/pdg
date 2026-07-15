@@ -1,7 +1,11 @@
 <map id="Sprite" name="Sprite">
-<area shape="rect" id="node2" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,161,101,189"/>
-<area shape="rect" id="node4" href="$classpdg_1_1_animated.html" title="Animated" alt="" coords="127,161,204,189"/>
-<area shape="rect" id="node6" href="$classpdg_1_1_serializable.html" title="Serializable\&lt; Sprite \&gt;" alt="" coords="229,161,376,189"/>
-<area shape="rect" id="node8" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="256,83,349,111"/>
-<area shape="rect" id="node10" href="$classpdg_1_1_ref_counted_obj.html" title="RefCountedObj" alt="" coords="246,6,359,34"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="81,226,136,252"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,153,103,178"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,189,102,224,97,227,70,192"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated.html" title=" " alt="" coords="126,153,203,178"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="148,192,120,228,116,224,144,189"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="118,79,211,105"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="167,120,167,152,162,152,162,120"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="109,5,220,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="167,46,167,79,162,79,162,46"/>
 </map>

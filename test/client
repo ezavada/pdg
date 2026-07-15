@@ -33,9 +33,25 @@ unset NODE_DEBUG
 
 # load pdgrc
 _SD=`pwd`;while [ "`pwd`" != '/' ];do { if [ -e ".pdgrc" ];then { source .pdgrc;break; } fi;cd ..; } done;cd $_SD
+if [ -z "$PDG_ROOT" ]; then
+    PDG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+    export PDG_ROOT
+fi
+source "$PDG_ROOT/test/lib/test_env.sh"
+pdg_test_prepare_env "client"
+
+NODE_BIN="$PDG_ROOT/tools/node"
+if [ ! -x "$NODE_BIN" ]; then
+    NODE_BIN="$(command -v node)"
+fi
+
+if [ -z "$NODE_BIN" ]; then
+    echo "Error: could not find a Node.js executable."
+    exit 1
+fi
 
 # start an echo server
-$PDG_ROOT/tools/node $PDG_ROOT/tools/echo_tcp.js > /dev/null &
+"$NODE_BIN" "$PDG_ROOT/tools/echo_tcp.js" > /dev/null &
 
 #export NODE_DEBUG="module"
 cd test

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addArc(center, xRadius, yRadius, startAngle, endAngle, attrs)
+
+\brief adds an arc element to the drawing
+
+**/ }

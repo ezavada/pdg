@@ -6,7 +6,6 @@ namespace pdg { /**
 
 \todo NOT IMPLEMENTED
 
-\related pdg::EventManager
 \related pdg::GraphicsManager
 \ingroup Events
 

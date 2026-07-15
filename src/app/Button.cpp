@@ -27,7 +27,6 @@
 //
 // -----------------------------------------------
 
-#include "pdg/msvcfix.h"  // fix non-standard MSVC
 
 #include "pdg/sys/os.h"
 #include "pdg/app/Button.h"
@@ -37,13 +36,6 @@
 #error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use Button.cpp
 #endif
 
-// TODO: remove these catan specific things
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-  #include "ToolTipCtrl.h"
-  #include "CatanUIConsts.h"
-  #define BUTTON_COLOR           CATAN_BUTTON_COLOR
-  #define BUTTON_PRESSED_COLOR   CATAN_BOARD_BKG_COLOR
-#endif 
 
 #include "timerids.h"
 
@@ -64,7 +56,7 @@ const int BUTTON_TEXT_SIZE       = 14;  // 14 pt lettering on buttons
 const int SMALL_BUTTON_TEXT_SIZE = 11;
 const int TEXT_V_OFFSET          = 18;
 const int SMALL_TEXT_V_OFFSET    = 14;
-const int buttonTextStyle = Graphics::textStyle_Bold + Graphics::textStyle_Centered;
+const int buttonTextStyle = textStyle_Bold + textStyle_Centered;
 
 Button::Button(Controller* controller, const Rect frame, int buttonID, int resourceTextID, short substring, int imageID) 
 : View(controller, frame),
@@ -74,8 +66,7 @@ Button::Button(Controller* controller, const Rect frame, int buttonID, int resou
   mButtonID(buttonID), 
   mImagesId(imageID), 
   mIsButtonPressed(false),
-  mIsToolTipEnabled(false),
-  mToolTipCtrl(0)
+  mIsToolTipEnabled(false)
 {
     initializeButton(resourceTextID, substring);
 
@@ -92,13 +83,12 @@ Button::Button(Controller* controller, const Point& topLeftPoint, int buttonID, 
   mButtonID(buttonID), 
   mImagesId(imageID), 
   mIsButtonPressed(false),
-  mIsToolTipEnabled(false),
-  mToolTipCtrl(0)
+  mIsToolTipEnabled(false)
 {
     initializeButton(resourceTextID, substring);
 
 	// Reset view area
-	if( mpButtonImage[BUTTON_PRESSED])
+	if ( mpButtonImage[BUTTON_PRESSED])
 	{
 		int width = mpButtonImage[BUTTON_PRESSED]->width;
 		int height = mpButtonImage[BUTTON_PRESSED]->height;
@@ -115,7 +105,7 @@ void Button::initializeButton(int resourceTextID, short substring) {
 
 	// if the user didn't pass in any imageID we will use the default buttons
 	// which should be already loaded
-	if(mImagesId == RES_DEFAULT_BUTTON_IMAGE)
+	if (mImagesId == RES_DEFAULT_BUTTON_IMAGE)
 	{
 		loadImageArray(mResMgr, mpButtonImage, RES_DEFAULT_BUTTON_IMAGE, MAX_BUTTON_IMAGES);
 	}
@@ -125,7 +115,7 @@ void Button::initializeButton(int resourceTextID, short substring) {
 	}
 
 	// Set the button text
-	if(resourceTextID != -1) 
+	if (resourceTextID != -1) 
 	{
 		setTextFromResource(resourceTextID, substring);	// if substring is -1, it will be 
     }
@@ -169,7 +159,7 @@ void Button::setTextFromResource(int resourceID, short substring)
 
 void Button::setText(const char* text)
 {
-	if( text )
+	if ( text )
 	{
 		mText = text;
 	}
@@ -179,7 +169,20 @@ void Button::setText(const char* text)
 	}
 }
 
-
+// doClick() no longer exists in new API, using doLeftClick instead
+/*void Button::doClick(int part)
+{
+	if (part == mButtonID)
+	{
+	  #ifndef PDG_NO_SOUND
+		if (mpClickSound) {
+		    mpClickSound->play();
+	  }
+		#endif
+		notifyObservers();
+	}
+}
+*/
 
 void Button::drawSelf()
 {
@@ -189,10 +192,10 @@ void Button::drawSelf()
 
     Color buttonTextColor;
 
-	if( mIsEnabled )
+	if ( mIsEnabled )
 	{
 		buttonTextColor = PDG_WHITE_COLOR;
-		if( mIsButtonPressed )
+		if ( mIsButtonPressed )
 		{
 			buttonImage = mpButtonImage[BUTTON_PRESSED];
 		}
@@ -207,7 +210,7 @@ void Button::drawSelf()
 		buttonTextColor = PDG_GRAY_30_COLOR;	
 	}
 
-	if( buttonImage )
+	if ( buttonImage )
 	{
 //	    if (mText.length()%2 == 1) {
 //	        drawStandardButtonBackground();
@@ -218,7 +221,7 @@ void Button::drawSelf()
 /*		int buttonTextSize = buttonImage->height/2;
 		Point textBaselineCenterPoint( buttonImage->width/2, 0);
 		textBaselineCenterPoint.y += buttonImage->height - mPort->getFontHeight(buttonTextSize, buttonTextStyle);
-		if(buttonImage->height < mpDefaultButtonImage[BUTTON_PRESSED]->height)
+		if (buttonImage->height < mpDefaultButtonImage[BUTTON_PRESSED]->height)
 		{
 			size = SMALL_BUTTON_TEXT_SIZE;
 			textBaselineCenterPoint.y = SMALL_TEXT_V_OFFSET;
@@ -229,7 +232,7 @@ void Button::drawSelf()
 			textBaselineCenterPoint.y = TEXT_V_OFFSET;
 		} */
 		// Draw text over button
-		mPort->drawText(mText.c_str(), localToGlobal(mTextBaselineCenterPoint), mButtonTextSize, buttonTextStyle, buttonTextColor);
+		mPort->drawText(mText.c_str(), localToGlobal(mTextBaselineCenterPoint), pdg::Attributes().textSize(mButtonTextSize).textStyle(buttonTextStyle).fillColor(buttonTextColor));
 	}
 
 	//this->drawClickableParts();
@@ -262,7 +265,7 @@ void Button::drawStandardButtonBackground()
         c[6] = BUTTON_PRESSED_COLOR;
     }
     
-    mPort->fillRoundRect(r, BUTTON_RADIUS, c[6]);
+    mPort->drawRect(r, pdg::Attributes().fillColor(c[6]).roundedCorners(BUTTON_RADIUS));
     Rect clipSave = mPort->getClipRect();
     Rect newClip;
     
@@ -271,14 +274,14 @@ void Button::drawStandardButtonBackground()
     mPort->setClipRect(newClip);
     r.bottom += 4;
     
-    mPort->frameRoundRect(r, BUTTON_RADIUS, PDG_GRAY_40_COLOR);
+    mPort->drawRect(r, pdg::Attributes().lineColor(PDG_GRAY_40_COLOR));
     if (!mIsButtonPressed) {
         r.shrink(1);
-        mPort->frameRoundRect(r, BUTTON_RADIUS, c[0]);
+        mPort->drawRect(r, pdg::Attributes().lineColor(c[0]));
         r.shrink(1);
-        mPort->frameRoundRect(r, BUTTON_RADIUS, c[1]);
+        mPort->drawRect(r, pdg::Attributes().lineColor(c[1]));
         r.shrink(1);
-        mPort->frameRoundRect(r, BUTTON_RADIUS, c[2]);
+        mPort->drawRect(r, pdg::Attributes().lineColor(c[2]));
         r.grow(3);
     }
     
@@ -289,15 +292,15 @@ void Button::drawStandardButtonBackground()
     r.top -= 5;
     r.left -= 5;
 
-    mPort->frameRoundRect(r, BUTTON_RADIUS, PDG_GRAY_70_COLOR);
+    mPort->drawRect(r, pdg::Attributes().lineColor(PDG_GRAY_70_COLOR));
     r.shrink(1);
-    mPort->frameRoundRect(r, BUTTON_RADIUS - 2.0f, c[3]);
-    mPort->frameRoundRect(r, BUTTON_RADIUS - 1.0f, c[3]);
+    mPort->drawRect(r, pdg::Attributes().lineColor(c[3]));
+    mPort->drawRect(r, pdg::Attributes().lineColor(c[3]));
     r.shrink(1);
-    mPort->frameRoundRect(r, BUTTON_RADIUS - 2.0f, c[4]);
-    mPort->frameRoundRect(r, BUTTON_RADIUS - 1.0f, c[4]);
+    mPort->drawRect(r, pdg::Attributes().lineColor(c[4]));
+    mPort->drawRect(r, pdg::Attributes().lineColor(c[4]));
     r.shrink(1);
-    mPort->frameRoundRect(r, BUTTON_RADIUS - 2.0f, c[5]);
+    mPort->drawRect(r, pdg::Attributes().lineColor(c[5]));
     r.grow(3);
 
     r = mViewArea;
@@ -308,7 +311,7 @@ void Button::drawStandardButtonBackground()
     r.top = mViewArea.top;
     r.bottom -= 1;
     
-    mPort->frameRoundRect(r, BUTTON_RADIUS, PDG_BLACK_COLOR);
+    mPort->drawRect(r, pdg::Attributes().lineColor(PDG_BLACK_COLOR));
 
     // restore original clip rect
     mPort->setClipRect(clipSave);
@@ -317,13 +320,13 @@ void Button::drawStandardButtonBackground()
 // handler shows all the tooltips for button
 void Button::doMouseMove(const MouseInfo *mi,  int id, int part)
 {
-	if(!mIsToolTipEnabled)
+	if (!mIsToolTipEnabled)
 		return ;
 	Point mousePts = mi->mousePos;
 	Rect rToolRect;
-	if(mousePts.x>0 && mousePts.y>0){	// the points are not outside the wnd area
+	if (mousePts.x>0 && mousePts.y>0){	// the points are not outside the wnd area
 		int nArea = IsMouseInToolArea(mousePts,rToolRect);//IsPointInPlayerNameArea(mousePts);// check if pts lie anywhere in our tooltip area
-		if(nArea){
+		if (nArea){
 			showToolTip(nArea,mousePts,rToolRect);	// show the tooltip window, if it lies in tool area
 			nHasChangedAreaHit = nArea;		// update the last hit
 		}else{
@@ -352,29 +355,10 @@ bool Button::IsMouseInToolArea(Point pts,Rect & rToolRect)
 // display the tooltip if it lies on any area else hide it
 void Button::showToolTip(int nArea, Point pts,Rect & rToolRect)
 {
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-	if(nArea > -1 && (nArea != nHasChangedAreaHit)){// mouse area has change, show tooltip with changed text
-		// we got a new hit
-		if(mToolTipCtrl !=0){
-			mToolTipCtrl->show(rToolRect);// display the tooltip
-			nHasChangedAreaHit = nArea;
-		}
-	}else if(nArea==-1){// hit was no where, hide the tooltip window
-		if(mToolTipCtrl !=0)
-		mToolTipCtrl->hide();
-		nHasChangedAreaHit=-1;
-	}
-#endif
 }
 
 void Button::setToolTipText(std::string sText)
 {
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-	mIsToolTipEnabled = true;
-	nHasChangedAreaHit =-1;
-	mToolTipCtrl = new ToolTipCtrl(mController,sText);
-	CHECK_NEW(mToolTipCtrl, ToolTipCtrl);
-#endif
 }
 
 } // namespace pdg

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getAppliedCharacterMaps()
+
+\brief returns an array of all currently applied character map names
+
+**/ }

@@ -31,6 +31,7 @@
 
 #include "pdg/framework.h"
 #include "pdg/app/MessageView.h"
+#include "pdg/sys/attributes.h"
 
 #ifndef PDG_ALLOW_DEPRECATED_CALLS
 #error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use MessageView.cpp
@@ -73,7 +74,7 @@ void MessageView::loadImages()
 	
 void MessageView::drawSelf()
 {
-	mPort->fillRect(mViewArea, MESSAGE_BACKGROUND_COLOR);
+	mPort->drawRect(mViewArea, Attributes().fillColor(MESSAGE_BACKGROUND_COLOR));
 	// Fill in header text
 	Rect textArea = Rect(BORDER_SPACER, BORDER_SPACER, mViewArea.width() - BORDER_SPACER, mViewArea.height() - BORDER_SPACER);
 	

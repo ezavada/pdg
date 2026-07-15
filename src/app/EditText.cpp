@@ -30,13 +30,8 @@
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
 
 #include "pdg/app/EditText.h"
+#include "pdg/sys/attributes.h"
 #include "timerids.h"
-
-// TODO: remove these catan specific things
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-#include "CatanUIConsts.h"
-#define EDITTEXT_COLOR CATAN_BUTTON_COLOR
-#endif
 
 #ifndef EDITTEXT_COLOR
    #define EDITTEXT_COLOR          Color(255, 207, 82)
@@ -46,7 +41,7 @@
 
 namespace pdg {
 
-EditText::EditText(Controller* controller, Rect viewArea, int resourceID,int fontSize, Color bkColor, Color sTextColor, Graphics::Style textStyle)
+EditText::EditText(Controller* controller, Rect viewArea, int resourceID,int fontSize, Color bkColor, Color sTextColor, Style textStyle)
 : View(controller, viewArea),
 mResMgr(controller->getApplication().getResourceManager()),
 mbkColor(bkColor),mTextColor(sTextColor),mFontSize(fontSize),mStyle(textStyle),
@@ -67,14 +62,14 @@ mLogMgr(&controller->getApplication().getLogManager())
 	mBlockedKeys.erase();
 	// Make sure the text style is always left justified, Otherwise text will be drawn 
 	// outside view area
-	if(Graphics::textStyle_Centered == (mStyle & Graphics::textStyle_Centered)) {
-		mStyle = (Graphics::Style)(mStyle & (~Graphics::textStyle_Centered));
+	if (textStyle_Centered == (mStyle & textStyle_Centered)) {
+		mStyle = (Style)(mStyle & (~textStyle_Centered));
 	}
-	if(Graphics::textStyle_RightJustified == (mStyle & Graphics::textStyle_RightJustified)) {
-		mStyle = (Graphics::Style)(mStyle & (~Graphics::textStyle_RightJustified));
+	if (textStyle_RightJustified == (mStyle & textStyle_RightJustified)) {
+		mStyle = (Style)(mStyle & (~textStyle_RightJustified));
 	}
 
-	if(!mPort->getDrawingArea().contains(viewArea))
+	if (!mPort->getDrawingArea().contains(viewArea))
 	{
 		viewArea = mPort->getDrawingArea();
 		viewArea.bottom = viewArea.top + mPort->getCurrentFont(mStyle)->getFontHeight(mFontSize,mStyle) + TEXT_HEIGHT_OFFSET;
@@ -90,7 +85,7 @@ mLogMgr(&controller->getApplication().getLogManager())
 	mResMgr.getString(aString,resourceID);
 	int nTextWidth = mPort->getTextWidth("W",mFontSize,mStyle,1); 
 	int charViewable = ( mViewArea.width() - (LEFT_MARGIN + RIGHT_MARGIN) )  / nTextWidth;
-	if(aString.length() > (unsigned)charViewable)
+	if (aString.length() > (unsigned)charViewable)
 	{
 		// trim extra characters
 		aString = aString.substr(0,charViewable);
@@ -121,7 +116,7 @@ void EditText::setFilter(const char* allowedKeys, const char* blockedKeys)
 
 bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 {
-	if(ki->unicode == 0 && ki->alt == true) // work around for avoiding KeyPress
+	if (ki->unicode == 0 && ki->alt == true) // work around for avoiding KeyPress
 											// when main game window is minimised or maximised
 	{
 		return true;
@@ -129,16 +124,17 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 
 	bool movement = false;
 
-	if( (ki->unicode == key_Backspace) /*|| (ki->unicode == key_Delete)*/ ) // backspace or delete key
+	if ( (ki->unicode == key_Backspace) /*|| (ki->unicode == key_Delete)*/ ) // backspace or delete key
 	{
-		if(-1 != highlightStartCharIndex)
+		if (-1 != highlightStartCharIndex)
 		{
-			if(highlightStartCharIndex < highlightEndCharIndex)
+			if (highlightStartCharIndex < highlightEndCharIndex)
 			{
 				mText.erase(highlightStartCharIndex,highlightEndCharIndex - highlightStartCharIndex);
 				caretPos = highlightStartCharIndex;	
 				highlightStartCharIndex = -1;
 				movement = true;
+				notifyObservers();
 			}
 			else
 			{
@@ -146,42 +142,47 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 				caretPos = highlightEndCharIndex;	
 				highlightStartCharIndex = -1;
 				movement = true;
+				notifyObservers();
 			}
 		}
-		else if(caretPos > 0)
+		else if (caretPos > 0)
 		{
 			mText.erase(caretPos-1,1);
 			caretPos -= 1;
 			movement = true;
+			notifyObservers();
 		}
 		else // caretPos is zero, nothing to delete
 			return true;
 	}
 
-	if( (ki->unicode == key_Delete) ) // backspace or delete key
+	if ( (ki->unicode == key_Delete) ) // backspace or delete key
 	{
-		if(-1 != highlightStartCharIndex)
+		if (-1 != highlightStartCharIndex)
 		{
-			if(highlightStartCharIndex < highlightEndCharIndex)
+			if (highlightStartCharIndex < highlightEndCharIndex)
 			{
 				mText.erase(highlightStartCharIndex,highlightEndCharIndex - highlightStartCharIndex);
 				caretPos = highlightStartCharIndex;	
 				highlightStartCharIndex = -1;
 				movement = true;
+				notifyObservers();
 			}
 			else
 			{
                 mText.erase(highlightEndCharIndex,highlightStartCharIndex - highlightEndCharIndex);
 				caretPos = highlightEndCharIndex;	
 				highlightStartCharIndex = -1;
-				movement = true;
+				movement = true;	
+				notifyObservers();
 			}
 
 		}
-		else if(caretPos >= 0 && mText.length() > 0)
+		else if (caretPos >= 0 && mText.length() > 0)
 		{
 			mText.erase(caretPos,1);
 			movement = true;
+			notifyObservers();
 		}
 		else // caretPos is zero, nothing to delete
 			return true;
@@ -192,8 +193,8 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 	}
 	
 	if (ki->unicode == key_UpArrow || ki->unicode == key_Home) {
-		if(ki->shift){
-			if(-1 == highlightStartCharIndex)
+		if (ki->shift){
+			if (-1 == highlightStartCharIndex)
 			{
 				highlightStartCharIndex = caretPos;
 				highlightEndCharIndex = 0;
@@ -217,8 +218,8 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 		movement = true;        
     }
 	if (ki->unicode == key_DownArrow || ki->unicode == key_End) {
-		if(ki->shift){
-			if(-1 == highlightStartCharIndex)
+		if (ki->shift){
+			if (-1 == highlightStartCharIndex)
 			{
 				highlightStartCharIndex = caretPos;
 				highlightEndCharIndex =  mText.length();
@@ -253,8 +254,8 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
     }
     if (ki->unicode == key_LeftArrow){
 		if (caretPos > 0){
-			if(ki->shift){
-                if(-1 == highlightStartCharIndex)
+			if (ki->shift){
+                if (-1 == highlightStartCharIndex)
 				{
 					highlightStartCharIndex = caretPos;
 					highlightEndCharIndex = caretPos - 1;
@@ -286,13 +287,13 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 			caretPos -= 1;
     		movement = true;        			
 		}
-		else if(!ki->shift)
+		else if (!ki->shift)
 			highlightStartCharIndex = -1;
 	}
     if (ki->unicode == key_RightArrow) {
         if ((unsigned)caretPos <= mText.length()) {
-			if(ki->shift){
-                if(-1 == highlightStartCharIndex)
+			if (ki->shift){
+                if (-1 == highlightStartCharIndex)
 				{
 					highlightStartCharIndex = caretPos;
 					highlightEndCharIndex = caretPos + 1;
@@ -324,7 +325,7 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 			caretPos += 1;
     		movement = true;        
 		}
-		else if(!ki->shift)
+		else if (!ki->shift)
 			highlightStartCharIndex = -1;
     }
     if (movement) {
@@ -337,8 +338,8 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 	}
 	
 	// check pressed key in filter. Allowed filter has precedance over Blocked filter
-	if(mAllowedKeys.npos == mAllowedKeys.find((utf16char)ki->unicode))
-		if(mAllowedKeys.npos != mBlockedKeys.find((utf16char)ki->unicode))
+	if (mAllowedKeys.npos == mAllowedKeys.find((utf16char)ki->unicode))
+		if (mAllowedKeys.npos != mBlockedKeys.find((utf16char)ki->unicode))
 			return true;
 
 	// Before inserting, appending or prepending character, check whether the resulting string
@@ -347,14 +348,14 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 		return true;
 
 	// and can fit in display area
-	if(!canFitInDisplayArea(ki))
+	if (!canFitInDisplayArea(ki))
 		return true; // does not fit in display area
 
-	if(caretPos == 0) // add character at beginning
+	if (caretPos == 0) // add character at beginning
 	{
-		if(-1 != highlightStartCharIndex)
+		if (-1 != highlightStartCharIndex)
 		{
-			if(highlightStartCharIndex < highlightEndCharIndex)
+			if (highlightStartCharIndex < highlightEndCharIndex)
 			{
 				mText.erase(highlightStartCharIndex,highlightEndCharIndex - highlightStartCharIndex);
 				caretPos = highlightStartCharIndex;	
@@ -371,12 +372,13 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 		str = utf16char(ki->unicode);
 		mText = str + mText;
 		caretPos += 1;
+		notifyObservers();
 	}
-	else if((unsigned)caretPos >= mText.length()) // append character
+	else if ((unsigned)caretPos >= mText.length()) // append character
 	{
-		if(-1 != highlightStartCharIndex)
+		if (-1 != highlightStartCharIndex)
 		{
-			if(highlightStartCharIndex < highlightEndCharIndex)
+			if (highlightStartCharIndex < highlightEndCharIndex)
 			{
 				mText.erase(highlightStartCharIndex,highlightEndCharIndex - highlightStartCharIndex);
 				highlightStartCharIndex = -1;
@@ -391,12 +393,13 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 		}
 		mText += utf16char(ki->unicode);
 		caretPos += 1;
+		notifyObservers();
 	}
 	else								// insert character at caret possition
 	{
-		if(-1 != highlightStartCharIndex)
+		if (-1 != highlightStartCharIndex)
 		{
-			if(highlightStartCharIndex < highlightEndCharIndex)
+			if (highlightStartCharIndex < highlightEndCharIndex)
 			{
 				mText.erase(highlightStartCharIndex,highlightEndCharIndex - highlightStartCharIndex);
 				caretPos = highlightStartCharIndex;	
@@ -414,6 +417,7 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 		str = utf16char(ki->unicode);
 		mText.insert(caretPos,str);
 		caretPos += 1;
+		notifyObservers();
 	}
 	View::draw();
 //#ifdef DEBUG
@@ -436,28 +440,28 @@ void EditText::drawSelf()
 	std::string aString("");
 	OS::utf16to8(aString, mText);
 	// fill text rect
-	mPort->fillRect(tempRect,mbkColor);
+	mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
 	// draw text 
 	Point textPoint = tempRect.leftTop();
 	textPoint.x += LEFT_MARGIN;	// left
 	textPoint.y = textPoint.y + mPort->getCurrentFont()->getFontHeight(mFontSize,mStyle);// + TEXT_HEIGHT_OFFSET/2; //top	
 	if (-1 != highlightStartCharIndex ) {
-		if(highlightStartCharIndex > highlightEndCharIndex)
+		if (highlightStartCharIndex > highlightEndCharIndex)
 		{
 			Rect highlightRect = mViewArea;			
-			highlightRect.left = LEFT_MARGIN + mViewArea.left + highlightEndPoint.y;
-			highlightRect.right = mViewArea.left + LEFT_MARGIN + highlightStartPoint.y;
-			mPort->fillRect(highlightRect,EDITTEXT_COLOR);
-		}
-		else if(highlightStartCharIndex < highlightEndCharIndex)
-		{
-			Rect highlightRect = mViewArea;
-			highlightRect.left = LEFT_MARGIN + mViewArea.left + highlightStartPoint.y;
-			highlightRect.right = LEFT_MARGIN + mViewArea.left + highlightEndPoint.y;
-			mPort->fillRect(highlightRect,EDITTEXT_COLOR);
-		}
+		highlightRect.left = LEFT_MARGIN + mViewArea.left + highlightEndPoint.y;
+		highlightRect.right = mViewArea.left + LEFT_MARGIN + highlightStartPoint.y;
+		mPort->drawRect(highlightRect, Attributes().fillColor(EDITTEXT_COLOR));
 	}
-	mPort->drawText(aString.c_str(), textPoint, mFontSize,mStyle,mTextColor);
+		else if (highlightStartCharIndex < highlightEndCharIndex)
+		{
+		Rect highlightRect = mViewArea;
+		highlightRect.left = LEFT_MARGIN + mViewArea.left + highlightStartPoint.y;
+		highlightRect.right = LEFT_MARGIN + mViewArea.left + highlightEndPoint.y;
+		mPort->drawRect(highlightRect, Attributes().fillColor(EDITTEXT_COLOR));
+	}
+}
+	mPort->drawText(aString.c_str(), textPoint, Attributes().textSize(mFontSize).textStyle(mStyle).fillColor(mTextColor));
 	// draw border
 	drawBorder();	
 	// draw caret
@@ -478,12 +482,12 @@ void EditText::drawCaret()
 		Rect caretRect = mViewArea;
 		caretRect.left = caretRect.left + nTextWidth + LEFT_MARGIN;
 		caretRect.right = caretRect.left+1;
-		caretRect.top += 1;
-		caretRect.bottom -= 1;
-		if(mbShowCaret)
-			mPort->fillRect(caretRect);
-		else
-			mPort->fillRect(caretRect, mbkColor);
+	caretRect.top += 1;
+	caretRect.bottom -= 1;
+	if (mbShowCaret)
+		mPort->drawRect(caretRect, Attributes().fillColor(PDG_BLACK_COLOR));
+	else
+		mPort->drawRect(caretRect, Attributes().fillColor(mbkColor));
 	}
 }
 
@@ -502,8 +506,8 @@ void EditText::drawBorder()
 	leftBottom.y -= 2;
 	rightBottom = Point(tempRect.right,tempRect.bottom);
 
-	mPort->drawLineEx(leftTop,rightTop,2,Graphics::solidPat,0, PDG_BLACK_COLOR);
-	mPort->drawLineEx(leftTop,leftBottom,2,Graphics::solidPat,0,PDG_BLACK_COLOR);
+	mPort->drawLine(leftTop,rightTop, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(2));
+	mPort->drawLine(leftTop,leftBottom, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(2));
 
 /*	tempRect.shrink(2);
 	leftTop = Point(tempRect.left,tempRect.top);
@@ -511,11 +515,11 @@ void EditText::drawBorder()
 	leftBottom = Point(tempRect.left,tempRect.bottom);
 	rightBottom = Point(tempRect.right,tempRect.bottom);
 
-//	mPort->drawLineEx(rightTop,rightBottom,2,Graphics::solidPat,0,PDG_WHITE_COLOR,Graphics::halfTransparent);
+//	mPort->drawLine(rightTop,rightBottom,PDG_WHITE_COLOR,2);
 
 	rightBottom.x += 1;
 
-	//mPort->drawLineEx(leftBottom,rightBottom,2,Graphics::solidPat,0,PDG_WHITE_COLOR,Graphics::halfTransparent);*/
+	//mPort->drawLine(leftBottom,rightBottom,PDG_WHITE_COLOR,2);*/
 }
 
 void EditText::setFocus(bool bFocus)
@@ -533,9 +537,9 @@ bool EditText::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEv
 	if (inEventType == eventType_Timer)
 	{
 		TimerInfo* ti = static_cast<TimerInfo*>(inEventData);
-		if(mController->isActive() && (ti->id == PDG_START_CURSOR_BLINK))   // don't flash caret unless we are active
+		if (mController->isActive() && (ti->id == PDG_START_CURSOR_BLINK))   // don't flash caret unless we are active
 		{
-			if(mbShowCaret)
+			if (mbShowCaret)
 			{
 				mbShowCaret = false;
 				//drawSelf();
@@ -559,7 +563,7 @@ bool EditText::canFitInDisplayArea(const KeyPressInfo* ki)
 	strTemp += utf16char(ki->unicode);
 	std::string aString("");
 	OS::utf16to8(aString, strTemp);
-	if( (mViewArea.width()-LEFT_MARGIN-RIGHT_MARGIN) > mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length())) 
+	if ( (mViewArea.width()-LEFT_MARGIN-RIGHT_MARGIN) > mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length())) 
 		return true; 
 	else
 		return false;
@@ -576,6 +580,7 @@ void EditText::setText(const char *text)
 	OS::utf8to16(mText, aString);
     selectAll();
 	draw();
+	notifyObservers();
 }
 	
 /*
@@ -596,9 +601,9 @@ void EditText::doMouseMove(const MouseInfo *mi, int id, int part)
 	mbShowCaret = true;
 	std::string UTF8str("");
 
-	if(mi->leftButton)
+	if (mi->leftButton)
 	{
-        if(mText.length() == 0)
+        if (mText.length() == 0)
 		{
             caretPos = 0;
 			highlightStartCharIndex = -1;
@@ -607,7 +612,7 @@ void EditText::doMouseMove(const MouseInfo *mi, int id, int part)
 		{
             utf16string str;
 			str.erase();
-			if(-1 == highlightStartCharIndex)
+			if (-1 == highlightStartCharIndex)
 				highlightStartCharIndex = caretPos;
 			
 			caretPos = 0;
@@ -615,7 +620,7 @@ void EditText::doMouseMove(const MouseInfo *mi, int id, int part)
 			{
 				str += mText.at(i);
 				OS::utf16to8(UTF8str, str);
-				if(mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
+				if (mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
 					caretPos += 1;
 				else
 					break;
@@ -644,9 +649,9 @@ bool EditText::doMouseDown(const MouseInfo *mi, int id, int part)
 	mbHasFocus = true;
 	mbShowCaret = true;
 	std::string UTF8str("");
-	if(mi->shift)
+	if (mi->shift)
 	{
-		if(-1 == highlightStartCharIndex)
+		if (-1 == highlightStartCharIndex)
 			highlightStartCharIndex = caretPos;
 	}
 	else
@@ -660,7 +665,7 @@ bool EditText::doMouseDown(const MouseInfo *mi, int id, int part)
 	{
 		str += mText.at(i);
 		OS::utf16to8(UTF8str, str);
-		if(mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
+		if (mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
 			caretPos += 1;
 		else
 			break;
@@ -686,7 +691,7 @@ bool EditText::doMouseUp(const MouseInfo *mi, int id, int part)
 {
 	std::string UTF8str("");
 	
-	if(mText.length() == 0)
+	if (mText.length() == 0)
 	{
 		caretPos = 0;
 		highlightStartCharIndex = -1;
@@ -700,7 +705,7 @@ bool EditText::doMouseUp(const MouseInfo *mi, int id, int part)
 		{
 			str += mText.at(i);
 			OS::utf16to8(UTF8str, str);
-			if(mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
+			if (mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
 				caretPos += 1;
 			else
 				break;
@@ -729,7 +734,7 @@ bool EditText::doDoubleClick(const MouseInfo *mi, int id, int part, int clickCou
 	str.erase();
 	caretPos = 0;
 
-	if(mText.length() == 0)
+	if (mText.length() == 0)
 	{
 		caretPos = 0;
 		highlightStartCharIndex = -1;
@@ -740,16 +745,16 @@ bool EditText::doDoubleClick(const MouseInfo *mi, int id, int part, int clickCou
 		unsigned int i;
         for(i=0; i < mText.length(); i++)
 		{
-			if(mText.at(i) == 0x20)
+			if (mText.at(i) == 0x20)
 			{
-				if(!wordFound)
+				if (!wordFound)
                     wordFound = false;
 				else
 					newWord = true;
 			}
 			else
 			{
-				if(!wordFound || newWord)
+				if (!wordFound || newWord)
 				{
 					highlightStartCharIndex = i;
                     wordFound = true;
@@ -761,21 +766,21 @@ bool EditText::doDoubleClick(const MouseInfo *mi, int id, int part, int clickCou
 			// one or more spaces
 			str += mText.at(i);
 			OS::utf16to8(UTF8str, str);
-			if(mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
+			if (mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
 				caretPos += 1;
 			else
 				break;
 		}
-		if(wordFound)
+		if (wordFound)
 		{
 			highlightEndCharIndex = caretPos;
-			if(i >= mText.length())
+			if (i >= mText.length())
 				caretPos = highlightEndCharIndex = mText.length();	
 			else
 			{
 				for(;i < mText.length() && mText.at(i) != 0x20; i++)
 					caretPos = highlightEndCharIndex = i+1;
-				if(i >= mText.length())
+				if (i >= mText.length())
 					caretPos = highlightEndCharIndex = mText.length();
 				else
 				{
@@ -785,7 +790,7 @@ bool EditText::doDoubleClick(const MouseInfo *mi, int id, int part, int clickCou
 			}
 		}
 
-		if(-1 != highlightStartCharIndex)
+		if (-1 != highlightStartCharIndex)
 		{
 			str = mText.substr(0,highlightStartCharIndex);
 			// convert str from UTF16 to UTF8
@@ -806,7 +811,7 @@ bool EditText::doDoubleClick(const MouseInfo *mi, int id, int part, int clickCou
 
 void EditText::selectAll()
 {
-	if(mText.length() == 0)
+	if (mText.length() == 0)
 	{
 		caretPos = 0;
 		highlightStartCharIndex = -1;

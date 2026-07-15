@@ -35,6 +35,7 @@
 
 #include "pdg/sys/coordinates.h"
 #include "pdg/sys/singleton.h"
+#include <vector>
 
 namespace pdg {
 
@@ -47,8 +48,14 @@ namespace pdg {
 // -----------------------------------------------------------------------------------
 
 class Port;
+class PortImpl;
 class Font;
 
+    enum {
+        screenNum_PrimaryScreen = -1,
+        screenNum_BestFitScreen = -2
+    };
+    
 // -----------------------------------------------------------------------------------
 //! Graphics Manager
 //! Used to create and track ports
@@ -57,11 +64,6 @@ class Font;
 class GraphicsManager : public Singleton<GraphicsManager> {
 friend class Singleton<GraphicsManager>;
 public:
-    enum {
-        screenNum_PrimaryScreen = -1,
-        screenNum_BestFitScreen = -2
-    };
-    
     struct ScreenMode {
     	long width;
     	long height;
@@ -77,6 +79,10 @@ public:
     //! discounting menu bars, docks, window frames, etc...
     virtual ScreenMode   getCurrentScreenMode(int screenNum = screenNum_PrimaryScreen,
     	pdg::Rect* maxWindowRect = 0);
+
+    //! returns the bounds (position and size) of a screen in the global coordinate space
+    //! this is useful for multi-monitor setups to determine where each screen is positioned
+    virtual pdg::Rect   getScreenBounds(int screenNum = screenNum_PrimaryScreen);
 
     //! returns the number of screens modes a particular screen supports
     virtual int   getNumSupportedScreenModes(int screenNum = screenNum_PrimaryScreen);
@@ -109,6 +115,12 @@ public:
     //! the application to quit
     virtual void    closeGraphicsPort(Port* port = 0);
 
+    //! close all active graphics ports (e.g. for test harness cleanup before exit)
+    virtual void    closeAllGraphicsPorts();
+
+    //! invalidate all OpenGL textures when graphics context is destroyed
+    virtual void    invalidateAllTextures();
+
     //! create a font
     virtual Font*   createFont(const char* fontName, float scalingFactor = 1.0f);
 
@@ -121,6 +133,9 @@ public:
     //! you might also use this before closing the old main port if you are replacing 
     //! it with a new one, that will avoid triggering the app to quit
     virtual void    setMainPort(Port* port);
+
+    //! get all active ports for drawing (used by the main loop to post draw events)
+    virtual std::vector<Port*> getAllActivePorts();
 
 	//! make a port be fullscreen 
     //! if port is not passed it will default to the main port
@@ -153,6 +168,8 @@ public:
 	// location of the primary pointing device is returned (ie: same as getMouse(0) )
     virtual Point   getMouse(int mouseNumber = 0);
 
+
+
 // lifecycle
 /// @cond C++
     virtual ~GraphicsManager();
@@ -173,6 +190,15 @@ protected:
 	Rect  mSavedWindowPos[kMaxScreens];
 	long  mSavedScreenWidth[kMaxScreens];
 	long  mSavedScreenHeight[kMaxScreens];
+	
+	// Track all active ports
+	std::vector<PortImpl*> mActivePorts;
+	
+	// Add port to active list
+	void addActivePort(PortImpl* port);
+	
+	// Remove port from active list
+	void removeActivePort(PortImpl* port);
 /// @endcond
 };
 

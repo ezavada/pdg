@@ -28,28 +28,37 @@
 // -----------------------------------------------
 
 
+#include "pdg/sys/events.h"
 #include "pdg_project.h"
 
+#include "pdg/sys/global_types.h"
 #include "pdg/sys/os.h"
 #include "pdg/sys/sprite.h"
 #include "pdg/sys/spritelayer.h"
 #include "pdg/sys/iserializer.h"
 #include "pdg/sys/ideserializer.h"
+#include "pdg/sys/eventmanager.h"
+#include "pdg/sys/resource.h"
 
 #include "spritemanager.h"
 #include "internals.h"
 
-#ifdef PDG_SCML_SUPPORT
-#include "SCML_pdg.h"
-#endif
+// define this here to get debug rendering of spriter elements
+#define PDG_DEBUG_SPRITER
+
+#ifdef PDG_SPRITER_SUPPORT
+  #ifdef PDG_DEBUG_SPRITER
+    #include "spriterengine/global/settings.h"
+  #endif // PDG_DEBUG_SPRITER
+#endif // PDG_SPRITER_SUPPORT
 
 #include <algorithm>
-#include <fstream>
 
 // define the following in your build environment, or uncomment it here to get
 // debug output for the core events and timers
 //#define PDG_DEBUG_SPRITELAYER
 //#define PDG_DEBUG_SERIALIZATION
+//#define PDG_DEBUG_EVENTS
 
 #ifndef PDG_DEBUG_SPRITELAYER
   #define SPRITELAYER_DEBUG_ONLY(_expression)
@@ -61,6 +70,11 @@
   #define SERIALIZATION_DEBUG_ONLY(_expression)
 #else
   #define SERIALIZATION_DEBUG_ONLY(_expression) _expression
+#endif
+#ifndef PDG_DEBUG_EVENTS
+  #define EVENTS_DEBUG_ONLY(_expression)
+#else
+  #define EVENTS_DEBUG_ONLY(_expression) _expression
 #endif
 
 #ifndef PI
@@ -76,12 +90,12 @@
 #ifdef PDG_DESERIALIZER_NO_THROW
 	// we can't throw, so we report errors but don't exit
 	#define STREAM_SAFETY_CHECK(_cond, _msg, _except) if (!(_cond)) { char buf[1024]; buf[0] = 0;\
-		std::sprintf(buf, "%s: %s at %s (%s:%d)", #_except, _msg, __FUNCTION__, __FILE__, __LINE__); \
+		std::snprintf(buf, sizeof(buf), "%s: %s at %s (%s:%d)", #_except, _msg, __FUNCTION__, __FILE__, __LINE__); \
 		DEBUG_PRINT(buf); }
 #else
 	// we throw exceptions on errors
 	#define STREAM_SAFETY_CHECK(_cond, _msg, _except) if (!(_cond)) { char buf[1024]; buf[0] = 0;\
-		std::sprintf(buf, "%s: %s at %s (%s:%d)", #_except, _msg, __FUNCTION__, __FILE__, __LINE__); \
+		std::snprintf(buf, sizeof(buf), "%s: %s at %s (%s:%d)", #_except, _msg, __FUNCTION__, __FILE__, __LINE__); \
 		throw _except(buf); }
 #endif
 
@@ -96,36 +110,48 @@
 
 namespace pdg {
 
-#ifdef PDG_SCML_SUPPORT
-	SCML_pdg::FileSystem gSCMLFileSystem;
-#endif
-
 long gNextLayerId = 1;
 static uint32 sUniqueLayerId = 1;
 
+long gNextSpriteEventId = 1;
 
-void SpriteAnimateInfo_ReleaseSprites(void* ptr);
-void SpriteCollideInfo_ReleaseSprites(void* ptr);
+void SpriteAnimateInfo_ReleaseActingSprite(void* ptr);
+void SpriteCollideInfo_ReleaseSpritesAndFreeStrings(void* ptr);
 
-void SpriteAnimateInfo_ReleaseSprites(void* ptr) {
+void SpriteAnimateInfo_ReleaseActingSprite(void* ptr) {
 	if (!ptr) return;
 	SpriteAnimateInfo* sai = static_cast<SpriteAnimateInfo*>(ptr);
 	if (sai->actingSprite) {
+		EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteAnimateInfo_ReleaseActingSprite id: %d actingSprite: %p", sai->id, sai->actingSprite));
 		sai->actingSprite->release();
 		sai->actingSprite = 0;
 	}
 }
-
-void SpriteCollideInfo_ReleaseSprites(void* ptr) {
+	
+void SpriteCollideInfo_ReleaseSpritesAndFreeStrings(void* ptr) {
+    EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteCollideInfo_ReleaseSpritesAndFreeStrings ptr: %p", ptr));
 	if (!ptr) return;
-	SpriteAnimateInfo_ReleaseSprites(ptr);
+	SpriteAnimateInfo_ReleaseActingSprite(ptr);
 	SpriteCollideInfo* sci = static_cast<SpriteCollideInfo*>(ptr);
 	if (sci->targetSprite) {
+		EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteCollideInfo_ReleaseSpritesAndFreeStrings id: %d targetSprite: %p", sci->id, sci->targetSprite));
 		sci->targetSprite->release();
 		sci->targetSprite = 0;
 	}
+#ifdef PDG_SPRITER_SUPPORT
+	// Free collision name strings if they were allocated for enqueued events
+	if (sci->collisionName) {
+		EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteCollideInfo_ReleaseSpritesAndFreeStrings id: %d collisionName: %s", sci->id, sci->collisionName));
+		free(const_cast<char*>(sci->collisionName));
+		sci->collisionName = 0;
+	}
+	if (sci->withCollisionName) {
+		EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteCollideInfo_ReleaseSpritesAndFreeStrings id: %d withCollisionName: %s", sci->id, sci->withCollisionName));
+		free(const_cast<char*>(sci->withCollisionName));
+		sci->withCollisionName = 0;
+	}
+#endif // PDG_SPRITER_SUPPORT
 }
-
 
 
 // -----------------------------------------------------------------------------------
@@ -138,34 +164,37 @@ void SpriteLayer::setSerializationFlags(uint32 flags) {
 }
 
 uint32 SpriteLayer::getSerializedSize(ISerializer* serializer) const {
+	if ( (mSerFlags == ser_Micro) || (mSerFlags == ser_Positions) ) {
+        serializer->setSendTags(false);  // we don't want to send any unnecessary data
+    }
 	uint32 totalSize = 0;
 	Sprite* sprite = 0;
 	uint32 count = 0;
 	totalSize += 1;  // size of PDG_SPRITE_LAYER_STREAM_VERSION
-	totalSize += serializer->serializedSize(mSerFlags); // size of serializable flags
+	totalSize += serializer->sizeof_uint(mSerFlags); // size of serializable flags
 	if ( (mSerFlags == ser_Micro) || (mSerFlags == ser_Positions) ) {
 		// special case, smallest possible update, basically just the sprites
 		sprite = mFirstSprite;
 		while (sprite) {
 			count++;
 			if (mSerFlags & ser_ZOrder) {
-				totalSize += serializer->serializedSize(sprite->iid);
+				totalSize += serializer->sizeof_uint(sprite->iid);
 			}
-			// normally we would call serializer->serializedSize(sprite), but
+			// normally we would call serializer->sizeof_obj(sprite), but
 			// that adds a bunch of overhead for object tags and such that we don't want
 			// this only gives us the size of the data
 			totalSize += sprite->getSerializedSize(serializer);
 			sprite = sprite->mNextSprite;
 		}
-		totalSize += serializer->serializedSize(count);
+		totalSize += serializer->sizeof_uint(count);
 	} else {
 	  #ifdef PDG_TAG_SERIALIZED_DATA
 		totalSize += 4;  // size of request magic number
 	  #endif
 		totalSize += 2; // size layerFlags
 		if (mSerFlags & ser_InitialData) {
-			totalSize += serializer->serializedSize(iid);
-			totalSize += serializer->serializedSize((uint32)layerId);
+			totalSize += serializer->sizeof_uint(iid);
+			totalSize += serializer->sizeof_uint(layerId);
 		}
 		SIZE_FLOAT_LIST_START(2, 15);
 		if (mSerFlags & ser_Positions) {
@@ -216,16 +245,16 @@ uint32 SpriteLayer::getSerializedSize(ISerializer* serializer) const {
 		while (sprite) {
 			count++;
 			if (mSerFlags & ser_ZOrder) {
-				totalSize += serializer->serializedSize(sprite->iid);
+				totalSize += serializer->sizeof_uint(sprite->iid);
 			}
 		  	if (mSerFlags & ser_InitialData) {
-				totalSize += serializer->serializedSize(sprite);
+				totalSize += serializer->sizeof_obj(sprite);
 			} else {
 				totalSize += sprite->getSerializedSize(serializer);
 			}
 			sprite = sprite->mNextSprite;
 		}
-		totalSize += serializer->serializedSize(count); // for count
+		totalSize += serializer->sizeof_uint(count); // for count
 
 	}
 	return totalSize;
@@ -233,6 +262,9 @@ uint32 SpriteLayer::getSerializedSize(ISerializer* serializer) const {
 
 
 void SpriteLayer::serialize(ISerializer* serializer) const {
+	if ( (mSerFlags == ser_Micro) || (mSerFlags == ser_Positions) ) {
+        serializer->setSendTags(false);  // we don't want to send any unnecessary data
+    }
 	Sprite* sprite = 0;
 	uint32 count = 0;
 	serializer->serialize_1u(PDG_SPRITE_LAYER_STREAM_VERSION);
@@ -515,7 +547,7 @@ bool	SpriteLayer::isHidden() {
 	return mHidden;
 }
 
-void	SpriteLayer::fadeIn(int32 msDuration, EasingFunc easing) {
+void	SpriteLayer::fadeIn(ms_delta msDuration, EasingFunc easing) {
 	mDoneFadingInAt = OS::getMilliseconds() + msDuration;
 	Sprite* sprite = mFirstSprite;
 	while (sprite) {
@@ -524,7 +556,7 @@ void	SpriteLayer::fadeIn(int32 msDuration, EasingFunc easing) {
 	}
 }
 
-void	SpriteLayer::fadeOut(int32 msDuration, EasingFunc easing) {
+void	SpriteLayer::fadeOut(ms_delta msDuration, EasingFunc easing) {
 	mDoneFadingOutAt = OS::getMilliseconds() + msDuration;
 	Sprite* sprite = mFirstSprite;
 	while (sprite) {
@@ -849,10 +881,10 @@ SpriteLayer::setZoom(float zoomLevel) {
 }
 
 void
-SpriteLayer::zoomTo(float zoomLevel, int32 msDuration, EasingFunc easing, 
+SpriteLayer::zoomTo(float zoomLevel, ms_delta msDuration, EasingFunc easing, 
 					Rect keepInRect, const Point* centerOn) 
 {
-    int32 saveDelay = mDelayMs;
+    ms_delta saveDelay = mDelayMs;
     if (centerOn != 0) {
         moveTo(*centerOn, msDuration, (zoomLevel < mZoom) ? easeOutExpo : easeInOutQuad);
     }
@@ -974,7 +1006,7 @@ void	SpriteLayer::disableCollisions() {
 }
 
 
-void    SpriteLayer::collide(long msElapsed, SpriteLayer* withLayer, bool deferEvents)  {
+void    SpriteLayer::collide(ms_delta msElapsed, SpriteLayer* withLayer, bool deferEvents)  {
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
   if (!mUseChipmunkPhysics) { // if we are compiled with chipmunk support, make sure we want it for this layer
   #endif
@@ -996,11 +1028,18 @@ void    SpriteLayer::collide(long msElapsed, SpriteLayer* withLayer, bool deferE
                         sprite->impartCollisionImpulse(otherSprite, normal, impulse, kineticEnergy);
                         float dt = ((float)msElapsed) / 1000.0f;
                         float force = impulse.vectorLength() / dt;
+						EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::collide calling notifyCollisionAction sprite"));
 						notifyCollisionAction(Sprite::action_CollideSprite, sprite, normal, impulse, force, kineticEnergy, 
 									  #ifdef PDG_USE_CHIPMUNK_PHYSICS
 										0, // need something for the cpArbiter param
-									  #endif // PDG_USE_CHIPMUNK_PHYSICS							
-										otherSprite, !deferEvents);
+									  #endif // PDG_USE_CHIPMUNK_PHYSICS
+									  #ifdef PDG_SPRITER_SUPPORT
+										sprite->mLastCollisionName.c_str(),
+										otherSprite->mLastCollisionName.c_str(),
+										sprite->mIsFirstContact,
+									  #endif // PDG_SPRITER_SUPPORT
+										otherSprite, 
+										!deferEvents);
 					}
 				}
 				otherSprite = nextOther;
@@ -1049,14 +1088,14 @@ void	SpriteLayer::drawLayer() {
 #endif // ! PDG_NO_GUI
 
 void
-SpriteLayer::animateLayer(long msElapsed) {
+SpriteLayer::animateLayer(ms_delta msElapsed) {
 	Animated::animate(msElapsed);
 
 	mFacingCos = cos(mFacing); // cache these frequently used values
 	mFacingSin = sin(mFacing);
 	
 	SpriteLayerInfo evntInfo;
-	uint32 currMs = OS::getMilliseconds();
+	ms_time currMs = OS::getMilliseconds();
 	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("Animating layer [%p] @ %ld", this, msElapsed); )
 
 	if (mDoneFadingInAt && (currMs > mDoneFadingInAt)) {
@@ -1161,15 +1200,21 @@ void SpriteLayer::checkIfClickEventsStillWanted() {
 }
 #endif // ! PDG_NO_GUI
 
+// some animation actions happen as callbacks from chipmunk during simulation, so we enqueue them
+// to be handled outside of the chipmunk simulation loop.
+// This and notifyCollisionAction are the only two methods that will enqueue events.
 void SpriteLayer::notifyAnimationAction(int action, Sprite* actingSprite, bool sendImmediately) {
+	// Create SpriteAnimateInfo on the stack
 	SpriteAnimateInfo si;
 	si.action = action;
+	si.id = gNextSpriteEventId++;
 	si.actingSprite = actingSprite;
 	si.inLayer = this;
 	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("Sprite [%p] -> anim event %d", actingSprite, action); )
   #ifndef PDG_NO_EVENT_QUEUE
 	if (sendImmediately) {
   #endif
+  		// For immediate events, use UserData to manage the data lifecycle
   		actingSprite->postEvent(eventType_SpriteAnimate, &si);
   #ifndef PDG_NO_EVENT_QUEUE
 	} else {
@@ -1180,19 +1225,34 @@ void SpriteLayer::notifyAnimationAction(int action, Sprite* actingSprite, bool s
 			actingSprite->addRef();
 		}
 		EventManager::getSingletonInstance()->enqueueEvent(eventType_SpriteAnimate, 
-			UserData::makeUserDataViaCopy(&si, sizeof(SpriteAnimateInfo), &SpriteAnimateInfo_ReleaseSprites),
+			UserData::makeUserDataViaCopy(&si, sizeof(SpriteAnimateInfo), 
+			&SpriteAnimateInfo_ReleaseActingSprite),
 			actingSprite);
 	}
   #endif
 }
 
-void SpriteLayer::notifyCollisionAction(int action, Sprite* actingSprite, Vector normal, Vector impulse, float force, float kineticEnergy, 
+// some collision actions happen as callbacks from chipmunk during simulation, so we enqueue them
+// to be handled outside of the chipmunk simulation loop
+// there is also a deferEvents parameter on the SpriteLayer::collide() method that can be used to 
+// control whether the events are sent immediately during the collide() call, or deferred to until
+// the end of the event loop.
+// this and notifyAnimationAction are the only two methods that will enqueue events.
+void SpriteLayer::notifyCollisionAction(int action, Sprite* actingSprite, Vector normal, 
+										Vector impulse, float force, float kineticEnergy, 
                                     #ifdef PDG_USE_CHIPMUNK_PHYSICS
                                         cpArbiter* arbiter,
                                     #endif
+                                    #ifdef PDG_SPRITER_SUPPORT
+                                        const char* collisionName,
+                                        const char* withCollisionName,
+                                        bool isFirstContact,
+                                    #endif // PDG_SPRITER_SUPPORT
                                         Sprite* targetSprite, bool sendImmediately) {
+	// Create SpriteCollideInfo on the stack
 	SpriteCollideInfo si;
 	si.action = action;
+	si.id = gNextSpriteEventId++;
 	si.actingSprite = actingSprite;
 	si.targetSprite = targetSprite;
     si.normal = normal;
@@ -1203,13 +1263,21 @@ void SpriteLayer::notifyCollisionAction(int action, Sprite* actingSprite, Vector
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
 	si.arbiter = arbiter;
   #endif
+  #ifdef PDG_SPRITER_SUPPORT
+	si.collisionName = collisionName;
+	si.withCollisionName = withCollisionName;
+	si.isFirstContact = isFirstContact;
+  #endif // PDG_SPRITER_SUPPORT
   #ifndef PDG_NO_EVENT_QUEUE
 	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("Sprite [%p] -> collide event %d", actingSprite, action); )
 	if (sendImmediately) {
   #endif
-  		actingSprite->postEvent(eventType_SpriteCollide, &si);
+  		// For immediate events, use UserData to manage the data lifecycle
+		EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::notifyCollisionAction calling postEvent id: %d data: %p", si.id, &si));
+  		actingSprite->postEvent(eventType_SpriteCollide,  &si);
   #ifndef PDG_NO_EVENT_QUEUE
 	} else {
+		EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::notifyCollisionAction calling enqueueEvent id: %d", si.id));
 		// if the events are to be deferred, then we will be retaining copies of the Sprite pointers in the SpriteCollideInfo within the queue. 
 		// We need to increment the refcount and make the User Data object call our custom SpriteCollideInfo_ReleaseSprites function when
 		// it goes to free the SpriteCollideInfo object
@@ -1219,8 +1287,25 @@ void SpriteLayer::notifyCollisionAction(int action, Sprite* actingSprite, Vector
 		if (targetSprite) {
 			targetSprite->addRef();
 		}
+		
+		// For enqueued events, we need to make copies of the collision name strings
+		// since they point to data that might be destroyed before the event is processed
+#ifdef PDG_SPRITER_SUPPORT
+		if (si.collisionName && strlen(si.collisionName) > 0) {
+			si.collisionName = strdup(si.collisionName);
+		} else {
+			si.collisionName = nullptr; // make sure a zero length string is treated as a null pointer
+		}
+		if (si.withCollisionName && strlen(si.withCollisionName) > 0) {
+			si.withCollisionName = strdup(si.withCollisionName);
+		} else {
+			si.withCollisionName = nullptr; // make sure a zero length string is treated as a null pointer
+		}
+#endif // PDG_SPRITER_SUPPORT
+		
 		EventManager::getSingletonInstance()->enqueueEvent(eventType_SpriteCollide, 
-			UserData::makeUserDataViaCopy(&si, sizeof(SpriteCollideInfo), &SpriteCollideInfo_ReleaseSprites),
+			UserData::makeUserDataViaCopy(&si, sizeof(SpriteCollideInfo), 
+			&SpriteCollideInfo_ReleaseSpritesAndFreeStrings),
 			actingSprite);
 	}
   #endif
@@ -1254,105 +1339,140 @@ Sprite* SpriteLayer::cloneSprite(const Sprite* originalSprite) {
     return 0;
 }
 
-#ifdef PDG_SCML_SUPPORT
+#ifdef PDG_SPRITER_SUPPORT
 
-// protected method, loads an SCML file and creates a sprite for the named entity, or first entity if no name given
-Sprite* SpriteLayer::createSCMLSprite(SCML::Data* scmlData, bool needLoad, const char* inEntityName, bool addAll) {
-	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("SpriteLayer::createSCMLSprite [%s]", scmlData->name.c_str()); )
-#ifdef PLATFORM_WIN32
-	size_t len = scmlData->name.rfind('\\');
-#else
-	size_t len = scmlData->name.rfind('/');
-#endif
-	std::string dirPath(scmlData->name, 0, len);
-	if (needLoad) {
-		int resFileRef = ResourceManager::instance().openResourceFile(dirPath.c_str());
-		gSCMLFileSystem.load(scmlData);
-//		scmlData->log(10);  // this will do a complete dump of what was loaded
-		ResourceManager::instance().closeResourceFile(resFileRef);
-	}
-	Sprite* result = 0;
-	bool first = true;
-    for (std::map<int, SCML::Data::Entity*>::iterator e = scmlData->entities.begin(); e != scmlData->entities.end(); e++) {
-        if (addAll || (!inEntityName && first) || (inEntityName && std::strcmp(e->second->name.c_str(), inEntityName) == 0)) {
-			SCML_pdg::Entity* entity = new SCML_pdg::Entity(scmlData, e->first);
-			entity->setFileSystem(&gSCMLFileSystem);
-		  #ifndef PDG_NO_GUI
-			entity->setPort(mPort);
-		  #endif
-        	result = new Sprite();
-		  	result->mEntity = entity;
-			addSprite(result);
-		  	if (!addAll) break;
-        }
-        first = false;
-    }
-	return result;
-}
+// create a sprite from a Spriter file, optionally specifying which entity if there are several
+Sprite* SpriteLayer::createSpriteFromSpriterFile(const char* inFileName, const char* inEntityName) {
 
-// protected method, loads an SCML file and creates sprites for all the entities
-void SpriteLayer::createSCMLSprites(SCML::Data* scmlData) {
-	createSCMLSprite(scmlData, true, 0, true);
-}
+// TODO: have a way to enable/disable debug drawing at runtime in debug builds
+#ifdef PDG_DEBUG_SPRITER
+	SpriterEngine::Settings::renderDebugBoxes = true;
+	SpriterEngine::Settings::renderDebugBones = true;
+	SpriterEngine::Settings::renderDebugPoints = true;
+	SpriterEngine::Settings::enableDebugBones = true;
+#endif // PDG_DEBUG_SPRITER
 
-Sprite* SpriteLayer::createSpriteFromSCML(const char* inSCML, const char* inEntityName) {
-	// create a sprite from Spriter SCML data, optionally specifying which entity if there are several
-	SCML::Data data;
-	data.fromTextData(inSCML);
-	// we are just being given the data, so any caching must be handled elsewhere
-	return createSCMLSprite(&data, true, inEntityName);
-}
-
-// create a sprite from a Spriter SCML file, optionally specifying which entity if there are several
-Sprite* SpriteLayer::createSpriteFromSCMLFile(const char* inFileName, const char* inEntityName) {
+	// Check ResourceManager first for relative paths
 	std::string fullPath;
+	bool isResourceFile = false;
+	
 	if (os_isAbsolutePath(inFileName)) {
 		fullPath = inFileName;
 	} else {
-		fullPath = OS::getApplicationResourceDirectory();
-		fullPath += inFileName;
-        fullPath = OS::makeCanonicalPath(fullPath.c_str());
-      #ifndef PLATFORM_WIN32
-		DEBUG_ASSERT(fullPath[0] == '/', "Full path doesn't start with '/'!");
-	  #endif
+		// For relative paths, check if the file exists in ResourceManager first
+		ResourceManager* resMgr = ResourceManager::getSingletonInstance();
+		if (resMgr && !resMgr->getResourcePaths().empty()) {
+			size_t resourceSize = resMgr->getResourceSize(inFileName);
+			if (resourceSize > 0) {
+				// File exists in ResourceManager, use the relative path directly
+				fullPath = inFileName;
+				isResourceFile = true;
+				SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("SpriteLayer::createSpriteFromSpriterFile found in resources [%s]", inFileName); )
+			}
+		}
+		
+		// If not found in resources, fall back to file system path resolution
+		if (!isResourceFile) {
+			fullPath = OS::getApplicationResourceDirectory();
+			fullPath += inFileName;
+			fullPath = OS::makeCanonicalPath(fullPath.c_str());
+		#ifndef PLATFORM_WIN32
+			DEBUG_ASSERT(fullPath[0] == '/', "Full path doesn't start with '/'!");
+		#endif
+		}
 	}
-	SCML::Data* scmlData = 0;
-	bool needLoad = false;
-	// check if we already have this SCML data cached
-	for (std::list<SCML::Data*>::iterator itr = mSCMLData.begin(); itr != mSCMLData.end(); itr++) {
-		SCML::Data* dat = *itr;
-		if (std::strlen(dat->name.c_str()) > 0 && dat->name == fullPath) {
-			scmlData = dat;
+	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("SpriteLayer::createSpriteFromSpriterFile [%s] [%s]", inFileName, fullPath.c_str()); )
+
+	bool needLoad = true;
+	SpriterEngine::SpriterModel* spriterModel = nullptr;
+	// check if we already have this Spriter data cached
+	for (std::list<std::pair<std::string, SpriterEngine::SpriterModel*>>::iterator itr = mModels.begin(); itr != mModels.end(); itr++) {
+		std::pair<std::string, SpriterEngine::SpriterModel*> pair = *itr;
+		if (pair.first == fullPath) {
+			needLoad = false;
+			spriterModel = pair.second;
+			SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("SpriteLayer::createSpriteFromSpriterFile [%s] [%s] found in cache", inFileName, fullPath.c_str()); )
 			break;
 		}
 	}
-	if (!scmlData) {
-		// not cached, load it
-		SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("SpriteLayer::createSpriteFromSCMLFile [%s] [%s]", inFileName, fullPath.c_str()); )
-		scmlData = new SCML::Data(fullPath);
-//		gSCMLFileSystem.load(scmlData);
-		mSCMLData.push_back(scmlData);
-		needLoad = true;
+	// load the Spriter file if we don't have it cached
+	if (needLoad) {
+		// Create new factories for this SpriterModel - each SpriterModel owns its factories
+		PDGFileFactory* fileFactory = new PDGFileFactory(this);
+		PDGObjectFactory* objectFactory = new PDGObjectFactory(this);
+		spriterModel = new SpriterEngine::SpriterModel(fullPath, fileFactory, objectFactory);
+		mModels.push_back(std::make_pair(fullPath, spriterModel));
 	}
-	return createSCMLSprite(scmlData, needLoad, inEntityName);
-}
-
-// create a sprite from previously loaded data
-// createSpriteLayerFromSCMLFile() and createSpriteFromSCMLFile() both
-// cache their data for later use by this call
-Sprite* SpriteLayer::createSpriteFromSCMLEntity(const char* inEntityName) {
-	Sprite* result = 0;
-	for (std::list<SCML::Data*>::iterator itr = mSCMLData.begin(); itr != mSCMLData.end(); itr++) {
-		SCML::Data* scmlData = *itr;
-		result = createSCMLSprite(scmlData, false, inEntityName);
-		if (result) {
-			return result;
-		}
+	// create a sprite for the specified entity (or the first entity if no name given)
+	Sprite* result = nullptr;
+	SpriterEngine::EntityInstance* entityInstance = nullptr;
+	if (inEntityName) {
+		entityInstance = spriterModel->getNewEntityInstance(inEntityName);
+	} else {
+		// Create first entity
+		entityInstance = spriterModel->getNewEntityInstance(0);
+	}
+	if (entityInstance) {
+		result = new Sprite(entityInstance, spriterModel);
+		addSprite(result);
 	}
 	return result;
 }
 
-#endif // PDG_SCML_SUPPORT
+// create a sprite from a previously loaded Spriter file(s)
+// createSpriteLayerFromSpriterFile() and createSpriteFromSpriterFile() both
+// cache their data for later use by this call
+Sprite* SpriteLayer::createSpriteFromSpriterEntity(const char* inEntityName) {
+	Sprite* result = nullptr;
+	for (std::list<std::pair<std::string, SpriterEngine::SpriterModel*>>::iterator itr = mModels.begin(); itr != mModels.end(); itr++) {
+		SpriterEngine::SpriterModel* spriterModel = itr->second;
+		SpriterEngine::EntityInstance* entityInstance = spriterModel->getNewEntityInstance(inEntityName);
+		if (entityInstance) {
+			result = new Sprite(entityInstance, spriterModel);
+			addSprite(result);
+			return result;
+		}
+	}
+	return nullptr;
+}
+
+// Character map management
+void SpriteLayer::applyCharacterMapToAll(const char* mapName) {
+	if (mapName) {
+		Sprite* sprite = mFirstSprite;
+		while (sprite) {
+			if (sprite->isSpriterSprite()) {
+			sprite->applyCharacterMap(mapName);
+			}
+			sprite = sprite->mNextSprite;
+		}
+	}
+}
+
+void SpriteLayer::removeCharacterMapFromAll(const char* mapName) {
+	if (mapName) {
+		Sprite* sprite = mFirstSprite;
+		while (sprite) {
+			if (sprite->isSpriterSprite()) {
+				sprite->removeCharacterMap(mapName);
+			}
+			sprite = sprite->mNextSprite;
+		}
+	}
+}
+
+// Event system (basic, triggers only)
+void SpriteLayer::enableSpriterEvents(bool enable) {
+	Sprite* sprite = mFirstSprite;
+	while (sprite) {
+		if (sprite->isSpriterSprite()) {
+			sprite->enableSpriterEvents(enable);
+		}
+		sprite = sprite->mNextSprite;
+	}
+}
+
+#endif // PDG_SPRITER_SUPPORT
 
     
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
@@ -1455,24 +1575,60 @@ SpriteLayer::SpriteLayer():
 
 SpriteLayer::~SpriteLayer() {
 	SPRITELAYER_DEBUG_ONLY( OS::_DOUT("dt SpriteLayer %p", this); )
+  #ifndef PDG_NO_EVENT_QUEUE
+	EventManager* eventMgr = EventManager::getSingletonInstance();
+	if (eventMgr) {
+		// remove all enqueued events that are from or reference this layer
+		EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::~SpriteLayer removing enqueued events for layer %p", this));
+		eventMgr->RemoveEnqueuedEvents([this](EventManager::EventQueueEntry entry) {
+			if (entry.emitter == this) {
+				EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::~SpriteLayer removing event for layer %p type: %d", this, entry.eventType));
+				return true;
+			}
+			if (entry.eventType == eventType_SpriteLayer) {
+				SpriteLayerInfo* sli = static_cast<SpriteLayerInfo*>(entry.userData->getData());
+				if (sli->actingLayer == this) {
+					EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::~SpriteLayer removing SpriteLayerInfo event for layer %p eventType_SpriteLayer", this));
+					return true;
+				}
+			}
+			if (entry.eventType == eventType_SpriteCollide) {
+				SpriteCollideInfo* sci = static_cast<SpriteCollideInfo*>(entry.userData->getData());
+				if (sci->inLayer == this) {
+					EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::~SpriteLayer removing SpriteCollideInfo event for layer %p id: %d", this, sci->id));
+					return true;
+				}
+			}
+			if (entry.eventType == eventType_SpriteAnimate) {
+				SpriteAnimateInfo* sli = static_cast<SpriteAnimateInfo*>(entry.userData->getData());
+				if (sli->inLayer == this) {
+					EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::~SpriteLayer removing SpriteAnimateInfo event for layer %p id: %d", this, sli->id));
+					return true;
+				}
+			}
+			return false;
+		});
+	}
+  #endif // ! PDG_NO_EVENT_QUEUE
 	Sprite* sprite = mFirstSprite;
 	while (sprite) {
 		Sprite* next = sprite->mNextSprite;
 		sprite->release();
 		sprite = next;
 	}
-  #ifdef PDG_SCML_SUPPORT
-	// iterate through and delete all the cached SCML Data
-	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("about to delete %d SCML::Data pointer(s) from list", mSCMLData.size()); )
-	for (std::list<SCML::Data*>::iterator itr = mSCMLData.begin(); itr != mSCMLData.end(); itr++) {
-		SCML::Data* scmlData = *itr;
-		delete scmlData;
+  #ifdef PDG_SPRITER_SUPPORT
+	// iterate through and delete all the cached SpriterPlusPlus wrappers
+	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("about to delete %d SpriterPlusPlus wrapper(s) from list", mModels.size()); )
+	for (std::list<std::pair<std::string, SpriterEngine::SpriterModel*>>::iterator itr = mModels.begin(); itr != mModels.end(); itr++) {
+		SpriterEngine::SpriterModel* model = itr->second;
+		delete model;
 	}
-  #endif // PDG_SCML_SUPPORT
+  #endif // PDG_SPRITER_SUPPORT
 	SpriteManager::getSingletonInstance()->removeLayer(this);
   #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	CleanupSpriteLayerScriptObject(mSpriteLayerScriptObj);
   #endif
+    SPRITELAYER_DEBUG_ONLY(OS::_DOUT("DONE SpriteLayer::~SpriteLayer %p", this));
 }
 
 #ifndef PDG_NO_GUI
@@ -1491,54 +1647,55 @@ SpriteLayer* createSpriteLayer() {
 }
 #endif // ! PDG_NO_GUI
 
+#ifdef PDG_SPRITER_SUPPORT
 #ifndef PDG_NO_GUI
-SpriteLayer* createSpriteLayerFromSCMLFile(const char* layerSCMLFile, bool addSprites, Port* port) {
-	// create sprite manager singleton instance if necessary
-	SpriteLayer* layer = SpriteManager::createSpriteLayer(port);
-	SpriteManager::getSingletonInstance()->addLayer(layer);
-	std::string fullPath;
-	if (layerSCMLFile[0] == '/') {
-		fullPath = layerSCMLFile;
-	} else {
-		fullPath = OS::getApplicationResourceDirectory();
-		fullPath += layerSCMLFile;
-        fullPath = OS::makeCanonicalPath(fullPath.c_str());
-
-		DEBUG_ASSERT(fullPath[0] == '/', "Full path doesn't start with '/'!");
-	}
-	// this can't possibly be cached already, we just created the sprite layer
-	SCML::Data* scmlData = new SCML::Data(fullPath);
-//	gSCMLFileSystem.load(scmlData);
-	layer->mSCMLData.push_back(scmlData);
-	layer->createSCMLSprites(scmlData);
-	return layer;
-}
+SpriteLayer* createSpriteLayerFromSpriterFile(const char* layerSpriterFile, bool addSprites, Port* port) 
 #else
-SpriteLayer* createSpriteLayerFromSCMLFile(const char* layerSCMLFile, bool addSprites) {
+SpriteLayer* createSpriteLayerFromSpriterFile(const char* layerSpriterFile, bool addSprites)
+#endif
+{
 	// create sprite manager singleton instance if necessary
-	SpriteLayer* layer = SpriteManager::createSpriteLayer();
+	#ifndef PDG_NO_GUI
+		SpriteLayer* layer = SpriteManager::createSpriteLayer(port);
+	#else
+		SpriteLayer* layer = SpriteManager::createSpriteLayer();
+	#endif
 	SpriteManager::getSingletonInstance()->addLayer(layer);
 	std::string fullPath;
-	if (layerSCMLFile[0] == '/') {
-		fullPath = layerSCMLFile;
+	if (layerSpriterFile[0] == '/') {
+		fullPath = layerSpriterFile;
 	} else {
 		fullPath = OS::getApplicationResourceDirectory();
-		fullPath += layerSCMLFile;
+		fullPath += layerSpriterFile;
         fullPath = OS::makeCanonicalPath(fullPath.c_str());
 
 		DEBUG_ASSERT(fullPath[0] == '/', "Full path doesn't start with '/'!");
 	}
+
+	// Create factories for this SpriterModel - the SpriterModel will take ownership
+	PDGFileFactory* fileFactory = new PDGFileFactory(layer);
+	PDGObjectFactory* objectFactory = new PDGObjectFactory(layer);
+	
 	// this can't possibly be cached already, we just created the sprite layer
-	SCML::Data* scmlData = new SCML::Data(fullPath);
-//	gSCMLFileSystem.load(scmlData);
-	layer->mSCMLData.push_back(scmlData);
-	layer->createSCMLSprites(scmlData);
+	SpriterEngine::SpriterModel* spriterModel = new SpriterEngine::SpriterModel(fullPath, fileFactory, objectFactory);
+	if (spriterModel) {
+		layer->mModels.push_back(std::make_pair(fullPath, spriterModel));
+	} else {
+		delete spriterModel;
+	}
+	if (addSprites) {
+		// Loop through all the entities in the model and create a sprite for each one
+		// SpriterEngine::EntityInstance* entityInstance = spriterModel->getNewEntityInstance(0);
+		// while (entityInstance) {
+		//	layer->createSpriterSprite(spriterModel, entityInstance->getName().c_str());
+		// }
+	}
 	return layer;
 }
-#endif // ! PDG_NO_GUI
+#endif // PDG_SPRITER_SUPPORT
 
-void cleanupSpriteLayer(SpriteLayer* layer) {
-	SPRITELAYER_DEBUG_ONLY( OS::_DOUT("cleanupSpriteLayer %p", layer); )
+void cleanupLayer(SpriteLayer* layer) {
+	SPRITELAYER_DEBUG_ONLY( OS::_DOUT("cleanupLayer %p", layer); )
 	if (layer) {
 		SpriteManager::getSingletonInstance()->removeLayer(layer);
 		SpriteManager::cleanupLayer(layer);

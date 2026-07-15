@@ -8,6 +8,7 @@ doc/api.xml
 tmp/
 node_g
 *.swp
+node/benchmark/
 .benchmark_reports
 node/.project
 node/.cproject

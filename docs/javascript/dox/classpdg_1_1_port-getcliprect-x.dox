@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::getClipRect()
+
+\brief Get the current clipping rectangle for drawing operations
+
+**/ }

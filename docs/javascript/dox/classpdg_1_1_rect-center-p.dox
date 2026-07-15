@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::center(Point p)
+
+\brief center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle
+
+**/ }

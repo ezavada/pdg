@@ -1,0 +1,18 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getZOrder
+
+\brief get the z-order of this sprite in the layer it belongs to
+
+0 means furthest back (drawn first)
+
+\sa isBehind()
+\sa moveToBack()
+\sa moveToFront()
+\sa moveBehind()
+\sa moveInFrontOf()
+\sa SpriteLayer.getSpriteZOrder()
+\sa SpriteLayer.getNthSprite()
+
+
+**/ }

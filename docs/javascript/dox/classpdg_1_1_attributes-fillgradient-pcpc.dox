@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::fillGradient(start, startColor, end, endColor)
+
+\brief sets a linear gradient fill from start point to end point
+
+**/ }

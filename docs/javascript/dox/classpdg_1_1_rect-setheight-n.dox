@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::setHeight(h)
+
+\brief Set the height of this rectangle, keeping the top edge fixed
+
+**/ }

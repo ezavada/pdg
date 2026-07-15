@@ -1,33 +1,29 @@
-.TH "NetClient" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "NetClient" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-NetClient \- 
-.PP
-a network endpoint that can initiate a connection  
+NetClient \- a network endpoint that can initiate a connection  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
 .RI "\fBNetClient\fP (object opts=null)"
 .br
-.RI "\fIconstructor for \fBNetClient\fP, sets client options \fP"
+.RI "constructor for \fBNetClient\fP, sets client options "
 .ti -1c
-.RI "\fBNetClient\fP \fBconnect\fP (object serverInfo, function callback, string clientKey= '')"
+.RI "\fBNetClient\fP \fBconnect\fP (object serverInfo, function callback, string clientKey='')"
 .br
-.RI "\fIestablish a connection to a server \fP"
+.RI "connect to a server for your game "
 .ti -1c
 .RI "\fBNetClient\fP \fBonError\fP (function callback)"
 .br
-.RI "\fIset the callback function that will handle errors \fP"
-.ti -1c
-.RI "string \fBtoString\fP ()"
-.br
-.RI "\fIreturns '[object NetClient]' \fP"
+.RI "set the callback function that will handle errors "
 .in -1c
 .SS "Public Attributes"
 
@@ -35,52 +31,62 @@ a network endpoint that can initiate a connection
 .ti -1c
 .RI "boolean \fBconnection\fP"
 .br
-.RI "\fIreference to the \fBNetConnection\fP, or boolean false if not yet connected \fP"
+.RI "reference to the \fBNetConnection\fP, or boolean false if not yet connected "
 .in -1c
 .SH "Detailed Description"
 .PP 
 a network endpoint that can initiate a connection 
 
-\fBNote:\fP
+
+.PP
+\fBNote\fP
 .RS 4
 \fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
 .RE
 .PP
 \fBNetClient\fP is part of the PDG Engine's custom protocol for games\&. It handles protocol negotiation and optional connections\&. It establishes both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server\&.
+
 .PP
 \fBNetClient\fP doesn't actually handle network communication, it only establishes the connection\&. Once established, it creates \fBNetConnection\fP objects you can use to send and receive data\&.
+
 .PP
-\fBWarning:\fP
+\fBWarning\fP
 .RS 4
-\fBNetClient\fP, \fBNetServer\fP, and \fBNetConnection\fP all work together over a custom protocol\&. Do not attempt to use \fBNetClient\fP to connect to other kinds of servers, such as HTTP or raw TCP sockets\&. There are perfectly fine \fCNet\fP and \fCHTTP\fP modules built-in to Node\&.js (and thus to PDG) for that\&.
+\fBNetClient\fP, \fBNetServer\fP, and \fBNetConnection\fP all work together over a custom protocol\&. Do not attempt to use \fBNetClient\fP to connect to other kinds of servers, such as HTTP or raw TCP sockets\&. There are perfectly fine \fRNet\fP and \fRHTTP\fP modules built-in to Node\&.js (and thus to PDG) for that\&.
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBNetConnection\fP 
+
 .PP
 \fBNetServer\fP 
+
 .PP
-\fCNode\&.js Net module\fP 
+\fRNode\&.js Net module\fP 
+
 .PP
-\fCNode\&.js HTTP module\fP 
+\fRNode\&.js HTTP module\fP 
 .RE
 .PP
 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBNetClient\fP (objectopts = \fCnull\fP)"
+.SS "\fBNetClient\fP (object opts = \fRnull\fP)"
 
 .PP
 constructor for \fBNetClient\fP, sets client options Construct a new \fBNetClient\fP with particular options or using default values if no options are specified\&.
+
 .PP
 Available options are:
+
 .PP
 .IP "1." 4
 noDatagram - flag to indicate that we should not try to establish UDP communication with the server (defaults to false, allowing UDP)
 .PP
+
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIopts\fP a Javascript object with the options above
 .RE
@@ -91,16 +97,23 @@ var myClient = new pdg\&.NetClient( {noDatagram = true} );
 .fi
 .PP
  
+.PP
+Referenced by \fBconnect()\fP, and \fBonError()\fP\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "connect (objectserverInfo, functioncallback, stringclientKey = \fC''\fP)"
+.SS "\fBNetClient\fP connect (object serverInfo, function callback, string clientKey = \fR''\fP)"
 
 .PP
-establish a connection to a server Attempts to connect to the given server, and if it succeeds it invokes your callback with a new \fBNetConnection\fP object as the parameter\&. The If the connection fails, you'll get an error callback if you set one up using the \fBonError()\fP call\&.
+connect to a server for your game establish a connection to a server
+
+.PP
+Attempts to connect to the given server, and if it succeeds it invokes your callback with a new \fBNetConnection\fP object as the parameter\&. The If the connection fails, you'll get an error callback if you set one up using the \fBonError()\fP call\&.
+
 .PP
 An option key is passed in to do authentication if the server requires connection reservations\&. See \fBNetServer\&.expectClient\fP for more about client reservations\&.
+
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIserverInfo\fP an object with host and port that tells us where to find the \fBNetServer\fP 
 .br
@@ -127,28 +140,34 @@ var t = pdg\&.tm\&.onInterval( function() {
 }, 100);  // check every 100 milleseconds
 .fi
 .PP
+
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBonError\fP 
+
 .PP
 \fBNetConnection\fP 
+
 .PP
 \fBNetServer\&.expectClient\fP 
 .RE
 .PP
 
-.SS "onError (functioncallback)"
+.PP
+References \fBNetClient()\fP\&.
+.SS "\fBNetClient\fP onError (function callback)"
 
 .PP
 set the callback function that will handle errors This function will be called whenever a call to \fBconnect()\fP fails\&. The function will be called with a single parameter, a string of the error message\&.
+
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIcallback\fP the error handling function for this connection
 .RE
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 reference to itself for call chaining
 .RE
@@ -156,24 +175,23 @@ reference to itself for call chaining
 .PP
 .nf
 myClient\&.onError( function(msg) {
-    console\&.log('Connection failed: '+msg);
+    console\&.log("Connection failed: "+msg);
 }
 .fi
 .PP
+
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 \fBconnect\fP 
 .RE
 .PP
 
-.SS "toString ()"
-
 .PP
-returns '[object NetClient]' Yep\&. Every time\&. That's all it does\&. 
+References \fBNetClient()\fP\&.
 .SH "Member Data Documentation"
 .PP 
-.SS "connection"
+.SS "boolean connection"
 
 .PP
 reference to the \fBNetConnection\fP, or boolean false if not yet connected 

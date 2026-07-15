@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::subsection(Rect section)
+
+\brief Sets a subsection of an image to draw
+
+**/ }

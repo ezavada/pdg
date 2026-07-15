@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structpdg_1_1_sprite_animate_info.html" title="SpriteAnimateInfo" alt="" coords="6,5,133,33"/>
+<area shape="rect" id="Node000000" href="$classpdg_1_1_singleton.html" title=" " alt="" coords="5,5,192,31"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_sound_manager.html" title=" " alt="" coords="240,5,348,31"/>
+<area shape="poly" id="edge41_Node000000_Node000001" title=" " alt="" coords="207,16,239,16,239,21,207,21"/>
 </map>

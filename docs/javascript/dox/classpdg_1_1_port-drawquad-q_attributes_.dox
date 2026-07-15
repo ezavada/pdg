@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawQuad(quad, attrs)
+
+\brief draws a quad with the specified attributes
+
+**/ }

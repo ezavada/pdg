@@ -43,6 +43,9 @@
 #include "internals.h"
 #include "pdg-main.h"
 #include "graphics-opengl.h"
+#include "textcache-opengl.h"
+#include "imagecache-opengl.h"
+#include "image-opengl.h"
 
 namespace pdg {
 
@@ -121,7 +124,7 @@ GraphicsManager::ScreenMode
 GraphicsManager::getCurrentScreenMode(int screenNum, pdg::Rect* maxWindowRect) 
 {
 	ScreenMode mode;
-	if (screenNum == GraphicsManager::screenNum_PrimaryScreen) {
+	if (screenNum == screenNum_PrimaryScreen) {
 		screenNum = platform_getPrimaryScreen();
 	}
     mode.bpp = platform_getCurrentScreenDepth(screenNum);
@@ -134,10 +137,23 @@ GraphicsManager::getCurrentScreenMode(int screenNum, pdg::Rect* maxWindowRect)
 	return mode;
 }
 
+pdg::Rect 
+GraphicsManager::getScreenBounds(int screenNum) 
+{
+	if (screenNum == screenNum_PrimaryScreen) {
+		screenNum = platform_getPrimaryScreen();
+	}
+	long x, y, width, height;
+	platform_getScreenBounds(&x, &y, &width, &height, screenNum);
+	pdg::Rect r = pdg::Rect(width, height);
+	r.moveTo(x, y);
+	return r;
+}
+
 // returns the number of screens modes a particular screen supports
 int   
 GraphicsManager::getNumSupportedScreenModes(int screenNum) {
-	if (screenNum == GraphicsManager::screenNum_PrimaryScreen) {
+	if (screenNum == screenNum_PrimaryScreen) {
 		screenNum = platform_getPrimaryScreen();
 	}
 	if ((screenNum < 0) || (screenNum >= kMaxScreens)) return 0;
@@ -151,7 +167,7 @@ GraphicsManager::getNthSupportedScreenMode(int n, int screenNum) {
 	mode.bpp = 0;
 	mode.height = 0;
 	mode.width = 0;
-	if (screenNum == GraphicsManager::screenNum_PrimaryScreen) {
+	if (screenNum == screenNum_PrimaryScreen) {
 		screenNum = platform_getPrimaryScreen();
 	}
 	if ((n >= 0) && (screenNum >= 0) && (screenNum < kMaxScreens) && (n < platform_getNumSupportedScreenModes(screenNum)) ) {
@@ -162,7 +178,7 @@ GraphicsManager::getNthSupportedScreenMode(int n, int screenNum) {
 
 void       
 GraphicsManager::setScreenMode(long width, long height, int screenNum, int bpp) {
-	if (screenNum == GraphicsManager::screenNum_PrimaryScreen) {
+	if (screenNum == screenNum_PrimaryScreen) {
 		screenNum = platform_getPrimaryScreen();
 	}
 	if ((screenNum < 0) || (screenNum >= kMaxScreens)) return;
@@ -202,13 +218,16 @@ GraphicsManager::createWindowPort(const Rect& rect, const char* windName, int bp
 	    gMainPort = port;
 	}
 
+	// Add to active ports list
+	addActivePort(port);
+
     return port;
 }
 
 Port*   
 GraphicsManager::createFullScreenPort(const Rect& rect, int screenNum, bool allowResChange, int bpp) {
     PortImpl* port = dynamic_cast<PortImpl*>(graphics_newPort(this));
-	if ((screenNum == GraphicsManager::screenNum_PrimaryScreen) 
+	if ((screenNum == screenNum_PrimaryScreen) 
       || (screenNum < pdg::screenNum_BestFitScreen)
 	  || (screenNum >= kMaxScreens)) {
 		screenNum = platform_getPrimaryScreen();
@@ -256,6 +275,10 @@ GraphicsManager::createFullScreenPort(const Rect& rect, int screenNum, bool allo
 	if (!gMainPort) {
 	    gMainPort = port;
 	}
+	
+	// Add to active ports list
+	addActivePort(port);
+	
     return port;
 }
 
@@ -271,8 +294,37 @@ GraphicsManager::closeGraphicsPort(Port* port) {
     if (thePort == gMainPort) {
         gMainPort = 0;  // clear the main port if we just closed it
     }
+    
+    // Remove from active ports list
+    removeActivePort(thePort);
+    
+    thePort->invalidateImageCache();
+    thePort->invalidateTextCache();
+    
     platform_destroyWindow(thePort->mPlatformWindowRef);
     delete thePort;
+}
+
+void
+GraphicsManager::closeAllGraphicsPorts() {
+    std::vector<Port*> toClose = getAllActivePorts();
+    for (size_t i = 0; i < toClose.size(); i++) {
+        closeGraphicsPort(toClose[i]);
+    }
+}
+
+void    
+GraphicsManager::invalidateAllTextures() {
+    // Invalidate all text cache textures
+    // Invalidate port-specific image and text caches for all active ports
+    std::vector<Port*> activePorts = getAllActivePorts();
+    for (size_t i = 0; i < activePorts.size(); i++) {
+        PortImpl* port = dynamic_cast<PortImpl*>(activePorts[i]);
+        if (port) {
+            port->invalidateImageCache();
+            port->invalidateTextCache();
+        }
+    }
 }
 
 bool    
@@ -339,8 +391,8 @@ GraphicsManager::switchToWindowMode(Port* port, const char* windName) {
     }
 	bool prevFS = platform_isFullScreen(thePort->mPlatformWindowRef);
 	if (!prevFS) return true; // already in Window Mode
-	long height = thePort->getDrawingArea().height();
-	long width = thePort->getDrawingArea().width();
+//	long height = thePort->getDrawingArea().height();
+//	long width = thePort->getDrawingArea().width();
 	int screenNum = platform_getWindowScreen(thePort->mPlatformWindowRef);
 	if (screenNum < 0 || screenNum >= kMaxScreens) return false;
 	int bpp = platform_getCurrentScreenDepth(screenNum);
@@ -364,6 +416,43 @@ bool
 GraphicsManager::inFullScreenMode() {
     if (!gMainPort) return false;
     return platform_isFullScreen(gMainPort->mPlatformWindowRef);
+}
+
+// Add port to active list
+void 
+GraphicsManager::addActivePort(PortImpl* port) {
+    if (port) {
+        // Check if port is already in the list
+        for (size_t i = 0; i < mActivePorts.size(); i++) {
+            if (mActivePorts[i] == port) {
+                return; // Already in list
+            }
+        }
+        mActivePorts.push_back(port);
+    }
+}
+
+// Remove port from active list
+void 
+GraphicsManager::removeActivePort(PortImpl* port) {
+    if (port) {
+        for (size_t i = 0; i < mActivePorts.size(); i++) {
+            if (mActivePorts[i] == port) {
+                mActivePorts.erase(mActivePorts.begin() + i);
+                break;
+            }
+        }
+    }
+}
+
+// Get all active ports for drawing
+std::vector<Port*> 
+GraphicsManager::getAllActivePorts() {
+    std::vector<Port*> result;
+    for (size_t i = 0; i < mActivePorts.size(); i++) {
+        result.push_back(mActivePorts[i]);
+    }
+    return result;
 }
 
 // IMPORTANT! This rect return is two different bits of data stuffed into a rect:

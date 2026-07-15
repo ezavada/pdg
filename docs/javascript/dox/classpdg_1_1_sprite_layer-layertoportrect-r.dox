@@ -2,13 +2,13 @@ namespace pdg { /**
 
 \fn pdg::SpriteLayer::layerToPortRect
 
-\brief translate the rectangle to account for layer transformations
+\brief translate the rectangle (or RotatedRect) to account for layer transformations
 
 Adjusts for layer rotation, zoom and scrolling (origin) to get drawing coordinates.
 
-\param r Rect in layer coordinates
+\param r Rect or RotatedRect in layer coordinates
 
-\returns Rect in port coordinates
+\returns RotatedRect in port coordinates
 
 
 **/ }

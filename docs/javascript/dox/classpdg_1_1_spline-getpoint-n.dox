@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Spline::getPoint(pointIndex)
+
+\brief returns the control point at the specified index
+
+**/ }

@@ -13,11 +13,14 @@
   <script type="text/javascript" src="../tools/jasmine/jasmine-html.js"></script>
   
   <!-- source files that define set up in-browser version of pdg -->
+<!-- 
   <script type="text/javascript" src="../src/js/require.js"></script>
   <script type="text/javascript" src="../src/js/dump.js"></script>
-  <script type="text/javascript" src="../src/js/classify.js"></script>
+ -->
 
   <!-- include source files here... -->
+  <script type="text/javascript" src="../libpdg.js"></script>
+<!-- 
   <script type="text/javascript" src="../src/js/color.js"></script>
   <script type="text/javascript" src="../src/js/coordinates.js"></script>
   <script type="text/javascript" src="../src/js/pdg-defs.js"></script>
@@ -26,17 +29,38 @@
   <script type="text/javascript" src="../src/js/netconnection.js"></script>
   <script type="text/javascript" src="../src/js/netclient.js"></script>
   <script type="text/javascript" src="../src/js/netserver.js"></script>
+ -->
 
   <!-- include spec files here... -->
   <script type="text/javascript" src="spec/SpecHelper.js"></script>
-  <script type="text/javascript" src="spec/color.spec.js"></script>
-  <script type="text/javascript" src="spec/point.spec.js"></script>
-  <script type="text/javascript" src="spec/rect.spec.js"></script>
-  <script type="text/javascript" src="spec/quad.spec.js"></script>
-  <script type="text/javascript" src="spec/eventemitter.spec.js"></script>
 <!-- 
+  <script type="text/javascript" src="spec/animated.spec.js"></script>
+  <script type="text/javascript" src="spec/color.spec.js"></script>
+  <script type="text/javascript" src="spec/configmanager.spec.js"></script>
+ -->
+  <script type="text/javascript" src="spec/eventemitter.spec.js"></script>
+  <script type="text/javascript" src="spec/eventmanager.spec.js"></script>
+<!-- 
+  <script type="text/javascript" src="spec/filemanager.spec.js"></script>
+  <script type="text/javascript" src="spec/font.spec.js"></script>
+  <script type="text/javascript" src="spec/graphicsmanager.spec.js"></script>
+  <script type="text/javascript" src="spec/image.spec.js"></script>
+  <script type="text/javascript" src="spec/log.spec.js"></script>
   <script type="text/javascript" src="spec/netclient.spec.js"></script>
+  <script type="text/javascript" src="spec/netconnection.spec.js"></script>
   <script type="text/javascript" src="spec/netserver.spec.js"></script>
+  <script type="text/javascript" src="spec/point.spec.js"></script>
+  <script type="text/javascript" src="spec/port.spec.js"></script>
+  <script type="text/javascript" src="spec/quad.spec.js"></script>
+  <script type="text/javascript" src="spec/rect.spec.js"></script>
+  <script type="text/javascript" src="spec/recourcemanager.spec.js"></script>
+  <script type="text/javascript" src="spec/serialization.spec.js"></script>
+  <script type="text/javascript" src="spec/sound.spec.js"></script>
+  <script type="text/javascript" src="spec/soundmanager.spec.js"></script>
+  <script type="text/javascript" src="spec/sprite.spec.js"></script>
+  <script type="text/javascript" src="spec/spritelayer.spec.js"></script>
+  <script type="text/javascript" src="spec/tilelayer.spec.js"></script>
+  <script type="text/javascript" src="spec/timermanager.spec.js"></script>
  -->
 
   <script type="text/javascript">
@@ -66,9 +90,9 @@
         jasmineEnv.execute();
       }
 
-      setTimeout(function() {
-      	document.location.reload();
-      }, 10000);
+//       setTimeout(function() {
+//       	document.location.reload();
+//       }, 10000);
     })();
   </script>
 

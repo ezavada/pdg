@@ -95,20 +95,20 @@ file_put_contents ( "save.log", " writing file : " . $docName . "\n", FILE_APPEN
 file_put_contents ( $docName , $docContents );
 
 // regen the docs
-$cmd = '/raid/website/pdg/tools/regen-doxygen-docs.sh ezavada 2>&1'; 
+$cmd = '/usr/share/nginx/pdg/tools/regen-doxygen-docs.sh 2>&1'; 
 if ($log_everything) { file_put_contents ( "save.log", " > " . $cmd . "\n", FILE_APPEND); }
 $output = shell_exec($cmd);
 if ($log_everything) { file_put_contents ( "save.log", " doxygen said : " . $output . "\n", FILE_APPEND); }
 
 // do a git add to stage the files
-$cmd = 'sudo -u ezavada /sw/bin/git add *.html ' . $docName . ' 2>&1';
+$cmd = 'sudo  /usr/bin/git add *.html ' . $docName . ' 2>&1';
 if ($log_everything) { file_put_contents ( "save.log", " > " . $cmd . "\n", FILE_APPEND); }
 $output = shell_exec($cmd);
 if ($log_everything) { file_put_contents ( "save.log", " git said : " . $output . "\n", FILE_APPEND); }
 
 // commit the files to the repository
 if ($auto_commit) {
-	$cmd = 'sudo -u ezavada /sw/bin/git commit -o *.html ' . $docName . ' -m "update from ' . getRemoteIP() . 
+	$cmd = 'sudo /usr/bin/git commit -o *.html ' . $docName . ' -m "update from ' . getRemoteIP() . 
 		'"  --no-status 2>&1 | tail -1';
 	if ($log_everything) { file_put_contents ( "save.log", " > " . $cmd . "\n", FILE_APPEND); }
 	$output = shell_exec($cmd);

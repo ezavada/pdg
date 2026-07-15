@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getLineColor()
+
+\brief returns the current line color
+
+**/ }

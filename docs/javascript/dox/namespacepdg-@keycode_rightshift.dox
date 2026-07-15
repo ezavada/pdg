@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_RightShift
+
+\brief platform-specific keycode for the right Shift key
+
+This constant contains the correct keycode value for the right Shift key on the current platform. Use this when checking #KeyEvent.keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect right Shift key presses in a cross-platform way.
+
+**Platform values:**
+- Mac OS X: 60 (0x3C - NSEvent hardware keycode)
+- Windows: 161 (0xA1 - VK_RSHIFT virtual keycode)
+- Linux/GLFW: 344 (GLFW_KEY_RIGHT_SHIFT)
+
+\see keyCode_LeftShift
+\see keyCode_Shift
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

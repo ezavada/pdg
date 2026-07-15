@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Image::setTransparentColor(inTransparentColor)
+
+\brief sets the color that should be treated as transparent in the image
+
+**/ }

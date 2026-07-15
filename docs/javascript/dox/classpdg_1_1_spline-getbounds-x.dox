@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Spline::getBounds()
+
+\brief returns the bounding rectangle of the spline curve
+
+**/ }

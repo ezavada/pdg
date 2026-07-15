@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setWantsOffscreenEvents(wantsThem)
+
+\brief enables or disables offscreen event generation for this sprite
+
+**/ }

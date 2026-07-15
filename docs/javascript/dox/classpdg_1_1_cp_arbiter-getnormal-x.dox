@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::CpArbiter::getNormal()
+
+\brief returns the collision normal vector for the collision
+
+**/ }

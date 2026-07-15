@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Vector::unit()
+
+\brief get the unit vector of this vector, ie: A.unit() = (A.x / |A|, A.y / |A|)
+
+**/ }

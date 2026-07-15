@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::FileManager::findClose(inFindData)
+
+\brief closes a file search operation and cleans up resources
+
+**/ }

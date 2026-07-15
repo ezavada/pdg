@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Vector::projection
+
+\brief do a projection of a point onto this vector
+
+**/ }

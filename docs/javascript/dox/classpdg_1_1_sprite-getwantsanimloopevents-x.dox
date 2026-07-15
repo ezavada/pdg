@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getWantsAnimLoopEvents()
+
+\brief returns true if animation loop events are enabled for this sprite
+
+**/ }

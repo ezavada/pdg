@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::empty()
+
+\brief returns true if the polygon has no points
+
+**/ }

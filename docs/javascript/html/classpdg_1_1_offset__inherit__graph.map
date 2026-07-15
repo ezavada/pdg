@@ -1,4 +1,7 @@
 <map id="Offset" name="Offset">
-<area shape="rect" id="node2" href="$classpdg_1_1_point.html" title="point for 2D coordinate system" alt="" coords="5,79,57,104"/>
-<area shape="rect" id="node3" href="$classpdg_1_1_vector.html" title="vector (magnitude and direction) within a 2D coordinate system." alt="" coords="82,79,141,104"/>
+<area shape="rect" id="Node000001" title="offset within a 2D coordinate system" alt="" coords="42,5,100,31"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_point.html" title="point for 2D coordinate system" alt="" coords="5,79,57,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="59,46,40,80,35,77,55,43"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_vector.html" title="vector (magnitude and direction) within a 2D coordinate system." alt="" coords="81,79,141,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="87,43,107,77,102,80,83,46"/>
 </map>

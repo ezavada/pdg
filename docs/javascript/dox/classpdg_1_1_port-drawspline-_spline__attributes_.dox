@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawSpline(spline, attrs)
+
+\brief draws a spline curve with the specified attributes
+
+**/ }

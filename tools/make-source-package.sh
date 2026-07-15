@@ -38,42 +38,14 @@ fi
 TARGET_NAME=pdg-`cat $PDG_ROOT/VERSION`
 TARGET_SUBDIR=$TARGET_NAME
 TARGET=$TARGET_NAME-src.tar
-TARGET_DIR=$PDG_ROOT/build/package/$TARGET_DIR
+TARGET_DIR=$PDG_ROOT/build/package/$TARGET_SUBDIR
 
 mkdir -p $TARGET_DIR/deps/
 cd $PDG_ROOT/build/package
 rm -rf $TARGET.gz $TARGET.bz2
 
 echo "Copying all files into the package..."
-# put everything into the package
-echo " * pdg/* -> $TARGET_DIR/"
-rsync -d --delete --force --exclude-from=../../.gitignore ../../* $TARGET_DIR/
-echo " * pdg/deps/chipmunk -> $TARGET_DIR/deps/chipmunk"
-rsync -r --delete --force ../../deps/chipmunk $TARGET_DIR/deps/
-echo " * pdg/deps/glfw -> $TARGET_DIR/deps/glfw"
-rsync -r --delete --force ../../deps/glfw $TARGET_DIR/deps/
-echo " * pdg/deps/png -> $TARGET_DIR/deps/png"
-rsync -r --delete --force ../../deps/png $TARGET_DIR/deps/
-echo " * pdg/deps/scml-pp -> $TARGET_DIR/deps/scml-pp"
-rsync -r --delete --force ../../deps/png $TARGET_DIR/deps/
-echo " * pdg/deps/node -> $TARGET_DIR/deps/node"
-rsync -r --delete --force --delete-excluded \
-	--exclude=.DS_Store \
-	--exclude-from=../../tools/node-rsync-exclude.txt \
-	../../deps/node $TARGET_DIR/deps/
-echo " * pdg/deps/png -> $TARGET_DIR/deps/png"
-rsync -r --delete --force ../../deps/png $TARGET_DIR/deps/
-echo " * pdg/docs -> $TARGET_DIR/docs"
-rsync -r --delete --force ../../docs $TARGET_DIR/
-echo " * pdg/src -> $TARGET_DIR/src"
-rsync -r --delete --force ../../src $TARGET_DIR/
-echo " * pdg/test -> $TARGET_DIR/test"
-rsync -r --delete --force ../../test $TARGET_DIR/
-echo " * pdg/tools -> $TARGET_DIR/tools"
-rsync -r --delete --force ../../tools $TARGET_DIR/
-
-# pull out the stuff we don't actually want
-rm -rf $TARGET_DIR/docs/html
+$PDG_ROOT/tools/rsync-source.sh $TARGET_DIR
 
 echo "Building tar.gz and tar.bz2 files..."
 tar -czf $TARGET.gz $TARGET_DIR/

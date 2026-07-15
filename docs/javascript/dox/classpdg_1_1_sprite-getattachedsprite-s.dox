@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getAttachedSprite(attachPointName)
+
+\brief returns the sprite attached at the specified attach point, or null if none
+
+**/ }

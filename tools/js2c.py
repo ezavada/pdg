@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2006-2008 the V8 project authors. All rights reserved.
 # Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ def ToCArray(filename, lines):
     value = ord(chr)
 
     if value >= 128:
-      print 'non-ascii value ' + filename + ':' + str(row) + ':' + str(col)
+      print('non-ascii value ' + filename + ':' + str(row) + ':' + str(col))
       sys.exit(1);
 
     result.append(str(value))
@@ -172,9 +172,9 @@ class PythonMacro:
       args.append(mapping[arg])
     return str(self.fun(*args))
 
-CONST_PATTERN = re.compile('^const\s+([a-zA-Z0-9_]+)\s*=\s*([^;]*);$')
-MACRO_PATTERN = re.compile('^macro\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*=\s*([^;]*);$')
-PYTHON_MACRO_PATTERN = re.compile('^python\s+macro\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*=\s*([^;]*);$')
+CONST_PATTERN = re.compile(r'^const\s+([a-zA-Z0-9_]+)\s*=\s*([^;]*);$')
+MACRO_PATTERN = re.compile(r'^macro\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*=\s*([^;]*);$')
+PYTHON_MACRO_PATTERN = re.compile(r'^python\s+macro\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*=\s*([^;]*);$')
 
 def ReadMacros(lines):
   constants = { }
@@ -183,7 +183,7 @@ def ReadMacros(lines):
     hash = line.find('#')
     if hash != -1: line = line[:hash]
     line = line.strip()
-    if len(line) is 0: continue
+    if len(line) == 0: continue
     const_match = CONST_PATTERN.match(line)
     if const_match:
       name = const_match.group(1)

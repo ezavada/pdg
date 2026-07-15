@@ -18,9 +18,8 @@ namespace pdg {
 class View;
 class Port;
 
-	class ModalController : public pdg::Controller {
+class ModalController : public pdg::Controller {
 public:
-	virtual void redrawAll();   // redraw entire controller heirarchy depth first, active controllers only	
 	ModalController(Application* theApp, bool wantKeyUpDown = true, bool wantKeyPress = true, bool wantMouseEnterLeave = true, bool wantAll = false);
 };
 

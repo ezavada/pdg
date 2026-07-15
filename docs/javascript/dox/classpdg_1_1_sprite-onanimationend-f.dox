@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onAnimationEnd
+
+\brief set event handler for sprite animation end events
+
+These happen when this sprite finishes a particular frame animation sequence, but only if setWantsAnimEndEvents(true) was called
+
+\sa setWantsAnimEndEvents()
+\sa SpriteAnimateEvent
+\sa IEventHandler
+
+**/ }

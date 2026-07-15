@@ -1,5 +1,3 @@
-[![Build Status](https://api.travis-ci.org/ezavada/pdg.svg)](https://travis-ci.org/ezavada/pdg/) - linux
-
 Pixel Dust Game Engine (PDG)
 ============================
 
@@ -102,3 +100,49 @@ things as needed for your game.
 
 We do plan to build Game Kits for a variety of game genres on top of PDG, so check to
 see if they are available and have what you need.
+
+
+Building From Source
+--------------------
+
+**Windows**:
+
+- Install CMake 3.0 or later
+- Install Python 2.7
+- Install Git
+- Install Visual Studio 2013 Express
+- In Visual Studio Command Console:
+
+        C:\> git clone git@github.com:ezavada/pdg.git pdg
+        C:\> cd pdg
+        C:\pdg> configure
+        C:\pdg> make
+    
+  Test it with any of the following:
+
+        C:\pdg> pdg
+        C:\pdg> test\pdg
+        C:\pdg> test\client 
+    
+
+**Mac OS X**:
+
+- Install CMake 3.0 or later
+- Install XCode 5 or later, including command line tools
+- In Terminal Window:
+
+        $ git clone git@github.com:ezavada/pdg.git pdg
+        $ cd pdg
+        $ ./configure
+        $ make
+
+  Test it with any of the following:
+  
+        $ ./pdg test/js/main.js
+        $ test/pdg
+        $ test/client
+        $ test/node
+        $ test/ui
+        $ ./pdg
+
+

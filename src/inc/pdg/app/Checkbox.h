@@ -16,7 +16,7 @@
 namespace pdg {
 
 
-class Checkbox : public View
+class Checkbox : public View, public Subject
 {
 public:
 
@@ -47,7 +47,7 @@ protected:
 	};
 
     ResourceManager& mResMgr;
-	Image* mpCheckboxImages[NUM_CHECKBOX_IMAGES];
+	ImageStrip* mpCheckboxImages;
 	Sound* mpClickSound;
 
 	bool mIsChecked;

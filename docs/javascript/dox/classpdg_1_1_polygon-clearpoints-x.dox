@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::clearPoints()
+
+\brief removes all points from the polygon
+
+**/ }

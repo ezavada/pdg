@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::moveLeft(delta)
+
+\brief moves the polygon left by the specified amount
+
+**/ }

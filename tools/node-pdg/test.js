@@ -27,7 +27,7 @@
 //
 // -----------------------------------------------
 
-var pdg = require('pdg');
+var pdg = require('./lib/pdg');  // expected require('pdg') to work but it doesn't for "npm test"
 var assert = require('assert')
 
 // module
@@ -65,6 +65,7 @@ assert(typeof(pdg.NetConnection) === 'function');
 assert(typeof(pdg.NetServer) === 'function');
 assert(typeof(pdg.Offset) === 'function');
 assert(typeof(pdg.Point) === 'function');
+assert(typeof(pdg.Polygon) === 'function');
 assert(typeof(pdg.Quad) === 'function');
 assert(typeof(pdg.Rect) === 'function');
 assert(typeof(pdg.ResourceManager) === 'function');
@@ -72,6 +73,7 @@ assert(typeof(pdg.RotatedRect) === 'function');
 assert(typeof(pdg.Serializer) === 'function');
 assert(typeof(pdg.Sprite) === 'function');
 assert(typeof(pdg.SpriteLayer) === 'function');
+assert(typeof(pdg.Spline) === 'function');
 assert(typeof(pdg.TileLayer) === 'function');
 assert(typeof(pdg.TimerManager) === 'function');
 assert(typeof(pdg.Vector) === 'function');

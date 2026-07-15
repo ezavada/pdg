@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getTransform()
+
+\brief returns the current transformation matrix
+
+**/ }

@@ -27,33 +27,45 @@
 //
 // -----------------------------------------------
 
-var fs = require('fs');
-var exec = require('child_process').exec;
+// fs and pdg are set up by SpecHelper.js
+var path = require('path');
+var LOG_PREFIX = 'pdg_test';
+var LOG_EXT = '.log';
+var logDir = (typeof pdg !== 'undefined' && pdg.fs && typeof pdg.fs.getApplicationDirectory === 'function')
+	? path.resolve(pdg.fs.getApplicationDirectory())
+	: '.';
+var logBasePath = LOG_PREFIX;
+
+function isManagedLogFile(filename) {
+	return filename.indexOf(LOG_PREFIX) === 0 && filename.substr(-LOG_EXT.length) === LOG_EXT;
+}
 
 function getLogFiles() {
-	var files = fs.readdirSync('.');
-//	console.log('CHECKING: '+ files);
+    if (!fs) return [];
+	var files = fs.readdirSync(logDir);
 	var result = [];
 	for (var i = 0; i < files.length; i++) {
-		if (files[i].substr(-4) == '.log') {
+		if (isManagedLogFile(files[i])) {
 			result.push( files[i] );
 		}
 	}
-//	console.log('FOUND: '+ result);
+	result.sort();
 	return result;
 }
 
 function countLogFileLines(filename) {
+    if (!fs) return 0;
 	var count = 0;
-	fs.readFileSync(filename).toString().split(/\r?\n/).forEach(function(line) {
+	fs.readFileSync(path.join(logDir, filename)).toString().split(/\r?\n/).forEach(function(line) {
   		count++;
 	});
 	return (count - 1);
 }
 
 function deleteLogFile(filename) {
-  	pdg.lm.setLogLevel(-1);
-	fs.unlinkSync(filename);
+    if (!fs) return;
+ 	pdg.lm.setLogLevel(-1);
+	fs.unlinkSync(path.join(logDir, filename));
 }
 
 function cleanUp() {
@@ -108,7 +120,7 @@ describe("LogManager", function() {
   });
 
   it("write to a new file", function() {
-	pdg.lm.initialize("pdg_test", pdg.lm.init_OverwriteExisting);
+	pdg.lm.initialize(logBasePath, pdg.lm.init_OverwriteExisting);
 	var logs = getLogFiles();
 	expect(logs.length).toEqual(1);
 	expect(logs[0]).toBe('pdg_test.log');
@@ -120,7 +132,7 @@ describe("LogManager", function() {
   });
 
   it("write to an existing file", function() {
-	pdg.lm.initialize("pdg_test", pdg.lm.init_AppendToExisting);
+	pdg.lm.initialize(logBasePath, pdg.lm.init_AppendToExisting);
 	var logs = getLogFiles();
 	expect(logs.length).toEqual(1);
 	expect(logs[0]).toBe('pdg_test.log');
@@ -132,8 +144,8 @@ describe("LogManager", function() {
   });
 
   it("write to an unique file", function() {
-	pdg.lm.initialize("pdg_test", pdg.lm.init_CreateUniqueNewFile);
-	pdg.lm.initialize("pdg_test", pdg.lm.init_CreateUniqueNewFile); // this should produce 2 new log files
+	pdg.lm.initialize(logBasePath, pdg.lm.init_CreateUniqueNewFile);
+	pdg.lm.initialize(logBasePath, pdg.lm.init_CreateUniqueNewFile); // this should produce 2 new log files
 	var logs = getLogFiles();
 	expect(logs.length).toEqual(3);
 	expect(logs[0]).toBe('pdg_test.log');
@@ -147,9 +159,9 @@ describe("LogManager", function() {
 	expect(lc2).toEqual(lc+7);
   });
 
-  it("only writes line that at or above the priority level", function() {
+  it("only writes line that are at or above the priority level", function() {
     cleanUp();
-	pdg.lm.initialize("pdg_test", pdg.lm.init_AppendToExisting);
+	pdg.lm.initialize(logBasePath, pdg.lm.init_AppendToExisting);
   	pdg.lm.setLogLevel(0);
   	pdg.lm.setLogLevel(-1);
 	var logs = getLogFiles();

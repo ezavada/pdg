@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::fillColor(color)
+
+\brief sets the fill color for shapes and drawings
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::round()
+
+\brief round the coordinates to closest whole number
+
+**/ }

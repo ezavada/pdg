@@ -1,14 +1,14 @@
-.TH "Point" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Point" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Point \- 
-.PP
-point for 2D coordinate system  
+Point \- point for 2D coordinate system  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .PP
 Inherits \fBOffset\fP\&.
 .SS "Public Member Functions"
@@ -17,30 +17,104 @@ Inherits \fBOffset\fP\&.
 .ti -1c
 .RI "\fBPoint\fP ()"
 .br
-.RI "\fIcreate with x = 0, y = 0 \fP"
+.RI "create with x = 0, y = 0 "
 .ti -1c
 .RI "\fBPoint\fP (number \fBx\fP, number \fBy\fP)"
 .br
-.RI "\fIcreate and set x & y values \fP"
+.RI "create and set x & y values "
 .ti -1c
 .RI "\fBPoint\fP (number[] xy)"
 .br
-.RI "\fIcreate and set x & y values \fP"
+.RI "create and set x & y values "
 .ti -1c
 .RI "\fBPoint\fP (object xy)"
 .br
-.RI "\fIcreate and set x & y values \fP"
+.RI "create and set x & y values "
 .ti -1c
 .RI "number \fBdistance\fP (\fBPoint\fP point)"
 .br
-.RI "\fIget distance from another point \fP"
+.RI "get distance from another point "
 .ti -1c
-.RI "\fBPoint\fP \fBprojection\fP (\fBPoint\fP point)"
+.RI "\fBOffset\fP \fBoffset\fP (\fBPoint\fP point)"
 .br
-.RI "\fIdo a projection of a second point onto this point \fP"
+.RI "get the offset of this point from another point "
+.in -1c
+
+Public Member Functions inherited from \fBOffset\fP
+.in +1c
+.ti -1c
+.RI "\fBOffset\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP (number \fBx\fP, number \fBy\fP)"
+.br
+.ti -1c
+.RI "\fBOffset\fP (number[] xy)"
+.br
+.ti -1c
+.RI "\fBOffset\fP (object xy)"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBadd\fP (\fBOffset\fP offset)"
+.br
+.RI "add an offset to this one "
+.ti -1c
+.RI "\fBOffset\fP \fBassign\fP (\fBOffset\fP offset)"
+.br
+.RI "set this offset equal to the given offset "
+.ti -1c
+.RI "\fBOffset\fP \fBdiv\fP (\fBOffset\fP offset)"
+.br
+.RI "divide this offset by the given one "
+.ti -1c
+.RI "\fBOffset\fP \fBdividedby\fP (\fBOffset\fP offset)"
+.br
+.RI "return new offset that is this offset divided by given offset "
+.ti -1c
+.RI "boolean \fBequals\fP (\fBOffset\fP offset)"
+.br
+.RI "return true if this point is equal to the other "
+.ti -1c
+.RI "\fBOffset\fP \fBminus\fP (\fBOffset\fP offset)"
+.br
+.RI "return new offset that is this offset minus given offset "
+.ti -1c
+.RI "\fBOffset\fP \fBmul\fP (\fBOffset\fP offset)"
+.br
+.RI "multiply this offset by the given one "
+.ti -1c
+.RI "boolean \fBnotEquals\fP (\fBOffset\fP offset)"
+.br
+.RI "return true if this point is not equal to the other "
+.ti -1c
+.RI "\fBOffset\fP \fBplus\fP (\fBOffset\fP offset)"
+.br
+.RI "return new offset that is this offset plus given offset "
+.ti -1c
+.RI "\fBOffset\fP \fBsub\fP (\fBOffset\fP offset)"
+.br
+.RI "subtract an offset from this one "
+.ti -1c
+.RI "\fBOffset\fP \fBtimes\fP (\fBOffset\fP offset)"
+.br
+.RI "return new offset that is this offset multiplied by given offset "
+.ti -1c
+.RI "\fBVector\fP \fBvector\fP ()"
+.br
+.RI "return a new vector from this offset "
 .in -1c
 .SS "Public Attributes"
 
+.in +1c
+.ti -1c
+.RI "number \fBx\fP"
+.br
+.ti -1c
+.RI "number \fBy\fP"
+.br
+.in -1c
+
+Public Attributes inherited from \fBOffset\fP
 .in +1c
 .ti -1c
 .RI "number \fBx\fP"
@@ -54,18 +128,23 @@ Inherits \fBOffset\fP\&.
 point for 2D coordinate system 
 
 \fBPoint\fP provides support for dealing with points as x, y floating point values in 2 dimensional space\&. The PDG coordinate space starts with the top left corner of the drawing port at Point(0,0) and the bottom left corner at Point( width, height );
+
 .PP
- 
+     
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "\fBPoint\fP ()"
 
 .PP
 create with x = 0, y = 0 
-.SS "\fBPoint\fP (numberx, numbery)"
+.PP
+Referenced by \fBdistance()\fP, and \fBoffset()\fP\&.
+.SS "\fBPoint\fP (number x, number y)"
 
 .PP
-create and set x & y values \fBParameters:\fP
+create and set x & y values 
+.PP
+\fBParameters\fP
 .RS 4
 \fIx\fP the horizontal coordinate 
 .br
@@ -73,19 +152,25 @@ create and set x & y values \fBParameters:\fP
 .RE
 .PP
 
-.SS "\fBPoint\fP (number[]xy)"
+.PP
+References \fBx\fP, and \fBy\fP\&.
+.SS "\fBPoint\fP (number[] xy)"
 
 .PP
-create and set x & y values \fBParameters:\fP
+create and set x & y values 
+.PP
+\fBParameters\fP
 .RS 4
 \fIxy\fP an array of numbers with x as element 0 and y as element 1 
 .RE
 .PP
 
-.SS "\fBPoint\fP (objectxy)"
+.SS "\fBPoint\fP (object xy)"
 
 .PP
-create and set x & y values \fBParameters:\fP
+create and set x & y values 
+.PP
+\fBParameters\fP
 .RS 4
 \fIxy\fP an object with x and y members, for example: {x: 1, y: 4} 
 .RE
@@ -93,25 +178,35 @@ create and set x & y values \fBParameters:\fP
 
 .SH "Member Function Documentation"
 .PP 
-.SS "distance (\fBPoint\fPpoint)"
+.SS "number distance (\fBPoint\fP point)"
 
 .PP
-get distance from another point \fBParameters:\fP
+get distance from another point 
+.PP
+\fBParameters\fP
 .RS 4
 \fIpoint\fP the other \fBPoint\fP 
 .RE
 .PP
 
-.SS "projection (\fBPoint\fPpoint)"
+.PP
+References \fBPoint()\fP\&.
+.SS "\fBOffset\fP offset (\fBPoint\fP point)"
 
 .PP
-do a projection of a second point onto this point 
+get the offset of this point from another point 
+.PP
+References \fBOffset::Offset()\fP, and \fBPoint()\fP\&.
 .SH "Member Data Documentation"
 .PP 
 .SS "number x"
 
+.PP
+Referenced by \fBPoint()\fP\&.
 .SS "number y"
 
+.PP
+Referenced by \fBPoint()\fP\&.
 
 .SH "Author"
 .PP 

@@ -33,6 +33,7 @@
 #include "sound-mgr-macosx.h"
 #include "sound-macosx.h"
 #include "pdg/sys/resource.h"
+#include "pdg-lib.h"
 
 namespace pdg {
 
@@ -76,6 +77,41 @@ SoundManagerMac::idle() {
             continue;
         }
         ++it;
+    }
+    
+    // Process deferred audio cleanup to prevent resource leaks
+    DeferredAudioCleanup::getInstance().processCleanup();
+}
+
+// check if we're in shutdown mode (uses pdg_LibIsQuitting())
+bool
+SoundManagerMac::isShuttingDown() const {
+    return pdg_LibIsQuitting();
+}
+
+// stop all currently playing sounds
+void
+SoundManagerMac::stopAllSounds() {
+    // Make a copy of the sounds list to avoid issues when sounds remove themselves
+    SoundsList sounds = mSounds;
+    SoundsList::iterator it;
+    
+    // Set all volumes to 0 to prevent pops/clicks
+    for (it = sounds.begin(); it != sounds.end(); ++it) {
+        if (*it) {
+            (*it)->setVolume(0.0f);
+        }
+    }
+    
+    // Wait for volume change to propagate through the audio pipeline
+    // This prevents buffer repeating and pops when we flush
+    PosixAPI::usleep(500 * 1000); // 500ms
+    
+    // Now stop all sounds (this will flush buffers and stop immediately during shutdown)
+    for (it = sounds.begin(); it != sounds.end(); ++it) {
+        if (*it) {
+            (*it)->stop();
+        }
     }
 }
 

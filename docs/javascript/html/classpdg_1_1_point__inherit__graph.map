@@ -1,3 +1,5 @@
 <map id="Point" name="Point">
-<area shape="rect" id="node2" href="$classpdg_1_1_offset.html" title="offset within a 2D coordinate system" alt="" coords="5,5,62,31"/>
+<area shape="rect" id="Node000001" title="point for 2D coordinate system" alt="" coords="8,79,60,105"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_offset.html" title="offset within a 2D coordinate system" alt="" coords="5,5,63,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="37,46,37,79,31,79,31,46"/>
 </map>

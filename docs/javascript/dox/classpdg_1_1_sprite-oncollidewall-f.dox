@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onCollideWall
+
+\brief set event handler for sprite-wall collision events
+
+This happens whenever this sprite collides with the boundaries of the layer, but only if setWantsCollideWallEvents(true) was called.
+
+\sa setWantsCollideWallEvents()
+\sa onExitLayer()
+\sa SpriteCollideEvent
+\sa IEventHandler
+
+**/ }

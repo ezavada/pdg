@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::isAnimationPaused()
+
+\brief returns true if the animation is currently paused
+
+**/ }

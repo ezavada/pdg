@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Spline::getPointCount()
+
+\brief returns the number of control points in the spline
+
+**/ }

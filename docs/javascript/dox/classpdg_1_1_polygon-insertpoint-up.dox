@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::insertPoint(index, point)
+
+\brief inserts a point at the specified index
+
+**/ }

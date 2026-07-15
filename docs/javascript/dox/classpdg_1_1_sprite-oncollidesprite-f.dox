@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onCollideSprite
+
+\brief set event handler for sprite-to-sprite collision events
+
+The happens whenever this sprite collides with another sprite, but only if enableCollisions() or setCollisionRadius() was called
+
+\sa enableCollisions()
+\sa setCollisionRadius()
+\sa SpriteCollideEvent
+\sa IEventHandler
+
+**/ }

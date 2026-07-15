@@ -1,0 +1,19 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::offsetFrameCenters
+
+\brief change the center of rotation for the sprite
+
+Normally a sprite rotates around it's visual center, that is, the center-point of each frame of animation. This lets you shift that center of rotation, for all frames, on a per Image basis, or on a frame by frame basis.
+
+\param offsetX the horizontal offset from true center for the new center-point
+\param offsetY the vertical offset from the true center for the new center-point
+\param image if passed, only change the center points for frames using that image, and make frame numbers relative to the Image frames.
+\param startingFrame if passed, only change frames starting at a particular index in the frame list (or Image frame list if image also passed)
+\param numFrames only change this many frames
+
+\warning This doesn't work to change the center-point of individual images or frames of an SCML sprite
+
+\sa getFrameCenterOffset()
+
+**/ }

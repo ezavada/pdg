@@ -32,17 +32,19 @@
 
 #include "pdg/msvcfix.h" // fixes GCC too
 
-#include "internal.h"
+#include "internals.h"
 #include "pdg-main.h"
+#include "pdg-lib.h"
 
 int main(int argc, const char* argv[]) {
+	pdg_LibSaveArgs(argc, argv);  // FIXME -- why isn't this done in main_init() instead
 
 	int result = pdg::main_init(argc, argv, false);
-	while (!gQuitting) {
-		main_run();
+	while (!pdg::gExit) {
+		pdg::main_run();
+		pdg::platform_pollEvents();
 	}
-	main_cleanup();
+	pdg::main_cleanup();
 	
-    return gExitCode;
+    return pdg::gExitCode;
 }
-

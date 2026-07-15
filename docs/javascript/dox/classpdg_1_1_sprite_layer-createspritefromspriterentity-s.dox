@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::SpriteLayer::createSpriteFromSpriterEntity
+
+\brief create a sprite from SCML data that was previously loaded
+
+createSpriteLayerFromSpriterFile() and createSpriteFromSpriterFile() both cache their file data for this purpose
+
+
+**/ }

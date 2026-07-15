@@ -1,0 +1,12 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setCollideGroup
+
+\brief set the collide group this sprite is part of (*Chipmunk Physics Only*)
+
+Items in the same collide group do not collide with one another. Sprites that are connected with joints are automatically assigned to the same collide group.
+
+\sa getCollideGroup()
+
+
+**/ }

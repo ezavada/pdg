@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addLine(from, to, attrs)
+
+\brief adds a line element to the drawing
+
+**/ }

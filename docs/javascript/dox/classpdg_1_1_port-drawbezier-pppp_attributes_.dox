@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawBezier(from, control1, control2, to, attrs)
+
+\brief draws a Bezier curve with the specified control points and attributes
+
+**/ }

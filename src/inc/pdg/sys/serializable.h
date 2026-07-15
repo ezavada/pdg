@@ -121,7 +121,7 @@ namespace pdg {
 		\ingroup Serialization
 	 */
 	
-	class ISerializable : public RefCountedObj {
+	class ISerializable : public virtual RefCountedObj {
 	public:
 
 		//! Get number of bytes needed to hold serialized state

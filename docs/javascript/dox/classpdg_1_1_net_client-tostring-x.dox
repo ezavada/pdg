@@ -1,9 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::NetClient::toString
-
-\brief returns "[object NetClient]"
-
-Yep. Every time. That's all it does. 
-
-**/ }

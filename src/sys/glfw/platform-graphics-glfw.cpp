@@ -64,9 +64,12 @@ struct PrivateWindowInfoT {
 #ifdef PLATFORM_WIN32
 extern HWND gMainHWND;
 HDC graphics_getPortDC(Port* port) {
+	if (!port) return NULL;
 	PortImpl* portimpl = dynamic_cast<PortImpl*>(port);
+	if (!portimpl || !portimpl->mPlatformWindowRef) return NULL;
 	GLFWwindow* window = static_cast<GLFWwindow*>(portimpl->mPlatformWindowRef);
 	HWND hwnd = glfwGetWin32Window(window);
+	if (!hwnd) return NULL;
 	HDC hdc = WinAPI::GetDC(hwnd);
 	return hdc;
 }
@@ -123,12 +126,31 @@ int platform_getPrimaryScreen() {
 
 void platform_getScreenSize(long* outWidth, long* outHeight, int screenNum) {
 	glfwInitIfNeeded();
-	if (screenNum >= GraphicsManager::screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
+	if (screenNum >= screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
 		GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
-		const GLFWvidmode* mode = glfwGetVideoMode(monitor);		
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		*outWidth = mode->width;
 		*outHeight = mode->height;
 	} else {
+		*outWidth = 0;
+		*outHeight = 0;
+	}
+}
+
+void platform_getScreenBounds(long* outX, long* outY, long* outWidth, long* outHeight, int screenNum) {
+	glfwInitIfNeeded();
+	if (screenNum >= screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
+		GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
+		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+		int x, y;
+		glfwGetMonitorPos(monitor, &x, &y);
+		*outX = (long)x;
+		*outY = (long)y;
+		*outWidth = mode->width;
+		*outHeight = mode->height;
+	} else {
+		*outX = 0;
+		*outY = 0;
 		*outWidth = 0;
 		*outHeight = 0;
 	}
@@ -157,7 +179,7 @@ void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum) {
 	*outWidth = screenWidth - windFrameWidth;
 	*outHeight = screenHeight - windFrameHeight;
 	// adjust for menu bar/dock
-	if (screenNum == GraphicsManager::screenNum_PrimaryScreen 
+	if (screenNum == screenNum_PrimaryScreen 
 	  || screenNumToGLFWmonitor(screenNum) == glfwGetPrimaryMonitor()) {
 		*outWidth += primaryDeltaWidth;
 		*outHeight += primaryDeltaHeight;
@@ -166,6 +188,7 @@ void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum) {
 
 void* platform_createWindow(long width, long height, long xPos, long yPos, int bpp, const char* title) {
 	glfwInitIfNeeded();
+	glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 	GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
 	glfwSetWindowPos(window, xPos, yPos);
 	PrivateWindowInfoT* winInfo = new PrivateWindowInfoT();
@@ -178,7 +201,7 @@ void* platform_createWindow(long width, long height, long xPos, long yPos, int b
 }
 
 int platform_getNumSupportedScreenModes(int screenNum) {
-	if ((screenNum < GraphicsManager::screenNum_PrimaryScreen) || (screenNum >= platform_getNumScreens())) return 0;
+	if ((screenNum < screenNum_PrimaryScreen) || (screenNum >= platform_getNumScreens())) return 0;
 	int count = 1;
 	GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
 	glfwGetVideoModes(monitor, &count);
@@ -189,7 +212,7 @@ void platform_getNthSupportedScreenMode(int screenNum, int n, long* outWidth, lo
 	*outWidth = 0;
 	*outHeight = 0;
 	*outBpp = 0;
-	if ((screenNum < GraphicsManager::screenNum_PrimaryScreen) || (screenNum >= platform_getNumScreens())) return;
+	if ((screenNum < screenNum_PrimaryScreen) || (screenNum >= platform_getNumScreens())) return;
 	if (n < 0) return;
 	int count = 1;
 	GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
@@ -249,7 +272,7 @@ int platform_closestScreenTo(long width, long height, int bpp) {
     if (bpp == 0) bpp = 32;
     int numScreens = platform_getNumScreens();
     int ranking[PDG_MAX_DISPLAYS];
-    int highestRankedScreen = GraphicsManager::screenNum_PrimaryScreen; // worst case is we just use main screen
+    int highestRankedScreen = screenNum_PrimaryScreen; // worst case is we just use main screen
     int highestRank = 0;
     for (int i = 0; i <  numScreens; i++) {
         long h, w;
@@ -279,8 +302,8 @@ void platform_switchScreenResolution(int screenNum, long width, long height, int
 
 void* platform_createFullscreenWindow(long width, long height, int bpp, int screenNum) {
 	glfwInitIfNeeded();
-	if (screenNum < GraphicsManager::screenNum_PrimaryScreen && screenNum >= platform_getNumScreens()) {
-		screenNum = GraphicsManager::screenNum_PrimaryScreen;
+	if (screenNum < screenNum_PrimaryScreen && screenNum >= platform_getNumScreens()) {
+		screenNum = screenNum_PrimaryScreen;
 	}
     if (bpp == 0) bpp = platform_getCurrentScreenDepth(screenNum);
 	GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
@@ -308,7 +331,7 @@ void platform_resizeWindow(void* windRef, long width, long height, bool fullscre
 	glfwSetWindowSize(window, width, height);
 	if (winInfo->isFullscreen != fullscreen) {
 		// we are swapping between fullscreen and windowed mode
-		OS::_DOUT("Can't swap between fullscreen and windowed mode in GLFW!!");
+		DEBUG_ONLY( OS::_DOUT("Can't swap between fullscreen and windowed mode in GLFW!!"); )
 	}
 //	winInfo->isFullscreen = fullscreen;
 }	
@@ -332,6 +355,11 @@ void platform_setWindowPosition(void* windRef, long xPos, long yPos) {
 	glfwSetWindowPos(window, xPos, yPos);
 }
 
+void platform_setHardwareCursorVisible(bool inVisible) {
+	// GLFW handles cursor visibility automatically
+	// This function is called to reset cursor state, but GLFW manages it internally
+}
+
 bool platform_isFullScreen(void* windRef) {
 	GLFWwindow* window = static_cast<GLFWwindow*>(windRef);
 	PrivateWindowInfoT* winInfo = (PrivateWindowInfoT*)glfwGetWindowUserPointer(window);
@@ -340,7 +368,7 @@ bool platform_isFullScreen(void* windRef) {
 
 int platform_getCurrentScreenDepth(int screenNum) {
 	glfwInitIfNeeded();
-	if (screenNum >= GraphicsManager::screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
+	if (screenNum >= screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
 		GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 		return bppFromGLFWvidmode(mode);

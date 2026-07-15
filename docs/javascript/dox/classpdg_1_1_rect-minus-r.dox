@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::minus(Rect r2)
+
+\brief Subtract another rectangle from this rectangle, returning the difference
+
+**/ }

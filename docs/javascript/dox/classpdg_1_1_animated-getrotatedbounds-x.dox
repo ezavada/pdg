@@ -4,6 +4,7 @@ namespace pdg { /**
 
 \brief get the bounds with rotation
 
-\todo should this be returning a RotatedRect?
+\returns RotatedRect
+**/ }
 
 **/ }

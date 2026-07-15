@@ -26,15 +26,22 @@
 // -----------------------------------------------
 
 var pdg = require('pdg');
+
 var path = require('path');
 
-var drawBalls = false;
-var drawSpinner = false;
-var drawWalkingHero = false;
-var drawStandingHero = true;
-var drawGlobe = false;
+// GC Monitoring
+const GCMonitor = require('./test/js/gc-monitor.js');
+let gcMonitor = null;
 
-var gBackgroundColor = new Color("white");  // was teal
+var drawBalls = true;
+var drawSpinner = true;
+var drawWalkingHero = true;
+var drawStandingHero = true;
+var drawGlobe = true;
+var playMusic = true;
+var playSounds = true;
+
+var gBackgroundColor = new pdg.Color("teal");  // was teal
 
 var kWindowWidth  = 800;
 var kWindowHeight =  600;
@@ -49,26 +56,22 @@ var kMaxSpriteMoveDelta =  300;
 var launchedFromTest = /[\/\\]test$/.test(global.process.cwd());
 var testDir = launchedFromTest ? "" : "test/";
 
-// samples directory doesn't need to be adjusted the same way because relative paths
-// are considered to be relative to the Application Directory
-var samplesDir = "../"; //launchedFromTest ? "../../" : "../";
+// Use absolute path to avoid canonicalization issues
+var samplesDir = process.cwd() + "/test/data/spriter-samples/";
 if (global.process.ios) {
 	testDir = "";  // doesn't have test directory
 	samplesDir = process.cwd();
 }
-samplesDir += "deps/scml-pp/samples/";
 
 var gSpriteFilename = testDir + "yinyang.png";
 var gEarthFilename = testDir + "earthmap2.png";
-var gHeroFilename = samplesDir + "hero/Hero.SCML";
 var gHeroFilename = samplesDir + "wonkyskeleton/wonkyskeleton.scml";
-//var gHeroFilename = samplesDir + "greyguy/player.scml";
-//var gHeroFilename = samplesDir + "simple/simple.scml";
-var gStepFilename = "step.wav";
-var gClink1Filename = "clink1.mp3";
-var gClink2Filename = "clink2.mp3";
-var gHitFilename = "hit.wav";
-var gMusicFilename = "Peppy_The-Firing-Squad_YMXB.mp3";
+var gGreyGuyFilename = samplesDir + "greyguy/player.scml";
+var gStepFilename = process.cwd() + "/" + testDir + "step.wav";
+var gClink1Filename = process.cwd() + "/" + testDir + "clink1.mp3";
+var gClink2Filename = process.cwd() + "/" + testDir + "clink2.mp3";
+var gHitFilename = process.cwd() + "/" + testDir + "hit.wav";
+var gMusicFilename = process.cwd() + "/" + testDir + "Peppy_The-Firing-Squad_YMXB.mp3";
 
 var gCollisions = true;
 
@@ -101,6 +104,17 @@ function main()
  	var logMgr = pdg.getLogManager();
  	logMgr.setLogLevel(10);
 // 	logMgr.initialize("simple", logMgr.init_OverwriteExisting);
+
+    // Start GC monitoring
+    gcMonitor = new GCMonitor({
+        logToConsole: true,
+        trackMemoryUsage: true,
+        trackFrameRate: true,
+        gcThreshold: 10, // Log GC events longer than 10ms
+		pdg: pdg
+    });
+    gcMonitor.start();
+    console.log("GC monitoring started");
 
     Randomize();
     
@@ -135,7 +149,7 @@ function SetUpSpriteWorld() {
 
         // Create the SpriteWorld
     pdg.gfx.setTargetFPS(50.0);
-    var r = new Rect(kWindowWidth, kWindowHeight);
+    var r = new pdg.Rect(kWindowWidth, kWindowHeight);
     if (kFullscreen) {
 //    	console.log(pdg.gfx.getCurrentScreenMode(0));
 //    	pdg.gfx.setScreenMode(0, kWindowWidth, kWindowHeight, 32);
@@ -156,7 +170,8 @@ function SetUpSpriteWorld() {
 	console.log("  setup spritelayer erase callback");
     gSpriteLayer.onErasePort( function(evt) {
  		var portRect = gPort.getDrawingArea();
-		gPort.fillRect( portRect, gBackgroundColor );
+		//var backgroundAttrs = new pdg.Attributes().fillColor(gBackgroundColor);
+		//gPort.drawRect(portRect, backgroundAttrs);
         var loc = portRect.centerPoint();
         if (!gStartingMs) gStartingMs = evt.millisec;
         var t = (evt.millisec - gStartingMs);
@@ -164,17 +179,29 @@ function SetUpSpriteWorld() {
         var scale = t/10;
         if (scale > 400.0) scale = 400;
         if (drawGlobe) {
-        	gPort.drawTexturedSphere( gEarthImage, loc, scale, rotation);
+			var earthAttrs = new pdg.Attributes().sphereRotation(rotation).texture(gEarthImage).lightOffset(new pdg.Offset(1, 0));
+			gPort.drawSphere(loc, scale, earthAttrs);
+        	//gPort.drawTexturedSphere( gEarthImage, loc, scale, rotation);
     	}
 		var fps = "FPS: " + pdg.gfx.getFPS() + ".0";
-		var where = new Point(10, kWindowHeight - 20);
-		gPort.drawText( fps.substring(0,9), where, 14, 0, "white");
+		var where = new pdg.Point(10, kWindowHeight - 20);
+		var fpsAttrs = new pdg.Attributes().textSize(14).fillColor("white");
+		gPort.drawText(fps.substring(0,9), where, fpsAttrs);
+		
+		// Track frame rate for GC monitoring
+		if (gcMonitor) {
+		    gcMonitor.onFrame();
+		}
+		
 		return true; // completely handled
 	});
 
 	console.log("  creating ball image");
 	gBallImage = new pdg.Image(gSpriteFilename);
+	console.log("  ball image created, size: " + gBallImage.getWidth() + "x" + gBallImage.getHeight());
+    console.log("  creating earth image from: " + gEarthFilename);
     gEarthImage = new pdg.Image(gEarthFilename);
+    console.log("  earth image created, size: " + gEarthImage.getWidth() + "x" + gEarthImage.getHeight());
 }
 
 // a helper object that keeps an animated object within bounds and causes it to 
@@ -213,6 +240,7 @@ var echoed = false;
 function BallCollideFunc(evt) {
 	if (evt.arbiter && evt.arbiter.isFirstContact()) {
 		if (!echoed) {
+			console.log("BallCollideFunc");
 			console.log(evt);
 			echoed = true;
 		}
@@ -220,11 +248,13 @@ function BallCollideFunc(evt) {
 		var xoffset = xloc - gPort.getDrawingArea().width()/2;
 		gCollisionCount++;
 		keVol = evt.kineticEnergy / 100000;
-		if (keVol >= 0.01) {
+		// Use a much lower threshold or minimum volume for testing
+		var soundVol = Math.max(keVol/4, 0.1); // minimum volume of 0.1 for testing
+		if (playSounds) {
 			if (gCollisionCount % 2 == 1) {
-				gClink1.play(keVol/4, xoffset);
+				if (gClink1) gClink1.play(soundVol, xoffset);
 			} else {
-				gClink2.play(keVol/4, xoffset);
+				if (gClink2) gClink2.play(soundVol, xoffset);
 			}
 		}
 	}
@@ -261,9 +291,11 @@ function CreateBallSprite() {
 
 function AddSprites() {
 	console.log("in AddSprites()");
-    var   newSprite;
+    var newSprite;
+	var greyGuySprite;
 
 	if (drawBalls) {
+		console.log("Creating " + kNumSprites + " ball sprites...");
 		for (spriteNum = 0; spriteNum < kNumSprites; spriteNum++) {
 			newSprite = CreateBallSprite();
 			newSprite.id = spriteNum;
@@ -272,6 +304,7 @@ function AddSprites() {
 			var max_y = screenCenter.y - gBallImage.getHeight()/2;
 			var loc = new pdg.Point((pdg.rand() % max_x * 2), pdg.rand() % max_y * 2);
 			newSprite.setLocation(loc);
+			console.log("Created ball sprite " + spriteNum + " at position " + loc.x + "," + loc.y);
 
 			if (gCollisions) {
 				newSprite.enableCollisions();
@@ -280,7 +313,7 @@ function AddSprites() {
 			}
 
 			do {	// make sure we get movement in both axis
-				var v = new Vector(pdg.rand() % (kMaxSpriteMoveDelta*2+1) - kMaxSpriteMoveDelta, pdg.rand() % (kMaxSpriteMoveDelta*2+1) - kMaxSpriteMoveDelta);
+				var v = new pdg.Vector(pdg.rand() % (kMaxSpriteMoveDelta*2+1) - kMaxSpriteMoveDelta, pdg.rand() % (kMaxSpriteMoveDelta*2+1) - kMaxSpriteMoveDelta);
 				newSprite.setVelocity(v);
 			} while (v.x == 0 || v.y == 0);
 		}
@@ -293,10 +326,20 @@ function AddSprites() {
 		newSprite.setMass(10);
 	
 		var myHelper = new pdg.ISpriteDrawHelper(function(sprite, port) {
-			var bounds = sprite.getRotatedBounds();
+			var bounds = sprite.getRotatedBounds(); // this gets a rotated rect: unrotated size plus centerpoint and rotation
 			var r = sprite.getLayer().layerToPortRect(bounds);
-			port.fillRect(r, "black");
-			port.frameRect(r, "white");
+			var center = sprite.getLayer().layerToPortPoint(bounds.centerPoint());
+			var frameAttrs = new pdg.Attributes().lineColor("white").lineThickness(1.0).rotation(bounds.radians, center);
+			port.drawRect(r, frameAttrs.fillColor("black"));
+			
+			// Debug: Draw the actual collision bounds
+			if (false && sprite.getCollisionType() == pdg.collide_BoundingBox) {
+				var collisionBounds = sprite.getRotatedBounds();
+				var collisionRect = sprite.getLayer().layerToPortRect(collisionBounds);
+				var collisionFrameAttrs = new pdg.Attributes().lineColor("red").lineThickness(1.0);
+				port.drawRect(collisionRect, collisionFrameAttrs);
+			}
+			
 			return false; // don't let sprite draw itself (ignored for post draw)
 		});
 		newSprite.setVelocity([10, 10]);
@@ -310,27 +353,31 @@ function AddSprites() {
 	}
 
 	if (drawWalkingHero) {
-		console.log("AddSprites: createSpriteFromSCMLFile ["+gHeroFilename+"]");
-		newSprite = gSpriteLayer.createSpriteFromSCMLFile(gHeroFilename);
+		console.log("AddSprites: createSpriteFromSpriterFile ["+gHeroFilename+"]");
+		newSprite = gSpriteLayer.createSpriteFromSpriterFile(gHeroFilename);
 		if (newSprite) {
 			newSprite.setLocation(new pdg.Point(200,600) );
 			newSprite.setEntityScale(4.0, 4.0);
+			newSprite.enableCollisions(pdg.collide_SpriterCollisionBox);
 			if (newSprite.hasAnimation('walk')) {
 				console.log("sprite has walk animation");
 				newSprite.startAnimation('walk');
 			}
+			pdg.tm.onInterval(function() {
+				newSprite.flipX();
+			}, 4000);
 		}
 	}
 
 	if (drawStandingHero) {
-		console.log("AddSprites: createSpriteFromSCMLFile ["+gHeroFilename+"]");
-		newSprite = gSpriteLayer.createSpriteFromSCMLFile(gHeroFilename);
-		if (newSprite) {
-			newSprite.setLocation(new pdg.Point(800,1200) );
-			newSprite.setEntityScale(4.0, 4.0);
-			if (newSprite.hasAnimation('Idle')) {
+		console.log("AddSprites: createSpriteFromSpriterFile ["+gGreyGuyFilename+"]");
+		greyGuySprite = gSpriteLayer.createSpriteFromSpriterFile(gGreyGuyFilename);
+		if (greyGuySprite) {
+			greyGuySprite.setLocation(new pdg.Point(400,600) );
+			greyGuySprite.setEntityScale(4.0, 4.0);
+			if (greyGuySprite.hasAnimation('Idle')) {
 				console.log("sprite has Idle animation");
-				newSprite.startAnimation('Idle');
+				greyGuySprite.startAnimation('Idle');
 			}
 		}
 	}
@@ -343,11 +390,15 @@ function AddSprites() {
 
 function RunAnimation() {
 	console.log("in RunAnimation()");
-	gMusic = new pdg.Sound(gMusicFilename);
-	gMusic.setVolume(0.3);
-	gMusic.start();
-	gClink1 = new pdg.Sound(gClink1Filename);
-	gClink2 = new pdg.Sound(gClink2Filename);
+	if (playMusic) {
+		gMusic = new pdg.Sound(gMusicFilename);
+		gMusic.setVolume(0.3);
+		gMusic.start();
+	}
+	if (playSounds) {
+		gClink1 = new pdg.Sound(gClink1Filename);
+		gClink2 = new pdg.Sound(gClink2Filename);
+	}
 	pdg.run();
 }
 
@@ -359,14 +410,18 @@ function RunAnimation() {
 
 function CleanUp() {
 	
-    pdg.cleanupSpriteLayer(gSpriteLayer);
-
-        // Dispose the master sprite, since it isn't included in the SpriteWorld
-//     SWDisposeSprite(&gMasterBallSpriteP);
-// 
-//         // Dispose the SpriteWorld, including all sprites and layers currently in it
-//     SWDisposeSpriteWorld(&gSpriteWorldP);
-//     SWExitSpriteWorld();
+    // Stop GC monitoring and print final report
+	try {
+		if (gcMonitor) {
+			console.log("\n=== Final GC Report ===");
+			gcMonitor.stop();
+			gcMonitor.printReport();
+		}
+	} catch (e) {
+		console.log("No GC report available");
+	}
+    
+    pdg.cleanupLayer(gSpriteLayer);
 
     return true;
 }

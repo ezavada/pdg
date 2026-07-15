@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::moveXTo(x)
+
+\brief move the rectangle to a particular x location, leaving y unchanged
+
+**/ }

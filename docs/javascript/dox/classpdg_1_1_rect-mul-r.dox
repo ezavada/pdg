@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::mul(Rect r2)
+
+\brief mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point; mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle
+
+**/ }

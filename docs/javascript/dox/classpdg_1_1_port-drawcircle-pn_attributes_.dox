@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawCircle(Point center, float radius, Attributes attrs)
+
+\brief Draw a circle at the specified center point with given radius
+
+**/ }

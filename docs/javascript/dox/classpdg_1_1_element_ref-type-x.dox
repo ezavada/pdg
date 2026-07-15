@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::ElementRef::type()
+
+\brief returns the type of the element
+
+**/ }

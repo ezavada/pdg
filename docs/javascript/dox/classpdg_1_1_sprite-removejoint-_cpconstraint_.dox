@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::removeJoint
+
+\brief remove a joint between two sprites (*Chipmunk Physics Only*)
+
+**/ }

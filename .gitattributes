@@ -1,0 +1,14 @@
+# Keep Unix entry-point scripts executable under WSL/macOS.
+*.sh text eol=lf
+/configure text eol=lf
+/test/client text eol=lf
+/test/node text eol=lf
+/test/ui text eol=lf
+/test/lanes text eol=lf
+/deps/node/configure text eol=lf
+/tools/node-pdg/Makefile text eol=lf
+
+# Keep Windows command wrappers in native CRLF format.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf

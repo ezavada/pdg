@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::onMouseLeave
+
+\brief set event handler for mouse pointer leaving this sprite (*NOT IMPLEMENTED*)
+
+Only works if you first call setWantsMouseOverEvents(true).
+
+\sa setWantsMouseOverEvents()
+\sa onMouseEnter()
+\sa SpriteTouchEvent
+\sa IEventHandler
+
+\todo NOT IMPLEMENTED
+
+**/ }

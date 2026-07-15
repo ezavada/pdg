@@ -1,0 +1,13 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::ratchet
+
+\brief join two sprites rotation with a ratchet mechanism (*Chipmunk Physics Only*)
+
+like a socket wrench. ratchetInterval is the distance between “clicks”, phase is the initial angular offset to use when deciding where the ratchet angles are.
+
+If a breaking force is given, then the joint will break, generating a SpriteBreakEvent, if greater than that amount of rotational force (torque) is applied to the joint.
+
+\returns the cpConstraint for the Joint in case you want to do anything special with it
+
+**/ }

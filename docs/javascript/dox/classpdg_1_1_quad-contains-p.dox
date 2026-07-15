@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Quad::contains(p)
+
+\brief returns true if the point is contained within this quad
+
+**/ }

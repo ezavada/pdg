@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::removePoint(index)
+
+\brief removes the point at the specified index
+
+**/ }

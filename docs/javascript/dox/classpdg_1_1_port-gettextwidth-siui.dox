@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::getTextWidth(text, size, style, len)
+
+\brief returns the width of the specified text in pixels
+
+**/ }

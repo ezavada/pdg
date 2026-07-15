@@ -14,7 +14,7 @@ var searchData=
   ['init_5fstdout',['init_StdOut',['../classpdg_1_1_log_manager.html#a1267056b056c5ca859a19f90aaaf9965',1,'pdg::LogManager::init_StdOut()'],['../namespacepdg.html#a90fb7f7cb4c30ab6ff46518f73dd6804',1,'pdg::init_StdOut()']]],
   ['initialize',['initialize',['../classpdg_1_1_log_manager.html#a2bd69db5ae34acce85e4d643a21ad741',1,'pdg::LogManager']]],
   ['intersection',['intersection',['../classpdg_1_1_rect.html#a0bb3d481344656f39403bb680bf1fa74',1,'pdg::Rect']]],
-  ['isbehind',['isBehind',['../classpdg_1_1_sprite.html#ad4e9b49ed0795b3f283e5364a8e328df',1,'pdg::Sprite']]],
+  ['isbehind',['isBehind',['../classpdg_1_1_sprite.html#a0860ad0c3da994fcba1599eaa64cb5a9',1,'pdg::Sprite']]],
   ['isbuttondown',['isButtonDown',['../classpdg_1_1_event_manager.html#ae544f683f6e39ce32d71bebf17a76941',1,'pdg::EventManager']]],
   ['iserializable',['ISerializable',['../classpdg_1_1_i_serializable.html',1,'pdg']]],
   ['isfirstcontact',['isFirstContact',['../classpdg_1_1_cp_arbiter.html#a4d2d94b707e4c15ef6d182fbd1fce5f6',1,'pdg::CpArbiter']]],

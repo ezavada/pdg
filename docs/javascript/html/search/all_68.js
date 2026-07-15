@@ -1,7 +1,7 @@
 var searchData=
 [
   ['handshaketimeout',['handshakeTimeout',['../classpdg_1_1_net_server.html#a0ffaf6e3a228ef910002506cc4ccdd22',1,'pdg::NetServer']]],
-  ['hasanimation',['hasAnimation',['../classpdg_1_1_sprite.html#a145066efa9ca3b5babb6fb06b05b26f0',1,'pdg::Sprite::hasAnimation(int animationId)'],['../classpdg_1_1_sprite.html#abd56596d49bf3c45cf549f16f226c4e1',1,'pdg::Sprite::hasAnimation(string animationName)']]],
+  ['hasanimation',['hasAnimation',['../classpdg_1_1_sprite.html#a2b16d9a17f4b6c9c42e7e4a631638ded',1,'pdg::Sprite::hasAnimation(int animationId)'],['../classpdg_1_1_sprite.html#aa7d004608f7e04d55259311fd6651b1f',1,'pdg::Sprite::hasAnimation(string animationName)']]],
   ['hasdgram',['hasDgram',['../classpdg_1_1_net_connection.html#a87ac3f234de7674a61b0d0ccc70f2ef3',1,'pdg::NetConnection']]],
   ['hasgraphics',['hasGraphics',['../namespacepdg.html#ac71ec7cdd430f90b571ceba11731cd6c',1,'pdg']]],
   ['hasnetwork',['hasNetwork',['../namespacepdg.html#add518553fc9759b224e133afe70c922f',1,'pdg']]],

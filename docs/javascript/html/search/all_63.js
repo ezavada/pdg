@@ -29,7 +29,7 @@ var searchData=
   ['color',['Color',['../classpdg_1_1_color.html#a1589b83974b42a2f3315624f14c3c92c',1,'pdg::Color::Color()'],['../classpdg_1_1_color.html#a362aff9b25c37d9e319f70d5a0fe4500',1,'pdg::Color::Color(number c)'],['../classpdg_1_1_color.html#a9ef3596454d4ec68489aeb1771e5d4ed',1,'pdg::Color::Color(string colorstr)'],['../classpdg_1_1_color.html#aa3d51272440a246e0102e9d5d8be97eb',1,'pdg::Color::Color(number r, number g, number b, number alpha=1)']]],
   ['color',['Color',['../classpdg_1_1_color.html',1,'pdg']]],
   ['configmanager',['ConfigManager',['../classpdg_1_1_config_manager.html',1,'pdg']]],
-  ['connect',['connect',['../classpdg_1_1_net_client.html#a90d598df2dacf49b5d4737dc14b6351d',1,'pdg::NetClient']]],
+  ['connect',['connect',['../classpdg_1_1_net_client.html#a214b5a144e9e08ed14cb67cc531ca742',1,'pdg::NetClient']]],
   ['connection',['connection',['../classpdg_1_1_net_client.html#a10275a078bd1abcbebc206cc5d19e18b',1,'pdg::NetClient']]],
   ['connections',['connections',['../classpdg_1_1_net_server.html#a05c97c0ecc629abbb582b61ed0bfc9b3',1,'pdg::NetServer']]],
   ['contains',['contains',['../classpdg_1_1_rect.html#ad79f24ca877564e49db27d9537002594',1,'pdg::Rect::contains(Rect r)'],['../classpdg_1_1_rect.html#a6f2225b6dd282c8e49562065d0016f7d',1,'pdg::Rect::contains(Point p)'],['../classpdg_1_1_quad.html#a6f2225b6dd282c8e49562065d0016f7d',1,'pdg::Quad::contains()']]],
@@ -44,6 +44,7 @@ var searchData=
   ['createspritefromscmlentity',['createSpriteFromSCMLEntity',['../classpdg_1_1_sprite_layer.html#a1744086ce246ae17db4e2cce1dd8925c',1,'pdg::SpriteLayer']]],
   ['createspritefromscmlfile',['createSpriteFromSCMLFile',['../classpdg_1_1_sprite_layer.html#a5e61f77dbb4f57b8fe813c2d7a293959',1,'pdg::SpriteLayer']]],
   ['createspritelayer',['createSpriteLayer',['../classpdg_1_1_sprite_layer.html#a5d0c48103dbf450f8249d4037d81bfbd',1,'pdg::SpriteLayer::createSpriteLayer()'],['../namespacepdg.html#a431b7a147d409fa5f0bc4c6fca3e79c7',1,'pdg::createSpriteLayer()']]],
+  ['createspritelayerfromscmlfile',['createSpriteLayerFromSCMLFile',['../classpdg_1_1_sprite_layer.html#ae020cb99668538332a39bf5631a6f671',1,'pdg::SpriteLayer::createSpriteLayerFromSCMLFile()'],['../namespacepdg.html#ab20ce402153d3796e8c7af0cbb25b5fd',1,'pdg::createSpriteLayerFromSCMLFile()']]],
   ['createtilelayer',['createTileLayer',['../namespacepdg.html#a7d121e89f88c7b0fa70bcc2f12d7d114',1,'pdg']]],
   ['createwindowport',['createWindowPort',['../classpdg_1_1_graphics_manager.html#a4c76f6d357459e57141901e0adf367c0',1,'pdg::GraphicsManager']]]
 ];

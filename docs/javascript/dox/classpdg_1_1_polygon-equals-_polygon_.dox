@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::equals(other)
+
+\brief returns true if this polygon equals another polygon
+
+**/ }

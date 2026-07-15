@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::contains(Rect r)
+
+\brief contains([Point] p) return true if the point is inside this rectangle; contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle
+
+**/ }

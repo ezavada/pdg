@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::moveDown(delta)
+
+\brief move the rectangle down by some amount
+
+**/ }

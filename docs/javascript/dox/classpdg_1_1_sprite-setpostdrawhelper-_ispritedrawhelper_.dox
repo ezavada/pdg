@@ -1,0 +1,28 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setPostDrawHelper(helper)
+
+\brief sets a helper that draws additional content after the sprite is rendered
+
+This function sets a custom drawing helper that will be called after the sprite has been rendered. 
+This allows for additional custom drawing operations to be performed on top of the sprite.
+
+\param helper The ISpriteDrawHelper object that will handle the post-draw operations
+
+\details
+The post-draw helper is called after the sprite has been completely rendered, allowing for additional 
+drawing operations such as overlays, effects, or custom graphics to be drawn on top of the sprite.
+
+The helper object must implement the ISpriteDrawHelper interface, which provides access to the drawing 
+context and sprite information needed for custom drawing operations.
+
+\warning The helper will be called every frame while the sprite is visible, so performance should be 
+considered
+\note The helper has access to the same drawing context as the sprite
+\note Setting a new helper will replace any previously set helper
+
+\sa ISpriteDrawHelper
+\sa Sprite::setPreDrawHelper()
+
+
+**/ }

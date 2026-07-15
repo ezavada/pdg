@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getFitType()
+
+\brief Gets how an image should be fitted into a target rectangle
+
+**/ }

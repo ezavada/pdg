@@ -39,6 +39,8 @@
 #include "pdg/sys/graphics.h"
 #include "pdg/sys/events.h"
 #include "pdg/sys/initializer.h"
+#include "pdg/sys/spline.h"
+#include "pdg/sys/polygon.h"
 #include "internals.h"
 #include "pdg-main.h"
 
@@ -60,6 +62,16 @@
 #endif
 
 namespace pdg {
+
+#ifdef PLATFORM_WIN32
+/* glBlendEquation not in Windows opengl32.lib; load at runtime (OpenGL 1.4) */
+PFNGLBLENDEQUATIONPROC pdg_glBlendEquation = nullptr;
+static void pdg_init_glBlendEquation() {
+	if (!pdg_glBlendEquation) {
+		pdg_glBlendEquation = (PFNGLBLENDEQUATIONPROC)wglGetProcAddress("glBlendEquation");
+	}
+}
+#endif
 
 float gRotationAngle = 0.0f;
 int gScreenPos = -1;
@@ -84,9 +96,16 @@ void graphics_startDrawing(Port* port) {
 	}
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	
 	gPortDirty = false;
     gModesSet = false;
     gBoundTexture = -1;
+    
+    // Begin new frame for image cache (for LRU frame-based protection)
+    thePort->beginFrame();
+    
+    // Reset the texture binding cache at the start of each frame
+    thePort->mStateCache.resetState();
 }
 
 void graphics_finishDrawing(Port* port) {
@@ -155,132 +174,6 @@ bool graphics_allowHorizontalOrientation() {
 bool graphics_allowVerticalOrientation() {
 	return gAllowVerticalRotation;
 }
-	
-	// ==================================================================
-// PORT
-// implementation of publicly declared methods (ie, exposed outside
-// system framework by framework/inc/graphics.h)
-// these implementations are not OS dependent
-// ==================================================================
-
-void
-Port::fillRectEx(const Quad& quad, uint32 pattern, uint8 patternShift, Color rgba) {
-  #ifdef DEBUG
-    if ( pattern != Graphics::solidPat ) {
-        OS::_DOUT("fillRectEx: pattern NOT IMPLEMENTED");
-    }
-  #endif
-    fillRect(quad, rgba);
-}
-
-void
-Port::frameRectEx(const Quad& quad, uint8 thickness, uint32 pattern, uint8 patternShift, Color rgba) {
-  #ifdef DEBUG
-    if ( pattern != Graphics::solidPat ) {
-        OS::_DOUT("frameRectEx: pattern NOT IMPLEMENTED");
-    }
-  #endif
-	Point p1 = quad.points[3];
-	for (int i = 0; i<4; i++) {
-		Point p2 = quad.points[i];
-		drawLineEx(p1, p2, thickness, pattern, patternShift, rgba);
-		p1 = p2;
-    }
-}
-
-void
-Port::drawLineEx(const Point& from, const Point& to, uint8 thickness, uint32 pattern, uint8 patternShift, Color rgba) {
-  #ifdef DEBUG
-    if ( pattern != Graphics::solidPat ) {
-        OS::_DOUT("drawLineEx: pattern NOT IMPLEMENTED");
-    }
-  #endif
-    Point p1 = from;
-    Point p2 = to;
-    while (thickness > 0) {
-        drawLine(p1, p2, rgba);
-        long dx = to.x - from.x;    // get deltas
-        long dy = to.y - from.y;
-        long lx = std::abs(dx);     // get absolute deltas (lengths)
-        long ly = std::abs(dy);
-        if (lx > ly) {
-            // horizontal
-            ++p1.y;
-            ++p2.y;
-        } else {
-            ++p1.x;
-            ++p2.x;
-        }
-        --thickness;
-    }
-}
-
-void
-Port::fillRect(const Quad& quad, Color rgba) {
-	PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-	if (quad.getBounds().intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
-	port.setOpenGLModesForDrawing((rgba.alpha != 1.0f));  // sets up clip rect too
-
-	glColor4f( rgba.red, rgba.green, rgba.blue, rgba.alpha );
-
-	glBegin(GL_TRIANGLE_STRIP);
-	glVertex2f( quad.points[lftBot].x, quad.points[lftBot].y );
-	glVertex2f( quad.points[lftTop].x, quad.points[lftTop].y );
-	glVertex2f( quad.points[rgtBot].x, quad.points[rgtBot].y );
-	glVertex2f( quad.points[rgtTop].x, quad.points[rgtTop].y );
-	glEnd();
-	port.mNeedRedraw = true;
-	gPortDirty = true;
-}
-
-void
-Port::fillRectWithGradient(const Quad& quad, Color startColor, Color endColor) {
-    PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-	if (quad.getBounds().intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
-	port.setOpenGLModesForDrawing( (startColor.alpha < 1.0f) || (endColor.alpha < 1.0f) );  // sets up clip rect too
-
-	glBegin(GL_TRIANGLE_STRIP);
-	glVertexColor4f ( endColor.red, endColor.green, endColor.blue, endColor.alpha);
-	glVertex2f( quad.points[lftBot].x, quad.points[lftBot].y );
-	glVertexColor4f ( startColor.red, startColor.green, startColor.blue, startColor.alpha);
-	glVertex2f( quad.points[lftTop].x, quad.points[lftTop].y );
-	glVertexColor4f ( endColor.red, endColor.green, endColor.blue, endColor.alpha);
-	glVertex2f( quad.points[rgtBot].x, quad.points[rgtBot].y );
-	glVertexColor4f ( startColor.red, startColor.green, startColor.blue, startColor.alpha);
-	glVertex2f( quad.points[rgtTop].x, quad.points[rgtTop].y );
-	glEnd();
-	port.mNeedRedraw = true;
-	gPortDirty = true;
-}
-
-void
-Port::frameRect(const Quad& quad, Color rgba) {
-	PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-	if (quad.getBounds().intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
-	port.setOpenGLModesForDrawing((rgba.alpha < 1.0f));  // sets up clip rect too
-
-	glColor4f ( (float) rgba.red, rgba.green, rgba.blue, rgba.alpha);
-
-	glBegin(GL_LINE_LOOP);
-	glVertex2f( quad.points[lftBot].x, quad.points[lftBot].y );
-	glVertex2f( quad.points[rgtBot].x, quad.points[rgtBot].y );
-	glVertex2f( quad.points[rgtTop].x, quad.points[rgtTop].y );
-	glVertex2f( quad.points[lftTop].x, quad.points[lftTop].y );
-	glEnd();
-
-/*	for some reason this mode generates a lot of flicker... possibly because it is drawing directly to the screen and not to the back buffer?
-	GLshort thePoints[] = {
-			rect.left, rect.top, // origin of the line
-			rect.right, rect.top, // next line segment
-			rect.right, rect.bottom, // next line segment
-			rect.left, rect.bottom  // next line segment and back to first
-	};
-	glVertexPointer(2, GL_SHORT, 0, thePoints);
-	glDrawArrays(GL_LINE_LOOP, 0, 4);
- */
-	port.mNeedRedraw = true;
-	gPortDirty = true;
-}
 
 Rect
 Port::getDrawingArea() {
@@ -305,272 +198,6 @@ Port::setClipRect(const Rect& rect) {
     mClipChanged = true;
 }
 
-void
-Port::drawLine(const Point& from, const Point& to, Color rgba) {
-
-	PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-	Rect bounds(from, to);
-	if (bounds.left > bounds.right) { bounds.right = bounds.left; bounds.left = to.x; }
-	if (bounds.top > bounds.bottom) { bounds.bottom = bounds.top; bounds.top = to.y; }
-	if (bounds.height() == 0) bounds.setHeight(1);
-	if (bounds.width() == 0) bounds.setWidth(1);
-	if (bounds.intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
-	port.setOpenGLModesForDrawing((rgba.alpha < 1.0f));  // sets up clip rect too
-
-	glColor4f ( (float) rgba.red, rgba.green, rgba.blue, rgba.alpha);
-
-	glBegin(GL_LINES);
-	glVertex2f(from.x, from.y);
-	glVertex2f(to.x, to.y);
-	glEnd();
-
-
-/*	GLshort thePoints[] = {
-		from.x, from.y, // origin of the line
-		to.x, to.y // end of line
-	};
-	glVertexPointer(2, GL_SHORT, 0, thePoints);
-	glDrawArrays(GL_LINES, 0, 2); */
-	port.mNeedRedraw = true;
-	gPortDirty = true;
-}
-
-void
-Port::frameOval(const Point& centerPt, float xRadius, float yRadius, Color rgba)
-{
-}
-
-void
-Port::fillOval(const Point& centerPt, float xRadius, float yRadius, Color rgba)
-{
-}
-
-void
-Port::frameCircle(const Point& centerPt, float radius, Color rgba)
-{
-    PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-
-    // calc the actual, clipped rect that will be altered
-    Rect r;
-    r.top = std::max<long>(centerPt.y - (long)radius, port.mClipRect.top);
-    r.left = std::max<long>(centerPt.x - (long)radius, port.mClipRect.left);
-    r.bottom = std::min<long>(centerPt.y + (long)radius, port.mClipRect.bottom-1);
-    r.right = std::min<long>(centerPt.x + (long)radius, port.mClipRect.right-1);
-
-	if (r.intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
-
- 	port.setOpenGLModesForDrawing((rgba.alpha < 1.0f));
-
-	glColor4f ( (float) rgba.red, rgba.green, rgba.blue, rgba.alpha);
-
-	// now offset the rect by the centerPt
-	r.moveLeft(centerPt.x);
-	r.moveUp(centerPt.y);
-	// we would use these for clipping, but we are not going to do clipping right now
-
-	float r2 = radius * radius; // precalc radius squared, we will need it a lot
-	float x;
-	float y;
-	float centerY = centerPt.y;
-	float centerX = centerPt.x;
-
-	float lastX = 0;
-	float lastY = radius;
-	// iterating y by 1/16 of the radius to give us values for x
-	// this divides the circle into 64 segments (or less if the circle is < 16 pixels in diameter)
-	// for a consistent drawing time
-	glBegin(GL_LINES);
-	float radDiv16 = radius / 16.0f;
-	int inc = std::ceil(radDiv16);
-	for (long d = inc; d <= radius; d += inc) {
-		x = (float)d;
-		y = std::sqrt(r2 - (x*x));
-		glVertex2f(centerX - lastX, centerY - lastY); // origin of the line
-		glVertex2f(centerX - x, centerY - y); // ending point of the line
-
-		glVertex2f(centerX + lastX, centerY - lastY); // origin of the line
-		glVertex2f(centerX + x, centerY - y); // ending point of the line
-
-		glVertex2f(centerX - lastX, centerY + lastY); // origin of the line
-		glVertex2f(centerX - x, centerY + y); // ending point of the line
-
-		glVertex2f(centerX + lastX, centerY + lastY); // origin of the line
-		glVertex2f(centerX + x, centerY + y); // ending point of the line
-		lastX = x;
-		lastY = y;
-	} // end radius for loop
-	glVertex2f(centerX - lastX, centerY - lastY); // origin of the line
-	glVertex2f(centerX - radius, centerY); // ending point of the line
-
-	glVertex2f(centerX + lastX, centerY - lastY); // origin of the line
-	glVertex2f(centerX + radius, centerY); // ending point of the line
-
-	glVertex2f(centerX - lastX, centerY + lastY); // origin of the line
-	glVertex2f(centerX - radius, centerY); // ending point of the line
-
-	glVertex2f(centerX + lastX, centerY + lastY); // origin of the line
-	glVertex2f(centerX + radius, centerY); // ending point of the line
-	glEnd( );
-	port.mNeedRedraw = true;
-	gPortDirty = true;
-}
-
-void
-Port::fillCircle(const Point& centerPt, float radius, Color rgba)
-{
-    PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-
-    // calc the actual, clipped rect that will be altered
-    Rect r;
-    r.top = std::max<long>(centerPt.y - (long)radius, port.mClipRect.top);
-    r.left = std::max<long>(centerPt.x - (long)radius, port.mClipRect.left);
-    r.bottom = std::min<long>(centerPt.y + (long)radius, port.mClipRect.bottom-1);
-    r.right = std::min<long>(centerPt.x + (long)radius, port.mClipRect.right-1);
-
-	if (r.intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
-
-	port.setOpenGLModesForDrawing((rgba.alpha < 1.0f));
-
-	glColor4f ( (float) rgba.red, rgba.green, rgba.blue, rgba.alpha);
-
-	// now offset the rect by the centerPt
-	r.moveLeft(centerPt.x);
-	r.moveUp(centerPt.y);
-	// we would use these for clipping, but we are not going to do clipping right now
-
-	float r2 = radius * radius; // precalc radius squared, we will need it a lot
-	float x;
-	float y;
-	float centerY = centerPt.y;
-	float centerX = centerPt.x;
-	float lastX = 0;
-	float lastY = radius;
-
-	// iterating y by 1/16 of the radius to give us values for x
-	// this divides the circle into 64 segments (or less if the circle is < 16 pixels in diameter)
-	// for a consistent drawing time
-	float radDiv16 = radius / 16.0f;
-	int inc = std::ceil(radDiv16);
-	for (long d = inc; d <= radius; d += inc) {
-		x = (float)d;
-		y = std::sqrt(r2 - (x*x));
-		glBegin(GL_TRIANGLE_STRIP);
-		glVertex2f(centerX - x, centerY - y); // ending point of the line
-		glVertex2f(centerX - lastX, centerY - lastY); // origin of the line
-		glVertex2f(centerX + x, centerY - y); // ending point of the line
-		glVertex2f(centerX + lastX, centerY - lastY); // origin of the line
-		glEnd();
-
-		glBegin(GL_TRIANGLE_STRIP);
-		glVertex2f(centerX - x, centerY + y); // ending point of the line
-		glVertex2f(centerX - lastX, centerY + lastY); // origin of the line
-		glVertex2f(centerX + x, centerY + y); // ending point of the line
-		glVertex2f(centerX + lastX, centerY + lastY); // origin of the line
-		glEnd();
-		lastX = x;
-		lastY = y;
-	} // end radius for loop
-	glBegin(GL_TRIANGLE_STRIP);
-	glVertex2f(centerX - lastX, centerY - lastY); // origin of the line
-	glVertex2f(centerX - radius, centerY); // ending point of the line
-	glVertex2f(centerX + lastX, centerY - lastY); // origin of the line
-	glVertex2f(centerX + radius, centerY); // ending point of the line
-	glEnd();
-
-	glBegin(GL_TRIANGLE_STRIP);
-	glVertex2f(centerX - lastX, centerY + lastY); // origin of the line
-	glVertex2f(centerX - radius, centerY); // ending point of the line
-	glVertex2f(centerX + lastX, centerY + lastY); // origin of the line
-	glVertex2f(centerX + radius, centerY); // ending point of the line
-	glEnd( );
-	port.mNeedRedraw = true;
-	gPortDirty = true;
-}
-
-void
-Port::frameRoundRect(const Rect& rect, float radius, Color rgb)
-{
-    PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-	if (rect.intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
-	port.setOpenGLModesForDrawing((rgb.alpha < 1.0f));
-
-    // calc the actual, clipped rect that will be altered
-    Rect r;
-    r.top = std::max<long>(rect.top, port.mClipRect.top);
-    r.left = std::max<long>(rect.left, port.mClipRect.left);
-    r.bottom = std::min<long>(rect.bottom, port.mClipRect.bottom-1);
-    r.right = std::min<long>(rect.right, port.mClipRect.right-1);
-
-    // make sure there is actually something to draw
-    if ((r.width() > 0) && (r.height() > 0)) {
-		 // limit radius
-		if ((radius * 2) > rect.width()) {
-			radius = (float)rect.width()/2.0f;
-		}
-		if ((radius * 2) > rect.height()) {
-			radius = (float)rect.height()/2.0f;
-		}
-
-/*		float r2 = radius * radius; // precalc radius squared, we will need it a lot
-		float last = radius;
-		float x;
-		float y;
-		Point centerPt = rect.centerPoint();
-		long extraX = (long)(((float)rect.width() / 2.0f) - radius);
-		long extraY = (long)(((float)rect.height() / 2.0f) - radius);
-		bool swapped = false;
-*/
-		long lradius = (long)radius;
-		drawLine(Point(rect.left + lradius, rect.top), Point(rect.right - lradius, rect.top), rgb);
-		drawLine(Point(rect.left + lradius, rect.bottom), Point(rect.right - lradius, rect.bottom), rgb);
-		drawLine(Point(rect.left, rect.top + lradius), Point(rect.left, rect.bottom - lradius), rgb);
-		drawLine(Point(rect.right, rect.top + lradius), Point(rect.right, rect.bottom - lradius), rgb);
-
-    }
-	port.mNeedRedraw = true;
-	gPortDirty = true;
-}
-
-void
-Port::fillRoundRect(const Rect& rect, float radius, Color rgb)
-{
-    PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-
-    // calc the actual, clipped rect that will be altered
-    Rect r;
-    r.top = std::max<long>(rect.top, port.mClipRect.top);
-    r.left = std::max<long>(rect.left, port.mClipRect.left);
-    r.bottom = std::min<long>(rect.bottom, port.mClipRect.bottom-1);
-    r.right = std::min<long>(rect.right, port.mClipRect.right-1);
-
-	if (r.intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
-
-    // make sure there is actually something to draw
-    if ((r.width() > 0) && (r.height() > 0)) {
-		// limit radius
-		if ((radius * 2) > rect.width()) {
-			radius = (float)rect.width()/2.0f;
-		}
-		if ((radius * 2) > rect.height()) {
-			radius = (float)rect.height()/2.0f;
-		}
-
-/*
-		float r2 = radius * radius; // precalc radius squared, we will need it a lot
-		float x;
-		float y;
-		Point centerPt = rect.centerPoint();
-		long extraX = (long)(((float)rect.width() / 2.0f) - radius);
-		long extraY = (long)(((float)rect.height() / 2.0f) - radius);
-		long rowtop = r.top;      // lowest row drawn in top section
-		long rowbot = r.bottom;   // highest row drawn in bottom section
-		bool swapped = false;
- */
-	}
-	port.mNeedRedraw = true;
-	gPortDirty = true;
-}
-
 // returns the font currently in use for the port
 Font*     
 Port::getCurrentFont(uint32 style)
@@ -589,7 +216,15 @@ Port::setFont(Font* font)
 	if (!font) {
 		font = port.mGraphicsMgr->createFont("Arial");
 	}
-	if (!font) return;
+	if (!font) {
+		DEBUG_ONLY( OS::_DOUT("Port::setFont() font is null, and Arial font not found"); )
+		return;
+	}
+	// Cached fonts are shared, so refresh their backing port before reusing them.
+	FontImpl* fontImpl = dynamic_cast<FontImpl*>(font);
+	if (fontImpl) {
+		fontImpl->mPort = this;
+	}
 	for (int i = 0; i < NUM_TEXT_STYLES; i++) {
 		if (port.mFontForStyle[i]) {
 			port.mFontForStyle[i]->release();
@@ -609,7 +244,15 @@ Port::setFontForStyle(Font* font, uint32 style)
 	if (!font) {
 		font = port.mGraphicsMgr->createFont("Arial");
 	}
-	if (!font) return;
+	if (!font) {
+		DEBUG_ONLY( OS::_DOUT("Port::setFontForStyle() font is null, and Arial font not found"); )
+		return;
+	}
+	// Keep shared cached fonts pointed at the live port using them.
+	FontImpl* fontImpl = dynamic_cast<FontImpl*>(font);
+	if (fontImpl) {
+		fontImpl->mPort = this;
+	}
 	style &= TEXT_STYLES_MASK;
 	if (port.mFontForStyle[style]) {
 		port.mFontForStyle[style]->release();
@@ -644,7 +287,7 @@ Port::drawImage(Image* img, const Quad& quad) {
 }
 
 void     
-Port::drawImage(Image* img, const Rect& r, Image::FitType fitType, bool clipOverflow) {
+Port::drawImage(Image* img, const Rect& r, FitType fitType, bool clipOverflow) {
 	if (img->mPort != this) {
 		img->setPort(this);
 	}
@@ -668,7 +311,7 @@ Port::drawImage(ImageStrip* img, int frame, const Quad& quad) {
 }
 
 void     
-Port::drawImage(ImageStrip* img, int frame, const Rect& r, Image::FitType fitType, bool clipOverflow) {
+Port::drawImage(ImageStrip* img, int frame, const Rect& r, FitType fitType, bool clipOverflow) {
 	if (img->mPort != this) {
 		img->setPort(this);
 	}
@@ -692,33 +335,102 @@ Port::drawTexture(ImageStrip* img, int frame, const Rect& r) {
 }
 
 void 
-Port::drawTexturedSphere(Image* img, const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians) {
+Port::drawTexturedSphere(Image* img, const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight) {
 	if (img->mPort != this) {
 		img->setPort(this);
 	}
-	img->drawTexturedSphere(loc, radius, rotation, polarOffsetRadians, lightOffsetRadians);
+	img->drawTexturedSphere(loc, radius, rotation, polarOffsetRadians, lightOffsetRadians, ambientLight);
 }
 
 void 
-Port::drawTexturedSphere(ImageStrip* img, int frame, const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians) {
+Port::drawTexturedSphere(ImageStrip* img, int frame, const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight) {
 	if (img->mPort != this) {
 		img->setPort(this);
 	}
-	img->drawTexturedSphereFrame(loc, frame, radius, rotation, polarOffsetRadians, lightOffsetRadians);
+	img->drawTexturedSphereFrame(loc, frame, radius, rotation, polarOffsetRadians, lightOffsetRadians, ambientLight);
 }
 
+void
+Port::drawColoredSphere(const Color& color, const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight) {
+	// Decide how many slices to draw (very crude LOD)
+	GLint slices = log2f(radius) * 4;
+	if (slices < 5) slices = 5;
+	
+	PortImpl& port = static_cast<PortImpl&>(*this);
+	port.setOpenGLModesForDrawing(false);
+	
+	// Setup material color
+	GLfloat mat_diffuse[] = { color.red, color.green, color.blue, color.alpha };
+	GLfloat mat_ambient[] = { color.red * 0.5f, color.green * 0.5f, color.blue * 0.5f, color.alpha };
+	GLfloat mat_specular[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	GLfloat mat_shininess[] = { 20.0f };
+	
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	
+	// Setup lighting
+	float degreesRot = rotation * 180.0 / M_PI;
+	static GLfloat light_position[] = { 0, 0, -10, 1 };
+	GLfloat model_ambient[] = { ambientLight.red, ambientLight.green, ambientLight.blue, ambientLight.alpha };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, model_ambient);
+	
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_DEPTH_TEST);
+	
+	glPushMatrix();
+	
+	glTranslatef(loc.x, loc.y, 1.0f);
+	
+	// Translate light position from spherical to cartesian coordinates
+	GLfloat theta = lightOffsetRadians.y;
+	GLfloat rho = lightOffsetRadians.x;
+	GLfloat r = radius * 10.0f;
+	GLfloat lx = -r * sin(rho);
+	GLfloat ly = -r * sin(theta) * sin(rho);
+	GLfloat lz = 10.0 * cos(theta) * cos(rho);
+	light_position[0] = lx;
+	light_position[1] = ly;
+	light_position[2] = lz;
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	
+	glScalef(-radius, radius, 1.0f);
+	
+	GLfloat xRotDeg = (polarOffsetRadians.x * 180.0 / M_PI) - 90.0;
+	GLfloat yRotDeg = polarOffsetRadians.y * 180.0 / M_PI;
+	glRotatef(xRotDeg, 1.0f, 0.0f, 0.0);
+	glRotatef(yRotDeg, 0.0f, 1.0f, 0.0);
+	
+	glRotatef(-degreesRot, 0.0f, 0.0f, 1.0);
+	
+	// Draw sphere without texture
+	GLUquadricObj* qobj = gluNewQuadric();
+	gluQuadricDrawStyle(qobj, GLU_FILL);
+	gluQuadricOrientation(qobj, GLU_INSIDE);
+	gluQuadricTexture(qobj, GL_FALSE);  // No texture
+	gluQuadricNormals(qobj, GLU_SMOOTH);
+	gluSphere(qobj, 1.0f, slices, slices);
+	gluDeleteQuadric(qobj);
+	
+	glPopMatrix();
+	glDisable(GL_LIGHTING);
+	glDisable(GL_LIGHT0);
+	glDisable(GL_DEPTH_TEST);
+}
 
 void
 Port::drawText(const char* text, const Point& loc, int size, uint32 style, Color rgba) {
 	if (text == 0) return;
-	int len = std::strlen(text);
+	int len = (int)std::strlen(text);
 	if (len == 0) return;
 	// look for text entirely outside clip rect
 	PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
 	Rect drawable = port.drawableRect();
 	// cheapest checks, off to right and left
-	if (((style & (Graphics::textStyle_Centered | Graphics::textStyle_RightJustified)) == 0) && (loc.x >= drawable.right)) return; // exit early if completely clipped
-	if (((style & Graphics::textStyle_RightJustified) == Graphics::textStyle_RightJustified) && (loc.x <= drawable.left)) return; // exit early if completely clipped
+	if (((style & (textStyle_Centered | textStyle_RightJustified)) == 0) && (loc.x >= drawable.right)) return; // exit early if completely clipped
+	if (((style & textStyle_RightJustified) == textStyle_RightJustified) && (loc.x <= drawable.left)) return; // exit early if completely clipped
 	// further checks require font info
 	FontImpl* font = dynamic_cast<FontImpl*> ( getCurrentFont(style) );
 	if (!font) return;
@@ -731,9 +443,9 @@ Port::drawText(const char* text, const Point& loc, int size, uint32 style, Color
 
 	// adjust for text justification
 	int textwidth = getTextWidth(text, size, style, len);
-	if (style & Graphics::textStyle_Centered) {
+	if (style & textStyle_Centered) {
 		textRect.left -= (textwidth/2);     // centered means the point given is the centerpoint for the text
-	} else if (style & Graphics::textStyle_RightJustified) {
+	} else if (style & textStyle_RightJustified) {
 		textRect.left -= textwidth;         // otherwise the point given is the right-side end of the text
 	}
 	textRect.setWidth(textwidth);
@@ -751,7 +463,7 @@ Port::drawText(const char* text, const Point& loc, int size, uint32 style, Color
 void
 Port::drawText(const char* text, const Quad& quad, int size, uint32 style, Color rgba) {
 	if (text == 0) return;
-	int len = std::strlen(text);
+	int len = (int)std::strlen(text);
 	if (len == 0) return;
 	PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
 	if (quad.getBounds().intersection(port.drawableRect()).empty()) return; // exit early if completely clipped
@@ -771,6 +483,7 @@ Port::setCursor(Image* cursorImage, const Point& hotSpot)
 {
     PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
 
+    if (!cursorImage) return;
     cursorImage->addRef();
 
 	// If there is already a cursor set....
@@ -1020,7 +733,7 @@ PortImpl::resizePort(long width, long height) {
 //	bool avoidRecursion = false;
 
 void
-PortImpl::setOpenGLModesForDrawing(bool useAlpha) {
+PortImpl::setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode) {
 //	if (avoidRecursion) return;
 //	avoidRecursion = true;
     if (!gModesSet) {
@@ -1044,9 +757,45 @@ PortImpl::setOpenGLModesForDrawing(bool useAlpha) {
         gModesSet = true; // don't do this again till next frame
     }
 
-	if (useAlpha) {
-		glEnable(GL_BLEND); // for line fading
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // ditto
+	// Enable blending if we have alpha or a non-normal blend mode
+	if (useAlpha || blendMode != blendMode_Normal) {
+		glEnable(GL_BLEND);
+#ifdef PLATFORM_WIN32
+		pdg_init_glBlendEquation();
+#endif
+		// Apply blend mode from attributes
+		switch (blendMode) {
+			case blendMode_Normal:
+				glBlendEquation(GL_FUNC_ADD);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				break;
+			case blendMode_Additive:
+				glBlendEquation(GL_FUNC_ADD);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+				break;
+			case blendMode_Multiply:
+				glBlendEquation(GL_FUNC_ADD);
+				glBlendFunc(GL_DST_COLOR, GL_ZERO);
+				break;
+			case blendMode_Screen:
+				glBlendEquation(GL_FUNC_ADD);
+				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+				break;
+			case blendMode_Darken:
+				// Darken uses MIN blend equation to keep darker color
+				glBlendEquation(GL_MIN);
+				glBlendFunc(GL_ONE, GL_ONE);
+				break;
+			case blendMode_Lighten:
+				// Lighten uses MAX blend equation to keep lighter color
+				glBlendEquation(GL_MAX);
+				glBlendFunc(GL_ONE, GL_ONE);
+				break;
+			default:
+				glBlendEquation(GL_FUNC_ADD);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				break;
+		}
 	} else {
 		glDisable(GL_BLEND);
 	}
@@ -1084,17 +833,32 @@ PortImpl::PortImpl(GraphicsManager* graphicsMgr)
   mCurrentCursor(0),
   mHotSpot(),
   mCurrentCursorBackground(0),
-  mFontScalingFactor(0.0)
+  mFontScalingFactor(0.0),
+  mImageCache(0),
+  mTextCache(0)
 {
 	for (int i = 0; i<NUM_TEXT_STYLES; i++) {
 		mFontForStyle[i] = 0;
 	}
+	if (!graphicsMgr->getMainPort()) {
+		graphicsMgr->setMainPort(this);
+	}
+	// Create hash-based image cache
+	mImageCache = new ImageCache(100);  // Max 100 cached textures
 	setFont();  // set the default font
 }
 
 PortImpl::~PortImpl()
 {
-    // do nothing
+    // Clean up fonts
+    for (int i = 0; i < NUM_TEXT_STYLES; i++) {
+        if (mFontForStyle[i]) {
+            mFontForStyle[i]->release();
+            mFontForStyle[i] = 0;
+        }
+    }
+    
+    // Clean up cursor
 	if(mCurrentCursor)
 	{
 		mCurrentCursor->release();
@@ -1106,10 +870,114 @@ PortImpl::~PortImpl()
 	    mCurrentCursorBackground = 0;
 	    mCurrentCursorBackgroundSize = 0;
 	}
+	
+	// Clean up image cache
+	if (mImageCache) {
+		delete mImageCache;
+		mImageCache = 0;
+	}
 }
 
+// New key-based image cache management methods
+CacheKey 
+PortImpl::getCacheKey(const char* sourceName, int width, int height, bool useEdgeClamp) {
+	// Create cache if it doesn't exist yet
+	if (!mImageCache) {
+		mImageCache = new ImageCache(100);  // Max 100 entries
+	}
+	return mImageCache->getCacheKey(sourceName, width, height, useEdgeClamp);
+}
+
+GLuint 
+PortImpl::getTexture(CacheKey key) {
+	if (mImageCache) {
+		return mImageCache->getTexture(key);
+	}
+	return 0;
+}
+
+void 
+PortImpl::setTexture(CacheKey key, GLuint texture) {
+	if (mImageCache) {
+		mImageCache->setTexture(key, texture);
+	}
+}
+
+void 
+PortImpl::releaseCachedEntry(CacheKey key) {
+	if (mImageCache) {
+		mImageCache->releaseCachedEntry(key);
+	}
+}
+
+void 
+PortImpl::beginFrame() {
+	if (mImageCache) {
+		mImageCache->beginFrame();
+	}
+}
+
+// Legacy image cache management methods (deprecated)
+ImageCacheEntry* 
+PortImpl::getImageFromCache(const char* sourceName, int width, int height, bool useEdgeClamp) {
+	if (mImageCache) {
+		// Use hash-based cache for O(1) lookup
+		return mImageCache->getImage(sourceName, width, height, useEdgeClamp);
+	} else {
+		// No cache yet, create new entry
+		return new ImageCacheEntry(sourceName, width, height, useEdgeClamp);
+	}
+}
+
+void 
+PortImpl::addImageToCache(ImageCacheEntry* entry) {
+	if (mImageCache) {
+		// Add to hash-based cache with LRU eviction
+		mImageCache->addImage(entry);
+	}
+}
+
+void 
+PortImpl::invalidateImageCache() {
+	if (mImageCache) {
+		// Invalidate all cached textures
+		mImageCache->invalidateAll();
+	}
+}
+
+// Text cache management methods
+TextCacheEntry* 
+PortImpl::getTextFromCache(const char* text, int len, FontImpl* font, int size, uint32 style) {
+	if (mTextCache) {
+		// Use port-specific cache
+		return mTextCache->findTextInPortCache(text, len, font, size, style);
+	} else {
+		// No cache yet, create new entry
+		return new TextCacheEntry(text, len, font, size, style);
+	}
+}
+
+void 
+PortImpl::addTextToCache(TextCacheEntry* entry) {
+	if (mTextCache) {
+		// Add to port-specific cache
+		mTextCache->addEntryToPortCache(entry);
+		// Update the port's cache pointer to point to the new head
+		mTextCache = entry;
+	} else {
+		// Initialize port cache with this entry
+		mTextCache = entry;
+	}
+}
+
+void 
+PortImpl::invalidateTextCache() {
+	if (mTextCache) {
+		// Invalidate port-specific cache
+		mTextCache->invalidatePortTextures();
+	}
+}
 
 } // end namespace pdg
 
 #endif // PDG_NO_GUI
-

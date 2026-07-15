@@ -1,0 +1,4 @@
+.git/
+.svn/
+bindings/emscripten/
+bindings/jsc-ios/

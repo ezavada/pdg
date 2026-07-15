@@ -1,0 +1,10 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::motor
+
+\brief  keep spin of another sprite at a constant rate compared to this one (*Chipmunk Physics Only*)
+
+\returns the cpConstraint in case you want to do anything special with it
+
+
+**/ }

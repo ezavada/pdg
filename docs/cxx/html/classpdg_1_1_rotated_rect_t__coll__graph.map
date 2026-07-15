@@ -1,4 +1,7 @@
 <map id="RotatedRectT" name="RotatedRectT">
-<area shape="rect" id="node2" href="$classpdg_1_1_rect_t.html" title="RectT\&lt; T \&gt;" alt="" coords="5,6,93,34"/>
-<area shape="rect" id="node4" href="$classpdg_1_1_offset_t.html" title="OffsetT\&lt; T \&gt;" alt="" coords="117,6,213,34"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="57,102,160,128"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_rect_t.html" title=" " alt="" coords="5,5,95,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="68,43,103,100,99,103,63,45"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_offset_t.html" title=" " alt="" coords="119,5,216,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="154,45,118,103,114,100,150,43"/>
 </map>

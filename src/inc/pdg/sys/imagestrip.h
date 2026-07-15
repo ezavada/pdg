@@ -80,10 +80,15 @@ public:
 	//! return a frame of the image an image which can be passed to port draw calls
 	virtual Image*  getFrame(int frame) = 0;
 
-    static ImageStrip* createImageStripFromData(const char* imageName, char* imageData, long imageDataLen);
     static ImageStrip* createImageStripFromFile(const char* imageFileName);
+    static ImageStrip* createImageStripFromData(char* imageData, long imageDataLen);
+
+    static ImageStrip* createImageStripFromResourceFile(const char* resourceName, const char* imageFileName);
+    static ImageStrip* createImageStripFromResourceData(const char* resourceName, char* imageData, long imageDataLen);
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+	static ImageStrip* createEmptyImageStripForIntrospection();
+	
 	SCRIPT_OBJECT_REF mImageStripScriptObj;
 #endif
 
@@ -113,7 +118,9 @@ inline ImageStrip::ImageStrip()
 inline ImageStrip::~ImageStrip() {
 //                DEBUG_ONLY( OS::_DOUT("dt Image %p", this); )
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+	#ifndef PDG_NO_GUI
 	CleanupImageStripScriptObject(mImageStripScriptObj);
+	#endif
 #endif
 }
 /// @endcond
@@ -147,13 +154,17 @@ ImageStrip::getImageBounds( Point& at ) {
 inline void 
 ImageStrip::setFrameWidth(long wid) { 
 	frameWidth = wid; 
-	frames = width/frameWidth; 
+	if (frameWidth > 0) {
+		frames = (int)(width/frameWidth);
+	}
 }
 
 inline void 
 ImageStrip::setNumFrames(int num) { 
-	frameWidth = width/num; 
-	frames = num; 
+	if (num > 0) {
+		frameWidth = width/num; 
+		frames = num; 
+	}
 }
 
 } // end namespace pdg

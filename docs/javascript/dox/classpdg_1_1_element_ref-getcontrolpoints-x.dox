@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::ElementRef::getControlPoints()
+
+\brief returns all control points of the element
+
+**/ }

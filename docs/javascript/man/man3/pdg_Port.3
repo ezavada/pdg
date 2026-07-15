@@ -1,148 +1,149 @@
-.TH "Port" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Port" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Port \- 
-.PP
-area in which drawing is done, a viewport (\fIGUI Only\fP)  
+Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
-.RI "\fBdrawImage\fP (\fBImage\fP img, \fBPoint\fP loc)"
+.RI "\fBdrawArc\fP (\fBPoint\fP center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, \fBAttributes\fP attrs)"
 .br
+.RI "Draw an elliptical arc using the specified center, radii, and angle range\&. "
 .ti -1c
-.RI "\fBdrawImage\fP (\fBImage\fP img, \fBQuad\fP quad)"
+.RI "\fBdrawBezier\fP (\fBPoint\fP from, \fBPoint\fP control1, \fBPoint\fP control2, \fBPoint\fP to, \fBAttributes\fP attrs)"
 .br
+.RI "draws a Bezier curve with the specified control points and attributes "
 .ti -1c
-.RI "\fBdrawImage\fP (\fBImage\fP img, \fBRect\fP rect, int fitType=\fBfit_Fill\fP, boolean clipOverflow=false)"
+.RI "\fBdrawCircle\fP (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
 .br
+.RI "Draw a circle at the specified center point with given radius\&. "
 .ti -1c
-.RI "\fBdrawLine\fP (\fBPoint\fP from, \fBPoint\fP to, \fBColor\fP rgba='black')"
+.RI "\fBdrawDrawing\fP (\fBDrawing\fP drawing, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 .br
+.RI "Draws a \fBDrawing\fP object at the specified location with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawLineEx\fP (\fBPoint\fP from, \fBPoint\fP to, uint thickness, uint pattern, uint patternShift, \fBColor\fP rgba)"
+.RI "\fBdrawDrawing\fP (\fBDrawing\fP drawing, \fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
+.RI "Draws a \fBDrawing\fP object within the specified rectangle with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawText\fP (string text, \fBPoint\fP location, int size, uint style=\fBtextStyle_Plain\fP, \fBColor\fP rgba= 'black')"
+.RI "\fBdrawEllipse\fP (\fBPoint\fP center, number float xRadius, number float yRadius, \fBAttributes\fP attrs)"
 .br
+.RI "Draw an ellipse at the specified center point with given x and y radii\&. "
 .ti -1c
-.RI "\fBdrawText\fP (string text, \fBQuad\fP quad, int size, uint style=\fBtextStyle_Plain\fP, \fBColor\fP rgba= 'black')"
+.RI "\fBdrawImage\fP (\fBImage\fP img, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 .br
+.RI "Draws an image at the specified location with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawText\fP (string text, \fBRect\fP rect, int size, uint style=\fBtextStyle_Plain\fP, \fBColor\fP rgba= 'black')"
+.RI "\fBdrawImage\fP (\fBImage\fP img, \fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
+.RI "Draws an image within the specified rectangle with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawTexture\fP (\fBImage\fP img, \fBRect\fP r)"
+.RI "\fBdrawLine\fP (\fBPoint\fP from, \fBPoint\fP to, \fBAttributes\fP attrs)"
 .br
+.RI "draws a line from one point to another with the specified attributes "
 .ti -1c
-.RI "\fBdrawTexturedSphere\fP (\fBImage\fP img, \fBPoint\fP loc, number radius, number rotation=0, \fBOffset\fP polarOffsetRadians=\fBOffset\fP(0, 0), \fBOffset\fP lightOffsetRadians=\fBOffset\fP(0, 0))"
+.RI "\fBdrawPolygon\fP (\fBPolygon\fP polygon, \fBAttributes\fP attrs)"
 .br
+.RI "draws a polygon with the specified attributes "
 .ti -1c
-.RI "\fBdrawTexturedSphere\fP (\fBImageStrip\fP imgStrip, int frameNum, \fBPoint\fP loc, number radius, number rotation=0, \fBOffset\fP polarOffsetRadians=\fBOffset\fP(0, 0), \fBOffset\fP lightOffsetRadians=\fBOffset\fP(0, 0))"
+.RI "\fBdrawQuad\fP (\fBQuad\fP quad, \fBAttributes\fP attrs)"
 .br
+.RI "draws a quad with the specified attributes "
 .ti -1c
-.RI "\fBfillCircle\fP (\fBPoint\fP centerPt, number radius, \fBColor\fP rgba='black')"
+.RI "\fBdrawRect\fP (\fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
+.RI "draws a rectangle with the specified attributes "
 .ti -1c
-.RI "\fBfillOval\fP (\fBPoint\fP centerPt, number xRadius, number yRadius, \fBColor\fP rgba='black')"
+.RI "\fBdrawRoundedRect\fP (\fBRect\fP rect, number float radius, \fBAttributes\fP attrs)"
 .br
+.RI "Draw a rectangle with rounded corners using the specified corner radius\&. "
 .ti -1c
-.RI "\fBfillRect\fP (\fBQuad\fP quad, \fBColor\fP rgba='black')"
+.RI "\fBdrawSphere\fP (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
 .br
+.RI "Draws a textured sphere at the specified center point with given radius and styling attributes\&. "
 .ti -1c
-.RI "\fBfillRect\fP (\fBRect\fP quad, \fBColor\fP rgba='black')"
+.RI "\fBdrawSpline\fP (\fBSpline\fP spline, \fBAttributes\fP attrs)"
 .br
+.RI "draws a spline curve with the specified attributes "
 .ti -1c
-.RI "\fBfillRectEx\fP (\fBQuad\fP quad, uint pattern, uint patternShift, \fBColor\fP rgba)"
+.RI "\fBdrawText\fP (string text, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 .br
+.RI "Draws text at the specified location with styling attributes\&. "
 .ti -1c
-.RI "\fBfillRectEx\fP (\fBRect\fP quad, uint pattern, uint patternShift, \fBColor\fP rgba)"
+.RI "\fBdrawText\fP (string text, \fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
+.RI "Draws text within the specified rectangle with styling attributes\&. "
 .ti -1c
-.RI "\fBfillRectWithGradient\fP (\fBQuad\fP quad, \fBColor\fP startColor, \fBColor\fP endColor)"
+.RI "\fBdrawVector\fP (\fBVector\fP vector, \fBAttributes\fP attrs)"
 .br
-.ti -1c
-.RI "\fBfillRectWithGradient\fP (\fBRect\fP quad, \fBColor\fP startColor, \fBColor\fP endColor)"
-.br
-.ti -1c
-.RI "\fBfillRoundRect\fP (\fBRect\fP rect, number radius, \fBColor\fP rgba='black')"
-.br
-.ti -1c
-.RI "\fBframeCircle\fP (\fBPoint\fP centerPt, number radius, \fBColor\fP rgba='black')"
-.br
-.ti -1c
-.RI "\fBframeOval\fP (\fBPoint\fP centerPt, number xRadius, number yRadius, \fBColor\fP rgba='black')"
-.br
-.ti -1c
-.RI "\fBframeRect\fP (\fBQuad\fP quad, \fBColor\fP rgba='black')"
-.br
-.ti -1c
-.RI "\fBframeRect\fP (\fBRect\fP quad, \fBColor\fP rgba='black')"
-.br
-.ti -1c
-.RI "\fBframeRectEx\fP (\fBQuad\fP quad, uint thickness, uint pattern, uint patternShift, \fBColor\fP rgba)"
-.br
-.ti -1c
-.RI "\fBframeRectEx\fP (\fBRect\fP quad, uint thickness, uint pattern, uint patternShift, \fBColor\fP rgba)"
-.br
-.ti -1c
-.RI "\fBframeRoundRect\fP (\fBRect\fP rect, number radius, \fBColor\fP rgba='black')"
-.br
+.RI "Draw a vector (arrow) from origin to the specified endpoint\&. "
 .ti -1c
 .RI "\fBRect\fP \fBgetClipRect\fP ()"
 .br
+.RI "Get the current clipping rectangle for drawing operations\&. "
 .ti -1c
 .RI "\fBFont\fP \fBgetCurrentFont\fP (uint style=\fBtextStyle_Plain\fP)"
 .br
+.RI "returns the current font for the specified style "
 .ti -1c
 .RI "\fBImage\fP \fBgetCursor\fP ()"
 .br
-.RI "\fIget the \fBImage\fP that is being used as the cursor \fINOT IMPLEMENTED\fP \fP"
+.RI "get the \fBImage\fP that is being used as the cursor \fINOT IMPLEMENTED\fP "
 .ti -1c
 .RI "\fBRect\fP \fBgetDrawingArea\fP ()"
 .br
+.RI "Get the total drawing area rectangle for this port\&. "
 .ti -1c
-.RI "number \fBgetTextWidth\fP (string text, int size, uint style=\fBtextStyle_Plain\fP, int len=-1)"
+.RI "number \fBgetTextWidth\fP (string text, int size, uint style=\fBtextStyle_Plain\fP, int len=\-1)"
 .br
+.RI "returns the width of the specified text in pixels "
 .ti -1c
 .RI "\fBresetCursor\fP ()"
 .br
-.RI "\fINOT IMPLEMENTED\&. \fP"
+.RI "NOT IMPLEMENTED\&. "
 .ti -1c
 .RI "\fBPort\fP \fBsetClipRect\fP (\fBRect\fP inClipRect)"
 .br
+.RI "Set the clipping rectangle to limit drawing operations to a specific area\&. "
 .ti -1c
 .RI "\fBsetCursor\fP (\fBImage\fP cursorImage, \fBPoint\fP hotSpot)"
 .br
-.RI "\fINOT IMPLEMENTED\&. \fP"
+.RI "NOT IMPLEMENTED\&. "
 .ti -1c
 .RI "\fBsetFont\fP (\fBFont\fP font=DEFAULT_FONT)"
 .br
+.RI "sets the current font for text rendering "
 .ti -1c
 .RI "\fBsetFontForStyle\fP (uint style, \fBFont\fP font=DEFAULT_FONT)"
 .br
+.RI "Set a custom font for a specific text style (bold, italic, etc\&.) "
 .ti -1c
 .RI "\fBsetFontScalingFactor\fP (number scaleBy)"
 .br
+.RI "Set a scaling factor to adjust the size of all rendered text\&. "
 .ti -1c
 .RI "number \fBstartTrackingMouse\fP (\fBRect\fP rect)"
 .br
-.RI "\fINOT IMPLEMENTED\&. \fP"
+.RI "NOT IMPLEMENTED\&. "
 .ti -1c
 .RI "\fBstopTrackingMouse\fP (int trackingRef)"
 .br
-.RI "\fINOT IMPLEMENTED\&. \fP"
+.RI "NOT IMPLEMENTED\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
 area in which drawing is done, a viewport (\fIGUI Only\fP) 
 
-\fBNote:\fP
+
+.PP
+\fBNote\fP
 .RS 4
 \fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
 .RE
@@ -150,93 +151,240 @@ area in which drawing is done, a viewport (\fIGUI Only\fP)
 A \fBPort\fP can be a full screen drawing context or a window\&. 
 .SH "Member Function Documentation"
 .PP 
-.SS "drawImage (\fBImage\fPimg, \fBPoint\fPloc)"
+.SS "drawArc (\fBPoint\fP center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, \fBAttributes\fP attrs)"
 
-.SS "drawImage (\fBImage\fPimg, \fBQuad\fPquad)"
+.PP
+Draw an elliptical arc using the specified center, radii, and angle range\&. This function draws an elliptical arc (a portion of an ellipse) using the specified center point, radii, and angle range\&. The arc is drawn with the given attributes for styling\&.
 
-.SS "drawImage (\fBImage\fPimg, \fBRect\fPrect, intfitType = \fC\fBfit_Fill\fP\fP, booleanclipOverflow = \fCfalse\fP)"
+.PP
+\fBParameters\fP
+.RS 4
+\fIcenter\fP The center point of the ellipse in screen coordinates 
+.br
+\fIxRadius\fP The horizontal radius of the ellipse in pixels 
+.br
+\fIyRadius\fP The vertical radius of the ellipse in pixels 
+.br
+\fIstartAngle\fP The starting angle of the arc in radians (0 = 12 o'clock position, positive = clockwise) 
+.br
+\fIendAngle\fP The ending angle of the arc in radians 
+.br
+\fIattrs\fP The \fBAttributes\fP object containing styling information (line color, thickness, fill, etc\&.)
+.RE
+.PP
+The arc is drawn as a portion of an ellipse defined by the center point and radii\&. The angle parameters specify which portion of the ellipse to draw, starting from startAngle and ending at endAngle\&.
 
-.SS "drawLine (\fBPoint\fPfrom, \fBPoint\fPto, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+Angles are measured in radians, with 0 radians pointing up (12 o'clock position)\&. Positive angles go clockwise, negative angles go counter-clockwise\&.
 
-.SS "drawLineEx (\fBPoint\fPfrom, \fBPoint\fPto, uintthickness, uintpattern, uintpatternShift, \fBColor\fPrgba)"
+.PP
+\fBWarning\fP
+.RS 4
+If startAngle equals endAngle, no arc will be drawn 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+The arc is drawn using the current transformation matrix and clipping region
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPort::drawEllipse()\fP 
 
-.SS "drawText (stringtext, \fBPoint\fPlocation, intsize, uintstyle = \fC\fBtextStyle_Plain\fP\fP, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+\fBPort::drawCircle()\fP 
 
-.SS "drawText (stringtext, \fBQuad\fPquad, intsize, uintstyle = \fC\fBtextStyle_Plain\fP\fP, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+\fBAttributes\fP 
 
-.SS "drawText (stringtext, \fBRect\fPrect, intsize, uintstyle = \fC\fBtextStyle_Plain\fP\fP, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+\fBPoint\fP 
+.RE
+.PP
 
-.SS "drawTexture (\fBImage\fPimg, \fBRect\fPr)"
+.SS "drawBezier (\fBPoint\fP from, \fBPoint\fP control1, \fBPoint\fP control2, \fBPoint\fP to, \fBAttributes\fP attrs)"
 
-.SS "drawTexturedSphere (\fBImage\fPimg, \fBPoint\fPloc, numberradius, numberrotation = \fC0\fP, \fBOffset\fPpolarOffsetRadians = \fC\fBOffset\fP(0, 0)\fP, \fBOffset\fPlightOffsetRadians = \fC\fBOffset\fP(0, 0)\fP)"
+.PP
+draws a Bezier curve with the specified control points and attributes 
+.SS "drawCircle (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
 
-.SS "drawTexturedSphere (\fBImageStrip\fPimgStrip, intframeNum, \fBPoint\fPloc, numberradius, numberrotation = \fC0\fP, \fBOffset\fPpolarOffsetRadians = \fC\fBOffset\fP(0, 0)\fP, \fBOffset\fPlightOffsetRadians = \fC\fBOffset\fP(0, 0)\fP)"
+.PP
+Draw a circle at the specified center point with given radius\&. 
+.SS "drawDrawing (\fBDrawing\fP drawing, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 
-.SS "fillCircle (\fBPoint\fPcenterPt, numberradius, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+Draws a \fBDrawing\fP object at the specified location with styling attributes\&. 
+.SS "drawDrawing (\fBDrawing\fP drawing, \fBRect\fP rect, \fBAttributes\fP attrs)"
 
-.SS "fillOval (\fBPoint\fPcenterPt, numberxRadius, numberyRadius, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+Draws a \fBDrawing\fP object within the specified rectangle with styling attributes\&. 
+.SS "drawEllipse (\fBPoint\fP center, number float xRadius, number float yRadius, \fBAttributes\fP attrs)"
 
-.SS "fillRect (\fBQuad\fPquad, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+Draw an ellipse at the specified center point with given x and y radii\&. 
+.SS "drawImage (\fBImage\fP img, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 
-.SS "fillRect (\fBRect\fPquad, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+Draws an image at the specified location with styling attributes\&. 
+.SS "drawImage (\fBImage\fP img, \fBRect\fP rect, \fBAttributes\fP attrs)"
 
-.SS "fillRectEx (\fBQuad\fPquad, uintpattern, uintpatternShift, \fBColor\fPrgba)"
+.PP
+Draws an image within the specified rectangle with styling attributes\&. 
+.SS "drawLine (\fBPoint\fP from, \fBPoint\fP to, \fBAttributes\fP attrs)"
 
-.SS "fillRectEx (\fBRect\fPquad, uintpattern, uintpatternShift, \fBColor\fPrgba)"
+.PP
+draws a line from one point to another with the specified attributes 
+.SS "drawPolygon (\fBPolygon\fP polygon, \fBAttributes\fP attrs)"
 
-.SS "fillRectWithGradient (\fBQuad\fPquad, \fBColor\fPstartColor, \fBColor\fPendColor)"
+.PP
+draws a polygon with the specified attributes 
+.SS "drawQuad (\fBQuad\fP quad, \fBAttributes\fP attrs)"
 
-.SS "fillRectWithGradient (\fBRect\fPquad, \fBColor\fPstartColor, \fBColor\fPendColor)"
+.PP
+draws a quad with the specified attributes 
+.SS "drawRect (\fBRect\fP rect, \fBAttributes\fP attrs)"
 
-.SS "fillRoundRect (\fBRect\fPrect, numberradius, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+draws a rectangle with the specified attributes 
+.SS "drawRoundedRect (\fBRect\fP rect, number float radius, \fBAttributes\fP attrs)"
 
-.SS "frameCircle (\fBPoint\fPcenterPt, numberradius, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+Draw a rectangle with rounded corners using the specified corner radius\&. 
+.SS "drawSphere (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
 
-.SS "frameOval (\fBPoint\fPcenterPt, numberxRadius, numberyRadius, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+Draws a textured sphere at the specified center point with given radius and styling attributes\&. This function renders a 3D sphere with a texture applied from a single \fBImage\fP\&. The sphere is drawn using perspective projection and includes lighting calculations for realistic 3D appearance\&.
 
-.SS "frameRect (\fBQuad\fPquad, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+\fBParameters\fP
+.RS 4
+\fIcenter\fP The center point of the sphere in screen coordinates 
+.br
+\fIradius\fP The radius of the sphere in pixels 
+.br
+\fIattrs\fP The attributes to use to draw the sphere
+.RE
+.PP
+\fBAttributes\fP
+.IP "\(bu" 2
+texture() The \fBImage\fP containing the texture to apply to the sphere
+.IP "\(bu" 2
+sphereRotation() The rotation angle of the sphere around its vertical axis in radians
+.IP "\(bu" 2
+polarOffset() The offset for the polar coordinates (latitude/longitude mapping) in radians
+.IP "\(bu" 2
+lightOffset() The offset for the lighting calculation in radians
+.PP
 
-.SS "frameRect (\fBRect\fPquad, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+The function creates a 3D sphere by mapping the 2D texture from the \fBImage\fP provided by attrs\&.texture onto a spherical surface\&. The texture is wrapped around the sphere using spherical coordinates, offset by attrs\&.sphereRotation, with the rotation happening around the pole define at attrs\&.polarOffset\&.
 
-.SS "frameRectEx (\fBQuad\fPquad, uintthickness, uintpattern, uintpatternShift, \fBColor\fPrgba)"
+.PP
+The lighting calculation uses the attrs\&.lightOffset parameter to determine how light falls on the sphere, creating a realistic 3D appearance with highlights and shadows\&.
 
-.SS "frameRectEx (\fBRect\fPquad, uintthickness, uintpattern, uintpatternShift, \fBColor\fPrgba)"
+.PP
+\fBWarning\fP
+.RS 4
+Very large texture (image) or radius values may impact rendering performance
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBAttributes\&.texture\fP 
 
-.SS "frameRoundRect (\fBRect\fPrect, numberradius, \fBColor\fPrgba = \fC'black'\fP)"
+.PP
+\fBAttributes\&.sphereRotation\fP 
 
+.PP
+\fBAttributes\&.lightOffset\fP 
+
+.PP
+\fBAttributes\&.polarOffset\fP 
+
+.PP
+\fBImage\fP 
+
+.PP
+\fBPoint\fP 
+
+.PP
+\fBOffset\fP 
+
+.PP
+\fBAttributes\fP 
+.RE
+.PP
+
+.SS "drawSpline (\fBSpline\fP spline, \fBAttributes\fP attrs)"
+
+.PP
+draws a spline curve with the specified attributes 
+.SS "drawText (string text, \fBPoint\fP loc, \fBAttributes\fP attrs)"
+
+.PP
+Draws text at the specified location with styling attributes\&. 
+.SS "drawText (string text, \fBRect\fP rect, \fBAttributes\fP attrs)"
+
+.PP
+Draws text within the specified rectangle with styling attributes\&. 
+.SS "drawVector (\fBVector\fP vector, \fBAttributes\fP attrs)"
+
+.PP
+Draw a vector (arrow) from origin to the specified endpoint\&. 
 .SS "\fBRect\fP getClipRect ()"
 
-.SS "\fBFont\fP getCurrentFont (uintstyle = \fC\fBtextStyle_Plain\fP\fP)"
+.PP
+Get the current clipping rectangle for drawing operations\&. 
+.SS "\fBFont\fP getCurrentFont (uint style = \fR\fBtextStyle_Plain\fP\fP)"
 
-.SS "getCursor ()"
+.PP
+returns the current font for the specified style 
+.PP
+References \fBpdg::textStyle_Plain\fP\&.
+.SS "\fBImage\fP getCursor ()"
 
 .PP
 get the \fBImage\fP that is being used as the cursor \fINOT IMPLEMENTED\fP 
 .SS "\fBRect\fP getDrawingArea ()"
 
-.SS "number getTextWidth (stringtext, intsize, uintstyle = \fC\fBtextStyle_Plain\fP\fP, intlen = \fC-1\fP)"
+.PP
+Get the total drawing area rectangle for this port\&. 
+.SS "number getTextWidth (string text, int size, uint style = \fR\fBtextStyle_Plain\fP\fP, int len = \fR\-1\fP)"
 
+.PP
+returns the width of the specified text in pixels 
+.PP
+References \fBpdg::textStyle_Plain\fP\&.
 .SS "resetCursor ()"
 
 .PP
 NOT IMPLEMENTED\&. 
-.SS "\fBPort\fP setClipRect (\fBRect\fPinClipRect)"
+.SS "\fBPort\fP setClipRect (\fBRect\fP inClipRect)"
 
-.SS "setCursor (\fBImage\fPcursorImage, \fBPoint\fPhotSpot)"
+.PP
+Set the clipping rectangle to limit drawing operations to a specific area\&. 
+.SS "setCursor (\fBImage\fP cursorImage, \fBPoint\fP hotSpot)"
 
 .PP
 NOT IMPLEMENTED\&. 
-.SS "setFont (\fBFont\fPfont = \fCDEFAULT_FONT\fP)"
+.SS "setFont (\fBFont\fP font = \fRDEFAULT_FONT\fP)"
 
-.SS "setFontForStyle (uintstyle, \fBFont\fPfont = \fCDEFAULT_FONT\fP)"
+.PP
+sets the current font for text rendering 
+.SS "setFontForStyle (uint style, \fBFont\fP font = \fRDEFAULT_FONT\fP)"
 
-.SS "setFontScalingFactor (numberscaleBy)"
+.PP
+Set a custom font for a specific text style (bold, italic, etc\&.) 
+.SS "setFontScalingFactor (number scaleBy)"
 
-.SS "startTrackingMouse (\fBRect\fPrect)"
+.PP
+Set a scaling factor to adjust the size of all rendered text\&. 
+.SS "number startTrackingMouse (\fBRect\fP rect)"
 
 .PP
 NOT IMPLEMENTED\&. 
-.SS "stopTrackingMouse (inttrackingRef)"
+.SS "stopTrackingMouse (int trackingRef)"
 
 .PP
 NOT IMPLEMENTED\&. 

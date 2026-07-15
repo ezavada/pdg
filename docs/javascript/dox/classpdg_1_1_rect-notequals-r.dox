@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::notEquals(r2)
+
+\brief return true if this rectangle is not equal to the given one
+
+**/ }

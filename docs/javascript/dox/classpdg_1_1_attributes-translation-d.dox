@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::translation(offset)
+
+\brief sets the translation offset for transformations
+
+**/ }

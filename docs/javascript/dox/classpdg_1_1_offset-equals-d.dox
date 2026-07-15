@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Offset::equals(offset)
+
+\brief return true if this point is equal to the other
+
+**/ }

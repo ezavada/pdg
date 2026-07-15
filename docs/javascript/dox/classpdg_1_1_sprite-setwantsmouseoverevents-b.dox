@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setWantsMouseOverEvents(wantsThem)
+
+\brief enables or disables mouse over event generation for this sprite
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getAttachPoint(attachPointName)
+
+\brief returns the position of the specified attach point
+
+**/ }

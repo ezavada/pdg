@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getGradientType()
+
+\brief returns the current gradient type
+
+**/ }

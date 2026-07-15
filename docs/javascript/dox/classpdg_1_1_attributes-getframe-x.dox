@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getFrame()
+
+\brief Gets which frame of an ImageStrip to draw
+
+**/ }

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addDrawing(rect, drawing, attrs)
+
+\brief adds a nested drawing element to the drawing
+
+**/ }

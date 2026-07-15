@@ -1,53 +1,75 @@
-.TH "Quad" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Quad" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Quad \- 
-.PP
-4 point polygon in 2D system  
+Quad \- 4 point polygon in 2D system  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
-.RI "\fBQuad\fP (args\&.\&.\&.)"
+.RI "\fBQuad\fP ()"
+.br
+.ti -1c
+.RI "\fBQuad\fP (\fBPoint\fP p1, \fBPoint\fP p2, \fBPoint\fP p3, \fBPoint\fP p4)"
+.br
+.ti -1c
+.RI "\fBQuad\fP (\fBPoint\fP[] p)"
+.br
+.ti -1c
+.RI "\fBQuad\fP (\fBQuad\fP q)"
+.br
+.ti -1c
+.RI "\fBQuad\fP (\fBRect\fP r)"
+.br
+.ti -1c
+.RI "\fBQuad\fP (\fBRotatedRect\fP r)"
 .br
 .ti -1c
 .RI "\fBPoint\fP \fBcenterPoint\fP ()"
 .br
+.RI "return the calculated centerpoint of the quad "
 .ti -1c
 .RI "boolean \fBcontains\fP (\fBPoint\fP p)"
 .br
+.RI "returns true if the point is contained within this quad "
 .ti -1c
 .RI "boolean \fBequals\fP (\fBQuad\fP q2)"
 .br
+.RI "return true if this quad is equal to the given one "
 .ti -1c
 .RI "\fBRect\fP \fBgetBounds\fP ()"
 .br
+.RI "return a rectangle that bounds the quad "
 .ti -1c
 .RI "\fBmoveDown\fP (number delta)"
 .br
+.RI "move the quad down by some amount "
 .ti -1c
 .RI "\fBmoveLeft\fP (number delta)"
 .br
+.RI "move the quad to the left by some amount "
 .ti -1c
 .RI "\fBmoveRight\fP (number delta)"
 .br
+.RI "move the quad to the right by some amount "
 .ti -1c
 .RI "\fBmoveUp\fP (number delta)"
 .br
+.RI "move the quad up by some amount "
 .ti -1c
 .RI "boolean \fBnotEquals\fP (\fBQuad\fP q2)"
 .br
+.RI "return true if this quad is not equal to the given one "
 .ti -1c
 .RI "\fBrotate\fP (number rotationRadians, \fBOffset\fP centerPtOffset=\fBPoint\fP(0, 0))"
 .br
-.ti -1c
-.RI "string \fBtoString\fP ()"
-.br
+.RI "rotate(n): rotate the quad by a rotation in radians (around the calculated center point of the quad); rotate(n, [Offset] o): rotate the quad by a rotation in radians around an offset center point "
 .in -1c
 .SS "Public Attributes"
 
@@ -63,32 +85,68 @@ Quad \-
 \fBQuad\fP is a class that provides support for dealing with 4 point ploygons in 2 dimensional space The PDG coordinate space starts with the top left corner of the drawing port at Point(0,0) and the bottom left corner at Point( width, height ); 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBQuad\fP (args\&.\&.\&.)"
+.SS "\fBQuad\fP ()"
+
+.PP
+Referenced by \fBQuad()\fP, \fBequals()\fP, and \fBnotEquals()\fP\&.
+.SS "\fBQuad\fP (\fBQuad\fP q)"
+
+.PP
+References \fBQuad()\fP\&.
+.SS "\fBQuad\fP (\fBRect\fP r)"
+
+.SS "\fBQuad\fP (\fBRotatedRect\fP r)"
+
+.SS "\fBQuad\fP (\fBPoint\fP p1, \fBPoint\fP p2, \fBPoint\fP p3, \fBPoint\fP p4)"
+
+.SS "\fBQuad\fP (\fBPoint\fP[] p)"
 
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBPoint\fP centerPoint ()"
 
-.SS "boolean contains (\fBPoint\fPp)"
+.PP
+return the calculated centerpoint of the quad 
+.SS "boolean contains (\fBPoint\fP p)"
 
-.SS "boolean equals (\fBQuad\fPq2)"
+.PP
+returns true if the point is contained within this quad 
+.SS "boolean equals (\fBQuad\fP q2)"
 
+.PP
+return true if this quad is equal to the given one 
+.PP
+References \fBQuad()\fP\&.
 .SS "\fBRect\fP getBounds ()"
 
-.SS "moveDown (numberdelta)"
+.PP
+return a rectangle that bounds the quad 
+.SS "moveDown (number delta)"
 
-.SS "moveLeft (numberdelta)"
+.PP
+move the quad down by some amount 
+.SS "moveLeft (number delta)"
 
-.SS "moveRight (numberdelta)"
+.PP
+move the quad to the left by some amount 
+.SS "moveRight (number delta)"
 
-.SS "moveUp (numberdelta)"
+.PP
+move the quad to the right by some amount 
+.SS "moveUp (number delta)"
 
-.SS "boolean notEquals (\fBQuad\fPq2)"
+.PP
+move the quad up by some amount 
+.SS "boolean notEquals (\fBQuad\fP q2)"
 
-.SS "rotate (numberrotationRadians, \fBOffset\fPcenterPtOffset = \fC\fBPoint\fP(0, 0)\fP)"
+.PP
+return true if this quad is not equal to the given one 
+.PP
+References \fBQuad()\fP\&.
+.SS "rotate (number rotationRadians, \fBOffset\fP centerPtOffset = \fR\fBPoint\fP(0,0)\fP)"
 
-.SS "string toString ()"
-
+.PP
+rotate(n): rotate the quad by a rotation in radians (around the calculated center point of the quad); rotate(n, [Offset] o): rotate the quad by a rotation in radians around an offset center point 
 .SH "Member Data Documentation"
 .PP 
 .SS "\fBPoint\fP [] points"

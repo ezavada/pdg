@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Rect::times(Point p)
+
+\brief Multiply this rectangle by a point, scaling its dimensions
+
+**/ }

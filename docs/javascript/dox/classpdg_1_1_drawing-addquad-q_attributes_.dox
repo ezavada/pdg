@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Drawing::addQuad(quad, attrs)
+
+\brief adds a quad element to the drawing
+
+**/ }

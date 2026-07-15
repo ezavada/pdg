@@ -4,4 +4,8 @@ namespace pdg { /**
 
 \brief get the bytes needed to serialize the layer
 
+Takes into account the serialization mode for this layer
+
+\sa SpriteLayer.setSerializationFlags()
+
 **/ }

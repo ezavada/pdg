@@ -110,6 +110,8 @@ public:
     inline OffsetT(T ix, T iy) : x(ix), y(iy) {}
 	//! create a point at the origin (0,0)
     inline OffsetT() : x(0), y(0) {}
+	//! copy constructor
+    inline OffsetT(const OffsetT<T>& other) : x(other.x), y(other.y) {}
 };
 
 //! \cond C++
@@ -120,6 +122,8 @@ public:
 	// math
 	//! get distance from another point
 	float distance(const PointT<T>& p2) const;
+	//! get distance squared from another point
+	float distanceSquared(const PointT<T>& p2) const;
 	//! do a projection of a second point onto this point
 	PointT<T> projection(const PointT<T> &pointB) const;
     // constructors
@@ -244,6 +248,13 @@ inline float PointT<T>::distance(const PointT<T>& p2) const {
 	T dx = p2.x - OffsetT<T>::x;
 	T dy = p2.y - OffsetT<T>::y;
 	return sqrt( (dx * dx) + (dy * dy) );
+}
+
+template <typename T>
+inline float PointT<T>::distanceSquared(const PointT<T>& p2) const {
+	T dx = p2.x - OffsetT<T>::x;
+	T dy = p2.y - OffsetT<T>::y;
+	return (dx * dx) + (dy * dy);
 }
 
 template <typename T>
@@ -420,7 +431,14 @@ public:
 	RectT<T>&    	 round()			 { top = fround2i(top); bottom = fround2i(bottom); left = fround2i(left); right = fround2i(right); return *this; }
 	// typecasts
 	// typecast operators
-	operator QuadT<T> () { return QuadT<T>(*this); }
+	operator QuadT<T> () { 
+		QuadT<T> result;
+		result.points[0] = this->leftTop(); 
+		result.points[1] = this->rightTop(); 
+		result.points[3] = this->leftBottom(); 
+		result.points[2] = this->rightBottom();
+		return result;
+	}
 	// operators
 	//! return true if this rectangle is equal to the other
 	bool operator== (const RectT<T>& r2);
@@ -455,6 +473,8 @@ public:
     RectT(const PointT<T>& lftTop, T wid, T hgt) : left(lftTop.x), top(lftTop.y), right(lftTop.x + wid), bottom(lftTop.y + hgt) {}
 	//! create an empty rectangle with origin at (0,0)
     RectT() : left(0), top(0), right(0), bottom(0) {}
+	//! copy constructor
+    RectT(const RectT<T>& other) : left(other.left), top(other.top), right(other.right), bottom(other.bottom) {}
 };
 
 //! \cond C++
@@ -615,6 +635,8 @@ public:
 	void	rotate(float rotationRadians) { rotate(rotationRadians, PointT<T>((T)0,(T)0)); }
 	//! rotate the quad by a rotation in radians around an offset center point
 	void	rotate(float rotationRadians, const PointT<T>& centerPtOffset);
+	//! rotate the quad by a rotation in radians around a center point
+	void	rotateAround(float rotationRadians, const PointT<T>& centerPoint);
 };
 
 typedef QuadT<PDG_BASE_COORD_TYPE> Quad;
@@ -652,6 +674,14 @@ PointT<T>  QuadT<T>::centerPoint() const {
 	PointT<float> pa2(points[rgtBot].x, points[rgtBot].y);
 	PointT<float> pb1(points[lftBot].x, points[lftBot].y);
 	PointT<float> pb2(points[rgtTop].x, points[rgtTop].y);
+	
+	// Check for degenerate cases first
+	if (pa1.x == pa2.x && pb1.x == pb2.x) {
+		// Both diagonals are vertical - use average of all points
+		return PointT<T>((pa1.x + pa2.x + pb1.x + pb2.x) / 4.0f, 
+		                 (pa1.y + pa2.y + pb1.y + pb2.y) / 4.0f);
+	}
+	
 	if ( (pa2.y < pb2.y) && (pa1.x < pb2.x)) {
 		// twisted around horizontal axis, swap for calculation
 		PointT<float> tmp = pa2;
@@ -664,11 +694,26 @@ PointT<T>  QuadT<T>::centerPoint() const {
 		pa1 = pb2;
 		pb2 = tmp;
 	}
+	
+	// Check for division by zero
+	if (pa2.x == pa1.x || pb2.x == pb1.x) {
+		// One or both diagonals are vertical - use bounds center
+		return getBounds().centerPoint();
+	}
+	
 	sa = (pa2.y - pa1.y)/(pa2.x - pa1.x);
 	sb = (pb2.y - pb1.y)/(pb2.x - pb1.x);
+	
 	if (sa == sb) return getBounds().centerPoint();
+	
 	float x = ((sa * pa2.x) - (sb * pb2.x) + pb2.y - pa2.y) / (sa - sb);
 	float y = (sa * (x - pa2.x)) + pa2.y;
+	
+	// Check for NaN or infinite results
+	if (std::isnan(x) || std::isnan(y) || std::isinf(x) || std::isinf(y)) {
+		return getBounds().centerPoint();
+	}
+	
 	return PointT<T>(x, y);
 }
 
@@ -696,18 +741,24 @@ void	QuadT<T>::rotate(float rotationRadians, const PointT<T>& centerPtOffset) {
 	PointT<float> cp = centerPoint();
 	PointT<float> coff(centerPtOffset.x, centerPtOffset.y);
 	cp += coff;
+	rotateAround(rotationRadians, cp);
+}
+
+template <typename T>
+void	QuadT<T>::rotateAround(float rotationRadians, const PointT<T>& centerPoint) {
 	// calc points with rotation
 	VectorT<float> v;
 	for (int i = 0; i < 4; i++) {
 		v.x = points[i].x;
 		v.y = points[i].y;
-		v -= cp;
+		v -= centerPoint;
 		float len = v.vectorLength();
 		float rot = v.vectorAngle();
-		points[i].x = (T) ((len * cos(rot + rotationRadians)) + cp.x);
-		points[i].y = (T) ((len * sin(rot + rotationRadians)) + cp.y);
+		points[i].x = (T) ((len * cos(rot + rotationRadians)) + centerPoint.x);
+		points[i].y = (T) ((len * sin(rot + rotationRadians)) + centerPoint.y);
 	}
 }
+
 //! \endcond
 
 // -----------------------------------------------------------------------------------

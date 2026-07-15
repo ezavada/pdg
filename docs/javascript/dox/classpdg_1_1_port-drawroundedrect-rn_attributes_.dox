@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawRoundedRect(Rect rect, float radius, Attributes attrs)
+
+\brief Draw a rectangle with rounded corners using the specified corner radius
+
+**/ }

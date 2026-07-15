@@ -34,12 +34,17 @@
 
 if [ $? = 0 ] && [ "$(tput colors 2> /dev/null)" -gt "2" ]; then
 	export ERR="\033[1;37;41m"
+	export WARN="\033[1;33m"
+	export GOOD="\033[1;32m"
 	export RED="\033[1;37m"
 	export MGNT="\033[1;35m"
 	export NRML="\033[0;0m"
-	export BOLD="\033[1;37m"
+	export RESET="\033[0;0m"
+	export BOLD="\033[1;0m"
 	export BLUE="\033[0;34m"
 	export GRN="\033[0;32m"
 	export YELW="\033[0;33m"
 	export BLUE="\033[0;34m"
+	export HEAD="\033[1;35m"
+	export BOLD_BLUE="\033[1;34m"
 fi

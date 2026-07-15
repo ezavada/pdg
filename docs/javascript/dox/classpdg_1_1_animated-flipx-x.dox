@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Animated::flipX()
+
+\brief flips the object horizontally, center offset is flipped too. Applied before other transformations.
+
+**/ }

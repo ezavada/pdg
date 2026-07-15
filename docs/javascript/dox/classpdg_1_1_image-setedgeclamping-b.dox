@@ -24,6 +24,6 @@ In the example above you can see faint diagonal white lines on the left hand ima
 \sa Port.drawTexturedSphere()
 
 
-  [1]: /pdg/images/edge-clamping.png
+  [1]: edge-clamping.png
 
 **/ }

@@ -95,8 +95,10 @@
 #define THIS_FILE __FILE__
 #endif
 
-#ifndef COMPILER_MSVC
+#if !defined( COMPILER_MSVC ) && !defined( COMPILER_EMCC ) 
 #include <cxxabi.h>
+
+extern "C" const char* functionPtrToName(void* ptr, bool nameOnly);
 
 /* Use this to demangle a symbol name into a human readable name.
    Can be called from straight C, even for C++ symbols. */
@@ -230,7 +232,7 @@ OS::isButtonDown(int buttonNumber) {
 bool 
 OS::isRawKeyDown(long keyCode) {
   #ifndef PDG_NO_GUI
-	return main_getRawKeyState(keyCode);
+	return main_getRawKeyState((int)keyCode);
   #else
 	return false;
   #endif
@@ -328,7 +330,7 @@ OS::gameCriticalRandom() {
 
 void
 OS::srand(unsigned long seed) {
-    std::srand(seed);   // this seeds the non-critical random number generation
+    std::srand((unsigned int)seed);   // this seeds the non-critical random number generation
   #ifndef PDG_NO_MERSENNE_TWISTER
     // following seeds critical random number generation
     RAND_MUTEX;
@@ -376,7 +378,7 @@ OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, i
     outBuf[0] = 0;  // start with a clean buffer
 
 	const char truncMsg[22] = "<HEX DUMP TRUNCATED>";
-	int truncMsgLen = std::strlen(truncMsg);
+	int truncMsgLen = (int)std::strlen(truncMsg);
 	int offset = 0;
 
 	int outPos = 0;
@@ -397,10 +399,10 @@ OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, i
             ch = *p++;
 			CHECK_PTR_WRITE(hexbuf + n*3 + ex, 4, hexbuf, hexBufLen); // 3 + NUL
 			if (hiliteEnd && (total == (hiliteEnd -1))) {
-            	std::sprintf(hexbuf + n*3 + ex, "%02X] ", ch);
+            	std::snprintf(hexbuf + n*3 + ex, hexBufLen - (n*3 + ex), "%02X] ", ch);
             	ex += 1;
             } else {
-            	std::sprintf(hexbuf + n*3 + ex, "%02X ", ch);
+            	std::snprintf(hexbuf + n*3 + ex, hexBufLen - (n*3 + ex), "%02X ", ch);
             }
 			CHECK_PTR(ascbuf + n, ascbuf, ascBufLen);
             ascbuf[n] = std::isprint(ch) ? ch : '.';
@@ -408,7 +410,7 @@ OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, i
 		CHECK_PTR(ascbuf + n, ascbuf, ascBufLen);
         ascbuf[n] = '\0';
 
-		int lineLen = std::strlen(hexbuf) + std::strlen(ascbuf);
+		int lineLen = (int)(std::strlen(hexbuf) + std::strlen(ascbuf));
 		if (outPos + lineLen + 5 > outBufSize) {
 			if (outPos + truncMsgLen > outBufSize) {
 				offset = outBufSize - truncMsgLen - 1;
@@ -416,20 +418,21 @@ OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, i
 				offset = outPos;
 			}
 			CHECK_PTR_WRITE(outBuf + offset, truncMsgLen + 1, outBuf, outBufSize);
-			std::strcpy(&outBuf[offset], truncMsg);
+			std::strncpy(&outBuf[offset], truncMsg, outBufSize - offset - 1);
+			outBuf[outBufSize - 1] = '\0';
 			break; // jump out of the loop
 		}
 		if ( (n < bytesPerLine) || (total == inBufSize) ) {
 			for( ch = n; ch < bytesPerLine; ch++ ) {
 			    CHECK_PTR_WRITE(hexbuf + ex + ch*3, 4, hexbuf, hexBufLen); // 3 + NUL
-				std::strcpy( hexbuf + ex + ch*3, "   " );
+				std::strncpy( hexbuf + ex + ch*3, "   ", 4 );
 			}
 			CHECK_PTR_WRITE(&outBuf[outPos], lineLen + 4, outBuf, outBufSize) // " | " + NUL
-	        std::sprintf(&outBuf[outPos], "%s | %s", hexbuf, ascbuf);
+	        std::snprintf(&outBuf[outPos], outBufSize - outPos, "%s | %s", hexbuf, ascbuf);
 	        outPos += lineLen + 3;
 		} else {
 			CHECK_PTR_WRITE(&outBuf[outPos], lineLen + 5, outBuf, outBufSize) // " | " + "\n" + NUL
-			std::sprintf(&outBuf[outPos], "%s | %s\n", hexbuf, ascbuf);
+			std::snprintf(&outBuf[outPos], outBufSize - outPos, "%s | %s\n", hexbuf, ascbuf);
 	        outPos += lineLen + 4;
 		}
 
@@ -442,7 +445,7 @@ OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, i
 void 
 OS::utf8to16(utf16string& dst, const std::string& src)
 {
-	int cbLen = src.length();
+	int cbLen = (int)src.length();
 	utf8to16( dst, src, cbLen);
 }
 

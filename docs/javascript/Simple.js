@@ -87,9 +87,9 @@ function SetUpSpriteWorld() {
 
     // Create the SpriteWorld
     if (kFullscreen) {
-        gPort = pdg.getGraphicsManager().createFullScreenPort(new Rect(kWindowWidth, kWindowHeight));
+        gPort = pdg.getGraphicsManager().createFullScreenPort(new pdg.Rect(kWindowWidth, kWindowHeight));
     } else {
-        gPort = pdg.getGraphicsManager().createWindowPort(new Rect(kWindowWidth, kWindowHeight), "PDG Simple Sprite Test");
+        gPort = pdg.getGraphicsManager().createWindowPort(new pdg.Rect(kWindowWidth, kWindowHeight), "PDG Simple Sprite Test");
     }
 
     // Create the Sprite Layers
@@ -182,7 +182,7 @@ function AddSprites() {
     for (spriteNum = 0; spriteNum < kNumSprites; spriteNum++) {
         newSprite = CreateBallSprite();
         newSprite.id = spriteNum;
-        var screenCenter = new Rect(gPort.getDrawingArea()).centerPoint();
+        var screenCenter = new pdg.Rect(gPort.getDrawingArea()).centerPoint();
         var max_x = screenCenter.x - gBallImage.getWidth()/2;
         var max_y = screenCenter.y - gBallImage.getHeight()/2;
         var loc = new pdg.Point(pdg.rand() % max_x + screenCenter.x, pdg.rand() % max_y + screenCenter.y);

@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::areSpriterEventsEnabled()
+
+\brief returns true if spriter events are enabled for this sprite
+
+**/ }

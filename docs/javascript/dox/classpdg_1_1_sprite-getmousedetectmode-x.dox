@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::getMouseDetectMode()
+
+\brief returns the current mouse detection mode for this sprite
+
+**/ }

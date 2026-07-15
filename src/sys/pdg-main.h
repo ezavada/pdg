@@ -49,11 +49,11 @@ enum {
 	numMouseEventTypes
 };
 
-enum {
-	screenNum_PrimaryScreen = -1,
-    screenNum_BestFitScreen = -2
-};
-
+//enum {
+//	screenNum_PrimaryScreen = -1,
+//    screenNum_BestFitScreen = -2
+//};
+//
 bool main_getRawKeyState(int keyCode);
 bool main_getKeyState(utf16char keyChar);
 bool main_getButtonState(int buttonNumber);
@@ -69,6 +69,7 @@ void main_handleKeyPress(utf16char keyChar, bool repeat, bool shift, bool contro
 void main_handleKeyDown(int keyCode, utf16char keyChar);
 void main_handleKeyUp(int keyCode, utf16char keyChar);
 void main_handleMouse(int action, float x, float y, int button, bool shift, bool control, bool alt, bool cmd);
+void main_handleScrollWheel(int horizDelta, int vertDelta, bool shift, bool control, bool alt, bool cmd);
 void main_handleScreenUpdate(int screenPos);
 void main_setInitialScreenState(int screenPos, bool fullscreen);
 void main_handleLiveResize(int currWidth, int currHeight);
@@ -86,6 +87,10 @@ void main_initKeyStates();
 int main_init(int argc, const char* argv[], bool isInitialized);
 void main_run();
 int main_cleanup(bool* dontExit = NULL);
+
+// Global exit flags
+extern bool gExit;
+extern int gExitCode;
 
 } // end namespace pdg
 #endif

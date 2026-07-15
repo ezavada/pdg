@@ -1,2271 +1,1320 @@
-/* This file automatically generated from docs/pdg-js.i */
-
-
-
-pdg =
-{
-
-    var all_events = 0;
-    var eventType_Startup = 1;
-    var eventType_Shutdown = 2;
-    var eventType_Timer = 3;
-    var eventType_KeyDown = 4;
-    var eventType_KeyUp = 5;
-    var eventType_KeyPress = 6;
-    var eventType_MouseDown = 7;
-    var eventType_MouseUp = 8;
-    var eventType_MouseMove = 9;
-    var eventType_MouseEnter = 22;
-    var eventType_MouseLeave = 23;
-    var eventType_PortResized = 15;
-    var eventType_ScrollWheel = 16;
-    var eventType_SpriteTouch = 19;
-    var eventType_SpriteAnimate = 17;
-    var eventType_SpriteLayer = 18;
-    var eventType_SpriteCollide = 20;
-    var eventType_SpriteBreak = 21;
-    var eventType_SoundEvent = 14;
-    var soundEvent_DonePlaying = 0;
-    var soundEvent_Looping = 1;
-    var soundEvent_FailedToPlay = 2;
-    var key_Break = 1;
-    var key_Home = 2;
-    var key_End = 3;
-    var key_Clear = 4;
-    var key_Help = 5;
-    var key_Pause = 6;
-    var key_Mute = 7;
-    var key_Backspace = 8;
-    var key_Delete = 127;
-    var key_Tab = 9;
-    var key_PageUp = 11;
-    var key_PageDown = 12;
-    var key_Return = 13;
-    var key_Enter = 13;
-    var key_F1 = 14;
-    var key_F2 = 15;
-    var key_F3 = 16;
-    var key_F4 = 17;
-    var key_F5 = 18;
-    var key_F6 = 19;
-    var key_F7 = 20;
-    var key_F8 = 21;
-    var key_F9 = 22;
-    var key_F10 = 23;
-    var key_F11 = 24;
-    var key_F12 = 25;
-    var key_FirstF = 14;
-    var key_LastF = 25;
-    var key_Insert = 26;
-    var key_Escape = 27;
-    var key_LeftArrow = 28;
-    var key_RightArrow = 29;
-    var key_UpArrow = 30;
-    var key_DownArrow = 31;
-    var key_FirstPrintable = 32;
-    var screenPos_Normal = 0;
-    var screenPos_Rotated180 = 1;
-    var screenPos_Rotated90Clockwise = 2;
-    var screenPos_Rotated90CounterClockwise = 3;
-    var screenPos_FaceUp = 4;
-    var screenPos_FaceDown = 5;
-    var textStyle_Plain = 0;
-    var textStyle_Bold = 1;
-    var textStyle_Italic = 2;
-    var textStyle_Underline = 4;
-    var textStyle_Centered = 16;
-    var textStyle_LeftJustified = 0;
-    var textStyle_RightJustified = 32;
-    var fit_None = 0;
-    var fit_Height = 1;
-    var fit_Width = 2;
-    var fit_Inside = 3;
-    var fit_Fill = 4;
-    var fit_FillKeepProportions = 5;
-    var init_CreateUniqueNewFile = 0;
-    var init_OverwriteExisting = 1;
-    var init_AppendToExisting = 2;
-    var init_StdOut = 3;
-    var init_StdErr = 4;
-    var duration_Constant = -1;
-    var duration_Instantaneous = 0;
-    var animate_StartToEnd = 0;
-    var animate_EndToStart = 1;
-    var animate_Unidirectional = 0;
-    var animate_Bidirectional = 2;
-    var animate_NoLooping = 0;
-    var animate_Looping = 4;
-    var start_FromFirstFrame = -1;
-    var start_FromLastFrame = -2;
-    var all_Frames = 0;
-    var action_CollideSprite = 0;
-    var action_CollideWall = 1;
-    var action_Offscreen = 2;
-    var action_AnimationLoop = 8;
-    var action_AnimationEnd = 9;
-    var action_FadeComplete = 10;
-    var action_FadeInComplete = 11;
-    var action_FadeOutComplete = 12;
-    var action_JointBreak = 13;
-    var touch_MouseEnter = 20;
-    var touch_MouseLeave = 21;
-    var touch_MouseDown = 22;
-    var touch_MouseUp = 23;
-    var touch_MouseClick = 24;
-    var collide_None = 0;
-    var collide_Point = 1;
-    var collide_BoundingBox = 2;
-    var collide_CollisionRadius = 3;
-    var collide_AlphaChannel = 4;
-    var collide_Last = 4;
-    var action_ErasePort = 40;
-    var action_PreDrawLayer = 41;
-    var action_PostDrawLayer = 42;
-    var action_DrawPortComplete = 43;
-    var action_AnimationStart = 44;
-    var action_PreAnimateLayer = 45;
-    var action_PostAnimateLayer = 46;
-    var action_AnimationComplete = 47;
-    var action_ZoomComplete = 48;
-    var facing_North = 0;
-    var facing_East = 64;
-    var facing_South = 128;
-    var facing_West = 192;
-    var facing_Ignore = 256;
-    var flipped_None = 0;
-    var flipped_Horizontal = 64;
-    var flipped_Vertical = 128;
-    var flipped_Both = 192;
-    var flipped_Ignore = 256;
-    var timer_OneShot = 1;
-    var timer_Repeating = 0;
-    var timer_Never = -1;
-    var linearTween = 0;
-    var easeInQuad = 1;
-    var easeOutQuad = 2;
-    var easeInOutQuad = 3;
-    var easeInCubic = 4;
-    var easeOutCubic = 5;
-    var easeInOutCubic = 6;
-    var easeInQuart = 7;
-    var easeOutQuart = 8;
-    var easeInQuint = 10;
-    var easeOutQuint = 11;
-    var easeInOutQuint = 12;
-    var easeInSine = 13;
-    var easeOutSine = 14;
-    var easeInOutSine = 15;
-    var easeInExpo = 16;
-    var easeOutExpo = 17;
-    var easeInOutExpo = 18;
-    var easeInCirc = 19;
-    var easeOutCirc = 20;
-    var easeInOutCirc = 21;
-    var easeInBounce = 22;
-    var easeOutBounce = 23;
-    var easeInOutBounce = 24;
-    var easeInBack = 25;
-    var easeOutBack = 26;
-    var easeInOutBack = 27;
-    var lftTop = 0;
-    var rgtTop = 1;
-    var rgtBot = 2;
-    var lftBot = 3;
-    var fs;
-    var evt;
-    var gfx;
-    var tm;
-    var res;
-    var cfg;
-    var snd;
-    var argv;
-
-/**  */
-    rand ();
-/**  */
-    gameCriticalRandom ();
-/**  */
-    srand ([number uint] seed);
-/**  */
-    registerEasingFunction (function easingFunc);
-/**  */
-    getFileManager ();
-/**  */
-    getLogManager ();
-/**  */
-    getConfigManager ();
-/**  */
-    getResourceManager ();
-/**  */
-    getEventManager ();
-/**  */
-    getTimerManager ();
-/**  */
-    registerSerializableClass (object klass);
-/**  */
-    getGraphicsManager ();
-/**  */
-    getSoundManager ();
-/**  */
-    createSpriteLayer ([object Port] port = null);
-/**  */
-    cleanupSpriteLayer ([object SpriteLayer] layer);
-/**  */
-    quit ();
-/**  */
-    run ();
-/**  */
-    idle ();
-/** start node-inspector and open a debugger window in your browser */
-    openDebugger ();
-/**  */
-    openConsole "Exception: Cannot call method 'indexOf' of undefined";
-/**  */
-    log (string msg);
-/**  */
-    info (string msg);
-/**  */
-    warn (string msg);
-/**  */
-    error (string msg);
-/**  */
-    debug (string msg);
-/**  */
-    trace (string msg);
-/**  */
-    captureConsole ();
-/**  */
-    on ([number int] eventType, function func);
-/**  */
-    onShutdown (function func);
-/**  */
-    onTimer (function func);
-/**  */
-    onKeyDown (function func);
-/**  */
-    onKeyUp (function func);
-/**  */
-    onKeyPress (function func);
-/**  */
-    onMouseDown (function func);
-/**  */
-    onMouseUp (function func);
-/**  */
-    onMouseMove (function func);
-/**  */
-    startRepl ();
-
-    (MemBlock) =
-    {
-
-/**  */
-        [string Binary] getData ();
-/**  */
-        number getDataSize ();
-/**  */
-        number getByte ([number uint] i);
-/**  */
-        [string Binary] getBytes ([number uint] start, [number uint] len);
-    };
-
-    (FileManager) =
-    {
-
-/**  */
-        object findFirst (string inFindName);
-/**  */
-        object findNext (object inFindData);
-/**  */
-        findClose (object inFindData);
-/**  */
-        string getApplicationDataDirectory ();
-/**  */
-        string getApplicationDirectory ();
-/**  */
-        string getApplicationResourceDirectory ();
-/**  */
-        string[] findFiles (string name);
-/**  */
-        string[] findDirs (string name);
-    };
-
-    (LogManager) =
-    {
-
-        var init_CreateUniqueNewFile = 0;
-        var init_OverwriteExisting = 1;
-        var init_AppendToExisting = 2;
-        var init_StdOut = 3;
-        var init_StdErr = 4;
-/**  */
-        number getLogLevel ();
-/**  */
-        setLogLevel ([number int] inLogLevel);
-/**  */
-        initialize (string inLogNameBase, [number int] initMode = LogManager.init_StdOut);
-/**  */
-        writeLogEntry ([number int] level, string category, string message);
-/**  */
-        string binaryDump ([string Binary] inData, [number int] length = 0, [number int] bytesPerLine = 20);
-/**  */
-        string binaryDump ([object MemBlock] inData, [number int] length = 0, [number int] bytesPerLine = 20);
-    };
-
-    (ConfigManager) =
-    {
-
-/**  */
-        boolean useConfig (string inConfigName);
-/**  */
-        {string|}
-        getConfigString (string inConfigItemName);
-/**  */
-        {number|}
-        getConfigLong (string inConfigItemName);
-/**  */
-        {number|}
-        getConfigFloat (string inConfigItemName);
-/**  */
-        {boolean|}
-        getConfigBool (string inConfigItemName);
-/**  */
-        setConfigString (string inConfigItemName, string inValue);
-/**  */
-        setConfigLong (string inConfigItemName, [number int] inValue);
-/**  */
-        setConfigFloat (string inConfigItemName, number inValue);
-/**  */
-        setConfigBool (string inConfigItemName, boolean inValue);
-    };
-
-    (ResourceManager) =
-    {
-
-/**  */
-        number openResourceFile (string filename);
-/**  */
-        [object Image] getImage (string imageName);
-/**  */
-        [object Sound] getSound (string soundName);
-/**  */
-        string getString ([number int] id, [number int] substring = -1);
-/**  */
-        number getResourceSize (string resourceName);
-/**  */
-        [string Binary] getResource (string resourceName);
-/**  */
-        string getResourcePaths ();
-    };
-
-    (Serializer) =
-    {
-
-/**  */
-        serialize_d (number val);
-/**  */
-        serialize_f (number val);
-/**  */
-        serialize_4 ([number int] val);
-/**  */
-        serialize_4u ([number uint] val);
-/**  */
-        serialize_3u ([number uint] val);
-/**  */
-        serialize_2 ([number int] val);
-/**  */
-        serialize_2u ([number uint] val);
-/**  */
-        serialize_1 ([number int] val);
-/**  */
-        serialize_1u ([number uint] val);
-/**  */
-        serialize_uint ([number uint] val);
-/**  */
-        serialize_str (string str);
-/**  */
-        serialize_mem ([string Binary] mem);
-/**  */
-        serialize_mem ([object MemBlock] mem);
-/**  */
-        serialize_obj ([object ISerializable] obj);
-/**  */
-        number serializedSize (string arg);
-/**  */
-        number serializedSize ([number uint] arg);
-/**  */
-        number serializedSize ([object MemBlock] arg);
-/**  */
-        number serializedSize ([object ISerializable] arg);
-/**  */
-        number getDataSize ();
-/**  */
-        [object MemBlock] getDataPtr ();
-    };
-
-    (Deserializer) =
-    {
-
-/**  */
-        number deserialize_d ();
-/**  */
-        number deserialize_f ();
-/**  */
-        number deserialize_4 ();
-/**  */
-        number deserialize_4u ();
-/**  */
-        number deserialize_3u ();
-/**  */
-        number deserialize_2 ();
-/**  */
-        number deserialize_2u ();
-/**  */
-        number deserialize_1 ();
-/**  */
-        number deserialize_1u ();
-/**  */
-        number deserialize_uint ();
-/**  */
-        string deserialize_str ();
-/**  */
-        number deserialize_strGetLen ();
-/**  */
-        [object MemBlock] deserialize_mem ();
-/**  */
-        number deserialize_memGetLen ();
-/**  */
-        [object ISerializable] deserialize_obj ();
-/**  */
-        setDataPtr ([string Binary] data);
-/**  */
-        setDataPtr ([object MemBlock] data);
-    };
-
-    (ISerializable) =
-    {
-
-    };
-
-    (IEventHandler) =
-    {
-
-    };
-
-    (EventEmitter) =
-    {
-
-/** add a new handler for some event type, or for all events if no type specified.  \param inHandler the object to handle events \param inEventType the type of event to handle */
-        addHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once. <br/><br/> NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not. <br/><br/> It is safe to call remove handler from within an event handler's handleEvent() call. \param inHandler the object to handle events \param inEventType the type of event to stop handling (see note) */
-        removeHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove all handlers */
-        clear ();
-/** temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. \param inEventType the type of event to block */
-        blockEvent ([number int] inEventType);
-/** stop ignoring events of a particular type  \param inEventType the type of event to unblock */
-        unblockEvent ([number int] inEventType);
-    };
-
-    (EventManager : public EventEmitter) =
-    {
-
-/** add a new handler for some event type, or for all events if no type specified.  \param inHandler the object to handle events \param inEventType the type of event to handle */
-        addHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once. <br/><br/> NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not. <br/><br/> It is safe to call remove handler from within an event handler's handleEvent() call. \param inHandler the object to handle events \param inEventType the type of event to stop handling (see note) */
-        removeHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove all handlers */
-        clear ();
-/** temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. \param inEventType the type of event to block */
-        blockEvent ([number int] inEventType);
-/** stop ignoring events of a particular type  \param inEventType the type of event to unblock */
-        unblockEvent ([number int] inEventType);
-/**  */
-        boolean isKeyDown (string unicodeChar);
-/**  */
-        boolean isKeyDown ([number uint] utf16CharCode);
-/**  */
-        boolean isRawKeyDown ([number int] keyCode);
-/**  */
-        boolean isButtonDown ([number int] buttonNumber = 0);
-/** NOT IMPLEMENTED */
-        object getDeviceOrientation ();
-    };
-
-    (TimerManager) =
-    {
-
-/** add a new handler for some event type, or for all events if no type specified.  \param inHandler the object to handle events \param inEventType the type of event to handle */
-        addHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once. <br/><br/> NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not. <br/><br/> It is safe to call remove handler from within an event handler's handleEvent() call. \param inHandler the object to handle events \param inEventType the type of event to stop handling (see note) */
-        removeHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove all handlers */
-        clear ();
-/** temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. \param inEventType the type of event to block */
-        blockEvent ([number int] inEventType);
-/** stop ignoring events of a particular type  \param inEventType the type of event to unblock */
-        unblockEvent ([number int] inEventType);
-/**  */
-        startTimer ([number int] id, [number uint] delay, boolean oneShot = true);
-/**  */
-        cancelTimer ([number int] id);
-/**  */
-        cancelAllTimers ();
-/**  */
-        delayTimer ([number int] id, [number uint] delay);
-/**  */
-        delayTimerUntil ([number int] id, [number uint] msTime);
-/**  */
-        pause ();
-/**  */
-        unpause ();
-/**  */
-        boolean isPaused ();
-/**  */
-        pauseTimer ([number int] id);
-/**  */
-        unpauseTimer ([number int] id);
-/**  */
-        boolean isTimerPaused ([number int] id);
-/**  */
-        number getWhenTimerFiresNext ([number int] id);
-/**  */
-        number getMilliseconds ();
-    };
-
-    (IAnimationHelper) =
-    {
-
-    };
-
-    (Animated) =
-    {
-
-/**  */
-        [object Rect] getBoundingBox ();
-/**  */
-        [object Rect] getRotatedBounds ();
-/**  */
-        [object Point] getLocation ();
-/**  */
-        setLocation ([object Point] inLocation);
-/**  */
-        number getSpeed ();
-/**  */
-        setSpeed (number inSpeed);
-/**  */
-        [object Vector] getVelocity ();
-/**  */
-        setVelocity ([object Vector] deltaPerSec);
-/**  */
-        setVelocity (number deltaXPerSec, number deltaYPerSec);
-/**  */
-        number getWidth ();
-/**  */
-        setWidth (number inWidth);
-/**  */
-        number getHeight ();
-/**  */
-        setHeight (number inHeight);
-/**  */
-        number getRotation ();
-/**  */
-        setRotation (number inRotation);
-/**  */
-        [object Offset] getCenterOffset ();
-/**  */
-        setCenterOffset ([object Offset] inCenterOffset);
-/**  */
-        number getSpin ();
-/**  */
-        setSpin (number inSpin);
-/**  */
-        number getMass ();
-/**  */
-        setMass (number inMass);
-/**  */
-        number getMoveFriction ();
-/**  */
-        setMoveFriction (number inMoveFriction);
-/**  */
-        number getSpinFriction ();
-/**  */
-        setSpinFriction (number inSpinFriction);
-/**  */
-        number getSizeFriction ();
-/**  */
-        setSizeFriction (number inSizeFriction);
-/**  */
-        move ([object Point] delta, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        moveTo ([object Point] where, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        setVelocityInRadians (number speed, number direction);
-/**  */
-        number getMovementDirectionInRadians ();
-/**  */
-        stopMoving ();
-/**  */
-        accelerate (number deltaSpeed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween);
-/**  */
-        accelerateTo (number speed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween);
-/**  */
-        setSize (number width, number height);
-/**  */
-        grow (number factor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        stretch (number widthFactor, number heightFactor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        startGrowing (number amountPerSecond);
-/**  */
-        stopGrowing ();
-/**  */
-        startStretching (number widthPerSecond, number heightPerSecond);
-/**  */
-        stopStretching ();
-/**  */
-        resize (number deltaWidth, number deltaHeight, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        resizeTo (number width, number height, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        rotate (number radians, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        rotateTo (number radiansRotation, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        stopSpinning ();
-/**  */
-        changeCenter ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        changeCenterTo ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        wait ([number int] msDuration);
-/**  */
-        setFriction (number frictionCoefficient);
-/**  */
-        applyForce ([object Vector] force, [number int] msDuration = duration_Instantaneous);
-/**  */
-        applyTorque (number forceSpin, [number int] msDuration = duration_Instantaneous);
-/**  */
-        stopAllForces ();
-/**  */
-        addAnimationHelper ([object IAnimationHelper] helper);
-/**  */
-        removeAnimationHelper ([object IAnimationHelper] helper);
-/**  */
-        clearAnimationHelpers ();
-/**  */
-        boolean animate ([number int] msElapsed);
-    };
-
-    (CpArbiter) =
-    {
-
-/** true if this is the first moment of contact between the objects, false if part of an ongoing collison */
-        boolean isFirstContact ();
-/**  */
-        number getCount ();
-/**  */
-        [object Vector] getNormal ();
-/**  */
-        [object Point] getPoint ();
-/**  */
-        number getDepth ();
-    };
-
-    (CpConstraint) =
-    {
-
-/**  */
-        string getType ();
-/**  */
-        activateBodies ();
-/**  */
-        number getImpulse ();
-/**  */
-        number getMaxForce ();
-/**  */
-        setMaxForce (number inMaxForce);
-/**  */
-        number getErrorBias ();
-/**  */
-        setErrorBias (number inErrorBias);
-/**  */
-        number getMaxBias ();
-/**  */
-        setMaxBias (number inMaxBias);
-/**  */
-        [object Sprite] getSprite ();
-/**  */
-        [object Sprite] getOtherSprite ();
-/**  */
-        [object Offset] getAnchor ();
-/**  */
-        setAnchor ([object Offset] inAnchor);
-/**  */
-        [object Offset] getOtherAnchor ();
-/**  */
-        setOtherAnchor ([object Offset] inOtherAnchor);
-/**  */
-        number getPinDist ();
-/**  */
-        setPinDist (number inPinDist);
-/**  */
-        number getSpringStiffness ();
-/**  */
-        setSpringStiffness (number inSpringStiffness);
-/**  */
-        number getSpringDamping ();
-/**  */
-        setSpringDamping (number inSpringDamping);
-/**  */
-        number getSlideMinDist ();
-/**  */
-        setSlideMinDist (number inSlideMinDist);
-/**  */
-        number getSlideMaxDist ();
-/**  */
-        setSlideMaxDist (number inSlideMaxDist);
-/**  */
-        [object Offset] getGrooveStart ();
-/**  */
-        setGrooveStart ([object Offset] inGrooveStart);
-/**  */
-        [object Offset] getGrooveEnd ();
-/**  */
-        setGrooveEnd ([object Offset] inGrooveEnd);
-/**  */
-        number getSpringRestLength ();
-/**  */
-        setSpringRestLength (number inSpringRestLength);
-/**  */
-        number getRotarySpringRestAngle ();
-/**  */
-        setRotarySpringRestAngle (number inRotarySpringRestAngle);
-/**  */
-        number getMinAngle ();
-/**  */
-        setMinAngle (number inMinAngle);
-/**  */
-        number getMaxAngle ();
-/**  */
-        setMaxAngle (number inMaxAngle);
-/**  */
-        number getRatchetAngle ();
-/**  */
-        setRatchetAngle (number inRatchetAngle);
-/**  */
-        number getRatchetPhase ();
-/**  */
-        setRatchetPhase (number inRatchetPhase);
-/**  */
-        number getRatchetInterval ();
-/**  */
-        setRatchetInterval (number inRatchetInterval);
-/**  */
-        number getGearRatio ();
-/**  */
-        setGearRatio (number inGearRatio);
-/**  */
-        number getGearInitialAngle ();
-/**  */
-        setGearInitialAngle (number inGearInitialAngle);
-/**  */
-        number getMotorSpinRate ();
-/**  */
-        setMotorSpinRate (number inMotorSpinRate);
-    };
-
-    (CpSpace) =
-    {
-
-/**  */
-        useSpatialHash (number dim, [number int] count);
-/**  */
-        reindexStatic ();
-/**  */
-        step (number dt);
-/**  */
-        number getIdleSpeedThreshold ();
-/**  */
-        setIdleSpeedThreshold (number inIdleSpeedThreshold);
-/**  */
-        number getSleepTimeThreshold ();
-/**  */
-        setSleepTimeThreshold (number inSleepTimeThreshold);
-/**  */
-        number getCollisionSlop ();
-/**  */
-        setCollisionSlop (number inCollisionSlop);
-/**  */
-        number getCollisionBias ();
-/**  */
-        setCollisionBias (number inCollisionBias);
-/**  */
-        number getCollisionPersistence ();
-/**  */
-        setCollisionPersistence (number inCollisionPersistence);
-/**  */
-        boolean getEnableContactGraph ();
-/**  */
-        setEnableContactGraph (boolean inEnableContactGraph);
-    };
-
-    (ISpriteDrawHelper) =
-    {
-
-    };
-
-    (Sprite : public Animated,public EventEmitter) =
-    {
-
-/** add a new handler for some event type, or for all events if no type specified.  \param inHandler the object to handle events \param inEventType the type of event to handle */
-        addHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once. <br/><br/> NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not. <br/><br/> It is safe to call remove handler from within an event handler's handleEvent() call. \param inHandler the object to handle events \param inEventType the type of event to stop handling (see note) */
-        removeHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove all handlers */
-        clear ();
-/** temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. \param inEventType the type of event to block */
-        blockEvent ([number int] inEventType);
-/** stop ignoring events of a particular type  \param inEventType the type of event to unblock */
-        unblockEvent ([number int] inEventType);
-/**  */
-        [object Rect] getBoundingBox ();
-/**  */
-        [object Rect] getRotatedBounds ();
-/**  */
-        [object Point] getLocation ();
-/**  */
-        setLocation ([object Point] inLocation);
-/**  */
-        number getSpeed ();
-/**  */
-        setSpeed (number inSpeed);
-/**  */
-        [object Vector] getVelocity ();
-/**  */
-        setVelocity ([object Vector] deltaPerSec);
-/**  */
-        setVelocity (number deltaXPerSec, number deltaYPerSec);
-/**  */
-        number getWidth ();
-/**  */
-        setWidth (number inWidth);
-/**  */
-        number getHeight ();
-/**  */
-        setHeight (number inHeight);
-/**  */
-        number getRotation ();
-/**  */
-        setRotation (number inRotation);
-/**  */
-        [object Offset] getCenterOffset ();
-/**  */
-        setCenterOffset ([object Offset] inCenterOffset);
-/**  */
-        number getSpin ();
-/**  */
-        setSpin (number inSpin);
-/**  */
-        number getMass ();
-/**  */
-        setMass (number inMass);
-/**  */
-        number getMoveFriction ();
-/**  */
-        setMoveFriction (number inMoveFriction);
-/**  */
-        number getSpinFriction ();
-/**  */
-        setSpinFriction (number inSpinFriction);
-/**  */
-        number getSizeFriction ();
-/**  */
-        setSizeFriction (number inSizeFriction);
-/**  */
-        move ([object Point] delta, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        moveTo ([object Point] where, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        setVelocityInRadians (number speed, number direction);
-/**  */
-        number getMovementDirectionInRadians ();
-/**  */
-        stopMoving ();
-/**  */
-        accelerate (number deltaSpeed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween);
-/**  */
-        accelerateTo (number speed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween);
-/**  */
-        setSize (number width, number height);
-/**  */
-        grow (number factor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        stretch (number widthFactor, number heightFactor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        startGrowing (number amountPerSecond);
-/**  */
-        stopGrowing ();
-/**  */
-        startStretching (number widthPerSecond, number heightPerSecond);
-/**  */
-        stopStretching ();
-/**  */
-        resize (number deltaWidth, number deltaHeight, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        resizeTo (number width, number height, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        rotate (number radians, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        rotateTo (number radiansRotation, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        stopSpinning ();
-/**  */
-        changeCenter ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        changeCenterTo ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        wait ([number int] msDuration);
-/**  */
-        setFriction (number frictionCoefficient);
-/**  */
-        applyForce ([object Vector] force, [number int] msDuration = duration_Instantaneous);
-/**  */
-        applyTorque (number forceSpin, [number int] msDuration = duration_Instantaneous);
-/**  */
-        stopAllForces ();
-/**  */
-        addAnimationHelper ([object IAnimationHelper] helper);
-/**  */
-        removeAnimationHelper ([object IAnimationHelper] helper);
-/**  */
-        clearAnimationHelpers ();
-/**  */
-        [object Rect] getFrameRotatedBounds ([number int] frame);
-/**  */
-        setFrame ([number int] frame);
-/** which frame of animation the sprite is currently showing */
-        number getCurrentFrame ();
-/** total number of frames of animation for this sprite */
-        number getFrameCount ();
-/**  */
-        setFramesPerSecond (number fps, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames, [number int] animateFlags = animate_Looping);
-/**  */
-        stopFrameAnimation ();
-/**  */
-        boolean setWantsAnimLoopEvents (boolean wantsThem = true);
-/**  */
-        boolean setWantsAnimEndEvents (boolean wantsThem = true);
-/**  */
-        addFramesImage ([object Image] image, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames);
-/**  */
-        setDrawHelper ([object ISpriteDrawHelper] helper);
-/**  */
-        setPostDrawHelper ([object ISpriteDrawHelper] helper);
-/**  */
-        changeFramesImage ([object Image] oldImage, [object Image] newImage);
-/**  */
-        offsetFrameCenters ([number int] offsetX, [number int] offsetY, [object Image] image = null, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames);
-/** NOT IMPLEMENTED */
-        getFrameCenterOffset ();
-/**  */
-        setOpacity (number opacity);
-/**  */
-        number getOpacity ();
-/**  */
-        fadeTo (number targetOpacity, [number int] msDuration, [number int] easing = linearTween);
-/**  */
-        fadeIn ([number int] msDuration, [number int] easing = linearTween);
-/**  */
-        fadeOut ([number int] msDuration, [number int] easing = linearTween);
-/**  */
-        moveBehind ([object Sprite] sprite);
-/**  */
-        moveInFrontOf ([object Sprite] sprite);
-/** put this sprite in front of all others in its layer */
-        moveToFront ();
-/** put this sprite behind all others in its layer */
-        moveToBack ();
-/**  */
-        enableCollisions ([number int] collisionType = collide_AlphaChannel);
-/**  */
-        disableCollisions ();
-/**  */
-        setCollisionRadius (number pixelRadius);
-/**  */
-        number getCollisionRadius ();
-/**  */
-        useCollisionMask ([object Image] frameImage, [object Image] maskImage);
-/**  */
-        setElasticity (number elasticity);
-/**  */
-        number getElasticity ();
-/**  */
-        boolean setWantsMouseOverEvents (boolean wantsThem = true);
-/**  */
-        boolean setWantsClickEvents (boolean wantsThem = true);
-/**  */
-        number setMouseDetectMode ([number int] collisionType = collide_BoundingBox);
-/** get the layer that contains this sprite */
-        [object SpriteLayer] getLayer ();
-/**  */
-        [object Sprite] makeStatic ();
-/**  */
-        number getFriction ();
-/**  */
-        setCollideGroup ([number int] group);
-/**  */
-        number getCollideGroup ();
-/**  */
-        [object CpConstraint] pinJoint ([object Offset] anchor, [object Sprite] otherSprite, [object Offset] otherAnchor, number breakingForce = 0);
-/**  */
-        [object CpConstraint] slideJoint ([object Offset] anchor, [object Sprite] otherSprite, [object Offset] otherAnchor, number minDist, number maxDist, number breakingForce = 0);
-/**  */
-        [object CpConstraint] pivotJoint ([object Sprite] otherSprite, [object Point] pivot, number breakingForce = 0);
-/**  */
-        [object CpConstraint] grooveJoint ([object Offset] grooveStart, [object Offset] grooveEnd, [object Sprite] otherSprite, [object Offset] otherAnchor, number breakingForce = 0);
-/**  */
-        [object CpConstraint] springJoint ([object Offset] anchor, [object Sprite] otherSprite, [object Offset] otherAnchor, number restLength, number stiffness, number damping, number breakingForce = 0);
-/**  */
-        [object CpConstraint] rotarySpring ([object Sprite] otherSprite, number restAngle, number stiffness, number damping, number breakingForce = 0);
-/**  */
-        [object CpConstraint] rotaryLimit ([object Sprite] otherSprite, number minAngle, number maxAngle, number breakingForce = 0);
-/**  */
-        [object CpConstraint] ratchet ([object Sprite] otherSprite, number rachetInterval, number phase, number breakingForce = 0);
-/**  */
-        [object CpConstraint] gear ([object Sprite] otherSprite, number gearRatio, number initialAngle = 0, number breakingForce = 0);
-/**  */
-        [object CpConstraint] motor ([object Sprite] otherSprite, number spin, number maxTorque = INFINITY);
-/**  */
-        removeJoint ([object CpConstraint] joint);
-/**  */
-        disconnect ([object Sprite] otherSprite);
-/**  */
-        makeJointBreakable ([object CpConstraint] joint, number breakingForce);
-/**  */
-        makeJointUnbreakable ([object CpConstraint] joint);
-/**  */
-        [object IEventHandler] on ([number int] eventCode, function func);
-/**  */
-        [object IEventHandler] onCollideSprite (function func);
-/**  */
-        [object IEventHandler] onCollideWall (function func);
-/**  */
-        [object IEventHandler] onOffscreen (function func);
-/**  */
-        [object IEventHandler] onAnimationLoop (function func);
-/**  */
-        [object IEventHandler] onAnimationEnd (function func);
-/**  */
-        [object IEventHandler] onFadeComplete (function func);
-/**  */
-        [object IEventHandler] onFadeInComplete (function func);
-/**  */
-        [object IEventHandler] onFadeOutComplete (function func);
-/**  */
-        [object IEventHandler] onMouseEnter (function func);
-/**  */
-        [object IEventHandler] onMouseLeave (function func);
-/**  */
-        [object IEventHandler] onMouseDown (function func);
-/**  */
-        [object IEventHandler] onMouseUp (function func);
-/**  */
-        [object IEventHandler] onMouseClick (function func);
-    };
-
-    (SpriteLayer : public Animated) =
-    {
-
-/** add a new handler for some event type, or for all events if no type specified.  \param inHandler the object to handle events \param inEventType the type of event to handle */
-        addHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once. <br/><br/> NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not. <br/><br/> It is safe to call remove handler from within an event handler's handleEvent() call. \param inHandler the object to handle events \param inEventType the type of event to stop handling (see note) */
-        removeHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove all handlers */
-        clear ();
-/** temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. \param inEventType the type of event to block */
-        blockEvent ([number int] inEventType);
-/** stop ignoring events of a particular type  \param inEventType the type of event to unblock */
-        unblockEvent ([number int] inEventType);
-/**  */
-        [object Rect] getBoundingBox ();
-/**  */
-        [object Rect] getRotatedBounds ();
-/**  */
-        [object Point] getLocation ();
-/**  */
-        setLocation ([object Point] inLocation);
-/**  */
-        number getSpeed ();
-/**  */
-        setSpeed (number inSpeed);
-/**  */
-        [object Vector] getVelocity ();
-/**  */
-        setVelocity ([object Vector] deltaPerSec);
-/**  */
-        setVelocity (number deltaXPerSec, number deltaYPerSec);
-/**  */
-        number getWidth ();
-/**  */
-        setWidth (number inWidth);
-/**  */
-        number getHeight ();
-/**  */
-        setHeight (number inHeight);
-/**  */
-        number getRotation ();
-/**  */
-        setRotation (number inRotation);
-/**  */
-        [object Offset] getCenterOffset ();
-/**  */
-        setCenterOffset ([object Offset] inCenterOffset);
-/**  */
-        number getSpin ();
-/**  */
-        setSpin (number inSpin);
-/**  */
-        number getMass ();
-/**  */
-        setMass (number inMass);
-/**  */
-        number getMoveFriction ();
-/**  */
-        setMoveFriction (number inMoveFriction);
-/**  */
-        number getSpinFriction ();
-/**  */
-        setSpinFriction (number inSpinFriction);
-/**  */
-        number getSizeFriction ();
-/**  */
-        setSizeFriction (number inSizeFriction);
-/**  */
-        move ([object Point] delta, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        moveTo ([object Point] where, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        setVelocityInRadians (number speed, number direction);
-/**  */
-        number getMovementDirectionInRadians ();
-/**  */
-        stopMoving ();
-/**  */
-        accelerate (number deltaSpeed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween);
-/**  */
-        accelerateTo (number speed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween);
-/**  */
-        setSize (number width, number height);
-/**  */
-        grow (number factor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        stretch (number widthFactor, number heightFactor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        startGrowing (number amountPerSecond);
-/**  */
-        stopGrowing ();
-/**  */
-        startStretching (number widthPerSecond, number heightPerSecond);
-/**  */
-        stopStretching ();
-/**  */
-        resize (number deltaWidth, number deltaHeight, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        resizeTo (number width, number height, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        rotate (number radians, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        rotateTo (number radiansRotation, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        stopSpinning ();
-/**  */
-        changeCenter ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        changeCenterTo ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        wait ([number int] msDuration);
-/**  */
-        setFriction (number frictionCoefficient);
-/**  */
-        applyForce ([object Vector] force, [number int] msDuration = duration_Instantaneous);
-/**  */
-        applyTorque (number forceSpin, [number int] msDuration = duration_Instantaneous);
-/**  */
-        stopAllForces ();
-/**  */
-        addAnimationHelper ([object IAnimationHelper] helper);
-/**  */
-        removeAnimationHelper ([object IAnimationHelper] helper);
-/**  */
-        clearAnimationHelpers ();
-/**  */
-        startAnimations ();
-/**  */
-        stopAnimations ();
-/**  */
-        hide ();
-/**  */
-        show ();
-/**  */
-        boolean isHidden ();
-/**  */
-        fadeIn ([number int] msDuration, [number int] easing = linearTween);
-/**  */
-        fadeOut ([number int] msDuration, [number int] easing = linearTween);
-/**  */
-        moveBehind ([object SpriteLayer] layer);
-/**  */
-        moveInFrontOf ([object SpriteLayer] layer);
-/** move this layer in front of all other layers */
-        moveToFront ();
-/** move this layer behind all other layers */
-        moveToBack ();
-/**  */
-        [object Sprite] findSprite ([number int] id);
-/**  */
-        boolean hasSprite ([object Sprite] sprite);
-/**  */
-        addSprite ([object Sprite] newSprite);
-/**  */
-        removeSprite ([object Sprite] oldSprite);
-/**  */
-        removeAllSprites ();
-/**  */
-        enableCollisions ();
-/**  */
-        disableCollisions ();
-/**  */
-        enableCollisionsWithLayer ([object SpriteLayer] otherLayer);
-/**  */
-        disableCollisionsWithLayer ([object SpriteLayer] otherLayer);
-/**  */
-        [object Sprite] createSprite ();
-/**  */
-        [object Port] getSpritePort ();
-/**  */
-        setSpritePort ([object Port] port);
-/**  */
-        setOrigin ([object Point] origin);
-/** get the point in the layer that is drawn at 0,0 in the port */
-        [object Point] getOrigin ();
-/**  */
-        setAutoCenter (boolean autoCenter = true);
-/**  */
-        setFixedMoveAxis (boolean fixedAxis = true);
-/**  */
-        setZoom (number zoomLevel);
-/** get the current zoom factor */
-        number getZoom ();
-/**  */
-        zoomTo (number zoomLevel, [number int] msDuration, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) );
-/**  */
-        zoom (number deltaZoomLevel, [number int] msDuration, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) );
-/**  */
-        [object Point] layerToPortPoint ([object Point] p);
-/**  */
-        [object Offset] layerToPortOffset ([object Offset] o);
-/**  */
-        [object Vector] layerToPortVector ([object Vector] v);
-/**  */
-        [object Rect] layerToPortRect ([object Rect] r);
-/**  */
-        [object Quad] layerToPortQuad ([object Quad] q);
-/**  */
-        [object Point] portToLayerPoint ([object Point] p);
-/**  */
-        [object Offset] portToLayerOffset ([object Offset] o);
-/**  */
-        [object Vector] portToLayerVector ([object Vector] v);
-/**  */
-        [object Rect] portToLayerRect ([object Rect] r);
-/**  */
-        [object Quad] portToLayerQuad ([object Quad] q);
-/**  */
-        setGravity (number gravity, boolean keepItDownward = true);
-/**  */
-        setKeepGravityDownward (boolean keepItDownward = true);
-/**  */
-        setDamping (number damping);
-/**  */
-        [object CpSpace] getSpace ();
-/**  */
-        [object IEventHandler] on ([number int] eventCode, function func);
-/**  */
-        [object IEventHandler] onCollideSprite (function func);
-/**  */
-        [object IEventHandler] onCollideWall (function func);
-/**  */
-        [object IEventHandler] onOffscreen (function func);
-/**  */
-        [object IEventHandler] onAnimationLoop (function func);
-/**  */
-        [object IEventHandler] onAnimationEnd (function func);
-/**  */
-        [object IEventHandler] onFadeComplete (function func);
-/**  */
-        [object IEventHandler] onFadeInComplete (function func);
-/**  */
-        [object IEventHandler] onFadeOutComplete (function func);
-/**  */
-        [object IEventHandler] onMouseEnter (function func);
-/**  */
-        [object IEventHandler] onMouseLeave (function func);
-/**  */
-        [object IEventHandler] onMouseDown (function func);
-/**  */
-        [object IEventHandler] onMouseUp (function func);
-/**  */
-        [object IEventHandler] onMouseClick (function func);
-/**  */
-        [object IEventHandler] onErasePort (function func);
-/**  */
-        [object IEventHandler] onPreDrawLayer (function func);
-/**  */
-        [object IEventHandler] onPostDrawLayer (function func);
-/**  */
-        [object IEventHandler] onDrawPortComplete (function func);
-/**  */
-        [object IEventHandler] onAnimationStart (function func);
-/**  */
-        [object IEventHandler] onPreAnimateLayer (function func);
-/**  */
-        [object IEventHandler] onAnimationComplete (function func);
-/**  */
-        [object IEventHandler] onZoomComplete (function func);
-    };
-
-    (TileLayer : public SpriteLayer) =
-    {
-
-/** add a new handler for some event type, or for all events if no type specified.  \param inHandler the object to handle events \param inEventType the type of event to handle */
-        addHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once. <br/><br/> NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not. <br/><br/> It is safe to call remove handler from within an event handler's handleEvent() call. \param inHandler the object to handle events \param inEventType the type of event to stop handling (see note) */
-        removeHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove all handlers */
-        clear ();
-/** temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. \param inEventType the type of event to block */
-        blockEvent ([number int] inEventType);
-/** stop ignoring events of a particular type  \param inEventType the type of event to unblock */
-        unblockEvent ([number int] inEventType);
-/**  */
-        [object Rect] getBoundingBox ();
-/**  */
-        [object Rect] getRotatedBounds ();
-/**  */
-        [object Point] getLocation ();
-/**  */
-        setLocation ([object Point] inLocation);
-/**  */
-        number getSpeed ();
-/**  */
-        setSpeed (number inSpeed);
-/**  */
-        [object Vector] getVelocity ();
-/**  */
-        setVelocity ([object Vector] deltaPerSec);
-/**  */
-        setVelocity (number deltaXPerSec, number deltaYPerSec);
-/**  */
-        number getWidth ();
-/**  */
-        setWidth (number inWidth);
-/**  */
-        number getHeight ();
-/**  */
-        setHeight (number inHeight);
-/**  */
-        number getRotation ();
-/**  */
-        setRotation (number inRotation);
-/**  */
-        [object Offset] getCenterOffset ();
-/**  */
-        setCenterOffset ([object Offset] inCenterOffset);
-/**  */
-        number getSpin ();
-/**  */
-        setSpin (number inSpin);
-/**  */
-        number getMass ();
-/**  */
-        setMass (number inMass);
-/**  */
-        number getMoveFriction ();
-/**  */
-        setMoveFriction (number inMoveFriction);
-/**  */
-        number getSpinFriction ();
-/**  */
-        setSpinFriction (number inSpinFriction);
-/**  */
-        number getSizeFriction ();
-/**  */
-        setSizeFriction (number inSizeFriction);
-/**  */
-        move ([object Point] delta, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        moveTo ([object Point] where, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        setVelocityInRadians (number speed, number direction);
-/**  */
-        number getMovementDirectionInRadians ();
-/**  */
-        stopMoving ();
-/**  */
-        accelerate (number deltaSpeed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween);
-/**  */
-        accelerateTo (number speed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween);
-/**  */
-        setSize (number width, number height);
-/**  */
-        grow (number factor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        stretch (number widthFactor, number heightFactor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        startGrowing (number amountPerSecond);
-/**  */
-        stopGrowing ();
-/**  */
-        startStretching (number widthPerSecond, number heightPerSecond);
-/**  */
-        stopStretching ();
-/**  */
-        resize (number deltaWidth, number deltaHeight, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        resizeTo (number width, number height, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        rotate (number radians, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        rotateTo (number radiansRotation, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        stopSpinning ();
-/**  */
-        changeCenter ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        changeCenterTo ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad);
-/**  */
-        wait ([number int] msDuration);
-/**  */
-        setFriction (number frictionCoefficient);
-/**  */
-        applyForce ([object Vector] force, [number int] msDuration = duration_Instantaneous);
-/**  */
-        applyTorque (number forceSpin, [number int] msDuration = duration_Instantaneous);
-/**  */
-        stopAllForces ();
-/**  */
-        addAnimationHelper ([object IAnimationHelper] helper);
-/**  */
-        removeAnimationHelper ([object IAnimationHelper] helper);
-/**  */
-        clearAnimationHelpers ();
-/**  */
-        startAnimations ();
-/**  */
-        stopAnimations ();
-/**  */
-        hide ();
-/**  */
-        show ();
-/**  */
-        boolean isHidden ();
-/**  */
-        fadeIn ([number int] msDuration, [number int] easing = linearTween);
-/**  */
-        fadeOut ([number int] msDuration, [number int] easing = linearTween);
-/**  */
-        moveBehind ([object SpriteLayer] layer);
-/**  */
-        moveInFrontOf ([object SpriteLayer] layer);
-/** move this layer in front of all other layers */
-        moveToFront ();
-/** move this layer behind all other layers */
-        moveToBack ();
-/**  */
-        [object Sprite] findSprite ([number int] id);
-/**  */
-        boolean hasSprite ([object Sprite] sprite);
-/**  */
-        addSprite ([object Sprite] newSprite);
-/**  */
-        removeSprite ([object Sprite] oldSprite);
-/**  */
-        removeAllSprites ();
-/**  */
-        enableCollisions ();
-/**  */
-        disableCollisions ();
-/**  */
-        enableCollisionsWithLayer ([object SpriteLayer] otherLayer);
-/**  */
-        disableCollisionsWithLayer ([object SpriteLayer] otherLayer);
-/**  */
-        [object Sprite] createSprite ();
-/**  */
-        [object Port] getSpritePort ();
-/**  */
-        setSpritePort ([object Port] port);
-/**  */
-        setOrigin ([object Point] origin);
-/** get the point in the layer that is drawn at 0,0 in the port */
-        [object Point] getOrigin ();
-/**  */
-        setAutoCenter (boolean autoCenter = true);
-/**  */
-        setFixedMoveAxis (boolean fixedAxis = true);
-/**  */
-        setZoom (number zoomLevel);
-/** get the current zoom factor */
-        number getZoom ();
-/**  */
-        zoomTo (number zoomLevel, [number int] msDuration, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) );
-/**  */
-        zoom (number deltaZoomLevel, [number int] msDuration, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) );
-/**  */
-        [object Point] layerToPortPoint ([object Point] p);
-/**  */
-        [object Offset] layerToPortOffset ([object Offset] o);
-/**  */
-        [object Vector] layerToPortVector ([object Vector] v);
-/**  */
-        [object Rect] layerToPortRect ([object Rect] r);
-/**  */
-        [object Quad] layerToPortQuad ([object Quad] q);
-/**  */
-        [object Point] portToLayerPoint ([object Point] p);
-/**  */
-        [object Offset] portToLayerOffset ([object Offset] o);
-/**  */
-        [object Vector] portToLayerVector ([object Vector] v);
-/**  */
-        [object Rect] portToLayerRect ([object Rect] r);
-/**  */
-        [object Quad] portToLayerQuad ([object Quad] q);
-/**  */
-        setGravity (number gravity, boolean keepItDownward = true);
-/**  */
-        setKeepGravityDownward (boolean keepItDownward = true);
-/**  */
-        setDamping (number damping);
-/**  */
-        [object CpSpace] getSpace ();
-/**  */
-        setWorldSize ([number int] width, [number int] height, boolean repeatingX = false, boolean repeatingY = false);
-/**  */
-        [object Rect] getWorldSize ();
-/**  */
-        [object Rect] getWorldBounds ();
-/**  */
-        defineTileSet ([number int] tileWidth, [number int] tileHeight, [object Image] tilese, boolean hasTransparency = true, boolean flipTiles = false);
-/**  */
-        loadMapData ([string Binary] data, [number int] mapWidth = 0, [number int] mapHeight = 0, [number int] dstX, [number int] dstY);
-/**  */
-        loadMapData ([object MemBlock] data, [number int] mapWidth = 0, [number int] mapHeight = 0, [number int] dstX, [number int] dstY);
-/**  */
-        [object MemBlock] getMapData ([number int] mapWidth = 0, [number int] mapHeight = 0, [number int] srcX, [number int] srcY);
-/**  */
-        [object Image] getTileSetImage ();
-/**  */
-        [object Point] getTileSize ();
-/**  */
-        {number|object}
-        getTileTypeAt ([number int] x, [number int] y, boolean separateFacing = false);
-/**  */
-        setTileTypeAt ([number int] x, [number int] y, [number uint] t, [number uint] facing = facing_Ignore);
-/**  */
-        number checkCollision ([object Sprite] movingSprite, [number uint] alphaThreshold = 128, boolean shortCircuit = true);
-    };
-
-    (Image) =
-    {
-
-/**  */
-        number getWidth ();
-/**  */
-        number getHeight ();
-/** get image boundary rect, optionally with top left at given point */
-        [object Rect] getImageBounds ([object Point] at);
-/** get image that is a single frame of this multi-frame image */
-        [object Image] getFrame ([number int] frameNum);
-/** get image that is an arbitrary subsection of this image */
-        [object Image] getSubsection ([object Quad] quad);
-/** get image that is an arbitrary subsection of this image */
-        [object Image] getSubsection ([object Rect] quad);
-/**  */
-        number getFrameWidth ();
-/**  */
-        setFrameWidth ([number int] inFrameWidth);
-/** how many frames in this multi-frame image */
-        number getNumFrames ();
-/** set the number of frames that are in this image */
-        setNumFrames ([number int] num);
-/**  */
-        object getTransparentColor ();
-/**  */
-        setTransparentColor (object inTransparentColor);
-/** get opacity of this image: 0.0 - completely transparent to 1.0 - completely solid */
-        number getOpacity ();
-/** set opacity of this image as range from either (0-255) or (0.0 to 1.0) */
-        setOpacity (number opacity);
-/** set whether image uses edge clamping or not */
-        setEdgeClamping (boolean inUseEdgeClamp);
-/** retain pixel data for use by Image.getPixel() */
-        retainData ();
-/** retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions */
-        retainAlpha ();
-/** bind the image into an OpenGL texture and free image data from main memory */
-        number prepareToRasterize ();
-/**  */
-        number getAlphaValue ([object Point] p);
-/**  */
-        number getAlphaValue ([number int] x, [number int] y);
-/**  */
-        [object Color] getPixel ([object Point] p);
-/**  */
-        [object Color] getPixel ([number int] x, [number int] y);
-    };
-
-    (Font) =
-    {
-
-/**  */
-        string getFontName ();
-/**  */
-        number getFontHeight ();
-/**  */
-        number getFontLeading ();
-/**  */
-        number getFontAscent ();
-/**  */
-        number getFontDescent ();
-    };
-
-    (Port) =
-    {
-
-/**  */
-        [object Rect] getClipRect ();
-/**  */
-        setClipRect ([object Rect] inClipRect);
-/** NOT IMPLEMENTED: get the Image that is being used as the cursor */
-        [object Image] getCursor ();
-/** NOT IMPLEMENTED */
-        setCursor ([object Image] cursorImage, [object Point] hotSpot);
-/**  */
-        [object Rect] getDrawingArea ();
-/**  */
-        fillRect ([object Quad] quad, [object Color] rgba = "black");
-/**  */
-        fillRect ([object Rect] quad, [object Color] rgba = "black");
-/**  */
-        frameRect ([object Quad] quad, [object Color] rgba = "black");
-/**  */
-        frameRect ([object Rect] quad, [object Color] rgba = "black");
-/**  */
-        drawLine ([object Point] from, [object Point] to, [object Color] rgba = "black");
-/**  */
-        frameOval ([object Point] centerPt, number xRadius, number yRadius, [object Color] rgba = "black");
-/**  */
-        fillOval ([object Point] centerPt, number xRadius, number yRadius, [object Color] rgba = "black");
-/**  */
-        frameCircle ([object Point] centerPt, number radius, [object Color] rgba = "black");
-/**  */
-        fillCircle ([object Point] centerPt, number radius, [object Color] rgba = "black");
-/**  */
-        frameRoundRect ([object Rect] rect, number radius, [object Color] rgba = "black");
-/**  */
-        fillRoundRect ([object Rect] rect, number radius, [object Color] rgba = "black");
-/**  */
-        fillRectEx ([object Quad] quad, [number uint] pattern, [number uint] patternShift, [object Color] rgba);
-/**  */
-        fillRectEx ([object Rect] quad, [number uint] pattern, [number uint] patternShift, [object Color] rgba);
-/**  */
-        frameRectEx ([object Quad] quad, [number uint] thickness, [number uint] pattern, [number uint] patternShift, [object Color] rgba);
-/**  */
-        frameRectEx ([object Rect] quad, [number uint] thickness, [number uint] pattern, [number uint] patternShift, [object Color] rgba);
-/**  */
-        drawLineEx ([object Point] from, [object Point] to, [number uint] thickness, [number uint] pattern, [number uint] patternShift, [object Color] rgba);
-/**  */
-        fillRectWithGradient ([object Quad] quad, [object Color] startColor, [object Color] endColor);
-/**  */
-        fillRectWithGradient ([object Rect] quad, [object Color] startColor, [object Color] endColor);
-/**  */
-        drawText (string text, [object Point] location, [number int] size, [number uint] style = textStyle_Plain, [object Color] rgba = 'black');
-/**  */
-        drawText (string text, [object Quad] quad, [number int] size, [number uint] style = textStyle_Plain, [object Color] rgba = 'black');
-/**  */
-        drawText (string text, [object Rect] rect, [number int] size, [number uint] style = textStyle_Plain, [object Color] rgba = 'black');
-/**  */
-        drawImage ([object Image] img, [object Point] loc);
-/**  */
-        drawImage ([object Image] img, [object Quad] quad);
-/**  */
-        drawImage ([object Image] img, [object Rect] rect, [number int] fitType = fit_Fill, boolean clipOverflow = false);
-/**  */
-        drawTexture ([object Image] img, [object Rect] r);
-/**  */
-        number getTextWidth (string text, [number int] size, [number uint] style = textStyle_Plain, [number int] len = -1);
-/**  */
-        [object Font] getCurrentFont ([number uint] style = textStyle_Plain);
-/**  */
-        setFont ([object Font] font = DEFAULT_FONT);
-/**  */
-        setFontForStyle ([number uint] style, [object Font] font = DEFAULT_FONT);
-/**  */
-        setFontScalingFactor (number scaleBy);
-/** NOT IMPLEMENTED */
-        number startTrackingMouse ([object Rect] rect);
-/** NOT IMPLEMENTED */
-        stopTrackingMouse ([number int] trackingRef);
-/** NOT IMPLEMENTED: restore the default system cursor */
-        resetCursor ();
-    };
-
-    (GraphicsManager) =
-    {
-
-/**  */
-        number getNumScreens ();
-/**  */
-        number getFPS ();
-/**  */
-        [object Point] getMouse ();
-/** returns object with width, height, depth and maxWindowRect for specified screen */
-        object getCurrentScreenMode ([number int] screenNum);
-/** changes specified screen to closest matching mode */
-        setScreenMode ([number int] screenNum, [number int] width, [number int] height, [number int] depth);
-/** create windowed drawing port with given dimensions, title and depth */
-        [object Port] createWindowPort ([object Rect] rect, string windName = "", [number int] bpp = 0);
-/** create full screen drawing port with given dimensions on given screen, optionally changing depth */
-        [object Port] createFullScreenPort ([object Rect] rect, [number int] screenNum = PRIMARY_SCREEN, [number int] bpp = 0);
-/** close given port, along with its window and restore screen mode if changed */
-        closeGraphicsPort ([object Port] port);
-/** get a font with optional scaling adjust */
-        [object Font] createFont (string fontName, number scalingFactor = 1.0);
-/** return the primary graphics port */
-        [object Port] getMainPort ();
-/** change the primary graphics port's fullscreen mode, return new state */
-        boolean setMainPortFullScreenMode (boolean fullScreen = true);
-/** return whether primary graphics port is fullscreen or not */
-        boolean inFullScreenMode ();
-    };
-
-    (Sound : public EventEmitter) =
-    {
-
-/** add a new handler for some event type, or for all events if no type specified.  \param inHandler the object to handle events \param inEventType the type of event to handle */
-        addHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once. <br/><br/> NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not. <br/><br/> It is safe to call remove handler from within an event handler's handleEvent() call. \param inHandler the object to handle events \param inEventType the type of event to stop handling (see note) */
-        removeHandler ([object IEventHandler] inHandler, [number int] inEventType = all_events);
-/** remove all handlers */
-        clear ();
-/** temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. \param inEventType the type of event to block */
-        blockEvent ([number int] inEventType);
-/** stop ignoring events of a particular type  \param inEventType the type of event to unblock */
-        unblockEvent ([number int] inEventType);
-/**  */
-        number getVolume ();
-/**  */
-        setVolume (number inVolume);
-/**  */
-        play ();
-/**  */
-        stop ();
-/**  */
-        pause ();
-/**  */
-        resume ();
-/**  */
-        boolean isPaused ();
-/**  */
-        setLooping (boolean loopingOn);
-/**  */
-        boolean isLooping ();
-/**  */
-        fadeOut ([number uint] fadeMs);
-/**  */
-        fadeIn ([number uint] fadeMs);
-/**  */
-        fadeTo (number level, [number uint] fadeMs);
-/**  */
-        skip ([number int] skipMilliseconds);
-/**  */
-        skipTo ([number uint] timeMs);
-/**  */
-        [object IEventHandler] on ([number int] eventCode, function func);
-/**  */
-        [object IEventHandler] onDonePlaying (function func);
-/**  */
-        [object IEventHandler] onLooping (function func);
-/**  */
-        [object IEventHandler] onFailedToPlay (function func);
-    };
-
-    (SoundManager) =
-    {
-
-/** 0.0 - silent to 1.0 - full volume */
-        setVolume (number level);
-/**  */
-        setMute (boolean muted);
-    };
-
-    (Point : public Offset) =
-    {
-
-        var x;
-        var y;
-/** create and set x & y values */
-        Point ();
-/** create and set x & y values */
-        Point (number x, number y);
-/** create and set x & y values */
-        Point (number[] xy);
-/** create and set x & y values */
-        Point (object xy);
-/** return string representation  */
-        string toString ();
-/** get distance from another point */
-        number distance ([object Point] point);
-/** do a projection of a second point onto this point */
-        [object Point] projection ([object Point] point);
-/** return true if this point is equal to the other */
-        boolean equals ([object Offset] offset);
-/** return true if this point is not equal to the other */
-        boolean notEquals ([object Offset] offset);
-/** set this offset equal to the given offset */
-        [object Offset] assign ([object Offset] offset);
-/** add an offset to this one */
-        [object Offset] add ([object Offset] offset);
-/** subtract an offset from this one */
-        [object Offset] sub ([object Offset] offset);
-/** multiply this offset by the given one */
-        [object Offset] mul ([object Offset] offset);
-/** divide this offset by the given one */
-        [object Offset] div ([object Offset] offset);
-/** return new offset that is this offset plus given offset */
-        [object Offset] plus ([object Offset] offset);
-/** return new offset that is this offset minus given offset */
-        [object Offset] minus ([object Offset] offset);
-/** return new offset that is this offset multiplied by given offset */
-        [object Offset] times ([object Offset] offset);
-/** return new offset that is this offset divided by given offset */
-        [object Offset] dividedby ([object Offset] offset);
-    };
-
-    (Offset) =
-    {
-
-        var x;
-        var y;
-/** return string representation  */
-        string toString ();
-/** create and set x & y values */
-        Offset ();
-/** create and set x & y values */
-        Offset (number x, number y);
-/** create and set x & y values */
-        Offset (number[] xy);
-/** create and set x & y values */
-        Offset (object xy);
-/** return true if this point is equal to the other */
-        boolean equals ([object Offset] offset);
-/** return true if this point is not equal to the other */
-        boolean notEquals ([object Offset] offset);
-/** set this offset equal to the given offset */
-        [object Offset] assign ([object Offset] offset);
-/** add an offset to this one */
-        [object Offset] add ([object Offset] offset);
-/** subtract an offset from this one */
-        [object Offset] sub ([object Offset] offset);
-/** multiply this offset by the given one */
-        [object Offset] mul ([object Offset] offset);
-/** divide this offset by the given one */
-        [object Offset] div ([object Offset] offset);
-/** return new offset that is this offset plus given offset */
-        [object Offset] plus ([object Offset] offset);
-/** return new offset that is this offset minus given offset */
-        [object Offset] minus ([object Offset] offset);
-/** return new offset that is this offset multiplied by given offset */
-        [object Offset] times ([object Offset] offset);
-/** return new offset that is this offset divided by given offset */
-        [object Offset] dividedby ([object Offset] offset);
-    };
-
-    (Vector : public Offset) =
-    {
-
-        var x;
-        var y;
-/** create and set x & y values */
-        Vector ();
-/** create and set x & y values */
-        Vector (number x, number y);
-/** create and set x & y values */
-        Vector (number[] xy);
-/** create and set x & y values */
-        Vector (object xy);
-/** return string representation  */
-        string toString ();
-/** get dot product for this vector with a 2nd vector */
-        number dotProduct ([object Vector] vector);
-/** get length as a vector (distance from origin) */
-        number vectorLength ();
-/** get angle (in radians) for this vector */
-        number vectorAngle ();
-/** return true if this point is equal to the other */
-        boolean equals ([object Offset] offset);
-/** return true if this point is not equal to the other */
-        boolean notEquals ([object Offset] offset);
-/** set this offset equal to the given offset */
-        [object Offset] assign ([object Offset] offset);
-/** add an offset to this one */
-        [object Offset] add ([object Offset] offset);
-/** subtract an offset from this one */
-        [object Offset] sub ([object Offset] offset);
-/** multiply this offset by the given one */
-        [object Offset] mul ([object Offset] offset);
-/** divide this offset by the given one */
-        [object Offset] div ([object Offset] offset);
-/** return new offset that is this offset plus given offset */
-        [object Offset] plus ([object Offset] offset);
-/** return new offset that is this offset minus given offset */
-        [object Offset] minus ([object Offset] offset);
-/** return new offset that is this offset multiplied by given offset */
-        [object Offset] times ([object Offset] offset);
-/** return new offset that is this offset divided by given offset */
-        [object Offset] dividedby ([object Offset] offset);
-    };
-
-    (Rect) =
-    {
-
-        var left;
-        var top;
-        var right;
-        var bottom;
-/** return string representation  */
-        string toString ();
-/**  */
-        Rect "Exception: Cannot read property 'top' of null";
-/** return true if this rectangle is empty (no width or no height) */
-        boolean empty ();
-/** contains([Point] p) return true if the point is inside this rectangle; contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle */
-        boolean contains ([object Rect] r);
-/** contains([Point] p) return true if the point is inside this rectangle; contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle */
-        boolean contains ([object Point] p);
-/** return true if this rectangle overlaps the other rectangle at all (sharing an edge is not overlapping) */
-        boolean overlaps ([object Rect] r);
-/** get top left corner point of this rectangle */
-        [object Point] leftTop ();
-/** get top right corner point of this rectangle */
-        [object Point] rightTop ();
-/** get bottom left corner point of this rectangle */
-        [object Point] leftBottom ();
-/** get bottom right corner point of this rectangle */
-        [object Point] rightBottom ();
-/** get center point of this rectangle */
-        [object Point] centerPoint ();
-/** alias for Rect.left */
-        number x1 ();
-/** alias for Rect.top */
-        number y1 ();
-/** alias for Rect.right */
-        number x2 ();
-/** alias for Rect.bottom */
-        number y2 ();
-/** get the width of this rectangle */
-        number width ();
-/** get the height of this rectangle */
-        number height ();
-/** get a new rectangle that is the overlapping area of the the rectangles */
-        [object Rect] intersection ([object Rect] r);
-/** get the smallest possible new rectangle that contains both rectangles */
-        [object Rect] unionWith ([object Rect] r);
-/** move the rectangle to the left by some amount */
-        moveLeft (number delta);
-/** move the rectangle to the right by some amount */
-        moveRight (number delta);
-/** move the rectangle up by some amount */
-        moveUp (number delta);
-/** move the rectangle down by some amount */
-        moveDown (number delta);
-/** move the rectangle to a particular x location, leaving y unchanged */
-        moveXTo (number x);
-/** move the rectangle to a particular y location, leaving x unchanged */
-        moveYTo (number y);
-/** moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point */
-        moveTo (number x, number y);
-/** moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point */
-        moveTo ([object Point] p);
-/** center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle */
-        center ([object Rect] r);
-/** center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle */
-        center ([object Point] p);
-/** set the size (width & height) of the rectangle */
-        setSize (number n);
-/**  */
-        setWidth (number w);
-/**  */
-        setHeight (number h);
-/** reduce the width of the rectangle while leaving the center point unchanged */
-        horzShrink (number delta);
-/** reduce the height of the rectangle while leaving the center point unchanged */
-        vertShrink (number delta);
-/** increase the width of the rectangle while leaving the center point unchanged */
-        horzGrow (number delta);
-/** increase the height of the rectangle while leaving the center point unchanged */
-        vertGrow (number delta);
-/** reduce the height and width of the rectangle while leaving the center point unchanged */
-        shrink (number delta);
-/** increase the height and width of the rectangle while leaving the center point unchanged */
-        grow (number delta);
-/** change the x coordinates of the rectangle by a multiplier */
-        horzScale (number f);
-/** change the y coordinates of the rectangle by a multiplier */
-        vertScale (number f);
-/** change the coordinates of the rectangle by a multiplier */
-        scale (number f);
-/** round the coordinates to closest whole number */
-        round ();
-/** convert rectangle to a Quad */
-        [object Quad] toQuad ();
-/** return true if this rectangle is equal to the given one */
-        boolean equals ([object Rect] r2);
-/** return true if this rectangle is not equal to the given one */
-        boolean notEquals ([object Rect] r2);
-/** set this rectangle equal to the given one */
-        [object Rect] assign ([object Rect] r2);
-/** add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates */
-        [object Rect] add ([object Rect] r2);
-/** add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates */
-        [object Rect] add ([object Point] p);
-/** sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point; sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates */
-        [object Rect] sub ([object Rect] r2);
-/** sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point; sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates */
-        [object Rect] sub ([object Point] p);
-/** mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point; mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle */
-        [object Rect] mul ([object Rect] r2);
-/** mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point; mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle */
-        [object Rect] mul ([object Point] p);
-/** div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point; div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle */
-        [object Rect] div ([object Rect] r2);
-/** div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point; div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle */
-        [object Rect] div ([object Point] p);
-/**  */
-        [object Rect] plus ([object Rect] r2);
-/**  */
-        [object Rect] plus ([object Point] p);
-/**  */
-        [object Rect] minus ([object Rect] r2);
-/**  */
-        [object Rect] minus ([object Point] p);
-/**  */
-        [object Rect] times ([object Rect] r2);
-/**  */
-        [object Rect] times ([object Point] p);
-/**  */
-        [object Rect] dividedby ([object Rect] r2);
-/**  */
-        [object Rect] dividedby ([object Point] p);
-    };
-
-    (Quad) =
-    {
-
-        var points;
-/** return string representation  */
-        string toString ();
-/** new Quad(): create an empty quad at 0,0; new Quad([Quad] q): copy from another quad; new Quad([Rect] r): create a quad from a rectangle; new Quad([RotatedRect r]): create a quad from a rotated rectangle; new Quad([Point] p1, [Point] p2, [Point] p3, [Point] p4): create a quad given its corner points; new Quad([Point] p[4]): create a quad given an array of 4 points */
-        Quad (args...);
-/** return a rectangle that bounds the quad */
-        [object Rect] getBounds ();
-/** return the calculated centerpoint of the quad */
-        [object Point] centerPoint ();
-/** return true if this quad is equal to the given one */
-        boolean equals ([object Quad] q2);
-/** return true if this quad is not equal to the given one */
-        boolean notEquals ([object Quad] q2);
-/** returns true if the point is contained within this quad */
-        boolean contains ([object Point] p);
-/** move the quad to the left by some amount */
-        moveLeft (number delta);
-/** move the quad to the right by some amount */
-        moveRight (number delta);
-/** move the quad up by some amount */
-        moveUp (number delta);
-/** move the quad down by some amount */
-        moveDown (number delta);
-/** rotate(n): rotate the quad by a rotation in radians (around the calculated center point of the quad); rotate(n, [Offset] o): rotate the quad by a rotation in radians around an offset center point */
-        rotate (number rotationRadians, [object Offset] centerPtOffset = Point(0,0));
-    };
-
-    (RotatedRect : public Rect) =
-    {
-
-        var left;
-        var top;
-        var right;
-        var bottom;
-        var centerOffset;
-/** create a new RotatedRect */
-        RotatedRect ([object Rect] rect = Rect(0,0), number rotationRadians = 0.0, [object Offset] cpOffset = null);
-/** return string representation  */
-        string toString ();
-/** set an offset for point around which rotation is applied */
-        setCenterOffset ([object Offset] cpOffset);
-/** set the rotation of this rectangle to a particular amount in radians */
-        setRotation (number rotationRadians, [object Offset] cpOffset = null);
-/** change the rotation of this rectangle by some number of radians */
-        rotate (number rotateRadians);
-/** create a Quad by applying the rectangle's rotation around the center point with offset */
-        [object Quad] getQuad ();
-/** return true if this rectangle is empty (no width or no height) */
-        boolean empty ();
-/** contains([Point] p) return true if the point is inside this rectangle; contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle */
-        boolean contains ([object Rect] r);
-/** contains([Point] p) return true if the point is inside this rectangle; contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle */
-        boolean contains ([object Point] p);
-/** return true if this rectangle overlaps the other rectangle at all (sharing an edge is not overlapping) */
-        boolean overlaps ([object Rect] r);
-/** get top left corner point of this rectangle */
-        [object Point] leftTop ();
-/** get top right corner point of this rectangle */
-        [object Point] rightTop ();
-/** get bottom left corner point of this rectangle */
-        [object Point] leftBottom ();
-/** get bottom right corner point of this rectangle */
-        [object Point] rightBottom ();
-/** get center point of this rectangle */
-        [object Point] centerPoint ();
-/** alias for Rect.left */
-        number x1 ();
-/** alias for Rect.top */
-        number y1 ();
-/** alias for Rect.right */
-        number x2 ();
-/** alias for Rect.bottom */
-        number y2 ();
-/** get the width of this rectangle */
-        number width ();
-/** get the height of this rectangle */
-        number height ();
-/** get a new rectangle that is the overlapping area of the the rectangles */
-        [object Rect] intersection ([object Rect] r);
-/** get the smallest possible new rectangle that contains both rectangles */
-        [object Rect] unionWith ([object Rect] r);
-/** move the rectangle to the left by some amount */
-        moveLeft (number delta);
-/** move the rectangle to the right by some amount */
-        moveRight (number delta);
-/** move the rectangle up by some amount */
-        moveUp (number delta);
-/** move the rectangle down by some amount */
-        moveDown (number delta);
-/** move the rectangle to a particular x location, leaving y unchanged */
-        moveXTo (number x);
-/** move the rectangle to a particular y location, leaving x unchanged */
-        moveYTo (number y);
-/** moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point */
-        moveTo (number x, number y);
-/** moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point */
-        moveTo ([object Point] p);
-/** center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle */
-        center ([object Rect] r);
-/** center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle */
-        center ([object Point] p);
-/** set the size (width & height) of the rectangle */
-        setSize (number n);
-/**  */
-        setWidth (number w);
-/**  */
-        setHeight (number h);
-/** reduce the width of the rectangle while leaving the center point unchanged */
-        horzShrink (number delta);
-/** reduce the height of the rectangle while leaving the center point unchanged */
-        vertShrink (number delta);
-/** increase the width of the rectangle while leaving the center point unchanged */
-        horzGrow (number delta);
-/** increase the height of the rectangle while leaving the center point unchanged */
-        vertGrow (number delta);
-/** reduce the height and width of the rectangle while leaving the center point unchanged */
-        shrink (number delta);
-/** increase the height and width of the rectangle while leaving the center point unchanged */
-        grow (number delta);
-/** change the x coordinates of the rectangle by a multiplier */
-        horzScale (number f);
-/** change the y coordinates of the rectangle by a multiplier */
-        vertScale (number f);
-/** change the coordinates of the rectangle by a multiplier */
-        scale (number f);
-/** round the coordinates to closest whole number */
-        round ();
-/** convert rectangle to a Quad */
-        [object Quad] toQuad ();
-/** return true if this rectangle is equal to the given one */
-        boolean equals ([object Rect] r2);
-/** return true if this rectangle is not equal to the given one */
-        boolean notEquals ([object Rect] r2);
-/** set this rectangle equal to the given one */
-        [object Rect] assign ([object Rect] r2);
-/** add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates */
-        [object Rect] add ([object Rect] r2);
-/** add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates */
-        [object Rect] add ([object Point] p);
-/** sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point; sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates */
-        [object Rect] sub ([object Rect] r2);
-/** sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point; sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates */
-        [object Rect] sub ([object Point] p);
-/** mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point; mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle */
-        [object Rect] mul ([object Rect] r2);
-/** mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point; mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle */
-        [object Rect] mul ([object Point] p);
-/** div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point; div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle */
-        [object Rect] div ([object Rect] r2);
-/** div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point; div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle */
-        [object Rect] div ([object Point] p);
-/**  */
-        [object Rect] plus ([object Rect] r2);
-/**  */
-        [object Rect] plus ([object Point] p);
-/**  */
-        [object Rect] minus ([object Rect] r2);
-/**  */
-        [object Rect] minus ([object Point] p);
-/**  */
-        [object Rect] times ([object Rect] r2);
-/**  */
-        [object Rect] times ([object Point] p);
-/**  */
-        [object Rect] dividedby ([object Rect] r2);
-/**  */
-        [object Rect] dividedby ([object Point] p);
-    };
-
-    (Color) =
-    {
-
-        var red;
-        var green;
-        var blue;
-        var alpha;
-/** return string representation  */
-        string toString ();
-/** create and color and set rgb values */
-        Color ();
-/** create and color and set rgb values */
-        Color (number c);
-/** create and color and set rgb values */
-        Color (string colorstr);
-/** create and color and set rgb values */
-        Color (number r, number g, number b, number alpha = 1);
-/** return true if this color is equal to the other (ignoring alpha) */
-        boolean equals ([object Color] color);
-/** return true if this color is not equal to the other (ignoring alpha) */
-        boolean notEquals ([object Color] color);
-/** set this color equal to the given color */
-        [object Color] assign ([object Color] color);
-/** convert this color to a matching shade of grey */
-        convertToGrayscale ();
-    };
-}
+// this file was automatically generated by "pdg tools/make-idl.js --js-format"
+
+
+var pdg = {
+
+    all_events : 0,
+    eventType_Shutdown : 2,
+    eventType_Timer : 3,
+    eventType_KeyDown : 4,
+    eventType_KeyUp : 5,
+    eventType_KeyPress : 6,
+    eventType_MouseDown : 7,
+    eventType_MouseUp : 8,
+    eventType_MouseMove : 9,
+    eventType_MouseEnter : 22,
+    eventType_MouseLeave : 23,
+    eventType_PortResized : 15,
+    eventType_ScrollWheel : 16,
+    eventType_SpriteTouch : 19,
+    eventType_SpriteAnimate : 17,
+    eventType_SpriteLayer : 18,
+    eventType_SpriteCollide : 20,
+    eventType_SpriteBreak : 21,
+    eventType_SoundEvent : 14,
+    eventType_PortDraw : 24,
+    soundEvent_DonePlaying : 0,
+    soundEvent_Looping : 1,
+    soundEvent_FailedToPlay : 2,
+    key_Break : 1,
+    key_Home : 2,
+    key_End : 3,
+    key_Clear : 4,
+    key_Help : 5,
+    key_Pause : 6,
+    key_Mute : 7,
+    key_Backspace : 8,
+    key_Delete : 127,
+    key_Tab : 9,
+    key_PageUp : 11,
+    key_PageDown : 12,
+    key_Return : 13,
+    key_Enter : 13,
+    key_F1 : 14,
+    key_F2 : 15,
+    key_F3 : 16,
+    key_F4 : 17,
+    key_F5 : 18,
+    key_F6 : 19,
+    key_F7 : 20,
+    key_F8 : 21,
+    key_F9 : 22,
+    key_F10 : 23,
+    key_F11 : 24,
+    key_F12 : 25,
+    key_FirstF : 14,
+    key_LastF : 25,
+    key_Insert : 26,
+    key_Escape : 27,
+    key_LeftArrow : 28,
+    key_RightArrow : 29,
+    key_UpArrow : 30,
+    key_DownArrow : 31,
+    key_FirstPrintable : 32,
+    screenPos_Normal : 0,
+    screenPos_Rotated180 : 1,
+    screenPos_Rotated90Clockwise : 2,
+    screenPos_Rotated90CounterClockwise : 3,
+    screenPos_FaceUp : 4,
+    screenPos_FaceDown : 5,
+    textStyle_Plain : 0,
+    textStyle_Bold : 1,
+    textStyle_Italic : 2,
+    textStyle_Underline : 4,
+    textStyle_Centered : 16,
+    textStyle_LeftJustified : 0,
+    textStyle_RightJustified : 32,
+    fit_None : 0,
+    fit_Height : 1,
+    fit_Width : 2,
+    fit_Inside : 3,
+    fit_Fill : 4,
+    fit_FillKeepProportions : 5,
+    init_CreateUniqueNewFile : 0,
+    init_OverwriteExisting : 1,
+    init_AppendToExisting : 2,
+    init_StdOut : 3,
+    init_StdErr : 4,
+    duration_Constant : -1,
+    duration_Instantaneous : 0,
+    animate_StartToEnd : 0,
+    animate_EndToStart : 1,
+    animate_Unidirectional : 0,
+    animate_Bidirectional : 2,
+    animate_NoLooping : 0,
+    animate_Looping : 4,
+    start_FromFirstFrame : -1,
+    start_FromLastFrame : -2,
+    all_Frames : 0,
+    action_CollideSprite : 0,
+    action_CollideWall : 1,
+    action_Offscreen : 2,
+    action_Onscreen : 3,
+    action_ExitLayer : 4,
+    action_AnimationLoop : 8,
+    action_AnimationEnd : 9,
+    action_FadeComplete : 10,
+    action_FadeInComplete : 11,
+    action_FadeOutComplete : 12,
+    action_JointBreak : 13,
+    touch_MouseEnter : 20,
+    touch_MouseLeave : 21,
+    touch_MouseDown : 22,
+    touch_MouseUp : 23,
+    touch_MouseClick : 24,
+    collide_None : 0,
+    collide_Point : 1,
+    collide_BoundingBox : 2,
+    collide_CollisionRadius : 3,
+    collide_AlphaChannel : 4,
+    collide_Last : 4,
+    action_ErasePort : 40,
+    action_PreDrawLayer : 41,
+    action_PostDrawLayer : 42,
+    action_DrawPortComplete : 43,
+    action_AnimationStart : 44,
+    action_PreAnimateLayer : 45,
+    action_PostAnimateLayer : 46,
+    action_AnimationComplete : 47,
+    action_ZoomComplete : 48,
+    action_LayerFadeInComplete : 49,
+    action_LayerFadeOutComplete : 50,
+    facing_North : 0,
+    facing_East : 64,
+    facing_South : 128,
+    facing_West : 192,
+    facing_Ignore : 256,
+    flipped_None : 0,
+    flipped_Horizontal : 64,
+    flipped_Vertical : 128,
+    flipped_Both : 192,
+    flipped_Ignore : 256,
+    timer_OneShot : true,
+    timer_Repeating : false,
+    timer_Never : -1,
+    linearTween : 0,
+    easeInQuad : 1,
+    easeOutQuad : 2,
+    easeInOutQuad : 3,
+    easeInCubic : 4,
+    easeOutCubic : 5,
+    easeInOutCubic : 6,
+    easeInQuart : 7,
+    easeOutQuart : 8,
+    easeInQuint : 10,
+    easeOutQuint : 11,
+    easeInOutQuint : 12,
+    easeInSine : 13,
+    easeOutSine : 14,
+    easeInOutSine : 15,
+    easeInExpo : 16,
+    easeOutExpo : 17,
+    easeInOutExpo : 18,
+    easeInCirc : 19,
+    easeOutCirc : 20,
+    easeInOutCirc : 21,
+    easeInBounce : 22,
+    easeOutBounce : 23,
+    easeInOutBounce : 24,
+    easeInBack : 25,
+    easeOutBack : 26,
+    easeInOutBack : 27,
+    ser_Positions : 1,
+    ser_ZOrder : 2,
+    ser_Sizes : 4,
+    ser_Animations : 8,
+    ser_Motion : 16,
+    ser_Forces : 32,
+    ser_Physics : 64,
+    ser_LayerDraw : 128,
+    ser_ImageRefs : 256,
+    ser_SCMLRefs : 512,
+    ser_HelperRefs : 1024,
+    ser_HelperObjs : 8192,
+    ser_InitialData : 16384,
+    ser_Micro : 3,
+    ser_Update : 127,
+    ser_Full : 18303,
+    running : null,   // boolean
+    quitting : null,   // boolean
+    lftTop : 0,
+    rgtTop : 1,
+    rgtBot : 2,
+    lftBot : 3,
+    hasNetwork : null,   // boolean
+    fs : null,   // FileManager
+    evt : null,   // EventManager
+    tm : null,   // TimerManager
+    res : null,   // ResourceManager
+    cfg : null,   // ConfigManager
+    lm : null,   // LogManager
+    gfx : null,   // GraphicsManager
+    hasGraphics : null,   // boolean
+    snd : null,   // SoundManager
+    hasSound : null,   // boolean
+    argv : null,   // string[]
+    rand : () => {},
+    srand : (seed) => {},
+    setSerializationDebugMode : (debugMode) => {},
+    registerEasingFunction : (easingFunc) => {},
+    getFileManager : () => {},
+    getLogManager : () => {},
+    getConfigManager : () => {},
+    getResourceManager : () => {},
+    getEventManager : () => {},
+    getTimerManager : () => {},
+    registerSerializableClass : (klass) => {},
+    getGraphicsManager : () => {},
+    getSoundManager : () => {},
+    createSpriteLayer : (port) => {},
+    createSpriteLayerFromSCMLFile : (layerSCMLFilename, addSprites, port) => {},
+    cleanupSpriteLayer : (layer) => {},
+    createTileLayer : (port) => {},
+    quit : () => {},
+    run : () => {},
+    idle : () => {},
+    // openDebugger: start node-inspector and open a debugger window in your browser
+    openDebugger : () => {},
+    // openConsole: open a pdg console window
+    openConsole : () => {},
+    // openCommandPort: start a REPL server on a TCP port
+    openCommandPort : (port) => {},
+    log : (msg) => {},
+    info : (msg) => {},
+    warn : (msg) => {},
+    fatal : (msg) => {},
+    error : (msg) => {},
+    debug : (msg) => {},
+    trace : (msg) => {},
+    captureConsole : () => {},
+    // createSerializableObject: Creates a pdg.ISerializable object from a JavaScript object with serialization methods
+    createSerializableObject : (obj, classTag) => {},
+    on : (eventType, func) => {},
+    onShutdown : (func) => {},
+    onTimer : (func) => {},
+    onKeyDown : (func) => {},
+    onKeyUp : (func) => {},
+    onKeyPress : (func) => {},
+    onMouseDown : (func) => {},
+    onMouseUp : (func) => {},
+    onMouseMove : (func) => {},
+    startRepl : () => {},
+
+    MemBlock : () => { return {
+        getData : () => { return string /* Binary */; }, 
+        getDataSize : () => { return number; }, 
+        getByte : (i) => { return number; }, 
+        getBytes : (start, len) => { return string /* Binary */; }, 
+        toBuffer : () => { return Buffer; }, 
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.fs
+    FileManager : () => { return {
+        findFirst : (inFindName) => { return object; }, 
+        findNext : (inFindData) => { return object; }, 
+        findClose : (inFindData) => {},
+        getApplicationDataDirectory : () => { return string; }, 
+        getApplicationDirectory : () => { return string; }, 
+        getApplicationResourceDirectory : () => { return string; }, 
+        findFiles : (name) => { return [""] /* array of strings */; }, 
+        findDirs : (name) => { return [""] /* array of strings */; }, 
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.lm
+    LogManager : () => { return {
+        init_CreateUniqueNewFile : 0,
+        init_OverwriteExisting : 1,
+        init_AppendToExisting : 2,
+        init_StdOut : 3,
+        init_StdErr : 4,
+        getLogLevel : () => { return number; }, 
+        setLogLevel : (inLogLevel) => { return LogManager; }, 
+        initialize : (inLogNameBase, initMode) => {},
+        writeLogEntry : (level, category, message) => {},
+        binaryDump : (inData, length, bytesPerLine) => { return string; }, 
+        binaryDump : (inData, length, bytesPerLine) => { return string; }, 
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.cfg
+    ConfigManager : () => { return {
+        useConfig : (inConfigName) => { return boolean; }, 
+        getConfigString : (inConfigItemName) => { return string; }, 
+        getConfigLong : (inConfigItemName) => { return number; }, 
+        getConfigFloat : (inConfigItemName) => { return number; }, 
+        getConfigBool : (inConfigItemName) => { return boolean; }, 
+        setConfigString : (inConfigItemName, inValue) => {},
+        setConfigLong : (inConfigItemName, inValue) => {},
+        setConfigFloat : (inConfigItemName, inValue) => {},
+        setConfigBool : (inConfigItemName, inValue) => {},
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.res
+    ResourceManager : () => { return {
+        getLanguage : () => { return string; }, 
+        setLanguage : (inLanguage) => { return ResourceManager; }, 
+        openResourceFile : (filename) => { return number; }, 
+        closeResourceFile : (refNum) => {},
+        getImage : (imageName) => { return Image; }, 
+        getImageStrip : (imageName) => { return ImageStrip; }, 
+        getString : (id, substring) => { return string; }, 
+        getResourceSize : (resourceName) => { return number; }, 
+        getResource : (resourceName) => { return string /* Binary */; }, 
+        getResourcePaths : () => { return string; }, 
+    }; },
+
+    Serializer : () => { return {
+        serialize_8 : (val) => {},
+        serialize_8u : (val) => {},
+        sizeof_8 : (val) => { return number /* uint */; }, 
+        sizeof_8u : (val) => { return number /* uint */; }, 
+        serialize_d : (val) => {},
+        serialize_f : (val) => {},
+        serialize_4 : (val) => {},
+        serialize_4u : (val) => {},
+        serialize_3u : (val) => {},
+        serialize_2 : (val) => {},
+        serialize_2u : (val) => {},
+        serialize_1 : (val) => {},
+        serialize_1u : (val) => {},
+        serialize_bool : (val) => {},
+        serialize_uint : (val) => {},
+        serialize_color : (val) => {},
+        serialize_offset : (val) => {},
+        serialize_point : (val) => {},
+        serialize_vector : (val) => {},
+        serialize_rect : (val) => {},
+        serialize_rotr : (val) => {},
+        serialize_quad : (val) => {},
+        serialize_str : (str) => {},
+        serialize_mem : (mem) => {},
+        serialize_mem : (mem) => {},
+        // serialize_obj: Serializes an ISerializable object
+        serialize_obj : (obj) => {},
+        serialize_ref : (obj) => {},
+        sizeof_d : (val) => { return number /* uint */; }, 
+        sizeof_f : (val) => { return number /* uint */; }, 
+        sizeof_4 : (val) => { return number /* uint */; }, 
+        sizeof_4u : (val) => { return number /* uint */; }, 
+        sizeof_3u : (val) => { return number /* uint */; }, 
+        sizeof_2 : (val) => { return number /* uint */; }, 
+        sizeof_2u : (val) => { return number /* uint */; }, 
+        sizeof_1 : (val) => { return number /* uint */; }, 
+        sizeof_1u : (val) => { return number /* uint */; }, 
+        sizeof_bool : (val) => { return number /* uint */; }, 
+        sizeof_uint : (val) => { return number /* uint */; }, 
+        sizeof_color : (val) => { return number /* uint */; }, 
+        sizeof_offset : (val) => { return number /* uint */; }, 
+        sizeof_point : (val) => { return number /* uint */; }, 
+        sizeof_vector : (val) => { return number /* uint */; }, 
+        sizeof_rect : (val) => { return number /* uint */; }, 
+        sizeof_rotr : (val) => { return number /* uint */; }, 
+        sizeof_quad : (val) => { return number /* uint */; }, 
+        sizeof_str : (val) => { return number /* uint */; }, 
+        sizeof_mem : (mem) => { return number /* uint */; }, 
+        sizeof_mem : (mem) => { return number /* uint */; }, 
+        // sizeof_obj: Calculates the serialized size of an ISerializable object
+        sizeof_obj : (obj) => { return number /* uint */; }, 
+        sizeof_ref : (val) => { return number /* uint */; }, 
+        getDataSize : () => { return number; }, 
+        getDataPtr : () => { return MemBlock; }, 
+    }; },
+
+    Deserializer : () => { return {
+        deserialize_8 : () => { return number; }, 
+        deserialize_8u : () => { return number; }, 
+        deserialize_d : () => { return number; }, 
+        deserialize_f : () => { return number; }, 
+        deserialize_4 : () => { return number; }, 
+        deserialize_4u : () => { return number; }, 
+        deserialize_3u : () => { return number; }, 
+        deserialize_2 : () => { return number; }, 
+        deserialize_2u : () => { return number; }, 
+        deserialize_1 : () => { return number; }, 
+        deserialize_1u : () => { return number; }, 
+        deserialize_bool : () => { return boolean; }, 
+        deserialize_uint : () => { return number; }, 
+        deserialize_color : () => { return Color; }, 
+        deserialize_offset : () => { return Offset; }, 
+        deserialize_point : () => { return Point; }, 
+        deserialize_vector : () => { return Vector; }, 
+        deserialize_rect : () => { return Rect; }, 
+        deserialize_rotr : () => { return RotatedRect; }, 
+        deserialize_quad : () => { return Quad; }, 
+        deserialize_str : () => { return string; }, 
+        deserialize_mem : () => { return MemBlock; }, 
+        deserialize_memGetLen : () => { return number; }, 
+        deserialize_obj : () => { return ISerializable; }, 
+        deserialize_ref : () => { return object; }, 
+        setDataPtr : (data) => {},
+        setDataPtr : (data) => {},
+    }; },
+
+    ISerializable : () => { return {
+    }; },
+
+    IEventHandler : () => { return {
+    }; },
+
+    EventEmitter : () => { return {
+        // addHandler: add a new handler for some event type, or for all events if no type specified.  
+        // \param inHandler the object to handle events 
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call. 
+        // \param inHandler the object to handle events 
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        // clear: remove all handlers
+        clear : () => {},
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. 
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        // unblockEvent: stop ignoring events of a particular type  
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.evt
+    EventManager : () => { return {
+   //  TODO: derive from EventEmitter
+        isKeyDown : (unicodeChar) => { return boolean; }, 
+        isKeyDown : (utf16CharCode) => { return boolean; }, 
+        isRawKeyDown : (keyCode) => { return boolean; }, 
+        isButtonDown : (buttonNumber) => { return boolean; }, 
+        // getDeviceOrientation: NOT IMPLEMENTED
+        getDeviceOrientation : (absolute) => { return object; }, 
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.tm
+    TimerManager : () => { return {
+   //  TODO: derive from EventEmitter
+        startTimer : (id, delay, oneShot) => {},
+        cancelTimer : (id) => {},
+        cancelAllTimers : () => {},
+        delayTimer : (id, delay) => {},
+        delayTimerUntil : (id, msTime) => {},
+        pause : () => {},
+        unpause : () => {},
+        isPaused : () => { return boolean; }, 
+        pauseTimer : (id) => {},
+        unpauseTimer : (id) => {},
+        isTimerPaused : (id) => { return boolean; }, 
+        getWhenTimerFiresNext : (id) => { return number; }, 
+        getMilliseconds : () => { return number; }, 
+        // onTimeout: setup handler to be called once after delay ms
+        onTimeout : (func, delay) => { return IEventHandler; }, 
+        // onInterval: setup handler to be called regularly at interval ms
+        onInterval : (func, interval) => { return IEventHandler; }, 
+    }; },
+
+    IAnimationHelper : () => { return {
+    }; },
+
+    Animated : () => { return {
+        getBoundingBox : () => { return Rect; }, 
+        getRotatedBounds : () => { return RotatedRect; }, 
+        getLocation : () => { return Point; }, 
+        setLocation : (inLocation) => { return Animated; }, 
+        getSpeed : () => { return number; }, 
+        setSpeed : (inSpeed) => { return Animated; }, 
+        getVelocity : () => { return Vector; }, 
+        setVelocity : (deltaPerSec) => { return Animated; }, 
+        setVelocity : (deltaXPerSec, deltaYPerSec) => { return Animated; }, 
+        getWidth : () => { return number; }, 
+        setWidth : (inWidth) => { return Animated; }, 
+        getHeight : () => { return number; }, 
+        setHeight : (inHeight) => { return Animated; }, 
+        getRotation : () => { return number; }, 
+        setRotation : (inRotation) => { return Animated; }, 
+        getCenterOffset : () => { return Offset; }, 
+        setCenterOffset : (inCenterOffset) => { return Animated; }, 
+        getSpin : () => { return number; }, 
+        setSpin : (inSpin) => { return Animated; }, 
+        getMass : () => { return number; }, 
+        setMass : (inMass) => { return Animated; }, 
+        getMoveFriction : () => { return number; }, 
+        setMoveFriction : (inMoveFriction) => { return Animated; }, 
+        getSpinFriction : () => { return number; }, 
+        setSpinFriction : (inSpinFriction) => { return Animated; }, 
+        getSizeFriction : () => { return number; }, 
+        setSizeFriction : (inSizeFriction) => { return Animated; }, 
+        move : (delta, msDuration, easing) => {},
+        moveTo : (where, msDuration, easing) => {},
+        setVelocityInRadians : (speed, direction) => { return Animated; }, 
+        getMovementDirectionInRadians : () => { return number; }, 
+        stopMoving : () => {},
+        accelerate : (deltaSpeed, msDuration, easing) => {},
+        accelerateTo : (speed, msDuration, easing) => {},
+        setSize : (width, height) => { return Animated; }, 
+        grow : (factor, msDuration, easing) => {},
+        stretch : (widthFactor, heightFactor, msDuration, easing) => {},
+        startGrowing : (amountPerSecond) => {},
+        stopGrowing : () => {},
+        startStretching : (widthPerSecond, heightPerSecond) => {},
+        stopStretching : () => {},
+        resize : (deltaWidth, deltaHeight, msDuration, easing) => {},
+        resizeTo : (width, height, msDuration, easing) => {},
+        rotate : (radians, msDuration, easing) => {},
+        rotateTo : (radiansRotation, msDuration, easing) => {},
+        stopSpinning : () => {},
+        changeCenter : (offset, msDuration, easing) => {},
+        changeCenterTo : (offset, msDuration, easing) => {},
+        wait : (msDuration) => { return Animated; }, 
+        setFriction : (frictionCoefficient) => { return Animated; }, 
+        applyForce : (force, msDuration) => {},
+        applyTorque : (forceSpin, msDuration) => {},
+        stopAllForces : () => {},
+        addAnimationHelper : (helper) => {},
+        removeAnimationHelper : (helper) => {},
+        clearAnimationHelpers : () => {},
+        animate : (msElapsed) => { return boolean; }, 
+    }; },
+
+    CpArbiter : () => { return {
+        // isFirstContact: true if this is the first moment of contact between the objects, false if part of an ongoing collison
+        isFirstContact : () => { return boolean; }, 
+        getCount : () => { return number; }, 
+        getNormal : () => { return Vector; }, 
+        getPointA : (i) => { return Point; }, 
+        getPointB : (i) => { return Point; }, 
+        getDepth : (i) => { return number; }, 
+    }; },
+
+    CpConstraint : () => { return {
+        getType : () => { return string; }, 
+        activateBodies : () => {},
+        getImpulse : () => { return number; }, 
+        getMaxForce : () => { return number; }, 
+        setMaxForce : (inMaxForce) => { return CpConstraint; }, 
+        getErrorBias : () => { return number; }, 
+        setErrorBias : (inErrorBias) => { return CpConstraint; }, 
+        getMaxBias : () => { return number; }, 
+        setMaxBias : (inMaxBias) => { return CpConstraint; }, 
+        getSprite : () => { return Sprite; }, 
+        getOtherSprite : () => { return Sprite; }, 
+        getAnchor : () => { return Offset; }, 
+        setAnchor : (inAnchor) => { return CpConstraint; }, 
+        getOtherAnchor : () => { return Offset; }, 
+        setOtherAnchor : (inOtherAnchor) => { return CpConstraint; }, 
+        getPinDist : () => { return number; }, 
+        setPinDist : (inPinDist) => { return CpConstraint; }, 
+        getSpringStiffness : () => { return number; }, 
+        setSpringStiffness : (inSpringStiffness) => { return CpConstraint; }, 
+        getSpringDamping : () => { return number; }, 
+        setSpringDamping : (inSpringDamping) => { return CpConstraint; }, 
+        getSlideMinDist : () => { return number; }, 
+        setSlideMinDist : (inSlideMinDist) => { return CpConstraint; }, 
+        getSlideMaxDist : () => { return number; }, 
+        setSlideMaxDist : (inSlideMaxDist) => { return CpConstraint; }, 
+        getGrooveStart : () => { return Offset; }, 
+        setGrooveStart : (inGrooveStart) => { return CpConstraint; }, 
+        getGrooveEnd : () => { return Offset; }, 
+        setGrooveEnd : (inGrooveEnd) => { return CpConstraint; }, 
+        getSpringRestLength : () => { return number; }, 
+        setSpringRestLength : (inSpringRestLength) => { return CpConstraint; }, 
+        getRotarySpringRestAngle : () => { return number; }, 
+        setRotarySpringRestAngle : (inRotarySpringRestAngle) => { return CpConstraint; }, 
+        getMinAngle : () => { return number; }, 
+        setMinAngle : (inMinAngle) => { return CpConstraint; }, 
+        getMaxAngle : () => { return number; }, 
+        setMaxAngle : (inMaxAngle) => { return CpConstraint; }, 
+        getRatchetAngle : () => { return number; }, 
+        setRatchetAngle : (inRatchetAngle) => { return CpConstraint; }, 
+        getRatchetPhase : () => { return number; }, 
+        setRatchetPhase : (inRatchetPhase) => { return CpConstraint; }, 
+        getRatchetInterval : () => { return number; }, 
+        setRatchetInterval : (inRatchetInterval) => { return CpConstraint; }, 
+        getGearRatio : () => { return number; }, 
+        setGearRatio : (inGearRatio) => { return CpConstraint; }, 
+        getGearInitialAngle : () => { return number; }, 
+        setGearInitialAngle : (inGearInitialAngle) => { return CpConstraint; }, 
+        getMotorSpinRate : () => { return number; }, 
+        setMotorSpinRate : (inMotorSpinRate) => { return CpConstraint; }, 
+    }; },
+
+    CpSpace : () => { return {
+        useSpatialHash : (dim, count) => {},
+        reindexStatic : () => {},
+        step : (dt) => {},
+        getIdleSpeedThreshold : () => { return number; }, 
+        setIdleSpeedThreshold : (inIdleSpeedThreshold) => { return CpSpace; }, 
+        getSleepTimeThreshold : () => { return number; }, 
+        setSleepTimeThreshold : (inSleepTimeThreshold) => { return CpSpace; }, 
+        getCollisionSlop : () => { return number; }, 
+        setCollisionSlop : (inCollisionSlop) => { return CpSpace; }, 
+        getCollisionBias : () => { return number; }, 
+        setCollisionBias : (inCollisionBias) => { return CpSpace; }, 
+        getCollisionPersistence : () => { return number; }, 
+        setCollisionPersistence : (inCollisionPersistence) => { return CpSpace; }, 
+    }; },
+
+    ISpriteDrawHelper : () => { return {
+    }; },
+
+    ISpriteCollideHelper : () => { return {
+    }; },
+
+    Sprite : () => { return {
+   //  TODO: derive from Animated, EventEmitter, ISerializable
+        getMyClassTag : () => { return number; }, 
+        // getSerializedSize: get size of this object's data for the given stream
+        getSerializedSize : (serializer) => { return number /* uint */; }, 
+        // serialize: write this object's data into the given stream
+        serialize : (serializer) => {},
+        // deserialize: read this object's data from the given stream
+        deserialize : (deserializer) => {},
+        getFrameRotatedBounds : (frameNum) => { return RotatedRect; }, 
+        setFrame : (frame) => { return Sprite; }, 
+        // getCurrentFrame: which frame of animation the sprite is currently showing
+        getCurrentFrame : () => { return number; }, 
+        // getFrameCount: total number of frames of animation for this sprite
+        getFrameCount : () => { return number; }, 
+        startFrameAnimation : (fps, startingFrame, numFrames, animateFlags) => {},
+        stopFrameAnimation : () => {},
+        getWantsAnimLoopEvents : () => { return boolean; }, 
+        setWantsAnimLoopEvents : (wantsThem) => { return Sprite; }, 
+        getWantsAnimEndEvents : () => { return boolean; }, 
+        setWantsAnimEndEvents : (wantsThem) => { return Sprite; }, 
+        getWantsCollideWallEvents : () => { return boolean; }, 
+        setWantsCollideWallEvents : (wantsThem) => { return Sprite; }, 
+        addFramesImage : (image, startingFrame, numFrames) => {},
+        hasAnimation : (animationId) => { return boolean; }, 
+        hasAnimation : (animationName) => { return boolean; }, 
+        startAnimation : (animationId) => {},
+        startAnimation : (animationName) => {},
+        setEntityScale : (xScale, yScale) => { return Sprite; }, 
+        changeFramesImage : (oldImage, newImage) => {},
+        offsetFrameCenters : (offsetX, offsetY, image, startingFrame, numFrames) => {},
+        getFrameCenterOffset : (image, frameNum) => { return Offset; }, 
+        getOpacity : () => { return number; }, 
+        setOpacity : (opacity) => { return Sprite; }, 
+        fadeTo : (targetOpacity, msDuration, easing) => {},
+        fadeIn : (msDuration, easing) => {},
+        fadeOut : (msDuration, easing) => {},
+        isBehind : (sprite) => { return boolean; }, 
+        getZOrder : () => { return number /* int */; }, 
+        moveBehind : (sprite) => { return Sprite; }, 
+        moveInFrontOf : (sprite) => { return Sprite; }, 
+        // moveToFront: put this sprite in front of all others in its layer
+        moveToFront : () => { return Sprite; }, 
+        // moveToBack: put this sprite behind all others in its layer
+        moveToBack : () => { return Sprite; }, 
+        enableCollisions : (collisionType) => { return Sprite; }, 
+        disableCollisions : () => { return Sprite; }, 
+        getCollisionRadius : () => { return number; }, 
+        setCollisionRadius : (pixelRadius) => { return Sprite; }, 
+        useCollisionMask : (frameImage, maskImage) => {},
+        setCollisionHelper : (helper) => {},
+        getElasticity : () => { return number; }, 
+        setElasticity : (elasticity) => { return Sprite; }, 
+        // getLayer: get the layer that contains this sprite
+        getLayer : () => { return SpriteLayer; }, 
+        setDrawHelper : (helper) => {},
+        setPostDrawHelper : (helper) => {},
+        getWantsMouseOverEvents : () => { return boolean; }, 
+        setWantsMouseOverEvents : (wantsThem) => { return Sprite; }, 
+        getWantsClickEvents : () => { return boolean; }, 
+        setWantsClickEvents : (wantsThem) => { return Sprite; }, 
+        getMouseDetectMode : () => { return number; }, 
+        setMouseDetectMode : (collisionType) => { return Sprite; }, 
+        getWantsOffscreenEvents : () => { return boolean; }, 
+        setWantsOffscreenEvents : (wantsThem) => { return Sprite; }, 
+        makeStatic : () => { return Sprite; }, 
+        getFriction : () => { return number; }, 
+        setCollideGroup : (group) => { return Sprite; }, 
+        getCollideGroup : () => { return number; }, 
+        pinJoint : (anchor, otherSprite, otherAnchor, breakingForce) => { return CpConstraint; }, 
+        slideJoint : (anchor, otherSprite, otherAnchor, minDist, maxDist, breakingForce) => { return CpConstraint; }, 
+        pivotJoint : (otherSprite, pivot, breakingForce) => { return CpConstraint; }, 
+        grooveJoint : (grooveStart, grooveEnd, otherSprite, otherAnchor, breakingForce) => { return CpConstraint; }, 
+        springJoint : (anchor, otherSprite, otherAnchor, restLength, stiffness, damping, breakingForce) => { return CpConstraint; }, 
+        rotarySpring : (otherSprite, restAngle, stiffness, damping, breakingForce) => { return CpConstraint; }, 
+        rotaryLimit : (otherSprite, minAngle, maxAngle, breakingForce) => { return CpConstraint; }, 
+        ratchet : (otherSprite, rachetInterval, phase, breakingForce) => { return CpConstraint; }, 
+        gear : (otherSprite, gearRatio, initialAngle, breakingForce) => { return CpConstraint; }, 
+        motor : (otherSprite, spin, maxTorque) => { return CpConstraint; }, 
+        removeJoint : (joint) => {},
+        disconnect : (otherSprite) => {},
+        makeJointBreakable : (joint, breakingForce) => {},
+        makeJointUnbreakable : (joint) => {},
+        on : (eventCode, func) => { return IEventHandler; }, 
+        onCollideSprite : (func) => { return IEventHandler; }, 
+        onCollideWall : (func) => { return IEventHandler; }, 
+        onOffscreen : (func) => { return IEventHandler; }, 
+        onOnscreen : (func) => { return IEventHandler; }, 
+        onExitLayer : (func) => { return IEventHandler; }, 
+        onAnimationLoop : (func) => { return IEventHandler; }, 
+        onAnimationEnd : (func) => { return IEventHandler; }, 
+        onFadeComplete : (func) => { return IEventHandler; }, 
+        onFadeInComplete : (func) => { return IEventHandler; }, 
+        onFadeOutComplete : (func) => { return IEventHandler; }, 
+        onMouseEnter : (func) => { return IEventHandler; }, 
+        onMouseLeave : (func) => { return IEventHandler; }, 
+        onMouseDown : (func) => { return IEventHandler; }, 
+        onMouseUp : (func) => { return IEventHandler; }, 
+        onMouseClick : (func) => { return IEventHandler; }, 
+    }; },
+
+    SpriteLayer : () => { return {
+   //  TODO: derive from Animated, EventEmitter, ISerializable
+        getMyClassTag : () => { return number; }, 
+        // getSerializedSize: get size of this object's data for the given stream
+        getSerializedSize : (serializer) => { return number /* uint */; }, 
+        // serialize: write this object's data into the given stream
+        serialize : (serializer) => {},
+        // deserialize: read this object's data from the given stream
+        deserialize : (deserializer) => {},
+        setSerializationFlags : (flags) => { return SpriteLayer; }, 
+        startAnimations : () => {},
+        stopAnimations : () => {},
+        hide : () => {},
+        show : () => {},
+        isHidden : () => { return boolean; }, 
+        fadeIn : (msDuration, easing) => {},
+        fadeOut : (msDuration, easing) => {},
+        moveBehind : (layer) => {},
+        moveInFrontOf : (layer) => {},
+        // moveToFront: move this layer in front of all other layers
+        moveToFront : () => {},
+        // moveToBack: move this layer behind all other layers
+        moveToBack : () => {},
+        getZOrder : () => { return number /* int */; }, 
+        moveWith : (layer, moveRatio, zoomRatio) => {},
+        findSprite : (id) => { return Sprite; }, 
+        getNthSprite : (index) => { return Sprite; }, 
+        getSpriteZOrder : (sprite) => { return number /* int */; }, 
+        isSpriteBehind : (sprite, otherSprite) => { return boolean; }, 
+        hasSprite : (sprite) => { return boolean; }, 
+        addSprite : (newSprite) => {},
+        removeSprite : (oldSprite) => {},
+        removeAllSprites : () => {},
+        enableCollisions : () => {},
+        disableCollisions : () => {},
+        enableCollisionsWithLayer : (otherLayer) => {},
+        disableCollisionsWithLayer : (otherLayer) => {},
+        createSprite : () => { return Sprite; }, 
+        getSpritePort : () => { return Port; }, 
+        setSpritePort : (port) => {},
+        setOrigin : (origin) => {},
+        // getOrigin: get the point in the layer that is drawn at 0,0 in the port
+        getOrigin : () => { return Point; }, 
+        setAutoCenter : (autoCenter) => {},
+        setFixedMoveAxis : (fixedAxis) => {},
+        setZoom : (zoomLevel) => {},
+        // getZoom: get the current zoom factor
+        getZoom : () => { return number; }, 
+        zoomTo : (zoomLevel, msDuration, easing, keepInRect, centerOn) => {},
+        zoom : (deltaZoomLevel, msDuration, easing, keepInRect, centerOn) => {},
+        layerToPortPoint : (p) => { return Point; }, 
+        layerToPortOffset : (o) => { return Offset; }, 
+        layerToPortVector : (v) => { return Vector; }, 
+        layerToPortRect : (r) => { return RotatedRect; }, 
+        layerToPortQuad : (q) => { return Quad; }, 
+        portToLayerPoint : (p) => { return Point; }, 
+        portToLayerOffset : (o) => { return Offset; }, 
+        portToLayerVector : (v) => { return Vector; }, 
+        portToLayerRect : (r) => { return RotatedRect; }, 
+        portToLayerQuad : (q) => { return Quad; }, 
+        setGravity : (gravity, keepItDownward) => {},
+        setUseChipmunkPhysics : (useIt) => {},
+        setStaticLayer : (isStatic) => {},
+        setKeepGravityDownward : (keepItDownward) => {},
+        setDamping : (damping) => {},
+        getSpace : () => { return CpSpace; }, 
+        createSpriteFromSCML : (inSCML, inEntityName) => { return Sprite; }, 
+        createSpriteFromSCMLFile : (inFileName, inEntityName) => { return Sprite; }, 
+        createSpriteFromSCMLEntity : (inEntityName) => { return Sprite; }, 
+        on : (eventCode, func) => { return IEventHandler; }, 
+        onCollideSprite : (func) => { return IEventHandler; }, 
+        onCollideWall : (func) => { return IEventHandler; }, 
+        onOffscreen : (func) => { return IEventHandler; }, 
+        onOnscreen : (func) => { return IEventHandler; }, 
+        onExitLayer : (func) => { return IEventHandler; }, 
+        onAnimationLoop : (func) => { return IEventHandler; }, 
+        onAnimationEnd : (func) => { return IEventHandler; }, 
+        onFadeComplete : (func) => { return IEventHandler; }, 
+        onFadeInComplete : (func) => { return IEventHandler; }, 
+        onFadeOutComplete : (func) => { return IEventHandler; }, 
+        onMouseEnter : (func) => { return IEventHandler; }, 
+        onMouseLeave : (func) => { return IEventHandler; }, 
+        onMouseDown : (func) => { return IEventHandler; }, 
+        onMouseUp : (func) => { return IEventHandler; }, 
+        onMouseClick : (func) => { return IEventHandler; }, 
+        onErasePort : (func) => { return IEventHandler; }, 
+        onPreDrawLayer : (func) => { return IEventHandler; }, 
+        onPostDrawLayer : (func) => { return IEventHandler; }, 
+        onDrawPortComplete : (func) => { return IEventHandler; }, 
+        onAnimationStart : (func) => { return IEventHandler; }, 
+        onPreAnimateLayer : (func) => { return IEventHandler; }, 
+        onPostAnimateLayer : (func) => { return IEventHandler; }, 
+        onAnimationComplete : (func) => { return IEventHandler; }, 
+        onZoomComplete : (func) => { return IEventHandler; }, 
+        onLayerFadeInComplete : (func) => { return IEventHandler; }, 
+        onLayerFadeOutComplete : (func) => { return IEventHandler; }, 
+    }; },
+
+    TileLayer : () => { return {
+   //  TODO: derive from SpriteLayer
+        setWorldSize : (width, height, repeatingX, repeatingY) => {},
+        getWorldSize : () => { return Rect; }, 
+        getWorldBounds : () => { return Rect; }, 
+        defineTileSet : (tileWidth, tileHeight, tiles, hasTransparency, flipTiles) => {},
+        loadMapData : (data, mapWidth, mapHeight, dstX, dstY) => {},
+        loadMapData : (data, mapWidth, mapHeight, dstX, dstY) => {},
+        getMapData : (mapWidth, mapHeight, srcX, srcY) => { return MemBlock; }, 
+        getTileSetImage : () => { return Image; }, 
+        getTileSize : () => { return Point; }, 
+        getTileTypeAt : (x, y) => { return number; }, 
+        getTileTypeAndFacingAt : (x, y) => { return object; }, 
+        setTileTypeAt : (x, y, t, facing) => {},
+        checkCollision : (movingSprite, alphaThreshold, shortCircuit) => { return number; }, 
+    }; },
+
+    Image : () => { return {
+        getWidth : () => { return number; }, 
+        getHeight : () => { return number; }, 
+        // getImageBounds: get image boundary rect, optionally with top left at given point
+        getImageBounds : (at) => { return Rect; }, 
+        // getSubsection: get image that is an arbitrary subsection of this image
+        getSubsection : (quad) => { return Image; }, 
+        getSubsection : (quad) => { return Image; }, 
+        setTransparentColor : (inTransparentColor) => { return Image; }, 
+        // getOpacity: get opacity of this image: 0.0
+        getOpacity : () => { return number; }, 
+        // setOpacity: set opacity of this image as range from either (0-255) or (0.0 to 1.0)
+        setOpacity : (opacity) => {},
+        // setEdgeClamping: set whether image uses edge clamping or not
+        setEdgeClamping : (inUseEdgeClamp) => {},
+        getTransparentColor : () => { return Color; }, 
+        // retainData: retain pixel data for use by Image.getPixel()
+        retainData : () => {},
+        // retainAlpha: retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions
+        retainAlpha : () => {},
+        // prepareToRasterize: bind the image into an OpenGL texture and free image data from main memory
+        prepareToRasterize : () => { return number; }, 
+        getAlphaValue : (p) => { return number; }, 
+        getAlphaValue : (x, y) => { return number; }, 
+        getPixel : (p) => { return Color; }, 
+        getPixel : (x, y) => { return Color; }, 
+    }; },
+
+    ImageStrip : () => { return {
+   //  TODO: derive from Image
+        // getFrame: get image that is a single frame of this multi-frame image
+        getFrame : (frameNum) => { return Image; }, 
+        getFrameWidth : () => { return number; }, 
+        setFrameWidth : (inFrameWidth) => { return ImageStrip; }, 
+        getNumFrames : () => { return number; }, 
+        setNumFrames : (inNumFrames) => { return ImageStrip; }, 
+    }; },
+
+    Font : () => { return {
+        getFontName : () => { return string; }, 
+        getFontHeight : (size, style) => { return number; }, 
+        getFontLeading : (size, style) => { return number; }, 
+        getFontAscent : (size, style) => { return number; }, 
+        getFontDescent : (size, style) => { return number; }, 
+    }; },
+
+    Port : () => { return {
+        getClipRect : () => { return Rect; }, 
+        setClipRect : (inClipRect) => { return Port; }, 
+        // getCursor: NOT IMPLEMENTED: get the Image that is being used as the cursor
+        getCursor : () => { return Image; }, 
+        // setCursor: NOT IMPLEMENTED
+        setCursor : (cursorImage, hotSpot) => {},
+        getDrawingArea : () => { return Rect; }, 
+        fillRect : (quad, rgba) => {},
+        fillRect : (quad, rgba) => {},
+        frameRect : (quad, rgba) => {},
+        frameRect : (quad, rgba) => {},
+        drawLine : (from, to, rgba) => {},
+        frameOval : (centerPt, xRadius, yRadius, rgba) => {},
+        fillOval : (centerPt, xRadius, yRadius, rgba) => {},
+        frameCircle : (centerPt, radius, rgba) => {},
+        fillCircle : (centerPt, radius, rgba) => {},
+        frameRoundRect : (rect, radius, rgba) => {},
+        fillRoundRect : (rect, radius, rgba) => {},
+        fillRectEx : (quad, pattern, patternShift, rgba) => {},
+        fillRectEx : (quad, pattern, patternShift, rgba) => {},
+        frameRectEx : (quad, thickness, pattern, patternShift, rgba) => {},
+        frameRectEx : (quad, thickness, pattern, patternShift, rgba) => {},
+        drawLineEx : (from, to, thickness, pattern, patternShift, rgba) => {},
+        fillRectWithGradient : (quad, startColor, endColor) => {},
+        fillRectWithGradient : (quad, startColor, endColor) => {},
+        drawText : (text, location, size, style, rgba) => {},
+        drawText : (text, quad, size, style, rgba) => {},
+        drawText : (text, rect, size, style, rgba) => {},
+        drawImage : (img, loc) => {},
+        drawImage : (img, quad) => {},
+        drawImage : (img, rect, fitType, clipOverflow) => {},
+        drawTexture : (img, r) => {},
+        drawTexturedSphere : (img, loc, radius, rotation, polarOffsetRadians, lightOffsetRadians) => {},
+        drawTexturedSphere : (imgStrip, frameNum, loc, radius, rotation, polarOffsetRadians, lightOffsetRadians) => {},
+        getTextWidth : (text, size, style, len) => { return number; }, 
+        getCurrentFont : (style) => { return Font; }, 
+        setFont : (font) => {},
+        setFontForStyle : (style, font) => {},
+        setFontScalingFactor : (scaleBy) => {},
+        // startTrackingMouse: NOT IMPLEMENTED
+        startTrackingMouse : (rect) => { return number; }, 
+        // stopTrackingMouse: NOT IMPLEMENTED
+        stopTrackingMouse : (trackingRef) => {},
+        // resetCursor: NOT IMPLEMENTED: restore the default system cursor
+        resetCursor : () => {},
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.gfx
+    GraphicsManager : () => { return {
+        getNumScreens : () => { return number; }, 
+        getFPS : () => { return number; }, 
+        getTargetFPS : () => { return number; }, 
+        setTargetFPS : (inTargetFPS) => { return GraphicsManager; }, 
+        getMouse : (mouseNumber) => { return Point; }, 
+        // getCurrentScreenMode: returns object with width, height, depth and maxWindowRect for specified screen
+        getCurrentScreenMode : (screenNum) => { return object; }, 
+        // getScreenBounds: returns the bounds (position and size) of a screen in the global coordinate space
+        getScreenBounds : (screenNum) => { return Rect; }, 
+        getNumSupportedScreenModes : (screen) => { return number; }, 
+        // getNthSupportedScreenMode: returns object with width, height, depth and maxWindowRect for specified screen
+        getNthSupportedScreenMode : (n, screenNum) => { return object; }, 
+        // setScreenMode: changes specified screen to closest matching mode
+        setScreenMode : (width, height, screenNum, bpp) => {},
+        // createWindowPort: create windowed drawing port with given dimensions, title and depth
+        createWindowPort : (rect, windName, bpp) => { return Port; }, 
+        // createFullScreenPort: create full screen drawing port with given dimensions on given screen, optionally changing depth
+        createFullScreenPort : (rect, screenNum, allowResChange, bpp) => { return Port; }, 
+        // closeGraphicsPort: close given port, along with its window and restore screen mode if changed
+        closeGraphicsPort : (port) => {},
+        // createFont: get a font with optional scaling adjust
+        createFont : (fontName, scalingFactor) => { return Font; }, 
+        // getMainPort: return the primary graphics port
+        getMainPort : () => { return Port; }, 
+        // switchToFullScreenMode: change a port to fullscreen mode, return true on success
+        switchToFullScreenMode : (allowResChange, port) => { return boolean; }, 
+        // switchToWindowMode: change a port to window mode, return true on success
+        switchToWindowMode : (port, windName) => { return boolean; }, 
+        // inFullScreenMode: return whether primary graphics port is fullscreen or not
+        inFullScreenMode : () => { return boolean; }, 
+    }; },
+
+    Sound : () => { return {
+   //  TODO: derive from EventEmitter
+        getVolume : () => { return number; }, 
+        setVolume : (inVolume) => { return Sound; }, 
+        play : (vol, offsetX, pitch, fromMs, lenMs) => {},
+        start : () => {},
+        stop : () => {},
+        pause : () => {},
+        resume : () => {},
+        isPaused : () => { return boolean; }, 
+        setLooping : (loopingOn) => { return Sound; }, 
+        isLooping : () => { return boolean; }, 
+        setPitch : (pitchOffset) => { return Sound; }, 
+        changePitch : (targetOffset, msDuration, easing) => {},
+        setOffsetX : (offsetX) => { return Sound; }, 
+        changeOffsetX : (targetOffset, msDuration, easing) => {},
+        fadeOut : (fadeMs, easing) => {},
+        fadeIn : (fadeMs, easing) => {},
+        changeVolume : (level, fadeMs, easing) => {},
+        skip : (skipMilliseconds) => { return Sound; }, 
+        skipTo : (timeMs) => { return Sound; }, 
+        on : (eventCode, func) => { return IEventHandler; }, 
+        onDonePlaying : (func) => { return IEventHandler; }, 
+        onLooping : (func) => { return IEventHandler; }, 
+        onFailedToPlay : (func) => { return IEventHandler; }, 
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.snd
+    SoundManager : () => { return {
+        // setVolume: 0.0
+        setVolume : (level) => {},
+        setMute : (muted) => {},
+        on : (eventCode, func) => { return IEventHandler; }, 
+        onDonePlaying : (func) => { return IEventHandler; }, 
+        onLooping : (func) => { return IEventHandler; }, 
+        onFailedToPlay : (func) => { return IEventHandler; }, 
+    }; },
+
+    Point : () => { return {
+   //  TODO: derive from Offset
+        x : null,
+        y : null,
+        // Point: create and set x & y values
+        Point : () => { return Point; }, 
+        Point : (x, y) => { return Point; }, 
+        Point : (xy) => { return Point; }, 
+        Point : (xy) => { return Point; }, 
+        // distance: get distance from another point
+        distance : (point) => { return number; }, 
+        // offset: get the offset of this point from another point
+        offset : (point) => { return Offset; }, 
+    }; },
+
+    Offset : () => { return {
+        x : null,
+        y : null,
+        // Offset: create and set x & y values
+        Offset : () => { return Offset; }, 
+        Offset : (x, y) => { return Offset; }, 
+        Offset : (xy) => { return Offset; }, 
+        Offset : (xy) => { return Offset; }, 
+        // equals: return true if this point is equal to the other
+        equals : (offset) => { return boolean; }, 
+        // notEquals: return true if this point is not equal to the other
+        notEquals : (offset) => { return boolean; }, 
+        // assign: set this offset equal to the given offset
+        assign : (offset) => { return Offset; }, 
+        // add: add an offset to this one
+        add : (offset) => { return Offset; }, 
+        // sub: subtract an offset from this one
+        sub : (offset) => { return Offset; }, 
+        // mul: multiply this offset by the given one
+        mul : (offset) => { return Offset; }, 
+        // div: divide this offset by the given one
+        div : (offset) => { return Offset; }, 
+        // plus: return new offset that is this offset plus given offset
+        plus : (offset) => { return Offset; }, 
+        // minus: return new offset that is this offset minus given offset
+        minus : (offset) => { return Offset; }, 
+        // times: return new offset that is this offset multiplied by given offset
+        times : (offset) => { return Offset; }, 
+        // dividedby: return new offset that is this offset divided by given offset
+        dividedby : (offset) => { return Offset; }, 
+        // vector: return a new vector from this offset
+        vector : () => { return Vector; }, 
+    }; },
+
+    Vector : () => { return {
+   //  TODO: derive from Offset
+        x : null,
+        y : null,
+        // Vector: create and set x & y values
+        Vector : () => { return Vector; }, 
+        Vector : (x, y) => { return Vector; }, 
+        Vector : (xy) => { return Vector; }, 
+        Vector : (xy) => { return Vector; }, 
+        // unit: get the unit vector of this vector, ie: A.unit() = (A.x / |A|, A.y / |A|)
+        unit : () => { return Vector; }, 
+        // normal: get the normal of this vector, ie: A.normal() = (-A.y, A.x)
+        normal : () => { return Vector; }, 
+        // dotProduct: get dot product for this vector with a 2nd vector
+        dotProduct : (vector) => { return number; }, 
+        // vectorLength: get length as a vector (distance from origin)
+        vectorLength : () => { return number; }, 
+        // vectorAngle: get angle (in radians) for this vector
+        vectorAngle : () => { return number; }, 
+        // projection: projection of a point onto the line defined by this vector, ie: A.projection(B) = ((A . B) / |B|^2) * B
+        projection : (point) => { return Point; }, 
+    }; },
+
+    Rect : () => { return {
+        left : null,
+        top : null,
+        right : null,
+        bottom : null,
+        // Rect: create and set values
+        Rect : () => { return Rect; }, 
+        Rect : (w, h) => { return Rect; }, 
+        Rect : (topLeft, w, h) => { return Rect; }, 
+        Rect : (leftTop, rightBottom) => { return Rect; }, 
+        Rect : (left, top, right, bottom) => { return Rect; }, 
+        // empty: return true if this rectangle is empty (no width or no height)
+        empty : () => { return boolean; }, 
+        // contains: contains([Point] p) return true if the point is inside this rectangle
+        // contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle
+        contains : (r) => { return boolean; }, 
+        contains : (p) => { return boolean; }, 
+        // overlaps: return true if this rectangle overlaps the other rectangle at all (sharing an edge is not overlapping)
+        overlaps : (r) => { return boolean; }, 
+        // leftTop: get top left corner point of this rectangle
+        leftTop : () => { return Point; }, 
+        // rightTop: get top right corner point of this rectangle
+        rightTop : () => { return Point; }, 
+        // leftBottom: get bottom left corner point of this rectangle
+        leftBottom : () => { return Point; }, 
+        // rightBottom: get bottom right corner point of this rectangle
+        rightBottom : () => { return Point; }, 
+        // centerPoint: get center point of this rectangle
+        centerPoint : () => { return Point; }, 
+        // x1: alias for Rect.left
+        x1 : () => { return number; }, 
+        // y1: alias for Rect.top
+        y1 : () => { return number; }, 
+        // x2: alias for Rect.right
+        x2 : () => { return number; }, 
+        // y2: alias for Rect.bottom
+        y2 : () => { return number; }, 
+        // width: get the width of this rectangle
+        width : () => { return number; }, 
+        // height: get the height of this rectangle
+        height : () => { return number; }, 
+        // intersection: get a new rectangle that is the overlapping area of the the rectangles
+        intersection : (r) => { return Rect; }, 
+        // unionWith: get the smallest possible new rectangle that contains both rectangles
+        unionWith : (r) => { return Rect; }, 
+        // moveLeft: move the rectangle to the left by some amount
+        moveLeft : (delta) => {},
+        // moveRight: move the rectangle to the right by some amount
+        moveRight : (delta) => {},
+        // moveUp: move the rectangle up by some amount
+        moveUp : (delta) => {},
+        // moveDown: move the rectangle down by some amount
+        moveDown : (delta) => {},
+        // moveXTo: move the rectangle to a particular x location, leaving y unchanged
+        moveXTo : (x) => {},
+        // moveYTo: move the rectangle to a particular y location, leaving x unchanged
+        moveYTo : (y) => {},
+        // moveTo: moveTo(x,y): the rectangle to a particular (x, y) location
+        // moveTo([Point] p): move the rectangle to a particular point
+        moveTo : (x, y) => {},
+        moveTo : (p) => {},
+        // center: center([Point] p): move the rectangle to be centered over a particular point
+        // center([Rect] r): move the rectangle to be centered within/relative to another rectangle
+        center : (r) => {},
+        center : (p) => {},
+        // setSize: set the size (width & height) of the rectangle
+        setSize : (n) => {},
+        setWidth : (w) => {},
+        setHeight : (h) => {},
+        // horzShrink: reduce the width of the rectangle while leaving the center point unchanged
+        horzShrink : (delta) => {},
+        // vertShrink: reduce the height of the rectangle while leaving the center point unchanged
+        vertShrink : (delta) => {},
+        // horzGrow: increase the width of the rectangle while leaving the center point unchanged
+        horzGrow : (delta) => {},
+        // vertGrow: increase the height of the rectangle while leaving the center point unchanged
+        vertGrow : (delta) => {},
+        // shrink: reduce the height and width of the rectangle while leaving the center point unchanged
+        shrink : (delta) => {},
+        // grow: increase the height and width of the rectangle while leaving the center point unchanged
+        grow : (delta) => {},
+        // horzScale: change the x coordinates of the rectangle by a multiplier
+        horzScale : (f) => {},
+        // vertScale: change the y coordinates of the rectangle by a multiplier
+        vertScale : (f) => {},
+        // scale: change the coordinates of the rectangle by a multiplier
+        scale : (f) => {},
+        // round: round the coordinates to closest whole number
+        round : () => {},
+        // toQuad: convert rectangle to a Quad
+        toQuad : () => { return Quad; }, 
+        // equals: return true if this rectangle is equal to the given one
+        equals : (r2) => { return boolean; }, 
+        // notEquals: return true if this rectangle is not equal to the given one
+        notEquals : (r2) => { return boolean; }, 
+        // assign: set this rectangle equal to the given one
+        assign : (r2) => { return Rect; }, 
+        // add: add([Point] p): offset this rectangle's location by adding x & y coordinates of the point
+        // add([Rect] r): add another rectangle to this one by adding corresponding coordinates
+        add : (r2) => { return Rect; }, 
+        add : (p) => { return Rect; }, 
+        // sub: sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point
+        // sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates
+        sub : (r2) => { return Rect; }, 
+        sub : (p) => { return Rect; }, 
+        // mul: mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point
+        // mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle
+        mul : (r2) => { return Rect; }, 
+        mul : (p) => { return Rect; }, 
+        // div: div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point
+        // div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle
+        div : (r2) => { return Rect; }, 
+        div : (p) => { return Rect; }, 
+        plus : (r2) => { return Rect; }, 
+        plus : (p) => { return Rect; }, 
+        minus : (r2) => { return Rect; }, 
+        minus : (p) => { return Rect; }, 
+        times : (r2) => { return Rect; }, 
+        times : (p) => { return Rect; }, 
+        dividedby : (r2) => { return Rect; }, 
+        dividedby : (p) => { return Rect; }, 
+    }; },
+
+    Quad : () => { return {
+        points : null,
+        // Quad: new Quad(): create an empty quad at 0,0
+        // new Quad([Quad] q): copy from another quad
+        // new Quad([Rect] r): create a quad from a rectangle
+        // new Quad([RotatedRect r]): create a quad from a rotated rectangle
+        // new Quad([Point] p1, [Point] p2, [Point] p3, [Point] p4): create a quad given its corner points
+        // new Quad([Point] p[4]): create a quad given an array of 4 points
+        Quad : () => { return Quad; }, 
+        Quad : (q) => { return Quad; }, 
+        Quad : (r) => { return Quad; }, 
+        Quad : (r) => { return Quad; }, 
+        Quad : (p1, p2, p3, p4) => { return Quad; }, 
+        Quad : (p) => { return Quad; }, 
+        // getBounds: return a rectangle that bounds the quad
+        getBounds : () => { return Rect; }, 
+        // centerPoint: return the calculated centerpoint of the quad
+        centerPoint : () => { return Point; }, 
+        // equals: return true if this quad is equal to the given one
+        equals : (q2) => { return boolean; }, 
+        // notEquals: return true if this quad is not equal to the given one
+        notEquals : (q2) => { return boolean; }, 
+        // contains: returns true if the point is contained within this quad
+        contains : (p) => { return boolean; }, 
+        // moveLeft: move the quad to the left by some amount
+        moveLeft : (delta) => {},
+        // moveRight: move the quad to the right by some amount
+        moveRight : (delta) => {},
+        // moveUp: move the quad up by some amount
+        moveUp : (delta) => {},
+        // moveDown: move the quad down by some amount
+        moveDown : (delta) => {},
+        // rotate: rotate(n): rotate the quad by a rotation in radians (around the calculated center point of the quad)
+        // rotate(n, [Offset] o): rotate the quad by a rotation in radians around an offset center point
+        rotate : (rotationRadians, centerPtOffset) => {},
+    }; },
+
+    RotatedRect : () => { return {
+   //  TODO: derive from Rect
+        left : null,
+        top : null,
+        right : null,
+        bottom : null,
+        centerOffset : null,
+        // RotatedRect: create a new RotatedRect
+        RotatedRect : (rect, rotationRadians, cpOffset) => { return RotatedRect; }, 
+        // setCenterOffset: set an offset for point around which rotation is applied
+        setCenterOffset : (cpOffset) => {},
+        // setRotation: set the rotation of this rectangle to a particular amount in radians
+        setRotation : (rotationRadians, cpOffset) => {},
+        // rotate: change the rotation of this rectangle by some number of radians
+        rotate : (rotateRadians) => {},
+        // getQuad: create a Quad by applying the rectangle's rotation around the center point with offset
+        getQuad : () => { return Quad; }, 
+    }; },
+
+    Color : () => { return {
+        red : null,
+        green : null,
+        blue : null,
+        alpha : null,
+        // Color: create and color and set rgb values
+        Color : () => { return Color; }, 
+        Color : (c) => { return Color; }, 
+        Color : (colorstr) => { return Color; }, 
+        Color : (r, g, b, alpha) => { return Color; }, 
+        // equals: return true if this color is equal to the other (ignoring alpha)
+        equals : (color) => { return boolean; }, 
+        // notEquals: return true if this color is not equal to the other (ignoring alpha)
+        notEquals : (color) => { return boolean; }, 
+        // assign: set this color equal to the given color
+        assign : (color) => { return Color; }, 
+        // convertToGrayscale: convert this color to a matching shade of grey
+        convertToGrayscale : () => {},
+    }; },
+
+    NetConnection : () => { return {
+        localAddr : null,
+        localPort : null,
+        remoteAddr : null,
+        remotePort : null,
+        hasDgram : null,
+        // NetConnection: create a NetConnection to manage a socket
+        NetConnection : (socket) => { return NetConnection; }, 
+        // close: close the connection
+        close : (kill) => {},
+        // onClose: setup connection close handler
+        onClose : (callback) => { return NetConnection; }, 
+        // onMessage: setup incoming message handler
+        onMessage : (callback) => { return NetConnection; }, 
+        // send: send a message via a reliable transport mechanism
+        send : (message) => {},
+        send : (message) => {},
+        send : (message) => {},
+        send : (message) => {},
+        // sendDgram: send a message via the fastest transport mechanism
+        sendDgram : (message) => {},
+        sendDgram : (message) => {},
+        sendDgram : (message) => {},
+        sendDgram : (message) => {},
+    }; },
+
+    NetClient : () => { return {
+        connection : null,
+        // NetClient: create a network client
+        NetClient : (opts) => { return NetClient; }, 
+        // connect: connect to a server for your game
+        connect : (serverInfo, callback, clientKey) => { return NetClient; }, 
+        // onError: setup error handler
+        onError : (callback) => { return NetClient; }, 
+    }; },
+
+    NetServer : () => { return {
+        serverPort : null,
+        serverAddr : null,
+        handshakeTimeout : null,
+        reservationRequired : null,
+        allowDatagram : null,
+        listening : null,
+        connections : null,
+        // NetServer: create a network server
+        NetServer : (opts) => { return NetServer; }, 
+        // listen: open the server for incoming connections
+        listen : (callback) => { return NetServer; }, 
+        // broadcast: send a message to all connections, with optional filter
+        broadcast : (message, filter) => { return number; }, 
+        // expectClient: client reservation
+        expectClient : (clientKey, clientIpAddr, reservationTTL, singleUse) => { return NetServer; }, 
+        // onError: setup error handler
+        onError : (callback) => { return NetServer; }, 
+        // shutdown: close the listener and don't accept new connections
+        shutdown : (closeExisting, kill) => {},
+    }; },
+
+};

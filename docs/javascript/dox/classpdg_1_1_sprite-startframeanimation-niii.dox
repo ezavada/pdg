@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::startFrameAnimation(fps, startingFrame, numFrames, animateFlags)
+
+\brief starts frame animation with specified fps, starting frame, number of frames, and animation flags
+
+**/ }

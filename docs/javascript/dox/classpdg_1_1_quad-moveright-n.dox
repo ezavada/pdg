@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Quad::moveRight(delta)
+
+\brief move the quad to the right by some amount
+
+**/ }

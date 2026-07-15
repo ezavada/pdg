@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::getLineStyle()
+
+\brief returns the current line style
+
+**/ }

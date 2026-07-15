@@ -1,0 +1,93 @@
+{
+  "testName": "PDG PDGMark (C++)",
+  "timestamp": "2025-10-20T19:10:42Z",
+  "totalDurationSeconds": 208.314,
+  "compositeScore": 97934,
+  "tests": {
+    "bitmap": {
+      "testName": "bitmap",
+      "testTitle": "Bitmap Rendering",
+      "weight": 1,
+      "objectsAt60FPS": 31800,
+      "score": 31800,
+      "durationSeconds": 83.12,
+      "totalFrames": 6413,
+      "frameTime": {
+        "meanMs": 8.23608,
+        "minMs": 0,
+        "maxMs": 43,
+        "percentile95Ms": 14,
+        "percentile99Ms": 18
+      },
+      "averageFPS": 121.417
+    },
+    "drawing": {
+      "testName": "drawing",
+      "testTitle": "Line Drawing",
+      "weight": 1.2,
+      "objectsAt60FPS": 18450,
+      "score": 22140,
+      "durationSeconds": 47.109,
+      "totalFrames": 3530,
+      "frameTime": {
+        "meanMs": 9.67649,
+        "minMs": 0,
+        "maxMs": 29,
+        "percentile95Ms": 15,
+        "percentile99Ms": 18
+      },
+      "averageFPS": 103.343
+    },
+    "alpha": {
+      "testName": "alpha",
+      "testTitle": "Alpha Blending",
+      "weight": 1.3,
+      "objectsAt60FPS": 28200,
+      "score": 36660,
+      "durationSeconds": 54.953,
+      "totalFrames": 4258,
+      "frameTime": {
+        "meanMs": 8.31611,
+        "minMs": 0,
+        "maxMs": 37,
+        "percentile95Ms": 15,
+        "percentile99Ms": 19
+      },
+      "averageFPS": 120.249
+    },
+    "polygon": {
+      "testName": "polygon",
+      "testTitle": "Polygon Fills",
+      "weight": 1.5,
+      "objectsAt60FPS": 4600,
+      "score": 6900,
+      "durationSeconds": 9.085,
+      "totalFrames": 709,
+      "frameTime": {
+        "meanMs": 7.34838,
+        "minMs": 0,
+        "maxMs": 20,
+        "percentile95Ms": 13,
+        "percentile99Ms": 16
+      },
+      "averageFPS": 136.084
+    },
+    "text": {
+      "testName": "text",
+      "testTitle": "Text Rendering",
+      "weight": 1.4,
+      "objectsAt60FPS": 310,
+      "score": 434,
+      "durationSeconds": 14.041,
+      "totalFrames": 1042,
+      "frameTime": {
+        "meanMs": 4.20633,
+        "minMs": 0,
+        "maxMs": 38,
+        "percentile95Ms": 22,
+        "percentile99Ms": 26
+      },
+      "averageFPS": 237.737
+    }
+  }
+}

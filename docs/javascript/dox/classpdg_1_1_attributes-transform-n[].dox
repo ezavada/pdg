@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Attributes::transform([n,n,n,  n,n,n,  n,n,n]])
+
+\brief sets the transformation matrix directly
+
+**/ }

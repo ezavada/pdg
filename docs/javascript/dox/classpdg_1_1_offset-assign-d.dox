@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Offset::assign(offset)
+
+\brief set this offset equal to the given offset
+
+**/ }

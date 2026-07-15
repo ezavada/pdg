@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setFrame(frame)
+
+\brief sets the current frame of the sprite to the specified frame number
+
+**/ }

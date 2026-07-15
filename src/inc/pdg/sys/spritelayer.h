@@ -43,11 +43,12 @@
 #endif
 
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-#include "chipmunk.h"
+#include "chipmunk/chipmunk_private.h"
 #endif
 
-#ifdef PDG_SCML_SUPPORT
-#include "SCML_pdg.h"
+#ifdef PDG_SPRITER_SUPPORT
+#include "spriter/pdg_spriter.h"
+#include "spriterengine/model/spritermodel.h"
 #endif
 
 #include <vector>
@@ -97,7 +98,8 @@ enum {
 // Used to create and track collections of sprites
 // -----------------------------------------------------------------------------------
 
-class SpriteLayer : public EventEmitter, public Animated, public Serializable<SpriteLayer> {
+class SpriteLayer : public EventEmitter, public Animated, public Serializable<SpriteLayer> 
+{
 friend class Sprite;
 friend class SpriteManager;
 public:
@@ -145,8 +147,8 @@ public:
     virtual void	hide();
     virtual void	show();
 	virtual bool	isHidden();
-	virtual void	fadeIn(int32 msDuration, EasingFunc easing = linearTween);  // fadeInComplete notification when done
-	virtual void	fadeOut(int32 msDuration, EasingFunc easing = linearTween);  // fadeOutComplete notification when done
+	virtual void	fadeIn(ms_delta msDuration, EasingFunc easing = linearTween);  // fadeInComplete notification when done
+	virtual void	fadeOut(ms_delta msDuration, EasingFunc easing = linearTween);  // fadeOutComplete notification when done
 	
 	// arrange layers
 	virtual void	moveBehind(SpriteLayer* layer);
@@ -179,9 +181,9 @@ public:
 	float           getZoom() const;
 
 	 // keeps centered, taking into account layer center offset
-	virtual void	zoomTo(float zoomLevel, int32 msDuration, EasingFunc easing = easeInOutQuad, 
+	virtual void	zoomTo(float zoomLevel, ms_delta msDuration, EasingFunc easing = easeInOutQuad, 
 							Rect keepInRect = Rect(0,0), const Point* centerOn = 0);
-	void			zoom(float deltaZoomLevel, int32 msDuration, EasingFunc easing = easeInOutQuad, 
+	void			zoom(float deltaZoomLevel, ms_delta msDuration, EasingFunc easing = easeInOutQuad, 
 							Rect keepInRect = Rect(0,0), const Point* centerOn = 0);
   #endif // ! PDG_NO_GUI
 
@@ -210,17 +212,22 @@ public:
 	virtual Sprite* createSprite();
 	virtual Sprite* cloneSprite(const Sprite* originalSprite);
 	
-  #ifdef PDG_SCML_SUPPORT
-	// Spriter file (SCML) support
+  #ifdef PDG_SPRITER_SUPPORT
+	// Spriter file support
 	
-	// create a sprite from Spriter SCML data, optionally specifying which entity if there are several
-	virtual Sprite* createSpriteFromSCML(const char* inSCML, const char* inEntityName = 0);
-	// create a sprite from a Spriter SCML file, optionally specifying which entity if there are several
-	virtual Sprite* createSpriteFromSCMLFile(const char* inFileName, const char* inEntityName = 0);
+	// create a sprite from a Spriter file, optionally specifying which entity if there are several
+	virtual Sprite* createSpriteFromSpriterFile(const char* inFileName, const char* inEntityName = 0);
 	// create a sprite from an entity that was previously loaded
-	// this only works for layers created via createSpriteLayerFromSCMLFile
-	virtual Sprite* createSpriteFromSCMLEntity(const char* inEntityName);
-  #endif // PDG_SCML_SUPPORT
+	// this only works for layers created via createSpriteLayerFromSpriterFile
+	virtual Sprite* createSpriteFromSpriterEntity(const char* inEntityName);
+	
+	// Character map management
+	void applyCharacterMapToAll(const char* mapName);
+	void removeCharacterMapFromAll(const char* mapName);
+	
+	// Event system (basic, triggers only)
+	void enableSpriterEvents(bool enable = true);
+  #endif // PDG_SPRITER_SUPPORT
 
   #ifndef PDG_NO_GUI
     // coordinate conversions, adjusting for offset, zoom and rotation of layer
@@ -286,20 +293,28 @@ protected:
 	virtual void drawLayer();
   #endif // ! PDG_NO_GUI
 
-	virtual void animateLayer(long msElapsed);
+	virtual void animateLayer(ms_delta msElapsed);
 
     // do collision between layers
-	virtual void    collide(long msElapsed, SpriteLayer* withLayer, bool deferEvents = false);
+	virtual void    collide(ms_delta msElapsed, SpriteLayer* withLayer, bool deferEvents = false);
 
 	// sprite action notifications
 	// normally these notifications will be enqueued to be handled at the end of the event loop,
 	// but you can pass true to sendImmediately to have the notifications directly posted to the event handlers
 	void notifyAnimationAction(int action, Sprite* actingSprite, bool sendImmediately = false);
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-	void notifyCollisionAction(int action, Sprite* actingSprite, Vector normal, Vector impulse, float force, float kineticEnergy, cpArbiter* arbiter, Sprite* targetSprite = 0, bool sendImmediately = false);
-  #else
-	void notifyCollisionAction(int action, Sprite* actingSprite, Vector normal, Vector impulse, float force, float kineticEnergy, Sprite* targetSprite = 0, bool sendImmediately = false);
-  #endif
+
+	// sprite collision notifications
+	void notifyCollisionAction(int action, Sprite* actingSprite, Vector normal, Vector impulse, float force, float kineticEnergy, 
+      #ifdef PDG_USE_CHIPMUNK_PHYSICS
+		cpArbiter* arbiter, 
+	 #endif // PDG_USE_CHIPMUNK_PHYSICS
+	#ifdef PDG_SPRITER_SUPPORT
+		const char* collisionName,
+		const char* withCollisionName,
+		bool isFirstContact,
+	#endif // PDG_SPRITER_SUPPORT
+		Sprite* targetSprite = 0, bool sendImmediately = false);
+
   #ifndef PDG_NO_GUI
 	void wantMouseOverEvents();
 	void checkIfMouseOverEventsStillWanted();
@@ -317,8 +332,8 @@ protected:
 	bool mDoCollisions;
 	bool mWantsMouseOver;
 	bool mWantsClicks;
-	uint32 mDoneFadingInAt;
-	uint32 mDoneFadingOutAt;
+	ms_time mDoneFadingInAt;
+	ms_time mDoneFadingOutAt;
 
   #ifndef PDG_NO_GUI
 	float mZoom;
@@ -334,10 +349,8 @@ protected:
 	bool mIsStaticLayer;
   #endif
 
-  #ifdef PDG_SCML_SUPPORT
-	Sprite* createSCMLSprite(SCML::Data* scmlData, bool needLoad, const char* inEntityName, bool addAll = false);
-	void createSCMLSprites(SCML::Data* scmlData);
-  	std::list<SCML::Data*>	mSCMLData;
+  #ifdef PDG_SPRITER_SUPPORT
+	std::list<std::pair<std::string, SpriterEngine::SpriterModel*>> mModels;
   #endif
 
 	SpriteLayer* mNextLayer;
@@ -411,7 +424,7 @@ SpriteLayer::getZoom() const {
 }
 
 inline void	
-SpriteLayer::zoom(float deltaZoom, int32 msDuration, EasingFunc easing, 
+SpriteLayer::zoom(float deltaZoom, ms_delta msDuration, EasingFunc easing, 
 				Rect keepInRect, const Point* centerOn) {
 	zoomTo(mZoom * deltaZoom, msDuration, easing, keepInRect, centerOn);
 }
@@ -438,28 +451,27 @@ SpriteLayer::setUseChipmunkPhysics(bool useIt) {
 
 // create a Sprite Layer object
 // will use main port if none given
-#ifndef PDG_NO_GUI
-
-SpriteLayer* createSpriteLayer(Port* port = 0);
-#ifdef PDG_SCML_SUPPORT
-// if addSprites is true, every entity in the SCML file will have a sprite created for it
-// and added to the layer.
-SpriteLayer* createSpriteLayerFromSCMLFile(const char* layerSCMLFile, bool addSprites = true, Port* port = 0);
-#endif
-
-#else
-
 SpriteLayer* createSpriteLayer();
-#ifdef PDG_SCML_SUPPORT
+#ifndef PDG_NO_GUI
+SpriteLayer* createSpriteLayer(Port* port = 0);
+#endif // !PDG_NO_GUI
+
+// create a sprite layer from a Spriter file
 // if addSprites is true, every entity in the SCML file will have a sprite created for it
 // and added to the layer.
-SpriteLayer* createSpriteLayerFromSCMLFile(const char* layerSCMLFile, bool addSprites = true);
-#endif
+// will use main port if none given
+#ifdef PDG_SPRITER_SUPPORT
+  SpriteLayer* createSpriteLayerFromSpriterFile(
+	const char* layerSpriterFile, 
+	bool addSprites = true
+   #ifndef PDG_NO_GUI
+    , Port* port = 0
+   #endif // !PDG_NO_GUI
+  );
+#endif // PDG_SPRITER_SUPPORT
 
-#endif // PDG_NO_GUI
-
-// delete a sprite layer, release all sprites in it, and remove it from the sprite manager
-void cleanupSpriteLayer(SpriteLayer* layer);
+// delete a sprite layer (or tile layer), release all sprites in it, and remove it from the sprite manager
+void cleanupLayer(SpriteLayer* layer);
 	
 
 } // end namespace pdg

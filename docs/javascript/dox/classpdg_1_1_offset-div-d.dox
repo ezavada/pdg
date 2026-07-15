@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Offset::div(offset)
+
+\brief divide this offset by the given one
+
+**/ }

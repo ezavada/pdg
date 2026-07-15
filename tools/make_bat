@@ -19,6 +19,10 @@ if not %BUILD_STATUS%==0 goto Error
 if not exist tools\node.exe (
 	copy /Y deps\node\Release\node.exe tools\ 
 )
+if not exist node_modules\jasmine-node\package.json (
+    echo Installing Jasmine Node Module for testing...
+    deps\node\deps\npm\bin\npm install jasmine-node
+)
 
 :msbuild
 if defined MSVS_VERSION goto :msbuild-found
@@ -70,6 +74,13 @@ set BUILD_STATUS=%ERRORLEVEL%
 cd ..\..\..
 if not %BUILD_STATUS%==0 goto Error
 copy build\win32\chipmunk\src\%config%\chipmunk.lib build\win32\chipmunk\src\
+
+echo Building libjpeg-turbo Library ...
+cd build\win32\libjpeg-turbo
+msbuild jpeg.sln /m /t:%target% /p:Configuration=%config% /clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal /nologo
+set BUILD_STATUS=%ERRORLEVEL%
+cd ..\..\..
+if not %BUILD_STATUS%==0 goto Error
 
 echo Building PDG ...
 cd msvc

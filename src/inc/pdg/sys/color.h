@@ -47,6 +47,8 @@ namespace pdg {
 #define PDG_WHITE_COLOR     ::pdg::Color(1.0f, 1.0f, 1.0f)
 #define PDG_BLACK_COLOR     ::pdg::Color(0.0f, 0.0f, 0.0f)
 
+#define PDG_TRANSPARENT_COLOR  ::pdg::Color(0.0f, 0.0f, 0.0f, 0.0f)
+
 // primary colors
 #define PDG_RED_COLOR       ::pdg::Color(1.0f, 0.0f, 0.0f)
 #define PDG_GREEN_COLOR     ::pdg::Color(0.0f, 1.0f, 0.0f)
@@ -117,9 +119,11 @@ struct Color {
 	Color( float r, float g, float b, float a ): red(r), green(g), blue(b), alpha(a) {}
 	//! create a new color with the ARGB values specified in a single unsigned 32 bit value
     explicit Color( uint32 c ):  red((float)((c>>16)&0xff)/255.0f), 
-						green((float)((c>>8)&0xff)/255.0f), 
-						blue((float)(c&0xff)/255.0f),
-						alpha((float)((c>>24)&0xff)/255.0f)  {}
+					green((float)((c>>8)&0xff)/255.0f), 
+					blue((float)(c&0xff)/255.0f),
+					alpha((float)((c>>24)&0xff)/255.0f)  {}
+	//! copy constructor
+    Color(const Color& c) : red(c.red), green(c.green), blue(c.blue), alpha(c.alpha) {}
 	//! set this color equal to another
     Color&  operator=(const Color& c) { red = c.red; green = c.green; blue = c.blue; alpha = c.alpha; return *this; }
 	//! set to ARGB color value
@@ -130,7 +134,6 @@ struct Color {
     								return *this; 
     							}
 	//! check to see if this color is the same as another, IGNORES ALPHA
-    bool    operator==(const Color& c) { return ((uint8)(255.0f * red) == (uint8)(255.0f * c.red) && (uint8)(255.0f * green) == (uint8)(255.0f * c.green) && (uint8)(255.0f * blue) == (uint8)(255.0f * c.blue)); }
     bool    operator==(uint32 c) { return ((c&0xffffff) == (((((uint32)(255.0f * red))&0xff)<<16) | ((((uint32)(255.0f * green))&0xff)<<8) | (((uint32)(255.0f * blue))&0xff)) ); }
 
 	//! convert a color to a matching shade of grey
@@ -142,6 +145,13 @@ struct Color {
 	//! create a color from a CSS color string value, eg: "#111", "#237D1A", "black", etc...
 	static Color makeColor(const char* cssColorValue);
 };
+
+//! check to see if two colors are the same, IGNORES ALPHA
+inline bool operator==(const Color& a, const Color& b) { 
+    return ((uint8)(255.0f * a.red) == (uint8)(255.0f * b.red) && 
+            (uint8)(255.0f * a.green) == (uint8)(255.0f * b.green) && 
+            (uint8)(255.0f * a.blue) == (uint8)(255.0f * b.blue)); 
+}
 
 
 } // end namespace pdg

@@ -11,12 +11,13 @@
 #define PDG_LIST_BOX_H_INCLUDED
 
 #include "pdg/app/View.h"
+#include "pdg/app/Observer.h"
 
 namespace pdg {
 
 class Scrollbar;
 
-class ListBox : public View
+class ListBox : public View, public Subject, public IObserver
 {
 public:
 

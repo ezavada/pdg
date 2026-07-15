@@ -35,12 +35,24 @@
 #include "pdg/sys/tilelayer.h"
 #include "pdg/sys/os.h"
 
+#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+#include "pdg_script_interface.h"
+#endif
+
 #ifndef PDG_NO_GUI
 #include "pdg/sys/port.h"
+#include "pdg/sys/graphicsmanager.h"
 #endif
 
 #include "spritemanager.h"
 
+//#define PDG_DEBUG_CHIPMUNK
+
+#ifdef PDG_DEBUG_CHIPMUNK
+#define CHIPMUNK_DEBUG_ONLY(_expression) _expression
+#else
+#define CHIPMUNK_DEBUG_ONLY(_expression)
+#endif
 
 #define SPRITE_LAYER_TIMER_ID -1234031
 #define SPRITE_TIMER_INTERVAL_MS 10  // 100 fps for sprite animation
@@ -65,6 +77,18 @@ SpriteManager::ChipmunkSpriteCollisionBeginFunc(cpArbiter *arb, struct cpSpace *
     if (!s1->mDoCollisions) return false;
     Sprite* s2 = static_cast<Sprite*>(cpBodyGetUserData(sprite2));
     if (!s2->mDoCollisions) return false;
+	if (!s1->mLayer || !s2->mLayer) {
+		CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionBeginFunc s1->mLayer or s2->mLayer is null, skipping"));
+		return false;
+	}
+	if (SpriteLayer::getLayer(s1->mLayer->layerId) != s1->mLayer) {
+		CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionBeginFunc s1->mLayer is invalid, skipping"));
+		return false;
+	}
+	if (SpriteLayer::getLayer(s2->mLayer->layerId) != s2->mLayer) {
+		CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionBeginFunc s2->mLayer is invalid, skipping"));
+		return false;
+	}
     // same layer, okay to collide
 	bool canCollide =  (s1->mLayer == s2->mLayer);
 	if (!canCollide) {
@@ -99,15 +123,34 @@ SpriteManager::ChipmunkSpriteCollisionPostSolveFunc(cpArbiter *arb, cpSpace *spa
     // this is only called if we have approved the collision
     CP_ARBITER_GET_BODIES(arb, sprite1, sprite2);
     Sprite* s1 = static_cast<Sprite*>(cpBodyGetUserData(sprite1));
-    Sprite* s2 = static_cast<Sprite*>(cpBodyGetUserData(sprite2));
-    cpVect norm = cpArbiterGetNormal(arb, 0);
+   	Sprite* s2 = static_cast<Sprite*>(cpBodyGetUserData(sprite2));
+	if (!s1->mLayer || !s2->mLayer) {
+		CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionPostSolveFunc s1->mLayer or s2->mLayer is null, skipping"));
+		return;
+	}
+	if (SpriteLayer::getLayer(s1->mLayer->layerId) != s1->mLayer) {
+		CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionPostSolveFunc s1->mLayer is invalid, skipping"));
+		return;
+	}
+	if (SpriteLayer::getLayer(s2->mLayer->layerId) != s2->mLayer) {
+		CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionPostSolveFunc s2->mLayer is invalid, skipping"));
+		return;
+	}
+    cpVect norm = cpArbiterGetNormal(arb);
     cpVect imp = cpArbiterTotalImpulse(arb);
     Vector normal(norm.x, norm.y);
     Vector impulse(imp.x, imp.y);
     cpFloat kineticEnergy = cpArbiterTotalKE(arb);
     cpFloat dt = ((float)SPRITE_TIMER_INTERVAL_MS)/1000.0f;
     cpFloat force = impulse.vectorLength() / dt;
-    s1->mLayer->notifyCollisionAction(Sprite::action_CollideSprite, s1, normal, impulse, force, kineticEnergy, arb, s2);
+	CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionPostSolveFunc calling notifyCollisionAction sprite"));
+    s1->mLayer->notifyCollisionAction(Sprite::action_CollideSprite, s1, normal, impulse, force, kineticEnergy, arb, 
+		#ifdef PDG_SPRITER_SUPPORT
+			nullptr,
+			nullptr,
+			cpArbiterIsFirstContact(arb),
+		#endif // PDG_SPRITER_SUPPORT
+		s2);
 }
 
 cpBool 
@@ -156,10 +199,11 @@ SpriteManager::cleanupLayer(SpriteLayer* layer) {
 // add a layer to the end
 void SpriteManager::addLayer(SpriteLayer* layer) {
 	if (!layer) return;
-	layer->mNextLayer = 0;
-	if (mFirstLayer == 0) {
+	layer->mNextLayer = nullptr;
+	if (mFirstLayer == nullptr) {
 		mFirstLayer = layer;
-		layer->mPrevLayer = 0;
+		layer->mPrevLayer = nullptr;
+		mTimerMgr->unpauseTimer(SPRITE_LAYER_TIMER_ID);
 	} else {
 		layer->mPrevLayer = mLastLayer;
 		mLastLayer->mNextLayer = layer;
@@ -183,15 +227,18 @@ void SpriteManager::removeLayer(SpriteLayer* layer) {
 		layer->mNextLayer->mPrevLayer = layer->mPrevLayer;
 	}
 	// finally clear our prev and next layers
-	layer->mNextLayer = 0;
-	layer->mPrevLayer = 0;
+	layer->mNextLayer = nullptr;
+	layer->mPrevLayer = nullptr;
+	if (nullptr == mFirstLayer) {
+		mTimerMgr->pauseTimer(SPRITE_LAYER_TIMER_ID);
+	}
 }
 
 SpriteManager::SpriteManager(EventManager* eventMgr, TimerManager* timerMgr): 
 	mEventMgr(eventMgr), 
 	mTimerMgr(timerMgr),
-	mFirstLayer(0),
-	mLastLayer(0)
+	mFirstLayer(nullptr),
+	mLastLayer(nullptr)
 {	
 	// for now we need these
 	DEBUG_ASSERT(mEventMgr, "must have a pdg::EventManager");
@@ -207,18 +254,13 @@ SpriteManager::SpriteManager(EventManager* eventMgr, TimerManager* timerMgr):
 						 timer_Repeating, UserData::makeUserDataFromPointer(this, data_DoNothing) );
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
     mSpace = cpSpaceNew();
-    cpSpaceAddCollisionHandler(mSpace, CP_COLLIDE_TYPE_SPRITE, CP_COLLIDE_TYPE_SPRITE,
-                               ChipmunkSpriteCollisionBeginFunc, // begin
-                               NULL, // preSolve
-                               ChipmunkSpriteCollisionPostSolveFunc, // postSolve,
-                               NULL, // separate,
-                               NULL); // *data
-    cpSpaceAddCollisionHandler(mSpace, CP_COLLIDE_TYPE_SPRITE, CP_COLLIDE_TYPE_WALL,
-                               ChipmunkWallCollisionBeginFunc, // begin
-                               NULL, // preSolve
-                               ChipmunkWallCollisionPostSolveFunc, // postSolve,
-                               NULL, // separate,
-                               NULL); // *data
+    cpCollisionHandler* spriteToSpriteHdlr = cpSpaceAddCollisionHandler(mSpace, CP_COLLIDE_TYPE_SPRITE, CP_COLLIDE_TYPE_SPRITE);
+    spriteToSpriteHdlr->beginFunc = ChipmunkSpriteCollisionBeginFunc;
+    spriteToSpriteHdlr->postSolveFunc = ChipmunkSpriteCollisionPostSolveFunc;
+
+    cpCollisionHandler* spriteToWallHdlr = cpSpaceAddCollisionHandler(mSpace, CP_COLLIDE_TYPE_SPRITE, CP_COLLIDE_TYPE_WALL);
+    spriteToWallHdlr->beginFunc = ChipmunkWallCollisionBeginFunc;
+    spriteToWallHdlr->postSolveFunc = ChipmunkWallCollisionPostSolveFunc;
 #endif
     
 }
@@ -232,16 +274,17 @@ SpriteManager::~SpriteManager() {
 
 // return true if completely handled
 bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw() {
-	if (mFirstLayer == 0) return false;  // we can't do anything if we don't have any sprite layers
 	if (inEventType == eventType_Timer) {
+		//SpriteLayer* layer = dynamic_cast<SpriteLayer*>(mFirstLayer);
 		pdg::TimerInfo* infoP = static_cast<TimerInfo*>(inEventData);
 		if ((infoP->id == SPRITE_LAYER_TIMER_ID) && (infoP->userData == (void*) this)) {
+			if (mFirstLayer == nullptr) return true;  // this is our timer, but we don't have any sprite layers so fully handled
 			
 			// time passed since we last animated
           #ifdef SPRITE_IGNORE_ANIMATION_TIMER_DRIFT
 			uint32 elapsedMs = SPRITE_TIMER_INTERVAL_MS; // this is how long we told it to take
           #else
-			uint32 elapsedMs = infoP->msElapsed;  // this is the actual time it took
+			ms_delta elapsedMs = infoP->msElapsed;  // this is the actual time it took
 			if (elapsedMs > 100) { 
 				// 1/10 of a second is more than timer drift. We were probably
 				// paused or in the debugger or something. So use the normal timer interval
@@ -268,58 +311,78 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
           #endif
 
 			while (layer) {
-				evntInfo.actingLayer = layer;
-				evntInfo.action = SpriteLayer::action_PreAnimateLayer;
-				layer->postEvent(eventType_SpriteLayer, &evntInfo);
+				SpriteLayerInfo evntInfo2;
+				evntInfo2.actingLayer = layer;
+				evntInfo2.action = SpriteLayer::action_PreAnimateLayer;
+				layer->postEvent(eventType_SpriteLayer, &evntInfo2);
 				layer->animateLayer(elapsedMs);
-				evntInfo.actingLayer = layer;
-				evntInfo.action = SpriteLayer::action_PostAnimateLayer;
-				layer->postEvent(eventType_SpriteLayer, &evntInfo);
+				SpriteLayerInfo evntInfo3;
+				evntInfo3.actingLayer = layer;
+				evntInfo3.action = SpriteLayer::action_PostAnimateLayer;
+				layer->postEvent(eventType_SpriteLayer, &evntInfo3);
 				layer = layer->mNextLayer;
 			}
-			evntInfo.actingLayer = mLastLayer;
-			evntInfo.action = SpriteLayer::action_AnimationComplete;
-			mLastLayer->postEvent(eventType_SpriteLayer, &evntInfo);
+			SpriteLayerInfo evntInfo4;
+			evntInfo4.actingLayer = mLastLayer;
+			evntInfo4.action = SpriteLayer::action_AnimationComplete;
+			mLastLayer->postEvent(eventType_SpriteLayer, &evntInfo4);
 			
 			return true;
 		}
 	}
 
+	if (mFirstLayer == nullptr) return false;  // we can't do anything further if we don't have any sprite layers
+
 #ifndef PDG_NO_GUI
 	if (inEventType == eventType_PortDraw) {
 		pdg::PortDrawInfo* infoP = static_cast<PortDrawInfo*>(inEventData);
-		if (infoP->port == mFirstLayer->mPort) {
-
+		
+		// Check if we should fire layer events for this port
+		bool shouldFireEvents = false;
+		if (mFirstLayer) {
+			if (mFirstLayer->mPort) {
+				// Layer has a specific port, only fire if it matches
+				shouldFireEvents = (infoP->port == mFirstLayer->mPort);
+			} else {
+				// Layer doesn't have a port, fire for main port
+				Port* mainPort = GraphicsManager::instance().getMainPort();
+				shouldFireEvents = (infoP->port == mainPort);
+			}
+		}
+		
+		if (shouldFireEvents) {
 			SpriteLayerInfo evntInfo;
-			SpriteLayer* layer = mFirstLayer;
-			// Draw all the layers and their appropriate ports, and time how long it took
 			evntInfo.actingLayer = mFirstLayer;
 			evntInfo.action = SpriteLayer::action_ErasePort;
 			evntInfo.millisec = OS::getMilliseconds();
-			if (mFirstLayer->mPort) {
-				if (!mFirstLayer->postEvent(eventType_SpriteLayer, &evntInfo) ) {
+			// UserData* userData = UserData::makeUserDataViaCopy(&evntInfo, sizeof(SpriteLayerInfo));
+			bool handled = mFirstLayer->postEvent(eventType_SpriteLayer, &evntInfo);
+			//userData->release();
+			if (!handled && mFirstLayer->mPort) {
 				// erase the port to black
 //					mFirstLayer->mPort->fillRect(mFirstLayer->mPort->getDrawingArea(), PDG_BLACK_COLOR );
-				}
 			}
 
-			layer = mFirstLayer;
+			SpriteLayer* layer = mFirstLayer;
 			while (layer) {
 				if (layer->mPort) {
-					evntInfo.actingLayer = layer;
-					evntInfo.action = SpriteLayer::action_PreDrawLayer;
-					layer->postEvent(eventType_SpriteLayer, &evntInfo);
+					SpriteLayerInfo evntInfo2;
+					evntInfo2.actingLayer = layer;
+					evntInfo2.action = SpriteLayer::action_PreDrawLayer;
+					layer->postEvent(eventType_SpriteLayer, &evntInfo2);
 					layer->drawLayer();
-					evntInfo.actingLayer = layer;
-					evntInfo.action = SpriteLayer::action_PostDrawLayer;
-					layer->postEvent(eventType_SpriteLayer, &evntInfo);
+					SpriteLayerInfo evntInfo3;
+					evntInfo3.actingLayer = layer;
+					evntInfo3.action = SpriteLayer::action_PostDrawLayer;
+					layer->postEvent(eventType_SpriteLayer, &evntInfo3);
 				}
 				layer = layer->mNextLayer;
 			}
-			evntInfo.actingLayer = mLastLayer;
-			evntInfo.action = SpriteLayer::action_DrawPortComplete;
+			SpriteLayerInfo evntInfo4;
+			evntInfo4.actingLayer = mLastLayer;
+			evntInfo4.action = SpriteLayer::action_DrawPortComplete;
 			if (mLastLayer->mPort) {
-				mLastLayer->postEvent(eventType_SpriteLayer, &evntInfo);
+				mLastLayer->postEvent(eventType_SpriteLayer, &evntInfo4);
 			}		
 			return false; // we didn't completely handle this, others may want to draw
 		}
@@ -327,7 +390,7 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 #endif // !PDG_NO_GUI
 
 	if ( (inEventType == eventType_MouseDown) || (inEventType == eventType_MouseUp)) {
-		Sprite* hitSprite = 0;
+		Sprite* hitSprite = nullptr;
 		MouseInfo* mi = static_cast<MouseInfo*>(inEventData);
  		SpriteLayer* layer = mLastLayer;
 		while (layer) {
@@ -358,21 +421,27 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 			layer = layer->mPrevLayer;
 		}
 		if (hitSprite) {
-			static Sprite* sLastHitSprite = 0;
-			SpriteTouchInfo sti;
-			std::memcpy(&sti, mi, sizeof(MouseInfo));
+			static Sprite* sLastHitSprite = nullptr;
+			SpriteTouchInfo* sti = new SpriteTouchInfo();
+			std::memcpy((void*)sti, mi, sizeof(MouseInfo)); // copy the mouse info to the sprite touch info
 			if (inEventType == eventType_MouseDown) {
-				sti.touchType = Sprite::touch_MouseDown;
+				sti->touchType = Sprite::touch_MouseDown;
 				sLastHitSprite = hitSprite;
 			} else {
-				sti.touchType = Sprite::touch_MouseUp;
+				sti->touchType = Sprite::touch_MouseUp;
 			}
-			sti.touchedSprite = hitSprite;
-			sti.inLayer = layer;
-			hitSprite->postEvent(eventType_SpriteTouch, &sti);
+			sti->touchedSprite = hitSprite;
+			sti->inLayer = layer;
+			hitSprite->postEvent(eventType_SpriteTouch, sti);
+			delete sti; // Clean up the allocated memory
 			if ((inEventType == eventType_MouseUp) && (hitSprite == sLastHitSprite)) {
-				sti.touchType = Sprite::touch_MouseClick;
-				hitSprite->postEvent(eventType_SpriteTouch, &sti);
+				SpriteTouchInfo* sti2 = new SpriteTouchInfo();
+				std::memcpy((void*)sti2, mi, sizeof(MouseInfo)); // copy the mouse info to the sprite touch info
+				sti2->touchType = Sprite::touch_MouseClick;
+				sti2->touchedSprite = hitSprite;
+				sti2->inLayer = layer;
+				hitSprite->postEvent(eventType_SpriteTouch, sti2);
+				delete sti2; // Clean up the allocated memory
 			}
 			return true;
 		}

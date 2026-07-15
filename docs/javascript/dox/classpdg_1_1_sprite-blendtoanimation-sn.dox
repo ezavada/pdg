@@ -1,0 +1,34 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::blendToAnimation(string animationName, number blendTime)
+
+\brief Smoothly blend from current animation to a new animation by name over the specified time
+
+This function smoothly transitions from the current Spriter animation to a new Spriter animation by 
+interpolating between the two over the specified blend time. The blend creates a seamless transition between animations.
+
+\param animationName The name of the target animation to blend to
+\param blendTime The duration of the blend transition in seconds
+
+\details
+The blend operation interpolates between the current animation frame and the corresponding frame in the 
+target animation. This creates a smooth transition that maintains the sprite's visual continuity.
+
+During the blend, the sprite will emit animation events and can be monitored for blend completion. The 
+blend time determines how quickly the transition occurs.
+
+\warning If the target animation name is invalid, the blend will fail silently
+\warning This only works for blending between Spriter animations
+
+\note The blend time must be positive (greater than 0)
+\note If no animation is currently playing, the new animation will start immediately
+
+\return true if the blend was successfully initiated, false otherwise
+
+\sa Sprite::blendToAnimation(int, number)
+\sa Sprite::onAnimationBlendComplete()
+\sa Sprite::isBlending()
+\sa Sprite::getBlendProgress()
+
+
+**/ }

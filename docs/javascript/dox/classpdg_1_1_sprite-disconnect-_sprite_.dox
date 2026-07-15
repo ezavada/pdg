@@ -1,0 +1,9 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::disconnect
+
+\brief remove all connections (joints) to another sprite
+
+If otherSprite is not passed in, it will remove all joints for this sprite, regardless of what sprite they are connected to.
+
+**/ }

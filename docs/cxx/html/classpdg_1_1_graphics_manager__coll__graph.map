@@ -1,3 +1,5 @@
 <map id="GraphicsManager" name="GraphicsManager">
-<area shape="rect" id="node2" href="$classpdg_1_1_singleton.html" title="Singleton\&lt; GraphicsManager \&gt;" alt="" coords="5,6,211,34"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="44,79,168,105"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_singleton.html" title=" " alt="" coords="5,5,207,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,46,109,79,103,79,103,46"/>
 </map>

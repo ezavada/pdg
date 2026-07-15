@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\class pdg::Attributes
+
+\brief Container for styling and transformation attributes used in drawing operations
+
+**/ }

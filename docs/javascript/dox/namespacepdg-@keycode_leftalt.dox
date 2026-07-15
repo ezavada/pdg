@@ -1,0 +1,23 @@
+namespace pdg { /**
+
+\var pdg::keyCode_LeftAlt
+
+\brief platform-specific keycode for the left Alt/Option key
+
+This constant contains the correct keycode value for the left Alt (Windows/Linux) or Option (Mac) key on the current platform. Use this when checking #KeyEvent.keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect left Alt/Option key presses in a cross-platform way.
+
+**Platform values:**
+- Mac OS X: 58 (0x3A - NSEvent hardware keycode for left Option)
+- Windows: 164 (0xA4 - VK_LMENU virtual keycode for left Alt)
+- Linux/GLFW: 342 (GLFW_KEY_LEFT_ALT)
+
+\see keyCode_RightAlt
+\see keyCode_Alt
+\see KeyEvent
+\see eventType_KeyDown
+\see eventType_KeyUp
+
+\ingroup KeyCodes
+
+
+**/ }

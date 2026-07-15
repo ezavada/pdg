@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Polygon::unionWith(other)
+
+\brief returns the union of this polygon with another polygon
+
+**/ }

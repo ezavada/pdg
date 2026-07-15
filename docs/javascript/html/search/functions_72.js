@@ -1,7 +1,8 @@
 var searchData=
 [
   ['rand',['rand',['../namespacepdg.html#a3294092f3f05b7a4d757276fed5a81a0',1,'pdg']]],
-  ['ratchet',['ratchet',['../classpdg_1_1_sprite.html#a57ab3ef4ccf54d0dc2f622a3662c7479',1,'pdg::Sprite']]],
+  ['ratchet',['ratchet',['../classpdg_1_1_sprite.html#add5e01231ce6f1d127750aee4a81b7a5',1,'pdg::Sprite']]],
+  ['rect',['Rect',['../classpdg_1_1_rect.html#ae436fd0322c99157c5443a3385961e22',1,'pdg::Rect::Rect()'],['../classpdg_1_1_rect.html#a207582af4dce5f93b7a8116aca458a09',1,'pdg::Rect::Rect(number w, number h)'],['../classpdg_1_1_rect.html#a59471a7b8dcaf1034439d37e707e6fa7',1,'pdg::Rect::Rect(Point topLeft, number w, number h)'],['../classpdg_1_1_rect.html#a34f03b0d37c7450cc2227d466e736049',1,'pdg::Rect::Rect(Point leftTop, Point rightBottom)'],['../classpdg_1_1_rect.html#a79a5200a1f8bb8d7c7bac6a9fe85a283',1,'pdg::Rect::Rect(number left, number top, number right, number bottom)']]],
   ['registereasingfunction',['registerEasingFunction',['../namespacepdg.html#ae7ab4e23ad93ace076c63805a56faaca',1,'pdg']]],
   ['registerserializableclass',['registerSerializableClass',['../group___serialization.html#gae3e78e215364e60bf255bb34fc7ef1b2',1,'pdg::ISerializable::registerSerializableClass()'],['../namespacepdg.html#a3f639cbe19f6a44376551f35aa30651a',1,'pdg::registerSerializableClass()']]],
   ['reindexstatic',['reindexStatic',['../classpdg_1_1_cp_space.html#ab8e8d440c80f05675584583fa3d72d7e',1,'pdg::CpSpace']]],
@@ -19,8 +20,8 @@ var searchData=
   ['retaindata',['retainData',['../classpdg_1_1_image.html#a549ce8b3338f42f98141bbfdaf930cf5',1,'pdg::Image']]],
   ['rightbottom',['rightBottom',['../classpdg_1_1_rect.html#a392fbd2c1bd8df338a12a8f75242127f',1,'pdg::Rect']]],
   ['righttop',['rightTop',['../classpdg_1_1_rect.html#a3caa9b235e86449b26aad60d74e0dba0',1,'pdg::Rect']]],
-  ['rotarylimit',['rotaryLimit',['../classpdg_1_1_sprite.html#a153a3841051bbf3495cdc880e6309205',1,'pdg::Sprite']]],
-  ['rotaryspring',['rotarySpring',['../classpdg_1_1_sprite.html#ad96acd7f76d2411bed8c94520a8a5cdf',1,'pdg::Sprite']]],
+  ['rotarylimit',['rotaryLimit',['../classpdg_1_1_sprite.html#a2e33c1b35c7ef309889fca6e7e3c69d5',1,'pdg::Sprite']]],
+  ['rotaryspring',['rotarySpring',['../classpdg_1_1_sprite.html#a66034c77922928e3b76d814dc8fdb257',1,'pdg::Sprite']]],
   ['rotate',['rotate',['../classpdg_1_1_animated.html#a98a5fb76a126ff4b83fa9597e7a6b663',1,'pdg::Animated::rotate()'],['../classpdg_1_1_quad.html#a1cc09b3d4ac5de7bb08b8f2a8ac148f8',1,'pdg::Quad::rotate()'],['../classpdg_1_1_rotated_rect.html#a77ec3c95453fe68e82a9487d9d091b37',1,'pdg::RotatedRect::rotate()']]],
   ['rotatedrect',['RotatedRect',['../classpdg_1_1_rotated_rect.html#a9633656e80cc7b3ed305c5346771b5a9',1,'pdg::RotatedRect']]],
   ['rotateto',['rotateTo',['../classpdg_1_1_animated.html#a2c7b257d894ef2c7691c6d56f5b9ce81',1,'pdg::Animated']]],

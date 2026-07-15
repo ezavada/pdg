@@ -1,0 +1,29 @@
+namespace pdg { /**
+
+\fn pdg::Port::drawArc(object Point center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, object Attributes attrs)
+
+\brief Draw an elliptical arc using the specified center, radii, and angle range
+
+This function draws an elliptical arc (a portion of an ellipse) using the specified center point, radii, and angle range. The arc is drawn with the given attributes for styling.
+
+\param center The center point of the ellipse in screen coordinates
+\param xRadius The horizontal radius of the ellipse in pixels
+\param yRadius The vertical radius of the ellipse in pixels
+\param startAngle The starting angle of the arc in radians (0 = 12 o'clock position, positive = clockwise)
+\param endAngle The ending angle of the arc in radians
+\param attrs The Attributes object containing styling information (line color, thickness, fill, etc.)
+
+\details
+The arc is drawn as a portion of an ellipse defined by the center point and radii. The angle parameters specify which portion of the ellipse to draw, starting from startAngle and ending at endAngle.
+
+Angles are measured in radians, with 0 radians pointing up (12 o'clock position). Positive angles go clockwise, negative angles go counter-clockwise.
+
+\warning If startAngle equals endAngle, no arc will be drawn
+\note The arc is drawn using the current transformation matrix and clipping region
+
+\sa Port::drawEllipse()
+\sa Port::drawCircle()
+\sa Attributes
+\sa Point
+
+**/ }

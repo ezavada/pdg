@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\class pdg::ElementRef
+
+\brief Reference to a drawing element that allows modification of its properties and control points
+
+**/ }

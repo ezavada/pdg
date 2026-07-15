@@ -1,0 +1,27 @@
+namespace pdg { /**
+
+\fn pdg::Sprite::setDrawHelper
+
+\brief set a pre-draw helper for custom sprite drawing
+
+Sets a helper to do extra drawing stuff for this Sprite. This helper will be called before the Sprite draws normally, and can block normal sprite drawing by returning false from the helper function.
+
+If you want to do overlay effects, use the post-draw helper for that (see #setPostDrawHelper)
+
+\param helper the pre-draw helper that you want use to add background effects or replace normal rendering of the sprite
+
+\code
+	var myHelper = new pdg.ISpriteDrawHelper(function(sprite, port) {
+		console.log("in my sprite draw helper for " + sprite );
+		var r = sprite.getLayer().layerToPortRect(sprite.getFrameRotatedBounds());
+		port.fillRect(r, "black");
+		port.frameRect(r, "white");
+		return false;  // don't let sprite draw itself (ignored for post draw)
+	});
+	mySprite.setDrawHelper(myHelper);
+\endcode
+
+\sa ISpriteDrawHelper
+\sa setPostDrawHelper()
+
+**/ }

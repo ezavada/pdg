@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::RotatedRect::setRotation(rotationRadians, cpOffset)
+
+\brief set the rotation of this rectangle to a particular amount in radians
+
+**/ }

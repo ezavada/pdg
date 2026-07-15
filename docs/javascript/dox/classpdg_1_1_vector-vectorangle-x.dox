@@ -1,0 +1,7 @@
+namespace pdg { /**
+
+\fn pdg::Vector::vectorAngle()
+
+\brief get angle (in radians) for this vector
+
+**/ }

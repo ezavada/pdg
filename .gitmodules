@@ -1,0 +1,3 @@
+[submodule "deps/SpriterPlusPlus"]
+	path = deps/SpriterPlusPlus
+	url = https://github.com/lucidspriter/SpriterPlusPlus.git

@@ -1,48 +1,54 @@
-.TH "CpArbiter" 3 "Thu Jul 10 2014" "Version v0.9.4" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "CpArbiter" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-CpArbiter \- 
-.PP
-arbitrates collisions between sprites using Chipmunk Physics (\fIChipmunk Physics Only\fP)  
+CpArbiter \- arbitrates collisions between sprites using Chipmunk Physics (\fIChipmunk Physics Only\fP)  
 
 .SH SYNOPSIS
 .br
 .PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
 .RI "number \fBgetCount\fP ()"
 .br
-.RI "\fInumber of contacts tracked by this arbiter \fP"
+.RI "number of contacts tracked by this arbiter "
 .ti -1c
 .RI "number \fBgetDepth\fP (int i)"
 .br
-.RI "\fIget the depth of penetration for a particular contact point \fP"
+.RI "get the depth of penetration for a particular contact point "
 .ti -1c
-.RI "\fBVector\fP \fBgetNormal\fP (int i)"
+.RI "\fBVector\fP \fBgetNormal\fP ()"
 .br
-.RI "\fIget collision normal for a particular contact point \fP"
+.RI "get collision normal "
 .ti -1c
-.RI "\fBPoint\fP \fBgetPoint\fP (int i)"
+.RI "\fBPoint\fP \fBgetPointA\fP (int i)"
 .br
-.RI "\fIget the location of a particular contact point \fP"
+.RI "get the location of a particular contact point "
+.ti -1c
+.RI "\fBPoint\fP \fBgetPointB\fP (int i)"
+.br
+.RI "get the location of a particular contact point "
 .ti -1c
 .RI "boolean \fBisFirstContact\fP ()"
 .br
-.RI "\fIis this this first moment of contact in a collision? \fP"
+.RI "is this this first moment of contact in a collision? "
 .in -1c
 .SH "Detailed Description"
 .PP 
 arbitrates collisions between sprites using Chipmunk Physics (\fIChipmunk Physics Only\fP) 
 
-\fBNote:\fP
+
+.PP
+\fBNote\fP
 .RS 4
 \fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
 .RE
 .PP
-\fBSee Also:\fP
+\fBSee also\fP
 .RS 4
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpArbiter 
 .RE
@@ -50,65 +56,87 @@ http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpArbiter
 
 .SH "Member Function Documentation"
 .PP 
-.SS "getCount ()"
+.SS "number getCount ()"
 
 .PP
 number of contacts tracked by this arbiter A collision can involve multiple contact points between objects\&. This tells you how many different contact points are involved in this collision\&.
+
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 number of contact points 
 .RE
 .PP
 
-.SS "getDepth (inti)"
+.SS "number getDepth (int i)"
 
 .PP
-get the depth of penetration for a particular contact point \fBParameters:\fP
+get the depth of penetration for a particular contact point 
+.PP
+\fBParameters\fP
 .RS 4
 \fIi\fP index into contact points
 .RE
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 how far the contact point is inside the other object 
 .RE
 .PP
 
-.SS "getNormal (inti)"
+.SS "\fBVector\fP getNormal ()"
 
 .PP
-get collision normal for a particular contact point Get the normal vector (magnitude of 1\&.0) that expresses the relative x and y direction of the collision for this particular contact point\&.
+get collision normal returns the collision normal vector for the collision
+
 .PP
-\fBParameters:\fP
+Get the normal vector (magnitude of 1\&.0) that expresses the relative x and y direction of the collision\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+the collision normal vector for the collision 
+.RE
+.PP
+
+.SS "\fBPoint\fP getPointA (int i)"
+
+.PP
+get the location of a particular contact point 
+.PP
+\fBParameters\fP
 .RS 4
 \fIi\fP index into contact points
 .RE
 .PP
-\fBReturns:\fP
-.RS 4
-the collision normal vector for that contact point 
-.RE
-.PP
-
-.SS "getPoint (inti)"
-
-.PP
-get the location of a particular contact point \fBParameters:\fP
-.RS 4
-\fIi\fP index into contact points
-.RE
-.PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 the location of the contact 
 .RE
 .PP
 
-.SS "isFirstContact ()"
+.SS "\fBPoint\fP getPointB (int i)"
 
 .PP
-is this this first moment of contact in a collision? \fBReturns:\fP
+get the location of a particular contact point 
+.PP
+\fBParameters\fP
+.RS 4
+\fIi\fP index into contact points
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+the location of the contact 
+.RE
+.PP
+
+.SS "boolean isFirstContact ()"
+
+.PP
+is this this first moment of contact in a collision? 
+.PP
+\fBReturns\fP
 .RS 4
 true if this is the first moment of contact between the objects, false if part of an ongoing collison 
 .RE
