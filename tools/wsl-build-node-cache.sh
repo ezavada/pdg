@@ -8,6 +8,10 @@ if [ "$#" -ne 1 ]; then
 fi
 
 REPO_ROOT="$(cd "$1" && pwd)"
+source "$REPO_ROOT/tools/submodules.sh"
+if ! ensure_repo_submodule "$REPO_ROOT" "deps/node" "deps/node/src/node_version.h" "Node.js source checkout"; then
+    exit 1
+fi
 NODE_SRC="$REPO_ROOT/deps/node"
 BUILD_ROOT="${HOME}/.pdg-node-build-cache"
 LOG_DIR="${TMPDIR:-/tmp}/pdg-node-build"

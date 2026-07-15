@@ -30,6 +30,7 @@
 # -----------------------------------------------
 
 source tools/colors.sh
+source tools/submodules.sh
 
 PLATFORM=`uname -s | awk '{print tolower($0)}'`
 
@@ -248,6 +249,12 @@ else
 	    echo -e "-- Check for NPM: ${ERR}not found${RESET}"
         HAVE_NODE="no"
     fi
+fi
+
+echo -e "${HEAD}Checking required source dependencies...${RESET}"
+if ! ensure_repo_submodule "$PDG_ROOT" "deps/node" "deps/node/src/node_version.h" "Node.js source checkout"; then
+    echo -e "${ERR}FATAL ERROR: Missing Node.js source checkout${RESET}"
+    exit 1
 fi
 
 echo -e "${HEAD}Cleaning up old junk...${RESET}"

@@ -42,6 +42,12 @@ if ($Help) {
     exit 0
 }
 
+$submoduleHelperPath = Join-Path $PSScriptRoot "tools\submodules.ps1"
+if (-not (Test-Path $submoduleHelperPath)) {
+    $submoduleHelperPath = Join-Path $PSScriptRoot "submodules.ps1"
+}
+. $submoduleHelperPath
+
 # Function to write colored output
 function Write-Status {
     param([string]$Message, [string]$Color = "White")
@@ -1008,6 +1014,11 @@ Write-Host ""
 
 if ([string]::IsNullOrEmpty($CMAKE_PATH) -and (Test-Command "cmake")) {
     $CMAKE_PATH = "cmake"
+}
+
+if (-not (Ensure-RepoSubmodule -RepoRoot $PSScriptRoot -SubmodulePath "deps/node" -SentinelRelativePath "deps\node\src\node_version.h" -DisplayName "Node.js source checkout")) {
+    Write-Error-Status "Node.js source checkout is required. Exiting."
+    exit 1
 }
 
 $shouldBuildInterfaceTools = $EnableInterfaceTools -and (-not $SkipInterfaceTools)

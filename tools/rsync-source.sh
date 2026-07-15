@@ -35,6 +35,11 @@ if [ -z "$PDG_ROOT" ]; then
 	exit 1
 fi
 
+source "$PDG_ROOT/tools/submodules.sh"
+if ! ensure_repo_submodule "$PDG_ROOT" "deps/node" "deps/node/src/node_version.h" "Node.js source checkout"; then
+	exit 1
+fi
+
 if [ -z "$1" ]; then
 	echo "Usage: $0 <target_dir>"
 	exit 1

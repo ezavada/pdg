@@ -6,6 +6,12 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+. (Join-Path $PSScriptRoot "submodules.ps1")
+
+if (-not (Ensure-RepoSubmodule -RepoRoot $repoRoot -SubmodulePath "deps/node" -SentinelRelativePath "deps\node\src\node_version.h" -DisplayName "Node.js source checkout")) {
+    throw "Node.js source checkout is required."
+}
+
 if ([System.IO.Path]::IsPathRooted($TargetDir)) {
     $resolvedTargetDir = [System.IO.Path]::GetFullPath($TargetDir)
 }

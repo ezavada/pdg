@@ -6,11 +6,17 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$submoduleHelperPath = Join-Path $PSScriptRoot "submodules.ps1"
+. $submoduleHelperPath
 $targetDir = Join-Path $repoRoot "build\node-pdg"
 $installDir = Join-Path $repoRoot "build\node-pdg-install"
 $npmCacheDir = Join-Path $repoRoot "build\npm-cache"
 $version = (Get-Content -Raw (Join-Path $repoRoot "VERSION")).Trim()
 $packageArchive = Join-Path $targetDir "pdg-$version.tgz"
+
+if (-not (Ensure-RepoSubmodule -RepoRoot $repoRoot -SubmodulePath "deps/node" -SentinelRelativePath "deps\node\src\node_version.h" -DisplayName "Node.js source checkout")) {
+    throw "Node.js source checkout is required."
+}
 
 function Resolve-NodeExecutable {
     param([string]$BuildConfig)

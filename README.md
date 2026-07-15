@@ -113,10 +113,14 @@ Building From Source
 - Install Visual Studio 2013 Express
 - In Visual Studio Command Console:
 
-        C:\> git clone git@github.com:ezavada/pdg.git pdg
+        C:\> git clone --recurse-submodules git@github.com:ezavada/pdg.git pdg
         C:\> cd pdg
         C:\pdg> configure
         C:\pdg> make
+
+  If you already cloned without submodules, run:
+
+        C:\pdg> git submodule update --init --recursive
     
   Test it with any of the following:
 
@@ -131,10 +135,14 @@ Building From Source
 - Install XCode 5 or later, including command line tools
 - In Terminal Window:
 
-        $ git clone git@github.com:ezavada/pdg.git pdg
+        $ git clone --recurse-submodules git@github.com:ezavada/pdg.git pdg
         $ cd pdg
         $ ./configure
         $ make
+
+  If you already cloned without submodules, run:
+  
+        $ git submodule update --init --recursive
 
   Test it with any of the following:
   
