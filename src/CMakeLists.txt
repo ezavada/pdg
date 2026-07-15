@@ -70,9 +70,6 @@ SET (PDG_JAVASCRIPT_BINDINGS_SOURCES
 	bindings/javascript/v8/pdg_v8_support.cpp
 	bindings/generated/v8/pdg_script_impl.cpp
 	bindings/generated/v8/pdg_interfaces.cpp
-	bindings/generated/v8/physics/cp_arbiter.cpp
-	bindings/generated/v8/physics/cp_constraint.cpp
-	bindings/generated/v8/physics/cp_space.cpp
 	bindings/generated/v8/core/config_manager.cpp
 	bindings/generated/v8/core/log_manager.cpp
 	bindings/generated/v8/core/event_manager.cpp
@@ -99,6 +96,16 @@ SET (PDG_JAVASCRIPT_BINDINGS_SOURCES
 	bindings/generated/v8/audio/sound.cpp
 	bindings/node/pdg_node.cpp
 )
+
+SET(PDG_JAVASCRIPT_PHYSICS_BINDINGS_SOURCES
+	bindings/generated/v8/physics/cp_arbiter.cpp
+	bindings/generated/v8/physics/cp_constraint.cpp
+	bindings/generated/v8/physics/cp_space.cpp
+)
+
+IF(USE_CHIPMUNK)
+	LIST(APPEND PDG_JAVASCRIPT_BINDINGS_SOURCES ${PDG_JAVASCRIPT_PHYSICS_BINDINGS_SOURCES})
+ENDIF()
 
 SET (PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES 
 	${PDG_SOURCE_DIR}/src/bindings/javascript

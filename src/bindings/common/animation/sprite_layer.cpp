@@ -451,6 +451,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       RETURN_CPP_OBJECT(layer, SpriteLayer);
       END
   
+  %#ifdef PDG_SPRITER_SUPPORT
   FUNCTION_IMPL(CreateSpriteLayerFromSpriterFile)
       METHOD_SIGNATURE("", [object SpriteLayer], 1, (string layerSpriterFilename, boolean addSprites = true, [object Port] port = null)); 
       REQUIRE_ARG_MIN_COUNT(1);
@@ -464,6 +465,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
     %#endif
       RETURN_CPP_OBJECT(layer, SpriteLayer);
       END
+  %#endif
   
   FUNCTION_IMPL(CleanupLayer)
       METHOD_SIGNATURE("", undefined, 1, ([object SpriteLayer] layer)); 
