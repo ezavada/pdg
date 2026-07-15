@@ -1,3 +1,6 @@
 [submodule "deps/SpriterPlusPlus"]
 	path = deps/SpriterPlusPlus
 	url = https://github.com/lucidspriter/SpriterPlusPlus.git
+[submodule "deps/node"]
+	path = deps/node
+	url = https://github.com/nodejs/node.git
