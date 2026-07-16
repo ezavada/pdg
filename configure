@@ -256,6 +256,10 @@ if ! ensure_repo_submodule "$PDG_ROOT" "deps/node" "deps/node/src/node_version.h
     echo -e "${ERR}FATAL ERROR: Missing Node.js source checkout${RESET}"
     exit 1
 fi
+if ! ensure_repo_submodule "$PDG_ROOT" "deps/SpriterPlusPlus" "deps/SpriterPlusPlus/spriterengine/spriterengine.h" "SpriterPlusPlus source checkout"; then
+    echo -e "${ERR}FATAL ERROR: Missing SpriterPlusPlus source checkout${RESET}"
+    exit 1
+fi
 
 echo -e "${HEAD}Cleaning up old junk...${RESET}"
 rm -rf test/node_modules
