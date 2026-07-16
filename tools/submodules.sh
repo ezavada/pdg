@@ -6,6 +6,7 @@ ensure_repo_submodule() {
     local sentinel_path="$3"
     local display_name="${4:-$2}"
     local sentinel_full="$repo_root/$sentinel_path"
+    local gitmodules_path="$repo_root/.gitmodules"
 
     if [ -e "$sentinel_full" ]; then
         return 0
@@ -20,9 +21,16 @@ ensure_repo_submodule() {
     fi
 
     echo "-- Initializing $display_name from git submodule $submodule_path"
-    if ! (cd "$repo_root" && git submodule update --init --checkout --recursive "$submodule_path"); then
-        echo "FATAL: unable to populate $submodule_path via git submodule update."
-        return 1
+    if [ -f "$gitmodules_path" ]; then
+        (cd "$repo_root" && git submodule sync --recursive -- "$submodule_path") >/dev/null 2>&1 || true
+    fi
+
+    if ! (cd "$repo_root" && git submodule update --init --checkout --recursive -- "$submodule_path"); then
+        echo "-- Targeted submodule update failed for $submodule_path; retrying a full submodule sync/update."
+        if ! (cd "$repo_root" && git submodule sync --recursive && git submodule update --init --checkout --recursive); then
+            echo "FATAL: unable to populate $submodule_path via git submodule update."
+            return 1
+        fi
     fi
 
     if [ ! -e "$sentinel_full" ]; then
