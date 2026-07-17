@@ -5464,7 +5464,6 @@ namespace pdg
         };
     }
 
-#ifdef PDG_SPRITER_SUPPORT
     void CreateSpriteLayerFromSpriterFile(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         v8::Isolate* isolate = args.GetIsolate();
@@ -5521,7 +5520,6 @@ namespace pdg
             { args.GetReturnValue().Set( obj__ ); return; };
         };
     }
-#endif
 
     void CleanupLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {

@@ -85,6 +85,15 @@ function Test-Command {
     }
 }
 
+function Test-PDGHeadlessConfigured {
+    $cachePath = Join-Path (Get-Location).Path "msvc\CMakeCache.txt"
+    if (-not (Test-Path $cachePath)) {
+        return $false
+    }
+
+    return (Select-String -Path $cachePath -Pattern "^PDG_HEADLESS:BOOL=ON$" -Quiet)
+}
+
 # Function to find MSBuild
 function Find-MSBuild {
     # Check if MSBuild is in PATH
@@ -471,7 +480,17 @@ function Build-GLFW {
         [string]$MSBUILD_PATH,
         [switch]$Verbose
     )
-    
+
+    if ($script:PDG_HEADLESS_BUILD) {
+        Write-Status "Skipping GLFW build because the current PDG configuration is headless." "Yellow"
+        return 0
+    }
+
+    if (-not (Test-Path "build\win32\glfw\GLFW.sln")) {
+        Write-Error-Status "GLFW is not configured. Run .\configure.ps1 without -Headless to generate the GLFW solution."
+        return 1
+    }
+
     Write-Status "Building GLFW Library..." "Yellow"
     Push-Location "build\win32\glfw"
     try {
@@ -634,7 +653,12 @@ function Build-PDG-Tests {
         [string]$MSBUILD_PATH,
         [switch]$Verbose
     )
-    
+
+    if ($script:PDG_HEADLESS_BUILD) {
+        Write-Error-Status "pdg-tests is unavailable in a headless configuration. Re-run .\configure.ps1 without -Headless to build the performance tests."
+        return 1
+    }
+
     Write-Host ""
     Write-Status "Building C++ performance tests..." "Cyan"
     
@@ -797,6 +821,11 @@ Write-Status "Found MSBuild at: $MSBUILD_PATH" "Green"
 # Clean up any stuck MSBuild processes before starting
 Stop-StuckMSBuildProcesses
 
+$script:PDG_HEADLESS_BUILD = Test-PDGHeadlessConfigured
+if ($script:PDG_HEADLESS_BUILD) {
+    Write-Status "Detected headless PDG configuration (PDG_HEADLESS=ON)." "Cyan"
+}
+
 # Handle different targets
 switch ($Target.ToLower()) {
     "pdg" {
@@ -831,7 +860,12 @@ switch ($Target.ToLower()) {
         Write-Host "- Configuration: $Config" -ForegroundColor White
         Write-Host "- Target: $Target" -ForegroundColor White
         Write-Host ""
-        Write-Status "You can now run tests with: .\test\client or .\test\node" "Green"
+        if ($script:PDG_HEADLESS_BUILD) {
+            Write-Status "Headless build configured; GUI/client test runs are not available in this setup." "Green"
+        }
+        else {
+            Write-Status "You can now run tests with: .\test\client or .\test\node" "Green"
+        }
     }
 
     "pdg-node" {
@@ -858,6 +892,11 @@ switch ($Target.ToLower()) {
     }
     
     "glfw" {
+        if ($script:PDG_HEADLESS_BUILD) {
+            Write-Error-Status "GLFW is not configured in a headless build. Re-run .\configure.ps1 without -Headless to build it."
+            exit 1
+        }
+
         $status = Build-GLFW -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
         if ($status -ne 0) { exit 1 }
         

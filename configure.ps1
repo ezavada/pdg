@@ -7,7 +7,8 @@ param(
     [switch]$SkipInstall,
     [switch]$ConfigureOnly,
     [switch]$SkipInterfaceTools,
-    [switch]$EnableInterfaceTools
+    [switch]$EnableInterfaceTools,
+    [switch]$Headless
 )
 
 # Function to display help
@@ -22,6 +23,7 @@ function Show-Help {
     Write-Host "  -SkipInstall    Skip installation and only configure existing dependencies" -ForegroundColor White
     Write-Host "  -ConfigureOnly  Only run configuration steps, skip dependency detection/installation" -ForegroundColor White
     Write-Host "  -EnableInterfaceTools  Build bcpp and enable CAN_BUILD_INTERFACES (default: OFF)" -ForegroundColor White
+    Write-Host "  -Headless       No windowed graphics or sound." -ForegroundColor White
     Write-Host "  -SkipInterfaceTools    Legacy flag; keeps interface tools disabled" -ForegroundColor White
     Write-Host "  -Help           Show this help message" -ForegroundColor White
     Write-Host ""
@@ -1037,6 +1039,12 @@ if ($shouldBuildInterfaceTools) {
     }
 }
 
+$pdgCmakeArgs = $pdgCmakeInterfaceArgs + @("-DCMAKE_CXX_STANDARD=20")
+if ($Headless) {
+    Write-Status "Headless mode enabled; configuring PDG with PDG_HEADLESS=ON." "Cyan"
+    $pdgCmakeArgs += "-DPDG_HEADLESS=ON"
+}
+
 # Configure main project using Visual Studio generator with ClangCL
 try {
     Write-Status "Using Visual Studio generator (MSVC)" "Cyan"
@@ -1045,7 +1053,7 @@ try {
         foreach ($vsGen in $vsGenerators) {
             try {
                 Write-Status "Trying Visual Studio generator: $vsGen" "Cyan"
-            Invoke-CMakeConfigure -SourcePath ".." -BuildPath "msvc" -Generator $vsGen -Arguments ($pdgCmakeInterfaceArgs + @("-DCMAKE_CXX_STANDARD=20"))
+            Invoke-CMakeConfigure -SourcePath ".." -BuildPath "msvc" -Generator $vsGen -Arguments $pdgCmakeArgs
             Write-Success-Status "Successfully configured with Visual Studio generator"
                 $configured = $true
                 break
@@ -1069,14 +1077,19 @@ Write-Status "Configuring Dependencies" "Cyan"
 Write-Host "=======================" -ForegroundColor Cyan
 
 # Configure GLFW
-Write-Status "Configuring GLFW Library..." "Yellow"
-try {
-        $vsGen = "Visual Studio 17 2022"
-    Invoke-CMakeConfigure -SourcePath "..\..\..\deps\glfw" -BuildPath "build\win32\glfw" -Generator $vsGen -Arguments @("-DGLFW_BUILD_EXAMPLES=OFF", "-DGLFW_BUILD_TESTS=OFF")
+if ($Headless) {
+    Write-Status "Skipping GLFW configuration for headless build." "Yellow"
 }
-catch {
-    Write-Error-Status "GLFW configuration failed: $($_)"
-    exit 1
+else {
+    Write-Status "Configuring GLFW Library..." "Yellow"
+    try {
+            $vsGen = "Visual Studio 17 2022"
+        Invoke-CMakeConfigure -SourcePath "..\..\..\deps\glfw" -BuildPath "build\win32\glfw" -Generator $vsGen -Arguments @("-DGLFW_BUILD_EXAMPLES=OFF", "-DGLFW_BUILD_TESTS=OFF")
+    }
+    catch {
+        Write-Error-Status "GLFW configuration failed: $($_)"
+        exit 1
+    }
 }
 
 # Configure Chipmunk
@@ -1192,7 +1205,13 @@ else {
 Write-Host ""
 Write-Status "Build Summary:" "Cyan"
 Write-Host "- Main project: msvc\ directory" -ForegroundColor White
-Write-Host "- GLFW: build\win32\glfw\ directory" -ForegroundColor White
+if ($Headless) {
+    Write-Host "- Mode: headless (PDG_HEADLESS=ON)" -ForegroundColor White
+    Write-Host "- GLFW: skipped for headless build" -ForegroundColor White
+}
+else {
+    Write-Host "- GLFW: build\win32\glfw\ directory" -ForegroundColor White
+}
 Write-Host "- Chipmunk: build\win32\chipmunk\ directory" -ForegroundColor White
 Write-Host "- libjpeg-turbo: build\win32\libjpeg-turbo\ directory" -ForegroundColor White
 Write-Host "- Node.js: deps\node\ directory" -ForegroundColor White

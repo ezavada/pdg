@@ -10,7 +10,6 @@ function Ensure-RepoSubmodule {
     )
 
     $sentinelPath = Join-Path $RepoRoot $SentinelRelativePath
-    $gitmodulesPath = Join-Path $RepoRoot ".gitmodules"
     if (Test-Path $sentinelPath) {
         return $true
     }
@@ -28,24 +27,10 @@ function Ensure-RepoSubmodule {
 
     Push-Location $RepoRoot
     try {
-        if (Test-Path $gitmodulesPath) {
-            & $gitCommand.Source submodule sync --recursive -- $SubmodulePath *> $null
-        }
-
         & $gitCommand.Source submodule update --init --checkout --recursive -- $SubmodulePath
         if ($LASTEXITCODE -ne 0) {
-            Write-Host "WARNING: targeted submodule update failed for $SubmodulePath; retrying a full submodule sync/update." -ForegroundColor Yellow
-            & $gitCommand.Source submodule sync --recursive
-            if ($LASTEXITCODE -ne 0) {
-                Write-Host "ERROR: unable to sync submodules before retry." -ForegroundColor Red
-                return $false
-            }
-
-            & $gitCommand.Source submodule update --init --checkout --recursive
-            if ($LASTEXITCODE -ne 0) {
-                Write-Host "ERROR: unable to populate $SubmodulePath via git submodule update." -ForegroundColor Red
-                return $false
-            }
+            Write-Host "ERROR: unable to populate $SubmodulePath via git submodule update." -ForegroundColor Red
+            return $false
         }
     }
     finally {
