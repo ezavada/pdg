@@ -1,10 +1,10 @@
 # Build the bcpp C++ beautifier (used by gen-script-interface.*) from the
-# sources shipped in tools/bcpp.tar.zip (extracted to build/win32/bcpp-src/...).
+# sources shipped in tools/bcpp.tar.zip (extracted by the platform configure script).
 cmake_minimum_required(VERSION 3.16)
 project(bcpp LANGUAGES CXX)
 
 if(NOT DEFINED BCPP_SOURCE_DIR OR NOT EXISTS "${BCPP_SOURCE_DIR}")
-	message(FATAL_ERROR "BCPP_SOURCE_DIR must point to the extracted bcpp .../code directory (run configure.ps1 to extract tools/bcpp.tar.zip).")
+	message(FATAL_ERROR "BCPP_SOURCE_DIR must point to the extracted bcpp .../code directory (run configure.ps1 -EnableInterfaceTools or ./configure --enable-interface-tools).")
 endif()
 
 file(GLOB BCPP_SOURCES "${BCPP_SOURCE_DIR}/*.cpp")

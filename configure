@@ -45,6 +45,7 @@ INSTALL_NODE_APP="no"
 HAVE_EMSCRIPTEN="no"
 BUILD_IOS="no"
 HEADLESS_BUILD="no"
+ENABLE_INTERFACE_TOOLS="no"
 PDG_CMAKE_OPTIONS=""
 HAVE_CMAKE="no"
 HAVE_XCODE="no"
@@ -77,6 +78,7 @@ for arg in "$@"; do
             echo "  --headless            - build without GUI/graphics support"
             echo "  --use-system-node     - Use the Node.js tools already installed"
             echo "  --pure-js             - Build the pure JavaScript version of PDG using Emscripten"
+            echo "  --enable-interface-tools - Build bcpp and enable JavaScript interface regeneration"
             exit 0
             ;;
         --headless)
@@ -90,6 +92,9 @@ for arg in "$@"; do
             ;;
         --pure-js)
             BUILD_EMSCRIPTEN="yes"
+            ;;
+        --enable-interface-tools)
+            ENABLE_INTERFACE_TOOLS="yes"
             ;;
         --with-native-window)
             if [ "$PLATFORM" == "darwin" ]; then
@@ -160,7 +165,11 @@ else
     echo "export PDG_NODE_INSPECTOR=$PDG_ROOT/tools/node-inspector" >> .pdgrc
     echo "export PDG_REPL=$PDG_ROOT/tools/repl" >> .pdgrc
 fi
-echo "export PATH=$PDG_ROOT/tools:\$PATH" >> .pdgrc
+if [ "$ENABLE_INTERFACE_TOOLS" == "yes" ]; then
+    echo "export PATH=$PDG_ROOT/build/$PLATFORM/bcpp:$PDG_ROOT/tools:\$PATH" >> .pdgrc
+else
+    echo "export PATH=$PDG_ROOT/tools:\$PATH" >> .pdgrc
+fi
 echo "source $PDG_ROOT/tools/colors.sh" >> .pdgrc
 
 echo "-- created .pdgrc"
@@ -172,6 +181,50 @@ echo -e "${HEAD}Finding tools...${RESET}"
 
 command_exists () {
     type "$1" &> /dev/null ;
+}
+
+build_bcpp () {
+    local archive="$PDG_ROOT/tools/bcpp.tar.zip"
+    local source_root="$PDG_ROOT/build/$PLATFORM/bcpp-src"
+    local source_dir="$source_root/bcpp-20120318/code"
+    local build_dir="$PDG_ROOT/build/$PLATFORM/bcpp"
+
+    if [ ! -f "$archive" ]; then
+        echo -e "${ERR}FATAL ERROR: Missing $archive${RESET}"
+        return 1
+    fi
+
+    echo -e "${HEAD}Building C++ Pretty Print...${RESET}"
+    mkdir -p "$source_root" "$build_dir"
+
+    if ! (cd "$source_root" && cmake -E tar xvf "$archive" --format=zip >/dev/null); then
+        echo -e "${ERR}FATAL ERROR: Could not extract tools/bcpp.tar.zip${RESET}"
+        return 1
+    fi
+
+    if ! (cd "$source_root" && cmake -E tar xvf bcpp.tar >/dev/null); then
+        echo -e "${ERR}FATAL ERROR: Could not extract bcpp.tar${RESET}"
+        return 1
+    fi
+
+    if ! cmake -S "$PDG_ROOT/tools/bcpp" -B "$build_dir" \
+        -DBCPP_SOURCE_DIR="$source_dir" -DCMAKE_BUILD_TYPE=Release; then
+        echo -e "${ERR}FATAL ERROR: Could not configure bcpp${RESET}"
+        return 1
+    fi
+    if ! cmake --build "$build_dir" --config Release; then
+        echo -e "${ERR}FATAL ERROR: Could not build bcpp${RESET}"
+        return 1
+    fi
+    if [ ! -x "$build_dir/bcpp" ]; then
+        echo -e "${ERR}FATAL ERROR: bcpp executable not found at $build_dir/bcpp${RESET}"
+        return 1
+    fi
+
+    BCPP_PATH="$build_dir/bcpp"
+    PATH="$build_dir:$PATH"
+    export PATH
+    echo "-- Built C++ Pretty Print: $BCPP_PATH - OK"
 }
 
 if command_exists cmake ; then
@@ -198,15 +251,17 @@ if [ "$PLATFORM" == "darwin" ]; then
     fi
 fi
 
-if command_exists bcpp ; then
+if [ "$ENABLE_INTERFACE_TOOLS" == "yes" ]; then
+    echo "-- Option: Build bcpp and enable JavaScript interface regeneration"
+	CAN_BUILD_INTERFACES="pending"
+elif command_exists bcpp ; then
     BCPP_PATH=`which bcpp`
     echo "-- Check for C++ Pretty Print: $BCPP_PATH - OK"
 	CAN_BUILD_INTERFACES="yes"
 	PDG_CMAKE_OPTIONS="-DCAN_BUILD_INTERFACES=ON $PDG_CMAKE_OPTIONS"
 else
     echo -e "-- Check for C++ Pretty Print - ${WARN}NOT FOUND${RESET}"
-    echo "     Optional: Build and install bpp to support rebuilding JavaScript bindings"
-    echo "     bcpp can be found in: tools/bcpp.tar.zip"
+    echo "     Optional: rerun with --enable-interface-tools to build bcpp"
 	CAN_BUILD_INTERFACES="no"
 fi
 
@@ -302,6 +357,15 @@ fi
 mkdir -p build/$PLATFORM/libjpeg-turbo
 mkdir -p build/$PLATFORM/pdg
 mkdir -p build/js/pdg
+
+if [ "$ENABLE_INTERFACE_TOOLS" == "yes" ]; then
+    cd "$PDG_ROOT"
+    if ! build_bcpp; then
+        exit 1
+    fi
+    CAN_BUILD_INTERFACES="yes"
+    PDG_CMAKE_OPTIONS="-DCAN_BUILD_INTERFACES=ON $PDG_CMAKE_OPTIONS"
+fi
 
 cp LICENSE tools/node-pdg/LICENSE
 if [ "$BUILD_IOS" == "yes" ]; then
