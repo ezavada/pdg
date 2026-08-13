@@ -111,7 +111,6 @@ SET (PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES
 	${PDG_SOURCE_DIR}/src/bindings/javascript
 	${PDG_SOURCE_DIR}/src/bindings/javascript/v8
 	${PDG_SOURCE_DIR}/src/bindings/generated/v8
-	${PDG_SOURCE_DIR}/src/bindings/generated/jsc
 	${PDG_SOURCE_DIR}/src/bindings/node
 	${PDG_SOURCE_DIR}/deps/node/src
 	${PDG_SOURCE_DIR}/deps/node/deps/cares/include
@@ -119,6 +118,12 @@ SET (PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES
 	${PDG_SOURCE_DIR}/deps/node/deps/v8
 ${PDG_SOURCE_DIR}/deps/node/deps/v8/include
 )
+
+IF(CAN_BUILD_JSC_INTERFACES)
+	LIST(APPEND PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES
+		${PDG_SOURCE_DIR}/src/bindings/generated/jsc
+	)
+ENDIF()
 
 SET (PDG_JAVASCRIPT_BINDINGS_LINK_DIRECTORIES 
 )
@@ -935,11 +940,6 @@ ENDIF(WIN32)
 
 
 IF(CAN_BUILD_INTERFACES)
-	#check if bindings/jsc-ios exists
-	IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios")
-		SET( CAN_BUILD_JSC_INTERFACES TRUE )
-	ENDIF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios")
-
 	IF(WIN32)
 		SET(GEN_SCRIPT_INTERFACE_CMD ${CMAKE_COMMAND} -E env "BCPP_EXE=${BCPP_EXECUTABLE}" powershell -NoProfile -ExecutionPolicy Bypass -File "${CMAKE_SOURCE_DIR}/tools/gen-script-interface.ps1")
 	ELSE()
@@ -1065,9 +1065,11 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_impl_macros.h"
 	)
 	SET( BINDING_SCRIPT_DIRS
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8"
 	)
+	IF(CAN_BUILD_JSC_INTERFACES)
+		LIST(APPEND BINDING_SCRIPT_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc")
+	ENDIF()
 	SET( BINDING_SCRIPT_SUBDIRS
 		"physics"
 		"core"
@@ -1133,20 +1135,22 @@ IF(CAN_BUILD_INTERFACES)
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8/animation/.dir"
 				${macro_deps}
 		) 
-		# Generate for JSC
-		SET( outfile "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}/${filename}" )
-		LIST(APPEND interface_outfiles ${outfile}) 
-		ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
-			COMMAND ${GEN_SCRIPT_INTERFACE_CMD} "javascript/jsc" "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}" "./" "${filename}"
-			DEPENDS "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h" 
-				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/physics/.dir" 
-				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/core/.dir"
-				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/data/.dir"
-				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/graphics/.dir"
-				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/audio/.dir"
-				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/animation/.dir"
-				${macro_deps}
-		) 
+		IF(CAN_BUILD_JSC_INTERFACES)
+			# Generate for JSC
+			SET( outfile "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}/${filename}" )
+			LIST(APPEND interface_outfiles ${outfile})
+			ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
+				COMMAND ${GEN_SCRIPT_INTERFACE_CMD} "javascript/jsc" "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}" "./" "${filename}"
+				DEPENDS "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/physics/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/core/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/data/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/graphics/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/audio/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/animation/.dir"
+					${macro_deps}
+			)
+		ENDIF()
 	ENDFOREACH(srcfile)
 	ADD_CUSTOM_TARGET(pdg_common_interfaces ALL DEPENDS ${interface_outfiles})
 
@@ -1169,25 +1173,28 @@ IF(CAN_BUILD_INTERFACES)
 	)
 	ADD_CUSTOM_TARGET(pdg_v8_interfaces ALL DEPENDS ${V8_INTERFACES_SRC})
 
-	SET( JSC_BINDING_SRC
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_js_classes.cpp"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h"
-	)
-	SET( JSC_INTERFACES_SRC
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/pdg_interfaces.cpp"
-	)
-	# custom command for building the JavaScriptCore version of the pdg_interfaces.cpp file
-	# should only need to run when the pdg_js_classes.cpp file in src/bindings/javascript/jsc/ changes
-	ADD_CUSTOM_COMMAND(OUTPUT ${JSC_INTERFACES_SRC}
-		COMMAND ${GEN_SCRIPT_INTERFACE_CMD}
-			"javascript/jsc" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_js_classes.cpp" 
-			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc" "./"
-			"pdg_interfaces.cpp"
-		DEPENDS ${JSC_BINDING_SRC}
-	)
-	ADD_CUSTOM_TARGET(pdg_jsc_interfaces ALL DEPENDS ${JSC_INTERFACES_SRC})
+	IF(CAN_BUILD_JSC_INTERFACES)
+		SET( JSC_BINDING_SRC
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_js_classes.cpp"
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h"
+		)
+		SET( JSC_INTERFACES_SRC
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/pdg_interfaces.cpp"
+		)
+		# custom command for building the JavaScriptCore version of the pdg_interfaces.cpp file
+		# should only need to run when the pdg_js_classes.cpp file in src/bindings/javascript/jsc/ changes
+		ADD_CUSTOM_COMMAND(OUTPUT ${JSC_INTERFACES_SRC}
+			COMMAND ${GEN_SCRIPT_INTERFACE_CMD}
+				"javascript/jsc" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_js_classes.cpp"
+				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc" "./"
+				"pdg_interfaces.cpp"
+			DEPENDS ${JSC_BINDING_SRC}
+		)
+		ADD_CUSTOM_TARGET(pdg_jsc_interfaces ALL DEPENDS ${JSC_INTERFACES_SRC})
+		ADD_DEPENDENCIES(pdg pdg_jsc_interfaces)
+	ENDIF()
 
-	ADD_DEPENDENCIES(pdg pdg_common_interfaces pdg_js2native pdg_v8_interfaces pdg_jsc_interfaces)
+	ADD_DEPENDENCIES(pdg pdg_common_interfaces pdg_js2native pdg_v8_interfaces)
 
 IF( USE_CHIPMUNK )
 	IF(WIN32)

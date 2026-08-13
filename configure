@@ -137,7 +137,8 @@ if [ "$PLATFORM" == "darwin" ]; then
 # 	fi
 	if [ -d "ios/pdg.xcodeproj" ]; then
 		BUILD_IOS="yes"
-        USE_JAVASCRIPTCORE="yes"
+		USE_JAVASCRIPTCORE="yes"
+		PDG_CMAKE_OPTIONS="-DCAN_BUILD_JSC_INTERFACES=ON $PDG_CMAKE_OPTIONS"
 	fi
     SHARED_LIB_EXT="dylib"
 else
@@ -490,9 +491,9 @@ echo "" >> Makefile
 # -- target: pdg
 
 if [ "$PLATFORM" != "darwin" ]; then
-    echo "pdg: $GLFW_TARG chipmunk $LIBJPEG_TARG node $JS_INTERFACES_TARG" >> Makefile
+    echo "pdg: $GLFW_TARG chipmunk $LIBJPEG_TARG pdg-cmake-refresh $JS_INTERFACES_TARG" >> Makefile
 else
-    echo "pdg: $GLFW_TARG chipmunk node $JS_INTERFACES_TARG" >> Makefile
+    echo "pdg: $GLFW_TARG chipmunk pdg-cmake-refresh $JS_INTERFACES_TARG" >> Makefile
 fi
 echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make $PARALLEL_MAKE_OPTIONS " >> Makefile
 if [ "$PLATFORM" == "linux" ] && [ "$HEADLESS_BUILD" == "yes" ]; then
@@ -532,7 +533,7 @@ if [ "$HEADLESS_BUILD" == "yes" ]; then
     echo "	@echo \"pdg-tests is unavailable for headless builds. Re-run ./configure without --headless to build GUI performance tests.\"" >> Makefile
     echo "	@false" >> Makefile
 else
-echo "pdg-tests: $GLFW_TARG chipmunk node $JS_INTERFACES_TARG" >> Makefile
+echo "pdg-tests: $GLFW_TARG chipmunk pdg-cmake-refresh $JS_INTERFACES_TARG" >> Makefile
 echo "	@echo \"Building C++ performance tests...\"" >> Makefile
 echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make bunnymark pdgmark" >> Makefile
 echo "	@rm -f \$(PDG_ROOT)/test/perf/cpp-bunnymark/bunnymark" >> Makefile
@@ -563,7 +564,7 @@ echo "" >> Makefile
 
 # -- target: pdg-libs
 
-echo "pdg-libs: $GLFW_TARG chipmunk node $JS_INTERFACES_TARG" >> Makefile
+echo "pdg-libs: $GLFW_TARG chipmunk pdg-cmake-refresh $JS_INTERFACES_TARG" >> Makefile
 echo "	@echo \"Building PDG C++ libraries (debug and optimized)...\"" >> Makefile
 echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make pdg-libs" >> Makefile
 echo "	@echo \"\"" >> Makefile
@@ -607,7 +608,7 @@ fi
 # -- target: js-interfaces
 
 if [ "$CAN_BUILD_INTERFACES" == "yes" ]; then
-    echo "js-interfaces:" >> Makefile
+    echo "js-interfaces: pdg-cmake-refresh" >> Makefile
     echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make pdg_js2native" >> Makefile
     echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make pdg_common_interfaces" >> Makefile
     echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make pdg_v8_interfaces" >> Makefile
@@ -673,6 +674,16 @@ echo "endif" >> Makefile
 echo "	-@cd \$(PDG_ROOT)/deps/node/out/Release/; ls -al node" >> Makefile
 fi
 echo "	-@cd \$(PDG_ROOT)/deps/node/out/Release/; ls -al libnode.a" >> Makefile
+echo "" >> Makefile
+
+
+
+# -- target: pdg-cmake-refresh
+
+# A clean build creates Node's static archives after the initial CMake pass.
+# Refresh CMake now so those archives are included in the linker command.
+echo "pdg-cmake-refresh: node" >> Makefile
+echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; cmake \$(PDG_ROOT)" >> Makefile
 echo "" >> Makefile
 
 
@@ -816,15 +827,15 @@ echo "" >> Makefile
 
 if [ "$PLATFORM" != "darwin" ]; then
     if [ "$USE_GLFW" == "yes" ]; then
-        echo ".PHONY : all config pdg pdg-ios pdg-js pdg-node pdg-tests pdg-libs chipmunk chipmunk-js glfw libjpeg-turbo jsc js-interfaces fix-interface-timestamps node node-modules superclean clean xcode help" >> Makefile
+        echo ".PHONY : all config pdg pdg-ios pdg-js pdg-node pdg-tests pdg-libs chipmunk chipmunk-js glfw libjpeg-turbo jsc js-interfaces fix-interface-timestamps node pdg-cmake-refresh node-modules superclean clean xcode help" >> Makefile
     else
-        echo ".PHONY : all config pdg pdg-ios pdg-js pdg-node pdg-tests pdg-libs chipmunk chipmunk-js libjpeg-turbo jsc js-interfaces fix-interface-timestamps node node-modules superclean clean xcode help" >> Makefile
+        echo ".PHONY : all config pdg pdg-ios pdg-js pdg-node pdg-tests pdg-libs chipmunk chipmunk-js libjpeg-turbo jsc js-interfaces fix-interface-timestamps node pdg-cmake-refresh node-modules superclean clean xcode help" >> Makefile
     fi
 else
     if [ "$USE_GLFW" == "yes" ]; then
-        echo ".PHONY : all config pdg pdg-ios pdg-js pdg-node pdg-tests pdg-libs chipmunk chipmunk-js glfw jsc js-interfaces fix-interface-timestamps node node-modules superclean clean xcode help" >> Makefile
+        echo ".PHONY : all config pdg pdg-ios pdg-js pdg-node pdg-tests pdg-libs chipmunk chipmunk-js glfw jsc js-interfaces fix-interface-timestamps node pdg-cmake-refresh node-modules superclean clean xcode help" >> Makefile
     else
-        echo ".PHONY : all config pdg pdg-ios pdg-js pdg-node pdg-tests pdg-libs chipmunk chipmunk-js jsc js-interfaces fix-interface-timestamps node node-modules superclean clean xcode help" >> Makefile
+        echo ".PHONY : all config pdg pdg-ios pdg-js pdg-node pdg-tests pdg-libs chipmunk chipmunk-js jsc js-interfaces fix-interface-timestamps node pdg-cmake-refresh node-modules superclean clean xcode help" >> Makefile
     fi
 fi
 

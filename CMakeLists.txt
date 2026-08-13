@@ -23,6 +23,7 @@ OPTION(USE_CHIPMUNK "Build with Chipmunk Physics library" ON)
 OPTION(USE_GLFW_MAC "Build with GLFW library on Mac OS X" ON)
 OPTION(USE_SPRITER "Build with support for Spriter animations" ON)
 OPTION(CAN_BUILD_INTERFACES "Support rebuilding JavaScript Interfaces" OFF)
+OPTION(CAN_BUILD_JSC_INTERFACES "Support rebuilding JavaScriptCore Interfaces" OFF)
 OPTION(PDG_HEADLESS "Build without GUI/graphics support" OFF)
 
 IF(WIN32 AND CAN_BUILD_INTERFACES)
