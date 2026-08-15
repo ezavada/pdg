@@ -358,12 +358,12 @@ function Build-Node {
         
         Push-Location "deps\node"
         try {
-            # Set environment to force single-threaded build to avoid hanging
-            Write-Status "Running: cmd /c vcbuild.bat noprojgen nosign" "Gray"
+            # Keep the build single-threaded, but let vcbuild regenerate project files when needed.
+            Write-Status "Running: cmd /c vcbuild.bat nosign" "Gray"
             Write-Status "Using single-threaded build to prevent MSBuild hanging issues" "Yellow"
             $originalProcessors = $env:NUMBER_OF_PROCESSORS
             $env:NUMBER_OF_PROCESSORS = "1"
-            $process = Start-Process -FilePath "cmd" -ArgumentList @("/c", "vcbuild.bat", "noprojgen", "nosign") -PassThru -NoNewWindow
+            $process = Start-Process -FilePath "cmd" -ArgumentList @("/c", "vcbuild.bat", "nosign") -PassThru -NoNewWindow
             $timeout = 60 * 60 * 1000  # 60 minutes timeout for single-threaded Node.js build
             
             if ($process.WaitForExit($timeout)) {

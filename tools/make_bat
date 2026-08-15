@@ -7,7 +7,7 @@ set BUILD_STATUS=0
 cd deps\node
 if not exist out\%config%\nodelib.lib (
 	echo Building Node.js as a library...
-	call vcbuild.bat noprojgen nosign
+	call vcbuild.bat nosign
 	set BUILD_STATUS=%ERRORLEVEL%
 	xcopy /D %config%\lib\*.lib out\%config%\
 	xcopy /D build\%config%\lib\*.lib out\%config%\
