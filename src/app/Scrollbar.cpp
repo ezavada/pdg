@@ -30,6 +30,7 @@
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
 
 #include "pdg/app/Scrollbar.h"
+#include "ViewUtils.h"
 #include "pdg/framework.h"
 #include "pdg/sys/attributes.h"
 #include "timerids.h"
@@ -101,7 +102,7 @@ Scrollbar::~Scrollbar()
 void Scrollbar::loadImages(int scrollbarImagesResourceID)
 {
 	// Load scroll bar images
-	loadImageArray(mResMgr, mpScrollBarImages, scrollbarImagesResourceID, MAX_SCROLL_BAR_IMAGES);
+	app::loadImageArray(mPort, mResMgr, mpScrollBarImages, scrollbarImagesResourceID, MAX_SCROLL_BAR_IMAGES);
 
 	// Calc areas
 	calcClickableAreas();
@@ -211,14 +212,14 @@ void Scrollbar::drawSelf()
 	{
 		if (mpScrollBarImages[SCROLL_UP_CLICKED])
 		{
-			mpScrollBarImages[SCROLL_UP_CLICKED]->draw(localToGlobal(mUpButtonPoint));
+			mPort->drawImage(mpScrollBarImages[SCROLL_UP_CLICKED], localToGlobal(mUpButtonPoint), Attributes());
 		}
 	}
 	else
 	{
 		if (mpScrollBarImages[SCROLL_UP])
 		{
-			mpScrollBarImages[SCROLL_UP]->draw(localToGlobal(mUpButtonPoint));
+			mPort->drawImage(mpScrollBarImages[SCROLL_UP], localToGlobal(mUpButtonPoint), Attributes());
 		}
 	}
 
@@ -227,14 +228,14 @@ void Scrollbar::drawSelf()
 	{
 		if (mpScrollBarImages[SCROLL_DOWN_CLICKED])
 		{
-			mpScrollBarImages[SCROLL_DOWN_CLICKED]->draw(localToGlobal(mDownButtonPoint));
+			mPort->drawImage(mpScrollBarImages[SCROLL_DOWN_CLICKED], localToGlobal(mDownButtonPoint), Attributes());
 		}
 	}
 	else
 	{
 		if (mpScrollBarImages[SCROLL_DOWN])
 		{
-			mpScrollBarImages[SCROLL_DOWN]->draw(localToGlobal(mDownButtonPoint));
+			mPort->drawImage(mpScrollBarImages[SCROLL_DOWN], localToGlobal(mDownButtonPoint), Attributes());
 		}
 	}
 
@@ -293,7 +294,7 @@ void Scrollbar::drawSelf()
 		}
 
 		// draw the slider
-		mpScrollBarImages[SCROLL_SLIDER]->draw(localToGlobal(mSliderPoint));
+		mPort->drawImage(mpScrollBarImages[SCROLL_SLIDER], localToGlobal(mSliderPoint), Attributes());
 	}
 	/*char text[20];
 	std::snprintf(text, 20, "CurrPos=%d", mCurrentPosition);
@@ -527,7 +528,7 @@ void Scrollbar::trackScrollSlider()
 			// go back to our point where the user started.
 			Rect goodRangeRect = this->mSliderArea;
 			goodRangeRect = goodRangeRect + goodRangeOffset;
-			//mPort->frameRect(localToGlobal(goodRangeRect), PDG_GREEN_COLOR);
+			//mPort->drawRect(localToGlobal(goodRangeRect), Attributes().lineColor(PDG_GREEN_COLOR));
 			if (!goodRangeRect.contains(newMousePoint))
 			{
 				newMousePoint = mSliderStartTrackPoint;

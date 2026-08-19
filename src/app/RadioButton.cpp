@@ -32,10 +32,7 @@
 #include "pdg/app/RadioButton.h"
 #include "pdg/app/Controller.h"
 #include "pdg/sys/attributes.h"
-
-#ifndef PDG_ALLOW_DEPRECATED_CALLS
-#error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use RadioButton.cpp
-#endif
+#include "ViewUtils.h"
 
 namespace pdg {
 
@@ -64,7 +61,7 @@ RadioButton::~RadioButton()
 
 void RadioButton::loadImages()
 {
-	loadImageArray(mResMgr, mpRadioImages, RES_RADIO_IMAGES, MAX_RADIO_IMAGES);
+	app::loadImageArray(mPort, mResMgr, mpRadioImages, RES_RADIO_IMAGES, MAX_RADIO_IMAGES);
 }
 
 void RadioButton::loadStrings(int resourceID, int numStrings)
@@ -108,7 +105,7 @@ void RadioButton::drawSelf()
 			if (mpRadioImages[RADIO_CLOSED])
 			{
 				imagePoint.y += (mViewArea.height() - mpRadioImages[RADIO_CLOSED]->height)/2;
-				mpRadioImages[RADIO_CLOSED]->draw(localToGlobal(imagePoint));
+				mPort->drawImage(mpRadioImages[RADIO_CLOSED], localToGlobal(imagePoint), Attributes());
 				textPoint.x += mpRadioImages[RADIO_CLOSED]->width + 5;
 				textPoint.y += fontHeight;
 			}
@@ -118,13 +115,13 @@ void RadioButton::drawSelf()
 			if (mpRadioImages[RADIO_OPEN])
 			{
 				imagePoint.y += (mViewArea.height() - mpRadioImages[RADIO_OPEN]->height)/2;
-				mpRadioImages[RADIO_OPEN]->draw(localToGlobal(imagePoint));
+				mPort->drawImage(mpRadioImages[RADIO_OPEN], localToGlobal(imagePoint), Attributes());
 				textPoint.x += mpRadioImages[RADIO_OPEN]->width + 5;
 			textPoint.y += fontHeight;
 		}
 	}
 
-	mPort->drawText(mStrings[i].c_str(), localToGlobal(textPoint), Attributes().textSize(RADIO_TEXT_SIZE));
+	mPort->drawText(mStrings[i].c_str(), localToGlobal(textPoint), Attributes().textSize(RADIO_TEXT_SIZE).fillColor(PDG_BLACK_COLOR));
 	buttonPoint.x += buttonSpace;
 	}
 
@@ -140,4 +137,3 @@ void RadioButton::doClick(int part)
 }
 
 } // namespace pdg
-

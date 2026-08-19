@@ -31,10 +31,7 @@
 #include "pdg/sys/os.h"
 #include "pdg/app/Button.h"
 #include "pdg/app/View.h"
-
-#ifndef PDG_ALLOW_DEPRECATED_CALLS
-#error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use Button.cpp
-#endif
+#include "ViewUtils.h"
 
 
 #include "timerids.h"
@@ -71,7 +68,7 @@ Button::Button(Controller* controller, const Rect frame, int buttonID, int resou
     initializeButton(resourceTextID, substring);
 
 	// Resize images to fit
-	scaleImageArrayToFit(mpButtonImage, MAX_BUTTON_IMAGES, frame);
+	app::scaleImageArrayToFit(mpButtonImage, MAX_BUTTON_IMAGES, frame);
 
 	finishInitButton();
 }
@@ -107,11 +104,11 @@ void Button::initializeButton(int resourceTextID, short substring) {
 	// which should be already loaded
 	if (mImagesId == RES_DEFAULT_BUTTON_IMAGE)
 	{
-		loadImageArray(mResMgr, mpButtonImage, RES_DEFAULT_BUTTON_IMAGE, MAX_BUTTON_IMAGES);
+		app::loadImageArray(mPort, mResMgr, mpButtonImage, RES_DEFAULT_BUTTON_IMAGE, MAX_BUTTON_IMAGES);
 	}
 	else
 	{
-		loadImageArray(mResMgr, mpButtonImage, mImagesId, MAX_BUTTON_IMAGES);
+		app::loadImageArray(mPort, mResMgr, mpButtonImage, mImagesId, MAX_BUTTON_IMAGES);
 	}
 
 	// Set the button text
@@ -135,9 +132,9 @@ void Button::finishInitButton() {
 Button::~Button()
 {
     // unload the button images
-    unloadImage(mpButtonImage[BUTTON_NOT_PRESSED]);
-    unloadImage(mpButtonImage[BUTTON_PRESSED]);
-    unloadImage(mpButtonImage[BUTTON_DISABLED]);
+    app::unloadImage(mpButtonImage[BUTTON_NOT_PRESSED]);
+    app::unloadImage(mpButtonImage[BUTTON_PRESSED]);
+    app::unloadImage(mpButtonImage[BUTTON_DISABLED]);
     mpClickSound = 0;
 }
 
@@ -215,7 +212,7 @@ void Button::drawSelf()
 //	    if (mText.length()%2 == 1) {
 //	        drawStandardButtonBackground();
 //	    } else {
-		    buttonImage->draw(localToGlobal(topLeftPoint));
+		    mPort->drawImage(buttonImage, localToGlobal(topLeftPoint), Attributes());
 //		}
 
 /*		int buttonTextSize = buttonImage->height/2;

@@ -193,7 +193,7 @@ void ListBox::drawSelf()
 
 	// Left in for debug purposes
 	//Rect viewArea(0,0,mViewArea.height(), mViewArea.width());
-    //mPort->frameRect(localToGlobal(viewArea), PDG_GREEN_COLOR);
+    //mPort->drawRect(localToGlobal(viewArea), Attributes().lineColor(PDG_GREEN_COLOR));
 
 	//this->drawClickableParts();
 }
@@ -351,4 +351,3 @@ bool ListBox::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 }
 
 } // namespace pdg
-

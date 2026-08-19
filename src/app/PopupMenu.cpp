@@ -30,11 +30,8 @@
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
 
 #include "pdg/app/PopupMenu.h"
+#include "ViewUtils.h"
 #include "pdg/sys/attributes.h"
-
-#ifndef PDG_ALLOW_DEPRECATED_CALLS
-#error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use PopupMenu.cpp
-#endif
 
 namespace pdg {
 
@@ -251,7 +248,7 @@ void PopupMenu::drawSelf()
 			{
 				Point arrowPt(tempRect.right - mPullArrowImage->width - 2, 
 					(tempRect.height() - mPullArrowImage->height)/2 + tempRect.top);
-//				mPullArrowImage->draw(arrowPt);
+//				mPort->drawImage(mPullArrowImage, arrowPt, Attributes());
 			}
 		}
 // draw item vertically centered
@@ -284,38 +281,38 @@ void PopupMenu::drawSelf()
 	{
 // for up arrow
 		Rect tempRect = localToGlobal(View::getClickableRectFromID(ITEM_UP_ARROW));
-			mPort->fillRect(tempRect,mbkColor);
+			mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
 		if (mShowUpArrow) // draw enabled up arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[0]->width) /2 ;
 			imagePoint.y += (tempRect.height() - mScrollImages[0]->height) /2;
-			mScrollImages[0]->draw(imagePoint);
+			mPort->drawImage(mScrollImages[0], imagePoint, Attributes());
 		}
 		else // draw disabled up arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[1]->width) /2 ;
 			imagePoint.y += (tempRect.height() - mScrollImages[1]->height) /2;
-			mScrollImages[1]->draw(imagePoint);
+			mPort->drawImage(mScrollImages[1], imagePoint, Attributes());
 		}
 
 // for down arrow
 		tempRect = localToGlobal(View::getClickableRectFromID(ITEM_DOWN_ARROW));
-		mPort->fillRect(tempRect,mbkColor);
+		mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
 		if (mShowDownArrow) // draw enabled down arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[2]->width) /2 ;
 			imagePoint.y += (tempRect.height() - mScrollImages[2]->height) /2;
-			mScrollImages[2]->draw(imagePoint);
+			mPort->drawImage(mScrollImages[2], imagePoint, Attributes());
 		}
 		else // draw disabled down arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[3]->width) /2 ;
 			imagePoint.y += (tempRect.height() - mScrollImages[3]->height) /2;
-			mScrollImages[3]->draw(imagePoint);
+			mPort->drawImage(mScrollImages[3], imagePoint, Attributes());
 		}
 	} */
 
@@ -441,8 +438,8 @@ void PopupMenu::showSelf()
 
 void PopupMenu::loadImages()
 {
-//	loadImageArray(mResMgr, mScrollImages, RES_MENU_IMAGES, MAX_ARROW_IMAGES + MAX_ARROW_IMAGES);
-	mPullArrowImage = loadImage(mResMgr, RES_MENU_IMAGES, RES_PULL_ARROW);
+//	app::loadImageArray(mPort, mResMgr, mScrollImages, RES_MENU_IMAGES, MAX_ARROW_IMAGES + MAX_ARROW_IMAGES);
+	mPullArrowImage = app::loadImage(mPort, mResMgr, RES_MENU_IMAGES, RES_PULL_ARROW);
 }
 
 void PopupMenu::setLongestText()
@@ -880,4 +877,3 @@ void PopupMenu::hide()
 }
 
 } // namespace pdg
-

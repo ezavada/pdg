@@ -29,6 +29,7 @@
 
 #include "pdg/app/Dice.h"
 #include "pdg/app/DiceView.h"
+#include "ViewUtils.h"
 #include "pdg/app/Controller.h"
 #include "pdg/sys/os.h"
 #include "pdg/sys/resource.h"
@@ -127,7 +128,7 @@ DiceView::reset() {
 void
 DiceView::loadImages() {
 	// Load Dice images
-	loadImageArray(mResMgr, mDiceImage, RES_DICE_ANIM_NAMES, DICE_IMAGE_NUM);
+	app::loadImageArray(mPort, mResMgr, mDiceImage, RES_DICE_ANIM_NAMES, DICE_IMAGE_NUM);
 	if (mDiceImage[DICE_IDX]) {
 		static_cast<ImageStrip*>(mDiceImage[DICE_IDX])->setNumFrames(DICE_NUM_SIDES);  // six sided dice
 	}
@@ -152,7 +153,7 @@ DiceView::loadImages() {
 
 void
 DiceView::drawSelf() {
-//    mPort->frameRect(mAnimRect, PDG_CYAN_COLOR);
+//    mPort->drawRect(mAnimRect, Attributes().lineColor(PDG_CYAN_COLOR));
 
 // TODO: remove these catan specific things
 #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
@@ -253,4 +254,3 @@ bool DiceView::IsMouseOnDiceView(Point mousePts, Rect & rToolRect)
 }
 
 } // close namespace pdg
-

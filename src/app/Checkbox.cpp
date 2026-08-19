@@ -32,10 +32,6 @@
 #include "pdg/app/Checkbox.h"
 #include "pdg/sys/attributes.h"
 
-#ifndef PDG_ALLOW_DEPRECATED_CALLS
-#error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use Checkbox.cpp
-#endif
-
 
 namespace pdg {
 
@@ -99,7 +95,7 @@ void Checkbox::drawSelf()
 	{
 		if (mpCheckboxImages)
 		{
-			mpCheckboxImages->getFrame(CLOSED)->draw(localToGlobal(checkPt));
+			mPort->drawImage(mpCheckboxImages, localToGlobal(checkPt), Attributes().frame(CLOSED));
 		} else {
 			checkPt = localToGlobal(checkPt);
 
@@ -113,7 +109,7 @@ void Checkbox::drawSelf()
 	{
 		if (mpCheckboxImages)
 		{
-			mpCheckboxImages->getFrame(OPEN)->draw(localToGlobal(checkPt));
+			mPort->drawImage(mpCheckboxImages, localToGlobal(checkPt), Attributes().frame(OPEN));
 		} else {
 			checkPt = localToGlobal(checkPt);
 
@@ -140,7 +136,7 @@ void Checkbox::drawSelf()
 			textPt.y += OPEN_CHECKBOX_HEIGHT - SPACE_UP_FROM_BOTTOM;
 		}
 
-		mPort->drawText(mString.c_str(), localToGlobal(textPt), Attributes().textSize(mTextSize).textStyle(checkboxTextStyle));
+		mPort->drawText(mString.c_str(), localToGlobal(textPt), Attributes().textSize(mTextSize).textStyle(checkboxTextStyle).fillColor(PDG_BLACK_COLOR));
 	}
 	//this->drawClickableParts();
 }

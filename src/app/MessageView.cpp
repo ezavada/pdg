@@ -31,11 +31,8 @@
 
 #include "pdg/framework.h"
 #include "pdg/app/MessageView.h"
+#include "ViewUtils.h"
 #include "pdg/sys/attributes.h"
-
-#ifndef PDG_ALLOW_DEPRECATED_CALLS
-#error You must define PDG_ALLOW_DEPRECATED_CALLS in your project to use MessageView.cpp
-#endif
 
 // TODO: remove these catan specific things
 #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
@@ -79,7 +76,7 @@ void MessageView::drawSelf()
 	Rect textArea = Rect(BORDER_SPACER, BORDER_SPACER, mViewArea.width() - BORDER_SPACER, mViewArea.height() - BORDER_SPACER);
 	
 	// Draw string
-	this->drawMultilineText(mMessageString.c_str(), MESSAGE_TEXT_SIZE, MESSAGE_TEXT_COLOR, localToGlobal(textArea));
+	app::drawMultilineText(mPort, mMessageString.c_str(), MESSAGE_TEXT_SIZE, MESSAGE_TEXT_COLOR, localToGlobal(textArea));
 }
 
 } // namespace pdg
