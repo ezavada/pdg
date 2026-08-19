@@ -341,6 +341,15 @@ int platform_getWindowScreen(void* windRef) {
 	return 0;
 }
 
+void platform_getWindowContentSize(void* windRef, long* outWidth, long* outHeight) {
+	GLFWwindow* window = static_cast<GLFWwindow*>(windRef);
+	int width = 0;
+	int height = 0;
+	glfwGetFramebufferSize(window, &width, &height);
+	*outWidth = width;
+	*outHeight = height;
+}
+
 void platform_getWindowPosition(void* windRef, long* outXPos, long* outYPos) {
 	GLFWwindow* window = static_cast<GLFWwindow*>(windRef);
 	int xpos;

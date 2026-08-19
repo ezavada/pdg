@@ -209,8 +209,16 @@ GraphicsManager::createWindowPort(const Rect& rect, const char* windName, int bp
     port->mPlatformWindowRef = platform_createWindow(rect.width(), rect.height(), 
     	rect.left, rect.top, bpp, windName);
 	
-	pdg::Rect r = rect;
-	r.moveTo(0,0);
+	long contentWidth = 0;
+	long contentHeight = 0;
+	// The window manager may constrain the requested size to the usable desktop.
+	// Keep the port and OpenGL viewport aligned with the content area actually created.
+	if (port->mPlatformWindowRef) {
+		platform_getWindowContentSize(port->mPlatformWindowRef, &contentWidth, &contentHeight);
+	}
+	pdg::Rect r = (contentWidth > 0 && contentHeight > 0)
+		? pdg::Rect(contentWidth, contentHeight)
+		: pdg::Rect(rect.width(), rect.height());
 	port->setPortRects(r);
 
 	// make this the main port if there isn't one already
@@ -514,4 +522,3 @@ graphics_getScreenRectForPortSize(long width, long height, int screenNum, bool a
 } // end namespace pdg
 
 #endif // PDG_NO_GUI
-

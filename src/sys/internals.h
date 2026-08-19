@@ -96,6 +96,7 @@ namespace pdg {
     void platform_destroyWindow(void* windRef);
 	void platform_resizeWindow(void* windRef, long width, long height, bool fullscreen);
 	int platform_getWindowScreen(void* windRef);
+	void platform_getWindowContentSize(void* windRef, long* outWidth, long* outHeight);
 	void platform_getWindowPosition(void* windRef, long* outXPos, long* outYPos);
 	void platform_setWindowPosition(void* windRef, long xPos, long yPos);
 	bool platform_isFullScreen(void* windRef);

@@ -449,6 +449,13 @@ int platform_getWindowScreen(void* windRef) {
 	return displayIDToScreenNumTo(dispId);
 }
 
+void platform_getWindowContentSize(void* windRef, long* outWidth, long* outHeight) {
+    PDGOpenGLView* myView = (PDGOpenGLView*)windRef;
+    NSRect contents = [myView bounds];
+    *outWidth = contents.size.width;
+    *outHeight = contents.size.height;
+}
+
 void platform_getWindowPosition(void* windRef, long* outXPos, long* outYPos) {
     PDGOpenGLView* myView = (PDGOpenGLView*)windRef;
     NSWindow* window = [myView window];
@@ -581,5 +588,4 @@ CGDisplayModeRef bestModeForParameters(CGDirectDisplayID dispId, int bpp, long w
     CFRelease(modeList);
     return highestRankedMode;
 }
-
 
