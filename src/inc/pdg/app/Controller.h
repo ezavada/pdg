@@ -82,6 +82,10 @@ public:
 	virtual bool doDragComplete(const MouseInfo *mi, View* view, int id, int part);
 	
     virtual void portWasResized(Port* resizedPort);
+
+    // Area in which dialogs should be horizontally presented. Applications with
+    // split-screen layouts can override this without coupling Dialog to app code.
+    virtual Rect getDialogPresentationArea(Port* port);
     
     // for a controller we own trying to close
     virtual bool attemptChildClose(Controller* child, bool cancelled);
@@ -139,5 +143,4 @@ private:
 
 
 #endif // PDG_CONTROLLER_H_INCLUDED
-
 

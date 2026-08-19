@@ -35,16 +35,12 @@
 #include "pdg/app/View.h"
 #include "pdg/sys/attributes.h"
 
-// TODO: remove these catan specific things
 #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
   #include "GameController.h"
-  #include "BoardView.h"
 #endif
 
 #define PART_DIALOG_BKGRND      1
 #define DIALOG_BKGRND_VIEW_ID   -100
-
-#define CONTROL_DIVIDER_X		880.0f
 
 #define BRIGHTEN(ch) if (ch < 0.5f) { ch += 0.5f; } else { ch = 1.0f; }
 #define DARKEN(ch) if (ch > 0.5f) { ch -= 0.5f; } else { ch = 0.0f; }
@@ -198,23 +194,12 @@ void Dialog::portWasResized(Port* resizedPort) {
     int width = mDialogRect.width();
     int height = mDialogRect.height();
 
-// TODO: remove these catan specific things
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-	// If the water is being shown draw all dialogs over the center otherwise center over just board.
-	GameController& gc = static_cast<GameController&>(getTopController());
-	if (!gc.isGameBoardAndControlsHidden())
-	{
-	    long dividerX = (long)(CONTROL_DIVIDER_X * (float)resizedPort->getDrawingArea().width() / 1280.0f);
-		topLeft.x = (dividerX - width) / 2;
-	    if (topLeft.x < 20) {
-	        // offsreen to left, so center on full window
-		    topLeft.x = (resizedPort->getDrawingArea().width() - width) / 2;
-	    }
-	}
-	else
-#endif // CATAN_SPECIFIC
-	{
-		topLeft.x = (resizedPort->getDrawingArea().width() - width) / 2;
+	Rect drawingArea = resizedPort->getDrawingArea();
+	Rect presentationArea = getTopController().getDialogPresentationArea(resizedPort);
+	topLeft.x = presentationArea.left + (presentationArea.width() - width) / 2;
+	if (topLeft.x < drawingArea.left + 20) {
+		// If the preferred area is too narrow, center in the full drawing area.
+		topLeft.x = drawingArea.left + (drawingArea.width() - width) / 2;
 	}
 
     if (mFlags & dialog_Centered) {
@@ -305,23 +290,12 @@ void Dialog::setDialogRect(const Rect& dialogRect)
     Port* port = getApplication().getGraphicsManager().getMainPort();
     if (port) {
 
-      // TODO: remove these catan specific things
-      #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-		// If the water is being shown draw all dialogs over the center otherwise center over just board.
-	    GameController& gc = static_cast<GameController&>(mParentController->getTopController());
-		if (!gc.isGameBoardAndControlsHidden())
-		{
-		    long dividerX = (long)(CONTROL_DIVIDER_X * (float)port->getDrawingArea().width() / 1280.0f);
-			topLeft.x = (dividerX - dialogRect.width()) / 2;
-		    if (topLeft.x < 20) {
-		        // offsreen to left, so center on full window
-			    topLeft.x = (port->getDrawingArea().width() - dialogRect.width()) / 2;
-		    }
-		}
-		else
-	  #endif // CATAN_SPECIFIC
-		{
-			topLeft.x = (port->getDrawingArea().width() - dialogRect.width()) / 2;
+		Rect drawingArea = port->getDrawingArea();
+		Rect presentationArea = mParentController->getTopController().getDialogPresentationArea(port);
+		topLeft.x = presentationArea.left + (presentationArea.width() - dialogRect.width()) / 2;
+		if (topLeft.x < drawingArea.left + 20) {
+			// If the preferred area is too narrow, center in the full drawing area.
+			topLeft.x = drawingArea.left + (drawingArea.width() - dialogRect.width()) / 2;
 		}
 
         if (mFlags & dialog_Centered) {

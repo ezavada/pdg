@@ -105,6 +105,10 @@ Controller::~Controller() {
     removeAllViews();
 }
 
+Rect Controller::getDialogPresentationArea(Port* port) {
+    return port ? port->getDrawingArea() : Rect();
+}
+
 
 void Controller::addView(const View* view, int id) {
 	// Add the ID and name pair to our list
