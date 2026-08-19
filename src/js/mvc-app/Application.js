@@ -82,7 +82,8 @@ class Application {
     _unregisterEventHandlers() {
         // Remove individual event handlers
         if (this.shutdownHandler) {
-            this.eventMgr.removeHandler(this.shutdownHandler);
+            if (typeof this.shutdownHandler.cancel === 'function') this.shutdownHandler.cancel();
+            else this.eventMgr.removeHandler(this.shutdownHandler, pdg.eventType_Shutdown);
             this.shutdownHandler = null;
         }
     }

@@ -25,6 +25,7 @@ const ControllerPreferences = {
 };
 
 const DBL_CLICK_TIME = 250; // Milliseconds allowed between clicks of a double-click
+const { ControlAttributes } = require('./ControlAttributes');
 
 /**
  * Base Controller class that manages views and handles events
@@ -70,8 +71,8 @@ class Controller {
         this.wantsAllEvents = wantAll;
         this.drawInactive = drawInactive;
         this.viewOnLastMouseMoved = null;
-        this.lasthitViewID = -1;
-        this.lasthitViewPart = -1;
+        this.lastHitViewID = -1;
+        this.lastHitViewPart = -1;
         
         // Store event handler references for cleanup
         this.mouseUpHandler = null;
@@ -142,43 +143,27 @@ class Controller {
      */
     _unregisterEventHandlers() {
         const eventManager = this.app.getEventManager();
-        
-        // Remove individual event handlers
-        if (this.mouseUpHandler) {
-            eventManager.removeHandler(this.mouseUpHandler);
-            this.mouseUpHandler = null;
-        }
-        if (this.mouseDownHandler) {
-            eventManager.removeHandler(this.mouseDownHandler);
-            this.mouseDownHandler = null;
-        }
-        if (this.mouseMoveHandler) {
-            eventManager.removeHandler(this.mouseMoveHandler);
-            this.mouseMoveHandler = null;
-        }
-        if (this.keyUpHandler) {
-            eventManager.removeHandler(this.keyUpHandler);
-            this.keyUpHandler = null;
-        }
-        if (this.keyDownHandler) {
-            eventManager.removeHandler(this.keyDownHandler);
-            this.keyDownHandler = null;
-        }
-        if (this.keyPressHandler) {
-            eventManager.removeHandler(this.keyPressHandler);
-            this.keyPressHandler = null;
-        }
-        if (this.mouseEnterHandler) {
-            eventManager.removeHandler(this.mouseEnterHandler);
-            this.mouseEnterHandler = null;
-        }
-        if (this.mouseLeaveHandler) {
-            eventManager.removeHandler(this.mouseLeaveHandler);
-            this.mouseLeaveHandler = null;
-        }
+        const cancel = (property, eventType) => {
+            const handler = this[property];
+            if (!handler) return;
+            if (typeof handler.cancel === 'function') handler.cancel();
+            else eventManager.removeHandler(handler, eventType);
+            this[property] = null;
+        };
+
+        cancel('mouseUpHandler', pdg.eventType_MouseUp);
+        cancel('mouseDownHandler', pdg.eventType_MouseDown);
+        cancel('mouseMoveHandler', pdg.eventType_MouseMove);
+        cancel('keyUpHandler', pdg.eventType_KeyUp);
+        cancel('keyDownHandler', pdg.eventType_KeyDown);
+        cancel('keyPressHandler', pdg.eventType_KeyPress);
+        cancel('mouseEnterHandler', pdg.eventType_MouseEnter);
+        cancel('mouseLeaveHandler', pdg.eventType_MouseLeave);
+        cancel('portDrawHandler', pdg.eventType_PortDraw);
+        cancel('portResizedHandler', pdg.eventType_PortResized);
         
         if (this.wantsAllEvents) {
-            eventManager.removeHandler(this);
+            eventManager.removeHandler(this, pdg.all_events);
         }
     }
 
@@ -340,6 +325,14 @@ class Controller {
         }
     }
 
+    /**
+     * Return application-wide attributes for a control. Top-level application
+     * controllers override this to provide a theme to all child controllers.
+     */
+    getControlAttributes(type, styleId = -1) {
+        return new ControlAttributes();
+    }
+
      /**
      * Draw all the views, then call drawViews for active children
      * @param {pdg.Port} port - Port to draw into
@@ -394,6 +387,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onMouseDown(eventData) {
+        if (!this.active) return false;
         const hitView = this.getHitView(eventData.mousePos);
         const hitViewID = hitView ? hitView.getID() : -1;
         const hitViewPart = hitView ? hitView.getPartClicked(eventData.mousePos) : -1;
@@ -418,6 +412,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onMouseUp(eventData) {
+        if (!this.active) return false;
         const hitView = this.getHitView(eventData.mousePos);
         const hitViewID = hitView ? hitView.getID() : -1;
         const hitViewPart = hitView ? hitView.getPartClicked(eventData.mousePos) : -1;
@@ -448,6 +443,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onMouseMove(eventData) {
+        if (!this.active) return false;
         // this generates synthetic mouse enter and leave events to views
         const hitView = this.getHitView(eventData.mousePos);
         const hitViewID = hitView ? hitView.getID() : -1;
@@ -483,6 +479,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onMouseEnter(eventData) {
+        if (!this.active) return false;
         // these are real mouse enter events from the engine
         // which must have been set up though mouse tracking calls
         const hitView = this.getHitView(eventData.mousePos);
@@ -497,6 +494,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onMouseLeave(eventData) {
+        if (!this.active) return false;
         // these are real mouse leave events from the engine
         // which must have been set up though mouse tracking calls
         const hitView = this.getHitView(eventData.mousePos);
@@ -511,6 +509,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onKeyDown(eventData) {
+        if (!this.active) return false;
         const mousePos = pdg.gfx.getMouse();
         const hitView = this.getHitView(mousePos);
         const hitViewID = hitView ? hitView.getID() : -1;
@@ -524,6 +523,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onKeyUp(eventData) {
+        if (!this.active) return false;
         const mousePos = pdg.gfx.getMouse();
         const hitView = this.getHitView(mousePos);
         const hitViewID = hitView ? hitView.getID() : -1;
@@ -538,6 +538,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onKeyPress(eventData) {
+        if (!this.active) return false;
         const mousePos = pdg.gfx.getMouse();
         const hitView = this.getHitView(mousePos);
         const hitViewID = hitView ? hitView.getID() : -1;
@@ -554,7 +555,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     doMouseDown(mouseInfo, view, id, part) {
-        return false;
+        return view ? view.doMouseDown(mouseInfo, id, part) : false;
     }
 
     /**
@@ -566,7 +567,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     doMouseUp(mouseInfo, view, id, part) {
-        return false;
+        return view ? view.doMouseUp(mouseInfo, id, part) : false;
     }
 
     /**
@@ -578,7 +579,7 @@ class Controller {
      * @param {number} trackingRef - Tracking reference (not for synthetic events)
      */
     doMouseEnter(mouseInfo, view, id, part, trackingRef) {
-        // Override to do something when the mouse enters a view
+        if (view) view.doMouseEnter(mouseInfo, id, part);
     }
 
     /**
@@ -590,7 +591,7 @@ class Controller {
      * @param {number} trackingRef - Tracking reference (not for synthetic events)
      */
     doMouseLeave(mouseInfo, view, id, part, trackingRef) {
-        // Override to do something when the mouse leaves a view
+        if (view) view.doMouseLeave(mouseInfo, id, part);
     }
 
     /**
@@ -601,7 +602,7 @@ class Controller {
      * @param {number} part - Clicked part
      */
     doMouseMove(mouseInfo, view, id, part) {
-        // Override to do something when the mouse moves over a view
+        if (view) view.doMouseMove(mouseInfo, id, part);
     }
 
     /**
@@ -613,7 +614,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     doLeftClick(mouseInfo, view, id, part) {
-        return false;
+        return view ? view.doLeftClick(mouseInfo, id, part) : false;
     }
 
     /**
@@ -625,7 +626,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     doRightClick(mouseInfo, view, id, part) {
-        return false;
+        return view ? view.doRightClick(mouseInfo, id, part) : false;
     }
 
     /**

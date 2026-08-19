@@ -109,4 +109,54 @@ IF(BUILD_TESTING AND NOT PDG_HEADLESS)
         ${PDG_SOURCE_DIR}/deps
     )
     ADD_TEST(NAME pdg-app-view-utils COMMAND pdg-app-view-utils-tests)
+
+    ADD_EXECUTABLE(pdg-app-framework-tests
+        test/cxx/test-app-framework.cpp
+        src/app/Application.cpp
+        src/app/Checkbox.cpp
+        src/app/ControlAttributes.cpp
+        src/app/Controller.cpp
+        src/app/Observer.cpp
+        src/app/RadioButton.cpp
+        src/app/Scrollbar.cpp
+        src/app/View.cpp
+    )
+    TARGET_COMPILE_DEFINITIONS(pdg-app-framework-tests PRIVATE
+        PDG_INTERNAL_LIB=1
+        PDG_PROJECT=PDG_PROJECT_C_ONLY_APP
+    )
+    TARGET_INCLUDE_DIRECTORIES(pdg-app-framework-tests PRIVATE
+        ${PDG_SOURCE_DIR}/src/inc
+        ${PDG_SOURCE_DIR}/src/sys
+        ${PDG_SOURCE_DIR}/src/app
+        ${PDG_SOURCE_DIR}/deps
+    )
+    TARGET_LINK_DIRECTORIES(pdg-app-framework-tests PRIVATE
+        ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src
+        ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/chipmunk/src
+    )
+    TARGET_LINK_LIBRARIES(pdg-app-framework-tests PRIVATE pdg-lib-debug)
+    IF(MACOSX)
+        TARGET_LINK_LIBRARIES(pdg-app-framework-tests PRIVATE
+            "-framework AppKit"
+            "-framework CoreGraphics"
+            "-framework AudioToolbox"
+            "-framework CoreFoundation"
+            "-framework Security"
+            "-framework OpenGL"
+            "-framework GLUT"
+            "-framework IOKit"
+            ${OPENGL_LIBRARIES}
+        )
+    ELSEIF(WIN32)
+        TARGET_LINK_LIBRARIES(pdg-app-framework-tests PRIVATE
+            imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
+            ${OPENGL_LIBRARIES}
+        )
+    ELSE()
+        TARGET_LINK_LIBRARIES(pdg-app-framework-tests PRIVATE
+            ${OPENGL_LIBRARIES} dl pthread
+        )
+    ENDIF()
+    ADD_TEST(NAME pdg-app-framework COMMAND pdg-app-framework-tests)
 ENDIF()

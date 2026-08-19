@@ -9,6 +9,7 @@
 // -----------------------------------------------
 
 const { View  } = require('./View');
+const { ControlAttributes, ControlState, ControlType } = require('./ControlAttributes');
 
 const MAX_RADIO_IMAGES = 2;
 
@@ -25,8 +26,16 @@ class RadioButton extends View {
         this.selectedIndex = 0;
         this.strings = [];
         this.maxStrings = numStrings;
+        this.attributes = new ControlAttributes();
+        this.textSize = 14;
         
-        this.loadImages();
+        this.attributes
+            .stateForeground(ControlState.Normal, new pdg.Color(0, 0, 0, 1))
+            .stateForeground(ControlState.Selected, new pdg.Color(0, 0, 0, 1))
+            .stateForeground(ControlState.Disabled, new pdg.Color(0.7, 0.7, 0.7, 1))
+            .stateForeground(ControlState.SelectedDisabled, new pdg.Color(0.7, 0.7, 0.7, 1));
+        this.attributes.merge(controller.getTopController()
+            .getControlAttributes(ControlType.RadioButton));
         this.loadStrings(resourceTextID, numStrings);
         this.calcClickableAreas();
     }
@@ -72,21 +81,14 @@ class RadioButton extends View {
      */
     calcClickableAreas() {
         const viewArea = this.getViewArea();
-        const radioSize = 16;
-        const textHeight = 16;
-        const spacing = 4;
-        
-        // Calculate total height needed
-        const totalHeight = this.strings.length * (radioSize + spacing) - spacing;
-        const startY = viewArea.top + (viewArea.height() - totalHeight) / 2;
-        
-        // Add clickable areas for each radio option
+        const optionWidth = viewArea.width() / Math.max(1, this.strings.length);
         for (let i = 0; i < this.strings.length; i++) {
+            this.removeClickablePart(i);
             const optionRect = new pdg.Rect(
-                viewArea.left,
-                startY + i * (radioSize + spacing),
-                viewArea.width(),
-                radioSize
+                i * optionWidth,
+                0,
+                (i + 1) * optionWidth,
+                viewArea.height()
             );
             
             this.addClickablePart(optionRect, i);
@@ -97,57 +99,49 @@ class RadioButton extends View {
      * Draw the radio button
      */
     drawSelf(port, frameNum) {
-        const viewArea = this.getViewArea();
-        
-        // Draw background
-        var backgroundAttrs = new pdg.Attributes().fillColor(new pdg.Color(1.0, 1.0, 1.0, 1.0));
-        port.drawRect(viewArea, backgroundAttrs);
-        
-        // Draw border
-        var borderAttrs = new pdg.Attributes().lineColor(new pdg.Color(0.7, 0.7, 0.7, 1.0)).lineThickness(1);
-        port.drawRect(viewArea, borderAttrs);
-        
-        // Draw radio options
-        this.drawRadioOptions();
+        this.drawRadioOptions(port);
     }
 
     /**
      * Draw radio options
      */
-    drawRadioOptions() {
-        const port = this.getPort();
+    drawRadioOptions(port = this.getPort()) {
         const viewArea = this.getViewArea();
-        const radioSize = 16;
-        const textHeight = 16;
-        const spacing = 4;
-        
-        // Calculate total height needed
-        const totalHeight = this.strings.length * (radioSize + spacing) - spacing;
-        const startY = viewArea.top + (viewArea.height() - totalHeight) / 2;
+        const optionWidth = viewArea.width() / Math.max(1, this.strings.length);
         
         for (let i = 0; i < this.strings.length; i++) {
-            const optionY = startY + i * (radioSize + spacing);
+            const selected = i === this.selectedIndex;
+            const state = selected
+                ? (this.isEnabled() ? ControlState.Selected : ControlState.SelectedDisabled)
+                : (this.isEnabled() ? ControlState.Normal : ControlState.Disabled);
+            const visual = this.attributes.state(state);
+            const normal = this.attributes.state(ControlState.Normal);
+            const image = visual.hasImage ? visual.image : (normal.hasImage ? normal.image : null);
+            const imageWidth = image ? (typeof image.width === 'function' ? image.width() : image.width) : this.textSize;
+            const imageHeight = image ? (typeof image.height === 'function' ? image.height() : image.height) : this.textSize;
+            const optionX = viewArea.left + i * optionWidth;
             const radioRect = new pdg.Rect(
-                viewArea.left + 8,
-                optionY,
-                radioSize,
-                radioSize
+                optionX,
+                viewArea.top + (viewArea.height() - imageHeight) / 2,
+                optionX + imageWidth,
+                viewArea.top + (viewArea.height() - imageHeight) / 2 + imageHeight
             );
-            
-            // Draw radio circle
-            this.drawRadioCircle(radioRect, i === this.selectedIndex);
+            this.attributes.draw(port, radioRect, state);
+            if (!image && !visual.hasDrawing && !visual.hasDrawRoutine &&
+                !normal.hasDrawing && !normal.hasDrawRoutine) {
+                this.drawRadioCircle(radioRect, selected,
+                    visual.hasForeground ? visual.foreground : normal.foreground);
+            }
             
             // Draw text
             const textPoint = new pdg.Point(
-                viewArea.left + 8 + radioSize + 8,
-                optionY + radioSize / 2 + 6
+                optionX + imageWidth + 5,
+                viewArea.top + viewArea.height() / 2 + this.textSize / 2
             );
+            const textColor = visual.hasForeground ? visual.foreground : normal.foreground;
             
-            const textColor = i === this.selectedIndex ? 
-                new pdg.Color(0.0, 0.0, 0.0, 1.0) : 
-                new pdg.Color(0.5, 0.5, 0.5, 1.0);
-            
-            port.drawText(this.strings[i], textPoint, 12, pdg.textStyle_Plain, textColor);
+            port.drawText(this.strings[i], textPoint, new pdg.Attributes()
+                .textSize(this.textSize).textStyle(pdg.textStyle_Plain).fillColor(textColor));
         }
     }
 
@@ -156,23 +150,23 @@ class RadioButton extends View {
      * @param {pdg.Rect} rect - Circle rectangle
      * @param {boolean} selected - Whether this option is selected
      */
-    drawRadioCircle(rect, selected) {
+    drawRadioCircle(rect, selected, color = new pdg.Color(0, 0, 0, 1)) {
         const port = this.getPort();
         
         // Draw outer circle
-        var outerAttrs = new pdg.Attributes().lineColor(new pdg.Color(0.3, 0.3, 0.3, 1.0)).lineThickness(1);
-        port.drawRect(rect, outerAttrs);
+        port.drawEllipse(rect.centerPoint(), rect.width() / 2, rect.height() / 2,
+            new pdg.Attributes().fillColor(new pdg.Color(1, 1, 1, 1)).lineColor(color));
         
         if (selected) {
             // Draw inner filled circle
             const innerRect = new pdg.Rect(
                 rect.left + 3,
                 rect.top + 3,
-                rect.width() - 6,
-                rect.height() - 6
+                rect.right - 3,
+                rect.bottom - 3
             );
             var innerAttrs = new pdg.Attributes().fillColor(new pdg.Color(0.0, 0.0, 0.0, 1.0));
-            port.drawRect(innerRect, innerAttrs);
+            port.drawEllipse(innerRect.centerPoint(), innerRect.width() / 2, innerRect.height() / 2, innerAttrs);
         }
     }
 
@@ -183,6 +177,7 @@ class RadioButton extends View {
     doClick(part) {
         if (part >= 0 && part < this.strings.length) {
             this.setSelectedIndex(part);
+            this.attributes.playClick();
         }
     }
 
@@ -209,7 +204,7 @@ class RadioButton extends View {
      */
     doMouseUp(mouseInfo, id, part) {
         if (part >= 0 && part < this.strings.length) {
-            this.setSelectedIndex(part);
+            this.doClick(part);
             return true;
         }
         return false;
@@ -444,6 +439,19 @@ class RadioButton extends View {
         return this.textSize || 12;
     }
 
+    setClickSound(clickSound) {
+        this.attributes.clickSound(clickSound);
+    }
+
+    setAttributes(attributes) {
+        this.attributes.merge(attributes);
+        this.calcClickableAreas();
+    }
+
+    getAttributes() {
+        return this.attributes;
+    }
+
     /**
      * Cleanup when radio button is destroyed
      */
@@ -455,6 +463,7 @@ class RadioButton extends View {
         
         // Clear strings
         this.strings = [];
+        this.attributes = new ControlAttributes();
     }
 }
 

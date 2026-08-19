@@ -12,9 +12,10 @@ const { IObserver, Subject } = require('./Observer');
 const { Application, AppStates, NoManagerError } = require('./Application');
 const { View, ClickablePartsIDs, ViewBinding } = require('./View');
 const { Controller, ControllerPreferences } = require('./Controller');
+const { ControlAttributes, ControlStateAttributes, ControlState, ControlType } = require('./ControlAttributes');
 
 // UI Components
-const { Button, MAX_BUTTON_IMAGES, RES_DEFAULT_BUTTON_IMAGE } = require('./Button');
+const { Button, MAX_BUTTON_IMAGES, RES_DEFAULT_BUTTON_IMAGE_NAMES } = require('./Button');
 const { Dialog, DialogResult, DialogFlags } = require('./Dialog');
 const { Checkbox, CheckboxClickIDs, CBImages } = require('./Checkbox');
 const { EditText, EditTextClickIDs, LEFT_MARGIN, RIGHT_MARGIN, TEXT_HEIGHT_OFFSET } = require('./EditText');
@@ -46,11 +47,15 @@ module.exports = {
     ViewBinding,
     Controller,
     ControllerPreferences,
+    ControlAttributes,
+    ControlStateAttributes,
+    ControlState,
+    ControlType,
         
     // UI Components
     Button,
     MAX_BUTTON_IMAGES,
-    RES_DEFAULT_BUTTON_IMAGE,
+    RES_DEFAULT_BUTTON_IMAGE_NAMES,
     Dialog,
     DialogResult,
     DialogFlags,
@@ -116,6 +121,7 @@ module.exports.Observer = require('./Observer');
 module.exports.Application = require('./Application');
 module.exports.View = require('./View');
 module.exports.Controller = require('./Controller');
+module.exports.ControlAttributes = require('./ControlAttributes');
 module.exports.Button = require('./Button');
 module.exports.Dialog = require('./Dialog');
 module.exports.Checkbox = require('./Checkbox');

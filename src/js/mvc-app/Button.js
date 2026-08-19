@@ -9,9 +9,39 @@
 // -----------------------------------------------
 
 const { View } = require('./View');
+const { ControlAttributes, ControlState, ControlType } = require('./ControlAttributes');
+const pdgDefs = require('../pdg-defs');
 
 const MAX_BUTTON_IMAGES = 3;
 const RES_DEFAULT_BUTTON_IMAGE_NAMES = ['button_default.png', 'button_pressed.png', 'button_disabled.png'];
+
+// Keep this expression parallel with buttonTextStyle in Button.cpp, but resolve
+// it at use time. PDG publishes its constants during runtime initialization.
+function getButtonTextStyle() {
+    const bold = Number.isFinite(pdg.textStyle_Bold)
+        ? pdg.textStyle_Bold : pdgDefs.textStyle_Bold;
+    const centered = Number.isFinite(pdg.textStyle_Centered)
+        ? pdg.textStyle_Centered : pdgDefs.textStyle_Centered;
+    return bold + centered;
+}
+
+function rectValues(rect) {
+    return rect ? {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom
+    } : null;
+}
+
+function colorValues(color) {
+    return color ? {
+        red: color.red,
+        green: color.green,
+        blue: color.blue,
+        alpha: color.alpha
+    } : null;
+}
 
 // FIXME: this breaks when run under pdg, but is needed for node
 // const pdg = require('pdg'); // uncomment this to run under node
@@ -20,8 +50,8 @@ const RES_DEFAULT_BUTTON_IMAGE_NAMES = ['button_default.png', 'button_pressed.pn
  * Button UI component that extends View
  */
 class Button extends View {
-    constructor(controller, frameOrPoint, buttonID, resourceTextID = -1, 
-                substring = -1, imageNames = RES_DEFAULT_BUTTON_IMAGE_NAMES) {
+    constructor(controller, frameOrPoint, buttonID, resourceTextID = -1,
+                substring = -1, imageNames = null, styleId = -1) {
         
         let rect;
         if (frameOrPoint instanceof pdg.Point) {
@@ -33,21 +63,30 @@ class Button extends View {
         }
 
         super(controller, rect);
+
+        if (typeof imageNames === 'number') {
+            styleId = imageNames;
+            imageNames = null;
+        }
         
         this.resMgr = controller.getApplication().getResourceManager();
         this.buttonImage = new Array(MAX_BUTTON_IMAGES).fill(null);
-        this.clickSound = null;
+        this.attributes = new ControlAttributes();
         this.text = '';
         this.buttonID = buttonID;
         this.imageNames = imageNames;
+        this.styleId = styleId;
         this.isButtonPressed = false;
+        this.isHovered = false;
         
         // Tooltip support
         this.isToolTipEnabled = false;
         this.toolTipCtrl = null;
         this.nHasChangedAreaHit = 0;
         this.textBaselineCenterPoint = new pdg.Point(0, 0);
-        this.buttonTextSize = 12;
+        this.buttonTextSize = 14;
+        this.textDrawDiagnosticCount = 0;
+        this.lastTextMetrics = null;
         
         this.initializeButton(resourceTextID, substring);
         this.finishInitButton();
@@ -68,8 +107,83 @@ class Button extends View {
      * Finish button initialization
      */
     finishInitButton() {
-        this.loadImages();
+        this.attributes
+            .stateAttributes(ControlState.Normal, new pdg.Attributes()
+                .fillColor(new pdg.Color(1, 207 / 255, 82 / 255, 1))
+                .lineColor(new pdg.Color(0, 0, 0, 1)).roundedCorners(7))
+            .stateAttributes(ControlState.Hovered, new pdg.Attributes()
+                .fillColor(new pdg.Color(1, 220 / 255, 120 / 255, 1))
+                .lineColor(new pdg.Color(0, 0, 0, 1)).roundedCorners(7))
+            .stateAttributes(ControlState.Pressed, new pdg.Attributes()
+                .fillColor(new pdg.Color(1, 239 / 255, 173 / 255, 1))
+                .lineColor(new pdg.Color(0, 0, 0, 1)).roundedCorners(7))
+            .stateAttributes(ControlState.Disabled, new pdg.Attributes()
+                .fillColor(new pdg.Color(0.8, 0.8, 0.8, 1.0))
+                .lineColor(new pdg.Color(0.6, 0.6, 0.6, 1.0)).roundedCorners(7))
+            .stateForeground(ControlState.Normal, new pdg.Color(1, 1, 1, 1))
+            .stateForeground(ControlState.Pressed, new pdg.Color(1, 1, 1, 1))
+            .stateForeground(ControlState.Disabled, new pdg.Color(0.7, 0.7, 0.7, 1));
+        this.attributes.merge(this.controller.getTopController()
+            .getControlAttributes(ControlType.Button, this.styleId));
+        if (this.imageNames) {
+            this.loadImages();
+            this.attributes
+                .stateImage(ControlState.Normal, this.buttonImage[0])
+                .stateImage(ControlState.Pressed, this.buttonImage[1])
+                .stateImage(ControlState.Disabled, this.buttonImage[2]);
+        }
         this.setWantsMouseOvers(true); // Enable mouse over events for tooltips
+        this.updateLayout();
+    }
+
+    updateLayout() {
+        this.removeClickablePart(this.buttonID);
+        this.addClickablePart(new pdg.Rect(0, 0,
+            this.getViewArea().width(), this.getViewArea().height()), this.buttonID);
+
+        const height = this.getViewArea().height();
+        this.buttonTextSize = Math.trunc(height / 2 - 1);
+        this.textBaselineCenterPoint.x = this.getViewArea().width() / 2;
+        this.hasValidTextMetrics = this._updateTextBaseline(this.getPort());
+    }
+
+    _updateTextBaseline(port) {
+        const style = getButtonTextStyle();
+        const height = this.getViewArea().height();
+        const fallback = Math.round(
+            (height - this.buttonTextSize) * 0.5 + this.buttonTextSize * 0.8) + 1;
+        this.textBaselineCenterPoint.y = fallback;
+        this.lastTextMetrics = {
+            style,
+            size: this.buttonTextSize,
+            ascent: null,
+            descent: null,
+            baseline: fallback,
+            valid: false
+        };
+        if (!port || typeof port.getCurrentFont !== 'function') return false;
+
+        try {
+            const font = port.getCurrentFont(style);
+            const ascent = font && font.getFontAscent(this.buttonTextSize, style);
+            const descent = font && font.getFontDescent(this.buttonTextSize, style);
+            this.lastTextMetrics.ascent = ascent;
+            this.lastTextMetrics.descent = descent;
+            if (!Number.isFinite(ascent) || ascent <= 0 ||
+                !Number.isFinite(descent) || descent < 0) return false;
+
+            // This is the same baseline calculation used by Button.cpp.
+            const measured = Math.round(
+                (height - ascent - descent) * 0.5 + ascent) + 1;
+            if (measured < this.buttonTextSize || measured > height) return false;
+            this.textBaselineCenterPoint.y = measured;
+            this.lastTextMetrics.baseline = measured;
+            this.lastTextMetrics.valid = true;
+            return true;
+        } catch (error) {
+            this.lastTextMetrics.error = error && error.message;
+            return false;
+        }
     }
 
     /**
@@ -100,7 +214,15 @@ class Button extends View {
      * @param {Sound} clickSound - Sound to play when clicked
      */
     setClickSound(clickSound) {
-        this.mpClickSound = clickSound;
+        this.attributes.clickSound(clickSound);
+    }
+
+    setAttributes(attributes) {
+        this.attributes.merge(attributes);
+    }
+
+    getAttributes() {
+        return this.attributes;
     }
 
     /**
@@ -125,17 +247,14 @@ class Button extends View {
      * Draw the button
      */
     drawSelf(port, frameNum) {
-        if (this.buttonImage[0]) {
-            // Draw using loaded images
-            this.drawWithImages(port);
-        } else {
-            // Draw standard button background
-            this.drawStandardButtonBackground(port);
-        }
+        const state = !this.isEnabled() ? ControlState.Disabled
+            : (this.isButtonPressed ? ControlState.Pressed
+                : (this.isHovered ? ControlState.Hovered : ControlState.Normal));
+        this.attributes.draw(port, this.getViewArea(), state);
         
         // Draw text if present
         if (this.text) {
-            this.drawText(port);
+            this.drawText(port, state);
         }
     }
 
@@ -196,28 +315,63 @@ class Button extends View {
     /**
      * Draw button text
      */
-    drawText() {
+    drawText(port, state = ControlState.Normal) {
         if (!this.text) return;
+        if (!this.hasValidTextMetrics) {
+            this.hasValidTextMetrics = this._updateTextBaseline(port);
+        }
         
-        const port = this.getPort();
         const viewArea = this.getViewArea();
         
         // Calculate text position (centered)
-        const textColor = this.textColor || new pdg.Color(0.0, 0.0, 0.0, 1.0);
-        const centerX = viewArea.left + viewArea.width() / 2;
-        const centerY = viewArea.top + viewArea.height() / 2;
-        
-        // Adjust for button pressed state
-        const offsetX = this.isButtonPressed ? 1 : 0;
-        const offsetY = this.isButtonPressed ? 1 : 0;
-        
-        const textPoint = new pdg.Point(centerX + offsetX, centerY + offsetY);
+        const visual = this.attributes.state(state);
+        const normal = this.attributes.state(ControlState.Normal);
+        const textColor = visual.hasForeground ? visual.foreground
+            : (normal.hasForeground ? normal.foreground : new pdg.Color(0, 0, 0, 1));
+        const baseline = this.localToGlobal(this.textBaselineCenterPoint);
+        const textPoint = new pdg.Point(baseline.x, baseline.y);
+        const textStyle = getButtonTextStyle();
+        const textAttributes = new pdg.Attributes()
+            .textSize(this.buttonTextSize).textStyle(textStyle).fillColor(textColor);
+
+        const diagnosticOptions = global.PDG_CONTROL_DRAW_DIAGNOSTICS;
+        const diagnosticLimit = diagnosticOptions && diagnosticOptions.maxDrawsPerButton || 0;
+        if (this.textDrawDiagnosticCount < diagnosticLimit) {
+            this.textDrawDiagnosticCount++;
+            let clipRect = null;
+            try { clipRect = port.getClipRect(); } catch (_) {}
+            console.log('[Button.drawText] ' + JSON.stringify({
+                draw: this.textDrawDiagnosticCount,
+                buttonID: this.buttonID,
+                text: this.text,
+                localBaseline: {
+                    x: this.textBaselineCenterPoint.x,
+                    y: this.textBaselineCenterPoint.y
+                },
+                drawPoint: { x: textPoint.x, y: textPoint.y },
+                viewArea: rectValues(viewArea),
+                clipRect: rectValues(clipRect),
+                requested: {
+                    textSize: this.buttonTextSize,
+                    textStyle,
+                    fillColor: colorValues(textColor)
+                },
+                attributes: {
+                    textSize: textAttributes.getTextSize(),
+                    textStyle: textAttributes.getTextStyle(),
+                    fillColor: colorValues(textAttributes.getFillColor())
+                },
+                fontMetrics: this.lastTextMetrics
+            }));
+        }
         
         // Draw text centered
-        port.drawText(this.text, textPoint, this.buttonTextSize, pdg.textStyle_Centered, textColor);
-        
-        // Store baseline center point for tooltips
-        this.textBaselineCenterPoint = textPoint;
+        try {
+            port.drawText(this.text, textPoint, textAttributes);
+        } catch (error) {
+            console.error('[Button.drawText] drawText rejected the logged arguments:', error);
+            throw error;
+        }
     }
 
     /**
@@ -236,9 +390,8 @@ class Button extends View {
      * @returns {boolean} true if handled
      */
     doMouseDown(mouseInfo, id, part) {
-        if (this.isEnabled()) {
+        if (part === this.buttonID && this.isEnabled()) {
             this.setClickState(true);
-            return true;
         }
         return false;
     }
@@ -253,13 +406,6 @@ class Button extends View {
     doMouseUp(mouseInfo, id, part) {
         if (this.isButtonPressed) {
             this.setClickState(false);
-            
-            // Play click sound if available
-            if (this.clickSound) {
-                this.clickSound.play();
-            }
-            
-            return true;
         }
         return false;
     }
@@ -272,7 +418,8 @@ class Button extends View {
      * @returns {boolean} true if handled
      */
     doLeftClick(mouseInfo, id, part) {
-        if (this.isEnabled()) {
+        if (part === this.buttonID && this.isEnabled()) {
+            this.attributes.playClick();
             // Notify controller that button was clicked
             const controller = this.controller;
             if (controller && typeof controller.buttonClicked === 'function') {
@@ -325,6 +472,7 @@ class Button extends View {
      * @param {number} part - Clicked part
      */
     doMouseMove(mouseInfo, id, part) {
+        if (!this.isHovered) this.isHovered = true;
         if (this.isToolTipEnabled) {
             // Check if we should show tooltip
             const viewArea = this.getViewArea();
@@ -334,6 +482,10 @@ class Button extends View {
         }
     }
 
+    doMouseEnter(mouseInfo, id, part) {
+        this.isHovered = true;
+    }
+
     /**
      * Handle mouse leave
      * @param {Object} mouseInfo - Mouse information
@@ -341,6 +493,7 @@ class Button extends View {
      * @param {number} part - Clicked part
      */
     doMouseLeave(mouseInfo, id, part) {
+        this.isHovered = false;
         // Hide tooltip when mouse leaves
         if (this.isToolTipEnabled) {
             console.log(`Hiding tooltip for button ${this.buttonID}`);
@@ -392,7 +545,7 @@ class Button extends View {
         }
         
         // Clean up sound
-        this.clickSound = null;
+        this.attributes = new ControlAttributes();
         
         // Clean up tooltip
         this.toolTipCtrl = null;

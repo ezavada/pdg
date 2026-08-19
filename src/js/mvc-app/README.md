@@ -13,6 +13,7 @@ The JavaScript Application Framework includes:
 - **UI Components**: Complete set of UI components including Button, Dialog, Checkbox, EditText, ListBox, Scrollbar, RadioButton, PopupMenu, MessageDialog, MessageView, and more
 - **Advanced Controllers**: ModalController and TouchController for specialized behavior
 - **Scrollable Views**: ScrollingView base class for scrollable content
+- **Control Theming**: State-based drawing, images, foreground colors, custom draw routines, and click behavior through `ControlAttributes`
 
 ## File Structure
 
@@ -22,6 +23,7 @@ src/js/app/
 ├── Application.js       # Application base class
 ├── View.js             # View base class with input handling
 ├── Controller.js       # Controller base class
+├── ControlAttributes.js # Shared application control theming
 ├── Button.js           # Button UI component
 ├── Dialog.js           # Dialog UI component
 ├── Checkbox.js         # Checkbox UI component
@@ -118,6 +120,31 @@ class MyController extends Controller {
 ```
 
 ## UI Components
+
+Applications can theme every instance of a control type from their top-level
+controller and can then add per-instance overrides:
+
+```javascript
+const { ControlAttributes, ControlState, ControlType } = require('./ControlAttributes');
+
+class GameController extends Controller {
+    getControlAttributes(type, styleId = -1) {
+        const attributes = new ControlAttributes();
+        if (type === ControlType.Button) {
+            attributes
+                .stateForeground(ControlState.Normal, new pdg.Color(1, 1, 1, 1))
+                .clickRoutine(() => this.playButtonSound());
+        }
+        return attributes;
+    }
+}
+```
+
+An interactive parity gallery is available at `test/js/app-control-gallery.js`:
+
+```sh
+./pdg test/js/app-control-gallery.js
+```
 
 ### Button
 

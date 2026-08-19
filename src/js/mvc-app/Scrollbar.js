@@ -10,6 +10,11 @@
 
 const { View } = require('./View');
 const { Subject } = require('./Observer');
+const { ControlAttributes, ControlState, ControlType } = require('./ControlAttributes');
+
+// TimerManager requires non-zero numeric IDs. Give each scrollbar its own IDs
+// so multiple controls can repeat independently.
+let nextScrollbarTimerID = 0x07100000;
 
 /**
  * Scrollbar orientation
@@ -64,6 +69,11 @@ class Scrollbar extends View {
         this.eventMgr = controller.getApplication().getEventManager();
         this.resMgr = controller.getApplication().getResourceManager();
         this.timerMgr = controller.getApplication().getTimerManager();
+        this.scrollUpTimerID = nextScrollbarTimerID++;
+        this.scrollDownTimerID = nextScrollbarTimerID++;
+        this.timerHandler = typeof pdg.onTimer === 'function'
+            ? pdg.onTimer((eventData) => this.handleEvent('eventType_Timer', eventData))
+            : null;
         
         // Images
         this.mpScrollBarImages = new Array(ScrollbarImages.MAX_SCROLL_BAR_IMAGES).fill(null);
@@ -85,6 +95,22 @@ class Scrollbar extends View {
         this.scrollUpFullWindowClicked = false;
         this.scrollDownFullWindowClicked = false;
         this.scrollSliderClicked = false;
+        this.attributes = new ControlAttributes();
+        this.attributes
+            .stateAttributes(ControlState.Normal, new pdg.Attributes()
+                .fillColor(new pdg.Color(76 / 255, 100 / 255, 126 / 255, 1)))
+            .stateAttributes(ControlState.Decrement, new pdg.Attributes()
+                .fillColor(new pdg.Color(0.8, 0.8, 0.8, 1)).lineColor(new pdg.Color(0.6, 0.6, 0.6, 1)))
+            .stateAttributes(ControlState.DecrementPressed, new pdg.Attributes()
+                .fillColor(new pdg.Color(0.6, 0.6, 0.6, 1)).lineColor(new pdg.Color(0, 0, 0, 1)))
+            .stateAttributes(ControlState.Increment, new pdg.Attributes()
+                .fillColor(new pdg.Color(0.8, 0.8, 0.8, 1)).lineColor(new pdg.Color(0.6, 0.6, 0.6, 1)))
+            .stateAttributes(ControlState.IncrementPressed, new pdg.Attributes()
+                .fillColor(new pdg.Color(0.6, 0.6, 0.6, 1)).lineColor(new pdg.Color(0, 0, 0, 1)))
+            .stateAttributes(ControlState.Thumb, new pdg.Attributes()
+                .fillColor(new pdg.Color(1, 1, 1, 1)).lineColor(new pdg.Color(0, 0, 0, 1)).roundedCorners(3));
+        this.attributes.merge(controller.getTopController()
+            .getControlAttributes(ControlType.Scrollbar, orientation));
         
         // Note: Event handling is done through the global pdg.on* methods
         // No need to register with eventMgr.addHandler
@@ -101,6 +127,18 @@ class Scrollbar extends View {
             for (let i = 0; i < ScrollbarImages.MAX_SCROLL_BAR_IMAGES; i++) {
                 this.mpScrollBarImages[i] = this.resMgr.getImage(scrollbarImagesResourceID, i);
             }
+            const horizontal = this.orientation === ScrollbarOrientation.HORIZONTAL;
+            this.attributes
+                .stateImage(ControlState.Decrement,
+                    this.mpScrollBarImages[horizontal ? ScrollbarImages.SCROLL_DOWN : ScrollbarImages.SCROLL_UP])
+                .stateImage(ControlState.DecrementPressed,
+                    this.mpScrollBarImages[horizontal ? ScrollbarImages.SCROLL_DOWN_CLICKED : ScrollbarImages.SCROLL_UP_CLICKED])
+                .stateImage(ControlState.Increment,
+                    this.mpScrollBarImages[horizontal ? ScrollbarImages.SCROLL_UP : ScrollbarImages.SCROLL_DOWN])
+                .stateImage(ControlState.IncrementPressed,
+                    this.mpScrollBarImages[horizontal ? ScrollbarImages.SCROLL_UP_CLICKED : ScrollbarImages.SCROLL_DOWN_CLICKED])
+                .stateImage(ControlState.Thumb, this.mpScrollBarImages[ScrollbarImages.SCROLL_SLIDER]);
+            this.calcClickableAreas();
         } catch (error) {
             console.warn(`Failed to load scrollbar images for ID ${scrollbarImagesResourceID}:`, error);
             this.createPlaceholderImages();
@@ -122,34 +160,41 @@ class Scrollbar extends View {
      */
     calcClickableAreas() {
         const viewArea = this.getViewArea();
-        const buttonSize = 16; // Standard button size
+        const decrementSize = this.decrementExtent();
+        const incrementSize = this.incrementExtent();
+        this.removeClickablePart(ScrollbarClickIDs.CLICK_ID_SCROLL_UP);
+        this.removeClickablePart(ScrollbarClickIDs.CLICK_ID_SCROLL_DOWN);
+        this.removeClickablePart(ScrollbarClickIDs.CLICK_ID_SLIDER_AREA);
         
         if (this.orientation === ScrollbarOrientation.HORIZONTAL) {
             // Horizontal scrollbar
-            this.upButtonPoint = new pdg.Point(viewArea.left, viewArea.top);
-            this.downButtonPoint = new pdg.Point(viewArea.right - buttonSize, viewArea.top);
-            this.sliderArea = new pdg.Rect(viewArea.left + buttonSize, viewArea.top, 
-                                      viewArea.right - buttonSize * 2, viewArea.bottom);
+            this.downButtonPoint = new pdg.Point(viewArea.left, viewArea.top);
+            this.upButtonPoint = new pdg.Point(viewArea.right - incrementSize, viewArea.top);
+            this.sliderArea = new pdg.Rect(viewArea.left + decrementSize, viewArea.top,
+                                      viewArea.right - incrementSize, viewArea.bottom);
             
             // Add clickable areas
-            this.addClickablePart(new pdg.Rect(viewArea.left, viewArea.top, buttonSize, viewArea.height()),
-                                ScrollbarClickIDs.CLICK_ID_SCROLL_UP);
-            this.addClickablePart(new pdg.Rect(viewArea.right - buttonSize, viewArea.top, buttonSize, viewArea.height()),
+            this.addClickablePart(new pdg.Rect(0, 0, decrementSize, viewArea.height()),
                                 ScrollbarClickIDs.CLICK_ID_SCROLL_DOWN);
-            this.addClickablePart(this.sliderArea, ScrollbarClickIDs.CLICK_ID_SLIDER_AREA);
+            this.addClickablePart(new pdg.Rect(viewArea.width() - incrementSize, 0, viewArea.width(), viewArea.height()),
+                                ScrollbarClickIDs.CLICK_ID_SCROLL_UP);
+            this.addClickablePart(new pdg.Rect(decrementSize, 0,
+                viewArea.width() - incrementSize, viewArea.height()), ScrollbarClickIDs.CLICK_ID_SLIDER_AREA);
         } else {
             // Vertical scrollbar
             this.upButtonPoint = new pdg.Point(viewArea.left, viewArea.top);
-            this.downButtonPoint = new pdg.Point(viewArea.left, viewArea.bottom - buttonSize);
-            this.sliderArea = new pdg.Rect(viewArea.left, viewArea.top + buttonSize,
-                                      viewArea.right, viewArea.bottom - buttonSize * 2);
+            this.downButtonPoint = new pdg.Point(viewArea.left, viewArea.bottom - incrementSize);
+            this.sliderArea = new pdg.Rect(viewArea.left, viewArea.top + decrementSize,
+                                      viewArea.right, viewArea.bottom - incrementSize);
             
             // Add clickable areas
-            this.addClickablePart(new pdg.Rect(viewArea.left, viewArea.top, viewArea.width(), buttonSize),
+            this.addClickablePart(new pdg.Rect(0, 0, viewArea.width(), decrementSize),
                                 ScrollbarClickIDs.CLICK_ID_SCROLL_UP);
-            this.addClickablePart(new pdg.Rect(viewArea.left, viewArea.bottom - buttonSize, viewArea.width(), buttonSize),
+            this.addClickablePart(new pdg.Rect(0, viewArea.height() - incrementSize,
+                viewArea.width(), viewArea.height()),
                                 ScrollbarClickIDs.CLICK_ID_SCROLL_DOWN);
-            this.addClickablePart(this.sliderArea, ScrollbarClickIDs.CLICK_ID_SLIDER_AREA);
+            this.addClickablePart(new pdg.Rect(0, decrementSize, viewArea.width(),
+                viewArea.height() - incrementSize), ScrollbarClickIDs.CLICK_ID_SLIDER_AREA);
         }
         
         this.updateSliderPosition();
@@ -164,18 +209,24 @@ class Scrollbar extends View {
             return;
         }
         
-        const range = this.maxRange - this.minRange;
+        const range = Math.max(1, this.maxRange - this.minRange);
         const position = (this.currentPosition - this.minRange) / range;
+        const thumb = this.thumbDimensions();
         
         if (this.orientation === ScrollbarOrientation.HORIZONTAL) {
-            const sliderWidth = Math.max(this.sliderArea.width() * this.visibleAmount / (this.visibleAmount + range), 20);
+            const sliderWidth = thumb.x;
             const availableWidth = this.sliderArea.width() - sliderWidth;
             const sliderX = this.sliderArea.left + position * availableWidth;
             this.sliderPoint = new pdg.Point(sliderX, this.sliderArea.top);
-        } else {
-            const sliderHeight = Math.max(this.sliderArea.height() * this.visibleAmount / (this.visibleAmount + range), 20);
+        } else if (this.orientation === ScrollbarOrientation.VERTICAL) {
+            const sliderHeight = thumb.y;
             const availableHeight = this.sliderArea.height() - sliderHeight;
             const sliderY = this.sliderArea.top + position * availableHeight;
+            this.sliderPoint = new pdg.Point(this.sliderArea.left, sliderY);
+        } else {
+            const sliderHeight = thumb.y;
+            const availableHeight = this.sliderArea.height() - sliderHeight;
+            const sliderY = this.sliderArea.bottom - sliderHeight - position * availableHeight;
             this.sliderPoint = new pdg.Point(this.sliderArea.left, sliderY);
         }
     }
@@ -184,18 +235,20 @@ class Scrollbar extends View {
      * Draw the scrollbar
      */
     drawSelf(port, frameNum) {
-        const viewArea = this.getViewArea();
-        
-        // Draw background
-        var backgroundAttrs = new pdg.Attributes().fillColor(new pdg.Color(0.9, 0.9, 0.9, 1.0));
-        port.drawRect(viewArea, backgroundAttrs);
-        
-        // Draw border
-        var borderAttrs = new pdg.Attributes().lineColor(new pdg.Color(0.7, 0.7, 0.7, 1.0)).lineThickness(1);
-        port.drawRect(viewArea, borderAttrs);
-        
-        // Draw buttons and slider
-        this.drawScrollBar();
+        const horizontal = this.orientation === ScrollbarOrientation.HORIZONTAL;
+        const decrementState = (horizontal ? this.scrollDownClicked : this.scrollUpClicked)
+            ? ControlState.DecrementPressed : ControlState.Decrement;
+        const incrementState = (horizontal ? this.scrollUpClicked : this.scrollDownClicked)
+            ? ControlState.IncrementPressed : ControlState.Increment;
+        const decrementRect = horizontal ? this.getDownButtonRect() : this.getUpButtonRect();
+        const incrementRect = horizontal ? this.getUpButtonRect() : this.getDownButtonRect();
+        this.attributes.draw(port, this.sliderArea, ControlState.Normal);
+        this.attributes.draw(port, decrementRect, decrementState);
+        this.attributes.draw(port, incrementRect, incrementState);
+        if (!this._stateImage(decrementState)) this.drawArrow(decrementRect, false);
+        if (!this._stateImage(incrementState)) this.drawArrow(incrementRect, true);
+        if (!this.scrollSliderClicked) this.updateSliderPosition();
+        this.attributes.draw(port, this.getSliderRect(), ControlState.Thumb);
     }
 
     /**
@@ -258,22 +311,25 @@ class Scrollbar extends View {
      * @param {pdg.Rect} rect - Button rectangle
      * @param {number} imageIndex - Image index
      */
-    drawArrow(rect, imageIndex) {
+    drawArrow(rect, increment) {
         const port = this.getPort();
         const centerX = rect.left + rect.width() / 2;
         const centerY = rect.top + rect.height() / 2;
         const size = 4;
         
-        const arrowColor = new pdg.Color(0.2, 0.2, 0.2, 1.0);
-        
-        if (imageIndex === ScrollbarImages.SCROLL_UP || imageIndex === ScrollbarImages.SCROLL_UP_CLICKED) {
-            // Draw up arrow
-            port.drawLine(new pdg.Point(centerX, centerY - size), new pdg.Point(centerX - size, centerY), arrowColor, 2);
-            port.drawLine(new pdg.Point(centerX, centerY - size), new pdg.Point(centerX + size, centerY), arrowColor, 2);
-        } else if (imageIndex === ScrollbarImages.SCROLL_DOWN || imageIndex === ScrollbarImages.SCROLL_DOWN_CLICKED) {
-            // Draw down arrow
-            port.drawLine(new pdg.Point(centerX, centerY + size), new pdg.Point(centerX - size, centerY), arrowColor, 2);
-            port.drawLine(new pdg.Point(centerX, centerY + size), new pdg.Point(centerX + size, centerY), arrowColor, 2);
+        const line = new pdg.Attributes().lineColor(new pdg.Color(0.2, 0.2, 0.2, 1)).lineThickness(2);
+        if (this.orientation === ScrollbarOrientation.HORIZONTAL) {
+            const direction = increment ? 1 : -1;
+            port.drawLine(new pdg.Point(centerX - direction * size, centerY - size),
+                new pdg.Point(centerX + direction * size, centerY), line);
+            port.drawLine(new pdg.Point(centerX + direction * size, centerY),
+                new pdg.Point(centerX - direction * size, centerY + size), line);
+        } else {
+            const direction = increment ? 1 : -1;
+            port.drawLine(new pdg.Point(centerX - size, centerY - direction * size),
+                new pdg.Point(centerX, centerY + direction * size), line);
+            port.drawLine(new pdg.Point(centerX, centerY + direction * size),
+                new pdg.Point(centerX + size, centerY - direction * size), line);
         }
     }
 
@@ -315,11 +371,14 @@ class Scrollbar extends View {
      * @returns {pdg.Rect} Up button rectangle
      */
     getUpButtonRect() {
-        const buttonSize = 16;
+        const buttonSize = this.orientation === ScrollbarOrientation.HORIZONTAL
+            ? this.incrementExtent() : this.decrementExtent();
         if (this.orientation === ScrollbarOrientation.HORIZONTAL) {
-            return new pdg.Rect(this.upButtonPoint.x, this.upButtonPoint.y, buttonSize, this.getViewArea().height());
+            return new pdg.Rect(this.upButtonPoint.x, this.upButtonPoint.y,
+                this.upButtonPoint.x + buttonSize, this.upButtonPoint.y + this.getViewArea().height());
         } else {
-            return new pdg.Rect(this.upButtonPoint.x, this.upButtonPoint.y, this.getViewArea().width(), buttonSize);
+            return new pdg.Rect(this.upButtonPoint.x, this.upButtonPoint.y,
+                this.upButtonPoint.x + this.getViewArea().width(), this.upButtonPoint.y + buttonSize);
         }
     }
 
@@ -328,11 +387,14 @@ class Scrollbar extends View {
      * @returns {pdg.Rect} Down button rectangle
      */
     getDownButtonRect() {
-        const buttonSize = 16;
+        const buttonSize = this.orientation === ScrollbarOrientation.HORIZONTAL
+            ? this.decrementExtent() : this.incrementExtent();
         if (this.orientation === ScrollbarOrientation.HORIZONTAL) {
-            return new pdg.Rect(this.downButtonPoint.x, this.downButtonPoint.y, buttonSize, this.getViewArea().height());
+            return new pdg.Rect(this.downButtonPoint.x, this.downButtonPoint.y,
+                this.downButtonPoint.x + buttonSize, this.downButtonPoint.y + this.getViewArea().height());
         } else {
-            return new pdg.Rect(this.downButtonPoint.x, this.downButtonPoint.y, this.getViewArea().width(), buttonSize);
+            return new pdg.Rect(this.downButtonPoint.x, this.downButtonPoint.y,
+                this.downButtonPoint.x + this.getViewArea().width(), this.downButtonPoint.y + buttonSize);
         }
     }
 
@@ -341,16 +403,52 @@ class Scrollbar extends View {
      * @returns {pdg.Rect} Slider rectangle
      */
     getSliderRect() {
-        const range = this.maxRange - this.minRange;
-        if (range <= 0) return new pdg.Rect(0, 0, 0, 0);
-        
-        if (this.orientation === ScrollbarOrientation.HORIZONTAL) {
-            const sliderWidth = Math.max(this.sliderArea.width() * this.visibleAmount / (this.visibleAmount + range), 20);
-            return new pdg.Rect(this.sliderPoint.x, this.sliderPoint.y, sliderWidth, this.sliderArea.height());
-        } else {
-            const sliderHeight = Math.max(this.sliderArea.height() * this.visibleAmount / (this.visibleAmount + range), 20);
-            return new pdg.Rect(this.sliderPoint.x, this.sliderPoint.y, this.sliderArea.width(), sliderHeight);
-        }
+        const thumb = this.thumbDimensions();
+        return new pdg.Rect(this.sliderPoint.x, this.sliderPoint.y,
+            this.sliderPoint.x + thumb.x, this.sliderPoint.y + thumb.y);
+    }
+
+    _imageDimension(image, dimension) {
+        if (!image) return 0;
+        return typeof image[dimension] === 'function' ? image[dimension]() : image[dimension];
+    }
+
+    _stateImage(state) {
+        const visual = this.attributes.state(state);
+        return visual.hasImage ? visual.image : null;
+    }
+
+    decrementExtent() {
+        const image = this._stateImage(ControlState.Decrement);
+        if (image) return this._imageDimension(image,
+            this.orientation === ScrollbarOrientation.HORIZONTAL ? 'width' : 'height');
+        return this.orientation === ScrollbarOrientation.HORIZONTAL
+            ? this.getViewArea().height() : this.getViewArea().width();
+    }
+
+    incrementExtent() {
+        const image = this._stateImage(ControlState.Increment);
+        if (image) return this._imageDimension(image,
+            this.orientation === ScrollbarOrientation.HORIZONTAL ? 'width' : 'height');
+        return this.orientation === ScrollbarOrientation.HORIZONTAL
+            ? this.getViewArea().height() : this.getViewArea().width();
+    }
+
+    thumbDimensions() {
+        const image = this._stateImage(ControlState.Thumb);
+        if (image) return new pdg.Point(this._imageDimension(image, 'width'), this._imageDimension(image, 'height'));
+        return this.orientation === ScrollbarOrientation.HORIZONTAL
+            ? new pdg.Point(Math.min(this.getViewArea().height(), this.sliderArea.width()), this.getViewArea().height())
+            : new pdg.Point(this.getViewArea().width(), Math.min(this.getViewArea().width(), this.sliderArea.height()));
+    }
+
+    setAttributes(attributes) {
+        this.attributes.merge(attributes);
+        this.calcClickableAreas();
+    }
+
+    getAttributes() {
+        return this.attributes;
     }
 
     /**
@@ -385,27 +483,33 @@ class Scrollbar extends View {
      * @returns {boolean} true if handled
      */
     doMouseUp(mouseInfo, id, part) {
-        switch (part) {
-            case ScrollbarClickIDs.CLICK_ID_SCROLL_UP:
-                this.scrollUpReleased();
-                return true;
-                
-            case ScrollbarClickIDs.CLICK_ID_SCROLL_DOWN:
-                this.scrollDownReleased();
-                return true;
-                
-            case ScrollbarClickIDs.CLICK_ID_SLIDER_AREA:
-                this.scrollSliderAreaReleased();
-                return true;
+        let handled = false;
+        if (this.scrollUpClicked) {
+            this.scrollUpReleased();
+            handled = true;
         }
-        return false;
+        if (this.scrollDownClicked) {
+            this.scrollDownReleased();
+            handled = true;
+        }
+        if (this.scrollSliderClicked || this.scrollUpFullWindowClicked ||
+            this.scrollDownFullWindowClicked) {
+            this.scrollSliderAreaReleased();
+            handled = true;
+        }
+        return handled;
+    }
+
+    doMouseMove(mouseInfo, id, part) {
+        if (this.scrollSliderClicked) this.trackScrollSlider(mouseInfo.mousePos);
     }
 
     /**
      * Scroll up
      */
     scrollUp() {
-        this.setCurrentPosition(this.currentPosition - this.stepSize);
+        this.setCurrentPosition(this.currentPosition +
+            (this.orientation === ScrollbarOrientation.VERTICAL ? -this.stepSize : this.stepSize));
     }
 
     /**
@@ -416,7 +520,7 @@ class Scrollbar extends View {
         this.scrollUp();
         
         // Start repeat timer
-        this.timerMgr.startTimer('SCROLL_UP_TIMER', 100, false); // oneShot = false (repeating)
+        this.timerMgr.startTimer(this.scrollUpTimerID, 100, false); // repeating
     }
 
     /**
@@ -424,14 +528,15 @@ class Scrollbar extends View {
      */
     scrollUpReleased() {
         this.scrollUpClicked = false;
-        this.timerMgr.cancelTimer('SCROLL_UP_TIMER');
+        this.timerMgr.cancelTimer(this.scrollUpTimerID);
     }
 
     /**
      * Scroll down
      */
     scrollDown() {
-        this.setCurrentPosition(this.currentPosition + this.stepSize);
+        this.setCurrentPosition(this.currentPosition +
+            (this.orientation === ScrollbarOrientation.VERTICAL ? this.stepSize : -this.stepSize));
     }
 
     /**
@@ -442,7 +547,7 @@ class Scrollbar extends View {
         this.scrollDown();
         
         // Start repeat timer
-        this.timerMgr.startTimer('SCROLL_DOWN_TIMER', 100, false); // oneShot = false (repeating)
+        this.timerMgr.startTimer(this.scrollDownTimerID, 100, false); // repeating
     }
 
     /**
@@ -450,7 +555,7 @@ class Scrollbar extends View {
      */
     scrollDownReleased() {
         this.scrollDownClicked = false;
-        this.timerMgr.cancelTimer('SCROLL_DOWN_TIMER');
+        this.timerMgr.cancelTimer(this.scrollDownTimerID);
     }
 
     /**
@@ -458,26 +563,30 @@ class Scrollbar extends View {
      * @param {pdg.Point} clickPoint - Click point
      */
     scrollSliderAreaPressed(clickPoint) {
-        const localPoint = this.globalToLocal(clickPoint);
-        
-        if (this.getSliderRect().contains(localPoint)) {
+        if (this.getSliderRect().contains(clickPoint)) {
             // Clicked on slider - start tracking
             this.scrollSliderClicked = true;
-            this.sliderStartTrackPoint = localPoint;
-            this.oldMousePoint = localPoint;
-            this.sliderStartTrackHeight = this.currentPosition;
+            this.sliderStartTrackPoint = new pdg.Point(clickPoint.x, clickPoint.y);
+            this.oldMousePoint = new pdg.Point(clickPoint.x, clickPoint.y);
+            this.sliderStartTrackHeight = this.orientation === ScrollbarOrientation.HORIZONTAL
+                ? clickPoint.x - this.sliderPoint.x
+                : clickPoint.y - this.sliderPoint.y;
         } else {
             // Clicked in slider area - page up/down
             if (this.orientation === ScrollbarOrientation.HORIZONTAL) {
-                if (localPoint.x < this.sliderPoint.x) {
-                    this.scrollUpFullWindow();
-                } else {
+                if (clickPoint.x < this.sliderPoint.x) {
+                    this.scrollDownFullWindowClicked = true;
                     this.scrollDownFullWindow();
+                } else {
+                    this.scrollUpFullWindowClicked = true;
+                    this.scrollUpFullWindow();
                 }
             } else {
-                if (localPoint.y < this.sliderPoint.y) {
+                if (clickPoint.y < this.sliderPoint.y) {
+                    this.scrollUpFullWindowClicked = true;
                     this.scrollUpFullWindow();
                 } else {
+                    this.scrollDownFullWindowClicked = true;
                     this.scrollDownFullWindow();
                 }
             }
@@ -489,30 +598,52 @@ class Scrollbar extends View {
      */
     scrollSliderAreaReleased() {
         this.scrollSliderClicked = false;
+        this.scrollUpFullWindowClicked = false;
+        this.scrollDownFullWindowClicked = false;
     }
 
     /**
      * Scroll up full window (page up)
      */
     scrollUpFullWindow() {
-        this.setCurrentPosition(this.currentPosition - this.pageSize);
+        this.setCurrentPosition(this.currentPosition +
+            (this.orientation === ScrollbarOrientation.VERTICAL ? -this.pageSize : this.pageSize));
     }
 
     /**
      * Scroll down full window (page down)
      */
     scrollDownFullWindow() {
-        this.setCurrentPosition(this.currentPosition + this.pageSize);
+        this.setCurrentPosition(this.currentPosition +
+            (this.orientation === ScrollbarOrientation.VERTICAL ? this.pageSize : -this.pageSize));
     }
 
     /**
      * Track scroll slider
      */
-    trackScrollSlider() {
-        if (!this.scrollSliderClicked) return;
-        
-        // This would be called during mouse move to update slider position
-        // Implementation would calculate new position based on mouse movement
+    trackScrollSlider(mousePoint = pdg.gfx.getMouse()) {
+        if (!this.scrollSliderClicked || !mousePoint) return;
+
+        const thumb = this.thumbDimensions();
+        let ratio;
+        if (this.orientation === ScrollbarOrientation.HORIZONTAL) {
+            const min = this.sliderArea.left;
+            const max = this.sliderArea.right - thumb.x;
+            this.sliderPoint.x = Math.max(min, Math.min(max,
+                mousePoint.x - this.sliderStartTrackHeight));
+            ratio = (this.sliderPoint.x - min) / Math.max(1, max - min);
+        } else {
+            const min = this.sliderArea.top;
+            const max = this.sliderArea.bottom - thumb.y;
+            this.sliderPoint.y = Math.max(min, Math.min(max,
+                mousePoint.y - this.sliderStartTrackHeight));
+            ratio = this.orientation === ScrollbarOrientation.VERTICAL
+                ? (this.sliderPoint.y - min) / Math.max(1, max - min)
+                : (max - this.sliderPoint.y) / Math.max(1, max - min);
+        }
+        this.oldMousePoint = new pdg.Point(mousePoint.x, mousePoint.y);
+        const position = this.minRange + ratio * (this.maxRange - this.minRange);
+        this.setCurrentPosition(Math.round(position));
     }
 
     /**
@@ -523,10 +654,10 @@ class Scrollbar extends View {
      */
     handleEvent(eventType, eventData) {
         if (eventType === 'eventType_Timer') {
-            if (eventData.id === 'SCROLL_UP_TIMER') {
+            if (eventData.id === this.scrollUpTimerID) {
                 this.scrollUp();
                 return true;
-            } else if (eventData.id === 'SCROLL_DOWN_TIMER') {
+            } else if (eventData.id === this.scrollDownTimerID) {
                 this.scrollDown();
                 return true;
             }
@@ -651,11 +782,14 @@ class Scrollbar extends View {
      */
     destroy() {
         // Cancel timers
-        this.timerMgr.cancelTimer('SCROLL_UP_TIMER');
-        this.timerMgr.cancelTimer('SCROLL_DOWN_TIMER');
+        this.timerMgr.cancelTimer(this.scrollUpTimerID);
+        this.timerMgr.cancelTimer(this.scrollDownTimerID);
         
-        // Unregister event handlers
-        this.eventMgr.removeHandler(this, PDGEventTypes.eventType_Timer);
+        if (this.timerHandler) {
+            if (typeof this.timerHandler.cancel === 'function') this.timerHandler.cancel();
+            else this.eventMgr.removeHandler(this.timerHandler, pdg.eventType_Timer);
+            this.timerHandler = null;
+        }
         
         // Clean up images
         for (let i = 0; i < ScrollbarImages.MAX_SCROLL_BAR_IMAGES; i++) {
@@ -664,6 +798,7 @@ class Scrollbar extends View {
         
         // Clear observers
         this.observers = [];
+        this.attributes = new ControlAttributes();
     }
 }
 

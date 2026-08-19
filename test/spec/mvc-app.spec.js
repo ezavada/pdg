@@ -23,6 +23,9 @@ const ClickablePartsIDs = framework.View.ClickablePartsIDs;
 const ViewBinding = framework.View.ViewBinding;
 const Controller = framework.Controller.Controller;
 const ControllerPreferences = framework.Controller.ControllerPreferences;
+const ControlAttributes = framework.ControlAttributes.ControlAttributes;
+const ControlState = framework.ControlAttributes.ControlState;
+const ControlType = framework.ControlAttributes.ControlType;
 const Button = framework.Button.Button;
 const Dialog = framework.Dialog.Dialog;
 const DialogFlags = framework.Dialog.DialogFlags;
@@ -31,6 +34,7 @@ const EditText = framework.EditText.EditText;
 const ListBox = framework.ListBox.ListBox;
 const Scrollbar = framework.Scrollbar.Scrollbar;
 const ScrollbarOrientation = framework.Scrollbar.ScrollbarOrientation;
+const ScrollbarClickIDs = framework.Scrollbar.ScrollbarClickIDs;
 const ModalController = framework.ModalController.ModalController;
 const TouchController = framework.TouchController.TouchController;
 const ScrollingView = framework.ScrollingView.ScrollingView;
@@ -122,6 +126,19 @@ class TestController extends Controller {
     }
 }
 
+class ThemedController extends TestController {
+    constructor(app, port) {
+        super(app, port);
+        this.requestedControls = [];
+        this.themeFactory = null;
+    }
+
+    getControlAttributes(type, styleId = -1) {
+        this.requestedControls.push({ type, styleId });
+        return this.themeFactory ? this.themeFactory(type, styleId) : new ControlAttributes();
+    }
+}
+
 class TestScrollingView extends ScrollingView {
     constructor(controller, rect) {
         super(controller, rect);
@@ -135,6 +152,71 @@ class TestScrollingView extends ScrollingView {
 }
 
 describe("MVC Application Framework", function() {
+
+  describe("ControlAttributes", function() {
+
+    it("should merge partial state overrides without losing foreground values", function() {
+      const foreground = new pdg.Color(0.2, 0.3, 0.4, 1);
+      const drawing = new pdg.Attributes().fillColor(new pdg.Color(0.8, 0.7, 0.6, 1));
+      const base = new ControlAttributes()
+        .stateForeground(ControlState.Normal, foreground)
+        .stateAttributes(ControlState.Normal, drawing);
+      const overrides = new ControlAttributes()
+        .stateForeground(ControlState.Hovered, foreground);
+
+      base.merge(overrides);
+
+      expect(base.state(ControlState.Normal).drawing).toBe(drawing);
+      expect(base.state(ControlState.Normal).foreground).toBe(foreground);
+      expect(base.state(ControlState.Hovered).foreground).toBe(foreground);
+    });
+
+    it("should replace mutually exclusive background sources", function() {
+      const image = { width: 20, height: 10 };
+      const state = new ControlAttributes()
+        .stateAttributes(ControlState.Normal, new pdg.Attributes())
+        .merge(new ControlAttributes().stateImage(ControlState.Normal, image))
+        .state(ControlState.Normal);
+
+      expect(state.hasImage).toBe(true);
+      expect(state.image).toBe(image);
+      expect(state.hasDrawing).toBe(false);
+      expect(state.hasDrawRoutine).toBe(false);
+    });
+
+    it("should fall back to Normal drawing for an unspecified state", function() {
+      const calls = [];
+      const drawing = new pdg.Attributes();
+      const attributes = new ControlAttributes()
+        .stateAttributes(ControlState.Normal, drawing);
+      const port = { drawRect: (area, attrs) => calls.push({ area, attrs }) };
+      const area = new pdg.Rect(0, 0, 20, 10);
+
+      attributes.draw(port, area, ControlState.Hovered);
+
+      expect(calls.length).toEqual(1);
+      expect(calls[0].attrs).toBe(drawing);
+    });
+
+    it("should prefer a click routine to a click sound", function() {
+      let routineCalls = 0;
+      const sound = { calls: [], play(volume) { this.calls.push(volume); } };
+      const attributes = new ControlAttributes()
+        .clickSound(sound, 0.35)
+        .clickRoutine(() => { routineCalls++; });
+
+      attributes.playClick();
+
+      expect(routineCalls).toEqual(1);
+      expect(sound.calls.length).toEqual(0);
+      expect(attributes.getClickVolume()).toEqual(0.35);
+    });
+
+    it("should reject invalid states", function() {
+      expect(() => new ControlAttributes().state(ControlState.Count)).toThrow();
+    });
+
+  });
 
   describe("Observer Pattern", function() {
 
@@ -211,18 +293,49 @@ describe("MVC Application Framework", function() {
 
   describe("Button", function() {
 
+    it("should merge top-controller and per-instance attributes", function() {
+      const app = new TestApplication();
+      const controller = new ThemedController(app, app.graphicsMgr.getMainPort());
+      const themedColor = new pdg.Color(0.1, 0.2, 0.3, 1);
+      const localColor = new pdg.Color(0.7, 0.6, 0.5, 1);
+      controller.themeFactory = (type) => new ControlAttributes()
+        .stateForeground(ControlState.Normal, themedColor);
+
+      const button = new Button(controller, new pdg.Rect(0, 0, 100, 30), 7,
+        -1, -1, null, 42);
+      button.setAttributes(new ControlAttributes()
+        .stateForeground(ControlState.Pressed, localColor));
+
+      expect(controller.requestedControls[0]).toEqual({ type: ControlType.Button, styleId: 42 });
+      expect(button.getAttributes().state(ControlState.Normal).foreground).toBe(themedColor);
+      expect(button.getAttributes().state(ControlState.Pressed).foreground).toBe(localColor);
+    });
+
+    it("should run ControlAttributes click behavior", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      let clicks = 0;
+      const button = new Button(controller, new pdg.Rect(0, 0, 100, 30), 7);
+      button.setAttributes(new ControlAttributes().clickRoutine(() => { clicks++; }));
+
+      button.doLeftClick({}, 7, 7);
+
+      expect(clicks).toEqual(1);
+    });
+
     it("should create and manage button properties", function() {
       console.log('* Testing Button...');
       
       const app = new TestApplication();
       const controller = new TestController(app, app.graphicsMgr.getMainPort());
-      const rect = new pdg.Rect(50, 50, 120, 30);
+      const rect = new pdg.Rect(50, 50, 120, 90);
       
       const button = new Button(controller, rect, 1, -1, -1, -1);
       button.setText('Test Button');
       
       expect(button.getText()).toEqual('Test Button');
       expect(button.getButtonID()).toEqual(1);
+      expect(button.buttonTextSize).toEqual(19);
       expect(button.isEnabled()).toBe(true);
       expect(button.isPressed()).toBe(false);
     });
@@ -240,9 +353,129 @@ describe("MVC Application Framework", function() {
       expect(controller.buttonWasClicked).toBe(true);
     });
 
+    it("should always draw text at a finite baseline", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      controller.port.getCurrentFont = () => ({
+        getFontAscent: () => 0,
+        getFontDescent: () => 0
+      });
+      const button = new Button(controller, new pdg.Rect(50, 50, 120, 90), 1);
+      button.setText('Visible');
+      let textPoint = null;
+      let textAttributes = null;
+      controller.port.drawText = (text, point, attributes) => {
+        textPoint = point;
+        textAttributes = attributes;
+      };
+
+      button.drawText(controller.port);
+
+      expect(textPoint).not.toBe(null);
+      expect(Number.isFinite(textPoint.x)).toBe(true);
+      expect(Number.isFinite(textPoint.y)).toBe(true);
+      expect(textPoint.y).toBeGreaterThan(button.getViewArea().top);
+      expect(textPoint.y).toBeLessThan(button.getViewArea().bottom);
+      expect(textAttributes.getTextStyle()).toEqual(17);
+    });
+
+    it("should keep the local text baseline stable across draw frames", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      controller.port.getCurrentFont = () => ({
+        getFontAscent: () => 14,
+        getFontDescent: () => 4
+      });
+      const button = new Button(controller, new pdg.Rect(50, 50, 120, 90), 1);
+      button.setText('Stable');
+      const textPoints = [];
+      controller.port.drawText = (text, point) => {
+        textPoints.push({ x: point.x, y: point.y });
+      };
+
+      button.drawText(controller.port);
+      button.drawText(controller.port);
+      button.drawText(controller.port);
+
+      expect(textPoints).toEqual([
+        { x: 85, y: 76 },
+        { x: 85, y: 76 },
+        { x: 85, y: 76 }
+      ]);
+      expect(button.textBaselineCenterPoint.x).toEqual(35);
+      expect(button.textBaselineCenterPoint.y).toEqual(26);
+    });
+
+    it("should receive hover, press, and click events through its controller", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      const button = new Button(controller, new pdg.Rect(10, 10, 110, 40), 7);
+      const inside = {
+        mousePos: new pdg.Point(50, 25),
+        rightButton: false,
+        lastClickElapsed: 1000
+      };
+
+      controller.onMouseMove(inside);
+      expect(button.isHovered).toBe(true);
+
+      controller.onMouseDown(inside);
+      expect(button.isPressed()).toBe(true);
+
+      controller.onMouseUp(inside);
+      expect(button.isPressed()).toBe(false);
+      expect(controller.buttonWasClicked).toBe(true);
+
+      controller.onMouseMove(Object.assign({}, inside, {
+        mousePos: new pdg.Point(200, 200)
+      }));
+      expect(button.isHovered).toBe(false);
+    });
+
   });
 
   describe("Checkbox", function() {
+
+    it("should use the C++ default text size, style, and font-metric layout", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      controller.port.getCurrentFont = () => ({
+        getFontAscent: () => 12,
+        getFontDescent: () => 3
+      });
+      let textCall = null;
+      controller.port.drawText = (text, point, attributes) => {
+        textCall = { text, point, attributes };
+      };
+      const checkbox = new Checkbox(controller, new pdg.Rect(50, 100, 350, 132));
+
+      expect(checkbox.getTextSize()).toEqual(16);
+      checkbox.setString('Default checkbox');
+      checkbox.drawSelf();
+
+      expect(checkbox.getViewArea().bottom).toEqual(120);
+      expect(textCall.point.x).toEqual(67);
+      expect(textCall.point.y).toEqual(115);
+      expect(textCall.attributes.getTextSize()).toEqual(16);
+      expect(textCall.attributes.getTextStyle()).toEqual(1);
+    });
+
+    it("should draw its checkmark with the native three-argument line API", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      const checkbox = new Checkbox(controller, new pdg.Rect(50, 100, 150, 125));
+      const calls = [];
+      controller.port.drawLine = function(from, to, attributes) {
+        if (arguments.length !== 3) throw new Error('drawLine requires three arguments');
+        calls.push({ from, to, attributes });
+      };
+
+      checkbox.drawCheckmark(new pdg.Rect(50, 105, 64, 119), new pdg.Color(0, 0, 0, 1));
+
+      expect(calls.length).toEqual(2);
+      expect(calls[0].from instanceof pdg.Point).toBe(true);
+      expect(calls[0].to instanceof pdg.Point).toBe(true);
+    });
 
     it("should create and manage checkbox properties", function() {
       console.log('* Testing Checkbox...');
@@ -278,6 +511,74 @@ describe("MVC Application Framework", function() {
   });
 
   describe("Dialog", function() {
+
+    it("should create a themeable background view", function() {
+      const app = new TestApplication();
+      const controller = new ThemedController(app, app.graphicsMgr.getMainPort());
+      const drawRoutine = () => {};
+      controller.themeFactory = (type) => type === ControlType.Dialog
+        ? new ControlAttributes().stateDrawRoutine(ControlState.Normal, drawRoutine)
+        : new ControlAttributes();
+
+      const dialog = new Dialog(controller, 300, 200, DialogFlags.dialog_Standard, 1, 2);
+
+      expect(dialog.backgroundView).not.toBe(null);
+      expect(dialog.backgroundView.attributes.state(ControlState.Normal).drawRoutine).toBe(drawRoutine);
+      expect(dialog.getDialogRect().width()).toEqual(300);
+      expect(dialog.getDialogRect().height()).toEqual(200);
+      expect(dialog.getDialogRect().left).toEqual(250);
+      expect(dialog.getDialogRect().top).toEqual(200);
+      expect(dialog.backgroundView.getViewArea().left).toEqual(249);
+      expect(dialog.backgroundView.getViewArea().top).toEqual(199);
+      expect(dialog.backgroundView.getViewArea().width()).toEqual(302);
+      expect(dialog.backgroundView.getViewArea().height()).toEqual(202);
+      expect(dialog.backgroundView.getPartClicked(new pdg.Point(260, 210))).toEqual(1);
+    });
+
+    it("should draw the default dialog fill and black border separately", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      const dialog = new Dialog(controller, 300, 200, DialogFlags.dialog_Standard, 1, 2);
+      const draws = [];
+      const port = { drawRect: (area, attributes) => draws.push({ area, attributes }) };
+
+      dialog.backgroundView.drawSelf(port);
+
+      expect(draws.length).toEqual(2);
+      expect(draws[0].area).toBe(dialog.backgroundView.getViewArea());
+      expect(draws[1].area).toBe(dialog.backgroundView.getViewArea());
+    });
+
+    it("should reactivate its parent after closing", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      const dialog = new Dialog(controller, 300, 200, DialogFlags.dialog_Standard, 1, 2);
+      const mouseDownHandler = dialog.mouseDownHandler;
+      const originalCancel = mouseDownHandler.cancel.bind(mouseDownHandler);
+      let mouseDownCancelled = false;
+      mouseDownHandler.cancel = () => {
+        mouseDownCancelled = true;
+        originalCancel();
+      };
+
+      expect(controller.isActive()).toBe(false);
+      expect(controller.children).toContain(dialog);
+      expect(dialog.onMouseDown({
+        mousePos: new pdg.Point(10, 10),
+        rightButton: false,
+        lastClickElapsed: 1000
+      })).toBe(true);
+      expect(dialog.doLeftClick({}, null, -1, -1)).toBe(true);
+      expect(controller.children).toContain(dialog);
+      expect(controller.isActive()).toBe(false);
+
+      dialog.doClose(false);
+
+      expect(mouseDownCancelled).toBe(true);
+      expect(controller.isActive()).toBe(true);
+      expect(controller.children).not.toContain(dialog);
+      expect(() => dialog.doClose(false)).not.toThrow();
+    });
 
     it("should create and manage dialog properties", function() {
       console.log('* Testing Dialog...');
@@ -399,6 +700,57 @@ describe("MVC Application Framework", function() {
 
   describe("Scrollbar", function() {
 
+    it("should use numeric timer IDs for mouse press repeat handling", function() {
+      const app = new TestApplication();
+      const started = [];
+      const cancelled = [];
+      app.timerMgr.startTimer = (id, delay, oneShot) => {
+        if (typeof id !== 'number') throw new TypeError('timer id must be numeric');
+        started.push({ id, delay, oneShot });
+      };
+      app.timerMgr.cancelTimer = (id) => {
+        if (typeof id !== 'number') throw new TypeError('timer id must be numeric');
+        cancelled.push(id);
+      };
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      const scrollbar = new Scrollbar(controller, new pdg.Rect(0, 0, 200, 20),
+        ScrollbarOrientation.HORIZONTAL, 35, 10, 110);
+
+      scrollbar.doMouseDown({ mousePos: new pdg.Point(195, 10) }, 0,
+        ScrollbarClickIDs.CLICK_ID_SCROLL_UP);
+      expect(started.length).toEqual(1);
+      expect(started[0].id).toEqual(scrollbar.scrollUpTimerID);
+      expect(started[0].oneShot).toBe(false);
+
+      // Releasing outside the original part must still stop the active timer.
+      scrollbar.doMouseUp({ mousePos: new pdg.Point(250, 10) }, 0, -1);
+      expect(cancelled).toEqual([scrollbar.scrollUpTimerID]);
+    });
+
+    it("should pass orientation as style and use themed image dimensions", function() {
+      const app = new TestApplication();
+      const controller = new ThemedController(app, app.graphicsMgr.getMainPort());
+      const decrement = { width: 13, height: 9 };
+      const increment = { width: 17, height: 9 };
+      controller.themeFactory = () => new ControlAttributes()
+        .stateImage(ControlState.Decrement, decrement)
+        .stateImage(ControlState.Increment, increment);
+
+      const scrollbar = new Scrollbar(controller, new pdg.Rect(0, 0, 200, 20),
+        ScrollbarOrientation.HORIZONTAL, 0, 10, 100);
+
+      expect(controller.requestedControls[0]).toEqual({
+        type: ControlType.Scrollbar,
+        styleId: ScrollbarOrientation.HORIZONTAL
+      });
+      expect(scrollbar.decrementExtent()).toEqual(13);
+      expect(scrollbar.incrementExtent()).toEqual(17);
+      scrollbar.scrollUp();
+      expect(scrollbar.getCurrentPosition()).toEqual(1);
+      scrollbar.scrollDown();
+      expect(scrollbar.getCurrentPosition()).toEqual(0);
+    });
+
     it("should create and manage Scrollbar properties", function() {
       console.log('* Testing Scrollbar...');
       
@@ -423,6 +775,51 @@ describe("MVC Application Framework", function() {
       
       scrollbar.setMaxRange(200);
       expect(scrollbar.getScrollRange()).toEqual(200);
+    });
+
+    it("should recognize and drag the thumb in global coordinates", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      const scrollbar = new Scrollbar(controller, new pdg.Rect(55, 402, 370, 424),
+        ScrollbarOrientation.HORIZONTAL, 35, 10, 110);
+      const thumb = scrollbar.getSliderRect();
+      const pressPoint = new pdg.Point(thumb.left + thumb.width() / 2,
+        thumb.top + thumb.height() / 2);
+      const press = {
+        mousePos: pressPoint,
+        rightButton: false,
+        lastClickElapsed: 1000
+      };
+
+      controller.onMouseDown(press);
+      expect(scrollbar.scrollSliderClicked).toBe(true);
+
+      const moved = Object.assign({}, press, {
+        mousePos: new pdg.Point(pressPoint.x + 50, pressPoint.y)
+      });
+      controller.onMouseMove(moved);
+      controller.onMouseMove(moved);
+      expect(scrollbar.getCurrentPosition()).toBeGreaterThan(35);
+
+      controller.onMouseUp(moved);
+      expect(scrollbar.scrollSliderClicked).toBe(false);
+    });
+
+    it("should page a horizontal scrollbar toward the clicked track area", function() {
+      const app = new TestApplication();
+      const controller = new TestController(app, app.graphicsMgr.getMainPort());
+      const scrollbar = new Scrollbar(controller, new pdg.Rect(55, 402, 370, 424),
+        ScrollbarOrientation.HORIZONTAL, 35, 10, 110);
+      let thumb = scrollbar.getSliderRect();
+
+      scrollbar.scrollSliderAreaPressed(new pdg.Point(thumb.left - 5, thumb.top + 5));
+      expect(scrollbar.getCurrentPosition()).toEqual(25);
+      scrollbar.scrollSliderAreaReleased();
+
+      scrollbar.setCurrentPosition(35);
+      thumb = scrollbar.getSliderRect();
+      scrollbar.scrollSliderAreaPressed(new pdg.Point(thumb.right + 5, thumb.top + 5));
+      expect(scrollbar.getCurrentPosition()).toEqual(45);
     });
 
   });

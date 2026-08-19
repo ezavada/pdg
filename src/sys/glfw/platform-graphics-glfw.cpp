@@ -356,8 +356,10 @@ void platform_setWindowPosition(void* windRef, long xPos, long yPos) {
 }
 
 void platform_setHardwareCursorVisible(bool inVisible) {
-	// GLFW handles cursor visibility automatically
-	// This function is called to reset cursor state, but GLFW manages it internally
+	if (gMainPort && gMainPort->mPlatformWindowRef) {
+		GLFWwindow* window = static_cast<GLFWwindow*>(gMainPort->mPlatformWindowRef);
+		glfwSetInputMode(window, GLFW_CURSOR, inVisible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
+	}
 }
 
 bool platform_isFullScreen(void* windRef) {
@@ -417,4 +419,3 @@ GLFWmonitor* screenNumToGLFWmonitor(int screenNum) {
 }
 
 } // end namespace pdg
-

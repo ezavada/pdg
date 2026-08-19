@@ -110,6 +110,7 @@ void graphics_startDrawing(Port* port) {
 
 void graphics_finishDrawing(Port* port) {
 	pdg::PortImpl* thePort = dynamic_cast<pdg::PortImpl*>(port);
+	thePort->internalDrawCursor();
 	platform_finishDrawing(thePort->mPlatformWindowRef);
 }
 
@@ -496,7 +497,7 @@ Port::setCursor(Image* cursorImage, const Point& hotSpot)
 	else
 	{
 		// otherwise just turn off the OS cursor
-//		setHardwareCursorVisible(false);
+		platform_setHardwareCursorVisible(false);
 	}
 
 	// remove the cursor background storage if there is any
@@ -645,25 +646,15 @@ PortImpl::unlockDrawingSurface()
 void
 PortImpl::internalDrawCursor()
 {
-/*	if(mCurrentCursor)
+	if(mCurrentCursor)
 	{
-		if (!lockDrawingSurface())
-		{
-			return;
-		}
+		Rect savedClip = getClipRect();
+		setClipRect(getDrawingArea());
 		Point mousePt = OS::getMouse();
 		mousePt = mousePt - mHotSpot;
-		Point cursorExtent = mousePt;
-		cursorExtent.x += mCurrentCursor->width;
-		cursorExtent.y += mCurrentCursor->height;
-		// Don't draw the cursor if the mouse is off the drawing surface.
-		if(mousePt.x < 0 || cursorExtent.x >= mBufInfo.width ||
-			mousePt.y < 0 || cursorExtent.y >= mBufInfo.height)
-		{
-			return;
-		}
 		mCurrentCursor->draw(mousePt);
-	} */
+		setClipRect(savedClip);
+	}
 }
 
 void

@@ -9,6 +9,37 @@
 // -----------------------------------------------
 
 const { Controller } = require('./Controller');
+const { View } = require('./View');
+const { ControlState, ControlType } = require('./ControlAttributes');
+
+const DIALOG_BACKGROUND_VIEW_ID = -100;
+
+class DialogBackgroundView extends View {
+    constructor(dialog, area, attributes) {
+        super(dialog, area);
+        this.attributes = attributes;
+        this.setID(DIALOG_BACKGROUND_VIEW_ID);
+        const backgroundArea = this.getViewArea();
+        backgroundArea.left -= 1;
+        backgroundArea.top -= 1;
+        backgroundArea.right += 1;
+        backgroundArea.bottom += 1;
+        this.addClickablePart(new pdg.Rect(0, 0,
+            backgroundArea.width(), backgroundArea.height()), 1);
+    }
+
+    drawSelf(port) {
+        const normal = this.attributes.state(ControlState.Normal);
+        if (normal.hasDrawRoutine || normal.hasImage || normal.hasDrawing) {
+            this.attributes.draw(port, this.getViewArea(), ControlState.Normal);
+            return;
+        }
+        port.drawRect(this.getViewArea(), new pdg.Attributes()
+            .fillColor(new pdg.Color(1, 1, 1, 1)));
+        port.drawRect(this.getViewArea(), new pdg.Attributes()
+            .lineColor(new pdg.Color(0, 0, 0, 1)).lineThickness(1));
+    }
+}
 
 /**
  * Dialog result constants
@@ -54,6 +85,7 @@ class Dialog extends Controller {
         this.viewVisibilitySave = null;
         this.parentController = parentController;
         this.dialogRect = new pdg.Rect(0, 0, width, height);
+        this.backgroundView = null;
         
         // Calculate dialog position
         this._calculateDialogPosition();
@@ -63,11 +95,10 @@ class Dialog extends Controller {
             this._createBackground();
         }
         
-        // Store event handler references for cleanup
-        this.keyPressHandler = null;
-        
-        // Register for key press events - use more JavaScript-idiomatic on*() event method
-        this.keyPressHandler = pdg.onKeyPress((eventData) => this.handleEvent('eventType_KeyPress', eventData));
+        parentController.childActivated(this);
+        if (!(flags & DialogFlags.dialog_NonModal)) {
+            parentController.setActive(false);
+        }
     }
 
     /**
@@ -77,20 +108,17 @@ class Dialog extends Controller {
     _calculateDialogPosition() {
         const port = this.port;
         const drawingArea = port.getDrawingArea();
+        const width = this.dialogRect.width();
+        const height = this.dialogRect.height();
+        const left = drawingArea.left + (drawingArea.width() - width) / 2;
+        const top = (this.flags & DialogFlags.dialog_Centered)
+            ? drawingArea.top + (drawingArea.height() - height) / 2
+            : drawingArea.top + (drawingArea.height() - height) / 3;
         
-        if (this.flags & DialogFlags.dialog_Centered) {
-            // Center the dialog on screen
-            this.dialogRect.left = drawingArea.left + (drawingArea.width() - this.dialogRect.width()) / 2;
-            this.dialogRect.top = drawingArea.top + (drawingArea.height() - this.dialogRect.height()) / 2;
-            this.dialogRect.right = this.dialogRect.left + this.dialogRect.width();
-            this.dialogRect.bottom = this.dialogRect.top + this.dialogRect.height();
-        } else {
-            // Standard dialog position (centered horizontally, 2/3 up vertically)
-            this.dialogRect.left = drawingArea.left + (drawingArea.width() - this.dialogRect.width()) / 2;
-            this.dialogRect.top = drawingArea.top + drawingArea.height() / 3;
-            this.dialogRect.right = this.dialogRect.left + this.dialogRect.width();
-            this.dialogRect.bottom = this.dialogRect.top + this.dialogRect.height();
-        }
+        this.dialogRect.left = left;
+        this.dialogRect.top = top;
+        this.dialogRect.right = left + width;
+        this.dialogRect.bottom = top + height;
     }
 
     /**
@@ -98,9 +126,9 @@ class Dialog extends Controller {
      * @private
      */
     _createBackground() {
-        // In a real implementation, you would create a background view
-        // For now, we'll just set up the dialog area
-        console.log(`Creating dialog background: ${this.dialogRect.width()}x${this.dialogRect.height()}`);
+        const attributes = this.parentController.getTopController()
+            .getControlAttributes(ControlType.Dialog);
+        this.backgroundView = new DialogBackgroundView(this, this.dialogRect, attributes);
     }
 
     /**
@@ -117,10 +145,11 @@ class Dialog extends Controller {
             // This is likely a button
             view.setClickState(true);
             this.buttonWithMouseDown = view;
-            return true;
         }
-        
-        return false;
+
+        // Modal dialogs swallow all mouse-down events, including clicks
+        // outside their background, just like the C++ Dialog controller.
+        return true;
     }
 
     /**
@@ -136,9 +165,8 @@ class Dialog extends Controller {
         if (this.buttonWithMouseDown) {
             this.buttonWithMouseDown.setClickState(false);
             this.buttonWithMouseDown = null;
-            return true;
         }
-        
+        // Allow Controller.onMouseUp() to follow with doLeftClick().
         return false;
     }
 
@@ -158,12 +186,13 @@ class Dialog extends Controller {
         }
         
         // Check if this is the Cancel button
-        if (id === this.cancelButtonId) {
+        if (this.cancelButtonId !== -1 && id === this.cancelButtonId) {
             this.doClose(DialogResult.kCancelled);
             return true;
         }
         
-        return false;
+        // Dialog background and non-button views still consume the click.
+        return true;
     }
 
     /**
@@ -197,11 +226,16 @@ class Dialog extends Controller {
      * @param {Port} resizedPort - The port that was resized
      */
     portWasResized(resizedPort) {
-        // Recalculate dialog position
+        const oldTopLeft = this.dialogRect.leftTop();
         this._calculateDialogPosition();
-        
-        // Call parent implementation
-        super.portWasResized(resizedPort);
+        const dx = this.dialogRect.left - oldTopLeft.x;
+        const dy = this.dialogRect.top - oldTopLeft.y;
+        for (const viewPair of this.views) {
+            const area = viewPair.first.getViewArea();
+            area.moveRight(dx);
+            area.moveDown(dy);
+        }
+        this.cachedPortDrawingArea = resizedPort.getDrawingArea();
     }
 
     /**
@@ -209,8 +243,10 @@ class Dialog extends Controller {
      * @param {boolean} cancelled - Whether the dialog was cancelled
      */
     doClose(cancelled) {
+        const parent = this.parentController;
+        if (!parent) return;
         // Notify parent controller that we're trying to close
-        if (this.parentController.attemptChildClose(this, cancelled)) {
+        if (parent.attemptChildClose(this, cancelled)) {
             // Parent allows us to close
             this._dismissDialog();
         }
@@ -222,19 +258,13 @@ class Dialog extends Controller {
      * @private
      */
     _dismissDialog() {
-        // Remove from parent controller
-        if (this.parentController) {
-            this.parentController.removeChild(this);
-        }
-        
-        // Unregister event handlers
-        if (this.keyPressHandler) {
-            this.app.getEventManager().removeHandler(this.keyPressHandler);
-            this.keyPressHandler = null;
-        }
-        
-        // Clean up
+        const parent = this.parentController;
+        if (parent) parent.removeChild(this);
         this.destroy();
+        this.parentController = null;
+        if (parent && !(this.flags & DialogFlags.dialog_NonModal)) {
+            parent.setActive(true);
+        }
     }
 
     /**
@@ -358,12 +388,6 @@ class Dialog extends Controller {
         // Clean up visibility save array
         this.viewVisibilitySave = null;
         
-        // Unregister event handlers
-        if (this.keyPressHandler) {
-            pdg.evt.removeHandler(this.keyPressHandler);
-            this.keyPressHandler = null;
-        }
-        
         // Call parent cleanup
         super.destroy();
     }
@@ -371,6 +395,8 @@ class Dialog extends Controller {
 
 module.exports = {
     Dialog,
+    DialogBackgroundView,
+    DIALOG_BACKGROUND_VIEW_ID,
     DialogResult,
     DialogFlags
 };

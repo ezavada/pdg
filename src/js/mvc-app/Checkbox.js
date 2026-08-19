@@ -9,6 +9,17 @@
 // -----------------------------------------------
 
 const { View } = require('./View');
+const { ControlAttributes, ControlState, ControlType } = require('./ControlAttributes');
+const pdgDefs = require('../pdg-defs');
+
+const CHECKBOX_TEXT_SIZE = 16;
+const SPACE_BETWEEN_BOX_AND_TEXT = 5;
+const SPACE_UP_FROM_BOTTOM = 5;
+
+function getCheckboxTextStyle() {
+    return Number.isFinite(pdg.textStyle_Bold)
+        ? pdg.textStyle_Bold : pdgDefs.textStyle_Bold;
+}
 
 /**
  * Checkbox click IDs
@@ -39,12 +50,18 @@ class Checkbox extends View {
         
         this.resMgr = controller.getApplication().getResourceManager();
         this.mpCheckboxImages = new Array(CBImages.NUM_CHECKBOX_IMAGES).fill(null);
-        this.mpClickSound = null;
+        this.attributes = new ControlAttributes();
         this.checked = false;
         this.string = '';
-        this.textSize = 12;
+        this.textSize = CHECKBOX_TEXT_SIZE;
         
-        this.loadImages();
+        this.attributes
+            .stateForeground(ControlState.Normal, new pdg.Color(0, 0, 0, 1))
+            .stateForeground(ControlState.Selected, new pdg.Color(0, 0, 0, 1))
+            .stateForeground(ControlState.Disabled, new pdg.Color(0.7, 0.7, 0.7, 1))
+            .stateForeground(ControlState.SelectedDisabled, new pdg.Color(0.7, 0.7, 0.7, 1));
+        this.attributes.merge(controller.getTopController()
+            .getControlAttributes(ControlType.Checkbox));
         this.calcClickableAreas();
     }
 
@@ -83,19 +100,57 @@ class Checkbox extends View {
     drawSelf() {
         const port = this.getPort();
         const viewArea = this.getViewArea();
-        
-        if (this.mpCheckboxImages[0] && this.mpCheckboxImages[1]) {
-            // Draw using loaded images
-            this.drawWithImages();
-        } else {
-            // Draw standard checkbox
-            this.drawStandardCheckbox();
+        const state = this.checked
+            ? (this.isEnabled() ? ControlState.Selected : ControlState.SelectedDisabled)
+            : (this.isEnabled() ? ControlState.Normal : ControlState.Disabled);
+        const visual = this.attributes.state(state);
+        const normal = this.attributes.state(ControlState.Normal);
+        const image = visual.hasImage ? visual.image : (normal.hasImage ? normal.image : null);
+        const imageWidth = image ? (typeof image.width === 'function' ? image.width() : image.width) : 0;
+        const imageHeight = image ? (typeof image.height === 'function' ? image.height() : image.height) : 0;
+        const metrics = this.getTextMetrics(port);
+        const baseline = Math.round(
+            (viewArea.height() - metrics.ascent - metrics.descent) * 0.5 + metrics.ascent);
+        const checkboxSize = image ? imageWidth : Math.max(1, Math.round(metrics.ascent));
+        const checkboxHeight = image ? imageHeight : checkboxSize;
+        const checkboxTop = image
+            ? viewArea.top + (viewArea.height() - checkboxHeight) / 2
+            : viewArea.top + baseline - checkboxHeight;
+        const checkboxRect = new pdg.Rect(
+            viewArea.left,
+            checkboxTop,
+            viewArea.left + checkboxSize,
+            checkboxTop + checkboxHeight
+        );
+
+        this.attributes.draw(port, checkboxRect, state);
+        if (!image && !visual.hasDrawing && !visual.hasDrawRoutine &&
+            !normal.hasDrawing && !normal.hasDrawRoutine) {
+            const markColor = visual.hasForeground ? visual.foreground : normal.foreground;
+            port.drawRect(checkboxRect, new pdg.Attributes()
+                .fillColor(new pdg.Color(1, 1, 1, 1)).lineColor(markColor).lineThickness(1));
+            if (this.checked) this.drawCheckmark(checkboxRect, markColor);
         }
         
         // Draw text if present
         if (this.string) {
-            this.drawText();
+            const textColor = visual.hasForeground ? visual.foreground : normal.foreground;
+            this.drawText(checkboxSize, baseline, textColor);
         }
+    }
+
+    getTextMetrics(port = this.getPort()) {
+        const style = getCheckboxTextStyle();
+        try {
+            const font = port.getCurrentFont(style);
+            const ascent = font.getFontAscent(this.textSize, style);
+            const descent = font.getFontDescent(this.textSize, style);
+            if (Number.isFinite(ascent) && ascent > 0 &&
+                Number.isFinite(descent) && descent >= 0) {
+                return { ascent, descent };
+            }
+        } catch (_) {}
+        return { ascent: this.textSize * 0.8, descent: this.textSize * 0.2 };
     }
 
     /**
@@ -162,6 +217,7 @@ class Checkbox extends View {
      */
     drawCheckmark(checkboxRect, color) {
         const port = this.getPort();
+        const line = new pdg.Attributes().lineColor(color).lineThickness(2);
         
         // Draw a simple checkmark using lines
         const margin = 3;
@@ -175,40 +231,39 @@ class Checkbox extends View {
         // Draw checkmark as two lines forming a check
         // First line: from bottom-left to center
         port.drawLine(
-            { x: left, y: centerY + 2 },
-            { x: centerX - 1, y: bottom - 1 },
-            color, 2
+            new pdg.Point(left, centerY + 2),
+            new pdg.Point(centerX - 1, bottom - 1),
+            line
         );
         
         // Second line: from center to top-right
         port.drawLine(
-            { x: centerX - 1, y: bottom - 1 },
-            { x: right, y: top },
-            color, 2
+            new pdg.Point(centerX - 1, bottom - 1),
+            new pdg.Point(right, top),
+            line
         );
     }
 
     /**
      * Draw checkbox text
      */
-    drawText() {
+    drawText(checkboxSize, baseline, textColor = null) {
         if (!this.string) return;
         
         const port = this.getPort();
         const viewArea = this.getViewArea();
         
         // Calculate text position (to the right of checkbox)
-        const checkboxSize = Math.min(viewArea.height(), 20);
-        const textX = viewArea.left + checkboxSize + 5; // 5 pixels spacing
-        const textY = viewArea.top + viewArea.height() / 2;
+        const textX = viewArea.left + checkboxSize + SPACE_BETWEEN_BOX_AND_TEXT;
+        const textY = viewArea.top + baseline;
         
-        const textColor = this.isEnabled() ? 
+        textColor = textColor || (this.isEnabled() ?
             new pdg.Color(0.0, 0.0, 0.0, 1.0) : // Black
-            new pdg.Color(0.5, 0.5, 0.5, 1.0);  // Gray
+            new pdg.Color(0.5, 0.5, 0.5, 1.0));  // Gray
         
         // Draw text
-        port.drawText(this.string, new Point(textX, textY), this.textSize, 
-                     pdg.textStyle_Plain, textColor);
+        port.drawText(this.string, new pdg.Point(textX, textY), new pdg.Attributes()
+            .textSize(this.textSize).textStyle(getCheckboxTextStyle()).fillColor(textColor));
     }
 
     /**
@@ -216,9 +271,9 @@ class Checkbox extends View {
      */
     calcClickableAreas() {
         const viewArea = this.getViewArea();
-        
-        // Make the entire view area clickable
-        this.addClickablePart(viewArea, CheckboxClickIDs.CLICK_ID_CHECKBOX);
+        this.removeClickablePart(CheckboxClickIDs.CLICK_ID_CHECKBOX);
+        this.addClickablePart(new pdg.Rect(0, 0, viewArea.width(), viewArea.height()),
+            CheckboxClickIDs.CLICK_ID_CHECKBOX);
     }
 
     /**
@@ -252,6 +307,27 @@ class Checkbox extends View {
      */
     setString(str) {
         this.string = str || '';
+        if (!this.string) return;
+
+        const port = this.getPort();
+        const style = getCheckboxTextStyle();
+        const metrics = this.getTextMetrics(port);
+        const normal = this.attributes.state(ControlState.Normal);
+        const image = normal.hasImage ? normal.image : null;
+        const imageWidth = image
+            ? (typeof image.width === 'function' ? image.width() : image.width) : 0;
+        const imageHeight = image
+            ? (typeof image.height === 'function' ? image.height() : image.height) : 0;
+        const boxWidth = image ? imageWidth : Math.max(1, Math.round(metrics.ascent));
+        const boxHeight = image ? imageHeight : boxWidth;
+        const textWidth = port.getTextWidth(this.string, this.textSize, style);
+        const newClickArea = new pdg.Rect(this.getViewArea());
+        newClickArea.bottom = newClickArea.top + Math.max(
+            boxHeight, Math.ceil(metrics.ascent + metrics.descent) + SPACE_UP_FROM_BOTTOM);
+        newClickArea.right = newClickArea.left + boxWidth
+            + SPACE_BETWEEN_BOX_AND_TEXT + textWidth;
+        this.setViewArea(newClickArea);
+        this.calcClickableAreas();
     }
 
     /**
@@ -286,10 +362,7 @@ class Checkbox extends View {
         if (part === CheckboxClickIDs.CLICK_ID_CHECKBOX) {
             this.toggle();
             
-            // Play click sound if available
-            if (this.mpClickSound) {
-                this.mpClickSound.play();
-            }
+            this.attributes.playClick();
         }
     }
 
@@ -313,7 +386,7 @@ class Checkbox extends View {
      * @param {Sound} clickSound - Sound to play when clicked
      */
     setClickSound(clickSound) {
-        this.mpClickSound = clickSound;
+        this.attributes.clickSound(clickSound);
     }
 
     /**
@@ -321,7 +394,16 @@ class Checkbox extends View {
      * @returns {Sound} Current click sound
      */
     getClickSound() {
-        return this.mpClickSound;
+        return this.attributes.getClickSound();
+    }
+
+    setAttributes(attributes) {
+        this.attributes.merge(attributes);
+        this.calcClickableAreas();
+    }
+
+    getAttributes() {
+        return this.attributes;
     }
 
     /**
@@ -345,7 +427,7 @@ class Checkbox extends View {
         }
         
         // Clean up sound
-        this.mpClickSound = null;
+        this.attributes = new ControlAttributes();
     }
 }
 

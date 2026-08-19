@@ -427,7 +427,9 @@ class View {
      * @param {pdg.Rect} rect - New view area in global/port coordinates
      */
     setViewArea(rect) {
-        this.viewArea = rect;
+        // Match the C++ value semantics: a View owns its rectangle rather than
+        // retaining and later mutating the caller's Rect object.
+        this.viewArea = new pdg.Rect(rect);
     }
 
     /**

@@ -462,7 +462,8 @@ class TouchController extends ModalController {
         
         // Unregister timer events
         for (const handler of this.eventHandlers) {
-            this.app.getEventManager().removeHandler(handler);
+            if (typeof handler.cancel === 'function') handler.cancel();
+            else this.app.getEventManager().removeHandler(handler, pdg.eventType_Timer);
         }
         this.eventHandlers = [];
         

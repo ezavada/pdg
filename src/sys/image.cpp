@@ -89,6 +89,8 @@ Image*  ImageImpl::getFrame(int frame) {
 	ImageImpl* img = NEW_IMAGE(mPort);
 	img->mSuperImage = this;
 	img->mFrameNum = frame;
+	img->width = getWidth();
+	img->height = height;
 	addRef();
 	std::stringstream ss;
 	ss << mSourceName << " (frame " << frame << ")";
@@ -1224,4 +1226,3 @@ zoom(ImageImpl *dst, ImageImpl *src, double (*filterf)(double), double fwidth)
 	delete tmp;
 }
 } // end namespace pdg
-
