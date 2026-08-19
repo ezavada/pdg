@@ -39,6 +39,7 @@
 #include "image-opengl.h"
 #include "include-opengl.h"
 #include "pdg/sys/os.h"
+#include <algorithm>
 #include <cmath>
 
 
@@ -46,6 +47,34 @@ namespace pdg {
 
     // helper function to make a rounded rect polygon
     void MakeRoundedRectPolygon(const Rect& rect, float xRadius, float yRadius, Polygon& polygon);
+
+    // Choose enough vertices to keep the maximum gap between an ellipse and
+    // its polygonal approximation below a quarter of a screen pixel.
+    static int calculateEllipseSegments(const Point& center, float xRadius, float yRadius,
+                                        const glm::mat3& transform, bool hasTransform) {
+        float screenXRadius = std::abs(xRadius);
+        float screenYRadius = std::abs(yRadius);
+
+        if (hasTransform) {
+            glm::vec3 transformedCenter = transform * glm::vec3(center.x, center.y, 1.0f);
+            glm::vec3 transformedX = transform * glm::vec3(center.x + xRadius, center.y, 1.0f);
+            glm::vec3 transformedY = transform * glm::vec3(center.x, center.y + yRadius, 1.0f);
+            screenXRadius = std::hypot(transformedX.x - transformedCenter.x,
+                                       transformedX.y - transformedCenter.y);
+            screenYRadius = std::hypot(transformedY.x - transformedCenter.x,
+                                       transformedY.y - transformedCenter.y);
+        }
+
+        constexpr float maxError = 0.25f;
+        constexpr int minSegments = 32;
+        constexpr int maxSegments = 512;
+        float screenRadius = std::max(screenXRadius, screenYRadius);
+        if (screenRadius <= maxError) return minSegments;
+
+        float cosine = std::clamp(1.0f - maxError / screenRadius, -1.0f, 1.0f);
+        int segments = static_cast<int>(std::ceil(M_PI / std::acos(cosine)));
+        return std::clamp(segments, minSegments, maxSegments);
+    }
 
     // Helper structure to hold calculated texture UV coordinates
     struct TextureUVBounds {
@@ -530,14 +559,20 @@ namespace pdg {
             // Fill with solid color using direct OpenGL
             port.setOpenGLModesForDrawing(fillColor.alpha < 1.0f, attrs.getBlendMode());
             glColor4f(fillColor.red, fillColor.green, fillColor.blue, fillColor.alpha);
-            
-            // Use GL_QUADS for proper rendering of non-rectangular quads
-            // Quad point indices: lftTop=0, rgtTop=1, rgtBot=2, lftBot=3
-            glBegin(GL_QUADS);
-            glVertex2f(transformedQuad.points[0].x, transformedQuad.points[0].y); // lftTop
-            glVertex2f(transformedQuad.points[1].x, transformedQuad.points[1].y); // rgtTop
-            glVertex2f(transformedQuad.points[2].x, transformedQuad.points[2].y); // rgtBot
-            glVertex2f(transformedQuad.points[3].x, transformedQuad.points[3].y); // lftBot
+
+            // GL_QUADS has undefined fill behavior for concave quads. Tessellate
+            // the contour so convex, concave, and self-intersecting quads all use
+            // the same even-odd fill rule as general polygons.
+            Polygon fillPolygon;
+            for (const Point& point : transformedQuad.points) {
+                fillPolygon.addPoint(point);
+            }
+            std::vector<Point> triangles = fillPolygon.tessellate();
+
+            glBegin(GL_TRIANGLES);
+            for (const Point& point : triangles) {
+                glVertex2f(point.x, point.y);
+            }
             glEnd();
         }
 
@@ -806,10 +841,6 @@ namespace pdg {
             size_t pointCount = transformedPolygon.getPointCount();
             if (pointCount < 3) return; // Need at least 3 points for a polygon
 
-            // Check if polygon is self-intersecting or complex
-            bool needsTessellation = (pointCount > 3) && 
-                                    (pointCount > 6 || transformedPolygon.isSelfIntersecting());
-            
             if (pointCount == 3) {
                 // Simple triangle - just draw it
                 glBegin(GL_TRIANGLES);
@@ -818,8 +849,10 @@ namespace pdg {
                     glVertex2f(p.x, p.y);
                 }
                 glEnd();
-            } else if (needsTessellation) {
-                // Use libtess2 tessellation for self-intersecting or complex polygons
+            } else {
+                // A triangle fan is only valid for convex polygons. Use libtess2
+                // for every larger contour so concave and self-intersecting
+                // polygons follow the even-odd fill rule as well.
                 std::vector<Point> triangles = transformedPolygon.tessellate();
                 
                 // Render each triangle
@@ -827,21 +860,6 @@ namespace pdg {
                 for (size_t i = 0; i < triangles.size(); i++) {
                     Point p = triangles[i];
                     glVertex2f(p.x, p.y);
-                }
-                glEnd();
-            } else {
-                // Use GL_TRIANGLE_FAN for simple convex polygons (4-6 points, not self-intersecting)
-                glBegin(GL_TRIANGLE_FAN);
-                Point center = transformedPolygon.getPoint(0);
-                glVertex2f(center.x, center.y);
-                
-                for (size_t i = 1; i < pointCount; i++) {
-                    Point p = transformedPolygon.getPoint(i);
-                    glVertex2f(p.x, p.y);
-                }
-                if (pointCount > 2) {
-                    Point second = transformedPolygon.getPoint(1);
-                    glVertex2f(second.x, second.y);
                 }
                 glEnd();
             }
@@ -963,6 +981,9 @@ namespace pdg {
             glm::vec3 transformed = attrs.getTransform() * glm::vec3(drawCenter.x, drawCenter.y, 1.0f);
             transformedCenter = Point(transformed.x, transformed.y);
         }
+
+        const int segments = calculateEllipseSegments(drawCenter, drawXRadius, drawYRadius,
+                                                      attrs.getTransform(), hasTransform);
         
         // Calculate transformed bounds for culling
         Rect transformedBounds(transformedCenter.x - drawXRadius, transformedCenter.y - drawYRadius,
@@ -1011,7 +1032,6 @@ namespace pdg {
                 }
             
                 // Draw ellipse using triangle fan with rectangular texture mapping
-                const int segments = 32; // Number of segments for smooth circle
                 glBegin(GL_TRIANGLE_FAN);
                 
                 // Center point with center UV coordinates
@@ -1102,7 +1122,6 @@ namespace pdg {
             };
             
             // Draw ellipse using triangle fan with gradient colors
-            const int segments = 32;
             glBegin(GL_TRIANGLE_FAN);
             
             // Center point
@@ -1165,7 +1184,6 @@ namespace pdg {
             };
             
             // Draw ellipse using triangle fan from gradient center with radial gradient colors
-            const int segments = 32;
             glBegin(GL_TRIANGLE_FAN);
             
             // Center point of the radial gradient - always gets the center color
@@ -1197,7 +1215,6 @@ namespace pdg {
             glColor4f(fillColor.red, fillColor.green, fillColor.blue, fillColor.alpha);
             
             // Draw ellipse using triangle fan
-            const int segments = 32; // Number of segments for smooth circle
             glBegin(GL_TRIANGLE_FAN);
             
             // Use the pre-calculated transformed center
@@ -1229,7 +1246,6 @@ namespace pdg {
             }
             
             // Draw ellipse outline using line loop
-            const int segments = 32; // Number of segments for smooth circle
             glBegin(GL_LINE_LOOP);
             for (int i = 0; i < segments; i++) {
                 float angle = 2.0f * M_PI * i / segments;
