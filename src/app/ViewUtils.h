@@ -105,6 +105,36 @@ inline void unloadImage(Image*& image)
     }
 }
 
+inline void unloadImageArray(Image* images[], int imageCount)
+{
+    for (int i = 0; i < imageCount; ++i) {
+        unloadImage(images[i]);
+    }
+}
+
+inline void scaleImage(
+    Image*& image,
+    float scale,
+    Image::FilterType filter = Image::filter_Best)
+{
+    if (image) {
+        Image* scaledImage = image->createImageScaled(scale, scale, filter);
+        image->release();
+        image = scaledImage;
+    }
+}
+
+inline void scaleImageArray(
+    Image* images[],
+    int imageCount,
+    float scale,
+    Image::FilterType filter = Image::filter_Best)
+{
+    for (int i = 0; i < imageCount; ++i) {
+        scaleImage(images[i], scale, filter);
+    }
+}
+
 inline void scaleImageArrayToFit(
     Image* images[],
     int imageCount,
