@@ -34,12 +34,6 @@
 #include "pdg/app/MessageView.h"
 #include "pdg/app/Button.h"
 
-// TODO: remove these catan specific things
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-#include "GameController.h"
-#include "CatanDialogBorder.h"
-#endif
-
 #define RES_DIALOG_BUTTONS_STR_ID   1101
 #define RES_OK_BUTTON               0
 #define RES_CANCEL_BUTTON           1
@@ -59,7 +53,7 @@ const int BUTTON_SIZE_X = 90;
 const int BUTTON_SIZE_Y = 28;
 
 MessageDialog::MessageDialog(Controller *parentController, std::string& message, BUTTON_TEXT button1, BUTTON_TEXT button2)
- : Dialog(parentController, 300, 150, dialog_Centered, VIEW_ID_BUTTON_1, VIEW_ID_BUTTON_2), // creates background
+ : Dialog(parentController, 300, 150, dialog_Standard, VIEW_ID_BUTTON_1, VIEW_ID_BUTTON_2),
    mResMgr(parentController->getApplication().getResourceManager()),
    mButtonClickedId(-1)
 {
@@ -72,7 +66,7 @@ MessageDialog::MessageDialog(Controller *parentController, std::string& message,
 }
 
 MessageDialog::MessageDialog(Controller *parentController, std::string& message, std::string& buttonText1, std::string& buttonText2)
- : Dialog(parentController, 300, 150, dialog_Centered, VIEW_ID_BUTTON_1, VIEW_ID_BUTTON_2), // creates background
+ : Dialog(parentController, 300, 150, dialog_Standard, VIEW_ID_BUTTON_1, VIEW_ID_BUTTON_2),
    mResMgr(parentController->getApplication().getResourceManager()),
    mButtonClickedId(-1)
 {
@@ -121,13 +115,6 @@ void MessageDialog::setupDialog(std::string& message, std::string& buttonText1, 
 			addView(button2, VIEW_ID_BUTTON_2);
 		}
 	}
-
-// TODO: remove these catan specific things
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-	// Draw Catan Scroll Border around dialog
-	CatanDialogBorder* borderView = new CatanDialogBorder(this, getDialogRect());
-	addView(borderView, VIEW_ID_BORDER);
-#endif
 
 }
 

@@ -35,9 +35,7 @@
 #include "pdg/sys/attributes.h"
 #include "timerids.h"
 
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-  #include "CatanUIConsts.h"
-#endif
+#include <algorithm>
 
 #ifndef SCROLLBAR_SLIDER_BG_COLOR
 #define SCROLLBAR_SLIDER_BG_COLOR Color(76, 100, 126)
@@ -49,9 +47,6 @@ const int SCROLLBAR_CLICK_PAUSE_MSTIME = 250;
 const int SCROLLBAR_REPEATER_MSTIME = 40;
 const int SCROLLBAR_TRACKER_MSTIME = 30;
 
-const int RES_DEFAULT_VERTICAL_SCROLLBAR_IMAGES = 123;
-const int RES_DEFAULT_HORIZONTAL_SCROLLBAR_IMAGES = 135;
-
 const Rect goodRangeOffset(-50, -50, 50, 50);       // x,y
 
 // NOTE: This scrollbar class was written close to the Java 1.5 Scrollbar class.
@@ -60,7 +55,6 @@ const Rect goodRangeOffset(-50, -50, 50, 50);       // x,y
 Scrollbar::Scrollbar(Controller* controller, const Rect& scrollBarRect, Orientation orientation, int initValue, int visibleAmount, int rangeSize) 
 : View(controller, scrollBarRect),
 	mEventMgr(controller->getApplication().getEventManager()), 
-	mResMgr(controller->getApplication().getResourceManager()), 
 	mTimerMgr(controller->getApplication().getTimerManager()),   
 	mOrientation(orientation),
 	mSliderStartTrackHeight(0),
@@ -75,17 +69,16 @@ Scrollbar::Scrollbar(Controller* controller, const Rect& scrollBarRect, Orientat
 	mScrollDownFullWindowClicked(false), 
 	mScrollSliderClicked(false)
 {
-	// Load default images for now. 
-	// Call loadImages explictly after you create the scrollbar and pass in 
-	// a different resource ID for different scrollbar images.
-	if (mOrientation == HORIZONTAL)
-	{
-		loadImages(RES_DEFAULT_HORIZONTAL_SCROLLBAR_IMAGES);
-	}
-	else if ( (mOrientation == VERTICAL) || (mOrientation == VERTICAL_UP_IS_BIGGER) )
-	{
-		loadImages(RES_DEFAULT_VERTICAL_SCROLLBAR_IMAGES);
-	}
+	mAttributes
+		.stateAttributes(ControlState::Normal, Attributes().fillColor(SCROLLBAR_SLIDER_BG_COLOR))
+		.stateAttributes(ControlState::Decrement, Attributes().fillColor(PDG_GRAY_20_COLOR).lineColor(PDG_GRAY_40_COLOR))
+		.stateAttributes(ControlState::DecrementPressed, Attributes().fillColor(PDG_GRAY_40_COLOR).lineColor(PDG_BLACK_COLOR))
+		.stateAttributes(ControlState::Increment, Attributes().fillColor(PDG_GRAY_20_COLOR).lineColor(PDG_GRAY_40_COLOR))
+		.stateAttributes(ControlState::IncrementPressed, Attributes().fillColor(PDG_GRAY_40_COLOR).lineColor(PDG_BLACK_COLOR))
+		.stateAttributes(ControlState::Thumb, Attributes().fillColor(PDG_WHITE_COLOR).lineColor(PDG_BLACK_COLOR).roundedCorners(3));
+	mAttributes.merge(controller->getTopController().getControlAttributes(
+		ControlType::Scrollbar, static_cast<int>(mOrientation)));
+	calcClickableAreas();
 
 	mEventMgr.addHandler(this, eventType_Timer);    // we need to start handling timer events
 }
@@ -99,203 +92,123 @@ Scrollbar::~Scrollbar()
 	mEventMgr.removeHandler(this, eventType_Timer);    // remove ourselves from the handler queue
 }
 
-void Scrollbar::loadImages(int scrollbarImagesResourceID)
+void Scrollbar::setAttributes(const ControlAttributes& attributes)
 {
-	// Load scroll bar images
-	app::loadImageArray(mPort, mResMgr, mpScrollBarImages, scrollbarImagesResourceID, MAX_SCROLL_BAR_IMAGES);
-
-	// Calc areas
+	mAttributes.merge(attributes);
 	calcClickableAreas();
+}
+
+float Scrollbar::decrementExtent() const
+{
+	Image* image = mAttributes.state(ControlState::Decrement).image;
+	if (image) return mOrientation == HORIZONTAL ? image->width : image->height;
+	return mOrientation == HORIZONTAL ? mViewArea.height() : mViewArea.width();
+}
+
+float Scrollbar::incrementExtent() const
+{
+	Image* image = mAttributes.state(ControlState::Increment).image;
+	if (image) return mOrientation == HORIZONTAL ? image->width : image->height;
+	return mOrientation == HORIZONTAL ? mViewArea.height() : mViewArea.width();
+}
+
+Point Scrollbar::thumbDimensions() const
+{
+	Image* image = mAttributes.state(ControlState::Thumb).image;
+	if (image) return Point(image->width, image->height);
+	if (mOrientation == HORIZONTAL) {
+		return Point(std::min(mViewArea.height(), mSliderArea.width()), mViewArea.height());
+	}
+	return Point(mViewArea.width(), std::min(mViewArea.width(), mSliderArea.height()));
+}
+
+Rect Scrollbar::thumbRect() const
+{
+	return Rect(mSliderPoint, thumbDimensions().x, thumbDimensions().y);
 }
 
 void Scrollbar::calcClickableAreas()
 {
-	Point sliderAreaTLPoint;
-	Point sliderAreaBRPoint;
-	Point viewAreaTLPoint;
-	Point viewAreaBRPoint;
-
-	if (mOrientation == HORIZONTAL)
-	{
-		// Calc right button areas
-		if (mpScrollBarImages[SCROLL_UP])
-		{
-			viewAreaBRPoint = Point(mViewArea.width(), mpScrollBarImages[SCROLL_UP]->height);
-			mUpButtonPoint = Point(mViewArea.width(), 0);
-			mUpButtonPoint.x -= mpScrollBarImages[SCROLL_UP]->width;
-			Point botImagePoint = mUpButtonPoint;
-			botImagePoint.x += mpScrollBarImages[SCROLL_UP]->width;
-			botImagePoint.y += mpScrollBarImages[SCROLL_UP]->height;
-			Rect imageRect(mUpButtonPoint, botImagePoint);
-			this->addClickablePart(imageRect, CLICK_ID_SCROLL_UP);
-
-			sliderAreaBRPoint = mUpButtonPoint;
-			sliderAreaBRPoint.y += mpScrollBarImages[SCROLL_UP]->height;
-		}
-
-		// Calc left button areas
-		if (mpScrollBarImages[SCROLL_DOWN])
-		{
-			mDownButtonPoint = Point(0, 0);
-			viewAreaTLPoint = mDownButtonPoint;
-			Point botImagePoint = mDownButtonPoint;
-			botImagePoint.x += mpScrollBarImages[SCROLL_DOWN]->width;
-			botImagePoint.y += mpScrollBarImages[SCROLL_DOWN]->height;
-			Rect imageRect(mDownButtonPoint, botImagePoint);
-			this->addClickablePart(imageRect, CLICK_ID_SCROLL_DOWN);
-
-			sliderAreaTLPoint = mDownButtonPoint;
-			sliderAreaTLPoint.x += mpScrollBarImages[SCROLL_DOWN]->width; 
-		}
+	removeClickablePart(CLICK_ID_SCROLL_UP);
+	removeClickablePart(CLICK_ID_SCROLL_DOWN);
+	removeClickablePart(CLICK_ID_SLIDER_AREA);
+	const float dec = decrementExtent();
+	const float inc = incrementExtent();
+	if (mOrientation == HORIZONTAL) {
+		mDownButtonPoint = Point(0, 0);
+		mUpButtonPoint = Point(mViewArea.width() - inc, 0);
+		addClickablePart(Rect(mDownButtonPoint, dec, mViewArea.height()), CLICK_ID_SCROLL_DOWN);
+		addClickablePart(Rect(mUpButtonPoint, inc, mViewArea.height()), CLICK_ID_SCROLL_UP);
+		mSliderArea = Rect(dec, 0, mViewArea.width() - inc, mViewArea.height());
+	} else {
+		mUpButtonPoint = Point(0, 0);
+		mDownButtonPoint = Point(0, mViewArea.height() - inc);
+		addClickablePart(Rect(mUpButtonPoint, mViewArea.width(), dec), CLICK_ID_SCROLL_UP);
+		addClickablePart(Rect(mDownButtonPoint, mViewArea.width(), inc), CLICK_ID_SCROLL_DOWN);
+		mSliderArea = Rect(0, dec, mViewArea.width(), mViewArea.height() - inc);
 	}
-	else if ( (mOrientation == VERTICAL) || (mOrientation == VERTICAL_UP_IS_BIGGER) )
-	{
-		// Calc top button areas
-		if (mpScrollBarImages[SCROLL_UP])
-		{
-			mUpButtonPoint = Point(0,0);
-			viewAreaTLPoint = mUpButtonPoint;
-			Point botImagePoint = mUpButtonPoint;
-			botImagePoint.x += mpScrollBarImages[SCROLL_UP]->width;
-			botImagePoint.y += mpScrollBarImages[SCROLL_UP]->height;
-			Rect imageRect(mUpButtonPoint, botImagePoint);
-			this->addClickablePart(imageRect, CLICK_ID_SCROLL_UP);
+	addClickablePart(mSliderArea, CLICK_ID_SLIDER_AREA);
+	updateSliderPointFromValue();
+}
 
-			sliderAreaTLPoint = mUpButtonPoint;
-			sliderAreaTLPoint.y += mpScrollBarImages[SCROLL_UP]->height; 
-		}
-
-		// Calc bottom button areas
-		if (mpScrollBarImages[SCROLL_DOWN])
-		{
-			mDownButtonPoint = Point(0, mViewArea.height());
-			viewAreaBRPoint = Point(mpScrollBarImages[SCROLL_DOWN]->width, mViewArea.height());
-			Point botImagePoint = mDownButtonPoint;
-			botImagePoint.x += mpScrollBarImages[SCROLL_DOWN]->width;
-			mDownButtonPoint.y -= mpScrollBarImages[SCROLL_DOWN]->height;
-			Rect imageRect(mDownButtonPoint, botImagePoint);
-			this->addClickablePart(imageRect, CLICK_ID_SCROLL_DOWN);
-
-			sliderAreaBRPoint = mDownButtonPoint;
-			sliderAreaBRPoint.x += mpScrollBarImages[SCROLL_DOWN]->width; 
-		}
+void Scrollbar::updateSliderPointFromValue()
+{
+	const Point thumb = thumbDimensions();
+	const float range = std::max(1, mMaxRange - mMinRange);
+	const float ratio = std::max(0.0f, std::min(1.0f,
+		static_cast<float>(mCurrentPosition - mMinRange) / range));
+	if (mOrientation == HORIZONTAL) {
+		mSliderPoint = Point(mSliderArea.left + ratio * std::max(0.0f, mSliderArea.width() - thumb.x), mSliderArea.top);
+	} else if (mOrientation == VERTICAL) {
+		mSliderPoint = Point(mSliderArea.left, mSliderArea.top + ratio * std::max(0.0f, mSliderArea.height() - thumb.y));
+	} else {
+		mSliderPoint = Point(mSliderArea.left, mSliderArea.bottom - thumb.y - ratio * std::max(0.0f, mSliderArea.height() - thumb.y));
 	}
+}
 
-	// set new view area
-	Rect newViewArea(viewAreaTLPoint, viewAreaBRPoint);
-	this->setViewArea(localToGlobal(newViewArea));
-
-	mSliderArea = Rect(sliderAreaTLPoint, sliderAreaBRPoint);
-	this->addClickablePart(mSliderArea, CLICK_ID_SLIDER_AREA);
-
-    // choose the starting location for the slider
-    if (mOrientation == VERTICAL) 
-    {
-	    mSliderPoint = mSliderArea.rightTop();
-	} 
-	else 
-	{
-	    mSliderPoint = mSliderArea.rightBottom();
-	}
-	
-	if (	mpScrollBarImages[SCROLL_SLIDER])
-	{
-		mSliderPoint.x -= mpScrollBarImages[SCROLL_SLIDER]->width;
-		mSliderPoint.y -= mpScrollBarImages[SCROLL_SLIDER]->height;
+void Scrollbar::drawArrow(const Rect& area, bool increment)
+{
+	const Point center((area.left + area.right) / 2, (area.top + area.bottom) / 2);
+	const float radius = std::max(2.0f, std::min(area.width(), area.height()) / 4);
+	Attributes line = Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(2);
+	if (mOrientation == HORIZONTAL) {
+		const float direction = increment ? 1.0f : -1.0f;
+		mPort->drawLine(localToGlobal(Point(center.x - direction * radius, center.y - radius)),
+			localToGlobal(Point(center.x + direction * radius, center.y)), line);
+		mPort->drawLine(localToGlobal(Point(center.x + direction * radius, center.y)),
+			localToGlobal(Point(center.x - direction * radius, center.y + radius)), line);
+	} else {
+		const float direction = increment ? 1.0f : -1.0f;
+		mPort->drawLine(localToGlobal(Point(center.x - radius, center.y - direction * radius)),
+			localToGlobal(Point(center.x, center.y + direction * radius)), line);
+		mPort->drawLine(localToGlobal(Point(center.x, center.y + direction * radius)),
+			localToGlobal(Point(center.x + radius, center.y - direction * radius)), line);
 	}
 }
 
 void Scrollbar::drawSelf()
 {
-	// draw top button
-	if (mScrollUpClicked)
-	{
-		if (mpScrollBarImages[SCROLL_UP_CLICKED])
-		{
-			mPort->drawImage(mpScrollBarImages[SCROLL_UP_CLICKED], localToGlobal(mUpButtonPoint), Attributes());
-		}
-	}
-	else
-	{
-		if (mpScrollBarImages[SCROLL_UP])
-		{
-			mPort->drawImage(mpScrollBarImages[SCROLL_UP], localToGlobal(mUpButtonPoint), Attributes());
-		}
-	}
-
-	// draw bottom button
-	if (mScrollDownClicked)
-	{
-		if (mpScrollBarImages[SCROLL_DOWN_CLICKED])
-		{
-			mPort->drawImage(mpScrollBarImages[SCROLL_DOWN_CLICKED], localToGlobal(mDownButtonPoint), Attributes());
-		}
-	}
-	else
-	{
-		if (mpScrollBarImages[SCROLL_DOWN])
-		{
-			mPort->drawImage(mpScrollBarImages[SCROLL_DOWN], localToGlobal(mDownButtonPoint), Attributes());
-		}
-	}
-
-	// draw grey slider area
-	mPort->drawRect(localToGlobal(mSliderArea), Attributes().fillColor(SCROLLBAR_SLIDER_BG_COLOR));
-
-	int scrollRange = mMaxRange - mMinRange;
-	int sliderPos = 0;
-	int sliderTravelHeight = 0;
-	if (mpScrollBarImages[SCROLL_SLIDER])
-	{
-		// Compute Current Position if slider is moving
-		if (mScrollSliderClicked)
-		{
-			if (mOrientation == HORIZONTAL)
-			{
-				sliderPos = mSliderPoint.x - mSliderArea.left;
-				sliderTravelHeight = mSliderArea.width() - mpScrollBarImages[SCROLL_SLIDER]->width;
-			}
-			else if (mOrientation == VERTICAL)
-			{
-				sliderPos = mSliderPoint.y - mSliderArea.top;
-				sliderTravelHeight = mSliderArea.height() - mpScrollBarImages[SCROLL_SLIDER]->height;
-			}
-			else if (mOrientation == VERTICAL_UP_IS_BIGGER)
-			{
-				sliderPos = mSliderArea.bottom - mpScrollBarImages[SCROLL_SLIDER]->height - mSliderPoint.y;
-				sliderTravelHeight = mSliderArea.height() - mpScrollBarImages[SCROLL_SLIDER]->height;
-			}
-			mCurrentPosition = (int)(((float)sliderPos / (float)sliderTravelHeight) * scrollRange);
-		}
-		// Otherwise Compute Slider Position based on current position
-		else
-		{
-			if (mOrientation == HORIZONTAL)
-			{
-				sliderPos = mCurrentPosition - mMinRange;
-				sliderTravelHeight = mSliderArea.width() - mpScrollBarImages[SCROLL_SLIDER]->width;
-				mSliderPoint.x = mSliderArea.left;
-				mSliderPoint.x += (int)(((float)sliderPos / (float)scrollRange) * sliderTravelHeight);
-			}
-			else if (mOrientation == VERTICAL)
-			{
-				sliderPos = mCurrentPosition - mMinRange;
-				sliderTravelHeight = mSliderArea.height() - mpScrollBarImages[SCROLL_SLIDER]->height;
-				mSliderPoint.y = mSliderArea.top;
-				mSliderPoint.y += (int)(((float)sliderPos / (float)scrollRange) * sliderTravelHeight);
-			}
-			else if (mOrientation == VERTICAL_UP_IS_BIGGER)
-			{
-				sliderPos = mCurrentPosition - mMinRange;
-				sliderTravelHeight = mSliderArea.height() - mpScrollBarImages[SCROLL_SLIDER]->height;
-				mSliderPoint.y = mSliderArea.bottom - mpScrollBarImages[SCROLL_SLIDER]->height;
-				mSliderPoint.y -= (int)(((float)sliderPos / (float)scrollRange) * sliderTravelHeight);
-			}
-		}
-
-		// draw the slider
-		mPort->drawImage(mpScrollBarImages[SCROLL_SLIDER], localToGlobal(mSliderPoint), Attributes());
-	}
+	const float dec = decrementExtent();
+	const float inc = incrementExtent();
+	Rect decrementRect = mOrientation == HORIZONTAL
+		? Rect(mDownButtonPoint, dec, mViewArea.height())
+		: Rect(mUpButtonPoint, mViewArea.width(), dec);
+	Rect incrementRect = mOrientation == HORIZONTAL
+		? Rect(mUpButtonPoint, inc, mViewArea.height())
+		: Rect(mDownButtonPoint, mViewArea.width(), inc);
+	mAttributes.draw(*mPort, localToGlobal(mSliderArea), ControlState::Normal);
+	ControlState decrementState = mScrollDownClicked && mOrientation == HORIZONTAL
+		? ControlState::DecrementPressed : (mScrollUpClicked && mOrientation != HORIZONTAL
+			? ControlState::DecrementPressed : ControlState::Decrement);
+	ControlState incrementState = mScrollUpClicked && mOrientation == HORIZONTAL
+		? ControlState::IncrementPressed : (mScrollDownClicked && mOrientation != HORIZONTAL
+			? ControlState::IncrementPressed : ControlState::Increment);
+	mAttributes.draw(*mPort, localToGlobal(decrementRect), decrementState);
+	mAttributes.draw(*mPort, localToGlobal(incrementRect), incrementState);
+	if (!mAttributes.state(decrementState).image) drawArrow(decrementRect, false);
+	if (!mAttributes.state(incrementState).image) drawArrow(incrementRect, true);
+	if (!mScrollSliderClicked) updateSliderPointFromValue();
+	mAttributes.draw(*mPort, localToGlobal(thumbRect()), ControlState::Thumb);
 	/*char text[20];
 	std::snprintf(text, 20, "CurrPos=%d", mCurrentPosition);
     MAKE_STRING_BUFFER_SAFE(text, 20);
@@ -406,14 +319,7 @@ void Scrollbar::scrollSliderAreaPressed(Point& clickPoint)
 	// Change mouse point back to working local coordinates
 	clickPoint = globalToLocal(clickPoint);
 
-	// Find thumb/slider area
-	Rect thumbArea(0, 0);
-	if (mpScrollBarImages[SCROLL_SLIDER])
-	{
-		Point thumbDim(mpScrollBarImages[SCROLL_SLIDER]->width, mpScrollBarImages[SCROLL_SLIDER]->height);
-		Point sliderPt = mSliderPoint;
-		thumbArea = Rect( mSliderPoint, sliderPt + thumbDim);
-	}
+	Rect thumbArea = thumbRect();
 
 	// Find slider areas
 	Rect upperSliderArea = mSliderArea;
@@ -522,50 +428,45 @@ void Scrollbar::trackScrollSlider()
 	
 	if ( newMousePoint != mOldMousePoint )
 	{
-		if (mpScrollBarImages[SCROLL_SLIDER])
+		const Point thumb = thumbDimensions();
+		// The mouse moved, check to see if the mouse is in a good range otherwise
+		// go back to our point where the user started.
+		Rect goodRangeRect = this->mSliderArea;
+		goodRangeRect = goodRangeRect + goodRangeOffset;
+		if (!goodRangeRect.contains(newMousePoint))
 		{
-			// The mouse moved, check to see if the mouse is in a good range otherwise 
-			// go back to our point where the user started.
-			Rect goodRangeRect = this->mSliderArea;
-			goodRangeRect = goodRangeRect + goodRangeOffset;
-			//mPort->drawRect(localToGlobal(goodRangeRect), Attributes().lineColor(PDG_GREEN_COLOR));
-			if (!goodRangeRect.contains(newMousePoint))
+			newMousePoint = mSliderStartTrackPoint;
+		}
+		else
+		{
+			if (mOrientation == HORIZONTAL)
 			{
-				newMousePoint = mSliderStartTrackPoint;
+				const float absLeft = mSliderArea.left + mSliderStartTrackHeight;
+				const float absRight = mSliderArea.right - (thumb.x - mSliderStartTrackHeight);
+				newMousePoint.x = std::max(absLeft, std::min(absRight, newMousePoint.x));
+				mSliderPoint.x = newMousePoint.x - mSliderStartTrackHeight;
 			}
 			else
 			{
-				// Check to see if the point is above or below the slider area...if so clamp it
-				if (mOrientation == HORIZONTAL)
-				{
-					int absLeft = this->mSliderArea.left + mSliderStartTrackHeight;
-					int absRight = this->mSliderArea.right - (mpScrollBarImages[SCROLL_SLIDER]->width - mSliderStartTrackHeight);
-					if (newMousePoint.x < absLeft)
-					{
-						newMousePoint.x = absLeft;
-					}
-					else if (newMousePoint.x > absRight)
-					{
-						newMousePoint.x = absRight;
-					}
-					mSliderPoint.x = newMousePoint.x - mSliderStartTrackHeight;
-				}
-				else if ( (mOrientation == VERTICAL) || (mOrientation == VERTICAL_UP_IS_BIGGER))
-				{
-					int absTop = this->mSliderArea.top + mSliderStartTrackHeight;
-					int absBottom = this->mSliderArea.bottom - (mpScrollBarImages[SCROLL_SLIDER]->height - mSliderStartTrackHeight);
-					if (newMousePoint.y < absTop)
-					{
-						newMousePoint.y = absTop;
-					}
-					else if (newMousePoint.y > absBottom)
-					{
-						newMousePoint.y = absBottom;
-					}
-					mSliderPoint.y = newMousePoint.y - mSliderStartTrackHeight;
-				}
+				const float absTop = mSliderArea.top + mSliderStartTrackHeight;
+				const float absBottom = mSliderArea.bottom - (thumb.y - mSliderStartTrackHeight);
+				newMousePoint.y = std::max(absTop, std::min(absBottom, newMousePoint.y));
+				mSliderPoint.y = newMousePoint.y - mSliderStartTrackHeight;
 			}
 		}
+
+		float ratio = 0.0f;
+		if (mOrientation == HORIZONTAL) {
+			ratio = (mSliderPoint.x - mSliderArea.left) /
+				std::max(1.0f, mSliderArea.width() - thumb.x);
+		} else if (mOrientation == VERTICAL) {
+			ratio = (mSliderPoint.y - mSliderArea.top) /
+				std::max(1.0f, mSliderArea.height() - thumb.y);
+		} else {
+			ratio = (mSliderArea.bottom - thumb.y - mSliderPoint.y) /
+				std::max(1.0f, mSliderArea.height() - thumb.y);
+		}
+		mCurrentPosition = mMinRange + static_cast<int>(ratio * (mMaxRange - mMinRange));
 
 		mOldMousePoint = newMousePoint;
 

@@ -147,6 +147,7 @@
 
   // Application Framework GUI
   #ifndef PDG_NO_GUI
+    #include "pdg/app/ControlAttributes.h"
     #include "pdg/app/Controller.h"
 	#include "pdg/app/ModalController.h"
 	#include "pdg/app/TouchController.h"
@@ -162,4 +163,3 @@
 #endif // PDG_NO_APP_FRAMEWORK
 
 #endif // PDG_FRAMEWORK_H_INCLUDED
-

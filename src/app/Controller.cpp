@@ -109,6 +109,16 @@ Rect Controller::getDialogPresentationArea(Port* port) {
     return port ? port->getDrawingArea() : Rect();
 }
 
+ControlAttributes Controller::getControlAttributes(ControlType type) {
+    (void)type;
+    return ControlAttributes();
+}
+
+ControlAttributes Controller::getControlAttributes(ControlType type, int styleId) {
+    (void)styleId;
+    return getControlAttributes(type);
+}
+
 
 void Controller::addView(const View* view, int id) {
 	// Add the ID and name pair to our list
@@ -194,7 +204,7 @@ bool Controller::doMouseDown(const MouseInfo *mi, View* view, int id, int part) 
     // override to do something when mouse button transistions from up to down
 	
     // clicks are generally handled in doLeftClick() or doRightClick()
-	return false;
+	return view ? view->doMouseDown(mi, id, part) : false;
 }
 
 bool Controller::doMouseUp(const MouseInfo *mi, View* view, int id, int part) {
@@ -203,34 +213,33 @@ bool Controller::doMouseUp(const MouseInfo *mi, View* view, int id, int part) {
     // Return true from this method to completely swallow the mouse up event
     // and prevent any doClick method from being called
     // IF YOU DELETE THIS CONTROLLER FROM WITHIN THIS METHOD, YOU MUST RETURN TRUE!!!
-    return false;
+    return view ? view->doMouseUp(mi, id, part) : false;
 }
 
 void Controller::doMouseEnter(const MouseInfo *mi, View* view, int id, int part) {
     // override to do something when the mouse enters a view
     // check the MouseInfo struct to see if the mouse button is up or down
+	if (view) view->doMouseEnter(mi, id, part);
 }
 
 void Controller::doMouseLeave(const MouseInfo *mi, View* view, int id, int part) {
     // override to do something when the mouse leaves a view
     // check the MouseInfo struct to see if the mouse button is up or down
-//	if (view)
-//	view->doMouseLeave(mi->mousePos, id, part);
+	if (view) view->doMouseLeave(mi, id, part);
 }
 
 void Controller::doMouseMove(const MouseInfo *mi, View* view, int id, int part){
-//	if (view)
-//	view->doMouseMove(mi->mousePos, id, part);
+	if (view) view->doMouseMove(mi, id, part);
 }
 
 bool Controller::doLeftClick(const MouseInfo *mi, View* view, int id, int part) {
     // override to do something with the left mouse button is clicked and released in the same part
-	return false;
+	return view ? view->doLeftClick(mi, id, part) : false;
 }
 
 bool Controller::doRightClick(const MouseInfo *mi, View* view, int id, int part) {
     // override to do something with the right mouse button is clicked and released in the same part
-	return false;
+	return view ? view->doRightClick(mi, id, part) : false;
 }
 
 bool Controller::doDoubleClick(const MouseInfo *mi, View* view, int id, int part, int clickCount) {

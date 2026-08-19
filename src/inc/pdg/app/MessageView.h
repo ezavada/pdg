@@ -23,7 +23,6 @@ public:
 	MessageView(Controller* controller, const Rect& viewRect, std::string& message);
 	~MessageView();
 
-	void loadImages();
 	void drawSelf();
 
 private:
@@ -33,4 +32,3 @@ private:
 } // close namespace pdg
 
 #endif // PDG_MESSAGEVIEW_H_INCLUDED
-

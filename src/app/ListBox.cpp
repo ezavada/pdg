@@ -57,7 +57,6 @@ ListBox::ListBox(Controller* controller, const Rect& viewArea, int textLines, co
 	mHtColor(htcolor),
 	mBkColor(bkcolor)
 {
-	loadImages();
 	calcClickableAreas();
 }
 
@@ -69,10 +68,6 @@ ListBox::~ListBox()
         mListText.pop_back();
         std::free(textLine.text);
     }
-}
-
-void ListBox::loadImages()
-{
 }
 
 void ListBox::calcClickableAreas()

@@ -28,31 +28,23 @@ public:
     Checkbox(Controller* controller, const Rect& viewArea);
 	~Checkbox();
 
-	void loadImages();
-	void drawSelf();
+	void drawSelf() override;
 	void calcClickableAreas();
 	bool isChecked() { return mIsChecked; }
 	void setChecked(bool checked) { mIsChecked = checked; }
 	void setString(const std::string& str);
 	void setTextSize(int pointSize) { mTextSize = pointSize; }
 	void doClick(int part);
+	bool doLeftClick(const MouseInfo* mi, int id, int part) override;
 	void setClickSound(Sound* clickSound);
+	void setAttributes(const ControlAttributes& attributes);
+	const ControlAttributes& getAttributes() const { return mAttributes; }
 
 protected:
-	enum CBImages
-	{
-		OPEN,
-		CLOSED,
-		NUM_CHECKBOX_IMAGES
-	};
-
-    ResourceManager& mResMgr;
-	Image* mpCheckboxImages[NUM_CHECKBOX_IMAGES];
-	Sound* mpClickSound;
-
 	bool mIsChecked;
 	std::string mString;
 	int  mTextSize;
+	ControlAttributes mAttributes;
 };
 
 } // end namespace pdg

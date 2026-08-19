@@ -38,7 +38,7 @@ namespace pdg {
 PopupMenu::PopupMenu(Controller* controller, Point topLeft, Color bkColor, Color sTextColor, Color highlightColor, int nTextSize)
 : View(controller, Rect(0,0,0,0)),
 mResMgr(controller->getApplication().getResourceManager()),
-mbkColor(bkColor),mTextColor(sTextColor),mhighlightColor(highlightColor),mTextSize(nTextSize), mPullArrowImage(0)
+mbkColor(bkColor),mTextColor(sTextColor),mhighlightColor(highlightColor),mTextSize(nTextSize)
 {
 	mStartIndex = START_INDEX_NONE;
 	mHotItem = HOT_ITEM_NONE;
@@ -51,14 +51,12 @@ mbkColor(bkColor),mTextColor(sTextColor),mhighlightColor(highlightColor),mTextSi
 	mViewArea.top = topLeft.y;
 
     mMinWidth = 0;
-    
-	loadImages();
 }
 
 PopupMenu::PopupMenu(Controller* controller, Rect area, Color bkColor, Color sTextColor, Color highlightColor, int nTextSize)
 : View(controller, Rect(0,0,0,0)),
 mResMgr(controller->getApplication().getResourceManager()),
-mbkColor(bkColor),mTextColor(sTextColor),mhighlightColor(highlightColor),mTextSize(nTextSize), mPullArrowImage(0)
+mbkColor(bkColor),mTextColor(sTextColor),mhighlightColor(highlightColor),mTextSize(nTextSize)
 {
 	mStartIndex = START_INDEX_NONE;
 	mHotItem = HOT_ITEM_NONE;
@@ -74,7 +72,6 @@ mbkColor(bkColor),mTextColor(sTextColor),mhighlightColor(highlightColor),mTextSi
     
     mBaseRect = area;
 
-	loadImages();
 }
 
 PopupMenu::~PopupMenu()
@@ -240,16 +237,6 @@ void PopupMenu::drawSelf()
 		{
 			mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
 			tempRect.shrink(HIGHLIGHT_AREA_MARGIN);
-		}
-		// Draw down arrow if this if the first item
-		if (itr == mDrawableItemList.begin())
-		{
-			if (mPullArrowImage)
-			{
-				Point arrowPt(tempRect.right - mPullArrowImage->width - 2, 
-					(tempRect.height() - mPullArrowImage->height)/2 + tempRect.top);
-//				mPort->drawImage(mPullArrowImage, arrowPt, Attributes());
-			}
 		}
 // draw item vertically centered
 		int fontHeight = mPort->getCurrentFont(item.mStyle)->getFontHeight(mTextSize,item.mStyle);
@@ -435,12 +422,6 @@ void PopupMenu::showSelf()
 
 	mHotItem = getPartClicked(OS::getMouse());
 }	
-
-void PopupMenu::loadImages()
-{
-//	app::loadImageArray(mPort, mResMgr, mScrollImages, RES_MENU_IMAGES, MAX_ARROW_IMAGES + MAX_ARROW_IMAGES);
-	mPullArrowImage = app::loadImage(mPort, mResMgr, RES_MENU_IMAGES, RES_PULL_ARROW);
-}
 
 void PopupMenu::setLongestText()
 {

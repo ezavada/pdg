@@ -37,7 +37,6 @@ public:
 
 	void addToList(const char* text, const Color& fgcolor = PDG_BLACK_COLOR ); //, const Color& bgcolor
 	void clear(); // Clears all entries in list box
-	void loadImages();
 	void calcClickableAreas();
 	virtual void drawSelf();
 	int getSelectedIndex() { return mSelectedIndex; }
@@ -74,4 +73,3 @@ private:
 } // close namespace pdg
 
 #endif // PDG_LIST_BOX_H_INCLUDED
-

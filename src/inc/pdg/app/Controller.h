@@ -18,6 +18,7 @@
 #include "pdg/sys/refcounted.h"
 #include "pdg/sys/events.h"
 #include "pdg/app/Application.h"
+#include "pdg/app/ControlAttributes.h"
 
 #if defined (COMPILER_MSVC) && (COMPILER_MSVC < 1300)
 	#define GETVIEW(controller, type, id) dynamic_cast<type*>(controller->getUntypedView(id))
@@ -86,6 +87,14 @@ public:
     // Area in which dialogs should be horizontally presented. Applications with
     // split-screen layouts can override this without coupling Dialog to app code.
     virtual Rect getDialogPresentationArea(Port* port);
+
+    // Application-wide control theming hook. The returned attributes are merged
+    // over each control's built-in defaults. Child controllers use the top-level
+    // controller's theme, so dialogs inherit the application's look and sound.
+    virtual ControlAttributes getControlAttributes(ControlType type);
+    // Optional application-defined style identifier. Controls never interpret
+    // this as a resource ID; the application may use it to select a theme.
+    virtual ControlAttributes getControlAttributes(ControlType type, int styleId);
     
     // for a controller we own trying to close
     virtual bool attemptChildClose(Controller* child, bool cancelled);
@@ -143,4 +152,3 @@ private:
 
 
 #endif // PDG_CONTROLLER_H_INCLUDED
-

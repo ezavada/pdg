@@ -70,7 +70,7 @@ inline Image* loadImage(
 {
     std::string imageNameStorage;
     const char* imageName = resourceManager.getString(imageNameStorage, id, index);
-    if (!imageName) {
+    if (!imageName || imageName[0] == '\0') {
         return nullptr;
     }
 

@@ -11,8 +11,7 @@
 #define PDG_RADIO_BUTTON_H_INCLUDED
 
 #include "pdg/app/View.h"
-
-#define MAX_RADIO_IMAGES 2
+#include "pdg/app/ControlAttributes.h"
 
 namespace pdg {
 
@@ -23,24 +22,27 @@ public:
     RadioButton(Controller* controller, const Rect& viewArea, int resourceTextID, int numStrings);
 	~RadioButton();
 
-	void loadImages();
 	void loadStrings(int resourceID, int numStrings);
+	void setString(int index, const std::string& value);
 	void calcClickableAreas();
-	virtual void drawSelf();
+	void drawSelf() override;
 	int getSelectedIndex() { return mSelectedIndex; }
 	void setSelectedIndex(int selected) { mSelectedIndex = selected; }
 	void doClick(int part);
+	bool doLeftClick(const MouseInfo* mi, int id, int part) override;
+	void setAttributes(const ControlAttributes& attributes);
+	void setClickSound(Sound* clickSound) { mAttributes.clickSound(clickSound); }
+	const ControlAttributes& getAttributes() const { return mAttributes; }
 
 private:
     ResourceManager& mResMgr;
-	Image* mpRadioImages[MAX_RADIO_IMAGES];
 	int mSelectedIndex;
 	std::string* mStrings;
 	int   mMaxStrings;
+	ControlAttributes mAttributes;
 
 };
 
 } // close namespace pdg
 
 #endif // PDG_RADIO_BUTTON_H_INCLUDED
-

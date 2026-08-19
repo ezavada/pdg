@@ -35,49 +35,35 @@
 #include "pdg/app/View.h"
 #include "pdg/sys/attributes.h"
 
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-  #include "GameController.h"
-#endif
-
 #define PART_DIALOG_BKGRND      1
 #define DIALOG_BKGRND_VIEW_ID   -100
 
-#define BRIGHTEN(ch) if (ch < 0.5f) { ch += 0.5f; } else { ch = 1.0f; }
-#define DARKEN(ch) if (ch > 0.5f) { ch -= 0.5f; } else { ch = 0.0f; }
-
-#define DEFAULT_DIALOG_BORDER_WIDTH    7
+#define DEFAULT_DIALOG_BORDER_WIDTH    1
 
 namespace pdg {
 
 class DialogBackgroundView : public View {
 public:
-    DialogBackgroundView(Dialog* dialog, const Rect aRect, Color borderColor = PDG_BLACK_COLOR,
-                         Color fillColor = PDG_WHITE_COLOR, int borderWidth = DEFAULT_DIALOG_BORDER_WIDTH )
+    DialogBackgroundView(Dialog* dialog, const Rect aRect, const ControlAttributes& attributes,
+                         Color borderColor = PDG_BLACK_COLOR, Color fillColor = PDG_WHITE_COLOR,
+                         int borderWidth = DEFAULT_DIALOG_BORDER_WIDTH )
         : View(dialog, aRect),
         mBorderColor(borderColor),
         mFillColor(fillColor),
         mBorderWidth(borderWidth) {
+		mAttributes.merge(attributes);
         mViewArea.grow(borderWidth);
         addClickablePart(globalToLocal(mViewArea), PART_DIALOG_BKGRND);
     }
 
     void drawSelf() {
+		const ControlStateAttributes& themed = mAttributes.state(ControlState::Normal);
+		if (themed.hasDrawRoutine || themed.hasImage || themed.hasDrawing) {
+			mAttributes.draw(*mPort, mViewArea, ControlState::Normal);
+			return;
+        }
         mPort->drawRect(mViewArea, Attributes().fillColor(mFillColor));
         mPort->drawRect(mViewArea, Attributes().lineColor(mBorderColor).lineThickness(mBorderWidth));
-        Color ltLnColor = mBorderColor;
-        BRIGHTEN(ltLnColor.red);
-        BRIGHTEN(ltLnColor.green);
-        BRIGHTEN(ltLnColor.blue);
-        Color dkLnColor = mBorderColor;
-        DARKEN(dkLnColor.red);
-        DARKEN(dkLnColor.green);
-        DARKEN(dkLnColor.blue);
-        // light lines at top and left
-        mPort->drawLine(mViewArea.leftTop(), mViewArea.rightTop(), Attributes().lineColor(ltLnColor));
-        mPort->drawLine(mViewArea.leftTop(), mViewArea.leftBottom(), Attributes().lineColor(ltLnColor));
-        // dark lines at bottom and right
-        mPort->drawLine(mViewArea.leftBottom(), mViewArea.rightBottom(), Attributes().lineColor(dkLnColor));
-        mPort->drawLine(mViewArea.rightTop(), mViewArea.rightBottom(), Attributes().lineColor(dkLnColor));
 //        mController->viewRedrawn();
     }
 
@@ -85,6 +71,7 @@ protected:
     Color mBorderColor;
     Color mFillColor;
     int   mBorderWidth;
+	ControlAttributes mAttributes;
 };
 
 
@@ -104,7 +91,8 @@ Dialog::Dialog(Controller* parentController, int width, int height, uint32 flags
 
     // create the background view
     if (flags & dialog_CreateBackground) {
-		View* bkgnd = new DialogBackgroundView(this, mDialogRect);
+        View* bkgnd = new DialogBackgroundView(this, mDialogRect,
+			parentController->getTopController().getControlAttributes(ControlType::Dialog));
         addView(bkgnd, DIALOG_BKGRND_VIEW_ID);
     }
 
@@ -132,7 +120,7 @@ Dialog::~Dialog() {
 bool Dialog::doMouseDown(const MouseInfo *mi, View* view, int id, int part) {
     // override to do something when mouse button transistions from up to down
     // clicks are generally handled in doLeftClick() or doRightClick()
-    if (view && (id == mOkButtonId) || (id == mCancelButtonId)) {
+    if (view && ((id == mOkButtonId) || (id == mCancelButtonId))) {
         Button* button = static_cast<Button*>(view);
         button->setClickState(true);
         mButtonWithMouseDown = button;
@@ -144,14 +132,8 @@ bool Dialog::doMouseUp(const MouseInfo *mi, View* view, int id, int part) {
     // override to do something when mouse button transistions from down to up
     // clicks are generally handled in doLeftClick() or doRightClick()
     if (mButtonWithMouseDown) {
-      // TODO: remove these catan specific things
-      #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-		GameController& gc = static_cast<GameController&>(getTopController());
-#ifndef PDG_NO_SOUND
-		gc.playSound(GameController::SND7_BUTTON_CLICK);
-#endif
+		mButtonWithMouseDown->playClickSound();
         mButtonWithMouseDown->setClickState(false);
-      #endif
         mButtonWithMouseDown = 0;
     }
     return false;   // we haven't handled this completely, let the doClick() methods be called

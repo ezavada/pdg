@@ -36,11 +36,6 @@
 
 namespace pdg {
 
-const int RES_RADIO_IMAGES = 136;
-
-const int RADIO_OPEN = 0;
-const int RADIO_CLOSED = 1;
-
 const int RADIO_TEXT_SIZE = 14;
 
 RadioButton::RadioButton(Controller* controller, const Rect& viewArea, int resourceTextID, int numStrings)
@@ -49,7 +44,12 @@ RadioButton::RadioButton(Controller* controller, const Rect& viewArea, int resou
 	mSelectedIndex(0), mMaxStrings(numStrings)
 {
 	mStrings = new std::string[numStrings];
-	loadImages();
+	mAttributes
+		.stateForeground(ControlState::Normal, PDG_BLACK_COLOR)
+		.stateForeground(ControlState::Selected, PDG_BLACK_COLOR)
+		.stateForeground(ControlState::Disabled, PDG_GRAY_30_COLOR)
+		.stateForeground(ControlState::SelectedDisabled, PDG_GRAY_30_COLOR);
+	mAttributes.merge(mController->getTopController().getControlAttributes(ControlType::RadioButton));
 	loadStrings(resourceTextID, numStrings);
 	calcClickableAreas();
 }
@@ -59,13 +59,14 @@ RadioButton::~RadioButton()
 	delete [] mStrings;
 }
 
-void RadioButton::loadImages()
+void RadioButton::setAttributes(const ControlAttributes& attributes)
 {
-	app::loadImageArray(mPort, mResMgr, mpRadioImages, RES_RADIO_IMAGES, MAX_RADIO_IMAGES);
+	mAttributes.merge(attributes);
 }
 
 void RadioButton::loadStrings(int resourceID, int numStrings)
 {
+	if (resourceID < 0) return;
 	std::string aString;
 	for(int i=0; i < numStrings; i++)
 	{
@@ -74,12 +75,17 @@ void RadioButton::loadStrings(int resourceID, int numStrings)
 	}
 }
 
+void RadioButton::setString(int index, const std::string& value)
+{
+	if (index >= 0 && index < mMaxStrings) mStrings[index] = value;
+}
+
 void RadioButton::calcClickableAreas()
 {
+	for (int i = 0; i < mMaxStrings; ++i) removeClickablePart(i);
 	int buttonSpace = mViewArea.width() / mMaxStrings;
-	int fontHeight = mPort->getCurrentFont()->getFontHeight(RADIO_TEXT_SIZE);
 	Point buttonTLPoint(0,0);
-	Point buttonBRPoint(buttonSpace-1, fontHeight);
+	Point buttonBRPoint(buttonSpace-1, mViewArea.height());
 	for(int i=0; i < mMaxStrings; i++)
 	{
 		Rect clickArea(buttonTLPoint, buttonBRPoint);
@@ -99,33 +105,42 @@ void RadioButton::drawSelf()
 	for(int i=0; i < mMaxStrings; i++)
 	{
 		textPoint = buttonPoint;
-		Point imagePoint = buttonPoint;
-		if ( i == mSelectedIndex )
-		{
-			if (mpRadioImages[RADIO_CLOSED])
-			{
-				imagePoint.y += (mViewArea.height() - mpRadioImages[RADIO_CLOSED]->height)/2;
-				mPort->drawImage(mpRadioImages[RADIO_CLOSED], localToGlobal(imagePoint), Attributes());
-				textPoint.x += mpRadioImages[RADIO_CLOSED]->width + 5;
-				textPoint.y += fontHeight;
-			}
+		bool selected = i == mSelectedIndex;
+		ControlState state = selected
+			? (mIsEnabled ? ControlState::Selected : ControlState::SelectedDisabled)
+			: (mIsEnabled ? ControlState::Normal : ControlState::Disabled);
+		const ControlStateAttributes& visual = mAttributes.state(state);
+		const ControlStateAttributes& normal = mAttributes.state(ControlState::Normal);
+		Image* image = visual.hasImage ? visual.image : normal.image;
+		int imageWidth = image ? image->width : 0;
+		int imageHeight = image ? image->height : RADIO_TEXT_SIZE;
+		Point imagePoint(buttonPoint.x, (mViewArea.height() - imageHeight) / 2);
+		Rect imageRect(imagePoint, imageWidth, imageHeight);
+		mAttributes.draw(*mPort, localToGlobal(imageRect), state);
+		Color textColor = visual.hasForeground ? visual.foreground : normal.foreground;
+		if (!image) {
+			Point center = localToGlobal(Point(imagePoint.x + 7, imagePoint.y + 7));
+			mPort->drawCircle(center, 7, Attributes().fillColor(PDG_WHITE_COLOR).lineColor(textColor));
+			if (selected) mPort->drawCircle(center, 3, Attributes().fillColor(textColor));
+			imageWidth = 14;
 		}
-		else
-		{
-			if (mpRadioImages[RADIO_OPEN])
-			{
-				imagePoint.y += (mViewArea.height() - mpRadioImages[RADIO_OPEN]->height)/2;
-				mPort->drawImage(mpRadioImages[RADIO_OPEN], localToGlobal(imagePoint), Attributes());
-				textPoint.x += mpRadioImages[RADIO_OPEN]->width + 5;
-			textPoint.y += fontHeight;
-		}
-	}
-
-	mPort->drawText(mStrings[i].c_str(), localToGlobal(textPoint), Attributes().textSize(RADIO_TEXT_SIZE).fillColor(PDG_BLACK_COLOR));
-	buttonPoint.x += buttonSpace;
+		textPoint.x += imageWidth + 5;
+		textPoint.y += (mViewArea.height() - fontHeight) / 2 + fontHeight;
+		mPort->drawText(mStrings[i].c_str(), localToGlobal(textPoint), Attributes().textSize(RADIO_TEXT_SIZE).fillColor(textColor));
+		buttonPoint.x += buttonSpace;
 	}
 
 	//this->drawClickableParts();
+}
+
+bool RadioButton::doLeftClick(const MouseInfo* mi, int id, int part)
+{
+	(void)mi;
+	(void)id;
+	if (!mIsEnabled || part < 0 || part >= mMaxStrings) return false;
+	doClick(part);
+	draw();
+	return true;
 }
 
 void RadioButton::doClick(int part)
@@ -133,6 +148,8 @@ void RadioButton::doClick(int part)
 	if (part >= 0 && part < mMaxStrings)
 	{
 		mSelectedIndex = part;
+		mAttributes.playClick();
+		notifyObservers();
 	}
 }
 

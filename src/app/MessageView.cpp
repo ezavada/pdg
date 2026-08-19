@@ -34,15 +34,6 @@
 #include "ViewUtils.h"
 #include "pdg/sys/attributes.h"
 
-// TODO: remove these catan specific things
-#if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
-  #include "CatanUIConsts.h"  // for colors
-  #define MESSAGE_BACKGROUND_COLOR CATAN_PARCHMENT_COLOR
-#endif 
-
-#ifndef MESSAGE_BACKGROUND_COLOR
-  #define MESSAGE_BACKGROUND_COLOR PDG_WHITE_COLOR
-#endif
 #ifndef MESSAGE_TEXT_COLOR
   #define MESSAGE_TEXT_COLOR PDG_BLACK_COLOR
 #endif
@@ -56,7 +47,6 @@ const int MESSAGE_TEXT_SIZE  = 18;
 MessageView::MessageView(Controller* controller, const Rect& viewRect, std::string& message) :
 	View(controller, viewRect), mMessageString(message)
 {
-	loadImages();
 }
 
 MessageView::~MessageView()
@@ -64,14 +54,8 @@ MessageView::~MessageView()
 }
 
 
-void MessageView::loadImages()
-{
-
-}
-	
 void MessageView::drawSelf()
 {
-	mPort->drawRect(mViewArea, Attributes().fillColor(MESSAGE_BACKGROUND_COLOR));
 	// Fill in header text
 	Rect textArea = Rect(BORDER_SPACER, BORDER_SPACER, mViewArea.width() - BORDER_SPACER, mViewArea.height() - BORDER_SPACER);
 	

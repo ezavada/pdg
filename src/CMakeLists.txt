@@ -1407,4 +1407,86 @@ IF( WIN32 )
 	SET_PROPERTY(TARGET pdgmark PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	TARGET_LINK_LIBRARIES ( pdgmark pdg-lib imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt ${OPENGL_LIBRARIES})
 ENDIF( WIN32 ) 
+
+# ============================================================================
+# PDG C++ App Framework Control Gallery
+# ============================================================================
+# Interactive draw/behavior test. It is intentionally not registered with
+# CTest because it remains open for visual inspection and mouse interaction.
+
+IF(BUILD_TESTING)
+	ADD_EXECUTABLE(pdg-app-control-gallery WIN32 MACOSX_BUNDLE
+		../test/cxx/app-control-gallery.cpp
+		../test/yinyang.png
+		sys/unix/main-unix.cpp
+		app/Application.cpp
+		app/ControlAttributes.cpp
+		app/Controller.cpp
+		app/Dialog.cpp
+		app/View.cpp
+		app/Observer.cpp
+		app/Button.cpp
+		app/Checkbox.cpp
+		app/RadioButton.cpp
+		app/Scrollbar.cpp
+	)
+	SET_SOURCE_FILES_PROPERTIES(../test/yinyang.png PROPERTIES
+		MACOSX_PACKAGE_LOCATION Resources
+	)
+
+	TARGET_COMPILE_DEFINITIONS(pdg-app-control-gallery PRIVATE
+		PDG_INTERNAL_LIB=1
+		PDG_PROJECT=PDG_PROJECT_C_ONLY_APP
+		DEBUG=1
+	)
+
+	TARGET_INCLUDE_DIRECTORIES(pdg-app-control-gallery PRIVATE
+		${PDG_SOURCE_DIR}/src/inc
+		${PDG_SOURCE_DIR}/src/sys
+		${PDG_SOURCE_DIR}/src/app
+		${PDG_SOURCE_DIR}/deps
+		${OPENGL_INCLUDE_DIR}
+	)
+
+	IF(USE_CHIPMUNK)
+		TARGET_INCLUDE_DIRECTORIES(pdg-app-control-gallery PRIVATE
+			${PDG_SOURCE_DIR}/deps/chipmunk/include
+		)
+	ENDIF()
+
+	TARGET_LINK_DIRECTORIES(pdg-app-control-gallery PRIVATE
+		${GLFW_LINK_DIRS}
+		${CHIPMUNK_LINK_DIRS}
+	)
+
+	IF(MACOSX)
+		TARGET_INCLUDE_DIRECTORIES(pdg-app-control-gallery PRIVATE
+			${PDG_SOURCE_DIR}/src/sys/macosx
+		)
+		TARGET_LINK_LIBRARIES(pdg-app-control-gallery
+			pdg-lib-debug
+			"-framework AppKit"
+			"-framework CoreGraphics"
+			"-framework AudioToolbox"
+			"-framework CoreFoundation"
+			"-framework Security"
+			"-framework OpenGL"
+			"-framework GLUT"
+			"-framework IOKit"
+			${OPENGL_LIBRARIES}
+		)
+	ELSEIF(WIN32)
+		SET_PROPERTY(TARGET pdg-app-control-gallery PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+		TARGET_INCLUDE_DIRECTORIES(pdg-app-control-gallery PRIVATE
+			${PDG_SOURCE_DIR}/src/sys/win32
+			${PDG_SOURCE_DIR}/deps/glfw/include
+		)
+		TARGET_LINK_LIBRARIES(pdg-app-control-gallery pdg-lib-debug
+			imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
+			${OPENGL_LIBRARIES})
+	ELSE()
+		TARGET_LINK_LIBRARIES(pdg-app-control-gallery pdg-lib-debug
+			${OPENGL_LIBRARIES} dl pthread)
+	ENDIF()
+ENDIF()
 ENDIF()

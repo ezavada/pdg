@@ -16,16 +16,12 @@
 
 namespace pdg {
 
-class GameController;
-class ResourceList;
-
 class MessageDialog : public Dialog {
 public:
 	enum VIEW_IDS
 	{
 	    // views
-		VIEW_ID_MESSAGE_VIEW  = 1,
-		VIEW_ID_BORDER = 2,
+	    VIEW_ID_MESSAGE_VIEW  = 1,
 		
 		// buttons
 		// don't add anything but buttons in this section
@@ -69,5 +65,4 @@ protected:
 } // close namespace pdg
 
 #endif // PDG_MESSAGE_DIALOG_H_INCLUDED
-
 

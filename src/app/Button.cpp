@@ -33,6 +33,7 @@
 #include "pdg/app/View.h"
 #include "ViewUtils.h"
 
+#include <cmath>
 
 #include "timerids.h"
 
@@ -43,10 +44,6 @@
 
 namespace pdg {
 
-const int BUTTON_NOT_PRESSED     = 0;
-const int BUTTON_PRESSED         = 1;
-const int BUTTON_DISABLED        = 2;
-
 const int BUTTON_SIZE_X			 = 90;
 const int BUTTON_SIZE_Y			 = 28;
 const int BUTTON_TEXT_SIZE       = 14;  // 14 pt lettering on buttons
@@ -55,14 +52,14 @@ const int TEXT_V_OFFSET          = 18;
 const int SMALL_TEXT_V_OFFSET    = 14;
 const int buttonTextStyle = textStyle_Bold + textStyle_Centered;
 
-Button::Button(Controller* controller, const Rect frame, int buttonID, int resourceTextID, short substring, int imageID) 
+Button::Button(Controller* controller, const Rect frame, int buttonID, int resourceTextID, short substring, int styleId)
 : View(controller, frame),
   mResMgr(controller->getApplication().getResourceManager()), 
-  mpClickSound(0),
   mText(""), 
   mButtonID(buttonID), 
-  mImagesId(imageID), 
+  mStyleId(styleId),
   mIsButtonPressed(false),
+  mIsHovered(false),
   mIsToolTipEnabled(false)
 {
     initializeButton(resourceTextID, substring);
@@ -70,44 +67,27 @@ Button::Button(Controller* controller, const Rect frame, int buttonID, int resou
 	finishInitButton();
 }
 
-Button::Button(Controller* controller, const Point& topLeftPoint, int buttonID, int resourceTextID, short substring, int imageID) 
-: View(controller, Rect(0, 0)),
+Button::Button(Controller* controller, const Point& topLeftPoint, int buttonID, int resourceTextID, short substring, int styleId)
+: View(controller, Rect(topLeftPoint, BUTTON_SIZE_X, BUTTON_SIZE_Y)),
   mResMgr(controller->getApplication().getResourceManager()), 
   mText(""), 
   mButtonID(buttonID), 
-  mImagesId(imageID), 
+  mStyleId(styleId),
   mIsButtonPressed(false),
+  mIsHovered(false),
   mIsToolTipEnabled(false)
 {
     initializeButton(resourceTextID, substring);
 
-	// Reset view area
-	if ( mpButtonImage[BUTTON_PRESSED])
-	{
-		int width = mpButtonImage[BUTTON_PRESSED]->width;
-		int height = mpButtonImage[BUTTON_PRESSED]->height;
-		Rect viewArea(topLeftPoint.x, topLeftPoint.y, topLeftPoint.x + width, topLeftPoint.y + height);
-		setViewArea(viewArea);
-    }
-
 	finishInitButton();
+	const ControlStateAttributes& normal = mAttributes.state(ControlState::Normal);
+	if (normal.hasImage && normal.image) {
+		setViewArea(Rect(topLeftPoint, normal.image->width, normal.image->height));
+		updateLayout();
+	}
 }
 
 void Button::initializeButton(int resourceTextID, short substring) {
-	// If the deafult images haven't been loaded yet....load them...this will only happen once.
-	loadDefaultImages();
-
-	// if the user didn't pass in any imageID we will use the default buttons
-	// which should be already loaded
-	if (mImagesId == RES_DEFAULT_BUTTON_IMAGE)
-	{
-		app::loadImageArray(mPort, mResMgr, mpButtonImage, RES_DEFAULT_BUTTON_IMAGE, MAX_BUTTON_IMAGES);
-	}
-	else
-	{
-		app::loadImageArray(mPort, mResMgr, mpButtonImage, mImagesId, MAX_BUTTON_IMAGES);
-	}
-
 	// Set the button text
 	if (resourceTextID != -1) 
 	{
@@ -116,32 +96,48 @@ void Button::initializeButton(int resourceTextID, short substring) {
 }
 
 void Button::finishInitButton() {
+	mAttributes
+		.stateAttributes(ControlState::Normal, Attributes().fillColor(BUTTON_COLOR).lineColor(PDG_BLACK_COLOR).roundedCorners(7.0f))
+		.stateAttributes(ControlState::Hovered, Attributes().fillColor(Color(255, 220, 120)).lineColor(PDG_BLACK_COLOR).roundedCorners(7.0f))
+		.stateAttributes(ControlState::Pressed, Attributes().fillColor(BUTTON_PRESSED_COLOR).lineColor(PDG_BLACK_COLOR).roundedCorners(7.0f))
+		.stateAttributes(ControlState::Disabled, Attributes().fillColor(PDG_GRAY_20_COLOR).lineColor(PDG_GRAY_40_COLOR).roundedCorners(7.0f))
+		.stateForeground(ControlState::Normal, PDG_WHITE_COLOR)
+		.stateForeground(ControlState::Pressed, PDG_WHITE_COLOR)
+		.stateForeground(ControlState::Disabled, PDG_GRAY_30_COLOR);
+	mAttributes.merge(mController->getTopController().getControlAttributes(ControlType::Button, mStyleId));
+	updateLayout();
+}
+
+
+void Button::updateLayout() {
 	// Set clickable part
+	removeClickablePart(mButtonID);
 	Rect viewArea(mViewArea.width(), mViewArea.height());
 	addClickablePart(viewArea, mButtonID);
 
 	mButtonTextSize = mViewArea.height()/2-1;
 	mTextBaselineCenterPoint.x = mViewArea.width()/2;
-	int textHeight = mPort->getCurrentFont(buttonTextStyle)->getFontHeight(mButtonTextSize, buttonTextStyle);
-	mTextBaselineCenterPoint.y = textHeight + (mViewArea.height() - textHeight)/4;
+	Font* font = mPort->getCurrentFont(buttonTextStyle);
+	const float ascent = font->getFontAscent(mButtonTextSize, buttonTextStyle);
+	const float descent = font->getFontDescent(mButtonTextSize, buttonTextStyle);
+	// drawText takes a baseline. Center the glyph area, with a one-pixel optical
+	// adjustment so button labels do not appear high in their backgrounds.
+	mTextBaselineCenterPoint.y = static_cast<int>(std::lround(
+		(mViewArea.height() - ascent - descent) * 0.5f + ascent)) + 1;
 }
 
 Button::~Button()
-{
-    // unload the button images
-    app::unloadImage(mpButtonImage[BUTTON_NOT_PRESSED]);
-    app::unloadImage(mpButtonImage[BUTTON_PRESSED]);
-    app::unloadImage(mpButtonImage[BUTTON_DISABLED]);
-    mpClickSound = 0;
-}
-
-void Button::loadDefaultImages()
 {
 }
 
 void Button::setClickSound(Sound* clickSound)
 {
-    mpClickSound = clickSound;
+    mAttributes.clickSound(clickSound);
+}
+
+void Button::setAttributes(const ControlAttributes& attributes)
+{
+	mAttributes.merge(attributes);
 }
 
 void Button::setTextFromResource(int resourceID, short substring)
@@ -180,37 +176,21 @@ void Button::setText(const char* text)
 
 void Button::drawSelf()
 {
-	// Draw button image
-	Point topLeftPoint( 0, 0 );
-	Image* buttonImage = 0;
+	ControlState state = !mIsEnabled ? ControlState::Disabled
+		: (mIsButtonPressed ? ControlState::Pressed
+			: (mIsHovered ? ControlState::Hovered : ControlState::Normal));
+	Rect buttonRect(mViewArea.width(), mViewArea.height());
+	mAttributes.draw(*mPort, localToGlobal(buttonRect), state);
 
-    Color buttonTextColor;
-
-	if ( mIsEnabled )
-	{
-		buttonTextColor = PDG_WHITE_COLOR;
-		if ( mIsButtonPressed )
-		{
-			buttonImage = mpButtonImage[BUTTON_PRESSED];
-		}
-		else
-		{
-			buttonImage = mpButtonImage[BUTTON_NOT_PRESSED];
-		}
-	}
-	else
-	{
-		buttonImage = mpButtonImage[BUTTON_DISABLED];
-		buttonTextColor = PDG_GRAY_30_COLOR;	
-	}
-
-	if ( buttonImage )
+	const ControlStateAttributes& stateAttributes = mAttributes.state(state);
+	const ControlStateAttributes& normalAttributes = mAttributes.state(ControlState::Normal);
+	Color buttonTextColor = stateAttributes.hasForeground
+		? stateAttributes.foreground : normalAttributes.foreground;
+	if (!mText.empty())
 	{
 //	    if (mText.length()%2 == 1) {
 //	        drawStandardButtonBackground();
 //	    } else {
-		    Rect buttonRect(mViewArea.width(), mViewArea.height());
-		    mPort->drawImage(buttonImage, localToGlobal(buttonRect), Attributes());
 //		}
 
 /*		int buttonTextSize = buttonImage->height/2;
@@ -231,6 +211,34 @@ void Button::drawSelf()
 	}
 
 	//this->drawClickableParts();
+}
+
+bool Button::doMouseDown(const MouseInfo* mi, int id, int part)
+{
+	(void)mi;
+	(void)id;
+	if (part != mButtonID || !mIsEnabled) return false;
+	setClickState(true);
+	return false;
+}
+
+bool Button::doMouseUp(const MouseInfo* mi, int id, int part)
+{
+	(void)mi;
+	(void)id;
+	(void)part;
+	if (mIsButtonPressed) setClickState(false);
+	return false;
+}
+
+bool Button::doLeftClick(const MouseInfo* mi, int id, int part)
+{
+	(void)mi;
+	(void)id;
+	if (part != mButtonID || !mIsEnabled) return false;
+	mAttributes.playClick();
+	notifyObservers();
+	return true;
 }
 
 // gray 40
@@ -315,6 +323,10 @@ void Button::drawStandardButtonBackground()
 // handler shows all the tooltips for button
 void Button::doMouseMove(const MouseInfo *mi,  int id, int part)
 {
+	if (!mIsHovered) {
+		mIsHovered = true;
+		draw();
+	}
 	if (!mIsToolTipEnabled)
 		return ;
 	Point mousePts = mi->mousePos;
@@ -336,6 +348,10 @@ void Button::doMouseMove(const MouseInfo *mi,  int id, int part)
 
 void Button::doMouseLeave(const MouseInfo *mi, int id, int part)
 {
+	if (mIsHovered) {
+		mIsHovered = false;
+		draw();
+	}
 //	showToolTip(-1,mousePts,Rect(0,0,0,0));
 }
 

@@ -25,13 +25,11 @@
 #define TEXT_LEFT_MARGIN		2
 #define HIGHLIGHT_AREA_MARGIN	2
 #define CLIP_TEXT				"..."
-#define RES_MENU_IMAGES			143
 #define TEXT_RESOURCE_ID_NONE	-1
 #define MAX_MENU_WIDTH			200
 // id's for scrolling
 #define ITEM_UP_ARROW			1
 #define ITEM_DOWN_ARROW			2
-#define RES_PULL_ARROW 4
 
 #define START_INDEX_NONE		-1
 #define HOT_ITEM_NONE			-1
@@ -104,8 +102,6 @@ private:
 	int mItemShowable;
 	bool mNeedScrolling, mShowUpArrow, mShowDownArrow ;
 	Point mOldScrollPos;
-//	Image* mScrollImages[MAX_ARROW_IMAGES + MAX_ARROW_IMAGES];
-	Image* mPullArrowImage;
 	int mMinWidth;
 	Rect mBaseRect;
 
@@ -148,7 +144,6 @@ public:
 	void hide();
 
 protected:
-	void loadImages();
 	void loadString(std::string& aString,int resourceID, int numStrings);
 	void addDrawableItemPart(const Rect& rect, ItemInfo& item);
 	void calcClickableAreas();
@@ -158,4 +153,3 @@ protected:
 } // close namespace pdg
 
 #endif // PDG_POPUP_MENU_H_INCLUDED
-

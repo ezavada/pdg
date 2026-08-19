@@ -33,89 +33,88 @@
 #include "pdg/sys/attributes.h"
 #include "ViewUtils.h"
 
+#include <algorithm>
+#include <cmath>
+
 
 namespace pdg {
 
-const int RES_CHECKBOX_IMAGES = 127;
-
-const int OPEN_CHECKBOX_OFFSET_Y = 8;
-const int OPEN_CHECKBOX_WIDTH  = 19;
-const int OPEN_CHECKBOX_HEIGHT = 19;
 const int CHECKBOX_TEXT_SIZE = 16;
-const int SPACE_BETWEEN_BOX_AND_TEXT = -3;
+const int SPACE_BETWEEN_BOX_AND_TEXT = 5;
 const int SPACE_UP_FROM_BOTTOM = 5;
 const Style checkboxTextStyle = textStyle_Bold;
 
 Checkbox::Checkbox(Controller* controller, const Rect& viewArea) :
 	View(controller, viewArea),
-	mResMgr(controller->getApplication().getResourceManager()),
-	mpClickSound(0),
 	mIsChecked(false),
 	mString(""),
 	mTextSize(CHECKBOX_TEXT_SIZE)
 {
-	loadImages();
+	mAttributes
+		.stateForeground(ControlState::Normal, PDG_BLACK_COLOR)
+		.stateForeground(ControlState::Selected, PDG_BLACK_COLOR)
+		.stateForeground(ControlState::Disabled, PDG_GRAY_30_COLOR)
+		.stateForeground(ControlState::SelectedDisabled, PDG_GRAY_30_COLOR);
+	mAttributes.merge(mController->getTopController().getControlAttributes(ControlType::Checkbox));
 	calcClickableAreas();
 }
 
 Checkbox::~Checkbox()
 {
-	app::unloadImage(mpCheckboxImages[OPEN]);
-	app::unloadImage(mpCheckboxImages[CLOSED]);
-    mpClickSound = 0;
-}
-
-
-void Checkbox::loadImages()
-{
-	app::loadImageArray(mPort, mResMgr, mpCheckboxImages, RES_CHECKBOX_IMAGES, NUM_CHECKBOX_IMAGES);
 }
 	
 void Checkbox::setClickSound(Sound* clickSound)
 {
-    mpClickSound = clickSound;
+    mAttributes.clickSound(clickSound);
+}
+
+void Checkbox::setAttributes(const ControlAttributes& attributes)
+{
+	mAttributes.merge(attributes);
+	calcClickableAreas();
 }
 
 void Checkbox::calcClickableAreas()
 {
-	if (mpCheckboxImages[OPEN])
-	{
-		Rect clickArea(OPEN_CHECKBOX_WIDTH, OPEN_CHECKBOX_HEIGHT);
-		clickArea = clickArea + Point(0, OPEN_CHECKBOX_OFFSET_Y);
-		addClickablePart(clickArea, CLICK_ID_CHECKBOX);
-	}
+	removeClickablePart(CLICK_ID_CHECKBOX);
+	Rect clickArea(mViewArea.width(), mViewArea.height());
+	addClickablePart(clickArea, CLICK_ID_CHECKBOX);
 }
 
 void Checkbox::drawSelf()
 {
-	Point checkPt(0,0);
-
-	if (isChecked())
-	{
-		if (mpCheckboxImages[CLOSED])
-		{
-			mPort->drawImage(mpCheckboxImages[CLOSED], localToGlobal(checkPt), Attributes());
-		} else {
-			checkPt = localToGlobal(checkPt);
-
-			Rect checkRect(0, 0, OPEN_CHECKBOX_WIDTH, OPEN_CHECKBOX_HEIGHT);
-			checkPt.y += OPEN_CHECKBOX_OFFSET_Y;
-			checkRect = checkRect.moveTo(checkPt);
-			mPort->drawRect(checkRect, Attributes().fillColor(PDG_BLACK_COLOR));
-		}
-	}
-	else
-	{
-		if (mpCheckboxImages[OPEN])
-		{
-			mPort->drawImage(mpCheckboxImages[OPEN], localToGlobal(checkPt), Attributes());
-		} else {
-			checkPt = localToGlobal(checkPt);
-
-			Rect checkRect(0, 0, OPEN_CHECKBOX_WIDTH, OPEN_CHECKBOX_HEIGHT);
-			checkPt.y += OPEN_CHECKBOX_OFFSET_Y;
-			checkRect = checkRect.moveTo(checkPt);
-			mPort->drawRect(checkRect, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1.0f));
+	ControlState state = isChecked()
+		? (mIsEnabled ? ControlState::Selected : ControlState::SelectedDisabled)
+		: (mIsEnabled ? ControlState::Normal : ControlState::Disabled);
+	const ControlStateAttributes& visual = mAttributes.state(state);
+	const ControlStateAttributes& normal = mAttributes.state(ControlState::Normal);
+	Image* image = visual.hasImage ? visual.image : normal.image;
+	Font* font = mPort->getCurrentFont(checkboxTextStyle);
+	const float ascent = font->getFontAscent(mTextSize, checkboxTextStyle);
+	const float descent = font->getFontDescent(mTextSize, checkboxTextStyle);
+	const float glyphHeight = ascent + descent;
+	const int baseline = static_cast<int>(std::lround(
+		(mViewArea.height() - glyphHeight) * 0.5f + ascent));
+	const int defaultBoxSize = std::max(1, static_cast<int>(std::lround(ascent)));
+	int boxWidth = image ? image->width : defaultBoxSize;
+	int boxHeight = image ? image->height : defaultBoxSize;
+	Point checkPt(0, image ? (mViewArea.height() - boxHeight) / 2 : baseline - boxHeight);
+	Rect checkRect(checkPt, boxWidth, boxHeight);
+	mAttributes.draw(*mPort, localToGlobal(checkRect), state);
+	if (!image && !visual.hasDrawing && !visual.hasDrawRoutine) {
+		Color markColor = visual.hasForeground ? visual.foreground : normal.foreground;
+		Rect globalCheckRect = localToGlobal(checkRect);
+		mPort->drawRect(globalCheckRect, Attributes().fillColor(PDG_WHITE_COLOR)
+			.lineColor(markColor).lineThickness(1.0f));
+		if (isChecked()) {
+			const Point left(globalCheckRect.left + boxWidth * 0.20f,
+				globalCheckRect.top + boxHeight * 0.52f);
+			const Point middle(globalCheckRect.left + boxWidth * 0.43f,
+				globalCheckRect.top + boxHeight * 0.76f);
+			const Point right(globalCheckRect.left + boxWidth * 0.82f,
+				globalCheckRect.top + boxHeight * 0.25f);
+			mPort->drawLine(left, middle, Attributes().lineColor(markColor).lineThickness(2.0f));
+			mPort->drawLine(middle, right, Attributes().lineColor(markColor).lineThickness(2.0f));
 		}
 	}
 
@@ -123,19 +122,10 @@ void Checkbox::drawSelf()
 	// Draw Text if there is any
 	if (!mString.empty())
 	{
-		if (mpCheckboxImages[OPEN])
-		{
-			textPt.x += mpCheckboxImages[OPEN]->width + SPACE_BETWEEN_BOX_AND_TEXT;
-			textPt.y += mpCheckboxImages[OPEN]->height - SPACE_UP_FROM_BOTTOM;
-		}
-		else
-		{
-			// Fallback positioning when images aren't loaded
-			textPt.x += OPEN_CHECKBOX_WIDTH + SPACE_BETWEEN_BOX_AND_TEXT;
-			textPt.y += OPEN_CHECKBOX_HEIGHT - SPACE_UP_FROM_BOTTOM;
-		}
-
-		mPort->drawText(mString.c_str(), localToGlobal(textPt), Attributes().textSize(mTextSize).textStyle(checkboxTextStyle).fillColor(PDG_BLACK_COLOR));
+		textPt.x = boxWidth + SPACE_BETWEEN_BOX_AND_TEXT;
+		textPt.y = baseline;
+		Color textColor = visual.hasForeground ? visual.foreground : normal.foreground;
+		mPort->drawText(mString.c_str(), localToGlobal(textPt), Attributes().textSize(mTextSize).textStyle(checkboxTextStyle).fillColor(textColor));
 	}
 	//this->drawClickableParts();
 }
@@ -145,13 +135,19 @@ void Checkbox::doClick(int part)
 	if (part == CLICK_ID_CHECKBOX)
 	{
 		mIsChecked = !mIsChecked;
-      #ifndef PDG_NO_SOUND
-		if (mpClickSound) {
-		    mpClickSound->play();
-		}
-      #endif
+		mAttributes.playClick();
 		notifyObservers();
 	}
+}
+
+bool Checkbox::doLeftClick(const MouseInfo* mi, int id, int part)
+{
+	(void)mi;
+	(void)id;
+	if (!mIsEnabled || part != CLICK_ID_CHECKBOX) return false;
+	doClick(part);
+	draw();
+	return true;
 }
 
 void Checkbox::setString(const std::string& str) 
@@ -159,11 +155,17 @@ void Checkbox::setString(const std::string& str)
 	mString = str; 
 	int textWidth = mPort->getTextWidth(mString.c_str(), mTextSize, checkboxTextStyle);
 	Rect newClickArea(mViewArea);
-	if (mpCheckboxImages[OPEN])
-	{
-		newClickArea.bottom = newClickArea.top + mpCheckboxImages[OPEN]->height;
-		newClickArea.right = newClickArea.left + mpCheckboxImages[OPEN]->width;
-	}
+	Image* image = mAttributes.state(ControlState::Normal).image;
+	Font* font = mPort->getCurrentFont(checkboxTextStyle);
+	int defaultBoxSize = std::max(1, static_cast<int>(std::lround(
+		font->getFontAscent(mTextSize, checkboxTextStyle))));
+	int boxWidth = image ? image->width : defaultBoxSize;
+	int boxHeight = image ? image->height : defaultBoxSize;
+	int fontHeight = static_cast<int>(std::ceil(
+		font->getFontAscent(mTextSize, checkboxTextStyle) +
+		font->getFontDescent(mTextSize, checkboxTextStyle)));
+	newClickArea.bottom = newClickArea.top + std::max(boxHeight, fontHeight + SPACE_UP_FROM_BOTTOM);
+	newClickArea.right = newClickArea.left + boxWidth;
 	newClickArea.right += SPACE_BETWEEN_BOX_AND_TEXT + textWidth;
 	setViewArea(newClickArea);
 	//remove and re-add clickable part
