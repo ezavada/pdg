@@ -47,7 +47,7 @@ protected:
 	};
 
     ResourceManager& mResMgr;
-	ImageStrip* mpCheckboxImages;
+	Image* mpCheckboxImages[NUM_CHECKBOX_IMAGES];
 	Sound* mpClickSound;
 
 	bool mIsChecked;
@@ -59,4 +59,3 @@ protected:
 
 
 #endif // PDG_CHECKBOX_H_INCLUDED
-

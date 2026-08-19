@@ -31,11 +31,12 @@
 
 #include "pdg/app/Checkbox.h"
 #include "pdg/sys/attributes.h"
+#include "ViewUtils.h"
 
 
 namespace pdg {
 
-const char* RES_CHECKBOX_IMAGES = "checkbox";
+const int RES_CHECKBOX_IMAGES = 127;
 
 const int OPEN_CHECKBOX_OFFSET_Y = 8;
 const int OPEN_CHECKBOX_WIDTH  = 19;
@@ -59,17 +60,15 @@ Checkbox::Checkbox(Controller* controller, const Rect& viewArea) :
 
 Checkbox::~Checkbox()
 {
+	app::unloadImage(mpCheckboxImages[OPEN]);
+	app::unloadImage(mpCheckboxImages[CLOSED]);
     mpClickSound = 0;
 }
 
 
 void Checkbox::loadImages()
 {
-	mpCheckboxImages = mResMgr.getImageStrip(RES_CHECKBOX_IMAGES);
-	// If image loading fails, mpCheckboxImages will be null and we'll use fallback drawing
-	if (mpCheckboxImages) {
-		mpCheckboxImages->setNumFrames(NUM_CHECKBOX_IMAGES);
-	}
+	app::loadImageArray(mPort, mResMgr, mpCheckboxImages, RES_CHECKBOX_IMAGES, NUM_CHECKBOX_IMAGES);
 }
 	
 void Checkbox::setClickSound(Sound* clickSound)
@@ -79,7 +78,7 @@ void Checkbox::setClickSound(Sound* clickSound)
 
 void Checkbox::calcClickableAreas()
 {
-	if (mpCheckboxImages && mpCheckboxImages->getFrame(OPEN))
+	if (mpCheckboxImages[OPEN])
 	{
 		Rect clickArea(OPEN_CHECKBOX_WIDTH, OPEN_CHECKBOX_HEIGHT);
 		clickArea = clickArea + Point(0, OPEN_CHECKBOX_OFFSET_Y);
@@ -93,9 +92,9 @@ void Checkbox::drawSelf()
 
 	if (isChecked())
 	{
-		if (mpCheckboxImages)
+		if (mpCheckboxImages[CLOSED])
 		{
-			mPort->drawImage(mpCheckboxImages, localToGlobal(checkPt), Attributes().frame(CLOSED));
+			mPort->drawImage(mpCheckboxImages[CLOSED], localToGlobal(checkPt), Attributes());
 		} else {
 			checkPt = localToGlobal(checkPt);
 
@@ -107,9 +106,9 @@ void Checkbox::drawSelf()
 	}
 	else
 	{
-		if (mpCheckboxImages)
+		if (mpCheckboxImages[OPEN])
 		{
-			mPort->drawImage(mpCheckboxImages, localToGlobal(checkPt), Attributes().frame(OPEN));
+			mPort->drawImage(mpCheckboxImages[OPEN], localToGlobal(checkPt), Attributes());
 		} else {
 			checkPt = localToGlobal(checkPt);
 
@@ -124,10 +123,10 @@ void Checkbox::drawSelf()
 	// Draw Text if there is any
 	if (!mString.empty())
 	{
-		if (mpCheckboxImages)
+		if (mpCheckboxImages[OPEN])
 		{
-			textPt.x += mpCheckboxImages->getFrame(OPEN)->width + SPACE_BETWEEN_BOX_AND_TEXT;
-			textPt.y += mpCheckboxImages->getFrame(OPEN)->height - SPACE_UP_FROM_BOTTOM;
+			textPt.x += mpCheckboxImages[OPEN]->width + SPACE_BETWEEN_BOX_AND_TEXT;
+			textPt.y += mpCheckboxImages[OPEN]->height - SPACE_UP_FROM_BOTTOM;
 		}
 		else
 		{
@@ -160,10 +159,10 @@ void Checkbox::setString(const std::string& str)
 	mString = str; 
 	int textWidth = mPort->getTextWidth(mString.c_str(), mTextSize, checkboxTextStyle);
 	Rect newClickArea(mViewArea);
-	if (mpCheckboxImages)
+	if (mpCheckboxImages[OPEN])
 	{
-		newClickArea.bottom = newClickArea.top + mpCheckboxImages->getFrame(OPEN)->height;
-		newClickArea.right = newClickArea.left + mpCheckboxImages->getFrame(OPEN)->width;
+		newClickArea.bottom = newClickArea.top + mpCheckboxImages[OPEN]->height;
+		newClickArea.right = newClickArea.left + mpCheckboxImages[OPEN]->width;
 	}
 	newClickArea.right += SPACE_BETWEEN_BOX_AND_TEXT + textWidth;
 	setViewArea(newClickArea);

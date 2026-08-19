@@ -152,7 +152,7 @@ bool Dialog::doMouseUp(const MouseInfo *mi, View* view, int id, int part) {
       #if (defined(CATAN_CLIENT) || defined(CATAN_STANDALONE))
 		GameController& gc = static_cast<GameController&>(getTopController());
 #ifndef PDG_NO_SOUND
-		gc.getSound(GameController::SND7_BUTTON_CLICK)->play();
+		gc.playSound(GameController::SND7_BUTTON_CLICK);
 #endif
         mButtonWithMouseDown->setClickState(false);
       #endif

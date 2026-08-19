@@ -67,9 +67,6 @@ Button::Button(Controller* controller, const Rect frame, int buttonID, int resou
 {
     initializeButton(resourceTextID, substring);
 
-	// Resize images to fit
-	app::scaleImageArrayToFit(mpButtonImage, MAX_BUTTON_IMAGES, frame);
-
 	finishInitButton();
 }
 
@@ -212,7 +209,8 @@ void Button::drawSelf()
 //	    if (mText.length()%2 == 1) {
 //	        drawStandardButtonBackground();
 //	    } else {
-		    mPort->drawImage(buttonImage, localToGlobal(topLeftPoint), Attributes());
+		    Rect buttonRect(mViewArea.width(), mViewArea.height());
+		    mPort->drawImage(buttonImage, localToGlobal(buttonRect), Attributes());
 //		}
 
 /*		int buttonTextSize = buttonImage->height/2;

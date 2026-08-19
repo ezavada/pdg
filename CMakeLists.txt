@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
 PROJECT(PDG VERSION 1.0.0 LANGUAGES C CXX)
 
+INCLUDE(CTest)
+
 IF(NOT DEFINED PDG_SOURCE_DIR)
 	SET(PDG_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 ENDIF()
@@ -96,3 +98,15 @@ IF(NOT MACOSX AND NOT WIN32)
 ENDIF()
 
 ADD_SUBDIRECTORY(src)
+
+IF(BUILD_TESTING AND NOT PDG_HEADLESS)
+    ADD_EXECUTABLE(pdg-app-view-utils-tests
+        test/cxx/test-view-utils.cpp
+    )
+    TARGET_INCLUDE_DIRECTORIES(pdg-app-view-utils-tests PRIVATE
+        ${PDG_SOURCE_DIR}/src/inc
+        ${PDG_SOURCE_DIR}/src/app
+        ${PDG_SOURCE_DIR}/deps
+    )
+    ADD_TEST(NAME pdg-app-view-utils COMMAND pdg-app-view-utils-tests)
+ENDIF()
