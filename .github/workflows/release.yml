@@ -31,6 +31,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Install Windows build dependencies
+        shell: pwsh
+        run: choco install nasm --yes --no-progress
       - name: Build, test, and package
         shell: pwsh
         run: ./tools/release-windows.ps1 -Tag $env:GITHUB_REF_NAME -Configure
