@@ -962,8 +962,10 @@ $WINDOWS_SDK_AVAILABLE = $false
 # Refresh PATH to pick up any recently installed tools
 Refresh-Path
 
-# Check if winget is available
-if (-not (Test-Command "winget")) {
+# winget is only needed when this script is allowed to install dependencies.
+# CI and pre-provisioned machines use -SkipInstall (or -ConfigureOnly) and
+# should validate the tools already present without requiring a package manager.
+if (-not $SkipInstall -and -not $ConfigureOnly -and -not (Test-Command "winget")) {
     Write-Error-Status "winget is not available. Please install Windows Package Manager first."
     Write-Host "Download from: https://github.com/microsoft/winget-cli/releases" -ForegroundColor Gray
     exit 1
