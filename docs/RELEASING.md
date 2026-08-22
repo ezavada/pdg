@@ -19,6 +19,17 @@ On macOS or a Windows environment with GNU Make:
 
     make release RELEASE_TAG=v1.0.0
 
+Generate all C++, JavaScript, manual-page, and bundled third-party
+documentation locally:
+
+    make docs
+
+This installs Doxygen and Graphviz with Homebrew on macOS or apt-get on Linux
+when either tool is missing. The generated site and versioned documentation
+ZIP are written under artifacts/docs. Maintainers can run
+`tools/build-docs.sh --refresh-api` after building PDG when the generated
+JavaScript API description also needs to be refreshed.
+
 When RELEASE_TAG is omitted, HEAD must be at an exact release tag. The
 platform scripts can also be called directly:
 
@@ -59,6 +70,7 @@ tag:
     git tag v1.0.0
     git push origin v1.0.0
 
-The release workflow builds independently on macOS and Windows. It creates a
-GitHub Release only after both local release scripts succeed, and exposes the
-separate optimized and debug ZIPs with their SHA-256 files.
+The release workflow builds independently on macOS and Windows and builds the
+platform-neutral documentation on Linux. It creates a GitHub Release only
+after all three jobs succeed, and exposes the separate optimized, debug, and
+documentation ZIPs with their SHA-256 files.

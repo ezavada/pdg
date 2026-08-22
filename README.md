@@ -10,7 +10,7 @@ This is the documentation for the Javascript API.
 
 Features
 --------
-- integrated with Node.js
+- integrated with Node.js v24
 - high performance Javascript via Google's V8 engine
 - event driven
 - cross platform
@@ -19,11 +19,13 @@ Features
 - user input handling
 - timers
 - networking
+- efficient serialization and deserialization
 - sound
 - animation including jQuery-like easing functions
 - sprites
+- bone based animation via [Brash Monkey's Spriter](https://brashmonkey.com/spriter-pro/)
 - tile based maps
-- physics support using Chipmunk Physics
+- physics support using [Chipmunk Physics](https://chipmunk-physics.net/)
 - works with node inspector for Javascript debugging
 - interactive Javascript console mode
 
@@ -39,7 +41,7 @@ Design Goals
 
 PDG is focused on making a broad array of capabilities available to developers 
 regardless of the OS platform they are targeting. Currently it works on Mac OS X, 
-Windows, and iOS.
+Windows, and iOS. The Non-GUI build (and Node.js plugin) also work on Linux.
 
 The PDG API is designed to make simple things easy to do, without adding undue 
 complexity to more complicated problems.
@@ -56,7 +58,7 @@ Usage assumptions
 
 PDG is supplied in several different forms:
 - an ANSI C++ SDK
-- a Javascript SDK that includes a binary runtime for Mac OS X and Windows
+- a Javascript SDK (that will eventually include a binary runtime for Mac OS X and Windows)
 - an npm package for Node.js for server side programming
 
 No languages other than Javascript and C++ are currently supported, though Ruby bindings have been created in the past. The Javascript bindings could serve as a guide for anyone wishing to add support for other languages.
@@ -78,10 +80,14 @@ What's missing?
 There are a few things we'd like to add to PDG, but haven't had time to build yet. Some
 are pretty simple, others rather larger. In no particular order, they are:
 
+- Binary distributions and release builds of the runtime
 - Pure Javascript HTML5 implementation so you can run your game in a browser
 - Port.drawRadialGradient()
+- Applying Chipmunk Physics to SCML based sprites
+- A map editor for tile layers
+- Particle System (similar to sprites but optimized for particle effects)
 - Example Code
-- Unit Tests for every part of PDG
+- More comprehensive Unit Tests
 - FluidLayer for simulating floating objects
 - OuterSpaceLayer for simulating gravitational attraction between objects
 - Android port
@@ -152,5 +158,4 @@ Building From Source
         $ test/node
         $ test/ui
         $ ./pdg
-
 
