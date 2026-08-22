@@ -48,6 +48,9 @@ try {
     & powershell -NoProfile -ExecutionPolicy Bypass -File ".\make.ps1" -Target pdg -Config Release
     if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
 
+    & cmake --build msvc --config Release --target pdg-app-view-utils-tests pdg-app-framework-tests --parallel
+    if ($LASTEXITCODE -ne 0) { throw "Windows native test build failed." }
+
     & ctest --test-dir msvc --build-config Release --output-on-failure
     if ($LASTEXITCODE -ne 0) { throw "Native tests failed." }
     if (-not (Test-Path ".\node_modules\jasmine-node\package.json")) {

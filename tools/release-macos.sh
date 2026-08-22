@@ -75,7 +75,8 @@ cmake -S "$PDG_ROOT" -B "$BUILD_DIR" \
 
 cmake --build "$PDG_ROOT/build/darwin/glfw" --config Release --parallel
 cmake --build "$PDG_ROOT/build/darwin/chipmunk" --config Release --parallel
-cmake --build "$BUILD_DIR" --config Release --target pdg --parallel
+cmake --build "$BUILD_DIR" --config Release \
+    --target pdg pdg-app-view-utils-tests pdg-app-framework-tests --parallel
 
 PDG_APP="$BUILD_DIR/src/pdg.app"
 PDG_EXE="$PDG_APP/Contents/MacOS/pdg"
