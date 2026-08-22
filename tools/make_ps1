@@ -28,7 +28,7 @@ function Show-Help {
     Write-Host "  -Help             Show this help message" -ForegroundColor White
     Write-Host ""
     Write-Host "Available Targets:" -ForegroundColor Yellow
-    Write-Host "  pdg               PDG app with Node.js JavaScript support (default)" -ForegroundColor White
+    Write-Host "  pdg               PDG app with embedded JavaScript support (default)" -ForegroundColor White
     Write-Host "  pdg-node          PDG engine as a Node.js plugin" -ForegroundColor White
     Write-Host "  release           Build, test, and package Windows release assets" -ForegroundColor White
     Write-Host "  pdg-tests         C++ performance test suite (Bunnymark & PDGMark)" -ForegroundColor White
@@ -602,7 +602,7 @@ function Build-PDG {
         [string]$Config,
         [string]$MSBUILD_PATH,
         [switch]$Verbose,
-        [string]$MSBuildTarget = "Build"
+        [string]$MSBuildTarget = "pdg"
     )
     
     $pdgExeName = if ($Config -eq "Debug") { "pdg-debug.exe" } else { "pdg.exe" }
@@ -859,9 +859,6 @@ switch ($Target.ToLower()) {
         $status = Build-PDG -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
         if ($status -ne 0) { exit 1 }
         
-        $status = Build-PDG-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
-        if ($status -ne 0) { exit 1 }
-        
         # Final cleanup to ensure all processes are terminated
         Cleanup-BuildProcesses
         
@@ -878,7 +875,8 @@ switch ($Target.ToLower()) {
             Write-Status "Headless build configured; GUI/client test runs are not available in this setup." "Green"
         }
         else {
-            Write-Status "You can now run tests with: .\test\client or .\test\node" "Green"
+            Write-Status "You can now run client tests with: .\test\client" "Green"
+            Write-Status "Build the Node plugin with .\make.ps1 -Target pdg-node before running .\test\node." "Green"
         }
     }
 

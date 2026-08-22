@@ -65,8 +65,7 @@ try {
         & $nodeExe $npmCli install --no-save --package-lock=false jasmine-node@1.16.0
         if ($LASTEXITCODE -ne 0) { throw "JavaScript test dependency installation failed." }
     }
-    & cmd /c ".\test\node.bat"
-    if ($LASTEXITCODE -ne 0) { throw "Headless JavaScript tests failed." }
+    # The npm/native Node plugin is released separately by the pdg-node target.
     & cmd /c ".\test\client.bat"
     if ($LASTEXITCODE -ne 0) { throw "Client JavaScript tests failed." }
 

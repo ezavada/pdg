@@ -13,6 +13,8 @@
 #include "pdg/app/View.h"
 #include "pdg/app/ControlAttributes.h"
 
+#include <string>
+
 namespace pdg {
 
 class RadioButton : public View, public Subject

@@ -149,6 +149,7 @@ IF(BUILD_TESTING AND NOT PDG_HEADLESS)
             ${OPENGL_LIBRARIES}
         )
     ELSEIF(WIN32)
+        SET_PROPERTY(TARGET pdg-app-framework-tests PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
         TARGET_LINK_LIBRARIES(pdg-app-framework-tests PRIVATE
             imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
             ${OPENGL_LIBRARIES}
