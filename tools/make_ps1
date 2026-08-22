@@ -4,6 +4,7 @@
 param(
     [string]$Target = "pdg",
     [string]$Config = "Release",
+    [string]$Tag,
     [switch]$Help,
     [switch]$Clean,
     [switch]$Verbose
@@ -21,6 +22,7 @@ function Show-Help {
     Write-Host "Options:" -ForegroundColor Yellow
     Write-Host "  -Target <name>    Build target (default: pdg)" -ForegroundColor White
     Write-Host "  -Config <name>    Build configuration (default: Release)" -ForegroundColor White
+    Write-Host "  -Tag <version>    Release tag for the release target" -ForegroundColor White
     Write-Host "  -Clean            Clean build before building" -ForegroundColor White
     Write-Host "  -Verbose          Show full compiler/linker command lines (MSBuild detailed)" -ForegroundColor White
     Write-Host "  -Help             Show this help message" -ForegroundColor White
@@ -28,6 +30,7 @@ function Show-Help {
     Write-Host "Available Targets:" -ForegroundColor Yellow
     Write-Host "  pdg               PDG app with Node.js JavaScript support (default)" -ForegroundColor White
     Write-Host "  pdg-node          PDG engine as a Node.js plugin" -ForegroundColor White
+    Write-Host "  release           Build, test, and package Windows release assets" -ForegroundColor White
     Write-Host "  pdg-tests         C++ performance test suite (Bunnymark & PDGMark)" -ForegroundColor White
     Write-Host "  pdg-libs          C++ library suite (debug and optimized)" -ForegroundColor White
     Write-Host "  chipmunk          Chipmunk physics library" -ForegroundColor White
@@ -602,10 +605,11 @@ function Build-PDG {
         [string]$MSBuildTarget = "Build"
     )
     
-    $pdgExePath = "src\$Config\pdg.exe"
+    $pdgExeName = if ($Config -eq "Debug") { "pdg-debug.exe" } else { "pdg.exe" }
+    $pdgExePath = "src\$Config\$pdgExeName"
     Write-Status "Building PDG..." "Yellow"
     Push-Location "msvc"
-    #delete the pdg.exe file
+    # Delete the selected configuration's executable.
     Remove-Item $pdgExePath -Force -ErrorAction SilentlyContinue
     try {
         $BUILD_STATUS = Invoke-MSBuild -ProjectPath "PDG.sln" -Target $MSBuildTarget -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
@@ -615,12 +619,12 @@ function Build-PDG {
     }
 
     # Verify PDG build actually succeeded by checking for the executable file
-    $pdgExePath = "msvc\src\$Config\pdg.exe"
+    $pdgExePath = "msvc\src\$Config\$pdgExeName"
     if (Test-Path $pdgExePath) {
-        Write-Success-Status "PDG build verification passed - pdg.exe exists"
+        Write-Success-Status "PDG build verification passed - $pdgExeName exists"
         $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
     } else {
-        Write-Error-Status "PDG build verification failed - pdg.exe not found"
+        Write-Error-Status "PDG build verification failed - $pdgExeName not found"
         $BUILD_STATUS = 1
     }
 
@@ -635,9 +639,9 @@ function Build-PDG {
     # Copy final executables and files
     Write-Status "Copying final files..." "Yellow"
 
-    # Copy pdg.exe to the locations the Windows test/debug workflows use
-    $null = Copy-File-If-Exists "msvc\src\$Config\pdg.exe" "test\pdg-run.exe"
-    $null = Copy-File-If-Exists "msvc\src\$Config\pdg.exe" "pdg.exe"
+    # Copy the selected executable to the locations the Windows workflows use.
+    $null = Copy-File-If-Exists $pdgExePath "test\pdg-run.exe"
+    $null = Copy-File-If-Exists $pdgExePath $pdgExeName
 
     # Copy debug.html
     $null = Copy-File-If-Exists "tools\debug.html" "test\debug.html"
@@ -828,6 +832,16 @@ if ($script:PDG_HEADLESS_BUILD) {
 
 # Handle different targets
 switch ($Target.ToLower()) {
+    "release" {
+        $releaseArguments = @()
+        if (-not [string]::IsNullOrWhiteSpace($Tag)) {
+            $releaseArguments += @("-Tag", $Tag)
+        }
+        $releaseScript = Join-Path $PDG_ROOT "tools\release-windows.ps1"
+        & $releaseScript @releaseArguments
+        if ($LASTEXITCODE -ne 0) { exit 1 }
+    }
+
     "pdg" {
         # Build all dependencies and PDG
         $status = Build-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose

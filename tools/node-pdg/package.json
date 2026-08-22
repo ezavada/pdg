@@ -23,7 +23,7 @@
     "Chipmunk Physics"
   ],
   "main": "lib/pdg.js",
-  "version": "0.10.0",
+  "version": "1.0.0",
   "author": {
     "name": "Ed Zavada",
     "url": "http://www.ezavada.com/pdg/javascript/html/",

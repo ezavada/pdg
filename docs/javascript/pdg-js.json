@@ -2,7 +2,7 @@
 	"name": "pdg",
 	"type": "module",
 	"lang": "javascript",
-	"vers": "0.10.0",
+	"vers": "1.0.0",
 	"when": "2026-03-30",
 	"interface": [
 		{

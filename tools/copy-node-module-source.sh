@@ -81,6 +81,7 @@ $RSYNC -r --delete --force --exclude=*/gles/*** --exclude=*/ios/*** --exclude=*/
 $RSYNC src/sys/macosx/platform-image-macosx.mm $TARGET_DIR/src/sys/macosx/platform-image-macosx-objc.cxx
 echo " * tools/node-pdg/* ==> $TARGET_DIR/"
 $RSYNC -d --delete --force tools/node-pdg/* $TARGET_DIR/
+$RSYNC LICENSE $TARGET_DIR/LICENSE
 mv -f $TARGET_DIR/npm_ignore $TARGET_DIR/.npmignore
 echo " * deps/chipmunk/include ==> $TARGET_DIR/deps/chipmunk/include"
 $RSYNC -r --delete --force deps/chipmunk/include/* $TARGET_DIR/deps/chipmunk/include/
