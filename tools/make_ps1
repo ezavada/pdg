@@ -498,11 +498,6 @@ function Build-GLFW {
     Push-Location "build\win32\glfw"
     try {
         $BUILD_STATUS = Invoke-MSBuild -ProjectPath "GLFW.sln" -Target "Build" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
-        
-        if ($BUILD_STATUS -eq 0) {
-            # Copy glfw3.lib to src directory
-            $null = Copy-File-If-Exists "src\$Config\glfw3.lib" "src\glfw3.lib"
-        }
     }
     finally {
         Pop-Location
@@ -519,6 +514,9 @@ function Build-GLFW {
         Write-Error-Status "GLFW build failed"
         return 1
     }
+
+    # Keep the unqualified link path fresh for older generated projects and tools.
+    $null = Copy-File-If-Exists $glfwLibPath "build\win32\glfw\src\glfw3.lib"
 
     # Clean up after GLFW build
     Cleanup-BuildProcesses
@@ -590,6 +588,9 @@ function Build-LibjpegTurbo {
         Write-Error-Status "libjpeg-turbo build failed"
         return 1
     }
+
+    # Keep the unqualified link path fresh for older generated projects and tools.
+    $null = Copy-File-If-Exists $jpegLibPath "build\win32\libjpeg-turbo\jpeg.lib"
 
     # Clean up after libjpeg-turbo build
     Cleanup-BuildProcesses

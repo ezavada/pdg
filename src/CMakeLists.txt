@@ -502,6 +502,7 @@ ADD_EXECUTABLE(pdg WIN32 MACOSX_BUNDLE
 # V8 requires C++20; ensure MSVC gets /std:c++20 and updates __cplusplus (needed for v8config.h)
 SET_TARGET_PROPERTIES(pdg PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON)
 SET_TARGET_PROPERTIES(pdg PROPERTIES DEBUG_POSTFIX "-debug")
+SET_TARGET_PROPERTIES(pdg PROPERTIES RELWITHDEBINFO_POSTFIX "-debug")
 IF(MSVC)
 	TARGET_COMPILE_OPTIONS(pdg PRIVATE /std:c++20 /Zc:__cplusplus)
 ENDIF()
@@ -515,7 +516,8 @@ target_compile_definitions(pdg PRIVATE
 	PDG_INTERNAL_LIB=1
 	PDG_NO_NETWORK=1
 	$<$<CONFIG:Debug>:DEBUG=1>
-	$<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
+	$<$<CONFIG:RelWithDebInfo>:DEBUG=1>
+	$<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>>:NDEBUG=1>
 )
 
 # Set include directories for the target (modern CMake approach)

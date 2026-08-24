@@ -69,13 +69,29 @@ try {
     & cmd /c ".\test\client.bat"
     if ($LASTEXITCODE -ne 0) { throw "Client JavaScript tests failed." }
 
-    # Build a distinct Debug executable with DEBUG logging and full PDB symbols.
-    & cmake --build msvc --config Debug --target pdg --parallel
+    # The symbol/debug package uses RelWithDebInfo so it can reuse the Release-built
+    # third-party libraries, including Node. It still compiles PDG with DEBUG=1.
+    $releaseDependencyLibraries = @(
+        "build\win32\glfw\src\Release\glfw3.lib",
+        "build\win32\glfw\src\glfw3.lib",
+        "build\win32\chipmunk\src\Release\chipmunk.lib",
+        "build\win32\chipmunk\src\chipmunk.lib",
+        "build\win32\libjpeg-turbo\Release\jpeg.lib",
+        "build\win32\libjpeg-turbo\jpeg.lib"
+    )
+    foreach ($library in $releaseDependencyLibraries) {
+        if (-not (Test-Path $library)) {
+            throw "Expected Windows release dependency library was not produced: $library"
+        }
+    }
+
+    # Build a distinct executable with DEBUG logging and PDB symbols.
+    & cmake --build msvc --config RelWithDebInfo --target pdg --parallel
     if ($LASTEXITCODE -ne 0) { throw "Windows debug build failed." }
 
     $sourceExe = Join-Path $pdgRoot "msvc\src\Release\pdg.exe"
-    $sourceDebugExe = Join-Path $pdgRoot "msvc\src\Debug\pdg-debug.exe"
-    $sourceDebugPdb = Join-Path $pdgRoot "msvc\src\Debug\pdg-debug.pdb"
+    $sourceDebugExe = Join-Path $pdgRoot "msvc\src\RelWithDebInfo\pdg-debug.exe"
+    $sourceDebugPdb = Join-Path $pdgRoot "msvc\src\RelWithDebInfo\pdg-debug.pdb"
     foreach ($requiredFile in @($sourceExe, $sourceDebugExe, $sourceDebugPdb)) {
         if (-not (Test-Path $requiredFile)) {
             throw "Expected release file was not produced: $requiredFile"
