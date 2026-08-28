@@ -75,6 +75,7 @@ struct Element {
     std::vector<Point> controlPoints;
     
     Element(const Attributes& attrsData) : attrs(attrsData) {}
+    virtual ~Element() = default;
 };
 
 // Specific element data structures
@@ -164,13 +165,17 @@ struct ImageElement : public Element {
     int frameNumber;
     
     ImageElement(const Rect& rectData, const Image& imageData, int frame, const Attributes& attrsData) : 
-        Element(attrsData), rect(rectData), image(const_cast<Image*>(&imageData)) {
-        frameNumber = frame;
+        Element(attrsData), rect(rectData), image(const_cast<Image*>(&imageData)), numFrames(1), frameNumber(frame) {
+        image->addRef();
         // Control points are the four corners of the rect
         controlPoints.push_back(rect.leftTop());
         controlPoints.push_back(rect.rightTop());
         controlPoints.push_back(rect.rightBottom());
         controlPoints.push_back(rect.leftBottom());
+    }
+
+    ~ImageElement() override {
+        image->release();
     }
 };
 
@@ -773,7 +778,9 @@ void DrawingImpl::draw(Port* port) {
             case type_ImageStrip:
             case type_Image: {
                 ImageElement* imageElement = static_cast<ImageElement*>(elementData);
-                //port->drawImage(imageElement->image, imageElement->transformedBounds);
+                if (imageElement->image) {
+                    port->drawImage(imageElement->image, imageElement->rect, elementData->attrs);
+                }
                 break;
             }
             case type_Drawing: {
