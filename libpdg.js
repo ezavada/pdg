@@ -12887,6 +12887,16 @@ ${functionBody}
     };
   var _glMatrixMode = _emscripten_glMatrixMode;
 
+  var _emscripten_glNormal3f = (x, y, z) => {
+      assert(GLImmediate.mode >= 0); // must be in begin/end
+      GLImmediate.vertexData[GLImmediate.vertexCounter++] = x;
+      GLImmediate.vertexData[GLImmediate.vertexCounter++] = y;
+      GLImmediate.vertexData[GLImmediate.vertexCounter++] = z;
+      assert(GLImmediate.vertexCounter << 2 < GL.MAX_TEMP_BUFFER_SIZE);
+      GLImmediate.addRendererComponent(GLImmediate.NORMAL, 3, GLctx.FLOAT);
+    };
+  var _glNormal3f = _emscripten_glNormal3f;
+
   var _emscripten_glNormalPointer = (type, stride, pointer) => {
       GLImmediate.setClientAttribute(GLImmediate.NORMAL, 3, type, stride, pointer);
     };
@@ -13051,6 +13061,17 @@ ${functionBody}
       GLImmediate.addRendererComponent(GLImmediate.VERTEX, 4, GLctx.FLOAT);
     };
   var _glVertex2f = _emscripten_glVertex2f;
+
+  var _emscripten_glVertex3f = (x, y, z) => {
+      assert(GLImmediate.mode >= 0); // must be in begin/end
+      GLImmediate.vertexData[GLImmediate.vertexCounter++] = x;
+      GLImmediate.vertexData[GLImmediate.vertexCounter++] = y;
+      GLImmediate.vertexData[GLImmediate.vertexCounter++] = z;
+      GLImmediate.vertexData[GLImmediate.vertexCounter++] = 1;
+      assert(GLImmediate.vertexCounter << 2 < GL.MAX_TEMP_BUFFER_SIZE);
+      GLImmediate.addRendererComponent(GLImmediate.VERTEX, 4, GLctx.FLOAT);
+    };
+  var _glVertex3f = _emscripten_glVertex3f;
 
   var _emscripten_glVertexPointer = (size, type, stride, pointer) => {
       GLImmediate.setClientAttribute(GLImmediate.VERTEX, size, type, stride, pointer);
@@ -15314,12 +15335,12 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('wasmBinary');
 }
 var ASM_CONSTS = {
-  8537724: () => { pdg_em_platform_cleanup(); },  
- 8537751: () => { return typeof window !== 'undefined' && typeof window.addEventListener === 'function' && typeof document !== 'undefined'; },  
- 8537877: ($0, $1) => { pdg_em_platform_init($0, $1); },  
- 8537911: () => { pdg_em_platform_pollEvents(); },  
- 8537941: () => { return Math.max(800, globalThis.screen ? screen.width : 800); },  
- 8538007: () => { return Math.max(600, globalThis.screen ? screen.height : 600); }
+  8547100: () => { pdg_em_platform_cleanup(); },  
+ 8547127: () => { return typeof window !== 'undefined' && typeof window.addEventListener === 'function' && typeof document !== 'undefined'; },  
+ 8547253: ($0, $1) => { pdg_em_platform_init($0, $1); },  
+ 8547287: () => { pdg_em_platform_pollEvents(); },  
+ 8547317: () => { return Math.max(800, globalThis.screen ? screen.width : 800); },  
+ 8547383: () => { return Math.max(600, globalThis.screen ? screen.height : 600); }
 };
 function pdg_audio_create(data,length,mime) { if (typeof Audio === 'undefined' || typeof Blob === 'undefined' || typeof URL === 'undefined') return 0; Module.pdgAudioObjects = Module.pdgAudioObjects || new Map(); Module.pdgNextAudioId = (Module.pdgNextAudioId || 0) + 1; var bytes = HEAPU8.slice(data, data + length); var url = URL.createObjectURL(new Blob([bytes], { type: UTF8ToString(mime) })); var audio = new Audio(url); audio.preload = 'auto'; Module.pdgAudioObjects.set(Module.pdgNextAudioId, { audio: audio, url: url, stopTimer: 0 }); return Module.pdgNextAudioId; }
 function pdg_audio_destroy(id) { var objects = Module.pdgAudioObjects; var entry = objects && objects.get(id); if (!entry) return; if (entry.stopTimer) clearTimeout(entry.stopTimer); entry.audio.pause(); entry.audio.removeAttribute('src'); entry.audio.load(); URL.revokeObjectURL(entry.url); objects.delete(id); }
@@ -15577,6 +15598,8 @@ var wasmImports = {
   /** @export */
   glMatrixMode: _glMatrixMode,
   /** @export */
+  glNormal3f: _glNormal3f,
+  /** @export */
   glNormalPointer: _glNormalPointer,
   /** @export */
   glPixelStorei: _glPixelStorei,
@@ -15604,6 +15627,8 @@ var wasmImports = {
   glTranslatef: _glTranslatef,
   /** @export */
   glVertex2f: _glVertex2f,
+  /** @export */
+  glVertex3f: _glVertex3f,
   /** @export */
   glVertexPointer: _glVertexPointer,
   /** @export */

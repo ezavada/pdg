@@ -20,6 +20,7 @@
     var frameCount = 0;
     var runtimeError = null;
     var fontColorsSeen = { white: false, yellow: false };
+    var drawingSpheresSeen = false;
 
     function sampleFontColors() {
         if (testId !== "font" || (fontColorsSeen.white && fontColorsSeen.yellow)) return;
@@ -39,6 +40,56 @@
             }
         } catch (error) {
             console.warn("Could not sample the font test framebuffer", error);
+        }
+    }
+
+    function sampleDrawingSpheres() {
+        if (testId !== "drawing" || drawingSpheresSeen) return;
+        var gl = window.Module && window.Module.ctx;
+        var canvas = document.getElementById("pdg-canvas");
+        if (!gl || !canvas || (gl.isContextLost && gl.isContextLost())) return;
+        try {
+            var pixels = new Uint8Array(canvas.width * canvas.height * 4);
+            gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+            var scaleX = canvas.width / 1000;
+            var scaleY = canvas.height / 800;
+
+            function pixelAt(x, y) {
+                var px = Math.max(0, Math.min(canvas.width - 1, Math.round(x * scaleX)));
+                var py = Math.max(0, Math.min(canvas.height - 1, Math.round(y * scaleY)));
+                var offset = ((canvas.height - 1 - py) * canvas.width + px) * 4;
+                return [pixels[offset], pixels[offset + 1], pixels[offset + 2]];
+            }
+
+            var background = pixelAt(800, 700);
+            function sphereStats(centerX, centerY) {
+                var foreground = 0;
+                var bright = 0;
+                for (var y = centerY - 36; y <= centerY + 36; y += 2) {
+                    for (var x = centerX - 36; x <= centerX + 36; x += 2) {
+                        var dx = x - centerX;
+                        var dy = y - centerY;
+                        if (dx * dx + dy * dy > 36 * 36) continue;
+                        var color = pixelAt(x, y);
+                        var difference = Math.abs(color[0] - background[0]) +
+                            Math.abs(color[1] - background[1]) +
+                            Math.abs(color[2] - background[2]);
+                        if (difference > 24) foreground++;
+                        if (difference > 24 && Math.max(color[0], color[1], color[2]) > 55) bright++;
+                    }
+                }
+                return { foreground: foreground, bright: bright };
+            }
+
+            var coloredCenters = [100, 220, 340, 460, 580];
+            var geometryIsRound = coloredCenters.every(function(centerX) {
+                return sphereStats(centerX, 150).foreground > 700;
+            });
+            var jupiterIsTextured = sphereStats(580, 510).bright > 250;
+            var moonIsTextured = sphereStats(580, 630).bright > 250;
+            drawingSpheresSeen = geometryIsRound && jupiterIsTextured && moonIsTextured;
+        } catch (error) {
+            console.warn("Could not sample the drawing test framebuffer", error);
         }
     }
 
@@ -62,6 +113,10 @@
             (!fontColorsSeen.white || !fontColorsSeen.yellow)) {
             status = "failed";
             message = "font framebuffer did not contain both white and yellow text";
+        }
+        if (status === "passed" && testId === "drawing" && !drawingSpheresSeen) {
+            status = "failed";
+            message = "sphere framebuffer did not contain round colored and JPEG-textured spheres";
         }
         var result = {
             status: status,
@@ -220,6 +275,7 @@
                     frameCount++;
                     var handled = callback(event);
                     sampleFontColors();
+                    sampleDrawingSpheres();
                     return handled;
                 });
             }

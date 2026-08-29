@@ -59,6 +59,12 @@ typedef struct pdg_png_data_t {
 
 namespace pdg {
 
+#ifdef PDG_USE_LIBJPEG
+void platform_initJPEGData(unsigned char* imageData, long imageDataLen, unsigned char** outDataPtr,
+	long* outWidth, long* outHeight, long* outBufferWidth, long* outBufferHeight,
+	long* outBufferPitch, int* outFormat);
+#endif
+
 void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigned char** outDataPtr, 
 	long* outWidth, long* outHeight, long* outBufferWidth, long* outBufferHeight, long* outBufferPitch, 
 	int* outFormat)
@@ -71,7 +77,15 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 	*outBufferPitch = 0;
 	*outFormat = GL_RGBA;
 
-	bool is_png = !png_sig_cmp(imageData, 0, PNG_SIG_BYTES);
+#ifdef PDG_USE_LIBJPEG
+	if (imageDataLen >= 2 && imageData[0] == 0xFF && imageData[1] == 0xD8) {
+		platform_initJPEGData(imageData, imageDataLen, outDataPtr, outWidth, outHeight,
+			outBufferWidth, outBufferHeight, outBufferPitch, outFormat);
+		return;
+	}
+#endif
+
+	bool is_png = imageDataLen >= PNG_SIG_BYTES && !png_sig_cmp(imageData, 0, PNG_SIG_BYTES);
 	if (!is_png) return;
 
 	// create lib png structures
@@ -181,4 +195,3 @@ void pdg_png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
 	memcpy(data, &read_io_ptr->imageData[read_io_ptr->currOffset], length);
 	read_io_ptr->currOffset += length;
 }
-

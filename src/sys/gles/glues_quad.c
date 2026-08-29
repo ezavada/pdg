@@ -995,6 +995,69 @@ GLAPI void APIENTRY gluPartialDisk(GLUquadric* qobj, GLfloat innerRadius,
    }
 }
 
+#ifdef __EMSCRIPTEN__
+static void gluesSphereVertex(GLUquadric* qobj, GLfloat radius, GLfloat phi,
+                              GLfloat theta, GLfloat u, GLfloat v)
+{
+   const GLfloat sinPhi=sin(phi);
+   const GLfloat x=radius*sinPhi*sin(theta);
+   const GLfloat y=radius*sinPhi*cos(theta);
+   const GLfloat z=radius*cos(phi);
+   const GLfloat normalSign=qobj->orientation==GLU_OUTSIDE ? 1.0f : -1.0f;
+
+   if (qobj->normals!=GLU_NONE)
+   {
+      glNormal3f(normalSign*x/radius, normalSign*y/radius, normalSign*z/radius);
+   }
+   if (qobj->textureCoords)
+   {
+      glTexCoord2f(u, v);
+   }
+   glVertex3f(x, y, z);
+}
+
+static void gluesSphereTriangles(GLUquadric* qobj, GLfloat radius,
+                                  GLint slices, GLint stacks)
+{
+   GLint i, j;
+   glBegin(GL_TRIANGLES);
+   for (j=0; j<stacks; ++j)
+   {
+      const GLfloat phi0=PI*j/stacks;
+      const GLfloat phi1=PI*(j+1)/stacks;
+      const GLfloat v0=1.0f-(GLfloat)j/stacks;
+      const GLfloat v1=1.0f-(GLfloat)(j+1)/stacks;
+      for (i=0; i<slices; ++i)
+      {
+         const GLfloat theta0=2.0f*PI*i/slices;
+         const GLfloat theta1=2.0f*PI*(i+1)/slices;
+         const GLfloat u0=1.0f-(GLfloat)i/slices;
+         const GLfloat u1=1.0f-(GLfloat)(i+1)/slices;
+
+         if (qobj->orientation==GLU_OUTSIDE)
+         {
+            gluesSphereVertex(qobj, radius, phi0, theta0, u0, v0);
+            gluesSphereVertex(qobj, radius, phi0, theta1, u1, v0);
+            gluesSphereVertex(qobj, radius, phi1, theta1, u1, v1);
+            gluesSphereVertex(qobj, radius, phi0, theta0, u0, v0);
+            gluesSphereVertex(qobj, radius, phi1, theta1, u1, v1);
+            gluesSphereVertex(qobj, radius, phi1, theta0, u0, v1);
+         }
+         else
+         {
+            gluesSphereVertex(qobj, radius, phi0, theta0, u0, v0);
+            gluesSphereVertex(qobj, radius, phi1, theta1, u1, v1);
+            gluesSphereVertex(qobj, radius, phi0, theta1, u1, v0);
+            gluesSphereVertex(qobj, radius, phi0, theta0, u0, v0);
+            gluesSphereVertex(qobj, radius, phi1, theta0, u0, v1);
+            gluesSphereVertex(qobj, radius, phi1, theta1, u1, v1);
+         }
+      }
+   }
+   glEnd();
+}
+#endif
+
 GLAPI void APIENTRY gluSphere(GLUquadric* qobj, GLfloat radius, GLint slices, GLint stacks)
 {
    GLint i, j;
@@ -1039,6 +1102,19 @@ GLAPI void APIENTRY gluSphere(GLUquadric* qobj, GLfloat radius, GLint slices, GL
       gluQuadricError(qobj, GLU_INVALID_VALUE);
       return;
    }
+
+#ifdef __EMSCRIPTEN__
+   /* Emscripten's legacy-GL layer does not reliably notice mutations to the
+      same client-array pointers between the individual sphere-band draws.
+      Submit filled spheres as one immediate-mode triangle batch instead. */
+   if (qobj->drawStyle==GLU_FILL)
+   {
+      if (radius==0.0f)
+         return;
+      gluesSphereTriangles(qobj, radius, slices, stacks);
+      return;
+   }
+#endif
 
    /* Cache is the vertex locations cache */
    /* Cache2 is the various normals at the vertices themselves */

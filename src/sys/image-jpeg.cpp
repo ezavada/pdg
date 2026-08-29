@@ -45,6 +45,7 @@ extern "C" {
 }
 
 #include <cstdlib>
+#include <cstring>
 #include <csetjmp>
 
 // JPEG error handling structure (using standard libjpeg-turbo structure)
@@ -197,4 +198,4 @@ void platform_initJPEGData(unsigned char* imageData, long imageDataLen, unsigned
     jpeg_destroy_decompress(&cinfo);
 }
 
-}  // end namespace pdg 
+}  // end namespace pdg
