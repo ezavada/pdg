@@ -451,6 +451,52 @@ if (inbrowser && bindings.cfg) {
     });
 }
 
+if (inbrowser && typeof bindings.Spline !== "undefined") {
+    var NativeSpline = bindings.Spline;
+    var nativeSplineGetFirstOrder = NativeSpline.prototype.getFirstOrder;
+    var nativeSplineGetSecondOrder = NativeSpline.prototype.getSecondOrder;
+    var nativeSplineGetPoint = NativeSpline.prototype.getPoint;
+    var nativeSplineGetBounds = NativeSpline.prototype.getBounds;
+
+    bindings.Spline = function Spline(type) {
+        return new NativeSpline(typeof type === "undefined" ? bindings.spline_CubicBezier : type);
+    };
+    bindings.Spline.prototype = NativeSpline.prototype;
+    NativeSpline.prototype.getFirstOrder = function(u) { return new bindings.Point(nativeSplineGetFirstOrder.call(this, u)); };
+    NativeSpline.prototype.getSecondOrder = function(u) { return new bindings.Point(nativeSplineGetSecondOrder.call(this, u)); };
+    NativeSpline.prototype.getPoint = function(index) { return new bindings.Point(nativeSplineGetPoint.call(this, index)); };
+    NativeSpline.prototype.getBounds = function() { return new bindings.Rect(nativeSplineGetBounds.call(this)); };
+}
+
+if (inbrowser && typeof bindings.Polygon !== "undefined") {
+    var NativePolygon = bindings.Polygon;
+    var nativePolygonGetPoint = NativePolygon.prototype.getPoint;
+    var nativePolygonGetBounds = NativePolygon.prototype.getBounds;
+    var nativePolygonCenterPoint = NativePolygon.prototype.centerPoint;
+    var nativePolygonAddSpline = NativePolygon.prototype.addSpline;
+
+    bindings.Polygon = function Polygon() {
+        var polygon = new NativePolygon();
+        var points = (arguments.length === 1 && Array.isArray(arguments[0]))
+            ? arguments[0] : Array.prototype.slice.call(arguments);
+        for (var i = 0; i < points.length; i++) polygon.addPoint(points[i]);
+        return polygon;
+    };
+    bindings.Polygon.prototype = NativePolygon.prototype;
+    NativePolygon.prototype.getPoint = function(index) { return new bindings.Point(nativePolygonGetPoint.call(this, index)); };
+    NativePolygon.prototype.getBounds = function() { return new bindings.Rect(nativePolygonGetBounds.call(this)); };
+    NativePolygon.prototype.centerPoint = function() { return new bindings.Point(nativePolygonCenterPoint.call(this)); };
+    NativePolygon.prototype.addSpline = function(spline, step) {
+        return nativePolygonAddSpline.call(this, spline, typeof step === "undefined" ? 0.01 : step);
+    };
+    NativePolygon.prototype.moveTo = function(first, second) {
+        return arguments.length === 1 ? this._moveToPoint(first) : this._moveToXY(first, second);
+    };
+    NativePolygon.prototype.center = function(target) {
+        return typeof target.left === "number" ? this._centerRect(target) : this._centerPoint(target);
+    };
+}
+
 if (typeof bindings.GraphicsManager != "undefined") {  // might be non-gui build
 	bindings.gfx = bindings.getGraphicsManager();
 	bindings.hasGraphics = true;

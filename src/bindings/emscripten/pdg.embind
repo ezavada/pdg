@@ -38,6 +38,73 @@ emscripten::function("cleanupSpriteLayer", &pdg::cleanupLayer, emscripten::allow
 emscripten::function("cleanupLayer", &pdg::cleanupLayer, emscripten::allow_raw_pointers());
 emscripten::function("createTileLayer", &pdg::createTileLayer, emscripten::allow_raw_pointers());
 
+emscripten::value_object<pdg::Point>("_PointValue")
+    .field("x", &pdg::Point::x)
+    .field("y", &pdg::Point::y)
+    ;
+
+emscripten::value_object<pdg::Offset>("_OffsetValue")
+    .field("x", &pdg::Offset::x)
+    .field("y", &pdg::Offset::y)
+    ;
+
+emscripten::value_object<pdg::Rect>("_RectValue")
+    .field("left", &pdg::Rect::left)
+    .field("top", &pdg::Rect::top)
+    .field("right", &pdg::Rect::right)
+    .field("bottom", &pdg::Rect::bottom)
+    ;
+
+emscripten::class_<pdg::Spline>("Spline")
+    .constructor<int>()
+    .function("getFirstOrder", &pdg::Spline::getFirstOrder)
+    .function("getSecondOrder", &pdg::Spline::getSecondOrder)
+    .function("addSegment", &pdg::Spline::addSegment)
+    .function("addPoint", &pdg::Spline::addPoint)
+    .function("getPoint", &pdg::Spline::getPoint)
+    .function("setPoint", &pdg::Spline::setPoint)
+    .function("getPointCount", &pdg::Spline::getPointCount)
+    .function("getMaxU", &pdg::Spline::getMaxU)
+    .function("getBounds", &pdg::Spline::getBounds)
+    ;
+
+emscripten::class_<pdg::Polygon>("Polygon")
+    .constructor<>()
+    .function("addPoint", &pdg::Polygon::addPoint)
+    .function("addSpline", &pdg::Polygon::addSpline, emscripten::allow_raw_pointers())
+    .function("insertPoint", &pdg::Polygon::insertPoint)
+    .function("removePoint", &pdg::Polygon::removePoint)
+    .function("getPointCount", &pdg::Polygon::getPointCount)
+    .function("getPoint", &pdg::Polygon::getPoint)
+    .function("setPoint", &pdg::Polygon::setPoint)
+    .function("clearPoints", &pdg::Polygon::clearPoints)
+    .function("getBounds", &pdg::Polygon::getBounds)
+    .function("centerPoint", &pdg::Polygon::centerPoint)
+    .function("contains", &pdg::Polygon::contains)
+    .function("empty", &pdg::Polygon::empty)
+    .function("move", &pdg::Polygon::move, emscripten::return_value_policy::reference())
+    .function("moveLeft", &pdg::Polygon::moveLeft, emscripten::return_value_policy::reference())
+    .function("moveRight", &pdg::Polygon::moveRight, emscripten::return_value_policy::reference())
+    .function("moveUp", &pdg::Polygon::moveUp, emscripten::return_value_policy::reference())
+    .function("moveDown", &pdg::Polygon::moveDown, emscripten::return_value_policy::reference())
+    .function("moveXTo", &pdg::Polygon::moveXTo, emscripten::return_value_policy::reference())
+    .function("moveYTo", &pdg::Polygon::moveYTo, emscripten::return_value_policy::reference())
+    .function("_moveToXY", emscripten::select_overload<pdg::Polygon&(float, float)>(&pdg::Polygon::moveTo), emscripten::return_value_policy::reference())
+    .function("_moveToPoint", emscripten::select_overload<pdg::Polygon&(const pdg::Point&)>(&pdg::Polygon::moveTo), emscripten::return_value_policy::reference())
+    .function("_centerPoint", emscripten::select_overload<pdg::Polygon&(const pdg::Point&)>(&pdg::Polygon::center), emscripten::return_value_policy::reference())
+    .function("_centerRect", emscripten::select_overload<pdg::Polygon&(const pdg::Rect&)>(&pdg::Polygon::center), emscripten::return_value_policy::reference())
+    .function("scale", &pdg::Polygon::scale, emscripten::return_value_policy::reference())
+    .function("horzScale", &pdg::Polygon::horzScale, emscripten::return_value_policy::reference())
+    .function("vertScale", &pdg::Polygon::vertScale, emscripten::return_value_policy::reference())
+    .function("scaleAround", &pdg::Polygon::scaleAround, emscripten::return_value_policy::reference())
+    .function("rotate", emscripten::select_overload<pdg::Polygon&(float)>(&pdg::Polygon::rotate), emscripten::return_value_policy::reference())
+    .function("rotateAround", &pdg::Polygon::rotateAround, emscripten::return_value_policy::reference())
+    .function("equals", &pdg::Polygon::operator==)
+    .function("isSelfIntersecting", &pdg::Polygon::isSelfIntersecting)
+    .function("intersection", &pdg::emscriptenPolygonIntersection, emscripten::allow_raw_pointers())
+    .function("unionWith", &pdg::emscriptenPolygonUnion, emscripten::allow_raw_pointers())
+    ;
+
 emscripten::class_<pdg::MemBlock>("MemBlock")
     MemBlock_Extra
     .function("getData", &pdg::MemBlock::getData)

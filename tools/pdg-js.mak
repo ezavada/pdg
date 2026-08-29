@@ -116,8 +116,10 @@ OBJS= \
 	$(OUT_DIR)/os.cpp.o \
 	$(OUT_DIR)/pdg-lib.cpp.o \
 	$(OUT_DIR)/pdg-main.cpp.o \
+	$(OUT_DIR)/polygon.cpp.o \
     $(OUT_DIR)/resource.cpp.o \
 	$(OUT_DIR)/serializer.cpp.o \
+	$(OUT_DIR)/spline.cpp.o \
 	$(OUT_DIR)/sprite.cpp.o \
     $(OUT_DIR)/spritelayer.cpp.o \
 	$(OUT_DIR)/spritemanager.cpp.o \
@@ -289,6 +291,11 @@ $(OUT_DIR)/pdg-main.cpp.o: $(SRC_SYS_DIR)/pdg-main.cpp
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/pdg-main.cpp.o -c $(SRC_SYS_DIR)/pdg-main.cpp
 	
 
+$(OUT_DIR)/polygon.cpp.o: $(SRC_SYS_DIR)/polygon.cpp
+	@echo  'Compiling polygon.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/polygon.cpp.o -c $(SRC_SYS_DIR)/polygon.cpp
+
+
 $(OUT_DIR)/resource.cpp.o: $(SRC_SYS_DIR)/resource.cpp
 	@echo  'Compiling resource.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/resource.cpp.o -c $(SRC_SYS_DIR)/resource.cpp
@@ -298,6 +305,11 @@ $(OUT_DIR)/serializer.cpp.o: $(SRC_SYS_DIR)/serializer.cpp
 	@echo  'Compiling serializer.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/serializer.cpp.o -c $(SRC_SYS_DIR)/serializer.cpp
 	
+
+$(OUT_DIR)/spline.cpp.o: $(SRC_SYS_DIR)/spline.cpp
+	@echo  'Compiling spline.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/spline.cpp.o -c $(SRC_SYS_DIR)/spline.cpp
+
 
 $(OUT_DIR)/sprite.cpp.o: $(SRC_SYS_DIR)/sprite.cpp
 	@echo  'Compiling sprite.cpp...'

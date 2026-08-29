@@ -83,6 +83,14 @@ MemBlock* emscriptenCreateEmptyMemBlock() {
     return new MemBlock(0);
 }
 
+Polygon* emscriptenPolygonIntersection(Polygon& polygon, const Polygon& other) {
+    return new Polygon(polygon.intersection(other));
+}
+
+Polygon* emscriptenPolygonUnion(Polygon& polygon, const Polygon& other) {
+    return new Polygon(polygon.unionWith(other));
+}
+
 void setSerializationDebugMode(bool mode) {
     ISerializer::s_DebugMode = mode;
 }

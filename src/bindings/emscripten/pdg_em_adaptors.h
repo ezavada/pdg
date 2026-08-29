@@ -34,6 +34,8 @@ void emscriptenConfigSetFloat(ConfigManager& manager, const std::string& key, fl
 void emscriptenConfigSetBool(ConfigManager& manager, const std::string& key, bool value);
 
 MemBlock* emscriptenCreateEmptyMemBlock();
+Polygon* emscriptenPolygonIntersection(Polygon& polygon, const Polygon& other);
+Polygon* emscriptenPolygonUnion(Polygon& polygon, const Polygon& other);
 
 class FileManager : public Singleton<FileManager> {
 public:
