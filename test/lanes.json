@@ -365,6 +365,60 @@
         "Confirm the port, font, drawing, shape fill, image, and animation scripts all pass.",
         "Spot-check that window creation, rendering, and animation behavior match expectations."
       ]
+    },
+    {
+      "id": "emscripten-browser",
+      "name": "Emscripten browser suite",
+      "category": "test",
+      "targetPlatform": "emscripten",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "automation": "automated",
+      "stopOnFailure": true,
+      "notes": [
+        "Requires Emscripten and Chrome or Chromium on the macOS host.",
+        "Covers WebAssembly initialization, the complete browser client specs, and rendered UI behavior.",
+        "If the browser module is missing, this lane will print the Emscripten build command to run."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "Emscripten browser module",
+          "paths": [
+            "libpdg.js",
+            "libpdg.wasm"
+          ],
+          "freshnessPath": "libpdg.wasm",
+          "staleInputs": [
+            "src",
+            "test/client_test.js",
+            "test/cxx",
+            "test/data",
+            "test/js",
+            "test/spec",
+            "test/earthmap.jpg",
+            "test/earthmap2.png",
+            "test/jupitermap2.jpg",
+            "test/moonmap2.jpg",
+            "test/tiles.png",
+            "test/yinyang.png",
+            "tools/pdg-js.mak"
+          ],
+          "buildCommands": [
+            "make pdg-js"
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "name": "Browser client spec suite",
+          "command": "./test/client --emscripten --no-build"
+        },
+        {
+          "name": "Rendered UI suite",
+          "command": "./test/ui --emscripten --no-build"
+        }
+      ]
     }
   ]
 }

@@ -1,3 +1,4 @@
+// Browser harness for the Emscripten client specs.
 (function() {
     "use strict";
 

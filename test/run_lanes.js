@@ -77,7 +77,21 @@ function platformLabel(platformName) {
     if (platformName === 'darwin') {
         return 'macOS';
     }
+    if (platformName === 'emscripten') {
+        return 'Emscripten/Web';
+    }
     return platformName;
+}
+
+function laneHostPlatforms(lane) {
+    if (lane.hostPlatforms && lane.hostPlatforms.length > 0) {
+        return lane.hostPlatforms;
+    }
+    return [lane.targetPlatform];
+}
+
+function laneRunsOnCurrentHost(lane) {
+    return laneHostPlatforms(lane).indexOf(process.platform) !== -1;
 }
 
 function toWslPath(winPath) {
@@ -96,7 +110,8 @@ function createMismatchHint(lane) {
     if (process.platform === 'win32' && lane.targetPlatform === 'darwin') {
         return 'Run on the Mac checkout: ./test/lanes run ' + lane.id;
     }
-    return 'Run this lane on a ' + platformLabel(lane.targetPlatform) + ' host.';
+    var supportedHosts = laneHostPlatforms(lane).map(platformLabel).join(' or ');
+    return 'Run this lane on a supported host: ' + supportedHosts + '.';
 }
 
 function laneArtifactsDir(lane) {
@@ -110,6 +125,7 @@ function createBaseResult(lane, status) {
         category: lane.category,
         targetPlatform: lane.targetPlatform,
         hostPlatform: process.platform,
+        supportedHostPlatforms: laneHostPlatforms(lane),
         automation: lane.automation,
         status: status,
         startedAt: new Date().toISOString(),
@@ -301,12 +317,12 @@ function printLaneList(manifest) {
     console.log('Configured PDG platform lanes:\n');
     manifest.lanes.forEach(function(lane) {
         var latest = indexData.lanes[lane.id];
-        var currentPlatformMark = lane.targetPlatform === process.platform ? '*' : ' ';
+        var currentPlatformMark = laneRunsOnCurrentHost(lane) ? '*' : ' ';
         var latestStatus = latest ? latest.status : 'not-run';
         console.log(currentPlatformMark + ' ' + lane.id + ' [' + lane.category + ', ' + lane.automation + ', ' + platformLabel(lane.targetPlatform) + '] - ' + latestStatus);
         console.log('    ' + lane.name);
     });
-    console.log('\n* matches the current host platform');
+    console.log('\n* can run on the current host platform');
 }
 
 function writeStepLogs(stepDir, stepName, stdoutText, stderrText) {
@@ -321,12 +337,23 @@ function writeStepLogs(stepDir, stepName, stdoutText, stderrText) {
     };
 }
 
+function clearStepLogs(stepDir) {
+    if (!fs.existsSync(stepDir)) {
+        return;
+    }
+    fs.readdirSync(stepDir).forEach(function(entryName) {
+        if (/\.(stdout|stderr)\.log$/.test(entryName)) {
+            fs.unlinkSync(path.join(stepDir, entryName));
+        }
+    });
+}
+
 function runLane(lane) {
     var result;
     var latestPath;
-    if (lane.targetPlatform !== process.platform) {
+    if (!laneRunsOnCurrentHost(lane)) {
         result = createBaseResult(lane, 'blocked');
-        result.blockedReason = 'Lane target platform does not match the current host.';
+        result.blockedReason = 'Lane cannot run on the current host platform.';
         result.runHint = createMismatchHint(lane);
         latestPath = finishResult(lane, result);
         console.log('BLOCKED: ' + lane.id);
@@ -377,6 +404,7 @@ function runLane(lane) {
     var laneDir = laneArtifactsDir(lane);
     var stepDir = path.join(laneDir, 'steps');
     ensureDir(stepDir);
+    clearStepLogs(stepDir);
 
     console.log('Running lane: ' + lane.id);
     printStaleBuildWarnings(buildChecks.stale);
@@ -445,7 +473,7 @@ function recordLane(lane, status, note) {
     var result = createBaseResult(lane, status);
     result.recorded = true;
     result.recordedNote = note || '';
-    result.runHint = lane.targetPlatform !== process.platform ? createMismatchHint(lane) : '';
+    result.runHint = !laneRunsOnCurrentHost(lane) ? createMismatchHint(lane) : '';
     var latestPath = finishResult(lane, result);
     console.log('Recorded ' + status + ' for ' + lane.id);
     console.log('  Result: ' + latestPath);

@@ -2,7 +2,7 @@
 
 set -u
 
-PDG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PDG_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BUILD=yes
 if [ "${1:-}" = "--no-build" ]; then
     BUILD=no
@@ -35,7 +35,7 @@ RESULT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pdg-emscripten-tests.XXXXXX")" || exit 
 RESULT_HTML="$RESULT_DIR/result.html"
 SERVER_LOG="$RESULT_DIR/server.log"
 SERVER_PID=""
-TEST_URL="http://127.0.0.1:$PORT/test/InBrowserTests.html"
+TEST_URL="http://127.0.0.1:$PORT/test/client.html"
 USING_EXISTING_SERVER=no
 
 cleanup() {
@@ -92,6 +92,6 @@ if [ "$USING_EXISTING_SERVER" = yes ]; then
     echo "Interactive report: $TEST_URL"
 else
     echo "Rendered Jasmine report: $RESULT_HTML"
-    echo "For an interactive report, serve $PDG_ROOT and open test/InBrowserTests.html."
+    echo "For an interactive report, serve $PDG_ROOT and open test/client.html."
 fi
 exit 1

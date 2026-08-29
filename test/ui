@@ -39,7 +39,7 @@ fi
 
 if [ "${1:-}" = "--emscripten" ]; then
     shift
-    exec "$PDG_ROOT/test/ui_emscripten" "$@"
+    exec "$PDG_ROOT/test/emscripten/ui_emscripten" "$@"
 fi
 
 export PDG_TEST_MODE="ui"

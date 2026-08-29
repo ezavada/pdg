@@ -1,3 +1,4 @@
+// Browser harness for the Emscripten UI tests.
 (function() {
     "use strict";
 
@@ -201,7 +202,7 @@
                 ? "Rerunning " + id + (automated ? " (accelerated)" : "")
                 : "Full UI suite " + (index + 1) + "/" + testIds.length + ": " + id +
                     (automated ? " (accelerated)" : "");
-            frame.src = "EmscriptenUITests.html?test=" + encodeURIComponent(id) +
+            frame.src = "ui.html?test=" + encodeURIComponent(id) +
                 "&suite=1" + (automated ? "&automated=1" : "") +
                 "&run=" + encodeURIComponent(activeRunToken) + "&_pdg_cache=" + Date.now();
         }

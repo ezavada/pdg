@@ -638,9 +638,10 @@ if [ "$HAVE_EMSCRIPTEN" == "yes" ]; then
     echo "	@\$(PDG_ROOT)/test/client --emscripten --no-build" >> Makefile
     echo "" >> Makefile
 
-    echo "pdg-js-smoke: pdg-js" >> Makefile
-    echo "	@node \$(PDG_ROOT)/test/emscripten_smoke.js" >> Makefile
+    echo "pdg-js-ui-tests: pdg-js" >> Makefile
+    echo "	@\$(PDG_ROOT)/test/ui --emscripten --no-build" >> Makefile
     echo "" >> Makefile
+
 fi
 
 
@@ -834,8 +835,8 @@ echo "	@echo \"release           - build, test, and package release assets (opti
 if [ "$BUILD_EMSCRIPTEN" == "yes" ]; then
     echo "	@echo \"pdg-js            - PDG in pure JavaScript for running in a web browser\"" >> Makefile
     echo "	@echo \"pdg-js-rebuild    - rebuild pdg-js completely\"" >> Makefile
-    echo "	@echo \"pdg-js-smoke      - build and smoke-test the WebAssembly module\"" >> Makefile
     echo "	@echo \"pdg-js-client-tests - build and run client specs in a headless browser\"" >> Makefile
+    echo "	@echo \"pdg-js-ui-tests - build and run the UI suite in a headless browser\"" >> Makefile
 fi
 if [ "$HEADLESS_BUILD" == "yes" ]; then
     echo "	@echo \"pdg-tests         - unavailable in headless builds\"" >> Makefile

@@ -8,11 +8,8 @@
 # build target specs
 
 # first target entry is the target invoked when typing 'make'
-.PHONY: all smoke client-tests
+.PHONY: all client-tests
 all: libpdg
-
-smoke: libpdg
-	@node $(PDG_ROOT)/test/emscripten_smoke.js
 
 client-tests: libpdg
 	@$(PDG_ROOT)/test/client --emscripten --no-build

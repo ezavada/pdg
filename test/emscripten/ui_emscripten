@@ -2,7 +2,7 @@
 
 set -u
 
-PDG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PDG_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BUILD=yes
 if [ "${1:-}" = "--no-build" ]; then
     BUILD=no
@@ -35,7 +35,7 @@ PORT="${PDG_TEST_PORT:-8123}"
 RESULT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pdg-emscripten-ui.XXXXXX")" || exit 2
 SERVER_LOG="$RESULT_DIR/server.log"
 SERVER_PID=""
-BASE_URL="http://127.0.0.1:$PORT/test/EmscriptenUITests.html"
+BASE_URL="http://127.0.0.1:$PORT/test/ui.html"
 
 cleanup() {
     if [ -n "$SERVER_PID" ]; then

@@ -33,7 +33,7 @@ unset NODE_DEBUG
 
 if [ "$1" = "--emscripten" ]; then
     shift
-    exec "$(cd "$(dirname "$0")" && pwd)/client_emscripten" "$@"
+    exec "$(cd "$(dirname "$0")" && pwd)/emscripten/client_emscripten" "$@"
 fi
 
 # load pdgrc
