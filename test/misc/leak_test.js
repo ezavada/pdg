@@ -1,5 +1,5 @@
 // -----------------------------------------------
-// leaktest.js
+// leak_test.js
 //
 // Written by Ed Zavada, 2014
 // Copyright (c) 2014, Dream Rock Studios, LLC
@@ -27,7 +27,7 @@
 
 var pdg = require('pdg');
 
-console.log("Leaktest.js\n");
+console.log("leak_test.js\n");
 
 if (typeof(gc) != 'function') {
 	console.error("You must run with --expose-gc on the command line to expose V8's garbage collection");

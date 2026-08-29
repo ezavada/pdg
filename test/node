@@ -75,7 +75,7 @@ fi
 # start an echo server
 "$NODE_BIN" "$PDG_ROOT/tools/echo_tcp.js" > /dev/null &
 
-PDG_DEBUG="$PDG_DEBUG" NODE_DEBUG="$NODE_DEBUG" "$NODE_BIN" "$PDG_ROOT/test/node_test.js" "$@"
+PDG_DEBUG="$PDG_DEBUG" NODE_DEBUG="$NODE_DEBUG" "$NODE_BIN" "$PDG_ROOT/test/js/node_test.js" "$@"
 EXIT_CODE=$?
 
 # kill the echo server

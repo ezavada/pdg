@@ -40,10 +40,10 @@ function loadTestImages() {
     
     try {
         // Load different image formats
-        var yinyang = new pdg.Image("yinyang.png");
-        var earthmap = new pdg.Image("earthmap.jpg");
+        var yinyang = new pdg.Image("data/yinyang.png");
+        var earthmap = new pdg.Image("data/earthmap.jpg");
         var rocks = new pdg.Image("data/rocks.png");
-        var tiles = new pdg.Image("tiles.png");
+        var tiles = new pdg.Image("data/tiles.png");
         
         testImages = [yinyang, tiles, earthmap, rocks];
         

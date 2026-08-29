@@ -1,5 +1,5 @@
 // -----------------------------------------------
-// client_test/main.js
+// js/client_test.js
 //
 // Written by Ed Zavada, 2013
 // Copyright (c) 2013, Dream Rock Studios, LLC
@@ -27,7 +27,7 @@
 
 var pdg = require('pdg');
 var fs = require('fs');
-var specRunner = require('./lib/spec_runner');
+var specRunner = require('../lib/spec_runner');
 
 if( !process.env.NODE_ENV ) process.env.NODE_ENV = 'test';
 

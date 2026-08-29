@@ -1421,7 +1421,7 @@ ENDIF( WIN32 )
 IF(BUILD_TESTING)
 	ADD_EXECUTABLE(pdg-app-control-gallery WIN32 MACOSX_BUNDLE
 		../test/cxx/app-control-gallery.cpp
-		../test/yinyang.png
+		../test/data/yinyang.png
 		sys/unix/main-unix.cpp
 		app/Application.cpp
 		app/ControlAttributes.cpp
@@ -1434,7 +1434,7 @@ IF(BUILD_TESTING)
 		app/RadioButton.cpp
 		app/Scrollbar.cpp
 	)
-	SET_SOURCE_FILES_PROPERTIES(../test/yinyang.png PROPERTIES
+	SET_SOURCE_FILES_PROPERTIES(../test/data/yinyang.png PROPERTIES
 		MACOSX_PACKAGE_LOCATION Resources
 	)
 

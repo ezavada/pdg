@@ -391,17 +391,10 @@
           "freshnessPath": "libpdg.wasm",
           "staleInputs": [
             "src",
-            "test/client_test.js",
             "test/cxx",
             "test/data",
             "test/js",
             "test/spec",
-            "test/earthmap.jpg",
-            "test/earthmap2.png",
-            "test/jupitermap2.jpg",
-            "test/moonmap2.jpg",
-            "test/tiles.png",
-            "test/yinyang.png",
             "tools/pdg-js.mak"
           ],
           "buildCommands": [

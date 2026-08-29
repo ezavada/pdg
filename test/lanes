@@ -16,4 +16,4 @@ if [ -z "$NODE_BIN" ]; then
     exit 1
 fi
 
-exec "$NODE_BIN" "$PDG_ROOT/test/run_lanes.js" "$@"
+exec "$NODE_BIN" "$PDG_ROOT/test/js/run_lanes.js" "$@"

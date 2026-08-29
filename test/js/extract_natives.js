@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Diagnostic helper for validating the generated native JavaScript array.
 
 const fs = require('fs');
 

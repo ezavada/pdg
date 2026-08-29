@@ -281,9 +281,9 @@ public:
             std::string(pdg::OS::getApplicationResourceDirectory()) + "yinyang.png";
         const std::string paths[] = {
             resourceImage,
-            "test/yinyang.png",
-            "../test/yinyang.png",
-            "../../../../test/yinyang.png",
+            "test/data/yinyang.png",
+            "../test/data/yinyang.png",
+            "../../../../test/data/yinyang.png",
             "yinyang.png"
         };
         for (const std::string& path : paths) {

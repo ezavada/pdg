@@ -21,7 +21,7 @@ cd /d "%PDG_ROOT%"
 
 if not exist node_modules\jasmine-node\package.json (
     echo Installing jasmine-node and dependencies...
-    powershell -ExecutionPolicy Bypass -File test\install-dependencies.ps1
+    powershell -ExecutionPolicy Bypass -File test\lib\install-dependencies.ps1
     if errorlevel 1 exit /b 1
 )
 
@@ -31,9 +31,9 @@ if not defined ECHOSERVER_PID exit /b 1
 
 echo Running Tests ...
 if exist "%NODE_BIN%" (
-    "%NODE_BIN%" "%PDG_ROOT%\test\node_test.js" %*
+    "%NODE_BIN%" "%PDG_ROOT%\test\js\node_test.js" %*
 ) else (
-    node "%PDG_ROOT%\test\node_test.js" %*
+    node "%PDG_ROOT%\test\js\node_test.js" %*
 )
 set BUILD_STATUS=%ERRORLEVEL%
 

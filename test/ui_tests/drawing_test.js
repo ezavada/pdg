@@ -35,9 +35,9 @@ var testTimeout = null;
 
 var rocksTexture = new pdg.Image("data/rocks.png");
 var yinYangTexture = new pdg.Image("data/test_image.png");
-var earthTexture = new pdg.Image("./earthmap2.png");
-var jupiterTexture = new pdg.Image("./jupitermap2.jpg");
-var moonTexture = new pdg.Image("./moonmap2.jpg");
+var earthTexture = new pdg.Image("./data/earthmap2.png");
+var jupiterTexture = new pdg.Image("./data/jupitermap2.jpg");
+var moonTexture = new pdg.Image("./data/moonmap2.jpg");
 if (!rocksTexture || !yinYangTexture || !earthTexture || !jupiterTexture || !moonTexture) {
     console.log("ERROR: Could not load test textures");
     process.exit(1);

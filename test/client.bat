@@ -28,7 +28,7 @@ REM Check if jasmine-node is available, if not install it
 if not exist node_modules\jasmine-node\package.json (
     echo Installing jasmine-node and dependencies...
     echo Running PowerShell installation script...
-    powershell -ExecutionPolicy Bypass -File test\install-dependencies.ps1
+    powershell -ExecutionPolicy Bypass -File test\lib\install-dependencies.ps1
     if errorlevel 1 (
         echo ERROR: Failed to install dependencies.
         goto Error
@@ -70,7 +70,7 @@ if errorlevel 1 (
 )
 echo Using PDG client executable: %CD%\%PDG_CLIENT_EXE% ^(from %PDG_SOURCE_EXE%^)
 @echo on
-%PDG_CLIENT_EXE% client_test.js %*
+%PDG_CLIENT_EXE% js\client_test.js %*
 @echo off
 set BUILD_STATUS=%ERRORLEVEL%
 

@@ -10,8 +10,8 @@ var childProcess = require('child_process');
 var fs = require('fs');
 var path = require('path');
 
-var repoRoot = path.resolve(__dirname, '..');
-var manifestPath = path.join(__dirname, 'lanes.json');
+var repoRoot = path.resolve(__dirname, '..', '..');
+var manifestPath = path.join(__dirname, '..', 'lanes.json');
 var resultsIndexPath = path.join(repoRoot, 'artifacts', 'test-results', 'lanes', 'latest-results.json');
 
 function ensureDir(dirPath) {

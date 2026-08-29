@@ -125,7 +125,7 @@ if (shapeToTest) {
 
 var rocksTexture = new pdg.Image("test/data/rocks.png");
 var yinYangTexture = new pdg.Image("test/data/test_image.png");
-var earthTexture = new pdg.Image("test/earthmap2.png");
+var earthTexture = new pdg.Image("test/data/earthmap2.png");
 var canvasMarkTexture = new pdg.Image("test/perf/canvasmark2013/images/texture5.png");
 var bunnyMarkTexture = new pdg.Image("test/perf/bunnymark/wabbit.png");
 
@@ -801,4 +801,3 @@ setupKeyHandler();
 startCurrentTest();
 
 pdg.run();
-

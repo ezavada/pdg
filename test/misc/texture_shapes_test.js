@@ -16,9 +16,9 @@ function runTextureShapesTest() {
     var drawingArea = port.getDrawingArea();
     
     // Load a test texture (using yinyang.png which should be available)
-    var texture = new pdg.Image("../yinyang.png");
+    var texture = new pdg.Image("../data/yinyang.png");
     if (!texture) {
-        console.log("ERROR: Could not load test texture 'tiles.png'");
+		console.log("ERROR: Could not load test texture 'yinyang.png'");
         return;
     }
     

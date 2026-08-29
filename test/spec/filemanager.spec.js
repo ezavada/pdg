@@ -452,10 +452,11 @@ describe("FileManager", function() {
   describe("Performance and Scalability", function() {
     it("can handle large numbers of files", function() {
       var files = fileManager.findFiles('*');
+      var jsFiles = fileManager.findFiles('js/*');
       expect(Array.isArray(files)).toBe(true);
       expect(files.length > 0).toBe(true);
-      // Should find some known files in the current directory
-      expect(files.some(f => f === 'client_test.js')).toBe(true);
+      // Should find a known test entry point in its support directory
+      expect(jsFiles.some(f => f === 'client_test.js')).toBe(true);
     });
 
     it("can handle complex wildcard patterns efficiently", function() {
@@ -587,7 +588,7 @@ describe("FileManager", function() {
     });
 
     it("can find nested files and directories", function() {
-      var nestedFiles = fileManager.findFiles('*');
+      var nestedFiles = fileManager.findFiles('js/*');
       var nestedDirs = fileManager.findDirs('*');
       
       expect(Array.isArray(nestedFiles)).toBe(true);

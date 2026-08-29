@@ -37,7 +37,7 @@ describe("TileLayer", function() {
   });
 
   it("can have a tile set defined", function() {
-  	var tiles = new pdg.Image("tiles.png");
+	var tiles = new pdg.Image("data/tiles.png");
   	expect(tiles).toBeDefined();
   	expect(tiles.getWidth()).toBe(512);
   	expect(tiles.getHeight()).toBe(512);

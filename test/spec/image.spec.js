@@ -33,7 +33,7 @@ describe("Image", function() {
   var subsectionImage;
 
   beforeEach(function() {
-    testImage = new pdg.Image('./yinyang.png');
+    testImage = new pdg.Image('./data/yinyang.png');
     expect(testImage).toBeDefined();
   });
 
@@ -44,7 +44,7 @@ describe("Image", function() {
     });
 
     it("can be created with file path", function() {
-      var image = new pdg.Image('./yinyang.png');
+      var image = new pdg.Image('./data/yinyang.png');
       expect(image).toBeDefined();
       expect(image.constructor.name).toBe('Image');
     });

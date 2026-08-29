@@ -1,4 +1,4 @@
-// Test script to verify physics classes are available
+// Focused diagnostic script to verify physics classes are available.
 console.log("Testing physics classes...");
 
 // Test if physics classes are available

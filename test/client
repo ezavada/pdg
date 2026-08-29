@@ -61,7 +61,7 @@ fi
 #export NODE_DEBUG="module"
 cd test
 # run the tests, some of which use the echo server
-./pdg client_test.js $@
+./pdg js/client_test.js $@
 EXIT_CODE=$?
 
 # kill the echo server

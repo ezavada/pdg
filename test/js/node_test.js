@@ -5,7 +5,7 @@
 // -----------------------------------------------
 
 var fs = require('fs');
-var specRunner = require('./lib/spec_runner');
+var specRunner = require('../lib/spec_runner');
 
 if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = 'test';

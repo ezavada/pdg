@@ -34,7 +34,7 @@ describe("ImageStrip", function() {
 
   beforeEach(function() {
     // Create an ImageStrip from a test image
-    testImageStrip = new pdg.ImageStrip('./yinyang.png');
+    testImageStrip = new pdg.ImageStrip('./data/yinyang.png');
     expect(testImageStrip).toBeDefined();
   });
 
@@ -45,7 +45,7 @@ describe("ImageStrip", function() {
     });
 
     it("can be created with file path", function() {
-      var imageStrip = new pdg.ImageStrip('./yinyang.png');
+      var imageStrip = new pdg.ImageStrip('./data/yinyang.png');
       expect(imageStrip).toBeDefined();
       expect(imageStrip.constructor.name).toBe('ImageStrip');
     });

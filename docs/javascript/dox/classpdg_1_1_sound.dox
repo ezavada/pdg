@@ -15,7 +15,7 @@ This mode is typically used for short sound effects, like a footstep, an explosi
 \code
     PDG terminal v0.9.4
     > pdg.run();  // must be running for sounds to play
-    > var snd = new pdg.Sound("test/clink1.mp3");
+    > var snd = new pdg.Sound("test/data/clink1.mp3");
     > snd.play();
     > snd.play(0.3);
 \endcode
@@ -30,7 +30,7 @@ For longer sound effects and music, you will often want more dynamic control ove
 \code
     PDG terminal v0.9.4
     > pdg.run();  // must be running for sounds to play
-    > var snd = new pdg.Sound("test/Peppy_The-Firing-Squad_YMXB.mp3");
+    > var snd = new pdg.Sound("test/data/Peppy_The-Firing-Squad_YMXB.mp3");
     > snd.start();
     > snd.setVolume(0.3);
     > snd.skip(2000);

@@ -15335,12 +15335,12 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('wasmBinary');
 }
 var ASM_CONSTS = {
-  8547100: () => { pdg_em_platform_cleanup(); },  
- 8547127: () => { return typeof window !== 'undefined' && typeof window.addEventListener === 'function' && typeof document !== 'undefined'; },  
- 8547253: ($0, $1) => { pdg_em_platform_init($0, $1); },  
- 8547287: () => { pdg_em_platform_pollEvents(); },  
- 8547317: () => { return Math.max(800, globalThis.screen ? screen.width : 800); },  
- 8547383: () => { return Math.max(600, globalThis.screen ? screen.height : 600); }
+  16415180: () => { pdg_em_platform_cleanup(); },
+ 16415207: () => { return typeof window !== 'undefined' && typeof window.addEventListener === 'function' && typeof document !== 'undefined'; },
+ 16415333: ($0, $1) => { pdg_em_platform_init($0, $1); },
+ 16415367: () => { pdg_em_platform_pollEvents(); },
+ 16415397: () => { return Math.max(800, globalThis.screen ? screen.width : 800); },
+ 16415463: () => { return Math.max(600, globalThis.screen ? screen.height : 600); }
 };
 function pdg_audio_create(data,length,mime) { if (typeof Audio === 'undefined' || typeof Blob === 'undefined' || typeof URL === 'undefined') return 0; Module.pdgAudioObjects = Module.pdgAudioObjects || new Map(); Module.pdgNextAudioId = (Module.pdgNextAudioId || 0) + 1; var bytes = HEAPU8.slice(data, data + length); var url = URL.createObjectURL(new Blob([bytes], { type: UTF8ToString(mime) })); var audio = new Audio(url); audio.preload = 'auto'; Module.pdgAudioObjects.set(Module.pdgNextAudioId, { audio: audio, url: url, stopTimer: 0 }); return Module.pdgNextAudioId; }
 function pdg_audio_destroy(id) { var objects = Module.pdgAudioObjects; var entry = objects && objects.get(id); if (!entry) return; if (entry.stopTimer) clearTimeout(entry.stopTimer); entry.audio.pause(); entry.audio.removeAttribute('src'); entry.audio.load(); URL.revokeObjectURL(entry.url); objects.delete(id); }
@@ -16646,4 +16646,3 @@ Module.onRuntimeInitialized = function() {
     Module.pdgReady = true;
 };
 // end include: /Users/edz/Documents/Personal/pdg-devel/src/bindings/emscripten/pdg_emscripten.js
-

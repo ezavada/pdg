@@ -6,8 +6,8 @@ This file applies to `test`.
 
 - `test/spec` contains the main Jasmine-based behavioral spec suite.
 - `test/lib/spec_runner.js` is the shared runner helper used by both client and headless entry points.
-- `test/client_test.js` is the GUI/client-oriented spec entry.
-- `test/node_test.js` is the headless Node-oriented spec entry.
+- `test/js/client_test.js` is the GUI/client-oriented spec entry.
+- `test/js/node_test.js` is the headless Node-oriented spec entry.
 - `test/cxx` contains native C++ tests.
 - `test/misc` contains focused regression, reproduction, and behavior probes.
 - `test/ui_tests` contains GUI drawing and `PortDraw`-oriented tests.

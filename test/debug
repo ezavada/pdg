@@ -56,7 +56,7 @@ else
         fi
         TARGET_SPEC="";
     else
-        JS_MAIN="$PDG_ROOT/test/client_test.js"
+        JS_MAIN="$PDG_ROOT/test/js/client_test.js"
         TARGET_SPEC="$1"
     fi
 fi 

@@ -55,23 +55,25 @@ var kMaxSpriteMoveDelta =  300;
 // from when we are in a C++ debugger verses launching from the command line
 var launchedFromTest = /[\/\\]test$/.test(global.process.cwd());
 var testDir = launchedFromTest ? "" : "test/";
+var dataDir = testDir + "data/";
 
 // Use absolute path to avoid canonicalization issues
 var samplesDir = process.cwd() + "/test/data/spriter-samples/";
 if (global.process.ios) {
 	testDir = "";  // doesn't have test directory
+	dataDir = "";  // test assets are copied into the application resources root
 	samplesDir = process.cwd();
 }
 
-var gSpriteFilename = testDir + "yinyang.png";
-var gEarthFilename = testDir + "earthmap2.png";
+var gSpriteFilename = dataDir + "yinyang.png";
+var gEarthFilename = dataDir + "earthmap2.png";
 var gHeroFilename = samplesDir + "wonkyskeleton/wonkyskeleton.scml";
 var gGreyGuyFilename = samplesDir + "greyguy/player.scml";
-var gStepFilename = process.cwd() + "/" + testDir + "step.wav";
-var gClink1Filename = process.cwd() + "/" + testDir + "clink1.mp3";
-var gClink2Filename = process.cwd() + "/" + testDir + "clink2.mp3";
-var gHitFilename = process.cwd() + "/" + testDir + "hit.wav";
-var gMusicFilename = process.cwd() + "/" + testDir + "Peppy_The-Firing-Squad_YMXB.mp3";
+var gStepFilename = process.cwd() + "/" + dataDir + "step.wav";
+var gClink1Filename = process.cwd() + "/" + dataDir + "clink1.mp3";
+var gClink2Filename = process.cwd() + "/" + dataDir + "clink2.mp3";
+var gHitFilename = process.cwd() + "/" + dataDir + "hit.wav";
+var gMusicFilename = process.cwd() + "/" + dataDir + "Peppy_The-Firing-Squad_YMXB.mp3";
 
 var gCollisions = true;
 
