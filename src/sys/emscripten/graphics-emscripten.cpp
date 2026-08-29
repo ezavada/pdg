@@ -39,7 +39,14 @@ EM_JS(double, pdg_em_measure_text, (const char* text, const char* family, int si
 EM_JS(void, pdg_em_rasterize_text,
       (const char* text, const char* family, int size, int style, int width, int height,
        int ascent, unsigned char* pixels), {
-    HEAPU8.fill(0, pixels, pixels + width * height);
+    const pixelCount = width * height;
+    for (let index = 0; index < pixelCount; ++index) {
+        const target = pixels + index * 4;
+        HEAPU8[target] = 255;
+        HEAPU8[target + 1] = 255;
+        HEAPU8[target + 2] = 255;
+        HEAPU8[target + 3] = 0;
+    }
     if (typeof document === 'undefined' && typeof OffscreenCanvas === 'undefined') return;
     const canvas = typeof OffscreenCanvas !== 'undefined'
         ? new OffscreenCanvas(width, height)
@@ -59,8 +66,8 @@ EM_JS(void, pdg_em_rasterize_text,
         context.fillRect(0, ascent + thickness, width, thickness);
     }
     const rgba = context.getImageData(0, 0, width, height).data;
-    for (let index = 0; index < width * height; ++index) {
-        HEAPU8[pixels + index] = rgba[index * 4 + 3];
+    for (let index = 0; index < pixelCount; ++index) {
+        HEAPU8[pixels + index * 4 + 3] = rgba[index * 4 + 3];
     }
 });
 
@@ -136,7 +143,7 @@ void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& qu
         const int textureWidth = std::max(1, textInfo->width + extraWidth);
         const int textureHeight = std::max(1, textInfo->charHeight);
         unsigned char* imageData = static_cast<unsigned char*>(
-            std::malloc(static_cast<size_t>(textureWidth) * textureHeight));
+            std::malloc(static_cast<size_t>(textureWidth) * textureHeight * 4));
         if (!imageData) return;
         const int scaledSize = std::max(1, static_cast<int>(std::ceil(size * font->mScalingFactor)));
         pdg_em_rasterize_text(text, font->getFontName(), scaledSize, static_cast<int>(style),
@@ -148,8 +155,11 @@ void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& qu
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, textureWidth, textureHeight, 0,
-                     GL_ALPHA, GL_UNSIGNED_BYTE, imageData);
+        // WebGL maps legacy alpha-only textures inconsistently under Emscripten's
+        // fixed-function emulation. White RGB lets glColor4f tint the glyph while
+        // the Canvas2D coverage remains in alpha.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, imageData);
         std::free(imageData);
         textInfo->tx = 1.0f;
         textInfo->ty = 1.0f;

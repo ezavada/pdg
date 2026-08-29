@@ -65,7 +65,7 @@ if [ -n "$SELECTED_TEST" ]; then TESTS=("$SELECTED_TEST"); fi
 FAILED=0
 for TEST_ID in "${TESTS[@]}"; do
     RESULT_HTML="$RESULT_DIR/$TEST_ID.html"
-    TEST_URL="$BASE_URL?test=$TEST_ID"
+    TEST_URL="$BASE_URL?test=$TEST_ID&automated=1"
     "$BROWSER" --headless=new --enable-unsafe-swiftshader --dump-dom \
         --virtual-time-budget=120000 "$TEST_URL" >"$RESULT_HTML" 2>/dev/null
     BROWSER_EXIT=$?
