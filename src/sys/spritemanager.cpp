@@ -336,36 +336,34 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 #ifndef PDG_NO_GUI
 	if (inEventType == eventType_PortDraw) {
 		pdg::PortDrawInfo* infoP = static_cast<PortDrawInfo*>(inEventData);
-		
-		// Check if we should fire layer events for this port
-		bool shouldFireEvents = false;
-		if (mFirstLayer) {
-			if (mFirstLayer->mPort) {
-				// Layer has a specific port, only fire if it matches
-				shouldFireEvents = (infoP->port == mFirstLayer->mPort);
-			} else {
-				// Layer doesn't have a port, fire for main port
-				Port* mainPort = GraphicsManager::instance().getMainPort();
-				shouldFireEvents = (infoP->port == mainPort);
+		Port* mainPort = GraphicsManager::instance().getMainPort();
+		auto belongsToPort = [infoP, mainPort](SpriteLayer* layer) {
+			return layer && (layer->mPort ? layer->mPort == infoP->port
+			                                : infoP->port == mainPort);
+		};
+		SpriteLayer* firstLayerForPort = nullptr;
+		SpriteLayer* lastLayerForPort = nullptr;
+		for (SpriteLayer* layer = mFirstLayer; layer; layer = layer->mNextLayer) {
+			if (belongsToPort(layer)) {
+				if (!firstLayerForPort) firstLayerForPort = layer;
+				lastLayerForPort = layer;
 			}
 		}
-		
-		if (shouldFireEvents) {
+
+		if (firstLayerForPort) {
 			SpriteLayerInfo evntInfo;
-			evntInfo.actingLayer = mFirstLayer;
+			evntInfo.actingLayer = firstLayerForPort;
 			evntInfo.action = SpriteLayer::action_ErasePort;
 			evntInfo.millisec = OS::getMilliseconds();
-			// UserData* userData = UserData::makeUserDataViaCopy(&evntInfo, sizeof(SpriteLayerInfo));
-			bool handled = mFirstLayer->postEvent(eventType_SpriteLayer, &evntInfo);
-			//userData->release();
-			if (!handled && mFirstLayer->mPort) {
+			bool handled = firstLayerForPort->postEvent(eventType_SpriteLayer, &evntInfo);
+			if (!handled && firstLayerForPort->mPort) {
 				// erase the port to black
-//					mFirstLayer->mPort->fillRect(mFirstLayer->mPort->getDrawingArea(), PDG_BLACK_COLOR );
+//					firstLayerForPort->mPort->fillRect(firstLayerForPort->mPort->getDrawingArea(), PDG_BLACK_COLOR );
 			}
 
 			SpriteLayer* layer = mFirstLayer;
 			while (layer) {
-				if (layer->mPort) {
+				if (belongsToPort(layer)) {
 					SpriteLayerInfo evntInfo2;
 					evntInfo2.actingLayer = layer;
 					evntInfo2.action = SpriteLayer::action_PreDrawLayer;
@@ -379,11 +377,9 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 				layer = layer->mNextLayer;
 			}
 			SpriteLayerInfo evntInfo4;
-			evntInfo4.actingLayer = mLastLayer;
+			evntInfo4.actingLayer = lastLayerForPort;
 			evntInfo4.action = SpriteLayer::action_DrawPortComplete;
-			if (mLastLayer->mPort) {
-				mLastLayer->postEvent(eventType_SpriteLayer, &evntInfo4);
-			}		
+			lastLayerForPort->postEvent(eventType_SpriteLayer, &evntInfo4);
 			return false; // we didn't completely handle this, others may want to draw
 		}
 	}

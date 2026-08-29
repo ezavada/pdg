@@ -33,12 +33,22 @@
 #ifndef __GLUES_QUAD_H__
 #define __GLUES_QUAD_H__
 
+#ifdef __EMSCRIPTEN__
+#include <GL/gl.h>
+#else
 #include <OpenGLES/ES1/gl.h>
+#endif
 //#include <OpenGL/gl.h>
 
+#ifndef GLAPI
 #define GLAPI
+#endif
+#ifndef APIENTRY
 #define APIENTRY
+#endif
+#ifndef APIENTRYP
 #define APIENTRYP
+#endif
 
 #ifdef __cplusplus
    extern "C" {

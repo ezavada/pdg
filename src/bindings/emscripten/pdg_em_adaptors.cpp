@@ -4,6 +4,10 @@
 #include "pdg_em_adaptors.h"
 #include "pdg-lib.h"
 
+#ifndef PDG_NO_GUI
+#include "glfw/internals-glfw.h"
+#endif
+
 #include <emscripten.h>
 
 #include <algorithm>
@@ -14,6 +18,319 @@
 
 
 namespace pdg {
+
+class EmscriptenEventBridge : public IEventHandler {
+public:
+    explicit EmscriptenEventBridge(const emscripten::val& jsEmitter)
+        : mJsEmitter(jsEmitter), mRefs(0) {}
+
+    void addRef() const throw() override { ++mRefs; }
+    void release() const throw() override {
+        if (--mRefs == 0) delete this;
+    }
+
+    bool handleEvent(EventEmitter*, long eventType, void* eventData) throw() override {
+        try {
+            emscripten::val event = emscripten::val::object();
+            if (eventData && eventType == eventType_SpriteLayer) {
+                const SpriteLayerInfo* info = static_cast<const SpriteLayerInfo*>(eventData);
+                event.set("action", info->action);
+                event.set("actingLayer", mJsEmitter);
+                event.set("millisec", static_cast<double>(info->millisec));
+            } else if (eventData && eventType == eventType_SpriteCollide) {
+                const SpriteCollideInfo* info = static_cast<const SpriteCollideInfo*>(eventData);
+                event.set("action", info->action);
+                event.set("actingSprite", mJsEmitter);
+                event.set("inLayer", true);
+                event.set("targetSprite", true);
+                event.set("force", info->force);
+                event.set("kineticEnergy", info->kineticEnergy);
+                event.set("isFirstContact", info->isFirstContact);
+                event.set("collisionName", info->collisionName
+                    ? emscripten::val(info->collisionName) : emscripten::val::null());
+                event.set("withCollisionName", info->withCollisionName
+                    ? emscripten::val(info->withCollisionName) : emscripten::val::null());
+            } else if (eventData && eventType == eventType_SpriteAnimate) {
+                const SpriteAnimateInfo* info = static_cast<const SpriteAnimateInfo*>(eventData);
+                event.set("action", info->action);
+                event.set("actingSprite", mJsEmitter);
+                event.set("inLayer", true);
+                event.set("id", info->id);
+            } else if (eventData && eventType == eventType_SoundEvent) {
+                const SoundEventInfo* info = static_cast<const SoundEventInfo*>(eventData);
+                event.set("eventCode", info->eventCode);
+                event.set("sound", mJsEmitter);
+            } else if (eventData && eventType == eventType_PortDraw) {
+                const PortDrawInfo* info = static_cast<const PortDrawInfo*>(eventData);
+                event.set("portIdentity", reinterpret_cast<uintptr_t>(info->port));
+                event.set("frameNum", info->frameNum);
+            }
+            return mJsEmitter.call<bool>("__dispatchNativeEvent", eventType, event);
+        } catch (...) {
+            return false;
+        }
+    }
+
+private:
+    emscripten::val mJsEmitter;
+    mutable int mRefs;
+};
+
+void emscriptenEventEmitterAddBridge(EventEmitter& emitter, long eventType,
+                                     const emscripten::val& jsEmitter) {
+    emitter.addHandler(new EmscriptenEventBridge(jsEmitter), eventType);
+}
+
+void emscriptenSpriteAddEventBridge(Sprite& emitter, long eventType,
+                                    const emscripten::val& jsEmitter) {
+    emitter.addHandler(new EmscriptenEventBridge(jsEmitter), eventType);
+}
+
+void emscriptenSpriteLayerAddEventBridge(SpriteLayer& emitter, long eventType,
+                                         const emscripten::val& jsEmitter) {
+    emitter.addHandler(new EmscriptenEventBridge(jsEmitter), eventType);
+}
+
+void emscriptenEventManagerAddEventBridge(EventManager& emitter, long eventType,
+                                          const emscripten::val& jsEmitter) {
+    emitter.addHandler(new EmscriptenEventBridge(jsEmitter), eventType);
+}
+
+SpriteLayer* emscriptenCreateSpriteLayer() {
+#ifndef PDG_NO_GUI
+    return createSpriteLayer(nullptr);
+#else
+    return createSpriteLayer();
+#endif
+}
+
+TileLayer* emscriptenCreateTileLayer() {
+#ifndef PDG_NO_GUI
+    return createTileLayer(nullptr);
+#else
+    return createTileLayer();
+#endif
+}
+
+SpriteLayer* emscriptenCreateSpriteLayerForPort(Port* port) {
+#ifndef PDG_NO_GUI
+    return createSpriteLayer(port);
+#else
+    return emscriptenCreateSpriteLayer();
+#endif
+}
+
+TileLayer* emscriptenCreateTileLayerForPort(Port* port) {
+#ifndef PDG_NO_GUI
+    return createTileLayer(port);
+#else
+    return emscriptenCreateTileLayer();
+#endif
+}
+
+#ifndef PDG_NO_GUI
+emscripten::val emscriptenGraphicsGetCurrentScreenMode(GraphicsManager& manager, int screenNum) {
+    Rect maxWindowRect;
+    GraphicsManager::ScreenMode mode = manager.getCurrentScreenMode(screenNum, &maxWindowRect);
+    emscripten::val result = emscripten::val::object();
+    result.set("width", mode.width);
+    result.set("height", mode.height);
+    result.set("depth", mode.bpp);
+    emscripten::val maxRect = emscripten::val::object();
+    maxRect.set("left", maxWindowRect.left);
+    maxRect.set("top", maxWindowRect.top);
+    maxRect.set("right", maxWindowRect.right);
+    maxRect.set("bottom", maxWindowRect.bottom);
+    result.set("maxWindowRect", maxRect);
+    return result;
+}
+
+emscripten::val emscriptenGraphicsGetNthSupportedScreenMode(GraphicsManager& manager, int n,
+                                                            int screenNum) {
+    GraphicsManager::ScreenMode mode = manager.getNthSupportedScreenMode(n, screenNum);
+    emscripten::val result = emscripten::val::object();
+    result.set("width", mode.width);
+    result.set("height", mode.height);
+    result.set("depth", mode.bpp);
+    return result;
+}
+
+Port* emscriptenGraphicsCreateWindowPort(GraphicsManager& manager, const Rect& rect,
+                                         const std::string& name, int bpp) {
+    return manager.createWindowPort(rect, name.empty() ? nullptr : name.c_str(), bpp);
+}
+
+Port* emscriptenCreatePort(long width, long height) {
+    return GraphicsManager::getSingletonInstance()->createWindowPort(
+        Rect(0, 0, width, height), "PDG Emscripten Port", 0);
+}
+
+uintptr_t emscriptenPortGetIdentity(Port& port) {
+    return reinterpret_cast<uintptr_t>(&port);
+}
+
+Font* emscriptenGraphicsCreateFont(GraphicsManager& manager, const std::string& name,
+                                   float scalingFactor) {
+    return manager.createFont(name.c_str(), scalingFactor);
+}
+
+static bool emscriptenDestinationIsRect(const emscripten::val& destination) {
+    return !destination["right"].isUndefined() && !destination["bottom"].isUndefined();
+}
+
+void emscriptenPortDrawImage(Port& port, Image* image, const emscripten::val& destination,
+                             const Attributes& attributes) {
+    if (emscriptenDestinationIsRect(destination)) {
+        port.drawImage(image, destination.as<Rect>(), attributes);
+    } else {
+        port.drawImage(image, destination.as<Point>(), attributes);
+    }
+}
+
+void emscriptenPortDrawDrawing(Port& port, const Drawing& drawing,
+                               const emscripten::val& destination, const Attributes& attributes) {
+    if (emscriptenDestinationIsRect(destination)) {
+        port.drawDrawing(drawing, destination.as<Rect>(), attributes);
+    } else {
+        port.drawDrawing(drawing, destination.as<Point>(), attributes);
+    }
+}
+
+void emscriptenPortDrawText(Port& port, const std::string& text,
+                            const emscripten::val& destination, const Attributes& attributes) {
+    if (emscriptenDestinationIsRect(destination)) {
+        port.drawText(text.c_str(), destination.as<Rect>(), attributes);
+    } else {
+        port.drawText(text.c_str(), destination.as<Point>(), attributes);
+    }
+}
+
+int emscriptenPortGetTextWidth(Port& port, const std::string& text, int size, uint32 style, int len) {
+    return port.getTextWidth(text.c_str(), size, style, len);
+}
+
+int emscriptenPortStartTrackingMouse(Port& port, const Rect& rect) {
+    return port.startTrackingMouse(rect, nullptr);
+}
+
+void emscriptenPortDrawCircle(Port& port, const Point& center, float radius,
+                              const Attributes& attributes) {
+    port.drawCircle(center, radius, attributes);
+}
+
+void emscriptenPortDrawQuad(Port& port, const emscripten::val& quad,
+                            const Attributes& attributes) {
+    const emscripten::val points = quad["points"];
+    port.drawQuad(Quad(points[0].as<Point>(), points[1].as<Point>(),
+                       points[2].as<Point>(), points[3].as<Point>()),
+                  attributes);
+}
+
+std::string emscriptenFontGetName(Font& font) {
+    return font.getFontName();
+}
+
+float emscriptenFontGetHeight(Font& font, int size, int style) {
+    return font.getFontHeight(size, static_cast<uint32>(style));
+}
+
+float emscriptenFontGetLeading(Font& font, int size, int style) {
+    return font.getFontLeading(size, static_cast<uint32>(style));
+}
+
+float emscriptenFontGetAscent(Font& font, int size, int style) {
+    return font.getFontAscent(size, static_cast<uint32>(style));
+}
+
+float emscriptenFontGetDescent(Font& font, int size, int style) {
+    return font.getFontDescent(size, static_cast<uint32>(style));
+}
+
+void emscriptenDrawingDraw(Drawing& drawing, Port* port) {
+    if (port) drawing.draw(port);
+}
+
+#ifdef PDG_SPRITER_SUPPORT
+bool emscriptenSpriteHasAnimation(Sprite& sprite, const emscripten::val& animation) {
+    return animation.typeOf().as<std::string>() == "number"
+        ? sprite.hasAnimation(animation.as<int>())
+        : sprite.hasAnimation(animation.isNull() ? "" : animation.as<std::string>().c_str());
+}
+
+void emscriptenSpriteStartAnimation(Sprite& sprite, const emscripten::val& animation) {
+    if (animation.typeOf().as<std::string>() == "number") sprite.startAnimation(animation.as<int>());
+    else sprite.startAnimation(animation.isNull() ? "" : animation.as<std::string>().c_str());
+}
+
+void emscriptenSpriteBlendToAnimation(Sprite& sprite, const emscripten::val& animation, float blendTime) {
+    if (animation.typeOf().as<std::string>() == "number") sprite.blendToAnimation(animation.as<int>(), blendTime);
+    else sprite.blendToAnimation(animation.isNull() ? "" : animation.as<std::string>().c_str(), blendTime);
+}
+
+void emscriptenSpriteApplyCharacterMap(Sprite& sprite, const std::string& name) { sprite.applyCharacterMap(name.c_str()); }
+void emscriptenSpriteRemoveCharacterMap(Sprite& sprite, const std::string& name) { sprite.removeCharacterMap(name.c_str()); }
+
+emscripten::val emscriptenSpriteGetAppliedCharacterMaps(const Sprite& sprite) {
+    emscripten::val result = emscripten::val::array();
+    std::vector<std::string> maps = sprite.getAppliedCharacterMaps();
+    for (size_t i = 0; i < maps.size(); ++i) result.set(i, maps[i]);
+    return result;
+}
+
+bool emscriptenSpriteHasAttachPoint(const Sprite& sprite, const std::string& name) { return sprite.hasAttachPoint(name.c_str()); }
+Offset emscriptenSpriteGetAttachPoint(const Sprite& sprite, const std::string& name) { return sprite.getAttachPoint(name.c_str()); }
+void emscriptenSpriteAttachSprite(Sprite& sprite, Sprite* attached, const std::string& name) { sprite.attachSprite(attached, name.c_str()); }
+Sprite* emscriptenSpriteGetAttachedSprite(const Sprite& sprite, const std::string& name) { return sprite.getAttachedSprite(name.c_str()); }
+void emscriptenSpriteActivateSubEntity(Sprite& sprite, const std::string& entity, const std::string& animation) { sprite.activateSubEntity(entity.c_str(), animation.c_str()); }
+bool emscriptenSpriteIsCollisionActive(const Sprite& sprite, const std::string& name) { return sprite.isSpriterCollisionActive(name.c_str()); }
+emscripten::val emscriptenSpriteGetCollisionBox(const Sprite& sprite, const std::string& name) {
+    RotatedRect box = sprite.getSpriterCollisionBox(name.c_str());
+    emscripten::val result = emscripten::val::object();
+    result.set("left", box.left);
+    result.set("top", box.top);
+    result.set("right", box.right);
+    result.set("bottom", box.bottom);
+    result.set("radians", box.radians);
+    emscripten::val center = emscripten::val::object();
+    center.set("x", box.centerOffset.x);
+    center.set("y", box.centerOffset.y);
+    result.set("centerOffset", center);
+    return result;
+}
+emscripten::val emscriptenSpriteGetCollisionBoxName(const Sprite& sprite, int index) {
+    const char* name = sprite.getSpriterCollisionBoxName(index);
+    return name ? emscripten::val(name) : emscripten::val::null();
+}
+
+Sprite* emscriptenLayerCreateSpriteFromFile(SpriteLayer& layer, const std::string& path, const std::string& entity) {
+    return layer.createSpriteFromSpriterFile(path.c_str(), entity.empty() ? nullptr : entity.c_str());
+}
+Sprite* emscriptenLayerCreateSpriteFromEntity(SpriteLayer& layer, const std::string& entity) { return layer.createSpriteFromSpriterEntity(entity.c_str()); }
+void emscriptenLayerApplyCharacterMap(SpriteLayer& layer, const std::string& name) { layer.applyCharacterMapToAll(name.c_str()); }
+void emscriptenLayerRemoveCharacterMap(SpriteLayer& layer, const std::string& name) { layer.removeCharacterMapFromAll(name.c_str()); }
+#endif
+#endif
+
+#ifndef PDG_NO_SOUND
+void emscriptenSoundPlay(Sound& sound, float volume, int32 offsetX, float pitch,
+                         ms_time fromMs, ms_delta lengthMs) {
+    sound.play(volume, offsetX, pitch, fromMs, lengthMs);
+}
+void emscriptenSoundChangePitch(Sound& sound, float target, ms_delta duration) {
+    sound.changePitch(target, duration);
+}
+void emscriptenSoundChangeOffset(Sound& sound, int32 target, ms_delta duration) {
+    sound.changeOffsetX(target, duration);
+}
+void emscriptenSoundFadeOut(Sound& sound, ms_delta duration) { sound.fadeOut(duration); }
+void emscriptenSoundFadeIn(Sound& sound, ms_delta duration) { sound.fadeIn(duration); }
+void emscriptenSoundChangeVolume(Sound& sound, float target, ms_delta duration) {
+    sound.changeVolume(target, duration);
+}
+Sound* emscriptenResourceGetSound(ResourceManager& manager, const std::string& soundName) {
+    return manager.getSound(soundName.c_str());
+}
+#endif
 
 // extend the config manager to handle API differences between C++ and Javascript
 
@@ -641,8 +958,16 @@ std::string& FileManager::getApplicationResourceDirectory() {
     return _wdstr;
 }
 
+static bool sEmscriptenGlfwInitialized = false;
+
 void platform_cleanup() 
 {
+#ifndef PDG_NO_GUI
+  if (sEmscriptenGlfwInitialized) {
+    glfwTerminate();
+    sEmscriptenGlfwInitialized = false;
+  }
+#endif
   EM_ASM(
      pdg_em_platform_cleanup();
   );
@@ -650,6 +975,16 @@ void platform_cleanup()
 
 void platform_init(int argc, const char* argv[])
 {
+#ifndef PDG_NO_GUI
+  if (EM_ASM_INT({
+      return typeof window !== 'undefined' &&
+             typeof window.addEventListener === 'function' &&
+             typeof document !== 'undefined';
+  })) {
+    glfwInitIfNeeded();
+    sEmscriptenGlfwInitialized = true;
+  }
+#endif
   EM_ASM({
      pdg_em_platform_init($0, $1);
   }, argc, argv);
@@ -657,6 +992,9 @@ void platform_init(int argc, const char* argv[])
 
 void platform_pollEvents()
 {
+#ifndef PDG_NO_GUI
+  if (sEmscriptenGlfwInitialized) glfwPollEvents();
+#endif
   EM_ASM(
      pdg_em_platform_pollEvents();
   );

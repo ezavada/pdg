@@ -17,6 +17,12 @@
   <div id="pdg-test-banner"><span id="pdg-test-status">Loading WebAssembly...</span></div>
   <ul id="pdg-load-errors"></ul>
   <pre id="pdg-result-json"></pre>
-  <script src="emscripten_client_runner.js"></script>
+  <canvas id="pdg-canvas" width="1" height="1" hidden></canvas>
+  <script>window.Module = { canvas: document.getElementById("pdg-canvas") };</script>
+  <script>
+    var runner = document.createElement("script");
+    runner.src = "emscripten_client_runner.js?_pdg_cache=" + Date.now();
+    document.body.appendChild(runner);
+  </script>
 </body>
 </html>

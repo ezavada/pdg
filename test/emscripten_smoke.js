@@ -26,8 +26,10 @@ const timer = setInterval(() => {
     assert.equal(typeof pdg.getTimerManager, 'function');
     assert.ok(pdg.evt);
     assert.ok(pdg.tm);
-    assert.equal(pdg.hasGraphics, false);
-    assert.equal(pdg.hasSound, false);
+    assert.equal(pdg.hasGraphics, true);
+    assert.ok(pdg.gfx);
+    assert.equal(pdg.hasSound, true);
+    assert.ok(pdg.snd);
     assert.equal(typeof pdg.rand(), 'number');
     assert.equal(pdg._isQuitting(), false);
     pdg.idle();

@@ -69,7 +69,7 @@ if [ "$READY" != yes ]; then
     exit 2
 fi
 
-"$BROWSER" --headless=new --disable-gpu --dump-dom --virtual-time-budget=60000 \
+"$BROWSER" --headless=new --enable-unsafe-swiftshader --dump-dom --virtual-time-budget=60000 \
     "$TEST_URL" >"$RESULT_HTML" 2>/dev/null
 BROWSER_EXIT=$?
 RESULT_JSON="$(sed -n 's/.*<pre id="pdg-result-json">\([^<]*\)<\/pre>.*/\1/p' "$RESULT_HTML" | tail -1)"

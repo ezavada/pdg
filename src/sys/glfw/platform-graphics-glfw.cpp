@@ -40,11 +40,19 @@
 #include "internals-glfw.h"
 #include "graphics-opengl.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #ifndef PDG_MAX_DISPLAYS
   #define PDG_MAX_DISPLAYS 32
 #endif
 
 GLFWvidmode gOriginalDisplayModes[PDG_MAX_DISPLAYS];
+
+#ifdef __EMSCRIPTEN__
+static GLFWwindow* sEmscriptenWindow = nullptr;
+#endif
 
 #ifdef PLATFORM_WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -114,10 +122,14 @@ void platform_finishDrawing(void* windRef) {
 }
 
 int platform_getNumScreens(void) {
+	#ifdef __EMSCRIPTEN__
+	return 1;
+	#else
 	glfwInitIfNeeded();
 	int count = 0;
 	glfwGetMonitors(&count);
 	return count;
+	#endif
 }
 
 int platform_getPrimaryScreen() {
@@ -125,6 +137,11 @@ int platform_getPrimaryScreen() {
 }
 
 void platform_getScreenSize(long* outWidth, long* outHeight, int screenNum) {
+	#ifdef __EMSCRIPTEN__
+	*outWidth = EM_ASM_INT({ return Math.max(800, globalThis.screen ? screen.width : 800); });
+	*outHeight = EM_ASM_INT({ return Math.max(600, globalThis.screen ? screen.height : 600); });
+	return;
+	#else
 	glfwInitIfNeeded();
 	if (screenNum >= screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
 		GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
@@ -135,9 +152,16 @@ void platform_getScreenSize(long* outWidth, long* outHeight, int screenNum) {
 		*outWidth = 0;
 		*outHeight = 0;
 	}
+	#endif
 }
 
 void platform_getScreenBounds(long* outX, long* outY, long* outWidth, long* outHeight, int screenNum) {
+	#ifdef __EMSCRIPTEN__
+	*outX = 0;
+	*outY = 0;
+	platform_getScreenSize(outWidth, outHeight, screenNum);
+	return;
+	#else
 	glfwInitIfNeeded();
 	if (screenNum >= screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
 		GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
@@ -154,9 +178,14 @@ void platform_getScreenBounds(long* outX, long* outY, long* outWidth, long* outH
 		*outWidth = 0;
 		*outHeight = 0;
 	}
+	#endif
 }
 
 void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum) {
+	#ifdef __EMSCRIPTEN__
+	platform_getScreenSize(outWidth, outHeight, screenNum);
+	return;
+	#endif
 	long screenWidth, screenHeight;
 	static bool measuredWindows = false;
 	static long windFrameWidth = 0;
@@ -188,8 +217,18 @@ void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum) {
 
 void* platform_createWindow(long width, long height, long xPos, long yPos, int bpp, const char* title) {
 	glfwInitIfNeeded();
+	#ifdef __EMSCRIPTEN__
+	if (sEmscriptenWindow) {
+		glfwSetWindowSize(sEmscriptenWindow, width, height);
+		glfwSetWindowTitle(sEmscriptenWindow, title ? title : "PDG");
+		glfwMakeContextCurrent(sEmscriptenWindow);
+		return sEmscriptenWindow;
+	}
+	#endif
 	glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 	GLFWwindow* window = glfwCreateWindow(width, height, title, NULL, NULL);
+	if (!window) return NULL;
+	glfwMakeContextCurrent(window);
 	glfwSetWindowPos(window, xPos, yPos);
 	PrivateWindowInfoT* winInfo = new PrivateWindowInfoT();
 	winInfo->isFullscreen = false;
@@ -197,6 +236,9 @@ void* platform_createWindow(long width, long height, long xPos, long yPos, int b
 	setupGlfwCallbacks(window);
 	extraWindowSetup(window);
 	glfwShowWindow(window);
+	#ifdef __EMSCRIPTEN__
+	sEmscriptenWindow = window;
+	#endif
 	return window;
 }
 
@@ -318,11 +360,17 @@ void* platform_createFullscreenWindow(long width, long height, int bpp, int scre
 }
 
 void platform_destroyWindow(void* windRef) {
+	#ifdef __EMSCRIPTEN__
+	// Emscripten's GLFW port supports one window for the lifetime of the page.
+	// Keep its canvas/context alive so sequential PDG ports can reuse it.
+	return;
+	#else
 	GLFWwindow* window = static_cast<GLFWwindow*>(windRef);
 	PrivateWindowInfoT* winInfo = (PrivateWindowInfoT*)glfwGetWindowUserPointer(window);
 	delete winInfo;
 	glfwSetWindowUserPointer(window, 0);
 	glfwDestroyWindow(window);
+	#endif
 }
 
 void platform_resizeWindow(void* windRef, long width, long height, bool fullscreen) {
@@ -378,6 +426,9 @@ bool platform_isFullScreen(void* windRef) {
 }
 
 int platform_getCurrentScreenDepth(int screenNum) {
+	#ifdef __EMSCRIPTEN__
+	return 32;
+	#else
 	glfwInitIfNeeded();
 	if (screenNum >= screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
 		GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
@@ -386,6 +437,7 @@ int platform_getCurrentScreenDepth(int screenNum) {
 	} else {
 		return 0;
 	}
+	#endif
 }
 
 void platform_captureScreen(int screenNum) {

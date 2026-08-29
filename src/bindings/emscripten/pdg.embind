@@ -26,17 +26,19 @@ emscripten::function("getTimerManager", &pdg::getTimerManager, emscripten::allow
 #endif
 
 
-#ifndef PDG_NO_GUI
+#ifndef PDG_NO_SOUND
   emscripten::function("getSoundManager", &pdg::getSoundManager, emscripten::allow_raw_pointers());
 #endif
 
-emscripten::function("createSpriteLayer", &pdg::createSpriteLayer, emscripten::allow_raw_pointers());
+emscripten::function("createSpriteLayer", &pdg::emscriptenCreateSpriteLayer, emscripten::allow_raw_pointers());
+emscripten::function("_createSpriteLayerForPort", &pdg::emscriptenCreateSpriteLayerForPort, emscripten::allow_raw_pointers());
 #ifdef PDG_SPRITER_SUPPORT
 emscripten::function("createSpriteLayerFromSpriterFile", &pdg::createSpriteLayerFromSpriterFile, emscripten::allow_raw_pointers());
 #endif
 emscripten::function("cleanupSpriteLayer", &pdg::cleanupLayer, emscripten::allow_raw_pointers());
 emscripten::function("cleanupLayer", &pdg::cleanupLayer, emscripten::allow_raw_pointers());
-emscripten::function("createTileLayer", &pdg::createTileLayer, emscripten::allow_raw_pointers());
+emscripten::function("createTileLayer", &pdg::emscriptenCreateTileLayer, emscripten::allow_raw_pointers());
+emscripten::function("_createTileLayerForPort", &pdg::emscriptenCreateTileLayerForPort, emscripten::allow_raw_pointers());
 emscripten::function("createDrawing", &pdg::emscriptenCreateDrawing, emscripten::allow_raw_pointers());
 
 emscripten::constant("lineStyle_Auto", static_cast<int>(pdg::lineStyle_Auto));
@@ -55,6 +57,18 @@ emscripten::constant("blendMode_Lighten", static_cast<int>(pdg::blendMode_Lighte
 emscripten::constant("gradientType_None", static_cast<int>(pdg::gradientType_None));
 emscripten::constant("gradientType_Linear", static_cast<int>(pdg::gradientType_Linear));
 emscripten::constant("gradientType_Radial", static_cast<int>(pdg::gradientType_Radial));
+emscripten::constant("fit_None", static_cast<int>(pdg::fit_None));
+emscripten::constant("fit_Fill", static_cast<int>(pdg::fit_Fill));
+// Compatibility name used by older JavaScript UI tests. The renamed mode is fit_Overflow.
+emscripten::constant("fit_FillKeepProportions", static_cast<int>(pdg::fit_Overflow));
+emscripten::constant("fit_Height", static_cast<int>(pdg::fit_Height));
+emscripten::constant("fit_Width", static_cast<int>(pdg::fit_Width));
+emscripten::constant("fit_Inside", static_cast<int>(pdg::fit_Inside));
+emscripten::constant("fit_Overflow", static_cast<int>(pdg::fit_Overflow));
+emscripten::constant("fit_Clipped", static_cast<int>(pdg::fit_Clipped));
+emscripten::constant("fit_TileX", static_cast<int>(pdg::fit_TileX));
+emscripten::constant("fit_TileY", static_cast<int>(pdg::fit_TileY));
+emscripten::constant("fit_Tile", static_cast<int>(pdg::fit_Tile));
 emscripten::constant("type_Line", static_cast<int>(pdg::type_Line));
 emscripten::constant("type_Spline", static_cast<int>(pdg::type_Spline));
 emscripten::constant("type_Arc", static_cast<int>(pdg::type_Arc));
@@ -404,8 +418,11 @@ emscripten::class_<pdg::ISpriteCollideHelper>("ISpriteCollideHelper")
 
 emscripten::class_<pdg::Sprite, emscripten::base<pdg::Animated>>("Sprite")
     Sprite_Extra
+    .function("setWantsCollideWallEvents", &pdg::Sprite::setWantsCollideWallEvents, emscripten::return_value_policy::reference())
+    .function("setWantsOffscreenEvents", &pdg::Sprite::setWantsOffscreenEvents, emscripten::return_value_policy::reference())
     .function("_enableCollisions", &pdg::Sprite::enableCollisions, emscripten::return_value_policy::reference())
     .function("disableCollisions", &pdg::Sprite::disableCollisions, emscripten::return_value_policy::reference())
+    .function("getCollisionType", &pdg::Sprite::getCollisionType)
     .function("_setElasticity", &pdg::Sprite::setElasticity, emscripten::return_value_policy::reference())
     .function("getElasticity", &pdg::Sprite::getElasticity)
     ;
@@ -554,6 +571,9 @@ emscripten::class_<pdg::Drawing>("Drawing")
     .function("_getBounds", &pdg::Drawing::getBounds)
     .function("_centerPoint", &pdg::Drawing::centerPoint)
     .function("empty", &pdg::Drawing::empty)
+#ifndef PDG_NO_GUI
+    .function("draw", &pdg::emscriptenDrawingDraw, emscripten::allow_raw_pointers())
+#endif
     ;
 
 
@@ -578,14 +598,14 @@ emscripten::class_<pdg::Drawing>("Drawing")
 #endif
 
 
-#ifndef PDG_NO_GUI
+#ifndef PDG_NO_SOUND
   emscripten::class_<pdg::Sound>("Sound")
     Sound_Extra
     ;
 #endif
 
 
-#ifndef PDG_NO_GUI
+#ifndef PDG_NO_SOUND
   emscripten::class_<pdg::SoundManager>("SoundManager")
     SoundManager_Extra
     ;

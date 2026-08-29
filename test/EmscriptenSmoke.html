@@ -6,9 +6,11 @@
 </head>
 <body>
   <pre id="result">WAITING</pre>
+  <canvas id="pdg-canvas" width="1" height="1" hidden></canvas>
   <script>
     (function() {
       var result = document.getElementById('result');
+      window.Module = { canvas: document.getElementById('pdg-canvas') };
 
       function fail(message) {
         result.textContent = 'FAIL: ' + message;

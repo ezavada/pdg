@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html data-status="running">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+  <title>PDG UI TEST: RUNNING</title>
+  <style>
+    body { margin: 0; background: #20252b; color: #f5f7fa; font: 14px sans-serif; }
+    #pdg-ui-status { padding: 10px 14px; }
+    #pdg-ui-result-json { display: none; }
+    #pdg-canvas { display: block; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="pdg-ui-status">Loading WebAssembly…</div>
+  <pre id="pdg-ui-result-json"></pre>
+  <canvas id="pdg-canvas" width="1200" height="900"></canvas>
+  <script>window.Module = { canvas: document.getElementById("pdg-canvas") };</script>
+  <script>
+    var runner = document.createElement("script");
+    runner.src = "emscripten_ui_runner.js?_pdg_cache=" + Date.now();
+    document.body.appendChild(runner);
+  </script>
+</body>
+</html>

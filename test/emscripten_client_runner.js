@@ -14,6 +14,8 @@
     ];
     var moduleCache = {};
     var loadErrors = [];
+    var specFailures = [];
+    var cacheToken = Date.now().toString(36);
     var statusNode = document.getElementById("pdg-test-status");
     var loadErrorNode = document.getElementById("pdg-load-errors");
 
@@ -23,7 +25,8 @@
 
     function requestSource(url) {
         var request = new XMLHttpRequest();
-        request.open("GET", url, false);
+        request.open("GET", url + (url.indexOf("?") === -1 ? "?" : "&") +
+            "_pdg_cache=" + cacheToken, false);
         request.send(null);
         if ((request.status >= 200 && request.status < 300) || request.status === 0) {
             return request.responseText;
@@ -115,6 +118,7 @@
             jasmineFailures: results.failedCount,
             loadFailures: loadErrors.length,
             loadErrors: loadErrors.map(function(message) { return message.split("\n")[0]; }),
+            failureDetails: specFailures,
             loadedFiles: specs.length + 1
         };
         window.pdgTestResults = result;
@@ -156,6 +160,28 @@
         var htmlReporter = new jasmine.HtmlReporter(document);
         jasmineEnv.updateInterval = 250;
         jasmineEnv.addReporter(htmlReporter);
+        jasmineEnv.addReporter({
+            reportSpecStarting: function(spec) {
+                console.log("[PDG TEST START] " + spec.getFullName());
+            },
+            reportSpecResults: function(spec) {
+                var results = spec.results();
+                console.log("[PDG TEST " + (results.passed() ? "PASS" : "FAIL") + "] " + spec.getFullName());
+                if (!results.passed()) {
+                    results.getItems().forEach(function(item) {
+                        if (item && item.passed && !item.passed()) {
+                            var trace = item.trace && item.trace.stack ? "\n" + item.trace.stack : "";
+                            var detail = spec.getFullName() + ": " + (item.message || item.trace || item) + trace;
+                            specFailures.push(detail);
+                            console.error("[PDG TEST DETAIL] " + detail);
+                            var node = document.createElement("li");
+                            node.textContent = detail;
+                            loadErrorNode.appendChild(node);
+                        }
+                    });
+                }
+            }
+        });
         jasmineEnv.addReporter({ reportRunnerResults: finish });
         jasmineEnv.specFilter = function(spec) { return htmlReporter.specFilter(spec); };
         setStatus("Running client specs...");
@@ -188,7 +214,7 @@
             return;
         }
         var script = document.createElement("script");
-        script.src = "../libpdg.js";
+        script.src = "../libpdg.js?_pdg_cache=" + cacheToken;
         script.onerror = function() { failInitialization("libpdg.js failed to load"); };
         document.head.appendChild(script);
         waitForPdg(Date.now() + 30000);

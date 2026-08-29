@@ -864,6 +864,50 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
             if (sprites && sprites[index]) return sprites[index];
             return this._getNthSprite(index);
         };
+        if (typeof layerProto._createSpriteFromSpriterFile === "function") {
+            layerProto.createSpriteFromSpriterFile = function(path, entity) {
+                var sprite = this._createSpriteFromSpriterFile(path,
+                    typeof entity === "undefined" || entity === null ? "" : entity);
+                if (sprite) {
+                    var sprites = layerSprites.get(this) || [];
+                    if (!layerSprites.has(this)) layerSprites.set(this, sprites);
+                    sprites.push(sprite);
+                }
+                return sprite;
+            };
+
+            var nativeSetEntityScale = spriteProto.setEntityScale;
+            var nativeGetSpriterCollisionBox = spriteProto.getSpriterCollisionBox;
+            var nativeHasAttachPoint = spriteProto.hasAttachPoint;
+            var nativeAttachSprite = spriteProto.attachSprite;
+            var nativeActivateSubEntity = spriteProto.activateSubEntity;
+            spriteProto.setEntityScale = function(x, y) {
+                nativeSetEntityScale.call(this, x, y);
+                return this;
+            };
+            spriteProto.getSpriterCollisionBox = function(name) {
+                var value = nativeGetSpriterCollisionBox.call(this, name);
+                return new bindings.RotatedRect(new bindings.Rect(value), value.radians,
+                    new bindings.Offset(value.centerOffset));
+            };
+            spriteProto.hasAttachPoint = function(name) {
+                if (typeof name === "undefined") throw new TypeError("AttachPoint name is required");
+                return nativeHasAttachPoint.call(this, name === null ? "" : name);
+            };
+            spriteProto.attachSprite = function(sprite, name) {
+                if (typeof name === "undefined" || name === null) {
+                    throw new TypeError("AttachPoint name is required");
+                }
+                nativeAttachSprite.call(this, sprite, name);
+            };
+            spriteProto.activateSubEntity = function(entity, animation) {
+                if (typeof entity === "undefined" || animation === null) {
+                    throw new TypeError("Sub-entity and animation names are required");
+                }
+                nativeActivateSubEntity.call(this, entity,
+                    typeof animation === "undefined" ? "idle" : animation);
+            };
+        }
         layerProto.setUseChipmunkPhysics = function(useIt) {
             if (typeof this._setUseChipmunkPhysics === "function") {
                 this._setUseChipmunkPhysics(useIt !== false);
@@ -872,6 +916,11 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
         };
         spriteProto.enableCollisions = function(collisionType) {
             this._enableCollisions(typeof collisionType === "undefined" ? bindings.collide_AlphaChannel : collisionType);
+            return this;
+        };
+        var nativeSetWantsCollideWallEvents = spriteProto.setWantsCollideWallEvents;
+        spriteProto.setWantsCollideWallEvents = function(wantsThem) {
+            nativeSetWantsCollideWallEvents.call(this, wantsThem !== false);
             return this;
         };
         spriteProto.setElasticity = function(value) {
@@ -1239,14 +1288,148 @@ if (inbrowser) {
         proto.getImageStrip = function(imageName) {
             return this._getImageStrip(imageName);
         };
+        if (typeof proto._getSound === "function") {
+            proto.getSound = function(soundName) { return this._getSound(soundName); };
+        }
     })(bindings.ResourceManager.prototype);
 }
 
 if (bindings.hasGraphics) {
     fixManagerConstructorAndToString(bindings.gfx, bindings.GraphicsManager, 'GraphicsManager');
+
+    if (inbrowser) {
+        (function() {
+            bindings._emscriptenPortsById = new Map();
+            function rememberPort(port) {
+                if (port && typeof port._getNativeIdentity === "function") {
+                    bindings._emscriptenPortsById.set(port._getNativeIdentity(), port);
+                }
+                return port;
+            }
+            var graphicsProto = bindings.GraphicsManager.prototype;
+            var nativeCreateWindowPort = graphicsProto._createWindowPort;
+            var nativeCreateFont = graphicsProto._createFont;
+            var nativeGetCurrentScreenMode = graphicsProto.getCurrentScreenMode;
+            var nativeGetScreenBounds = graphicsProto.getScreenBounds;
+            var nativeGetNumSupportedScreenModes = graphicsProto.getNumSupportedScreenModes;
+            var nativeGetNthSupportedScreenMode = graphicsProto.getNthSupportedScreenMode;
+            var nativeGetMouse = graphicsProto.getMouse;
+            var nativeSetTargetFPS = graphicsProto.setTargetFPS;
+            graphicsProto.createWindowPort = function(rect, name, bpp) {
+                return rememberPort(nativeCreateWindowPort.call(this, rect,
+                    typeof name === "undefined" ? "" : name,
+                    typeof bpp === "undefined" ? 0 : bpp));
+            };
+            graphicsProto.createFont = function(name, scalingFactor) {
+                return nativeCreateFont.call(this, name,
+                    typeof scalingFactor === "undefined" ? 1.0 : scalingFactor);
+            };
+            graphicsProto.getCurrentScreenMode = function(screenNum) {
+                return nativeGetCurrentScreenMode.call(this,
+                    typeof screenNum === "undefined" ? -1 : screenNum);
+            };
+            graphicsProto.getScreenBounds = function(screenNum) {
+                return new bindings.Rect(nativeGetScreenBounds.call(this,
+                    typeof screenNum === "undefined" ? -1 : screenNum));
+            };
+            graphicsProto.getNumSupportedScreenModes = function(screenNum) {
+                return nativeGetNumSupportedScreenModes.call(this,
+                    typeof screenNum === "undefined" ? -1 : screenNum);
+            };
+            graphicsProto.getNthSupportedScreenMode = function(n, screenNum) {
+                return nativeGetNthSupportedScreenMode.call(this, n,
+                    typeof screenNum === "undefined" ? -1 : screenNum);
+            };
+            graphicsProto.getMouse = function(mouseNumber) {
+                return new bindings.Point(nativeGetMouse.call(this,
+                    typeof mouseNumber === "undefined" ? 0 : mouseNumber));
+            };
+            graphicsProto.setTargetFPS = function(fps) {
+                nativeSetTargetFPS.call(this, fps);
+                return this;
+            };
+
+            var portProto = bindings.Port.prototype;
+            var nativeGetDrawingArea = portProto.getDrawingArea;
+            var nativeGetClipRect = portProto.getClipRect;
+            var nativeGetTextWidth = portProto._getTextWidth;
+            var nativeSetClipRect = portProto.setClipRect;
+            var nativeGetCurrentFont = portProto.getCurrentFont;
+            var nativeSetFontForStyle = portProto.setFontForStyle;
+            var nativeSetFont = portProto.setFont;
+            portProto.getDrawingArea = function() {
+                return new bindings.Rect(nativeGetDrawingArea.call(this));
+            };
+            portProto.getClipRect = function() {
+                return new bindings.Rect(nativeGetClipRect.call(this));
+            };
+            portProto.getTextWidth = function(text, size, style, len) {
+                return nativeGetTextWidth.call(this, text, size,
+                    typeof style === "undefined" ? bindings.textStyle_Plain : style,
+                    typeof len === "undefined" ? -1 : len);
+            };
+            portProto.getCurrentFont = function(style) {
+                return nativeGetCurrentFont.call(this,
+                    typeof style === "undefined" ? bindings.textStyle_Plain : style);
+            };
+            portProto.setFontForStyle = function(style, font) {
+                nativeSetFontForStyle.call(this, font, style);
+                return this;
+            };
+            portProto.setFont = function(font) {
+                nativeSetFont.call(this, typeof font === "undefined" ? null : font);
+                return this;
+            };
+            portProto.setClipRect = function(rect) {
+                nativeSetClipRect.call(this, rect);
+                return this;
+            };
+            ["drawLine", "drawRect", "drawQuad", "drawPolygon", "drawSpline",
+             "drawCircle", "drawEllipse", "drawArc", "drawImage", "drawDrawing",
+             "drawText", "drawSphere"].forEach(function(method) {
+                var nativeDraw = portProto[method];
+                portProto[method] = function() {
+                    nativeDraw.apply(this, arguments);
+                    return this;
+                };
+            });
+
+            var fontProto = bindings.Font.prototype;
+            ["Height", "Leading", "Ascent", "Descent"].forEach(function(metric) {
+                var nativeMetric = fontProto["_getFont" + metric];
+                fontProto["getFont" + metric] = function(size, style) {
+                    return nativeMetric.call(this, size,
+                        typeof style === "undefined" ? bindings.textStyle_Plain : style);
+                };
+            });
+        })();
+        bindings.getGraphicsManager = function() { return bindings.gfx; };
+        var nativeCreateSpriteLayer = bindings.createSpriteLayer;
+        bindings.createSpriteLayer = function(port) {
+            return typeof port === "undefined"
+                ? nativeCreateSpriteLayer()
+                : bindings._createSpriteLayerForPort(port);
+        };
+        var nativeCreateTileLayer = bindings.createTileLayer;
+        bindings.createTileLayer = function(port) {
+            return typeof port === "undefined"
+                ? nativeCreateTileLayer()
+                : bindings._createTileLayerForPort(port);
+        };
+    }
 }
 if (bindings.hasSound) {
     fixManagerConstructorAndToString(bindings.snd, bindings.SoundManager, 'SoundManager');
+    if (inbrowser) {
+        bindings.getSoundManager = function() { return bindings.snd; };
+        bindings.Sound.prototype.play = function(volume, offsetX, pitch, fromMs, lengthMs) {
+            this._play(typeof volume === "undefined" ? 1.0 : volume,
+                typeof offsetX === "undefined" ? 0 : offsetX,
+                typeof pitch === "undefined" ? 0.0 : pitch,
+                typeof fromMs === "undefined" ? 0 : fromMs,
+                typeof lengthMs === "undefined" ? -1 : lengthMs);
+        };
+    }
 }
 
 // Now get the prototype references (after fixing, these should be the same objects)
@@ -1292,7 +1475,8 @@ if (inbrowser) {
             if (!state) {
                 state = {
                     handlers: Object.create(null),
-                    blocked: Object.create(null)
+                    blocked: Object.create(null),
+                    nativeBridges: Object.create(null)
                 };
                 emitterStates.set(emitter, state);
             }
@@ -1304,8 +1488,13 @@ if (inbrowser) {
                 throw new TypeError("addHandler requires an IEventHandler");
             }
             if (typeof eventType === "undefined") eventType = bindings.all_events;
-            var handlers = getEmitterState(this).handlers;
+            var state = getEmitterState(this);
+            var handlers = state.handlers;
             var list = handlers[eventType] || (handlers[eventType] = []);
+            if (!state.nativeBridges[eventType] && typeof this._addNativeEventBridge === "function") {
+                this._addNativeEventBridge(eventType, this);
+                state.nativeBridges[eventType] = true;
+            }
             list.push(handler);
         }
 
@@ -1345,6 +1534,10 @@ if (inbrowser) {
         }
 
         function postEvent(eventType, event) {
+            if (event && typeof event.portIdentity !== "undefined" &&
+                bindings._emscriptenPortsById) {
+                event.port = bindings._emscriptenPortsById.get(event.portIdentity) || null;
+            }
             var state = getEmitterState(this);
             if (state.blocked[eventType]) return false;
             if (dispatchHandlers(state.handlers[eventType], event)) return true;
@@ -1363,6 +1556,7 @@ if (inbrowser) {
             EmitterType.prototype.blockEvent = blockEvent;
             EmitterType.prototype.unblockEvent = unblockEvent;
             EmitterType.prototype.postEvent = postEvent;
+            EmitterType.prototype.__dispatchNativeEvent = postEvent;
         });
 
         function installConvenienceHandler(proto, name, eventType, discriminator, expectedValue) {
@@ -1429,14 +1623,27 @@ if (inbrowser) {
         });
 
         var spriterEventStates = new WeakMap();
+        var nativeSpriteEnableSpriterEvents = bindings.Sprite.prototype.enableSpriterEvents;
+        var nativeSpriteAreSpriterEventsEnabled = bindings.Sprite.prototype.areSpriterEventsEnabled;
+        var nativeLayerEnableSpriterEvents = bindings.SpriteLayer.prototype.enableSpriterEvents;
         bindings.Sprite.prototype.enableSpriterEvents = function(enable) {
-            spriterEventStates.set(this, enable !== false);
+            var enabled = enable !== false;
+            if (typeof nativeSpriteEnableSpriterEvents === "function") {
+                nativeSpriteEnableSpriterEvents.call(this, enabled);
+            }
+            spriterEventStates.set(this, enabled);
             return this;
         };
         bindings.Sprite.prototype.areSpriterEventsEnabled = function() {
+            if (typeof nativeSpriteAreSpriterEventsEnabled === "function") {
+                return nativeSpriteAreSpriterEventsEnabled.call(this);
+            }
             return spriterEventStates.get(this) === true;
         };
-        bindings.SpriteLayer.prototype.enableSpriterEvents = function() {
+        bindings.SpriteLayer.prototype.enableSpriterEvents = function(enable) {
+            if (typeof nativeLayerEnableSpriterEvents === "function") {
+                nativeLayerEnableSpriterEvents.call(this, enable !== false);
+            }
             return this;
         };
 

@@ -401,7 +401,7 @@ function runAnimationTest(port) {
     var topLeft = new pdg.Point(centerX - img.getWidth()/2, centerY - img.getHeight()/2);
     
     port.drawImage(img, topLeft, new pdg.Attributes().rotation(rad, center));
-    port.drawText("Rotated: " + Math.round(angle) + "°", new pdg.Point(centerX - 40, centerY + size + 10), textAttrs);
+    port.drawText("Rotated: " + Math.round(angle) + "°", new pdg.Point(centerX - 40, centerY + img.getHeight()/2 + 10), textAttrs);
 }
 
 // Test 4: Image opacity

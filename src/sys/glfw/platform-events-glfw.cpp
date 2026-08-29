@@ -49,6 +49,7 @@ static bool sCmd = false;
 static bool sRepeat = false;
 #endif
 
+#ifndef __EMSCRIPTEN__
 void platform_init(int argc, const char* argv[]) {
   #ifndef PDG_NO_GUI
 	glfwInitIfNeeded();
@@ -66,6 +67,7 @@ void platform_cleanup() {
 	glfwTerminate();
   #endif
 }
+#endif
 
 void platform_getDeviceOrientation(float* outRoll, float* outPitch, float* outYaw, bool absolute) {
     *outPitch = 0.0f;
@@ -299,4 +301,3 @@ unichar remapKeyboardChar(unichar character, int modifierFlags, bool& shift, boo
 
 
 } // end namespace pdg
-

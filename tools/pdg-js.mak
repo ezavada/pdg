@@ -41,17 +41,20 @@ INCLUDES := \
 	-I$(PDG_ROOT)/src/sys/unix \
 	-I$(PDG_ROOT)/src/sys/glfw \
 	-I$(PDG_ROOT)/deps/chipmunk/include \
+	-I$(PDG_ROOT)/deps/libtess2/Include \
+	-I$(PDG_ROOT)/deps/libtess2/Source \
 	-I$(PDG_ROOT)/deps/SpriterPlusPlus/ \
 	-I$(PDG_ROOT)/deps/SpriterPlusPlus/tinyxml2 \
 	-I$(PDG_ROOT)/deps/SpriterPlusPlus/pugixml \
+	-I$(PDG_ROOT)/deps/SpriterPlusPlus/example \
 	-I$(PDG_ROOT)/deps/SpriterPlusPlus/nlohmann-json
 
 DEFINES := \
 	'-DDEBUG' \
 	'-DPDG_DEBUG_OUT_TO_LOG' \
 	'-DPDG_USE_CHIPMUNK_PHYSICS' \
-	'-DPDG_NO_GUI' \
-	'-DPDG_NO_SOUND' \
+	'-DPDG_USE_GLFW' \
+	'-DPDG_SPRITER_SUPPORT' \
 	'-DPDG_NO_APP_FRAMEWORK' \
 	'-DPDG_NO_NETWORK' \
 	'-DPDG_LIBRARY' \
@@ -67,13 +70,18 @@ WEBIDL_BIND=$(EMSCRIPTEN_INSTALL_DIR)/tools/webidl_binder.py
 
 LIBS = \
     -s USE_ZLIB=1 \
-    -s USE_LIBPNG=1
+    -s USE_LIBPNG=1 \
+    -s USE_GLFW=3 \
+    -s LEGACY_GL_EMULATION=1 \
+    -s ALLOW_MEMORY_GROWTH=1 \
+    -s INITIAL_MEMORY=67108864 \
+    -s DISABLE_EXCEPTION_CATCHING=0
 
 
 CFLAGS_ALL=-gsource-map -Wno-warn-absolute-paths -DMOZZCONF_H $(DEFINES) $(INCLUDES)
 
 CFLAGS=$(CFLAGS_ALL)
-CXXFLAGS=-std=c++17 $(CFLAGS_ALL)
+CXXFLAGS=-std=c++17 -fexceptions $(CFLAGS_ALL)
 
 OUT_DIR=$(PDG_ROOT)/build/js/pdg
 SRC_SYS_DIR=$(PDG_ROOT)/src/sys
@@ -85,6 +93,13 @@ SRC_BINDINGS_DIR=$(PDG_ROOT)/src/bindings/emscripten
 SRC_BINDINGS_JAVASCRIPT_DIR=$(PDG_ROOT)/src/bindings/javascript
 SRC_JS_DIR=$(PDG_ROOT)/src/js
 
+SPRITER_ENGINE_SOURCES := $(shell find $(SRC_SPRITERPLUSPLUS_DIR)/spriterengine -name '*.cpp' -print)
+SPRITER_ENGINE_OBJS := $(patsubst $(SRC_SPRITERPLUSPLUS_DIR)/spriterengine/%.cpp,$(OUT_DIR)/spriterengine/%.cpp.o,$(SPRITER_ENGINE_SOURCES))
+SPRITER_OVERRIDE_NAMES := tinyxmlspriterfiledocumentwrapper tinyxmlspriterfileelementwrapper tinyxmlspriterfileattributewrapper
+SPRITER_OVERRIDE_OBJS := $(addprefix $(OUT_DIR)/spriter-override/,$(addsuffix .cpp.o,$(SPRITER_OVERRIDE_NAMES)))
+PDG_SPRITER_NAMES := pdg_file_factory pdg_object_factory pdg_image_file pdg_point_instance_info pdg_bone_instance_info pdg_box_instance_info pdg_spriter_file_document_wrapper
+PDG_SPRITER_OBJS := $(addprefix $(OUT_DIR)/pdg-spriter/,$(addsuffix .cpp.o,$(PDG_SPRITER_NAMES)))
+
 
 ADDITIONAL_JS_FILES= \
     --embed-file $(SRC_JS_DIR)/dump.js@/js_modules/dump.js \
@@ -95,6 +110,14 @@ ADDITIONAL_JS_FILES= \
     --embed-file $(PDG_ROOT)/test/yinyang.png@/yinyang.png \
     --embed-file $(PDG_ROOT)/test/tiles.png@/tiles.png \
     --embed-file $(PDG_ROOT)/test/data@/data \
+    --embed-file $(PDG_ROOT)/test/data@/test/data \
+    --embed-file $(PDG_ROOT)/test/earthmap.jpg@/earthmap.jpg \
+    --embed-file $(PDG_ROOT)/test/earthmap2.png@/earthmap2.png \
+    --embed-file $(PDG_ROOT)/test/jupitermap2.jpg@/jupitermap2.jpg \
+    --embed-file $(PDG_ROOT)/test/moonmap2.jpg@/moonmap2.jpg \
+    --embed-file $(PDG_ROOT)/test/earthmap2.png@/test/earthmap2.png \
+    --embed-file $(PDG_ROOT)/test/perf/canvasmark2013/images/texture5.png@/test/perf/canvasmark2013/images/texture5.png \
+    --embed-file $(PDG_ROOT)/test/perf/bunnymark/wabbit.png@/test/perf/bunnymark/wabbit.png \
     --embed-file $(PDG_ROOT)/test/spec@/spec \
     --embed-file $(PDG_ROOT)/test/cxx@/cxx \
     --embed-file $(PDG_ROOT)/test/js@/js \
@@ -120,17 +143,23 @@ OBJS= \
 	$(OUT_DIR)/eventemitter.cpp.o \
     $(OUT_DIR)/eventmanager.cpp.o \
 	$(OUT_DIR)/font-impl.cpp.o \
+	$(OUT_DIR)/font-fallback.cpp.o \
 	$(OUT_DIR)/graphics-manager.cpp.o \
     $(OUT_DIR)/graphics-opengl.cpp.o \
 	$(OUT_DIR)/image-opengl.cpp.o \
+	$(OUT_DIR)/imagecache-opengl.cpp.o \
+	$(OUT_DIR)/imagecache-opengl-v2.cpp.o \
 	$(OUT_DIR)/image.cpp.o \
     $(OUT_DIR)/log.cpp.o \
 	$(OUT_DIR)/os.cpp.o \
+	$(OUT_DIR)/opengl-state-cache.cpp.o \
 	$(OUT_DIR)/pdg-lib.cpp.o \
 	$(OUT_DIR)/pdg-main.cpp.o \
 	$(OUT_DIR)/polygon.cpp.o \
+	$(OUT_DIR)/port-renderer.cpp.o \
     $(OUT_DIR)/resource.cpp.o \
 	$(OUT_DIR)/serializer.cpp.o \
+	$(OUT_DIR)/sound-emscripten.cpp.o \
 	$(OUT_DIR)/spline.cpp.o \
 	$(OUT_DIR)/sprite.cpp.o \
     $(OUT_DIR)/spritelayer.cpp.o \
@@ -168,12 +197,29 @@ OBJS= \
 	$(OUT_DIR)/cpSpaceStep.c.o \
 	$(OUT_DIR)/cpSpatialIndex.c.o \
 	$(OUT_DIR)/cpSweep1D.c.o \
+	$(OUT_DIR)/libtess2-bucketalloc.c.o \
+	$(OUT_DIR)/libtess2-dict.c.o \
+	$(OUT_DIR)/libtess2-geom.c.o \
+	$(OUT_DIR)/libtess2-mesh.c.o \
+	$(OUT_DIR)/libtess2-priorityq.c.o \
+	$(OUT_DIR)/libtess2-sweep.c.o \
+	$(OUT_DIR)/libtess2-tess.c.o \
     $(OUT_DIR)/unzip.c.o \
     $(OUT_DIR)/ioapi.c.o \
 	$(OUT_DIR)/image-png.cpp.o \
+	$(OUT_DIR)/glues_quad.c.o \
+	$(OUT_DIR)/graphics-emscripten.cpp.o \
+	$(OUT_DIR)/platform-graphics-glfw.cpp.o \
+	$(OUT_DIR)/platform-events-glfw.cpp.o \
 	$(OUT_DIR)/config-unix.cpp.o \
 	$(OUT_DIR)/platform-unix.cpp.o \
 	$(OUT_DIR)/os-unix.cpp.o
+
+OBJS += $(SPRITER_ENGINE_OBJS) \
+	$(OUT_DIR)/tinyxml2.cpp.o \
+	$(OUT_DIR)/pugixml.cpp.o \
+	$(SPRITER_OVERRIDE_OBJS) \
+	$(PDG_SPRITER_OBJS)
 
 
 #bindings: $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
@@ -185,7 +231,12 @@ OBJS= \
 
 # $(ADDITIONAL_JS_FILES) -s EXPORTED_FUNCTIONS=$(EXPORTS)
 #	-@rm parser.out WebIDLGrammar.pkl 
-libpdg: $(OBJS)
+libpdg: $(OBJS) \
+	$(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp \
+	$(SRC_BINDINGS_DIR)/pdg.embind \
+	$(SRC_BINDINGS_DIR)/platform-emscripten.js \
+	$(SRC_BINDINGS_DIR)/pdg_emscripten.js \
+	$(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js
 	@echo  'Linking libpdg...'
 	@$(CXX) --bind $(CXXFLAGS) $(ADDITIONAL_JS_FILES) -o $(PDG_ROOT)/libpdg.js $(OBJS) $(LIBS) $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
 	@echo Done.
@@ -262,26 +313,77 @@ $(OUT_DIR)/eventmanager.cpp.o: $(SRC_SYS_DIR)/eventmanager.cpp
 $(OUT_DIR)/font-impl.cpp.o: $(SRC_SYS_DIR)/font-impl.cpp
 	@echo  'Compiling font-impl.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/font-impl.cpp.o -c $(SRC_SYS_DIR)/font-impl.cpp
-	
+
+$(OUT_DIR)/font-fallback.cpp.o: $(SRC_SYS_DIR)/font-fallback.cpp
+	@echo  'Compiling font-fallback.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/font-fallback.cpp.o -c $(SRC_SYS_DIR)/font-fallback.cpp
 
 $(OUT_DIR)/graphics-manager.cpp.o: $(SRC_SYS_DIR)/graphics-manager.cpp
 	@echo  'Compiling graphics-manager.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/graphics-manager.cpp.o -c $(SRC_SYS_DIR)/graphics-manager.cpp
-	
 
 $(OUT_DIR)/graphics-opengl.cpp.o: $(SRC_SYS_DIR)/graphics-opengl.cpp
 	@echo  'Compiling graphics-opengl.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/graphics-opengl.cpp.o -c $(SRC_SYS_DIR)/graphics-opengl.cpp
-	
 
 $(OUT_DIR)/image-opengl.cpp.o: $(SRC_SYS_DIR)/image-opengl.cpp
 	@echo  'Compiling image-opengl.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/image-opengl.cpp.o -c $(SRC_SYS_DIR)/image-opengl.cpp
-	
+
+$(OUT_DIR)/imagecache-opengl.cpp.o: $(SRC_SYS_DIR)/imagecache-opengl.cpp
+	@echo  'Compiling imagecache-opengl.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/imagecache-opengl.cpp.o -c $(SRC_SYS_DIR)/imagecache-opengl.cpp
+
+$(OUT_DIR)/imagecache-opengl-v2.cpp.o: $(SRC_SYS_DIR)/imagecache-opengl-v2.cpp
+	@echo  'Compiling imagecache-opengl-v2.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/imagecache-opengl-v2.cpp.o -c $(SRC_SYS_DIR)/imagecache-opengl-v2.cpp
 
 $(OUT_DIR)/image-png.cpp.o: $(SRC_SYS_DIR)/image-png.cpp
 	@echo  'Compiling image-png.cpp...'
 	@$(CXX) $(CXXFLAGS) -include $(PDG_ROOT)/deps/png/scripts/pnglibconf.h.prebuilt -o $(OUT_DIR)/image-png.cpp.o -c $(SRC_SYS_DIR)/image-png.cpp
+
+$(OUT_DIR)/glues_quad.c.o: $(SRC_SYS_DIR)/gles/glues_quad.c
+	@echo  'Compiling glues_quad.c...'
+	@$(CC) $(CFLAGS) -o $(OUT_DIR)/glues_quad.c.o -c $(SRC_SYS_DIR)/gles/glues_quad.c
+
+$(OUT_DIR)/graphics-emscripten.cpp.o: $(SRC_SYS_DIR)/emscripten/graphics-emscripten.cpp
+	@echo  'Compiling graphics-emscripten.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/graphics-emscripten.cpp.o -c $(SRC_SYS_DIR)/emscripten/graphics-emscripten.cpp
+
+$(OUT_DIR)/sound-emscripten.cpp.o: $(SRC_SYS_DIR)/emscripten/sound-emscripten.cpp
+	@echo  'Compiling sound-emscripten.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/sound-emscripten.cpp.o -c $(SRC_SYS_DIR)/emscripten/sound-emscripten.cpp
+
+$(OUT_DIR)/platform-graphics-glfw.cpp.o: $(SRC_SYS_DIR)/glfw/platform-graphics-glfw.cpp
+	@echo  'Compiling platform-graphics-glfw.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/platform-graphics-glfw.cpp.o -c $(SRC_SYS_DIR)/glfw/platform-graphics-glfw.cpp
+
+$(OUT_DIR)/platform-events-glfw.cpp.o: $(SRC_SYS_DIR)/glfw/platform-events-glfw.cpp
+	@echo  'Compiling platform-events-glfw.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/platform-events-glfw.cpp.o -c $(SRC_SYS_DIR)/glfw/platform-events-glfw.cpp
+
+$(OUT_DIR)/spriterengine/%.cpp.o: $(SRC_SPRITERPLUSPLUS_DIR)/spriterengine/%.cpp
+	@echo  'Compiling SpriterPlusPlus $*.cpp...'
+	@mkdir -p $(dir $@)
+	@$(CXX) $(CXXFLAGS) -Wno-overloaded-virtual -o $@ -c $<
+
+$(OUT_DIR)/tinyxml2.cpp.o: $(SRC_SPRITERPLUSPLUS_DIR)/tinyxml2/tinyxml2.cpp
+	@echo  'Compiling tinyxml2.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/pugixml.cpp.o: $(SRC_SPRITERPLUSPLUS_DIR)/pugixml/pugixml.cpp
+	@echo  'Compiling pugixml.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/spriter-override/%.cpp.o: $(SRC_SPRITERPLUSPLUS_DIR)/example/override/%.cpp
+	@echo  'Compiling Spriter override $*.cpp...'
+	@mkdir -p $(dir $@)
+	@$(CXX) $(CXXFLAGS) -Wno-overloaded-virtual -o $@ -c $<
+
+$(OUT_DIR)/pdg-spriter/%.cpp.o: $(SRC_SYS_DIR)/spriter/%.cpp
+	@echo  'Compiling PDG Spriter $*.cpp...'
+	@mkdir -p $(dir $@)
+	@$(CXX) $(CXXFLAGS) -Wno-overloaded-virtual -o $@ -c $<
 	
 
 $(OUT_DIR)/image.cpp.o: $(SRC_SYS_DIR)/image.cpp
@@ -304,6 +406,10 @@ $(OUT_DIR)/os.cpp.o: $(SRC_SYS_DIR)/os.cpp
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/os.cpp.o -c $(SRC_SYS_DIR)/os.cpp
 	
 
+$(OUT_DIR)/opengl-state-cache.cpp.o: $(SRC_SYS_DIR)/opengl-state-cache.cpp
+	@echo  'Compiling opengl-state-cache.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/opengl-state-cache.cpp.o -c $(SRC_SYS_DIR)/opengl-state-cache.cpp
+
 $(OUT_DIR)/pdg-lib.cpp.o: $(SRC_SYS_DIR)/pdg-lib.cpp
 	@echo  'Compiling pdg-lib.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/pdg-lib.cpp.o -c $(SRC_SYS_DIR)/pdg-lib.cpp
@@ -317,6 +423,11 @@ $(OUT_DIR)/pdg-main.cpp.o: $(SRC_SYS_DIR)/pdg-main.cpp
 $(OUT_DIR)/polygon.cpp.o: $(SRC_SYS_DIR)/polygon.cpp
 	@echo  'Compiling polygon.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/polygon.cpp.o -c $(SRC_SYS_DIR)/polygon.cpp
+
+
+$(OUT_DIR)/port-renderer.cpp.o: $(SRC_SYS_DIR)/port-renderer.cpp
+	@echo  'Compiling port-renderer.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/port-renderer.cpp.o -c $(SRC_SYS_DIR)/port-renderer.cpp
 
 
 $(OUT_DIR)/resource.cpp.o: $(SRC_SYS_DIR)/resource.cpp
@@ -518,6 +629,10 @@ $(OUT_DIR)/cpSweep1D.c.o: $(SRC_CHIPMUNK_DIR)/cpSweep1D.c
 	@echo  'Compiling cpSweep1D.c...'
 	@$(CC) $(CFLAGS) -o $(OUT_DIR)/cpSweep1D.c.o -c $(SRC_CHIPMUNK_DIR)/cpSweep1D.c
 	
+
+$(OUT_DIR)/libtess2-%.c.o: $(PDG_ROOT)/deps/libtess2/Source/%.c
+	@echo  'Compiling libtess2 $*.c...'
+	@$(CC) $(CFLAGS) -o $@ -c $<
 
 $(OUT_DIR)/unzip.c.o: $(SRC_MINIZIP_DIR)/unzip.c
 	@echo  'Compiling unzip.c...'

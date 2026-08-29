@@ -363,7 +363,7 @@ class Controller {
      * @returns {boolean} true if handled
      */
     onPortDraw(eventData) {
-        if (!this.parent) {
+        if (!this.parent && eventData && eventData.port === this.port) {
             // the top level controller handles port draw events
             // but this keeps us safe if a subclass overrides it
             // and calls super to do some additional drawing

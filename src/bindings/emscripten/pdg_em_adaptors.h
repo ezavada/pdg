@@ -15,6 +15,15 @@ namespace pdg {
 
 class FileManager;
 
+void emscriptenEventEmitterAddBridge(EventEmitter& emitter, long eventType,
+                                     const emscripten::val& jsEmitter);
+void emscriptenSpriteAddEventBridge(Sprite& emitter, long eventType,
+                                    const emscripten::val& jsEmitter);
+void emscriptenSpriteLayerAddEventBridge(SpriteLayer& emitter, long eventType,
+                                         const emscripten::val& jsEmitter);
+void emscriptenEventManagerAddEventBridge(EventManager& emitter, long eventType,
+                                          const emscripten::val& jsEmitter);
+
 // extend the config manager to handle API differences between C++ and Javascript
 
 // TODO: add this to ConfigManager
@@ -38,6 +47,64 @@ void emscriptenConfigSetFloat(ConfigManager& manager, const std::string& key, fl
 void emscriptenConfigSetBool(ConfigManager& manager, const std::string& key, bool value);
 
 MemBlock* emscriptenCreateEmptyMemBlock();
+SpriteLayer* emscriptenCreateSpriteLayer();
+TileLayer* emscriptenCreateTileLayer();
+
+#ifndef PDG_NO_GUI
+emscripten::val emscriptenGraphicsGetCurrentScreenMode(GraphicsManager& manager, int screenNum);
+emscripten::val emscriptenGraphicsGetNthSupportedScreenMode(GraphicsManager& manager, int n, int screenNum);
+Port* emscriptenGraphicsCreateWindowPort(GraphicsManager& manager, const Rect& rect, const std::string& name, int bpp);
+Port* emscriptenCreatePort(long width, long height);
+uintptr_t emscriptenPortGetIdentity(Port& port);
+Font* emscriptenGraphicsCreateFont(GraphicsManager& manager, const std::string& name, float scalingFactor);
+void emscriptenPortDrawImage(Port& port, Image* image, const emscripten::val& destination, const Attributes& attributes);
+void emscriptenPortDrawDrawing(Port& port, const Drawing& drawing, const emscripten::val& destination, const Attributes& attributes);
+void emscriptenPortDrawText(Port& port, const std::string& text, const emscripten::val& destination, const Attributes& attributes);
+int emscriptenPortGetTextWidth(Port& port, const std::string& text, int size, uint32 style, int len);
+int emscriptenPortStartTrackingMouse(Port& port, const Rect& rect);
+void emscriptenPortDrawCircle(Port& port, const Point& center, float radius,
+                              const Attributes& attributes);
+void emscriptenPortDrawQuad(Port& port, const emscripten::val& quad,
+                            const Attributes& attributes);
+SpriteLayer* emscriptenCreateSpriteLayerForPort(Port* port);
+TileLayer* emscriptenCreateTileLayerForPort(Port* port);
+std::string emscriptenFontGetName(Font& font);
+float emscriptenFontGetHeight(Font& font, int size, int style);
+float emscriptenFontGetLeading(Font& font, int size, int style);
+float emscriptenFontGetAscent(Font& font, int size, int style);
+float emscriptenFontGetDescent(Font& font, int size, int style);
+void emscriptenDrawingDraw(Drawing& drawing, Port* port);
+#ifdef PDG_SPRITER_SUPPORT
+bool emscriptenSpriteHasAnimation(Sprite& sprite, const emscripten::val& animation);
+void emscriptenSpriteStartAnimation(Sprite& sprite, const emscripten::val& animation);
+void emscriptenSpriteBlendToAnimation(Sprite& sprite, const emscripten::val& animation, float blendTime);
+void emscriptenSpriteApplyCharacterMap(Sprite& sprite, const std::string& name);
+void emscriptenSpriteRemoveCharacterMap(Sprite& sprite, const std::string& name);
+emscripten::val emscriptenSpriteGetAppliedCharacterMaps(const Sprite& sprite);
+bool emscriptenSpriteHasAttachPoint(const Sprite& sprite, const std::string& name);
+Offset emscriptenSpriteGetAttachPoint(const Sprite& sprite, const std::string& name);
+void emscriptenSpriteAttachSprite(Sprite& sprite, Sprite* attached, const std::string& name);
+Sprite* emscriptenSpriteGetAttachedSprite(const Sprite& sprite, const std::string& name);
+void emscriptenSpriteActivateSubEntity(Sprite& sprite, const std::string& entity, const std::string& animation);
+bool emscriptenSpriteIsCollisionActive(const Sprite& sprite, const std::string& name);
+emscripten::val emscriptenSpriteGetCollisionBox(const Sprite& sprite, const std::string& name);
+emscripten::val emscriptenSpriteGetCollisionBoxName(const Sprite& sprite, int index);
+Sprite* emscriptenLayerCreateSpriteFromFile(SpriteLayer& layer, const std::string& path, const std::string& entity);
+Sprite* emscriptenLayerCreateSpriteFromEntity(SpriteLayer& layer, const std::string& entity);
+void emscriptenLayerApplyCharacterMap(SpriteLayer& layer, const std::string& name);
+void emscriptenLayerRemoveCharacterMap(SpriteLayer& layer, const std::string& name);
+#endif
+#endif
+#ifndef PDG_NO_SOUND
+void emscriptenSoundPlay(Sound& sound, float volume, int32 offsetX, float pitch,
+                         ms_time fromMs, ms_delta lengthMs);
+void emscriptenSoundChangePitch(Sound& sound, float target, ms_delta duration);
+void emscriptenSoundChangeOffset(Sound& sound, int32 target, ms_delta duration);
+void emscriptenSoundFadeOut(Sound& sound, ms_delta duration);
+void emscriptenSoundFadeIn(Sound& sound, ms_delta duration);
+void emscriptenSoundChangeVolume(Sound& sound, float target, ms_delta duration);
+Sound* emscriptenResourceGetSound(ResourceManager& manager, const std::string& soundName);
+#endif
 Polygon* emscriptenPolygonIntersection(Polygon& polygon, const Polygon& other);
 Polygon* emscriptenPolygonUnion(Polygon& polygon, const Polygon& other);
 

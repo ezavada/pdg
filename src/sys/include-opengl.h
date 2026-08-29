@@ -35,7 +35,11 @@
 
 #include "pdg/sys/platform.h"
 
-#ifdef PLATFORM_WIN32
+#ifdef __EMSCRIPTEN__
+  #include <GL/gl.h>
+  #include "gles/glues_quad.h"
+  #define glVertexColor4f glColor4f
+#elif defined(PLATFORM_WIN32)
   #include <windows.h>
   #include <GL/gl.h>
   #include <GL/glu.h>

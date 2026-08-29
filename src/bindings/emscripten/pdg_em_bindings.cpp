@@ -88,11 +88,34 @@ namespace pdg {
 #define CpConstraint_Extra 
 #define CpSpace_Extra 
 #define Deserializer_Extra .constructor<>()
-#define EventEmitter_Extra .constructor<>()
-#define EventManager_Extra 
+#define EventEmitter_Extra \
+    .constructor<>() \
+    .function("_addNativeEventBridge", &pdg::emscriptenEventEmitterAddBridge)
+#define EventManager_Extra \
+    .function("_addNativeEventBridge", &pdg::emscriptenEventManagerAddEventBridge)
 #define FileManager_Extra 
-#define Font_Extra 
-#define GraphicsManager_Extra 
+#define Font_Extra \
+    .function("getFontName", &pdg::emscriptenFontGetName) \
+    .function("_getFontHeight", &pdg::emscriptenFontGetHeight) \
+    .function("_getFontLeading", &pdg::emscriptenFontGetLeading) \
+    .function("_getFontAscent", &pdg::emscriptenFontGetAscent) \
+    .function("_getFontDescent", &pdg::emscriptenFontGetDescent)
+#define GraphicsManager_Extra \
+    .function("getNumScreens", &pdg::GraphicsManager::getNumScreens) \
+    .function("getCurrentScreenMode", &pdg::emscriptenGraphicsGetCurrentScreenMode) \
+    .function("getScreenBounds", &pdg::GraphicsManager::getScreenBounds) \
+    .function("getNumSupportedScreenModes", &pdg::GraphicsManager::getNumSupportedScreenModes) \
+    .function("getNthSupportedScreenMode", &pdg::emscriptenGraphicsGetNthSupportedScreenMode) \
+    .function("setScreenMode", &pdg::GraphicsManager::setScreenMode) \
+    .function("_createWindowPort", &pdg::emscriptenGraphicsCreateWindowPort, emscripten::allow_raw_pointers()) \
+    .function("closeGraphicsPort", &pdg::GraphicsManager::closeGraphicsPort, emscripten::allow_raw_pointers()) \
+    .function("closeAllGraphicsPorts", &pdg::GraphicsManager::closeAllGraphicsPorts) \
+    .function("_createFont", &pdg::emscriptenGraphicsCreateFont, emscripten::allow_raw_pointers()) \
+    .function("getMainPort", &pdg::GraphicsManager::getMainPort, emscripten::allow_raw_pointers()) \
+    .function("getFPS", &pdg::GraphicsManager::getFPS) \
+    .function("setTargetFPS", &pdg::GraphicsManager::setTargetFPS) \
+    .function("getTargetFPS", &pdg::GraphicsManager::getTargetFPS) \
+    .function("getMouse", &pdg::GraphicsManager::getMouse)
 #define Image_Extra 
 #define ImageStrip_Extra 
 #define IAnimationHelper_Extra 
@@ -102,13 +125,106 @@ namespace pdg {
 #define ISpriteDrawHelper_Extra 
 #define LogManager_Extra 
 #define MemBlock_Extra .constructor(&pdg::emscriptenCreateEmptyMemBlock, emscripten::allow_raw_pointers())
-#define Port_Extra 
-#define ResourceManager_Extra 
+#define Port_Extra \
+    .constructor(&pdg::emscriptenCreatePort, emscripten::allow_raw_pointers()) \
+    .function("_getNativeIdentity", &pdg::emscriptenPortGetIdentity) \
+    .function("getDrawingArea", &pdg::Port::getDrawingArea) \
+    .function("getClipRect", &pdg::Port::getClipRect) \
+    .function("setClipRect", &pdg::Port::setClipRect) \
+    .function("_getTextWidth", &pdg::emscriptenPortGetTextWidth) \
+    .function("getCurrentFont", &pdg::Port::getCurrentFont, emscripten::allow_raw_pointers()) \
+    .function("setFont", &pdg::Port::setFont, emscripten::allow_raw_pointers()) \
+    .function("setFontForStyle", &pdg::Port::setFontForStyle, emscripten::allow_raw_pointers()) \
+    .function("setFontScalingFactor", &pdg::Port::setFontScalingFactor) \
+    .function("startTrackingMouse", &pdg::emscriptenPortStartTrackingMouse) \
+    .function("stopTrackingMouse", &pdg::Port::stopTrackingMouse) \
+    .function("resetCursor", &pdg::Port::resetCursor) \
+    .function("drawLine", &pdg::Port::drawLine) \
+    .function("drawRect", &pdg::Port::drawRect) \
+    .function("drawQuad", &pdg::emscriptenPortDrawQuad) \
+    .function("drawPolygon", &pdg::Port::drawPolygon) \
+    .function("drawSpline", &pdg::Port::drawSpline) \
+    .function("drawCircle", &pdg::emscriptenPortDrawCircle) \
+    .function("drawEllipse", &pdg::Port::drawEllipse) \
+    .function("drawArc", &pdg::Port::drawArc) \
+    .function("drawImage", &pdg::emscriptenPortDrawImage, emscripten::allow_raw_pointers()) \
+    .function("drawDrawing", &pdg::emscriptenPortDrawDrawing) \
+    .function("drawText", &pdg::emscriptenPortDrawText) \
+    .function("drawSphere", &pdg::Port::drawSphere)
+#ifndef PDG_NO_SOUND
+#define ResourceManager_Extra \
+    .function("_getSound", &pdg::emscriptenResourceGetSound, emscripten::allow_raw_pointers())
+#else
+#define ResourceManager_Extra
+#endif
 #define Serializer_Extra .constructor<>()
-#define Sound_Extra 
-#define SoundManager_Extra
-#define Sprite_Extra 
-#define SpriteLayer_Extra 
+#define Sound_Extra \
+    .function("_play", &pdg::emscriptenSoundPlay) \
+    .function("start", &pdg::Sound::start) \
+    .function("stop", &pdg::Sound::stop) \
+    .function("pause", &pdg::Sound::pause) \
+    .function("resume", &pdg::Sound::resume) \
+    .function("isPaused", &pdg::Sound::isPaused) \
+    .function("setLooping", &pdg::Sound::setLooping, emscripten::return_value_policy::reference()) \
+    .function("isLooping", &pdg::Sound::isLooping) \
+    .function("setVolume", &pdg::Sound::setVolume, emscripten::return_value_policy::reference()) \
+    .function("getVolume", &pdg::Sound::getVolume) \
+    .function("setPitch", &pdg::Sound::setPitch, emscripten::return_value_policy::reference()) \
+    .function("changePitch", &pdg::emscriptenSoundChangePitch) \
+    .function("setOffsetX", &pdg::Sound::setOffsetX, emscripten::return_value_policy::reference()) \
+    .function("changeOffsetX", &pdg::emscriptenSoundChangeOffset) \
+    .function("fadeOut", &pdg::emscriptenSoundFadeOut) \
+    .function("fadeIn", &pdg::emscriptenSoundFadeIn) \
+    .function("changeVolume", &pdg::emscriptenSoundChangeVolume) \
+    .function("skip", &pdg::Sound::skip, emscripten::return_value_policy::reference()) \
+    .function("skipTo", &pdg::Sound::skipTo, emscripten::return_value_policy::reference())
+#define SoundManager_Extra \
+    .function("setVolume", &pdg::SoundManager::setVolume) \
+    .function("setMute", &pdg::SoundManager::setMute) \
+    .function("stopAllSounds", &pdg::SoundManager::stopAllSounds)
+#ifdef PDG_SPRITER_SUPPORT
+#define Sprite_Extra \
+    .function("_addNativeEventBridge", &pdg::emscriptenSpriteAddEventBridge) \
+    .function("isSpriterSprite", &pdg::Sprite::isSpriterSprite) \
+    .function("hasAnimation", &pdg::emscriptenSpriteHasAnimation) \
+    .function("startAnimation", &pdg::emscriptenSpriteStartAnimation) \
+    .function("setEntityScale", &pdg::Sprite::setEntityScale, emscripten::return_value_policy::reference()) \
+    .function("applyCharacterMap", &pdg::emscriptenSpriteApplyCharacterMap) \
+    .function("removeCharacterMap", &pdg::emscriptenSpriteRemoveCharacterMap) \
+    .function("removeAllCharacterMaps", &pdg::Sprite::removeAllCharacterMaps) \
+    .function("getAppliedCharacterMaps", &pdg::emscriptenSpriteGetAppliedCharacterMaps) \
+    .function("enableSpriterEvents", &pdg::Sprite::enableSpriterEvents) \
+    .function("areSpriterEventsEnabled", &pdg::Sprite::areSpriterEventsEnabled) \
+    .function("blendToAnimation", &pdg::emscriptenSpriteBlendToAnimation) \
+    .function("isBlending", &pdg::Sprite::isBlending) \
+    .function("getBlendProgress", &pdg::Sprite::getBlendProgress) \
+    .function("pauseAnimation", &pdg::Sprite::pauseAnimation) \
+    .function("resumeAnimation", &pdg::Sprite::resumeAnimation) \
+    .function("stopAnimation", &pdg::Sprite::stopAnimation) \
+    .function("isAnimationPlaying", &pdg::Sprite::isAnimationPlaying) \
+    .function("isAnimationPaused", &pdg::Sprite::isAnimationPaused) \
+    .function("getAnimationProgress", &pdg::Sprite::getAnimationProgress) \
+    .function("hasAttachPoint", &pdg::emscriptenSpriteHasAttachPoint) \
+    .function("getAttachPoint", &pdg::emscriptenSpriteGetAttachPoint) \
+    .function("attachSprite", &pdg::emscriptenSpriteAttachSprite, emscripten::allow_raw_pointers()) \
+    .function("detachSprite", &pdg::Sprite::detachSprite, emscripten::allow_raw_pointers()) \
+    .function("getAttachedSprite", &pdg::emscriptenSpriteGetAttachedSprite, emscripten::allow_raw_pointers()) \
+    .function("activateSubEntity", &pdg::emscriptenSpriteActivateSubEntity) \
+    .function("getSpriterCollisionBox", &pdg::emscriptenSpriteGetCollisionBox) \
+    .function("isSpriterCollisionActive", &pdg::emscriptenSpriteIsCollisionActive) \
+    .function("getSpriterCollisionBoxCount", &pdg::Sprite::getSpriterCollisionBoxCount) \
+    .function("getSpriterCollisionBoxName", &pdg::emscriptenSpriteGetCollisionBoxName)
+#define SpriteLayer_Extra \
+    .function("_addNativeEventBridge", &pdg::emscriptenSpriteLayerAddEventBridge) \
+    .function("_createSpriteFromSpriterFile", &pdg::emscriptenLayerCreateSpriteFromFile, emscripten::allow_raw_pointers()) \
+    .function("createSpriteFromSpriterEntity", &pdg::emscriptenLayerCreateSpriteFromEntity, emscripten::allow_raw_pointers()) \
+    .function("applyCharacterMapToAll", &pdg::emscriptenLayerApplyCharacterMap) \
+    .function("removeCharacterMapFromAll", &pdg::emscriptenLayerRemoveCharacterMap) \
+    .function("enableSpriterEvents", &pdg::SpriteLayer::enableSpriterEvents)
+#else
+#define Sprite_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteAddEventBridge)
+#define SpriteLayer_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteLayerAddEventBridge)
+#endif
 #define TileLayer_Extra 
 #define TimerManager_Extra 
 

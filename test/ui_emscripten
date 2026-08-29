@@ -1,0 +1,88 @@
+#!/bin/bash
+
+set -u
+
+PDG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+BUILD=yes
+if [ "${1:-}" = "--no-build" ]; then
+    BUILD=no
+    shift
+fi
+
+SELECTED_TEST=""
+if [ "${1:-}" = "--test" ]; then
+    SELECTED_TEST="${2:-}"
+    shift 2
+fi
+
+if [ "$BUILD" = yes ]; then
+    (cd "$PDG_ROOT" && make pdg-js) || exit $?
+fi
+
+BROWSER="${PDG_BROWSER:-}"
+if [ -z "$BROWSER" ] && [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
+    BROWSER="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+fi
+if [ -z "$BROWSER" ]; then
+    BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+fi
+if [ -z "$BROWSER" ]; then
+    echo "Error: Chrome/Chromium not found. Set PDG_BROWSER to its executable path."
+    exit 2
+fi
+
+PORT="${PDG_TEST_PORT:-8123}"
+RESULT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pdg-emscripten-ui.XXXXXX")" || exit 2
+SERVER_LOG="$RESULT_DIR/server.log"
+SERVER_PID=""
+BASE_URL="http://127.0.0.1:$PORT/test/EmscriptenUITests.html"
+
+cleanup() {
+    if [ -n "$SERVER_PID" ]; then
+        kill "$SERVER_PID" 2>/dev/null || true
+        wait "$SERVER_PID" 2>/dev/null || true
+    fi
+}
+trap cleanup EXIT INT TERM
+
+if ! curl -fsS "$BASE_URL" >/dev/null 2>&1; then
+    (cd "$PDG_ROOT" && python3 -m http.server "$PORT" --bind 127.0.0.1 >"$SERVER_LOG" 2>&1) &
+    SERVER_PID=$!
+    READY=no
+    for unused in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+        if curl -fsS "$BASE_URL" >/dev/null 2>&1; then READY=yes; break; fi
+        sleep 0.1
+    done
+    if [ "$READY" != yes ]; then
+        echo "Error: UI test server did not start on port $PORT."
+        exit 2
+    fi
+fi
+
+TESTS=(port font drawing shape-fill image animation)
+if [ -n "$SELECTED_TEST" ]; then TESTS=("$SELECTED_TEST"); fi
+
+FAILED=0
+for TEST_ID in "${TESTS[@]}"; do
+    RESULT_HTML="$RESULT_DIR/$TEST_ID.html"
+    TEST_URL="$BASE_URL?test=$TEST_ID"
+    "$BROWSER" --headless=new --enable-unsafe-swiftshader --dump-dom \
+        --virtual-time-budget=120000 "$TEST_URL" >"$RESULT_HTML" 2>/dev/null
+    BROWSER_EXIT=$?
+    RESULT_JSON="$(sed -n 's/.*<pre id="pdg-ui-result-json">\([^<]*\)<\/pre>.*/\1/p' "$RESULT_HTML" | tail -1)"
+    if [ -z "$RESULT_JSON" ]; then
+        echo "FAIL: $TEST_ID (browser exit $BROWSER_EXIT; no result)"
+        FAILED=1
+    elif echo "$RESULT_JSON" | grep -q '"status":"passed"'; then
+        echo "PASS: $RESULT_JSON"
+    else
+        echo "FAIL: $RESULT_JSON"
+        FAILED=1
+    fi
+done
+
+if [ "$FAILED" -ne 0 ]; then
+    echo "Rendered UI reports: $RESULT_DIR"
+    exit 1
+fi
+echo "PASS: all Emscripten UI tests completed"

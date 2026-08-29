@@ -37,6 +37,11 @@ if [ -z "$PDG_ROOT" ]; then
     export PDG_ROOT
 fi
 
+if [ "${1:-}" = "--emscripten" ]; then
+    shift
+    exec "$PDG_ROOT/test/ui_emscripten" "$@"
+fi
+
 export PDG_TEST_MODE="ui"
 export PDG_TEST_PLATFORM="${PDG_TEST_PLATFORM:-$OSTYPE}"
 

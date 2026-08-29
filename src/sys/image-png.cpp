@@ -40,6 +40,7 @@
 #include "png/png.h"
 
 #include <cstdlib>
+#include <cstring>
 
 
 extern "C" {
@@ -180,5 +181,4 @@ void pdg_png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
 	memcpy(data, &read_io_ptr->imageData[read_io_ptr->currOffset], length);
 	read_io_ptr->currOffset += length;
 }
-
 
