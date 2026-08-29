@@ -66,7 +66,8 @@ WEBIDL_BIND=$(EMSCRIPTEN_INSTALL_DIR)/tools/webidl_binder.py
 
 
 LIBS = \
-    -s USE_ZLIB=1
+    -s USE_ZLIB=1 \
+    -s USE_LIBPNG=1
 
 
 CFLAGS_ALL=-gsource-map -Wno-warn-absolute-paths -DMOZZCONF_H $(DEFINES) $(INCLUDES)
@@ -91,6 +92,7 @@ ADDITIONAL_JS_FILES= \
     --embed-file $(SRC_JS_DIR)/color.js@/js_modules/color.js \
     --embed-file $(SRC_JS_DIR)/pdg-defs.js@/js_modules/pdg-defs.js \
     --embed-file $(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js@/js_modules/pdg-wrapper.js \
+    --embed-file $(PDG_ROOT)/test/yinyang.png@/yinyang.png \
     --post-js $(SRC_JS_DIR)/require.js \
     --post-js $(SRC_BINDINGS_DIR)/platform-emscripten.js \
     --post-js $(SRC_BINDINGS_DIR)/pdg_emscripten.js
@@ -158,7 +160,7 @@ OBJS= \
 	$(OUT_DIR)/cpSweep1D.c.o \
     $(OUT_DIR)/unzip.c.o \
     $(OUT_DIR)/ioapi.c.o \
-	$(OUT_DIR)/image-unix.cpp.o \
+	$(OUT_DIR)/image-png.cpp.o \
 	$(OUT_DIR)/config-unix.cpp.o \
 	$(OUT_DIR)/platform-unix.cpp.o \
 	$(OUT_DIR)/os-unix.cpp.o
@@ -258,7 +260,7 @@ $(OUT_DIR)/image-opengl.cpp.o: $(SRC_SYS_DIR)/image-opengl.cpp
 
 $(OUT_DIR)/image-png.cpp.o: $(SRC_SYS_DIR)/image-png.cpp
 	@echo  'Compiling image-png.cpp...'
-	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/image-png.cpp.o -c $(SRC_SYS_DIR)/image-png.cpp
+	@$(CXX) $(CXXFLAGS) -include $(PDG_ROOT)/deps/png/scripts/pnglibconf.h.prebuilt -o $(OUT_DIR)/image-png.cpp.o -c $(SRC_SYS_DIR)/image-png.cpp
 	
 
 $(OUT_DIR)/image.cpp.o: $(SRC_SYS_DIR)/image.cpp

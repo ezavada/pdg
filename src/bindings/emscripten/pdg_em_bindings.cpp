@@ -73,7 +73,7 @@ namespace pdg {
 
 // a way for us to insert special stuff into the automatic bindings
 
-#define Animated_Extra 
+#define Animated_Extra .constructor<>()
 #define ConfigManager_Extra \
     .function("useConfig", &pdg::emscriptenConfigUseConfig) \
     .function("getConfigString", &pdg::emscriptenConfigGetString) \
@@ -87,7 +87,7 @@ namespace pdg {
 #define CpArbiter_Extra 
 #define CpConstraint_Extra 
 #define CpSpace_Extra 
-#define Deserializer_Extra 
+#define Deserializer_Extra .constructor<>()
 #define EventEmitter_Extra .constructor<>()
 #define EventManager_Extra 
 #define FileManager_Extra 

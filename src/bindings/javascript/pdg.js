@@ -497,6 +497,234 @@ if (inbrowser && typeof bindings.Polygon !== "undefined") {
     };
 }
 
+if (inbrowser && typeof bindings.Animated !== "undefined") {
+    (function(Animated) {
+        var proto = Animated.prototype;
+
+        function xyValue(value, y) {
+            if (value === null || typeof value === "undefined") return null;
+            if (typeof value === "number") return { x: value, y: y };
+            if (Array.isArray(value)) return { x: value[0], y: value[1] };
+            return { x: value.x, y: value.y };
+        }
+
+        function easingOrDefault(easing) {
+            return typeof easing === "undefined" ? bindings.easeInOutQuad : easing;
+        }
+
+        function chain(nativeMethod, self, args) {
+            nativeMethod.apply(self, args);
+            return self;
+        }
+
+        proto.getBoundingBox = function() {
+            return new bindings.Rect(this._getBoundingBox());
+        };
+        proto.getRotatedBounds = function() {
+            var bounds = this._getRotatedBounds();
+            return new bindings.RotatedRect(bounds, bounds.radians, bounds.centerOffset);
+        };
+        proto.setLocation = function(location) {
+            var value = xyValue(location);
+            return value ? chain(this._setLocation, this, [value]) : this;
+        };
+        proto.getLocation = function() {
+            return new bindings.Point(this._getLocation());
+        };
+        proto.moveTo = function(where, duration, easing) {
+            var value;
+            if (typeof where === "number") {
+                value = xyValue(where, duration);
+                duration = arguments[2];
+                easing = arguments[3];
+            } else {
+                value = xyValue(where);
+            }
+            if (!value) return this;
+            return duration
+                ? chain(this._moveToTimed, this, [value, duration, easingOrDefault(easing)])
+                : chain(this._moveTo, this, [value]);
+        };
+        proto.move = function(offset, duration, easing) {
+            var value;
+            if (typeof offset === "number") {
+                value = xyValue(offset, duration);
+                duration = arguments[2];
+                easing = arguments[3];
+            } else {
+                value = xyValue(offset);
+            }
+            if (!value) return this;
+            return duration
+                ? chain(this._moveTimed, this, [value, duration, easingOrDefault(easing)])
+                : chain(this._move, this, [value]);
+        };
+        proto.setVelocity = function(velocity, y) {
+            var value = xyValue(velocity, y);
+            return value ? chain(this._setVelocity, this, [value]) : this;
+        };
+        proto.getVelocity = function() {
+            return new bindings.Vector(this._getVelocity());
+        };
+        proto.setSpeed = function(speed) { return chain(this._setSpeed, this, [speed]); };
+        proto.setVelocityInRadians = function(speed, direction) {
+            return chain(this._setVelocityInRadians, this, [speed, direction]);
+        };
+        proto.stopMoving = function() { return chain(this._stopMoving, this, []); };
+        proto.setSize = function(width, height) { return chain(this._setSize, this, [width, height]); };
+        proto.setWidth = function(width) { return chain(this._setWidth, this, [width]); };
+        proto.setHeight = function(height) { return chain(this._setHeight, this, [height]); };
+        proto.grow = function(factor, duration, easing) {
+            return duration
+                ? chain(this._growTimed, this, [factor, duration, easingOrDefault(easing)])
+                : chain(this._grow, this, [factor]);
+        };
+        proto.stretch = function(width, height, duration, easing) {
+            return duration
+                ? chain(this._stretchTimed, this, [width, height, duration, easingOrDefault(easing)])
+                : chain(this._stretch, this, [width, height]);
+        };
+        proto.startGrowing = function(amount) { return chain(this._startGrowing, this, [amount]); };
+        proto.stopGrowing = function() { return chain(this._stopGrowing, this, []); };
+        proto.startStretching = function(width, height) {
+            return chain(this._startStretching, this, [width, height]);
+        };
+        proto.stopStretching = function() { return chain(this._stopStretching, this, []); };
+        proto.resize = function(width, height, duration, easing) {
+            return chain(this._resize, this, [width, height, duration || 0, easingOrDefault(easing)]);
+        };
+        proto.resizeTo = function(width, height, duration, easing) {
+            return chain(this._resizeTo, this, [width, height, duration || 0, easingOrDefault(easing)]);
+        };
+        proto.setRotation = function(radians) { return chain(this._setRotation, this, [radians]); };
+        proto.rotate = function(radians, duration, easing) {
+            return duration
+                ? chain(this._rotateTimed, this, [radians, duration, easingOrDefault(easing)])
+                : chain(this._rotate, this, [radians]);
+        };
+        proto.rotateTo = function(radians, duration, easing) {
+            return duration
+                ? chain(this._rotateToTimed, this, [radians, duration, easingOrDefault(easing)])
+                : chain(this._rotateTo, this, [radians]);
+        };
+        proto.setFlipX = function(flip) { return chain(this._setFlipX, this, [flip]); };
+        proto.setFlipY = function(flip) { return chain(this._setFlipY, this, [flip]); };
+        proto.flipX = function() { return chain(this._flipX, this, []); };
+        proto.flipY = function() { return chain(this._flipY, this, []); };
+        proto.setSpin = function(spin) { return chain(this._setSpin, this, [spin]); };
+        proto.stopSpinning = function() { return chain(this._stopSpinning, this, []); };
+        proto.setCenterOffset = function(offset) {
+            var value = xyValue(offset);
+            return value ? chain(this._setCenterOffset, this, [value]) : this;
+        };
+        proto.getCenterOffset = function() {
+            return new bindings.Offset(this._getCenterOffset());
+        };
+        proto.changeCenter = function(offset, duration, easing) {
+            var value;
+            if (typeof offset === "number") {
+                value = xyValue(offset, duration);
+                duration = arguments[2];
+                easing = arguments[3];
+            } else {
+                value = xyValue(offset);
+            }
+            if (!value) return this;
+            return chain(this._changeCenter, this, [value, duration || 0, easingOrDefault(easing)]);
+        };
+        proto.changeCenterTo = function(offset, duration, easing) {
+            var value;
+            if (typeof offset === "number") {
+                value = xyValue(offset, duration);
+                duration = arguments[2];
+                easing = arguments[3];
+            } else {
+                value = xyValue(offset);
+            }
+            if (!value) return this;
+            return chain(this._changeCenterTo, this, [value, duration || 0, easingOrDefault(easing)]);
+        };
+        proto.wait = function(duration) { return chain(this._wait, this, [duration]); };
+        proto.setMass = function(mass) { return chain(this._setMass, this, [mass]); };
+        proto.setFriction = function(value) { return chain(this._setFriction, this, [value]); };
+        proto.setMoveFriction = function(value) { return chain(this._setMoveFriction, this, [value]); };
+        proto.setSpinFriction = function(value) { return chain(this._setSpinFriction, this, [value]); };
+        proto.setSizeFriction = function(value) { return chain(this._setSizeFriction, this, [value]); };
+        proto.applyForce = function(force, duration) {
+            var value = xyValue(force);
+            return value ? chain(this._applyForce, this, [value, duration || 0]) : this;
+        };
+        proto.applyTorque = function(force, duration) {
+            return chain(this._applyTorque, this, [force, duration || 0]);
+        };
+        proto.stopAllForces = function() { return chain(this._stopAllForces, this, []); };
+    })(bindings.Animated);
+}
+
+if (inbrowser && typeof bindings.Image !== "undefined") {
+    (function(Image) {
+        var proto = Image.prototype;
+
+        function pointValue(first, second) {
+            if (first === null || typeof first === "undefined") return { x: 0, y: 0 };
+            if (typeof first === "number") return { x: first, y: second };
+            return { x: first.x, y: first.y };
+        }
+
+        function colorValue(value) {
+            return new bindings.Color(value.red, value.green, value.blue, value.alpha);
+        }
+
+        proto.getImageBounds = function(point) {
+            var bounds = arguments.length === 0 || point === null
+                ? this._getImageBounds()
+                : this._getImageBoundsAt(pointValue(point));
+            return new bindings.Rect(bounds);
+        };
+        proto.getSubsection = function(section) {
+            var rect = (section && typeof section.getBounds === "function")
+                ? section.getBounds() : section;
+            return this._getSubsection(rect);
+        };
+        proto.setTransparentColor = function(value) {
+            this._setTransparentColor(value);
+            return this;
+        };
+        proto.getTransparentColor = function() {
+            return colorValue(this._getTransparentColor());
+        };
+        proto.setOpacity = function(value) {
+            var opacity = Number(value);
+            if (!isFinite(opacity)) opacity = 0;
+            if (opacity <= 1) opacity = Math.floor(255 * opacity);
+            opacity = Math.max(0, Math.min(255, Math.round(opacity)));
+            this._setOpacity(opacity);
+        };
+        proto.getOpacity = function() {
+            return this._getOpacity() / 255;
+        };
+        proto.getAlphaValue = function(first, second) {
+            var point = pointValue(first, second);
+            return this._getAlphaValue(point.x || 0, point.y || 0);
+        };
+        proto.getPixel = function(first, second) {
+            var point = pointValue(first, second);
+            return colorValue(this._getPixel(point.x || 0, point.y || 0));
+        };
+    })(bindings.Image);
+}
+
+if (inbrowser && typeof bindings.ImageStrip !== "undefined") {
+    bindings.ImageStrip.prototype.setFrameWidth = function(width) {
+        this._setFrameWidth(width);
+        return this;
+    };
+    bindings.ImageStrip.prototype.setNumFrames = function(count) {
+        this._setNumFrames(count);
+        return this;
+    };
+}
+
 if (typeof bindings.GraphicsManager != "undefined") {  // might be non-gui build
 	bindings.gfx = bindings.getGraphicsManager();
 	bindings.hasGraphics = true;
@@ -584,6 +812,127 @@ if (bindings.hasSound) {
 // Now get the prototype references (after fixing, these should be the same objects)
 var fileManagerProto = bindings.FileManager.prototype;
 var timerManagerProto = bindings.TimerManager.prototype;
+
+if (inbrowser) {
+    (function() {
+        var emitterStates = new WeakMap();
+        var emitterTypes = [
+            bindings.EventEmitter,
+            bindings.EventManager,
+            bindings.TimerManager,
+            bindings.Sprite,
+            bindings.SpriteLayer,
+            bindings.TileLayer
+        ];
+
+        if (typeof bindings.Sound !== "undefined") {
+            emitterTypes.push(bindings.Sound);
+        }
+
+        function BrowserEventHandler(callback) {
+            if (!(this instanceof BrowserEventHandler)) {
+                return new BrowserEventHandler(callback);
+            }
+            if (typeof callback !== "function") {
+                throw new TypeError("IEventHandler requires a callback function");
+            }
+            this.callback = callback;
+        }
+
+        BrowserEventHandler.prototype.handleEvent = function(event) {
+            var handled = this.callback.call(this, event);
+            if (typeof handled !== "boolean") {
+                throw new TypeError("event handlers must return true or false");
+            }
+            return handled;
+        };
+
+        function getEmitterState(emitter) {
+            var state = emitterStates.get(emitter);
+            if (!state) {
+                state = {
+                    handlers: Object.create(null),
+                    blocked: Object.create(null)
+                };
+                emitterStates.set(emitter, state);
+            }
+            return state;
+        }
+
+        function addHandler(handler, eventType) {
+            if (!handler || typeof handler.handleEvent !== "function") {
+                throw new TypeError("addHandler requires an IEventHandler");
+            }
+            if (typeof eventType === "undefined") eventType = bindings.all_events;
+            var handlers = getEmitterState(this).handlers;
+            var list = handlers[eventType] || (handlers[eventType] = []);
+            list.push(handler);
+        }
+
+        function removeHandler(handler, eventType) {
+            var handlers = getEmitterState(this).handlers;
+            var types = (typeof eventType === "undefined") ? Object.keys(handlers) : [String(eventType)];
+            types.forEach(function(type) {
+                var list = handlers[type];
+                if (!list) return;
+                handlers[type] = list.filter(function(candidate) {
+                    return candidate !== handler;
+                });
+                if (handlers[type].length === 0) delete handlers[type];
+            });
+        }
+
+        function clearHandlers() {
+            getEmitterState(this).handlers = Object.create(null);
+        }
+
+        function blockEvent(eventType) {
+            getEmitterState(this).blocked[eventType] = true;
+        }
+
+        function unblockEvent(eventType) {
+            delete getEmitterState(this).blocked[eventType];
+        }
+
+        function dispatchHandlers(list, event) {
+            if (!list) return false;
+            // Work on a snapshot so callbacks may safely add or remove handlers.
+            list = list.slice();
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].handleEvent(event)) return true;
+            }
+            return false;
+        }
+
+        function postEvent(eventType, event) {
+            var state = getEmitterState(this);
+            if (state.blocked[eventType]) return false;
+            if (dispatchHandlers(state.handlers[eventType], event)) return true;
+            if (eventType !== bindings.all_events) {
+                return dispatchHandlers(state.handlers[bindings.all_events], event);
+            }
+            return false;
+        }
+
+        bindings.IEventHandler = BrowserEventHandler;
+        emitterTypes.forEach(function(EmitterType) {
+            if (!EmitterType || !EmitterType.prototype) return;
+            EmitterType.prototype.addHandler = addHandler;
+            EmitterType.prototype.removeHandler = removeHandler;
+            EmitterType.prototype.clear = clearHandlers;
+            EmitterType.prototype.blockEvent = blockEvent;
+            EmitterType.prototype.unblockEvent = unblockEvent;
+            EmitterType.prototype.postEvent = postEvent;
+        });
+
+        bindings.EventManager.prototype.getDeviceOrientation = function() {
+            return { roll: 0, pitch: 0, yaw: 0 };
+        };
+        bindings.EventManager.prototype.isButtonDown = function() { return false; };
+        bindings.EventManager.prototype.isKeyDown = function() { return false; };
+        bindings.EventManager.prototype.isRawKeyDown = function() { return false; };
+    })();
+}
 
 // add methods to the file manager prototypes
 
@@ -854,6 +1203,177 @@ timerManagerProto.onInterval = function(func, interval) {
 	return handler;
 }
 bindings.TimerManager.prototype.onInterval = timerManagerProto.onInterval;
+
+if (inbrowser) {
+    (function(timerManager) {
+        var timers = Object.create(null);
+        var managerPaused = false;
+
+        function now() {
+            return Date.now();
+        }
+
+        function clearScheduled(timer) {
+            if (timer.handle !== null) {
+                clearTimeout(timer.handle);
+                timer.handle = null;
+            }
+        }
+
+        function schedule(timer, delay) {
+            clearScheduled(timer);
+            timer.remaining = Math.max(0, delay);
+            timer.nextFire = now() + timer.remaining;
+            timer.generation++;
+            if (timer.paused || managerPaused) return;
+            timer.handle = setTimeout(function() { fire(timer.id); }, timer.remaining);
+        }
+
+        function fire(id) {
+            var timer = timers[id];
+            if (!timer || timer.paused || managerPaused) return;
+            timer.handle = null;
+            var firedAt = now();
+            var elapsed = Math.max(1, firedAt - timer.lastFire);
+            timer.lastFire = firedAt;
+            var generation = timer.generation;
+            timer.firing = true;
+            if (timer.callback) {
+                timer.callback({ id: timer.id, millisec: firedAt, msElapsed: elapsed });
+            }
+            timer.firing = false;
+            if (timers[id] !== timer) return;
+            if (timer.generation !== generation) return;
+            if (timer.oneShot) {
+                delete timers[id];
+            } else {
+                schedule(timer, timer.delay);
+            }
+        }
+
+        timerManager.getMilliseconds = now;
+
+        timerManager.startTimer = function(id, delay, oneShot) {
+            var timer = timers[id];
+            if (!timer) {
+                timer = timers[id] = {
+                    id: id,
+                    callback: null,
+                    handle: null,
+                    generation: 0,
+                    paused: false,
+                    firing: false,
+                    lastFire: now(),
+                    remaining: delay,
+                    nextFire: 0
+                };
+            }
+            timer.delay = Math.max(0, delay);
+            timer.oneShot = oneShot !== false && oneShot !== bindings.timer_Repeating;
+            timer.paused = false;
+            timer.lastFire = now();
+            schedule(timer, timer.delay);
+        };
+
+        timerManager.cancelTimer = function(id) {
+            var timer = timers[id];
+            if (!timer) return;
+            clearScheduled(timer);
+            delete timers[id];
+        };
+
+        timerManager.cancelAllTimers = function() {
+            Object.keys(timers).forEach(function(id) { timerManager.cancelTimer(id); });
+            managerPaused = false;
+        };
+
+        timerManager.delayTimer = function(id, additionalDelay) {
+            var timer = timers[id];
+            if (!timer) return;
+            var baseDelay = timer.handle !== null
+                ? Math.max(0, timer.nextFire - now())
+                : timer.delay;
+            schedule(timer, baseDelay + Math.max(0, additionalDelay));
+        };
+
+        timerManager.delayTimerUntil = function(id, fireTime) {
+            var timer = timers[id];
+            if (!timer) return;
+            schedule(timer, Math.max(0, fireTime - now()));
+            timer.nextFire = fireTime;
+        };
+
+        timerManager.pauseTimer = function(id) {
+            var timer = timers[id];
+            if (!timer || timer.paused) return;
+            timer.remaining = Math.max(0, timer.nextFire - now());
+            timer.paused = true;
+            timer.generation++;
+            clearScheduled(timer);
+        };
+
+        timerManager.unpauseTimer = function(id) {
+            var timer = timers[id];
+            if (!timer || !timer.paused) return;
+            timer.paused = false;
+            schedule(timer, timer.remaining);
+        };
+
+        timerManager.isTimerPaused = function(id) {
+            var timer = timers[id];
+            return !!timer && (timer.paused || managerPaused);
+        };
+
+        timerManager.pause = function() {
+            if (managerPaused) return;
+            managerPaused = true;
+            Object.keys(timers).forEach(function(id) {
+                var timer = timers[id];
+                timer.remaining = Math.max(0, timer.nextFire - now());
+                timer.generation++;
+                clearScheduled(timer);
+            });
+        };
+
+        timerManager.unpause = function() {
+            if (!managerPaused) return;
+            managerPaused = false;
+            Object.keys(timers).forEach(function(id) {
+                var timer = timers[id];
+                if (!timer.paused) schedule(timer, timer.remaining);
+            });
+        };
+
+        timerManager.isPaused = function() {
+            return managerPaused;
+        };
+
+        timerManager.getWhenTimerFiresNext = function(id) {
+            var timer = timers[id];
+            return (!timer || timer.paused || managerPaused) ? bindings.timer_Never : timer.nextFire;
+        };
+
+        timerManager.onTimeout = function(callback, delay) {
+            var id = _lastAutoTimerId++;
+            timerManager.startTimer(id, delay, true);
+            timers[id].callback = callback;
+            return {
+                timer: id,
+                cancel: function() { timerManager.cancelTimer(id); }
+            };
+        };
+
+        timerManager.onInterval = function(callback, delay) {
+            var id = _lastAutoTimerId++;
+            timerManager.startTimer(id, delay, false);
+            timers[id].callback = callback;
+            return {
+                timer: id,
+                cancel: function() { timerManager.cancelTimer(id); }
+            };
+        };
+    })(bindings.tm);
+}
 
 if (typeof bindings.Sound != "undefined") {  // might be non-gui build
 

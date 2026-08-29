@@ -37,6 +37,24 @@ MemBlock* emscriptenCreateEmptyMemBlock();
 Polygon* emscriptenPolygonIntersection(Polygon& polygon, const Polygon& other);
 Polygon* emscriptenPolygonUnion(Polygon& polygon, const Polygon& other);
 
+emscripten::val emscriptenAnimatedGetRotatedBounds(Animated& animated);
+void emscriptenAnimatedMoveTo(Animated& animated, const Point& point, ms_delta duration, int easing);
+void emscriptenAnimatedMove(Animated& animated, const Offset& offset, ms_delta duration, int easing);
+void emscriptenAnimatedGrow(Animated& animated, float factor, ms_delta duration, int easing);
+void emscriptenAnimatedStretch(Animated& animated, float widthFactor, float heightFactor, ms_delta duration, int easing);
+void emscriptenAnimatedResize(Animated& animated, float width, float height, ms_delta duration, int easing);
+void emscriptenAnimatedResizeTo(Animated& animated, float width, float height, ms_delta duration, int easing);
+void emscriptenAnimatedRotate(Animated& animated, float radians, ms_delta duration, int easing);
+void emscriptenAnimatedRotateTo(Animated& animated, float radians, ms_delta duration, int easing);
+void emscriptenAnimatedChangeCenter(Animated& animated, const Offset& offset, ms_delta duration, int easing);
+void emscriptenAnimatedChangeCenterTo(Animated& animated, const Offset& offset, ms_delta duration, int easing);
+bool emscriptenAnimatedAnimate(Animated& animated, ms_delta elapsed);
+
+Image* emscriptenCreateImage(const std::string& path);
+ImageStrip* emscriptenCreateImageStrip(const std::string& path);
+Rect emscriptenImageGetBoundsAt(Image& image, const Point& point);
+Image* emscriptenImageGetSubsection(Image& image, const Rect& rect);
+
 class FileManager : public Singleton<FileManager> {
 public:
 	static FileManager* createSingletonInstance();
