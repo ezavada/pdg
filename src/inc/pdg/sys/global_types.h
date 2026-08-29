@@ -92,7 +92,11 @@ typedef long    ms_time;
 namespace pdg {
 #endif
 
+#if defined(__cplusplus) && (__cplusplus >= 201103L)
+typedef char16_t        utf16char;
+#else
 typedef uint16          utf16char;
+#endif
 typedef uint32          utf32char;
 
 #ifdef __cplusplus
@@ -100,5 +104,4 @@ typedef uint32          utf32char;
 #endif
 		
 #endif // PDG_GLOBAL_TYPES_H_INCLUDED
-
 

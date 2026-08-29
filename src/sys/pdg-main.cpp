@@ -73,8 +73,8 @@
 #include <limits>
 #include <signal.h>
 
-// Linux-specific headers
-#ifndef _WIN32
+// Native Unix stack-trace support is unavailable in the browser runtime.
+#if !defined(_WIN32) && !defined(__EMSCRIPTEN__)
 #include <execinfo.h>
 #include <cxxabi.h>
 #include <dlfcn.h>
@@ -817,4 +817,3 @@ void main_handleScrollWheel(int horizDelta, int vertDelta, bool shift, bool cont
 
 
 } // end namespace pdg
-

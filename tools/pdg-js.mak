@@ -44,7 +44,6 @@ DEFINES := \
 	'-DDEBUG' \
 	'-DPDG_DEBUG_OUT_TO_LOG' \
 	'-DPDG_USE_CHIPMUNK_PHYSICS' \
-	'-DPDG_SPRITER_SUPPORT' \
 	'-DPDG_NO_GUI' \
 	'-DPDG_NO_SOUND' \
 	'-DPDG_NO_APP_FRAMEWORK' \
@@ -67,7 +66,7 @@ LIBS = \
 CFLAGS_ALL=-gsource-map -Wno-warn-absolute-paths -DMOZZCONF_H $(DEFINES) $(INCLUDES)
 
 CFLAGS=$(CFLAGS_ALL)
-CXXFLAGS=$(CFLAGS_ALL)
+CXXFLAGS=-std=c++17 $(CFLAGS_ALL)
 
 OUT_DIR=$(PDG_ROOT)/build/js/pdg
 SRC_SYS_DIR=$(PDG_ROOT)/src/sys
@@ -83,10 +82,9 @@ SRC_JS_DIR=$(PDG_ROOT)/src/js
 ADDITIONAL_JS_FILES= \
     --embed-file $(SRC_JS_DIR)/dump.js@/js_modules/dump.js \
     --embed-file $(SRC_JS_DIR)/pdg-defs.js@/js_modules/pdg-defs.js \
-    --embed-file $(SRC_JS_DIR)/classify.js@/js_modules/classify.js \
+    --embed-file $(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js@/js_modules/pdg-wrapper.js \
     --post-js $(SRC_JS_DIR)/require.js \
-    --post-js $(SRC_BINDINGS_DIR)/pdg_emscripten.js \
-    --post-js $(SRC_BINDINGS_DIR)/../javascript/pdg.js
+    --post-js $(SRC_BINDINGS_DIR)/pdg_emscripten.js
 
 
 
@@ -130,7 +128,6 @@ OBJS= \
 	$(OUT_DIR)/cpGearJoint.c.o \
 	$(OUT_DIR)/cpGrooveJoint.c.o \
 	$(OUT_DIR)/cpHashSet.c.o \
-	$(OUT_DIR)/cpHastySpace.c.o \
 	$(OUT_DIR)/cpMarch.c.o \
 	$(OUT_DIR)/cpPinJoint.c.o \
 	$(OUT_DIR)/cpPivotJoint.c.o \
@@ -150,7 +147,6 @@ OBJS= \
 	$(OUT_DIR)/cpSweep1D.c.o \
     $(OUT_DIR)/unzip.c.o \
     $(OUT_DIR)/ioapi.c.o \
-	$(OUT_DIR)/spriterengine_combined.o \
 	$(OUT_DIR)/image-unix.cpp.o \
 	$(OUT_DIR)/config-unix.cpp.o \
 	$(OUT_DIR)/platform-unix.cpp.o \
@@ -168,7 +164,7 @@ OBJS= \
 #	-@rm parser.out WebIDLGrammar.pkl 
 libpdg: $(OBJS)
 	@echo  'Linking libpdg...'
-	@$(CC) --bind $(CFLAGS) $(ADDITIONAL_JS_FILES) -o $(PDG_ROOT)/libpdg.js $(OBJS) $(LIBS) $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
+	@$(CXX) --bind $(CXXFLAGS) $(ADDITIONAL_JS_FILES) -o $(PDG_ROOT)/libpdg.js $(OBJS) $(LIBS) $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
 	@echo Done.
 
 
@@ -489,12 +485,6 @@ $(OUT_DIR)/ioapi.c.o: $(SRC_MINIZIP_DIR)/ioapi.c
 	@$(CC) $(CFLAGS) -o $(OUT_DIR)/ioapi.c.o -c $(SRC_MINIZIP_DIR)/ioapi.c
 		
 	
-# SpriterPlusPlus compilation rules - combined approach
-$(OUT_DIR)/spriterengine_combined.o: $(SRC_SPRITERPLUSPLUS_DIR)/spriterengine/spriterengine.h
-	@echo  'Compiling SpriterPlusPlus engine (combined)...'
-	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/spriterengine_combined.o -c $(SRC_SPRITERPLUSPLUS_DIR)/spriterengine/spriterengine.h
-	
-
 $(OUT_DIR)/image-unix.cpp.o: $(SRC_UNIX_DIR)/image-unix.cpp
 	@echo  'Compiling image-unix.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/image-unix.cpp.o -c $(SRC_UNIX_DIR)/image-unix.cpp
@@ -520,6 +510,5 @@ $(OUT_DIR)/os-unix.cpp.o: $(SRC_UNIX_DIR)/os-unix.cpp
 .PHONY: clean
 clean:
 	@echo  'Removing all temporary binaries...'
-	@rm -f libpdg.js libpdg.html libpdg.map parser.out WebIDLGrammar.pkl $(OUT_DIR)/*.o
+	@rm -f libpdg.js libpdg.wasm libpdg.data libpdg.wasm.map libpdg.js.map libpdg.html libpdg.map parser.out WebIDLGrammar.pkl $(OUT_DIR)/*.o
 	
-

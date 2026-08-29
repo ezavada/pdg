@@ -99,7 +99,7 @@ protected:
 	void trim(std::string& str, const std::string & chrsToTrim = " \t\n\r", int trimDir = 0);
 	void convertToUpper(std::string& str);
 	
-	struct RecordKeyIs : std::unary_function<Record, bool>
+	struct RecordKeyIs
 	{
 		std::string key_;		
 		RecordKeyIs(const std::string& key): key_(key){}
@@ -112,4 +112,3 @@ protected:
 }  // close namespace pdg
 
 #endif // CONFIGMANAGER_UNIX_H_INCLUDED
-
