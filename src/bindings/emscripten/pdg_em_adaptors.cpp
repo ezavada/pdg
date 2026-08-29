@@ -6,6 +6,12 @@
 
 #include <emscripten.h>
 
+#include <algorithm>
+#include <stdexcept>
+#include <memory>
+#include <unordered_map>
+#include <vector>
+
 
 namespace pdg {
 
@@ -171,6 +177,424 @@ Rect emscriptenImageGetBoundsAt(Image& image, const Point& point) {
 Image* emscriptenImageGetSubsection(Image& image, const Rect& rect) {
     Rect mutableRect(rect);
     return image.getSubsection(mutableRect);
+}
+
+void emscriptenResourceSetLanguage(ResourceManager& manager, const std::string& language) {
+    manager.setLanguage(language.c_str());
+}
+
+std::string emscriptenResourceGetLanguage(ResourceManager& manager) {
+    return manager.getLanguage();
+}
+
+int emscriptenResourceOpenFile(ResourceManager& manager, const std::string& filename) {
+    return manager.openResourceFile(filename.c_str());
+}
+
+std::string emscriptenResourceGetString(ResourceManager& manager, int id, int substring) {
+    std::string value;
+    manager.getString(value, static_cast<short>(id), static_cast<short>(substring));
+    return value;
+}
+
+size_t emscriptenResourceGetSize(ResourceManager& manager, const std::string& resourceName) {
+    return manager.getResourceSize(resourceName.c_str());
+}
+
+emscripten::val emscriptenResourceGet(ResourceManager& manager, const std::string& resourceName, int maxSize) {
+    size_t resourceSize = manager.getResourceSize(resourceName.c_str());
+    size_t bufferSize = maxSize < 0 ? resourceSize : std::min(resourceSize, static_cast<size_t>(maxSize));
+    if (bufferSize == 0) return emscripten::val(false);
+
+    std::string value(bufferSize, '\0');
+    if (!manager.getResource(resourceName.c_str(), value.data(), bufferSize)) {
+        return emscripten::val(false);
+    }
+    return emscripten::val(value);
+}
+
+Image* emscriptenResourceGetImage(ResourceManager& manager, const std::string& imageName) {
+    return manager.getImage(imageName.c_str());
+}
+
+ImageStrip* emscriptenResourceGetImageStrip(ResourceManager& manager, const std::string& imageName) {
+    return manager.getImageStrip(imageName.c_str());
+}
+
+void emscriptenAttributesSetLineStyle(Attributes& attributes, int style) {
+    attributes.lineStyle(static_cast<LineStyle>(style));
+}
+
+void emscriptenAttributesSetFitType(Attributes& attributes, int fit) {
+    attributes.fitType(static_cast<FitType>(fit));
+}
+
+void emscriptenAttributesSetBlendMode(Attributes& attributes, int mode) {
+    attributes.blendMode(static_cast<BlendMode>(mode));
+}
+
+void emscriptenAttributesRotate(Attributes& attributes, float radians, const Point& center) {
+    attributes.rotation(radians, center);
+}
+
+void emscriptenAttributesScale(Attributes& attributes, float xFactor, float yFactor, const Point& center) {
+    attributes.scale(xFactor, yFactor, center);
+}
+
+void emscriptenAttributesSkew(Attributes& attributes, float xSkew, float ySkew, const Point& center) {
+    attributes.skew(xSkew, ySkew, center);
+}
+
+void emscriptenAttributesTransform(Attributes& attributes, const emscripten::val& matrix) {
+    if (!emscripten::val::global("Array").call<bool>("isArray", matrix) || matrix["length"].as<int>() != 9) {
+        throw std::invalid_argument("Attributes.transform requires an array of 9 numbers");
+    }
+
+    glm::mat3 nativeMatrix;
+    for (int column = 0; column < 3; ++column) {
+        for (int row = 0; row < 3; ++row) {
+            emscripten::val value = matrix[column * 3 + row];
+            if (value.typeOf().as<std::string>() != "number") {
+                throw std::invalid_argument("Attributes.transform requires an array of 9 numbers");
+            }
+            nativeMatrix[column][row] = value.as<float>();
+        }
+    }
+    attributes.transform(nativeMatrix);
+}
+
+emscripten::val emscriptenAttributesGetTransform(Attributes& attributes) {
+    const glm::mat3& matrix = attributes.getTransform();
+    emscripten::val result = emscripten::val::array();
+    for (int column = 0; column < 3; ++column) {
+        for (int row = 0; row < 3; ++row) {
+            result.set(column * 3 + row, matrix[column][row]);
+        }
+    }
+    return result;
+}
+
+int emscriptenAttributesGetLineStyle(Attributes& attributes) {
+    return static_cast<int>(attributes.getLineStyle());
+}
+
+int emscriptenAttributesGetGradientType(Attributes& attributes) {
+    return static_cast<int>(attributes.getGradientType());
+}
+
+int emscriptenAttributesGetFitType(Attributes& attributes) {
+    return static_cast<int>(attributes.getFitType());
+}
+
+int emscriptenAttributesGetBlendMode(Attributes& attributes) {
+    return static_cast<int>(attributes.getBlendMode());
+}
+
+Drawing* emscriptenCreateDrawing() {
+    return Drawing::create();
+}
+
+ElementRef* emscriptenDrawingAddSpline(Drawing& drawing, Spline& spline, const Attributes& attributes) {
+    return drawing.addSpline(std::move(spline), attributes);
+}
+
+ElementRef* emscriptenDrawingAddPolygon(Drawing& drawing, Polygon& polygon, const Attributes& attributes) {
+    return drawing.addPolygon(std::move(polygon), attributes);
+}
+
+emscripten::val emscriptenElementGetControlPoints(ElementRef& element) {
+    emscripten::val result = emscripten::val::array();
+    const std::vector<Point>& points = element.getControlPoints();
+    for (size_t i = 0; i < points.size(); ++i) {
+        emscripten::val point = emscripten::val::object();
+        point.set("x", points[i].x);
+        point.set("y", points[i].y);
+        result.set(i, point);
+    }
+    return result;
+}
+
+Attributes* emscriptenElementGetAttributes(ElementRef& element) {
+    Attributes* attributes = new Attributes();
+    element.getAttributes(*attributes);
+    return attributes;
+}
+
+int emscriptenElementGetType(ElementRef& element) {
+    return static_cast<int>(element.type());
+}
+
+static std::unordered_map<int, std::unique_ptr<FindDataT>> sEmscriptenFindData;
+static int sEmscriptenNextFindId = 1;
+
+static void emscriptenUpdateFindObject(emscripten::val& object, int id, const FindDataT& data, bool found) {
+    object.set("_pdgFindId", id);
+    object.set("nodeName", found ? data.nodeName : "");
+    object.set("isDirectory", found && data.isDirectory);
+    object.set("found", found);
+}
+
+emscripten::val emscriptenFileFindFirst(FileManager&, const std::string& pattern) {
+    std::unique_ptr<FindDataT> data(new FindDataT());
+    data->privateData = nullptr;
+    bool found = OS::findFirst(pattern.c_str(), *data);
+    emscripten::val result = emscripten::val::object();
+    if (!found) {
+        OS::findClose(*data);
+        emscriptenUpdateFindObject(result, 0, *data, false);
+        return result;
+    }
+
+    int id = sEmscriptenNextFindId++;
+    emscriptenUpdateFindObject(result, id, *data, true);
+    sEmscriptenFindData.emplace(id, std::move(data));
+    return result;
+}
+
+bool emscriptenFileFindNext(FileManager&, emscripten::val findData) {
+    int id = findData["_pdgFindId"].as<int>();
+    auto foundData = sEmscriptenFindData.find(id);
+    if (foundData == sEmscriptenFindData.end()) return false;
+    bool found = OS::findNext(*foundData->second);
+    emscriptenUpdateFindObject(findData, id, *foundData->second, found);
+    return found;
+}
+
+void emscriptenFileFindClose(FileManager&, const emscripten::val& findData) {
+    int id = findData["_pdgFindId"].as<int>();
+    auto foundData = sEmscriptenFindData.find(id);
+    if (foundData == sEmscriptenFindData.end()) return;
+    OS::findClose(*foundData->second);
+    sEmscriptenFindData.erase(foundData);
+}
+
+void emscriptenLogInitialize(LogManager& manager, const std::string& baseName, int mode) {
+    manager.initialize(baseName.c_str(), mode);
+}
+
+void emscriptenLogWrite(LogManager& manager, int level, const std::string& category, const std::string& message) {
+    manager.writeLogEntry(static_cast<int8>(level), category.c_str(), message.c_str());
+}
+
+void emscriptenLogSetLevel(LogManager& manager, int level) {
+    manager.setLogLevel(static_cast<int8>(level));
+}
+
+int emscriptenLogGetLevel(LogManager& manager) {
+    return manager.getLogLevel();
+}
+
+void emscriptenTileDefineSet(TileLayer& layer, int tileWidth, int tileHeight, Image* tiles) {
+    layer.defineTileSet(tileWidth, tileHeight, tiles);
+}
+
+void emscriptenTileSetWorldSize(TileLayer& layer, long width, long height) {
+    layer.setWorldSize(width, height);
+}
+
+int emscriptenTileGetType(TileLayer& layer, long x, long y) {
+    return layer.getTileTypeAt(x, y);
+}
+
+void emscriptenTileSetType(TileLayer& layer, long x, long y, int tileType, int facing) {
+    layer.setTileTypeAt(x, y, static_cast<uint8>(tileType), static_cast<TileLayer::TFacing>(facing));
+}
+
+emscripten::val emscriptenTileGetTypeAndFacing(TileLayer& layer, long x, long y) {
+    TileLayer::TFacing facing;
+    int tileType = layer.getTileTypeAt(x, y, &facing);
+    emscripten::val result = emscripten::val::object();
+    result.set("tileType", tileType - static_cast<int>(facing));
+    result.set("facing", static_cast<int>(facing));
+    return result;
+}
+
+static RotatedRect emscriptenRotatedRectFromVal(const emscripten::val& value) {
+    RotatedRect result(Rect(
+        value["left"].as<float>(), value["top"].as<float>(),
+        value["right"].as<float>(), value["bottom"].as<float>()),
+        value["radians"].as<float>());
+    emscripten::val center = value["centerOffset"];
+    if (!center.isUndefined() && !center.isNull()) {
+        result.centerOffset = Offset(center["x"].as<float>(), center["y"].as<float>());
+    }
+    return result;
+}
+
+static Quad emscriptenQuadFromVal(const emscripten::val& value) {
+    emscripten::val points = value["points"];
+    return Quad(
+        Point(points[0]["x"].as<float>(), points[0]["y"].as<float>()),
+        Point(points[1]["x"].as<float>(), points[1]["y"].as<float>()),
+        Point(points[2]["x"].as<float>(), points[2]["y"].as<float>()),
+        Point(points[3]["x"].as<float>(), points[3]["y"].as<float>()));
+}
+
+void emscriptenSerializerSerialize8(Serializer& serializer, double value) {
+    serializer.serialize_8(static_cast<int64>(value));
+}
+
+void emscriptenSerializerSerialize4(Serializer& serializer, int value) {
+    serializer.serialize_4(static_cast<int32>(value));
+}
+
+void emscriptenSerializerSerialize2(Serializer& serializer, int value) {
+    serializer.serialize_2(static_cast<int16>(value));
+}
+
+void emscriptenSerializerSerialize1(Serializer& serializer, int value) {
+    serializer.serialize_1(static_cast<int8>(value));
+}
+
+void emscriptenSerializerSerializeFloat(Serializer& serializer, double value) {
+    serializer.serialize_f(static_cast<float>(value));
+}
+
+void emscriptenSerializerSerializeDouble(Serializer& serializer, double value) {
+    serializer.serialize_d(value);
+}
+
+void emscriptenSerializerSerializePoint(Serializer& serializer, const Point& value) {
+    serializer.serialize_point(value);
+}
+
+void emscriptenSerializerSerializeVector(Serializer& serializer, const Vector& value) {
+    serializer.serialize_vector(value);
+}
+
+void emscriptenSerializerSerializeString(Serializer& serializer, const std::string& value) {
+    serializer.serialize_str(value.c_str());
+}
+
+void emscriptenSerializerSerializeMem(Serializer& serializer, const std::string& value) {
+    serializer.serialize_mem(value.data(), static_cast<uint32>(value.size()));
+}
+
+void emscriptenSerializerSerializeRotatedRect(Serializer& serializer, const emscripten::val& value) {
+    serializer.serialize_rotr(emscriptenRotatedRectFromVal(value));
+}
+
+void emscriptenSerializerSerializeQuad(Serializer& serializer, const emscripten::val& value) {
+    serializer.serialize_quad(emscriptenQuadFromVal(value));
+}
+
+uint32 emscriptenSerializerSizeofString(Serializer& serializer, const std::string& value) {
+    return serializer.sizeof_str(value.c_str());
+}
+
+uint32 emscriptenSerializerSizeofPoint(Serializer& serializer, const Point& value) {
+    return serializer.sizeof_point(value);
+}
+
+uint32 emscriptenSerializerSizeofVector(Serializer& serializer, const Vector& value) {
+    return serializer.sizeof_vector(value);
+}
+
+uint32 emscriptenSerializerSizeofMem(Serializer& serializer, const std::string& value) {
+    return serializer.sizeof_mem(value.data(), static_cast<uint32>(value.size()));
+}
+
+uint32 emscriptenSerializerSizeofRotatedRect(Serializer& serializer, const emscripten::val& value) {
+    return serializer.sizeof_rotr(emscriptenRotatedRectFromVal(value));
+}
+
+uint32 emscriptenSerializerSizeofQuad(Serializer& serializer, const emscripten::val& value) {
+    return serializer.sizeof_quad(emscriptenQuadFromVal(value));
+}
+
+MemBlock* emscriptenSerializerGetData(Serializer& serializer) {
+    return new MemBlock(reinterpret_cast<char*>(serializer.getDataPtr()), serializer.getDataSize(), false);
+}
+
+double emscriptenDeserializerDeserialize8(Deserializer& deserializer) {
+    return static_cast<double>(deserializer.deserialize_8());
+}
+
+int emscriptenDeserializerDeserialize4(Deserializer& deserializer) {
+    return deserializer.deserialize_4();
+}
+
+int emscriptenDeserializerDeserialize2(Deserializer& deserializer) {
+    return deserializer.deserialize_2();
+}
+
+int emscriptenDeserializerDeserialize1(Deserializer& deserializer) {
+    return deserializer.deserialize_1();
+}
+
+double emscriptenDeserializerDeserializeFloat(Deserializer& deserializer) {
+    return deserializer.deserialize_f();
+}
+
+double emscriptenDeserializerDeserializeDouble(Deserializer& deserializer) {
+    return deserializer.deserialize_d();
+}
+
+Point emscriptenDeserializerDeserializePoint(Deserializer& deserializer) {
+    return deserializer.deserialize_point();
+}
+
+Vector emscriptenDeserializerDeserializeVector(Deserializer& deserializer) {
+    return deserializer.deserialize_vector();
+}
+
+std::string emscriptenDeserializerDeserializeString(Deserializer& deserializer) {
+    std::string result;
+    deserializer.deserialize_string(result);
+    if (!result.empty() && result.back() == '\0') result.pop_back();
+    return result;
+}
+
+MemBlock* emscriptenDeserializerDeserializeMem(Deserializer& deserializer) {
+    uint32 size = deserializer.deserialize_memGetLen();
+    MemBlock* result = new MemBlock(size);
+    deserializer.deserialize_mem(result->ptr, size);
+    return result;
+}
+
+emscripten::val emscriptenDeserializerDeserializeRotatedRect(Deserializer& deserializer) {
+    RotatedRect value = deserializer.deserialize_rotr();
+    emscripten::val result = emscripten::val::object();
+    result.set("left", value.left);
+    result.set("top", value.top);
+    result.set("right", value.right);
+    result.set("bottom", value.bottom);
+    result.set("radians", value.radians);
+    emscripten::val center = emscripten::val::object();
+    center.set("x", value.centerOffset.x);
+    center.set("y", value.centerOffset.y);
+    result.set("centerOffset", center);
+    return result;
+}
+
+emscripten::val emscriptenDeserializerDeserializeQuad(Deserializer& deserializer) {
+    Quad value = deserializer.deserialize_quad();
+    emscripten::val points = emscripten::val::array();
+    for (int i = 0; i < 4; ++i) {
+        emscripten::val point = emscripten::val::object();
+        point.set("x", value.points[i].x);
+        point.set("y", value.points[i].y);
+        points.call<void>("push", point);
+    }
+    emscripten::val result = emscripten::val::object();
+    result.set("points", points);
+    return result;
+}
+
+void emscriptenDeserializerSetData(Deserializer& deserializer, MemBlock& data) {
+    deserializer.setDataPtr(data.ptr, static_cast<uint32>(data.bytes));
+}
+
+uint32 emscriptenSpriteLayerGetSerializedSize(SpriteLayer& layer, Serializer& serializer) {
+    return layer.getSerializedSize(&serializer);
+}
+
+void emscriptenSpriteLayerSerialize(SpriteLayer& layer, Serializer& serializer) {
+    layer.serialize(&serializer);
+}
+
+void emscriptenSpriteLayerDeserialize(SpriteLayer& layer, Deserializer& deserializer) {
+    layer.deserialize(&deserializer);
 }
 
 void setSerializationDebugMode(bool mode) {

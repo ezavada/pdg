@@ -93,6 +93,14 @@ ADDITIONAL_JS_FILES= \
     --embed-file $(SRC_JS_DIR)/pdg-defs.js@/js_modules/pdg-defs.js \
     --embed-file $(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js@/js_modules/pdg-wrapper.js \
     --embed-file $(PDG_ROOT)/test/yinyang.png@/yinyang.png \
+    --embed-file $(PDG_ROOT)/test/tiles.png@/tiles.png \
+    --embed-file $(PDG_ROOT)/test/data@/data \
+    --embed-file $(PDG_ROOT)/test/spec@/spec \
+    --embed-file $(PDG_ROOT)/test/cxx@/cxx \
+    --embed-file $(PDG_ROOT)/test/js@/js \
+    --embed-file $(PDG_ROOT)/test/misc/blend_mode_test.js@/misc/blend_mode_test.js \
+    --embed-file $(PDG_ROOT)/test/perf/bunnymark/README.md@/perf/bunnymark/README.md \
+    --embed-file $(PDG_ROOT)/test/client_test.js@/client_test.js \
     --post-js $(SRC_JS_DIR)/require.js \
     --post-js $(SRC_BINDINGS_DIR)/platform-emscripten.js \
     --post-js $(SRC_BINDINGS_DIR)/pdg_emscripten.js
@@ -104,9 +112,11 @@ OBJS= \
     $(OUT_DIR)/ConvertUTF.c.o \
 	$(OUT_DIR)/memblock.cpp.o \
 	$(OUT_DIR)/animated.cpp.o \
+	$(OUT_DIR)/attributes.cpp.o \
 	$(OUT_DIR)/collisiondetection.cpp.o \
     $(OUT_DIR)/color.cpp.o \
 	$(OUT_DIR)/deserializer.cpp.o \
+	$(OUT_DIR)/drawing.cpp.o \
 	$(OUT_DIR)/eventemitter.cpp.o \
     $(OUT_DIR)/eventmanager.cpp.o \
 	$(OUT_DIR)/font-impl.cpp.o \
@@ -213,6 +223,11 @@ $(OUT_DIR)/animated.cpp.o: $(SRC_SYS_DIR)/animated.cpp
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/animated.cpp.o -c $(SRC_SYS_DIR)/animated.cpp
 	
 
+$(OUT_DIR)/attributes.cpp.o: $(SRC_SYS_DIR)/attributes.cpp
+	@echo  'Compiling attributes.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/attributes.cpp.o -c $(SRC_SYS_DIR)/attributes.cpp
+
+
 $(OUT_DIR)/collisiondetection.cpp.o: $(SRC_SYS_DIR)/collisiondetection.cpp
 	@echo  'Compiling collisiondetection.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/collisiondetection.cpp.o -c $(SRC_SYS_DIR)/collisiondetection.cpp
@@ -227,6 +242,12 @@ $(OUT_DIR)/deserializer.cpp.o: $(SRC_SYS_DIR)/deserializer.cpp
 	@echo  'Compiling deserializer.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/deserializer.cpp.o -c $(SRC_SYS_DIR)/deserializer.cpp
 	
+
+
+$(OUT_DIR)/drawing.cpp.o: $(SRC_SYS_DIR)/drawing.cpp
+	@echo  'Compiling drawing.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/drawing.cpp.o -c $(SRC_SYS_DIR)/drawing.cpp
+
 
 $(OUT_DIR)/eventemitter.cpp.o: $(SRC_SYS_DIR)/eventemitter.cpp
 	@echo  'Compiling eventemitter.cpp...'

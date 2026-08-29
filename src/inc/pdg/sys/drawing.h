@@ -118,6 +118,14 @@ namespace pdg {
     public:
         static Drawing* create();
 
+        virtual ~Drawing() {
+        #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+          #ifndef PDG_NO_GUI
+            CleanupDrawingScriptObject(mDrawingScriptObj);
+          #endif
+        #endif
+        }
+
 		    // Add operations to the drawing. Returns the index of the added element.
 		    virtual ElementRef* addLine(const Point& from, const Point& to, const Attributes& attrs) = 0;
         virtual ElementRef* addSpline(Spline&& spline, const Attributes& attrs) = 0;
@@ -156,13 +164,6 @@ namespace pdg {
         Drawing() {
         #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
           INIT_SCRIPT_OBJECT(mDrawingScriptObj);
-        #endif
-        }
-        virtual ~Drawing() {
-        #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-          #ifndef PDG_NO_GUI
-            CleanupDrawingScriptObject(mDrawingScriptObj);
-          #endif
         #endif
         }
 	};

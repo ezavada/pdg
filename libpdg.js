@@ -5371,6 +5371,16 @@ Originally allocated`); // `.stack` will add "at ..." after this sentence
     };
 
   
+  var __embind_register_constant = (name, type, value) => {
+      name = AsciiToString(name);
+      whenDependentTypesAreResolved([], [type], (type) => {
+        type = type[0];
+        Module[name] = type.fromWireType(value);
+        return [];
+      });
+    };
+
+  
   var emval_freelist = [];
   
   var emval_handles = [0,1,,1,null,1,true,1,false,1];
@@ -5970,10 +5980,33 @@ ${functionBody}
 
 
   
+  var __emval_get_global = (name) => {
+      if (!name) {
+        return Emval.toHandle(globalThis);
+      }
+      name = getStringOrSymbol(name);
+      return Emval.toHandle(globalThis[name]);
+    };
+
+  var __emval_get_property = (handle, key) => {
+      handle = Emval.toValue(handle);
+      key = Emval.toValue(key);
+      return Emval.toHandle(handle[key]);
+    };
+
+  var __emval_incref = (handle) => {
+      if (handle > 9) {
+        emval_handles[handle + 1] += 1;
+      }
+    };
+
+  
   
   var __emval_invoke = (caller, handle, methodName, destructorsRef, args) => {
       return emval_methodCallers[caller](handle, methodName, destructorsRef, args);
     };
+
+  var __emval_new_array = () => Emval.toHandle([]);
 
   
   var __emval_new_cstring = (v) => Emval.toHandle(getStringOrSymbol(v));
@@ -5993,6 +6026,11 @@ ${functionBody}
       key = Emval.toValue(key);
       value = Emval.toValue(value);
       handle[key] = value;
+    };
+
+  var __emval_typeof = (handle) => {
+      handle = Emval.toValue(handle);
+      return Emval.toHandle(typeof handle);
     };
 
   var INT53_MAX = 9007199254740992;
@@ -6998,9 +7036,9 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('wasmBinary');
 }
 var ASM_CONSTS = {
-  274216: () => { pdg_em_platform_cleanup(); },  
- 274243: ($0, $1) => { pdg_em_platform_init($0, $1); },  
- 274277: () => { pdg_em_platform_pollEvents(); }
+  4305064: () => { pdg_em_platform_cleanup(); },  
+ 4305091: ($0, $1) => { pdg_em_platform_init($0, $1); },  
+ 4305125: () => { pdg_em_platform_pollEvents(); }
 };
 
 // Imports from the Wasm binary.
@@ -7087,6 +7125,8 @@ var wasmImports = {
   /** @export */
   _embind_register_class_function: __embind_register_class_function,
   /** @export */
+  _embind_register_constant: __embind_register_constant,
+  /** @export */
   _embind_register_emval: __embind_register_emval,
   /** @export */
   _embind_register_float: __embind_register_float,
@@ -7115,7 +7155,15 @@ var wasmImports = {
   /** @export */
   _emval_decref: __emval_decref,
   /** @export */
+  _emval_get_global: __emval_get_global,
+  /** @export */
+  _emval_get_property: __emval_get_property,
+  /** @export */
+  _emval_incref: __emval_incref,
+  /** @export */
   _emval_invoke: __emval_invoke,
+  /** @export */
+  _emval_new_array: __emval_new_array,
   /** @export */
   _emval_new_cstring: __emval_new_cstring,
   /** @export */
@@ -7124,6 +7172,8 @@ var wasmImports = {
   _emval_run_destructors: __emval_run_destructors,
   /** @export */
   _emval_set_property: __emval_set_property,
+  /** @export */
+  _emval_typeof: __emval_typeof,
   /** @export */
   _gmtime_js: __gmtime_js,
   /** @export */

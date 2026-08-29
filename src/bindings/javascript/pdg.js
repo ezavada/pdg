@@ -306,6 +306,23 @@ console.binaryDump = function(buf, len, bytesPerLine) {
 	console.log(dumpStr);
 }
 
+if (inbrowser && typeof bindings.LogManager !== "undefined" &&
+        typeof bindings.LogManager.prototype.binaryDump !== "function") {
+    bindings.LogManager.prototype.binaryDump = function(buf, len, bytesPerLine) {
+        bytesPerLine = bytesPerLine || 20;
+        len = Math.min(typeof len === "number" ? len : buf.length, buf.length);
+        var lines = [];
+        for (var offset = 0; offset < len; offset += bytesPerLine) {
+            var bytes = [];
+            for (var i = offset; i < Math.min(offset + bytesPerLine, len); ++i) {
+                bytes.push((buf.charCodeAt(i) & 0xff).toString(16).padStart(2, "0"));
+            }
+            lines.push(offset.toString(16).padStart(6, "0") + ": " + bytes.join(" "));
+        }
+        return lines.join("\n");
+    };
+}
+
 // basic coordinates - add to process.pdg
 bindings.Point = coordinates.Point;
 bindings.Offset = coordinates.Offset;
@@ -725,6 +742,392 @@ if (inbrowser && typeof bindings.ImageStrip !== "undefined") {
     };
 }
 
+if (inbrowser && typeof bindings.Attributes !== "undefined") {
+    (function(proto) {
+        function chain(self, nativeName, args) {
+            self[nativeName].apply(self, args);
+            return self;
+        }
+        function point(value) {
+            if (value === null || typeof value === "undefined") return { x: 0, y: 0 };
+            return { x: value.x, y: value.y };
+        }
+        function nativeColor(value) {
+            var converted = typeof value === "string" || typeof value === "number"
+                ? new bindings.Color(value) : value;
+            return {
+                red: converted.red,
+                green: converted.green,
+                blue: converted.blue,
+                alpha: converted.alpha
+            };
+        }
+        function publicColor(value) {
+            return new bindings.Color(value.red, value.green, value.blue, value.alpha);
+        }
+
+        proto.lineColor = function(value) { return chain(this, "_lineColor", [nativeColor(value)]); };
+        proto.lineThickness = function(value) { return chain(this, "_lineThickness", [value]); };
+        proto.lineOpacity = function(value) { return chain(this, "_lineOpacity", [value]); };
+        proto.lineStyle = function(value) { return chain(this, "_lineStyle", [value]); };
+        proto.fillColor = function(value) { return chain(this, "_fillColor", [nativeColor(value)]); };
+        proto.fillOpacity = function(value) { return chain(this, "_fillOpacity", [value]); };
+        proto.fillGradient = function(start, startColor, end, endColor) {
+            return chain(this, "_fillGradient", [point(start), nativeColor(startColor), point(end), nativeColor(endColor)]);
+        };
+        proto.fillRadialGradient = function(center, centerColor, radius, endColor) {
+            return chain(this, "_fillRadialGradient", [point(center), nativeColor(centerColor), radius, nativeColor(endColor)]);
+        };
+        proto.texture = function(value) { return chain(this, "_texture", [value]); };
+        proto.fitType = function(value) { return chain(this, "_fitType", [value]); };
+        proto.clipOverflow = function(value) { return chain(this, "_clipOverflow", [value]); };
+        proto.roundedCorners = function(value) { return chain(this, "_roundedCorners", [value]); };
+        proto.translation = function(value) { return chain(this, "_translation", [point(value)]); };
+        proto.rotation = function(radians, center) { return chain(this, "_rotation", [radians, point(center)]); };
+        proto.scale = function(xFactor, yFactor, center) {
+            if (typeof yFactor !== "number") {
+                center = yFactor;
+                yFactor = xFactor;
+            }
+            return chain(this, "_scale", [xFactor, yFactor, point(center)]);
+        };
+        proto.skew = function(xSkew, ySkew, center) {
+            return chain(this, "_skew", [xSkew, ySkew, point(center)]);
+        };
+        proto.transform = function(matrix) {
+            if (!Array.isArray(matrix) || matrix.length !== 9 || matrix.some(function(value) {
+                return typeof value !== "number";
+            })) {
+                throw new TypeError("Attributes.transform requires an array of 9 numbers");
+            }
+            return chain(this, "_transform", [matrix]);
+        };
+        proto.blendMode = function(value) { return chain(this, "_blendMode", [value]); };
+        proto.textSize = function(value) { return chain(this, "_textSize", [value]); };
+        proto.textStyle = function(value) { return chain(this, "_textStyle", [value]); };
+        proto.frame = function(value) { return chain(this, "_frame", [value]); };
+        proto.subsection = function(value) { return chain(this, "_subsection", [value]); };
+        proto.sphereRotation = function(value) { return chain(this, "_sphereRotation", [value]); };
+        proto.polarOffset = function(value) { return chain(this, "_polarOffset", [point(value)]); };
+        proto.lightOffset = function(value) { return chain(this, "_lightOffset", [point(value)]); };
+        proto.ambientLight = function(value) { return chain(this, "_ambientLight", [nativeColor(value)]); };
+
+        proto.getLineColor = function() { return publicColor(this._getLineColor()); };
+        proto.getFillColor = function() { return publicColor(this._getFillColor()); };
+        proto.getGradientStart = function() { return new bindings.Point(this._getGradientStart()); };
+        proto.getGradientEnd = function() { return new bindings.Point(this._getGradientEnd()); };
+        proto.getGradientStartColor = function() { return publicColor(this._getGradientStartColor()); };
+        proto.getGradientEndColor = function() { return publicColor(this._getGradientEndColor()); };
+        proto.getRadialGradientCenter = function() { return new bindings.Point(this._getRadialGradientCenter()); };
+        proto.getRadialGradientCenterColor = function() { return publicColor(this._getRadialGradientCenterColor()); };
+        proto.getRadialGradientEndColor = function() { return publicColor(this._getRadialGradientEndColor()); };
+        proto.getSubsection = function() { return new bindings.Rect(this._getSubsection()); };
+        proto.getPolarOffset = function() { return new bindings.Offset(this._getPolarOffset()); };
+        proto.getLightOffset = function() { return new bindings.Offset(this._getLightOffset()); };
+        proto.getAmbientLight = function() { return publicColor(this._getAmbientLight()); };
+    })(bindings.Attributes.prototype);
+}
+
+if (inbrowser && typeof bindings.Drawing !== "undefined") {
+    bindings.Drawing.prototype.getBounds = function() {
+        return new bindings.Rect(this._getBounds());
+    };
+    bindings.Drawing.prototype.centerPoint = function() {
+        return new bindings.Point(this._centerPoint());
+    };
+    bindings.ElementRef.prototype.getControlPoints = function() {
+        return this._getControlPoints().map(function(value) { return new bindings.Point(value); });
+    };
+    bindings.ElementRef.prototype.getControlPoint = function(index) {
+        return new bindings.Point(this._getControlPoint(index));
+    };
+}
+
+if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
+    (function() {
+        var layerSprites = new WeakMap();
+        var layerProto = bindings.SpriteLayer.prototype;
+        var spriteProto = bindings.Sprite.prototype;
+
+        layerProto.createSprite = function() {
+            var sprite = this._createSprite();
+            var sprites = layerSprites.get(this);
+            if (!sprites) {
+                sprites = [];
+                layerSprites.set(this, sprites);
+            }
+            sprites.push(sprite);
+            return sprite;
+        };
+        layerProto.getNthSprite = function(index) {
+            var sprites = layerSprites.get(this);
+            if (sprites && sprites[index]) return sprites[index];
+            return this._getNthSprite(index);
+        };
+        layerProto.setUseChipmunkPhysics = function(useIt) {
+            if (typeof this._setUseChipmunkPhysics === "function") {
+                this._setUseChipmunkPhysics(useIt !== false);
+            }
+            return this;
+        };
+        spriteProto.enableCollisions = function(collisionType) {
+            this._enableCollisions(typeof collisionType === "undefined" ? bindings.collide_AlphaChannel : collisionType);
+            return this;
+        };
+        spriteProto.setElasticity = function(value) {
+            this._setElasticity(value);
+            return this;
+        };
+    })();
+}
+
+if (inbrowser && typeof bindings.TileLayer !== "undefined") {
+    bindings.TileLayer.prototype.defineTileSet = function(tileWidth, tileHeight, image) {
+        this._defineTileSet(tileWidth, tileHeight, image);
+        return this;
+    };
+    bindings.TileLayer.prototype.setWorldSize = function(width, height) {
+        this._setWorldSize(width, height);
+        return this;
+    };
+    bindings.TileLayer.prototype.getWorldSize = function() {
+        return new bindings.Rect(this._getWorldSize());
+    };
+    bindings.TileLayer.prototype.getTileSize = function() {
+        return new bindings.Point(this._getTileSize());
+    };
+}
+
+if (inbrowser && typeof bindings.Serializer !== "undefined") {
+    (function(proto) {
+        function requireNumber(value, name) {
+            if (typeof value !== "number") throw new TypeError(name + " requires a number");
+            return value;
+        }
+        function rangedInteger(value, min, max, name) {
+            requireNumber(value, name);
+            if (!Number.isInteger(value) || value < min || value > max) {
+                throw new RangeError(name + " value is outside its supported range");
+            }
+            return value;
+        }
+        function fixedSize(size) {
+            return function(value) {
+                requireNumber(value, "sizeof");
+                return size;
+            };
+        }
+
+        proto.serialize_1 = function(value) { return this._serialize_1(rangedInteger(value, -128, 127, "serialize_1")); };
+        proto.serialize_1u = function(value) { return this._serialize_1u(rangedInteger(value, 0, 255, "serialize_1u")); };
+        proto.serialize_2 = function(value) { return this._serialize_2(rangedInteger(value, -32768, 32767, "serialize_2")); };
+        proto.serialize_2u = function(value) { return this._serialize_2u(rangedInteger(value, 0, 65535, "serialize_2u")); };
+        proto.serialize_3u = function(value) { return this._serialize_3u(rangedInteger(value, 0, 16777215, "serialize_3u")); };
+        proto.serialize_4 = function(value) { return this._serialize_4(rangedInteger(value, -2147483648, 2147483647, "serialize_4")); };
+        proto.serialize_4u = function(value) { return this._serialize_4u(rangedInteger(value, 0, 4294967295, "serialize_4u")); };
+        proto.serialize_8 = function(value) { return this._serialize_8(requireNumber(value, "serialize_8")); };
+        proto.serialize_f = function(value) { return this._serialize_f(requireNumber(value, "serialize_f")); };
+        proto.serialize_d = function(value) { return this._serialize_d(requireNumber(value, "serialize_d")); };
+        proto.serialize_uint = function(value) {
+            if (typeof value === "undefined") throw new TypeError("serialize_uint requires a number");
+            if (value === null || !Number.isFinite(value)) value = 0;
+            return this._serialize_uint(value);
+        };
+        proto.serialize_str = function(value) {
+            if (value === null) return;
+            if (typeof value !== "string") throw new TypeError("serialize_str requires a string");
+            return this._serialize_str(value);
+        };
+        proto.serialize_mem = function(value) {
+            if (typeof value !== "string") throw new TypeError("serialize_mem requires a binary string");
+            return this._serialize_mem(value);
+        };
+        proto.serialize_rotr = function(value) { return this._serialize_rotr(value); };
+        proto.serialize_quad = function(value) { return this._serialize_quad(value); };
+
+        proto.sizeof_1 = proto.sizeof_1u = fixedSize(1);
+        proto.sizeof_2 = proto.sizeof_2u = fixedSize(2);
+        proto.sizeof_3u = fixedSize(3);
+        proto.sizeof_4 = proto.sizeof_4u = proto.sizeof_f = fixedSize(4);
+        proto.sizeof_8 = proto.sizeof_8u = proto.sizeof_d = fixedSize(8);
+        proto.sizeof_str = function(value) { return this._sizeof_str(value); };
+        proto.sizeof_mem = function(value) { return this._sizeof_mem(value); };
+        proto.sizeof_rotr = function(value) { return this._sizeof_rotr(value); };
+        proto.sizeof_quad = function(value) { return this._sizeof_quad(value); };
+    })(bindings.Serializer.prototype);
+
+    (function(proto) {
+        var nativeColor = proto.deserialize_color;
+        var nativeOffset = proto.deserialize_offset;
+        var nativePoint = proto.deserialize_point;
+        var nativeVector = proto.deserialize_vector;
+        var nativeRect = proto.deserialize_rect;
+
+        proto.deserialize_color = function() {
+            var value = nativeColor.call(this);
+            return new bindings.Color(value.red, value.green, value.blue, value.alpha);
+        };
+        proto.deserialize_offset = function() { return new bindings.Offset(nativeOffset.call(this)); };
+        proto.deserialize_point = function() { return new bindings.Point(nativePoint.call(this)); };
+        proto.deserialize_vector = function() { return new bindings.Vector(nativeVector.call(this)); };
+        proto.deserialize_rect = function() { return new bindings.Rect(nativeRect.call(this)); };
+        proto.deserialize_rotr = function() {
+            var value = this._deserialize_rotr();
+            return new bindings.RotatedRect(new bindings.Rect(value), value.radians,
+                new bindings.Offset(value.centerOffset));
+        };
+        proto.deserialize_quad = function() {
+            var value = this._deserialize_quad();
+            return new bindings.Quad(value.points);
+        };
+    })(bindings.Deserializer.prototype);
+
+    // Embind cannot directly instantiate the V8-specific ScriptSerializable
+    // implementation. Keep the native byte stream, but bridge JavaScript-owned
+    // serializable objects and their constructor registry in JavaScript.
+    (function() {
+        var serializableClasses = Object.create(null);
+        var tagObject = 0x6f626a;
+        var tagObjectNil = 0x6e696c;
+        var tagObjectRef = 0x726566;
+
+        function BrowserSerializable(getSize, serialize, deserialize, getTag) {
+            if (!(this instanceof BrowserSerializable)) {
+                throw new TypeError("ISerializable must be constructed with new");
+            }
+            if (typeof getSize !== "function" || typeof serialize !== "function" ||
+                    typeof deserialize !== "function" || typeof getTag !== "function") {
+                throw new TypeError("ISerializable requires four function arguments");
+            }
+            Object.defineProperties(this, {
+                _pdgSizeCallback: { value: getSize },
+                _pdgSerializeCallback: { value: serialize },
+                _pdgDeserializeCallback: { value: deserialize },
+                _pdgTagCallback: { value: getTag }
+            });
+        }
+        BrowserSerializable.prototype.getSerializedSize = function(serializer) {
+            return this._pdgSizeCallback.call(this, serializer);
+        };
+        BrowserSerializable.prototype.serialize = function(serializer) {
+            return this._pdgSerializeCallback.call(this, serializer);
+        };
+        BrowserSerializable.prototype.deserialize = function(deserializer) {
+            return this._pdgDeserializeCallback.call(this, deserializer);
+        };
+        BrowserSerializable.prototype._pdgGetClassTag = function() {
+            return this._pdgTagCallback.call(this);
+        };
+        bindings.ISerializable = BrowserSerializable;
+
+        function classTagOf(obj) {
+            var tag;
+            if (obj && typeof obj._pdgGetClassTag === "function") tag = obj._pdgGetClassTag();
+            else if (obj && typeof obj.getMyClassTag === "function") tag = obj.getMyClassTag();
+            else throw new TypeError("Serializable object must provide getMyClassTag");
+            if (!Number.isInteger(tag) || tag < 0 || tag > 0xffffffff) {
+                throw new RangeError("Serializable class tag must be a 32-bit unsigned integer");
+            }
+            return tag;
+        }
+        function getSizeOf(obj, serializer) {
+            if (!obj || typeof obj.getSerializedSize !== "function") {
+                throw new TypeError("Serializable object must provide getSerializedSize");
+            }
+            return obj.getSerializedSize(serializer);
+        }
+        function serializeObjectData(obj, serializer) {
+            if (!obj || typeof obj.serialize !== "function") {
+                throw new TypeError("Serializable object must provide serialize");
+            }
+            return obj.serialize(serializer);
+        }
+        function deserializeObjectData(obj, deserializer) {
+            if (!obj || typeof obj.deserialize !== "function") {
+                throw new TypeError("Serializable object must provide deserialize");
+            }
+            return obj.deserialize(deserializer);
+        }
+
+        bindings.registerSerializableClass = function(constructor) {
+            if (typeof constructor !== "function") throw new TypeError("Serializable constructor must be a function");
+            var instance = new constructor();
+            if (!instance) throw new TypeError("Serializable constructor must return an object");
+            var tag = classTagOf(instance);
+            if (typeof instance.getSerializedSize !== "function" ||
+                    typeof instance.serialize !== "function" || typeof instance.deserialize !== "function") {
+                throw new TypeError("Serializable object is missing required methods");
+            }
+            if (instance._pdgRequiresExplicitRegistration) instance._pdgRegistered = true;
+            serializableClasses[tag] = constructor;
+        };
+
+        var serializerProto = bindings.Serializer.prototype;
+        serializerProto.sizeof_obj = function(obj) {
+            if (obj === null) return 3;
+            classTagOf(obj);
+            this._pdgSizedObjects = this._pdgSizedObjects || [];
+            var referenceIndex = this._pdgSizedObjects.indexOf(obj);
+            if (referenceIndex >= 0) return 3 + this.sizeof_uint(referenceIndex);
+            this._pdgSizedObjects.push(obj);
+            var objectSize = getSizeOf(obj, this);
+            return 3 + 4 + 2 + this.sizeof_uint(objectSize) + objectSize;
+        };
+        serializerProto.serialize_obj = function(obj) {
+            if (obj === null) {
+                this.serialize_3u(tagObjectNil);
+                return;
+            }
+            classTagOf(obj);
+            this._pdgSerializedObjects = this._pdgSerializedObjects || [];
+            var referenceIndex = this._pdgSerializedObjects.indexOf(obj);
+            if (referenceIndex >= 0) {
+                this.serialize_3u(tagObjectRef);
+                this.serialize_uint(referenceIndex);
+                return;
+            }
+            this._pdgSerializedObjects.push(obj);
+            this.serialize_3u(tagObject);
+            this.serialize_4u(classTagOf(obj));
+            this.serialize_2u(obj._pdgRequiresExplicitRegistration && !obj._pdgRegistered
+                ? 0 : this._pdgSerializedObjects.length);
+            this.serialize_uint(getSizeOf(obj, this));
+            serializeObjectData(obj, this);
+        };
+
+        var deserializerProto = bindings.Deserializer.prototype;
+        var nativeSetDataPtr = deserializerProto.setDataPtr;
+        deserializerProto.setDataPtr = function(data) {
+            this._pdgDeserializedObjects = [];
+            return nativeSetDataPtr.call(this, data);
+        };
+        deserializerProto.deserialize_obj = function() {
+            var serializationType = this.deserialize_3u();
+            if (serializationType === tagObjectNil) return null;
+            this._pdgDeserializedObjects = this._pdgDeserializedObjects || [];
+            if (serializationType === tagObjectRef) {
+                var referenceIndex = this.deserialize_uint();
+                if (referenceIndex < 0 || referenceIndex >= this._pdgDeserializedObjects.length) {
+                    throw new Error("Invalid serialized object reference");
+                }
+                return this._pdgDeserializedObjects[referenceIndex];
+            }
+            if (serializationType !== tagObject) throw new Error("Serialized data does not contain an object");
+            var classTag = this.deserialize_4u();
+            var serializedClassCount = this.deserialize_2u();
+            this.deserialize_uint();
+            if (serializedClassCount === 0) throw new Error("Unregistered serializable class tag " + classTag);
+            var constructor = serializableClasses[classTag];
+            if (!constructor) throw new Error("Unregistered serializable class tag " + classTag);
+            var obj = new constructor();
+            if (!obj) throw new TypeError("Serializable constructor must return an object");
+            this._pdgDeserializedObjects.push(obj);
+            deserializeObjectData(obj, this);
+            return obj;
+        };
+    })();
+}
+
 if (typeof bindings.GraphicsManager != "undefined") {  // might be non-gui build
 	bindings.gfx = bindings.getGraphicsManager();
 	bindings.hasGraphics = true;
@@ -801,6 +1204,43 @@ fixManagerConstructorAndToString(bindings.evt, bindings.EventManager, 'EventMana
 fixManagerConstructorAndToString(bindings.res, bindings.ResourceManager, 'ResourceManager');
 fixManagerConstructorAndToString(bindings.cfg, bindings.ConfigManager, 'ConfigManager');
 fixManagerConstructorAndToString(bindings.lm, bindings.LogManager, 'LogManager');
+
+bindings.lm.init_CreateUniqueNewFile = bindings.init_CreateUniqueNewFile;
+bindings.lm.init_OverwriteExisting = bindings.init_OverwriteExisting;
+bindings.lm.init_AppendToExisting = bindings.init_AppendToExisting;
+bindings.lm.init_StdOut = bindings.init_StdOut;
+bindings.lm.init_StdErr = bindings.init_StdErr;
+
+if (inbrowser) {
+    (function(proto) {
+        proto.setLanguage = function(language) {
+            if (language === null) return this;
+            if (typeof language === "undefined") throw new TypeError("language is required");
+            this._setLanguage(language);
+            return this;
+        };
+        proto.openResourceFile = function(filename) {
+            if (filename === null) return 0;
+            if (typeof filename === "undefined") throw new TypeError("filename is required");
+            return this._openResourceFile(filename);
+        };
+        proto.getString = function(id, substring) {
+            return this._getString(id, typeof substring === "undefined" ? -1 : substring);
+        };
+        proto.getResourceSize = function(resourceName) {
+            return this._getResourceSize(resourceName);
+        };
+        proto.getResource = function(resourceName, maxSize) {
+            return this._getResource(resourceName, typeof maxSize === "undefined" ? -1 : maxSize);
+        };
+        proto.getImage = function(imageName) {
+            return this._getImage(imageName);
+        };
+        proto.getImageStrip = function(imageName) {
+            return this._getImageStrip(imageName);
+        };
+    })(bindings.ResourceManager.prototype);
+}
 
 if (bindings.hasGraphics) {
     fixManagerConstructorAndToString(bindings.gfx, bindings.GraphicsManager, 'GraphicsManager');
@@ -924,6 +1364,81 @@ if (inbrowser) {
             EmitterType.prototype.unblockEvent = unblockEvent;
             EmitterType.prototype.postEvent = postEvent;
         });
+
+        function installConvenienceHandler(proto, name, eventType, discriminator, expectedValue) {
+            proto[name] = function(callback) {
+                if (typeof callback !== "function") throw new TypeError(name + " requires a callback");
+                var emitter = this;
+                var handler = new BrowserEventHandler(function(event) {
+                    if (event && typeof event[discriminator] !== "undefined" && event[discriminator] !== expectedValue) {
+                        return false;
+                    }
+                    return callback.call(emitter, event);
+                });
+                emitter.addHandler(handler, eventType);
+                handler.cancel = function() { emitter.removeHandler(handler, eventType); };
+                return handler;
+            };
+        }
+
+        var spriteActions = {
+            onCollideSprite: [bindings.eventType_SpriteCollide, 0],
+            onCollideWall: [bindings.eventType_SpriteCollide, 1],
+            onOffscreen: [bindings.eventType_SpriteAnimate, 2],
+            onOnscreen: [bindings.eventType_SpriteAnimate, 3],
+            onExitLayer: [bindings.eventType_SpriteAnimate, 4],
+            onAnimationLoop: [bindings.eventType_SpriteAnimate, 8],
+            onAnimationEnd: [bindings.eventType_SpriteAnimate, 9],
+            onFadeComplete: [bindings.eventType_SpriteAnimate, 10],
+            onFadeInComplete: [bindings.eventType_SpriteAnimate, 11],
+            onFadeOutComplete: [bindings.eventType_SpriteAnimate, 12],
+            onAnimationBlendComplete: [bindings.eventType_SpriteAnimate, 15]
+        };
+        var touchActions = {
+            onMouseEnter: 20,
+            onMouseLeave: 21,
+            onMouseDown: 22,
+            onMouseUp: 23,
+            onMouseClick: 24
+        };
+        var layerActions = {
+            onErasePort: 40,
+            onPreDrawLayer: 41,
+            onPostDrawLayer: 42,
+            onDrawPortComplete: 43,
+            onAnimationStart: 44,
+            onPreAnimateLayer: 45,
+            onPostAnimateLayer: 46,
+            onAnimationComplete: 47,
+            onZoomComplete: 48,
+            onLayerFadeInComplete: 49,
+            onLayerFadeOutComplete: 50
+        };
+
+        [bindings.Sprite.prototype, bindings.SpriteLayer.prototype].forEach(function(proto) {
+            Object.keys(spriteActions).forEach(function(name) {
+                installConvenienceHandler(proto, name, spriteActions[name][0], "action", spriteActions[name][1]);
+            });
+            Object.keys(touchActions).forEach(function(name) {
+                installConvenienceHandler(proto, name, bindings.eventType_SpriteTouch, "touchType", touchActions[name]);
+            });
+        });
+        Object.keys(layerActions).forEach(function(name) {
+            installConvenienceHandler(bindings.SpriteLayer.prototype, name,
+                bindings.eventType_SpriteLayer, "action", layerActions[name]);
+        });
+
+        var spriterEventStates = new WeakMap();
+        bindings.Sprite.prototype.enableSpriterEvents = function(enable) {
+            spriterEventStates.set(this, enable !== false);
+            return this;
+        };
+        bindings.Sprite.prototype.areSpriterEventsEnabled = function() {
+            return spriterEventStates.get(this) === true;
+        };
+        bindings.SpriteLayer.prototype.enableSpriterEvents = function() {
+            return this;
+        };
 
         bindings.EventManager.prototype.getDeviceOrientation = function() {
             return { roll: 0, pitch: 0, yaw: 0 };
@@ -1083,6 +1598,12 @@ bindings.createSerializableObject = function(obj, classTag) {
 		obj.deserialize.bind(obj),
 		function() { return classTag; }
 	);
+	if (inbrowser) {
+		Object.defineProperty(serializable, "_pdgRequiresExplicitRegistration", {
+			value: true,
+			writable: true
+		});
+	}
 	
 	// Add the getMyClassTag method as a property
 	serializable.getMyClassTag = function() {

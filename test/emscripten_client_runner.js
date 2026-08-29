@@ -57,7 +57,15 @@
         if (request === "fs") {
             return {
                 readdirSync: function(path) { return window.FS.readdir(path); },
-                readFileSync: function(path) { return window.FS.readFile(path, { encoding: "utf8" }); },
+                readFileSync: function(path, options) {
+                    var encoding = typeof options === "string" ? options : options && options.encoding;
+                    if (encoding) return window.FS.readFile(path, { encoding: encoding });
+                    var bytes = window.FS.readFile(path);
+                    bytes.toString = function(requestedEncoding) {
+                        return new TextDecoder(requestedEncoding || "utf-8").decode(bytes);
+                    };
+                    return bytes;
+                },
                 writeFileSync: function(path, data) { return window.FS.writeFile(path, data); },
                 unlinkSync: function(path) { return window.FS.unlink(path); },
                 existsSync: function(path) {

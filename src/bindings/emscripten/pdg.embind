@@ -37,6 +37,48 @@ emscripten::function("createSpriteLayerFromSpriterFile", &pdg::createSpriteLayer
 emscripten::function("cleanupSpriteLayer", &pdg::cleanupLayer, emscripten::allow_raw_pointers());
 emscripten::function("cleanupLayer", &pdg::cleanupLayer, emscripten::allow_raw_pointers());
 emscripten::function("createTileLayer", &pdg::createTileLayer, emscripten::allow_raw_pointers());
+emscripten::function("createDrawing", &pdg::emscriptenCreateDrawing, emscripten::allow_raw_pointers());
+
+emscripten::constant("lineStyle_Auto", static_cast<int>(pdg::lineStyle_Auto));
+emscripten::constant("lineStyle_None", static_cast<int>(pdg::lineStyle_None));
+emscripten::constant("lineStyle_Solid", static_cast<int>(pdg::lineStyle_Solid));
+emscripten::constant("lineStyle_Dashed", static_cast<int>(pdg::lineStyle_Dashed));
+emscripten::constant("lineStyle_Dotted", static_cast<int>(pdg::lineStyle_Dotted));
+emscripten::constant("lineStyle_DashDot", static_cast<int>(pdg::lineStyle_DashDot));
+emscripten::constant("lineStyle_DashDotDot", static_cast<int>(pdg::lineStyle_DashDotDot));
+emscripten::constant("blendMode_Normal", static_cast<int>(pdg::blendMode_Normal));
+emscripten::constant("blendMode_Additive", static_cast<int>(pdg::blendMode_Additive));
+emscripten::constant("blendMode_Multiply", static_cast<int>(pdg::blendMode_Multiply));
+emscripten::constant("blendMode_Screen", static_cast<int>(pdg::blendMode_Screen));
+emscripten::constant("blendMode_Darken", static_cast<int>(pdg::blendMode_Darken));
+emscripten::constant("blendMode_Lighten", static_cast<int>(pdg::blendMode_Lighten));
+emscripten::constant("gradientType_None", static_cast<int>(pdg::gradientType_None));
+emscripten::constant("gradientType_Linear", static_cast<int>(pdg::gradientType_Linear));
+emscripten::constant("gradientType_Radial", static_cast<int>(pdg::gradientType_Radial));
+emscripten::constant("type_Line", static_cast<int>(pdg::type_Line));
+emscripten::constant("type_Spline", static_cast<int>(pdg::type_Spline));
+emscripten::constant("type_Arc", static_cast<int>(pdg::type_Arc));
+emscripten::constant("type_Rect", static_cast<int>(pdg::type_Rect));
+emscripten::constant("type_Quad", static_cast<int>(pdg::type_Quad));
+emscripten::constant("type_Polygon", static_cast<int>(pdg::type_Polygon));
+emscripten::constant("type_Ellipse", static_cast<int>(pdg::type_Ellipse));
+emscripten::constant("type_Image", static_cast<int>(pdg::type_Image));
+emscripten::constant("type_ImageStrip", static_cast<int>(pdg::type_ImageStrip));
+emscripten::constant("type_Drawing", static_cast<int>(pdg::type_Drawing));
+emscripten::constant("ser_Positions", static_cast<int>(pdg::ser_Positions));
+emscripten::constant("ser_ZOrder", static_cast<int>(pdg::ser_ZOrder));
+emscripten::constant("ser_Sizes", static_cast<int>(pdg::ser_Sizes));
+emscripten::constant("ser_Animations", static_cast<int>(pdg::ser_Animations));
+emscripten::constant("ser_Motion", static_cast<int>(pdg::ser_Motion));
+emscripten::constant("ser_Forces", static_cast<int>(pdg::ser_Forces));
+emscripten::constant("ser_Physics", static_cast<int>(pdg::ser_Physics));
+emscripten::constant("ser_ImageRefs", static_cast<int>(pdg::ser_ImageRefs));
+emscripten::constant("ser_SCMLRefs", static_cast<int>(pdg::ser_SCMLRefs));
+emscripten::constant("ser_HelperRefs", static_cast<int>(pdg::ser_HelperRefs));
+emscripten::constant("ser_InitialData", static_cast<int>(pdg::ser_InitialData));
+emscripten::constant("ser_Micro", static_cast<int>(pdg::ser_Micro));
+emscripten::constant("ser_Update", static_cast<int>(pdg::ser_Update));
+emscripten::constant("ser_Full", static_cast<int>(pdg::ser_Full));
 
 emscripten::value_object<pdg::Point>("_PointValue")
     .field("x", &pdg::Point::x)
@@ -127,6 +169,9 @@ emscripten::class_<pdg::MemBlock>("MemBlock")
 
 emscripten::class_<pdg::FileManager>("FileManager")
     FileManager_Extra
+    .function("findFirst", &pdg::emscriptenFileFindFirst)
+    .function("findNext", &pdg::emscriptenFileFindNext)
+    .function("findClose", &pdg::emscriptenFileFindClose)
     .function("getApplicationDataDirectory", &pdg::FileManager::getApplicationDataDirectory)
     .function("getApplicationDirectory", &pdg::FileManager::getApplicationDirectory)
     .function("getApplicationResourceDirectory", &pdg::FileManager::getApplicationResourceDirectory)
@@ -134,6 +179,10 @@ emscripten::class_<pdg::FileManager>("FileManager")
 
 emscripten::class_<pdg::LogManager>("LogManager")
     LogManager_Extra
+    .function("initialize", &pdg::emscriptenLogInitialize)
+    .function("writeLogEntry", &pdg::emscriptenLogWrite)
+    .function("setLogLevel", &pdg::emscriptenLogSetLevel)
+    .function("getLogLevel", &pdg::emscriptenLogGetLevel)
     ;
 
 emscripten::class_<pdg::ConfigManager>("ConfigManager")
@@ -142,34 +191,67 @@ emscripten::class_<pdg::ConfigManager>("ConfigManager")
 
 emscripten::class_<pdg::ResourceManager>("ResourceManager")
     ResourceManager_Extra
-    .function("setLanguage", &pdg::ResourceManager::setLanguage, emscripten::allow_raw_pointers())
+    .function("_setLanguage", &pdg::emscriptenResourceSetLanguage)
+    .function("getLanguage", &pdg::emscriptenResourceGetLanguage)
+    .function("_openResourceFile", &pdg::emscriptenResourceOpenFile)
     .function("closeResourceFile", &pdg::ResourceManager::closeResourceFile)
-    .function("getImage", &pdg::ResourceManager::getImage, emscripten::allow_raw_pointers())
-    .function("getImageStrip", &pdg::ResourceManager::getImageStrip, emscripten::allow_raw_pointers())
+    .function("_getImage", &pdg::emscriptenResourceGetImage, emscripten::allow_raw_pointers())
+    .function("_getImageStrip", &pdg::emscriptenResourceGetImageStrip, emscripten::allow_raw_pointers())
+    .function("_getString", &pdg::emscriptenResourceGetString)
+    .function("_getResourceSize", &pdg::emscriptenResourceGetSize)
+    .function("_getResource", &pdg::emscriptenResourceGet)
     .function("getResourcePaths", &pdg::ResourceManager::getResourcePaths)
     ;
 
 emscripten::class_<pdg::Serializer>("Serializer")
     Serializer_Extra
-    .function("serialize_4u", &pdg::Serializer::serialize_4u)
-    .function("serialize_3u", &pdg::Serializer::serialize_3u)
-    .function("serialize_2u", &pdg::Serializer::serialize_2u)
-    .function("serialize_1u", &pdg::Serializer::serialize_1u)
+    .function("_serialize_8", &pdg::emscriptenSerializerSerialize8)
+    .function("_serialize_4", &pdg::emscriptenSerializerSerialize4)
+    .function("_serialize_2", &pdg::emscriptenSerializerSerialize2)
+    .function("_serialize_1", &pdg::emscriptenSerializerSerialize1)
+    .function("_serialize_f", &pdg::emscriptenSerializerSerializeFloat)
+    .function("_serialize_d", &pdg::emscriptenSerializerSerializeDouble)
+    .function("_serialize_4u", &pdg::Serializer::serialize_4u)
+    .function("_serialize_3u", &pdg::Serializer::serialize_3u)
+    .function("_serialize_2u", &pdg::Serializer::serialize_2u)
+    .function("_serialize_1u", &pdg::Serializer::serialize_1u)
     .function("serialize_bool", &pdg::Serializer::serialize_bool)
-    .function("serialize_uint", &pdg::Serializer::serialize_uint)
+    .function("_serialize_uint", &pdg::Serializer::serialize_uint)
+    .function("_serialize_str", &pdg::emscriptenSerializerSerializeString)
+    .function("_serialize_mem", &pdg::emscriptenSerializerSerializeMem)
     .function("serialize_color", &pdg::Serializer::serialize_color, emscripten::allow_raw_pointers())
+    .function("serialize_offset", &pdg::Serializer::serialize_offset)
+    .function("serialize_point", &pdg::emscriptenSerializerSerializePoint)
+    .function("serialize_vector", &pdg::emscriptenSerializerSerializeVector)
+    .function("serialize_rect", &pdg::Serializer::serialize_rect)
+    .function("_serialize_rotr", &pdg::emscriptenSerializerSerializeRotatedRect)
+    .function("_serialize_quad", &pdg::emscriptenSerializerSerializeQuad)
     .function("serialize_obj", &pdg::Serializer::serialize_obj, emscripten::allow_raw_pointers())
     .function("sizeof_bool", &pdg::Serializer::sizeof_bool)
     .function("sizeof_uint", &pdg::Serializer::sizeof_uint)
+    .function("_sizeof_str", &pdg::emscriptenSerializerSizeofString)
+    .function("_sizeof_mem", &pdg::emscriptenSerializerSizeofMem)
     .function("sizeof_color", &pdg::Serializer::sizeof_color, emscripten::allow_raw_pointers())
+    .function("sizeof_offset", &pdg::Serializer::sizeof_offset)
+    .function("sizeof_point", &pdg::emscriptenSerializerSizeofPoint)
+    .function("sizeof_vector", &pdg::emscriptenSerializerSizeofVector)
+    .function("sizeof_rect", &pdg::Serializer::sizeof_rect)
+    .function("_sizeof_rotr", &pdg::emscriptenSerializerSizeofRotatedRect)
+    .function("_sizeof_quad", &pdg::emscriptenSerializerSizeofQuad)
     .function("sizeof_obj", &pdg::Serializer::sizeof_obj, emscripten::allow_raw_pointers())
     .function("getDataSize", &pdg::Serializer::getDataSize)
-    .function("getDataPtr", &pdg::Serializer::getDataPtr, emscripten::allow_raw_pointers())
+    .function("getDataPtr", &pdg::emscriptenSerializerGetData, emscripten::allow_raw_pointers())
     ;
 
 emscripten::class_<pdg::Deserializer>("Deserializer")
     Deserializer_Extra
-    .function("deserialize_8u", &pdg::Deserializer::deserialize_8u)
+    .function("deserialize_8", &pdg::emscriptenDeserializerDeserialize8)
+    .function("deserialize_4", &pdg::emscriptenDeserializerDeserialize4)
+    .function("deserialize_2", &pdg::emscriptenDeserializerDeserialize2)
+    .function("deserialize_1", &pdg::emscriptenDeserializerDeserialize1)
+    .function("deserialize_f", &pdg::emscriptenDeserializerDeserializeFloat)
+    .function("deserialize_d", &pdg::emscriptenDeserializerDeserializeDouble)
+    .function("deserialize_8u", &pdg::emscriptenDeserializerDeserialize8)
     .function("deserialize_4u", &pdg::Deserializer::deserialize_4u)
     .function("deserialize_3u", &pdg::Deserializer::deserialize_3u)
     .function("deserialize_2u", &pdg::Deserializer::deserialize_2u)
@@ -177,9 +259,17 @@ emscripten::class_<pdg::Deserializer>("Deserializer")
     .function("deserialize_bool", &pdg::Deserializer::deserialize_bool)
     .function("deserialize_uint", &pdg::Deserializer::deserialize_uint)
     .function("deserialize_color", &pdg::Deserializer::deserialize_color, emscripten::allow_raw_pointers())
-    .function("deserialize_mem", &pdg::Deserializer::deserialize_mem, emscripten::allow_raw_pointers())
+    .function("deserialize_offset", &pdg::Deserializer::deserialize_offset)
+    .function("deserialize_point", &pdg::emscriptenDeserializerDeserializePoint)
+    .function("deserialize_vector", &pdg::emscriptenDeserializerDeserializeVector)
+    .function("deserialize_rect", &pdg::Deserializer::deserialize_rect)
+    .function("_deserialize_rotr", &pdg::emscriptenDeserializerDeserializeRotatedRect)
+    .function("_deserialize_quad", &pdg::emscriptenDeserializerDeserializeQuad)
+    .function("deserialize_str", &pdg::emscriptenDeserializerDeserializeString)
+    .function("deserialize_mem", &pdg::emscriptenDeserializerDeserializeMem, emscripten::allow_raw_pointers())
     .function("deserialize_memGetLen", &pdg::Deserializer::deserialize_memGetLen)
     .function("deserialize_obj", &pdg::Deserializer::deserialize_obj, emscripten::allow_raw_pointers())
+    .function("setDataPtr", &pdg::emscriptenDeserializerSetData)
     ;
 
 emscripten::class_<pdg::ISerializable>("ISerializable")
@@ -312,16 +402,38 @@ emscripten::class_<pdg::ISpriteCollideHelper>("ISpriteCollideHelper")
     ISpriteCollideHelper_Extra
     ;
 
-emscripten::class_<pdg::Sprite>("Sprite")
+emscripten::class_<pdg::Sprite, emscripten::base<pdg::Animated>>("Sprite")
     Sprite_Extra
+    .function("_enableCollisions", &pdg::Sprite::enableCollisions, emscripten::return_value_policy::reference())
+    .function("disableCollisions", &pdg::Sprite::disableCollisions, emscripten::return_value_policy::reference())
+    .function("_setElasticity", &pdg::Sprite::setElasticity, emscripten::return_value_policy::reference())
+    .function("getElasticity", &pdg::Sprite::getElasticity)
     ;
 
-emscripten::class_<pdg::SpriteLayer>("SpriteLayer")
+emscripten::class_<pdg::SpriteLayer, emscripten::base<pdg::Animated>>("SpriteLayer")
     SpriteLayer_Extra
+    .function("_createSprite", &pdg::SpriteLayer::createSprite, emscripten::allow_raw_pointers())
+    .function("_getNthSprite", &pdg::SpriteLayer::getNthSprite, emscripten::allow_raw_pointers())
+    .function("enableCollisions", &pdg::SpriteLayer::enableCollisions)
+    .function("disableCollisions", &pdg::SpriteLayer::disableCollisions)
+    .function("setSerializationFlags", &pdg::SpriteLayer::setSerializationFlags)
+    .function("getSerializedSize", &pdg::emscriptenSpriteLayerGetSerializedSize)
+    .function("serialize", &pdg::emscriptenSpriteLayerSerialize)
+    .function("deserialize", &pdg::emscriptenSpriteLayerDeserialize)
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    .function("_setUseChipmunkPhysics", &pdg::SpriteLayer::setUseChipmunkPhysics)
+#endif
     ;
 
-emscripten::class_<pdg::TileLayer>("TileLayer")
+emscripten::class_<pdg::TileLayer, emscripten::base<pdg::SpriteLayer>>("TileLayer")
     TileLayer_Extra
+    .function("_defineTileSet", &pdg::emscriptenTileDefineSet, emscripten::allow_raw_pointers())
+    .function("_setWorldSize", &pdg::emscriptenTileSetWorldSize)
+    .function("_getWorldSize", &pdg::TileLayer::getWorldSize)
+    .function("_getTileSize", &pdg::TileLayer::getTileSize)
+    .function("getTileTypeAt", &pdg::emscriptenTileGetType)
+    .function("setTileTypeAt", &pdg::emscriptenTileSetType)
+    .function("getTileTypeAndFacingAt", &pdg::emscriptenTileGetTypeAndFacing)
     ;
 
 emscripten::class_<pdg::Image>("Image")
@@ -350,6 +462,98 @@ emscripten::class_<pdg::ImageStrip, emscripten::base<pdg::Image>>("ImageStrip")
     .function("getNumFrames", &pdg::ImageStrip::getNumFrames)
     .function("_setNumFrames", &pdg::ImageStrip::setNumFrames)
     .function("getFrame", &pdg::ImageStrip::getFrame, emscripten::allow_raw_pointers())
+    ;
+
+emscripten::class_<pdg::Attributes>("Attributes")
+    .constructor<>()
+    .function("_lineColor", &pdg::Attributes::lineColor, emscripten::return_value_policy::reference())
+    .function("_lineThickness", &pdg::Attributes::lineThickness, emscripten::return_value_policy::reference())
+    .function("_lineOpacity", &pdg::Attributes::lineOpacity, emscripten::return_value_policy::reference())
+    .function("_lineStyle", &pdg::emscriptenAttributesSetLineStyle)
+    .function("_fillColor", &pdg::Attributes::fillColor, emscripten::return_value_policy::reference())
+    .function("_fillOpacity", &pdg::Attributes::fillOpacity, emscripten::return_value_policy::reference())
+    .function("_fillGradient", &pdg::Attributes::fillGradient, emscripten::return_value_policy::reference())
+    .function("_fillRadialGradient", &pdg::Attributes::fillRadialGradient, emscripten::return_value_policy::reference())
+    .function("_texture", &pdg::Attributes::texture, emscripten::allow_raw_pointers(), emscripten::return_value_policy::reference())
+    .function("_fitType", &pdg::emscriptenAttributesSetFitType)
+    .function("_clipOverflow", &pdg::Attributes::clipOverflow, emscripten::return_value_policy::reference())
+    .function("_roundedCorners", &pdg::Attributes::roundedCorners, emscripten::return_value_policy::reference())
+    .function("_translation", &pdg::Attributes::translation, emscripten::return_value_policy::reference())
+    .function("_rotation", &pdg::emscriptenAttributesRotate)
+    .function("_scale", &pdg::emscriptenAttributesScale)
+    .function("_skew", &pdg::emscriptenAttributesSkew)
+    .function("_transform", &pdg::emscriptenAttributesTransform)
+    .function("_blendMode", &pdg::emscriptenAttributesSetBlendMode)
+    .function("_textSize", &pdg::Attributes::textSize, emscripten::return_value_policy::reference())
+    .function("_textStyle", &pdg::Attributes::textStyle, emscripten::return_value_policy::reference())
+    .function("_frame", &pdg::Attributes::frame, emscripten::return_value_policy::reference())
+    .function("_subsection", &pdg::Attributes::subsection, emscripten::return_value_policy::reference())
+    .function("_sphereRotation", &pdg::Attributes::sphereRotation, emscripten::return_value_policy::reference())
+    .function("_polarOffset", &pdg::Attributes::polarOffset, emscripten::return_value_policy::reference())
+    .function("_lightOffset", &pdg::Attributes::lightOffset, emscripten::return_value_policy::reference())
+    .function("_ambientLight", &pdg::Attributes::ambientLight, emscripten::return_value_policy::reference())
+    .function("_getLineColor", &pdg::Attributes::getLineColor)
+    .function("getLineThickness", &pdg::Attributes::getLineThickness)
+    .function("getLineOpacity", &pdg::Attributes::getLineOpacity)
+    .function("getLineStyle", &pdg::emscriptenAttributesGetLineStyle)
+    .function("_getFillColor", &pdg::Attributes::getFillColor)
+    .function("getFillOpacity", &pdg::Attributes::getFillOpacity)
+    .function("getGradientType", &pdg::emscriptenAttributesGetGradientType)
+    .function("_getGradientStart", &pdg::Attributes::getGradientStart)
+    .function("_getGradientEnd", &pdg::Attributes::getGradientEnd)
+    .function("_getGradientStartColor", &pdg::Attributes::getGradientStartColor)
+    .function("_getGradientEndColor", &pdg::Attributes::getGradientEndColor)
+    .function("_getRadialGradientCenter", &pdg::Attributes::getRadialGradientCenter)
+    .function("getRadialGradientRadius", &pdg::Attributes::getRadialGradientRadius)
+    .function("_getRadialGradientCenterColor", &pdg::Attributes::getRadialGradientCenterColor)
+    .function("_getRadialGradientEndColor", &pdg::Attributes::getRadialGradientEndColor)
+    .function("getRoundedCornerRadius", &pdg::Attributes::getRoundedCornerRadius)
+    .function("getTransform", &pdg::emscriptenAttributesGetTransform)
+    .function("getBlendMode", &pdg::emscriptenAttributesGetBlendMode)
+    .function("getTextSize", &pdg::Attributes::getTextSize)
+    .function("getTextStyle", &pdg::Attributes::getTextStyle)
+    .function("getFrame", &pdg::Attributes::getFrame)
+    .function("getFitType", &pdg::emscriptenAttributesGetFitType)
+    .function("getClipOverflow", &pdg::Attributes::getClipOverflow)
+    .function("_getSubsection", &pdg::Attributes::getSubsection)
+    .function("getSphereRotation", &pdg::Attributes::getSphereRotation)
+    .function("_getPolarOffset", &pdg::Attributes::getPolarOffset)
+    .function("_getLightOffset", &pdg::Attributes::getLightOffset)
+    .function("_getAmbientLight", &pdg::Attributes::getAmbientLight)
+    .function("getTexture", &pdg::Attributes::getTexture, emscripten::allow_raw_pointers())
+    ;
+
+emscripten::class_<pdg::ElementRef>("ElementRef")
+    .function("type", &pdg::emscriptenElementGetType)
+    .function("_getControlPoints", &pdg::emscriptenElementGetControlPoints)
+    .function("_getControlPoint", &pdg::ElementRef::getControlPoint)
+    .function("changeControlPoint", &pdg::ElementRef::changeControlPoint)
+    .function("getAttributes", &pdg::emscriptenElementGetAttributes, emscripten::allow_raw_pointers())
+    .function("setAttributes", &pdg::ElementRef::setAttributes)
+    .function("moveForward", &pdg::ElementRef::moveForward)
+    .function("moveBackward", &pdg::ElementRef::moveBackward)
+    .function("moveToFront", &pdg::ElementRef::moveToFront)
+    .function("moveToBack", &pdg::ElementRef::moveToBack)
+    .function("remove", &pdg::ElementRef::remove)
+    ;
+
+emscripten::class_<pdg::Drawing>("Drawing")
+    .function("addLine", &pdg::Drawing::addLine, emscripten::allow_raw_pointers())
+    .function("addSpline", &pdg::emscriptenDrawingAddSpline, emscripten::allow_raw_pointers())
+    .function("addArc", &pdg::Drawing::addArc, emscripten::allow_raw_pointers())
+    .function("addRect", &pdg::Drawing::addRect, emscripten::allow_raw_pointers())
+    .function("addQuad", &pdg::Drawing::addQuad, emscripten::allow_raw_pointers())
+    .function("addPolygon", &pdg::emscriptenDrawingAddPolygon, emscripten::allow_raw_pointers())
+    .function("addEllipse", &pdg::Drawing::addEllipse, emscripten::allow_raw_pointers())
+    .function("addImage", &pdg::Drawing::addImage, emscripten::allow_raw_pointers())
+    .function("addImageStrip", &pdg::Drawing::addImageStrip, emscripten::allow_raw_pointers())
+    .function("addDrawing", &pdg::Drawing::addDrawing, emscripten::allow_raw_pointers())
+    .function("getElementCount", &pdg::Drawing::getElementCount)
+    .function("getElement", &pdg::Drawing::getElement, emscripten::allow_raw_pointers())
+    .function("getElementHitBy", &pdg::Drawing::getElementHitBy, emscripten::allow_raw_pointers())
+    .function("_getBounds", &pdg::Drawing::getBounds)
+    .function("_centerPoint", &pdg::Drawing::centerPoint)
+    .function("empty", &pdg::Drawing::empty)
     ;
 
 
