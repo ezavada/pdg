@@ -7,6 +7,8 @@
 
 #include "../javascript/memblock.h"
 
+#include <emscripten/val.h>
+
 namespace pdg {
 
 // extend the config manager to handle API differences between C++ and Javascript
@@ -20,6 +22,18 @@ public:
     float getConfigFloat(std::string& arg0);
     bool getConfigBool(std::string& arg0);
 };
+
+bool emscriptenConfigUseConfig(ConfigManager& manager, const std::string& name);
+emscripten::val emscriptenConfigGetString(ConfigManager& manager, const std::string& key);
+emscripten::val emscriptenConfigGetLong(ConfigManager& manager, const std::string& key);
+emscripten::val emscriptenConfigGetFloat(ConfigManager& manager, const std::string& key);
+emscripten::val emscriptenConfigGetBool(ConfigManager& manager, const std::string& key);
+void emscriptenConfigSetString(ConfigManager& manager, const std::string& key, const std::string& value);
+void emscriptenConfigSetLong(ConfigManager& manager, const std::string& key, long value);
+void emscriptenConfigSetFloat(ConfigManager& manager, const std::string& key, float value);
+void emscriptenConfigSetBool(ConfigManager& manager, const std::string& key, bool value);
+
+MemBlock* emscriptenCreateEmptyMemBlock();
 
 class FileManager : public Singleton<FileManager> {
 public:

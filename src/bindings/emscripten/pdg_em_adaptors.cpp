@@ -30,9 +30,57 @@ float ConfigManagerWrap::getConfigFloat(std::string& arg0) {
 }
 
 bool ConfigManagerWrap::getConfigBool(std::string& arg0) {
-    bool n;
+    bool n = false;
     ConfigManagerUnix::getConfigBool(arg0.c_str(), n);
     return n;
+}
+
+bool emscriptenConfigUseConfig(ConfigManager& manager, const std::string& name) {
+    return manager.useConfig(name.c_str());
+}
+
+emscripten::val emscriptenConfigGetString(ConfigManager& manager, const std::string& key) {
+    std::string value;
+    if (!manager.getConfigString(key.c_str(), value)) return emscripten::val::undefined();
+    return emscripten::val(value);
+}
+
+emscripten::val emscriptenConfigGetLong(ConfigManager& manager, const std::string& key) {
+    long value = 0;
+    if (!manager.getConfigLong(key.c_str(), value)) return emscripten::val::undefined();
+    return emscripten::val(value);
+}
+
+emscripten::val emscriptenConfigGetFloat(ConfigManager& manager, const std::string& key) {
+    float value = 0.0f;
+    if (!manager.getConfigFloat(key.c_str(), value)) return emscripten::val::undefined();
+    return emscripten::val(value);
+}
+
+emscripten::val emscriptenConfigGetBool(ConfigManager& manager, const std::string& key) {
+    bool value = false;
+    if (!manager.getConfigBool(key.c_str(), value)) return emscripten::val::undefined();
+    return emscripten::val(value);
+}
+
+void emscriptenConfigSetString(ConfigManager& manager, const std::string& key, const std::string& value) {
+    manager.setConfigString(key.c_str(), value);
+}
+
+void emscriptenConfigSetLong(ConfigManager& manager, const std::string& key, long value) {
+    manager.setConfigLong(key.c_str(), value);
+}
+
+void emscriptenConfigSetFloat(ConfigManager& manager, const std::string& key, float value) {
+    manager.setConfigFloat(key.c_str(), value);
+}
+
+void emscriptenConfigSetBool(ConfigManager& manager, const std::string& key, bool value) {
+    manager.setConfigBool(key.c_str(), value);
+}
+
+MemBlock* emscriptenCreateEmptyMemBlock() {
+    return new MemBlock(0);
 }
 
 void setSerializationDebugMode(bool mode) {

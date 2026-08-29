@@ -420,6 +420,37 @@ bindings.res = bindings.getResourceManager();
 bindings.cfg = bindings.getConfigManager();
 bindings.lm = bindings.getLogManager();
 
+// Embind creates a fresh JavaScript handle each time a singleton pointer is
+// returned. Preserve the public API's singleton identity by returning the
+// canonical handles initialized above.
+bindings.getFileManager = function() { return bindings.fs; };
+bindings.getEventManager = function() { return bindings.evt; };
+bindings.getTimerManager = function() { return bindings.tm; };
+bindings.getResourceManager = function() { return bindings.res; };
+bindings.getConfigManager = function() { return bindings.cfg; };
+bindings.getLogManager = function() { return bindings.lm; };
+
+if (inbrowser && typeof bindings.MemBlock !== "undefined") {
+    bindings.MemBlock.prototype.toBuffer = function() {
+        var data = this.getData();
+        var bytes = new Uint8Array(data.length);
+        for (var i = 0; i < data.length; i++) bytes[i] = data.charCodeAt(i) & 0xff;
+        return bytes;
+    };
+}
+
+if (inbrowser && bindings.cfg) {
+    ["setConfigString", "setConfigLong", "setConfigFloat", "setConfigBool"].forEach(function(name) {
+        var original = bindings.ConfigManager.prototype[name];
+        bindings.ConfigManager.prototype[name] = function(key, value) {
+            if (value === null || typeof value === "undefined") {
+                throw new TypeError(name + " requires a value");
+            }
+            return original.call(this, key, value);
+        };
+    });
+}
+
 if (typeof bindings.GraphicsManager != "undefined") {  // might be non-gui build
 	bindings.gfx = bindings.getGraphicsManager();
 	bindings.hasGraphics = true;
