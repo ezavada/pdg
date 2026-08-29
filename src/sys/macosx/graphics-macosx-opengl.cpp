@@ -142,7 +142,7 @@ void graphics_CG_drawText(CGContextRef context, FontImplMac* font, int size, uin
 	// Check if font supports all characters
 	MacAPI::PrivateOSFontRef fontRef = font->getMacFont(size, style);
 	MacAPI::CGGlyph glyphs[len];
-	CGFontGetGlyphsForUnichars(fontRef, (short unsigned int*)s16.c_str(), glyphs, len);
+	CGFontGetGlyphsForUnichars(fontRef, const_cast<utf16char*>(s16.c_str()), glyphs, len);
 	
 	// Check for missing glyphs (glyph ID 0)
 	bool hasMissingGlyphs = false;

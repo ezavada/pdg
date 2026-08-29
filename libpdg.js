@@ -3784,10 +3784,27 @@ var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
   
 
   
+  
   var stringToUTF8 = (str, outPtr, maxBytesToWrite) => {
       assert(typeof maxBytesToWrite == 'number', 'stringToUTF8 requires a third parameter that specifies the length of the output buffer');
       return stringToUTF8Array(str, HEAPU8, outPtr, maxBytesToWrite);
     };
+  function ___syscall_getcwd(buf, size) {
+  try {
+  
+      if (!size) return -28;
+      var cwd = FS.cwd();
+      var cwdLengthInBytes = lengthBytesUTF8(cwd) + 1;
+      if (size < cwdLengthInBytes) return -68;
+      stringToUTF8(cwd, buf, size);
+      return cwdLengthInBytes;
+    } catch (e) {
+    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
+    return -e.errno;
+  }
+  }
+  
+
   
   
   
@@ -5990,6 +6007,35 @@ Originally allocated`); // `.stack` will add "at ..." after this sentence
       return 0;
     };
 
+  
+  var runtimeKeepaliveCounter = 0;
+  var keepRuntimeAlive = () => noExitRuntime || runtimeKeepaliveCounter > 0;
+  var _proc_exit = (code) => {
+      EXITSTATUS = code;
+      if (!keepRuntimeAlive()) {
+        Module['onExit']?.(code);
+        ABORT = true;
+      }
+      quit_(code, new ExitStatus(code));
+    };
+  
+  
+  /** @param {boolean|number=} implicit */
+  var exitJS = (status, implicit) => {
+      EXITSTATUS = status;
+  
+      checkUnflushedContent();
+  
+      // if exit() was called explicitly, warn the user if the runtime isn't actually being shut down
+      if (keepRuntimeAlive() && !implicit) {
+        var msg = `program exited (with status: ${status}), but keepRuntimeAlive() is set (counter=${runtimeKeepaliveCounter}) due to an async operation, so halting execution but not exiting the runtime or preventing further async execution (you can use emscripten_force_exit, if you want to force a true shutdown)`;
+        err(msg);
+      }
+  
+      _proc_exit(status);
+    };
+  var _exit = exitJS;
+
   function _fd_close(fd) {
   try {
   
@@ -6212,7 +6258,6 @@ if (Module['printErr']) err = Module['printErr'];
   'getTempRet0',
   'setTempRet0',
   'zeroMemory',
-  'exitJS',
   'getHeapMax',
   'growMemory',
   'withStackSave',
@@ -6228,7 +6273,6 @@ if (Module['printErr']) err = Module['printErr'];
   'getDynCaller',
   'dynCall',
   'handleException',
-  'keepRuntimeAlive',
   'runtimeKeepalivePush',
   'runtimeKeepalivePop',
   'callUserCallback',
@@ -6405,6 +6449,7 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'stackRestore',
   'createNamedFunction',
   'ptrToString',
+  'exitJS',
   'abortOnCannotGrowMemory',
   'ENV',
   'ERRNO_CODES',
@@ -6418,6 +6463,7 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'readEmAsmArgs',
   'runEmAsmFunction',
   'getExecutableName',
+  'keepRuntimeAlive',
   'asyncLoad',
   'mmapAlloc',
   'wasmTable',
@@ -6716,10 +6762,10 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('wasmBinary');
 }
 var ASM_CONSTS = {
-  182792: () => { pdg_em_platform_cleanup(); },  
- 182819: ($0, $1) => { pdg_em_platform_init($0, $1); },  
- 182853: () => { pdg_em_platform_pollEvents(); },  
- 182883: ($0, $1, $2, $3, $4, $5, $6, $7, $8) => { pdg_em_platform_initImageData($0, $1, $2, $3, $4, $5, $6, $7, $8); }
+  183592: () => { pdg_em_platform_cleanup(); },  
+ 183619: ($0, $1) => { pdg_em_platform_init($0, $1); },  
+ 183653: () => { pdg_em_platform_pollEvents(); },  
+ 183683: ($0, $1, $2, $3, $4, $5, $6, $7, $8) => { pdg_em_platform_initImageData($0, $1, $2, $3, $4, $5, $6, $7, $8); }
 };
 
 // Imports from the Wasm binary.
@@ -6779,6 +6825,8 @@ var wasmImports = {
   /** @export */
   __syscall_fcntl64: ___syscall_fcntl64,
   /** @export */
+  __syscall_getcwd: ___syscall_getcwd,
+  /** @export */
   __syscall_getdents64: ___syscall_getdents64,
   /** @export */
   __syscall_ioctl: ___syscall_ioctl,
@@ -6832,6 +6880,8 @@ var wasmImports = {
   environ_get: _environ_get,
   /** @export */
   environ_sizes_get: _environ_sizes_get,
+  /** @export */
+  exit: _exit,
   /** @export */
   fd_close: _fd_close,
   /** @export */
@@ -7032,6 +7082,73 @@ window.require.cache = new Object();
 })();
 // end include: /Users/edz/Documents/Personal/pdg-devel/src/js/require.js
 
+// include: /Users/edz/Documents/Personal/pdg-devel/src/bindings/emscripten/platform-emscripten.js
+// -----------------------------------------------
+// platform-emscripten.js
+// 
+// part of the emscripten bindings
+// implementation of platform calls when platform is javascript
+// with an emscripten runtime
+//
+// Written by Ed Zavada, 2015
+// Copyright (c) 2015, Dream Rock Studios, LLC
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// -----------------------------------------------
+
+
+// pdg::platform_cleanup()
+
+function pdg_em_platform_cleanup() 
+{
+}
+
+
+// pdg::platform_init(int argc, const char* argv[])
+
+function pdg_em_platform_init(argc, argv) 
+{
+}
+
+
+// pdg::platform_pollEvents()
+
+function pdg_em_platform_pollEvents() 
+{
+}
+
+
+// pdg::platform_initImageData(unsigned char* imageData, long imageDataLen, 
+//		unsigned char** outDataPtr, long* outWidth, long* outHeight, 
+//		long* outBufferWidth, long* outBufferHeight, long* outBufferPitch, 
+//		int* outFormat)
+
+function pdg_em_platform_initImageData(
+    imageData, imageDataLen, outDataPtr, outWidth, outHeight, 
+    outBufferWidth, outBufferHeight, outBufferPitch, outFormat) 
+{
+}
+
+// end include: /Users/edz/Documents/Personal/pdg-devel/src/bindings/emscripten/platform-emscripten.js
+
 // include: /Users/edz/Documents/Personal/pdg-devel/src/bindings/emscripten/pdg_emscripten.js
 // -----------------------------------------------
 // pdg_emscripten.js
@@ -7084,6 +7201,8 @@ Module.onRuntimeInitialized = function() {
     window.pdg_bind = Module;
     window.require.cache[window.require.resolve('pdg')] = Module;
     window.require.cache[window.require.resolve('module')] = Module;
+
+    Module._initialize();
 
     var pdgDefs = window.require('pdg-defs');
     for (var prop in pdgDefs) {

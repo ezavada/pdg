@@ -10,6 +10,10 @@ EMSCRIPTEN_BINDINGS(pdg) {
 emscripten::function("rand", &pdg::rand, emscripten::allow_raw_pointers());
 emscripten::function("srand", &pdg::srand, emscripten::allow_raw_pointers());
 emscripten::function("setSerializationDebugMode", &pdg::setSerializationDebugMode, emscripten::allow_raw_pointers());
+emscripten::function("_initialize", &pdg::emscriptenInit);
+emscripten::function("_idle", &pdg::emscriptenIdle);
+emscripten::function("_quit", &pdg::emscriptenQuit);
+emscripten::function("_isQuitting", &pdg::emscriptenIsQuitting);
 emscripten::function("getFileManager", &pdg::getFileManager, emscripten::allow_raw_pointers());
 emscripten::function("getLogManager", &pdg::getLogManager, emscripten::allow_raw_pointers());
 emscripten::function("getConfigManager", &pdg::getConfigManager, emscripten::allow_raw_pointers());

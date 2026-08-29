@@ -169,12 +169,18 @@ bindings.run = function() {
 bindings.__run = function() {
 	if (!bindings.quitting && !bindings._isQuitting() ) {
 		bindings.idle();
-		setImmediate(bindings.__run);
+		if (inbrowser) {
+			setTimeout(bindings.__run, 0);
+		} else {
+			setImmediate(bindings.__run);
+		}
 	} else {
 		bindings._quit();
 		// Clear the run loop active flag when stopping
 		bindings._pdgRunLoopActive = false;
-		process.nextTick(process.exit);
+		if (!inbrowser) {
+			process.nextTick(process.exit);
+		}
 	}
 }
 

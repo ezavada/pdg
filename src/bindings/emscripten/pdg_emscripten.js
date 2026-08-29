@@ -50,6 +50,8 @@ Module.onRuntimeInitialized = function() {
     window.require.cache[window.require.resolve('pdg')] = Module;
     window.require.cache[window.require.resolve('module')] = Module;
 
+    Module._initialize();
+
     var pdgDefs = window.require('pdg-defs');
     for (var prop in pdgDefs) {
         if (Object.prototype.hasOwnProperty.call(pdgDefs, prop)) {

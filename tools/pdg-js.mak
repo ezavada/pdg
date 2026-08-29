@@ -8,8 +8,11 @@
 # build target specs
 
 # first target entry is the target invoked when typing 'make'
-.PHONY: all
+.PHONY: all smoke
 all: libpdg
+
+smoke: libpdg
+	@node $(PDG_ROOT)/test/emscripten_smoke.js
 
 
 EXPORTS='[ \
@@ -84,6 +87,7 @@ ADDITIONAL_JS_FILES= \
     --embed-file $(SRC_JS_DIR)/pdg-defs.js@/js_modules/pdg-defs.js \
     --embed-file $(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js@/js_modules/pdg-wrapper.js \
     --post-js $(SRC_JS_DIR)/require.js \
+    --post-js $(SRC_BINDINGS_DIR)/platform-emscripten.js \
     --post-js $(SRC_BINDINGS_DIR)/pdg_emscripten.js
 
 

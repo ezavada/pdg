@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PDG Emscripten smoke test</title>
+</head>
+<body>
+  <pre id="result">WAITING</pre>
+  <script src="../libpdg.js"></script>
+  <script>
+    (function waitForPdg(deadline) {
+      if (window.pdg && window.pdg.pdgReady) {
+        try {
+          window.pdg.idle();
+          if (typeof window.pdg.rand() !== 'number') {
+            throw new Error('rand() did not return a number');
+          }
+          document.getElementById('result').textContent = 'PASS';
+          document.title = 'PASS: PDG Emscripten smoke test';
+        } catch (error) {
+          document.getElementById('result').textContent = 'FAIL: ' + error.message;
+          document.title = 'FAIL: PDG Emscripten smoke test';
+        }
+        return;
+      }
+
+      if (Date.now() >= deadline) {
+        document.getElementById('result').textContent = 'FAIL: initialization timed out';
+        document.title = 'FAIL: PDG Emscripten smoke test';
+        return;
+      }
+      setTimeout(function() { waitForPdg(deadline); }, 10);
+    })(Date.now() + 5000);
+  </script>
+</body>
+</html>
