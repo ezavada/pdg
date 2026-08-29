@@ -1,0 +1,97 @@
+#!/bin/bash
+
+set -u
+
+PDG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+BUILD=yes
+if [ "${1:-}" = "--no-build" ]; then
+    BUILD=no
+    shift
+fi
+
+if [ "$BUILD" = yes ]; then
+    (cd "$PDG_ROOT" && make pdg-js) || exit $?
+fi
+
+if [ ! -f "$PDG_ROOT/libpdg.js" ] || [ ! -f "$PDG_ROOT/libpdg.wasm" ]; then
+    echo "Error: libpdg.js and libpdg.wasm are required; run make pdg-js first."
+    exit 2
+fi
+
+BROWSER="${PDG_BROWSER:-}"
+if [ -z "$BROWSER" ] && [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
+    BROWSER="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+fi
+if [ -z "$BROWSER" ]; then
+    BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+fi
+if [ -z "$BROWSER" ]; then
+    echo "Error: Chrome/Chromium not found. Set PDG_BROWSER to its executable path."
+    exit 2
+fi
+
+PORT="${PDG_TEST_PORT:-8123}"
+RESULT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pdg-emscripten-tests.XXXXXX")" || exit 2
+RESULT_HTML="$RESULT_DIR/result.html"
+SERVER_LOG="$RESULT_DIR/server.log"
+SERVER_PID=""
+TEST_URL="http://127.0.0.1:$PORT/test/InBrowserTests.html"
+USING_EXISTING_SERVER=no
+
+cleanup() {
+    if [ -n "$SERVER_PID" ]; then
+        kill "$SERVER_PID" 2>/dev/null || true
+        wait "$SERVER_PID" 2>/dev/null || true
+    fi
+}
+trap cleanup EXIT INT TERM
+
+READY=no
+if curl -fsS "$TEST_URL" >/dev/null 2>&1; then
+    READY=yes
+    USING_EXISTING_SERVER=yes
+    echo "Using existing test server at http://127.0.0.1:$PORT"
+else
+    (cd "$PDG_ROOT" && python3 -m http.server "$PORT" --bind 127.0.0.1 >"$SERVER_LOG" 2>&1) &
+    SERVER_PID=$!
+    for unused in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+        if curl -fsS "$TEST_URL" >/dev/null 2>&1; then
+            READY=yes
+            echo "Started temporary test server at http://127.0.0.1:$PORT"
+            break
+        fi
+        sleep 0.1
+    done
+fi
+if [ "$READY" != yes ]; then
+    echo "Error: test server did not start on port $PORT."
+    sed -n '1,20p' "$SERVER_LOG"
+    exit 2
+fi
+
+"$BROWSER" --headless=new --disable-gpu --dump-dom --virtual-time-budget=60000 \
+    "$TEST_URL" >"$RESULT_HTML" 2>/dev/null
+BROWSER_EXIT=$?
+RESULT_JSON="$(sed -n 's/.*<pre id="pdg-result-json">\([^<]*\)<\/pre>.*/\1/p' "$RESULT_HTML" | tail -1)"
+
+if [ -n "$RESULT_JSON" ]; then
+    echo "$RESULT_JSON"
+else
+    echo "Error: browser did not produce a test result (exit $BROWSER_EXIT)."
+    echo "Browser output: $RESULT_HTML"
+    exit 2
+fi
+
+if echo "$RESULT_JSON" | grep -q '"status":"passed"'; then
+    exit 0
+fi
+
+sed -n 's/.*<li>\([^<]*\)<\/li>.*/\1/p' "$RESULT_HTML" | head -20
+echo "Client suite completed, but Jasmine reported test failures; the server is working."
+if [ "$USING_EXISTING_SERVER" = yes ]; then
+    echo "Interactive report: $TEST_URL"
+else
+    echo "Rendered Jasmine report: $RESULT_HTML"
+    echo "For an interactive report, serve $PDG_ROOT and open test/InBrowserTests.html."
+fi
+exit 1

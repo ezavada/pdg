@@ -6762,10 +6762,10 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('wasmBinary');
 }
 var ASM_CONSTS = {
-  183592: () => { pdg_em_platform_cleanup(); },  
- 183619: ($0, $1) => { pdg_em_platform_init($0, $1); },  
- 183653: () => { pdg_em_platform_pollEvents(); },  
- 183683: ($0, $1, $2, $3, $4, $5, $6, $7, $8) => { pdg_em_platform_initImageData($0, $1, $2, $3, $4, $5, $6, $7, $8); }
+  236424: () => { pdg_em_platform_cleanup(); },  
+ 236451: ($0, $1) => { pdg_em_platform_init($0, $1); },  
+ 236485: () => { pdg_em_platform_pollEvents(); },  
+ 236515: ($0, $1, $2, $3, $4, $5, $6, $7, $8) => { pdg_em_platform_initImageData($0, $1, $2, $3, $4, $5, $6, $7, $8); }
 };
 
 // Imports from the Wasm binary.
@@ -7192,15 +7192,22 @@ Module.onRuntimeInitialized = function() {
     // Supply the small amount of Node-like global state expected by the
     // shared JavaScript wrapper when it runs in a browser.
     window.global = window;
+    window.FS = FS;
     window.process = window.process || { env: {}, versions: {} };
     window.process.env = window.process.env || {};
     window.process.versions = window.process.versions || {};
+    window.process.cwd = window.process.cwd || function() { return "/"; };
 
     // pdg.js expects a module system and the Embind API under pdg_bind.
     window.module = Module;
     window.pdg_bind = Module;
     window.require.cache[window.require.resolve('pdg')] = Module;
     window.require.cache[window.require.resolve('module')] = Module;
+
+    // Modern Emscripten installs an aborting compatibility getter named
+    // `run`. PDG owns that public name, so remove the configurable getter
+    // before the shared wrapper installs pdg.run().
+    delete Module.run;
 
     Module._initialize();
 

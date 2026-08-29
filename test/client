@@ -31,6 +31,11 @@
 export NODE_DEBUG=""
 unset NODE_DEBUG
 
+if [ "$1" = "--emscripten" ]; then
+    shift
+    exec "$(cd "$(dirname "$0")" && pwd)/client_emscripten" "$@"
+fi
+
 # load pdgrc
 _SD=`pwd`;while [ "`pwd`" != '/' ];do { if [ -e ".pdgrc" ];then { source .pdgrc;break; } fi;cd ..; } done;cd $_SD
 if [ -z "$PDG_ROOT" ]; then

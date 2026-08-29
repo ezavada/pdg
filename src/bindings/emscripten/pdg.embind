@@ -35,6 +35,7 @@ emscripten::function("createSpriteLayer", &pdg::createSpriteLayer, emscripten::a
 emscripten::function("createSpriteLayerFromSpriterFile", &pdg::createSpriteLayerFromSpriterFile, emscripten::allow_raw_pointers());
 #endif
 emscripten::function("cleanupSpriteLayer", &pdg::cleanupLayer, emscripten::allow_raw_pointers());
+emscripten::function("cleanupLayer", &pdg::cleanupLayer, emscripten::allow_raw_pointers());
 emscripten::function("createTileLayer", &pdg::createTileLayer, emscripten::allow_raw_pointers());
 
 emscripten::class_<pdg::MemBlock>("MemBlock")

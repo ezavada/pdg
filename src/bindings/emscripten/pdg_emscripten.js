@@ -40,15 +40,22 @@ Module.onRuntimeInitialized = function() {
     // Supply the small amount of Node-like global state expected by the
     // shared JavaScript wrapper when it runs in a browser.
     window.global = window;
+    window.FS = FS;
     window.process = window.process || { env: {}, versions: {} };
     window.process.env = window.process.env || {};
     window.process.versions = window.process.versions || {};
+    window.process.cwd = window.process.cwd || function() { return "/"; };
 
     // pdg.js expects a module system and the Embind API under pdg_bind.
     window.module = Module;
     window.pdg_bind = Module;
     window.require.cache[window.require.resolve('pdg')] = Module;
     window.require.cache[window.require.resolve('module')] = Module;
+
+    // Modern Emscripten installs an aborting compatibility getter named
+    // `run`. PDG owns that public name, so remove the configurable getter
+    // before the shared wrapper installs pdg.run().
+    delete Module.run;
 
     Module._initialize();
 

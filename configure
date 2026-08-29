@@ -43,6 +43,7 @@ BUILD_JAVASCRIPTCORE="no"
 BUILD_EMSCRIPTEN="no"
 INSTALL_NODE_APP="no"
 HAVE_EMSCRIPTEN="no"
+EMSCRIPTEN_PYTHON_PATH=""
 BUILD_IOS="no"
 HEADLESS_BUILD="no"
 ENABLE_INTERFACE_TOOLS="no"
@@ -268,13 +269,27 @@ fi
 
 if [ "$BUILD_EMSCRIPTEN" == "yes" ]; then
     if command_exists em++ ; then
-        HAVE_EMSCRIPTEN="yes"
-        EMCC_PATH=`which emcc`
-        EMXX_PATH=`which em++`
-        EMCC_VERS=`emcc --version | head -n 1 | sed 's/[^0-9.]*\([0-9.]*\).*/\1/'`
-        EMXX_VERS=`em++ --version | head -n 1 | sed 's/[^0-9.]*\([0-9.]*\).*/\1/'`
-        echo -e "-- Check for Emscripten C Compiler - $EMCC_PATH - found (version $EMCC_VERS)"
-        echo -e "-- Check for Emscripten C++ Compiler - $EMXX_PATH - found (version $EMXX_VERS)"
+        for PYTHON_CANDIDATE in `which python3 2>/dev/null` /opt/homebrew/bin/python3 /usr/local/bin/python3; do
+            if [ -x "$PYTHON_CANDIDATE" ] && "$PYTHON_CANDIDATE" -c 'import sys; raise SystemExit(sys.version_info < (3, 10))' 2>/dev/null; then
+                EMSCRIPTEN_PYTHON_PATH="$PYTHON_CANDIDATE"
+                break
+            fi
+        done
+        if [ -n "$EMSCRIPTEN_PYTHON_PATH" ]; then
+            HAVE_EMSCRIPTEN="yes"
+            EMCC_PATH=`which emcc`
+            EMXX_PATH=`which em++`
+            EMCC_VERS=`EMSDK_PYTHON="$EMSCRIPTEN_PYTHON_PATH" emcc --version | head -n 1 | sed 's/[^0-9.]*\([0-9.]*\).*/\1/'`
+            EMXX_VERS=`EMSDK_PYTHON="$EMSCRIPTEN_PYTHON_PATH" em++ --version | head -n 1 | sed 's/[^0-9.]*\([0-9.]*\).*/\1/'`
+            EMSCRIPTEN_PYTHON_VERS=`"$EMSCRIPTEN_PYTHON_PATH" --version 2>&1 | sed 's/^Python //'`
+            echo -e "-- Check for Emscripten Python - $EMSCRIPTEN_PYTHON_PATH - found (version $EMSCRIPTEN_PYTHON_VERS)"
+            echo -e "-- Check for Emscripten C Compiler - $EMCC_PATH - found (version $EMCC_VERS)"
+            echo -e "-- Check for Emscripten C++ Compiler - $EMXX_PATH - found (version $EMXX_VERS)"
+        else
+            echo -e "-- Check for Emscripten Python - ${ERR}Python 3.10 or newer not found${RESET}"
+            HAVE_EMSCRIPTEN="no"
+            BUILD_EMSCRIPTEN="no"
+        fi
     else
         echo -e "-- Check for Emscripten C Compiler - ${WARN}NOT FOUND${RESET}"
         echo -e "-- Check for Emscripten C++ Compiler - ${WARN}NOT FOUND${RESET}"
@@ -604,13 +619,23 @@ fi
 # -- target: pdg-js-rebuild
 
 if [ "$HAVE_EMSCRIPTEN" == "yes" ]; then
+    echo "EMSCRIPTEN_PYTHON := $EMSCRIPTEN_PYTHON_PATH" >> Makefile
+    echo "EMSCRIPTEN_CACHE := \$(PDG_ROOT)/build/js/emscripten-cache" >> Makefile
+    echo "" >> Makefile
+
     echo "pdg-js: $JS_INTERFACES_TARG" >> Makefile
-    echo "	emmake make $PARALLEL_MAKE_OPTIONS -f \$(PDG_ROOT)/tools/pdg-js.mak" >> Makefile
+    echo "	@mkdir -p \$(EMSCRIPTEN_CACHE)" >> Makefile
+    echo "	EMSDK_PYTHON=\"\$(EMSCRIPTEN_PYTHON)\" EM_CACHE=\"\$(EMSCRIPTEN_CACHE)\" emmake make $PARALLEL_MAKE_OPTIONS -f \$(PDG_ROOT)/tools/pdg-js.mak" >> Makefile
     echo "" >> Makefile
 
     echo "pdg-js-rebuild: $JS_INTERFACES_TARG" >> Makefile
-    echo "	emmake make $PARALLEL_MAKE_OPTIONS -f \$(PDG_ROOT)/tools/pdg-js.mak clean" >> Makefile
-    echo "	emmake make $PARALLEL_MAKE_OPTIONS -f \$(PDG_ROOT)/tools/pdg-js.mak" >> Makefile
+    echo "	@mkdir -p \$(EMSCRIPTEN_CACHE)" >> Makefile
+    echo "	EMSDK_PYTHON=\"\$(EMSCRIPTEN_PYTHON)\" EM_CACHE=\"\$(EMSCRIPTEN_CACHE)\" emmake make $PARALLEL_MAKE_OPTIONS -f \$(PDG_ROOT)/tools/pdg-js.mak clean" >> Makefile
+    echo "	EMSDK_PYTHON=\"\$(EMSCRIPTEN_PYTHON)\" EM_CACHE=\"\$(EMSCRIPTEN_CACHE)\" emmake make $PARALLEL_MAKE_OPTIONS -f \$(PDG_ROOT)/tools/pdg-js.mak" >> Makefile
+    echo "" >> Makefile
+
+    echo "pdg-js-client-tests: pdg-js" >> Makefile
+    echo "	@\$(PDG_ROOT)/test/client --emscripten --no-build" >> Makefile
     echo "" >> Makefile
 
     echo "pdg-js-smoke: pdg-js" >> Makefile
@@ -810,6 +835,7 @@ if [ "$BUILD_EMSCRIPTEN" == "yes" ]; then
     echo "	@echo \"pdg-js            - PDG in pure JavaScript for running in a web browser\"" >> Makefile
     echo "	@echo \"pdg-js-rebuild    - rebuild pdg-js completely\"" >> Makefile
     echo "	@echo \"pdg-js-smoke      - build and smoke-test the WebAssembly module\"" >> Makefile
+    echo "	@echo \"pdg-js-client-tests - build and run client specs in a headless browser\"" >> Makefile
 fi
 if [ "$HEADLESS_BUILD" == "yes" ]; then
     echo "	@echo \"pdg-tests         - unavailable in headless builds\"" >> Makefile

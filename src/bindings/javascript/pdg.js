@@ -77,8 +77,8 @@ if (embedded_pdg || jsc) {
     // everything is crammed into a single binding called pdg_bind
     
     bindings = pdg_bind;
-    coordinates = pdg_bind;
-    color = pdg_bind;
+    coordinates = require('coordinates');
+    color = require('color');
     
     // dump.js is embedded in our simulated file system
 	methodSignature = require('dump').methodSignature;

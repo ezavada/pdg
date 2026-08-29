@@ -6,31 +6,54 @@
 </head>
 <body>
   <pre id="result">WAITING</pre>
-  <script src="../libpdg.js"></script>
   <script>
-    (function waitForPdg(deadline) {
-      if (window.pdg && window.pdg.pdgReady) {
-        try {
-          window.pdg.idle();
-          if (typeof window.pdg.rand() !== 'number') {
-            throw new Error('rand() did not return a number');
-          }
-          document.getElementById('result').textContent = 'PASS';
-          document.title = 'PASS: PDG Emscripten smoke test';
-        } catch (error) {
-          document.getElementById('result').textContent = 'FAIL: ' + error.message;
-          document.title = 'FAIL: PDG Emscripten smoke test';
-        }
+    (function() {
+      var result = document.getElementById('result');
+
+      function fail(message) {
+        result.textContent = 'FAIL: ' + message;
+        document.title = 'FAIL: PDG Emscripten smoke test';
+      }
+
+      if (window.location.protocol === 'file:') {
+        fail('Chrome blocks WebAssembly loaded from file://. From the pdg-devel directory, run "python3 -m http.server 8123", then open http://localhost:8123/test/EmscriptenSmoke.html');
         return;
       }
 
-      if (Date.now() >= deadline) {
-        document.getElementById('result').textContent = 'FAIL: initialization timed out';
-        document.title = 'FAIL: PDG Emscripten smoke test';
-        return;
-      }
-      setTimeout(function() { waitForPdg(deadline); }, 10);
-    })(Date.now() + 5000);
+      window.addEventListener('unhandledrejection', function(event) {
+        fail(event.reason && event.reason.message ? event.reason.message : String(event.reason));
+      });
+
+      var script = document.createElement('script');
+      script.src = '../libpdg.js';
+      script.onerror = function() {
+        fail('could not load libpdg.js');
+      };
+      script.onload = function() {
+        (function waitForPdg(deadline) {
+          if (window.pdg && window.pdg.pdgReady) {
+            try {
+              window.pdg.idle();
+              if (typeof window.pdg.rand() !== 'number') {
+                throw new Error('rand() did not return a number');
+              }
+              result.textContent = 'PASS';
+              document.title = 'PASS: PDG Emscripten smoke test';
+            } catch (error) {
+              fail(error.message);
+            }
+            return;
+          }
+
+          if (Date.now() >= deadline) {
+            fail('initialization timed out; check the browser console for the loading error');
+            return;
+          }
+          setTimeout(function() { waitForPdg(deadline); }, 10);
+        })(Date.now() + 5000);
+      };
+      document.head.appendChild(script);
+    })();
   </script>
 </body>
 </html>
