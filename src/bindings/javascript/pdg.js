@@ -29,7 +29,7 @@
 
 // Set up debug logging
 _debug_log = function() {};
-if (process.env.NODE_DEBUG && /pdg/.test(process.env.NODE_DEBUG)) {
+if (typeof process === 'object' && process.env && process.env.NODE_DEBUG && /pdg/.test(process.env.NODE_DEBUG)) {
   _debug_log = function(x) {
     console.error(x);
   };
@@ -97,6 +97,14 @@ if (embedded_pdg || jsc) {
 }
 _debug_log('[PDG] pdg.js: modules require complete');
 
+// Browser builds provide a minimal process shim; initialize their shared
+// binding namespace after environment detection so they are not mistaken
+// for an embedded native runtime.
+if (inbrowser) {
+    process.pdg = bindings;
+} else {
+    process.pdg = process.pdg || {};
+}
 
 // Use process.pdg as our single source of truth
 _debug_log('[PDG] pdg.js: process.pdg has getResourceManager? ' + typeof bindings.getResourceManager);
@@ -862,5 +870,3 @@ if (typeof bindings._finishedScriptSetup === 'function') {
 } else {
     _debug_log('[PDG] pdg.js: _finishedScriptSetup is not available');
 }
-
-

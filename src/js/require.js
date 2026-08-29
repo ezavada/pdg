@@ -32,10 +32,10 @@
 window.require = function(module) {
 	var url = window.require.resolve(module);
 
-	if (require.cache[url]) {
+		if (window.require.cache[url]) {
 
 		// already cached, just return it
-		return require.cache[url];
+			return window.require.cache[url];
 
 	} else {
 	
@@ -75,8 +75,8 @@ window.require = function(module) {
 
         } else {
 
-            var code = source.match(/^\s*(?:(['"]use strict['"])(?:;\r?\n?|\r?\n))?\s*((?:.*\r?\n?)*)/);
-            eval('(function(){'+code[1]+';var exports=window.require.cache[\''+url+'\'];\n\n'+code[2]+'\n})();\n//@ sourceURL='+url+'\n');
+			var code = source.match(/^\s*(?:(['"]use strict['"])(?:;\r?\n?|\r?\n))?\s*((?:.*\r?\n?)*)/);
+			eval('(function(){'+code[1]+';var require=window.require;var exports=window.require.cache[\''+url+'\'];\n\n'+code[2]+'\n})();\n//@ sourceURL='+url+'\n');
 
         }
 	    return exports;
@@ -90,4 +90,3 @@ window.require.resolve = function(module) {
 
 window.require.cache = new Object();
 })();
-
