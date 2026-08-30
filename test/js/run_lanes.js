@@ -306,8 +306,8 @@ function printHelp() {
     console.log('Commands:');
     console.log('  list');
     console.log('      Show the configured test lanes.');
-    console.log('  run <lane-id>');
-    console.log('      Run an automated lane or emit a checklist for a manual lane.');
+    console.log('  run [lane-id]');
+    console.log('      Run one lane, or all automated lanes available on this host when omitted.');
     console.log('  record <lane-id> <passed|failed|blocked|manual> [note]');
     console.log('      Store a manual or external result for a lane.');
 }
@@ -458,6 +458,51 @@ function runLane(lane) {
     return result.status === 'passed' ? 0 : 1;
 }
 
+function runLocalLanes(manifest) {
+    var runnableLanes = manifest.lanes.filter(function(lane) {
+        return laneRunsOnCurrentHost(lane) && lane.automation === 'automated';
+    });
+    var manualLanes = manifest.lanes.filter(function(lane) {
+        return laneRunsOnCurrentHost(lane) && lane.automation !== 'automated';
+    });
+
+    if (runnableLanes.length === 0) {
+        console.log('No automated lanes can run on ' + platformLabel(process.platform) + '.');
+        return 1;
+    }
+
+    console.log('Running all automated lanes available on ' + platformLabel(process.platform) + ':');
+    runnableLanes.forEach(function(lane) {
+        console.log('  ' + lane.id);
+    });
+    if (manualLanes.length > 0) {
+        console.log('Skipping manual lanes:');
+        manualLanes.forEach(function(lane) {
+            console.log('  ' + lane.id + ' (run explicitly to view its checklist)');
+        });
+    }
+
+    var outcomes = [];
+    runnableLanes.forEach(function(lane, index) {
+        console.log('\n[' + (index + 1) + '/' + runnableLanes.length + '] ' + lane.name);
+        var exitCode = runLane(lane);
+        outcomes.push({
+            lane: lane,
+            exitCode: exitCode
+        });
+    });
+
+    var failedOutcomes = outcomes.filter(function(outcome) {
+        return outcome.exitCode !== 0;
+    });
+    console.log('\nLocal lane summary:');
+    outcomes.forEach(function(outcome) {
+        console.log('  ' + (outcome.exitCode === 0 ? 'PASS' : 'FAIL') + ' ' + outcome.lane.id);
+    });
+    console.log('  ' + (outcomes.length - failedOutcomes.length) + ' passed, ' + failedOutcomes.length + ' failed or blocked');
+    return failedOutcomes.length === 0 ? 0 : 1;
+}
+
 function recordLane(lane, status, note) {
     var validStatuses = {
         passed: true,
@@ -493,8 +538,7 @@ function main() {
     if (command === 'run') {
         var laneId = args.shift();
         if (!laneId) {
-            printHelp();
-            return 1;
+            return runLocalLanes(manifest);
         }
         var lane = findLane(manifest, laneId);
         if (!lane) {
