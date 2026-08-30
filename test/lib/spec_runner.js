@@ -210,6 +210,11 @@ function runJasmineSpecs(envInfo, runConfig, processObj) {
     var jasmineNode = loadJasmineNode(envInfo.repoRoot);
     var options = createJasmineOptions(envInfo, runConfig, processObj);
 
+    // Jasmine 1.3 otherwise runs synchronous specs for up to 250 ms before
+    // yielding to Node. PDG's engine loop shares that thread, so the default
+    // can starve timer and frame processing well past their deadlines.
+    jasmineNode.getEnv().updateInterval = 10;
+
     jasmineNode.loadHelpersInFolder(envInfo.specDir, new RegExp('^SpecHelper\\.js$', 'i'));
     jasmineNode.executeSpecsInFolder(options);
 }

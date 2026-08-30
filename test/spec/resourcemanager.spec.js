@@ -428,17 +428,17 @@ describe("ResourceManager", function() {
 
     it("handles null and undefined parameters gracefully", function() {
       console.log('  - Error Handling');
-      expect(function() {
-        resourceManager.setLanguage(null); // docs introspection
-      }).not.toThrow();
+      expectNullArgumentError(function() {
+        resourceManager.setLanguage(null);
+      });
       
       expect(function() {
         resourceManager.setLanguage(undefined);
       }).toThrow();
       
-      expect(function() {
-        resourceManager.openResourceFile(null); // docs introspection
-      }).not.toThrow();
+      expectNullArgumentError(function() {
+        resourceManager.openResourceFile(null);
+      });
       
       expect(function() {
         resourceManager.openResourceFile(undefined);

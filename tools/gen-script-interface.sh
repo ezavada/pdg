@@ -55,7 +55,7 @@ if [ -z "$1" ]; then
     echo "USAGE: gen-script-interface.sh binding_dir src_file [target_dir] [build_dir] [out_file_name]"
     echo ""
     echo "Parameters:"
-    echo "  binding_dir    - The binding directory to use for includes (javascript/v8 or javascript/jsc)"
+    echo "  binding_dir    - The binding directory to use for includes (javascript/v8)"
     echo "  src_file       - Source file to process (e.g., pdg_js_classes.cpp or pdg_script_interface.h)"
     echo "  target_dir     - Output directory for generated files (default: src/bindings/generated)"
     echo "  build_dir      - Build directory for temporary files (default: build)"
@@ -63,17 +63,20 @@ if [ -z "$1" ]; then
     echo ""
     echo "Examples:"
     echo "  ./gen-script-interface.sh javascript/v8 src/bindings/javascript/v8/pdg_js_classes.cpp"
-    echo "  ./gen-script-interface.sh javascript/jsc src/bindings/common/pdg_script_interface.h src/bindings/generated/jsc"
     echo "  ./gen-script-interface.sh javascript/v8 src/bindings/common/pdg_script_impl.cpp src/bindings/generated/v8 ./ pdg_script_impl.cpp"
     exit 1
 fi
 BINDING_DIR="$1"
 PDG_SRC="$2"
 PDG_SRC_DIR=`dirname $PDG_SRC`
-# remove PDG_ROOT from PDG_SRC_DIR
-PDG_REL_SRC_DIR=`echo $PDG_SRC_DIR | sed "s|$PDG_ROOT||"`
 PDG_SRC_FILENAME=`basename $PDG_SRC`
-PDG_REL_SRC=`echo $PDG_REL_SRC_DIR/$PDG_SRC_FILENAME`
+# Normalize both absolute and repository-relative source paths to the form
+# used in generated-file headers: $PDG_ROOT/path/from/repository/root.
+case "$PDG_SRC" in
+    "$PDG_ROOT"/*) PDG_REL_SRC="${PDG_SRC#$PDG_ROOT}" ;;
+    /*)            PDG_REL_SRC="$PDG_SRC" ;;
+    *)             PDG_REL_SRC="/$PDG_SRC" ;;
+esac
 if [ -z "$3" ]; then
 	PDG_TARGET_DIR="src/bindings"
 else

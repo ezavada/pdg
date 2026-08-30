@@ -80,15 +80,9 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
   METHOD_IMPL(Port, DrawSpline) // support both Attributes and Color objects for arg 2 to avoid name conflicts
       METHOD_SIGNATURE("", undefined, 2, ([object Spline] spline, [object Attributes] attrs)); 
       REQUIRE_ARG_COUNT(2);
-      REQUIRE_OBJECT_ARG(1, spline);
+      REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
       REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
-      SplineWrap* splineWrapper = static_cast<SplineWrap*>(OBJECT_PRIVATE_DATA(spline));
-      Spline* splinePtr = splineWrapper->getCppObject();
-      if (!splinePtr) {
-          THROW_TYPE_ERR("drawSpline must be called with a valid Spline object");
-          return;
-      }
-      self->drawSpline(*splinePtr, *attrs);
+      self->drawSpline(*spline, *attrs);
       NO_RETURN;
       END
   METHOD_IMPL(Port, GetTextWidth)
@@ -282,22 +276,16 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
   METHOD_IMPL(Port, DrawDrawing)
       METHOD_SIGNATURE("", undefined, 3, ({[object Drawing] drawing, [object Point] loc, [object Attributes] attrs|[object Drawing] drawing, [object Rect] rect, [object Attributes] attrs})); 
       REQUIRE_ARG_COUNT(3);
-      REQUIRE_OBJECT_ARG(1, drawing);
+      REQUIRE_CPP_OBJECT_ARG(1, drawing, Drawing);
       REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
-      DrawingWrap* drawingWrapper = static_cast<DrawingWrap*>(OBJECT_PRIVATE_DATA(drawing));
-      Drawing* drawingPtr = drawingWrapper->getCppObject();
-      if (!drawingPtr) {
-          THROW_TYPE_ERR("drawDrawingWithAttrs must be called with a valid Drawing object");
-          return;
-      }
       if (VALUE_IS_POINT(ARGV[1])) { 
           // Point variant
           pdg::Point loc = VAL2POINT(ARGV[1]);
-          self->drawDrawing(*drawingPtr, loc, *attrs);
+          self->drawDrawing(*drawing, loc, *attrs);
       } else {
           // Rect variant
           REQUIRE_RECT_ARG(2, rect);
-          self->drawDrawing(*drawingPtr, rect, *attrs);
+          self->drawDrawing(*drawing, rect, *attrs);
       }
       NO_RETURN;
       END

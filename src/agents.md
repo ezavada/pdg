@@ -21,7 +21,7 @@ This file applies to `src`.
 ## Generated And Derived Files
 
 - `src/bindings/generated/**` is generated output.
-- Prefer editing the inputs in `src/bindings/common`, `src/bindings/javascript`, `src/bindings/node`, `src/bindings/jsc-ios`, and the generator scripts under `tools`.
+- Prefer editing the inputs in `src/bindings/common`, `src/bindings/javascript`, `src/bindings/node`, and the generator scripts under `tools`.
 - If you touch generated bindings, document why regeneration was not used.
 
 ## Useful Mental Model

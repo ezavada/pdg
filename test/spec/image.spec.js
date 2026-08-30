@@ -214,19 +214,19 @@ describe("Image", function() {
     });
 
     it("handles null parameters gracefully", function() {
-      // getPixel with null may not throw in this implementation
-      expect(function() {
+      // The point overload requires an actual Point value.
+      expectNullArgumentError(function() {
         testImage.getPixel(null);
-      }).not.toThrow();
+      });
       
       // getAlphaValue with null may not throw in this implementation
-      expect(function() {
+      expectNullArgumentError(function() {
         testImage.getAlphaValue(null);
-      }).not.toThrow();
+      });
       
-      expect(function() {
+      expectNullArgumentError(function() {
         testImage.getImageBounds(null);
-      }).not.toThrow();
+      });
     });
 
     it("handles invalid opacity values gracefully", function() {
@@ -277,7 +277,7 @@ describe("Image", function() {
       var pixel = testImage.getPixel(16, 16);
       expect(typeof pixel).toBe('object');
       expect(pixel.constructor.name).toBe('Color');
-      expect(pixel instanceof Color).toBe(true);
+      expect(pixel instanceof pdg.Color).toBe(true);
     });
 
     it("validates that getAlphaValue returns number", function() {
@@ -289,7 +289,7 @@ describe("Image", function() {
     if ("validates that getTransparentColor returns Color", function() {
       var transparentColor = testImage.getTransparentColor();
       expect(typeof transparentColor).toBe('object');
-      expect(transparentColor instanceof Color).toBe(true);
+      expect(transparentColor instanceof pdg.Color).toBe(true);
     });
 
     it("validates that getImageBounds returns Rect", function() {

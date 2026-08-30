@@ -128,7 +128,7 @@ protected:
 
 	//! create a new timer manager that posts timer events to a particular event manager
     TimerManager()	// call TimerManger::getSingletonInstance instead
-     : timers(0), firing(), nextid(0), next(0), 
+     : timers(0), firing(), nextid(0), next(0), checkingTimers(false),
        deleted(false), addDelay(0), delayUntil(0), allTimersPaused(false) { firing.id = 0; }
 
     struct Timer {
@@ -151,6 +151,7 @@ protected:
     Timer firing;    // a copy of the timer currently being fired
     long    nextid;     // id of the next timer to fire, only valid when firing.id != 0
     Timer*  next;       // this will be the next timer to fire, only valid when firing.id != 0
+    bool checkingTimers; // prevent pdg::idle() in a handler from re-entering checkTimers()
     bool deleted;     // did we cancel the timer that is firing from within its handler?
     ms_delta addDelay;  // addition delay added to timer that is firing from within its handler
     ms_time  delayUntil; // new time when current timer is supposed to fire
@@ -162,4 +163,3 @@ protected:
 
 
 #endif // PDG_TIMER_MANAGER_H_INCLUDED
-

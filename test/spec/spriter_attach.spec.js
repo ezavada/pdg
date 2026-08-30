@@ -17,19 +17,13 @@ describe('Spriter AttachPoint System' + (hasSpriterSupport ? ' (Spriter Support 
         return;
     }
     
-    var port;
     var spriteLayer;
     var spriterSprite;
     var testSprite;
     
     beforeEach(function() {
-        // Create a port and sprite layer for testing
-        if (pdg.hasGraphics) {
-            port = new pdg.Port(800, 600);
-            spriteLayer = pdg.createSpriteLayer(port);
-        } else {
-            spriteLayer = pdg.createSpriteLayer();
-        }
+        // These API tests do not require a dedicated graphics port.
+        spriteLayer = pdg.createSpriteLayer();
         
         // Create a Spriter sprite for testing (only if Spriter support is available)
         if (hasSpriterSupport) {
@@ -42,13 +36,12 @@ describe('Spriter AttachPoint System' + (hasSpriterSupport ? ' (Spriter Support 
     });
     
     afterEach(function() {
-        if (port) {
-            delete port;
-        }
         if (spriteLayer) {
             pdg.cleanupLayer(spriteLayer);
             spriteLayer = null;
         }
+        spriterSprite = null;
+        testSprite = null;
     });
     
     describe('AttachPoint Methods', function() {
@@ -140,9 +133,9 @@ describe('Spriter AttachPoint System' + (hasSpriterSupport ? ' (Spriter Support 
     
     describe('Error Handling', function() {
         it('should handle null AttachPoint names', function() {
-            expect(function() {
+            expectNullArgumentError(function() {
                 spriterSprite.hasAttachPoint(null);
-            }).not.toThrow();
+            });
             
             // Test that attachSprite with null attach point name throws an error
             expect(function() {

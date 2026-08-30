@@ -42,6 +42,8 @@ if (pdg.hasGraphics == false) {
 describe("GraphicsManager", function() {
 
   var gfx;
+  var minScreenWidth = (typeof process !== 'undefined' && process.ios) ? 300 : 800;
+  var minScreenHeight = (typeof process !== 'undefined' && process.ios) ? 300 : 600;
 
   beforeEach(function() {
     gfx = pdg.gfx;
@@ -194,8 +196,8 @@ describe("GraphicsManager", function() {
         expect(screenMode).toBeDefined();
         
         // Validate screen dimensions are reasonable
-        expect(screenMode.width >= 800).toBe(true); // Minimum reasonable width
-        expect(screenMode.height >= 600).toBe(true); // Minimum reasonable height
+        expect(screenMode.width >= minScreenWidth).toBe(true);
+        expect(screenMode.height >= minScreenHeight).toBe(true);
         expect(screenMode.width <= 10000).toBe(true); // Reasonable upper limit
         expect(screenMode.height <= 10000).toBe(true); // Reasonable upper limit
         
@@ -207,8 +209,8 @@ describe("GraphicsManager", function() {
           // Use the width() and height() methods of the Rect class
           var width = bounds.width();
           var height = bounds.height();
-          expect(width >= 800).toBe(true);
-          expect(height >= 600).toBe(true);
+          expect(width >= minScreenWidth).toBe(true);
+          expect(height >= minScreenHeight).toBe(true);
           expect(width <= 10000).toBe(true);
           expect(height <= 10000).toBe(true);
         }

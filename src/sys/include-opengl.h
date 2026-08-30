@@ -71,8 +71,15 @@
 #elif PLATFORM_MACOSX
   #ifdef PLATFORM_OPENGLES
     #include <OpenGLES/ES1/gl.h>
+    #include <OpenGLES/ES1/glext.h>
     #include "gles-hacks.h"
     #include "glues_quad.h"
+    #define glBlendEquation glBlendEquationOES
+    #define GL_FUNC_ADD GL_FUNC_ADD_OES
+    #define GL_FUNC_SUBTRACT GL_FUNC_SUBTRACT_OES
+    #define GL_FUNC_REVERSE_SUBTRACT GL_FUNC_REVERSE_SUBTRACT_OES
+    #define GL_MIN GL_MIN_EXT
+    #define GL_MAX GL_MAX_EXT
   #else
     #include <OpenGL/gl.h>
     #include <OpenGL/glu.h>

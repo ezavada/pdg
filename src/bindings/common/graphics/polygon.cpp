@@ -71,9 +71,23 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Polygon)
     if (ARGC == 0) {
         // Empty constructor
         return new pdg::Polygon();
-    } else if (ARGC == 1 && (ARGV[0]->IsNull() || ARGV[0]->IsUndefined())) {
+    } else if (ARGC == 1 && (VALUE_IS_NULL(ARGV[0]) || VALUE_IS_UNDEFINED(ARGV[0]))) {
         // Handle null/undefined arguments during document generation
         return new pdg::Polygon();
+    %#ifdef PDG_USING_JAVASCRIPT_CORE
+    } else if (ARGC == 1 && JSValueIsArray(ctx, ARGV[0])) {
+        // Constructor with an array of Point arguments
+        std::vector<Point> points;
+        JSObjectRef array = JSValueToObject(ctx, ARGV[0], exception);
+        JSStringRef lengthName = JSStringCreateWithUTF8CString("length");
+        JSValueRef lengthValue = JSObjectGetProperty(ctx, array, lengthName, exception);
+        JSStringRelease(lengthName);
+        unsigned length = (unsigned)JSValueToNumber(ctx, lengthValue, exception);
+        for (unsigned i = 0; i < length; i++) {
+            points.push_back(VAL2POINT(JSObjectGetPropertyAtIndex(ctx, array, i, exception)));
+        }
+        return new pdg::Polygon(points);
+    %#else
     } else if (ARGC == 1 && ARGV[0]->IsArray()) {
         // Constructor with array of Point arguments
         std::vector<Point> points;
@@ -83,13 +97,22 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Polygon)
             points.push_back(VAL2POINT(array->Get(context, i).ToLocalChecked()));
         }
         return new pdg::Polygon(points);
+    %#endif
     } else {
         // Constructor with Point arguments
         std::vector<Point> points;
         for (int i = 0; i < ARGC; i++) {
-            if (!ARGV[i]->IsObject()) {
+            if (!VALUE_IS_OBJECT(ARGV[i])) {
+                %#ifdef PDG_USING_JAVASCRIPT_CORE
+                JSStringRef message = JSStringCreateWithUTF8CString("Polygon constructor arguments must be Point objects");
+                JSValueRef errorArgument = JSValueMakeString(ctx, message);
+                *exception = JSObjectMakeError(ctx, 1, &errorArgument, nullptr);
+                JSStringRelease(message);
+                return nullptr;
+                %#else
                 THROW_TYPE_ERR("Polygon constructor arguments must be Point objects");
                 return nullptr;
+                %#endif
             }
             Point point = VAL2POINT(ARGV[i]);
             points.push_back(point);
@@ -109,19 +132,13 @@ METHOD_IMPL(Polygon, AddPoint)
 METHOD_IMPL(Polygon, AddSpline)
     METHOD_SIGNATURE("", undefined, 1, ([object Spline] spline, [number] uStep)); 
     REQUIRE_ARG_MIN_COUNT(1);
-    REQUIRE_OBJECT_ARG(1, spline);
-    SplineWrap* splineWrapper = static_cast<SplineWrap*>(OBJECT_PRIVATE_DATA(spline));
-    Spline* splinePtr = splineWrapper->getCppObject();
-    if (!splinePtr) {
-        THROW_TYPE_ERR("addSpline must be called with a valid Spline object");
-        return;
-    }
+    REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
     float uStep = 0.01f;
-    if (ARGC >= 2 && !ARGV[1]->IsUndefined() && !ARGV[1]->IsNull()) {
+    if (ARGC >= 2 && !VALUE_IS_UNDEFINED(ARGV[1]) && !VALUE_IS_NULL(ARGV[1])) {
         REQUIRE_NUMBER_ARG(2, uStepArg);
         uStep = uStepArg;
     }
-    self->addSpline(splinePtr, uStep);
+    self->addSpline(spline, uStep);
     NO_RETURN;
     END
 
@@ -217,14 +234,8 @@ METHOD_IMPL(Polygon, Empty)
 METHOD_IMPL(Polygon, Equals)
     METHOD_SIGNATURE("", [boolean], 1, ([object Polygon] other)); 
     REQUIRE_ARG_COUNT(1);
-    REQUIRE_OBJECT_ARG(1, other);
-    PolygonWrap* polygonWrapper = static_cast<PolygonWrap*>(OBJECT_PRIVATE_DATA(other));
-    Polygon* otherPolygonPtr = polygonWrapper->getCppObject();
-    if (!otherPolygonPtr) {
-        THROW_TYPE_ERR("equals must be called with a valid Polygon object");
-        return;
-    }
-    RETURN_BOOL(*self == *otherPolygonPtr); // compare contents, not pointers
+    REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+    RETURN_BOOL(*self == *other); // compare contents, not pointers
     END
 
 METHOD_IMPL(Polygon, Move)
@@ -353,28 +364,16 @@ METHOD_IMPL(Polygon, RotateAround)
 METHOD_IMPL(Polygon, Intersection)
     METHOD_SIGNATURE("", [object Polygon], 1, ([object Polygon] other)); 
     REQUIRE_ARG_COUNT(1);
-    REQUIRE_OBJECT_ARG(1, other);
-    PolygonWrap* polygonWrapper = static_cast<PolygonWrap*>(OBJECT_PRIVATE_DATA(other));
-    Polygon* otherPolygonPtr = polygonWrapper->getCppObject();
-    if (!otherPolygonPtr) {
-        THROW_TYPE_ERR("intersection must be called with a valid Polygon object");
-        return;
-    }
-    Polygon* result = new Polygon(self->intersection(*otherPolygonPtr));
+    REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+    Polygon* result = new Polygon(self->intersection(*other));
     RETURN_NEW_CPP_OBJECT(result, Polygon);
     END
 
 METHOD_IMPL(Polygon, UnionWith)
     METHOD_SIGNATURE("", [object Polygon], 1, ([object Polygon] other)); 
     REQUIRE_ARG_COUNT(1);
-    REQUIRE_OBJECT_ARG(1, other);
-    PolygonWrap* polygonWrapper = static_cast<PolygonWrap*>(OBJECT_PRIVATE_DATA(other));
-    Polygon* otherPolygonPtr = polygonWrapper->getCppObject();
-    if (!otherPolygonPtr) {
-        THROW_TYPE_ERR("unionWith must be called with a valid Polygon object");
-        return;
-    }
-    Polygon* result = new Polygon(self->unionWith(*otherPolygonPtr));
+    REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+    Polygon* result = new Polygon(self->unionWith(*other));
     RETURN_NEW_CPP_OBJECT(result, Polygon);
     END
 

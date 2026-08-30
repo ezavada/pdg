@@ -104,7 +104,6 @@
     	'./src/bindings/javascript',
     	'./src/bindings/javascript/v8', 
     	'./src/bindings/generated/v8',
-    	'./src/bindings/generated/jsc',
     	'./src/bindings/node', 
     	'./src/sys/unix', 
     	'./src/sys/macosx', 
@@ -421,4 +420,3 @@
     },
   ],
 }
-

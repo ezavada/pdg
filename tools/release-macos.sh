@@ -70,7 +70,6 @@ cmake -S "$PDG_ROOT" -B "$BUILD_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_TESTING=ON \
     -DCAN_BUILD_INTERFACES=OFF \
-    -DCAN_BUILD_JSC_INTERFACES=OFF \
     -DPDG_HEADLESS=OFF
 
 cmake --build "$PDG_ROOT/build/darwin/glfw" --config Release --parallel
@@ -114,7 +113,6 @@ cmake -S "$PDG_ROOT" -B "$DEBUG_BUILD_DIR" \
     -DCMAKE_BUILD_TYPE=Debug \
     -DBUILD_TESTING=OFF \
     -DCAN_BUILD_INTERFACES=OFF \
-    -DCAN_BUILD_JSC_INTERFACES=OFF \
     -DPDG_HEADLESS=OFF
 cmake --build "$DEBUG_BUILD_DIR" --config Debug --target pdg --parallel
 

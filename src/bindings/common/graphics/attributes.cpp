@@ -233,6 +233,17 @@ METHOD_IMPL(Attributes, GetTransform)
     const glm::mat3& matrix = self->getTransform();
     
     // Convert glm::mat3 to JavaScript array of 9 numbers
+    %#ifdef PDG_USING_JAVASCRIPT_CORE
+    JSObjectRef result = JSObjectMakeArray(ctx, 0, nullptr, exception);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            int index = i * 3 + j;
+            JSObjectSetPropertyAtIndex(ctx, result, (unsigned)index,
+                JSValueMakeNumber(ctx, matrix[i][j]), exception);
+        }
+    }
+    RETURN_OBJECT(result);
+    %#else
     v8::Local<v8::Array> result = v8::Array::New(isolate, 9);
     v8::Local<v8::Context> context = isolate->GetCurrentContext();
     
@@ -244,6 +255,7 @@ METHOD_IMPL(Attributes, GetTransform)
     }
     
     args.GetReturnValue().Set(result);
+    %#endif
     END
 
 METHOD_IMPL(Attributes, GetBlendMode)
@@ -358,7 +370,7 @@ METHOD_IMPL(Attributes, Scale)
     REQUIRE_NUMBER_ARG(1, xFactor);
     OPTIONAL_NUMBER_ARG(2, yFactor, xFactor);
     OPTIONAL_POINT_ARG(3, center, Point(0, 0));
-    if (args.Length() > 1 && !ARGV[1]->IsUndefined()) {
+    if (ARGC > 1 && !VALUE_IS_UNDEFINED(ARGV[1])) {
         self->scale(xFactor, yFactor, center);
     } else {
         self->scale(xFactor, center);
@@ -381,6 +393,30 @@ METHOD_IMPL(Attributes, Transform)
     REQUIRE_ARG_COUNT(1);
     
     // Validate that argument is an array
+    %#ifdef PDG_USING_JAVASCRIPT_CORE
+    if (!JSValueIsArray(ctx, ARGV[0])) {
+        return JSC_ThrowArgTypeException(ctx, exception, 1, "an array of 9 numbers", ARGV[0]);
+    }
+
+    JSObjectRef matrixArray = JSValueToObject(ctx, ARGV[0], exception);
+    JSStringRef lengthName = JSStringCreateWithUTF8CString("length");
+    JSValueRef lengthValue = JSObjectGetProperty(ctx, matrixArray, lengthName, exception);
+    JSStringRelease(lengthName);
+    if ((unsigned)JSValueToNumber(ctx, lengthValue, exception) != 9) {
+        return JSC_ThrowArgTypeException(ctx, exception, 1, "an array of 9 numbers", ARGV[0]);
+    }
+
+    glm::mat3 matrix;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            JSValueRef element = JSObjectGetPropertyAtIndex(ctx, matrixArray, (unsigned)(i * 3 + j), exception);
+            if (!JSValueIsNumber(ctx, element)) {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "an array of 9 numbers", ARGV[0]);
+            }
+            matrix[i][j] = JSValueToNumber(ctx, element, exception);
+        }
+    }
+    %#else
     if (!ARGV[0]->IsArray()) {
         v8_ThrowArgTypeException(isolate, 1, "an array of 9 numbers");
         return;
@@ -407,6 +443,7 @@ METHOD_IMPL(Attributes, Transform)
             matrix[i][j] = element->NumberValue(context).ToChecked();
         }
     }
+    %#endif
     
     self->transform(matrix);
     RETURN_THIS;

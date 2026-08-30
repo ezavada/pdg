@@ -16,18 +16,12 @@ describe('Spriter Animation Blending' + (hasSpriterSupport ? ' (Spriter Support 
         return;
     }
     
-    var port;
     var spriteLayer;
     var spriterSprite;
     
     beforeEach(function() {
-        // Create a port and sprite layer for testing
-        if (pdg.hasGraphics) {
-            port = new pdg.Port(800, 600);
-            spriteLayer = pdg.createSpriteLayer(port);
-        } else {
-            spriteLayer = pdg.createSpriteLayer();
-        }
+        // These API tests do not require a dedicated graphics port.
+        spriteLayer = pdg.createSpriteLayer();
         
         // Create a Spriter sprite for testing
         var scmlPath = process.cwd() + "/data/spriter-samples/greyguy/player.scml";
@@ -35,13 +29,11 @@ describe('Spriter Animation Blending' + (hasSpriterSupport ? ' (Spriter Support 
     });
     
     afterEach(function() {
-        if (port) {
-            delete port;
-        }
         if (spriteLayer) {
             pdg.cleanupLayer(spriteLayer);
             spriteLayer = null;
         }
+        spriterSprite = null;
     });
     
     describe('Animation Blending Methods', function() {

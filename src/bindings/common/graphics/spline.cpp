@@ -48,9 +48,9 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Spline)
     
     int splineType = SPLINE_CUBIC_BEZIER; // default to SPLINE_CUBIC_BEZIER
     if (ARGC >= 1) {
-        if (ARGV[0]->IsNumber()) {
-            splineType = (int)ARGV[0]->Int32Value(isolate->GetCurrentContext()).ToChecked();
-        } else if (!ARGV[0]->IsNull() && !ARGV[0]->IsUndefined()) {
+        if (VALUE_IS_NUMBER(ARGV[0])) {
+            splineType = (int)VAL2INT(ARGV[0]);
+        } else if (!VALUE_IS_NULL(ARGV[0]) && !VALUE_IS_UNDEFINED(ARGV[0])) {
             return 0;  // Invalid argument type
         }
     }

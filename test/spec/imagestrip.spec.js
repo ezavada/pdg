@@ -298,18 +298,18 @@ describe("ImageStrip", function() {
 
     it("handles null parameters gracefully", function() {
       // getPixel with null may not throw in this implementation
-      expect(function() {
+      expectNullArgumentError(function() {
         testImageStrip.getPixel(null);
-      }).not.toThrow();
+      });
       
       // getAlphaValue with null may not throw in this implementation
-      expect(function() {
+      expectNullArgumentError(function() {
         testImageStrip.getAlphaValue(null);
-      }).not.toThrow();
+      });
       
-      expect(function() {
+      expectNullArgumentError(function() {
         testImageStrip.getImageBounds(null);
-      }).not.toThrow();
+      });
     });
 
     it("handles invalid opacity values gracefully", function() {

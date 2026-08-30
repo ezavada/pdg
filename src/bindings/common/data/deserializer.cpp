@@ -356,8 +356,13 @@ METHOD_IMPL(Deserializer, Deserialize_obj)
 	OBJECT_SAVE(self->mDeserializerScriptObj, THIS);
 	METHOD_SIGNATURE("", [object ISerializable], 1, ());
     REQUIRE_ARG_COUNT(0);
-  	try {
+	try {
 		ISerializable* obj = self->deserialize_obj();
+      %#ifdef PDG_USING_JAVASCRIPT_CORE
+		if (RestorePendingScriptException(exception)) {
+			return JSValueMakeUndefined(ctx);
+		}
+      %#endif
 		DEBUG_DUMP_SCRIPT_OBJECT(obj->mISerializableScriptObj, ISerializable)
 		RETURN_CPP_OBJECT(obj, ISerializable);
 	} catch(out_of_data& e) {
@@ -401,7 +406,6 @@ FUNCTION_IMPL(RegisterSerializableClass)
 			std::ostringstream msg;
 			msg << "argument 1: ISerializable subclass " << OBJECT_GET_CLASS_NAME(obj) << " getMyClassTag property is not a function!!";
 			THROW_ERR(msg.str().c_str());
-			return;
 		}
 		FUNCTION_REF func = VAL2FUNC(getMyClassTagVal);
 		VALUE classTagVal = CALL_SCRIPT(func, obj, 0, 0);
@@ -412,7 +416,6 @@ FUNCTION_IMPL(RegisterSerializableClass)
 		std::ostringstream msg;
         msg << "argument 1: ISerializable subclass " << OBJECT_GET_CLASS_NAME(obj) << " missing getMyClassTag() Function!!";
 		THROW_ERR(msg.str().c_str());
-		return;
 	}
 	Deserializer::registerScriptClass(classTag, constructorFunc);
     NO_RETURN;
@@ -428,4 +431,3 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Deserializer)
 
 
 } // pdg namespace
-

@@ -7,19 +7,13 @@ pdg.cleanupLayer(testSpriteLayer);
 testSpriteLayer = null;
 
 describe('Spriter Event System', function() {
-    var port;
     var spriteLayer;
     var sprite;
     var spriterSprite;
     
     beforeEach(function() {
-        // Create a port and sprite layer for testing
-        if (pdg.hasGraphics) {
-            port = new pdg.Port(800, 600);
-            spriteLayer = pdg.createSpriteLayer(port);
-        } else {
-            spriteLayer = pdg.createSpriteLayer();
-        }
+        // These API tests do not require a dedicated graphics port.
+        spriteLayer = pdg.createSpriteLayer();
         
         // Create a regular sprite for testing event system (works on any sprite)
         sprite = spriteLayer.createSprite();
@@ -34,19 +28,12 @@ describe('Spriter Event System', function() {
     });
     
     afterEach(function() {
-        if (port) {
-            delete port;
-        }
         if (spriteLayer) {
             pdg.cleanupLayer(spriteLayer);
             spriteLayer = null;
         }
-        if (sprite) {
-            delete sprite;
-        }
-        if (spriterSprite) {
-            delete spriterSprite;
-        }
+        sprite = null;
+        spriterSprite = null;
     });
     
     describe('Event System Functionality', function() {

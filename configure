@@ -38,7 +38,6 @@ PLATFORM=`uname -s | awk '{print tolower($0)}'`
 USE_GLFW="yes"
 GLFW_TARG="glfw"
 USE_SYSTEM_NODE="no"
-USE_JAVASCRIPTCORE="no"
 BUILD_JAVASCRIPTCORE="no"
 BUILD_EMSCRIPTEN="no"
 INSTALL_NODE_APP="no"
@@ -138,8 +137,6 @@ if [ "$PLATFORM" == "darwin" ]; then
 # 	fi
 	if [ -d "ios/pdg.xcodeproj" ]; then
 		BUILD_IOS="yes"
-		USE_JAVASCRIPTCORE="yes"
-		PDG_CMAKE_OPTIONS="-DCAN_BUILD_JSC_INTERFACES=ON $PDG_CMAKE_OPTIONS"
 	fi
     SHARED_LIB_EXT="dylib"
 else
@@ -445,11 +442,6 @@ echo -e "${HEAD}Building Master Makefile...${RESET}"
 
 if [ "$CAN_BUILD_INTERFACES" == "yes" ]; then
     echo "-- configure for building JavaScript V8 bindings with 'make js-interfaces'"
-    if [ "$USE_JAVASCRIPTCORE" == "yes" ]; then
-        echo "-- configure for building JavaScriptCore bindings with 'make js-interfaces'"
-    else
-        echo "-- configure with no JavaScriptCore bindings"    
-    fi
     JS_INTERFACES_TARG="js-interfaces"
 else
     echo "-- configure with no JavaScript V8 bindings"    
@@ -653,9 +645,6 @@ if [ "$CAN_BUILD_INTERFACES" == "yes" ]; then
     echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make pdg_js2native" >> Makefile
     echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make pdg_common_interfaces" >> Makefile
     echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make pdg_v8_interfaces" >> Makefile
-    if [ "$USE_JAVASCRIPTCORE" == "yes" ]; then
-        echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make pdg_jsc_interfaces" >> Makefile
-    fi
     echo "" >> Makefile
 fi
 
@@ -668,12 +657,6 @@ echo "	touch \$(PDG_ROOT)/src/bindings/generated/v8/pdg_script_impl.h" >> Makefi
 echo "	touch \$(PDG_ROOT)/src/bindings/generated/v8/pdg_script_impl.cpp" >> Makefile
 echo "	touch \$(PDG_ROOT)/src/bindings/generated/v8/pdg_interfaces.cpp" >> Makefile
 echo "	touch \$(PDG_ROOT)/src/bindings/generated/v8/pdg_script_interface.h" >> Makefile
-if [ "$USE_JAVASCRIPTCORE" == "yes" ]; then
-echo "	touch \$(PDG_ROOT)/src/bindings/generated/jsc/pdg_script_impl.h" >> Makefile
-echo "	touch \$(PDG_ROOT)/src/bindings/generated/jsc/pdg_script_impl.cpp" >> Makefile
-echo "	touch \$(PDG_ROOT)/src/bindings/generated/jsc/pdg_interfaces.cpp" >> Makefile
-echo "	touch \$(PDG_ROOT)/src/bindings/generated/jsc/pdg_script_interface.h" >> Makefile
-fi
 echo "" >> Makefile
 
 

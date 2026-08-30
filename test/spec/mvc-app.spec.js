@@ -9,7 +9,8 @@
 // -----------------------------------------------
 
 require('./SpecHelper');
-const framework = require('../../src/js/mvc-app/index');
+const mvcModulePath = process.ios ? '../src/js/mvc-app' : '../../src/js/mvc-app';
+const framework = require(mvcModulePath + '/index');
 
 // Extract classes from the framework object
 const Application = framework.Application.Application;
@@ -44,7 +45,7 @@ const MessageDialog = framework.MessageDialog.MessageDialog;
 const MessageDialogButtonText = framework.MessageDialog.MessageDialogButtonText;
 const MessageView = framework.MessageView.MessageView;
 
-const mocks = require('../../src/js/mvc-app/mocks');
+const mocks = require(mvcModulePath + '/mocks');
 const MockPdg = mocks.MockPdg;
 const MockGraphicsManager = mocks.MockGraphicsManager;
 const MockPort = mocks.MockPort;

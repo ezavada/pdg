@@ -56,6 +56,16 @@
 
 namespace pdg {
 
+// The JavaScriptCore compatibility layer uses this range for its own
+// setTimeout/setInterval scheduler. Bulk application-timer operations must
+// not stop that scheduler while it is dispatching JavaScript callbacks.
+static const long kScriptRuntimeTimerIdBase = 0x7e000000;
+static const long kScriptRuntimeTimerIdLimit = 0x7f000000;
+
+static bool isScriptRuntimeTimer(long id) {
+    return id >= kScriptRuntimeTimerIdBase && id < kScriptRuntimeTimerIdLimit;
+}
+
 
 
 // ==========================================================================
@@ -67,7 +77,6 @@ TimerManager::startTimer(long id, ms_delta delay, bool oneShot, UserData* userDa
     // zero is a special value, don't allow it as a timer ID
     DEBUG_ASSERT( (id != 0), "TimerMgr::startTimer illegal timer id [0]" );
     if (id == 0) return;
-
     TIMER_DEBUG_ONLY( 
         if (oneShot) {
             OS::_DOUT("TimerMgr::startTimer oneshot [%ld] fires in [%ld] ms", id, delay); 
@@ -154,7 +163,7 @@ TimerManager::pause() {
     Timer* t = timers;
     ms_time msTime = OS::getMilliseconds();
     while (t) {
-        if (!t->paused) {
+        if (!isScriptRuntimeTimer(t->id) && !t->paused) {
             t->paused = true;
             // convert from absolute ms time to milliseconds remaining
             if (t->fire > msTime) {
@@ -175,7 +184,7 @@ TimerManager::unpause() {
     Timer* t = timers;
     ms_time msTime = OS::getMilliseconds();
     while (t) {
-        if (t->paused) {
+        if (!isScriptRuntimeTimer(t->id) && t->paused) {
             // convert from  milliseconds remaining to absolute ms time
             if (t->fire) {
                 t->fire = msTime + t->fire;
@@ -324,23 +333,25 @@ TimerManager::cancelAllTimers() {
     Timer* nextT = 0;
     while (t) {
         nextT = t->next;
-        TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::cancelAllTimers timer [%p] id [%ld] deleted", t, t->id); )
-        delete t;
+        if (!isScriptRuntimeTimer(t->id)) {
+            cancelTimer(t->id);
+        }
         t = nextT;
     }
-    if ((firing.id != 0) && !firing.oneshot) {
-        // we deleted the timer currently firing, except for oneshots, which are already removed from the list
-        // and so we couldn't have deleted it here
-        deleted = true;
-        this->next = 0; // clear the cached value for next so we don't try to use it
-        delayUntil = 0; // don't do any extra delays
-        addDelay = 0;
-    }
-    timers = 0;
 }
 
 void 
 TimerManager::checkTimers() {
+    if (checkingTimers) {
+        return;
+    }
+
+    struct CheckTimersGuard {
+        explicit CheckTimersGuard(bool& flag) : active(flag) { active = true; }
+        ~CheckTimersGuard() { active = false; }
+        bool& active;
+    } guard(checkingTimers);
+
     Timer* t = timers;
     ms_time ms = OS::getMilliseconds();
 //    TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::checkTimers at ms [%ld]", ms); )
@@ -362,9 +373,9 @@ TimerManager::checkTimers() {
 				}
 				firing = *t;
 				TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::checkTimers firing timer [%ld]", ti.id); )
-				DEBUG_ONLY( ms_delta behindMs = ms - t->fire; 
+				DEBUG_ONLY( ms_delta behindMs = ms - t->fire;
                     if (behindMs > 100) {
-                        OS::_DOUT("TimerMgr::timer fired %ld ms late! Targeted for %ld", behindMs, t->fire); 
+					OS::_DOUT("TimerMgr::timer [%ld] fired %ld ms late! Targeted for %ld", t->id, behindMs, t->fire);
                     }
                 )
 				// cache the next timer in case of deletion
@@ -533,4 +544,3 @@ TimerManager* TimerManager::createSingletonInstance() {
 
 
 } // end namespace pdg
-

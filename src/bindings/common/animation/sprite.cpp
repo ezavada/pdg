@@ -332,11 +332,18 @@ METHOD_IMPL(Sprite, GetAppliedCharacterMaps)
 	REQUIRE_ARG_COUNT(0);
 	std::vector<std::string> maps = self->getAppliedCharacterMaps();
 	// Convert std::vector<std::string> to JavaScript array
+	%#ifdef PDG_USING_JAVASCRIPT_CORE
+	JSObjectRef arr = JSObjectMakeArray(ctx, 0, nullptr, exception);
+	for (size_t i = 0; i < maps.size(); i++) {
+		JSObjectSetPropertyAtIndex(ctx, arr, (unsigned)i, STR2VAL(maps[i].c_str()), exception);
+	}
+	%#else
 	v8::Local<v8::Array> arr = v8::Array::New(isolate);
 	for (size_t i = 0; i < maps.size(); i++) {
 		arr->Set(isolate->GetCurrentContext(), v8::Integer::New(isolate, i), 
 			v8::String::NewFromUtf8(isolate, maps[i].c_str()).ToLocalChecked()).ToChecked();
 	}
+	%#endif
 	RETURN(arr);
 	END
 

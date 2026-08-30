@@ -344,10 +344,19 @@ TileLayer::checkCollision(Sprite *movingSprite, uint8 alphaThreshold, bool short
 void 
 TileLayer::drawLayer() {
 	if (mHidden) return;
+	Port* drawingPort = mPort ? mPort : GraphicsManager::instance().getMainPort();
+	if (!drawingPort) return;
+	if (!mTiles || !mTileData || (mDataSize == 0) ||
+		(mSrcTileWidth <= 0) || (mSrcTileHeight <= 0) ||
+		(mSrcTileCountX <= 0) || (mSrcTileCountY <= 0) ||
+		(mWorldWidth <= 0) || (mWorldHeight <= 0)) {
+		SpriteLayer::drawLayer();
+		return;
+	}
 	// calculate number of cells that are visible
-	Rect drawRect = mPort->getClipRect();
+	Rect drawRect = drawingPort->getClipRect();
 	if (drawRect.empty()) { 
-		drawRect = mPort->getDrawingArea();
+		drawRect = drawingPort->getDrawingArea();
 	}
 
     Point origin(-mLocation.x, -mLocation.y);
@@ -434,7 +443,7 @@ TileLayer::drawLayer() {
 			float x2 = ADJUST(x + dstTileWidth);
 			bool needTopLeftOnly = false;
 			uint8* dp = dataRowPtr + tx + dataXOffset;
-			uint8 t = ( (dp < mTileData) || (dp > dataEnd) ) ? 0 : *dp; 
+			uint8 t = ( (dp < mTileData) || (dp >= dataEnd) ) ? 0 : *dp;
 			if ((t == 0) && mHasTransparency) {
 				needTopLeftOnly = (!emptyRow && !inEmptyRegion);
 				inEmptyRegion = true;
@@ -448,7 +457,7 @@ TileLayer::drawLayer() {
 			r.bottom = y2;
 			r.left = x;
 			r.right = x + dstTileWidth;
-			mPort->frameRect(r, Color(1.0f,1.0f,1.0f,0.25f));
+			drawingPort->frameRect(r, Color(1.0f,1.0f,1.0f,0.25f));
 //            continue;
 #endif
 			int dx;
@@ -649,7 +658,7 @@ TileLayer::drawLayer() {
 	if (haveNonEmptyTile && mTiles) {
 		static_cast<ImageOpenGL*>(mTiles)->bindTexture(mMipMode);
 
-		PortImpl& port = static_cast<PortImpl&>(*mPort); // get us access to our private data
+		PortImpl& port = static_cast<PortImpl&>(*drawingPort); // get us access to our private data
 		port.setOpenGLModesForDrawing( (static_cast<ImageOpenGL*>(mTiles)->mTextureFormat == GL_RGBA) && mHasTransparency);
 		
 		// define triange strip using indexed vertices
@@ -674,15 +683,15 @@ TileLayer::drawLayer() {
 			int ai = indexArray[i] * 4;
 			Point p = Point(vertexArray[ai], vertexArray[ai + 1]);
 			if (i % 4 == 2) {
-				mPort->drawLine(lp, p, Color(1.0f, 0.0f, 0.0f, 0.5f) );
+				drawingPort->drawLine(lp, p, Color(1.0f, 0.0f, 0.0f, 0.5f) );
 			}
 			if (i % 4 == 0) {
-				mPort->drawLine(lp, p, Color(1.0f, 0.0f, 1.0f, 0.5f) );
+				drawingPort->drawLine(lp, p, Color(1.0f, 0.0f, 1.0f, 0.5f) );
 			}
 			lp = p;
 		}
-		mPort->drawLine(Point(0, -mZoomedOrigin.y), Point(drawRect.width(), -mZoomedOrigin.y), Color(1.0f, 0.0f, 0.0f, 0.5f) );
-		mPort->drawLine(Point(-mZoomedOrigin.x, 0), Point(-mZoomedOrigin.x, drawRect.height()), Color(1.0f, 0.0f, 0.0f, 0.5f) );
+		drawingPort->drawLine(Point(0, -mZoomedOrigin.y), Point(drawRect.width(), -mZoomedOrigin.y), Color(1.0f, 0.0f, 0.0f, 0.5f) );
+		drawingPort->drawLine(Point(-mZoomedOrigin.x, 0), Point(-mZoomedOrigin.x, drawRect.height()), Color(1.0f, 0.0f, 0.0f, 0.5f) );
 	#endif
 	} // end if haveNonEmptyTile
 	

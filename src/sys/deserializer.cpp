@@ -361,10 +361,30 @@ Deserializer::deserialize_obj() {
 		}
        #endif // PDG_USING_V8
        #ifdef PDG_USING_JAVASCRIPT_CORE
-         // TODO: implement serialization with JavaScriptCore
-		 std::cerr << "fatal error: JS object streaming not implemented with JavaScriptCore yet!\n";
-		 exit(1);
-#warning TODO: implement JS object streaming with JavaScriptCore
+		// First try the JavaScript constructor registered for this class tag.
+		ScriptRegistryT::iterator it = gScriptRegistry.find(classTag);
+		if (it != gScriptRegistry.end() && it->second) {
+			JSValueRef exception = 0;
+			JSObjectRef scriptObj = JSObjectCallAsConstructor(
+				gMainContext, it->second, 0, 0, &exception);
+			if (exception) {
+				FatalException(exception, it->second);
+			} else if (scriptObj) {
+				obj = ISerializable_getCppObject(scriptObj);
+				if (!obj) {
+					// ES subclass instances may keep the native wrapper on their prototype.
+					JSValueRef protoVal = JSObjectGetPrototype(gMainContext, scriptObj);
+					if (protoVal && JSValueIsObject(gMainContext, protoVal)) {
+						JSObjectRef protoObj = JSValueToObject(gMainContext, protoVal, 0);
+						obj = ISerializable_getCppObject(protoObj);
+					}
+				}
+				if (obj) {
+					obj->mISerializableScriptObj = scriptObj;
+					JSValueProtect(gMainContext, scriptObj);
+				}
+			}
+		}
        #endif // PDG_USING_JAVASCRIPT_CORE
       #endif // PDG_COMPILING_FOR_SCRIPT_BINDINGS
         if (!obj) {

@@ -106,6 +106,7 @@ namespace pdg {
       protected:
         Drawing* drawing;
         uint32_t index;
+      public:
       #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
         SCRIPT_OBJECT_REF mElementRefScriptObj;
       #endif // PDG_COMPILING_FOR_SCRIPT_BINDINGS

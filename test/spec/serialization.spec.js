@@ -311,17 +311,17 @@ describe("Serialization", function() {
 
   describe("Error Handling", function() {
     it("handles null and undefined parameters gracefully", function() {
-      expect(function() {
-        serializer.serialize_str(null); // docs introspection
-      }).not.toThrow();
+      expectNullArgumentError(function() {
+        serializer.serialize_str(null);
+      });
       
       expect(function() {
         serializer.serialize_str(undefined);
       }).toThrow();
       
-      expect(function() {
-        serializer.serialize_uint(null); // docs introspection
-      }).not.toThrow();
+      expectNullArgumentError(function() {
+        serializer.serialize_uint(null);
+      });
       
       expect(function() {
         serializer.serialize_uint(undefined);
@@ -621,4 +621,4 @@ describe("Serialization", function() {
     });
   });
 
-});	
+});

@@ -22,7 +22,6 @@ describe('Spriter Collision Boxes' + (hasSpriterSupport ? ' (Spriter Support Ena
         return;
     }
     
-    var port;
     var spriteLayer;
     var spriterSprite1;
     var spriterSprite2;
@@ -59,13 +58,8 @@ describe('Spriter Collision Boxes' + (hasSpriterSupport ? ' (Spriter Support Ena
     }
     
     beforeEach(function() {
-        // Create a port and sprite layer for testing
-        if (pdg.hasGraphics) {
-            port = new pdg.Port(800, 600);
-            spriteLayer = pdg.createSpriteLayer(port);
-        } else {
-            spriteLayer = pdg.createSpriteLayer();
-        }
+        // These API tests do not require a dedicated graphics port.
+        spriteLayer = pdg.createSpriteLayer();
         spriteLayer.enableCollisions();
         
         // Create Spriter sprites for testing
@@ -89,13 +83,13 @@ describe('Spriter Collision Boxes' + (hasSpriterSupport ? ' (Spriter Support Ena
     });
     
     afterEach(function() {
-        if (port) {
-            delete port;
-        }
         if (spriteLayer) {
             pdg.cleanupLayer(spriteLayer);
             spriteLayer = null;
         }
+        spriterSprite1 = null;
+        spriterSprite2 = null;
+        regularSprite = null;
     });
     
     describe('Collision Type Support', function() {
@@ -170,9 +164,9 @@ describe('Spriter Collision Boxes' + (hasSpriterSupport ? ' (Spriter Support Ena
                     var name = spriterSprite1.getSpriterCollisionBoxName(0);
                     var box = spriterSprite1.getSpriterCollisionBox(name);
                     expect(box).toBeDefined();
-                    expect(typeof box.getCenter).toBe('function');
-                    expect(typeof box.getWidth).toBe('function');
-                    expect(typeof box.getHeight).toBe('function');
+                    expect(typeof box.centerPoint).toBe('function');
+                    expect(typeof box.width).toBe('function');
+                    expect(typeof box.height).toBe('function');
                 }
             }
         });

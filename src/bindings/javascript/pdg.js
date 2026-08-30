@@ -1889,6 +1889,30 @@ bindings.onMouseMove = function(func) {
 
 
 var _lastAutoTimerId = 0x7000000;
+var _autoTimerHandlers = Object.create(null);
+
+function removeAutoTimerHandler(timerManager, timerId) {
+	var handler = _autoTimerHandlers[timerId];
+	if (!handler) return;
+	timerManager.removeHandler(handler, bindings.eventType_Timer);
+	delete _autoTimerHandlers[timerId];
+}
+
+var _nativeCancelTimer = timerManagerProto.cancelTimer;
+var _nativeCancelAllTimers = timerManagerProto.cancelAllTimers;
+
+timerManagerProto.cancelTimer = function(timerId) {
+	removeAutoTimerHandler(this, timerId);
+	return _nativeCancelTimer.call(this, timerId);
+};
+
+timerManagerProto.cancelAllTimers = function() {
+	var timerManager = this;
+	Object.keys(_autoTimerHandlers).forEach(function(timerId) {
+		removeAutoTimerHandler(timerManager, timerId);
+	});
+	return _nativeCancelAllTimers.call(this);
+};
 
 // add methods to the timer manager prototypes
 // TimerManager.onTimeout(function, delayMs)
@@ -1898,13 +1922,16 @@ timerManagerProto.onTimeout = function(func, delay) {
 	this.startTimer(timerId, delay, bindings.timer_OneShot);
 	var handler = new bindings.IEventHandler(function(event) {
 		if (event.id != timerId) return false; // timer event was not for us
-		func(event);
-//		this.removeHandler(handler, eventType); // this was a one-shot, so remove the handler too
+		try {
+			func(event);
+		} finally {
+			removeAutoTimerHandler(this, timerId);
+		}
 		return true;  // we are the only handler to handle this event
 	}.bind(this));
+	_autoTimerHandlers[timerId] = handler;
 	this.addHandler(handler, bindings.eventType_Timer);
 	handler.cancel = function() {
-		this.removeHandler(handler, eventType);
 		this.cancelTimer(timerId);
 	}.bind(this);
 	handler.timer = timerId;  // so we can pass it to timer manager functions
@@ -1922,9 +1949,9 @@ timerManagerProto.onInterval = function(func, interval) {
 		func(event);
 		return true; // we are the only handler to handle this event
 	}.bind(this));
+	_autoTimerHandlers[timerId] = handler;
 	this.addHandler(handler, bindings.eventType_Timer);
 	handler.cancel = function() {
-		this.removeHandler(handler, eventType);
 		this.cancelTimer(timerId);
 	}.bind(this);
 	handler.timer = timerId;  // so we can pass it to timer manager functions

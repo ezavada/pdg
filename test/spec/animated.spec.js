@@ -465,17 +465,17 @@ describe("Animated", function() {
 
   describe("Error Handling", function() {
     it("handles null parameters gracefully", function() {
-      expect(function() {
+      expectNullArgumentError(function() {
         animated.setLocation(null);
-      }).not.toThrow();
+      });
       
-      expect(function() {
+      expectNullArgumentError(function() {
         animated.setVelocity(null);
-      }).not.toThrow();
+      });
       
-      expect(function() {
+      expectNullArgumentError(function() {
         animated.setCenterOffset(null);
-      }).not.toThrow();
+      });
     });
 
     it("handles invalid numeric parameters gracefully", function() {

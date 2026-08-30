@@ -203,10 +203,13 @@ describe('Sprite Layer Event Filtering', function() {
         var sprite;
         
         beforeEach(function() {            
-            // Create a port and sprite layer for testing
-            // Use a unique port name to ensure this is completely separate from early tests
+            // These callbacks are driven by real port draw events. The Node
+            // test host has no default main port, so give each spec an isolated
+            // port and close it explicitly during teardown.
             if (pdg.hasGraphics) {
-                port = pdg.gfx.createWindowPort({left: 0, top: 0, right: 800, bottom: 600}, "Integration Test Window " + Date.now());
+                port = pdg.gfx.createWindowPort(
+                    {left: 0, top: 0, right: 800, bottom: 600},
+                    "Sprite Layer Event Integration Test");
                 spriteLayer = pdg.createSpriteLayer(port);
             } else {
                 spriteLayer = pdg.createSpriteLayer();
@@ -221,15 +224,14 @@ describe('Sprite Layer Event Filtering', function() {
         });
         
         afterEach(function() {
-            if (sprite) {
-                delete sprite;
-            }
             if (spriteLayer) {
                 pdg.cleanupLayer(spriteLayer);
                 spriteLayer = null;
             }
+            sprite = null;
             if (port) {
-                delete port;
+                pdg.gfx.closeGraphicsPort(port);
+                port = null;
             }
         });
         

@@ -119,12 +119,6 @@ SET (PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES
 ${PDG_SOURCE_DIR}/deps/node/deps/v8/include
 )
 
-IF(CAN_BUILD_JSC_INTERFACES)
-	LIST(APPEND PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES
-		${PDG_SOURCE_DIR}/src/bindings/generated/jsc
-	)
-ENDIF()
-
 SET (PDG_JAVASCRIPT_BINDINGS_LINK_DIRECTORIES 
 )
 
@@ -959,25 +953,6 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/js/dump.js"
 	) 
 
-	SET( JS_JSC_IOS_FILES
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/pdg.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/../deps/node/lib/internal/linkedlist.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/assert.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/child_process.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/console.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/../deps/node/lib/events.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/fs.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/module.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/os.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/path.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/../deps/node/lib/punycode.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/timers.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/../deps/node/lib/url.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/../deps/node/lib/util.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/vm.js"
-		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_main.js"
-	)
-
 	SET( JS_NODE_FILES
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/pdg.js"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/node/pdg_main_v24.js"
@@ -988,24 +963,13 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/node/pdg_natives.h"
 	)
 
-	IF(CAN_BUILD_JSC_INTERFACES)
-		LIST(APPEND JS_NATIVE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h")
-	ENDIF(CAN_BUILD_JSC_INTERFACES)
-
-	# custom command for building the pdg_natives.h file(s)
+	# custom command for building the pdg_natives.h file
 	# should only need to run when the .js files in src/js/ change
-	# (Node and jsc-ios must be separate OUTPUT rules — each COMMAND only writes one file.)
 	ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/bindings/node/pdg_natives.h"
 		COMMAND ${PDG_PYTHON3} "${PDG_SOURCE_DIR}/tools/js2c.py" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/node/pdg_natives.h" ${JS_FILES} ${JS_NODE_FILES}
 		DEPENDS ${JS_FILES} ${JS_NODE_FILES}
 	)
 
-	IF(CAN_BUILD_JSC_INTERFACES)
-		ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h"
-			COMMAND ${PDG_PYTHON3} "${PDG_SOURCE_DIR}/tools/js2c.py" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h" ${JS_FILES} ${JS_JSC_IOS_FILES}
-			DEPENDS ${JS_FILES} ${JS_JSC_IOS_FILES}
-		)
-	ENDIF(CAN_BUILD_JSC_INTERFACES)
 	ADD_CUSTOM_TARGET(pdg_js2native ALL DEPENDS ${JS_NATIVE_FILES}) 
 
 	SET( COMMON_BINDING_SRC
@@ -1071,9 +1035,6 @@ IF(CAN_BUILD_INTERFACES)
 	SET( BINDING_SCRIPT_DIRS
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8"
 	)
-	IF(CAN_BUILD_JSC_INTERFACES)
-		LIST(APPEND BINDING_SCRIPT_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc")
-	ENDIF()
 	SET( BINDING_SCRIPT_SUBDIRS
 		"physics"
 		"core"
@@ -1139,22 +1100,6 @@ IF(CAN_BUILD_INTERFACES)
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8/animation/.dir"
 				${macro_deps}
 		) 
-		IF(CAN_BUILD_JSC_INTERFACES)
-			# Generate for JSC
-			SET( outfile "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}/${filename}" )
-			LIST(APPEND interface_outfiles ${outfile})
-			ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
-				COMMAND ${GEN_SCRIPT_INTERFACE_CMD} "javascript/jsc" "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}" "./" "${filename}"
-				DEPENDS "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h"
-					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/physics/.dir"
-					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/core/.dir"
-					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/data/.dir"
-					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/graphics/.dir"
-					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/audio/.dir"
-					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/animation/.dir"
-					${macro_deps}
-			)
-		ENDIF()
 	ENDFOREACH(srcfile)
 	ADD_CUSTOM_TARGET(pdg_common_interfaces ALL DEPENDS ${interface_outfiles})
 
@@ -1176,27 +1121,6 @@ IF(CAN_BUILD_INTERFACES)
 		DEPENDS ${V8_BINDING_SRC}
 	)
 	ADD_CUSTOM_TARGET(pdg_v8_interfaces ALL DEPENDS ${V8_INTERFACES_SRC})
-
-	IF(CAN_BUILD_JSC_INTERFACES)
-		SET( JSC_BINDING_SRC
-			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_js_classes.cpp"
-			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h"
-		)
-		SET( JSC_INTERFACES_SRC
-			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/pdg_interfaces.cpp"
-		)
-		# custom command for building the JavaScriptCore version of the pdg_interfaces.cpp file
-		# should only need to run when the pdg_js_classes.cpp file in src/bindings/javascript/jsc/ changes
-		ADD_CUSTOM_COMMAND(OUTPUT ${JSC_INTERFACES_SRC}
-			COMMAND ${GEN_SCRIPT_INTERFACE_CMD}
-				"javascript/jsc" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_js_classes.cpp"
-				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc" "./"
-				"pdg_interfaces.cpp"
-			DEPENDS ${JSC_BINDING_SRC}
-		)
-		ADD_CUSTOM_TARGET(pdg_jsc_interfaces ALL DEPENDS ${JSC_INTERFACES_SRC})
-		ADD_DEPENDENCIES(pdg pdg_jsc_interfaces)
-	ENDIF()
 
 	ADD_DEPENDENCIES(pdg pdg_common_interfaces pdg_js2native pdg_v8_interfaces)
 

@@ -26,7 +26,9 @@ namespace pdg {
 
 // ===== ElementRef Bindings =====
 
-WRAPPER_INITIALIZER_IMPL(ElementRef)
+WRAPPER_INITIALIZER_IMPL_CUSTOM(ElementRef,
+    OBJECT_SAVE(cppObj->mElementRefScriptObj, obj)
+)
     EXPORT_CLASS_SYMBOLS("ElementRef", ElementRef, , ,
         // method section
         HAS_METHOD(ElementRef, "type", Type)
@@ -47,7 +49,6 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(ElementRef)
     SETUP_NON_SCRIPT_CALL;
     
     // ElementRef should not be constructed directly by JavaScript
-    THROW_TYPE_ERR("ElementRef cannot be constructed directly. Use Drawing methods to get ElementRef objects.");
     return nullptr;
 END
 
@@ -66,6 +67,13 @@ METHOD_IMPL(ElementRef, GetControlPoints)
     const std::vector<Point>& points = self->getControlPoints();
     
     // Create JavaScript array of Point objects
+    %#ifdef PDG_USING_JAVASCRIPT_CORE
+    JSObjectRef result = JSObjectMakeArray(ctx, 0, nullptr, exception);
+    for (size_t i = 0; i < points.size(); i++) {
+        Point point = points[i];
+        JSObjectSetPropertyAtIndex(ctx, result, (unsigned)i, POINT2VAL(point), exception);
+    }
+    %#else
     v8::Local<v8::Array> result = v8::Array::New(isolate, points.size());
     v8::Local<v8::Context> context = isolate->GetCurrentContext();
     
@@ -73,6 +81,7 @@ METHOD_IMPL(ElementRef, GetControlPoints)
         Point point = points[i]; // Create a non-const copy
         result->Set(context, i, POINT2VAL(point)).ToChecked();
     }
+    %#endif
 
     RETURN_OBJECT(result);
     END
@@ -114,14 +123,8 @@ METHOD_IMPL(ElementRef, GetAttributes)
 METHOD_IMPL(ElementRef, SetAttributes)
     METHOD_SIGNATURE("", undefined, 1, ([object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(1);
-    REQUIRE_OBJECT_ARG(1, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addLine must be called with a valid Attributes object");
-        return;
-    }
-    self->setAttributes(*attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(1, attrs, Attributes);
+    self->setAttributes(*attrs);
     NO_RETURN;
     END
 
@@ -194,7 +197,6 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Drawing)
     SETUP_NON_SCRIPT_CALL;
     
     // Drawing should not be constructed directly by JavaScript, use Drawing.create() instead
-    THROW_TYPE_ERR("Drawing cannot be constructed directly. Use Drawing.create() to create a new Drawing.");
     return nullptr;
 END
 
@@ -212,35 +214,17 @@ METHOD_IMPL(Drawing, AddLine)
     REQUIRE_ARG_COUNT(3);
     REQUIRE_POINT_ARG(1, from);
     REQUIRE_POINT_ARG(2, to);
-    REQUIRE_OBJECT_ARG(3, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addLine must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addLine(from, to, *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+    ElementRef* result = self->addLine(from, to, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
 METHOD_IMPL(Drawing, AddSpline)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Spline] spline, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(2);
-    REQUIRE_OBJECT_ARG(1, spline);
-    SplineWrap* splineWrapper = static_cast<SplineWrap*>(OBJECT_PRIVATE_DATA(spline));
-    Spline* splinePtr = splineWrapper->getCppObject();
-    if (!splinePtr) {
-        THROW_TYPE_ERR("addSpline must be called with a valid Spline object");
-        return;
-    }
-    REQUIRE_OBJECT_ARG(2, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addSpline must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addSpline(std::move(*splinePtr), *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
+    REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+    ElementRef* result = self->addSpline(std::move(*spline), *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
@@ -248,14 +232,8 @@ METHOD_IMPL(Drawing, AddRect)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(2);
     REQUIRE_RECT_ARG(1, rect);
-    REQUIRE_OBJECT_ARG(2, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addRect must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addRect(rect, *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+    ElementRef* result = self->addRect(rect, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
@@ -263,35 +241,17 @@ METHOD_IMPL(Drawing, AddQuad)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Quad] quad, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(2);
     REQUIRE_QUAD_ARG(1, quad);
-    REQUIRE_OBJECT_ARG(2, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addQuad must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addQuad(quad, *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+    ElementRef* result = self->addQuad(quad, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
 METHOD_IMPL(Drawing, AddPolygon)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Polygon] polygon, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(2);
-    REQUIRE_OBJECT_ARG(1, polygon);
-    PolygonWrap* polygonWrapper = static_cast<PolygonWrap*>(OBJECT_PRIVATE_DATA(polygon));
-    Polygon* polygonPtr = polygonWrapper->getCppObject();
-    if (!polygonPtr) {
-        THROW_TYPE_ERR("addPolygon must be called with a valid Polygon object");
-        return;
-    }
-    REQUIRE_OBJECT_ARG(2, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addPolygon must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addPolygon(std::move(*polygonPtr), *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(1, polygon, Polygon);
+    REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+    ElementRef* result = self->addPolygon(std::move(*polygon), *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
@@ -301,14 +261,8 @@ METHOD_IMPL(Drawing, AddEllipse)
     REQUIRE_POINT_ARG(1, center);
     REQUIRE_NUMBER_ARG(2, xRadius);
     REQUIRE_NUMBER_ARG(3, yRadius);
-    REQUIRE_OBJECT_ARG(4, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addEllipse must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addEllipse(center, xRadius, yRadius, *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(4, attrs, Attributes);
+    ElementRef* result = self->addEllipse(center, xRadius, yRadius, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
@@ -320,14 +274,8 @@ METHOD_IMPL(Drawing, AddArc)
     REQUIRE_NUMBER_ARG(3, yRadius);
     REQUIRE_NUMBER_ARG(4, startAngle);
     REQUIRE_NUMBER_ARG(5, endAngle);
-    REQUIRE_OBJECT_ARG(6, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addArc must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addArc(center, xRadius, yRadius, startAngle, endAngle, *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(6, attrs, Attributes);
+    ElementRef* result = self->addArc(center, xRadius, yRadius, startAngle, endAngle, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
@@ -335,21 +283,9 @@ METHOD_IMPL(Drawing, AddImage)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object Image] image, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
-    REQUIRE_OBJECT_ARG(2, image);
-    ImageWrap* imageWrapper = static_cast<ImageWrap*>(OBJECT_PRIVATE_DATA(image));
-    Image* imagePtr = imageWrapper->getCppObject();
-    if (!imagePtr) {
-        THROW_TYPE_ERR("addImage must be called with a valid Image object");
-        return;
-    }
-    REQUIRE_OBJECT_ARG(3, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addImage must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addImage(rect, *imagePtr, *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(2, image, Image);
+    REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+    ElementRef* result = self->addImage(rect, *image, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
@@ -357,21 +293,9 @@ METHOD_IMPL(Drawing, AddImageStrip)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object ImageStrip] imageStrip, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
-    REQUIRE_OBJECT_ARG(2, imageStrip);
-    ImageStripWrap* imageStripWrapper = static_cast<ImageStripWrap*>(OBJECT_PRIVATE_DATA(imageStrip));
-    ImageStrip* imageStripPtr = imageStripWrapper->getCppObject();
-    if (!imageStripPtr) {
-        THROW_TYPE_ERR("addImageStrip must be called with a valid ImageStrip object");
-        return;
-    }
-    REQUIRE_OBJECT_ARG(3, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addImageStrip must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addImageStrip(rect, *imageStripPtr, *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(2, imageStrip, ImageStrip);
+    REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+    ElementRef* result = self->addImageStrip(rect, *imageStrip, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
@@ -379,21 +303,9 @@ METHOD_IMPL(Drawing, AddDrawing)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object Drawing] drawing, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
-    REQUIRE_OBJECT_ARG(2, drawing);
-    DrawingWrap* drawingWrapper = static_cast<DrawingWrap*>(OBJECT_PRIVATE_DATA(drawing));
-    Drawing* drawingPtr = drawingWrapper->getCppObject();
-    if (!drawingPtr) {
-        THROW_TYPE_ERR("addDrawing must be called with a valid Drawing object");
-        return;
-    }
-    REQUIRE_OBJECT_ARG(3, attrs);
-    AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(OBJECT_PRIVATE_DATA(attrs));
-    Attributes* attrsPtr = attrsWrapper->getCppObject();
-    if (!attrsPtr) {
-        THROW_TYPE_ERR("addDrawing must be called with a valid Attributes object");
-        return;
-    }
-    ElementRef* result = self->addDrawing(rect, *drawingPtr, *attrsPtr);
+    REQUIRE_CPP_OBJECT_ARG(2, drawing, Drawing);
+    REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+    ElementRef* result = self->addDrawing(rect, *drawing, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
 
@@ -450,17 +362,11 @@ METHOD_IMPL(Drawing, Empty)
 METHOD_IMPL(Drawing, Draw)
     METHOD_SIGNATURE("", undefined, 1, ([object Port] port)); 
     REQUIRE_ARG_COUNT(1);
-    REQUIRE_OBJECT_ARG(1, port);
-    PortWrap* portWrapper = static_cast<PortWrap*>(OBJECT_PRIVATE_DATA(port));
-    Port* portPtr = portWrapper->getCppObject();
-    if (!portPtr) {
-        THROW_TYPE_ERR("draw must be called with a valid Port object");
-        return;
-    }
+    REQUIRE_CPP_OBJECT_ARG(1, port, Port);
     
     // For now, just draw without transformation
     // TODO: Add support for transformation arguments
-    self->draw(portPtr);
+    self->draw(port);
     NO_RETURN;
     END
 

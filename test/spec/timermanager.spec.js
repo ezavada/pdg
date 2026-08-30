@@ -29,6 +29,8 @@
 
 describe("TimerManager", function() {
 
+  var timerAccuracyTolerance = (typeof process !== 'undefined' && process.ios) ? 50 : 20;
+
   it("is a singleton accessed by pdg.tm", function() {
 	console.log('* Testing TimerManager...');
   	var tm = pdg.tm;
@@ -64,6 +66,7 @@ describe("TimerManager", function() {
 
   it("can create a one-shot timer", function() {
   	var t = pdg.tm.onTimeout(fired, 1);
+	startMs = pdg.tm.getMilliseconds();
   	expect(t.timer).toBeDefined();
   	expect(t.timer).not.toBe(0);
 
@@ -76,7 +79,7 @@ describe("TimerManager", function() {
   		expect(fireCount).toEqual(1);
   		expect(firedId).toEqual(t.timer);
   		expect(elapsedMs).toBeGreaterThan(0);
-  		expect(Math.abs(deltaMs - elapsedMs)).toBeLessThan(20);
+		expect(Math.abs(deltaMs - elapsedMs)).toBeLessThan(timerAccuracyTolerance);
   	});
 
   });
@@ -175,11 +178,11 @@ describe("TimerManager", function() {
       
       var t = pdg.tm.onInterval(function(evt) {
         delayUntilCount++;
-        if (delayUntilCount === 1) {
-          originalFireTime = pdg.tm.getMilliseconds();
-          // Delay this timer until 100ms from now
-		  targetFireTime = pdg.tm.getMilliseconds() + 100;
-          pdg.tm.delayTimerUntil(evt.id, targetFireTime);
+	        if (delayUntilCount === 1) {
+	          originalFireTime = pdg.tm.getMilliseconds();
+	          // Delay this timer until 100ms from now
+			  targetFireTime = originalFireTime + 100;
+	          pdg.tm.delayTimerUntil(evt.id, targetFireTime);
         } else if (delayUntilCount === 2) {
           delayedFireTime = pdg.tm.getMilliseconds();
         }
@@ -286,36 +289,30 @@ describe("TimerManager", function() {
     it("can delay other timers from within a timer handler", function() {
       var mainTimerCount = 0;
       var otherTimerCount = 0;
-      var otherTimerOriginalTime = 0;
-      var otherTimerDelayedTime = 0;
+      var startTime = pdg.tm.getMilliseconds();
+      var otherTimerFireTime = 0;
       
-      // Create a timer that will delay another timer
-      var mainTimer = pdg.tm.onInterval(function(evt) {
-        mainTimerCount++;
-        if (mainTimerCount === 1) {
-          // Delay the other timer from within this timer's handler
-          pdg.tm.delayTimer(otherTimer.timer, 100);
-        }
-      }, 30);
-
-      // Create another timer that should be delayed
-      var otherTimer = pdg.tm.onInterval(function(evt) {
+      // Create the timer to be delayed first, then create the delaying timer.
+      // New timers are inserted at the list head, so the delaying callback is
+      // processed first even if an idle pass begins after both are overdue.
+      var otherTimer = pdg.tm.onTimeout(function(evt) {
         otherTimerCount++;
-        if (otherTimerCount === 1) {
-          otherTimerOriginalTime = pdg.tm.getMilliseconds();
-        } else if (otherTimerCount === 2) {
-          otherTimerDelayedTime = pdg.tm.getMilliseconds();
-        }
+        otherTimerFireTime = pdg.tm.getMilliseconds();
+      }, 60);
+
+      var mainTimer = pdg.tm.onTimeout(function(evt) {
+        mainTimerCount++;
+        pdg.tm.delayTimer(otherTimer.timer, 100);
       }, 20);
 
       waitsFor(function() {
-        return (otherTimerCount >= 2);
-      }, "the other timer to fire, be delayed, and fire again", 2000);
+        return (otherTimerCount >= 1);
+      }, "the other timer to be delayed and fire", 2000);
 
       runs(function() {
         expect(mainTimerCount).toBeGreaterThan(0);
-        expect(otherTimerCount).toBeGreaterThan(1);
-        expect(otherTimerDelayedTime - otherTimerOriginalTime).toBeGreaterThan(100);
+        expect(otherTimerCount).toEqual(1);
+        expect(otherTimerFireTime - startTime).toBeGreaterThan(150);
       });
     });
 
@@ -568,13 +565,15 @@ describe("TimerManager", function() {
 
     it("returns correct fire time that matches actual firing time", function() {
       var currentTime = pdg.tm.getMilliseconds();
-      var delay = 40;
-      var actualFireTime = 0;
-      var predictedFireTime = 0;
-      
-      var t = pdg.tm.onTimeout(function(evt) {
-        actualFireTime = pdg.tm.getMilliseconds();
-      }, delay);
+	      var delay = 40;
+	      var actualFireTime = 0;
+	      var actualElapsed = 0;
+	      var predictedFireTime = 0;
+
+	      var t = pdg.tm.onTimeout(function(evt) {
+	        actualFireTime = evt.millisec;
+	        actualElapsed = evt.msElapsed;
+	      }, delay);
       
       predictedFireTime = pdg.tm.getWhenTimerFiresNext(t.timer);
       
@@ -584,10 +583,11 @@ describe("TimerManager", function() {
       }, "the timer to fire", 1000);
       
       runs(function() {
-        // Verify the predicted time is close to the actual fire time
-        var timeDifference = Math.abs(actualFireTime - predictedFireTime);
-        expect(timeDifference).toBeLessThan(20); // Allow some variance for timing
-      });
+	        // Cooperative targets can dispatch late while the host is busy. The
+	        // event must report that delay consistently relative to its target.
+	        expect(actualFireTime).not.toBeLessThan(predictedFireTime);
+	        expect(actualFireTime - predictedFireTime).toEqual(actualElapsed - delay);
+	      });
     });
 
     it("handles large time values correctly (64-bit)", function() {

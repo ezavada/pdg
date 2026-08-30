@@ -36,7 +36,6 @@ try {
         "-B", "msvc",
         "-DBUILD_TESTING=ON",
         "-DCAN_BUILD_INTERFACES=OFF",
-        "-DCAN_BUILD_JSC_INTERFACES=OFF",
         "-DPDG_HEADLESS=OFF"
     )
     & cmake @cmakeArguments
