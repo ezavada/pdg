@@ -15335,12 +15335,12 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('wasmBinary');
 }
 var ASM_CONSTS = {
-  16384620: () => { pdg_em_platform_cleanup(); },  
- 16384647: () => { return typeof window !== 'undefined' && typeof window.addEventListener === 'function' && typeof document !== 'undefined'; },  
- 16384773: ($0, $1) => { pdg_em_platform_init($0, $1); },  
- 16384807: () => { pdg_em_platform_pollEvents(); },  
- 16384837: () => { return Math.max(800, globalThis.screen ? screen.width : 800); },  
- 16384903: () => { return Math.max(600, globalThis.screen ? screen.height : 600); }
+  21956204: () => { pdg_em_platform_cleanup(); },  
+ 21956231: () => { return typeof window !== 'undefined' && typeof window.addEventListener === 'function' && typeof document !== 'undefined'; },  
+ 21956357: ($0, $1) => { pdg_em_platform_init($0, $1); },  
+ 21956391: () => { pdg_em_platform_pollEvents(); },  
+ 21956421: () => { return Math.max(800, globalThis.screen ? screen.width : 800); },  
+ 21956487: () => { return Math.max(600, globalThis.screen ? screen.height : 600); }
 };
 function pdg_audio_create(data,length,mime) { if (typeof Audio === 'undefined' || typeof Blob === 'undefined' || typeof URL === 'undefined') return 0; Module.pdgAudioObjects = Module.pdgAudioObjects || new Map(); Module.pdgNextAudioId = (Module.pdgNextAudioId || 0) + 1; var bytes = HEAPU8.slice(data, data + length); var url = URL.createObjectURL(new Blob([bytes], { type: UTF8ToString(mime) })); var audio = new Audio(url); audio.preload = 'auto'; Module.pdgAudioObjects.set(Module.pdgNextAudioId, { audio: audio, url: url, stopTimer: 0 }); return Module.pdgNextAudioId; }
 function pdg_audio_destroy(id) { var objects = Module.pdgAudioObjects; var entry = objects && objects.get(id); if (!entry) return; if (entry.stopTimer) clearTimeout(entry.stopTimer); entry.audio.pause(); entry.audio.removeAttribute('src'); entry.audio.load(); URL.revokeObjectURL(entry.url); objects.delete(id); }
