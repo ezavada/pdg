@@ -130,7 +130,7 @@
       ],
       "checklist": [
         "Run .\\test\\ui.bat from a desktop session.",
-        "Confirm the port, font, drawing, shape fill, image, and animation scripts all pass.",
+        "Confirm the port, font, drawing, shape fill, image, animation, Spriter/sound, and MVC scripts all pass.",
         "Spot-check that the rendered windows and visual output look correct, not just that the scripts exit cleanly."
       ]
     },
@@ -362,7 +362,7 @@
       ],
       "checklist": [
         "Run ./test/ui from a local macOS desktop session.",
-        "Confirm the port, font, drawing, shape fill, image, and animation scripts all pass.",
+        "Confirm the port, font, drawing, shape fill, image, animation, Spriter/sound, and MVC scripts all pass.",
         "Spot-check that window creation, rendering, and animation behavior match expectations."
       ]
     },
@@ -394,7 +394,13 @@
             "test/cxx",
             "test/data",
             "test/js",
+            "test/emscripten",
+            "test/perf",
             "test/spec",
+            "test/ui_tests",
+            "test/client.html",
+            "test/ui.html",
+            "test/perf.html",
             "tools/pdg-js.mak"
           ],
           "buildCommands": [
@@ -411,6 +417,47 @@
           "name": "Rendered UI suite",
           "command": "./test/ui --emscripten --no-build"
         }
+      ]
+    },
+    {
+      "id": "emscripten-performance",
+      "name": "Emscripten browser performance suite",
+      "category": "performance",
+      "targetPlatform": "emscripten",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "automation": "manual",
+      "notes": [
+        "Runs the JavaScript Bunnymark, PDGMark, and CanvasMark benchmarks through the Emscripten runtime.",
+        "Use a normal hardware-accelerated Chrome window; headless SwiftShader scores are not representative."
+      ],
+      "requiredBuilds": [
+        {
+          "label": "Emscripten browser module",
+          "paths": [
+            "libpdg.js",
+            "libpdg.wasm"
+          ],
+          "freshnessPath": "libpdg.wasm",
+          "staleInputs": [
+            "src",
+            "test/data",
+            "test/emscripten",
+            "test/perf",
+            "test/perf.html",
+            "tools/pdg-js.mak"
+          ],
+          "buildCommands": [
+            "make pdg-js"
+          ]
+        }
+      ],
+      "checklist": [
+        "Run ./test/emscripten/perf_emscripten --no-build bunnymark 30 and download the JSON result.",
+        "Run ./test/emscripten/perf_emscripten --no-build pdgmark and download the JSON result.",
+        "Run ./test/emscripten/perf_emscripten --no-build canvasmark, finish with ESC, and download the JSON result.",
+        "Confirm each benchmark renders correctly and does not report a runtime error."
       ]
     }
   ]

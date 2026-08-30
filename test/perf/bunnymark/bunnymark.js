@@ -22,6 +22,7 @@ var FRAME_TIME_TARGET_MS = 1000 / TARGET_FPS;  // 16.67ms
 var FRAME_TIME_MIN_MS = 1000 / MIN_FPS;  // 33.33ms
 var STATS_UPDATE_INTERVAL = 500;  // Update stats every 500ms
 var AUTO_ADD_DELAY = 2000;  // Wait 2 seconds between auto-adds
+var TEST_DURATION_MS = 0;  // 0 means run until ESC is pressed
 
 // Check for command line options
 for (var i = 0; i < process.argv.length; i++) {
@@ -31,6 +32,9 @@ for (var i = 0; i < process.argv.length; i++) {
     } else if (process.argv[i] === '--batch' && i + 1 < process.argv.length) {
         BUNNIES_PER_BATCH = parseInt(process.argv[i + 1]);
         console.log("Batch size set to:", BUNNIES_PER_BATCH);
+    } else if (process.argv[i] === '--duration' && i + 1 < process.argv.length) {
+        TEST_DURATION_MS = Math.max(0, parseFloat(process.argv[i + 1]) * 1000);
+        console.log("Test duration set to:", (TEST_DURATION_MS / 1000) + " seconds");
     }
 }
 
@@ -64,6 +68,7 @@ var maxBunniesAt60FPS = 0;
 var maxBunniesAt30FPS = 0;
 var testStartTime = 0;
 var lastAutoAddTime = 0;
+var benchmarkFinished = false;
 
 // Performance metrics
 var metrics = {
@@ -229,6 +234,21 @@ function printFinalResults() {
     } catch (e) {
         console.log("Warning: Could not save results to file:", e.message);
     }
+
+    if (typeof global.pdgPerfReport === 'function') {
+        global.pdgPerfReport(results);
+    }
+
+    return results;
+}
+
+function finishBenchmark(reason) {
+    if (benchmarkFinished) return;
+    benchmarkFinished = true;
+    console.log("\n" + reason);
+    printFinalResults();
+    pdg.gfx.closeGraphicsPort(port);
+    pdg.quit();
 }
 
 // Setup graphics
@@ -372,10 +392,7 @@ function onDraw(evt) {
 // Key handler
 function onKeyPress(evt) {
     if (evt.unicode == pdg.key_Escape) {
-        console.log("\nTest stopped by user.");
-        printFinalResults();
-        pdg.gfx.closeGraphicsPort(port);
-        pdg.quit();
+        finishBenchmark("Test stopped by user.");
         return true;
     } else if (evt.unicode == 32) {  // Space key
         addBunnies(BUNNIES_PER_BATCH);
@@ -394,5 +411,10 @@ pdg.on(pdg.eventType_KeyPress, onKeyPress);
 console.log("\nTest started. Watch the window for live stats.");
 console.log("Starting with " + bunnies.length + " bunnies...\n");
 
-pdg.run();
+if (TEST_DURATION_MS > 0) {
+    pdg.tm.onTimeout(function() {
+        finishBenchmark("Configured test duration completed.");
+    }, TEST_DURATION_MS);
+}
 
+pdg.run();

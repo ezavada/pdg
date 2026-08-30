@@ -108,7 +108,7 @@ ADDITIONAL_JS_FILES= \
     --embed-file $(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js@/js_modules/pdg-wrapper.js \
     --embed-file $(PDG_ROOT)/test/data@/data \
     --embed-file $(PDG_ROOT)/test/data@/test/data \
-    --embed-file $(PDG_ROOT)/test/perf/canvasmark2013/images/texture5.png@/test/perf/canvasmark2013/images/texture5.png \
+    --embed-file $(PDG_ROOT)/test/perf/canvasmark2013/images@/test/perf/canvasmark2013/images \
     --embed-file $(PDG_ROOT)/test/perf/bunnymark/wabbit.png@/test/perf/bunnymark/wabbit.png \
     --embed-file $(PDG_ROOT)/test/spec@/spec \
     --embed-file $(PDG_ROOT)/test/cxx@/cxx \

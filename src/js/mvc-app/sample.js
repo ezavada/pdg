@@ -27,6 +27,17 @@ const Scrollbar = framework.Scrollbar.Scrollbar;
 const ScrollbarOrientation = framework.Scrollbar.ScrollbarOrientation;
 const MessageDialog = framework.MessageDialog.MessageDialog;
 const MessageDialogButtonText = framework.MessageDialog.MessageDialogButtonText;
+const uiTestMode = process.argv.indexOf('--ui-test') >= 0;
+const uiTestSignals = {
+    initialized: false,
+    frames: 0,
+    buttons: 0,
+    checkboxes: 0,
+    editTexts: 0,
+    listItems: 0,
+    scrollbar: false
+};
+global.pdgMvcSampleTest = uiTestSignals;
 
 // -----------------------------------------------
 // Sample Application class
@@ -50,7 +61,10 @@ class SampleApplication extends Application {
         this.logMgr = pdg.lm;
         this.configMgr = pdg.cfg;
         
-        this.mainController = null;
+        // Application's constructor calls initialize(), which creates the
+        // controller before control returns here. Preserve that initialized
+        // controller instead of orphaning its registered event handlers.
+        this.mainController = this.mainController || null;
      }
     
     initialize(args) {
@@ -145,6 +159,7 @@ class SampleBackgroundView extends View {
     }
 
     drawSelf(port, frameNum) {
+        uiTestSignals.frames++;
         const area = port.getDrawingArea();
         // fill the area with white
         var attrs = new pdg.Attributes().fillColor('white');
@@ -364,6 +379,31 @@ function main() {
     try {
         // Create and initialize the application
         const app = new SampleApplication();
+        const controller = app.mainController;
+        uiTestSignals.initialized = app.getState() === AppStates.state_Running && !!controller;
+        if (controller) {
+            uiTestSignals.buttons = controller.buttons.length;
+            uiTestSignals.checkboxes = controller.checkboxes.length;
+            uiTestSignals.editTexts = controller.editTexts.length;
+            uiTestSignals.listItems = controller.listBox ? controller.listBox.getItemCount() : 0;
+            uiTestSignals.scrollbar = !!controller.scrollbar;
+        }
+
+        if (uiTestMode) {
+            setTimeout(() => {
+                const passed = uiTestSignals.initialized && uiTestSignals.frames > 0 &&
+                    uiTestSignals.buttons >= 5 && uiTestSignals.checkboxes >= 1 &&
+                    uiTestSignals.editTexts >= 2 && uiTestSignals.listItems >= 6 &&
+                    uiTestSignals.scrollbar;
+                console.log((passed ? 'PASS' : 'FAIL') + ': MVC sample UI coverage ' +
+                    JSON.stringify(uiTestSignals));
+                if (!passed) {
+                    process.exit(1);
+                    return;
+                }
+                app.cleanup();
+            }, 5000);
+        }
     } catch (error) {
         console.error('Failed to start sample application:', error);
         pdg.quit();

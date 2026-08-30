@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html data-status="idle">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+  <title>PDG Emscripten Performance Tests</title>
+  <style>
+    body { margin: 0; background: #20252b; color: #f5f7fa; font: 14px sans-serif; }
+    header { padding: 12px 18px; background: #171b20; }
+    header h1 { margin: 0 0 8px; font-size: 20px; }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; }
+    nav a, #pdg-perf-download { padding: 7px 10px; border-radius: 4px; background: #34526f;
+      color: white; text-decoration: none; }
+    nav a:hover, nav a:focus, #pdg-perf-download:hover, #pdg-perf-download:focus {
+      outline: 2px solid #9ecbff; outline-offset: 1px;
+    }
+    #pdg-perf-status { padding: 10px 18px; background: #343b44; }
+    #pdg-perf-result { margin: 10px 18px; padding: 10px; max-height: 260px; overflow: auto;
+      background: #11161b; white-space: pre-wrap; }
+    #pdg-perf-download { display: none; margin: 0 18px 10px; width: max-content; }
+    #pdg-canvas { display: block; margin: 0 auto 20px; background: #111; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PDG Emscripten Performance Tests</h1>
+    <nav aria-label="Performance benchmarks">
+      <a href="perf.html?test=bunnymark">Bunnymark</a>
+      <a href="perf.html?test=bunnymark&duration=30">Bunnymark (30 seconds)</a>
+      <a href="perf.html?test=pdgmark">PDGMark</a>
+      <a href="perf.html?test=canvasmark">CanvasMark 2013</a>
+    </nav>
+  </header>
+  <div id="pdg-perf-status">Choose a benchmark above.</div>
+  <a id="pdg-perf-download" download>Download JSON results</a>
+  <pre id="pdg-perf-result"></pre>
+  <canvas id="pdg-canvas" width="1000" height="800" tabindex="0"></canvas>
+  <script>window.Module = { canvas: document.getElementById("pdg-canvas") };</script>
+  <script>
+    var runner = document.createElement("script");
+    runner.src = "emscripten/emscripten_perf_runner.js?_pdg_cache=" + Date.now();
+    document.body.appendChild(runner);
+  </script>
+</body>
+</html>

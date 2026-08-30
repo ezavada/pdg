@@ -8,9 +8,11 @@
         "drawing": "drawing_test.js",
         "shape-fill": "shape_fill_test.js",
         "image": "image_test.js",
-        "animation": "animation_test.js"
+        "animation": "animation_test.js",
+        "spriter-sound": "spriter_sound_test.js",
+        "mvc": "../src/js/mvc-app/sample.js"
     };
-    var testIds = ["port", "font", "drawing", "shape-fill", "image", "animation"];
+    var testIds = ["port", "font", "drawing", "shape-fill", "image", "animation", "spriter-sound", "mvc"];
     var params = new URLSearchParams(window.location.search);
     var testId = params.get("test");
     var automated = params.get("automated") === "1";
@@ -22,6 +24,7 @@
     var runtimeError = null;
     var fontColorsSeen = { white: false, yellow: false };
     var drawingSpheresSeen = false;
+    var moduleCache = {};
 
     function sampleFontColors() {
         if (testId !== "font" || (fontColorsSeen.white && fontColorsSeen.yellow)) return;
@@ -103,6 +106,43 @@
         throw new Error("Could not load " + url + " (HTTP " + request.status + ")");
     }
 
+    function resolveSource(request, parentUrl) {
+        var resolved = new URL(request, parentUrl).href;
+        var candidates = /\.[^/]+$/.test(new URL(resolved).pathname)
+            ? [resolved]
+            : [resolved + ".js", resolved.replace(/\/$/, "") + "/index.js"];
+        for (var i = 0; i < candidates.length; i++) {
+            try {
+                return { url: candidates[i], source: requestSource(candidates[i]) };
+            } catch (error) {}
+        }
+        throw new Error("Cannot load module " + request + " from " + parentUrl);
+    }
+
+    function browserRequire(request, parentUrl) {
+        if (request === "pdg") return window.pdg;
+        if (request.charAt(0) !== "." && request.charAt(0) !== "/") {
+            return window.require(request);
+        }
+
+        var loaded = resolveSource(request, parentUrl);
+        if (moduleCache[loaded.url]) return moduleCache[loaded.url].exports;
+
+        var module = { exports: {} };
+        moduleCache[loaded.url] = module;
+        var localRequire = function(name) { return browserRequire(name, loaded.url); };
+        try {
+            var factory = new Function("require", "module", "exports", "__filename", "__dirname",
+                loaded.source + "\n//# sourceURL=" + loaded.url);
+            factory(localRequire, module, module.exports, loaded.url,
+                loaded.url.replace(/\/[^/]*$/, ""));
+        } catch (error) {
+            delete moduleCache[loaded.url];
+            throw error;
+        }
+        return module.exports;
+    }
+
     function finish(status, message) {
         if (finished) return;
         finished = true;
@@ -118,6 +158,23 @@
         if (status === "passed" && testId === "drawing" && !drawingSpheresSeen) {
             status = "failed";
             message = "sphere framebuffer did not contain round colored and JPEG-textured spheres";
+        }
+        if (status === "passed" && testId === "spriter-sound") {
+            var signals = window.pdgSpriterSoundTest || {};
+            if (signals.spriterFilesLoaded < 2 || signals.soundObjectsLoaded < 3 ||
+                signals.soundPlayCalls < 3) {
+                status = "failed";
+                message = "Spriter examples or sound playback calls were incomplete";
+            }
+        }
+        if (status === "passed" && testId === "mvc") {
+            var mvcSignals = window.pdgMvcSampleTest || {};
+            if (!mvcSignals.initialized || mvcSignals.frames === 0 || mvcSignals.buttons < 5 ||
+                mvcSignals.checkboxes < 1 || mvcSignals.editTexts < 2 ||
+                mvcSignals.listItems < 6 || !mvcSignals.scrollbar) {
+                status = "failed";
+                message = "MVC sample did not initialize and render all expected controls";
+            }
         }
         var result = {
             status: status,
@@ -289,17 +346,25 @@
             return originalQuit.apply(window.pdg, arguments);
         };
 
-        window.process.argv = ["pdg", "ui_tests/" + tests[testId]];
+        window.process.argv = ["pdg", tests[testId]];
+        if (testId === "mvc") window.process.argv.push("--ui-test");
         window.process.exit = function(code) {
-            finish(code ? "failed" : "passed", "process.exit(" + code + ")");
+            var details = testId === "mvc" && window.pdgMvcSampleTest
+                ? " " + JSON.stringify(window.pdgMvcSampleTest) : "";
+            finish(code ? "failed" : "passed", "process.exit(" + code + ")" + details);
             if (code) throw new Error("UI test exited with status " + code);
             window.pdg.quit();
         };
 
         statusNode.textContent = "Running " + testId + " UI test…";
-        var source = requestSource("ui_tests/" + tests[testId]);
-        var factory = new Function(source + "\n//# sourceURL=/test/ui_tests/" + tests[testId]);
-        factory();
+        var sourcePath = testId === "mvc" ? tests[testId] : "ui_tests/" + tests[testId];
+        var sourceUrl = new URL(sourcePath, window.location.href).href;
+        var source = requestSource(sourcePath);
+        var module = { exports: {} };
+        var localRequire = function(name) { return browserRequire(name, sourceUrl); };
+        var factory = new Function("require", "module", "exports", "__filename", "__dirname",
+            source + "\n//# sourceURL=" + sourceUrl);
+        factory(localRequire, module, module.exports, sourceUrl, sourceUrl.replace(/\/[^/]*$/, ""));
 
         nativeSetTimeout(function() {
             if (!finished) finish("failed", "UI test timed out");

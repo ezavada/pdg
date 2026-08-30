@@ -9,12 +9,18 @@ if [ "${1:-}" = "--no-build" ]; then
     shift
 fi
 
-SELECTED_TEST=""
-if [ "${1:-}" = "--test" ]; then
-    SELECTED_TEST="${2:-}"
-    shift 2
+BENCHMARK="${1:-}"
+if [ -z "$BENCHMARK" ]; then
+    echo "Usage: test/emscripten/perf_emscripten [--no-build] <bunnymark|pdgmark|canvasmark> [duration-seconds]"
+    exit 2
 fi
 
+case "$BENCHMARK" in
+    bunnymark|pdgmark|canvasmark) ;;
+    *) echo "Error: unknown benchmark '$BENCHMARK'."; exit 2 ;;
+esac
+
+DURATION="${2:-}"
 if [ "$BUILD" = yes ]; then
     (cd "$PDG_ROOT" && make pdg-js) || exit $?
 fi
@@ -32,10 +38,10 @@ if [ -z "$BROWSER" ]; then
 fi
 
 PORT="${PDG_TEST_PORT:-8123}"
-RESULT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pdg-emscripten-ui.XXXXXX")" || exit 2
-SERVER_LOG="$RESULT_DIR/server.log"
+RUN_DIR="$(mktemp -d "${TMPDIR:-/tmp}/pdg-emscripten-perf.XXXXXX")" || exit 2
+SERVER_LOG="$RUN_DIR/server.log"
 SERVER_PID=""
-BASE_URL="http://127.0.0.1:$PORT/test/ui.html"
+BASE_URL="http://127.0.0.1:$PORT/test/perf.html"
 
 cleanup() {
     if [ -n "$SERVER_PID" ]; then
@@ -54,35 +60,16 @@ if ! curl -fsS "$BASE_URL" >/dev/null 2>&1; then
         sleep 0.1
     done
     if [ "$READY" != yes ]; then
-        echo "Error: UI test server did not start on port $PORT."
+        echo "Error: performance test server did not start on port $PORT."
         exit 2
     fi
 fi
 
-TESTS=(port font drawing shape-fill image animation spriter-sound mvc)
-if [ -n "$SELECTED_TEST" ]; then TESTS=("$SELECTED_TEST"); fi
-
-FAILED=0
-for TEST_ID in "${TESTS[@]}"; do
-    RESULT_HTML="$RESULT_DIR/$TEST_ID.html"
-    TEST_URL="$BASE_URL?test=$TEST_ID&automated=1"
-    "$BROWSER" --headless=new --enable-unsafe-swiftshader --dump-dom \
-        --virtual-time-budget=120000 "$TEST_URL" >"$RESULT_HTML" 2>/dev/null
-    BROWSER_EXIT=$?
-    RESULT_JSON="$(sed -n 's/.*<pre id="pdg-ui-result-json">\([^<]*\)<\/pre>.*/\1/p' "$RESULT_HTML" | tail -1)"
-    if [ -z "$RESULT_JSON" ]; then
-        echo "FAIL: $TEST_ID (browser exit $BROWSER_EXIT; no result)"
-        FAILED=1
-    elif echo "$RESULT_JSON" | grep -q '"status":"passed"'; then
-        echo "PASS: $RESULT_JSON"
-    else
-        echo "FAIL: $RESULT_JSON"
-        FAILED=1
-    fi
-done
-
-if [ "$FAILED" -ne 0 ]; then
-    echo "Rendered UI reports: $RESULT_DIR"
-    exit 1
+TEST_URL="$BASE_URL?test=$BENCHMARK"
+if [ "$BENCHMARK" = bunnymark ] && [ -n "$DURATION" ]; then
+    TEST_URL="$TEST_URL&duration=$DURATION"
 fi
-echo "PASS: all Emscripten UI tests completed"
+
+echo "Opening $TEST_URL"
+echo "Close the benchmark browser window when finished."
+"$BROWSER" --user-data-dir="$RUN_DIR/chrome-profile" --new-window "$TEST_URL"

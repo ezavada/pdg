@@ -496,6 +496,12 @@ function printFinalResults() {
     } catch (e) {
         console.log("Warning: Could not save results to file:", e.message);
     }
+
+    if (typeof global.pdgPerfReport === 'function') {
+        global.pdgPerfReport(results);
+    }
+
+    return results;
 }
 
 // ============================================
@@ -736,4 +742,3 @@ console.log("\nPDGMark started. Watch the window for live stats.");
 console.log("Starting with Test 1: " + tests[0].title + "...\n");
 
 pdg.run();
-

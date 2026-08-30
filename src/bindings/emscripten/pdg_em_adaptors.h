@@ -123,6 +123,7 @@ bool emscriptenAnimatedAnimate(Animated& animated, ms_delta elapsed);
 
 Image* emscriptenCreateImage(const std::string& path);
 ImageStrip* emscriptenCreateImageStrip(const std::string& path);
+Sound* emscriptenCreateSound(const std::string& path);
 Rect emscriptenImageGetBoundsAt(Image& image, const Point& point);
 Image* emscriptenImageGetSubsection(Image& image, const Rect& rect);
 

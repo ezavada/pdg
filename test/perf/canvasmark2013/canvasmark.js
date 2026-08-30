@@ -14,8 +14,13 @@ var pdg = require('pdg');
 var fs = require('fs');
 var path = require('path');
 
-// Setup browser globals BEFORE loading any scripts
-global.window = {
+// Setup browser globals BEFORE loading any scripts. Keep the CanvasMark shims
+// separate from the real browser globals: window.location and window.document
+// are host-owned properties, and assigning the shims to them can navigate the
+// Emscripten test page or silently retain the browser implementation.
+var hostGlobal = typeof globalThis !== 'undefined' ? globalThis : global;
+var runningInBrowser = hostGlobal.window === hostGlobal && !!hostGlobal.document;
+var canvasmarkWindow = {
     pageXOffset: 0,
     pageYOffset: 0,
     setTimeout: setTimeout,
@@ -31,12 +36,14 @@ global.window = {
         }
     }
 };
+global._pdgCanvasMarkWindow = canvasmarkWindow;
+global._pdgWindow = canvasmarkWindow;
 
 // Image reference system for data URL simulation
 global._prerenderImageMap = {};
 global._prerenderImageCounter = 0;
 
-global.document = {
+var canvasmarkDocument = {
     getElementById: function(id) { return null; },
     createElement: function(tag) {
         if (tag === 'canvas') {
@@ -92,18 +99,31 @@ global.document = {
     onkeydown: null,
     onkeyup: null
 };
+global._pdgCanvasMarkDocument = canvasmarkDocument;
+global._pdgDocument = canvasmarkDocument;
 
-global.navigator = {
+var canvasmarkNavigator = {
     userAgent: 'Mozilla/5.0 (PDG) AppleWebKit/537.36 Chrome/100.0 Safari/537.36',
     platform: 'MacIntel',
     vendor: 'PDG',
     appVersion: '5.0 (PDG)'
 };
+global._pdgCanvasMarkNavigator = canvasmarkNavigator;
+global._pdgNavigator = canvasmarkNavigator;
 
-global.location = {
-    search: '',
+var canvasmarkLocation = {
+    search: process.argv.indexOf('--auto') >= 0 ? '?auto=true' : '',
     href: 'pdg://canvasmark2013'
 };
+global._pdgCanvasMarkLocation = canvasmarkLocation;
+global._pdgLocation = canvasmarkLocation;
+
+if (!runningInBrowser) {
+    global.window = canvasmarkWindow;
+    global.document = canvasmarkDocument;
+    global.navigator = canvasmarkNavigator;
+    global.location = canvasmarkLocation;
+}
 
 global.requestAnimFrame = function(callback, element) {
     // Don't actually request animation frames - PDG draw events handle this
@@ -134,8 +154,18 @@ function loadScriptDirect(filepath) {
 function loadScript(filepath) {
     var fullPath = path.join(__dirname, filepath);
     var code = fs.readFileSync(fullPath, 'utf8');
+    // Indirect eval is needed so the original scripts share their globals. In a
+    // browser, however, top-level `var window` and friends still bind to
+    // read-only host properties. Give those identifiers private names before
+    // evaluation so CanvasMark consistently uses the compatibility shims.
+    code = code
+        .replace(/\bwindow\b/g, '_pdgWindow')
+        .replace(/\bdocument\b/g, '_pdgDocument')
+        .replace(/\bnavigator\b/g, '_pdgNavigator')
+        .replace(/\blocation\b/g, '_pdgLocation')
+        .replace(/\bImage\b/g, '_pdgImage');
     // Prepend variable declarations so eval'd code can see browser globals
-    var preamble = 'var window=global.window; var document=global.document; var navigator=global.navigator; var Image=global.Image; var requestAnimFrame=global.requestAnimFrame; var alert=global.alert; var location=global.location; var $=global.$; var DEBUG=global.DEBUG;\n';
+    var preamble = 'var _pdgWindow=global._pdgCanvasMarkWindow; var _pdgDocument=global._pdgCanvasMarkDocument; var _pdgNavigator=global._pdgCanvasMarkNavigator; var _pdgImage=global._pdgCanvasMarkImage; var requestAnimFrame=global.requestAnimFrame; var alert=global.alert; var _pdgLocation=global._pdgCanvasMarkLocation; var $=global.$; var DEBUG=global.DEBUG;\n';
     // Use indirect eval to execute in global scope
     (1, eval)(preamble + code);
 }
@@ -144,10 +174,11 @@ function loadScript(filepath) {
 loadScriptDirect('pdg-canvas-compat.js');
 
 // Make browser globals accessible as variables (not just global.*)
-var window = global.window;
-var document = global.document;
-var navigator = global.navigator;
-var Image = global.Image;
+var window = global._pdgCanvasMarkWindow;
+var document = global._pdgCanvasMarkDocument;
+var navigator = global._pdgCanvasMarkNavigator;
+var location = global._pdgCanvasMarkLocation;
+var Image = global._pdgCanvasMarkImage;
 
 // Stub out BrowserDetect to avoid errors
 global.BrowserDetect = {
@@ -414,6 +445,12 @@ function printFinalResults() {
     } catch (e) {
         console.log("Warning: Could not save results to file:", e.message);
     }
+
+    if (typeof global.pdgPerfReport === 'function') {
+        global.pdgPerfReport(results);
+    }
+
+    return results;
 }
 
 // Setup and run
@@ -424,4 +461,3 @@ pdg.on(pdg.eventType_KeyPress, onKeyPress);
 pdg.on(pdg.eventType_MouseDown, onMouseDown);
 
 pdg.run();
-

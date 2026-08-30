@@ -565,11 +565,26 @@ PDGCanvasContext.prototype = {
 // We just augment them here as needed
 
 // Image constructor that wraps pdg.Image
-global.Image = function() {
+global._pdgCanvasMarkImage = function() {
     var pdgImage = null;
     var src = null;
     var onload = null;
     var url = null;  // For preloader
+    var imagePath = null;
+
+    function ensureLoaded() {
+        if (!pdgImage && imagePath) {
+            pdgImage = new pdg.Image(imagePath);
+            // Emscripten's legacy GL texture upload path can release this
+            // decoder buffer through a different allocator. Retaining it for
+            // the lifetime of the browser benchmark avoids that invalid free;
+            // native benchmark runs keep their normal cache behavior.
+            if (typeof global.pdgPerfReport === 'function') {
+                pdgImage.retainData();
+            }
+        }
+        return pdgImage;
+    }
     
     Object.defineProperty(this, 'src', {
         get: function() { return src; },
@@ -596,11 +611,13 @@ global.Image = function() {
             }
             
             try {
-                // Load image relative to canvasmark directory
+                // Resolve now, but defer decoding until the benchmark actually
+                // draws or inspects the image. CanvasMark queues several very
+                // large sprite sheets at once; keeping all decoded CPU buffers
+                // alive until their first texture upload can exhaust/corrupt a
+                // constrained Wasm heap.
                 var path = require('path');
-                var imagePath = path.join(__dirname, value.replace('./', ''));
-                pdgImage = new pdg.Image(imagePath);
-                // Call onload immediately (PDG loads synchronously)
+                imagePath = path.join(__dirname, value.replace('./', ''));
                 if (onload) {
                     setTimeout(function() { onload(); }, 0);
                 }
@@ -615,7 +632,7 @@ global.Image = function() {
         set: function(value) { 
             onload = value;
             // If src was already set, call onload now
-            if (src && pdgImage && onload) {
+            if (src && onload) {
                 setTimeout(function() { onload(); }, 0);
             }
         }
@@ -627,21 +644,28 @@ global.Image = function() {
     });
     
     Object.defineProperty(this, 'width', {
-        get: function() { return pdgImage ? pdgImage.width : 0; }
+        get: function() {
+            var image = ensureLoaded();
+            return image ? image.width : 0;
+        }
     });
     
     Object.defineProperty(this, 'height', {
-        get: function() { return pdgImage ? pdgImage.height : 0; }
+        get: function() {
+            var image = ensureLoaded();
+            return image ? image.height : 0;
+        }
     });
     
     // Return the PDG Image for actual drawing
-    this._getPDGImage = function() { return pdgImage; };
+    this._getPDGImage = ensureLoaded;
 };
+global._pdgImage = global._pdgCanvasMarkImage;
 
 
 // add stats to the global window object
 // Dump the stats to the console
-global.window.dumpStats = function() {
+global._pdgCanvasMarkWindow.dumpStats = function() {
     console.log("gParseColor:", gParseColor);
     console.log("gParseColor3h:", gParseColor3h);
     console.log("gGetAttributes:", gGetAttributes);
@@ -670,7 +694,7 @@ global.window.dumpStats = function() {
     console.log("gTransformPointRotate:", gTransformPointRotate);
 };
 
-global.window.resetStats = function() {
+global._pdgCanvasMarkWindow.resetStats = function() {
     gParseColor = 0;
     gParseColor3h = 0;
     gGetAttributes = 0;
@@ -704,4 +728,3 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = PDGCanvasContext;
 }
 global.PDGCanvasContext = PDGCanvasContext;
-

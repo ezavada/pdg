@@ -159,6 +159,7 @@ namespace pdg {
 #endif
 #define Serializer_Extra .constructor<>()
 #define Sound_Extra \
+    .constructor(&pdg::emscriptenCreateSound, emscripten::allow_raw_pointers()) \
     .function("_play", &pdg::emscriptenSoundPlay) \
     .function("start", &pdg::Sound::start) \
     .function("stop", &pdg::Sound::stop) \

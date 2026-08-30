@@ -486,6 +486,10 @@ ImageStrip* emscriptenCreateImageStrip(const std::string& path) {
     return ImageStrip::createImageStripFromFile(path.c_str());
 }
 
+Sound* emscriptenCreateSound(const std::string& path) {
+    return Sound::createSoundFromFile(path.c_str());
+}
+
 Rect emscriptenImageGetBoundsAt(Image& image, const Point& point) {
     Point mutablePoint(point);
     return image.getImageBounds(mutablePoint);

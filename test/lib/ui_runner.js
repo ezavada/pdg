@@ -46,6 +46,19 @@ var UI_TESTS = [
         name: 'Animation test',
         scriptPath: path.join('ui_tests', 'animation_test.js'),
         workingDir: 'test'
+    },
+    {
+        id: 'spriter-sound',
+        name: 'Spriter and sound test',
+        scriptPath: path.join('ui_tests', 'spriter_sound_test.js'),
+        workingDir: 'test'
+    },
+    {
+        id: 'mvc',
+        name: 'MVC sample test',
+        scriptPath: path.join('src', 'js', 'mvc-app', 'sample.js'),
+        workingDir: 'repo',
+        args: ['--ui-test']
     }
 ];
 
@@ -125,7 +138,7 @@ function runUiTests() {
         var stdoutPath = path.join(envInfo.logDir, testSlug + '.stdout.log');
         var stderrPath = path.join(envInfo.logDir, testSlug + '.stderr.log');
         var workingDir = testDef.workingDir === 'repo' ? envInfo.repoRoot : envInfo.testDir;
-        var args = [testDef.scriptPath].concat(forwardedArgs);
+        var args = [testDef.scriptPath].concat(testDef.args || [], forwardedArgs);
 
         console.log('Running ' + testDef.name + '...');
         var startedAt = new Date().toISOString();
