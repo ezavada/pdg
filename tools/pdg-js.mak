@@ -82,7 +82,8 @@ CFLAGS_ALL=-gsource-map -Wno-warn-absolute-paths -DMOZZCONF_H $(DEFINES) $(INCLU
 CFLAGS=$(CFLAGS_ALL)
 CXXFLAGS=-std=c++17 -fexceptions $(CFLAGS_ALL)
 
-OUT_DIR=$(PDG_ROOT)/build/js/pdg
+WASM_OUT_DIR=$(PDG_ROOT)/build/wasm
+OUT_DIR=$(WASM_OUT_DIR)/pdg
 SRC_SYS_DIR=$(PDG_ROOT)/src/sys
 SRC_CHIPMUNK_DIR=$(PDG_ROOT)/deps/chipmunk/src
 SRC_MINIZIP_DIR=$(PDG_ROOT)/deps/node/deps/zlib/contrib/minizip
@@ -213,6 +214,11 @@ OBJS += $(SPRITER_ENGINE_OBJS) \
 	$(SPRITER_OVERRIDE_OBJS) \
 	$(PDG_SPRITER_OBJS)
 
+$(OUT_DIR):
+	@mkdir -p $@
+
+$(OBJS): | $(OUT_DIR)
+
 
 #bindings: $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
 #	@echo  'Creating JavaScript bindings for C++ objects...'
@@ -230,7 +236,8 @@ libpdg: $(OBJS) \
 	$(SRC_BINDINGS_DIR)/pdg_emscripten.js \
 	$(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js
 	@echo  'Linking libpdg...'
-	@$(CXX) --bind $(CXXFLAGS) $(ADDITIONAL_JS_FILES) -o $(PDG_ROOT)/libpdg.js $(OBJS) $(LIBS) $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
+	@mkdir -p $(WASM_OUT_DIR)
+	@$(CXX) --bind $(CXXFLAGS) $(ADDITIONAL_JS_FILES) -o $(WASM_OUT_DIR)/libpdg.js $(OBJS) $(LIBS) $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
 	@echo Done.
 
 
@@ -665,5 +672,5 @@ $(OUT_DIR)/os-unix.cpp.o: $(SRC_UNIX_DIR)/os-unix.cpp
 .PHONY: clean
 clean:
 	@echo  'Removing all temporary binaries...'
-	@rm -f libpdg.js libpdg.wasm libpdg.data libpdg.wasm.map libpdg.js.map libpdg.html libpdg.map parser.out WebIDLGrammar.pkl $(OUT_DIR)/*.o
+	@rm -f $(WASM_OUT_DIR)/libpdg.js $(WASM_OUT_DIR)/libpdg.wasm $(WASM_OUT_DIR)/libpdg.data $(WASM_OUT_DIR)/libpdg.wasm.map $(WASM_OUT_DIR)/libpdg.js.map $(WASM_OUT_DIR)/libpdg.html $(WASM_OUT_DIR)/libpdg.map parser.out WebIDLGrammar.pkl $(OUT_DIR)/*.o
 	

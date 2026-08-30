@@ -369,7 +369,7 @@ if [ "$USE_GLFW" == "yes" ]; then
 fi
 mkdir -p build/$PLATFORM/libjpeg-turbo
 mkdir -p build/$PLATFORM/pdg
-mkdir -p build/js/pdg
+mkdir -p build/wasm/pdg
 
 if [ "$ENABLE_INTERFACE_TOOLS" == "yes" ]; then
     cd "$PDG_ROOT"
@@ -612,7 +612,7 @@ fi
 
 if [ "$HAVE_EMSCRIPTEN" == "yes" ]; then
     echo "EMSCRIPTEN_PYTHON := $EMSCRIPTEN_PYTHON_PATH" >> Makefile
-    echo "EMSCRIPTEN_CACHE := \$(PDG_ROOT)/build/js/emscripten-cache" >> Makefile
+    echo "EMSCRIPTEN_CACHE := \$(PDG_ROOT)/build/wasm/emscripten-cache" >> Makefile
     echo "" >> Makefile
 
     echo "pdg-js: $JS_INTERFACES_TARG" >> Makefile
@@ -779,8 +779,8 @@ echo "" >> Makefile
 
 echo "clean:" >> Makefile
 echo "	@mkdir -p \$(PDG_ROOT)/build/$PLATFORM/node-pdg" >> Makefile
-echo "	@mkdir -p \$(PDG_ROOT)/build/js/chipmunk" >> Makefile
-echo "	@mkdir -p \$(PDG_ROOT)/build/js/pdg" >> Makefile
+echo "	@mkdir -p \$(PDG_ROOT)/build/wasm/chipmunk" >> Makefile
+echo "	@mkdir -p \$(PDG_ROOT)/build/wasm/pdg" >> Makefile
 echo "	cd \$(PDG_ROOT)/build/$PLATFORM/pdg; make clean" >> Makefile
 echo "	-cd \$(PDG_ROOT)/build/$PLATFORM/node-pdg; make clean" >> Makefile
 if [ "$BUILD_EMSCRIPTEN" == "yes" ]; then

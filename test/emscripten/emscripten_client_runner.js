@@ -215,7 +215,7 @@
             return;
         }
         var script = document.createElement("script");
-        script.src = "../libpdg.js?_pdg_cache=" + cacheToken;
+        script.src = "../build/wasm/libpdg.js?_pdg_cache=" + cacheToken;
         script.onerror = function() { failInitialization("libpdg.js failed to load"); };
         document.head.appendChild(script);
         waitForPdg(Date.now() + 30000);

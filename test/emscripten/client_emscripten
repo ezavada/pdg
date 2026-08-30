@@ -13,8 +13,8 @@ if [ "$BUILD" = yes ]; then
     (cd "$PDG_ROOT" && make pdg-js) || exit $?
 fi
 
-if [ ! -f "$PDG_ROOT/libpdg.js" ] || [ ! -f "$PDG_ROOT/libpdg.wasm" ]; then
-    echo "Error: libpdg.js and libpdg.wasm are required; run make pdg-js first."
+if [ ! -f "$PDG_ROOT/build/wasm/libpdg.js" ] || [ ! -f "$PDG_ROOT/build/wasm/libpdg.wasm" ]; then
+    echo "Error: build/wasm/libpdg.js and build/wasm/libpdg.wasm are required; run make pdg-js first."
     exit 2
 fi
 

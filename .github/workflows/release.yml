@@ -45,6 +45,24 @@ jobs:
             artifacts/release/*.sha256
           if-no-files-found: error
 
+  emscripten:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Emscripten
+        run: brew install emscripten
+      - name: Build, test, and package
+        run: ./tools/release-emscripten.sh --tag "$GITHUB_REF_NAME"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: emscripten-release-assets
+          path: |
+            artifacts/release/*.zip
+            artifacts/release/*.sha256
+          if-no-files-found: error
+
   docs:
     runs-on: ubuntu-latest
     steps:
@@ -62,7 +80,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    needs: [macos, windows, docs]
+    needs: [macos, windows, emscripten, docs]
     runs-on: ubuntu-latest
     permissions:
       contents: write

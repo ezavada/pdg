@@ -34,6 +34,7 @@ When RELEASE_TAG is omitted, HEAD must be at an exact release tag. The
 platform scripts can also be called directly:
 
     ./tools/release-macos.sh --tag v1.0.0
+    ./tools/release-emscripten.sh --tag v1.0.0
 
 On Windows, from PowerShell:
 
@@ -45,13 +46,14 @@ build trees first. An unconfigured checkout is configured automatically. The
 Windows configuration expects CMake, Python, and Visual Studio Build Tools to
 already be installed.
 
-Each script performs version validation, an optimized Release build, native
-CTest tests, the headless JavaScript suite, the GUI/client JavaScript suite,
-and staged-binary smoke tests. It also builds pdg-debug with DEBUG=1 and full
-symbols. macOS includes a dSYM when dsymutil is available; Windows includes
-the debug PDB.
+Each native script performs version validation, an optimized Release build,
+native CTest tests, the headless JavaScript suite, the GUI/client JavaScript
+suite, and staged-binary smoke tests. It also builds pdg-debug with DEBUG=1
+and full symbols. macOS includes a dSYM when dsymutil is available; Windows
+includes the debug PDB.
 
-Each platform writes two ZIPs and their SHA-256 files to artifacts/release:
+The native platform scripts write two ZIPs and their SHA-256 files to
+artifacts/release:
 
 - `pdg-vVERSION-PLATFORM-ARCH.zip` contains only the optimized pdg application.
 - `pdg-debug-vVERSION-PLATFORM-ARCH.zip` contains the unstripped pdg-debug
@@ -62,6 +64,13 @@ notices for bundled dependencies under THIRD_PARTY_LICENSES. Keeping the debug
 application and symbols separate lets runtime users download the much smaller
 optimized package.
 
+The Emscripten script performs a clean WebAssembly build in `build/wasm`, runs
+the browser client and UI suites, and writes `pdg-vVERSION-emscripten.zip` plus its
+SHA-256 file to `artifacts/release`. The package contains `libpdg.js`,
+`libpdg.wasm`, `libpdg.wasm.map`, and the applicable licenses. These build
+outputs are intentionally ignored by Git and are published only as release
+artifacts.
+
 ## Publish on GitHub
 
 After running the local release successfully, create and push the matching
@@ -70,7 +79,7 @@ tag:
     git tag v1.0.0
     git push origin v1.0.0
 
-The release workflow builds independently on macOS and Windows and builds the
-platform-neutral documentation on Linux. It creates a GitHub Release only
-after all three jobs succeed, and exposes the separate optimized, debug, and
-documentation ZIPs with their SHA-256 files.
+The release workflow builds independently on macOS, Windows, and Emscripten
+and builds the platform-neutral documentation on Linux. It creates a GitHub
+Release only after all four jobs succeed, and exposes the separate optimized,
+debug, WebAssembly, and documentation ZIPs with their SHA-256 files.

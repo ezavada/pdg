@@ -4,7 +4,9 @@ set -euo pipefail
 
 case "$(uname -s)" in
     Darwin)
-        exec "$(cd "$(dirname "$0")" && pwd)/release-macos.sh" "$@"
+        SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+        "$SCRIPT_DIR/release-macos.sh" "$@"
+        exec "$SCRIPT_DIR/release-emscripten.sh" "$@"
         ;;
     MINGW*|MSYS*|CYGWIN*)
         WINDOWS_ARGS=()
