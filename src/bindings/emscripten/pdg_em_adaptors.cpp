@@ -19,6 +19,34 @@
 
 namespace pdg {
 
+namespace {
+
+emscripten::val pointToVal(const Point& point) {
+    emscripten::val result = emscripten::val::object();
+    result.set("x", point.x);
+    result.set("y", point.y);
+    return result;
+}
+
+void setModifierKeys(emscripten::val& event, const ModifierKeyInfo& info) {
+    event.set("shift", info.shift);
+    event.set("ctrl", info.ctrl);
+    event.set("alt", info.alt);
+    event.set("meta", info.meta);
+}
+
+void setMouseInfo(emscripten::val& event, const MouseInfo& info) {
+    setModifierKeys(event, info);
+    event.set("mousePos", pointToVal(info.mousePos));
+    event.set("leftButton", info.leftButton);
+    event.set("rightButton", info.rightButton);
+    event.set("buttonNumber", info.buttonNumber);
+    event.set("lastClickPos", pointToVal(info.lastClickPos));
+    event.set("lastClickElapsed", static_cast<double>(info.lastClickElapsed));
+}
+
+}  // namespace
+
 class EmscriptenEventBridge : public IEventHandler {
 public:
     explicit EmscriptenEventBridge(const emscripten::val& jsEmitter)
@@ -32,7 +60,48 @@ public:
     bool handleEvent(EventEmitter*, long eventType, void* eventData) throw() override {
         try {
             emscripten::val event = emscripten::val::object();
-            if (eventData && eventType == eventType_SpriteLayer) {
+            if (eventData && eventType == eventType_Shutdown) {
+                const ShutdownInfo* info = static_cast<const ShutdownInfo*>(eventData);
+                event.set("exitReason", info->exitReason);
+                event.set("exitCode", info->exitCode);
+            } else if (eventData && eventType == eventType_Timer) {
+                const TimerInfo* info = static_cast<const TimerInfo*>(eventData);
+                if (info->id <= 0) return false;
+                event.set("id", info->id);
+                event.set("millisec", static_cast<double>(info->millisec));
+                event.set("msElapsed", static_cast<double>(info->msElapsed));
+            } else if (eventData &&
+                       (eventType == eventType_KeyDown || eventType == eventType_KeyUp)) {
+                event.set("keyCode", static_cast<const KeyInfo*>(eventData)->keyCode);
+            } else if (eventData && eventType == eventType_KeyPress) {
+                const KeyPressInfo* info = static_cast<const KeyPressInfo*>(eventData);
+                setModifierKeys(event, *info);
+                event.set("unicode", info->unicode);
+                event.set("isRepeating", info->isRepeating);
+            } else if (eventData &&
+                       (eventType == eventType_MouseDown || eventType == eventType_MouseUp ||
+                        eventType == eventType_MouseMove)) {
+                setMouseInfo(event, *static_cast<const MouseInfo*>(eventData));
+            } else if (eventData &&
+                       (eventType == eventType_MouseEnter || eventType == eventType_MouseLeave)) {
+                const MouseTrackingInfo* info =
+                    static_cast<const MouseTrackingInfo*>(eventData);
+                setMouseInfo(event, *info);
+                event.set("entering", info->entering);
+                event.set("trackingRef", info->trackingRef);
+            } else if (eventData && eventType == eventType_ScrollWheel) {
+                const ScrollWheelInfo* info = static_cast<const ScrollWheelInfo*>(eventData);
+                setModifierKeys(event, *info);
+                event.set("horizDelta", info->horizDelta);
+                event.set("vertDelta", info->vertDelta);
+            } else if (eventData && eventType == eventType_PortResized) {
+                const PortResizeInfo* info = static_cast<const PortResizeInfo*>(eventData);
+                event.set("portIdentity", reinterpret_cast<uintptr_t>(info->port));
+                event.set("screenPos", info->screenPos);
+                event.set("oldScreenPos", info->oldScreenPos);
+                event.set("oldWidth", info->oldWidth);
+                event.set("oldHeight", info->oldHeight);
+            } else if (eventData && eventType == eventType_SpriteLayer) {
                 const SpriteLayerInfo* info = static_cast<const SpriteLayerInfo*>(eventData);
                 event.set("action", info->action);
                 event.set("actingLayer", mJsEmitter);
