@@ -136,14 +136,20 @@ class SampleApplication extends Application {
     }
     
     cleanup() {
+        if (this.cleanedUp) return;
+        this.cleanedUp = true;
         console.log('SampleApplication cleaning up...');  
-        delete this.mainController;
+        if (this.mainController) {
+            this.mainController.destroy();
+        }
         this.mainController = null;
-        pdg.gfx.closeGraphicsPort(this.mainPort);
+        this._unregisterEventHandlers();
+        if (this.mainPort) {
+            pdg.gfx.closeGraphicsPort(this.mainPort);
+        }
         this.mainPort = null;
         super.cleanup();  
         console.log('SampleApplication cleanup complete');
-        pdg.quit();
     }
 }
 
@@ -402,6 +408,7 @@ function main() {
                     return;
                 }
                 app.cleanup();
+                pdg.quit();
             }, 5000);
         }
     } catch (error) {

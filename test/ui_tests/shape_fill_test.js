@@ -123,11 +123,11 @@ if (shapeToTest) {
 // TEXTURES
 // =======================================================================================
 
-var rocksTexture = new pdg.Image("test/data/rocks.png");
-var yinYangTexture = new pdg.Image("test/data/test_image.png");
-var earthTexture = new pdg.Image("test/data/earthmap2.png");
-var canvasMarkTexture = new pdg.Image("test/perf/canvasmark2013/images/texture5.png");
-var bunnyMarkTexture = new pdg.Image("test/perf/bunnymark/wabbit.png");
+var rocksTexture = new pdg.Image("data/rocks.png");
+var yinYangTexture = new pdg.Image("data/test_image.png");
+var earthTexture = new pdg.Image("data/earthmap2.png");
+var canvasMarkTexture = new pdg.Image("perf/canvasmark2013/images/texture5.png");
+var bunnyMarkTexture = new pdg.Image("perf/bunnymark/wabbit.png");
 
 if (!rocksTexture || !yinYangTexture || !earthTexture) {
     console.log("ERROR: Could not load test textures");

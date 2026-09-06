@@ -9,58 +9,7 @@ var childProcess = require('child_process');
 var fs = require('fs');
 var path = require('path');
 var specRunner = require('./spec_runner');
-
-var UI_TESTS = [
-    {
-        id: 'port',
-        name: 'Port test',
-        scriptPath: path.join('ui_tests', 'port_test.js'),
-        workingDir: 'test'
-    },
-    {
-        id: 'font',
-        name: 'Font test',
-        scriptPath: path.join('ui_tests', 'font_test.js'),
-        workingDir: 'test'
-    },
-    {
-        id: 'drawing',
-        name: 'Drawing test',
-        scriptPath: path.join('ui_tests', 'drawing_test.js'),
-        workingDir: 'test'
-    },
-    {
-        id: 'shape-fill',
-        name: 'Shape fill test',
-        scriptPath: path.join('test', 'ui_tests', 'shape_fill_test.js'),
-        workingDir: 'repo'
-    },
-    {
-        id: 'image',
-        name: 'Image test',
-        scriptPath: path.join('ui_tests', 'image_test.js'),
-        workingDir: 'test'
-    },
-    {
-        id: 'animation',
-        name: 'Animation test',
-        scriptPath: path.join('ui_tests', 'animation_test.js'),
-        workingDir: 'test'
-    },
-    {
-        id: 'spriter-sound',
-        name: 'Spriter and sound test',
-        scriptPath: path.join('ui_tests', 'spriter_sound_test.js'),
-        workingDir: 'test'
-    },
-    {
-        id: 'mvc',
-        name: 'MVC sample test',
-        scriptPath: path.join('src', 'js', 'mvc-app', 'sample.js'),
-        workingDir: 'repo',
-        args: ['--ui-test']
-    }
-];
+var UI_TESTS = require('./ui_test_catalog');
 
 function sanitizeSegment(value, fallbackValue) {
     var text = String(value || fallbackValue || '');

@@ -17,6 +17,7 @@
 #include "pdg/sys/os.h"
 #include "pdg/sys/graphics.h"
 #include "pdg/sys/port.h"
+#include <cmath>
 
 //#define PDG_DEBUG_FONT
 
@@ -29,6 +30,7 @@
 #ifdef PLATFORM_MACOSX
 #include "graphics-macosx.h"
 #include "internals-macosx.h"
+#include <CoreText/CoreText.h>
 extern "C" bool CGFontGetGlyphsForUnichars(CGFontRef, pdg::utf16char[], CGGlyph[], size_t);
 #endif
 
@@ -41,6 +43,43 @@ extern "C" bool CGFontGetGlyphsForUnichars(CGFontRef, pdg::utf16char[], CGGlyph[
 #endif
 
 namespace pdg {
+
+static int measureTextRunWidth(const utf16string& text, FontImpl* font, int size, uint32 style, Port* port) {
+#ifdef PLATFORM_MACOSX
+    FontImplMac* macFont = dynamic_cast<FontImplMac*>(font);
+    if (macFont && !text.empty()) {
+        MacAPI::PrivateOSFontRef fontRef = macFont->getMacFont(size, style);
+        if (fontRef) {
+            std::vector<MacAPI::CGGlyph> glyphs(text.length());
+            std::vector<MacAPI::CGSize> advances(text.length());
+            CGFontGetGlyphsForUnichars(fontRef, const_cast<utf16char*>(text.data()),
+                glyphs.data(), glyphs.size());
+
+            CTFontRef ctFont = CTFontCreateWithGraphicsFont(
+                fontRef, size * macFont->mScalingFactor, nullptr, nullptr);
+            if (ctFont) {
+                CTFontGetAdvancesForGlyphs(ctFont, kCTFontOrientationHorizontal,
+                    glyphs.data(), advances.data(), advances.size());
+                double width = 0.0;
+                for (size_t i = 0; i < advances.size(); ++i) {
+                    width += advances[i].width;
+                }
+                CFRelease(ctFont);
+                return static_cast<int>(std::ceil(width));
+            }
+        }
+    }
+    // Never re-enter the fallback-aware Port measurement path on Apple
+    // platforms, even if CoreText could not create a measuring font.
+    return static_cast<int>(text.length()) * size / 2;
+#else
+    std::string utf8Text;
+    utf16string textCopy = text;
+    OS::utf16to8(utf8Text, textCopy);
+    return port ? port->getTextWidth(utf8Text.c_str(), size, style)
+        : static_cast<int>(text.length()) * size / 2;
+#endif
+}
 
 FontFallbackManager& FontFallbackManager::getInstance() {
     static FontFallbackManager instance;
@@ -251,23 +290,17 @@ std::vector<TextRun> FontFallbackManager::splitIntoRuns(
                 int runLength = i - runStart;
                 utf16string runText = text.substr(runStart, runLength);
                 
-                // Convert to UTF-8 for width calculation
-                std::string utf8Text;
-                OS::utf16to8(utf8Text, runText);
-                
-                // Calculate actual run width using the current font
-                Font* oldFont = port ? port->getCurrentFont() : nullptr;
-                if (port && currentFont) {
-                    port->setFont(currentFont);
-                }
-                int runWidth = port ? port->getTextWidth(utf8Text.c_str(), size, style) : (runLength * size / 2);
-                if (port && oldFont) {
-                    port->setFont(oldFont);
-                }
-                
-                FONT_DEBUG_ONLY(OS::_DOUT("  Run %d: startIndex=%d, length=%d, font='%s', xOffset=%d, width=%d, text='%s'",
-                    (int)runs.size(), runStart, runLength, currentFont ? currentFont->getFontName().c_str() : "null", 
-                    currentXOffset, runWidth, utf8Text.c_str()));
+                // Measure this run directly. Calling Port::getTextWidth here
+                // would re-enter fallback splitting for an unsupported glyph.
+                int runWidth = measureTextRunWidth(runText, currentFont, size, style, port);
+
+                FONT_DEBUG_ONLY({
+                    std::string utf8Text;
+                    OS::utf16to8(utf8Text, runText);
+                    OS::_DOUT("  Run %d: startIndex=%d, length=%d, font='%s', xOffset=%d, width=%d, text='%s'",
+                        (int)runs.size(), runStart, runLength, currentFont ? currentFont->getFontName().c_str() : "null",
+                        currentXOffset, runWidth, utf8Text.c_str());
+                });
                 
                 runs.push_back(TextRun(runStart, runLength, currentFont, currentXOffset, runWidth));
                 currentXOffset += runWidth;
@@ -286,23 +319,16 @@ std::vector<TextRun> FontFallbackManager::splitIntoRuns(
         int runLength = text.length() - runStart;
         utf16string runText = text.substr(runStart, runLength);
         
-        // Convert to UTF-8 for width calculation
-        std::string utf8Text;
-        OS::utf16to8(utf8Text, runText);
-        
-        // Calculate actual run width
-        Font* oldFont = port ? port->getCurrentFont() : nullptr;
-        if (port && currentFont) {
-            port->setFont(currentFont);
-        }
-        int runWidth = port ? port->getTextWidth(utf8Text.c_str(), size, style) : (runLength * size / 2);
-        if (port && oldFont) {
-            port->setFont(oldFont);
-        }
-        
-        FONT_DEBUG_ONLY(OS::_DOUT("  Run %d (final): startIndex=%d, length=%d, font='%s', xOffset=%d, width=%d, text='%s'",
-            (int)runs.size(), runStart, runLength, currentFont ? currentFont->getFontName().c_str() : "null", 
-            currentXOffset, runWidth, utf8Text.c_str()));
+        // Measure without recursively invoking the fallback-aware Port API.
+        int runWidth = measureTextRunWidth(runText, currentFont, size, style, port);
+
+        FONT_DEBUG_ONLY({
+            std::string utf8Text;
+            OS::utf16to8(utf8Text, runText);
+            OS::_DOUT("  Run %d (final): startIndex=%d, length=%d, font='%s', xOffset=%d, width=%d, text='%s'",
+                (int)runs.size(), runStart, runLength, currentFont ? currentFont->getFontName().c_str() : "null",
+                currentXOffset, runWidth, utf8Text.c_str());
+        });
         
         runs.push_back(TextRun(runStart, runLength, currentFont, currentXOffset, runWidth));
     }
@@ -315,4 +341,3 @@ std::vector<TextRun> FontFallbackManager::splitIntoRuns(
 } // end namespace pdg
 
 #endif // PDG_NO_GUI
-
