@@ -141,6 +141,30 @@ if (typeof process === 'undefined') {
 	  	expect(this.testCallback3).not.toHaveBeenCalled();
 	  });
 
+	  it("stamps posted events with the dispatched event type", function() {
+		var seenEvent = null;
+		var handler = new pdg.IEventHandler(function(event) {
+			seenEvent = event;
+			return false;
+		});
+		var typedEmitter = new pdg.EventEmitter();
+		typedEmitter.addHandler(handler, pdg.eventType_KeyDown);
+		typedEmitter.postEvent(pdg.eventType_KeyDown, {eventType: pdg.eventType_Timer});
+		expect(seenEvent.eventType).toEqual(pdg.eventType_KeyDown);
+	  });
+
+	  it("stamps native bridge events with the dispatched event type", function() {
+		var seenEvent = null;
+		var handler = new pdg.IEventHandler(function(event) {
+			seenEvent = event;
+			return false;
+		});
+		var typedEmitter = new pdg.EventEmitter();
+		typedEmitter.addHandler(handler, pdg.eventType_MouseDown);
+		typedEmitter.__dispatchNativeEvent(pdg.eventType_MouseDown, {});
+		expect(seenEvent.eventType).toEqual(pdg.eventType_MouseDown);
+	  });
+
 	  it("stops sending events once they are handled", function() {
 	  	spyOn(handler_t1, 'handleEvent').andReturn(true);
 	  	emitter.postEvent(pdg.eventType_Timer, {id: 1});

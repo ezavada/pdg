@@ -1533,11 +1533,15 @@ if (inbrowser) {
             return false;
         }
 
-        function postEvent(eventType, event) {
-            if (event && typeof event.portIdentity !== "undefined" &&
-                bindings._emscriptenPortsById) {
-                event.port = bindings._emscriptenPortsById.get(event.portIdentity) || null;
-            }
+function postEvent(eventType, event) {
+    if (!event || typeof event !== "object") {
+        event = {};
+    }
+    event.eventType = eventType;
+    if (event && typeof event.portIdentity !== "undefined" &&
+        bindings._emscriptenPortsById) {
+        event.port = bindings._emscriptenPortsById.get(event.portIdentity) || null;
+    }
             var state = getEmitterState(this);
             if (state.blocked[eventType]) return false;
             if (dispatchHandlers(state.handlers[eventType], event)) return true;
