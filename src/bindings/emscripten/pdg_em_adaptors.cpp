@@ -76,7 +76,7 @@ public:
             } else if (eventData && eventType == eventType_KeyPress) {
                 const KeyPressInfo* info = static_cast<const KeyPressInfo*>(eventData);
                 setModifierKeys(event, *info);
-                event.set("unicode", info->unicode);
+                event.set("unicode", static_cast<int>(info->unicode));
                 event.set("isRepeating", info->isRepeating);
             } else if (eventData &&
                        (eventType == eventType_MouseDown || eventType == eventType_MouseUp ||
