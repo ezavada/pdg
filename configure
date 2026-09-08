@@ -565,7 +565,12 @@ echo "" >> Makefile
 
 # -- target: all
 
-echo "all: pdg pdg-docs pdg-node $PDG_JS_TARG $JSC_TARG" >> Makefile
+if [ "$CAN_BUILD_INTERFACES" == "yes" ]; then
+    PDG_DOCS_TARG="pdg-docs"
+else
+    PDG_DOCS_TARG=""
+fi
+echo "all: pdg $PDG_DOCS_TARG pdg-node $PDG_JS_TARG $JSC_TARG" >> Makefile
 echo "" >> Makefile
 
 
