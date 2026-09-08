@@ -49,7 +49,7 @@ namespace pdg
 
     void TileLayerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
         if (args.IsConstructCall() && !s_TileLayer_InNewFromCpp)
         {
@@ -94,7 +94,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mEventEmitterScriptObj.Reset(isolate, obj); cppObj->mAnimatedScriptObj.Reset(isolate, obj); cppObj->mSpriteLayerScriptObj.Reset(isolate, obj); cppObj->mTileLayerScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -763,7 +763,7 @@ namespace pdg
 
     void TileLayerWrap::AddHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -829,7 +829,7 @@ namespace pdg
 
     void TileLayerWrap::RemoveHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -865,7 +865,7 @@ namespace pdg
 
     void TileLayerWrap::Clear(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -884,7 +884,7 @@ namespace pdg
 
     void TileLayerWrap::BlockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -913,7 +913,7 @@ namespace pdg
 
     void TileLayerWrap::UnblockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -941,7 +941,7 @@ namespace pdg
 
     void TileLayerWrap::GetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -961,7 +961,7 @@ namespace pdg
 
     void TileLayerWrap::SetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -987,7 +987,7 @@ namespace pdg
 
     void TileLayerWrap::GetSpeed(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1007,7 +1007,7 @@ namespace pdg
 
     void TileLayerWrap::SetSpeed(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1033,7 +1033,7 @@ namespace pdg
 
     void TileLayerWrap::GetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1053,7 +1053,7 @@ namespace pdg
 
     void TileLayerWrap::SetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1079,7 +1079,7 @@ namespace pdg
 
     void TileLayerWrap::GetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1099,7 +1099,7 @@ namespace pdg
 
     void TileLayerWrap::SetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1125,7 +1125,7 @@ namespace pdg
 
     void TileLayerWrap::SetFlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1151,7 +1151,7 @@ namespace pdg
 
     void TileLayerWrap::SetFlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1177,7 +1177,7 @@ namespace pdg
 
     void TileLayerWrap::GetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1197,7 +1197,7 @@ namespace pdg
 
     void TileLayerWrap::SetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1223,7 +1223,7 @@ namespace pdg
 
     void TileLayerWrap::GetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1243,7 +1243,7 @@ namespace pdg
 
     void TileLayerWrap::SetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1269,7 +1269,7 @@ namespace pdg
 
     void TileLayerWrap::GetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1289,7 +1289,7 @@ namespace pdg
 
     void TileLayerWrap::SetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1315,7 +1315,7 @@ namespace pdg
 
     void TileLayerWrap::GetMass(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1335,7 +1335,7 @@ namespace pdg
 
     void TileLayerWrap::SetMass(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1361,7 +1361,7 @@ namespace pdg
 
     void TileLayerWrap::GetMoveFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1381,7 +1381,7 @@ namespace pdg
 
     void TileLayerWrap::SetMoveFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1407,7 +1407,7 @@ namespace pdg
 
     void TileLayerWrap::GetSpinFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1427,7 +1427,7 @@ namespace pdg
 
     void TileLayerWrap::SetSpinFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1453,7 +1453,7 @@ namespace pdg
 
     void TileLayerWrap::GetSizeFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1473,7 +1473,7 @@ namespace pdg
 
     void TileLayerWrap::SetSizeFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1499,7 +1499,7 @@ namespace pdg
 
     void TileLayerWrap::GetBoundingBox(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1518,7 +1518,7 @@ namespace pdg
 
     void TileLayerWrap::GetRotatedBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1537,7 +1537,7 @@ namespace pdg
 
     void TileLayerWrap::Move(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1622,7 +1622,7 @@ namespace pdg
 
     void TileLayerWrap::MoveTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1707,7 +1707,7 @@ namespace pdg
 
     void TileLayerWrap::SetVelocityInRadians(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1738,7 +1738,7 @@ namespace pdg
 
     void TileLayerWrap::GetMovementDirectionInRadians(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1757,7 +1757,7 @@ namespace pdg
 
     void TileLayerWrap::SetVelocity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1797,7 +1797,7 @@ namespace pdg
 
     void TileLayerWrap::GetVelocity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1817,7 +1817,7 @@ namespace pdg
 
     void TileLayerWrap::StopMoving(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1836,7 +1836,7 @@ namespace pdg
 
     void TileLayerWrap::Accelerate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1880,7 +1880,7 @@ namespace pdg
 
     void TileLayerWrap::AccelerateTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1924,7 +1924,7 @@ namespace pdg
 
     void TileLayerWrap::SetSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -1955,7 +1955,7 @@ namespace pdg
 
     void TileLayerWrap::Grow(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2006,7 +2006,7 @@ namespace pdg
 
     void TileLayerWrap::Stretch(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2063,7 +2063,7 @@ namespace pdg
 
     void TileLayerWrap::StartGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2088,7 +2088,7 @@ namespace pdg
 
     void TileLayerWrap::StopGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2107,7 +2107,7 @@ namespace pdg
 
     void TileLayerWrap::StartStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2138,7 +2138,7 @@ namespace pdg
 
     void TileLayerWrap::StopStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2157,7 +2157,7 @@ namespace pdg
 
     void TileLayerWrap::Resize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2207,7 +2207,7 @@ namespace pdg
 
     void TileLayerWrap::ResizeTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2257,7 +2257,7 @@ namespace pdg
 
     void TileLayerWrap::FlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2276,7 +2276,7 @@ namespace pdg
 
     void TileLayerWrap::FlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2295,7 +2295,7 @@ namespace pdg
 
     void TileLayerWrap::IsFlippedX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2314,7 +2314,7 @@ namespace pdg
 
     void TileLayerWrap::IsFlippedY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2333,7 +2333,7 @@ namespace pdg
 
     void TileLayerWrap::Rotate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2384,7 +2384,7 @@ namespace pdg
 
     void TileLayerWrap::RotateTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2435,7 +2435,7 @@ namespace pdg
 
     void TileLayerWrap::StopSpinning(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2454,7 +2454,7 @@ namespace pdg
 
     void TileLayerWrap::ChangeCenter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2532,7 +2532,7 @@ namespace pdg
 
     void TileLayerWrap::ChangeCenterTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2610,7 +2610,7 @@ namespace pdg
 
     void TileLayerWrap::Wait(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2635,7 +2635,7 @@ namespace pdg
 
     void TileLayerWrap::SetFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2660,7 +2660,7 @@ namespace pdg
 
     void TileLayerWrap::ApplyForce(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2691,7 +2691,7 @@ namespace pdg
 
     void TileLayerWrap::ApplyTorque(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2722,7 +2722,7 @@ namespace pdg
 
     void TileLayerWrap::StopAllForces(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2741,7 +2741,7 @@ namespace pdg
 
     void TileLayerWrap::AddAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2799,7 +2799,7 @@ namespace pdg
 
     void TileLayerWrap::RemoveAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2819,7 +2819,7 @@ namespace pdg
 
     void TileLayerWrap::ClearAnimationHelpers(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2840,7 +2840,7 @@ namespace pdg
 
     void TileLayerWrap::GetSpritePort(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2868,7 +2868,7 @@ namespace pdg
 
     void TileLayerWrap::SetSpritePort(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2888,7 +2888,7 @@ namespace pdg
 
     void TileLayerWrap::SetOrigin(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2913,7 +2913,7 @@ namespace pdg
 
     void TileLayerWrap::GetOrigin(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2932,7 +2932,7 @@ namespace pdg
 
     void TileLayerWrap::SetAutoCenter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2952,7 +2952,7 @@ namespace pdg
 
     void TileLayerWrap::SetFixedMoveAxis(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2972,7 +2972,7 @@ namespace pdg
 
     void TileLayerWrap::SetZoom(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -2997,7 +2997,7 @@ namespace pdg
 
     void TileLayerWrap::GetZoom(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3016,7 +3016,7 @@ namespace pdg
 
     void TileLayerWrap::ZoomTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3073,7 +3073,7 @@ namespace pdg
 
     void TileLayerWrap::Zoom(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3130,7 +3130,7 @@ namespace pdg
 
     void TileLayerWrap::LayerToPortPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3155,7 +3155,7 @@ namespace pdg
 
     void TileLayerWrap::LayerToPortOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3180,7 +3180,7 @@ namespace pdg
 
     void TileLayerWrap::LayerToPortVector(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3205,7 +3205,7 @@ namespace pdg
 
     void TileLayerWrap::LayerToPortRect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3230,7 +3230,7 @@ namespace pdg
 
     void TileLayerWrap::LayerToPortQuad(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3255,7 +3255,7 @@ namespace pdg
 
     void TileLayerWrap::PortToLayerPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3280,7 +3280,7 @@ namespace pdg
 
     void TileLayerWrap::PortToLayerOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3305,7 +3305,7 @@ namespace pdg
 
     void TileLayerWrap::PortToLayerVector(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3330,7 +3330,7 @@ namespace pdg
 
     void TileLayerWrap::PortToLayerRect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3355,7 +3355,7 @@ namespace pdg
 
     void TileLayerWrap::PortToLayerQuad(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3381,7 +3381,7 @@ namespace pdg
 
     void TileLayerWrap::SetSerializationFlags(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3406,7 +3406,7 @@ namespace pdg
 
     void TileLayerWrap::StartAnimations(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3425,7 +3425,7 @@ namespace pdg
 
     void TileLayerWrap::StopAnimations(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3444,7 +3444,7 @@ namespace pdg
 
     void TileLayerWrap::Hide(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3463,7 +3463,7 @@ namespace pdg
 
     void TileLayerWrap::Show(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3482,7 +3482,7 @@ namespace pdg
 
     void TileLayerWrap::IsHidden(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3501,7 +3501,7 @@ namespace pdg
 
     void TileLayerWrap::FadeIn(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3539,7 +3539,7 @@ namespace pdg
 
     void TileLayerWrap::FadeOut(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3577,7 +3577,7 @@ namespace pdg
 
     void TileLayerWrap::MoveBehind(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3597,7 +3597,7 @@ namespace pdg
 
     void TileLayerWrap::MoveInFrontOf(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3617,7 +3617,7 @@ namespace pdg
 
     void TileLayerWrap::MoveToFront(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3636,7 +3636,7 @@ namespace pdg
 
     void TileLayerWrap::MoveToBack(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3655,7 +3655,7 @@ namespace pdg
 
     void TileLayerWrap::MoveWith(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3687,7 +3687,7 @@ namespace pdg
 
     void TileLayerWrap::IsSpriteBehind(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3708,7 +3708,7 @@ namespace pdg
 
     void TileLayerWrap::GetZOrder(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3727,7 +3727,7 @@ namespace pdg
 
     void TileLayerWrap::GetSpriteZOrder(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3747,7 +3747,7 @@ namespace pdg
 
     void TileLayerWrap::FindSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3781,7 +3781,7 @@ namespace pdg
 
     void TileLayerWrap::GetNthSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3815,7 +3815,7 @@ namespace pdg
 
     void TileLayerWrap::HasSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3835,7 +3835,7 @@ namespace pdg
 
     void TileLayerWrap::AddSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3855,7 +3855,7 @@ namespace pdg
 
     void TileLayerWrap::RemoveSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3875,7 +3875,7 @@ namespace pdg
 
     void TileLayerWrap::RemoveAllSprites(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3894,7 +3894,7 @@ namespace pdg
 
     void TileLayerWrap::EnableCollisions(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3913,7 +3913,7 @@ namespace pdg
 
     void TileLayerWrap::DisableCollisions(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3932,7 +3932,7 @@ namespace pdg
 
     void TileLayerWrap::EnableCollisionsWithLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3952,7 +3952,7 @@ namespace pdg
 
     void TileLayerWrap::DisableCollisionsWithLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -3972,7 +3972,7 @@ namespace pdg
 
     void TileLayerWrap::CreateSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4002,7 +4002,7 @@ namespace pdg
 
     void TileLayerWrap::SetKeepGravityDownward(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4022,7 +4022,7 @@ namespace pdg
 
     void TileLayerWrap::SetGravity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4053,7 +4053,7 @@ namespace pdg
 
     void TileLayerWrap::SetDamping(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4078,7 +4078,7 @@ namespace pdg
 
     void TileLayerWrap::SetStaticLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4098,7 +4098,7 @@ namespace pdg
 
     void TileLayerWrap::SetUseChipmunkPhysics(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4118,7 +4118,7 @@ namespace pdg
 
     void TileLayerWrap::GetSpace(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4140,7 +4140,7 @@ namespace pdg
 
     void TileLayerWrap::SetWorldSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4183,7 +4183,7 @@ namespace pdg
 
     void TileLayerWrap::GetWorldSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4202,7 +4202,7 @@ namespace pdg
 
     void TileLayerWrap::GetWorldBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4221,7 +4221,7 @@ namespace pdg
 
     void TileLayerWrap::GetTileTypeAt(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4253,7 +4253,7 @@ namespace pdg
 
     void TileLayerWrap::GetTileTypeAndFacingAt(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4300,7 +4300,7 @@ namespace pdg
 
     void TileLayerWrap::DefineTileSet(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4344,7 +4344,7 @@ namespace pdg
 
     void TileLayerWrap::LoadMapData(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4475,7 +4475,7 @@ namespace pdg
 
     void TileLayerWrap::GetMapData(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4570,7 +4570,7 @@ namespace pdg
 
     void TileLayerWrap::GetTileSetImage(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4598,7 +4598,7 @@ namespace pdg
 
     void TileLayerWrap::GetTileSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4617,7 +4617,7 @@ namespace pdg
 
     void TileLayerWrap::SetTileTypeAt(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4660,7 +4660,7 @@ namespace pdg
 
     void TileLayerWrap::CheckCollision(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4692,7 +4692,7 @@ namespace pdg
 
     void TileLayerWrap::On(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4751,7 +4751,7 @@ namespace pdg
 
     void TileLayerWrap::OnCollideSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4787,7 +4787,7 @@ namespace pdg
 
     void TileLayerWrap::OnCollideWall(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4823,7 +4823,7 @@ namespace pdg
 
     void TileLayerWrap::OnOffscreen(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4859,7 +4859,7 @@ namespace pdg
 
     void TileLayerWrap::OnOnscreen(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4895,7 +4895,7 @@ namespace pdg
 
     void TileLayerWrap::OnExitLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4931,7 +4931,7 @@ namespace pdg
 
     void TileLayerWrap::OnAnimationLoop(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -4967,7 +4967,7 @@ namespace pdg
 
     void TileLayerWrap::OnAnimationEnd(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5003,7 +5003,7 @@ namespace pdg
 
     void TileLayerWrap::OnFadeComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5039,7 +5039,7 @@ namespace pdg
 
     void TileLayerWrap::OnFadeInComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5075,7 +5075,7 @@ namespace pdg
 
     void TileLayerWrap::OnFadeOutComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5111,7 +5111,7 @@ namespace pdg
 
     void TileLayerWrap::OnMouseEnter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5147,7 +5147,7 @@ namespace pdg
 
     void TileLayerWrap::OnMouseLeave(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5183,7 +5183,7 @@ namespace pdg
 
     void TileLayerWrap::OnMouseDown(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5219,7 +5219,7 @@ namespace pdg
 
     void TileLayerWrap::OnMouseUp(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5255,7 +5255,7 @@ namespace pdg
 
     void TileLayerWrap::OnMouseClick(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5291,7 +5291,7 @@ namespace pdg
 
     void TileLayerWrap::OnErasePort(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5327,7 +5327,7 @@ namespace pdg
 
     void TileLayerWrap::OnPreDrawLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5363,7 +5363,7 @@ namespace pdg
 
     void TileLayerWrap::OnPostDrawLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5399,7 +5399,7 @@ namespace pdg
 
     void TileLayerWrap::OnDrawPortComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5435,7 +5435,7 @@ namespace pdg
 
     void TileLayerWrap::OnAnimationStart(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5471,7 +5471,7 @@ namespace pdg
 
     void TileLayerWrap::OnPreAnimateLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5507,7 +5507,7 @@ namespace pdg
 
     void TileLayerWrap::OnPostAnimateLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5543,7 +5543,7 @@ namespace pdg
 
     void TileLayerWrap::OnAnimationComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5579,7 +5579,7 @@ namespace pdg
 
     void TileLayerWrap::OnZoomComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5615,7 +5615,7 @@ namespace pdg
 
     void TileLayerWrap::OnLayerFadeInComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5651,7 +5651,7 @@ namespace pdg
 
     void TileLayerWrap::OnLayerFadeOutComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TileLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TileLayerWrap>(args.This());
         TileLayer* self = dynamic_cast<TileLayer*>(objWrapper->cppPtr_);
 
@@ -5693,7 +5693,7 @@ namespace pdg
         if (!cppPtr_ && !s_TileLayer_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "TileLayer" " instance")));
             };
         }
@@ -5711,7 +5711,7 @@ namespace pdg
     TileLayer* New_TileLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_TileLayer_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         return new TileLayer();
     }
 

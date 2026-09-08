@@ -78,7 +78,7 @@ namespace pdg
 
     void Rand(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -92,7 +92,7 @@ namespace pdg
     }
     void GameCriticalRandom(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -106,7 +106,7 @@ namespace pdg
     }
     void Srand(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] seed)" " - " "").ToLocalChecked() ); return; };
@@ -127,7 +127,7 @@ namespace pdg
     }
     void SetSerializationDebugMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(bool debugMode)" " - " "").ToLocalChecked() ); return; };
@@ -163,7 +163,7 @@ namespace pdg
 
     void Idle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -179,7 +179,7 @@ namespace pdg
 
     void Run(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -195,7 +195,7 @@ namespace pdg
 
     void Quit(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -211,7 +211,7 @@ namespace pdg
 
     void IsQuitting(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };

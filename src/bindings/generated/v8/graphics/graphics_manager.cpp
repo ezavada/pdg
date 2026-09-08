@@ -48,7 +48,7 @@ namespace pdg
 
     void GraphicsManagerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
         if (args.IsConstructCall() && !s_GraphicsManager_InNewFromCpp)
         {
@@ -106,7 +106,7 @@ namespace pdg
 
     GraphicsManager* GraphicsManagerWrap::getSingletonInstance()
     {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::Object> val = GetScriptSingletonInstance(isolate)->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(val);
         return dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
@@ -211,7 +211,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetNumScreens(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -231,7 +231,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetFPS(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -251,7 +251,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetTargetFPS(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -271,7 +271,7 @@ namespace pdg
 
     void GraphicsManagerWrap::SetTargetFPS(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -297,7 +297,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetMouse(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -323,7 +323,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetNumSupportedScreenModes(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -349,7 +349,7 @@ namespace pdg
 
     void GraphicsManagerWrap::SetScreenMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
         ;
@@ -393,7 +393,7 @@ namespace pdg
 
     void GraphicsManagerWrap::CreateWindowPort(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -441,7 +441,7 @@ namespace pdg
 
     void GraphicsManagerWrap::CreateFullScreenPort(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -494,7 +494,7 @@ namespace pdg
 
     void GraphicsManagerWrap::CloseGraphicsPort(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -524,7 +524,7 @@ namespace pdg
 
     void GraphicsManagerWrap::CloseAllGraphicsPorts(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -543,7 +543,7 @@ namespace pdg
 
     void GraphicsManagerWrap::CreateFont(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -585,7 +585,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetMainPort(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -614,7 +614,7 @@ namespace pdg
 
     void GraphicsManagerWrap::SwitchToFullScreenMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -650,7 +650,7 @@ namespace pdg
 
     void GraphicsManagerWrap::SwitchToWindowMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -687,7 +687,7 @@ namespace pdg
 
     void GraphicsManagerWrap::InFullScreenMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
@@ -707,7 +707,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetScreenBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
         ;
@@ -732,7 +732,7 @@ namespace pdg
         if (!cppPtr_ && !s_GraphicsManager_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "GraphicsManager" " instance")));
             };
         }
@@ -756,7 +756,7 @@ namespace pdg
         else
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Cannot construct " "GraphicsManager" " directly - use get" "GraphicsManager" "() instead")));
             };
             return nullptr;

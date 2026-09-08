@@ -46,7 +46,7 @@ namespace pdg
 
     void IEventHandlerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         IEventHandlerWrap* objWrapper = new IEventHandlerWrap(args);
         objWrapper->Wrap(args.This());
         IEventHandler* cppObj = objWrapper->getCppObject();
@@ -85,7 +85,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         IEventHandlerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<IEventHandlerWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mIEventHandlerScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -122,7 +122,7 @@ namespace pdg
 
     void EventEmitterWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventEmitterWrap* objWrapper = new EventEmitterWrap(args);
         objWrapper->Wrap(args.This());
         EventEmitter* cppObj = objWrapper->getCppObject();
@@ -161,7 +161,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         EventEmitterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventEmitterWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mEventEmitterScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -215,7 +215,7 @@ namespace pdg
 
     void EventEmitterWrap::AddHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventEmitterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventEmitterWrap>(args.This());
         EventEmitter* self = dynamic_cast<EventEmitter*>(objWrapper->cppPtr_);
 
@@ -281,7 +281,7 @@ namespace pdg
 
     void EventEmitterWrap::RemoveHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventEmitterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventEmitterWrap>(args.This());
         EventEmitter* self = dynamic_cast<EventEmitter*>(objWrapper->cppPtr_);
 
@@ -317,7 +317,7 @@ namespace pdg
 
     void EventEmitterWrap::Clear(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventEmitterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventEmitterWrap>(args.This());
         EventEmitter* self = dynamic_cast<EventEmitter*>(objWrapper->cppPtr_);
 
@@ -336,7 +336,7 @@ namespace pdg
 
     void EventEmitterWrap::BlockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventEmitterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventEmitterWrap>(args.This());
         EventEmitter* self = dynamic_cast<EventEmitter*>(objWrapper->cppPtr_);
 
@@ -365,7 +365,7 @@ namespace pdg
 
     void EventEmitterWrap::UnblockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventEmitterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventEmitterWrap>(args.This());
         EventEmitter* self = dynamic_cast<EventEmitter*>(objWrapper->cppPtr_);
 
@@ -397,7 +397,7 @@ namespace pdg
         if (!cppPtr_ && !s_EventEmitter_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "EventEmitter" " instance")));
             };
         }
@@ -415,7 +415,7 @@ namespace pdg
     EventEmitter* New_EventEmitter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_EventEmitter_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         return new EventEmitter();
     }
 
@@ -423,7 +423,7 @@ namespace pdg
 
     void EventManagerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
         if (args.IsConstructCall() && !s_EventManager_InNewFromCpp)
         {
@@ -481,7 +481,7 @@ namespace pdg
 
     EventManager* EventManagerWrap::getSingletonInstance()
     {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::Object> val = GetScriptSingletonInstance(isolate)->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
         EventManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventManagerWrap>(val);
         return dynamic_cast<EventManager*>(objWrapper->cppPtr_);
@@ -546,7 +546,7 @@ namespace pdg
 
     void EventManagerWrap::AddHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventManagerWrap>(args.This());
         EventManager* self = dynamic_cast<EventManager*>(objWrapper->cppPtr_);
 
@@ -612,7 +612,7 @@ namespace pdg
 
     void EventManagerWrap::RemoveHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventManagerWrap>(args.This());
         EventManager* self = dynamic_cast<EventManager*>(objWrapper->cppPtr_);
 
@@ -648,7 +648,7 @@ namespace pdg
 
     void EventManagerWrap::Clear(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventManagerWrap>(args.This());
         EventManager* self = dynamic_cast<EventManager*>(objWrapper->cppPtr_);
 
@@ -667,7 +667,7 @@ namespace pdg
 
     void EventManagerWrap::BlockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventManagerWrap>(args.This());
         EventManager* self = dynamic_cast<EventManager*>(objWrapper->cppPtr_);
 
@@ -696,7 +696,7 @@ namespace pdg
 
     void EventManagerWrap::UnblockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         EventManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<EventManagerWrap>(args.This());
         EventManager* self = dynamic_cast<EventManager*>(objWrapper->cppPtr_);
 
@@ -723,7 +723,7 @@ namespace pdg
     }
     void EventManagerWrap::IsRawKeyDown(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "([number int] keyCode)" " - " "").ToLocalChecked() ); return; };
@@ -743,7 +743,7 @@ namespace pdg
     }
     void EventManagerWrap::IsButtonDown(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "([number int] buttonNumber = 0)" " - " "").ToLocalChecked() ); return; };
@@ -763,7 +763,7 @@ namespace pdg
         if (!cppPtr_ && !s_EventManager_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "EventManager" " instance")));
             };
         }
@@ -787,7 +787,7 @@ namespace pdg
         else
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Cannot construct " "EventManager" " directly - use get" "EventManager" "() instead")));
             };
             return nullptr;

@@ -48,7 +48,7 @@ namespace pdg
 
     void cpArbiterWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpArbiterWrap* objWrapper = new cpArbiterWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -82,7 +82,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             ;
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -139,7 +139,7 @@ namespace pdg
 
     void cpArbiterWrap::IsFirstContact(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
@@ -159,7 +159,7 @@ namespace pdg
 
     void cpArbiterWrap::GetCount(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
@@ -179,7 +179,7 @@ namespace pdg
 
     void cpArbiterWrap::GetNormal(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
@@ -200,7 +200,7 @@ namespace pdg
 
     void cpArbiterWrap::GetPointA(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
@@ -227,7 +227,7 @@ namespace pdg
 
     void cpArbiterWrap::GetPointB(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
@@ -254,7 +254,7 @@ namespace pdg
 
     void cpArbiterWrap::GetDepth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
@@ -291,12 +291,12 @@ namespace pdg
     cpArbiter* New_cpArbiter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_cpArbiter_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         s_HaveSavedError = true;
         {
             std::ostringstream excpt_;
             excpt_ << "CpArbiter cannot be created directly, it is only returned from certain Sprite calls.";
-            v8::Isolate* isolate = v8::Isolate::GetCurrent();
+            [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
             s_SavedError.Reset(isolate, v8::Exception::Error( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
         };
         return 0;

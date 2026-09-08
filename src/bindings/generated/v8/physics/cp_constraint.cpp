@@ -48,7 +48,7 @@ namespace pdg
 
     void cpConstraintWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = new cpConstraintWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -82,7 +82,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             ;
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -311,7 +311,7 @@ namespace pdg
 
     void cpConstraintWrap::GetType(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -331,7 +331,7 @@ namespace pdg
 
     void cpConstraintWrap::GetImpulse(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -351,7 +351,7 @@ namespace pdg
 
     void cpConstraintWrap::GetMaxForce(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -371,7 +371,7 @@ namespace pdg
 
     void cpConstraintWrap::SetMaxForce(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -397,7 +397,7 @@ namespace pdg
 
     void cpConstraintWrap::GetErrorBias(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -417,7 +417,7 @@ namespace pdg
 
     void cpConstraintWrap::SetErrorBias(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -443,7 +443,7 @@ namespace pdg
 
     void cpConstraintWrap::GetMaxBias(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -463,7 +463,7 @@ namespace pdg
 
     void cpConstraintWrap::SetMaxBias(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -489,7 +489,7 @@ namespace pdg
 
     void cpConstraintWrap::ActivateBodies(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
         ;
@@ -508,7 +508,7 @@ namespace pdg
 
     void cpConstraintWrap::GetSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
         ;
@@ -537,7 +537,7 @@ namespace pdg
 
     void cpConstraintWrap::GetOtherSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
         ;
@@ -566,7 +566,7 @@ namespace pdg
 
     void cpConstraintWrap::GetAnchor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -607,7 +607,7 @@ namespace pdg
 
     void cpConstraintWrap::SetAnchor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -663,7 +663,7 @@ namespace pdg
 
     void cpConstraintWrap::GetOtherAnchor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -708,7 +708,7 @@ namespace pdg
 
     void cpConstraintWrap::SetOtherAnchor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -768,7 +768,7 @@ namespace pdg
 
     void cpConstraintWrap::GetPinDist(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -792,7 +792,7 @@ namespace pdg
 
     void cpConstraintWrap::SetPinDist(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -832,7 +832,7 @@ namespace pdg
 
     void cpConstraintWrap::GetSlideMinDist(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -856,7 +856,7 @@ namespace pdg
 
     void cpConstraintWrap::SetSlideMinDist(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -896,7 +896,7 @@ namespace pdg
 
     void cpConstraintWrap::GetSlideMaxDist(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -920,7 +920,7 @@ namespace pdg
 
     void cpConstraintWrap::SetSlideMaxDist(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -960,7 +960,7 @@ namespace pdg
 
     void cpConstraintWrap::GetGrooveStart(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -985,7 +985,7 @@ namespace pdg
 
     void cpConstraintWrap::SetGrooveStart(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1025,7 +1025,7 @@ namespace pdg
 
     void cpConstraintWrap::GetGrooveEnd(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1050,7 +1050,7 @@ namespace pdg
 
     void cpConstraintWrap::SetGrooveEnd(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1090,7 +1090,7 @@ namespace pdg
 
     void cpConstraintWrap::GetSpringRestLength(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1114,7 +1114,7 @@ namespace pdg
 
     void cpConstraintWrap::SetSpringRestLength(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1154,7 +1154,7 @@ namespace pdg
 
     void cpConstraintWrap::GetRotarySpringRestAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1178,7 +1178,7 @@ namespace pdg
 
     void cpConstraintWrap::SetRotarySpringRestAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1218,7 +1218,7 @@ namespace pdg
 
     void cpConstraintWrap::GetMinAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1242,7 +1242,7 @@ namespace pdg
 
     void cpConstraintWrap::SetMinAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1282,7 +1282,7 @@ namespace pdg
 
     void cpConstraintWrap::GetMaxAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1306,7 +1306,7 @@ namespace pdg
 
     void cpConstraintWrap::SetMaxAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1346,7 +1346,7 @@ namespace pdg
 
     void cpConstraintWrap::GetRatchetAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1370,7 +1370,7 @@ namespace pdg
 
     void cpConstraintWrap::SetRatchetAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1410,7 +1410,7 @@ namespace pdg
 
     void cpConstraintWrap::GetRatchetPhase(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1434,7 +1434,7 @@ namespace pdg
 
     void cpConstraintWrap::SetRatchetPhase(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1474,7 +1474,7 @@ namespace pdg
 
     void cpConstraintWrap::GetRatchetInterval(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1498,7 +1498,7 @@ namespace pdg
 
     void cpConstraintWrap::SetRatchetInterval(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1538,7 +1538,7 @@ namespace pdg
 
     void cpConstraintWrap::GetGearRatio(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1562,7 +1562,7 @@ namespace pdg
 
     void cpConstraintWrap::SetGearRatio(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1602,7 +1602,7 @@ namespace pdg
 
     void cpConstraintWrap::GetGearInitialAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1626,7 +1626,7 @@ namespace pdg
 
     void cpConstraintWrap::SetGearInitialAngle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1666,7 +1666,7 @@ namespace pdg
 
     void cpConstraintWrap::GetMotorSpinRate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1690,7 +1690,7 @@ namespace pdg
 
     void cpConstraintWrap::SetMotorSpinRate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1730,7 +1730,7 @@ namespace pdg
 
     void cpConstraintWrap::GetSpringStiffness(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1765,7 +1765,7 @@ namespace pdg
 
     void cpConstraintWrap::SetSpringStiffness(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1812,7 +1812,7 @@ namespace pdg
 
     void cpConstraintWrap::GetSpringDamping(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1847,7 +1847,7 @@ namespace pdg
 
     void cpConstraintWrap::SetSpringDamping(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
@@ -1905,12 +1905,12 @@ namespace pdg
     cpConstraint* New_cpConstraint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_cpConstraint_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         s_HaveSavedError = true;
         {
             std::ostringstream excpt_;
             excpt_ << "CpConstraint cannot be created directly, it is only returned from certain Sprite calls.";
-            v8::Isolate* isolate = v8::Isolate::GetCurrent();
+            [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
             s_SavedError.Reset(isolate, v8::Exception::Error( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
         };
         return 0;

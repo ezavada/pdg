@@ -320,7 +320,7 @@
     isolate->ThrowException( v8::Exception::errtype( STR2VAL_SAFE( excpt_.str().c_str() )))
 
 #define _V8_THROW_ERR_LITERAL(msg, errtype)    { \
-    v8::Isolate* isolate = args.GetIsolate();         CR \
+    [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate(); CR \
 	isolate->ThrowException(v8::Exception::errtype(v8::String::NewFromUtf8Literal(isolate, msg))); CR \
 }
 
@@ -350,7 +350,7 @@
 	{                                                           CR \
 	    std::ostringstream excpt_;                              CR \
 	    excpt_ << msg;                          	            CR \
-	    v8::Isolate* isolate = v8::Isolate::GetCurrent();       CR \
+	    [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent(); CR \
         s_SavedError.Reset(isolate, v8::Exception::errtype(     \
                 STR2VAL( excpt_.str().c_str() )));              CR \
     }
@@ -516,7 +516,7 @@ class klass superklasses {                                          CR \
 //
 #define _V8_WRAPPER_NEW_IMPL(klass, wrapper, extra)    \
 void wrapper::New(SCRIPT_ARGS) {  CR \
-    v8::Isolate* isolate = args.GetIsolate();                    CR \
+    [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();   CR \
     wrapper* objWrapper = new wrapper(args);                     CR \
     objWrapper->Wrap(THIS);                                      CR \
     extra;                                                       CR \
@@ -527,7 +527,7 @@ void wrapper::New(SCRIPT_ARGS) {  CR \
 // Specialized version for singleton managers that prevents external instantiation
 #define _V8_SINGLETON_WRAPPER_NEW_IMPL(klass, wrapper, singletonName)    \
 void wrapper::New(SCRIPT_ARGS) {  CR \
-    v8::Isolate* isolate = args.GetIsolate();                    CR CR \
+    [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();   CR CR \
     if (args.IsConstructCall() && !s_##klass##_InNewFromCpp) {   CR \
         v8::Local<v8::String> error_msg = v8::String::NewFromUtf8(isolate,  CR \
             #klass " cannot be instantiated with 'new'. Use the singleton instance: require('pdg')." singletonName CR \
@@ -544,7 +544,7 @@ void wrapper::New(SCRIPT_ARGS) {  CR \
 // Specialized version for factory-only classes that prevents external instantiation
 #define _V8_FACTORY_ONLY_WRAPPER_NEW_IMPL(klass, wrapper, factoryFunction)    \
 void wrapper::New(SCRIPT_ARGS) {  CR \
-    v8::Isolate* isolate = args.GetIsolate();                    CR CR \
+    [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();   CR CR \
     if (args.IsConstructCall() && !s_##klass##_InNewFromCpp) {   CR \
         v8::Local<v8::String> error_msg = v8::String::NewFromUtf8(isolate,  CR \
             #klass " cannot be instantiated with 'new'. Use the factory function: pdg." factoryFunction "()" CR \
@@ -588,7 +588,7 @@ v8::Local<v8::Object> wrapper::NewFromCpp(v8::Isolate* isolate, klass* cppObj) {
     v8::Local<v8::Object> instance = maybeInstance.ToLocalChecked(); CR \
     v8::Persistent<v8::Object> obj(isolate, instance);               CR \
     wrapper* objWrapper = jswrap::ObjectWrap::Unwrap<wrapper>(instance);  CR \
-    { v8::Local<v8::Object> obj = instance; extra; }                 CR \
+    { [[maybe_unused]] v8::Local<v8::Object> obj = instance; extra; } CR \
     DEBUG_ASSERT(objWrapper->cppPtr_ == 0, 						     \
     	"NewFromCpp() already have C++ object!"); 		             CR \
     if (objWrapper->cppPtr_) delete objWrapper->cppPtr_;             CR \
@@ -662,7 +662,7 @@ v8::Local<v8::Object> wrapper::GetScriptSingletonInstance(v8::Isolate* isolate) 
 //   Note: getSingletonInstance() calls GetJavascriptSingletonInstance()
 #define _V8_GET_CPP_SINGLETON_IMPL(klass, wrapper)   \
 klass* wrapper::getSingletonInstance() {                            CR \
-    v8::Isolate* isolate = v8::Isolate::GetCurrent();               CR \
+    [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent(); CR \
 	v8::Local<v8::Object> val =                                     \
 	   GetScriptSingletonInstance(isolate)->ToObject(isolate->GetCurrentContext()).ToLocalChecked(); CR \
     wrapper* objWrapper = jswrap::ObjectWrap::Unwrap<wrapper>(val); CR \
@@ -758,13 +758,13 @@ bool s_##klass##_InNewFromCpp = false;	                   CR CR \
   _V8_MANAGED_CPP_INSTANCE_IMPL(klass, klass##Wrap)        CR \
 klass* New_##klass(SCRIPT_ARGS) {						   CR \
 	if (s_##klass##_InNewFromCpp) return nullptr;          CR \
-    v8::Isolate* isolate = args.GetIsolate();
+    [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
 #define CPP_UNMANAGED_CONSTRUCTOR_IMPL(klass, ops)	\
   _V8_UNMANAGED_CPP_INSTANCE_IMPL(klass, klass##Wrap, ops) CR \
 klass* New_##klass(SCRIPT_ARGS) {						   CR \
 	if (s_##klass##_InNewFromCpp) return nullptr;          CR \
-	v8::Isolate* isolate = args.GetIsolate();
+	[[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
 #define CPP_SINGLETON_CONSTRUCTOR_IMPL(klass)	\
   _V8_MANAGED_CPP_INSTANCE_IMPL(klass, klass##Wrap)        CR \
@@ -785,7 +785,7 @@ klass* New_##klass(SCRIPT_ARGS) {						   CR \
 		return nullptr;                                    CR \
 	}                                                      CR \
 	/* Custom initialization logic follows */              CR \
-    v8::Isolate* isolate = args.GetIsolate();
+    [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
 
 // Export all the symbols for a particular class under the name given.
@@ -840,12 +840,12 @@ klass* New_##klass(SCRIPT_ARGS) {						   CR \
 
 #define FUNCTION_IMPL(func)    \
   void func(SCRIPT_ARGS) {  CR \
-    v8::Isolate* isolate = args.GetIsolate();
+    [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
 
 #define SCRIPT_METHOD_IMPL(klass, method)   \
   void klass##Wrap::method(SCRIPT_ARGS) {  	CR \
-    v8::Isolate* isolate = args.GetIsolate();
+    [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
 
 #define METHOD_IMPL(klass, method)   CR CR \

@@ -96,7 +96,7 @@ namespace pdg
 
     void IAnimationHelperWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         IAnimationHelperWrap* objWrapper = new IAnimationHelperWrap(args);
         objWrapper->Wrap(args.This());
         IAnimationHelper* cppObj = objWrapper->getCppObject();
@@ -135,7 +135,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         IAnimationHelperWrap* objWrapper = jswrap::ObjectWrap::Unwrap<IAnimationHelperWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mIAnimationHelperScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -172,7 +172,7 @@ namespace pdg
 
     void AnimatedWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = new AnimatedWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -206,7 +206,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mAnimatedScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -487,7 +487,7 @@ namespace pdg
 
     void AnimatedWrap::GetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -507,7 +507,7 @@ namespace pdg
 
     void AnimatedWrap::SetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -533,7 +533,7 @@ namespace pdg
 
     void AnimatedWrap::GetSpeed(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -553,7 +553,7 @@ namespace pdg
 
     void AnimatedWrap::SetSpeed(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -579,7 +579,7 @@ namespace pdg
 
     void AnimatedWrap::GetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -599,7 +599,7 @@ namespace pdg
 
     void AnimatedWrap::SetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -625,7 +625,7 @@ namespace pdg
 
     void AnimatedWrap::GetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -645,7 +645,7 @@ namespace pdg
 
     void AnimatedWrap::SetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -671,7 +671,7 @@ namespace pdg
 
     void AnimatedWrap::SetFlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -697,7 +697,7 @@ namespace pdg
 
     void AnimatedWrap::SetFlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -723,7 +723,7 @@ namespace pdg
 
     void AnimatedWrap::GetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -743,7 +743,7 @@ namespace pdg
 
     void AnimatedWrap::SetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -769,7 +769,7 @@ namespace pdg
 
     void AnimatedWrap::GetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -789,7 +789,7 @@ namespace pdg
 
     void AnimatedWrap::SetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -815,7 +815,7 @@ namespace pdg
 
     void AnimatedWrap::GetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -835,7 +835,7 @@ namespace pdg
 
     void AnimatedWrap::SetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -861,7 +861,7 @@ namespace pdg
 
     void AnimatedWrap::GetMass(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -881,7 +881,7 @@ namespace pdg
 
     void AnimatedWrap::SetMass(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -907,7 +907,7 @@ namespace pdg
 
     void AnimatedWrap::GetMoveFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -927,7 +927,7 @@ namespace pdg
 
     void AnimatedWrap::SetMoveFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -953,7 +953,7 @@ namespace pdg
 
     void AnimatedWrap::GetSpinFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -973,7 +973,7 @@ namespace pdg
 
     void AnimatedWrap::SetSpinFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -999,7 +999,7 @@ namespace pdg
 
     void AnimatedWrap::GetSizeFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1019,7 +1019,7 @@ namespace pdg
 
     void AnimatedWrap::SetSizeFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1045,7 +1045,7 @@ namespace pdg
 
     void AnimatedWrap::GetBoundingBox(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1064,7 +1064,7 @@ namespace pdg
 
     void AnimatedWrap::GetRotatedBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1083,7 +1083,7 @@ namespace pdg
 
     void AnimatedWrap::Move(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1168,7 +1168,7 @@ namespace pdg
 
     void AnimatedWrap::MoveTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1253,7 +1253,7 @@ namespace pdg
 
     void AnimatedWrap::SetVelocityInRadians(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1284,7 +1284,7 @@ namespace pdg
 
     void AnimatedWrap::GetMovementDirectionInRadians(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1303,7 +1303,7 @@ namespace pdg
 
     void AnimatedWrap::SetVelocity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1343,7 +1343,7 @@ namespace pdg
 
     void AnimatedWrap::GetVelocity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1363,7 +1363,7 @@ namespace pdg
 
     void AnimatedWrap::StopMoving(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1382,7 +1382,7 @@ namespace pdg
 
     void AnimatedWrap::Accelerate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1426,7 +1426,7 @@ namespace pdg
 
     void AnimatedWrap::AccelerateTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1470,7 +1470,7 @@ namespace pdg
 
     void AnimatedWrap::SetSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1501,7 +1501,7 @@ namespace pdg
 
     void AnimatedWrap::Grow(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1552,7 +1552,7 @@ namespace pdg
 
     void AnimatedWrap::Stretch(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1609,7 +1609,7 @@ namespace pdg
 
     void AnimatedWrap::StartGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1634,7 +1634,7 @@ namespace pdg
 
     void AnimatedWrap::StopGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1653,7 +1653,7 @@ namespace pdg
 
     void AnimatedWrap::StartStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1684,7 +1684,7 @@ namespace pdg
 
     void AnimatedWrap::StopStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1703,7 +1703,7 @@ namespace pdg
 
     void AnimatedWrap::Resize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1753,7 +1753,7 @@ namespace pdg
 
     void AnimatedWrap::ResizeTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1803,7 +1803,7 @@ namespace pdg
 
     void AnimatedWrap::FlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1822,7 +1822,7 @@ namespace pdg
 
     void AnimatedWrap::FlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1841,7 +1841,7 @@ namespace pdg
 
     void AnimatedWrap::IsFlippedX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1860,7 +1860,7 @@ namespace pdg
 
     void AnimatedWrap::IsFlippedY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1879,7 +1879,7 @@ namespace pdg
 
     void AnimatedWrap::Rotate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1930,7 +1930,7 @@ namespace pdg
 
     void AnimatedWrap::RotateTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -1981,7 +1981,7 @@ namespace pdg
 
     void AnimatedWrap::StopSpinning(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2000,7 +2000,7 @@ namespace pdg
 
     void AnimatedWrap::ChangeCenter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2078,7 +2078,7 @@ namespace pdg
 
     void AnimatedWrap::ChangeCenterTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2156,7 +2156,7 @@ namespace pdg
 
     void AnimatedWrap::Wait(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2181,7 +2181,7 @@ namespace pdg
 
     void AnimatedWrap::SetFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2206,7 +2206,7 @@ namespace pdg
 
     void AnimatedWrap::ApplyForce(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2237,7 +2237,7 @@ namespace pdg
 
     void AnimatedWrap::ApplyTorque(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2268,7 +2268,7 @@ namespace pdg
 
     void AnimatedWrap::StopAllForces(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2287,7 +2287,7 @@ namespace pdg
 
     void AnimatedWrap::AddAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2345,7 +2345,7 @@ namespace pdg
 
     void AnimatedWrap::RemoveAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2365,7 +2365,7 @@ namespace pdg
 
     void AnimatedWrap::ClearAnimationHelpers(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2384,7 +2384,7 @@ namespace pdg
 
     void AnimatedWrap::Animate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AnimatedWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AnimatedWrap>(args.This());
         Animated* self = dynamic_cast<Animated*>(objWrapper->cppPtr_);
 
@@ -2415,7 +2415,7 @@ namespace pdg
         if (!cppPtr_ && !s_Animated_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Animated" " instance")));
             };
         }
@@ -2433,7 +2433,7 @@ namespace pdg
     Animated* New_Animated(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Animated_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         return new Animated();
     }
 

@@ -46,7 +46,7 @@ namespace pdg
 
     void ISpriteCollideHelperWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ISpriteCollideHelperWrap* objWrapper = new ISpriteCollideHelperWrap(args);
         objWrapper->Wrap(args.This());
         ISpriteCollideHelper* cppObj = objWrapper->getCppObject();
@@ -85,7 +85,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         ISpriteCollideHelperWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ISpriteCollideHelperWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mISpriteCollideHelperScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -124,7 +124,7 @@ namespace pdg
 
     void ISpriteDrawHelperWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ISpriteDrawHelperWrap* objWrapper = new ISpriteDrawHelperWrap(args);
         objWrapper->Wrap(args.This());
         ISpriteDrawHelper* cppObj = objWrapper->getCppObject();
@@ -163,7 +163,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         ISpriteDrawHelperWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ISpriteDrawHelperWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mISpriteDrawHelperScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -212,7 +212,7 @@ namespace pdg
 
     void SpriteWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = new SpriteWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -246,7 +246,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mEventEmitterScriptObj.Reset(isolate, obj); cppObj->mAnimatedScriptObj.Reset(isolate, obj); cppObj->mSpriteScriptObj.Reset(isolate, obj); cppObj->mISerializableScriptObj.Reset(isolate, obj); cppObj->addRef();
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -1005,7 +1005,7 @@ namespace pdg
 
     void SpriteWrap::AddHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1071,7 +1071,7 @@ namespace pdg
 
     void SpriteWrap::RemoveHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1107,7 +1107,7 @@ namespace pdg
 
     void SpriteWrap::Clear(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1126,7 +1126,7 @@ namespace pdg
 
     void SpriteWrap::BlockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1155,7 +1155,7 @@ namespace pdg
 
     void SpriteWrap::UnblockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1183,7 +1183,7 @@ namespace pdg
 
     void SpriteWrap::GetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1203,7 +1203,7 @@ namespace pdg
 
     void SpriteWrap::SetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1229,7 +1229,7 @@ namespace pdg
 
     void SpriteWrap::GetSpeed(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1249,7 +1249,7 @@ namespace pdg
 
     void SpriteWrap::SetSpeed(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1275,7 +1275,7 @@ namespace pdg
 
     void SpriteWrap::GetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1295,7 +1295,7 @@ namespace pdg
 
     void SpriteWrap::SetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1321,7 +1321,7 @@ namespace pdg
 
     void SpriteWrap::GetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1341,7 +1341,7 @@ namespace pdg
 
     void SpriteWrap::SetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1367,7 +1367,7 @@ namespace pdg
 
     void SpriteWrap::SetFlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1393,7 +1393,7 @@ namespace pdg
 
     void SpriteWrap::SetFlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1419,7 +1419,7 @@ namespace pdg
 
     void SpriteWrap::GetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1439,7 +1439,7 @@ namespace pdg
 
     void SpriteWrap::SetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1465,7 +1465,7 @@ namespace pdg
 
     void SpriteWrap::GetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1485,7 +1485,7 @@ namespace pdg
 
     void SpriteWrap::SetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1511,7 +1511,7 @@ namespace pdg
 
     void SpriteWrap::GetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1531,7 +1531,7 @@ namespace pdg
 
     void SpriteWrap::SetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1557,7 +1557,7 @@ namespace pdg
 
     void SpriteWrap::GetMass(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1577,7 +1577,7 @@ namespace pdg
 
     void SpriteWrap::SetMass(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1603,7 +1603,7 @@ namespace pdg
 
     void SpriteWrap::GetMoveFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1623,7 +1623,7 @@ namespace pdg
 
     void SpriteWrap::SetMoveFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1649,7 +1649,7 @@ namespace pdg
 
     void SpriteWrap::GetSpinFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1669,7 +1669,7 @@ namespace pdg
 
     void SpriteWrap::SetSpinFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1695,7 +1695,7 @@ namespace pdg
 
     void SpriteWrap::GetSizeFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1715,7 +1715,7 @@ namespace pdg
 
     void SpriteWrap::SetSizeFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1741,7 +1741,7 @@ namespace pdg
 
     void SpriteWrap::GetBoundingBox(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1760,7 +1760,7 @@ namespace pdg
 
     void SpriteWrap::GetRotatedBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1779,7 +1779,7 @@ namespace pdg
 
     void SpriteWrap::Move(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1864,7 +1864,7 @@ namespace pdg
 
     void SpriteWrap::MoveTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1949,7 +1949,7 @@ namespace pdg
 
     void SpriteWrap::SetVelocityInRadians(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1980,7 +1980,7 @@ namespace pdg
 
     void SpriteWrap::GetMovementDirectionInRadians(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -1999,7 +1999,7 @@ namespace pdg
 
     void SpriteWrap::SetVelocity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2039,7 +2039,7 @@ namespace pdg
 
     void SpriteWrap::GetVelocity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2059,7 +2059,7 @@ namespace pdg
 
     void SpriteWrap::StopMoving(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2078,7 +2078,7 @@ namespace pdg
 
     void SpriteWrap::Accelerate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2122,7 +2122,7 @@ namespace pdg
 
     void SpriteWrap::AccelerateTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2166,7 +2166,7 @@ namespace pdg
 
     void SpriteWrap::SetSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2197,7 +2197,7 @@ namespace pdg
 
     void SpriteWrap::Grow(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2248,7 +2248,7 @@ namespace pdg
 
     void SpriteWrap::Stretch(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2305,7 +2305,7 @@ namespace pdg
 
     void SpriteWrap::StartGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2330,7 +2330,7 @@ namespace pdg
 
     void SpriteWrap::StopGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2349,7 +2349,7 @@ namespace pdg
 
     void SpriteWrap::StartStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2380,7 +2380,7 @@ namespace pdg
 
     void SpriteWrap::StopStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2399,7 +2399,7 @@ namespace pdg
 
     void SpriteWrap::Resize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2449,7 +2449,7 @@ namespace pdg
 
     void SpriteWrap::ResizeTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2499,7 +2499,7 @@ namespace pdg
 
     void SpriteWrap::FlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2518,7 +2518,7 @@ namespace pdg
 
     void SpriteWrap::FlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2537,7 +2537,7 @@ namespace pdg
 
     void SpriteWrap::IsFlippedX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2556,7 +2556,7 @@ namespace pdg
 
     void SpriteWrap::IsFlippedY(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2575,7 +2575,7 @@ namespace pdg
 
     void SpriteWrap::Rotate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2626,7 +2626,7 @@ namespace pdg
 
     void SpriteWrap::RotateTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2677,7 +2677,7 @@ namespace pdg
 
     void SpriteWrap::StopSpinning(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2696,7 +2696,7 @@ namespace pdg
 
     void SpriteWrap::ChangeCenter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2774,7 +2774,7 @@ namespace pdg
 
     void SpriteWrap::ChangeCenterTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2852,7 +2852,7 @@ namespace pdg
 
     void SpriteWrap::Wait(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2877,7 +2877,7 @@ namespace pdg
 
     void SpriteWrap::SetFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2902,7 +2902,7 @@ namespace pdg
 
     void SpriteWrap::ApplyForce(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2933,7 +2933,7 @@ namespace pdg
 
     void SpriteWrap::ApplyTorque(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2964,7 +2964,7 @@ namespace pdg
 
     void SpriteWrap::StopAllForces(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -2983,7 +2983,7 @@ namespace pdg
 
     void SpriteWrap::AddAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3041,7 +3041,7 @@ namespace pdg
 
     void SpriteWrap::RemoveAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3061,7 +3061,7 @@ namespace pdg
 
     void SpriteWrap::ClearAnimationHelpers(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3080,7 +3080,7 @@ namespace pdg
 
     void SpriteWrap::GetMyClassTag(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3100,7 +3100,7 @@ namespace pdg
 
     void SpriteWrap::GetSerializedSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3120,7 +3120,7 @@ namespace pdg
 
     void SpriteWrap::Serialize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3140,7 +3140,7 @@ namespace pdg
 
     void SpriteWrap::Deserialize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3207,7 +3207,7 @@ namespace pdg
 
     void SpriteWrap::GetWantsAnimLoopEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3227,7 +3227,7 @@ namespace pdg
 
     void SpriteWrap::GetWantsAnimEndEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3247,7 +3247,7 @@ namespace pdg
 
     void SpriteWrap::GetWantsCollideWallEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3268,7 +3268,7 @@ namespace pdg
 
     void SpriteWrap::GetWantsMouseOverEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3288,7 +3288,7 @@ namespace pdg
 
     void SpriteWrap::GetWantsClickEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3308,7 +3308,7 @@ namespace pdg
 
     void SpriteWrap::GetMouseDetectMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3328,7 +3328,7 @@ namespace pdg
 
     void SpriteWrap::GetWantsOffscreenEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3349,7 +3349,7 @@ namespace pdg
 
     void SpriteWrap::GetFrameRotatedBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3369,7 +3369,7 @@ namespace pdg
 
     void SpriteWrap::SetFrame(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3394,7 +3394,7 @@ namespace pdg
 
     void SpriteWrap::GetCurrentFrame(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3414,7 +3414,7 @@ namespace pdg
 
     void SpriteWrap::GetFrameCount(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3434,7 +3434,7 @@ namespace pdg
 
     void SpriteWrap::StartFrameAnimation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3477,7 +3477,7 @@ namespace pdg
 
     void SpriteWrap::StopFrameAnimation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3496,7 +3496,7 @@ namespace pdg
 
     void SpriteWrap::SetWantsAnimLoopEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3516,7 +3516,7 @@ namespace pdg
 
     void SpriteWrap::SetWantsAnimEndEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3536,7 +3536,7 @@ namespace pdg
 
     void SpriteWrap::SetWantsCollideWallEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3556,7 +3556,7 @@ namespace pdg
 
     void SpriteWrap::AddFramesImage(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3589,7 +3589,7 @@ namespace pdg
 
     void SpriteWrap::HasAnimation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3629,7 +3629,7 @@ namespace pdg
 
     void SpriteWrap::StartAnimation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3668,7 +3668,7 @@ namespace pdg
 
     void SpriteWrap::SetEntityScale(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3699,7 +3699,7 @@ namespace pdg
 
     void SpriteWrap::ApplyCharacterMap(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3725,7 +3725,7 @@ namespace pdg
 
     void SpriteWrap::RemoveCharacterMap(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3751,7 +3751,7 @@ namespace pdg
 
     void SpriteWrap::RemoveAllCharacterMaps(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3770,7 +3770,7 @@ namespace pdg
 
     void SpriteWrap::GetAppliedCharacterMaps(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3804,7 +3804,7 @@ namespace pdg
 
     void SpriteWrap::EnableSpriterEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3824,7 +3824,7 @@ namespace pdg
 
     void SpriteWrap::AreSpriterEventsEnabled(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3843,7 +3843,7 @@ namespace pdg
 
     void SpriteWrap::BlendToAnimation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3888,7 +3888,7 @@ namespace pdg
 
     void SpriteWrap::IsBlending(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3907,7 +3907,7 @@ namespace pdg
 
     void SpriteWrap::GetBlendProgress(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3926,7 +3926,7 @@ namespace pdg
 
     void SpriteWrap::PauseAnimation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3945,7 +3945,7 @@ namespace pdg
 
     void SpriteWrap::ResumeAnimation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3964,7 +3964,7 @@ namespace pdg
 
     void SpriteWrap::StopAnimation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -3983,7 +3983,7 @@ namespace pdg
 
     void SpriteWrap::IsAnimationPlaying(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4002,7 +4002,7 @@ namespace pdg
 
     void SpriteWrap::IsAnimationPaused(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4021,7 +4021,7 @@ namespace pdg
 
     void SpriteWrap::GetAnimationProgress(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4040,7 +4040,7 @@ namespace pdg
 
     void SpriteWrap::HasAttachPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4066,7 +4066,7 @@ namespace pdg
 
     void SpriteWrap::GetAttachPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4092,7 +4092,7 @@ namespace pdg
 
     void SpriteWrap::AttachSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4119,7 +4119,7 @@ namespace pdg
 
     void SpriteWrap::DetachSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4139,7 +4139,7 @@ namespace pdg
 
     void SpriteWrap::GetAttachedSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4174,7 +4174,7 @@ namespace pdg
 
     void SpriteWrap::ActivateSubEntity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4209,7 +4209,7 @@ namespace pdg
 
     void SpriteWrap::SetWantsOffscreenEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4229,7 +4229,7 @@ namespace pdg
 
     void SpriteWrap::SetDrawHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4287,7 +4287,7 @@ namespace pdg
 
     void SpriteWrap::SetPostDrawHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4346,7 +4346,7 @@ namespace pdg
 
     void SpriteWrap::ChangeFramesImage(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4367,7 +4367,7 @@ namespace pdg
 
     void SpriteWrap::OffsetFrameCenters(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4425,7 +4425,7 @@ namespace pdg
 
     void SpriteWrap::GetFrameCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4460,7 +4460,7 @@ namespace pdg
 
     void SpriteWrap::SetOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4485,7 +4485,7 @@ namespace pdg
 
     void SpriteWrap::GetOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4504,7 +4504,7 @@ namespace pdg
 
     void SpriteWrap::FadeTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4548,7 +4548,7 @@ namespace pdg
 
     void SpriteWrap::FadeIn(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4586,7 +4586,7 @@ namespace pdg
 
     void SpriteWrap::FadeOut(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4624,7 +4624,7 @@ namespace pdg
 
     void SpriteWrap::IsBehind(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4644,7 +4644,7 @@ namespace pdg
 
     void SpriteWrap::GetZOrder(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4663,7 +4663,7 @@ namespace pdg
 
     void SpriteWrap::MoveBehind(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4683,7 +4683,7 @@ namespace pdg
 
     void SpriteWrap::MoveInFrontOf(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4703,7 +4703,7 @@ namespace pdg
 
     void SpriteWrap::MoveToFront(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4722,7 +4722,7 @@ namespace pdg
 
     void SpriteWrap::MoveToBack(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4741,7 +4741,7 @@ namespace pdg
 
     void SpriteWrap::EnableCollisions(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4761,7 +4761,7 @@ namespace pdg
 
     void SpriteWrap::DisableCollisions(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4780,7 +4780,7 @@ namespace pdg
 
     void SpriteWrap::GetCollisionType(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4799,7 +4799,7 @@ namespace pdg
 
     void SpriteWrap::SetCollisionRadius(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4824,7 +4824,7 @@ namespace pdg
 
     void SpriteWrap::GetCollisionRadius(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4843,7 +4843,7 @@ namespace pdg
 
     void SpriteWrap::UseCollisionMask(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4864,7 +4864,7 @@ namespace pdg
 
     void SpriteWrap::SetCollisionHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4922,7 +4922,7 @@ namespace pdg
 
     void SpriteWrap::SetElasticity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4947,7 +4947,7 @@ namespace pdg
 
     void SpriteWrap::GetElasticity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4967,7 +4967,7 @@ namespace pdg
 
     void SpriteWrap::SetWantsMouseOverEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -4987,7 +4987,7 @@ namespace pdg
 
     void SpriteWrap::SetWantsClickEvents(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5007,7 +5007,7 @@ namespace pdg
 
     void SpriteWrap::SetMouseDetectMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5028,7 +5028,7 @@ namespace pdg
 
     void SpriteWrap::GetLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5057,7 +5057,7 @@ namespace pdg
 
     void SpriteWrap::MakeStatic(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5076,7 +5076,7 @@ namespace pdg
 
     void SpriteWrap::GetFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5095,7 +5095,7 @@ namespace pdg
 
     void SpriteWrap::SetCollideGroup(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5120,7 +5120,7 @@ namespace pdg
 
     void SpriteWrap::GetCollideGroup(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5139,7 +5139,7 @@ namespace pdg
 
     void SpriteWrap::PinJoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5180,7 +5180,7 @@ namespace pdg
 
     void SpriteWrap::SlideJoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5233,7 +5233,7 @@ namespace pdg
 
     void SpriteWrap::PivotJoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5268,7 +5268,7 @@ namespace pdg
 
     void SpriteWrap::GrooveJoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5315,7 +5315,7 @@ namespace pdg
 
     void SpriteWrap::SpringJoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5374,7 +5374,7 @@ namespace pdg
 
     void SpriteWrap::RotarySpring(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5421,7 +5421,7 @@ namespace pdg
 
     void SpriteWrap::RotaryLimit(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5462,7 +5462,7 @@ namespace pdg
 
     void SpriteWrap::Ratchet(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5503,7 +5503,7 @@ namespace pdg
 
     void SpriteWrap::Gear(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5544,7 +5544,7 @@ namespace pdg
 
     void SpriteWrap::Motor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5579,7 +5579,7 @@ namespace pdg
 
     void SpriteWrap::RemoveJoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5599,7 +5599,7 @@ namespace pdg
 
     void SpriteWrap::Disconnect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5628,7 +5628,7 @@ namespace pdg
 
     void SpriteWrap::MakeJointBreakable(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5654,7 +5654,7 @@ namespace pdg
 
     void SpriteWrap::MakeJointUnbreakable(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5675,7 +5675,7 @@ namespace pdg
 
     void SpriteWrap::On(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5730,7 +5730,7 @@ namespace pdg
 
     void SpriteWrap::OnCollideSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5770,7 +5770,7 @@ namespace pdg
 
     void SpriteWrap::OnCollideWall(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5806,7 +5806,7 @@ namespace pdg
 
     void SpriteWrap::OnOffscreen(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5842,7 +5842,7 @@ namespace pdg
 
     void SpriteWrap::OnOnscreen(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5878,7 +5878,7 @@ namespace pdg
 
     void SpriteWrap::OnExitLayer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5914,7 +5914,7 @@ namespace pdg
 
     void SpriteWrap::OnAnimationLoop(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5950,7 +5950,7 @@ namespace pdg
 
     void SpriteWrap::OnAnimationEnd(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -5986,7 +5986,7 @@ namespace pdg
 
     void SpriteWrap::OnAnimationBlendComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6022,7 +6022,7 @@ namespace pdg
 
     void SpriteWrap::OnFadeComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6058,7 +6058,7 @@ namespace pdg
 
     void SpriteWrap::OnFadeInComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6094,7 +6094,7 @@ namespace pdg
 
     void SpriteWrap::OnFadeOutComplete(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6130,7 +6130,7 @@ namespace pdg
 
     void SpriteWrap::OnMouseEnter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6166,7 +6166,7 @@ namespace pdg
 
     void SpriteWrap::OnMouseLeave(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6202,7 +6202,7 @@ namespace pdg
 
     void SpriteWrap::OnMouseDown(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6238,7 +6238,7 @@ namespace pdg
 
     void SpriteWrap::OnMouseUp(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6274,7 +6274,7 @@ namespace pdg
 
     void SpriteWrap::OnMouseClick(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6312,7 +6312,7 @@ namespace pdg
 
     void SpriteWrap::GetSpriterCollisionBox(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6338,7 +6338,7 @@ namespace pdg
 
     void SpriteWrap::IsSpriterCollisionActive(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6364,7 +6364,7 @@ namespace pdg
 
     void SpriteWrap::GetSpriterCollisionBoxCount(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6383,7 +6383,7 @@ namespace pdg
 
     void SpriteWrap::GetSpriterCollisionBoxName(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
@@ -6422,7 +6422,7 @@ namespace pdg
         if (!cppPtr_ && !s_Sprite_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Sprite" " instance")));
             };
         }
@@ -6440,7 +6440,7 @@ namespace pdg
     Sprite* New_Sprite(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Sprite_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         return new Sprite();
     }
 

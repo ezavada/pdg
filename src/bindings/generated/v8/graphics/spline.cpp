@@ -46,7 +46,7 @@ namespace pdg
 
     void SplineWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = new SplineWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -80,7 +80,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mSplineScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -153,7 +153,7 @@ namespace pdg
         if (!cppPtr_ && !s_Spline_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Spline" " instance")));
             };
         }
@@ -171,7 +171,7 @@ namespace pdg
     Spline* New_Spline(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Spline_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
 
         int splineType = SPLINE_CUBIC_BEZIER;
@@ -192,7 +192,7 @@ namespace pdg
 
     void SplineWrap::GetFirstOrder(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
@@ -217,7 +217,7 @@ namespace pdg
 
     void SplineWrap::GetSecondOrder(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
@@ -242,7 +242,7 @@ namespace pdg
 
     void SplineWrap::AddSegment(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
@@ -285,7 +285,7 @@ namespace pdg
 
     void SplineWrap::AddPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
@@ -310,7 +310,7 @@ namespace pdg
 
     void SplineWrap::GetPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
@@ -335,7 +335,7 @@ namespace pdg
 
     void SplineWrap::SetPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
@@ -366,7 +366,7 @@ namespace pdg
 
     void SplineWrap::GetPointCount(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
@@ -385,7 +385,7 @@ namespace pdg
 
     void SplineWrap::GetMaxU(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
@@ -404,7 +404,7 @@ namespace pdg
 
     void SplineWrap::GetBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 

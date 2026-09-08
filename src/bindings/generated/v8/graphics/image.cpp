@@ -46,7 +46,7 @@ namespace pdg
 
     void ImageWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = new ImageWrap(args);
         objWrapper->Wrap(args.This());
         Image* cppObj = objWrapper->getCppObject();
@@ -85,7 +85,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mImageScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -175,7 +175,7 @@ namespace pdg
 
     void ImageWrap::GetTransparentColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -195,7 +195,7 @@ namespace pdg
 
     void ImageWrap::SetTransparentColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -221,7 +221,7 @@ namespace pdg
 
     void ImageWrap::GetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -241,7 +241,7 @@ namespace pdg
 
     void ImageWrap::GetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -261,7 +261,7 @@ namespace pdg
 
     void ImageWrap::GetImageBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -281,7 +281,7 @@ namespace pdg
 
     void ImageWrap::GetSubsection(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -315,7 +315,7 @@ namespace pdg
 
     void ImageWrap::GetOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -335,7 +335,7 @@ namespace pdg
 
     void ImageWrap::SetOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -370,7 +370,7 @@ namespace pdg
 
     void ImageWrap::SetEdgeClamping(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -395,7 +395,7 @@ namespace pdg
 
     void ImageWrap::RetainData(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -414,7 +414,7 @@ namespace pdg
 
     void ImageWrap::RetainAlpha(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -433,7 +433,7 @@ namespace pdg
 
     void ImageWrap::PrepareToRasterize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -452,7 +452,7 @@ namespace pdg
 
     void ImageWrap::GetAlphaValue(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -497,7 +497,7 @@ namespace pdg
 
     void ImageWrap::GetPixel(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
@@ -548,7 +548,7 @@ namespace pdg
         if (!cppPtr_ && !s_Image_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Image" " instance")));
             };
         }
@@ -566,7 +566,7 @@ namespace pdg
     Image* New_Image(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Image_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
         if (args.Length() < 1)
         {
@@ -582,7 +582,7 @@ namespace pdg
             {
                 std::ostringstream excpt_;
                 excpt_ << "argument 1 must be a string (filename)";
-                v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                 s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
             };
             return 0;
@@ -598,7 +598,7 @@ namespace pdg
                 {
                     std::ostringstream excpt_;
                     excpt_ << "could not create Image from file ["<<filename<<"]";
-                    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                    [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                     s_SavedError.Reset(isolate, v8::Exception::Error( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
                 };
                 return 0;
@@ -614,7 +614,7 @@ namespace pdg
 
     void ImageStripWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = new ImageStripWrap(args);
         objWrapper->Wrap(args.This());
         ImageStrip* cppObj = objWrapper->getCppObject();
@@ -653,7 +653,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mImageStripScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -763,7 +763,7 @@ namespace pdg
 
     void ImageStripWrap::GetTransparentColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -783,7 +783,7 @@ namespace pdg
 
     void ImageStripWrap::SetTransparentColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -809,7 +809,7 @@ namespace pdg
 
     void ImageStripWrap::GetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -829,7 +829,7 @@ namespace pdg
 
     void ImageStripWrap::GetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -849,7 +849,7 @@ namespace pdg
 
     void ImageStripWrap::GetImageBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -869,7 +869,7 @@ namespace pdg
 
     void ImageStripWrap::GetSubsection(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -903,7 +903,7 @@ namespace pdg
 
     void ImageStripWrap::GetOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -923,7 +923,7 @@ namespace pdg
 
     void ImageStripWrap::SetOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -958,7 +958,7 @@ namespace pdg
 
     void ImageStripWrap::SetEdgeClamping(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -983,7 +983,7 @@ namespace pdg
 
     void ImageStripWrap::RetainData(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1002,7 +1002,7 @@ namespace pdg
 
     void ImageStripWrap::RetainAlpha(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1021,7 +1021,7 @@ namespace pdg
 
     void ImageStripWrap::PrepareToRasterize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1040,7 +1040,7 @@ namespace pdg
 
     void ImageStripWrap::GetAlphaValue(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1085,7 +1085,7 @@ namespace pdg
 
     void ImageStripWrap::GetPixel(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1130,7 +1130,7 @@ namespace pdg
 
     void ImageStripWrap::GetNumFrames(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1150,7 +1150,7 @@ namespace pdg
 
     void ImageStripWrap::SetNumFrames(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1176,7 +1176,7 @@ namespace pdg
 
     void ImageStripWrap::GetFrameWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1196,7 +1196,7 @@ namespace pdg
 
     void ImageStripWrap::SetFrameWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1222,7 +1222,7 @@ namespace pdg
 
     void ImageStripWrap::GetFrame(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
@@ -1263,7 +1263,7 @@ namespace pdg
         if (!cppPtr_ && !s_ImageStrip_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "ImageStrip" " instance")));
             };
         }
@@ -1281,7 +1281,7 @@ namespace pdg
     ImageStrip* New_ImageStrip(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_ImageStrip_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
         if (args.Length() < 1)
         {
@@ -1297,7 +1297,7 @@ namespace pdg
             {
                 std::ostringstream excpt_;
                 excpt_ << "argument 1 must be a string (filename)";
-                v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                 s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
             };
             return 0;
@@ -1313,7 +1313,7 @@ namespace pdg
                 {
                     std::ostringstream excpt_;
                     excpt_ << "could not create ImageStrip from file ["<<filename<<"]";
-                    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                    [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                     s_SavedError.Reset(isolate, v8::Exception::Error( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
                 };
                 return 0;

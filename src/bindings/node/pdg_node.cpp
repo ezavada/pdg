@@ -1309,7 +1309,12 @@ void addProcessVersionsAddon() {
 
 extern "C" void pdg_install_win32_crash_handler(void);
 
-NODE_MODULE_INIT() {
+static void initializePdgModule(v8::Local<v8::Object> exports,
+                                v8::Local<v8::Value> module,
+                                v8::Local<v8::Context> context,
+                                void* privateData) {
+    (void)module;
+    (void)privateData;
 #ifdef _WIN32
     pdg_install_win32_crash_handler();
 #endif
@@ -1330,5 +1335,7 @@ NODE_MODULE_INIT() {
         process->Set(context, pdg_symbol, exports).Check();
     }
 }
+
+NODE_MODULE_CONTEXT_AWARE(NODE_GYP_MODULE_NAME, initializePdgModule)
 
 #endif

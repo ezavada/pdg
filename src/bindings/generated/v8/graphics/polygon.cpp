@@ -46,7 +46,7 @@ namespace pdg
 
     void PolygonWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = new PolygonWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -80,7 +80,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mPolygonScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -237,7 +237,7 @@ namespace pdg
         if (!cppPtr_ && !s_Polygon_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Polygon" " instance")));
             };
         }
@@ -255,7 +255,7 @@ namespace pdg
     Polygon* New_Polygon(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Polygon_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
 
         if (args.Length() == 0)
@@ -291,7 +291,7 @@ namespace pdg
             std::vector<Point> points;
             v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(args[0]);
             v8::Local<v8::Context> context = isolate->GetCurrentContext();
-            for (int i = 0; i < array->Length(); i++)
+            for (uint32_t i = 0; i < array->Length(); i++)
             {
                 points.push_back(v8_ValueToPoint(isolate, array->Get(context, i).ToLocalChecked()));
             }
@@ -333,7 +333,7 @@ namespace pdg
 
     void PolygonWrap::AddPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -358,7 +358,7 @@ namespace pdg
 
     void PolygonWrap::AddSpline(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -389,7 +389,7 @@ namespace pdg
 
     void PolygonWrap::InsertPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -420,7 +420,7 @@ namespace pdg
 
     void PolygonWrap::RemovePoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -459,7 +459,7 @@ namespace pdg
 
     void PolygonWrap::GetPointCount(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -478,7 +478,7 @@ namespace pdg
 
     void PolygonWrap::GetPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -517,7 +517,7 @@ namespace pdg
 
     void PolygonWrap::SetPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -562,7 +562,7 @@ namespace pdg
 
     void PolygonWrap::ClearPoints(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -581,7 +581,7 @@ namespace pdg
 
     void PolygonWrap::GetBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -600,7 +600,7 @@ namespace pdg
 
     void PolygonWrap::CenterPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -619,7 +619,7 @@ namespace pdg
 
     void PolygonWrap::Contains(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -644,7 +644,7 @@ namespace pdg
 
     void PolygonWrap::Empty(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -663,7 +663,7 @@ namespace pdg
 
     void PolygonWrap::Equals(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -682,7 +682,7 @@ namespace pdg
 
     void PolygonWrap::Move(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -707,7 +707,7 @@ namespace pdg
 
     void PolygonWrap::MoveLeft(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -732,7 +732,7 @@ namespace pdg
 
     void PolygonWrap::MoveRight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -757,7 +757,7 @@ namespace pdg
 
     void PolygonWrap::MoveUp(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -782,7 +782,7 @@ namespace pdg
 
     void PolygonWrap::MoveDown(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -807,7 +807,7 @@ namespace pdg
 
     void PolygonWrap::MoveXTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -832,7 +832,7 @@ namespace pdg
 
     void PolygonWrap::MoveYTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -857,7 +857,7 @@ namespace pdg
 
     void PolygonWrap::MoveTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -888,7 +888,7 @@ namespace pdg
 
     void PolygonWrap::Center(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -913,7 +913,7 @@ namespace pdg
 
     void PolygonWrap::Scale(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -938,7 +938,7 @@ namespace pdg
 
     void PolygonWrap::HorzScale(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -963,7 +963,7 @@ namespace pdg
 
     void PolygonWrap::VertScale(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -988,7 +988,7 @@ namespace pdg
 
     void PolygonWrap::ScaleAround(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -1019,7 +1019,7 @@ namespace pdg
 
     void PolygonWrap::Rotate(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -1044,7 +1044,7 @@ namespace pdg
 
     void PolygonWrap::RotateAround(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -1075,7 +1075,7 @@ namespace pdg
 
     void PolygonWrap::Intersection(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
@@ -1097,7 +1097,7 @@ namespace pdg
 
     void PolygonWrap::UnionWith(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
         Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 

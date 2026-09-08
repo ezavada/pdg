@@ -93,7 +93,7 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Polygon)
         std::vector<Point> points;
         v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(ARGV[0]);
         v8::Local<v8::Context> context = isolate->GetCurrentContext();
-        for (int i = 0; i < array->Length(); i++) {
+        for (uint32_t i = 0; i < array->Length(); i++) {
             points.push_back(VAL2POINT(array->Get(context, i).ToLocalChecked()));
         }
         return new pdg::Polygon(points);

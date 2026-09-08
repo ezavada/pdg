@@ -48,7 +48,7 @@ namespace pdg
 
     void FontWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         FontWrap* objWrapper = new FontWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -82,7 +82,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mFontScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -135,7 +135,7 @@ namespace pdg
 
     void FontWrap::GetFontName(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
@@ -155,7 +155,7 @@ namespace pdg
 
     void FontWrap::GetFontHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
@@ -187,7 +187,7 @@ namespace pdg
 
     void FontWrap::GetFontLeading(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
@@ -219,7 +219,7 @@ namespace pdg
 
     void FontWrap::GetFontAscent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
@@ -251,7 +251,7 @@ namespace pdg
 
     void FontWrap::GetFontDescent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
@@ -296,12 +296,12 @@ namespace pdg
     Font* New_Font(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Font_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         s_HaveSavedError = true;
         {
             std::ostringstream excpt_;
             excpt_ << "Font cannot be created directly, use pdg.gfx.createFont()";
-            v8::Isolate* isolate = v8::Isolate::GetCurrent();
+            [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
             s_SavedError.Reset(isolate, v8::Exception::Error( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
         };
         return 0;

@@ -48,7 +48,7 @@ namespace pdg
 
     void cpSpaceWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = new cpSpaceWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -82,7 +82,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             ;
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -167,7 +167,7 @@ namespace pdg
 
     void cpSpaceWrap::UseSpatialHash(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -198,7 +198,7 @@ namespace pdg
 
     void cpSpaceWrap::ReindexStatic(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -217,7 +217,7 @@ namespace pdg
 
     void cpSpaceWrap::Step(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -242,7 +242,7 @@ namespace pdg
 
     void cpSpaceWrap::GetIdleSpeedThreshold(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -262,7 +262,7 @@ namespace pdg
 
     void cpSpaceWrap::SetIdleSpeedThreshold(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -288,7 +288,7 @@ namespace pdg
 
     void cpSpaceWrap::GetSleepTimeThreshold(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -308,7 +308,7 @@ namespace pdg
 
     void cpSpaceWrap::SetSleepTimeThreshold(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -334,7 +334,7 @@ namespace pdg
 
     void cpSpaceWrap::GetCollisionSlop(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -354,7 +354,7 @@ namespace pdg
 
     void cpSpaceWrap::SetCollisionSlop(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -380,7 +380,7 @@ namespace pdg
 
     void cpSpaceWrap::GetCollisionBias(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -400,7 +400,7 @@ namespace pdg
 
     void cpSpaceWrap::SetCollisionBias(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -426,7 +426,7 @@ namespace pdg
 
     void cpSpaceWrap::GetCollisionPersistence(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -446,7 +446,7 @@ namespace pdg
 
     void cpSpaceWrap::SetCollisionPersistence(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
@@ -483,12 +483,12 @@ namespace pdg
     cpSpace* New_cpSpace(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_cpSpace_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         s_HaveSavedError = true;
         {
             std::ostringstream excpt_;
             excpt_ << "CpSpace cannot be created directly, it is only returned from certain Sprite calls.";
-            v8::Isolate* isolate = v8::Isolate::GetCurrent();
+            [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
             s_SavedError.Reset(isolate, v8::Exception::Error( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
         };
         return 0;

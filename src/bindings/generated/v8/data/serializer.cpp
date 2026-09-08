@@ -46,7 +46,7 @@ namespace pdg
 
     void SerializerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = new SerializerWrap(args);
         objWrapper->Wrap(args.This());
         Serializer* cppObj = objWrapper->getCppObject();
@@ -85,7 +85,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mSerializerScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -321,7 +321,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_d(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -346,7 +346,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_f(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -372,7 +372,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_8(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -397,7 +397,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_8u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -423,7 +423,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_4(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -454,7 +454,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_4u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -485,7 +485,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_3u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -516,7 +516,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_2(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -547,7 +547,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_2u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -578,7 +578,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_1(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -609,7 +609,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_1u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -640,7 +640,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_bool(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -665,7 +665,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_uint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -690,7 +690,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_color(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -715,7 +715,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_offset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -740,7 +740,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_point(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -765,7 +765,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_vector(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -790,7 +790,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_rect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -815,7 +815,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_rotr(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -840,7 +840,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_quad(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -865,7 +865,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_str(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -891,7 +891,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_mem(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -932,7 +932,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_ref(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -952,7 +952,7 @@ namespace pdg
 
     void SerializerWrap::GetDataSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -971,7 +971,7 @@ namespace pdg
 
     void SerializerWrap::GetDataPtr(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1000,7 +1000,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_1(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1031,7 +1031,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_1u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1062,7 +1062,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_2(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1093,7 +1093,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_2u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1124,7 +1124,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_3u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1155,7 +1155,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_4(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1186,7 +1186,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_4u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1218,7 +1218,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_8(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1243,7 +1243,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_8u(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1269,7 +1269,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_f(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1294,7 +1294,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_d(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1319,7 +1319,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_uint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1344,7 +1344,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_str(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1370,7 +1370,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_bool(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1395,7 +1395,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_point(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1420,7 +1420,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_offset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1445,7 +1445,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_vector(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1470,7 +1470,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_rect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1495,7 +1495,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_rotr(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1520,7 +1520,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_quad(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1545,7 +1545,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_color(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1570,7 +1570,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_ref(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1590,7 +1590,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_obj(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1617,7 +1617,7 @@ namespace pdg
 
     void SerializerWrap::Sizeof_mem(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -1665,7 +1665,7 @@ namespace pdg
         if (!cppPtr_ && !s_Serializer_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Serializer" " instance")));
             };
         }
@@ -1683,7 +1683,7 @@ namespace pdg
     Serializer* New_Serializer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Serializer_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         return new Serializer();
     }
 

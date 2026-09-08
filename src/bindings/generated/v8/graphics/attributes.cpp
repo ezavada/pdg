@@ -46,7 +46,7 @@ namespace pdg
 
     void AttributesWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = new AttributesWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -80,7 +80,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mAttributesScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -351,7 +351,7 @@ namespace pdg
         if (!cppPtr_ && !s_Attributes_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Attributes" " instance")));
             };
         }
@@ -369,14 +369,14 @@ namespace pdg
     Attributes* New_Attributes(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Attributes_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
         return new Attributes();
     }
 
     void AttributesWrap::GetLineColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -395,7 +395,7 @@ namespace pdg
 
     void AttributesWrap::GetLineThickness(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -414,7 +414,7 @@ namespace pdg
 
     void AttributesWrap::GetLineOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -433,7 +433,7 @@ namespace pdg
 
     void AttributesWrap::GetLineStyle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -452,7 +452,7 @@ namespace pdg
 
     void AttributesWrap::GetFillColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -471,7 +471,7 @@ namespace pdg
 
     void AttributesWrap::GetFillOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -490,7 +490,7 @@ namespace pdg
 
     void AttributesWrap::GetRoundedCornerRadius(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -509,7 +509,7 @@ namespace pdg
 
     void AttributesWrap::GetGradientType(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -528,7 +528,7 @@ namespace pdg
 
     void AttributesWrap::GetGradientStart(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -547,7 +547,7 @@ namespace pdg
 
     void AttributesWrap::GetGradientEnd(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -566,7 +566,7 @@ namespace pdg
 
     void AttributesWrap::GetGradientStartColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -585,7 +585,7 @@ namespace pdg
 
     void AttributesWrap::GetGradientEndColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -604,7 +604,7 @@ namespace pdg
 
     void AttributesWrap::GetRadialGradientCenter(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -623,7 +623,7 @@ namespace pdg
 
     void AttributesWrap::GetRadialGradientRadius(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -642,7 +642,7 @@ namespace pdg
 
     void AttributesWrap::GetRadialGradientCenterColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -661,7 +661,7 @@ namespace pdg
 
     void AttributesWrap::GetRadialGradientEndColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -680,7 +680,7 @@ namespace pdg
 
     void AttributesWrap::GetTransform(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -727,7 +727,7 @@ namespace pdg
 
     void AttributesWrap::GetBlendMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -746,7 +746,7 @@ namespace pdg
 
     void AttributesWrap::LineColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -771,7 +771,7 @@ namespace pdg
 
     void AttributesWrap::LineThickness(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -796,7 +796,7 @@ namespace pdg
 
     void AttributesWrap::LineOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -821,7 +821,7 @@ namespace pdg
 
     void AttributesWrap::SetLineStyle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -846,7 +846,7 @@ namespace pdg
 
     void AttributesWrap::FillColor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -871,7 +871,7 @@ namespace pdg
 
     void AttributesWrap::FillOpacity(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -896,7 +896,7 @@ namespace pdg
 
     void AttributesWrap::FillGradient(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -939,7 +939,7 @@ namespace pdg
 
     void AttributesWrap::FillRadialGradient(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -982,7 +982,7 @@ namespace pdg
 
     void AttributesWrap::RoundedCorners(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1007,7 +1007,7 @@ namespace pdg
 
     void AttributesWrap::Translation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1032,7 +1032,7 @@ namespace pdg
 
     void AttributesWrap::Rotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1063,7 +1063,7 @@ namespace pdg
 
     void AttributesWrap::Scale(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1107,7 +1107,7 @@ namespace pdg
 
     void AttributesWrap::Skew(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1144,7 +1144,7 @@ namespace pdg
 
     void AttributesWrap::Transform(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1223,7 +1223,7 @@ namespace pdg
 
     void AttributesWrap::SetBlendMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1248,7 +1248,7 @@ namespace pdg
 
     void AttributesWrap::TextSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1273,7 +1273,7 @@ namespace pdg
 
     void AttributesWrap::TextStyle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1300,7 +1300,7 @@ namespace pdg
 
     void AttributesWrap::SetFont(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1330,7 +1330,7 @@ namespace pdg
 
     void AttributesWrap::Frame(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1355,7 +1355,7 @@ namespace pdg
 
     void AttributesWrap::SetFitType(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1380,7 +1380,7 @@ namespace pdg
 
     void AttributesWrap::ClipOverflow(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1405,7 +1405,7 @@ namespace pdg
 
     void AttributesWrap::Subsection(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1430,7 +1430,7 @@ namespace pdg
 
     void AttributesWrap::SphereRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1455,7 +1455,7 @@ namespace pdg
 
     void AttributesWrap::PolarOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1480,7 +1480,7 @@ namespace pdg
 
     void AttributesWrap::LightOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1505,7 +1505,7 @@ namespace pdg
 
     void AttributesWrap::AmbientLight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1530,7 +1530,7 @@ namespace pdg
 
     void AttributesWrap::Texture(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1550,7 +1550,7 @@ namespace pdg
 
     void AttributesWrap::GetTextSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1569,7 +1569,7 @@ namespace pdg
 
     void AttributesWrap::GetTextStyle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1590,7 +1590,7 @@ namespace pdg
 
     void AttributesWrap::GetFont(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1619,7 +1619,7 @@ namespace pdg
 
     void AttributesWrap::GetFrame(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1638,7 +1638,7 @@ namespace pdg
 
     void AttributesWrap::GetFitType(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1657,7 +1657,7 @@ namespace pdg
 
     void AttributesWrap::GetClipOverflow(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1676,7 +1676,7 @@ namespace pdg
 
     void AttributesWrap::GetSubsection(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1695,7 +1695,7 @@ namespace pdg
 
     void AttributesWrap::GetSphereRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1714,7 +1714,7 @@ namespace pdg
 
     void AttributesWrap::GetPolarOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1733,7 +1733,7 @@ namespace pdg
 
     void AttributesWrap::GetLightOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1752,7 +1752,7 @@ namespace pdg
 
     void AttributesWrap::GetAmbientLight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 
@@ -1771,7 +1771,7 @@ namespace pdg
 
     void AttributesWrap::GetTexture(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         AttributesWrap* objWrapper = jswrap::ObjectWrap::Unwrap<AttributesWrap>(args.This());
         Attributes* self = dynamic_cast<Attributes*>(objWrapper->cppPtr_);
 

@@ -48,7 +48,7 @@ namespace pdg
 
     void SoundManagerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
         if (args.IsConstructCall() && !s_SoundManager_InNewFromCpp)
         {
@@ -106,7 +106,7 @@ namespace pdg
 
     SoundManager* SoundManagerWrap::getSingletonInstance()
     {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::Object> val = GetScriptSingletonInstance(isolate)->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
         SoundManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundManagerWrap>(val);
         return dynamic_cast<SoundManager*>(objWrapper->cppPtr_);
@@ -143,7 +143,7 @@ namespace pdg
 
     void SoundManagerWrap::SetVolume(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundManagerWrap>(args.This());
         SoundManager* self = dynamic_cast<SoundManager*>(objWrapper->cppPtr_);
 
@@ -168,7 +168,7 @@ namespace pdg
 
     void SoundManagerWrap::SetMute(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundManagerWrap>(args.This());
         SoundManager* self = dynamic_cast<SoundManager*>(objWrapper->cppPtr_);
 
@@ -197,7 +197,7 @@ namespace pdg
         if (!cppPtr_ && !s_SoundManager_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "SoundManager" " instance")));
             };
         }
@@ -221,7 +221,7 @@ namespace pdg
         else
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Cannot construct " "SoundManager" " directly - use get" "SoundManager" "() instead")));
             };
             return nullptr;

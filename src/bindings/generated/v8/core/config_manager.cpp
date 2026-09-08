@@ -46,7 +46,7 @@ namespace pdg
 
     void ConfigManagerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
         if (args.IsConstructCall() && !s_ConfigManager_InNewFromCpp)
         {
@@ -104,7 +104,7 @@ namespace pdg
 
     ConfigManager* ConfigManagerWrap::getSingletonInstance()
     {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::Object> val = GetScriptSingletonInstance(isolate)->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(val);
         return dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
@@ -169,7 +169,7 @@ namespace pdg
 
     void ConfigManagerWrap::UseConfig(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -195,7 +195,7 @@ namespace pdg
 
     void ConfigManagerWrap::GetConfigString(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -229,7 +229,7 @@ namespace pdg
 
     void ConfigManagerWrap::GetConfigLong(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -263,7 +263,7 @@ namespace pdg
 
     void ConfigManagerWrap::GetConfigFloat(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -297,7 +297,7 @@ namespace pdg
 
     void ConfigManagerWrap::GetConfigBool(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -331,7 +331,7 @@ namespace pdg
 
     void ConfigManagerWrap::SetConfigString(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -365,7 +365,7 @@ namespace pdg
 
     void ConfigManagerWrap::SetConfigLong(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -397,7 +397,7 @@ namespace pdg
 
     void ConfigManagerWrap::SetConfigFloat(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -429,7 +429,7 @@ namespace pdg
 
     void ConfigManagerWrap::SetConfigBool(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
@@ -465,7 +465,7 @@ namespace pdg
         if (!cppPtr_ && !s_ConfigManager_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "ConfigManager" " instance")));
             };
         }
@@ -489,7 +489,7 @@ namespace pdg
         else
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Cannot construct " "ConfigManager" " directly - use get" "ConfigManager" "() instead")));
             };
             return nullptr;

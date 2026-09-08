@@ -48,7 +48,7 @@ namespace pdg
 
     void PortWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = new PortWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -82,7 +82,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mPortScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -227,7 +227,7 @@ namespace pdg
 
     void PortWrap::GetDrawingArea(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -247,7 +247,7 @@ namespace pdg
 
     void PortWrap::GetClipRect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -267,7 +267,7 @@ namespace pdg
 
     void PortWrap::SetClipRect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -293,7 +293,7 @@ namespace pdg
 
     void PortWrap::DrawLine(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -325,7 +325,7 @@ namespace pdg
 
     void PortWrap::DrawSpline(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -346,7 +346,7 @@ namespace pdg
 
     void PortWrap::GetTextWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -390,7 +390,7 @@ namespace pdg
 
     void PortWrap::GetCurrentFont(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -419,7 +419,7 @@ namespace pdg
 
     void PortWrap::SetFont(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -448,7 +448,7 @@ namespace pdg
 
     void PortWrap::SetFontForStyle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -488,7 +488,7 @@ namespace pdg
 
     void PortWrap::SetFontScalingFactor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -513,7 +513,7 @@ namespace pdg
 
     void PortWrap::StartTrackingMouse(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -538,7 +538,7 @@ namespace pdg
 
     void PortWrap::StopTrackingMouse(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -563,7 +563,7 @@ namespace pdg
 
     void PortWrap::SetCursor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -589,7 +589,7 @@ namespace pdg
 
     void PortWrap::GetCursor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -618,7 +618,7 @@ namespace pdg
 
     void PortWrap::ResetCursor(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -638,7 +638,7 @@ namespace pdg
 
     void PortWrap::DrawRect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -664,7 +664,7 @@ namespace pdg
 
     void PortWrap::DrawQuad(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -690,7 +690,7 @@ namespace pdg
 
     void PortWrap::DrawPolygon(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -711,7 +711,7 @@ namespace pdg
 
     void PortWrap::DrawEllipse(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -749,7 +749,7 @@ namespace pdg
 
     void PortWrap::DrawArc(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -799,7 +799,7 @@ namespace pdg
 
     void PortWrap::DrawBezier(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -843,7 +843,7 @@ namespace pdg
 
     void PortWrap::DrawCircle(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -875,7 +875,7 @@ namespace pdg
 
     void PortWrap::DrawVector(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -901,7 +901,7 @@ namespace pdg
 
     void PortWrap::DrawRoundedRect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -933,7 +933,7 @@ namespace pdg
 
     void PortWrap::DrawImage(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -976,7 +976,7 @@ namespace pdg
 
     void PortWrap::DrawDrawing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -1013,7 +1013,7 @@ namespace pdg
 
     void PortWrap::DrawText(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -1056,7 +1056,7 @@ namespace pdg
 
     void PortWrap::DrawSphere(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
@@ -1101,12 +1101,12 @@ namespace pdg
     Port* New_Port(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Port_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         s_HaveSavedError = true;
         {
             std::ostringstream excpt_;
             excpt_ << "Port cannot be created directly, use pdg.gfx.createWindowPort() or pdg.gfx.createFullScreenPort()";
-            v8::Isolate* isolate = v8::Isolate::GetCurrent();
+            [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
             s_SavedError.Reset(isolate, v8::Exception::Error( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
         };
         return 0;

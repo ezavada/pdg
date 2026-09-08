@@ -46,7 +46,7 @@ namespace pdg
 
     void TimerManagerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
         if (args.IsConstructCall() && !s_TimerManager_InNewFromCpp)
         {
@@ -104,7 +104,7 @@ namespace pdg
 
     TimerManager* TimerManagerWrap::getSingletonInstance()
     {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::Object> val = GetScriptSingletonInstance(isolate)->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(val);
         return dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
@@ -205,7 +205,7 @@ namespace pdg
 
     void TimerManagerWrap::AddHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -271,7 +271,7 @@ namespace pdg
 
     void TimerManagerWrap::RemoveHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -307,7 +307,7 @@ namespace pdg
 
     void TimerManagerWrap::Clear(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -326,7 +326,7 @@ namespace pdg
 
     void TimerManagerWrap::BlockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -355,7 +355,7 @@ namespace pdg
 
     void TimerManagerWrap::UnblockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -383,7 +383,7 @@ namespace pdg
 
     void TimerManagerWrap::StartTimer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -420,7 +420,7 @@ namespace pdg
 
     void TimerManagerWrap::CancelTimer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -445,7 +445,7 @@ namespace pdg
 
     void TimerManagerWrap::CancelAllTimers(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -464,7 +464,7 @@ namespace pdg
 
     void TimerManagerWrap::DelayTimer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -495,7 +495,7 @@ namespace pdg
 
     void TimerManagerWrap::DelayTimerUntil(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -532,7 +532,7 @@ namespace pdg
 
     void TimerManagerWrap::Pause(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -551,7 +551,7 @@ namespace pdg
 
     void TimerManagerWrap::Unpause(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -570,7 +570,7 @@ namespace pdg
 
     void TimerManagerWrap::IsPaused(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -589,7 +589,7 @@ namespace pdg
 
     void TimerManagerWrap::PauseTimer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -614,7 +614,7 @@ namespace pdg
 
     void TimerManagerWrap::UnpauseTimer(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -639,7 +639,7 @@ namespace pdg
 
     void TimerManagerWrap::IsTimerPaused(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -664,7 +664,7 @@ namespace pdg
 
     void TimerManagerWrap::GetWhenTimerFiresNext(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
@@ -696,7 +696,7 @@ namespace pdg
     }
     void TimerManagerWrap::GetMilliseconds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -710,7 +710,7 @@ namespace pdg
         if (!cppPtr_ && !s_TimerManager_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "TimerManager" " instance")));
             };
         }
@@ -734,7 +734,7 @@ namespace pdg
         else
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Cannot construct " "TimerManager" " directly - use get" "TimerManager" "() instead")));
             };
             return nullptr;

@@ -46,7 +46,7 @@ namespace pdg
 
     void LogManagerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
         if (args.IsConstructCall() && !s_LogManager_InNewFromCpp)
         {
@@ -104,7 +104,7 @@ namespace pdg
 
     LogManager* LogManagerWrap::getSingletonInstance()
     {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::Object> val = GetScriptSingletonInstance(isolate)->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(val);
         return dynamic_cast<LogManager*>(objWrapper->cppPtr_);
@@ -158,7 +158,7 @@ namespace pdg
 
     void LogManagerWrap::GetLogLevel(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(args.This());
         LogManager* self = dynamic_cast<LogManager*>(objWrapper->cppPtr_);
 
@@ -178,7 +178,7 @@ namespace pdg
 
     void LogManagerWrap::SetLogLevel(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(args.This());
         LogManager* self = dynamic_cast<LogManager*>(objWrapper->cppPtr_);
 
@@ -204,7 +204,7 @@ namespace pdg
 
     void LogManagerWrap::Initialize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(args.This());
         LogManager* self = dynamic_cast<LogManager*>(objWrapper->cppPtr_);
 
@@ -236,7 +236,7 @@ namespace pdg
 
     void LogManagerWrap::WriteLogEntry(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(args.This());
         LogManager* self = dynamic_cast<LogManager*>(objWrapper->cppPtr_);
 
@@ -274,7 +274,7 @@ namespace pdg
     }
     void LogManagerWrap::BinaryDump(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "({[string Binary]|[object MemBlock]} inData, [number int] length = 0, [number int] bytesPerLine = 20)" " - " "").ToLocalChecked() ); return; };
@@ -327,7 +327,7 @@ namespace pdg
         if (!cppPtr_ && !s_LogManager_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "LogManager" " instance")));
             };
         }
@@ -347,13 +347,13 @@ namespace pdg
         if (!s_LogManager_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Cannot construct " "LogManager" " directly - use get" "LogManager" "() instead")));
             };
             return nullptr;
         }
 
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         LogManager *theLogMgr = LogManager::getSingletonInstance();
         pdg::log& debugLog = main_getDebugLog();
         debugLog.setLogManager(theLogMgr);

@@ -404,7 +404,7 @@ namespace pdg {
 		const_cast<Spline*>(this)->updateSegmentIndices(segmentNum);
 		
 		float X,Y;
-		float s, u2;
+		float s;
 		float tension, continuity, bias, a, b, c, d;
 		float h1, h2, m1, m2;
 		float t;
@@ -442,7 +442,6 @@ namespace pdg {
 			
 			case SPLINE_UNIFORM_B:
 				// Second derivative of Uniform B-spline
-				u2 = u * u;
 				X = mPoints[mCurrentSegmentIndices[0]].x * ((3*u*u - 6*u + 3) / 6.0f);
 				X += mPoints[mCurrentSegmentIndices[1]].x * ((9*u*u - 12*u) / 6.0f);
 				X += mPoints[mCurrentSegmentIndices[2]].x * ((-9*u*u + 6*u + 3) / 6.0f);

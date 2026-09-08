@@ -71,7 +71,7 @@ namespace pdg
 
     void GetConfigManager(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object ConfigManager]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -81,7 +81,7 @@ namespace pdg
 
     void GetLogManager(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object LogManager]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -95,7 +95,7 @@ namespace pdg
         if (!cppPtr_ && !s_IEventHandler_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "IEventHandler" " instance")));
             };
         }
@@ -113,7 +113,7 @@ namespace pdg
     IEventHandler* New_IEventHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_IEventHandler_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if ((args.Length() == 1 && args[0]->IsNull()))
         {
             ScriptEventHandler* handler = new ScriptEventHandler();
@@ -126,7 +126,7 @@ namespace pdg
             {
                 std::ostringstream excpt_;
                 excpt_ << "EventHandler must be created with a function argument (handlerFunc)";
-                v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                 s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
             };
         }
@@ -138,7 +138,7 @@ namespace pdg
 
     void EventManagerWrap::IsKeyDown(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "({string unicodeChar|[number uint] utf16CharCode})" " - " "").ToLocalChecked() ); return; };
@@ -168,7 +168,7 @@ namespace pdg
     }
     void EventManagerWrap::GetDeviceOrientation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "(boolean absolute = false)" " - " "NOT IMPLEMENTED").ToLocalChecked() ); return; };
@@ -189,7 +189,7 @@ namespace pdg
     }
     void GetEventManager(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object EventManager]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -202,7 +202,7 @@ namespace pdg
 
     void ResourceManagerWrap::GetImage(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -235,7 +235,7 @@ namespace pdg
 
     void ResourceManagerWrap::GetImageStrip(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -269,7 +269,7 @@ namespace pdg
 
     void ResourceManagerWrap::GetSound(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -303,7 +303,7 @@ namespace pdg
 
     void GetResourceManager(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object ResourceManager]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -317,7 +317,7 @@ namespace pdg
         if (!cppPtr_ && !s_ISerializable_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "ISerializable" " instance")));
             };
         }
@@ -335,7 +335,7 @@ namespace pdg
     ISerializable* New_ISerializable(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_ISerializable_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if ((args.Length() == 1 && args[0]->IsNull()))
         {
             ScriptSerializable* serializable = new ScriptSerializable();
@@ -351,7 +351,7 @@ namespace pdg
                 {
                     std::ostringstream excpt_;
                     excpt_ << "Serializable must be created with 4 function arguments " "(getSerializedSizeFunc, serializeFunc, deserializeFunc, getMyClassTagFunc)";
-                    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                    [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                     s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
                 };
 
@@ -370,7 +370,7 @@ namespace pdg
 
     void SerializerWrap::Serialize_obj(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -454,7 +454,7 @@ namespace pdg
 
     void SerializerWrap::SerializedSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
         Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
 
@@ -638,7 +638,7 @@ namespace pdg
 
     void RegisterSerializableObject(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(object obj, [number uint] uniqueId)" " - " "").ToLocalChecked() ); return; };
@@ -659,13 +659,13 @@ namespace pdg
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }())));
         }
-        v8::Local<v8::Object> obj = args[1 -1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();;
+        v8::Local<v8::Object> obj = args[1 -1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();; (void)obj;
         if (!args[2 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 2, "a number (""uniqueId"")");
             return;
         }
-        unsigned long uniqueId = args[2 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
+        unsigned long uniqueId = args[2 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked(); (void)uniqueId;
 
         args.GetReturnValue().SetUndefined();
     }
@@ -674,7 +674,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetCurrentScreenMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
         ;
@@ -703,7 +703,7 @@ namespace pdg
 
     void GraphicsManagerWrap::GetNthSupportedScreenMode(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
         ;
@@ -741,7 +741,7 @@ namespace pdg
 
     void GetGraphicsManager(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object GraphicsManager]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -754,7 +754,7 @@ namespace pdg
 
     void GetSoundManager(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SoundManager]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -765,7 +765,7 @@ namespace pdg
 
     void GetFileManager(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object FileManager]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -775,7 +775,7 @@ namespace pdg
 
     void GetTimerManager(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object TimerManager]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -792,7 +792,7 @@ namespace pdg
         if (!cppPtr_ && !s_IAnimationHelper_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "IAnimationHelper" " instance")));
             };
         }
@@ -810,7 +810,7 @@ namespace pdg
     IAnimationHelper* New_IAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_IAnimationHelper_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if ((args.Length() == 1 && args[0]->IsNull()))
         {
             ScriptAnimationHelper* helper = new ScriptAnimationHelper();
@@ -822,7 +822,7 @@ namespace pdg
             {
                 std::ostringstream excpt_;
                 excpt_ << "AnimationHelper must be created with a function argument (handlerFunc)";
-                v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                 s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
             };
             return 0;
@@ -840,7 +840,7 @@ namespace pdg
         if (!cppPtr_ && !s_ISpriteCollideHelper_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "ISpriteCollideHelper" " instance")));
             };
         }
@@ -858,7 +858,7 @@ namespace pdg
     ISpriteCollideHelper* New_ISpriteCollideHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_ISpriteCollideHelper_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if ((args.Length() == 1 && args[0]->IsNull()))
         {
             ScriptSpriteCollideHelper* helper = new ScriptSpriteCollideHelper();
@@ -870,7 +870,7 @@ namespace pdg
             {
                 std::ostringstream excpt_;
                 excpt_ << "SpriteCollideHelper must be created with a function argument (allowCollisionFunc)";
-                v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                 s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
             };
             return 0;
@@ -888,7 +888,7 @@ namespace pdg
         if (!cppPtr_ && !s_ISpriteDrawHelper_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "ISpriteDrawHelper" " instance")));
             };
         }
@@ -906,7 +906,7 @@ namespace pdg
     ISpriteDrawHelper* New_ISpriteDrawHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_ISpriteDrawHelper_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if ((args.Length() == 1 && args[0]->IsNull()))
         {
             ScriptSpriteDrawHelper* helper = new ScriptSpriteDrawHelper();
@@ -918,7 +918,7 @@ namespace pdg
             {
                 std::ostringstream excpt_;
                 excpt_ << "SpriteDrawHelper must be created with a function argument (drawFunc)";
-                v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                 s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
             };
             return 0;
@@ -1444,7 +1444,7 @@ namespace pdg
                 {
                     std::ostringstream excpt_;
                     excpt_ << msg.str().c_str();
-                    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                    [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                     s_SavedError.Reset(isolate, v8::Exception::TypeError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
                 };
                 return false;
@@ -2564,7 +2564,7 @@ namespace pdg
 
     void RegisterEasingFunction(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(function easingFunc)" " - " "").ToLocalChecked() ); return; };
@@ -2609,7 +2609,7 @@ namespace pdg
 
     void FinishedScriptSetup(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         scriptSetupCompleted();
         args.GetReturnValue().SetUndefined();
     }

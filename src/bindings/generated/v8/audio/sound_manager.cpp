@@ -48,7 +48,7 @@ namespace pdg
 
     void SoundWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = new SoundWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -82,7 +82,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mEventEmitterScriptObj.Reset(isolate, obj); cppObj->mSoundScriptObj.Reset(isolate, obj); cppObj->addRef();
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -211,7 +211,7 @@ namespace pdg
 
     void SoundWrap::AddHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -277,7 +277,7 @@ namespace pdg
 
     void SoundWrap::RemoveHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -313,7 +313,7 @@ namespace pdg
 
     void SoundWrap::Clear(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -332,7 +332,7 @@ namespace pdg
 
     void SoundWrap::BlockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -361,7 +361,7 @@ namespace pdg
 
     void SoundWrap::UnblockEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -389,7 +389,7 @@ namespace pdg
 
     void SoundWrap::GetVolume(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -409,7 +409,7 @@ namespace pdg
 
     void SoundWrap::SetVolume(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -435,7 +435,7 @@ namespace pdg
 
     void SoundWrap::Play(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -479,7 +479,7 @@ namespace pdg
 
     void SoundWrap::Start(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -498,7 +498,7 @@ namespace pdg
 
     void SoundWrap::Stop(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -517,7 +517,7 @@ namespace pdg
 
     void SoundWrap::Pause(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -536,7 +536,7 @@ namespace pdg
 
     void SoundWrap::Resume(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -555,7 +555,7 @@ namespace pdg
 
     void SoundWrap::IsPaused(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -574,7 +574,7 @@ namespace pdg
 
     void SoundWrap::SetLooping(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -599,7 +599,7 @@ namespace pdg
 
     void SoundWrap::IsLooping(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -618,7 +618,7 @@ namespace pdg
 
     void SoundWrap::SetPitch(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -643,7 +643,7 @@ namespace pdg
 
     void SoundWrap::ChangePitch(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -687,7 +687,7 @@ namespace pdg
 
     void SoundWrap::SetOffsetX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -712,7 +712,7 @@ namespace pdg
 
     void SoundWrap::ChangeOffsetX(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -756,7 +756,7 @@ namespace pdg
 
     void SoundWrap::FadeOut(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -794,7 +794,7 @@ namespace pdg
 
     void SoundWrap::FadeIn(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -832,7 +832,7 @@ namespace pdg
 
     void SoundWrap::ChangeVolume(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -876,7 +876,7 @@ namespace pdg
 
     void SoundWrap::Skip(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -901,7 +901,7 @@ namespace pdg
 
     void SoundWrap::SkipTo(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
@@ -932,7 +932,7 @@ namespace pdg
         if (!cppPtr_ && !s_Sound_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Sound" " instance")));
             };
         }
@@ -950,7 +950,7 @@ namespace pdg
     Sound* New_Sound(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Sound_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
         if (args.Length() < 1)
         {
@@ -966,7 +966,7 @@ namespace pdg
             {
                 std::ostringstream excpt_;
                 excpt_ << "argument 1 must be a string (filename)";
-                v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                 s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
             };
             return 0;
@@ -982,7 +982,7 @@ namespace pdg
                 {
                     std::ostringstream excpt_;
                     excpt_ << "could not create Sound from file ["<<filename<<"]";
-                    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+                    [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                     s_SavedError.Reset(isolate, v8::Exception::Error( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
                 };
                 return 0;

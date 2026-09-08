@@ -46,7 +46,7 @@ namespace pdg
 
     void MemBlockWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         MemBlockWrap* objWrapper = new MemBlockWrap(args);
         objWrapper->Wrap(args.This());
         MemBlock* cppObj = objWrapper->getCppObject();
@@ -85,7 +85,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mMemBlockScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }
@@ -135,7 +135,7 @@ namespace pdg
 
     void MemBlockWrap::GetData(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(args.This());
         MemBlock* self = dynamic_cast<MemBlock*>(objWrapper->cppPtr_);
 
@@ -154,7 +154,7 @@ namespace pdg
 
     void MemBlockWrap::GetDataSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(args.This());
         MemBlock* self = dynamic_cast<MemBlock*>(objWrapper->cppPtr_);
 
@@ -172,7 +172,7 @@ namespace pdg
 
     void MemBlockWrap::GetByte(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(args.This());
         MemBlock* self = dynamic_cast<MemBlock*>(objWrapper->cppPtr_);
 
@@ -196,7 +196,7 @@ namespace pdg
 
     void MemBlockWrap::GetBytes(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(args.This());
         MemBlock* self = dynamic_cast<MemBlock*>(objWrapper->cppPtr_);
 
@@ -233,7 +233,7 @@ namespace pdg
         if (!cppPtr_ && !s_MemBlock_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "MemBlock" " instance")));
             };
         }
@@ -251,7 +251,7 @@ namespace pdg
     MemBlock* New_MemBlock(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_MemBlock_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         return new MemBlock(0, 0, false);
     }
 

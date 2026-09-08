@@ -46,7 +46,7 @@ namespace pdg
 
     void ISerializableWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ISerializableWrap* objWrapper = new ISerializableWrap(args);
         objWrapper->Wrap(args.This());
         ISerializable* cppObj = objWrapper->getCppObject();
@@ -85,7 +85,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         ISerializableWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ISerializableWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mISerializableScriptObj.Reset(isolate, obj);
             objWrapper->Ref();
         }

@@ -46,7 +46,7 @@ namespace pdg
 
     void ElementRefWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = new ElementRefWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -80,7 +80,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mElementRefScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -161,7 +161,7 @@ namespace pdg
         if (!cppPtr_ && !s_ElementRef_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "ElementRef" " instance")));
             };
         }
@@ -179,7 +179,7 @@ namespace pdg
     ElementRef* New_ElementRef(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_ElementRef_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
 
         return nullptr;
@@ -189,7 +189,7 @@ namespace pdg
 
     void ElementRefWrap::Type(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -208,7 +208,7 @@ namespace pdg
 
     void ElementRefWrap::GetControlPoints(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -246,7 +246,7 @@ namespace pdg
 
     void ElementRefWrap::GetControlPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -286,7 +286,7 @@ namespace pdg
 
     void ElementRefWrap::ChangeControlPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -331,7 +331,7 @@ namespace pdg
 
     void ElementRefWrap::GetAttributes(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -360,7 +360,7 @@ namespace pdg
 
     void ElementRefWrap::SetAttributes(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -380,7 +380,7 @@ namespace pdg
 
     void ElementRefWrap::MoveForward(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -399,7 +399,7 @@ namespace pdg
 
     void ElementRefWrap::MoveBackward(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -418,7 +418,7 @@ namespace pdg
 
     void ElementRefWrap::MoveToFront(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -437,7 +437,7 @@ namespace pdg
 
     void ElementRefWrap::MoveToBack(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -456,7 +456,7 @@ namespace pdg
 
     void ElementRefWrap::Remove(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
         ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
 
@@ -477,7 +477,7 @@ namespace pdg
 
     void DrawingWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = new DrawingWrap(args);
         objWrapper->Wrap(args.This());
         ;
@@ -511,7 +511,7 @@ namespace pdg
         v8::Persistent<v8::Object> obj(isolate, instance);
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(instance);
         {
-            v8::Local<v8::Object> obj = instance;
+            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
             cppObj->mDrawingScriptObj.Reset(isolate, obj);
         }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
@@ -618,7 +618,7 @@ namespace pdg
         if (!cppPtr_ && !s_Drawing_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Drawing" " instance")));
             };
         }
@@ -636,7 +636,7 @@ namespace pdg
     Drawing* New_Drawing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_Drawing_InNewFromCpp) return nullptr;
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
 
         return nullptr;
@@ -646,7 +646,7 @@ namespace pdg
 
     void CreateDrawing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Drawing]" " function" "()" " - " "").ToLocalChecked() ); return; };
@@ -664,7 +664,7 @@ namespace pdg
 
     void DrawingWrap::AddLine(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -705,7 +705,7 @@ namespace pdg
 
     void DrawingWrap::AddSpline(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -735,7 +735,7 @@ namespace pdg
 
     void DrawingWrap::AddRect(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -770,7 +770,7 @@ namespace pdg
 
     void DrawingWrap::AddQuad(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -805,7 +805,7 @@ namespace pdg
 
     void DrawingWrap::AddPolygon(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -835,7 +835,7 @@ namespace pdg
 
     void DrawingWrap::AddEllipse(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -882,7 +882,7 @@ namespace pdg
 
     void DrawingWrap::AddArc(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -941,7 +941,7 @@ namespace pdg
 
     void DrawingWrap::AddImage(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -977,7 +977,7 @@ namespace pdg
 
     void DrawingWrap::AddImageStrip(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -1013,7 +1013,7 @@ namespace pdg
 
     void DrawingWrap::AddDrawing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -1049,7 +1049,7 @@ namespace pdg
 
     void DrawingWrap::GetElementCount(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -1068,7 +1068,7 @@ namespace pdg
 
     void DrawingWrap::GetElement(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -1116,7 +1116,7 @@ namespace pdg
 
     void DrawingWrap::GetElementHitBy(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -1150,7 +1150,7 @@ namespace pdg
 
     void DrawingWrap::GetBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -1169,7 +1169,7 @@ namespace pdg
 
     void DrawingWrap::CenterPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -1188,7 +1188,7 @@ namespace pdg
 
     void DrawingWrap::Empty(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 
@@ -1209,7 +1209,7 @@ namespace pdg
 
     void DrawingWrap::Draw(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         DrawingWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DrawingWrap>(args.This());
         Drawing* self = dynamic_cast<Drawing*>(objWrapper->cppPtr_);
 

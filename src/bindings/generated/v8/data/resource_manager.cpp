@@ -46,7 +46,7 @@ namespace pdg
 
     void ResourceManagerWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
 
         if (args.IsConstructCall() && !s_ResourceManager_InNewFromCpp)
         {
@@ -104,7 +104,7 @@ namespace pdg
 
     ResourceManager* ResourceManagerWrap::getSingletonInstance()
     {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
+        [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::Object> val = GetScriptSingletonInstance(isolate)->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(val);
         return dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
@@ -179,7 +179,7 @@ namespace pdg
 
     void ResourceManagerWrap::GetLanguage(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -199,7 +199,7 @@ namespace pdg
 
     void ResourceManagerWrap::SetLanguage(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -226,7 +226,7 @@ namespace pdg
 
     void ResourceManagerWrap::OpenResourceFile(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -252,7 +252,7 @@ namespace pdg
 
     void ResourceManagerWrap::CloseResourceFile(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -277,7 +277,7 @@ namespace pdg
 
     void ResourceManagerWrap::GetString(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -309,7 +309,7 @@ namespace pdg
 
     void ResourceManagerWrap::GetResourceSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -335,7 +335,7 @@ namespace pdg
 
     void ResourceManagerWrap::GetResource(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -384,7 +384,7 @@ namespace pdg
 
     void ResourceManagerWrap::GetResourcePaths(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
-        v8::Isolate* isolate = args.GetIsolate();
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
@@ -407,7 +407,7 @@ namespace pdg
         if (!cppPtr_ && !s_ResourceManager_InNewFromCpp)
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "ResourceManager" " instance")));
             };
         }
@@ -431,7 +431,7 @@ namespace pdg
         else
         {
             {
-                v8::Isolate* isolate = args.GetIsolate();
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
                 isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Cannot construct " "ResourceManager" " directly - use get" "ResourceManager" "() instead")));
             };
             return nullptr;

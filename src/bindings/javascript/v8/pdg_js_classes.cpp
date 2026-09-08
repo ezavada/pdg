@@ -315,8 +315,8 @@ METHOD_IMPL(Serializer, SerializedSize)
 FUNCTION_IMPL(RegisterSerializableObject)
 	METHOD_SIGNATURE("", undefined, 2, (object obj, [number uint] uniqueId));
 	REQUIRE_ARG_COUNT(2);
-	REQUIRE_OBJECT_ARG(1, obj);
-	REQUIRE_UINT32_ARG(2, uniqueId);
+	REQUIRE_OBJECT_ARG(1, obj); (void)obj;
+	REQUIRE_UINT32_ARG(2, uniqueId); (void)uniqueId;
 	
 	// We need to keep a reference to the object, but we need to do it
 	// in a way that ensures that the JS engine knows it is still around
