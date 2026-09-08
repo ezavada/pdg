@@ -36,7 +36,12 @@ namespace pdg {
     // -----------------------------------------------------------------------------------
 
     Attributes::Attributes() 
-        : mLineColor(PDG_BLACK_COLOR)
+        :
+#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+          mAttributesScriptObj()
+        ,
+#endif
+          mLineColor(PDG_BLACK_COLOR)
         , mLineThickness(1.0f)
         , mLineOpacity(1.0f)
         , mLineStyle(lineStyle_Auto) // solid for lines, none for fills
@@ -66,14 +71,16 @@ namespace pdg {
         , mLightOffset(Offset(0, 0))
         , mAmbientLight(Color(0.5f, 0.5f, 0.5f, 1.0f))
         , mTexture(nullptr)
-#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-        , mAttributesScriptObj()  // Initialize the persistent object
-#endif
     {
     }
 
     Attributes::Attributes(const Attributes& other)
-        : mLineColor(other.mLineColor)
+        :
+#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+          mAttributesScriptObj()  // Do not copy the persistent script object.
+        ,
+#endif
+          mLineColor(other.mLineColor)
         , mLineThickness(other.mLineThickness)
         , mLineOpacity(other.mLineOpacity)
         , mLineStyle(other.mLineStyle)
@@ -102,9 +109,6 @@ namespace pdg {
         , mPolarOffset(other.mPolarOffset)
         , mLightOffset(other.mLightOffset)
         , mTexture(other.mTexture)
-#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-        , mAttributesScriptObj()  // Initialize the persistent object (don't copy from other)
-#endif
     {
     }
 

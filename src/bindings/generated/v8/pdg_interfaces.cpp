@@ -152,7 +152,7 @@ namespace pdg
         {
             v8::Local<v8::String> keyCode_String = args[0]->ToString(isolate->GetCurrentContext()).ToLocalChecked();
             uint16 utf16Char = 0;
-            keyCode_String->Write(isolate, &utf16Char, 0, 1, v8::String::NO_NULL_TERMINATION);
+            keyCode_String->WriteV2(isolate, 0, 1, &utf16Char);
             { args.GetReturnValue().Set( v8::Boolean::New(isolate, OS::isKeyDown(utf16Char)) ); return; };
         }
         else
@@ -2492,7 +2492,7 @@ namespace pdg
         }
 
         uint16_t * twobytebuf = new uint16_t[buflen];
-        str->Write(isolate, twobytebuf, 0, buflen);
+        str->WriteV2(isolate, 0, static_cast<uint32_t>(buflen), twobytebuf);
 
         char* buf = (char*)std::malloc(buflen);
         for (size_t i = 0; i < buflen; i++)

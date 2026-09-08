@@ -407,7 +407,7 @@ namespace pdg {
 		float s, u2;
 		float tension, continuity, bias, a, b, c, d;
 		float h1, h2, m1, m2;
-		float u3, t, t2, t3;
+		float t;
 		
 		// Use localU for evaluation within the segment
 		u = localU;
@@ -456,11 +456,7 @@ namespace pdg {
 				
 			case SPLINE_CUBIC_BEZIER:
 				// Second derivative of Cubic Bezier spline
-				u2 = u * u;
-				u3 = u * u2;
 				t = 1.0f - u;
-				t2 = t * t;
-				t3 = t * t2;
 				
 				X = mPoints[mCurrentSegmentIndices[0]].x * (6*t);
 				X += mPoints[mCurrentSegmentIndices[1]].x * (6*t - 12*u);

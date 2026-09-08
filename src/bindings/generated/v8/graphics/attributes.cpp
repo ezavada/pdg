@@ -717,7 +717,7 @@ namespace pdg
             for (int j = 0; j < 3; j++)
             {
                 int index = i * 3 + j;
-                result->Set(context, index, v8::Number::New(isolate, matrix[i][j]));
+                (void)result->Set(context, index, v8::Number::New(isolate, matrix[i][j]));
             }
         }
 

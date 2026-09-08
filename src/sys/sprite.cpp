@@ -1573,7 +1573,7 @@ Offset	Sprite::getFrameCenterOffset(Image* image, int frameNum) {
 			}
 		}
 	}
-	return Offset(offsetY, offsetY);
+	return Offset(offsetX, offsetY);
 }
 
 
@@ -2190,11 +2190,6 @@ Sprite::doAnimate(ms_delta msElapsed, bool layerDoCollisions) {
   		// Invalidate collision bounds each frame since animation may change them
   		mColliderBoundsValid = false;
   		mSpriterCollisionBoxCacheValid = false;
-
-		  int i = getSpriterCollisionBoxCount();
-		  for (int j = 0; j < i; j++) {
-			  const char* name = getSpriterCollisionBoxName(j);
-		  }
 
   	}
   #endif
@@ -2947,18 +2942,6 @@ Sprite::recalcOnscreenAndInBounds() {
 Sprite::Sprite() : Sprite(nullptr, nullptr) {
 }
 Sprite::Sprite(SpriterEngine::EntityInstance* entityInstance, SpriterEngine::SpriterModel* spriterModel) : 
-    mEntityInstance(entityInstance),
-	mSpriterModel(spriterModel),
-	mEntityScaleX(1.0f),
-	mEntityScaleY(1.0f),
-	mSpriterEventsEnabled(false),
-	mIsBlending(false),
-	mBlendTime(0.0f),
-	mBlendProgress(0.0f),
-	mIsAnimationPaused(false),
-	mSpriterCollisionBoxCacheValid(false),
-	mIsFirstContact(false),
-	mColliderBoundsValid(false),
 #else
 Sprite::Sprite() : 
 #endif // PDG_SPRITER_SUPPORT
@@ -2983,6 +2966,20 @@ Sprite::Sprite() :
 	mSpriteAnimatingBackwardsNow(false),
 	mDoCollisions(false),
 	mMouseDetectMode(collide_BoundingBox),
+  #ifdef PDG_SPRITER_SUPPORT
+    mEntityInstance(entityInstance),
+	mSpriterModel(spriterModel),
+	mEntityScaleX(1.0f),
+	mEntityScaleY(1.0f),
+	mSpriterEventsEnabled(false),
+	mIsBlending(false),
+	mBlendTime(0.0f),
+	mBlendProgress(0.0f),
+	mIsAnimationPaused(false),
+	mSpriterCollisionBoxCacheValid(false),
+	mIsFirstContact(false),
+	mColliderBoundsValid(false),
+  #endif
   #ifndef PDG_NO_GUI
 	mPort(0),
   #endif

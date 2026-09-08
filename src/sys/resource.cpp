@@ -299,7 +299,6 @@ ResourceManager::openResourceFile(const char* filename) {
     
     // First check if the path is a directory using findFirst
     FindDataT findData;
-    bool isDirectory = false;
     bool found = OS::findFirst(fip->fullpath.c_str(), findData);
 	OS::findClose(findData);
 	if (!found) {
@@ -892,4 +891,3 @@ void ResourceManager::clearImageCache() {
 
 
 } // end namespace pdg
-

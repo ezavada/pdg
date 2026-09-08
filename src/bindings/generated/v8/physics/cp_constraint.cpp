@@ -1756,6 +1756,9 @@ namespace pdg
         else
         {
             args.GetReturnValue().SetUndefined();
+#ifndef PDG_USING_JAVASCRIPT_CORE
+            return;
+#endif
         };
         { args.GetReturnValue().Set( v8::Number::New(isolate, theSpringStiffness) ); return; };
     }
@@ -1835,6 +1838,9 @@ namespace pdg
         else
         {
             args.GetReturnValue().SetUndefined();
+#ifndef PDG_USING_JAVASCRIPT_CORE
+            return;
+#endif
         };
         { args.GetReturnValue().Set( v8::Number::New(isolate, theSpringDamping) ); return; };
     }

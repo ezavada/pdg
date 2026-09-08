@@ -214,6 +214,9 @@ CUSTOM_GETTER_IMPL(cpConstraint, SpringStiffness, NUMBER, 0, , ,
 		theSpringStiffness = cpDampedRotarySpringGetStiffness(self);
 	} else { CR
 		RETURN_UNDEFINED; CR
+		%#ifndef PDG_USING_JAVASCRIPT_CORE CR
+		return; CR
+		%#endif CR
 	}, () )
 CUSTOM_SETTER_IMPL(cpConstraint, SpringStiffness, NUMBER, 1, , ,
 	IF_CONSTRAINT_TYPE(SpringJoint) { CR
@@ -234,6 +237,9 @@ CUSTOM_GETTER_IMPL(cpConstraint, SpringDamping, NUMBER, 0, , ,
 		theSpringDamping = cpDampedRotarySpringGetDamping(self);
 	} else { CR
 		RETURN_UNDEFINED; CR
+		%#ifndef PDG_USING_JAVASCRIPT_CORE CR
+		return; CR
+		%#endif CR
 	}, () )
 CUSTOM_SETTER_IMPL(cpConstraint, SpringDamping, NUMBER, 1, , ,
 	IF_CONSTRAINT_TYPE(SpringJoint) { CR
@@ -252,4 +258,4 @@ CPP_UNMANAGED_CONSTRUCTOR_IMPL(cpConstraint, cppPtr_ = nullptr; CR )
  	return 0;
 	END
 
-} // end pdg namespace 
+} // end pdg namespace

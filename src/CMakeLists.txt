@@ -112,11 +112,14 @@ SET (PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES
 	${PDG_SOURCE_DIR}/src/bindings/javascript/v8
 	${PDG_SOURCE_DIR}/src/bindings/generated/v8
 	${PDG_SOURCE_DIR}/src/bindings/node
+)
+
+SET (PDG_NODE_INCLUDE_DIRECTORIES
 	${PDG_SOURCE_DIR}/deps/node/src
 	${PDG_SOURCE_DIR}/deps/node/deps/cares/include
 	${PDG_SOURCE_DIR}/deps/node/deps/uv/include
 	${PDG_SOURCE_DIR}/deps/node/deps/v8
-${PDG_SOURCE_DIR}/deps/node/deps/v8/include
+	${PDG_SOURCE_DIR}/deps/node/deps/v8/include
 )
 
 SET (PDG_JAVASCRIPT_BINDINGS_LINK_DIRECTORIES 
@@ -142,7 +145,7 @@ SET (PNG_SOURCES
 
 IF( USE_SPRITER )
 	# Add SpriterPlusPlus include directories
-	INCLUDE_DIRECTORIES(
+	INCLUDE_DIRECTORIES(SYSTEM
 		${PDG_SOURCE_DIR}/deps/SpriterPlusPlus
 		${PDG_SOURCE_DIR}/deps/SpriterPlusPlus/tinyxml2
 		${PDG_SOURCE_DIR}/deps/SpriterPlusPlus/pugixml
@@ -164,6 +167,18 @@ IF( USE_SPRITER )
 		${PDG_SOURCE_DIR}/deps/SpriterPlusPlus/example/override/tinyxmlspriterfileelementwrapper.cpp
 		${PDG_SOURCE_DIR}/deps/SpriterPlusPlus/example/override/tinyxmlspriterfileattributewrapper.cpp
 	)
+
+	# Vendored SpriterPlusPlus is warning-cleaned at the build boundary so its
+	# source can remain an unmodified upstream snapshot.
+	IF(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+		SET_SOURCE_FILES_PROPERTIES(${SPRITERPLUSPLUS_SOURCES} PROPERTIES
+			COMPILE_OPTIONS "-Wno-deprecated-declarations;-Wno-nonnull;-Wno-overloaded-virtual;-Wno-reorder-ctor"
+		)
+	ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+		SET_SOURCE_FILES_PROPERTIES(${SPRITERPLUSPLUS_SOURCES} PROPERTIES
+			COMPILE_OPTIONS "-Wno-deprecated-declarations;-Wno-nonnull;-Wno-overloaded-virtual;-Wno-reorder"
+		)
+	ENDIF()
 	
 	SET( SPRITER_FILES 
 		${SPRITERPLUSPLUS_SOURCES}
@@ -460,12 +475,9 @@ target_compile_definitions(minizip_static PRIVATE
     -DNOCRYPT
 )
 
-# Link zlib to minizip (on Windows use Node's built zlib by path; no separate zlib target)
-IF(WIN32)
-	target_link_libraries(minizip_static PRIVATE ${PDG_NODE_RELEASE_DIR}/lib/zlib.lib)
-ELSE()
-	target_link_libraries(minizip_static PRIVATE ${PDG_NODE_RELEASE_DIR}/libzlib.a)
-ENDIF()
+# minizip is a static archive and does not need to link zlib itself. Every
+# consumer below already links Node's zlib, avoiding a duplicate archive on
+# the final link line.
 
 # Set runtime library to static for minizip_static on Windows
 IF( WIN32 )
@@ -517,11 +529,14 @@ target_compile_definitions(pdg PRIVATE
 # Set include directories for the target (modern CMake approach)
 TARGET_INCLUDE_DIRECTORIES(pdg PRIVATE
 	${PDG_INCLUDE_DIRECTORIES}
+	${OPENGL_INCLUDE_DIR}
+	${PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES}
+)
+TARGET_INCLUDE_DIRECTORIES(pdg SYSTEM PRIVATE
 	${PDG_SOURCE_DIR}/deps/node/deps/zlib
 	${PDG_SOURCE_DIR}/deps/minizip
 	${PDG_SOURCE_DIR}/deps
-	${OPENGL_INCLUDE_DIR}
-	${PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES}
+	${PDG_NODE_INCLUDE_DIRECTORIES}
 )
 
 # Add platform-specific include directories
@@ -600,8 +615,8 @@ IF(MSVC)
 	# MSVC: Maximum optimization, inline expansion, favor speed
 	TARGET_COMPILE_OPTIONS(pdg-lib PRIVATE /O2 /Oi /Ot /GL /Zi- /DEBUG:NONE)
 ELSE()
-	# GCC/Clang: Maximum optimization, no debug symbols, aggressive optimizations
-	TARGET_COMPILE_OPTIONS(pdg-lib PRIVATE -O3 -g0 -ffast-math -funroll-loops)
+	# Keep IEEE NaN/infinity semantics: PDG and Chipmunk use both intentionally.
+	TARGET_COMPILE_OPTIONS(pdg-lib PRIVATE -O3 -g0 -funroll-loops)
 ENDIF()
 
 # Set include directories for pdg-lib
@@ -1161,7 +1176,7 @@ IF(MSVC)
 	TARGET_LINK_OPTIONS(bunnymark PRIVATE /LTCG /DEBUG:NONE)  # Link-time code generation
 ELSE()
 	# GCC/Clang: Maximum optimization, no debug symbols, aggressive optimizations
-	TARGET_COMPILE_OPTIONS(bunnymark PRIVATE -O3 -g0 -ffast-math -funroll-loops)
+	TARGET_COMPILE_OPTIONS(bunnymark PRIVATE -O3 -g0 -funroll-loops)
 ENDIF()
 
 # Set include directories for bunnymark
@@ -1261,7 +1276,7 @@ IF(MSVC)
 	TARGET_LINK_OPTIONS(pdgmark PRIVATE /LTCG /DEBUG:NONE)  # Link-time code generation
 ELSE()
 	# GCC/Clang: Maximum optimization, no debug symbols, aggressive optimizations
-	TARGET_COMPILE_OPTIONS(pdgmark PRIVATE -O3 -g0 -ffast-math -funroll-loops)
+	TARGET_COMPILE_OPTIONS(pdgmark PRIVATE -O3 -g0 -funroll-loops)
 ENDIF()
 
 # Set include directories for pdgmark
