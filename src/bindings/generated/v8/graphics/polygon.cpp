@@ -267,6 +267,23 @@ namespace pdg
         {
 
             return new pdg::Polygon();
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        }
+        else if (args.Length() == 1 && JSValueIsArray(ctx, args[0]))
+        {
+
+            std::vector<Point> points;
+            JSObjectRef array = JSValueToObject(ctx, args[0], exception);
+            JSStringRef lengthName = JSStringCreateWithUTF8CString("length");
+            JSValueRef lengthValue = JSObjectGetProperty(ctx, array, lengthName, exception);
+            JSStringRelease(lengthName);
+            unsigned length = (unsigned)JSValueToNumber(ctx, lengthValue, exception);
+            for (unsigned i = 0; i < length; i++)
+            {
+                points.push_back(v8_ValueToPoint(isolate, JSObjectGetPropertyAtIndex(ctx, array, i, exception)));
+            }
+            return new pdg::Polygon(points);
+#else
         }
         else if (args.Length() == 1 && args[0]->IsArray())
         {
@@ -279,6 +296,7 @@ namespace pdg
                 points.push_back(v8_ValueToPoint(isolate, array->Get(context, i).ToLocalChecked()));
             }
             return new pdg::Polygon(points);
+#endif
         }
         else
         {
@@ -288,6 +306,13 @@ namespace pdg
             {
                 if (!args[i]->IsObject())
                 {
+#ifdef PDG_USING_JAVASCRIPT_CORE
+                    JSStringRef message = JSStringCreateWithUTF8CString("Polygon constructor arguments must be Point objects");
+                    JSValueRef errorArgument = JSValueMakeString(ctx, message);
+                    *exception = JSObjectMakeError(ctx, 1, &errorArgument, nullptr);
+                    JSStringRelease(message);
+                    return nullptr;
+#else
                     std::ostringstream excpt_;
                     excpt_ << "Polygon constructor arguments must be Point objects";
                     isolate->ThrowException( v8::Exception::TypeError( ([&]()
@@ -297,6 +322,7 @@ namespace pdg
                             v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
                     }())));
                     return nullptr;
+#endif
                 }
                 Point point = v8_ValueToPoint(isolate, args[i]);
                 points.push_back(point);
@@ -345,21 +371,7 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, spline);
-        SplineWrap* splineWrapper = static_cast<SplineWrap*>(spline->GetAlignedPointerFromInternalField(0));
-        Spline* splinePtr = splineWrapper->getCppObject();
-        if (!splinePtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addSpline must be called with a valid Spline object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
+        REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
         float uStep = 0.01f;
         if (args.Length() >= 2 && !args[1]->IsUndefined() && !args[1]->IsNull())
         {
@@ -371,7 +383,7 @@ namespace pdg
             double uStepArg = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
             uStep = uStepArg;
         }
-        self->addSpline(splinePtr, uStep);
+        self->addSpline(spline, uStep);
         args.GetReturnValue().SetUndefined();
     }
 
@@ -664,22 +676,8 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, other);
-        PolygonWrap* polygonWrapper = static_cast<PolygonWrap*>(other->GetAlignedPointerFromInternalField(0));
-        Polygon* otherPolygonPtr = polygonWrapper->getCppObject();
-        if (!otherPolygonPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "equals must be called with a valid Polygon object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        { args.GetReturnValue().Set( v8::Boolean::New(isolate, *self == *otherPolygonPtr) ); return; };
+        REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+        { args.GetReturnValue().Set( v8::Boolean::New(isolate, *self == *other) ); return; };
     }
 
     void PolygonWrap::Move(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1090,22 +1088,8 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, other);
-        PolygonWrap* polygonWrapper = static_cast<PolygonWrap*>(other->GetAlignedPointerFromInternalField(0));
-        Polygon* otherPolygonPtr = polygonWrapper->getCppObject();
-        if (!otherPolygonPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "intersection must be called with a valid Polygon object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        Polygon* result = new Polygon(self->intersection(*otherPolygonPtr));
+        REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+        Polygon* result = new Polygon(self->intersection(*other));
         if (!result) { args.GetReturnValue().SetNull(); return; };
         { args.GetReturnValue().Set( PolygonWrap::NewFromCpp(isolate, result) ); return; };
         ;
@@ -1126,22 +1110,8 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, other);
-        PolygonWrap* polygonWrapper = static_cast<PolygonWrap*>(other->GetAlignedPointerFromInternalField(0));
-        Polygon* otherPolygonPtr = polygonWrapper->getCppObject();
-        if (!otherPolygonPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "unionWith must be called with a valid Polygon object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        Polygon* result = new Polygon(self->unionWith(*otherPolygonPtr));
+        REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+        Polygon* result = new Polygon(self->unionWith(*other));
         if (!result) { args.GetReturnValue().SetNull(); return; };
         { args.GetReturnValue().Set( PolygonWrap::NewFromCpp(isolate, result) ); return; };
         ;

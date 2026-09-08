@@ -274,6 +274,20 @@
         #endif
     
 
+    #elif defined(__aarch64__)
+
+        #define PLATFORM_ARM64        1
+        #define PLATFORM_LITTLE_ENDIAN 1
+        #define PLATFORM_64_BIT       1
+        #if defined(__linux__)
+            #define PLATFORM_UNIX     1
+            #define PLATFORM_POSIX    1
+            #define PLATFORM_LINUX    1
+            #define PLATFORM_STR "arm64-generic-linux"
+        #else
+            #error unrecognized gcc compiler
+        #endif
+
     #elif defined(__x86_64__)    
 
         #define PLATFORM_X86           1
@@ -630,4 +644,3 @@ const char* demangleSymbol(const char* mangled_name);
 #endif
 
 #endif /* PLATFORM_H_INCLUDED */
-

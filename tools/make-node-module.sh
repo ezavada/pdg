@@ -41,11 +41,20 @@ if ! ensure_repo_submodule "$PDG_ROOT" "deps/node" "deps/node/src/node_version.h
 fi
 
 VERSION="$(tr -d '\r\n' < "$PDG_ROOT/VERSION")"
-TARGET="$PDG_ROOT/build/node-pdg/pdg-$VERSION.tgz"
-INSTALL_DIR="$PDG_ROOT/build/node-pdg-install"
-CACHE_DIR="$PDG_ROOT/build/npm-cache"
+PDG_PLATFORM="${PDG_PLATFORM:-$(uname -s | tr '[:upper:]' '[:lower:]')}"
+PDG_ARCH="${PDG_ARCH:-$(uname -m)}"
+case "$PDG_ARCH" in
+	x86_64|amd64) PDG_ARCH="x86_64" ;;
+	arm64|aarch64) PDG_ARCH="arm64" ;;
+esac
+NODE_MODULE_BUILD_ROOT="$PDG_ROOT/build/$PDG_PLATFORM/$PDG_ARCH/node-module"
+TARGET="$NODE_MODULE_BUILD_ROOT/package/pdg-$VERSION.tgz"
+INSTALL_DIR="$NODE_MODULE_BUILD_ROOT/install"
+CACHE_DIR="$NODE_MODULE_BUILD_ROOT/npm-cache"
 
-if [ -n "$PYTHON" ]; then
+if [ -n "$PDG_NODE_PYTHON" ]; then
+	PYTHON_BIN="$PDG_NODE_PYTHON"
+elif [ -n "$PYTHON" ]; then
 	PYTHON_BIN="$PYTHON"
 elif command -v python3 >/dev/null 2>&1; then
 	PYTHON_BIN="$(command -v python3)"
@@ -66,7 +75,7 @@ initialize_install_workspace() {
 EOF
 }
 
-$PDG_ROOT/tools/copy-node-module-source.sh $PDG_ROOT/build/node-pdg
+$PDG_ROOT/tools/copy-node-module-source.sh "$NODE_MODULE_BUILD_ROOT/package"
 
 # npm puts out too many warnings that have nothing to do with us
 LOGLEVEL=`$PDG_NPM config get loglevel`
@@ -82,7 +91,7 @@ if [ -n "$PYTHON_BIN" ]; then
 fi
 
 echo -e "${HEAD}Packing the module${RESET}"
-cd $PDG_ROOT/build/node-pdg
+cd "$NODE_MODULE_BUILD_ROOT/package"
 $PDG_NPM pack
 cd $PDG_ROOT
 rm -rf "$PDG_ROOT/node_modules/pdg"

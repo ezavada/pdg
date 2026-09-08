@@ -3785,12 +3785,20 @@ namespace pdg
         };
         std::vector<std::string> maps = self->getAppliedCharacterMaps();
 
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        JSObjectRef arr = JSObjectMakeArray(ctx, 0, nullptr, exception);
+        for (size_t i = 0; i < maps.size(); i++)
+        {
+            JSObjectSetPropertyAtIndex(ctx, arr, (unsigned)i, v8::String::NewFromUtf8(isolate, maps[i].c_str()).ToLocalChecked(), exception);
+        }
+#else
         v8::Local<v8::Array> arr = v8::Array::New(isolate);
         for (size_t i = 0; i < maps.size(); i++)
         {
             arr->Set(isolate->GetCurrentContext(), v8::Integer::New(isolate, i),
                 v8::String::NewFromUtf8(isolate, maps[i].c_str()).ToLocalChecked()).ToChecked();
         }
+#endif
         { args.GetReturnValue().Set( arr ); return; };
     }
 
@@ -4238,11 +4246,11 @@ namespace pdg
         REQUIRE_CPP_OBJECT_OR_SUBCLASS_OR_NULL_ARG(1, helper, ISpriteDrawHelper);
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
-            std::cerr << __func__<<":"<< 494 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            std::cerr << __func__<<":"<< 501 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
         }
         else if (!args[0]->IsObject())
         {
-            std::cerr << __func__<<":"<< 494 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 501 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -4260,17 +4268,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 494 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 501 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 494 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 501 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
                 }
             }
             else
             {
                 ISpriteDrawHelper* obj = dynamic_cast<ISpriteDrawHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 494 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 501 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
             }
         } )
             self->setDrawHelper(helper);
@@ -4296,11 +4304,11 @@ namespace pdg
         REQUIRE_CPP_OBJECT_OR_SUBCLASS_OR_NULL_ARG(1, helper, ISpriteDrawHelper);
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
-            std::cerr << __func__<<":"<< 503 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            std::cerr << __func__<<":"<< 510 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
         }
         else if (!args[0]->IsObject())
         {
-            std::cerr << __func__<<":"<< 503 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 510 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -4318,17 +4326,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 503 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 510 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 503 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 510 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
                 }
             }
             else
             {
                 ISpriteDrawHelper* obj = dynamic_cast<ISpriteDrawHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 503 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 510 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
             }
         } )
             self->setPostDrawHelper(helper);
@@ -4867,11 +4875,11 @@ namespace pdg
         self->mSpriteScriptObj.Reset(isolate, args.This());
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
-            std::cerr << __func__<<":"<< 665 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            std::cerr << __func__<<":"<< 672 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
         }
         else if (!args[0]->IsObject())
         {
-            std::cerr << __func__<<":"<< 665 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 672 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -4889,17 +4897,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 665 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteCollideHelper""\n";
+                    std::cout << __func__<<":"<< 672 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteCollideHelper""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 665 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteCollideHelper""\n";
+                    std::cout << __func__<<":"<< 672 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteCollideHelper""\n";
                 }
             }
             else
             {
                 ISpriteCollideHelper* obj = dynamic_cast<ISpriteCollideHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 665 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteCollideHelper"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 672 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteCollideHelper"" ("<<(void*)obj<<")\n";
             }
         } );
         if (args.Length() != 1)

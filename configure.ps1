@@ -11,6 +11,15 @@ param(
     [switch]$Headless
 )
 
+$pdgArch = switch ($env:PROCESSOR_ARCHITECTURE) {
+    "ARM64" { "arm64" }
+    "AMD64" { "x86_64" }
+    default { $env:PROCESSOR_ARCHITECTURE.ToLowerInvariant() }
+}
+$pdgBuildRoot = "build\win32\$pdgArch"
+$pdgMainBuildDir = "$pdgBuildRoot\pdg"
+$pdgNodeOutDir = Join-Path $PSScriptRoot "$pdgBuildRoot\node\out"
+
 # Function to display help
 function Show-Help {
     Write-Host "PDG Dependency Installation Script (Visual Studio + ClangCL)" -ForegroundColor Cyan
@@ -881,7 +890,7 @@ function Build-BcppIfNeeded {
         Write-Warning-Status "tools/bcpp.tar.zip not found; skipping bcpp build."
         return $false
     }
-    $extractRoot = Join-Path $RepoRoot "build\win32\bcpp-src"
+    $extractRoot = Join-Path $RepoRoot "$pdgBuildRoot\bcpp-src"
     $innerTar = Join-Path $extractRoot "bcpp.tar"
     $srcDir = Join-Path $extractRoot "bcpp-20120318\code"
     if (-not (Test-Path $srcDir)) {
@@ -905,7 +914,7 @@ function Build-BcppIfNeeded {
         Write-Warning-Status "tools/bcpp/CMakeLists.txt not found; skipping bcpp build."
         return $false
     }
-    $bcppBuildDir = Join-Path $RepoRoot "build\win32\bcpp"
+    $bcppBuildDir = Join-Path $RepoRoot "$pdgBuildRoot\bcpp"
     $bcppExe = Join-Path $bcppBuildDir "Release\bcpp.exe"
     if (Test-Path $bcppExe) {
         Write-Status "bcpp already present: $bcppExe" "Gray"
@@ -1033,7 +1042,7 @@ if ($EnableInterfaceTools -and $SkipInterfaceTools) {
 $pdgCmakeInterfaceArgs = @("-DCAN_BUILD_INTERFACES=OFF")
 if ($shouldBuildInterfaceTools) {
     if (Build-BcppIfNeeded -RepoRoot $PSScriptRoot -VsGenerator "Visual Studio 17 2022") {
-        $bcppExePath = Join-Path $PSScriptRoot "build\win32\bcpp\Release\bcpp.exe"
+        $bcppExePath = Join-Path $PSScriptRoot "$pdgBuildRoot\bcpp\Release\bcpp.exe"
         $pdgCmakeInterfaceArgs = @("-DCAN_BUILD_INTERFACES=ON", "-DBCPP_EXECUTABLE=$bcppExePath")
     }
     else {
@@ -1041,7 +1050,7 @@ if ($shouldBuildInterfaceTools) {
     }
 }
 
-$pdgCmakeArgs = $pdgCmakeInterfaceArgs + @("-DCMAKE_CXX_STANDARD=20")
+$pdgCmakeArgs = $pdgCmakeInterfaceArgs + @("-DCMAKE_CXX_STANDARD=20", "-DPDG_NODE_OUT_DIR=$pdgNodeOutDir")
 if ($Headless) {
     Write-Status "Headless mode enabled; configuring PDG with PDG_HEADLESS=ON." "Cyan"
     $pdgCmakeArgs += "-DPDG_HEADLESS=ON"
@@ -1055,7 +1064,7 @@ try {
         foreach ($vsGen in $vsGenerators) {
             try {
                 Write-Status "Trying Visual Studio generator: $vsGen" "Cyan"
-            Invoke-CMakeConfigure -SourcePath ".." -BuildPath "msvc" -Generator $vsGen -Arguments $pdgCmakeArgs
+            Invoke-CMakeConfigure -SourcePath $PSScriptRoot -BuildPath $pdgMainBuildDir -Generator $vsGen -Arguments $pdgCmakeArgs
             Write-Success-Status "Successfully configured with Visual Studio generator"
                 $configured = $true
                 break
@@ -1086,7 +1095,7 @@ else {
     Write-Status "Configuring GLFW Library..." "Yellow"
     try {
             $vsGen = "Visual Studio 17 2022"
-        Invoke-CMakeConfigure -SourcePath "..\..\..\deps\glfw" -BuildPath "build\win32\glfw" -Generator $vsGen -Arguments @("-DGLFW_BUILD_EXAMPLES=OFF", "-DGLFW_BUILD_TESTS=OFF")
+        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\glfw") -BuildPath "$pdgBuildRoot\glfw" -Generator $vsGen -Arguments @("-DGLFW_BUILD_EXAMPLES=OFF", "-DGLFW_BUILD_TESTS=OFF")
     }
     catch {
         Write-Error-Status "GLFW configuration failed: $($_)"
@@ -1098,7 +1107,7 @@ else {
 Write-Status "Configuring Chipmunk Library..." "Yellow"
 try {
         $vsGen = "Visual Studio 17 2022"
-    Invoke-CMakeConfigure -SourcePath "..\..\..\deps\chipmunk" -BuildPath "build\win32\chipmunk" -Generator $vsGen -Arguments @("-DBUILD_DEMOS=OFF", "-DBUILD_SHARED=OFF")
+    Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\chipmunk") -BuildPath "$pdgBuildRoot\chipmunk" -Generator $vsGen -Arguments @("-DBUILD_DEMOS=OFF", "-DBUILD_SHARED=OFF")
 }
 catch {
     Write-Error-Status "Chipmunk configuration failed: $($_)"
@@ -1121,7 +1130,7 @@ if (-not $jpegConfigCopied) {
 
 try {
         $vsGen = "Visual Studio 17 2022"
-    Invoke-CMakeConfigure -SourcePath "..\..\..\deps\libjpeg-turbo" -BuildPath "build\win32\libjpeg-turbo" -Generator $vsGen -Arguments @("-DWITH_SIMD=ON")
+    Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\libjpeg-turbo") -BuildPath "$pdgBuildRoot\libjpeg-turbo" -Generator $vsGen -Arguments @("-DWITH_SIMD=ON")
 }
 catch {
     Write-Error-Status "libjpeg-turbo configuration failed: $($_)"
@@ -1130,6 +1139,22 @@ catch {
 
 # Configure Node.js
 Write-Status "Configuring Node.js Library..." "Yellow"
+$nodeOutLink = Join-Path $PSScriptRoot "deps\node\out"
+New-Item -ItemType Directory -Path $pdgNodeOutDir -Force | Out-Null
+if (Test-Path $nodeOutLink) {
+    $nodeOutItem = Get-Item $nodeOutLink -Force
+    if (($nodeOutItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+        Remove-Item $nodeOutLink -Force
+    }
+    else {
+        $legacyNodeOut = Join-Path $PSScriptRoot ("$pdgBuildRoot\node-legacy-out-" + (Get-Date -Format "yyyyMMddHHmmss"))
+        Write-Warning-Status "Preserving unscoped Node output at $legacyNodeOut"
+        New-Item -ItemType Directory -Path (Split-Path $legacyNodeOut -Parent) -Force | Out-Null
+        Move-Item $nodeOutLink $legacyNodeOut
+    }
+}
+New-Item -ItemType Junction -Path $nodeOutLink -Target $pdgNodeOutDir | Out-Null
+Write-Status "Node/V8 output: $pdgNodeOutDir" "Cyan"
 if (Test-Path "deps\node\vcbuild.bat") {
     try {
         Push-Location "deps\node"
@@ -1206,19 +1231,19 @@ else {
 
 Write-Host ""
 Write-Status "Build Summary:" "Cyan"
-Write-Host "- Main project: msvc\ directory" -ForegroundColor White
+Write-Host "- Main project: $pdgMainBuildDir\ directory" -ForegroundColor White
 if ($Headless) {
     Write-Host "- Mode: headless (PDG_HEADLESS=ON)" -ForegroundColor White
     Write-Host "- GLFW: skipped for headless build" -ForegroundColor White
 }
 else {
-    Write-Host "- GLFW: build\win32\glfw\ directory" -ForegroundColor White
+    Write-Host "- GLFW: $pdgBuildRoot\glfw\ directory" -ForegroundColor White
 }
-Write-Host "- Chipmunk: build\win32\chipmunk\ directory" -ForegroundColor White
-Write-Host "- libjpeg-turbo: build\win32\libjpeg-turbo\ directory" -ForegroundColor White
-Write-Host "- Node.js: deps\node\ directory" -ForegroundColor White
-if ($shouldBuildInterfaceTools -and (Test-Path (Join-Path $PSScriptRoot "build\win32\bcpp\Release\bcpp.exe"))) {
-    Write-Host "- bcpp (binding generator): build\win32\bcpp\Release\bcpp.exe" -ForegroundColor White
+Write-Host "- Chipmunk: $pdgBuildRoot\chipmunk\ directory" -ForegroundColor White
+Write-Host "- libjpeg-turbo: $pdgBuildRoot\libjpeg-turbo\ directory" -ForegroundColor White
+Write-Host "- Node.js: $pdgNodeOutDir\ directory" -ForegroundColor White
+if ($shouldBuildInterfaceTools -and (Test-Path (Join-Path $PSScriptRoot "$pdgBuildRoot\bcpp\Release\bcpp.exe"))) {
+    Write-Host "- bcpp (binding generator): $pdgBuildRoot\bcpp\Release\bcpp.exe" -ForegroundColor White
 }
 
 Write-Host ""

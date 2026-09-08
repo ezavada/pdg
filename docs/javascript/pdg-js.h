@@ -1413,6 +1413,7 @@ namespace pdg
     class NetServer
     {
         public:
+            object serverInfo;
             number serverPort;
             string serverAddr;
             number handshakeTimeout;

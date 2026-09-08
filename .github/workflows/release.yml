@@ -9,6 +9,38 @@ permissions:
   contents: read
 
 jobs:
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-22.04
+          - arch: arm64
+            runner: ubuntu-22.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Linux build and GUI-test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake python3 pkg-config xvfb \
+            libgl1-mesa-dev libgl1-mesa-dri libglu1-mesa-dev \
+            libx11-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev \
+            libjpeg-dev libasound2-dev
+      - name: Build, test, and package
+        run: ./tools/release-linux.sh --tag "$GITHUB_REF_NAME" --configure
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}-release-assets
+          path: |
+            artifacts/release/*.zip
+            artifacts/release/*.sha256
+          if-no-files-found: error
+
   macos:
     runs-on: macos-14
     steps:
@@ -80,7 +112,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    needs: [macos, windows, emscripten, docs]
+    needs: [linux, macos, windows, emscripten, docs]
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -1606,6 +1606,12 @@ namespace pdg
         }
         REQUIRE_CPP_OBJECT_OR_SUBCLASS_ARG(1, val, ISerializable);
         size_t n = self->sizeof_obj(val);
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        if (RestorePendingScriptException(exception))
+        {
+            return JSValueMakeUndefined(ctx);
+        }
+#endif
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
 

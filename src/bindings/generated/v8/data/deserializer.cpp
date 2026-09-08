@@ -1167,13 +1167,19 @@ namespace pdg
         try
         {
             ISerializable* obj = self->deserialize_obj();
+#ifdef PDG_USING_JAVASCRIPT_CORE
+            if (RestorePendingScriptException(exception))
+            {
+                return JSValueMakeUndefined(ctx);
+            }
+#endif
             SCRIPT_DEBUG_ONLY( if (obj->mISerializableScriptObj.IsEmpty())
             {
-                std::cerr << __func__<<":"<< 361 << " - NIL JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<")\n";
+                std::cerr << __func__<<":"<< 366 << " - NIL JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<")\n";
             }
             else if (!obj->mISerializableScriptObj->IsObject())
             {
-                std::cerr << __func__<<":"<< 361 << " - NOT JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<") : " << (obj->mISerializableScriptObj.IsEmpty() ? "empty" : obj->mISerializableScriptObj->IsArray() ? "array" : obj->mISerializableScriptObj->IsFunction() ? "function" : obj->mISerializableScriptObj->IsStringObject() ? "string (object)" : obj->mISerializableScriptObj->IsString() ? "string" : obj->mISerializableScriptObj->IsNull() ? "null" : obj->mISerializableScriptObj->IsUndefined() ? "undefined" : obj->mISerializableScriptObj->IsNumberObject() ? "number (object)" : obj->mISerializableScriptObj->IsNumber() ? "number" : obj->mISerializableScriptObj->IsBoolean() ? "boolean" : obj->mISerializableScriptObj->IsDate() ? "date" : obj->mISerializableScriptObj->IsRegExp() ? "regexp" : obj->mISerializableScriptObj->IsNativeError() ? "error" : obj->mISerializableScriptObj->IsObject() ? "object" : "unknown") << "\n";
+                std::cerr << __func__<<":"<< 366 << " - NOT JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<") : " << (obj->mISerializableScriptObj.IsEmpty() ? "empty" : obj->mISerializableScriptObj->IsArray() ? "array" : obj->mISerializableScriptObj->IsFunction() ? "function" : obj->mISerializableScriptObj->IsStringObject() ? "string (object)" : obj->mISerializableScriptObj->IsString() ? "string" : obj->mISerializableScriptObj->IsNull() ? "null" : obj->mISerializableScriptObj->IsUndefined() ? "undefined" : obj->mISerializableScriptObj->IsNumberObject() ? "number (object)" : obj->mISerializableScriptObj->IsNumber() ? "number" : obj->mISerializableScriptObj->IsBoolean() ? "boolean" : obj->mISerializableScriptObj->IsDate() ? "date" : obj->mISerializableScriptObj->IsRegExp() ? "regexp" : obj->mISerializableScriptObj->IsNativeError() ? "error" : obj->mISerializableScriptObj->IsObject() ? "object" : "unknown") << "\n";
             }
             else
             {
@@ -1191,17 +1197,17 @@ namespace pdg
                     }
                     if (obj__)
                     {
-                        std::cout << __func__<<":"<< 361 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
+                        std::cout << __func__<<":"<< 366 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
                     }
                     else
                     {
-                        std::cout << __func__<<":"<< 361 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
+                        std::cout << __func__<<":"<< 366 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
                     }
                 }
                 else
                 {
                     ISerializable* obj = dynamic_cast<ISerializable*>(obj__->getCppObject());
-                        std::cout << __func__<<":"<< 361 << " - JS Object (""obj->mISerializableScriptObj""|" << *((void**)&(obj->mISerializableScriptObj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
+                        std::cout << __func__<<":"<< 366 << " - JS Object (""obj->mISerializableScriptObj""|" << *((void**)&(obj->mISerializableScriptObj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
                 }
             } )
                 if (!obj) { args.GetReturnValue().SetNull(); return; };
@@ -1374,11 +1380,11 @@ namespace pdg
         }());
         SCRIPT_DEBUG_ONLY( if (obj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 395 << " - NIL JS Object (" "obj" "|"<<*((void**)&(obj))<<")\n";
+            std::cerr << __func__<<":"<< 400 << " - NIL JS Object (" "obj" "|"<<*((void**)&(obj))<<")\n";
         }
         else if (!obj->IsObject())
         {
-            std::cerr << __func__<<":"<< 395 << " - NOT JS Object (" "obj" "|"<<*((void**)&(obj))<<") : " << (obj.IsEmpty() ? "empty" : obj->IsArray() ? "array" : obj->IsFunction() ? "function" : obj->IsStringObject() ? "string (object)" : obj->IsString() ? "string" : obj->IsNull() ? "null" : obj->IsUndefined() ? "undefined" : obj->IsNumberObject() ? "number (object)" : obj->IsNumber() ? "number" : obj->IsBoolean() ? "boolean" : obj->IsDate() ? "date" : obj->IsRegExp() ? "regexp" : obj->IsNativeError() ? "error" : obj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 400 << " - NOT JS Object (" "obj" "|"<<*((void**)&(obj))<<") : " << (obj.IsEmpty() ? "empty" : obj->IsArray() ? "array" : obj->IsFunction() ? "function" : obj->IsStringObject() ? "string (object)" : obj->IsString() ? "string" : obj->IsNull() ? "null" : obj->IsUndefined() ? "undefined" : obj->IsNumberObject() ? "number (object)" : obj->IsNumber() ? "number" : obj->IsBoolean() ? "boolean" : obj->IsDate() ? "date" : obj->IsRegExp() ? "regexp" : obj->IsNativeError() ? "error" : obj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -1396,17 +1402,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 395 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
+                    std::cout << __func__<<":"<< 400 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 395 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
+                    std::cout << __func__<<":"<< 400 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
                 }
             }
             else
             {
                 ISerializable* obj = dynamic_cast<ISerializable*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 395 << " - JS Object (""obj""|" << *((void**)&(obj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 400 << " - JS Object (""obj""|" << *((void**)&(obj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
             }
         } );
         ISerializable* nativeSerializable = 0;
@@ -1443,7 +1449,6 @@ namespace pdg
                         return maybe.IsEmpty() ?
                         v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
                 }())));
-                return;
             }
             v8::Local<v8::Function> func = v8::Local<v8::Function>::Cast(getMyClassTagVal);
             v8::Local<v8::Value> classTagVal = ([&]() -> v8::Local<v8::Value>
@@ -1477,7 +1482,6 @@ namespace pdg
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }())));
-            return;
         }
         Deserializer::registerScriptClass(classTag, constructorFunc);
         args.GetReturnValue().SetUndefined();

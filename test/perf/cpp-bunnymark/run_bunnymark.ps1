@@ -7,7 +7,12 @@ Set-Location $PdgRoot
 
 # On Windows we must use bunnymark.exe (the "bunnymark" file here is a launcher path, not the binary)
 $testDir = Join-Path $PdgRoot "test\perf\cpp-bunnymark"
-$buildDir = Join-Path $PdgRoot "msvc\src\Release"
+$pdgArch = switch ($env:PROCESSOR_ARCHITECTURE) {
+    "ARM64" { "arm64" }
+    "AMD64" { "x86_64" }
+    default { $env:PROCESSOR_ARCHITECTURE.ToLowerInvariant() }
+}
+$buildDir = Join-Path $PdgRoot "build\win32\$pdgArch\pdg\src\Release"
 $Exe = $null
 if (Test-Path (Join-Path $testDir "bunnymark.exe")) { $Exe = Join-Path $testDir "bunnymark.exe" }
 elseif (Test-Path (Join-Path $buildDir "bunnymark.exe")) { $Exe = Join-Path $buildDir "bunnymark.exe" }

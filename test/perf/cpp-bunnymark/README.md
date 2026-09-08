@@ -26,8 +26,8 @@ This will:
 - Create a symlink at `test/perf/cpp-bunnymark/bunnymark`
 
 **What gets built:**
-- `build/darwin/pdg/src/libpdg-lib.a` (~42MB) - PDG C++ framework library
-- `build/darwin/pdg/src/bunnymark.app` - Bunnymark executable bundle
+- `build/darwin/$PDG_ARCH/pdg/src/libpdg-lib.a` (~42MB) - PDG C++ framework library
+- `build/darwin/$PDG_ARCH/pdg/src/bunnymark.app` - Bunnymark executable bundle
 - `test/perf/cpp-bunnymark/bunnymark` - Symlink for easy access
 
 ## Running
@@ -153,7 +153,7 @@ The C++ version measures:
 
 **Symlink broken:**
 - Run `make pdg-tests` to recreate the symlink
-- Or run directly: `./build/darwin/pdg/src/bunnymark.app/Contents/MacOS/bunnymark`
+- Or run directly: `./build/darwin/$PDG_ARCH/pdg/src/bunnymark.app/Contents/MacOS/bunnymark`
 
 **Very different scores from JavaScript**
 - This is expected - C++ should be faster
@@ -227,8 +227,8 @@ test/perf/cpp-bunnymark/
 └── .gitignore                 - Ignore results, keep symlink
 
 Build artifacts (not in repo):
-├── build/darwin/pdg/src/libpdg-lib.a        - PDG C++ framework library
-├── build/darwin/pdg/src/bunnymark.app/      - Bunnymark executable bundle
+├── build/darwin/$PDG_ARCH/pdg/src/libpdg-lib.a        - PDG C++ framework library
+├── build/darwin/$PDG_ARCH/pdg/src/bunnymark.app/      - Bunnymark executable bundle
 └── test/perf/cpp-bunnymark/bunnymark_results.json - Test results
 ```
 
@@ -308,7 +308,7 @@ This means the sources must be compiled twice, which is why pdg-lib is a separat
 **New pdg-tests target:**
 ```makefile
 pdg-tests: glfw chipmunk node js-interfaces
-	cd $(PDG_ROOT)/build/darwin/pdg; make bunnymark
+	cd $(PDG_ROOT)/build/darwin/$PDG_ARCH/pdg; make bunnymark
 	ln -sf .../bunnymark.app/.../bunnymark .../cpp-bunnymark/bunnymark
 ```
 

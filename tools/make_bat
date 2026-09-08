@@ -2,6 +2,9 @@
 set target=Build
 set config=Release
 set PDG_ROOT=%CD%
+set PDG_ARCH=x86_64
+set BUILD_ROOT=build\win32\%PDG_ARCH%
+set MAIN_BUILD=%BUILD_ROOT%\pdg
 
 set BUILD_STATUS=0
 cd deps\node
@@ -60,39 +63,39 @@ goto Error
 :msbuild-found
 echo Building GLFW Library ...
 REM cd deps\glfw\msvc\vc%MSVS_VERSION%
-cd build\win32\glfw
+pushd %BUILD_ROOT%\glfw
 msbuild GLFW.sln /m /t:%target% /p:Configuration=%config% /clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal /nologo
 copy src\%config%\glfw3.lib src\
 set BUILD_STATUS=%ERRORLEVEL%
-cd ..\..\..
+popd
 if not %BUILD_STATUS%==0 goto Error
 
 echo Building Chipmunk Library ...
-cd build\win32\chipmunk
+pushd %BUILD_ROOT%\chipmunk
 msbuild chipmunk.sln /m /t:%target% /p:Configuration=%config% /clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal /nologo
 set BUILD_STATUS=%ERRORLEVEL%
-cd ..\..\..
+popd
 if not %BUILD_STATUS%==0 goto Error
-copy build\win32\chipmunk\src\%config%\chipmunk.lib build\win32\chipmunk\src\
+copy %BUILD_ROOT%\chipmunk\src\%config%\chipmunk.lib %BUILD_ROOT%\chipmunk\src\
 
 echo Building libjpeg-turbo Library ...
-cd build\win32\libjpeg-turbo
+pushd %BUILD_ROOT%\libjpeg-turbo
 msbuild jpeg.sln /m /t:%target% /p:Configuration=%config% /clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal /nologo
 set BUILD_STATUS=%ERRORLEVEL%
-cd ..\..\..
+popd
 if not %BUILD_STATUS%==0 goto Error
 
 echo Building PDG ...
-cd msvc
+pushd %MAIN_BUILD%
 msbuild PDG.sln /m /t:%target% /p:Configuration=%config% /clp:NoSummary;NoItemAndPropertyList;Verbosity=minimal /nologo
 set BUILD_STATUS=%ERRORLEVEL%
-cd ..\
+popd
 if not %BUILD_STATUS%==0 goto Error
 
-copy msvc\src\%config%\pdg.exe test\
-copy msvc\src\%config%\pdg.exe .
+copy %MAIN_BUILD%\src\%config%\pdg.exe test\
+copy %MAIN_BUILD%\src\%config%\pdg.exe .
 copy tools\debug.html test\
-copy tools\debug.html msvc\src\%config%\
+copy tools\debug.html %MAIN_BUILD%\src\%config%\
 
 goto Success
 

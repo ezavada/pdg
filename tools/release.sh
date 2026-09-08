@@ -34,8 +34,11 @@ case "$(uname -s)" in
             -File "$(cd "$(dirname "$0")" && pwd)/release-windows.ps1" \
             "${WINDOWS_ARGS[@]}"
         ;;
+    Linux)
+        exec "$(cd "$(dirname "$0")" && pwd)/release-linux.sh" "$@"
+        ;;
     *)
-        echo "PDG release assets are currently supported only on macOS and Windows." >&2
+        echo "PDG release assets are supported on Linux, macOS, and Windows." >&2
         exit 1
         ;;
 esac

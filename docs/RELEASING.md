@@ -15,7 +15,7 @@ Validate a prospective release locally without creating a tag:
 
 ## Build release assets locally
 
-On macOS or a Windows environment with GNU Make:
+On Linux, macOS, or a Windows environment with GNU Make:
 
     make release RELEASE_TAG=v1.0.0
 
@@ -33,6 +33,7 @@ JavaScript API description also needs to be refreshed.
 When RELEASE_TAG is omitted, HEAD must be at an exact release tag. The
 platform scripts can also be called directly:
 
+    ./tools/release-linux.sh --tag v1.0.0
     ./tools/release-macos.sh --tag v1.0.0
     ./tools/release-emscripten.sh --tag v1.0.0
 
@@ -41,10 +42,15 @@ On Windows, from PowerShell:
     .\tools\release-windows.ps1 -Tag v1.0.0
     .\make.ps1 -Target release -Tag v1.0.0
 
-Use --configure on macOS or -Configure on Windows to regenerate all dependency
-build trees first. An unconfigured checkout is configured automatically. The
-Windows configuration expects CMake, Python, and Visual Studio Build Tools to
-already be installed.
+Use --configure on Linux or macOS, or -Configure on Windows, to regenerate all
+dependency build trees first. An unconfigured checkout is configured
+automatically. The Windows configuration expects CMake, Python, and Visual
+Studio Build Tools to already be installed.
+
+Bundled Node.js requires Python 3.9 through 3.13. The POSIX configure script
+selects a compatible versioned or system interpreter automatically, even when
+an unsupported newer `python3` appears first in `PATH`. Set
+`PDG_NODE_PYTHON=/path/to/python3` to override that selection.
 
 Each native script performs version validation, an optimized Release build,
 native CTest tests, the headless JavaScript suite, the GUI/client JavaScript
@@ -52,7 +58,7 @@ suite, and staged-binary smoke tests. It also builds pdg-debug with DEBUG=1
 and full symbols. macOS includes a dSYM when dsymutil is available; Windows
 includes the debug PDB.
 
-The native platform scripts write two ZIPs and their SHA-256 files to
+The native platform scripts write two architecture-specific ZIPs and their SHA-256 files to
 artifacts/release:
 
 - `pdg-vVERSION-PLATFORM-ARCH.zip` contains only the optimized pdg application.
@@ -64,8 +70,19 @@ notices for bundled dependencies under THIRD_PARTY_LICENSES. Keeping the debug
 application and symbols separate lets runtime users download the much smaller
 optimized package.
 
-The Emscripten script performs a clean WebAssembly build in `build/wasm`, runs
-the browser client and UI suites, and writes `pdg-vVERSION-emscripten.zip` plus its
+Native build products use a common `build/PLATFORM/ARCHITECTURE` layout:
+
+    build/darwin/arm64
+    build/linux/x86_64
+    build/linux/arm64
+    build/win32/x86_64
+
+Node and V8 outputs are isolated under `build/PLATFORM/ARCHITECTURE/node/out`.
+Emscripten follows the same convention at `build/wasm/wasm32`, leaving room
+for a future `wasm64` build without another directory migration.
+
+The Emscripten script performs a clean WebAssembly build in `build/wasm/wasm32`, runs
+the browser client and UI suites, and writes `pdg-vVERSION-emscripten-wasm32.zip` plus its
 SHA-256 file to `artifacts/release`. The package contains `libpdg.js`,
 `libpdg.wasm`, `libpdg.wasm.map`, and the applicable licenses. These build
 outputs are intentionally ignored by Git and are published only as release
@@ -79,7 +96,7 @@ tag:
     git tag v1.0.0
     git push origin v1.0.0
 
-The release workflow builds independently on macOS, Windows, and Emscripten
-and builds the platform-neutral documentation on Linux. It creates a GitHub
-Release only after all four jobs succeed, and exposes the separate optimized,
+The release workflow builds independently on Linux x86_64, Linux arm64, macOS,
+Windows, and Emscripten, and also builds platform-neutral documentation. It
+creates a GitHub Release only after every job succeeds and exposes the separate optimized,
 debug, WebAssembly, and documentation ZIPs with their SHA-256 files.

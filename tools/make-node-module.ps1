@@ -6,11 +6,18 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$pdgArch = switch ($env:PROCESSOR_ARCHITECTURE) {
+    "ARM64" { "arm64" }
+    "AMD64" { "x86_64" }
+    default { $env:PROCESSOR_ARCHITECTURE.ToLowerInvariant() }
+}
+$nodeModuleBuildRoot = Join-Path $repoRoot "build\win32\$pdgArch\node-module"
+$nodeOutDir = Join-Path $repoRoot "build\win32\$pdgArch\node\out"
 $submoduleHelperPath = Join-Path $PSScriptRoot "submodules.ps1"
 . $submoduleHelperPath
-$targetDir = Join-Path $repoRoot "build\node-pdg"
-$installDir = Join-Path $repoRoot "build\node-pdg-install"
-$npmCacheDir = Join-Path $repoRoot "build\npm-cache"
+$targetDir = Join-Path $nodeModuleBuildRoot "package"
+$installDir = Join-Path $nodeModuleBuildRoot "install"
+$npmCacheDir = Join-Path $nodeModuleBuildRoot "npm-cache"
 $version = (Get-Content -Raw (Join-Path $repoRoot "VERSION")).Trim()
 $packageArchive = Join-Path $targetDir "pdg-$version.tgz"
 
@@ -23,7 +30,7 @@ function Resolve-NodeExecutable {
 
     $candidates = @(
         (Join-Path $repoRoot "tools\node.exe"),
-        (Join-Path $repoRoot "deps\node\out\$BuildConfig\node.exe"),
+        (Join-Path $nodeOutDir "$BuildConfig\node.exe"),
         (Join-Path $repoRoot "deps\node\Release\node.exe")
     )
 

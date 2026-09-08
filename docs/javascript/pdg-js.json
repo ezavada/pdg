@@ -3,7 +3,7 @@
 	"type": "module",
 	"lang": "javascript",
 	"vers": "1.0.0",
-	"when": "2026-03-30",
+	"when": "2026-09-08",
 	"interface": [
 		{
 			"name": "all_events",
@@ -17561,6 +17561,10 @@
 			"type": "class",
 			"implements": [],
 			"interface": [
+				{
+					"name": "serverInfo",
+					"type": "object"
+				},
 				{
 					"name": "serverPort",
 					"type": "number"

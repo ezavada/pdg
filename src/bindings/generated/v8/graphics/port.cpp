@@ -338,23 +338,9 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 2);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, spline);
+        REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
         REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
-        SplineWrap* splineWrapper = static_cast<SplineWrap*>(spline->GetAlignedPointerFromInternalField(0));
-        Spline* splinePtr = splineWrapper->getCppObject();
-        if (!splinePtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "drawSpline must be called with a valid Spline object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        self->drawSpline(*splinePtr, *attrs);
+        self->drawSpline(*spline, *attrs);
         args.GetReturnValue().SetUndefined();
     }
 
@@ -1003,27 +989,13 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 3);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, drawing);
+        REQUIRE_CPP_OBJECT_ARG(1, drawing, Drawing);
         REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
-        DrawingWrap* drawingWrapper = static_cast<DrawingWrap*>(drawing->GetAlignedPointerFromInternalField(0));
-        Drawing* drawingPtr = drawingWrapper->getCppObject();
-        if (!drawingPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "drawDrawingWithAttrs must be called with a valid Drawing object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
         if (v8_ValueIsPoint(isolate, args[1]))
         {
 
             pdg::Point loc = v8_ValueToPoint(isolate, args[1]);
-            self->drawDrawing(*drawingPtr, loc, *attrs);
+            self->drawDrawing(*drawing, loc, *attrs);
         }
         else
         {
@@ -1034,7 +1006,7 @@ namespace pdg
                 return;
             }
             pdg::Rect rect = v8_ValueToRect(isolate, args[2 -1]);
-            self->drawDrawing(*drawingPtr, rect, *attrs);
+            self->drawDrawing(*drawing, rect, *attrs);
         }
         args.GetReturnValue().SetUndefined();
     }

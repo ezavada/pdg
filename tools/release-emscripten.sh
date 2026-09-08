@@ -64,12 +64,13 @@ cmake -DPDG_SOURCE_DIR="$PDG_ROOT" -DRELEASE_TAG="$RELEASE_TAG" \
 
 PDG_VERSION="$(tr -d '[:space:]' < "$PDG_ROOT/VERSION")"
 EMSCRIPTEN_PYTHON="${EMSDK_PYTHON:-$(command -v python3)}"
-WASM_OUTPUT_DIR="$PDG_ROOT/build/wasm"
+WASM_ARCH="${PDG_WASM_ARCH:-wasm32}"
+WASM_OUTPUT_DIR="$PDG_ROOT/build/wasm/$WASM_ARCH"
 EMSCRIPTEN_CACHE="${EM_CACHE:-$WASM_OUTPUT_DIR/emscripten-cache}"
 BUILD_JOBS="${PDG_BUILD_JOBS:-8}"
 
 run_emscripten_make() {
-    PDG_ROOT="$PDG_ROOT" EMSDK_PYTHON="$EMSCRIPTEN_PYTHON" EM_CACHE="$EMSCRIPTEN_CACHE" \
+    PDG_ROOT="$PDG_ROOT" WASM_ARCH="$WASM_ARCH" EMSDK_PYTHON="$EMSCRIPTEN_PYTHON" EM_CACHE="$EMSCRIPTEN_CACHE" \
         emmake make "--jobs=$BUILD_JOBS" -f "$PDG_ROOT/tools/pdg-js.mak" "$@"
 }
 
@@ -89,7 +90,7 @@ if [[ $SKIP_TESTS -eq 0 ]]; then
     PDG_TEST_PORT="$TEST_PORT" "$PDG_ROOT/test/ui" --emscripten --no-build
 fi
 
-ASSET_BASENAME="pdg-v${PDG_VERSION}-emscripten"
+ASSET_BASENAME="pdg-v${PDG_VERSION}-emscripten-${WASM_ARCH}"
 STAGE_DIR="$OUTPUT_DIR/stage/$ASSET_BASENAME"
 ASSET_PATH="$OUTPUT_DIR/$ASSET_BASENAME.zip"
 

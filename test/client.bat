@@ -12,6 +12,11 @@ set PDG_JASMINE_NODE=%PDG_ROOT%\tools\jasmine-node
 set PDG_REPL=%PDG_ROOT%\tools\repl
 set PDG_TEST_MODE=client
 set PDG_TEST_PLATFORM=win32
+if /I "%PROCESSOR_ARCHITECTURE%"=="ARM64" (
+    set PDG_ARCH=arm64
+) else (
+    set PDG_ARCH=x86_64
+)
 set PDG_TEST_ARTIFACTS_DIR=%PDG_ROOT%\artifacts\test-results\%PDG_TEST_PLATFORM%\%PDG_TEST_MODE%
 set PDG_TEST_LOG_DIR=%PDG_TEST_ARTIFACTS_DIR%\logs
 set PDG_TEST_REPORT_DIR=%PDG_TEST_ARTIFACTS_DIR%\reports
@@ -55,7 +60,7 @@ cd test
 REM run the tests, some of which use the echo server
 set PDG_CLIENT_EXE=pdg-run.exe
 set PDG_SOURCE_EXE=
-if exist ..\msvc\src\Release\pdg.exe set PDG_SOURCE_EXE=..\msvc\src\Release\pdg.exe
+if exist ..\build\win32\%PDG_ARCH%\pdg\src\Release\pdg.exe set PDG_SOURCE_EXE=..\build\win32\%PDG_ARCH%\pdg\src\Release\pdg.exe
 if not defined PDG_SOURCE_EXE if exist ..\pdg.exe set PDG_SOURCE_EXE=..\pdg.exe
 if not defined PDG_SOURCE_EXE (
     echo ERROR: No Windows PDG executable found. Build with .\make.ps1 -Target pdg first.

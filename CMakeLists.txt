@@ -27,9 +27,22 @@ OPTION(USE_SPRITER "Build with support for Spriter animations" ON)
 OPTION(CAN_BUILD_INTERFACES "Support rebuilding JavaScript Interfaces" OFF)
 OPTION(PDG_HEADLESS "Build without GUI/graphics support" OFF)
 
+STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" PDG_SYSTEM_PROCESSOR)
+IF(PDG_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$")
+    SET(PDG_ARCH "arm64")
+ELSEIF(PDG_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|x64)$")
+    SET(PDG_ARCH "x86_64")
+ELSEIF(CMAKE_SIZEOF_VOID_P EQUAL 8 AND WIN32)
+    # Visual Studio generators do not consistently populate
+    # CMAKE_SYSTEM_PROCESSOR, but this project currently targets x64 by default.
+    SET(PDG_ARCH "x86_64")
+ELSE()
+    SET(PDG_ARCH "${PDG_SYSTEM_PROCESSOR}")
+ENDIF()
+
 IF(WIN32 AND CAN_BUILD_INTERFACES)
 	IF(NOT BCPP_EXECUTABLE)
-		SET(BCPP_EXECUTABLE "${CMAKE_SOURCE_DIR}/build/win32/bcpp/Release/bcpp.exe" CACHE FILEPATH "bcpp pretty-printer (built by configure.ps1)")
+		SET(BCPP_EXECUTABLE "${CMAKE_SOURCE_DIR}/build/win32/${PDG_ARCH}/bcpp/Release/bcpp.exe" CACHE FILEPATH "bcpp pretty-printer (built by configure.ps1)")
 	ENDIF()
 ENDIF()
 
@@ -61,7 +74,7 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 ENDIF()
 
 IF (MACOSX)
-    SET(BUILD_SUBDIR "darwin")
+    SET(BUILD_SUBDIR "darwin/${PDG_ARCH}")
     SET(PLATFORM_SUBDIR "macosx")
     FIND_LIBRARY(COREFOUND CoreFoundation)
     FIND_LIBRARY(AUDIOTOOLBOX AudioToolbox)
@@ -73,12 +86,19 @@ IF (MACOSX)
 ENDIF(MACOSX)
 
 IF (WIN32)
-    SET(BUILD_SUBDIR "win32")
+    SET(BUILD_SUBDIR "win32/${PDG_ARCH}")
     SET(PLATFORM_SUBDIR "win32")
 ENDIF(WIN32)
 
 IF(NOT MACOSX AND NOT WIN32)
-    SET(BUILD_SUBDIR "linux")
+    IF(PDG_ARCH STREQUAL "arm64")
+        SET(PDG_NODE_OPENSSL_ARCH "linux-aarch64")
+    ELSEIF(PDG_ARCH STREQUAL "x86_64")
+        SET(PDG_NODE_OPENSSL_ARCH "linux-x86_64")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Unsupported Linux architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+    ENDIF()
+    SET(BUILD_SUBDIR "linux/${PDG_ARCH}")
     SET(PLATFORM_SUBDIR "unix")
 ENDIF()
 
@@ -86,7 +106,8 @@ IF(NOT MACOSX AND NOT WIN32)
     FIND_LIBRARY(
         PDG_SYSTEM_JPEG_LIBRARY
         NAMES jpeg libjpeg.so.8 jpeg.so.8
-        PATHS /usr/lib /usr/lib64 /usr/lib/x86_64-linux-gnu /lib /lib64 /lib/x86_64-linux-gnu
+        PATHS /usr/lib /usr/lib64 /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
+              /lib /lib64 /lib/${CMAKE_LIBRARY_ARCHITECTURE}
     )
     IF(PDG_SYSTEM_JPEG_LIBRARY)
         MESSAGE(STATUS "Using system JPEG library: ${PDG_SYSTEM_JPEG_LIBRARY}")
@@ -95,6 +116,20 @@ IF(NOT MACOSX AND NOT WIN32)
         MESSAGE(STATUS "Falling back to linker search for JPEG library: ${PDG_SYSTEM_JPEG_LIBRARY}")
     ENDIF()
 ENDIF()
+
+IF(MACOSX)
+    SET(PDG_PLATFORM_NAME "darwin")
+ELSEIF(WIN32)
+    SET(PDG_PLATFORM_NAME "win32")
+ELSE()
+    SET(PDG_PLATFORM_NAME "linux")
+ENDIF()
+
+# Node and V8 produce architecture-specific static archives. Configure scripts
+# point deps/node/out at this location because Node itself fixes that output name.
+SET(PDG_NODE_OUT_DIR "${PDG_SOURCE_DIR}/build/${PDG_PLATFORM_NAME}/${PDG_ARCH}/node/out" CACHE PATH
+    "Architecture-specific Node.js build output directory")
+SET(PDG_NODE_RELEASE_DIR "${PDG_NODE_OUT_DIR}/Release")
 
 ADD_SUBDIRECTORY(src)
 

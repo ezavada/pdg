@@ -297,7 +297,7 @@ IF( NOT MACOSX AND NOT WIN32 )
 ENDIF( NOT MACOSX AND NOT WIN32 )
 
 # Store link directories for later use with target_link_directories
-SET( NODE_LINK_DIRS ${PDG_SOURCE_DIR}/deps/node/out/Release )
+SET( NODE_LINK_DIRS ${PDG_NODE_RELEASE_DIR} )
 
 IF(PDG_WITH_GLFW)
 	IF( MACOSX )
@@ -328,10 +328,10 @@ IF( WIN32 )
 ENDIF( WIN32 )
 
 SET(PDG_NODE_STATIC_ZLIB_LIB_CANDIDATES
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libzlib.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libzlib_adler32_simd.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libzlib_arm_crc32.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libzlib_data_chunk_simd.a
+	${PDG_NODE_RELEASE_DIR}/libzlib.a
+	${PDG_NODE_RELEASE_DIR}/libzlib_adler32_simd.a
+	${PDG_NODE_RELEASE_DIR}/libzlib_arm_crc32.a
+	${PDG_NODE_RELEASE_DIR}/libzlib_data_chunk_simd.a
 )
 
 SET(PDG_NODE_STATIC_ZLIB_LIBS)
@@ -342,38 +342,38 @@ FOREACH(node_zlib_lib ${PDG_NODE_STATIC_ZLIB_LIB_CANDIDATES})
 ENDFOREACH()
 
 SET(PDG_NODE_NONWIN_LIB_CANDIDATES
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libnode.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libuv.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libuvwasi.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libicui18n.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libicuucx.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libicudata.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libcares.a
+	${PDG_NODE_RELEASE_DIR}/libnode.a
+	${PDG_NODE_RELEASE_DIR}/libuv.a
+	${PDG_NODE_RELEASE_DIR}/libuvwasi.a
+	${PDG_NODE_RELEASE_DIR}/libicui18n.a
+	${PDG_NODE_RELEASE_DIR}/libicuucx.a
+	${PDG_NODE_RELEASE_DIR}/libicudata.a
+	${PDG_NODE_RELEASE_DIR}/libcares.a
 	${PDG_NODE_STATIC_ZLIB_LIB_CANDIDATES}
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libnghttp2.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libhistogram.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libllhttp.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libopenssl.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libsqlite.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libbrotli.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libzstd.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libncrypto.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libsimdutf.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libsimdjson.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libabseil.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libhighway.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libada.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libcrdtp.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libnbytes.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_zlib.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_base_without_compiler.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_compiler.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_init.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_initializers.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_initializers_slow.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_libbase.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_libplatform.a
-	${PDG_SOURCE_DIR}/deps/node/out/Release/libv8_snapshot.a
+	${PDG_NODE_RELEASE_DIR}/libnghttp2.a
+	${PDG_NODE_RELEASE_DIR}/libhistogram.a
+	${PDG_NODE_RELEASE_DIR}/libllhttp.a
+	${PDG_NODE_RELEASE_DIR}/libopenssl.a
+	${PDG_NODE_RELEASE_DIR}/libsqlite.a
+	${PDG_NODE_RELEASE_DIR}/libbrotli.a
+	${PDG_NODE_RELEASE_DIR}/libzstd.a
+	${PDG_NODE_RELEASE_DIR}/libncrypto.a
+	${PDG_NODE_RELEASE_DIR}/libsimdutf.a
+	${PDG_NODE_RELEASE_DIR}/libsimdjson.a
+	${PDG_NODE_RELEASE_DIR}/libabseil.a
+	${PDG_NODE_RELEASE_DIR}/libhighway.a
+	${PDG_NODE_RELEASE_DIR}/libada.a
+	${PDG_NODE_RELEASE_DIR}/libcrdtp.a
+	${PDG_NODE_RELEASE_DIR}/libnbytes.a
+	${PDG_NODE_RELEASE_DIR}/libv8_zlib.a
+	${PDG_NODE_RELEASE_DIR}/libv8_base_without_compiler.a
+	${PDG_NODE_RELEASE_DIR}/libv8_compiler.a
+	${PDG_NODE_RELEASE_DIR}/libv8_init.a
+	${PDG_NODE_RELEASE_DIR}/libv8_initializers.a
+	${PDG_NODE_RELEASE_DIR}/libv8_initializers_slow.a
+	${PDG_NODE_RELEASE_DIR}/libv8_libbase.a
+	${PDG_NODE_RELEASE_DIR}/libv8_libplatform.a
+	${PDG_NODE_RELEASE_DIR}/libv8_snapshot.a
 )
 
 SET(PDG_NODE_NONWIN_LIBS)
@@ -441,7 +441,7 @@ target_include_directories(minizip_static PRIVATE
 IF( NOT MACOSX AND NOT WIN32 )
 	target_include_directories(minizip_static PRIVATE
 		${PDG_SOURCE_DIR}/deps/node/deps/openssl/config
-		${PDG_SOURCE_DIR}/deps/node/deps/openssl/config/archs/linux-x86_64/asm/include
+		${PDG_SOURCE_DIR}/deps/node/deps/openssl/config/archs/${PDG_NODE_OPENSSL_ARCH}/asm/include
 		${PDG_SOURCE_DIR}/deps/node/deps/openssl/openssl/include
 	)
 ENDIF()
@@ -462,9 +462,9 @@ target_compile_definitions(minizip_static PRIVATE
 
 # Link zlib to minizip (on Windows use Node's built zlib by path; no separate zlib target)
 IF(WIN32)
-	target_link_libraries(minizip_static PRIVATE ${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib.lib)
+	target_link_libraries(minizip_static PRIVATE ${PDG_NODE_RELEASE_DIR}/lib/zlib.lib)
 ELSE()
-	target_link_libraries(minizip_static PRIVATE ${PDG_SOURCE_DIR}/deps/node/out/Release/libzlib.a)
+	target_link_libraries(minizip_static PRIVATE ${PDG_NODE_RELEASE_DIR}/libzlib.a)
 ENDIF()
 
 # Set runtime library to static for minizip_static on Windows
@@ -662,9 +662,9 @@ IF(WIN32)
 	TARGET_LINK_LIBRARIES(pdg-lib PUBLIC
 		libtess2_static
 		minizip_static
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib_adler32_simd.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib_data_chunk_simd.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib_adler32_simd.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib_data_chunk_simd.lib
 	)
 ELSE()
 	TARGET_LINK_LIBRARIES(pdg-lib PUBLIC
@@ -778,9 +778,9 @@ IF(WIN32)
 	TARGET_LINK_LIBRARIES(pdg-lib-debug PUBLIC
 		libtess2_static
 		minizip_static
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib_adler32_simd.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib_data_chunk_simd.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib_adler32_simd.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib_data_chunk_simd.lib
 	)
 ELSE()
 	TARGET_LINK_LIBRARIES(pdg-lib-debug PUBLIC
@@ -874,41 +874,41 @@ ENDIF( USE_CHIPMUNK )
 IF( WIN32 )
 	# Link Node.js library and its dependencies (built under out/Release/lib/)
 	TARGET_LINK_LIBRARIES ( pdg
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/libnode.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/libuv.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/uvwasi.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/icui18n.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/icuucx.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/icudata.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/cares.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/nghttp2.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/histogram.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/llhttp.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/openssl.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/sqlite.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/brotli.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/ncrypto.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/simdutf.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/simdjson.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/abseil.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/highway.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/ada.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/crdtp.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/nbytes.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_zlib.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib_adler32_simd.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zlib_data_chunk_simd.lib
+		${PDG_NODE_RELEASE_DIR}/lib/libnode.lib
+		${PDG_NODE_RELEASE_DIR}/lib/libuv.lib
+		${PDG_NODE_RELEASE_DIR}/lib/uvwasi.lib
+		${PDG_NODE_RELEASE_DIR}/lib/icui18n.lib
+		${PDG_NODE_RELEASE_DIR}/lib/icuucx.lib
+		${PDG_NODE_RELEASE_DIR}/lib/icudata.lib
+		${PDG_NODE_RELEASE_DIR}/lib/cares.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib.lib
+		${PDG_NODE_RELEASE_DIR}/lib/nghttp2.lib
+		${PDG_NODE_RELEASE_DIR}/lib/histogram.lib
+		${PDG_NODE_RELEASE_DIR}/lib/llhttp.lib
+		${PDG_NODE_RELEASE_DIR}/lib/openssl.lib
+		${PDG_NODE_RELEASE_DIR}/lib/sqlite.lib
+		${PDG_NODE_RELEASE_DIR}/lib/brotli.lib
+		${PDG_NODE_RELEASE_DIR}/lib/ncrypto.lib
+		${PDG_NODE_RELEASE_DIR}/lib/simdutf.lib
+		${PDG_NODE_RELEASE_DIR}/lib/simdjson.lib
+		${PDG_NODE_RELEASE_DIR}/lib/abseil.lib
+		${PDG_NODE_RELEASE_DIR}/lib/highway.lib
+		${PDG_NODE_RELEASE_DIR}/lib/ada.lib
+		${PDG_NODE_RELEASE_DIR}/lib/crdtp.lib
+		${PDG_NODE_RELEASE_DIR}/lib/nbytes.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_zlib.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib_adler32_simd.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zlib_data_chunk_simd.lib
 		# V8 libraries
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_base_without_compiler.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_compiler.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_init.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_initializers.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_initializers_slow.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_libbase.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_libplatform.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/v8_snapshot.lib
-		${PDG_SOURCE_DIR}/deps/node/out/Release/lib/zstd.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_base_without_compiler.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_compiler.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_init.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_initializers.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_initializers_slow.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_libbase.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_libplatform.lib
+		${PDG_NODE_RELEASE_DIR}/lib/v8_snapshot.lib
+		${PDG_NODE_RELEASE_DIR}/lib/zstd.lib
 		minizip_static
 		libtess2_static
 		${PLATFORM_LIBS} ${OPENGL_LIBRARIES}

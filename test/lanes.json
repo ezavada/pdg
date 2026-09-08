@@ -385,10 +385,10 @@
         {
           "label": "Emscripten browser module",
           "paths": [
-            "build/wasm/libpdg.js",
-            "build/wasm/libpdg.wasm"
+            "build/wasm/wasm32/libpdg.js",
+            "build/wasm/wasm32/libpdg.wasm"
           ],
-          "freshnessPath": "build/wasm/libpdg.wasm",
+          "freshnessPath": "build/wasm/wasm32/libpdg.wasm",
           "staleInputs": [
             "src",
             "test/cxx",
@@ -436,10 +436,10 @@
         {
           "label": "Emscripten browser module",
           "paths": [
-            "build/wasm/libpdg.js",
-            "build/wasm/libpdg.wasm"
+            "build/wasm/wasm32/libpdg.js",
+            "build/wasm/wasm32/libpdg.wasm"
           ],
-          "freshnessPath": "build/wasm/libpdg.wasm",
+          "freshnessPath": "build/wasm/wasm32/libpdg.wasm",
           "staleInputs": [
             "src",
             "test/data",

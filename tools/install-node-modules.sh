@@ -48,7 +48,9 @@ NEED_NODE_GYP=0
 NEED_JASMINE_NODE=0
 NEED_NET_REPL=0
 
-if [ -n "$PYTHON" ]; then
+if [ -n "$PDG_NODE_PYTHON" ]; then
+	PYTHON_BIN="$PDG_NODE_PYTHON"
+elif [ -n "$PYTHON" ]; then
 	PYTHON_BIN="$PYTHON"
 elif command -v python3 >/dev/null 2>&1; then
 	PYTHON_BIN="$(command -v python3)"

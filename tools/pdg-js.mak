@@ -82,7 +82,8 @@ CFLAGS_ALL=-gsource-map -Wno-warn-absolute-paths -DMOZZCONF_H $(DEFINES) $(INCLU
 CFLAGS=$(CFLAGS_ALL)
 CXXFLAGS=-std=c++17 -fexceptions $(CFLAGS_ALL)
 
-WASM_OUT_DIR=$(PDG_ROOT)/build/wasm
+WASM_ARCH?=wasm32
+WASM_OUT_DIR=$(PDG_ROOT)/build/wasm/$(WASM_ARCH)
 OUT_DIR=$(WASM_OUT_DIR)/pdg
 SRC_SYS_DIR=$(PDG_ROOT)/src/sys
 SRC_CHIPMUNK_DIR=$(PDG_ROOT)/deps/chipmunk/src

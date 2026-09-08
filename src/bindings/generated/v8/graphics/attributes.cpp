@@ -696,6 +696,19 @@ namespace pdg
 
         const glm::mat3& matrix = self->getTransform();
 
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        JSObjectRef result = JSObjectMakeArray(ctx, 0, nullptr, exception);
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                int index = i * 3 + j;
+                JSObjectSetPropertyAtIndex(ctx, result, (unsigned)index,
+                    JSValueMakeNumber(ctx, matrix[i][j]), exception);
+            }
+        }
+        { args.GetReturnValue().Set( result ); return; };
+#else
         v8::Local<v8::Array> result = v8::Array::New(isolate, 9);
         v8::Local<v8::Context> context = isolate->GetCurrentContext();
 
@@ -709,6 +722,7 @@ namespace pdg
         }
 
         args.GetReturnValue().Set(result);
+#endif
     }
 
     void AttributesWrap::GetBlendMode(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1144,6 +1158,35 @@ namespace pdg
             return;
         };
 
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        if (!JSValueIsArray(ctx, args[0]))
+        {
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "an array of 9 numbers", args[0]);
+        }
+
+        JSObjectRef matrixArray = JSValueToObject(ctx, args[0], exception);
+        JSStringRef lengthName = JSStringCreateWithUTF8CString("length");
+        JSValueRef lengthValue = JSObjectGetProperty(ctx, matrixArray, lengthName, exception);
+        JSStringRelease(lengthName);
+        if ((unsigned)JSValueToNumber(ctx, lengthValue, exception) != 9)
+        {
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "an array of 9 numbers", args[0]);
+        }
+
+        glm::mat3 matrix;
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                JSValueRef element = JSObjectGetPropertyAtIndex(ctx, matrixArray, (unsigned)(i * 3 + j), exception);
+                if (!JSValueIsNumber(ctx, element))
+                {
+                    return JSC_ThrowArgTypeException(ctx, exception, 1, "an array of 9 numbers", args[0]);
+                }
+                matrix[i][j] = JSValueToNumber(ctx, element, exception);
+            }
+        }
+#else
         if (!args[0]->IsArray())
         {
             v8_ThrowArgTypeException(isolate, 1, "an array of 9 numbers");
@@ -1172,6 +1215,7 @@ namespace pdg
                 matrix[i][j] = element->NumberValue(context).ToChecked();
             }
         }
+#endif
 
         self->transform(matrix);
         { args.GetReturnValue().Set( args.This() ); return; };

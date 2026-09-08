@@ -10,6 +10,15 @@ param(
     [switch]$Verbose
 )
 
+$PdgArch = switch ($env:PROCESSOR_ARCHITECTURE) {
+    "ARM64" { "arm64" }
+    "AMD64" { "x86_64" }
+    default { $env:PROCESSOR_ARCHITECTURE.ToLowerInvariant() }
+}
+$PdgBuildRoot = "build\win32\$PdgArch"
+$PdgMainBuildDir = "$PdgBuildRoot\pdg"
+$PdgNodeOutDir = "$PdgBuildRoot\node\out"
+
 # Note: Removed global MSBuild environment variable overrides to allow GLFW to use default settings
 
 # Function to display help
@@ -89,12 +98,22 @@ function Test-Command {
 }
 
 function Test-PDGHeadlessConfigured {
-    $cachePath = Join-Path (Get-Location).Path "msvc\CMakeCache.txt"
+    $cachePath = Join-Path (Get-Location).Path "$PdgMainBuildDir\CMakeCache.txt"
     if (-not (Test-Path $cachePath)) {
         return $false
     }
 
     return (Select-String -Path $cachePath -Pattern "^PDG_HEADLESS:BOOL=ON$" -Quiet)
+}
+
+function Update-PDGCMakeConfiguration {
+    Write-Status "Refreshing PDG CMake configuration for architecture-scoped Node libraries..." "Cyan"
+    & cmake -S . -B $PdgMainBuildDir "-DPDG_NODE_OUT_DIR=$((Resolve-Path $PdgNodeOutDir).Path)"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error-Status "PDG CMake refresh failed"
+        return 1
+    }
+    return 0
 }
 
 # Function to find MSBuild
@@ -314,14 +333,14 @@ function Invoke-Clean {
     Write-Status "Cleaning build directories..." "Yellow"
     
     $cleanPaths = @(
-        "msvc\src\Debug",
-        "msvc\src\Release",
-        "build\win32\glfw\src\Debug",
-        "build\win32\glfw\src\Release",
-        "build\win32\chipmunk\src\Debug",
-        "build\win32\chipmunk\src\Release",
-        "build\win32\libjpeg-turbo\Debug",
-        "build\win32\libjpeg-turbo\Release",
+        "$PdgMainBuildDir\src\Debug",
+        "$PdgMainBuildDir\src\Release",
+        "$PdgBuildRoot\glfw\src\Debug",
+        "$PdgBuildRoot\glfw\src\Release",
+        "$PdgBuildRoot\chipmunk\src\Debug",
+        "$PdgBuildRoot\chipmunk\src\Release",
+        "$PdgBuildRoot\libjpeg-turbo\Debug",
+        "$PdgBuildRoot\libjpeg-turbo\Release",
         "test\perf\cpp-bunnymark\bunnymark.exe",
         "test\perf\cpp-pdgmark\pdgmark.exe"
     )
@@ -349,8 +368,8 @@ function Build-Node {
         Write-Error-Status "Node.js source checkout is required to build the node target."
         return 1
     }
-    $nodeLibPath = "deps\node\out\$Config\lib\libnode.lib"
-    $nodeExePath = "deps\node\out\$Config\node.exe"
+    $nodeLibPath = "$PdgNodeOutDir\$Config\lib\libnode.lib"
+    $nodeExePath = "$PdgNodeOutDir\$Config\node.exe"
 
     # Check if both required files exist
     $nodeLibExists = Test-Path $nodeLibPath
@@ -401,8 +420,8 @@ function Build-Node {
         
         # Verify Node.js build actually succeeded by checking for required files
         $requiredFiles = @(
-            "deps\node\out\$Config\lib\libnode.lib",
-            "deps\node\out\$Config\node.exe"
+            "$PdgNodeOutDir\$Config\lib\libnode.lib",
+            "$PdgNodeOutDir\$Config\node.exe"
         )
         
         $buildActuallySucceeded = $true
@@ -437,7 +456,7 @@ function Build-Node {
 
     # Copy node.exe to tools if needed
     if (-not (Test-Path "tools\node.exe")) {
-        $null = Copy-File-If-Exists "deps\node\Release\node.exe" "tools\node.exe"
+        $null = Copy-File-If-Exists $nodeExePath "tools\node.exe"
     }
     
     return 0
@@ -489,13 +508,13 @@ function Build-GLFW {
         return 0
     }
 
-    if (-not (Test-Path "build\win32\glfw\GLFW.sln")) {
+    if (-not (Test-Path "$PdgBuildRoot\glfw\GLFW.sln")) {
         Write-Error-Status "GLFW is not configured. Run .\configure.ps1 without -Headless to generate the GLFW solution."
         return 1
     }
 
     Write-Status "Building GLFW Library..." "Yellow"
-    Push-Location "build\win32\glfw"
+    Push-Location "$PdgBuildRoot\glfw"
     try {
         $BUILD_STATUS = Invoke-MSBuild -ProjectPath "GLFW.sln" -Target "Build" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
     }
@@ -504,7 +523,7 @@ function Build-GLFW {
     }
 
     # Verify GLFW build actually succeeded by checking for the library file
-    $glfwLibPath = "build\win32\glfw\src\$Config\glfw3.lib"
+    $glfwLibPath = "$PdgBuildRoot\glfw\src\$Config\glfw3.lib"
     if (Test-Path $glfwLibPath) {
         Write-Success-Status "GLFW build verification passed - glfw3.lib exists"
         $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
@@ -532,7 +551,7 @@ function Build-Chipmunk {
     )
     
     Write-Status "Building Chipmunk Library..." "Yellow"
-    Push-Location "build\win32\chipmunk"
+    Push-Location "$PdgBuildRoot\chipmunk"
     try {
         $BUILD_STATUS = Invoke-MSBuild -ProjectPath "chipmunk.sln" -Target "Build" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
     }
@@ -541,7 +560,7 @@ function Build-Chipmunk {
     }
 
     # Verify Chipmunk build actually succeeded by checking for the library file
-    $chipmunkLibPath = "build\win32\chipmunk\src\$Config\chipmunk.lib"
+    $chipmunkLibPath = "$PdgBuildRoot\chipmunk\src\$Config\chipmunk.lib"
     if (Test-Path $chipmunkLibPath) {
         Write-Success-Status "Chipmunk build verification passed - chipmunk.lib exists"
         $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
@@ -553,7 +572,7 @@ function Build-Chipmunk {
     }
 
     # Copy chipmunk.lib to src directory
-    $null = Copy-File-If-Exists "build\win32\chipmunk\src\$Config\chipmunk.lib" "build\win32\chipmunk\src\chipmunk.lib"
+    $null = Copy-File-If-Exists "$PdgBuildRoot\chipmunk\src\$Config\chipmunk.lib" "$PdgBuildRoot\chipmunk\src\chipmunk.lib"
 
     # Clean up after Chipmunk build
     Cleanup-BuildProcesses
@@ -569,7 +588,7 @@ function Build-LibjpegTurbo {
     )
     
     Write-Status "Building libjpeg-turbo Library..." "Yellow"
-    Push-Location "build\win32\libjpeg-turbo"
+    Push-Location "$PdgBuildRoot\libjpeg-turbo"
     try {
         $BUILD_STATUS = Invoke-MSBuild -ProjectPath "libjpeg-turbo.sln" -Target "Build" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
     }
@@ -578,7 +597,7 @@ function Build-LibjpegTurbo {
     }
 
     # Verify libjpeg-turbo build actually succeeded by checking for the library file
-    $jpegLibPath = "build\win32\libjpeg-turbo\$Config\jpeg.lib"
+    $jpegLibPath = "$PdgBuildRoot\libjpeg-turbo\$Config\jpeg.lib"
     if (Test-Path $jpegLibPath) {
         Write-Success-Status "libjpeg-turbo build verification passed - jpeg.lib exists"
         $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
@@ -609,7 +628,7 @@ function Build-PDG {
     $pdgExeName = if ($Config -eq "Debug") { "pdg-debug.exe" } else { "pdg.exe" }
     $pdgExePath = "src\$Config\$pdgExeName"
     Write-Status "Building PDG..." "Yellow"
-    Push-Location "msvc"
+    Push-Location "$PdgMainBuildDir"
     # Delete the selected configuration's executable.
     Remove-Item $pdgExePath -Force -ErrorAction SilentlyContinue
     try {
@@ -620,7 +639,7 @@ function Build-PDG {
     }
 
     # Verify PDG build actually succeeded by checking for the executable file
-    $pdgExePath = "msvc\src\$Config\$pdgExeName"
+    $pdgExePath = "$PdgMainBuildDir\src\$Config\$pdgExeName"
     if (Test-Path $pdgExePath) {
         Write-Success-Status "PDG build verification passed - $pdgExeName exists"
         $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
@@ -646,7 +665,7 @@ function Build-PDG {
 
     # Copy debug.html
     $null = Copy-File-If-Exists "tools\debug.html" "test\debug.html"
-    $null = Copy-File-If-Exists "tools\debug.html" "msvc\src\$Config\debug.html"
+    $null = Copy-File-If-Exists "tools\debug.html" "$PdgMainBuildDir\src\$Config\debug.html"
     
     return 0
 }
@@ -682,7 +701,7 @@ function Build-PDG-Tests {
     
     # Build the bunnymark and pdgmark targets
     Write-Status "Building bunnymark and pdgmark..." "Yellow"
-    Push-Location "msvc"
+    Push-Location "$PdgMainBuildDir"
     try {
         # Build bunnymark (MSBuild may return non-zero for warnings e.g. LNK4098; verify exe exists)
         $BUILD_STATUS = Invoke-MSBuild -ProjectPath "PDG.sln" -Target "bunnymark" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
@@ -718,12 +737,12 @@ function Build-PDG-Tests {
 
     function Copy-ExeIfFound {
         param([string]$ExeName, [string]$DestPath)
-        $expected = "msvc\src\$Config\$ExeName.exe"
+        $expected = "$PdgMainBuildDir\src\$Config\$ExeName.exe"
         if (Test-Path $expected) {
             Copy-Item $expected $DestPath -Force
             return $true
         }
-        $found = Get-ChildItem -Path "msvc" -Filter "$ExeName.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+        $found = Get-ChildItem -Path "$PdgMainBuildDir" -Filter "$ExeName.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
         if ($found) {
             Copy-Item $found.FullName $DestPath -Force
             return $true
@@ -732,8 +751,8 @@ function Build-PDG-Tests {
     }
     $bunOk = Copy-ExeIfFound "bunnymark" "test\perf\cpp-bunnymark\bunnymark.exe"
     $pdgOk = Copy-ExeIfFound "pdgmark" "test\perf\cpp-pdgmark\pdgmark.exe"
-    if (-not $bunOk) { Write-Warning "bunnymark.exe not found under msvc\ (expected msvc\src\$Config\bunnymark.exe)" }
-    if (-not $pdgOk) { Write-Warning "pdgmark.exe not found under msvc\ (expected msvc\src\$Config\pdgmark.exe)" }
+    if (-not $bunOk) { Write-Warning "bunnymark.exe not found under $PdgMainBuildDir\" }
+    if (-not $pdgOk) { Write-Warning "pdgmark.exe not found under $PdgMainBuildDir\" }
     
     Write-Host ""
     Write-Success-Status "C++ performance tests built successfully!"
@@ -774,7 +793,7 @@ function Build-PDG-Libs {
     
     # Build the pdg-libs target
     Write-Status "Building pdg-libs..." "Yellow"
-    Push-Location "msvc"
+    Push-Location "$PdgMainBuildDir"
     try {
         $BUILD_STATUS = Invoke-MSBuild -ProjectPath "PDG.sln" -Target "pdg-libs" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
         if ($BUILD_STATUS -ne 0) {
@@ -846,6 +865,9 @@ switch ($Target.ToLower()) {
     "pdg" {
         # Build all dependencies and PDG
         $status = Build-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+
+        $status = Update-PDGCMakeConfiguration
         if ($status -ne 0) { exit 1 }
         
         $status = Build-GLFW -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose

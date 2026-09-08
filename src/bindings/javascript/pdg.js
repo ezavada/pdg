@@ -430,22 +430,42 @@ if (!jsc && !inbrowser) { // not supported on iOS/JavaScriptCore currently
 	bindings.hasNetwork = false;
 }	
 
-bindings.fs = bindings.getFileManager();
-bindings.evt = bindings.getEventManager();
-bindings.tm = bindings.getTimerManager();
-bindings.res = bindings.getResourceManager();
-bindings.cfg = bindings.getConfigManager();
-bindings.lm = bindings.getLogManager();
+var _nativeGetFileManager = bindings.getFileManager;
+var _nativeGetEventManager = bindings.getEventManager;
+var _nativeGetTimerManager = bindings.getTimerManager;
+var _nativeGetResourceManager = bindings.getResourceManager;
+var _nativeGetConfigManager = bindings.getConfigManager;
+var _nativeGetLogManager = bindings.getLogManager;
+
+bindings.fs = _nativeGetFileManager();
+bindings.evt = _nativeGetEventManager();
+bindings.tm = _nativeGetTimerManager();
+bindings.res = _nativeGetResourceManager();
+bindings.cfg = _nativeGetConfigManager();
+bindings.lm = _nativeGetLogManager();
 
 // Embind creates a fresh JavaScript handle each time a singleton pointer is
 // returned. Preserve the public API's singleton identity by returning the
 // canonical handles initialized above.
-bindings.getFileManager = function() { return bindings.fs; };
-bindings.getEventManager = function() { return bindings.evt; };
-bindings.getTimerManager = function() { return bindings.tm; };
-bindings.getResourceManager = function() { return bindings.res; };
-bindings.getConfigManager = function() { return bindings.cfg; };
-bindings.getLogManager = function() { return bindings.lm; };
+function singletonGetter(nativeGetter, singleton) {
+	var getter = function() {
+		// Native functions return their documentation signature when probed with
+		// a single null argument. Preserve that behavior through this wrapper.
+		if (arguments.length === 1 && arguments[0] === null) {
+			return nativeGetter.call(bindings, null);
+		}
+		return singleton;
+	};
+	getter._pdgNativeWrapper = true;
+	return getter;
+}
+
+bindings.getFileManager = singletonGetter(_nativeGetFileManager, bindings.fs);
+bindings.getEventManager = singletonGetter(_nativeGetEventManager, bindings.evt);
+bindings.getTimerManager = singletonGetter(_nativeGetTimerManager, bindings.tm);
+bindings.getResourceManager = singletonGetter(_nativeGetResourceManager, bindings.res);
+bindings.getConfigManager = singletonGetter(_nativeGetConfigManager, bindings.cfg);
+bindings.getLogManager = singletonGetter(_nativeGetLogManager, bindings.lm);
 
 if (inbrowser && typeof bindings.MemBlock !== "undefined") {
     bindings.MemBlock.prototype.toBuffer = function() {
@@ -1909,14 +1929,19 @@ timerManagerProto.cancelTimer = function(timerId) {
 	removeAutoTimerHandler(this, timerId);
 	return _nativeCancelTimer.call(this, timerId);
 };
+timerManagerProto.cancelTimer._pdgNativeWrapper = true;
 
 timerManagerProto.cancelAllTimers = function() {
+	if (arguments.length === 1 && arguments[0] === null) {
+		return _nativeCancelAllTimers.call(this, null);
+	}
 	var timerManager = this;
 	Object.keys(_autoTimerHandlers).forEach(function(timerId) {
 		removeAutoTimerHandler(timerManager, timerId);
 	});
 	return _nativeCancelAllTimers.call(this);
 };
+timerManagerProto.cancelAllTimers._pdgNativeWrapper = true;
 
 // add methods to the timer manager prototypes
 // TimerManager.onTimeout(function, delayMs)

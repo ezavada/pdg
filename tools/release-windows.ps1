@@ -8,6 +8,14 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 $pdgRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$pdgArch = switch ($env:PROCESSOR_ARCHITECTURE) {
+    "ARM64" { "arm64" }
+    "AMD64" { "x86_64" }
+    default { $env:PROCESSOR_ARCHITECTURE.ToLowerInvariant() }
+}
+$platformBuildDir = Join-Path $pdgRoot "build\win32\$pdgArch"
+$mainBuildDir = Join-Path $platformBuildDir "pdg"
+$nodeOutDir = Join-Path $platformBuildDir "node\out"
 if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
     $OutputDirectory = Join-Path $pdgRoot "artifacts\release"
 }
@@ -25,7 +33,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Release version validation failed." }
 
     $version = (Get-Content "VERSION" -Raw).Trim()
-    $buildCache = Join-Path $pdgRoot "msvc\CMakeCache.txt"
+    $buildCache = Join-Path $mainBuildDir "CMakeCache.txt"
     if ($Configure -or -not (Test-Path $buildCache)) {
         & powershell -NoProfile -ExecutionPolicy Bypass -File ".\configure.ps1" -SkipInstall
         if ($LASTEXITCODE -ne 0) { throw "Windows configuration failed." }
@@ -33,10 +41,11 @@ try {
 
     $cmakeArguments = @(
         "-S", ".",
-        "-B", "msvc",
+        "-B", $mainBuildDir,
         "-DBUILD_TESTING=ON",
         "-DCAN_BUILD_INTERFACES=OFF",
-        "-DPDG_HEADLESS=OFF"
+        "-DPDG_HEADLESS=OFF",
+        "-DPDG_NODE_OUT_DIR=$nodeOutDir"
     )
     & cmake @cmakeArguments
     if ($LASTEXITCODE -ne 0) { throw "CMake release configuration failed." }
@@ -47,15 +56,15 @@ try {
     & powershell -NoProfile -ExecutionPolicy Bypass -File ".\make.ps1" -Target pdg -Config Release
     if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
 
-    & cmake --build msvc --config Release --target pdg-app-view-utils-tests pdg-app-framework-tests --parallel
+    & cmake --build $mainBuildDir --config Release --target pdg-app-view-utils-tests pdg-app-framework-tests --parallel
     if ($LASTEXITCODE -ne 0) { throw "Windows native test build failed." }
 
-    & ctest --test-dir msvc --build-config Release --output-on-failure
+    & ctest --test-dir $mainBuildDir --build-config Release --output-on-failure
     if ($LASTEXITCODE -ne 0) { throw "Native tests failed." }
     if (-not (Test-Path ".\node_modules\jasmine-node\package.json")) {
         $nodeExe = Join-Path $pdgRoot "tools\node.exe"
         if (-not (Test-Path $nodeExe)) {
-            $nodeExe = Join-Path $pdgRoot "deps\node\out\Release\node.exe"
+            $nodeExe = Join-Path $nodeOutDir "Release\node.exe"
         }
         $npmCli = Join-Path $pdgRoot "deps\node\deps\npm\bin\npm-cli.js"
         if (-not (Test-Path $nodeExe) -or -not (Test-Path $npmCli)) {
@@ -71,12 +80,12 @@ try {
     # The symbol/debug package uses RelWithDebInfo so it can reuse the Release-built
     # third-party libraries, including Node. It still compiles PDG with DEBUG=1.
     $releaseDependencyLibraries = @(
-        "build\win32\glfw\src\Release\glfw3.lib",
-        "build\win32\glfw\src\glfw3.lib",
-        "build\win32\chipmunk\src\Release\chipmunk.lib",
-        "build\win32\chipmunk\src\chipmunk.lib",
-        "build\win32\libjpeg-turbo\Release\jpeg.lib",
-        "build\win32\libjpeg-turbo\jpeg.lib"
+        (Join-Path $platformBuildDir "glfw\src\Release\glfw3.lib"),
+        (Join-Path $platformBuildDir "glfw\src\glfw3.lib"),
+        (Join-Path $platformBuildDir "chipmunk\src\Release\chipmunk.lib"),
+        (Join-Path $platformBuildDir "chipmunk\src\chipmunk.lib"),
+        (Join-Path $platformBuildDir "libjpeg-turbo\Release\jpeg.lib"),
+        (Join-Path $platformBuildDir "libjpeg-turbo\jpeg.lib")
     )
     foreach ($library in $releaseDependencyLibraries) {
         if (-not (Test-Path $library)) {
@@ -85,20 +94,20 @@ try {
     }
 
     # Build a distinct executable with DEBUG logging and PDB symbols.
-    & cmake --build msvc --config RelWithDebInfo --target pdg --parallel
+    & cmake --build $mainBuildDir --config RelWithDebInfo --target pdg --parallel
     if ($LASTEXITCODE -ne 0) { throw "Windows debug build failed." }
 
-    $sourceExe = Join-Path $pdgRoot "msvc\src\Release\pdg.exe"
-    $sourceDebugExe = Join-Path $pdgRoot "msvc\src\RelWithDebInfo\pdg-debug.exe"
-    $sourceDebugPdb = Join-Path $pdgRoot "msvc\src\RelWithDebInfo\pdg-debug.pdb"
+    $sourceExe = Join-Path $mainBuildDir "src\Release\pdg.exe"
+    $sourceDebugExe = Join-Path $mainBuildDir "src\RelWithDebInfo\pdg-debug.exe"
+    $sourceDebugPdb = Join-Path $mainBuildDir "src\RelWithDebInfo\pdg-debug.pdb"
     foreach ($requiredFile in @($sourceExe, $sourceDebugExe, $sourceDebugPdb)) {
         if (-not (Test-Path $requiredFile)) {
             throw "Expected release file was not produced: $requiredFile"
         }
     }
 
-    $assetBaseName = "pdg-v$version-windows-x64"
-    $debugAssetBaseName = "pdg-debug-v$version-windows-x64"
+    $assetBaseName = "pdg-v$version-windows-$pdgArch"
+    $debugAssetBaseName = "pdg-debug-v$version-windows-$pdgArch"
     $stageDirectory = Join-Path $OutputDirectory "stage\$assetBaseName"
     $debugStageDirectory = Join-Path $OutputDirectory "stage\$debugAssetBaseName"
     $assetPath = Join-Path $OutputDirectory "$assetBaseName.zip"

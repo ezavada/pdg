@@ -6,7 +6,7 @@
   Environment:
     BCPP_EXE - optional full path to bcpp.exe (otherwise bcpp on PATH).
     PDG_GEN_SCRIPT_VERBOSE=1 - print which preprocessor runs and command lines (also use -GenVerbose).
-    PDG_GEN_SCRIPT_KEEP_TEMPS=1 - copy workDir (tmp.1, tmp.5, bcpp output) under build\win32\gen-script-last-<id>\
+    PDG_GEN_SCRIPT_KEEP_TEMPS=1 - copy workDir (tmp.1, tmp.5, bcpp output) under build\win32\ARCH\gen-script-last-<id>\
 
   MSBuild: run from a shell with $env:PDG_GEN_SCRIPT_VERBOSE='1' so child processes inherit it.
 #>
@@ -228,13 +228,18 @@ if ([string]::IsNullOrEmpty($PdgOutFilename)) {
 
 $PdgTarget = Join-Path $PdgTargetDir $PdgOutFilename
 
+$pdgArch = switch ($env:PROCESSOR_ARCHITECTURE) {
+    "ARM64" { "arm64" }
+    "AMD64" { "x86_64" }
+    default { $env:PROCESSOR_ARCHITECTURE.ToLowerInvariant() }
+}
 $BcppExe = $env:BCPP_EXE
 if ([string]::IsNullOrEmpty($BcppExe)) {
-    $defaultBcpp = Join-Path $PDG_ROOT "build\win32\bcpp\Release\bcpp.exe"
+    $defaultBcpp = Join-Path $PDG_ROOT "build\win32\$pdgArch\bcpp\Release\bcpp.exe"
     if (Test-Path $defaultBcpp) { $BcppExe = $defaultBcpp }
 }
 if ([string]::IsNullOrEmpty($BcppExe)) {
-    throw "bcpp not found. Set BCPP_EXE or build with configure.ps1 (build\win32\bcpp\Release\bcpp.exe)."
+    throw "bcpp not found. Set BCPP_EXE or build it with configure.ps1 under build\win32\ARCH\bcpp."
 }
 $BcppExe = (Resolve-Path $BcppExe).Path
 
@@ -307,7 +312,7 @@ try {
         $bcppText = [System.IO.File]::ReadAllText($tmp6, [System.Text.Encoding]::Default)
     }
     if ([string]::IsNullOrEmpty($bcppText)) {
-        throw "bcpp produced no output (see tmp.6.bcpp-out.txt under build\win32\gen-script-last-* when PDG_GEN_SCRIPT_KEEP_TEMPS=1)."
+        throw "bcpp produced no output (see tmp.6.bcpp-out.txt under build\win32\ARCH\gen-script-last-* when PDG_GEN_SCRIPT_KEEP_TEMPS=1)."
     }
     # bcpp may echo the input basename before the formatted body (.h tmp names or .cpp source names)
     while ($true) {
@@ -321,7 +326,7 @@ try {
 }
 finally {
     if ($script:GenScriptKeepTemps) {
-        $base = Join-Path $PDG_ROOT "build\win32"
+        $base = Join-Path $PDG_ROOT "build\win32\$pdgArch"
         if (-not (Test-Path $base)) { New-Item -ItemType Directory -Path $base -Force | Out-Null }
         $leaf = (Split-Path -Leaf $workDir)
         $dest = Join-Path $base "gen-script-last-$leaf"

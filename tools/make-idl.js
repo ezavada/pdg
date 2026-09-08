@@ -164,6 +164,7 @@ function inspect(obj, objname, skip, objclassinfo) {
     }
 
     function _is_native(func) {
+        if (func._pdgNativeWrapper) return true;
         var fnStr = func.toString().replace(STRIP_COMMENTS, '');
         fnStr = fnStr.split('\n')[0];
         return (fnStr.indexOf("[native code]") >= 0) ? true : undefined;
@@ -505,41 +506,45 @@ function inspect(obj, objname, skip, objclassinfo) {
     function _member_info(name) {
         var tname = typeof(obj[name]);
         if (tname == 'object') {
-            // Check for both actual Arrays and array-like objects (with length property)
-            var isArrayLike = (obj[name] instanceof Array) || 
-                             (obj[name] && typeof(obj[name].length) === 'number' && obj[name].length >= 0);
-            
-            if (isArrayLike) {
-                var item = obj[name][0];
-                var itype = typeof(item);
-                if (itype=="string") {
-                    tname = "string[]";
-                } else if (itype == "object") {
-                    if (item && item.toString().substring(0,5) == "Point") {
-                        tname = "object Point[]"
-                    } else {
-                        tname = "object[]";
-                    }
-                } else if (itype == "undefined" && obj[name].length >= 0) {
-                    // Empty array - try to infer type from property name or default to generic array
-                    if (name == "connections") {
-                        tname = "object NetConnection[]";
-                    } else if (name == "points") {
-                        tname = "object Point[]";
+            if (obj[name] === null) {
+                tname = "object";
+            } else {
+                // Check for both actual Arrays and array-like objects (with length property)
+                var isArrayLike = (obj[name] instanceof Array) ||
+                                 (typeof(obj[name].length) === 'number' && obj[name].length >= 0);
+
+                if (isArrayLike) {
+                    var item = obj[name][0];
+                    var itype = typeof(item);
+                    if (itype=="string") {
+                        tname = "string[]";
+                    } else if (itype == "object") {
+                        if (item && item.toString().substring(0,5) == "Point") {
+                            tname = "object Point[]"
+                        } else {
+                            tname = "object[]";
+                        }
+                    } else if (itype == "undefined" && obj[name].length >= 0) {
+                        // Empty array - try to infer type from property name or default to generic array
+                        if (name == "connections") {
+                            tname = "object NetConnection[]";
+                        } else if (name == "points") {
+                            tname = "object Point[]";
+                        } else {
+                            tname = "[]";
+                        }
                     } else {
                         tname = "[]";
                     }
                 } else {
-                    tname = "[]";
-                }
-            } else {
-                tname = obj[name].toString();
-                if (tname.charAt(0) == '[') {
-                    tname = tname.slice(1, tname.indexOf(']')).trim();
-                } else if (tname.indexOf('(')>0) {
-                    tname = "object "+tname.slice(0, tname.indexOf('(')).trim();
-                } else {
-                    tname = "object";
+                    tname = obj[name].toString();
+                    if (tname.charAt(0) == '[') {
+                        tname = tname.slice(1, tname.indexOf(']')).trim();
+                    } else if (tname.indexOf('(')>0) {
+                        tname = "object "+tname.slice(0, tname.indexOf('(')).trim();
+                    } else {
+                        tname = "object";
+                    }
                 }
             }
         }
@@ -669,7 +674,10 @@ function inspect(obj, objname, skip, objclassinfo) {
             if (superverbose) {
                 log(indent() + "("+fullname+" appears to be a function)");
             }
-            _api.push( _function_info(name) );
+            const functionInfo = _function_info(name); // this can return undefined
+            if (functionInfo) {
+                _api.push( functionInfo );
+            }
         } else {
             if (verbose) { 
                 log(indent() + "- "+fullname+" -- skipped");

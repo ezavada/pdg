@@ -9,6 +9,13 @@ param(
     [switch]$UseMSVC
 )
 
+# This legacy MinGW/Clang flow targets Windows x86_64. Keep its products in
+# the same platform/architecture layout as the primary Windows build.
+$pdgArch = "x86_64"
+$pdgBuildRoot = "build\win32\$pdgArch"
+$pdgMainBuildDir = "$pdgBuildRoot\pdg"
+$pdgNodeOutDir = Join-Path $PSScriptRoot "$pdgBuildRoot\node\out"
+
 # Function to display help
 function Show-Help {
     Write-Host "PDG Dependency Installation Script" -ForegroundColor Cyan
@@ -1019,7 +1026,7 @@ try {
         foreach ($vsGen in $vsGenerators) {
             try {
                 Write-Status "Trying Visual Studio generator: $vsGen" "Cyan"
-                Invoke-CMakeConfigure -SourcePath ".." -BuildPath "msvc" -Generator $vsGen -Arguments @("-DCAN_BUILD_INTERFACES=OFF")
+                Invoke-CMakeConfigure -SourcePath $PSScriptRoot -BuildPath $pdgMainBuildDir -Generator $vsGen -Arguments @("-DCAN_BUILD_INTERFACES=OFF", "-DPDG_NODE_OUT_DIR=$pdgNodeOutDir")
                 Write-Success-Status "Successfully configured with Visual Studio generator"
                 $configured = $true
                 break
@@ -1100,7 +1107,8 @@ try {
                     }
                 }
             }
-            Invoke-CMakeConfigure -SourcePath ".." -BuildPath "msvc" -Generator "Ninja" -Arguments $cmakeArgs
+            $cmakeArgs += "-DPDG_NODE_OUT_DIR=$pdgNodeOutDir"
+            Invoke-CMakeConfigure -SourcePath $PSScriptRoot -BuildPath $pdgMainBuildDir -Generator "Ninja" -Arguments $cmakeArgs
         }
         catch {
             Write-Error-Status "Clang configuration failed: $($_)"
@@ -1136,7 +1144,7 @@ try {
     if ($UseMSVC -or (-not $CLANG_PATH)) {
         # Use Visual Studio generator for dependencies
         $vsGen = "Visual Studio 17 2022"
-        Invoke-CMakeConfigure -SourcePath "..\..\..\deps\glfw" -BuildPath "build\win32\glfw" -Generator $vsGen -Arguments @("-DGLFW_BUILD_EXAMPLES=OFF", "-DGLFW_BUILD_TESTS=OFF")
+        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\glfw") -BuildPath "$pdgBuildRoot\glfw" -Generator $vsGen -Arguments @("-DGLFW_BUILD_EXAMPLES=OFF", "-DGLFW_BUILD_TESTS=OFF")
     }
     else {
         # Use Ninja with Clang for dependencies
@@ -1178,7 +1186,7 @@ try {
         if ($mingwLibPath) {
             $glfwArgs += @("-DCMAKE_LIBRARY_PATH=`"$mingwLibPath`"")
         }
-        Invoke-CMakeConfigure -SourcePath "..\..\..\deps\glfw" -BuildPath "build\win32\glfw" -Generator "Ninja" -Arguments $glfwArgs
+        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\glfw") -BuildPath "$pdgBuildRoot\glfw" -Generator "Ninja" -Arguments $glfwArgs
     }
 }
 catch {
@@ -1192,7 +1200,7 @@ try {
     if ($UseMSVC -or (-not $CLANG_PATH)) {
         # Use Visual Studio generator for dependencies
         $vsGen = "Visual Studio 17 2022"
-        Invoke-CMakeConfigure -SourcePath "..\..\..\deps\chipmunk" -BuildPath "build\win32\chipmunk" -Generator $vsGen -Arguments @("-DBUILD_DEMOS=OFF", "-DBUILD_SHARED=OFF")
+        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\chipmunk") -BuildPath "$pdgBuildRoot\chipmunk" -Generator $vsGen -Arguments @("-DBUILD_DEMOS=OFF", "-DBUILD_SHARED=OFF")
     }
     else {
         # Use Ninja with Clang for dependencies
@@ -1234,7 +1242,7 @@ try {
         if ($mingwLibPath) {
             $chipmunkArgs += @("-DCMAKE_LIBRARY_PATH=`"$mingwLibPath`"")
         }
-        Invoke-CMakeConfigure -SourcePath "..\..\..\deps\chipmunk" -BuildPath "build\win32\chipmunk" -Generator "Ninja" -Arguments $chipmunkArgs
+        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\chipmunk") -BuildPath "$pdgBuildRoot\chipmunk" -Generator "Ninja" -Arguments $chipmunkArgs
     }
 }
 catch {
@@ -1260,7 +1268,7 @@ try {
     if ($UseMSVC -or (-not $CLANG_PATH)) {
         # Use Visual Studio generator for dependencies
         $vsGen = "Visual Studio 17 2022"
-        Invoke-CMakeConfigure -SourcePath "..\..\..\deps\libjpeg-turbo" -BuildPath "build\win32\libjpeg-turbo" -Generator $vsGen -Arguments @("-DWITH_SIMD=ON")
+        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\libjpeg-turbo") -BuildPath "$pdgBuildRoot\libjpeg-turbo" -Generator $vsGen -Arguments @("-DWITH_SIMD=ON")
     }
     else {
         # Use Ninja with Clang for dependencies
@@ -1301,7 +1309,7 @@ try {
         if ($mingwLibPath) {
             $libjpegArgs += @("-DCMAKE_LIBRARY_PATH=`"$mingwLibPath`"")
         }
-        Invoke-CMakeConfigure -SourcePath "..\..\..\deps\libjpeg-turbo" -BuildPath "build\win32\libjpeg-turbo" -Generator "Ninja" -Arguments $libjpegArgs
+        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\libjpeg-turbo") -BuildPath "$pdgBuildRoot\libjpeg-turbo" -Generator "Ninja" -Arguments $libjpegArgs
     }
 }
 catch {
@@ -1311,6 +1319,22 @@ catch {
 
 # Configure Node.js
 Write-Status "Configuring Node.js Library..." "Yellow"
+$nodeOutLink = Join-Path $PSScriptRoot "deps\node\out"
+New-Item -ItemType Directory -Path $pdgNodeOutDir -Force | Out-Null
+if (Test-Path $nodeOutLink) {
+    $nodeOutItem = Get-Item $nodeOutLink -Force
+    if (($nodeOutItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+        Remove-Item $nodeOutLink -Force
+    }
+    else {
+        $legacyNodeOut = Join-Path $PSScriptRoot ("$pdgBuildRoot\node-legacy-out-" + (Get-Date -Format "yyyyMMddHHmmss"))
+        Write-Warning-Status "Preserving unscoped Node output at $legacyNodeOut"
+        New-Item -ItemType Directory -Path (Split-Path $legacyNodeOut -Parent) -Force | Out-Null
+        Move-Item $nodeOutLink $legacyNodeOut
+    }
+}
+New-Item -ItemType Junction -Path $nodeOutLink -Target $pdgNodeOutDir | Out-Null
+Write-Status "Node/V8 output: $pdgNodeOutDir" "Cyan"
 
 # Check if Visual Studio with ClangCL is available (required for Node.js v24+)
 if (-not $VS_CLANGCL_AVAILABLE) {
@@ -1385,11 +1409,11 @@ else {
 
 Write-Host ""
 Write-Status "Build Summary:" "Cyan"
-Write-Host "- Main project: msvc\ directory" -ForegroundColor White
-Write-Host "- GLFW: build\win32\glfw\ directory" -ForegroundColor White
-Write-Host "- Chipmunk: build\win32\chipmunk\ directory" -ForegroundColor White
-Write-Host "- libjpeg-turbo: build\win32\libjpeg-turbo\ directory" -ForegroundColor White
-Write-Host "- Node.js: deps\node\ directory" -ForegroundColor White
+Write-Host "- Main project: $pdgMainBuildDir\ directory" -ForegroundColor White
+Write-Host "- GLFW: $pdgBuildRoot\glfw\ directory" -ForegroundColor White
+Write-Host "- Chipmunk: $pdgBuildRoot\chipmunk\ directory" -ForegroundColor White
+Write-Host "- libjpeg-turbo: $pdgBuildRoot\libjpeg-turbo\ directory" -ForegroundColor White
+Write-Host "- Node.js: $pdgNodeOutDir\ directory" -ForegroundColor White
 
 Write-Host ""
 Write-Status "Dependency Installation and Configuration script finished." "Green"

@@ -182,14 +182,6 @@ namespace pdg
         v8::Isolate* isolate = args.GetIsolate();
         ;
 
-        std::ostringstream excpt_;
-        excpt_ << "ElementRef cannot be constructed directly. Use Drawing methods to get ElementRef objects.";
-        isolate->ThrowException( v8::Exception::TypeError( ([&]()
-        {
-            v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                return maybe.IsEmpty() ?
-                v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-        }())));
         return nullptr;
     }
 
@@ -231,6 +223,14 @@ namespace pdg
         };
         const std::vector<Point>& points = self->getControlPoints();
 
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        JSObjectRef result = JSObjectMakeArray(ctx, 0, nullptr, exception);
+        for (size_t i = 0; i < points.size(); i++)
+        {
+            Point point = points[i];
+            JSObjectSetPropertyAtIndex(ctx, result, (unsigned)i, v8_MakeJavascriptPoint(isolate, point), exception);
+        }
+#else
         v8::Local<v8::Array> result = v8::Array::New(isolate, points.size());
         v8::Local<v8::Context> context = isolate->GetCurrentContext();
 
@@ -239,6 +239,7 @@ namespace pdg
             Point point = points[i];
             result->Set(context, i, v8_MakeJavascriptPoint(isolate, point)).ToChecked();
         }
+#endif
 
         { args.GetReturnValue().Set( result ); return; };
     }
@@ -372,22 +373,8 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addLine must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        self->setAttributes(*attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(1, attrs, Attributes);
+        self->setAttributes(*attrs);
         args.GetReturnValue().SetUndefined();
     }
 
@@ -652,14 +639,6 @@ namespace pdg
         v8::Isolate* isolate = args.GetIsolate();
         ;
 
-        std::ostringstream excpt_;
-        excpt_ << "Drawing cannot be constructed directly. Use Drawing.create() to create a new Drawing.";
-        isolate->ThrowException( v8::Exception::TypeError( ([&]()
-        {
-            v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                return maybe.IsEmpty() ?
-                v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-        }())));
         return nullptr;
     }
 
@@ -710,22 +689,8 @@ namespace pdg
             return;
         }
         pdg::Point to = v8_ValueToPoint(isolate, args[2 -1]);
-        REQUIRE_OBJECT_ARG(3, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addLine must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addLine(from, to, *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+        ElementRef* result = self->addLine(from, to, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -753,37 +718,9 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 2);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, spline);
-        SplineWrap* splineWrapper = static_cast<SplineWrap*>(spline->GetAlignedPointerFromInternalField(0));
-        Spline* splinePtr = splineWrapper->getCppObject();
-        if (!splinePtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addSpline must be called with a valid Spline object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        REQUIRE_OBJECT_ARG(2, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addSpline must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addSpline(std::move(*splinePtr), *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
+        REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+        ElementRef* result = self->addSpline(std::move(*spline), *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -817,22 +754,8 @@ namespace pdg
             return;
         }
         pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
-        REQUIRE_OBJECT_ARG(2, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addRect must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addRect(rect, *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+        ElementRef* result = self->addRect(rect, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -866,22 +789,8 @@ namespace pdg
             return;
         }
         pdg::Quad quad = v8_ValueToQuad(isolate, args[1 -1]);
-        REQUIRE_OBJECT_ARG(2, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addQuad must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addQuad(quad, *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+        ElementRef* result = self->addQuad(quad, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -909,37 +818,9 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 2);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, polygon);
-        PolygonWrap* polygonWrapper = static_cast<PolygonWrap*>(polygon->GetAlignedPointerFromInternalField(0));
-        Polygon* polygonPtr = polygonWrapper->getCppObject();
-        if (!polygonPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addPolygon must be called with a valid Polygon object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        REQUIRE_OBJECT_ARG(2, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addPolygon must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addPolygon(std::move(*polygonPtr), *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(1, polygon, Polygon);
+        REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+        ElementRef* result = self->addPolygon(std::move(*polygon), *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -985,22 +866,8 @@ namespace pdg
             return;
         }
         double yRadius = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        REQUIRE_OBJECT_ARG(4, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addEllipse must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addEllipse(center, xRadius, yRadius, *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(4, attrs, Attributes);
+        ElementRef* result = self->addEllipse(center, xRadius, yRadius, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -1058,22 +925,8 @@ namespace pdg
             return;
         }
         double endAngle = args[5 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        REQUIRE_OBJECT_ARG(6, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addArc must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addArc(center, xRadius, yRadius, startAngle, endAngle, *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(6, attrs, Attributes);
+        ElementRef* result = self->addArc(center, xRadius, yRadius, startAngle, endAngle, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -1107,37 +960,9 @@ namespace pdg
             return;
         }
         pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
-        REQUIRE_OBJECT_ARG(2, image);
-        ImageWrap* imageWrapper = static_cast<ImageWrap*>(image->GetAlignedPointerFromInternalField(0));
-        Image* imagePtr = imageWrapper->getCppObject();
-        if (!imagePtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addImage must be called with a valid Image object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        REQUIRE_OBJECT_ARG(3, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addImage must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addImage(rect, *imagePtr, *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(2, image, Image);
+        REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+        ElementRef* result = self->addImage(rect, *image, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -1171,37 +996,9 @@ namespace pdg
             return;
         }
         pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
-        REQUIRE_OBJECT_ARG(2, imageStrip);
-        ImageStripWrap* imageStripWrapper = static_cast<ImageStripWrap*>(imageStrip->GetAlignedPointerFromInternalField(0));
-        ImageStrip* imageStripPtr = imageStripWrapper->getCppObject();
-        if (!imageStripPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addImageStrip must be called with a valid ImageStrip object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        REQUIRE_OBJECT_ARG(3, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addImageStrip must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addImageStrip(rect, *imageStripPtr, *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(2, imageStrip, ImageStrip);
+        REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+        ElementRef* result = self->addImageStrip(rect, *imageStrip, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -1235,37 +1032,9 @@ namespace pdg
             return;
         }
         pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
-        REQUIRE_OBJECT_ARG(2, drawing);
-        DrawingWrap* drawingWrapper = static_cast<DrawingWrap*>(drawing->GetAlignedPointerFromInternalField(0));
-        Drawing* drawingPtr = drawingWrapper->getCppObject();
-        if (!drawingPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addDrawing must be called with a valid Drawing object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        REQUIRE_OBJECT_ARG(3, attrs);
-        AttributesWrap* attrsWrapper = static_cast<AttributesWrap*>(attrs->GetAlignedPointerFromInternalField(0));
-        Attributes* attrsPtr = attrsWrapper->getCppObject();
-        if (!attrsPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "addDrawing must be called with a valid Attributes object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
-        ElementRef* result = self->addDrawing(rect, *drawingPtr, *attrsPtr);
+        REQUIRE_CPP_OBJECT_ARG(2, drawing, Drawing);
+        REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+        ElementRef* result = self->addDrawing(rect, *drawing, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
         {
@@ -1453,23 +1222,9 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        REQUIRE_OBJECT_ARG(1, port);
-        PortWrap* portWrapper = static_cast<PortWrap*>(port->GetAlignedPointerFromInternalField(0));
-        Port* portPtr = portWrapper->getCppObject();
-        if (!portPtr)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "draw must be called with a valid Port object";
-            isolate->ThrowException( v8::Exception::TypeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-            return;
-        }
+        REQUIRE_CPP_OBJECT_ARG(1, port, Port);
 
-        self->draw(portPtr);
+        self->draw(port);
         args.GetReturnValue().SetUndefined();
     }
 #endif

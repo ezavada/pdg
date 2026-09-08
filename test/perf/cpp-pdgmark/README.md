@@ -38,8 +38,8 @@ This will:
 - Create symlinks at `test/perf/cpp-bunnymark/bunnymark` and `test/perf/cpp-pdgmark/pdgmark`
 
 **What gets built:**
-- `build/darwin/pdg/src/libpdg-lib.a` (~42MB) - PDG C++ framework library
-- `build/darwin/pdg/src/pdgmark.app` - PDGMark executable bundle
+- `build/darwin/$PDG_ARCH/pdg/src/libpdg-lib.a` (~42MB) - PDG C++ framework library
+- `build/darwin/$PDG_ARCH/pdg/src/pdgmark.app` - PDGMark executable bundle
 - `test/perf/cpp-pdgmark/pdgmark` - Symlink for easy access
 
 ## Running
@@ -197,7 +197,7 @@ Each test creates objects that:
 
 **Symlink broken:**
 - Run `make pdg-tests` to recreate the symlink
-- Or run directly: `./build/darwin/pdg/src/pdgmark.app/Contents/MacOS/pdgmark`
+- Or run directly: `./build/darwin/$PDG_ARCH/pdg/src/pdgmark.app/Contents/MacOS/pdgmark`
 
 **Very different scores from JavaScript**
 - This is expected - C++ should be faster
@@ -273,8 +273,8 @@ test/perf/cpp-pdgmark/
 └── README.md                 - This file
 
 Build artifacts (not in repo):
-├── build/darwin/pdg/src/libpdg-lib.a        - PDG C++ framework library
-├── build/darwin/pdg/src/pdgmark.app/        - PDGMark executable bundle
+├── build/darwin/$PDG_ARCH/pdg/src/libpdg-lib.a        - PDG C++ framework library
+├── build/darwin/$PDG_ARCH/pdg/src/pdgmark.app/        - PDGMark executable bundle
 └── test/perf/cpp-pdgmark/pdgmark_results.json - Test results
 ```
 
@@ -337,7 +337,7 @@ TARGET_LINK_LIBRARIES(pdgmark pdg-lib + frameworks)
 The `pdg-tests` target in the main Makefile:
 ```makefile
 pdg-tests: glfw chipmunk node js-interfaces
-	cd $(PDG_ROOT)/build/darwin/pdg; make bunnymark pdgmark
+	cd $(PDG_ROOT)/build/darwin/$PDG_ARCH/pdg; make bunnymark pdgmark
 	ln -sf .../pdgmark.app/.../pdgmark .../cpp-pdgmark/pdgmark
 ```
 
