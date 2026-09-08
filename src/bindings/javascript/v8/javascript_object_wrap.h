@@ -85,7 +85,8 @@ class ObjectWrap {
 
 
   inline void MakeWeak(void) {
-    persistent().SetWeak(this, reinterpret_cast<typename v8::WeakCallbackInfo<ObjectWrap>::Callback>(WeakCallback), v8::WeakCallbackType::kParameter);
+    persistent().SetWeak(static_cast<void*>(this), WeakCallback,
+                         v8::WeakCallbackType::kParameter);
   }
 
   /* Ref() marks the object as being attached to an event loop.
@@ -119,10 +120,10 @@ class ObjectWrap {
 
  private:
   static void WeakCallback(
-      const v8::WeakCallbackInfo<ObjectWrap>& data) {
+      const v8::WeakCallbackInfo<void>& data) {
     v8::Isolate* isolate = data.GetIsolate();
     v8::HandleScope scope(isolate);
-    ObjectWrap* wrap = data.GetParameter();
+    ObjectWrap* wrap = static_cast<ObjectWrap*>(data.GetParameter());
     assert(wrap->refs_ == 0);
     wrap->handle_.Reset();
     delete wrap;
