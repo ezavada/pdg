@@ -1,4 +1,4 @@
-.TH "pdg" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "pdg" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -14,9 +14,25 @@ pdg
 .br
 .RI "something that can be automatically moved, spun or resized over time\&. "
 .ti -1c
+.RI "class \fBAnimatedAttributes\fP"
+.br
+.RI "\fBDrawing\fP attributes with programmed movement and appearance animation\&. "
+.ti -1c
+.RI "class \fBAnimationContactTarget\fP"
+.br
+.RI "World and platform contact locks with timed release\&. "
+.ti -1c
+.RI "class \fBAnimationSpringTarget\fP"
+.br
+.RI "Spring target smoothing and recoil impulses\&. "
+.ti -1c
 .RI "class \fBAttributes\fP"
 .br
 .RI "Container for styling and transformation attributes used in drawing operations\&. "
+.ti -1c
+.RI "class \fBCollider\fP"
+.br
+.RI "Optional shapes, filtering, sensors and contacts for a \fBSprite\fP, \fBPart\fP or \fBParticle\fP\&. "
 .ti -1c
 .RI "class \fBColor\fP"
 .br
@@ -68,7 +84,7 @@ pdg
 .ti -1c
 .RI "class \fBGraphicsManager\fP"
 .br
-.RI "Used to create and track ports (\fIGUI Only\fP) "
+.RI "Used to create and track ports (\fIGUI Only\fP)\&. "
 .ti -1c
 .RI "class \fBIAnimationHelper\fP"
 .br
@@ -88,11 +104,7 @@ pdg
 .ti -1c
 .RI "class \fBISerializable\fP"
 .br
-.RI "interface for an object which can be serialized "
-.ti -1c
-.RI "class \fBISpriteCollideHelper\fP"
-.br
-.RI "helper for deciding whether 2 sprites should collide or not "
+.RI "Interface for an object which can be serialized\&. "
 .ti -1c
 .RI "class \fBISpriteDrawHelper\fP"
 .br
@@ -121,6 +133,26 @@ pdg
 .RI "class \fBOffset\fP"
 .br
 .RI "offset within a 2D coordinate system "
+.ti -1c
+.RI "class \fBPart\fP"
+.br
+.RI "An independently animated part owned by a \fBSprite\fP\&. "
+.ti -1c
+.RI "class \fBParticle\fP"
+.br
+.RI "Lightweight whole-body artwork and optional physics\&. "
+.ti -1c
+.RI "class \fBParticleEmitter\fP"
+.br
+.RI "A configurable point source of independent particles\&. "
+.ti -1c
+.RI "class \fBPhysicsBody\fP"
+.br
+.RI "Optional physical motion for a \fBSprite\fP or \fBPart\fP, using seconds\&. "
+.ti -1c
+.RI "class \fBPhysicsConstraint\fP"
+.br
+.RI "A retained physical relationship between any two \fBPhysicsBody\fP owners\&. "
 .ti -1c
 .RI "class \fBPoint\fP"
 .br
@@ -189,6 +221,10 @@ pdg
 .SS "Functions"
 
 .in +1c
+.ti -1c
+.RI "boolean \fBanimationHasTag\fP (object pose, string object, string tag)"
+.br
+.RI "Test sampled animation metadata for a tag\&. "
 .ti -1c
 .RI "\fBcaptureConsole\fP ()"
 .br
@@ -370,7 +406,7 @@ pdg
 .RI "number \fBrand\fP ()"
 .br
 .ti -1c
-.RI "\fBregisterEasingFunction\fP (function easingFunc)"
+.RI "int \fBregisterEasingFunction\fP (function easingFunc)"
 .br
 .ti -1c
 .RI "\fBregisterSerializableClass\fP"
@@ -395,9 +431,6 @@ pdg
 .RI "the singleton instance of the \fBSoundManager\fP "
 .ti -1c
 .RI "\fBsrand\fP (uint seed)"
-.br
-.ti -1c
-.RI "\fBstartRepl\fP ()"
 .br
 .ti -1c
 .RI "\fBtm\fP"
@@ -430,9 +463,16 @@ pdg
 .br
 .RI "eventType_SpriteAnimate action: a sprite animation has completed and is looping back to the start "
 .ti -1c
+.RI "const \fBaction_AnimationPhysicsRecoveryComplete\fP = 17"
+.br
+.ti -1c
 .RI "const \fBaction_AnimationStart\fP = 44"
 .br
 .RI "eventType_SpriteLayer action: starting animations for all SpriteLayers "
+.ti -1c
+.RI "const \fBaction_BodyBreak\fP = 16"
+.br
+.RI "\fBSpriteBreakEvent\fP action for body angular-speed notifications\&. "
 .ti -1c
 .RI "const \fBaction_CollideSprite\fP = 0"
 .br
@@ -500,10 +540,6 @@ pdg
 .br
 .RI "eventType_SpriteLayer action: about to render a particular \fBSpriteLayer\fP "
 .ti -1c
-.RI "const \fBaction_SpriterTrigger\fP = 14"
-.br
-.RI "eventType_SpriteAnimate action: a Spriter animation trigger fired "
-.ti -1c
 .RI "const \fBaction_ZoomComplete\fP = 48"
 .br
 .RI "eventType_SpriteLayer action: zooming a particular sprite layer is complete "
@@ -533,6 +569,117 @@ pdg
 .RI "const \fBanimate_Unidirectional\fP = 0"
 .br
 .ti -1c
+.RI "const \fBanimationBinding_Box\fP = 2"
+.br
+.ti -1c
+.RI "const \fBanimationBinding_Image\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationBinding_Point\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationBody_Dynamic\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationBody_Kinematic\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationDebug_All\fP = 7"
+.br
+.ti -1c
+.RI "const \fBanimationDebug_Bones\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationDebug_Boxes\fP = 4"
+.br
+.ti -1c
+.RI "const \fBanimationDebug_None\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationDebug_Sockets\fP = 2"
+.br
+.ti -1c
+.RI "const \fBanimationDraw_AfterAll\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationDraw_AfterSlot\fP = 3"
+.br
+.ti -1c
+.RI "const \fBanimationDraw_BeforeAll\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationDraw_BeforeSlot\fP = 2"
+.br
+.ti -1c
+.RI "const \fBanimationDraw_ReplaceSlot\fP = 4"
+.br
+.ti -1c
+.RI "const \fBanimationIK_NoStretch\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationIK_Stretch\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationPhysics_Driven\fP = 2"
+.br
+.ti -1c
+.RI "const \fBanimationPhysics_Dynamic\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationPhysics_Kinematic\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationPhysics_Mixed\fP = 3"
+.br
+.ti -1c
+.RI "const \fBanimationRoot_Fixed\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationRoot_Follow\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationSource_Clip\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationSource_Procedural\fP = 2"
+.br
+.ti -1c
+.RI "const \fBanimationSource_Reference\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationSpace_Local\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationSpace_Rig\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationSpace_World\fP = 2"
+.br
+.ti -1c
+.RI "const \fBanimationStage_Constraint\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationStage_PostConstraint\fP = 2"
+.br
+.ti -1c
+.RI "const \fBanimationStage_PreConstraint\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationStroke_Local\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationStroke_PortPixels\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationVariable_Float\fP = 0"
+.br
+.ti -1c
+.RI "const \fBanimationVariable_Int\fP = 1"
+.br
+.ti -1c
+.RI "const \fBanimationVariable_String\fP = 2"
+.br
+.ti -1c
 .RI "string[] \fBargv\fP"
 .br
 .RI "contains the arguments passed on the command line "
@@ -553,6 +700,9 @@ pdg
 .br
 .ti -1c
 .RI "const \fBblendMode_Screen\fP = 3"
+.br
+.ti -1c
+.RI "const \fBboneId_None\fP = 4294967295"
 .br
 .ti -1c
 .RI "\fBConfigManager\fP \fBcfg\fP"
@@ -579,11 +729,75 @@ pdg
 .RI "const \fBcollide_SpriterCollisionBox\fP = 5"
 .br
 .ti -1c
-.RI "const \fBduration_Constant\fP = \-1"
+.RI "const \fBcolliderSource_Animation\fP = 2"
 .br
 .ti -1c
-.RI "const \fBduration_Instantaneous\fP = 0"
+.RI "const \fBcolliderSource_Explicit\fP = 0"
 .br
+.ti -1c
+.RI "const \fBcolliderSource_Frame\fP = 1"
+.br
+.ti -1c
+.RI "const \fBcollision_Begin\fP = 0"
+.br
+.ti -1c
+.RI "const \fBcollision_End\fP = 2"
+.br
+.ti -1c
+.RI "const \fBcollision_Stay\fP = 1"
+.br
+.ti -1c
+.RI "const \fBcollisionShape_Capsule\fP = 5"
+.br
+.ti -1c
+.RI "const \fBcollisionShape_Circle\fP = 1"
+.br
+.ti -1c
+.RI "const \fBcollisionShape_Convex\fP = 2"
+.br
+.ti -1c
+.RI "const \fBcollisionShape_ImageMask\fP = 4"
+.br
+.ti -1c
+.RI "const \fBcollisionShape_None\fP = 0"
+.br
+.ti -1c
+.RI "const \fBcollisionShape_Polygon\fP = 3"
+.br
+.ti -1c
+.RI "const \fBconstraint_Gear\fP = 9"
+.br
+.ti -1c
+.RI "const \fBconstraint_Groove\fP = 4"
+.br
+.ti -1c
+.RI "const \fBconstraint_Motor\fP = 10"
+.br
+.ti -1c
+.RI "const \fBconstraint_Pin\fP = 1"
+.br
+.ti -1c
+.RI "const \fBconstraint_Pivot\fP = 3"
+.br
+.ti -1c
+.RI "const \fBconstraint_Ratchet\fP = 8"
+.br
+.ti -1c
+.RI "const \fBconstraint_RotaryLimit\fP = 7"
+.br
+.ti -1c
+.RI "const \fBconstraint_RotarySpring\fP = 6"
+.br
+.ti -1c
+.RI "const \fBconstraint_Slide\fP = 2"
+.br
+.ti -1c
+.RI "const \fBconstraint_Spring\fP = 5"
+.br
+.ti -1c
+.RI "const \fBCopyPixels\fP = true"
+.br
+.RI "Copy an offscreen surface's current pixels into an independent \fBImage\fP\&. Read-only boolean constant equal to true\&. The default for \fBImage::Image(Port, boolean)\fP\&. Available in every JavaScript runtime; constructing images from a \fBPort\fP requires graphics support\&. "
 .ti -1c
 .RI "const \fBeaseInBack\fP = 25"
 .br
@@ -663,6 +877,10 @@ pdg
 .RI "const \fBeaseOutSine\fP = 14"
 .br
 .ti -1c
+.RI "const \fBeventType_ColliderContact\fP = 26"
+.br
+.RI "\fBCollider\fP begin/stay/end notification carrying a \fBColliderContact\fP payload\&. "
+.ti -1c
 .RI "const \fBeventType_KeyDown\fP = 4"
 .br
 .RI "the user pushed down on a key "
@@ -695,6 +913,10 @@ pdg
 .br
 .RI "the user release a mouse button "
 .ti -1c
+.RI "const \fBeventType_ParticleBreak\fP = 27"
+.br
+.RI "A \fBParticle\fP body exceeded its angular-speed threshold\&. "
+.ti -1c
 .RI "const \fBeventType_PortDraw\fP = 24"
 .br
 .RI "a port needs to be redrawn "
@@ -717,11 +939,11 @@ pdg
 .ti -1c
 .RI "const \fBeventType_SpriteAnimate\fP = 17"
 .br
-.RI "a sprite finished an animation (\fIOptional\fP) "
+.RI "A \fBSprite\fP reports an animation, fade, or visibility action\&. "
 .ti -1c
 .RI "const \fBeventType_SpriteBreak\fP = 21"
 .br
-.RI "joined sprites broke apart (\fIChipmunk Physics only\fP) "
+.RI "A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. "
 .ti -1c
 .RI "const \fBeventType_SpriteCollide\fP = 20"
 .br
@@ -734,6 +956,10 @@ pdg
 .RI "const \fBeventType_SpriteTouch\fP = 19"
 .br
 .RI "sprite touched event (\fIOptional\fP) "
+.ti -1c
+.RI "const \fBeventType_SpriteTriggerEvent\fP = 25"
+.br
+.RI "An enabled Spriter animation crosses an authored eventline key\&. "
 .ti -1c
 .RI "const \fBeventType_Timer\fP = 3"
 .br
@@ -800,6 +1026,12 @@ pdg
 .br
 .ti -1c
 .RI "const \fBflipped_Vertical\fP = 128"
+.br
+.ti -1c
+.RI "const \fBframeCollider_AlphaMask\fP = 1"
+.br
+.ti -1c
+.RI "const \fBframeCollider_Bounds\fP = 0"
 .br
 .ti -1c
 .RI "\fBFileManager\fP \fBfs\fP"
@@ -1027,6 +1259,56 @@ pdg
 .RI "\fBLogManager\fP \fBlm\fP"
 .br
 .ti -1c
+.RI "const \fBpartId_None\fP = 4294967295"
+.br
+.ti -1c
+.RI "const \fBpartPlacement_PreserveWorld\fP = 1"
+.br
+.ti -1c
+.RI "const \fBpartPlacement_Snap\fP = 0"
+.br
+.ti -1c
+.RI "const \fBpartSpace_Local\fP = 0"
+.br
+.ti -1c
+.RI "const \fBpartSpace_Sprite\fP = 1"
+.br
+.ti -1c
+.RI "const \fBpartSpace_World\fP = 2"
+.br
+.ti -1c
+.RI "const \fBphysicsBody_Dynamic\fP = 1"
+.br
+.ti -1c
+.RI "const \fBphysicsBody_Kinematic\fP = 2"
+.br
+.ti -1c
+.RI "const \fBphysicsBody_None\fP = 0"
+.br
+.ti -1c
+.RI "const \fBphysicsBody_Static\fP = 3"
+.br
+.ti -1c
+.RI "const \fBphysicsBreak_AngularSpeed\fP = 1"
+.br
+.RI "\fBSpriteBreakEvent\fP reason for exceeding a body's angular-speed threshold\&. "
+.ti -1c
+.RI "const \fBphysicsBreak_Force\fP = 0"
+.br
+.RI "\fBSpriteBreakEvent\fP reason for a legacy Chipmunk joint-force break\&. "
+.ti -1c
+.RI "const \fBphysicsForce_None\fP = 0"
+.br
+.ti -1c
+.RI "const \fBphysicsSolver_Basic\fP = 1"
+.br
+.ti -1c
+.RI "const \fBphysicsSolver_Chipmunk\fP = 2"
+.br
+.ti -1c
+.RI "const \fBphysicsSolver_None\fP = 0"
+.br
+.ti -1c
 .RI "boolean \fBquitting\fP"
 .br
 .ti -1c
@@ -1037,6 +1319,18 @@ pdg
 .br
 .ti -1c
 .RI "const \fBrgtTop\fP = 1"
+.br
+.ti -1c
+.RI "const \fBrotationDirection_AsSpecified\fP = 0"
+.br
+.ti -1c
+.RI "const \fBrotationDirection_Clockwise\fP = 2"
+.br
+.ti -1c
+.RI "const \fBrotationDirection_CounterClockwise\fP = 3"
+.br
+.ti -1c
+.RI "const \fBrotationDirection_Shortest\fP = 1"
 .br
 .ti -1c
 .RI "boolean \fBrunning\fP"
@@ -1066,7 +1360,7 @@ pdg
 .RI "const \fBser_Forces\fP = 32"
 .br
 .ti -1c
-.RI "const \fBser_Full\fP = 18303"
+.RI "const \fBser_Full\fP = 18431"
 .br
 .RI "sprite layer serialization mode for recreating layer "
 .ti -1c
@@ -1110,6 +1404,16 @@ pdg
 .ti -1c
 .RI "const \fBser_ZOrder\fP = 2"
 .br
+.ti -1c
+.RI "const \fBserialization_Complete\fP = 0"
+.br
+.ti -1c
+.RI "const \fBserialization_ExternalReferences\fP = 1"
+.br
+.ti -1c
+.RI "const \fBSharedSurface\fP = false"
+.br
+.RI "Share an offscreen surface so later \fBPort\fP drawing updates the \fBImage\fP\&. Read-only boolean constant equal to false\&. Use new \fBpdg\&.Image\fP(port, \fBpdg\&.SharedSurface\fP)\&. The \fBImage\fP retains the surface after the source \fBPort\fP closes\&. Available in every JavaScript runtime; constructing images from a \fBPort\fP requires graphics support\&. "
 .ti -1c
 .RI "\fBSoundManager\fP \fBsnd\fP"
 .br
@@ -1230,14 +1534,71 @@ pdg
 .in -1c
 .SH "Function Documentation"
 .PP 
+.SS "boolean animationHasTag (object pose, string object, string tag)"
+
+.PP
+Test sampled animation metadata for a tag\&. Reads an owned snapshot without changing playback\&. Object and tag names are exact and case-sensitive\&. Missing objects/tags return false; an invalid snapshot or non-string names throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIpose\fP Snapshot returned by \fBSprite\&.getAnimationPose()\fP or sampleAnimationPose()\&. 
+.br
+\fIobject\fP Authored object name, or an empty string for entity metadata\&. 
+.br
+\fItag\fP Tag name to find\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True if the selected object's sampled tag set contains the name\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const touching = pdg\&.animationHasTag(sprite\&.getAnimationPose(), 'hand', 'contact');
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite::getAnimationPose()\fP, \fBAnimationContactTarget::update()\fP 
+.RE
+.PP
+
+.PP
+References \fBanimationHasTag()\fP\&.
+.PP
+Referenced by \fBanimationHasTag()\fP\&.
 .SS "captureConsole ()"
 
+.PP
+References \fBcaptureConsole()\fP\&.
+.PP
+Referenced by \fBcaptureConsole()\fP\&.
 .SS "cleanupLayer (\fBSpriteLayer\fP layer)"
 
+.PP
+References \fBcleanupLayer()\fP\&.
+.PP
+Referenced by \fBcleanupLayer()\fP\&.
 .SS "\fBDrawing\fP createDrawing ()"
 
+.PP
+References \fBcreateDrawing()\fP\&.
+.PP
+Referenced by \fBcreateDrawing()\fP\&.
 .SS "\fBISerializable\fP createSerializableObject (object obj, uint classTag)"
 
+.PP
+References \fBcreateSerializableObject()\fP\&.
+.PP
+Referenced by \fBcreateSerializableObject()\fP\&.
 .SS "\fBSpriteLayer\fP createSpriteLayer (\fBPort\fP port = \fRnull\fP)"
 
 .PP
@@ -1301,10 +1662,22 @@ create a new \fBTileLayer\fP attached to a particular port
 
 .SS "debug (string msg)"
 
+.PP
+References \fBdebug()\fP\&.
+.PP
+Referenced by \fBdebug()\fP\&.
 .SS "error (string msg)"
 
+.PP
+References \fBerror()\fP\&.
+.PP
+Referenced by \fBerror()\fP\&.
 .SS "fatal (string msg)"
 
+.PP
+References \fBfatal()\fP\&.
+.PP
+Referenced by \fBfatal()\fP\&.
 .SS "\fBConfigManager\fP getConfigManager ()"
 
 .PP
@@ -1395,56 +1768,152 @@ get the singleton instance of the \fBTimerManager\fP used by the pdg framework
 
 .SS "idle ()"
 
+.PP
+References \fBidle()\fP\&.
+.PP
+Referenced by \fBidle()\fP\&.
 .SS "info (string msg)"
 
+.PP
+References \fBinfo()\fP\&.
+.PP
+Referenced by \fBinfo()\fP\&.
 .SS "log (string msg)"
 
+.PP
+References \fBlog()\fP\&.
+.PP
+Referenced by \fBlog()\fP\&.
 .SS "\fBIEventHandler\fP on (int eventType, function func)"
 
+.PP
+References \fBon()\fP\&.
+.PP
+Referenced by \fBon()\fP\&.
 .SS "\fBIEventHandler\fP onKeyDown (function func)"
 
+.PP
+References \fBonKeyDown()\fP\&.
+.PP
+Referenced by \fBonKeyDown()\fP\&.
 .SS "\fBIEventHandler\fP onKeyPress (function func)"
 
+.PP
+References \fBonKeyPress()\fP\&.
+.PP
+Referenced by \fBonKeyPress()\fP\&.
 .SS "\fBIEventHandler\fP onKeyUp (function func)"
 
+.PP
+References \fBonKeyUp()\fP\&.
+.PP
+Referenced by \fBonKeyUp()\fP\&.
 .SS "\fBIEventHandler\fP onMouseDown (function func)"
 
+.PP
+References \fBonMouseDown()\fP\&.
+.PP
+Referenced by \fBonMouseDown()\fP\&.
 .SS "\fBIEventHandler\fP onMouseMove (function func)"
 
+.PP
+References \fBonMouseMove()\fP\&.
+.PP
+Referenced by \fBonMouseMove()\fP\&.
 .SS "\fBIEventHandler\fP onMouseUp (function func)"
 
+.PP
+References \fBonMouseUp()\fP\&.
+.PP
+Referenced by \fBonMouseUp()\fP\&.
 .SS "\fBIEventHandler\fP onShutdown (function func)"
 
+.PP
+References \fBonShutdown()\fP\&.
+.PP
+Referenced by \fBonShutdown()\fP\&.
 .SS "\fBIEventHandler\fP onTimer (function func)"
 
+.PP
+References \fBonTimer()\fP\&.
+.PP
+Referenced by \fBonTimer()\fP\&.
 .SS "openCommandPort (int port = \fR5757\fP)"
 
+.PP
+References \fBopenCommandPort()\fP\&.
+.PP
+Referenced by \fBopenCommandPort()\fP\&.
 .SS "openConsole ()"
 
+.PP
+References \fBopenConsole()\fP\&.
+.PP
+Referenced by \fBopenConsole()\fP\&.
 .SS "openDebugger ()"
 
+.PP
+References \fBopenDebugger()\fP\&.
+.PP
+Referenced by \fBopenDebugger()\fP\&.
 .SS "quit ()"
 
+.PP
+References \fBquit()\fP\&.
+.PP
+Referenced by \fBquit()\fP\&.
 .SS "number rand ()"
 
-.SS "registerEasingFunction (function easingFunc)"
+.PP
+References \fBrand()\fP\&.
+.PP
+Referenced by \fBrand()\fP\&.
+.SS "int registerEasingFunction (function easingFunc)"
 
+.PP
+References \fBregisterEasingFunction()\fP\&.
+.PP
+Referenced by \fBregisterEasingFunction()\fP\&.
 .SS "registerSerializableClass (function klass)"
 
+.PP
+References \fBregisterSerializableClass()\fP\&.
+.PP
+Referenced by \fBregisterSerializableClass()\fP\&.
 .SS "run ()"
 
+.PP
+References \fBrun()\fP\&.
+.PP
+Referenced by \fBrun()\fP\&.
 .SS "setSerializationDebugMode (bool debugMode)"
 
+.PP
+References \fBsetSerializationDebugMode()\fP\&.
+.PP
+Referenced by \fBsetSerializationDebugMode()\fP\&.
 .SS "srand (uint seed)"
 
-.SS "startRepl ()"
-
+.PP
+References \fBsrand()\fP\&.
+.PP
+Referenced by \fBsrand()\fP\&.
 .SS "trace (string msg)"
 
+.PP
+References \fBtrace()\fP\&.
+.PP
+Referenced by \fBtrace()\fP\&.
 .SS "warn (string msg)"
 
+.PP
+References \fBwarn()\fP\&.
+.PP
+Referenced by \fBwarn()\fP\&.
 .SH "Variable Documentation"
 .PP 
+.SS "const action_AnimationPhysicsRecoveryComplete = 17"
+
 .SS "const all_Frames = 0"
 
 .PP
@@ -1462,6 +1931,86 @@ Referenced by \fBSprite::startFrameAnimation()\fP\&.
 .SS "const animate_StartToEnd = 0"
 
 .SS "const animate_Unidirectional = 0"
+
+.SS "const animationBinding_Box = 2"
+
+.SS "const animationBinding_Image = 0"
+
+.SS "const animationBinding_Point = 1"
+
+.SS "const animationBody_Dynamic = 0"
+
+.SS "const animationBody_Kinematic = 1"
+
+.SS "const animationDebug_All = 7"
+
+.SS "const animationDebug_Bones = 1"
+
+.SS "const animationDebug_Boxes = 4"
+
+.SS "const animationDebug_None = 0"
+
+.SS "const animationDebug_Sockets = 2"
+
+.SS "const animationDraw_AfterAll = 1"
+
+.SS "const animationDraw_AfterSlot = 3"
+
+.SS "const animationDraw_BeforeAll = 0"
+
+.SS "const animationDraw_BeforeSlot = 2"
+
+.SS "const animationDraw_ReplaceSlot = 4"
+
+.SS "const animationIK_NoStretch = 0"
+
+.SS "const animationIK_Stretch = 1"
+
+.SS "const animationPhysics_Driven = 2"
+
+.SS "const animationPhysics_Dynamic = 1"
+
+.SS "const animationPhysics_Kinematic = 0"
+
+.SS "const animationPhysics_Mixed = 3"
+
+.SS "const animationRoot_Fixed = 0"
+
+.SS "const animationRoot_Follow = 1"
+
+.SS "const animationSource_Clip = 0"
+
+.SS "const animationSource_Procedural = 2"
+
+.SS "const animationSource_Reference = 1"
+
+.SS "const animationSpace_Local = 0"
+
+.PP
+Referenced by \fBSprite::getAnimationBindingTransform()\fP, and \fBSprite::getAnimationBoneTransform()\fP\&.
+.SS "const animationSpace_Rig = 1"
+
+.PP
+Referenced by \fBSprite::setAnimationIKTarget()\fP\&.
+.SS "const animationSpace_World = 2"
+
+.SS "const animationStage_Constraint = 1"
+
+.SS "const animationStage_PostConstraint = 2"
+
+.SS "const animationStage_PreConstraint = 0"
+
+.PP
+Referenced by \fBSprite::addAnimationModifier()\fP\&.
+.SS "const animationStroke_Local = 1"
+
+.SS "const animationStroke_PortPixels = 0"
+
+.SS "const animationVariable_Float = 0"
+
+.SS "const animationVariable_Int = 1"
+
+.SS "const animationVariable_String = 2"
 
 .SS "string [] argv"
 
@@ -1488,12 +2037,12 @@ contains the arguments passed on the command line If this was launched by being 
 
 .SS "const blendMode_Screen = 3"
 
+.SS "const boneId_None = 4294967295"
+
 .SS "\fBConfigManager\fP cfg\fR [related]\fP"
 
 .SS "const collide_AlphaChannel = 4"
 
-.PP
-Referenced by \fBSprite::enableCollisions()\fP\&.
 .SS "const collide_BoundingBox = 2"
 
 .PP
@@ -1508,12 +2057,50 @@ Referenced by \fBSprite::setMouseDetectMode()\fP\&.
 
 .SS "const collide_SpriterCollisionBox = 5"
 
-.SS "const duration_Constant = \-1"
+.SS "const colliderSource_Animation = 2"
 
-.SS "const duration_Instantaneous = 0"
+.SS "const colliderSource_Explicit = 0"
 
-.PP
-Referenced by \fBAnimated::accelerate()\fP, \fBAnimated::accelerateTo()\fP, \fBAnimated::applyForce()\fP, \fBAnimated::applyTorque()\fP, \fBAnimated::changeCenter()\fP, \fBAnimated::changeCenterTo()\fP, \fBAnimated::grow()\fP, \fBAnimated::move()\fP, \fBAnimated::moveTo()\fP, \fBAnimated::resize()\fP, \fBAnimated::resizeTo()\fP, \fBAnimated::rotate()\fP, \fBAnimated::rotateTo()\fP, and \fBAnimated::stretch()\fP\&.
+.SS "const colliderSource_Frame = 1"
+
+.SS "const collision_Begin = 0"
+
+.SS "const collision_End = 2"
+
+.SS "const collision_Stay = 1"
+
+.SS "const collisionShape_Capsule = 5"
+
+.SS "const collisionShape_Circle = 1"
+
+.SS "const collisionShape_Convex = 2"
+
+.SS "const collisionShape_ImageMask = 4"
+
+.SS "const collisionShape_None = 0"
+
+.SS "const collisionShape_Polygon = 3"
+
+.SS "const constraint_Gear = 9"
+
+.SS "const constraint_Groove = 4"
+
+.SS "const constraint_Motor = 10"
+
+.SS "const constraint_Pin = 1"
+
+.SS "const constraint_Pivot = 3"
+
+.SS "const constraint_Ratchet = 8"
+
+.SS "const constraint_RotaryLimit = 7"
+
+.SS "const constraint_RotarySpring = 6"
+
+.SS "const constraint_Slide = 2"
+
+.SS "const constraint_Spring = 5"
+
 .SS "const easeInBack = 25"
 
 .SS "const easeInBounce = 22"
@@ -1537,7 +2124,7 @@ Referenced by \fBAnimated::accelerate()\fP, \fBAnimated::accelerateTo()\fP, \fBA
 .SS "const easeInOutQuad = 3"
 
 .PP
-Referenced by \fBAnimated::changeCenter()\fP, \fBAnimated::changeCenterTo()\fP, \fBSound::changePitch()\fP, \fBAnimated::grow()\fP, \fBAnimated::move()\fP, \fBAnimated::moveTo()\fP, \fBAnimated::resize()\fP, \fBAnimated::resizeTo()\fP, \fBAnimated::rotate()\fP, \fBAnimated::rotateTo()\fP, \fBAnimated::stretch()\fP, \fBSpriteLayer::zoom()\fP, and \fBSpriteLayer::zoomTo()\fP\&.
+Referenced by \fBAnimated::changeCenterOffsetBy()\fP, \fBAnimated::changeCenterOffsetBy()\fP, \fBAnimatedAttributes::changeCenterOffsetBy()\fP, \fBAnimatedAttributes::changeCenterOffsetBy()\fP, \fBPart::changeCenterOffsetBy()\fP, \fBPart::changeCenterOffsetBy()\fP, \fBAnimated::changeCenterOffsetTo()\fP, \fBAnimated::changeCenterOffsetTo()\fP, \fBAnimatedAttributes::changeCenterOffsetTo()\fP, \fBAnimatedAttributes::changeCenterOffsetTo()\fP, \fBPart::changeCenterOffsetTo()\fP, \fBPart::changeCenterOffsetTo()\fP, \fBSound::changePitch()\fP, \fBAnimated::changeScaleBy()\fP, \fBAnimatedAttributes::changeScaleBy()\fP, \fBPart::changeScaleBy()\fP, \fBAnimated::changeScaleTo()\fP, \fBAnimatedAttributes::changeScaleTo()\fP, \fBPart::changeScaleTo()\fP, \fBAnimated::grow()\fP, \fBAnimatedAttributes::grow()\fP, \fBPart::grow()\fP, \fBAnimated::moveBy()\fP, \fBAnimated::moveBy()\fP, \fBAnimatedAttributes::moveBy()\fP, \fBAnimatedAttributes::moveBy()\fP, \fBPart::moveBy()\fP, \fBPart::moveBy()\fP, \fBAnimated::moveTo()\fP, \fBAnimated::moveTo()\fP, \fBAnimatedAttributes::moveTo()\fP, \fBAnimatedAttributes::moveTo()\fP, \fBPart::moveTo()\fP, \fBPart::moveTo()\fP, \fBAnimated::resizeBy()\fP, \fBAnimatedAttributes::resizeBy()\fP, \fBPart::resizeBy()\fP, \fBAnimated::resizeTo()\fP, \fBAnimatedAttributes::resizeTo()\fP, \fBPart::resizeTo()\fP, \fBAnimated::rotateBy()\fP, \fBAnimatedAttributes::rotateBy()\fP, \fBPart::rotateBy()\fP, \fBAnimated::rotateTo()\fP, \fBAnimatedAttributes::rotateTo()\fP, \fBPart::rotateTo()\fP, \fBAnimated::stretch()\fP, \fBAnimatedAttributes::stretch()\fP, \fBPart::stretch()\fP, \fBSpriteLayer::zoom()\fP, and \fBSpriteLayer::zoomTo()\fP\&.
 .SS "const easeInOutQuint = 12"
 
 .SS "const easeInOutSine = 15"
@@ -1612,6 +2199,12 @@ Referenced by \fBTileLayer::setTileTypeAt()\fP\&.
 
 .SS "const flipped_Vertical = 128"
 
+.SS "const frameCollider_AlphaMask = 1"
+
+.PP
+Referenced by \fBPart::setupFrameCollider()\fP, and \fBSprite::setupFrameCollider()\fP\&.
+.SS "const frameCollider_Bounds = 0"
+
 .SS "\fBFileManager\fP fs\fR [related]\fP"
 
 .SS "\fBGraphicsManager\fP gfx\fR [related]\fP"
@@ -1645,7 +2238,7 @@ Referenced by \fBTileLayer::setTileTypeAt()\fP\&.
 .SS "const linearTween = 0"
 
 .PP
-Referenced by \fBAnimated::accelerate()\fP, \fBAnimated::accelerateTo()\fP, \fBSound::changeOffsetX()\fP, \fBSound::changeVolume()\fP, \fBSound::fadeIn()\fP, \fBSprite::fadeIn()\fP, \fBSpriteLayer::fadeIn()\fP, \fBSound::fadeOut()\fP, \fBSprite::fadeOut()\fP, \fBSpriteLayer::fadeOut()\fP, and \fBSprite::fadeTo()\fP\&.
+Referenced by \fBAnimatedAttributes::changeAmbientLight()\fP, \fBAnimatedAttributes::changeFillColor()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillOpacity()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFrames()\fP, \fBAnimated::changeGrowingBy()\fP, \fBAnimatedAttributes::changeGrowingBy()\fP, \fBPart::changeGrowingBy()\fP, \fBAnimated::changeGrowingTo()\fP, \fBAnimatedAttributes::changeGrowingTo()\fP, \fBPart::changeGrowingTo()\fP, \fBAnimatedAttributes::changeLightOffset()\fP, \fBAnimatedAttributes::changeLineColor()\fP, \fBAnimatedAttributes::changeLineOpacity()\fP, \fBAnimatedAttributes::changeLineThickness()\fP, \fBAnimated::changeMovementBy()\fP, \fBAnimated::changeMovementBy()\fP, \fBAnimatedAttributes::changeMovementBy()\fP, \fBAnimatedAttributes::changeMovementBy()\fP, \fBPart::changeMovementBy()\fP, \fBPart::changeMovementBy()\fP, \fBAnimated::changeMovementTo()\fP, \fBAnimated::changeMovementTo()\fP, \fBAnimatedAttributes::changeMovementTo()\fP, \fBAnimatedAttributes::changeMovementTo()\fP, \fBPart::changeMovementTo()\fP, \fBPart::changeMovementTo()\fP, \fBSound::changeOffsetX()\fP, \fBAnimatedAttributes::changePolarOffset()\fP, \fBAnimatedAttributes::changeRoundedCorners()\fP, \fBAnimatedAttributes::changeSkew()\fP, \fBAnimatedAttributes::changeSphereRotation()\fP, \fBAnimated::changeSpinBy()\fP, \fBAnimatedAttributes::changeSpinBy()\fP, \fBPart::changeSpinBy()\fP, \fBAnimated::changeSpinTo()\fP, \fBAnimatedAttributes::changeSpinTo()\fP, \fBPart::changeSpinTo()\fP, \fBAnimated::changeStretchingBy()\fP, \fBAnimatedAttributes::changeStretchingBy()\fP, \fBPart::changeStretchingBy()\fP, \fBAnimated::changeStretchingTo()\fP, \fBAnimatedAttributes::changeStretchingTo()\fP, \fBPart::changeStretchingTo()\fP, \fBAnimatedAttributes::changeSubsection()\fP, \fBAnimatedAttributes::changeTextSize()\fP, \fBAnimatedAttributes::changeTransform()\fP, \fBSound::changeVolume()\fP, \fBSound::fadeIn()\fP, \fBSprite::fadeIn()\fP, \fBSpriteLayer::fadeIn()\fP, \fBSound::fadeOut()\fP, \fBSprite::fadeOut()\fP, \fBSpriteLayer::fadeOut()\fP, \fBParticle::fadeTo()\fP, and \fBSprite::fadeTo()\fP\&.
 .SS "const lineStyle_Auto = 0"
 
 .SS "const lineStyle_DashDot = 5"
@@ -1662,6 +2255,40 @@ Referenced by \fBAnimated::accelerate()\fP, \fBAnimated::accelerateTo()\fP, \fBS
 
 .SS "\fBLogManager\fP lm"
 
+.SS "const partId_None = 4294967295"
+
+.SS "const partPlacement_PreserveWorld = 1"
+
+.SS "const partPlacement_Snap = 0"
+
+.PP
+Referenced by \fBPart::attachSprite()\fP\&.
+.SS "const partSpace_Local = 0"
+
+.PP
+Referenced by \fBPart::getContentBounds()\fP, and \fBPart::getTransform()\fP\&.
+.SS "const partSpace_Sprite = 1"
+
+.SS "const partSpace_World = 2"
+
+.PP
+Referenced by \fBPart::setIKDriveTarget()\fP, \fBPart::setIKTarget()\fP, and \fBPart::solveIK()\fP\&.
+.SS "const physicsBody_Dynamic = 1"
+
+.SS "const physicsBody_Kinematic = 2"
+
+.SS "const physicsBody_None = 0"
+
+.SS "const physicsBody_Static = 3"
+
+.SS "const physicsForce_None = 0"
+
+.SS "const physicsSolver_Basic = 1"
+
+.SS "const physicsSolver_Chipmunk = 2"
+
+.SS "const physicsSolver_None = 0"
+
 .SS "boolean quitting"
 
 .SS "\fBResourceManager\fP res\fR [related]\fP"
@@ -1670,6 +2297,18 @@ Referenced by \fBAnimated::accelerate()\fP, \fBAnimated::accelerateTo()\fP, \fBS
 
 .SS "const rgtTop = 1"
 
+.SS "const rotationDirection_AsSpecified = 0"
+
+.PP
+Referenced by \fBAnimatedAttributes::changeSphereRotation()\fP, \fBSprite::disableAnimationPhysics()\fP, \fBAnimated::rotateBy()\fP, \fBAnimatedAttributes::rotateBy()\fP, \fBPart::rotateBy()\fP, \fBAnimated::rotateTo()\fP, \fBAnimatedAttributes::rotateTo()\fP, \fBPart::rotateTo()\fP, \fBSprite::setAnimationPhysicsMode()\fP, and \fBSprite::setAnimationPhysicsMode()\fP\&.
+.SS "const rotationDirection_Clockwise = 2"
+
+.SS "const rotationDirection_CounterClockwise = 3"
+
+.SS "const rotationDirection_Shortest = 1"
+
+.PP
+Referenced by \fBPhysicsBody::setDriveTarget()\fP\&.
 .SS "boolean running"
 
 .SS "const screenPos_FaceDown = 5"
@@ -1688,7 +2327,7 @@ Referenced by \fBAnimated::accelerate()\fP, \fBAnimated::accelerateTo()\fP, \fBS
 
 .SS "const ser_Forces = 32"
 
-.SS "const ser_Full = 18303"
+.SS "const ser_Full = 18431"
 
 .PP
 sprite layer serialization mode for recreating layer Everything needed to completely recreate the sprite layer\&.
@@ -1769,6 +2408,10 @@ sprite layer serialization mode for regular updates Used to update sprite layers
 
 .SS "const ser_ZOrder = 2"
 
+.SS "const serialization_Complete = 0"
+
+.SS "const serialization_ExternalReferences = 1"
+
 .SS "\fBSoundManager\fP snd\fR [related]\fP"
 
 .SS "const spline_Cardinal = 2"
@@ -1800,7 +2443,7 @@ Referenced by \fBSprite::addFramesImage()\fP, \fBSprite::offsetFrameCenters()\fP
 .SS "const textStyle_Plain = 0"
 
 .PP
-Referenced by \fBPort::getCurrentFont()\fP, \fBFont::getFontAscent()\fP, \fBFont::getFontDescent()\fP, \fBFont::getFontHeight()\fP, \fBFont::getFontLeading()\fP, and \fBPort::getTextWidth()\fP\&.
+Referenced by \fBPort::getCurrentFont()\fP, \fBFont::getFontAscent()\fP, \fBFont::getFontCapHeight()\fP, \fBFont::getFontDescent()\fP, \fBFont::getFontHeight()\fP, \fBFont::getFontLeading()\fP, and \fBPort::getTextWidth()\fP\&.
 .SS "const textStyle_RightJustified = 32"
 
 .SS "const textStyle_Underline = 4"

@@ -58,6 +58,14 @@ namespace pdg
     v8::Local<v8::Value> EncodeBinary(const void *buf, size_t len);
     void* DecodeBinary(v8::Local<v8::Value> val, size_t* outLen = 0);
 
+#ifdef PDG_USING_V8
+    ISerializable* V8_GetSerializable(v8::Isolate* isolate, v8::Local<v8::Value> value);
+#endif
+
+#ifdef PDG_USING_JAVASCRIPT_CORE
+    ISerializable* JSC_GetSerializable(JSContextRef ctx, JSValueRef value);
+#endif
+
     const bool kNoErrorOnFail = true;
 
     void CreateSingletons();
@@ -67,8 +75,13 @@ namespace pdg
         public:
             ScriptAnimationHelper();
             ScriptAnimationHelper(v8::Local<v8::Function> javascriptAnimateFunc);
-            bool animate(Animated* what, ms_delta msElapsed) throw();
+            bool animate(AnimatedBase* what, double deltaSeconds) noexcept override;
+            ~ScriptAnimationHelper() override;
+            void initializeScriptObject();
+            void retainForAnimation() override;
+            void releaseForAnimation() override;
         protected:
+            unsigned mAnimationRetains = 0;
             v8::Persistent<v8::Function> mScriptAnimateFunc;
     };
 
@@ -77,7 +90,7 @@ namespace pdg
         public:
             ScriptEventHandler();
             ScriptEventHandler(v8::Local<v8::Function> javascriptHandlerFunc);
-            bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw();
+            bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept;
         protected:
             v8::Persistent<v8::Function> mScriptHandlerFunc;
     };
@@ -87,7 +100,7 @@ namespace pdg
         public:
             ScriptAnimationEventHandler();
             ScriptAnimationEventHandler(v8::Local<v8::Function> javascriptHandlerFunc, long expectedAction);
-            bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw();
+            bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept;
         protected:
             v8::Persistent<v8::Function> mScriptHandlerFunc;
             long mExpectedAction;
@@ -98,7 +111,7 @@ namespace pdg
         public:
             ScriptTouchEventHandler();
             ScriptTouchEventHandler(v8::Local<v8::Function> javascriptHandlerFunc, long expectedAction);
-            bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw();
+            bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept;
         protected:
             v8::Persistent<v8::Function> mScriptHandlerFunc;
             long mExpectedAction;
@@ -109,7 +122,7 @@ namespace pdg
         public:
             ScriptLayerEventHandler();
             ScriptLayerEventHandler(v8::Local<v8::Function> javascriptHandlerFunc, long expectedAction);
-            bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw();
+            bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept;
         protected:
             v8::Persistent<v8::Function> mScriptHandlerFunc;
             long mExpectedAction;
@@ -136,16 +149,6 @@ namespace pdg
             v8::Persistent<v8::Function> mScriptGetMyClassTagFunc;
     };
 
-    class ScriptSpriteCollideHelper : public pdg::ISpriteCollideHelper
-    {
-        public:
-            ScriptSpriteCollideHelper();
-            ScriptSpriteCollideHelper(v8::Local<v8::Function> javascriptDrawFunc);
-            bool allowCollision(Sprite* sprite, Sprite* withSprite) throw();
-        protected:
-            v8::Persistent<v8::Function> mScriptAllowCollisionFunc;
-    };
-
 #ifndef PDG_NO_GUI
 
     class ScriptSpriteDrawHelper : public pdg::ISpriteDrawHelper
@@ -153,24 +156,24 @@ namespace pdg
         public:
             ScriptSpriteDrawHelper();
             ScriptSpriteDrawHelper(v8::Local<v8::Function> javascriptDrawFunc);
-            bool draw(Sprite* sprite, Port* port) throw();
+            bool draw(Sprite* sprite, Port* port) noexcept;
         protected:
             v8::Persistent<v8::Function> mScriptDrawFunc;
     };
 #endif
 
-    float CallScriptEasingFunc(int which, ms_delta ut, float b, float c, ms_delta ud);
+    float CallScriptEasingFunc(int which, double ut, float b, float c, double ud);
 
-    extern float customEasing0(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing1(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing2(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing3(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing4(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing5(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing6(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing7(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing8(ms_delta ut, float b, float c, ms_delta ud);
-    extern float customEasing9(ms_delta ut, float b, float c, ms_delta ud);
+    extern float customEasing0(double ut, float b, float c, double ud);
+    extern float customEasing1(double ut, float b, float c, double ud);
+    extern float customEasing2(double ut, float b, float c, double ud);
+    extern float customEasing3(double ut, float b, float c, double ud);
+    extern float customEasing4(double ut, float b, float c, double ud);
+    extern float customEasing5(double ut, float b, float c, double ud);
+    extern float customEasing6(double ut, float b, float c, double ud);
+    extern float customEasing7(double ut, float b, float c, double ud);
+    extern float customEasing8(double ut, float b, float c, double ud);
+    extern float customEasing9(double ut, float b, float c, double ud);
 
     namespace EasingFuncRef
     {

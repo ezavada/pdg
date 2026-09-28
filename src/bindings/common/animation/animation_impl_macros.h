@@ -1,489 +1,717 @@
 #define HAS_ANIMATED_METHODS(klass) \
-	HAS_GETTER(klass, BoundingBox)  \
-	HAS_GETTER(klass, RotatedBounds)  \
-	HAS_PROPERTY(klass, Location)  \
-	HAS_PROPERTY(klass, Speed)  \
-	HAS_PROPERTY(klass, Velocity)  \
-	HAS_PROPERTY(klass, Width)  \
-	HAS_PROPERTY(klass, Height)  \
-	HAS_PROPERTY(klass, Rotation)  \
-	HAS_PROPERTY(klass, CenterOffset)  \
-	HAS_PROPERTY(klass, Spin)  \
-	HAS_PROPERTY(klass, Mass)  \
-	HAS_PROPERTY(klass, MoveFriction)  \
-	HAS_PROPERTY(klass, SpinFriction)  \
-	HAS_PROPERTY(klass, SizeFriction)  \
-	HAS_METHOD(klass, "move", Move)  \
-	HAS_METHOD(klass, "moveTo", MoveTo)  \
-	HAS_METHOD(klass, "setVelocityInRadians", SetVelocityInRadians)  \
-	HAS_METHOD(klass, "getMovementDirectionInRadians", GetMovementDirectionInRadians)  \
-	HAS_METHOD(klass, "stopMoving", StopMoving)  \
-	HAS_METHOD(klass, "accelerate", Accelerate)  \
-	HAS_METHOD(klass, "accelerateTo", AccelerateTo)  \
-	HAS_METHOD(klass, "setSize", SetSize)  \
-	HAS_METHOD(klass, "grow", Grow)  \
-	HAS_METHOD(klass, "stretch", Stretch)  \
-	HAS_METHOD(klass, "startGrowing", StartGrowing)  \
-	HAS_METHOD(klass, "stopGrowing", StopGrowing)  \
-	HAS_METHOD(klass, "startStretching", StartStretching)  \
-	HAS_METHOD(klass, "stopStretching", StopStretching)  \
-	HAS_METHOD(klass, "resize", Resize)  \
-	HAS_METHOD(klass, "resizeTo", ResizeTo)  \
-	HAS_METHOD(klass, "setFlipX", SetFlipX)  \
-	HAS_METHOD(klass, "setFlipY", SetFlipY)  \
-	HAS_METHOD(klass, "flipX", FlipX)  \
-	HAS_METHOD(klass, "flipY", FlipY)  \
-	HAS_METHOD(klass, "isFlippedX", IsFlippedX)  \
-	HAS_METHOD(klass, "isFlippedY", IsFlippedY)  \
-	HAS_METHOD(klass, "rotate", Rotate)  \
-	HAS_METHOD(klass, "rotateTo", RotateTo)  \
-	HAS_METHOD(klass, "stopSpinning", StopSpinning)  \
-	HAS_METHOD(klass, "changeCenter", ChangeCenter)  \
-	HAS_METHOD(klass, "changeCenterTo", ChangeCenterTo)  \
-	HAS_METHOD(klass, "wait", Wait)  \
-	HAS_METHOD(klass, "setFriction", SetFriction)  \
-	HAS_METHOD(klass, "applyForce", ApplyForce)  \
-	HAS_METHOD(klass, "applyTorque", ApplyTorque)  \
-	HAS_METHOD(klass, "stopAllForces", StopAllForces)  \
-	HAS_METHOD(klass, "addAnimationHelper", AddAnimationHelper)  \
-	HAS_METHOD(klass, "removeAnimationHelper", RemoveAnimationHelper)  \
-	HAS_METHOD(klass, "clearAnimationHelpers", ClearAnimationHelpers)
-
+    HAS_METHOD(klass, "getBoundingBox", GetBoundingBox) \
+    HAS_METHOD(klass, "getRotatedBounds", GetRotatedBounds) \
+    HAS_METHOD(klass, "getLocation", GetLocation) \
+    HAS_METHOD(klass, "getMovement", GetMovement) \
+    HAS_METHOD(klass, "getSize", GetSize) \
+    HAS_METHOD(klass, "getWidth", GetWidth) \
+    HAS_METHOD(klass, "getHeight", GetHeight) \
+    HAS_METHOD(klass, "getScale", GetScale) \
+    HAS_METHOD(klass, "getStretching", GetStretching) \
+    HAS_METHOD(klass, "getRotation", GetRotation) \
+    HAS_METHOD(klass, "getCenterOffset", GetCenterOffset) \
+    HAS_METHOD(klass, "getSpin", GetSpin) \
+    HAS_METHOD(klass, "setLocation", SetLocation) \
+    HAS_METHOD(klass, "moveTo", MoveTo) \
+    HAS_METHOD(klass, "moveBy", MoveBy) \
+    HAS_METHOD(klass, "setMovement", SetMovement) \
+    HAS_METHOD(klass, "changeMovementTo", ChangeMovementTo) \
+    HAS_METHOD(klass, "changeMovementBy", ChangeMovementBy) \
+    HAS_METHOD(klass, "setSize", SetSize) \
+    HAS_METHOD(klass, "changeCenterOffsetTo", ChangeCenterOffsetTo) \
+    HAS_METHOD(klass, "changeCenterOffsetBy", ChangeCenterOffsetBy) \
+    HAS_METHOD(klass, "setWidth", SetWidth) \
+    HAS_METHOD(klass, "setHeight", SetHeight) \
+    HAS_METHOD(klass, "setRotation", SetRotation) \
+    HAS_METHOD(klass, "setSpin", SetSpin) \
+    HAS_METHOD(klass, "setGrowing", SetGrowing) \
+    HAS_METHOD(klass, "setStretching", SetStretching) \
+    HAS_METHOD(klass, "setScale", SetScale) \
+    HAS_METHOD(klass, "changeSpinTo", ChangeSpinTo) \
+    HAS_METHOD(klass, "changeSpinBy", ChangeSpinBy) \
+    HAS_METHOD(klass, "changeGrowingTo", ChangeGrowingTo) \
+    HAS_METHOD(klass, "changeGrowingBy", ChangeGrowingBy) \
+    HAS_METHOD(klass, "changeStretchingTo", ChangeStretchingTo) \
+    HAS_METHOD(klass, "changeStretchingBy", ChangeStretchingBy) \
+    HAS_METHOD(klass, "changeScaleTo", ChangeScaleTo) \
+    HAS_METHOD(klass, "changeScaleBy", ChangeScaleBy) \
+    HAS_METHOD(klass, "grow", Grow) \
+    HAS_METHOD(klass, "stretch", Stretch) \
+    HAS_METHOD(klass, "resizeBy", ResizeBy) \
+    HAS_METHOD(klass, "resizeTo", ResizeTo) \
+    HAS_METHOD(klass, "rotateBy", RotateBy) \
+    HAS_METHOD(klass, "rotateTo", RotateTo) \
+    HAS_METHOD(klass, "setCenterOffset", SetCenterOffset) \
+    HAS_METHOD(klass, "setFlipX", SetFlipX) \
+    HAS_METHOD(klass, "setFlipY", SetFlipY) \
+    HAS_METHOD(klass, "stopMovement", StopMovement) \
+    HAS_METHOD(klass, "stopSpinning", StopSpinning) \
+    HAS_METHOD(klass, "stopGrowing", StopGrowing) \
+    HAS_METHOD(klass, "stopStretching", StopStretching) \
+    HAS_METHOD(klass, "pauseSchedule", PauseSchedule) \
+    HAS_METHOD(klass, "resumeSchedule", ResumeSchedule) \
+    HAS_METHOD(klass, "cancelSchedule", CancelSchedule) \
+    HAS_METHOD(klass, "flipX", FlipX) \
+    HAS_METHOD(klass, "flipY", FlipY) \
+    HAS_METHOD(klass, "andThen", AndThen) \
+    HAS_METHOD(klass, "isFlippedX", IsFlippedX) \
+    HAS_METHOD(klass, "isFlippedY", IsFlippedY) \
+    HAS_METHOD(klass, "isSchedulePaused", IsSchedulePaused) \
+    HAS_METHOD(klass, "hasScheduledAnimations", HasScheduledAnimations) \
+    HAS_METHOD(klass, "wait", Wait) \
+    HAS_METHOD(klass, "addAnimationHelper", AddAnimationHelper) \
+    HAS_METHOD(klass, "removeAnimationHelper", RemoveAnimationHelper) \
+    HAS_METHOD(klass, "clearAnimationHelpers", ClearAnimationHelpers)
 
 #define ANIMATED_BASE_CLASS_IMPL(klass) CR \
-PROPERTY_IMPL(klass, Location, POINT) CR \
-PROPERTY_IMPL(klass, Speed, NUMBER) CR \
-PROPERTY_IMPL(klass, Width, NUMBER) CR \
-PROPERTY_IMPL(klass, Height, NUMBER) CR \
-SETTER_IMPL(klass, FlipX, BOOL) CR \
-SETTER_IMPL(klass, FlipY, BOOL) CR \
-PROPERTY_IMPL(klass, Rotation, NUMBER) CR \
-PROPERTY_IMPL(klass, CenterOffset, OFFSET) CR \
-PROPERTY_IMPL(klass, Spin, NUMBER) CR \
-PROPERTY_IMPL(klass, Mass, NUMBER) CR \
-PROPERTY_IMPL(klass, MoveFriction, NUMBER) CR \
-PROPERTY_IMPL(klass, SpinFriction, NUMBER) CR \
-PROPERTY_IMPL(klass, SizeFriction, NUMBER) CR \
-METHOD_IMPL(klass, GetBoundingBox) CR \
- 	METHOD_SIGNATURE("", [object Rect], 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-    pdg::Rect r = self->getBoundingBox(); CR \
-	RETURN( RECT2VAL(r) ); CR \
-	END CR \
-METHOD_IMPL(klass, GetRotatedBounds) CR \
- 	METHOD_SIGNATURE("", [object RotatedRect], 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-    pdg::RotatedRect r = self->getRotatedBounds(); CR \
-	RETURN( RECT2VAL(r) ); CR \
-	END CR \
-METHOD_IMPL(klass, Move) CR \
- 	METHOD_SIGNATURE("", undefined, 4, ([object Offset] delta, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	pdg::Offset delta; CR \
-	int32 msDuration; CR \
-	int easing; CR \
-	if (VALUE_IS_OFFSET(ARGV[0])) { CR \
-		delta = VAL2OFFSET(ARGV[0]); CR \
-		OPTIONAL_INT32_ARG(2, msDuration_2, duration_Instantaneous); CR \
-		OPTIONAL_INT32_ARG(3, easing_3, EasingFuncRef::easeInOutQuad); CR \
-		msDuration = msDuration_2; CR \
-		easing = easing_3; CR \
-    } else { CR \
-		REQUIRE_NUMBER_ARG(1, deltaX); CR \
-		REQUIRE_NUMBER_ARG(2, deltaY); CR \
-		delta.x = deltaX; CR \
-		delta.y = deltaY; CR \
-		OPTIONAL_INT32_ARG(3, msDuration_3, duration_Instantaneous); CR \
-		OPTIONAL_INT32_ARG(4, easing_4, EasingFuncRef::easeInOutQuad); CR \
-		msDuration = msDuration_3; CR \
-		easing = easing_4; CR \
-    } CR \
-    if (msDuration || self->mDelayMs) { CR \
-    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    		self->move(delta, msDuration, gEasingFunctions[easing]); CR \
-    	} else { CR \
-    		self->move(delta, msDuration); CR \
-    	} CR \
-    } else { CR \
-    	self->move(delta); CR \
-    } CR \
-	RETURN_THIS; CR \
-	END CR \
+GETTER_IMPL(klass, BoundingBox, RECT) CR \
+GETTER_IMPL(klass, RotatedBounds, ROTATED_RECT) CR \
+GETTER_IMPL(klass, Location, POINT) CR \
+GETTER_IMPL(klass, Movement, OFFSET) CR \
+GETTER_IMPL(klass, Size, OFFSET) CR \
+GETTER_IMPL(klass, Width, NUMBER) CR \
+GETTER_IMPL(klass, Height, NUMBER) CR \
+GETTER_IMPL(klass, Scale, OFFSET) CR \
+GETTER_IMPL(klass, Stretching, OFFSET) CR \
+GETTER_IMPL(klass, Rotation, NUMBER) CR \
+GETTER_IMPL(klass, CenterOffset, OFFSET) CR \
+GETTER_IMPL(klass, Spin, NUMBER) CR \
+METHOD_IMPL(klass, SetLocation) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 2, ({[object Point] value|number x, number y})); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Point value; CR \
+auto isPoint = VALUE_IS_POINT(ARGV[0], value); CR \
+if (!isPoint.has_value()) { RETURN_NULL; } CR \
+if (*isPoint) { CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->setLocation(value); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, x); REQUIRE_NUMBER_ARG(2, y); CR \
+REQUIRE_ARG_COUNT(2); CR \
+self->setLocation(x, y); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, MoveTo) CR \
- 	METHOD_SIGNATURE("", undefined, 4, ([object Point] where, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	pdg::Point where; CR \
-	int32 msDuration; CR \
-	int easing; CR \
-	if (VALUE_IS_POINT(ARGV[0])) {  CR \
-		where = VAL2POINT(ARGV[0]); CR \
-		OPTIONAL_INT32_ARG(2, msDuration_2, duration_Instantaneous); CR \
-		OPTIONAL_INT32_ARG(3, easing_3, EasingFuncRef::easeInOutQuad); CR \
-		easing = easing_3; CR \
-		msDuration = msDuration_2; CR \
-    } else { CR \
-		REQUIRE_NUMBER_ARG(1, x); CR \
-		REQUIRE_NUMBER_ARG(2, y); CR \
-		where.x = x; CR \
-		where.y = y; CR \
-		OPTIONAL_INT32_ARG(3, msDuration3, duration_Instantaneous); CR \
-		OPTIONAL_INT32_ARG(4, easing_4, EasingFuncRef::easeInOutQuad); CR \
-		easing = easing_4; CR \
-		msDuration = msDuration3; CR \
-    } CR \
-    if (msDuration || self->mDelayMs) { CR \
-    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    		self->moveTo(where, msDuration, gEasingFunctions[easing]); CR \
-    	} else { CR \
-    		self->moveTo(where, msDuration); CR \
-    	} CR \
-    } else { CR \
-    	self->moveTo(where); CR \
-    } CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, SetVelocityInRadians) CR \
- 	METHOD_SIGNATURE("", [object Animated], 2, (number speed, number direction)); CR \
-    REQUIRE_ARG_COUNT(2); CR \
-	REQUIRE_NUMBER_ARG(1, speed); CR \
-	REQUIRE_NUMBER_ARG(2, direction); CR \
-	self->setVelocityInRadians(speed, direction); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, GetMovementDirectionInRadians) CR \
- 	METHOD_SIGNATURE("", number, 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	float dir = self->getMovementDirectionInRadians(); CR \
-	RETURN_NUMBER(dir); CR \
-	END CR \
-METHOD_IMPL(klass, SetVelocity) CR \
- 	METHOD_SIGNATURE("", [object Animated], 2, ({[object Vector] deltaPerSec|number deltaXPerSec, number deltaYPerSec})); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	pdg::Vector deltaPerSec; CR \
-	if (VALUE_IS_VECTOR(ARGV[0])) { CR \
-		deltaPerSec = VAL2VECTOR(ARGV[0]);  CR \
-		self->setVelocity(deltaPerSec); CR \
-    } else { CR \
-		REQUIRE_NUMBER_ARG(1, deltaXPerSec); CR \
-		REQUIRE_NUMBER_ARG(2, deltaYPerSec); CR \
-		self->setVelocity(Vector(deltaXPerSec, deltaYPerSec)); CR \
-    } CR \
-	RETURN_THIS; CR \
-	END CR \
-GETTER_IMPL(klass, Velocity, VECTOR) CR \
-METHOD_IMPL(klass, StopMoving) CR \
-	METHOD_SIGNATURE("", undefined, 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	self->stopMoving(); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, Accelerate) CR \
- 	METHOD_SIGNATURE("", undefined, 3, (number deltaSpeed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween)); CR \
-    REQUIRE_ARG_MIN_COUNT(2); CR \
-	REQUIRE_NUMBER_ARG(1, deltaSpeed); CR \
-	OPTIONAL_INT32_ARG(2, msDuration, duration_Instantaneous); CR \
-	OPTIONAL_INT32_ARG(3, easing, EasingFuncRef::linearTween); CR \
-	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-		self->accelerate(deltaSpeed, msDuration, gEasingFunctions[easing]); CR \
-	} else { CR \
-		self->accelerate(deltaSpeed, msDuration); CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, AccelerateTo) CR \
- 	METHOD_SIGNATURE("", undefined, 3, (number speed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween)); CR \
-    REQUIRE_ARG_MIN_COUNT(2); CR \
-	REQUIRE_NUMBER_ARG(1, speed); CR \
-	OPTIONAL_INT32_ARG(2, msDuration, duration_Instantaneous); CR \
-	OPTIONAL_INT32_ARG(3, easing, EasingFuncRef::linearTween); CR \
-	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-		self->accelerateTo(speed, msDuration, gEasingFunctions[easing]); CR \
-	} else { CR \
-		self->accelerateTo(speed, msDuration); CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, ({[object Point] value|number x, number y}, number durationSeconds = 0, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Point value; CR \
+auto isPoint = VALUE_IS_POINT(ARGV[0], value); CR \
+if (!isPoint.has_value()) { RETURN_NULL; } CR \
+if (*isPoint) { CR \
+if (ARGC == 1) { self->moveTo(value); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->moveTo(value, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, x); REQUIRE_NUMBER_ARG(2, y); CR \
+if (ARGC == 2) { self->moveTo(x, y); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->moveTo(x, y, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, MoveBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, ({[object Offset] value|number x, number y}, number durationSeconds = 0, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Offset value; CR \
+auto converted = VALUE_IS_OFFSET(ARGV[0], value); CR \
+if (!converted.has_value()) { RETURN_NULL; } CR \
+if (*converted) { CR \
+if (ARGC == 1) { self->moveBy(value); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->moveBy(value, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, x); REQUIRE_NUMBER_ARG(2, y); CR \
+if (ARGC == 2) { self->moveBy(x, y); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->moveBy(x, y, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetMovement) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 2, ({[object Vector] value|number xPerSecond, number yPerSecond})); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Vector value; CR \
+auto converted = VALUE_IS_VECTOR(ARGV[0], value); CR \
+if (!converted.has_value()) { RETURN_NULL; } CR \
+if (*converted) { CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->setMovement(value); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, xPerSecond); REQUIRE_NUMBER_ARG(2, yPerSecond); CR \
+REQUIRE_ARG_COUNT(2); CR \
+self->setMovement(xPerSecond, yPerSecond); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeMovementTo) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, ({[object Vector] value|number xPerSecond, number yPerSecond}, number durationSeconds, [number int] easing = linearTween)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Vector value; CR \
+auto converted = VALUE_IS_VECTOR(ARGV[0], value); CR \
+if (!converted.has_value()) { RETURN_NULL; } CR \
+if (*converted) { CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeMovementTo(value, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, xPerSecond); REQUIRE_NUMBER_ARG(2, yPerSecond); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeMovementTo(xPerSecond, yPerSecond, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeMovementBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, ({[object Vector] value|number xPerSecond, number yPerSecond}, number durationSeconds, [number int] easing = linearTween)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Vector value; CR \
+auto converted = VALUE_IS_VECTOR(ARGV[0], value); CR \
+if (!converted.has_value()) { RETURN_NULL; } CR \
+if (*converted) { CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeMovementBy(value, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, xPerSecond); REQUIRE_NUMBER_ARG(2, yPerSecond); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeMovementBy(xPerSecond, yPerSecond, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, SetSize) CR \
- 	METHOD_SIGNATURE("", [object Animated], 2, (number width, number height)); CR \
-    REQUIRE_ARG_COUNT(2); CR \
-	REQUIRE_NUMBER_ARG(1, width); CR \
-	REQUIRE_NUMBER_ARG(2, height); CR \
-	self->setSize(width, height); CR \
-	RETURN_THIS; CR \
-	END CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 2, ({[object Offset] value|number width, number height})); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Offset value; CR \
+auto converted = VALUE_IS_OFFSET(ARGV[0], value); CR \
+if (!converted.has_value()) { RETURN_NULL; } CR \
+if (*converted) { CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->setSize(value); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, width); REQUIRE_NUMBER_ARG(2, height); CR \
+REQUIRE_ARG_COUNT(2); CR \
+self->setSize(width, height); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeCenterOffsetTo) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, ({[object Offset] value|number x, number y}, number durationSeconds, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Offset value; CR \
+auto converted = VALUE_IS_OFFSET(ARGV[0], value); CR \
+if (!converted.has_value()) { RETURN_NULL; } CR \
+if (*converted) { CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeCenterOffsetTo(value, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, x); REQUIRE_NUMBER_ARG(2, y); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeCenterOffsetTo(x, y, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeCenterOffsetBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, ({[object Offset] value|number x, number y}, number durationSeconds, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+pdg::Offset value; CR \
+auto converted = VALUE_IS_OFFSET(ARGV[0], value); CR \
+if (!converted.has_value()) { RETURN_NULL; } CR \
+if (*converted) { CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeCenterOffsetBy(value, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} else { CR \
+REQUIRE_NUMBER_ARG(1, x); REQUIRE_NUMBER_ARG(2, y); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeCenterOffsetBy(x, y, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetWidth) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, (number value)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, value); CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->setWidth(value); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetHeight) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, (number value)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, value); CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->setHeight(value); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetRotation) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, (number value)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, value); CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->setRotation(value); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetSpin) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, (number value)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, value); CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->setSpin(value); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetGrowing) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, (number value)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, value); CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->setGrowing(value); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetStretching) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 2, (number widthPerSecond, number heightPerSecond)); CR \
+REQUIRE_ARG_MIN_COUNT(2); CR \
+REQUIRE_NUMBER_ARG(1, widthPerSecond); CR \
+REQUIRE_NUMBER_ARG(2, heightPerSecond); CR \
+REQUIRE_ARG_COUNT(2); CR \
+self->setStretching(widthPerSecond, heightPerSecond); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetScale) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 2, (number x, number y = x)); CR \
+REQUIRE_ARG_MIN_COUNT(1); REQUIRE_NUMBER_ARG(1, x); OPTIONAL_NUMBER_ARG(2, y, x); CR \
+self->setScale(x, y); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeSpinTo) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 3, (number radiansPerSecond, number durationSeconds, [number int] easing = linearTween)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, radiansPerSecond); CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeSpinTo(radiansPerSecond, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeSpinBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 3, (number radiansPerSecond, number durationSeconds, [number int] easing = linearTween)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, radiansPerSecond); CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeSpinBy(radiansPerSecond, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeGrowingTo) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 3, (number amountPerSecond, number durationSeconds, [number int] easing = linearTween)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, amountPerSecond); CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeGrowingTo(amountPerSecond, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeGrowingBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 3, (number amountPerSecond, number durationSeconds, [number int] easing = linearTween)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, amountPerSecond); CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeGrowingBy(amountPerSecond, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeStretchingTo) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number widthPerSecond, number heightPerSecond, number durationSeconds, [number int] easing = linearTween)); CR \
+REQUIRE_ARG_MIN_COUNT(2); CR \
+REQUIRE_NUMBER_ARG(1, widthPerSecond); CR \
+REQUIRE_NUMBER_ARG(2, heightPerSecond); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeStretchingTo(widthPerSecond, heightPerSecond, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeStretchingBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number widthPerSecond, number heightPerSecond, number durationSeconds, [number int] easing = linearTween)); CR \
+REQUIRE_ARG_MIN_COUNT(2); CR \
+REQUIRE_NUMBER_ARG(1, widthPerSecond); CR \
+REQUIRE_NUMBER_ARG(2, heightPerSecond); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::linearTween)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeStretchingBy(widthPerSecond, heightPerSecond, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeScaleTo) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number x, number y, number durationSeconds, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(2); CR \
+REQUIRE_NUMBER_ARG(1, x); CR \
+REQUIRE_NUMBER_ARG(2, y); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeScaleTo(x, y, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ChangeScaleBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number x, number y, number durationSeconds, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(2); CR \
+REQUIRE_NUMBER_ARG(1, x); CR \
+REQUIRE_NUMBER_ARG(2, y); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->changeScaleBy(x, y, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, Grow) CR \
- 	METHOD_SIGNATURE("", undefined, 3, (number factor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	REQUIRE_NUMBER_ARG(1, factor); CR \
-	OPTIONAL_INT32_ARG(2, msDuration, duration_Instantaneous); CR \
-	OPTIONAL_INT32_ARG(3, easing, EasingFuncRef::easeInOutQuad); CR \
-	if (msDuration == 0) { CR \
-		self->grow(factor); CR \
-	} else { CR \
-    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    		self->grow(factor, msDuration, gEasingFunctions[easing]); CR \
-    	} else { CR \
-			self->grow(factor, msDuration); CR \
-		} CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 3, (number factor, number durationSeconds = 0, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, factor); CR \
+if (ARGC == 1) { self->grow(factor); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->grow(factor, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, Stretch) CR \
- 	METHOD_SIGNATURE("", undefined, 4, (number widthFactor, number heightFactor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(2); CR \
-    REQUIRE_NUMBER_ARG(1, widthFactor); CR \
-	REQUIRE_NUMBER_ARG(2, heightFactor); CR \
-	OPTIONAL_INT32_ARG(3, msDuration, 0); CR \
-	OPTIONAL_INT32_ARG(4, easing, EasingFuncRef::easeInOutQuad); CR \
-	if (msDuration == 0) { CR \
-		self->stretch(widthFactor, heightFactor); CR \
-	} else { CR \
-    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    		self->stretch(widthFactor, heightFactor, msDuration, gEasingFunctions[easing]); CR \
-    	} else { CR \
-			self->stretch(widthFactor, heightFactor, msDuration); CR \
-		} CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, StartGrowing) CR \
-	METHOD_SIGNATURE("", undefined, 1, (number amountPerSecond)); CR \
-    REQUIRE_ARG_COUNT(1); CR \
-	REQUIRE_NUMBER_ARG(1, amountPerSecond); CR \
-	self->startGrowing(amountPerSecond); CR \
-	NO_RETURN; CR \
-	END CR \
-METHOD_IMPL(klass, StopGrowing) CR \
-	METHOD_SIGNATURE("", undefined, 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	self->stopGrowing(); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, StartStretching) CR \
- 	METHOD_SIGNATURE("", undefined, 2, (number widthPerSecond, number heightPerSecond)); CR \
-    REQUIRE_ARG_COUNT(2); CR \
-	REQUIRE_NUMBER_ARG(1, widthPerSecond); CR \
-	REQUIRE_NUMBER_ARG(2, heightPerSecond); CR \
-	self->startStretching(widthPerSecond, heightPerSecond); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, StopStretching) CR \
-	METHOD_SIGNATURE("", undefined, 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	self->stopStretching(); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, Resize) CR \
- 	METHOD_SIGNATURE("", undefined, 4, (number deltaWidth, number deltaHeight, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(3); CR \
-	REQUIRE_NUMBER_ARG(1, deltaWidth); CR \
-	REQUIRE_NUMBER_ARG(2, deltaHeight); CR \
-	OPTIONAL_INT32_ARG(3, msDuration, duration_Instantaneous); CR \
-	OPTIONAL_INT32_ARG(4, easing, EasingFuncRef::easeInOutQuad); CR \
-	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-		self->resize(deltaWidth, deltaHeight, msDuration, gEasingFunctions[easing]); CR \
-	} else { CR \
-		self->resize(deltaWidth, deltaHeight, msDuration); CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number widthFactor, number heightFactor, number durationSeconds = 0, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(2); CR \
+REQUIRE_NUMBER_ARG(1, widthFactor); CR \
+REQUIRE_NUMBER_ARG(2, heightFactor); CR \
+if (ARGC == 2) { self->stretch(widthFactor, heightFactor); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->stretch(widthFactor, heightFactor, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ResizeBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number deltaWidth, number deltaHeight, number durationSeconds = 0, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(2); CR \
+REQUIRE_NUMBER_ARG(1, deltaWidth); CR \
+REQUIRE_NUMBER_ARG(2, deltaHeight); CR \
+if (ARGC == 2) { self->resizeBy(deltaWidth, deltaHeight); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->resizeBy(deltaWidth, deltaHeight, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, ResizeTo) CR \
- 	METHOD_SIGNATURE("", undefined, 4, (number width, number height, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(3); CR \
-	REQUIRE_NUMBER_ARG(1, width); CR \
-	REQUIRE_NUMBER_ARG(2, height); CR \
-	OPTIONAL_INT32_ARG(3, msDuration, duration_Instantaneous); CR \
-	OPTIONAL_INT32_ARG(4, easing, EasingFuncRef::easeInOutQuad); CR \
-	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-		self->resizeTo(width, height, msDuration, gEasingFunctions[easing]); CR \
-	} else { CR \
-		self->resizeTo(width, height, msDuration); CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, FlipX) CR \
-	METHOD_SIGNATURE("flips the object horizontally, center offset is flipped too. Applied before other transformations.", [object Animated], 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	self->flipX(); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, FlipY) CR \
-	METHOD_SIGNATURE("flips the object vertically, center offset is flipped too. Applied before other transformations.", [object Animated], 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	self->flipY(); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, IsFlippedX) CR \
-	METHOD_SIGNATURE("returns true if the object is flipped horizontally", boolean, 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	C_BOOL theFlipX = self->isFlippedX(); CR \
-	RETURN_BOOL(theFlipX); CR \
-	END CR \
-METHOD_IMPL(klass, IsFlippedY) CR \
-	METHOD_SIGNATURE("returns true if the object is flipped vertically", boolean, 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	C_BOOL theFlipY = self->isFlippedY(); CR \
-	RETURN_BOOL(theFlipY); CR \
-	END CR \
-METHOD_IMPL(klass, Rotate) CR \
- 	METHOD_SIGNATURE("", undefined, 3, (number radians, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	REQUIRE_NUMBER_ARG(1, radians); CR \
-	OPTIONAL_INT32_ARG(2, msDuration, 0); CR \
-	OPTIONAL_INT32_ARG(3, easing, EasingFuncRef::easeInOutQuad); CR \
-	if (msDuration == 0) { CR \
-		self->rotate(radians); CR \
-	} else { CR \
-    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    		self->rotate(radians, msDuration, gEasingFunctions[easing]); CR \
-    	} else { CR \
-			self->rotate(radians, msDuration); CR \
-		} CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number width, number height, number durationSeconds, [number int] easing = easeInOutQuad)); CR \
+REQUIRE_ARG_MIN_COUNT(2); CR \
+REQUIRE_NUMBER_ARG(1, width); CR \
+REQUIRE_NUMBER_ARG(2, height); CR \
+REQUIRE_NUMBER_ARG(3, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(4, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+self->resizeTo(width, height, durationSeconds, gEasingFunctions[easing]); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, RotateBy) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number radians, number durationSeconds = 0, [number int] easing = easeInOutQuad, [number int] direction = rotationDirection_AsSpecified)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, radians); CR \
+if (ARGC == 1) { self->rotateBy(radians); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+OPTIONAL_NUMBER_ARG(4, directionValue, static_cast<int>(rotationDirection_AsSpecified)); CR \
+if (!std::isfinite(directionValue) || std::floor(directionValue) != directionValue || directionValue < 0 || directionValue > 3) { THROW_RANGE_ERR("Expected an integer rotation direction"); RETURN_NULL; } CR \
+const int direction = static_cast<int>(directionValue); CR \
+self->rotateBy(radians, durationSeconds, gEasingFunctions[easing], direction); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, RotateTo) CR \
- 	METHOD_SIGNATURE("", undefined, 4, (number radiansRotation, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	REQUIRE_NUMBER_ARG(1, radiansRotation); CR \
-	OPTIONAL_INT32_ARG(2, msDuration, duration_Instantaneous); CR \
-	OPTIONAL_INT32_ARG(3, easing, EasingFuncRef::easeInOutQuad); CR \
-	if (msDuration == 0) { CR \
-		self->rotateTo(radiansRotation); CR \
-	} else { CR \
-    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    		self->rotateTo(radiansRotation, msDuration, gEasingFunctions[easing]); CR \
-    	} else { CR \
-			self->rotateTo(radiansRotation, msDuration); CR \
-		} CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 4, (number radians, number durationSeconds = 0, [number int] easing = easeInOutQuad, [number int] direction = rotationDirection_AsSpecified)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, radians); CR \
+if (ARGC == 1) { self->rotateTo(radians); RETURN_THIS; } CR \
+REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
+OPTIONAL_NUMBER_ARG(3, easingValue, static_cast<int>(EasingFuncRef::easeInOutQuad)); CR \
+if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS) { THROW_RANGE_ERR("Expected an integer easing constant"); RETURN_NULL; } CR \
+const int easing = static_cast<int>(easingValue); CR \
+if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing]) { THROW_RANGE_ERR("Unknown easing constant"); RETURN_NULL; } CR \
+OPTIONAL_NUMBER_ARG(4, directionValue, static_cast<int>(rotationDirection_AsSpecified)); CR \
+if (!std::isfinite(directionValue) || std::floor(directionValue) != directionValue || directionValue < 0 || directionValue > 3) { THROW_RANGE_ERR("Expected an integer rotation direction"); RETURN_NULL; } CR \
+const int direction = static_cast<int>(directionValue); CR \
+self->rotateTo(radians, durationSeconds, gEasingFunctions[easing], direction); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetCenterOffset) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, ([object Offset] offset)); CR \
+REQUIRE_ARG_COUNT(1); REQUIRE_OFFSET_ARG(1, offset); CR \
+self->setCenterOffset(offset); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetFlipX) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, (boolean flip)); CR \
+REQUIRE_ARG_COUNT(1); REQUIRE_BOOL_ARG(1, flip); CR \
+self->setFlipX(flip); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, SetFlipY) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, (boolean flip)); CR \
+REQUIRE_ARG_COUNT(1); REQUIRE_BOOL_ARG(1, flip); CR \
+self->setFlipY(flip); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, StopMovement) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->stopMovement(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, StopSpinning) CR \
-	METHOD_SIGNATURE("", undefined, 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	self->stopSpinning(); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, ChangeCenter) CR \
- 	METHOD_SIGNATURE("", undefined, 3, ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	pdg::Offset offset; CR \
-	int32 msDuration; CR \
-	int easing; CR \
-	if (VALUE_IS_OFFSET(ARGV[0])) { CR \
-		offset = VAL2OFFSET(ARGV[0]);  CR \
-		OPTIONAL_INT32_ARG(2, msDuration_2, duration_Instantaneous); CR \
-		OPTIONAL_INT32_ARG(3, easing_3, EasingFuncRef::easeInOutQuad); CR \
-		easing = easing_3; CR \
-		msDuration = msDuration_2; CR \
-    } else { CR \
-		REQUIRE_NUMBER_ARG(1, deltaXOffset); CR \
-		REQUIRE_NUMBER_ARG(2, deltaYOffset); CR \
-		offset.x = deltaXOffset; CR \
-		offset.y = deltaYOffset; CR \
-		OPTIONAL_INT32_ARG(3, msDuration_3, duration_Instantaneous); CR \
-		OPTIONAL_INT32_ARG(4, easing_4, EasingFuncRef::easeInOutQuad); CR \
-		easing = easing_4; CR \
-		msDuration = msDuration_3; CR \
-    } CR \
-	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-		self->changeCenter(offset, msDuration, gEasingFunctions[easing]); CR \
-	} else { CR \
-		self->changeCenter(offset, msDuration); CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, ChangeCenterTo) CR \
- 	METHOD_SIGNATURE("", undefined, 3, ([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	pdg::Offset offset; CR \
-	int32 msDuration; CR \
-	int easing; CR \
-	if (VALUE_IS_OFFSET(ARGV[0])) { CR \
-		offset = VAL2OFFSET(ARGV[0]);  CR \
-		OPTIONAL_INT32_ARG(2, msDuration_2, duration_Instantaneous); CR \
-		OPTIONAL_INT32_ARG(3, easing_3, EasingFuncRef::easeInOutQuad); CR \
-		easing = easing_3; CR \
-		msDuration = msDuration_2; CR \
-    } else { CR \
-		REQUIRE_NUMBER_ARG(1, deltaXOffset); CR \
-		REQUIRE_NUMBER_ARG(2, deltaYOffset); CR \
-		offset.x = deltaXOffset; CR \
-		offset.y = deltaYOffset; CR \
-		OPTIONAL_INT32_ARG(3, msDuration_3, duration_Instantaneous); CR \
-		OPTIONAL_INT32_ARG(4, easing_4, EasingFuncRef::easeInOutQuad); CR \
-		easing = easing_4; CR \
-		msDuration = msDuration_3; CR \
-    } CR \
-	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-		self->changeCenterTo(offset, msDuration, gEasingFunctions[easing]); CR \
-	} else { CR \
-		self->changeCenterTo(offset, msDuration); CR \
-	} CR \
-	RETURN_THIS; CR \
-	END CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->stopSpinning(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, StopGrowing) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->stopGrowing(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, StopStretching) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->stopStretching(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, PauseSchedule) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->pauseSchedule(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, ResumeSchedule) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->resumeSchedule(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, CancelSchedule) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->cancelSchedule(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, FlipX) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->flipX(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, FlipY) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->flipY(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, AndThen) CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+self->andThen(); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, IsFlippedX) CR \
+try { CR \
+METHOD_SIGNATURE("", boolean, 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+RETURN_BOOL(self->isFlippedX()); CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, IsFlippedY) CR \
+try { CR \
+METHOD_SIGNATURE("", boolean, 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+RETURN_BOOL(self->isFlippedY()); CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, IsSchedulePaused) CR \
+try { CR \
+METHOD_SIGNATURE("", boolean, 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+RETURN_BOOL(self->isSchedulePaused()); CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
+METHOD_IMPL(klass, HasScheduledAnimations) CR \
+try { CR \
+METHOD_SIGNATURE("", boolean, 0, ()); CR \
+REQUIRE_ARG_COUNT(0); CR \
+RETURN_BOOL(self->hasScheduledAnimations()); CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, Wait) CR \
-	METHOD_SIGNATURE("", [object Animated], 1, ([number int] msDuration)); CR \
-    REQUIRE_ARG_COUNT(1); CR \
-	REQUIRE_INT32_ARG(1, msDuration); CR \
-	self->wait(msDuration); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, SetFriction) CR \
- 	METHOD_SIGNATURE("", [object Animated], 1, (number frictionCoefficient)); CR \
-    REQUIRE_ARG_COUNT(1); CR \
-	REQUIRE_NUMBER_ARG(1, frictionCoefficient); CR \
-	self->setFriction(frictionCoefficient); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, ApplyForce) CR \
-	METHOD_SIGNATURE("", undefined, 2, ([object Vector] force, [number int] msDuration = duration_Instantaneous)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	REQUIRE_VECTOR_ARG(1, force); CR \
-	OPTIONAL_INT32_ARG(2, msDuration, duration_Instantaneous); CR \
-	self->applyForce(force, msDuration); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, ApplyTorque) CR \
-	METHOD_SIGNATURE("", undefined, 2, (number forceSpin, [number int] msDuration = duration_Instantaneous)); CR \
-    REQUIRE_ARG_MIN_COUNT(1); CR \
-	REQUIRE_NUMBER_ARG(1, forceSpin); CR \
-	OPTIONAL_INT32_ARG(2, msDuration, duration_Instantaneous); CR \
-	self->applyTorque(forceSpin, msDuration); CR \
-	RETURN_THIS; CR \
-	END CR \
-METHOD_IMPL(klass, StopAllForces) CR \
-	METHOD_SIGNATURE("", undefined, 0, ()); CR \
-    REQUIRE_ARG_COUNT(0); CR \
-	self->stopAllForces(); CR \
-	RETURN_THIS; CR \
-	END CR \
+try { CR \
+METHOD_SIGNATURE("", [object Animated], 1, (number durationSeconds)); CR \
+REQUIRE_ARG_MIN_COUNT(1); CR \
+REQUIRE_NUMBER_ARG(1, durationSeconds); CR \
+REQUIRE_ARG_COUNT(1); CR \
+self->wait(durationSeconds); RETURN_THIS; CR \
+} catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+END CR \
 METHOD_IMPL(klass, AddAnimationHelper) CR \
-	METHOD_SIGNATURE("", undefined, 1, ([object IAnimationHelper] helper)); CR \
-	OBJECT_SAVE(self->mAnimatedScriptObj, THIS); CR \
+    try { CR \
+	METHOD_SIGNATURE("", [object Animated], 1, ([object IAnimationHelper] helper)); CR \
+	OBJECT_SAVE_WEAK(self->mAnimatedScriptObj, THIS); CR \
     DEBUG_DUMP_SCRIPT_OBJECT(ARGV[0], IAnimationHelper); CR \
     REQUIRE_ARG_COUNT(1); CR \
 	REQUIRE_CPP_OBJECT_OR_SUBCLASS_ARG(1, helper, IAnimationHelper); CR \
 	self->addAnimationHelper(helper); CR \
-	NO_RETURN; CR \
+	RETURN_THIS; CR \
+    } catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
 	END CR \
 METHOD_IMPL(klass, RemoveAnimationHelper) CR \
-	METHOD_SIGNATURE("", undefined, 1, ([object IAnimationHelper] helper)); CR \
+    try { CR \
+	METHOD_SIGNATURE("", [object Animated], 1, ([object IAnimationHelper] helper)); CR \
     REQUIRE_ARG_COUNT(1); CR \
 	REQUIRE_CPP_OBJECT_ARG(1, helper, IAnimationHelper); CR \
 	self->removeAnimationHelper(helper); CR \
-	NO_RETURN; CR \
+	RETURN_THIS; CR \
+    } catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
 	END CR \
 METHOD_IMPL(klass, ClearAnimationHelpers) CR \
-	METHOD_SIGNATURE("", undefined, 0, ()); CR \
+    try { CR \
+	METHOD_SIGNATURE("", [object Animated], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
 	self->clearAnimationHelpers(); CR \
-	NO_RETURN; CR \
-	END CR \
-
+	RETURN_THIS; CR \
+    } catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
+	END CR
 
 #define HAS_SPRITE_LAYER_METHODS(klass) \
+    HAS_METHOD(klass, "createParticle", CreateParticle) \
+    HAS_METHOD(klass, "addParticle", AddParticle) \
+    HAS_METHOD(klass, "removeParticle", RemoveParticle) \
+    HAS_METHOD(klass, "removeAllParticles", RemoveAllParticles) \
+    HAS_METHOD(klass, "getParticleCount", GetParticleCount) \
+    HAS_METHOD(klass, "getNthParticle", GetNthParticle) \
+    HAS_METHOD(klass, "setMaxParticles", SetMaxParticles) \
+    HAS_METHOD(klass, "getMaxParticles", GetMaxParticles) \
+    HAS_METHOD(klass, "createParticleEmitter", CreateParticleEmitter) \
+    HAS_METHOD(klass, "removeParticleEmitter", RemoveParticleEmitter) \
+    HAS_METHOD(klass, "removeAllParticleEmitters", RemoveAllParticleEmitters) \
 	HAS_METHOD(klass, "setSerializationFlags", SetSerializationFlags) \
 	HAS_METHOD(klass, "startAnimations", StartAnimations)  \
 	HAS_METHOD(klass, "stopAnimations", StopAnimations)  \
@@ -595,34 +823,34 @@ METHOD_IMPL(klass, GetZoom) CR \
 	RETURN_NUMBER(zoom); CR \
 	END CR \
 METHOD_IMPL(klass, ZoomTo) CR \
-	METHOD_SIGNATURE("", undefined, 5, (number zoomLevel, [number int] msDuration, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) )); CR \
+	METHOD_SIGNATURE("", undefined, 5, (number zoomLevel, number durationSeconds, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) )); CR \
     REQUIRE_ARG_MIN_COUNT(2); CR \
 	REQUIRE_NUMBER_ARG(1, zoomLevel); CR \
-	REQUIRE_INT32_ARG(2, msDuration); CR \
+	REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
 	OPTIONAL_INT32_ARG(3, easing, EasingFuncRef::easeInOutQuad); CR \
 	OPTIONAL_RECT_ARG(4, keepInRect, pdg::Rect(0,0)); CR \
     OPTIONAL_POINT_ARG(5, centerOn, pdg::Point(0,0)); CR \
     pdg::Point* centerOnPtr = (ARGC >= 5) ? &centerOn : 0; CR \
    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    	self->zoomTo(zoomLevel, msDuration, gEasingFunctions[easing], keepInRect, centerOnPtr); CR \
+    	self->zoomTo(zoomLevel, durationSeconds, gEasingFunctions[easing], keepInRect, centerOnPtr); CR \
     } else { CR \
-		self->zoomTo(zoomLevel, msDuration); CR \
+		self->zoomTo(zoomLevel, durationSeconds); CR \
 	} CR \
 	RETURN_THIS; CR \
 	END CR \
 METHOD_IMPL(klass, Zoom) CR \
-	METHOD_SIGNATURE("", undefined, 5, (number deltaZoomLevel, [number int] msDuration, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) )); CR \
+	METHOD_SIGNATURE("", undefined, 5, (number deltaZoomLevel, number durationSeconds, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) )); CR \
     REQUIRE_ARG_MIN_COUNT(2); CR \
 	REQUIRE_NUMBER_ARG(1, deltaZoomLevel); CR \
-	REQUIRE_INT32_ARG(2, msDuration); CR \
+	REQUIRE_NUMBER_ARG(2, durationSeconds); CR \
 	OPTIONAL_INT32_ARG(3, easing, EasingFuncRef::easeInOutQuad); CR \
 	OPTIONAL_RECT_ARG(4, keepInRect, pdg::Rect(0,0)); CR \
     OPTIONAL_POINT_ARG(5, centerOn, pdg::Point(0,0)); CR \
     pdg::Point* centerOnPtr = (ARGC >= 5) ? &centerOn : 0; CR \
    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    	self->zoom(deltaZoomLevel, msDuration, gEasingFunctions[easing], keepInRect, centerOnPtr); CR \
+    	self->zoom(deltaZoomLevel, durationSeconds, gEasingFunctions[easing], keepInRect, centerOnPtr); CR \
     } else { CR \
-		self->zoom(deltaZoomLevel, msDuration); CR \
+		self->zoom(deltaZoomLevel, durationSeconds); CR \
 	} CR \
 	RETURN_THIS; CR \
 	END CR \
@@ -698,6 +926,50 @@ METHOD_IMPL(klass, PortToLayerQuad) CR \
 	END
 
 #define SPRITE_LAYER_BASE_CLASS_IMPL(klass) CR \
+METHOD_IMPL(klass, CreateParticle) CR \
+    METHOD_SIGNATURE("", [object Particle], 0, ()); CR \
+    try { REQUIRE_ARG_COUNT(0); auto* result=self->createParticle(); RETURN_CPP_OBJECT(result,Particle); } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, AddParticle) CR \
+    METHOD_SIGNATURE("", undefined, 1, ([object Particle] value)); CR \
+    try { REQUIRE_ARG_COUNT(1); REQUIRE_CPP_OBJECT_ARG(1,value,Particle); self->addParticle(value); NO_RETURN; } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, RemoveParticle) CR \
+    METHOD_SIGNATURE("", undefined, 1, ([object Particle] value)); CR \
+    try { REQUIRE_ARG_COUNT(1); REQUIRE_CPP_OBJECT_ARG(1,value,Particle); self->removeParticle(value); NO_RETURN; } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, RemoveAllParticles) CR \
+    METHOD_SIGNATURE("", undefined, 0, ()); CR \
+    try { REQUIRE_ARG_COUNT(0); self->removeAllParticles(); NO_RETURN; } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, GetParticleCount) CR \
+    METHOD_SIGNATURE("", [number uint], 0, ()); CR \
+    try { REQUIRE_ARG_COUNT(0); RETURN_UINT32(self->getParticleCount()); } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, GetNthParticle) CR \
+    METHOD_SIGNATURE("", [object Particle], 1, ([number uint] value)); CR \
+    try { REQUIRE_ARG_COUNT(1); REQUIRE_NUMBER_ARG(1,value); if (!std::isfinite(value) || value < 0 || value > UINT32_MAX || std::floor(value)!=value) throw std::invalid_argument("Expected a particle count or index"); auto* result=self->getNthParticle(static_cast<uint32_t>(value)); RETURN_CPP_OBJECT(result,Particle); } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, SetMaxParticles) CR \
+    METHOD_SIGNATURE("", [object SpriteLayer], 1, ([number uint] value)); CR \
+    try { REQUIRE_ARG_COUNT(1); REQUIRE_NUMBER_ARG(1,value); if (!std::isfinite(value) || value < 0 || value > UINT32_MAX || std::floor(value)!=value) throw std::invalid_argument("Expected a particle count or index"); self->setMaxParticles(static_cast<uint32_t>(value)); RETURN_THIS; } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, GetMaxParticles) CR \
+    METHOD_SIGNATURE("", [number uint], 0, ()); CR \
+    try { REQUIRE_ARG_COUNT(0); RETURN_UINT32(self->getMaxParticles()); } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, CreateParticleEmitter) CR \
+    METHOD_SIGNATURE("", [object ParticleEmitter], 0, ()); CR \
+    try { REQUIRE_ARG_COUNT(0); auto* result=self->createParticleEmitter(); RETURN_CPP_OBJECT(result,ParticleEmitter); } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, RemoveParticleEmitter) CR \
+    METHOD_SIGNATURE("", undefined, 1, ([object ParticleEmitter] value)); CR \
+    try { REQUIRE_ARG_COUNT(1); REQUIRE_CPP_OBJECT_ARG(1,value,ParticleEmitter); self->removeParticleEmitter(value); NO_RETURN; } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
+METHOD_IMPL(klass, RemoveAllParticleEmitters) CR \
+    METHOD_SIGNATURE("", undefined, 0, ()); CR \
+    try { REQUIRE_ARG_COUNT(0); self->removeAllParticleEmitters(); NO_RETURN; } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
+    END CR \
 METHOD_IMPL(klass, SetSerializationFlags) CR \
 	METHOD_SIGNATURE("", [object SpriteLayer], 0, ([number uint] flags)); CR \
     REQUIRE_ARG_COUNT(1); CR \
@@ -736,26 +1008,26 @@ METHOD_IMPL(klass, IsHidden) CR \
 	RETURN_BOOL(hidden); CR \
 	END CR \
 METHOD_IMPL(klass, FadeIn) CR \
-	METHOD_SIGNATURE("", undefined, 2, ([number int] msDuration, [number int] easing = linearTween)); CR \
+	METHOD_SIGNATURE("", undefined, 2, (number durationSeconds, [number int] easing = linearTween)); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
-	REQUIRE_INT32_ARG(1, msDuration); CR \
+	REQUIRE_NUMBER_ARG(1, durationSeconds); CR \
 	OPTIONAL_INT32_ARG(2, easing, EasingFuncRef::linearTween); CR \
    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    	self->fadeIn(msDuration, gEasingFunctions[easing]); CR \
+    	self->fadeIn(durationSeconds, gEasingFunctions[easing]); CR \
     } else { CR \
-		self->fadeIn(msDuration); CR \
+		self->fadeIn(durationSeconds); CR \
 	} CR \
 	RETURN_THIS; CR \
 	END CR \
 METHOD_IMPL(klass, FadeOut) CR \
-	METHOD_SIGNATURE("", undefined, 2, ([number int] msDuration, [number int] easing = linearTween)); CR \
+	METHOD_SIGNATURE("", undefined, 2, (number durationSeconds, [number int] easing = linearTween)); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
-	REQUIRE_INT32_ARG(1, msDuration); CR \
+	REQUIRE_NUMBER_ARG(1, durationSeconds); CR \
 	OPTIONAL_INT32_ARG(2, easing, EasingFuncRef::linearTween); CR \
    	if (easing >= 0 && easing < NUM_EASING_FUNCTIONS) { CR \
-    	self->fadeOut(msDuration, gEasingFunctions[easing]); CR \
+    	self->fadeOut(durationSeconds, gEasingFunctions[easing]); CR \
     } else { CR \
-		self->fadeOut(msDuration); CR \
+		self->fadeOut(durationSeconds); CR \
 	} CR \
 	RETURN_THIS; CR \
 	END CR \
@@ -837,24 +1109,30 @@ METHOD_IMPL(klass, HasSprite) CR \
 	RETURN_BOOL(found); CR \
 	END CR \
 METHOD_IMPL(klass, AddSprite) CR \
+    try { CR \
 	METHOD_SIGNATURE("", undefined, 1, ([object Sprite] newSprite)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_CPP_OBJECT_ARG(1, newSprite, Sprite); CR \
 	self->addSprite(newSprite); CR \
 	NO_RETURN; CR \
+    } catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
 	END CR \
 METHOD_IMPL(klass, RemoveSprite) CR \
+    try { CR \
 	METHOD_SIGNATURE("", undefined, 1, ([object Sprite] oldSprite)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_CPP_OBJECT_ARG(1, oldSprite, Sprite); CR \
     self->removeSprite(oldSprite); CR \
 	NO_RETURN; CR \
+    } catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
 	END CR \
 METHOD_IMPL(klass, RemoveAllSprites) CR \
+    try { CR \
 	METHOD_SIGNATURE("", undefined, 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
 	self->removeAllSprites(); CR \
 	NO_RETURN; CR \
+    } catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); } CR \
 	END CR \
 METHOD_IMPL(klass, EnableCollisions) CR \
 	METHOD_SIGNATURE("", undefined, 0, ()); CR \

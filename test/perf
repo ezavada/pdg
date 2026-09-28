@@ -1,0 +1,11 @@
+#!/bin/sh
+# Works from any directory; all platform and selection logic lives in the runner.
+PDG_TEST_ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+if [ -n "${PDG_NODE:-}" ]; then
+    PDG_TEST_NODE="$PDG_NODE"
+elif [ -x "$PDG_TEST_ROOT/tools/node" ]; then
+    PDG_TEST_NODE="$PDG_TEST_ROOT/tools/node"
+else
+    PDG_TEST_NODE=node
+fi
+exec "$PDG_TEST_NODE" "$PDG_TEST_ROOT/test/lib/perf_runner.js" "$@"

@@ -34,7 +34,7 @@
 #include "pdg_project.h"
 
 #include "pdg/sys/log.h"
-#include "pdg/sys/mutex.h"
+#include <mutex>
 
 // C++ standard lib includes
 #include <fstream>
@@ -58,7 +58,7 @@ public:
     					mLevel(0), mInitMode(init_StdOut) {};
     virtual ~LogManagerImpl() { if (mFile.is_open()) {mFile.close();} }
 protected:
-    Mutex           mWriteMutex;
+    std::mutex mWriteMutex;
     std::ofstream   mFile;
     std::ostream*	mStream;
     bool            mInited;

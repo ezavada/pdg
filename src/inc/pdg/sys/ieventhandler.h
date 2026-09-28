@@ -69,9 +69,9 @@ class EventEmitter;
 class IEventHandler  {
 public:
 	//! indicate that an additional reference to this object has been given out
-	virtual void addRef() const throw() {} // = 0;
+	virtual void addRef() const noexcept {} // = 0;
 	//! a reference to this object is no longer used, free self if nothing references it anymore
-	virtual void release() const throw() {} // = 0;
+	virtual void release() const noexcept {} // = 0;
     /** <b>handle_event</b>(inEventType, inEventData) in Ruby - Developer implements to handle one or more types of events.
 	 * The developer using the Pixel Dust Framework must implement this method
 	 * to handle events. Each handler is invoked only for the event types it was
@@ -87,7 +87,7 @@ public:
 	 *       handlers should receive it, or false if other handlers should still get an opportunity to handle it
      * @see EventManager
 	 */
-    virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw() { return false; } // = 0;  // return true if completely handled
+    virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept { return false; } // = 0;  // return true if completely handled
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	SCRIPT_OBJECT_REF mIEventHandlerScriptObj;

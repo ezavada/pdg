@@ -1,0 +1,5 @@
+<map id="Animation physics" name="Animation physics">
+<area shape="rect" id="Node000002" href="$group___animation.html" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="5,5,85,31"/>
+<area shape="rect" id="Node000001" title="Bone bodies, joints, simulation state, and recovery to authored animation." alt="" coords="133,31,261,56"/>
+<area shape="rect" id="Node000003" href="$group___physics.html" title="Things used for handling physics simulation." alt="" coords="11,55,79,80"/>
+</map>

@@ -60,9 +60,10 @@
         #define PDG_PROJECT_IOS_APP_SETTINGS_DEFINED
 
         #define PDG_USE_CHIPMUNK_PHYSICS
-        #define PDG_SCML_SUPPORT
-        #define PDG_NO_64BIT
+        #define PDG_SPRITER_SUPPORT
+        #define PDG_HACK_GL_QUAD_SUPPORT
         #define PDG_NO_NETWORK		// TODO: remove when networking fixed
+        #define PDG_NO_SLEEP        // UIKit drives the engine and timer wakeups
         #ifndef PLATFORM_IOS
             #define PLATFORM_IOS 1
         #endif

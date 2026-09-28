@@ -1,0 +1,10 @@
+/**
+\fn pdg::Sprite::clearAnimationDrawables()
+\brief Remove all custom drawing registrations.
+
+Releases retained Drawings and callbacks. During drawing, clearing takes effect after the current draw finishes.
+
+\return No value.
+
+\see addAnimationDrawable(), removeAnimationDrawable()
+*/

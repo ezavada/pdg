@@ -52,7 +52,7 @@
 #endif
 
 
-//! \defgroup Events
+//! \addtogroup Events
 //! Collection of classes, types and constants used by the Event Manager
 
 #ifdef __cplusplus
@@ -62,6 +62,8 @@ namespace pdg {
 class Sound;
 class Sprite;
 class SpriteLayer;
+class Part;
+class PhysicsBody;
 class Port;
 	
 // ===============
@@ -92,11 +94,14 @@ enum {
 	eventType_SpriteLayer	= 18,       // something happened to a sprite layer
 	eventType_SpriteTouch	= 19,		// the user did something directly to a sprite: a tap, mouse click, mouse over, etc...
 	eventType_SpriteCollide = 20,		// a sprite was involved in a collision
-    eventType_SpriteBreak   = 21,       // Chipmunk Physics Only: a joint on a sprite broke apart
+    eventType_SpriteBreak   = 21,       // a joint broke or a body exceeded its angular-speed threshold
 	eventType_MouseEnter	= 22,		// the mouse entered a tracking area
 	eventType_MouseLeave	= 23,		// the mouse left a tracking area
 	eventType_PortDraw		= 24,		// a port wants to be redrawn
-	eventType_SpriteTriggerEvent = 25,	// Spriter trigger events (only when PDG is compiled with Spriter support)
+	eventType_SpriteTriggerEvent = 25, //!< Authored Spriter trigger; payload: SpriteTriggerEventInfo (requires PDG_SPRITER_SUPPORT).
+
+    eventType_ColliderContact = 26, //!< Collider begin/stay/end; payload: ColliderContact.
+    eventType_ParticleBreak = 27, //!< Particle body angular-speed threshold; payload: PhysicsBodyBreakInfo.
 
     eventType_last
 };
@@ -433,6 +438,20 @@ struct SpriteAnimateInfo {
 };
 PDG_CLASS_TYPEDEF(SpriteAnimateInfo)
 
+//! Completion payload for action_AnimationPhysicsRecoveryComplete on eventType_SpriteAnimate.
+//! \ingroup Animation
+//! \ingroup Events
+struct SpriteAnimationPhysicsRecoveryInfo PDG_SUBCLASS_OF( SpriteAnimateInfo ) {
+    PDG_INHERITED_FIELDS_FROM(SpriteAnimateInfo)
+    uint32 bone; //!< Skeleton bone ID, or animation_NoBone when wholeRig is true.
+    bool wholeRig;
+    bool includeDescendants;
+    int mode; //!< Completed AnimationPhysicsMode.
+    uint32 bodyCount;
+    bool disabled; //!< True after the recovered rig was removed.
+};
+PDG_CLASS_TYPEDEF(SpriteAnimationPhysicsRecoveryInfo)
+
 //! Event Data for eventType_SpriteCollide.
 //! \ingroup Events
 //! \ingroup Animation
@@ -465,7 +484,10 @@ struct SpriteCollideInfo PDG_SUBCLASS_OF( SpriteAnimateInfo ) {
 };
 PDG_CLASS_TYPEDEF(SpriteCollideInfo)
 
-#ifdef PDG_USE_CHIPMUNK_PHYSICS
+//! Break notification reasons. Body speed notifications never disconnect joints.
+//! \ingroup Events
+enum { physicsBreak_Force = 0, physicsBreak_AngularSpeed = 1 };
+
 //! Event Data for eventType_SpriteBreak.
 //! \ingroup Events
 //! \ingroup Animation
@@ -482,10 +504,25 @@ struct SpriteJointBreakInfo PDG_SUBCLASS_OF( SpriteAnimateInfo ) {
     //! the force that was required to break the joint
     float       breakForce; 
     //! the joint that broke (pointer to a Chipmunk structure)
-    cpConstraint*  joint;  
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    cpConstraint*  joint;
+#else
+    void* joint;
+#endif
+    //! physicsBreak_Force or physicsBreak_AngularSpeed.
+    int reason;
+    //! Body that exceeded its threshold; null for legacy joint events.
+    PhysicsBody* body;
+    //! Source Part, or null for the Sprite's own body.
+    Part* part;
+    //! Optional reference body, or null for absolute angular speed.
+    PhysicsBody* referenceBody;
+    //! Measured nonnegative angular speed in radians/second.
+    double angularSpeed;
+    //! Configured angular-speed threshold in radians/second.
+    double breakAngularSpeed;
 };
 PDG_CLASS_TYPEDEF(SpriteJointBreakInfo)
-#endif
 
 //! Event Data for eventType_SpriteLayer.
 //! \ingroup Events
@@ -516,7 +553,8 @@ struct SpriteTouchInfo PDG_SUBCLASS_OF(  MouseInfo ) {
 PDG_CLASS_TYPEDEF(SpriteTouchInfo)
 
 #ifdef PDG_SPRITER_SUPPORT
-//! Event Data for eventType_SpriteTriggerEvent
+//! Authored trigger data for eventType_SpriteTriggerEvent; enable with Sprite::enableSpriterEvents().
+//! Dispatch by event type and triggerName; the inherited action field is not a trigger discriminator.
 //! \ingroup Events
 //! \ingroup Animation
 //! \ingroup Sprites
@@ -524,8 +562,16 @@ struct SpriteTriggerEventInfo PDG_SUBCLASS_OF( SpriteAnimateInfo ) {
     PDG_INHERITED_FIELDS_FROM(SpriteAnimateInfo)
     //! name of the Spriter trigger that fired
     const char* triggerName;
-    //! frame time when the trigger occurred
+    //! Compatibility integer milliseconds; use timeSeconds for animation timing.
     int frameTime;
+    //! Authored position relative to the start of clip, in floating-point seconds.
+    double timeSeconds;
+    //! Occurrence offset from the start of this update, in floating-point seconds.
+    double offsetSeconds;
+    //! Name of the clip containing this authored key.
+    const char* clipName;
+    //! Name of the Spriter entity containing the clip.
+    const char* entityName;
 };
 PDG_CLASS_TYPEDEF(SpriteTriggerEventInfo)
 #endif // PDG_SPRITER_SUPPORT

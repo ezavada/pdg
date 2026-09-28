@@ -42,6 +42,12 @@ describe("Serialization", function() {
   });
 
   describe("Basic Data Types", function() {
+    it("preserves doubles whose low word has its sign bit set", function() {
+      const values = [0.1, 0.15, 0.05, -0.1, Math.PI, 0.00025];
+      values.forEach(value => serializer.serialize_d(value));
+      deserializer.setDataPtr(serializer.getDataPtr());
+      values.forEach(value => expect(deserializer.deserialize_d()).toBe(value));
+    });
     it("can serialize basic data types", function() {
       var testStr = 'this is a test';
       
@@ -621,4 +627,204 @@ describe("Serialization", function() {
     });
   });
 
+});
+
+
+describe("Snapshot resources", function() {
+  it("selects resource policy per writer and rejects invalid modes", function() {
+    var complete = new pdg.Serializer(), references = new pdg.Serializer();
+    expect(complete.getResourceMode()).toBe(pdg.serialization_Complete);
+    expect(references.setResourceMode(pdg.serialization_ExternalReferences)).toBe(references);
+    expect(references.getResourceMode()).toBe(pdg.serialization_ExternalReferences);
+    expect(complete.getResourceMode()).toBe(pdg.serialization_Complete);
+    [-1, 2, 0.5, NaN, "complete"].forEach(function(mode) {
+      expect(function() { complete.setResourceMode(mode); }).toThrow();
+    });
+    expect(complete.getResourceMode()).toBe(pdg.serialization_Complete);
+  });
+  it("restores Part hierarchies, tweens and active drives without artwork", function() {
+    var source = pdg.createSpriteLayer(), copy = pdg.createSpriteLayer();
+    try {
+      var sprite = source.createSprite(); sprite.setLocation(new pdg.Point(10, 20));
+      var child = sprite.createPart("child"), parent = sprite.createPart("parent");
+      child.setParentPart(parent); parent.setLocation(new pdg.Point(5, 6));
+      child.setupPhysicsBody(2, 5).setMode(pdg.physicsBody_Kinematic);
+      child.moveTo(8, 9, 1, pdg.linearTween); child.animate(.25); child.pauseSchedule();
+      var driven = sprite.createPart("driven"); driven.setParentPart(parent);
+      driven.setupPhysicsBody(3, 7).setDriveTarget(new pdg.Point(40, 50), .5, 9, 4);
+      var removedId = sprite.createPart("removed").getId(); sprite.removePart(removedId);
+      [pdg.serialization_Complete, pdg.serialization_ExternalReferences].forEach(function(mode) {
+        var oldSprite = copy.createSprite(), old = oldSprite.createPart("retained");
+        var writer = new pdg.Serializer(); writer.setResourceMode(mode); source.serialize(writer);
+        var reader = new pdg.Deserializer(); reader.setDataPtr(writer.getDataPtr()); copy.deserialize(reader);
+        var restored = copy.getNthSprite(0), a = restored.getPart(child.getId()), b = restored.findPart("parent");
+        var c = restored.findPart("driven");
+        expect(copy.hasSprite(oldSprite)).toBe(false);
+        expect(old.getSprite()).toBe(oldSprite);
+        expect(restored.getPartNames()).toEqual(["child", "parent", "driven"]);
+        expect(a.getParentPart()).toBe(b); expect(a.getSprite()).toBe(restored);
+        expect(a.hasContent()).toBe(false); expect(b.hasContent()).toBe(false);
+        expect(b.physics).toBe(pdg.PhysicsBody.NoPhysics); expect(b.getBoneId()).toBe(pdg.boneId_None);
+        expect(a.physics.getMode()).toBe(pdg.physicsBody_Kinematic);
+        expect(a.isSchedulePaused()).toBe(true); expect(a.hasScheduledAnimations()).toBe(true);
+        expect(a.getLocation().x).toBeCloseTo(2, 5);
+        expect(c.physics.isDriveEnabled()).toBe(true); expect(c.physics.getDriveState().maxForce).toBe(9);
+        expect(c.physics.getMomentOfInertia()).toBe(7);
+        expect(restored.createPart("next").getId()).toBeGreaterThan(removedId);
+        a.resumeSchedule(); a.animate(.25); expect(a.getLocation().x).toBeCloseTo(4, 5);
+        copy.removeAllSprites();
+      });
+    } finally { pdg.cleanupLayer(copy); pdg.cleanupLayer(source); }
+  });
+  if (typeof pdg.Image !== "undefined") {
+    it("constructs images, strips and frame views from serialized objects without graphics", function() {
+      var image = new pdg.Image('./data/yinyang.png'); image.retainData(); image.setOpacity(123);
+      var source = new pdg.ImageStrip('./data/yinyang.png');
+      source.retainData(); source.setNumFrames(2);
+      var view = source.getFrame(1);
+      [pdg.serialization_Complete, pdg.serialization_ExternalReferences].forEach(function(mode) {
+        var writer = new pdg.Serializer(); writer.setResourceMode(mode);
+        writer.serialize_1u(42); // Establish stream tags before measuring individual objects.
+        [image, source, view].forEach(function(object) {
+          var size = writer.sizeof_obj(object), before = writer.getDataSize();
+          writer.serialize_obj(object);
+          expect(writer.getDataSize() - before).toBe(size);
+        });
+        var reader = new pdg.Deserializer(); reader.setDataPtr(writer.getDataPtr());
+        expect(reader.deserialize_1u()).toBe(42);
+        var copy = reader.deserialize_obj(), restored = reader.deserialize_obj(), frame = reader.deserialize_obj();
+        expect(copy.getWidth()).toBe(64); expect(copy.getHeight()).toBe(64);
+        expect(copy.getOpacity()).toBe(image.getOpacity());
+        expect(restored instanceof pdg.ImageStrip).toBe(true);
+        expect(restored.getNumFrames()).toBe(2);
+        expect(restored.getFrameWidth()).toBe(32);
+        expect(frame.getWidth()).toBe(32);
+        expect(frame.getHeight()).toBe(64);
+      });
+    });
+    it("restores Sprite frame artwork with either resource policy", function() {
+      var image = new pdg.ImageStrip('./data/yinyang.png'); image.setNumFrames(2);
+      var source = new pdg.Sprite(); source.addFramesImage(image); source.setFrame(1);
+      source.setLocation(new pdg.Point(12,34)); source.setScale(2,3);
+      [pdg.serialization_Complete, pdg.serialization_ExternalReferences].forEach(function(mode) {
+        var writer = new pdg.Serializer(); writer.setResourceMode(mode); writer.serialize_obj(source);
+        var reader = new pdg.Deserializer(); reader.setDataPtr(writer.getDataPtr());
+        var copy = reader.deserialize_obj();
+        expect(copy instanceof pdg.Sprite).toBe(true);
+        expect(copy.getFrameCount()).toBe(2); expect(copy.getCurrentFrame()).toBe(1);
+        expect(copy.getLocation().x).toBe(12);
+        expect(copy.getFrameRotatedBounds(1).width()).toBe(64);
+        expect(copy.getFrameRotatedBounds(1).height()).toBe(192);
+      });
+    });
+    it("restores an initial Layer into an empty layer with shared frame resources", function() {
+      var source=pdg.createSpriteLayer(), copy=pdg.createSpriteLayer();
+      try {
+        var image=new pdg.ImageStrip('./data/yinyang.png'); image.setNumFrames(2);
+        var a=source.createSprite(), b=source.createSprite();
+        a.addFramesImage(image); b.addFramesImage(image); b.setFrame(1);
+        source.setScale(2,3); source.changeScaleTo(4,5,1,pdg.linearTween);source.pauseSchedule();
+        [pdg.serialization_Complete,pdg.serialization_ExternalReferences].forEach(function(mode) {
+          var writer=new pdg.Serializer();writer.setResourceMode(mode);source.serialize(writer);
+          var reader=new pdg.Deserializer();reader.setDataPtr(writer.getDataPtr());
+          copy.deserialize(reader);
+          expect(copy.getNthSprite(0).getFrameCount()).toBe(2);
+          expect(copy.getNthSprite(1).getCurrentFrame()).toBe(1);
+          expect(copy.getNthSprite(2)).toBe(null);
+          expect(copy.getScale().x).toBe(2);
+          expect(copy.isSchedulePaused()).toBe(true);
+          copy.resumeSchedule();
+          expect(copy.hasScheduledAnimations()).toBe(true); // native owner test steps the restored curve
+          copy.removeAllSprites();
+        });
+      } finally { pdg.cleanupLayer(copy);pdg.cleanupLayer(source); }
+    });
+    (typeof pdg.Part.prototype.setDrawing === 'function' ? it : xit)("saves a live Drawing's current sample independently of its source", function() {
+      var source=new pdg.Sprite(), part=source.createPart('art'), d=pdg.createDrawing();
+      var attrs=new pdg.AnimatedAttributes(), element=d.addRect(new pdg.Rect(0,0,10,20),new pdg.Attributes());
+      element.setLiveAttributes(attrs);attrs.moveTo(40,0,1,pdg.linearTween);attrs.animate(.5);
+      part.setDrawing(d);
+      var writer=new pdg.Serializer();writer.serialize_obj(source);
+      var reader=new pdg.Deserializer();reader.setDataPtr(writer.getDataPtr());
+      var restored=reader.deserialize_obj();
+      expect(restored.findPart('art').getContentBounds().left).toBe(20);
+      attrs.animate(.5);
+      expect(part.getContentBounds().left).toBe(40);
+      expect(restored.findPart('art').getContentBounds().left).toBe(20);
+      source.clearParts();restored.clearParts();
+    });
+    // Drawing data exists headless; assigning it to a Part requires graphics.
+    (typeof pdg.Part.prototype.setDrawing === 'function' ? it : xit)("restores shared Part Drawing artwork with either resource policy", function() {
+      var sprite = new pdg.Sprite(), parent = sprite.createPart("parent"), child = sprite.createPart("child");
+      child.setParentPart(parent);
+      var image = new pdg.Image('./data/yinyang.png'), drawing = pdg.createDrawing();
+      drawing.addRect(new pdg.Rect(0, 0, 10, 20), new pdg.Attributes().fillColor(new pdg.Color(1, 0, 0)));
+      drawing.addImage(new pdg.Rect(0, 0, 8, 8), image, new pdg.Attributes());
+      parent.setDrawing(drawing); child.setDrawing(drawing);
+      [pdg.serialization_Complete, pdg.serialization_ExternalReferences].forEach(function(mode) {
+        var writer = new pdg.Serializer(); writer.setResourceMode(mode); writer.serialize_obj(sprite);
+        var reader = new pdg.Deserializer(); reader.setDataPtr(writer.getDataPtr());
+        var restored = reader.deserialize_obj(), a = restored.findPart("child"), b = restored.findPart("parent");
+        expect(a.getParentPart()).toBe(b);
+        expect(a.hasContent()).toBe(true); expect(b.hasContent()).toBe(true);
+        expect(a.getContentBounds().bottom).toBe(20); expect(b.getContentBounds().bottom).toBe(20);
+        // Clearing one owner's content must leave the shared resource usable.
+        a.clearContent(); expect(a.hasContent()).toBe(false);
+        expect(b.hasContent()).toBe(true); expect(b.getContentBounds().bottom).toBe(20);
+        restored.clearParts();
+      });
+      sprite.clearParts();
+    });
+    it("restores nested Sprite mounts independently of Layer draw order", function() {
+      var source = pdg.createSpriteLayer(), copy = pdg.createSpriteLayer();
+      try {
+        var child = source.createSprite(), tip = source.createSprite(), host = source.createSprite();
+        host.setLocation(new pdg.Point(10, 20)); host.setScale(2);
+        var hand = host.createPart("hand"), grip = child.createPart("grip");
+        hand.setLocation(new pdg.Point(4, 5)); grip.setLocation(new pdg.Point(3, 1));
+        child.setupPhysicsBody().setMode(pdg.physicsBody_Kinematic);
+        var mount = hand.attachSprite(child, pdg.partPlacement_Snap, grip);
+        var nested = child.createPart("tip").attachSprite(tip, pdg.partPlacement_PreserveWorld);
+        mount.setMovement(2, 0);
+        [pdg.serialization_Complete, pdg.serialization_ExternalReferences].forEach(function(mode) {
+          var writer = new pdg.Serializer(); writer.setResourceMode(mode); source.serialize(writer);
+          var reader = new pdg.Deserializer(); reader.setDataPtr(writer.getDataPtr()); copy.deserialize(reader);
+          var a = copy.getNthSprite(0), b = copy.getNthSprite(1), c = copy.getNthSprite(2);
+          var m = c.getPart(mount.getId()), n = a.getPart(nested.getId());
+          expect(m.getAttachedSprite()).toBe(a); expect(a.getAttachmentPart()).toBe(m);
+          expect(n.getAttachedSprite()).toBe(b); expect(b.getAttachmentPart()).toBe(n);
+          expect(a.getLocation().x).toBeCloseTo(child.getLocation().x, 5);
+          expect(b.getLocation().x).toBeCloseTo(tip.getLocation().x, 5);
+          expect(function() { a.physics.setVelocity(1, 0); }).toThrow();
+          expect(function() { c.serialize(new pdg.Serializer()); }).toThrow();
+          var before = a.getLocation().x; m.animate(.25);
+          expect(a.getLocation().x).toBeCloseTo(before + 1, 5);
+          copy.removeSprite(c); expect(copy.getNthSprite(0)).toBe(null);
+          copy.addSprite(c); expect(copy.hasSprite(a)).toBe(true); expect(copy.hasSprite(b)).toBe(true);
+          copy.removeAllSprites();
+        });
+      } finally { pdg.cleanupLayer(copy); pdg.cleanupLayer(source); }
+    });
+    it("restores Image pixels or external references with the same attributes", function() {
+      var source = new pdg.Image('./data/yinyang.png');
+      source.retainData(); source.setOpacity(123);
+      var sizes = [];
+      [pdg.serialization_Complete, pdg.serialization_ExternalReferences].forEach(function(mode) {
+        var writer = new pdg.Serializer(); writer.setResourceMode(mode);
+        writer.serialize_1u(42); // establish stream tags before checking the record size
+        var before = writer.getDataSize(), size = source.getSerializedSize(writer);
+        source.serialize(writer); sizes.push(writer.getDataSize());
+        expect(writer.getDataSize() - before).toBe(size);
+        var reader = new pdg.Deserializer(); reader.setDataPtr(writer.getDataPtr());
+        expect(reader.deserialize_1u()).toBe(42);
+        var restored = new pdg.Image('./data/yinyang.png');
+        restored.deserialize(reader);
+        expect(restored.getWidth()).toBe(source.getWidth());
+        expect(restored.getHeight()).toBe(source.getHeight());
+        expect(restored.getOpacity()).toBe(source.getOpacity());
+        expect(restored.getPixel(20,20).red).toBe(source.getPixel(20,20).red);
+      });
+      expect(sizes[1] < sizes[0]).toBe(true);
+    });
+  }
 });

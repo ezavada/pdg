@@ -1,0 +1,9 @@
+<map id="MouseInfo" name="MouseInfo">
+<area shape="rect" id="Node000001" title=" " alt="" coords="42,197,124,223"/>
+<area shape="rect" id="Node000002" href="$structpdg_1_1_modifier_key_info.html" title=" " alt="" coords="5,80,118,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="69,120,83,197,78,197,64,123"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_point_t.html" title=" " alt="" coords="142,80,250,106"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="177,118,96,199,93,195,171,116"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_offset_t.html" title=" " alt="" coords="139,5,253,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="198,44,199,81,194,79,195,49"/>
+</map>

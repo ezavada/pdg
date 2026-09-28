@@ -3,7 +3,6 @@ namespace pdg { /**
 \class Deserializer
 \brief deserialize data from a serialized data stream
 
-\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
 
 Deserializer retrieves and reconstructs complex data from a serialized data stream in memory. The stream must have been created by a Serializer. It will correctly rebuild entire object hierarchies, creating new objects of the correct classes without duplication as needed. In order to deserialize objects, you must register them using pdg.registerSerializableClass. Built in serializable objects, such as Sprites and SpriteLayers are pre-registered.
 

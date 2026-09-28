@@ -1,4 +1,4 @@
-.TH "Graphics" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Graphics" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -9,13 +9,37 @@ Graphics \- Graphics
 .SH SYNOPSIS
 .br
 .PP
+.SS "Topics"
+
+.in +1c
+.ti -1c
+.RI "\fBSprites and layers\fP"
+.br
+.RI "Sprite and tile layers, drawing helpers, and collision helpers\&. "
+.in -1c
 .SS "Classes"
 
 .in +1c
 .ti -1c
+.RI "class \fBAnimatedAttributes\fP"
+.br
+.RI "\fBDrawing\fP attributes with programmed movement and appearance animation\&. "
+.ti -1c
+.RI "class \fBAttributes\fP"
+.br
+.RI "Container for styling and transformation attributes used in drawing operations\&. "
+.ti -1c
 .RI "class \fBColor\fP"
 .br
 .RI "color in RGB space, with optional alpha "
+.ti -1c
+.RI "class \fBDrawing\fP"
+.br
+.RI "Container for drawing elements (lines, shapes, images) that can be rendered to a \fBPort\fP\&. "
+.ti -1c
+.RI "class \fBElementRef\fP"
+.br
+.RI "Reference to a drawing element that allows modification of its properties and control points\&. "
 .ti -1c
 .RI "class \fBFont\fP"
 .br
@@ -23,7 +47,7 @@ Graphics \- Graphics
 .ti -1c
 .RI "class \fBGraphicsManager\fP"
 .br
-.RI "Used to create and track ports (\fIGUI Only\fP) "
+.RI "Used to create and track ports (\fIGUI Only\fP)\&. "
 .ti -1c
 .RI "class \fBImage\fP"
 .br
@@ -44,6 +68,10 @@ Graphics \- Graphics
 .RI "class \fBPoint\fP"
 .br
 .RI "point for 2D coordinate system "
+.ti -1c
+.RI "class \fBPolygon\fP"
+.br
+.RI "Geometric shape defined by a collection of points with support for transformations and boolean operations\&. "
 .ti -1c
 .RI "class \fBPort\fP"
 .br
@@ -73,6 +101,22 @@ Graphics \- Graphics
 .br
 .RI "rectangle with rotation for 2D coordinate system\&. "
 .ti -1c
+.RI "class \fBSpline\fP"
+.br
+.RI "Curved path defined by control points, supporting multiple spline types including cubic Bezier curves\&. "
+.ti -1c
+.RI "class \fBSprite\fP"
+.br
+.RI "animated, moving image that is automatically moved, animated, and drawn "
+.ti -1c
+.RI "class \fBSpriteLayer\fP"
+.br
+.RI "creates and tracks collections of sprites "
+.ti -1c
+.RI "class \fBTileLayer\fP"
+.br
+.RI "efficiently handles large tile datasets, useful for backgrounds, terrains, etc\&.\&.\&. "
+.ti -1c
 .RI "class \fBVector\fP"
 .br
 .RI "vector (magnitude and direction) within a 2D coordinate system\&. "
@@ -96,6 +140,14 @@ Graphics \- Graphics
 .RI "const \fBaction_PreDrawLayer\fP = 41"
 .br
 .RI "eventType_SpriteLayer action: about to render a particular \fBSpriteLayer\fP "
+.ti -1c
+.RI "const \fBCopyPixels\fP = true"
+.br
+.RI "Copy an offscreen surface's current pixels into an independent \fBImage\fP\&. Read-only boolean constant equal to true\&. The default for \fBImage::Image(Port, boolean)\fP\&. Available in every JavaScript runtime; constructing images from a \fBPort\fP requires graphics support\&. "
+.ti -1c
+.RI "const \fBSharedSurface\fP = false"
+.br
+.RI "Share an offscreen surface so later \fBPort\fP drawing updates the \fBImage\fP\&. Read-only boolean constant equal to false\&. Use new \fBpdg\&.Image\fP(port, \fBpdg\&.SharedSurface\fP)\&. The \fBImage\fP retains the surface after the source \fBPort\fP closes\&. Available in every JavaScript runtime; constructing images from a \fBPort\fP requires graphics support\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -110,9 +162,9 @@ helper for drawing sprite overlays and add-on effects
 
 
 .PP
-\fBWarning\fP
+\fBNote\fP
 .RS 4
-\fBAPI Stability: 1 - Experimental\fP\&. This API was introduced recently and gotten little or no real use\&. It may change or be removed in future versions\&. It may not be completely implemented and may be missing important pieces of functionality\&. Please try it out and provide feedback\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 Implement this interface to do extra drawing stuff for a specific \fBSprite\fP then start using it by calling the sprite's setDrawHelper() method\&. You can only have one \fBSprite\fP Draw Helper attached to a particular sprite for normal drawing (before the sprite would normally draw) and one for post draw (after the sprite has been drawn)
@@ -123,11 +175,12 @@ For those coding in Javascript, there is an implementation of \fBISpriteDrawHelp
 .PP
 .PP
 .nf
-var myHelper = new pdg\&.ISpriteDrawHelper(function(sprite, port) {
+const myHelper = new pdg\&.ISpriteDrawHelper(function(sprite, port) {
                 console\&.log("in my sprite draw helper for " + sprite );
-                var r = sprite\&.getLayer()\&.layerToPortRect(sprite\&.getFrameRotatedBounds());
-                port\&.fillRect(r, "black");
-                port\&.frameRect(r, "white");
+                const r = sprite\&.getLayer()\&.layerToPortRect(sprite\&.getBoundingBox());
+                port\&.drawRect(r, new pdg\&.Attributes()
+                                \&.fillColor(new pdg\&.Color("black"))
+                                \&.lineColor(new pdg\&.Color("white")));
                 return false;  // don't let sprite draw itself (ignored for post draw)
 });
 mySprite\&.setDrawHelper(myHelper);
@@ -135,18 +188,25 @@ mySprite\&.setDrawHelper(myHelper);
 .PP
 
 .PP
-If you need something more complex, you can also use classify to create a new Javascript class that derives from \fBpdg\&.ISpriteDrawHelper\fP, and it will call the draw() method of your class\&. For example:
+For a helper with its own methods or state, declare a JavaScript class that extends \fR\fBpdg\&.ISpriteDrawHelper\fP\fP\&. The native interface takes a callback in its constructor; forward that callback to your \fRdraw()\fP method through \fRsuper()\fP:
 
 .PP
 .PP
 .nf
-classify(pdg\&.ISpriteDrawHelper, 'MyDrawHelperClass', function() {
-                def('draw', function(sprite, port) {
-                                console\&.log("MyDrawHelperClass\&.draw(" + sprite + ")" );
-                                return true;  // let sprite draw itself (ignored for post draw)
-                });
-});
-mySprite\&.setDrawHelper( new MyDrawHelperClass() );
+class MyDrawHelperClass extends pdg\&.ISpriteDrawHelper {
+    constructor() {
+        super(function(sprite, port) {
+            return this\&.draw(sprite, port);
+        });
+    }
+
+    draw(sprite, port) {
+        console\&.log("Drawing sprite:", sprite);
+        return true; // allow normal sprite drawing
+    }
+}
+
+mySprite\&.setDrawHelper(new MyDrawHelperClass());
 .fi
 .PP
 .SS "Your Custom Function:"
@@ -161,7 +221,7 @@ As you can see from the examples above, your \fBSprite\fP Draw Helper function (
 .PP
 \fBReturns\fP
 .RS 4
-\fBtrue\fP if the normal \fBSprite\fP drawing should happen; or \fBfalse\fP if the normal \fBSprite\fP drawing should be skipped\&. This return result only applies when called for pre-draw\&. If the helper is installed for as a post-draw helper, using setSpritePostDraw(), then the return result is ignored\&.
+\fBtrue\fP if the normal \fBSprite\fP drawing should happen; or \fBfalse\fP if the normal \fBSprite\fP drawing should be skipped\&. This return result only applies when called for pre-draw\&. If the helper is installed as a post-draw helper using setPostDrawHelper(), then the return result is ignored\&.
 .RE
 .PP
 \fBSee also\fP
@@ -314,6 +374,16 @@ eventType_SpriteLayer action: about to render a particular \fBSpriteLayer\fP Emi
 .RE
 .PP
 
+.SS "const CopyPixels = true"
+
+.PP
+Copy an offscreen surface's current pixels into an independent \fBImage\fP\&. Read-only boolean constant equal to true\&. The default for \fBImage::Image(Port, boolean)\fP\&. Available in every JavaScript runtime; constructing images from a \fBPort\fP requires graphics support\&. 
+.PP
+Referenced by \fBImage::Image()\fP\&.
+.SS "const SharedSurface = false"
+
+.PP
+Share an offscreen surface so later \fBPort\fP drawing updates the \fBImage\fP\&. Read-only boolean constant equal to false\&. Use new \fBpdg\&.Image\fP(port, \fBpdg\&.SharedSurface\fP)\&. The \fBImage\fP retains the surface after the source \fBPort\fP closes\&. Available in every JavaScript runtime; constructing images from a \fBPort\fP requires graphics support\&. 
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

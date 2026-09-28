@@ -1,0 +1,12 @@
+{
+  "testName": "cpp-rig",
+  "format": "csv",
+  "output": "rigs,parts,setup_ms,mean_step_ms,p95_step_ms,mode_switch_ms,flip_ms\n1,16,3.26187,0.184418,0.289833,0.016,0.010584\n10,160,0.762542,1.89542,2.99383,0.040167,0.053917\n50,800,2.45471,10.8283,18.748,0.169917,0.239917\n100,1600,5.09579,22.285,34.0391,0.34725,0.484042\n",
+  "build": {
+    "configuration": "Release",
+    "kind": "native-cpp",
+    "executable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/pdg-rig-perf",
+    "resolvedExecutable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/pdg-rig-perf",
+    "directory": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release"
+  }
+}

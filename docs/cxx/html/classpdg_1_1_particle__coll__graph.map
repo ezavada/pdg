@@ -1,0 +1,19 @@
+<map id="Particle" name="Particle">
+<area shape="rect" id="Node000001" title=" " alt="" coords="748,112,813,138"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="506,5,604,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="619,27,673,44,725,69,750,89,770,112,765,111,747,93,722,74,671,49,619,33"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated.html" title=" " alt="" coords="483,55,627,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="642,75,725,94,759,112,754,111,723,99,642,80"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="308,55,414,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="429,65,485,67,480,68,430,70"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="166,55,258,80"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="274,65,310,67,305,68,275,70"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,55,117,80"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="131,65,168,66,163,69,133,70"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_physics_body_ref.html" title=" " alt="" coords="479,104,631,145"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="647,122,750,125,745,125,647,127"/>
+<area shape="rect" id="Node000008" href="$classpdg_1_1_collider_ref.html" title=" " alt="" coords="463,169,647,195"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="661,166,723,151,754,139,759,138,725,156,662,171"/>
+<area shape="rect" id="Node000009" href="$classpdg_1_1_particle_emitter_ref.html" title=" " alt="" coords="491,220,619,246"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="634,223,680,212,722,192,751,165,770,139,775,136,755,169,725,197,681,217,635,229"/>
+</map>

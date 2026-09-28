@@ -1,0 +1,23 @@
+# Check process output rather than redirecting the host test runner's stderr.
+execute_process(COMMAND "${TEST_PROGRAM}" --queries-only
+    RESULT_VARIABLE query_result OUTPUT_VARIABLE query_output ERROR_VARIABLE query_errors)
+if(NOT query_result EQUAL 0 OR NOT query_errors STREQUAL "")
+    message(FATAL_ERROR "NoPhysics queries must succeed silently: ${query_result} ${query_errors}")
+endif()
+execute_process(COMMAND "${TEST_PROGRAM}"
+    RESULT_VARIABLE result OUTPUT_VARIABLE output ERROR_VARIABLE errors)
+if(NOT result EQUAL 0 OR NOT output MATCHES "NoPhysics diagnostics contract passed")
+    message(FATAL_ERROR "NoPhysics contract failed: ${result} ${output} ${errors}")
+endif()
+if(EXPECT_DEBUG)
+    set(expected "")
+    foreach(operation applyImpulse applyAngularImpulse applyTorque)
+        string(APPEND expected "PDG NoPhysics: ignored ${operation}; call setupPhysicsBody() first\n")
+    endforeach()
+    string(REPLACE "\r\n" "\n" errors "${errors}")
+    if(NOT errors STREQUAL expected)
+        message(FATAL_ERROR "Debug diagnostics must occur once per operation: ${errors}")
+    endif()
+elseif(NOT errors STREQUAL "")
+    message(FATAL_ERROR "Release NoPhysics calls must be silent: ${errors}")
+endif()

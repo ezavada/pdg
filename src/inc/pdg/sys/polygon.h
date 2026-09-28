@@ -121,7 +121,9 @@ namespace pdg {
 		
 	// Triangulation for rendering
 	std::vector<Point> triangulate() const;
-	std::vector<Point> tessellate() const;  // Uses libtess2 for robust tessellation
+	// Lazily caches even-odd triangles until the polygon's points change.
+	// Returns a copy so callers cannot modify the cached geometry.
+	std::vector<Point> tessellate() const;
 	
 	// Polygon analysis
 	bool isSelfIntersecting() const;  // Check if polygon has self-intersections
@@ -141,7 +143,15 @@ namespace pdg {
 		mutable Rect mCachedBounds;
 		mutable bool mBoundsDirty;
 		
-		void invalidateBounds() const { mBoundsDirty = true; }
+		mutable std::vector<Point> mCachedTessellation;
+		mutable bool mTessellationDirty = true;
+		void invalidateGeometry() const { mBoundsDirty = mTessellationDirty = true; }
+		const std::vector<Point>& tessellatedPoints() const;
+		std::vector<Point> buildTessellation() const;
+		friend class Port;  // Rendering reads the cache without copying it.
+#ifdef PDG_POLYGON_TESTING
+		friend struct PolygonTestAccess;
+#endif
 		
 		// Helper methods for triangulation
 		bool isEar(const std::vector<Point>& vertices, int i, const std::vector<int>& indices) const;

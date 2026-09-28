@@ -5,7 +5,7 @@ console.log("=== Renderer API TEST SCRIPT ===");
 console.log("Testing Renderer/Attributes API...");
 
 // Check for --wait parameter
-var waitForUser = false;
+var waitForUser = !!pdg.visualTestSession;
 for (var i = 0; i < process.argv.length; i++) {
     if (process.argv[i] === '--wait') {
         waitForUser = true;
@@ -14,7 +14,7 @@ for (var i = 0; i < process.argv.length; i++) {
 }
 
 if (waitForUser) {
-    console.log("Manual mode: Press SPACE to advance to next test, ESC to quit");
+    console.log(pdg.visualTestSession ? pdg.visualTestSession.instructions : "Manual mode: Press SPACE to advance to next test, ESC to quit");
 } else {
     console.log("Auto mode: Tests will advance automatically, press any key to advance early, ESC to quit");
 }
@@ -25,7 +25,7 @@ console.log("Number of screens detected:", numScreens);
 
 // Store created ports for cleanup
 var ports = [];
-var currentTest = 0;
+var currentTest = pdg.visualTestSession ? pdg.visualTestSession.page : 0;
 var frameCount = 0;
 
 // Test configuration
@@ -104,8 +104,10 @@ function setupDrawHandler() {
             return false; // Not one of our ports, let other handlers process
         }
         
-        portInfo.frameCount++;
-        frameCount++;
+        if (!pdg.visualTestSession || !pdg.visualTestSession.paused) {
+            portInfo.frameCount++;
+            frameCount++;
+        }
         
         var port = portInfo.port;
         var screenNum = portInfo.screenNum;
@@ -137,7 +139,7 @@ function setupDrawHandler() {
         port.drawText(testText, testPoint, testAttrs);
         
         // Draw instructions based on mode
-        var instructionText = waitForUser ? "Press SPACE to continue, ESC to quit" : "Press any key to advance early, ESC to quit";
+        var instructionText = pdg.visualTestSession ? pdg.visualTestSession.instructions : waitForUser ? "Press SPACE to continue, ESC to quit" : "Press any key to advance early, ESC to quit";
         var instructionPoint = new pdg.Point(actualWidth/2, actualHeight - 30);
         var instructionAttrs = new pdg.Attributes().textSize(14).textStyle(pdg.textStyle_Centered).fillColor("yellow");
         port.drawText(instructionText, instructionPoint, instructionAttrs);
@@ -177,6 +179,7 @@ function setupDrawHandler() {
 }
 
 function setupKeyHandler() {
+    if (pdg.visualTestSession) return null;
     var keyHandler = pdg.on(pdg.eventType_KeyPress, function(evt) {
         if (evt.unicode == pdg.key_Escape) {
             console.log("ESC pressed - closing all ports and quitting...");
@@ -1140,7 +1143,7 @@ function runNextTest() {
     console.log("Starting test " + (currentTest + 1) + "/8");
     
     if (waitForUser) {
-        console.log("Press SPACE to continue to next test, ESC to quit");
+        console.log(pdg.visualTestSession ? pdg.visualTestSession.instructions : "Press SPACE to continue to next test, ESC to quit");
     } else {
         testTimeout = setTimeout(function() {
             currentTest++;
@@ -1151,7 +1154,7 @@ function runNextTest() {
 
 // Function to start the test sequence
 function startTestSequence() {
-    currentTest = 0;
+    currentTest = pdg.visualTestSession ? pdg.visualTestSession.page : 0;
     frameCount = 0;
     runNextTest();
 }

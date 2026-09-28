@@ -1,4 +1,4 @@
-.TH "EventEmitter" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "EventEmitter" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,7 +10,7 @@ EventEmitter \- Distributes events to event handlers\&.
 .PP
 \fR#include <pdg\-js\&.h>\fP
 .PP
-Inherited by \fBEventManager\fP, \fBSound\fP, \fBSprite\fP, \fBSpriteLayer\fP, and \fBTimerManager\fP\&.
+Inherited by \fBEventManager\fP, \fBParticle\fP, \fBSound\fP, \fBSprite\fP, \fBSpriteLayer\fP, and \fBTimerManager\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
@@ -41,9 +41,9 @@ Distributes events to event handlers\&.
 
 
 .PP
-\fBPrecondition\fP
+\fBNote\fP
 .RS 4
-\fBAPI Stability: 3 - Stable\fP\&. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes\&. Backwards-compatibility is guaranteed\&.
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 The \fBEventEmitter\fP expects the game developer to implement \fBIEventHandler\fP subclasses and register them to handle various events they are interested in\&. 

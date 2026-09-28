@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PDG · Physics comparison</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#111821;color:#e7edf5}
+*{box-sizing:border-box}body{margin:0;padding:24px;max-width:1600px;margin-inline:auto}
+h1{font-size:25px;margin:0 0 7px;font-weight:650}p{color:#aebccd;line-height:1.5;margin:0 0 18px}
+.controls,.timeline{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px}
+label{font-size:14px;display:flex;align-items:center;gap:8px}button,select{font:inherit;color:inherit;background:#243246;border:1px solid #435369;border-radius:7px;padding:9px 13px}button{cursor:pointer}button:hover{background:#33475f}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #80d8ff;outline-offset:3px}button:disabled{opacity:.45;cursor:default}
+#play{min-width:88px;background:#275775}input[type=checkbox]{accent-color:#80d8ff}input[type=range]{flex:1;min-width:160px;accent-color:#80d8ff}output{font-variant-numeric:tabular-nums;min-width:135px;font-size:14px}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{overflow:hidden;border:1px solid #34465b;border-radius:10px;background:#172333}.panel h2{margin:0;padding:13px 17px;border-bottom:1px solid #34465b;font-size:18px;display:flex;justify-content:space-between;gap:15px}.panel h2 small{font-size:12px;font-weight:400;color:#aebccd;align-self:center}canvas{display:block;width:100%;height: min(60vh,620px);min-height:320px;background:#111c2a}.metric{padding:11px 17px;font-size:13px;color:#aebccd;border-top:1px solid #34465b;min-height:41px;font-variant-numeric:tabular-nums}
+#caption{margin:15px 0 5px}footer{color:#8798ae;font-size:12px;line-height:1.6}#error{color:#ffb4a9;white-space:pre-wrap}
+@media(max-width:700px){body{padding:12px}.panels{gap:8px}.panel h2{padding:10px;font-size:15px}.panel h2 small{display:none}canvas{min-height:260px;height:48vh}.metric{padding:8px;font-size:11px}}
+</style>
+</head>
+<body>
+<h1>PDG physics · Basic vs Chipmunk</h1>
+<p>Recorded native simulations, one playback clock. Pause or scrub to compare the same moment.</p>
+<p id="loading" role="status">Loading recorded simulations…</p>
+<div class="controls">
+<label>Scene <select id="scene"><option value="approach">Separated circles · approach</option><option value="contacts">Touching circles · forces</option><option value="stack">Box stacks</option><option value="pile">Box piles</option><option value="chain">Joint chains</option></select></label>
+<label>Owner <select id="owner"><option value="sprite">Sprite</option><option value="part">Part</option></select></label>
+<label><input id="sleep" type="checkbox"> Allow Chipmunk sleeping</label>
+</div>
+<div class="controls">
+<button id="play" type="button">Play</button><button id="restart" type="button">Restart</button><button id="step" type="button">Step 0.02 s</button>
+<label>Speed <select id="speed"><option value=".1">0.1×</option><option value=".25">0.25×</option><option value=".5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+<label><input id="loop" type="checkbox" checked> Loop</label>
+</div>
+<div class="timeline"><input id="time" type="range" min="0" step=".02" value="0" aria-label="Simulation time"><output id="clock" for="time">0.00 / 0.00 s</output></div>
+<div class="panels">
+<section class="panel"><h2>Basic <small>Same initial conditions</small></h2><canvas id="basic" aria-label="Basic solver playback"></canvas><div class="metric" id="basic-metric"></div></section>
+<section class="panel"><h2>Chipmunk <small id="chip-settings"></small></h2><canvas id="chipmunk" aria-label="Chipmunk solver playback"></canvas><div class="metric" id="chipmunk-metric"></div></section>
+</div>
+<p id="caption"></p><footer>Recorded directly from the native benchmark. Both views use the same camera scale. Filled shapes are bodies; gray shapes are supports. Sleeping bodies fade to gray. Space: play/pause. Arrow keys: step.</footer>
+<p id="error" role="alert"></p>
+<script id="recordings" type="__PDG_RECORDING_TYPE__" data-encoding="__PDG_RECORDING_ENCODING__">__PDG_RECORDINGS__</script>
+<script>__PDG_VIEWER_JS__</script>
+</body>
+</html>

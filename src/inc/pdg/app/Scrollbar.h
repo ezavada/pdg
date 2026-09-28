@@ -61,8 +61,10 @@ public:
 	void scrollDownFullWindow();
 	void trackScrollSlider();
 
+	void doMouseLeave(const MouseInfo* mi, int id, int part) override;
 	bool doMouseUp(const MouseInfo *mi, int id, int part) override;
 	bool doMouseDown(const MouseInfo *mi, int id, int part) override;
+    bool doScrollWheel(const ScrollWheelInfo* wheel) override;
 
 	int  getCurrentPosition() { return mCurrentPosition; }
 	int  getScrollRange() { return mMaxRange - mMinRange; }
@@ -70,7 +72,10 @@ public:
 	void setCurrentPosition(int position) { mCurrentPosition = (position <= mMaxRange) ? position : mMaxRange; }
 
 	// From IEventHandler
-    bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw() override;  // return true if completely handled
+    bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept override;  // return true if completely handled
+
+protected:
+    void viewAreaChanged(const Rect& previous) override;
 
 private:
 	float decrementExtent() const;

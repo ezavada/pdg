@@ -1,0 +1,7 @@
+<map id="AnimatedBase" name="AnimatedBase">
+<area shape="rect" id="Node000001" title=" " alt="" coords="8,153,114,178"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="15,79,107,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="63,118,64,153,58,151,59,122"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,5,117,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="62,44,64,79,58,78,60,49"/>
+</map>

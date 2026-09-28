@@ -1,4 +1,4 @@
-.TH "Image" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Image" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -14,6 +14,18 @@ Inherited by \fBImageStrip\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBImage\fP (\fBPort\fP port, boolean copyPixels=\fBCopyPixels\fP)"
+.br
+.RI "Create an independent snapshot or a live image of an offscreen surface\&. "
+.ti -1c
+.RI "\fBImage\fP (string filename)"
+.br
+.RI "Load a bitmap image from a file\&. "
+.ti -1c
+.RI "\fBdeserialize\fP (\fBDeserializer\fP deserializer)"
+.br
+.RI "Replace this image from a saved image record\&. "
 .ti -1c
 .RI "number \fBgetAlphaValue\fP (int x, int y)"
 .br
@@ -31,6 +43,10 @@ Inherited by \fBImageStrip\fP\&.
 .br
 .RI "get image boundary rect, optionally with top left at given point "
 .ti -1c
+.RI "number \fBgetMyClassTag\fP ()"
+.br
+.RI "Return the native serialization class identifier for images\&. "
+.ti -1c
 .RI "number \fBgetOpacity\fP ()"
 .br
 .RI "get opacity of this image "
@@ -42,6 +58,10 @@ Inherited by \fBImageStrip\fP\&.
 .RI "\fBColor\fP \fBgetPixel\fP (\fBPoint\fP p)"
 .br
 .RI "get the pixel data at the given point in the image "
+.ti -1c
+.RI "uint \fBgetSerializedSize\fP (\fBSerializer\fP serializer)"
+.br
+.RI "Measure an image record using this writer's resource policy\&. "
 .ti -1c
 .RI "\fBImage\fP \fBgetSubsection\fP (\fBQuad\fP quad)"
 .br
@@ -71,6 +91,10 @@ Inherited by \fBImageStrip\fP\&.
 .br
 .RI "retain pixel data for use by \fBImage\&.getPixel()\fP "
 .ti -1c
+.RI "\fBserialize\fP (\fBSerializer\fP serializer)"
+.br
+.RI "Save this image with pixels or a resolvable resource reference\&. "
+.ti -1c
 .RI "\fBsetEdgeClamping\fP (boolean inUseEdgeClamp)"
 .br
 .RI "set whether image uses edge clamping or not "
@@ -91,12 +115,17 @@ A bitmap image that can be blitted onto the screen\&.
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&. You can create an image directly from a file, or by loading it from resource files with the \fBResourceManager\fP\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
+.PP
+You can create an image from a file or an offscreen \fBPort\fP, or load it from resource files with the \fBResourceManager\fP\&.
+
 .PP
 .PP
 .nf
-var img = new pdg\&.Image("myImage\&.png");
+const img = new pdg\&.Image("myImage\&.png");
+// Given an offscreen Port named surface:
+const live = new pdg\&.Image(surface, pdg\&.SharedSurface);
 .fi
 .PP
 
@@ -113,8 +142,115 @@ Images are just a data object\&. Methods in \fBPort\fP are used to draw them ons
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Image (string filename)"
+
+.PP
+Load a bitmap image from a file\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfilename\fP \fBImage\fP file path, resolved using the runtime's file/resource lookup\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBImage(Port, boolean)\fP, \fBResourceManager::getImage()\fP 
+.RE
+.PP
+
+.PP
+Referenced by \fBImageStrip::getFrame()\fP, \fBgetSubsection()\fP, \fBgetSubsection()\fP, and \fBsetTransparentColor()\fP\&.
+.SS "Image (\fBPort\fP port, boolean copyPixels = \fR\fBCopyPixels\fP\fP)"
+
+.PP
+Create an independent snapshot or a live image of an offscreen surface\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIport\fP An open \fBPort\fP returned by \fBGraphicsManager::createOffscreenPort()\fP\&. 
+.br
+\fIcopyPixels\fP Defaults to \fBpdg\&.CopyPixels\fP (true): copy the current RGBA pixels into an independent image\&. With \fBpdg\&.SharedSurface\fP (false), retain the shared drawing surface: subsequent \fBPort\fP drawing is visible the next time the image is drawn, without constructing another image or uploading pixels when both use the same graphics context\&. Literal booleans remain supported; an omitted or undefined flag uses CopyPixels\&.
+.RE
+.PP
+Creates an \fBImage\fP with the port's dimensions and transparency\&. Throws an Error for an onscreen port and TypeError for a non-boolean copyPixels\&. Use new with this constructor\&.
+
+.PP
+Both kinds of image remain usable after the source port closes\&. Closing a port with live images prevents further drawing through that port but retains its final surface until the last live image is released\&. Closing the underlying graphics context preserves its final pixels for surviving images\&. \fBDrawing\fP does not depend on which clip rectangle was active when the image was created: the image always represents the whole surface\&.
+
+.PP
+Pixel reads and serialization of live images read the current contents\&. Serialized images are snapshots and do not restore a connection to a \fBPort\fP\&. \fBDrawing\fP across independent graphics contexts, or drawing a live image back into its own source, uses a pixel snapshot\&. Calling \fBsetTransparentColor()\fP on a live image converts that image to an independent snapshot before applying the color key\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Requires a graphics-enabled build\&. Shared images retain graphics memory until released, even after closeGraphicsPort()\&. An image's opacity is independent of the port\&. 
+
+.PP
+API stability: 2 — Evolving\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const surface = pdg\&.gfx\&.createOffscreenPort(new pdg\&.Rect(128, 128));
+if (!surface) throw new Error('Could not allocate drawing surface');
+const live = new pdg\&.Image(surface, pdg\&.SharedSurface);
+surface\&.drawEllipse(new pdg\&.Point(64, 64), 40, 40,
+    new pdg\&.Attributes()\&.fillColor('red')\&.lineStyle(pdg\&.lineStyle_None));
+// Drawing live now shows the red circle; further surface drawing updates it too\&.
+const frozen = new pdg\&.Image(surface, pdg\&.CopyPixels);
+// frozen keeps this circle even when the surface changes\&.
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBGraphicsManager::createOffscreenPort()\fP, \fBPort::drawImage()\fP, \fBgetPixel()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::CopyPixels\fP\&.
 .SH "Member Function Documentation"
 .PP 
+.SS "deserialize (\fBDeserializer\fP deserializer)"
+
+.PP
+Replace this image from a saved image record\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdeserializer\fP Reader positioned at a raw image record written by \fBImage::serialize()\fP\&. The saved record determines whether pixels are embedded or resources must be resolved\&. Missing resources, changed resource dimensions and malformed data throw\&. The old image content remains unchanged on validation failure\&. Decoded pixels and shared source-image references remain retained by the image\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+This changes the image seen by all existing references to it\&. 
+.PP
+.nf
+// image is an existing image; saved is a MemBlock from an image snapshot\&.
+const reader = new pdg\&.Deserializer();
+reader\&.setDataPtr(saved);
+image\&.deserialize(reader);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBImage::serialize()\fP, \fBSerializer::setResourceMode()\fP 
+.RE
+.PP
+
 .SS "number getAlphaValue (int x, int y)"
 
 .PP
@@ -221,6 +357,17 @@ the bounds rectangle for the image, with top left at (0,0) at at the (at\&.x, at
 .RE
 .PP
 
+.SS "number getMyClassTag ()"
+
+.PP
+Return the native serialization class identifier for images\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The image class tag, shared by \fBImage\fP and \fBImageStrip\fP\&. 
+.RE
+.PP
+
 .SS "number getOpacity ()"
 
 .PP
@@ -300,6 +447,27 @@ When an image is first drawn into a port, the image is data is converted into an
 .RE
 .PP
 
+.SS "uint getSerializedSize (\fBSerializer\fP serializer)"
+
+.PP
+Measure an image record using this writer's resource policy\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIserializer\fP Destination writer used for sizing\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+\fBImage\fP record size in bytes, excluding the stream header and enclosing object tag/length\&. Sizing validates availability of embedded pixels and may reload a named image\&. Embedded records support RGB/RGBA pixels, dimensions up to 32768 on each axis, and at most 512 MiB of pixel data\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBImage::serialize()\fP, \fBSerializer::setResourceMode()\fP 
+.RE
+.PP
+
 .SS "\fBImage\fP getSubsection (\fBQuad\fP quad)"
 
 .PP
@@ -321,6 +489,8 @@ this is done by referencing the original, the storage space is not duplicated
 .RE
 .PP
 
+.PP
+References \fBImage()\fP\&.
 .SS "\fBImage\fP getSubsection (\fBRect\fP quad)"
 
 .PP
@@ -342,6 +512,8 @@ this is done by referencing the original, the storage space is not duplicated
 .RE
 .PP
 
+.PP
+References \fBImage()\fP\&.
 .SS "\fBColor\fP getTransparentColor ()"
 
 .PP
@@ -411,6 +583,22 @@ retain pixel data for use by \fBImage\&.getPixel()\fP Unless retainData is calle
 \fBSee also\fP
 .RS 4
 \fBgetPixel()\fP 
+.RE
+.PP
+
+.SS "serialize (\fBSerializer\fP serializer)"
+
+.PP
+Save this image with pixels or a resolvable resource reference\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIserializer\fP Destination writer; its resource mode selects the representation\&. Frame layout, opacity, edge clamping and subsection selection are included\&. Anonymous runtime images and modified pixels embed in either mode\&. This writes a raw record; restore it by calling \fBImage::deserialize()\fP on an existing image\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSerializer::setResourceMode()\fP, \fBImage::getSerializedSize()\fP 
 .RE
 .PP
 
@@ -487,6 +675,8 @@ In many cases an image with a single color that is marked as transparent is more
 .RE
 .PP
 
+.PP
+References \fBImage()\fP\&.
 
 .SH "Author"
 .PP 

@@ -1,10 +1,14 @@
 namespace pdg { /**
+\fn pdg::Animated::getRotatedBounds()
+\brief Read rotated logical bounds.
 
-\fn pdg::Animated::getRotatedBounds
+Includes logical size, transform scale, rotation and center offset.
 
-\brief get the bounds with rotation
 
-\returns RotatedRect
-**/ }
+\return The current value, returned as a new coordinate object.
+
+\see getBoundingBox(), getSize()
+*/
+ }
 
 **/ }

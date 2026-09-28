@@ -1,3 +1,15 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structpdg_1_1_shutdown_info.html" title=" " alt="" coords="5,5,107,31"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,105,83,131"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_p_d_g_exception.html" title=" " alt="" coords="133,80,241,106"/>
+<area shape="poly" id="edge42_Node000000_Node000001" title=" " alt="" coords="97,106,135,101,130,104,99,111"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_timer_exception.html" title=" " alt="" coords="131,129,243,155"/>
+<area shape="poly" id="edge47_Node000000_Node000006" title=" " alt="" coords="98,125,133,132,128,133,98,130"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1bad__tag.html" title=" " alt="" coords="315,5,382,31"/>
+<area shape="poly" id="edge43_Node000001_Node000002" title=" " alt="" coords="227,70,290,40,317,30,313,33,292,45,229,75"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1out__of__data.html" title=" " alt="" coords="304,55,393,80"/>
+<area shape="poly" id="edge44_Node000001_Node000003" title=" " alt="" coords="256,79,306,74,301,75,257,85"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1sync__error.html" title=" " alt="" coords="308,104,390,130"/>
+<area shape="poly" id="edge45_Node000001_Node000004" title=" " alt="" coords="256,100,310,110,304,111,256,106"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1unknown__object.html" title=" " alt="" coords="291,153,406,179"/>
+<area shape="poly" id="edge46_Node000001_Node000005" title=" " alt="" coords="234,110,244,114,292,140,318,153,312,153,290,145,242,119,233,115"/>
 </map>

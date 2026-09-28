@@ -1,4 +1,4 @@
-.TH "ImageStrip" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ImageStrip" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -39,6 +39,18 @@ Inherits \fBImage\fP\&.
 Public Member Functions inherited from \fBImage\fP
 .in +1c
 .ti -1c
+.RI "\fBImage\fP (\fBPort\fP port, boolean copyPixels=\fBCopyPixels\fP)"
+.br
+.RI "Create an independent snapshot or a live image of an offscreen surface\&. "
+.ti -1c
+.RI "\fBImage\fP (string filename)"
+.br
+.RI "Load a bitmap image from a file\&. "
+.ti -1c
+.RI "\fBdeserialize\fP (\fBDeserializer\fP deserializer)"
+.br
+.RI "Replace this image from a saved image record\&. "
+.ti -1c
 .RI "number \fBgetAlphaValue\fP (int x, int y)"
 .br
 .RI "get the value for the alpha channel at the given x, y coordinates in the image "
@@ -55,6 +67,10 @@ Public Member Functions inherited from \fBImage\fP
 .br
 .RI "get image boundary rect, optionally with top left at given point "
 .ti -1c
+.RI "number \fBgetMyClassTag\fP ()"
+.br
+.RI "Return the native serialization class identifier for images\&. "
+.ti -1c
 .RI "number \fBgetOpacity\fP ()"
 .br
 .RI "get opacity of this image "
@@ -66,6 +82,10 @@ Public Member Functions inherited from \fBImage\fP
 .RI "\fBColor\fP \fBgetPixel\fP (\fBPoint\fP p)"
 .br
 .RI "get the pixel data at the given point in the image "
+.ti -1c
+.RI "uint \fBgetSerializedSize\fP (\fBSerializer\fP serializer)"
+.br
+.RI "Measure an image record using this writer's resource policy\&. "
 .ti -1c
 .RI "\fBImage\fP \fBgetSubsection\fP (\fBQuad\fP quad)"
 .br
@@ -95,6 +115,10 @@ Public Member Functions inherited from \fBImage\fP
 .br
 .RI "retain pixel data for use by \fBImage\&.getPixel()\fP "
 .ti -1c
+.RI "\fBserialize\fP (\fBSerializer\fP serializer)"
+.br
+.RI "Save this image with pixels or a resolvable resource reference\&. "
+.ti -1c
 .RI "\fBsetEdgeClamping\fP (boolean inUseEdgeClamp)"
 .br
 .RI "set whether image uses edge clamping or not "
@@ -115,7 +139,7 @@ bitmap image containing a number of frames that can be blitted onto the screen
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 You can create an image strip directly from a file, or by loading it from resource files with the \fBResourceManager\fP\&. 
@@ -142,6 +166,8 @@ this is done by referencing the original, the storage space is not duplicated
 .RE
 .PP
 
+.PP
+References \fBImage::Image()\fP\&.
 .SS "number getFrameWidth ()"
 
 .PP

@@ -1,0 +1,53 @@
+namespace pdg {
+/**
+\struct ColliderContact
+\ingroup Physics Events
+\brief One shape contact delivered as eventType_ColliderContact.
+
+Enable Collider::setWantsContactEvents() on each collider whose owner should
+receive notifications. Both Sprite and Part colliders deliver through the owning
+Sprite. Each receiving collider sees itself as `collider`; vectors reverse for
+the other endpoint. Delivery occurs synchronously after the solve.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor collider_contact_fields
+\par Contact fields
+
+| Field | Meaning |
+| --- | --- |
+| emitter | Owning Sprite receiving this event |
+| eventType | pdg::eventType_ColliderContact |
+| collider, other | Shared Collider handles identifying both endpoints |
+| shape, otherShape | Stable shape IDs within the corresponding colliders |
+| phase | collision_Begin, collision_Stay or collision_End |
+| point | Approximate contact Point in owning-layer/world coordinates |
+| normal | Unit Vector directed from collider toward other |
+| impulse | Actual impulse applied to other; zero for sensors, sleeping contacts and end contacts |
+| penetration | Nonnegative overlap depth; zero for an end contact |
+| sensor | Whether either collider is a sensor |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+Chipmunk contacts reuse its solved manifold: point is the mean of the contact
+midpoints and penetration is the greatest overlap depth. Sleeping pairs continue
+to report collision_Stay without a new impulse.
+
+Geometry, filters and physical associations are evaluated for the solved frame.
+A callback can remove an endpoint before another notification is delivered;
+retained handles remain safe and isAttached() reports their current state.
+Contact identity is per shape pair, so compound geometry can generate several
+notifications for the same two owners. Native ColliderContact pointers are
+borrowed only for the callback; JavaScript retains its Collider handles.
+*/
+/**
+\var eventType_ColliderContact
+\ingroup Events
+\brief Collider begin/stay/end notification carrying a ColliderContact payload.
+\see Collider::setWantsContactEvents()
+*/
+}

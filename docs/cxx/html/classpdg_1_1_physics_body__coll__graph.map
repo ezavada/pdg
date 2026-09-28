@@ -1,0 +1,9 @@
+<map id="PhysicsBody" name="PhysicsBody">
+<area shape="rect" id="Node000001" title=" " alt="" coords="17,177,116,203"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,5,117,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,46,69,177,63,176,59,47"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_physics_body.html" title=" " alt="" coords="82,80,181,106"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="83,39,123,79,118,81,83,45"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="118,118,77,178,73,175,112,119"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="197,85,207,93,199,101,182,103,180,98,197,96,202,93,196,90"/>
+</map>

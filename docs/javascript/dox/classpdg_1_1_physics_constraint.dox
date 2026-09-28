@@ -1,0 +1,45 @@
+namespace pdg {
+/**
+\class PhysicsConstraint
+\ingroup Physics
+\brief A retained physical relationship between any two PhysicsBody owners.
+
+Create through PhysicsBody methods, such as createPinJoint(), createSpring() or
+createMotor(). The same API joins Sprite-to-Sprite, Sprite-to-Part and Part-to-Part.
+Shapes are optional. A constraint never changes a Part's parent or bone binding.
+Do not construct this class directly.
+
+The factory receiver is body A; the `other` argument is B. Anchor coordinates are
+local to the physical body, without artwork scaling. Relative angles and angular
+speeds mean B minus A, clockwise positive, in radians and radians/second. Motors
+and forces act on physical state; they do not schedule Animated operations.
+
+Bodies retain their active constraints. Removing a body or removing/transferring
+an owner from its layer disconnects them. Retained JavaScript handles remain safe
+and return PhysicsBody::NoPhysics for both endpoints. A retained native handle
+requires addRef()/release(). Constraints created before insertion stay dormant
+until both bodies share a world. Joining two different layer worlds throws.
+
+Basic uses bounded impulse approximations; Chipmunk uses native constraints.
+Neither promises exact preservation under arbitrary loads or large timesteps.
+Both support force/torque caps, break thresholds and connected-body collision
+suppression. No response is applied when neither endpoint is dynamic.
+
+\note Instantiate both PhysicsBodies first. Owner updates advance constraints;
+calling PhysicsBody::step() on one detached body does not advance the other.
+Native custom worlds can call PhysicsBody::solveConstraints() with both endpoints.
+
+\code{.js}
+const mount = sprite.createPart('mount');
+const pendant = sprite.createPart('pendant');
+mount.setupPhysicsBody().setMode(pdg.physicsBody_Static);
+pendant.setLocation(0, 30);
+pendant.setupPhysicsBody(1, 20);
+const tether = mount.physics.createSpring(pendant.physics,
+    new pdg.Point(0, 0), new pdg.Point(0, 0), 30, 20, 5);
+tether.setMaxForce(100).setBreakForce(90);
+\endcode
+
+\see Collider, PhysicsBody
+*/
+}

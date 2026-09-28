@@ -45,25 +45,29 @@ namespace pdg {
 class DialogBackgroundView : public View {
 public:
     DialogBackgroundView(Dialog* dialog, const Rect aRect, const ControlAttributes& attributes,
-                         Color borderColor = PDG_BLACK_COLOR, Color fillColor = PDG_WHITE_COLOR,
+                         Color borderColor = Color(77,82,89), Color fillColor = PDG_WHITE_COLOR,
                          int borderWidth = DEFAULT_DIALOG_BORDER_WIDTH )
         : View(dialog, aRect),
         mBorderColor(borderColor),
         mFillColor(fillColor),
         mBorderWidth(borderWidth) {
 		mAttributes.merge(attributes);
-        mViewArea.grow(borderWidth);
+        Rect area = getViewArea();
+        area.grow(borderWidth);
+        setViewArea(area);
         addClickablePart(globalToLocal(mViewArea), PART_DIALOG_BKGRND);
     }
 
     void drawSelf() {
 		const ControlStateAttributes& themed = mAttributes.state(ControlState::Normal);
 		if (themed.hasDrawRoutine || themed.hasImage || themed.hasDrawing) {
-			mAttributes.draw(*mPort, mViewArea, ControlState::Normal);
+			mAttributes.draw(*mPort, mViewArea, ControlState::Normal, this);
 			return;
         }
-        mPort->drawRect(mViewArea, Attributes().fillColor(mFillColor));
-        mPort->drawRect(mViewArea, Attributes().lineColor(mBorderColor).lineThickness(mBorderWidth));
+        mPort->drawRect(mViewArea, getDrawingAttributes(Attributes().fillColor(mFillColor)));
+        Rect border(mViewArea);
+        border.shrink(mBorderWidth/2.0f);
+        mPort->drawRect(border, getDrawingAttributes(Attributes().lineColor(mBorderColor).lineThickness(mBorderWidth)));
 //        mController->viewRedrawn();
     }
 
@@ -78,7 +82,6 @@ protected:
 
 Dialog::Dialog(Controller* parentController, int width, int height, uint32 flags, int okButtonId, int cancelButtonId)
  : Controller(&parentController->getApplication()),
-   mButtonWithMouseDown(0),
    mOkButtonId(okButtonId),
    mCancelButtonId(cancelButtonId),
    mFlags(flags),
@@ -118,28 +121,18 @@ Dialog::~Dialog() {
 
 
 bool Dialog::doMouseDown(const MouseInfo *mi, View* view, int id, int part) {
-    // override to do something when mouse button transistions from up to down
-    // clicks are generally handled in doLeftClick() or doRightClick()
-    if (view && ((id == mOkButtonId) || (id == mCancelButtonId))) {
-        Button* button = static_cast<Button*>(view);
-        button->setClickState(true);
-        mButtonWithMouseDown = button;
-    }
+    Controller::doMouseDown(mi, view, id, part);
 	return true;
 }
 
 bool Dialog::doMouseUp(const MouseInfo *mi, View* view, int id, int part) {
-    // override to do something when mouse button transistions from down to up
-    // clicks are generally handled in doLeftClick() or doRightClick()
-    if (mButtonWithMouseDown) {
-		mButtonWithMouseDown->playClickSound();
-        mButtonWithMouseDown->setClickState(false);
-        mButtonWithMouseDown = 0;
-    }
+    Controller::doMouseUp(mi, view, id, part);
     return false;   // we haven't handled this completely, let the doClick() methods be called
 }
 
 bool Dialog::doLeftClick(const MouseInfo *mi, View* view, int id, int part) {
+    if (view && ((id == mOkButtonId) || (id == mCancelButtonId)))
+        static_cast<Button*>(view)->playClickSound();
 	if ( id == mOkButtonId ) {
 	    doClose(kAccepted);
 	} else if ( ( mCancelButtonId != -1) && (id == mCancelButtonId) ) {
@@ -200,9 +193,7 @@ void Dialog::portWasResized(Port* resizedPort) {
 	for(itr = mViews.begin(); itr != mViews.end(); itr++) {
 		idViewPair val = *itr;
         View* view = val.first;
-		Rect& vr = view->getModifiableViewAreaRect();
-        vr.moveRight(offsetPt.x);
-        vr.moveDown(offsetPt.y);
+        view->moveBy(offsetPt.x, offsetPt.y);
 	}
 }
 

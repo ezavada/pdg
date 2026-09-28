@@ -1,0 +1,83 @@
+/**
+\class pdg::Part
+\ingroup Animation
+\brief Independently animated Sprite subsection, artwork holder, or mounting frame.
+
+Create a Part with Sprite::createPart(name); names are unique within that Sprite.
+Its local transform is relative to the Sprite, an explicit parent Part, or an
+authored bone, binding or socket. setParentPart(), bindToBone(),
+bindToAnimationBinding() and bindToAnimationSocket() select one frame without
+changing local offsets. getBoneId() is always safe and returns boneId_None for
+an unbound Part (including one whose parent follows a bone). Authored relationships
+are scoped to the current rig and safely invalidate on replacement.
+
+setDrawing() retains shared editable Drawing contents. setImage(image,localBounds)
+retains an image in an explicit local rectangle. Artwork changes leave identity,
+logical dimensions, programmed motion, parent/binding and physics untouched.
+clearContent() removes artwork. getContentBounds() returns current artwork-local
+bounds or transformed bounds in partSpace_Sprite/partSpace_World. Part content is
+drawn after the owner's existing artwork, in Part creation order, with the owner's
+opacity and composed affine transform. Imported bindings supply transforms; this
+API does not duplicate or automatically replace imported artwork. Drawing still
+copies Attributes for its individual elements.
+
+\section part_mounting Attaching an independent Sprite
+
+hostPart.attachSprite(child, placement, childMount) returns a new Part beneath
+hostPart. This mounting Part retains the child and supplies an Animated attachment
+offset; getAttachedSprite() and child.getAttachmentPart() query the relationship.
+Animate the mounting Part to move the held object. The child root rejects competing
+transform edits, while its own clips, internal Parts, opacity and layer order remain
+independent. Attachment neither merges Part ownership nor steps the child twice.
+
+partPlacement_Snap aligns the child's origin, or the optional childMount frame,
+with the host. partPlacement_PreserveWorld keeps its current world placement.
+childMount must belong to the child; its frame is sampled once when attaching.
+The mount's local state is the only editable attachment offset. detachSprite()
+releases the child with its last published world pose and leaves the mounting Part
+available for reuse as an ordinary Part. Removal of the host socket or owning Sprite
+also detaches. Layer removal currently detaches mounts because placement and
+update scheduling require a shared layer.
+JavaScript references retain Parts and Sprites automatically.
+
+Both Sprites must share a layer (or both be outside layers). Cycles, an already
+mounted child, singular placement, or a root transform requiring shear are rejected
+before creating a mount. Independent Part artwork supports affine shear, but Sprite
+roots do not. A later invalid follow placement holds the last valid child pose and
+reports getAttachmentError(); valid placement clears it. Use uniform ancestor scales
+or aligned axes when rotating mounts. Rigid attachments currently require a child
+without a PhysicsBody; physical holding constraints are not supported by this attachment API. Release does not invent physical velocity.
+
+\code{.js}
+const socket = hero.createPart("weaponGrip");
+socket.bindToAnimationSocket("grip");
+const held = socket.attachSprite(sword, pdg.partPlacement_Snap);
+held.rotateTo(0.3, 0.25, pdg.easeInOutQuad);
+held.detachSprite();
+\endcode
+\section part_ik Explicit Part-chain IK
+
+solveIK(middle,tip,target,space,bendDirection,influence) solves two segments whose
+joint offsets come from the local locations of a contiguous three-Part chain.
+It requires neither artwork nor bones. The target defaults to owning-layer/world
+coordinates; partSpace_Local means the root Part's parent frame. The root's local
+scale must have equal absolute axes; ancestor transforms may be affine/reflected.
+The bend direction is +1 or -1, and influence is in [0,1]. Unreachable targets clamp
+to the available reach and return false. Invalid topology or dynamic bodies reject
+the operation before changing either joint. Direct IK replaces rotation programming;
+setIKTarget() and setIKDriveTarget() install recurring controllers, and
+setIKLimits() supplies fixed or shared rotary limits. Controller takeover requires
+explicit release with clearIKTarget().
+
+\section part_physics Part bodies
+
+An unbound Part can create its own PhysicsBody without a Sprite root body. It joins
+the Chipmunk world on a physics-enabled layer and publishes the solved state once;
+removal detaches the retained body back to basic integration. This currently covers
+free bodies, shared constraints, contact reporting and kinematic target scheduling.
+Use setupCollider() for explicit geometry, setupFrameCollider() for owned artwork
+or an explicitly selected image binding, and setupAnimationCollider(boxName) for
+one authored box. Bone binding alone does not create a physical joint or give the
+body authority to write a bone. Generated animation physics requires Chipmunk.
+
+*/

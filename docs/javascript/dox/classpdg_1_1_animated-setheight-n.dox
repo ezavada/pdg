@@ -1,7 +1,13 @@
 namespace pdg { /**
+\fn pdg::Animated::setHeight(number value)
+\brief Set logical height immediately.
 
-\fn pdg::Animated::setHeight
+Cancels scheduled height changes and preserves the height growth rate. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief set the object's height
+\param value Logical size value.
 
-**/ }
+\return This object, for chaining.
+
+\see setSize(), resizeTo()
+*/
+ }

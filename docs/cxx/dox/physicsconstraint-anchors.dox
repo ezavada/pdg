@@ -1,0 +1,130 @@
+/**
+\fn Point pdg::PhysicsConstraint::getAnchorA() const
+\brief Read the connection point on body A.
+
+Pin, slide, pivot and spring constraints support this getter. For a groove, use getGrooveStart() and getGrooveEnd() instead. Other constraint types throw. Coordinates are unscaled body-local
+distance units, relative to getBodyA()'s physical frame, not a bone's joint
+origin or the Sprite's frame. A retained disconnected constraint stays queryable.
+
+\return A copied Point; changing it does not change the constraint.
+\see setAnchorA(), setAnchors()
+*/
+
+/**
+\fn Point pdg::PhysicsConstraint::getAnchorB() const
+\brief Read the connection point on body B.
+
+Pin, slide, pivot, groove and spring constraints support this getter. Other constraint types throw. Coordinates are unscaled body-local
+distance units, relative to getBodyB()'s physical frame, not a bone's joint
+origin or the Sprite's frame. A retained disconnected constraint stays queryable.
+
+\return A copied Point; changing it does not change the constraint.
+\see setAnchorB(), setAnchors()
+*/
+
+/**
+\fn PhysicsConstraint& pdg::PhysicsConstraint::setAnchorA(const Point& anchor)
+\brief Move the connection point on body A.
+
+Pin, slide, pivot and spring constraints support this setter. For a groove, use setGroove() instead. Other constraint types throw. Finite coordinates are required;
+invalid input leaves the constraint unchanged. Only this endpoint changes.
+See setAnchors() for solver timing, geometry and lifetime behavior.
+
+\param anchor New point in body A's unscaled local distance units; copied.
+\return This constraint for chaining.
+\see getAnchorA(), setAnchors()
+*/
+
+/**
+\fn PhysicsConstraint& pdg::PhysicsConstraint::setAnchorB(const Point& anchor)
+\brief Move the connection point on body B.
+
+Pin, slide, pivot, groove and spring constraints support this setter. Other constraint types throw. Finite coordinates are required;
+invalid input leaves the constraint unchanged. Only this endpoint changes.
+See setAnchors() for solver timing, geometry and lifetime behavior.
+
+\param anchor New point in body B's unscaled local distance units; copied.
+\return This constraint for chaining.
+\see getAnchorB(), setAnchors()
+*/
+
+/**
+\fn PhysicsConstraint& pdg::PhysicsConstraint::setAnchors(const Point& anchorA, const Point& anchorB)
+\brief Move both connection points atomically.
+
+Supports pin, slide, pivot and spring constraints. Groove and angular-only
+constraints throw. Both Points must have finite coordinates. Validation occurs
+before either stored point changes; getters report successful edits immediately.
+
+The next physics step uses the new anchors. This includes edits requested in a
+collision callback: the active solver joint is not mutated during that solve.
+Connected sleeping bodies wake when the edit reaches the native solver. Repeating
+the same coordinates does not restart the joint. The public constraint handle,
+body endpoints, force/break limits and collision policy are preserved.
+
+Moving anchors does not teleport bodies, change velocities, resize colliders,
+recalculate mass/inertia, or change a pin's distance, slide limits or spring rest
+length. The solver may move bodies to satisfy the new geometry. Edited anchors
+are saved in scene snapshots, including edits made before the next solve.
+A retained disconnected constraint stays editable but is not reconnected.
+
+This edits physical connection points, not animation bones or Part offsets.
+Physical Part IK continues to validate its joint geometry against its Part chain;
+incompatible anchors produce a controller error instead of silently moving its
+captured chain offsets.
+
+\param anchorA New point in body A's unscaled local distance units; copied.
+\param anchorB New point in body B's unscaled local distance units; copied.
+\return This constraint for chaining.
+
+\note The example assumes upperArm and forearm are Parts with physics bodies
+in the same layer, with millimeters as the application's distance unit. The
+coordinates are relative to each body's origin.
+
+\par Example
+\code{.cpp}
+auto& elbow = upperArm.physics.createPivotJoint(forearm.physics,
+    pdg::Point(0, 150), pdg::Point(0, -130));
+elbow.setAnchors(pdg::Point(0, 145), pdg::Point(0, -125));
+\endcode
+
+\see getAnchorA(), getAnchorB(), setAnchorA(), setAnchorB(), setGroove()
+*/
+
+/**
+\fn Point pdg::PhysicsConstraint::getGrooveStart() const
+\brief Read the start of a groove joint's track.
+
+Only groove constraints support this getter; other types throw. Retained
+disconnected grooves remain queryable.
+
+\return A copied Point in body A's unscaled local distance units.
+\see setGroove(), getAnchorB()
+*/
+
+/**
+\fn Point pdg::PhysicsConstraint::getGrooveEnd() const
+\brief Read the end of a groove joint's track.
+
+Only groove constraints support this getter; other types throw. Retained
+disconnected grooves remain queryable.
+
+\return A copied Point in body A's unscaled local distance units.
+\see setGroove(), getAnchorB()
+*/
+
+/**
+\fn PhysicsConstraint& pdg::PhysicsConstraint::setGroove(const Point& start, const Point& end)
+\brief Move both endpoints of a groove joint's track atomically.
+
+Only groove constraints support this setter. Coordinates must be finite and the
+endpoints more than 1e-8 local distance units apart. Invalid input leaves both
+endpoints unchanged. Body B's anchor stays unchanged; use setAnchorB() to edit it.
+Getters report the change immediately; the solver adopts it on the next step.
+The same timing, lifetime and body-state rules as setAnchors() apply.
+
+\param start New track start in body A's unscaled local distance units; copied.
+\param end New track end in body A's unscaled local distance units; copied.
+\return This constraint for chaining.
+\see getGrooveStart(), getGrooveEnd(), setAnchorB(), setAnchors()
+*/

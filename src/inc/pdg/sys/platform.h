@@ -79,8 +79,6 @@
 
         PLATFORM_LITTLE_ENDIAN    - Generated code uses little endian format for integers
         PLATFORM_BIG_ENDIAN       - Generated code uses big endian format for integers
-        PLATFORM_RUNTIME_IS_LITTLE_ENDIAN - Generated code is using little endian format for integers (Runtime check)
-        PLATFORM_RUNTIME_IS_BIG_ENDIAN    - Generated code is using big endian format for integers (Runtime check)
      
         PLATFORM_MAC_CFM       - PLATFORM_MAC is true and CFM68K or PowerPC CFM (TVectors) are used
         PLATFORM_MAC_MACHO     - PLATFORM_MAC is true and Mach-O style runtime
@@ -217,9 +215,6 @@
     #define PLATFORM_UNIX          1
     #define PLATFORM_LINUX         1    /* runtime behaves like linux */
     #define PLATFORM_POSIX         1
-
-    #define PLATFORM_RUNTIME_IS_BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
-    #define PLATFORM_RUNTIME_IS_LITTLE_ENDIAN (*(uint16_t *)"\0\xff" > 0x100)
 
     #define PLATFORM_STR "javascript-ecma-emscripten"
 
@@ -548,7 +543,7 @@
   /* used when Doxygen is generating Ruby Documentation */
 #endif
 
-//! @cond C++
+//! @cond CXX
 #ifdef COMPILER_MWERKS
     /* option opt_propagation is defined in CodeWarrior when
        global optimization level is 2 or higher, a good indication
@@ -630,11 +625,6 @@ const char* demangleSymbol(const char* mangled_name);
 
 #if defined( PLATFORM_IOS ) || defined( PLATFORM_ANDROID )
     #define PLATFORM_OPENGLES 1
-#endif
-
-#ifndef PLATFORM_RUNTIME_IS_BIG_ENDIAN
-    #define PLATFORM_RUNTIME_IS_BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
-    #define PLATFORM_RUNTIME_IS_LITTLE_ENDIAN (*(uint16_t *)"\0\xff" > 0x100)
 #endif
 
 //! @endcond

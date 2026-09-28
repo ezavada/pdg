@@ -92,6 +92,7 @@ namespace pdg {
 	void platform_setHardwareNormalCursor();
 
     void* platform_createWindow(long width, long height, long xPos, long yPos, int bpp, const char* title);
+    void* platform_createOffscreenContext();
     void* platform_createFullscreenWindow(long width, long height, int bpp, int screenNum);
     void platform_destroyWindow(void* windRef);
 	void platform_resizeWindow(void* windRef, long width, long height, bool fullscreen);

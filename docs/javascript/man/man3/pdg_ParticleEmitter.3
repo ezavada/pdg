@@ -1,0 +1,753 @@
+.TH "ParticleEmitter" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ParticleEmitter \- A configurable point source of independent particles\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.PP
+Inherits \fBAnimated\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "number \fBemit\fP (uint count=1)"
+.br
+.RI "Emit an immediate burst\&. "
+.ti -1c
+.RI "number \fBgetEmissionRate\fP ()"
+.br
+.RI "Read the continuous rate\&. "
+.ti -1c
+.RI "\fBSpriteLayer\fP \fBgetLayer\fP ()"
+.br
+.RI "Read the emission layer\&. "
+.ti -1c
+.RI "number \fBgetMaxParticleSpeed\fP ()"
+.br
+.RI "Read the maximum initial speed\&. "
+.ti -1c
+.RI "number \fBgetMinParticleSpeed\fP ()"
+.br
+.RI "Read the minimum initial speed\&. "
+.ti -1c
+.RI "\fBParticle\fP \fBgetParticle\fP ()"
+.br
+.RI "Read the owning \fBParticle\fP\&. "
+.ti -1c
+.RI "number \fBgetSeed\fP ()"
+.br
+.RI "Read the configured seed\&. "
+.ti -1c
+.RI "number \fBgetSpread\fP ()"
+.br
+.RI "Read the full emission spread\&. "
+.ti -1c
+.RI "number \fBgetVelocityInheritance\fP ()"
+.br
+.RI "Read velocity inheritance\&. "
+.ti -1c
+.RI "boolean \fBhasParticleTemplate\fP ()"
+.br
+.RI "Test for captured configuration\&. "
+.ti -1c
+.RI "boolean \fBisEmitting\fP ()"
+.br
+.RI "Read continuous emission state\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBsetEmissionRate\fP (number value)"
+.br
+.RI "Set the continuous emission rate\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBsetParticleSpeed\fP (number minimum, number maximum=minimum)"
+.br
+.RI "Set initial particle speed\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBsetParticleTemplate\fP (\fBParticle\fP particle)"
+.br
+.RI "Capture the configuration for future emissions\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBsetSeed\fP (uint seed)"
+.br
+.RI "Reset emission randomness\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBsetSpread\fP (number value)"
+.br
+.RI "Set the full angular emission spread\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBsetVelocityInheritance\fP (number value)"
+.br
+.RI "Set initial velocity inheritance\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBstartEmitting\fP ()"
+.br
+.RI "Enable continuous emission\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBstopEmitting\fP ()"
+.br
+.RI "Stop continuous emission\&. "
+.in -1c
+
+Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandThen\fP ()"
+.br
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
+.ti -1c
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
+.br
+.RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
+.br
+.RI "Discard scheduled animations and pending sequencing\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipX\fP ()"
+.br
+.RI "Toggle the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipY\fP ()"
+.br
+.RI "Toggle the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
+.br
+.RI "Read axis-aligned logical bounds\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
+.br
+.RI "Read the rotation-center offset\&. "
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.RI "Read logical height\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.br
+.RI "Read the location in the container coordinate system\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.br
+.RI "Read the programmed movement rate\&. "
+.ti -1c
+.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
+.br
+.RI "Read rotated logical bounds\&. "
+.ti -1c
+.RI "number \fBgetRotation\fP ()"
+.br
+.RI "Read the current rotation in radians\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetScale\fP ()"
+.br
+.RI "Read independent transform scale\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetSize\fP ()"
+.br
+.RI "Read logical width and height\&. "
+.ti -1c
+.RI "number \fBgetSpin\fP ()"
+.br
+.RI "Read the programmed angular rate\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
+.br
+.RI "Read logical width and height change rates\&. "
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.RI "Read logical width\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
+.ti -1c
+.RI "boolean \fBisFlippedX\fP ()"
+.br
+.RI "Read the x reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisFlippedY\fP ()"
+.br
+.RI "Read the y reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisSchedulePaused\fP ()"
+.br
+.RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
+.br
+.RI "Pause scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Change logical size by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
+.br
+.RI "Resume scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate through a relative angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Set the rotation-center offset immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.br
+.RI "Set the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
+.br
+.RI "Set the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
+.br
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
+.br
+.RI "Set a constant programmed angular rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
+.br
+.RI "Set independent constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.br
+.RI "Set logical width immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
+.br
+.RI "Stop all programmed changes to position\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
+.br
+.RI "Stop all programmed changes to rotation\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by independent factors\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
+.br
+.RI "Delay the next timed animation request\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A configurable point source of independent particles\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "number emit (uint count = \fR1\fP)"
+
+.PP
+Emit an immediate burst\&. Requires a layer and template for nonzero count\&. Works while continuous emission is stopped\&. Excess particles are dropped at the layer budget; count zero is a no-op\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcount\fP Unsigned particle count; default 1\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Number actually created\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "number getEmissionRate ()"
+
+.PP
+Read the continuous rate\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Particles per second\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBSpriteLayer\fP getLayer ()"
+
+.PP
+Read the emission layer\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Owning layer, or the owning \fBParticle\fP's layer; null when detached\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "number getMaxParticleSpeed ()"
+
+.PP
+Read the maximum initial speed\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Distance units per second\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "number getMinParticleSpeed ()"
+
+.PP
+Read the minimum initial speed\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Distance units per second\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticle\fP getParticle ()"
+
+.PP
+Read the owning \fBParticle\fP\&. 
+.PP
+\fBReturns\fP
+.RS 4
+\fBParticle\fP, or null for a standalone/detached emitter\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "number getSeed ()"
+
+.PP
+Read the configured seed\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Unsigned 32-bit seed\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "number getSpread ()"
+
+.PP
+Read the full emission spread\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Radians centered on the facing\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "number getVelocityInheritance ()"
+
+.PP
+Read velocity inheritance\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Nonnegative dimensionless multiplier\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "boolean hasParticleTemplate ()"
+
+.PP
+Test for captured configuration\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Whether a template has been supplied\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "boolean isEmitting ()"
+
+.PP
+Read continuous emission state\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Whether \fBstartEmitting()\fP is active\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP setEmissionRate (number value)"
+
+.PP
+Set the continuous emission rate\&. Default 0\&. Fractional counts accumulate during active simulation steps\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative particles per second\&. JavaScript parameter is named value\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticleEmitter\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP setParticleSpeed (number minimum, number maximum = \fRminimum\fP)"
+
+.PP
+Set initial particle speed\&. One argument fixes the speed; two uniformly sample the inclusive range\&. Default 0\&. Speed is in layer distance units per second, independent of artwork scale\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIminimum\fP Finite nonnegative speed; JavaScript accepts minimum and optional maximum\&. 
+.br
+\fImaximum\fP Optional finite maximum speed; defaults to minimum\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticleEmitter\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP setParticleTemplate (\fBParticle\fP particle)"
+
+.PP
+Capture the configuration for future emissions\&. Copies settings and remaining scheduled actions immediately\&. Subsequent source-setting edits require another call\&. Shared artwork edits remain visible\&. Every emitted physical body is independent; constraints and external references are omitted\&. A relative angular-speed threshold is disabled in the captured template because its external reference is not copied\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIparticle\fP Source configuration; a fresh detached \fBParticle\fP is recommended\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticleEmitter\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP setSeed (uint seed)"
+
+.PP
+Reset emission randomness\&. Default seed 1\&. Resetting to the same seed repeats subsequent sampled speeds/angles\&. Each child emitter has independent state, reset to its captured seed\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIseed\fP Unsigned 32-bit seed, including zero\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticleEmitter\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP setSpread (number value)"
+
+.PP
+Set the full angular emission spread\&. Default 0\&. Uniformly samples from facing minus half the spread to facing plus half the spread\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite radians from zero through a full turn (2*pi)\&. JavaScript parameter is named value\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticleEmitter\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP setVelocityInheritance (number value)"
+
+.PP
+Set initial velocity inheritance\&. Default 0\&. Adds this multiple of emitter velocity to the directed emission velocity\&. Continuous emission samples motion during the tick, including scheduled motion and parent movement; explicit bursts use current configured movement/body velocity\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative multiplier; 1 inherits the entire velocity\&. JavaScript parameter is named value\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticleEmitter\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP startEmitting ()"
+
+.PP
+Enable continuous emission\&. Initially stopped\&. Detached emitters may be armed but do not emit until owned by a layer\&. A template is required to produce particles\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticleEmitter\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP stopEmitting ()"
+
+.PP
+Stop continuous emission\&. Clears the fractional emission remainder\&. Already-emitted particles remain alive; explicit \fBemit()\fP bursts remain available\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticleEmitter\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

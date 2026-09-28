@@ -1,5 +1,7 @@
 <map id="Animation" name="Animation">
-<area shape="rect" id="Node000001" title="Things related to animation." alt="" coords="5,67,85,92"/>
-<area shape="rect" id="Node000003" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="254,5,316,31"/>
-<area shape="rect" id="Node000002" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="249,127,322,152"/>
+<area shape="rect" id="Node000001" title="Things related to animation." alt="" coords="5,338,85,364"/>
+<area shape="rect" id="Node000005" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="334,37,396,62"/>
+<area shape="rect" id="Node000003" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="328,247,402,273"/>
+<area shape="rect" id="Node000004" href="$group___physics.html" title="Things used for handling physics simulation." alt="" coords="331,338,399,364"/>
+<area shape="rect" id="Node000002" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, and collision helpers." alt="" coords="302,431,428,457"/>
 </map>

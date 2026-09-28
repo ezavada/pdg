@@ -39,12 +39,12 @@ namespace pdg {
 
 // reference counted object template
 
-/// @cond C++
+/// @cond CXX
 template <class T>
 class RefCountedImpl : public T {
 public:
-    virtual void addRef() const throw() { ++refs; }
-	virtual void release() const throw() {
+    virtual void addRef() const noexcept { ++refs; }
+	virtual void release() const noexcept {
 	            --refs; 
 	            if (refs == 0) {
 	                delete this; 
@@ -63,8 +63,8 @@ protected:
 
 class RefCountedObj {
 public:
-    virtual void addRef() const throw() { ++refs; }
-	virtual void release() const throw() { 
+    virtual void addRef() const noexcept { ++refs; }
+	virtual void release() const noexcept {
 	            --refs; 
 	            if (refs == 0) {
 	                delete this;

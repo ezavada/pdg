@@ -32,9 +32,11 @@
 #include "pdg-lib.h"
 #include "pdg-main.h"
 #include "internals.h"
+#include "pdg/sys/timermanager.h"
 
 #include <iostream>
 #include <cstdlib>
+#include <climits>
 
 #define MAX_ARGS 100
 
@@ -110,6 +112,14 @@ void pdg_LibRun() {
     pdg::platform_cleanup();
 }
 
+long pdg_LibGetNextTimerDelay() {
+    if (!gPDG_IsInitialized || gPDG_Quitting) {
+        return -1;
+    }
+    ms_delta delay = pdg::TimerManager::instance().msTillNextFire();
+    return delay == LONG_MAX ? -1 : static_cast<long>(delay);
+}
+
 void pdg_LibQuit() {
 	if (gPDG_Quitting) {
 		return;  // Already quitting, don't do cleanup twice
@@ -124,4 +134,3 @@ void pdg_LibQuit() {
 bool pdg_LibIsQuitting() {
 	return gPDG_Quitting;
 }
-

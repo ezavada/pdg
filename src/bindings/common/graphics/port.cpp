@@ -9,6 +9,7 @@
 // -----------------------------------------------
 
 #include "pdg_script_macros.h"
+#include "graphics_macros.h"
 
 %#include "pdg_project.h"
 
@@ -36,6 +37,9 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       EXPORT_CLASS_SYMBOLS("Port", Port, , ,
           // method section
           HAS_PROPERTY(Port, ClipRect)
+    HAS_METHOD(Port, "resetClipRect", ResetClipRect)
+    HAS_METHOD(Port, "clear", Clear)
+    HAS_METHOD(Port, "setDrawingOrigin", SetDrawingOrigin)
           HAS_PROPERTY(Port, Cursor)
           HAS_GETTER(Port, DrawingArea)
           HAS_METHOD(Port, "drawLine", DrawLine)
@@ -68,12 +72,32 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       END
   GETTER_IMPL(Port, DrawingArea, RECT)
   PROPERTY_IMPL(Port, ClipRect, RECT)
+METHOD_IMPL(Port, Clear)
+    METHOD_SIGNATURE("", undefined, 1, ([object Color] color = TRANSPARENT_COLOR));
+    OPTIONAL_COLOR_ARG(1, color, Color(0, 0, 0, 0));
+    self->clear(color);
+    NO_RETURN;
+    END
+METHOD_IMPL(Port, SetDrawingOrigin)
+    METHOD_SIGNATURE("", undefined, 1, ([object Point] origin));
+    REQUIRE_ARG_COUNT(1);
+    REQUIRE_POINT_ARG(1, origin);
+    try { self->setDrawingOrigin(origin); }
+    catch (const std::exception& error) { THROW_ERR(error.what()); }
+    NO_RETURN;
+    END
+METHOD_IMPL(Port, ResetClipRect)
+    METHOD_SIGNATURE("", undefined, 0, ());
+    REQUIRE_ARG_COUNT(0);
+    self->resetClipRect();
+    NO_RETURN;
+    END
   METHOD_IMPL(Port, DrawLine) // support both Attributes and Color objects for arg 3 to avoid name conflicts
       METHOD_SIGNATURE("", undefined, 3, ([object Point] from, [object Point] to, [object Attributes] attrs));
       REQUIRE_ARG_COUNT(3);
       REQUIRE_POINT_ARG(1, from);
       REQUIRE_POINT_ARG(2, to);
-      REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(3, attrs);
       self->drawLine(from, to, *attrs);
       NO_RETURN;
       END
@@ -81,7 +105,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       METHOD_SIGNATURE("", undefined, 2, ([object Spline] spline, [object Attributes] attrs)); 
       REQUIRE_ARG_COUNT(2);
       REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
-      REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(2, attrs);
       self->drawSpline(*spline, *attrs);
       NO_RETURN;
       END
@@ -164,7 +188,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       METHOD_SIGNATURE("", undefined, 2, ([object Rect] rect, [object Attributes] attrs));
       REQUIRE_ARG_COUNT(2);
       REQUIRE_RECT_ARG(1, rect);
-      REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(2, attrs);
       self->drawRect(rect, *attrs);
       NO_RETURN;
       END
@@ -173,7 +197,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       METHOD_SIGNATURE("", undefined, 2, ([object Quad] quad, [object Attributes] attrs));
       REQUIRE_ARG_COUNT(2);
       REQUIRE_QUAD_ARG(1, quad);
-      REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(2, attrs);
       self->drawQuad(quad, *attrs);
       NO_RETURN;
       END
@@ -182,7 +206,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       METHOD_SIGNATURE("", undefined, 2, ([object Polygon] polygon, [object Attributes] attrs));
       REQUIRE_ARG_COUNT(2);
       REQUIRE_CPP_OBJECT_ARG(1, polygon, Polygon);
-      REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(2, attrs);
       self->drawPolygon(*polygon, *attrs);
       NO_RETURN;
       END
@@ -193,7 +217,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       REQUIRE_POINT_ARG(1, center);
       REQUIRE_NUMBER_ARG(2, xRadius);
       REQUIRE_NUMBER_ARG(3, yRadius);
-      REQUIRE_CPP_OBJECT_ARG(4, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(4, attrs);
       self->drawEllipse(center, xRadius, yRadius, *attrs);
       NO_RETURN;
       END
@@ -206,7 +230,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       REQUIRE_NUMBER_ARG(3, yRadius);
       REQUIRE_NUMBER_ARG(4, startAngle);
       REQUIRE_NUMBER_ARG(5, endAngle);
-      REQUIRE_CPP_OBJECT_ARG(6, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(6, attrs);
       self->drawArc(center, xRadius, yRadius, startAngle, endAngle, *attrs);
       NO_RETURN;
       END
@@ -218,7 +242,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       REQUIRE_POINT_ARG(2, control1);
       REQUIRE_POINT_ARG(3, control2);
       REQUIRE_POINT_ARG(4, to);
-      REQUIRE_CPP_OBJECT_ARG(5, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(5, attrs);
       self->drawBezier(from, control1, control2, to, *attrs);
       NO_RETURN;
       END
@@ -228,7 +252,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       REQUIRE_ARG_COUNT(3);
       REQUIRE_POINT_ARG(1, center);
       REQUIRE_NUMBER_ARG(2, radius);
-      REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(3, attrs);
       self->drawCircle(center, radius, *attrs);
       NO_RETURN;
       END
@@ -237,7 +261,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       METHOD_SIGNATURE("", undefined, 2, ([object Vector] vector, [object Attributes] attrs));
       REQUIRE_ARG_COUNT(2);
       REQUIRE_VECTOR_ARG(1, vector);
-      REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(2, attrs);
       self->drawVector(vector, *attrs);
       NO_RETURN;
       END
@@ -247,7 +271,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       REQUIRE_ARG_COUNT(3);
       REQUIRE_RECT_ARG(1, rect);
       REQUIRE_NUMBER_ARG(2, radius);
-      REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(3, attrs);
       self->drawRoundedRect(rect, radius, *attrs);
       NO_RETURN;
       END
@@ -256,19 +280,16 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       METHOD_SIGNATURE("", undefined, 3, ({[object Image] img, [object Point] loc, [object Attributes] attrs|[object Image] img, [object Rect] rect, [object Attributes] attrs|[object Image] img, [object Quad] quad, [object Attributes] attrs})); 
       REQUIRE_ARG_COUNT(3);
       REQUIRE_CPP_OBJECT_ARG(1, img, Image);
-      REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
-      if (VALUE_IS_POINT(ARGV[1])) { 
-          // Point variant
-          pdg::Point loc = VAL2POINT(ARGV[1]);
+      REQUIRE_ATTRIBUTES_ARG(3, attrs);
+      pdg::Point loc;
+      auto isPoint = VALUE_IS_POINT(ARGV[1], loc);
+      if (!isPoint.has_value()) { RETURN_NULL; }
+      if (*isPoint) {
           self->drawImage(img, loc, *attrs);
-      } else if (VALUE_IS_QUAD(ARGV[1])) {
-          // Quad variant
-          pdg::Quad quad = VAL2QUAD(ARGV[1]);
-          self->drawImage(img, quad, *attrs);
       } else {
-          // Rect variant
-          REQUIRE_RECT_ARG(2, rect);
-          self->drawImage(img, rect, *attrs);
+          // Rectangles (including rotation) are accepted by the Quad converter.
+          REQUIRE_QUAD_ARG(2, quad);
+          self->drawImage(img, quad, *attrs);
       }
       NO_RETURN;
       END
@@ -277,10 +298,11 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       METHOD_SIGNATURE("", undefined, 3, ({[object Drawing] drawing, [object Point] loc, [object Attributes] attrs|[object Drawing] drawing, [object Rect] rect, [object Attributes] attrs})); 
       REQUIRE_ARG_COUNT(3);
       REQUIRE_CPP_OBJECT_ARG(1, drawing, Drawing);
-      REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
-      if (VALUE_IS_POINT(ARGV[1])) { 
-          // Point variant
-          pdg::Point loc = VAL2POINT(ARGV[1]);
+      REQUIRE_ATTRIBUTES_ARG(3, attrs);
+      pdg::Point loc;
+      auto isPoint = VALUE_IS_POINT(ARGV[1], loc);
+      if (!isPoint.has_value()) { RETURN_NULL; }
+      if (*isPoint) {
           self->drawDrawing(*drawing, loc, *attrs);
       } else {
           // Rect variant
@@ -294,10 +316,11 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       METHOD_SIGNATURE("", undefined, 3, ({string text, [object Point] loc, [object Attributes] attrs|string text, [object Rect] rect, [object Attributes] attrs})); 
       REQUIRE_ARG_COUNT(3);
       REQUIRE_STRING_ARG(1, text);
-      REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
-      if (VALUE_IS_POINT(ARGV[1])) { 
-          // Point variant
-          pdg::Point loc = VAL2POINT(ARGV[1]);
+      REQUIRE_ATTRIBUTES_ARG(3, attrs);
+      pdg::Point loc;
+      auto isPoint = VALUE_IS_POINT(ARGV[1], loc);
+      if (!isPoint.has_value()) { RETURN_NULL; }
+      if (*isPoint) {
           self->drawText(text, loc, *attrs);
       } else {
           // Rect variant
@@ -312,7 +335,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Port,
       REQUIRE_ARG_COUNT(3);
       REQUIRE_POINT_ARG(1, center);
       REQUIRE_NUMBER_ARG(2, radius);
-      REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+      REQUIRE_ATTRIBUTES_ARG(3, attrs);
       self->drawSphere(center, radius, *attrs);
       NO_RETURN;
       END

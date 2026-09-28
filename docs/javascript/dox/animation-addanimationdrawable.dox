@@ -1,0 +1,151 @@
+namespace pdg { /**
+\fn pdg::Sprite::addAnimationDrawable(Drawing drawing, object options)
+
+\brief attach an editable Drawing to an animation bone
+
+Use this overload to attach artwork, such as a weapon or a marker, that follows
+a bone as the sprite animates. Create the artwork with
+\ref pdg::createDrawing() "pdg.createDrawing()" and the ordinary Drawing methods,
+such as \ref Drawing::addRect() "Drawing.addRect()" or
+\ref Drawing::addImage() "Drawing.addImage()".
+The drawing uses coordinates relative to the selected bone; PDG positions,
+rotates, and scales it with the bone's final animation pose.
+
+\param drawing The Drawing to attach. Its contents remain editable after
+registration, including through ElementRef objects returned by its methods.
+\param options An object selecting the bone, placement, and optional drawing
+settings. See \ref animation_drawable_options "Drawing options" below.
+
+\return A nonzero unsigned integer identifying the registration. Pass this ID to
+setAnimationDrawableEnabled(), removeAnimationDrawable(), or
+getAnimationDrawableError().
+
+\note Call enableAnimationPose() successfully before registering artwork. The
+sprite's animations must have a fixed hierarchy: their active bones and bindings,
+and their parent relationships, must remain consistent across clips.
+
+\par Example: attach a marker to a hand
+This example assumes \c sprite is a Spriter sprite in a visible layer, with a
+\c reference animation and a bone named \c hand. Use the clip and bone names from your
+own artwork.
+
+\code{.js}
+if (!sprite.enableAnimationPose('reference')) {
+    throw new Error(sprite.getAnimationRigError());
+}
+
+const artwork = pdg.createDrawing();
+const marker = artwork.addRect(
+    new pdg.Rect(-3, -3, 3, 3),
+    new pdg.Attributes().fillColor('yellow')
+);
+
+const drawableId = sprite.addAnimationDrawable(artwork, {
+    bone: 'hand',
+    placement: pdg.animationDraw_AfterAll
+});
+
+// A later edit appears on the next draw; no new registration is needed.
+marker.setAttributes(new pdg.Attributes().fillColor('cyan'));
+
+// When the marker is no longer needed:
+// sprite.removeAnimationDrawable(drawableId);
+\endcode
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_drawable_options
+\par Drawing options (both overloads)
+Both overloads accept the following \c options fields. Only \c bone is always
+required. Use the numeric \c pdg constants for placement and stroke space;
+strings such as \c "afterAll" or \c "local" are not accepted.
+
+| Field | Type | Default | Meaning |
+| ----- | ---- | ------- | ------- |
+| \c bone | string or integer | Required | Bone name or zero-based bone ID. See getAnimationBoneNames(). |
+| \c placement | integer | \c pdg.animationDraw_AfterAll | Where to draw relative to the sprite's authored images; see the placement table below. |
+| \c slot | string | Empty string | Image binding name. Required for slot placements; omit it for \c pdg.animationDraw_BeforeAll and \c pdg.animationDraw_AfterAll. See getAnimationBindingNames(). |
+| \c order | integer | \c 0 | Lower values draw first within the same placement and slot. Equal values preserve registration order. |
+| \c strokeSpace | integer | \c pdg.animationStroke_PortPixels | How line thickness responds to scale; see Stroke thickness below. |
+| \c bounds | object | Omitted | Rectangle with finite numeric \c left, \c top, \c right, and \c bottom fields in bone coordinates. Must include all artwork and stroke extents. |
+| \c uncullable | boolean | \c true without bounds; \c false with bounds | When true, prevents the artwork from being skipped based on its declared bounds. |
+
+\par Placement
+A slot is a named image binding in the authored animation. It is separate from
+the bone that positions your drawing. Slot placements require \c options.slot
+to identify an existing image binding.
+
+| Constant | Value | Placement |
+| -------- | ----- | --------- |
+| \c pdg.animationDraw_BeforeAll | 0 | Before all authored images. |
+| \c pdg.animationDraw_AfterAll | 1 | After all authored images. This is the default. |
+| \c pdg.animationDraw_BeforeSlot | 2 | Immediately before the named image. |
+| \c pdg.animationDraw_AfterSlot | 3 | Immediately after the named image. |
+| \c pdg.animationDraw_ReplaceSlot | 4 | In place of the named image. Other images remain visible. |
+
+\par Stroke thickness
+- \c pdg.animationStroke_PortPixels (0, default) keeps the Attributes line
+  thickness in port pixels as the artwork scales.
+- \c pdg.animationStroke_Local (1) scales line thickness with the artwork,
+  including element transforms, nested drawings, and layer zoom. For unequal
+  horizontal and vertical scaling, the thickness multiplier is
+  \c sqrt(abs(det(composedTransform))), the geometric mean of the scale factors.
+  The stroke keeps a uniform thickness rather than stretching its outline
+  differently along each axis.
+
+\par Bounds and visibility
+Bounds allow PDG to skip drawing artwork that is outside the visible area.
+When supplied, they must satisfy \c left <= \c right and \c top <= \c bottom.
+Omit bounds, or set \c uncullable to \c true, when you cannot provide a rectangle
+that safely contains all possible artwork.
+
+\warning \ref Drawing::getBounds() "Drawing.getBounds()" reports geometry bounds, which do not include
+complete stroke extents. Editing a drawing does not update the registration's
+declared bounds. Include enough room for strokes and later edits, or leave the
+registration uncullable. Visual bounds do not create physics or hit-test shapes.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\par Editing and coordinates
+PDG retains the drawing's shared contents. Changes made through the original
+Drawing or its ElementRef objects appear on subsequent draws. This overload
+does not invoke a JavaScript callback each frame.
+
+Use Attributes to style drawing elements. Element transforms, the final bone
+and sprite transforms, and the layer's conversion to port coordinates are
+applied automatically. Opacity multiplies through the hierarchy. Do not
+transform the artwork to world or port coordinates yourself.
+
+Nested drawings retain their child contents and map the child's bounds to the
+destination rectangle. ElementRef objects also keep drawing contents alive.
+Drawing containment cycles are rejected.
+
+\par Errors and registration changes
+Registration throws if the pose is not enabled, the bone or slot is invalid,
+or an option has an invalid type or value. A slot is not allowed with
+\c pdg.animationDraw_BeforeAll or \c pdg.animationDraw_AfterAll.
+
+Adding, removing, or enabling registrations during drawing takes effect after
+the current frame. A rendering failure disables the failing registration;
+getAnimationDrawableError() returns its diagnostic. Register the artwork again
+to retry. A failed replacement leaves the authored image visible; a successful
+replacement suppresses that image even when the Drawing is empty.
+
+Returned drawings and their images remain alive until their rendering finishes.
+Image opacity is restored after drawing, including on failure. Edits to shared
+drawing contents and pixels already drawn are not rolled back by a later error.
+
+\note Headless builds retain registrations but do not draw artwork or invoke
+drawing callbacks. Use isAnimationDrawingSupported() to check drawing capability.
+
+\sa Sprite::addAnimationDrawable(function, object)
+\sa Sprite::enableAnimationPose()
+\sa Sprite::setAnimationDrawableEnabled()
+\sa Sprite::removeAnimationDrawable()
+\sa Sprite::getAnimationDrawableError()
+
+**/ }

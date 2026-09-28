@@ -47,7 +47,16 @@
 
 namespace pdg {
 
-//! \cond C++
+/** Route for a rotation toward a target. Positive angles are clockwise. */
+enum RotationDirection {
+    rotationDirection_AsSpecified = 0,
+    rotationDirection_Shortest = 1,
+    rotationDirection_Clockwise = 2,
+    rotationDirection_CounterClockwise = 3
+};
+
+
+//! \cond CXX
 inline int fround2i(float x) {
 	return int(x > 0.0 ? x + 0.5 : x - 0.5);
 }
@@ -62,7 +71,7 @@ template <typename T> class QuadT;
 /** Point for 2D coordinate system.
  * Point is a provides support for dealing with points as x, y floating point values
  * in 2 dimensional space. 
- * \if C++
+ * \if CXX
  * PointT is not used directly in most cases. Use the Point class, which
  * is the long integer version of PointT, and has all the same methods.
  * PointT is a template class that provides support for dealing with points in
@@ -71,7 +80,7 @@ template <typename T> class QuadT;
  * declared using the PointT template.
  * \endif
  */
-//! \cond C++
+//! \cond CXX
 template <typename T>
 //! \endcond
 class OffsetT {
@@ -114,7 +123,7 @@ public:
     inline OffsetT(const OffsetT<T>& other) : x(other.x), y(other.y) {}
 };
 
-//! \cond C++
+//! \cond CXX
 template <typename T>
 //! \endcond
 class PointT : public OffsetT<T> {
@@ -135,7 +144,7 @@ public:
     inline PointT() : OffsetT<T>() {}
 };
 
-//! \cond C++
+//! \cond CXX
 template <typename T>
 //! \endcond
 class VectorT : public OffsetT<T> {
@@ -160,7 +169,7 @@ public:
     inline VectorT() : OffsetT<T>() {}
 };
 
-//! \cond C++
+//! \cond CXX
 
 template <typename T>
 inline bool OffsetT<T>::operator== (const OffsetT<T>& p2) const {
@@ -307,7 +316,7 @@ typedef VectorT<float> Vector;
 /** Rectangle for 2D coordinate system.
  * Rect is a class that provides support for dealing with rectangles in
  * 2 dimensional space. 
- * \if C++
+ * \if CXX
  * RectT is not used directly in most cases. Use the Rect class, which
  * is the long integer version of RectT, and has all the same methods.
  * RectT is a template class that provides support for dealing with rectangles in
@@ -316,7 +325,7 @@ typedef VectorT<float> Vector;
  * declared using the RectT template.
  * \endif
  */
-//! \cond C++
+//! \cond CXX
 template <typename T>
 //! \endcond
 class RectT {
@@ -477,7 +486,7 @@ public:
     RectT(const RectT<T>& other) : left(other.left), top(other.top), right(other.right), bottom(other.bottom) {}
 };
 
-//! \cond C++
+//! \cond CXX
 template <typename T>
 inline bool RectT<T>::operator== (const RectT<T>& r2) {
 	return ((left == r2.left) && (top == r2.top) && (right == r2.right) && (bottom == r2.bottom));
@@ -591,7 +600,7 @@ enum {
 /** a 4 point polygon in 2D system.
  * Quad is a class that provides support for dealing with 4 point
  * ploygons in 2 dimensional space
- * \if C++
+ * \if CXX
  * QuadT is not used directly in most cases. Use the Quad class, which
  * is the long integer version of QuadT, and has all the same methods.
  * QuadT is a template class that provides support for dealing with 4 point
@@ -600,7 +609,7 @@ enum {
  * easily be declared using the QuadT template.
  * \endif
  */
-//! \cond C++
+//! \cond CXX
 template <typename T>
 //! \endcond
 class QuadT {
@@ -641,7 +650,7 @@ public:
 
 typedef QuadT<PDG_BASE_COORD_TYPE> Quad;
 
-//! \cond C++
+//! \cond CXX
 template <typename T>
 bool QuadT<T>::operator== (const QuadT<T>& q2) const {
 	return (points[lftTop] == q2.points[lftTop]) && (points[rgtTop] == q2.points[rgtTop]) &&
@@ -767,7 +776,7 @@ void	QuadT<T>::rotateAround(float rotationRadians, const PointT<T>& centerPoint)
 /** Rectangle with rotation for 2D coordinate system.
  * RotatedRect is a class that provides support for dealing with rotating
  * rectangles in 2 dimensional space.
- * \if C++
+ * \if CXX
  * RotatedRectT is not used directly in most cases. Use the RotatedRect class, which
  * is the long integer version of RotatedRectT, and has all the same methods.
  * RotatedRectT is a template class that provides support for dealing with rotating
@@ -776,7 +785,7 @@ void	QuadT<T>::rotateAround(float rotationRadians, const PointT<T>& centerPoint)
  * easily be declared using the RotatedRectT template.
  * \endif
  */
-//! \cond C++
+//! \cond CXX
 template <typename T>
 //! \endcond
 class RotatedRectT : public RectT<T> {
@@ -803,7 +812,7 @@ public:
 
 typedef RotatedRectT<PDG_BASE_COORD_TYPE> RotatedRect;
 	
-//! \cond C++	
+//! \cond CXX
 template <typename T>
 QuadT<T>  RotatedRectT<T>::getQuad() const {
 	RectT<float> fr(this->left, this->top, this->right, this->bottom);

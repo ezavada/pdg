@@ -67,6 +67,7 @@ extern PortImpl* gMainPort;
 
 struct PrivateWindowInfoT {
 	bool	isFullscreen;
+	bool performanceUncapped = false;
 };
 
 #ifdef PLATFORM_WIN32
@@ -114,7 +115,17 @@ void handle_framebuffersize_callback(GLFWwindow* window, int width, int height) 
 
 
 void platform_startDrawing(void* windRef) {
-	glfwMakeContextCurrent(static_cast<GLFWwindow*>(windRef));
+	auto* window = static_cast<GLFWwindow*>(windRef);
+	glfwMakeContextCurrent(window);
+  #ifndef __EMSCRIPTEN__
+	// Apply to every context, including the initial window. Leaving even one
+	// synchronized still throttles the whole multi-window render loop.
+	auto* info = static_cast<PrivateWindowInfoT*>(glfwGetWindowUserPointer(window));
+	if (info && !info->performanceUncapped && main_isPerformanceUncapped()) {
+		glfwSwapInterval(0);
+		info->performanceUncapped = true;
+	}
+  #endif
 }
 
 void platform_finishDrawing(void* windRef) {
@@ -213,6 +224,26 @@ void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum) {
 		*outWidth += primaryDeltaWidth;
 		*outHeight += primaryDeltaHeight;
 	}
+}
+
+void* platform_createOffscreenContext() {
+    glfwInitIfNeeded();
+#ifdef __EMSCRIPTEN__
+    // The browser owns the host canvas; no additional DOM/window is created.
+    if (sEmscriptenWindow) return sEmscriptenWindow;
+    return platform_createWindow(1, 1, 0, 0, 32, "PDG");
+#else
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    GLFWwindow* window = glfwCreateWindow(1, 1, "", nullptr, nullptr);
+    glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+    if (window) {
+        glfwMakeContextCurrent(window);
+        auto* info = new PrivateWindowInfoT();
+        info->isFullscreen = false;
+        glfwSetWindowUserPointer(window, info);
+    }
+    return window;
+#endif
 }
 
 void* platform_createWindow(long width, long height, long xPos, long yPos, int bpp, const char* title) {
@@ -432,8 +463,10 @@ int platform_getCurrentScreenDepth(int screenNum) {
 	glfwInitIfNeeded();
 	if (screenNum >= screenNum_PrimaryScreen && screenNum < platform_getNumScreens()) {
 		GLFWmonitor* monitor = screenNumToGLFWmonitor(screenNum);
+		// The primary-screen sentinel is valid even when no monitor is available.
+		if (!monitor) return 0;
 		const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-		return bppFromGLFWvidmode(mode);
+		return mode ? bppFromGLFWvidmode(mode) : 0;
 	} else {
 		return 0;
 	}

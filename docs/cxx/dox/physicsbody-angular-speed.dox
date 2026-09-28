@@ -1,0 +1,96 @@
+/**
+\fn pdg::PhysicsBody& pdg::PhysicsBody::setBreakAngularSpeed(double radiansPerSecond, PhysicsBody* referenceBody)
+\brief Notify when a body exceeds an angular-speed threshold.
+
+The threshold is a notification condition, not a speed clamp. It does not apply
+braking, disconnect constraints, or split artwork. Existing motor and force-break
+behavior is unchanged. Both basic and Chipmunk solvers support it, including
+kinematic bodies and bodies without a collider or joint.
+
+A positive-duration physics step compares the magnitude of the solved angular
+velocity against the threshold. Equality does not trigger an event. One event is
+sent per excursion above the limit; a later sampled speed at or below the limit
+rearms it. Sampling occurs after each world step (before restoring temporary
+Chipmunk kinematic sweep velocities), or after step() for a detached basic body.
+It does not detect peaks between those samples. Setters and zero-duration steps
+never dispatch events synchronously.
+
+Changing the threshold or reference rearms monitoring. Repeating the same settings
+preserves the notification state. Invalid edits throw without changing settings
+or rearming. Zero disables monitoring and clears the reference. NoPhysics ignores
+this operation and always reports zero.
+
+With a reference, speed means
+`abs(body.angularVelocity - referenceBody.angularVelocity)`; otherwise it means
+`abs(body.angularVelocity)`. The reference must be a different present body in the
+same SpriteLayer, or both bodies must be outside a layer. The association is weak:
+removing its body from its owner or destroying it disables dependent monitors.
+A world mismatch detected at sampling also disables the monitor. A detached body
+retains its absolute threshold; relative monitoring is cleared on detachment.
+
+Sprite bodies emit eventType_SpriteBreak on their Sprite; Part bodies emit it on
+the owning Sprite with the Part identified. Returning false leaves the body and
+joints unchanged. Snapshots preserve settings and the notification latch. Relative
+references require a Sprite/Layer graph containing both bodies; external references
+are rejected. Event handlers are not saved.
+
+\param radiansPerSecond Finite nonnegative magnitude in radians/second. Default body setting is zero (disabled).
+\param referenceBody Optional borrowed reference body; nullptr selects absolute speed.
+\return This PhysicsBody, for chaining.
+
+\note The example assumes Sprite objects named sprite and housing in the same layer.
+
+\par Example
+\code{.cpp}
+auto& shaft = sprite.setupPhysicsBody();
+shaft.setBreakAngularSpeed(3000 * 2 * 3.14159265358979323846 / 60); // 3,000 RPM
+// Or measure relative to a housing body in the same layer:
+shaft.setBreakAngularSpeed(100, &housing.setupPhysicsBody());
+\endcode
+
+\see getBreakAngularSpeed(), getBreakAngularSpeedReference(), SpriteJointBreakInfo
+*/
+
+/**
+\fn double pdg::PhysicsBody::getBreakAngularSpeed() const
+\brief Read the configured angular-speed threshold.
+
+\return The threshold in radians/second; zero means disabled, including NoPhysics.
+\see setBreakAngularSpeed()
+*/
+
+/**
+\fn pdg::PhysicsBody* pdg::PhysicsBody::getBreakAngularSpeedReference() const
+\brief Read the optional angular-speed reference body.
+
+\return The borrowed reference body, or null for absolute speed or disabled monitoring.
+\see setBreakAngularSpeed()
+*/
+
+/**
+\fn pdg::PhysicsBody& pdg::PhysicsBody::setBreakHandler(std::function<void(const PhysicsBodyBreakInfo&)> handler)
+\brief Set a native callback for this body's angular-speed notifications.
+
+Useful for detached native bodies without a Sprite event route. On an owned body,
+the Sprite event is delivered first, followed by this callback. Exceptions from
+this callback propagate to the stepping caller. An empty function removes it.
+The info and its pointers are borrowed for the callback; retain managed bodies
+before keeping them. This callback is native-only; scripts use SpriteBreakEvent.
+Bodies with a callback cannot be serialized; clear it before saving.
+
+\param handler Callback receiving the source body, optional reference, measured
+angularSpeed and configured breakAngularSpeed, both in radians/second.
+\return This PhysicsBody, for chaining.
+
+\par Example
+\code{.cpp}
+pdg::PhysicsBody shaft;
+shaft.setBreakAngularSpeed(100).setBreakHandler([](const pdg::PhysicsBodyBreakInfo& event) {
+    // Stop this detached shaft when it exceeds the threshold.
+    event.body->stopSpinning();
+});
+shaft.setAngularVelocity(120);
+shaft.step(0.01);
+\endcode
+\see setBreakAngularSpeed()
+*/

@@ -1,7 +1,14 @@
-namespace pdg { /**
+/**
+\fn pdg::Animated::changeSpinTo(number radiansPerSecond, number durationSeconds, int easing)
+\brief Animate the spin rate to a target.
 
-\fn pdg::Animated::setSpin
+Uses clockwise radians per second. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. Dynamic PhysicsBody owners reject this operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
-\brief set the rate at which the object is spinning, in radians/sec
+\param radiansPerSecond Angular rate in clockwise radians per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
 
-**/ }
+\return This object, for chaining.
+
+\see setSpin(), changeSpinBy()
+*/

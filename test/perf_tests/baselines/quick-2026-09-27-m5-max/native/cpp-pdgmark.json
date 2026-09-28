@@ -1,0 +1,131 @@
+{
+  "benchmarkId": "cpp-pdgmark",
+  "compositeScore": 137986,
+  "framePacing": "uncapped",
+  "language": "C++",
+  "loadFactor": 1.5,
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "mode": "quick",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "synthetic": true,
+  "testName": "QuickPDGMark",
+  "tests": {
+    "alpha": {
+      "atOrAboveTarget": false,
+      "averageFPS": 46.544439679559,
+      "durationSeconds": 3.00787808305025,
+      "estimatedCapacity": 32813.8299740891,
+      "fixedLoad": 42300,
+      "frameTime": {
+        "maxMs": 26.700875043869,
+        "meanMs": 21.4848434503589,
+        "minMs": 19.9834580421448,
+        "percentile95Ms": 25.7601249814034,
+        "percentile99Ms": 26.4792919754982
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 28200,
+      "referenceScore": 36659.9986553192,
+      "requestedSampleSeconds": 3,
+      "score": 42658,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 140,
+      "warmupSeconds": 1
+    },
+    "bitmap": {
+      "atOrAboveTarget": true,
+      "averageFPS": 59.9641938811005,
+      "durationSeconds": 3.0017913749814,
+      "estimatedCapacity": 47671.5341354749,
+      "fixedLoad": 47700,
+      "frameTime": {
+        "maxMs": 19.6623330116272,
+        "meanMs": 16.6766187498967,
+        "minMs": 14.8127499818802,
+        "percentile95Ms": 17.9167920351028,
+        "percentile99Ms": 18.7431669831276
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 31800,
+      "referenceScore": 31800,
+      "requestedSampleSeconds": 3,
+      "score": 47672,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 180,
+      "warmupSeconds": 1
+    },
+    "drawing": {
+      "atOrAboveTarget": false,
+      "averageFPS": 49.2705154790826,
+      "durationSeconds": 3.00382487499714,
+      "estimatedCapacity": 22726.0252647269,
+      "fixedLoad": 27675,
+      "frameTime": {
+        "maxMs": 25.970457971096,
+        "meanMs": 20.2961140202509,
+        "minMs": 18.4839160442352,
+        "percentile95Ms": 24.2129170298576,
+        "percentile99Ms": 25.4967910051346
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 18450,
+      "referenceScore": 22140.0008797646,
+      "requestedSampleSeconds": 3,
+      "score": 27271,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 148,
+      "warmupSeconds": 1
+    },
+    "polygon": {
+      "atOrAboveTarget": false,
+      "averageFPS": 43.4212941351241,
+      "durationSeconds": 3.01695291697979,
+      "estimatedCapacity": 13315.8635347714,
+      "fixedLoad": 18400,
+      "frameTime": {
+        "maxMs": 28.0985830426216,
+        "meanMs": 23.030174938777,
+        "minMs": 21.4787919521332,
+        "percentile95Ms": 27.3694159984589,
+        "percentile99Ms": 27.9316250085831
+      },
+      "loadFactor": 4,
+      "referenceLoad": 4600,
+      "referenceScore": 6900,
+      "requestedSampleSeconds": 3,
+      "score": 19974,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 131,
+      "warmupSeconds": 1
+    },
+    "text": {
+      "atOrAboveTarget": false,
+      "averageFPS": 37.8809664243376,
+      "durationSeconds": 3.00942691701651,
+      "estimatedCapacity": 293.577489788616,
+      "fixedLoad": 465,
+      "frameTime": {
+        "maxMs": 31.8977090120316,
+        "meanMs": 26.398481728215,
+        "minMs": 24.8688340187073,
+        "percentile95Ms": 29.8649580478668,
+        "percentile99Ms": 31.8860000371933
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 310,
+      "referenceScore": 433.999992609024,
+      "requestedSampleSeconds": 3,
+      "score": 411,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 114,
+      "warmupSeconds": 1
+    }
+  },
+  "timestamp": "2026-09-27T21:30:33Z"
+}

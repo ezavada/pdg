@@ -3,7 +3,6 @@ namespace pdg { /**
 \class NetClient
 \brief a network endpoint that can initiate a connection
 
-\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
 
 NetClient is part of the PDG Engine's custom protocol for games. It handles protocol negotiation and optional connections. It establishes both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server. 
 

@@ -1,9 +1,11 @@
-namespace pdg { /**
+/**
+\fn pdg::Animated::clearAnimationHelpers()
+\brief Retire all helpers on this object.
 
-\fn pdg::Animated::clearAnimationHelpers
+Only this owner's registrations are removed; a retained helper may be registered again.
+Safe inside a callback: removed helpers do not run again on this step, and the
+currently executing callback remains alive until it returns.
 
-\brief remove all previously added animation helpers
-
-\sa addAnimationHelper
-
-**/ }
+\return The original owner object, for chaining.
+\see addAnimationHelper()
+*/

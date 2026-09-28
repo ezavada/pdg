@@ -49,13 +49,11 @@ namespace pdg {
 	class Deserializer : public IDeserializer {
 	public:
 			
-	  #ifndef PDG_NO_64BIT
 		//! Deserialize an 8 byte (64 bit) value
 		/*! internal pointer is advanced 8 btyes
 		 \return the deserialized 64 bit value
 		 */
 		virtual uint64 deserialize_8u();
-	  #endif
 
 		//! Deserialize a 4 byte (32 bit) value
 		/*! internal pointer is advanced 4 btyes
@@ -99,31 +97,31 @@ namespace pdg {
 		/*! internal pointer is advanced by ? bytes, depending on bytes required to store value
 		 \return the Color that was deserialized
 		 */
-		virtual Color deserialize_color() MAY_THROW( out_of_data );
+		virtual Color deserialize_color();
 
 		//! Deserialize a pdg::Offset value
 		/*! internal pointer is advanced by 1 to 9 bytes, depending on bytes required to store value
 		 \return the Offset that was deserialized
 		 */
-		virtual Offset deserialize_offset() MAY_THROW( out_of_data );
+		virtual Offset deserialize_offset();
 
 		//! Deserialize a pdg::Rect
 		/*! internal pointer is advanced by ? bytes, depending on bytes required to store value
 		 \return the Rect that was deserialized
 		 */
-		virtual Rect   deserialize_rect() MAY_THROW( out_of_data );
+		virtual Rect   deserialize_rect();
 
 		//! Deserialize a pdg::RotatedRect
 		/*! internal pointer is advanced by ? bytes, depending on bytes required to store value
 		 \return the RotatedRect that was deserialized
 		 */
-		virtual RotatedRect   deserialize_rotr() MAY_THROW( out_of_data );
+		virtual RotatedRect   deserialize_rotr();
 
 		//! Deserialize a pdg::Quad
 		/*! internal pointer is advanced by 1, 3 or 5 bytes, depending on bytes required to store value
 		 \return the Quad that was deserialized
 		 */
-		virtual Quad   deserialize_quad() MAY_THROW( out_of_data );
+		virtual Quad   deserialize_quad();
 
 		//! Deserialize a string value
 		/*! \param outStr, a buffer to hold the resulting string

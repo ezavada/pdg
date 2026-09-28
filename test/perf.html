@@ -25,6 +25,9 @@
   <header>
     <h1>PDG Emscripten Performance Tests</h1>
     <nav aria-label="Performance benchmarks">
+      <a href="perf.html?test=bunnymark&amp;quick=1">QuickBunnyMark</a>
+      <a href="perf.html?test=pdgmark&amp;quick=1">QuickPDGMark</a>
+      <a href="perf.html?test=canvasmark&amp;quick=1">QuickCanvasMark</a>
       <a href="perf.html?test=bunnymark">Bunnymark</a>
       <a href="perf.html?test=bunnymark&duration=30">Bunnymark (30 seconds)</a>
       <a href="perf.html?test=pdgmark">PDGMark</a>
@@ -34,6 +37,7 @@
   <div id="pdg-perf-status">Choose a benchmark above.</div>
   <a id="pdg-perf-download" download>Download JSON results</a>
   <pre id="pdg-perf-result"></pre>
+  <script type="application/json" id="pdg-perf-result-json"></script>
   <canvas id="pdg-canvas" width="1000" height="800" tabindex="0"></canvas>
   <script>window.Module = { canvas: document.getElementById("pdg-canvas") };</script>
   <script>

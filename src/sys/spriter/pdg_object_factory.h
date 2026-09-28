@@ -5,13 +5,10 @@
 
 namespace pdg {
 
-class SpriteLayer;
-class Sprite;
-
 class PDGObjectFactory : public SpriterEngine::ObjectFactory {
 public:
-    PDGObjectFactory(SpriteLayer* layer);
-    virtual ~PDGObjectFactory();
+    PDGObjectFactory() = default;
+    ~PDGObjectFactory() override = default;
 
     // ObjectFactory interface
     virtual SpriterEngine::SpriteObjectInfo* newSpriteObjectinfo() override;
@@ -24,8 +21,6 @@ public:
 	  virtual SpriterEngine::BoneInstanceInfo* newBoneInstanceInfo(SpriterEngine::point size) override;
   #endif
 
-private:
-    SpriteLayer* mLayer;
 };
 
 } // namespace pdg

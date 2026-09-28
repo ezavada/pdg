@@ -42,6 +42,7 @@
 
 #include <vector>
 #include <utility>
+#include <memory>
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 #include "pdg_script_bindings.h"
@@ -82,6 +83,12 @@ namespace pdg {
 
         void getAttributes(Attributes& attrs) const;
         void setAttributes(const Attributes& attrs);
+        /// Use current values from attrs on every replay, bounds query and hit test.
+        /// Shared sources are advanced by the caller. Source destruction freezes its last sample.
+        void setLiveAttributes(const Attributes& attrs);
+        /// Freeze the current sample and stop following its source.
+        void clearLiveAttributes();
+        bool hasLiveAttributes() const;
 
         void moveForward();
         void moveBackward();
@@ -90,11 +97,7 @@ namespace pdg {
 
         void remove();
 
-        ElementRef(Drawing* drawing, uint32_t index) : drawing(drawing), index(index) {
-        #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-          INIT_SCRIPT_OBJECT(mElementRefScriptObj);
-        #endif
-        }
+        ElementRef(Drawing* drawing, uint32_t index);
         virtual ~ElementRef() {
         #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
           #ifndef PDG_NO_GUI
@@ -104,8 +107,9 @@ namespace pdg {
         }
 
       protected:
-        Drawing* drawing;
-        uint32_t index;
+        std::shared_ptr<Drawing> drawing;
+        size_t resolveIndex() const;
+        std::weak_ptr<void> identity;
       public:
       #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
         SCRIPT_OBJECT_REF mElementRefScriptObj;
@@ -118,6 +122,8 @@ namespace pdg {
       #endif // PDG_COMPILING_FOR_SCRIPT_BINDINGS
     public:
         static Drawing* create();
+        // An owning handle to the same editable contents, independent of this wrapper's lifetime.
+        virtual std::shared_ptr<Drawing> share() const = 0;
 
         virtual ~Drawing() {
         #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
@@ -148,8 +154,17 @@ namespace pdg {
 		virtual Rect getBounds() const = 0;
 		virtual Point centerPoint() const = 0;
 		virtual bool empty() const = 0;
+        /// @cond INTERNAL
+        // Single-image artwork adapter; borrowed image, source pixels and local quad.
+        virtual bool getImageFrame(Image*& image, Rect& pixels, Quad& destination) const { return false; }
+        /// @endcond
 
     #ifndef PDG_NO_GUI
+        // Replay with parent attributes. Local strokes scale by sqrt(abs(det(transform)));
+        // otherwise thickness is in port pixels. Element attributes remain unchanged.
+        virtual void drawTransformed(Port* port, const Attributes& parent, bool localStrokes = false) const = 0;
+        // Map bounds into a finite affine parallelogram; degenerate source axes retain unit scale.
+        glm::mat3 destinationTransform(const Quad& destination) const;
         // drawing operations
         virtual void draw(Port* port) = 0;
         virtual void draw(Port* port, const Rect& rect) = 0;

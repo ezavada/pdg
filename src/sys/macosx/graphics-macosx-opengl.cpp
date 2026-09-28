@@ -30,6 +30,8 @@
 
 
 #include <cstring>
+#include <bit>
+#include <cstdint>
 #ifndef PDG_NO_GUI
 
 #include "pdg_project.h"
@@ -58,7 +60,7 @@
 
 
 extern "C" CGContextRef graphics_getCurrentCGContextRef();
-extern "C" int pow2(int n);
+
 
 // missing from CG headers
 extern "C" bool CGFontGetGlyphsForUnichars(CGFontRef, pdg::utf16char[], CGGlyph[], size_t);
@@ -209,8 +211,13 @@ void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& qu
 		if (style & textStyle_Italic) {
 			extraWidth = size; // Add full character width (font size) for italic overhang
 		}
-		int glBufferWidth = pow2(textInfo->width + extraWidth);
-		int glBufferHeight = pow2(textInfo->charHeight);
+        const auto bufferWidth = static_cast<std::int64_t>(textInfo->width) + extraWidth;
+        const auto bufferHeight = static_cast<std::int64_t>(textInfo->charHeight);
+        if (bufferWidth < 0 || bufferHeight < 0 || bufferWidth > (1LL << 30) || bufferHeight > (1LL << 30)) {
+            return;
+        }
+		int glBufferWidth = std::bit_ceil(static_cast<unsigned>(bufferWidth));
+		int glBufferHeight = std::bit_ceil(static_cast<unsigned>(bufferHeight));
 		int glBufferPitch = ((glBufferWidth * 4) + 3) / 4;
 		
 		size_t dataSize = glBufferHeight * glBufferPitch;
@@ -393,7 +400,7 @@ FontMetricsInfo* FontImplMac::getFontMetrics(int size, uint32 style) {
 	float unitsPerEm = MacAPI::CGFontGetUnitsPerEm( mfmi->mMacFont );
 	float pixelsPerEm = 0.7518f * mScalingFactor;   // 1/1.33 Pixels per Em for Windows & MacOSX, 1/1.0 for traditional Mac OS;
 	float ascent = ((float)MacAPI::CGFontGetAscent( mfmi->mMacFont ) * size * pixelsPerEm) / unitsPerEm ;
-	//float capHeight = ((float)MacAPI::CGFontGetCapHeight( mfmi->mMacFont ) * size * pixelsPerEm) / unitsPerEm ;
+	mfmi->capHeight = ((float)MacAPI::CGFontGetCapHeight( mfmi->mMacFont ) * size * pixelsPerEm) / unitsPerEm ;
 	if (std::strcmp(getFontName(), "Arial") == 0) {
 		ascent *= 1.1; // always seems to be off by a tiny amount
 	} else if (std::strcmp(getFontName(), "Helvetica") == 0) {

@@ -1,4 +1,4 @@
-.TH "TileLayer" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "TileLayer" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -71,13 +71,25 @@ Inherits \fBSpriteLayer\fP\&.
 Public Member Functions inherited from \fBSpriteLayer\fP
 .in +1c
 .ti -1c
+.RI "\fBaddParticle\fP (\fBParticle\fP value)"
+.br
+.RI "Add a live detached particle\&. "
+.ti -1c
 .RI "\fBaddSprite\fP (\fBSprite\fP newSprite)"
 .br
-.RI "add an existing sprite to the layer "
+.RI "Add a \fBSprite\fP and its mounted descendants to this layer\&. "
 .ti -1c
 .RI "\fBapplyCharacterMapToAll\fP (string mapName)"
 .br
 .RI "Applies a character map to all Spriter sprites in this layer\&. "
+.ti -1c
+.RI "\fBParticle\fP \fBcreateParticle\fP ()"
+.br
+.RI "Create a layer-owned particle\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBcreateParticleEmitter\fP ()"
+.br
+.RI "Create a layer-owned point emitter\&. "
 .ti -1c
 .RI "\fBSprite\fP \fBcreateSprite\fP ()"
 .br
@@ -93,7 +105,7 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .ti -1c
 .RI "\fBdeserialize\fP (\fBDeserializer\fP deserializer)"
 .br
-.RI "deserialize a sprite layer "
+.RI "Restore Layer state or apply an incremental update\&. "
 .ti -1c
 .RI "\fBdisableCollisions\fP ()"
 .br
@@ -115,11 +127,11 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "Enables or disables Spriter animation events for this layer\&. "
 .ti -1c
-.RI "\fBfadeIn\fP (int msDuration, int easing=\fBlinearTween\fP)"
+.RI "\fBfadeIn\fP (number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "fade entire layer to full opacity over time "
 .ti -1c
-.RI "\fBfadeOut\fP (int msDuration, int easing=\fBlinearTween\fP)"
+.RI "\fBfadeOut\fP (number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "fade out the entire layer to full transparency over time "
 .ti -1c
@@ -127,9 +139,17 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "find a sprite in this layer by user assigned id "
 .ti -1c
+.RI "uint \fBgetMaxParticles\fP ()"
+.br
+.RI "Read the layer particle budget\&. "
+.ti -1c
 .RI "number \fBgetMyClassTag\fP ()"
 .br
 .RI "returns class tag for \fBSpriteLayer\fP, used for serialization "
+.ti -1c
+.RI "\fBParticle\fP \fBgetNthParticle\fP (uint value)"
+.br
+.RI "Read a particle by creation order\&. "
 .ti -1c
 .RI "\fBSprite\fP \fBgetNthSprite\fP (int index)"
 .br
@@ -139,9 +159,13 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "get the point in the layer that is drawn at 0,0 in the port "
 .ti -1c
+.RI "uint \fBgetParticleCount\fP ()"
+.br
+.RI "Count live layer particles\&. "
+.ti -1c
 .RI "uint \fBgetSerializedSize\fP (\fBSerializer\fP serializer)"
 .br
-.RI "get the bytes needed to serialize the layer "
+.RI "Measure selected Layer state and shared \fBSprite\fP resources\&. "
 .ti -1c
 .RI "\fBCpSpace\fP \fBgetSpace\fP ()"
 .br
@@ -347,6 +371,14 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "adjust the vector to account for layer transformations "
 .ti -1c
+.RI "\fBremoveAllParticleEmitters\fP ()"
+.br
+.RI "Remove all standalone emitters\&. "
+.ti -1c
+.RI "\fBremoveAllParticles\fP ()"
+.br
+.RI "Detach every particle\&. "
+.ti -1c
 .RI "\fBremoveAllSprites\fP ()"
 .br
 .RI "remove all sprites in the layer "
@@ -355,13 +387,21 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "Removes a character map from all Spriter sprites in this layer\&. "
 .ti -1c
+.RI "\fBremoveParticle\fP (\fBParticle\fP value)"
+.br
+.RI "Detach a particle from this layer\&. "
+.ti -1c
+.RI "\fBremoveParticleEmitter\fP (\fBParticleEmitter\fP value)"
+.br
+.RI "Stop and remove a standalone emitter\&. "
+.ti -1c
 .RI "\fBremoveSprite\fP (\fBSprite\fP oldSprite)"
 .br
-.RI "remove a particular sprite from the layer "
+.RI "Remove a \fBSprite\fP and its mounted descendants from this layer\&. "
 .ti -1c
 .RI "\fBserialize\fP (\fBSerializer\fP serializer)"
 .br
-.RI "serialize the sprite layer and all the sprites in it "
+.RI "Save selected Layer state and its ordered sprites\&. "
 .ti -1c
 .RI "\fBsetAutoCenter\fP (boolean autoCenter=true)"
 .br
@@ -382,6 +422,10 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .RI "\fBsetKeepGravityDownward\fP (boolean keepItDownward=true)"
 .br
 .RI "keep gravity relative to the port when the layer is rotated (\fIChipmunk Physics Only\fP) "
+.ti -1c
+.RI "\fBSpriteLayer\fP \fBsetMaxParticles\fP (uint value)"
+.br
+.RI "Set the shared particle budget\&. "
 .ti -1c
 .RI "\fBsetOrigin\fP (\fBPoint\fP origin)"
 .br
@@ -419,11 +463,11 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "stop doing animation calculations for this layer "
 .ti -1c
-.RI "\fBzoom\fP (number deltaZoomLevel, int msDuration, int easing=\fBeaseInOutQuad\fP, \fBRect\fP keepInRect=\fBRect\fP(0, 0), \fBPoint\fP centerOn=\fBPoint\fP(0, 0))"
+.RI "\fBzoom\fP (number deltaZoomLevel, number durationSeconds, int easing=\fBeaseInOutQuad\fP, \fBRect\fP keepInRect=\fBRect\fP(0, 0), \fBPoint\fP centerOn=\fBPoint\fP(0, 0))"
 .br
 .RI "animated zoom by a particular factor over time "
 .ti -1c
-.RI "\fBzoomTo\fP (number zoomLevel, int msDuration, int easing=\fBeaseInOutQuad\fP, \fBRect\fP keepInRect=\fBRect\fP(0, 0), \fBPoint\fP centerOn=\fBPoint\fP(0, 0))"
+.RI "\fBzoomTo\fP (number zoomLevel, number durationSeconds, int easing=\fBeaseInOutQuad\fP, \fBRect\fP keepInRect=\fBRect\fP(0, 0), \fBPoint\fP centerOn=\fBPoint\fP(0, 0))"
 .br
 .RI "animated zoom to a particular zoom level over time "
 .in -1c
@@ -431,257 +475,297 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 Public Member Functions inherited from \fBAnimated\fP
 .in +1c
 .ti -1c
-.RI "\fBaccelerate\fP (number deltaSpeed, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBlinearTween\fP)"
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
-.RI "change the object's speed over time "
+.RI "Register a callback after the object's normal animation step\&. "
 .ti -1c
-.RI "\fBaccelerateTo\fP (number speed, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBlinearTween\fP)"
+.RI "\fBAnimated\fP \fBandThen\fP ()"
 .br
-.RI "change the object's speed to a particular value over time "
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
 .ti -1c
-.RI "\fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
-.RI "setup a helper to handle custom animation "
+.RI "Advance programmed animation by elapsed seconds\&. "
 .ti -1c
-.RI "boolean \fBanimate\fP (int msElapsed)"
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
 .br
-.RI "animate based on the passage of time "
+.RI "Discard scheduled animations and pending sequencing\&. "
 .ti -1c
-.RI "\fBapplyForce\fP (\fBVector\fP force, int msDuration=\fBduration_Instantaneous\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "apply a force to the object over time "
+.RI "Animate the rotation-center offset by a delta\&. "
 .ti -1c
-.RI "\fBapplyTorque\fP (number forceSpin, int msDuration=\fBduration_Instantaneous\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "apply torque to the object over time "
+.RI "Animate the rotation-center offset by a delta\&. "
 .ti -1c
-.RI "\fBchangeCenter\fP (\fBOffset\fP offset, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "shift the center point of the object over time "
+.RI "Animate the rotation-center offset to a target\&. "
 .ti -1c
-.RI "\fBchangeCenterTo\fP (\fBOffset\fP offset, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "shift the center point of the object to a particular offset from true center over time "
+.RI "Animate the rotation-center offset to a target\&. "
 .ti -1c
-.RI "\fBclearAnimationHelpers\fP ()"
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
-.RI "remove all previously added animation helpers "
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBflipX\fP ()"
 .br
-.RI "flips the object horizontally, center offset is flipped too\&. Applied before other transformations\&. "
+.RI "Toggle the x reflection flag immediately\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBflipY\fP ()"
 .br
-.RI "flips the object vertically, center offset is flipped too\&. Applied before other transformations\&. "
+.RI "Toggle the y reflection flag immediately\&. "
 .ti -1c
 .RI "\fBRect\fP \fBgetBoundingBox\fP ()"
 .br
-.RI "get the rectangle that completely encloses the object "
+.RI "Read axis-aligned logical bounds\&. "
 .ti -1c
 .RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
 .br
-.RI "get the current offset of the center relative to the true center point "
+.RI "Read the rotation-center offset\&. "
 .ti -1c
 .RI "number \fBgetHeight\fP ()"
 .br
-.RI "get height of the object "
+.RI "Read logical height\&. "
 .ti -1c
 .RI "\fBPoint\fP \fBgetLocation\fP ()"
 .br
-.RI "get the position of the object "
+.RI "Read the location in the container coordinate system\&. "
 .ti -1c
-.RI "number \fBgetMass\fP ()"
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
 .br
-.RI "get the mass of the object "
-.ti -1c
-.RI "number \fBgetMoveFriction\fP ()"
-.br
-.RI "get the amount of friction for movement "
-.ti -1c
-.RI "number \fBgetMovementDirectionInRadians\fP ()"
-.br
-.RI "get the direction the object is moving "
+.RI "Read the programmed movement rate\&. "
 .ti -1c
 .RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
 .br
-.RI "get the bounds with rotation "
+.RI "Read rotated logical bounds\&. "
 .ti -1c
 .RI "number \fBgetRotation\fP ()"
 .br
-.RI "get how much the object is rotated "
+.RI "Read the current rotation in radians\&. "
 .ti -1c
-.RI "number \fBgetSizeFriction\fP ()"
+.RI "\fBOffset\fP \fBgetScale\fP ()"
 .br
-.RI "get the friction applied to size changes (growing or shrinking) "
+.RI "Read independent transform scale\&. "
 .ti -1c
-.RI "number \fBgetSpeed\fP ()"
+.RI "\fBOffset\fP \fBgetSize\fP ()"
 .br
-.RI "get how fast the object is moving in pixels/sec "
+.RI "Read logical width and height\&. "
 .ti -1c
 .RI "number \fBgetSpin\fP ()"
 .br
-.RI "get how fast the object is spinning in radians per second "
+.RI "Read the programmed angular rate\&. "
 .ti -1c
-.RI "number \fBgetSpinFriction\fP ()"
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
 .br
-.RI "get the friction applied toward spinning "
-.ti -1c
-.RI "\fBVector\fP \fBgetVelocity\fP ()"
-.br
-.RI "get the vector that expresses magnitude and direction of the object's movement in pixels/sec "
+.RI "Read logical width and height change rates\&. "
 .ti -1c
 .RI "number \fBgetWidth\fP ()"
 .br
-.RI "get the width of the object "
+.RI "Read logical width\&. "
 .ti -1c
-.RI "\fBgrow\fP (number factor, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "change size of the object by a factor over time "
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
 .ti -1c
 .RI "boolean \fBisFlippedX\fP ()"
 .br
-.RI "returns true if the object is flipped horizontally "
+.RI "Read the x reflection flag\&. "
 .ti -1c
 .RI "boolean \fBisFlippedY\fP ()"
 .br
-.RI "returns true if the object is flipped vertically "
+.RI "Read the y reflection flag\&. "
 .ti -1c
-.RI "\fBmove\fP (\fBOffset\fP delta, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "boolean \fBisSchedulePaused\fP ()"
 .br
-.RI "move the object by a certain amount over time "
+.RI "Test whether scheduled animation advancement is paused\&. "
 .ti -1c
-.RI "\fBmoveTo\fP (\fBPoint\fP where, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "move the object to a particular location over time "
+.RI "Move by an offset\&. "
 .ti -1c
-.RI "\fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "remove a specific animation helper "
+.RI "Move by an offset\&. "
 .ti -1c
-.RI "\fBresize\fP (number deltaWidth, number deltaHeight, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "change the size of an object by a given amount over time "
+.RI "Move to a location\&. "
 .ti -1c
-.RI "\fBresizeTo\fP (number width, number height, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "resize the object to a specific size over time "
+.RI "Move to a location\&. "
 .ti -1c
-.RI "\fBrotate\fP (number radians, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
 .br
-.RI "rotate the object by a specific amount over time "
+.RI "Pause scheduled animations and their delays\&. "
 .ti -1c
-.RI "\fBrotateTo\fP (number radiansRotation, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
-.RI "rotate the object to face a particular direction over time "
+.RI "Retire a specific animation helper\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP inCenterOffset)"
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "set the offset of the center point relative to the true center "
+.RI "Change logical size by additive deltas\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean inFlipX)"
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "sets whether the object is flipped horizontally "
+.RI "Animate logical size to a target\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean inFlipY)"
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
 .br
-.RI "sets whether the object is flipped vertically "
+.RI "Resume scheduled animations and their delays\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFriction\fP (number frictionCoefficient)"
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
-.RI "set friction for movement, rotation and resizing all at once "
+.RI "Rotate through a relative angle\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetHeight\fP (number inHeight)"
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
-.RI "set the object's height "
+.RI "Rotate to an absolute angle\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP inLocation)"
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
 .br
-.RI "place the object at a particular location "
+.RI "Set the rotation-center offset immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetMass\fP (number inMass)"
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
 .br
-.RI "set the object's mass, used when forces are applied "
+.RI "Set the x reflection flag immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetMoveFriction\fP (number inMoveFriction)"
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
 .br
-.RI "set the object's friction for movement "
+.RI "Set the y reflection flag immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetRotation\fP (number inRotation)"
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
 .br
-.RI "set the direction the object is facing in radians "
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
 .br
-.RI "set the size of the object "
+.RI "Set logical width and height immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSizeFriction\fP (number inSizeFriction)"
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
 .br
-.RI "set the friction applied for object resizing "
+.RI "Set logical width and height immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpeed\fP (number inSpeed)"
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
 .br
-.RI "set the speed the object is moving in its current direction of motion "
+.RI "Set a constant programmed angular rate immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpin\fP (number inSpin)"
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
 .br
-.RI "set the rate at which the object is spinning, in radians/sec "
+.RI "Set independent constant growth rates immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpinFriction\fP (number inSpinFriction)"
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
 .br
-.RI "set the friction the object faces for spinning "
+.RI "Set logical width immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocity\fP (number deltaXPerSec, number deltaYPerSec)"
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to logical size\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocity\fP (\fBVector\fP deltaPerSec)"
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to position\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocityInRadians\fP (number speed, number direction)"
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to rotation\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetWidth\fP (number inWidth)"
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
 .br
-.RI "set the width of the object "
+.RI "Stop all programmed changes to logical size\&. "
 .ti -1c
-.RI "\fBstartGrowing\fP (number amountPerSecond)"
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "set the growth rate of the object in pixels/sec "
+.RI "Multiply logical width and height by independent factors\&. "
 .ti -1c
-.RI "\fBstartStretching\fP (number widthPerSecond, number heightPerSecond)"
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
 .br
-.RI "set the growth rate of the object in pixels/sec, with varied rates for width and height "
-.ti -1c
-.RI "\fBstopAllForces\fP ()"
-.br
-.RI "remove all forces that were acting on the object (except friction) "
-.ti -1c
-.RI "\fBstopGrowing\fP ()"
-.br
-.RI "stop any size change "
-.ti -1c
-.RI "\fBstopMoving\fP ()"
-.br
-.RI "stop any movement the object was doing (except spinning) "
-.ti -1c
-.RI "\fBstopSpinning\fP ()"
-.br
-.RI "stop any spinning the object was doing "
-.ti -1c
-.RI "\fBstopStretching\fP ()"
-.br
-.RI "stop any stretching the object was doing "
-.ti -1c
-.RI "\fBstretch\fP (number widthFactor, number heightFactor, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "change the dimensions of the object over time "
-.ti -1c
-.RI "\fBAnimated\fP \fBwait\fP (int msDuration)"
-.br
-.RI "wait before beginning the next animation call that operates over time "
+.RI "Delay the next timed animation request\&. "
 .in -1c
 
 Public Member Functions inherited from \fBEventEmitter\fP
@@ -747,7 +831,7 @@ efficiently handles large tile datasets, useful for backgrounds, terrains, etc\&
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 .SS "Capabilities"
@@ -1124,6 +1208,10 @@ create a new \fBTileLayer\fP attached to a particular port
 .RE
 .PP
 
+.PP
+References \fBcreateTileLayer()\fP\&.
+.PP
+Referenced by \fBcreateTileLayer()\fP\&.
 
 .SH "Author"
 .PP 

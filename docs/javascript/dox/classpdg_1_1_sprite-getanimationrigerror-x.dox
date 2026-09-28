@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::getAnimationRigError()
+\brief Read the latest rig diagnostic.
+
+\return A diagnostic string after a rig failure, or an empty string when no error is recorded.
+
+\see enableAnimationPose()
+*/

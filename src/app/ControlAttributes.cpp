@@ -119,23 +119,24 @@ void ControlAttributes::merge(const ControlAttributes& overrides) {
     }
 }
 
-void ControlAttributes::draw(Port& port, const Rect& area, ControlState value) const {
-    const ControlStateAttributes* selected = &state(value);
-    const ControlStateAttributes& normal = state(ControlState::Normal);
-    if (selected->hasDrawRoutine && selected->drawRoutine) {
-        selected->drawRoutine(port, area, *selected);
-    } else if (selected->hasImage && selected->image) {
-        port.drawImage(selected->image, area, selected->hasDrawing ? selected->drawing : Attributes());
-    } else if (selected->hasDrawing) {
-        port.drawRect(area, selected->drawing);
-    } else if (selected != &normal) {
-        if (normal.hasDrawRoutine && normal.drawRoutine) {
-            normal.drawRoutine(port, area, normal);
-        } else if (normal.hasImage && normal.image) {
-            port.drawImage(normal.image, area, normal.hasDrawing ? normal.drawing : Attributes());
-        } else if (normal.hasDrawing) {
-            port.drawRect(area, normal.drawing);
-        }
+void ControlAttributes::draw(Port& port, const Rect& area, ControlState value, const Attributes* appearance) const {
+    auto drawable = [](const ControlStateAttributes& s) {
+        return (s.hasDrawRoutine && s.drawRoutine) || (s.hasImage && s.image) || s.hasDrawing;
+    };
+    const auto& requested = state(value);
+    ControlStateAttributes selected = drawable(requested) ? requested : state(ControlState::Normal);
+    if (!drawable(selected)) return;
+    if (appearance) {
+        selected.drawing = (selected.hasDrawing ? selected.drawing : Attributes()).withAppearance(*appearance);
+        selected.hasDrawing = true;
+    }
+    if (selected.hasDrawRoutine && selected.drawRoutine) selected.drawRoutine(port, area, selected);
+    else if (selected.hasImage && selected.image) port.drawImage(selected.image, area, selected.drawing);
+    else if (selected.hasDrawing) {
+        Rect background(area);
+        if (selected.drawing.getLineStyle() != lineStyle_None)
+            background.shrink(selected.drawing.getLineThickness()/2);
+        port.drawRect(background, selected.drawing);
     }
 }
 

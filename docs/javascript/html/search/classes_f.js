@@ -13,5 +13,6 @@ var searchData=
   ['spritecollideevent_10',['SpriteCollideEvent',['../group___events.html#structpdg_1_1_sprite_collide_event',1,'']]],
   ['spritelayer_11',['SpriteLayer',['../classpdg_1_1_sprite_layer.html',1,'pdg']]],
   ['spritelayerevent_12',['SpriteLayerEvent',['../group___events.html#structpdg_1_1_sprite_layer_event',1,'']]],
-  ['spritetouchevent_13',['SpriteTouchEvent',['../group___events.html#structpdg_1_1_sprite_touch_event',1,'']]]
+  ['spritetouchevent_13',['SpriteTouchEvent',['../group___events.html#structpdg_1_1_sprite_touch_event',1,'']]],
+  ['spritetriggerevent_14',['SpriteTriggerEvent',['../group___events.html#structpdg_1_1_sprite_trigger_event',1,'']]]
 ];

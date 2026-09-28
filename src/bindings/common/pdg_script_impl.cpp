@@ -74,6 +74,9 @@ ScriptEventHandler::ScriptEventHandler() {
 // ========================================================================================
 
 ScriptAnimationHelper::ScriptAnimationHelper() {
+    %#ifdef PDG_USING_JAVASCRIPT_CORE
+    mScriptAnimateFunc = nullptr;
+    %#endif
 }
 
 
@@ -81,8 +84,7 @@ ScriptAnimationHelper::ScriptAnimationHelper() {
 //MARK: Script Sprite Collide Helper
 // ========================================================================================
 
-ScriptSpriteCollideHelper::ScriptSpriteCollideHelper() {
-}
+
 
 
 %#ifndef PDG_NO_GUI
@@ -129,13 +131,13 @@ FUNCTION_IMPL(SetSerializationDebugMode)
 
 
 // =========================  initializers =============================
-bool Initializer::allowHorizontalOrientation() throw() { return true; }
-bool Initializer::allowVerticalOrientation() throw() { return true; }
-const char* Initializer::getAppName(bool haveMainResourceFile) throw() { return "pdg"; }
-const char* Initializer::getMainResourceFileName() throw() {return NULL;}
-bool Initializer::installGlobalHandlers() throw() {return true;}
+bool Initializer::allowHorizontalOrientation() noexcept { return true; }
+bool Initializer::allowVerticalOrientation() noexcept { return true; }
+const char* Initializer::getAppName(bool haveMainResourceFile) noexcept { return "pdg"; }
+const char* Initializer::getMainResourceFileName() noexcept {return NULL;}
+bool Initializer::installGlobalHandlers() noexcept {return true;}
 bool Initializer::getGraphicsEnvironmentDimensions(Rect maxWindowDim, Rect maxFullScreenDim,
-	long& ioWidth, long& ioHeight, uint8& ioDepth) throw()
+	long& ioWidth, long& ioHeight, uint8& ioDepth) noexcept
 {
   ioWidth = 640;
   ioHeight = 480;

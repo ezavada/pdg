@@ -68,6 +68,7 @@
 
 namespace pdg {
 
+class Sprite;
 class SpriteLayer;
 class TileLayer;
 
@@ -84,7 +85,7 @@ class Port;
 class SpriteManager : public IEventHandler, public Singleton<SpriteManager> {
 friend class Singleton<SpriteManager>;
 public:
-    virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw();  // return true if completely handled
+    virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept;  // return true if completely handled
 	SpriteManager(EventManager* eventMgr, TimerManager* timerMgr);
 	virtual ~SpriteManager();
     
@@ -103,9 +104,15 @@ public:
 	SpriteLayer* mLastLayer;
 	uint32 mLastCallAt;
 
+    void finishLayerTraversal();
+    unsigned mLayerUpdateDepth = 0;
+    std::vector<SpriteLayer*> mDeferredLayerCleanup;
 	static SpriteManager* createSingletonInstance();
     
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
+    static void registerBody(cpBody* body, Sprite* sprite);
+    static Sprite* bodyOwner(cpBody* body);
+    void stepAnimationPhysics(ms_delta elapsed);
     cpSpace* mSpace; 
 
     static cpBool  ChipmunkSpriteCollisionBeginFunc(cpArbiter *arb, struct cpSpace *space, void *data);

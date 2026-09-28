@@ -1,0 +1,178 @@
+/**
+\fn pdg::Part::setIKLimits(PhysicsConstraint constraint)
+\brief Share a live physical rotary limit with this IK joint.
+
+Retains the constraint and reads its current interval on each solve and limit
+query. Changing PhysicsConstraint::setAngleLimits() changes the physical limit
+and the IK range together. This replaces any numeric or linked IK limits without
+changing the pose, creating bodies, or creating joints.
+
+The active constraint must connect this Part's body to its immediate parent
+Part's body, or to the owning Sprite's body for a root Part. Either endpoint
+order is accepted: reversed endpoints negate and exchange the bounds, so IK
+queries still report this Part's rotation relative to its parent.
+
+The parent frame must be uniform, unreflected, and aligned with the parent body's
+orientation. This Part must have positive effective scale axes. Authored source
+frames on a root Part and imported physical-rig bodies are unsupported. The
+interval must fit Part rotations and span at most one turn. Invalid setup leaves
+the old configuration intact. These conditions are checked again when used.
+
+If the constraint breaks, disconnects, changes to an unsupported interval, or no
+longer connects the correct bodies, direct solves and angle queries throw.
+Persistent IK records getIKError() and holds its pose; physical IK stops all its
+owned drives. The link remains configured, so hasIKLimits() stays true. Clear or
+replace it to recover; temporary frame/range errors recover when corrected.
+Clearing the link does not disconnect the physical constraint. Its retained
+handle stays safe after body removal.
+
+\param constraint An active PhysicsConstraint of type constraint_RotaryLimit.
+\return This Part for chaining.
+
+\note Initial Sprite/Layer snapshots retain the live constraint link. Save the
+containing Layer if its constraint endpoints span Sprites. Disconnected links and
+invalid live configurations must be cleared or repaired before saving. Numeric
+limits also round-trip without physics.
+
+\see PhysicsConstraint::setAngleLimits(), clearIKLimits(), setIKDriveTarget()
+*/
+
+/**
+\fn pdg::Part::setIKLimits(number minAngle, number maxAngle)
+\brief Limit this joint's local rotation when solving Part IK.
+
+Angles are radians in the Part's parent frame. Both bounds must be finite,
+representable as Part rotations, and
+ordered, spanning at most one full turn. Equal bounds lock the desired angle.
+The interval may cross a multiple of a full turn by using unwrapped values, such
+as 6.0 through 6.5. Invalid input leaves the old limits intact. This configuration
+does not immediately rotate the Part or constrain ordinary Animated calls.
+
+Set limits on the root and/or middle Part. Direct and persistent IK honor them;
+physical IK limits its desired pose. Physical bodies can overshoot or be pushed
+outside that pose: use PhysicsBody::createRotaryLimit() for a physical constraint.
+When both bend solutions satisfy the limits, bendDirection selects the preferred
+one. Otherwise the solve chooses the nearest permitted endpoint in the chain's
+parent coordinate frame. Positive partial influence remains inside the allowed interval.
+Numeric limits replace any live constraint link and are included in ordinary Part snapshots in both resource modes. Use the PhysicsConstraint overload to share an existing physical limit.
+
+\param minAngle Minimum local rotation, in radians.
+\param maxAngle Maximum local rotation, in radians.
+\return This Part for chaining.
+\see clearIKLimits(), solveIK(), setIKDriveTarget()
+*/
+
+/**
+\fn pdg::Part::clearIKLimits()
+\brief Remove this joint's IK rotation limits.
+
+\return This Part for chaining. Does not change the current pose or disconnect a linked physical constraint.
+*/
+
+/**
+\fn pdg::Part::hasIKLimits()
+\brief Check whether this joint has IK rotation limits.
+
+\return True when setIKLimits() has configured numeric limits or a constraint link, including an invalid or disconnected link.
+*/
+
+/**
+\fn pdg::Part::getIKMinAngle()
+\brief Read the minimum local IK rotation.
+
+\return The lower bound in local radians, or zero without limits. A linked constraint is read live; an invalid link throws.
+*/
+
+/**
+\fn pdg::Part::getIKMaxAngle()
+\brief Read the maximum local IK rotation.
+
+\return The upper bound in local radians, or zero without limits. A linked constraint is read live; an invalid link throws.
+*/
+
+/**
+\fn pdg::Part::isIKDriven()
+\brief Check whether this Part owns a physical IK controller.
+
+\return True for a configured physical IK controller, including while it holds a structural error; false for direct IK or no controller.
+*/
+
+/**
+\fn pdg::Part::setIKDriveTarget(Part middle, Part tip, Point target, number maxForce, number maxTorque, int space, int bendDirection, number influence, number frequency, number dampingRatio)
+\brief Drive a two-segment Part chain toward an IK target using bounded forces and torques.
+
+Installs a persistent controller. Each step computes a desired pose after Part
+animation and before the physics solve. The solver retains authority over all
+physical positions and rotations; registering or updating a target does not
+teleport the chain. The root and middle must have independent dynamic bodies.
+The tip may have a dynamic body or no body. All three Parts must form a contiguous
+chain in one Sprite. Imported physical-rig Parts are not supported by this controller.
+
+The first assignment captures the root's parent-relative anchor and the middle
+and tip joint offsets. Repeated assignments to the same chain retain those values,
+so physical drift cannot redefine segment lengths. Clear and reinstall to capture
+a new chain configuration. Ancestor movement and the current Part scales still
+apply. The root requires uniform absolute scale, as with solveIK().
+
+The controller owns each participating body drive until clearIKTarget(). Existing
+independent body drives or overlapping IK controllers cause setup to throw without
+replacing the old controller. Direct setDriveTarget(), clearDrive(), stopAllForces()
+and changes away from dynamic mode reject while the controller owns the body.
+Impulses and other forces may still disturb it. No joints are created implicitly:
+configure pivot joints, physical angular limits and collision shapes separately.
+Any pivot or pin between adjacent driven Parts must join the captured parent
+offset to the child origin (pin distance zero). Mismatched anchors reject setup
+or suspend a running controller. Anchors are unscaled body-local coordinates;
+account for Part scaling when configuring them.
+
+The root's target position is its captured anchor; the middle and physical tip
+receive the solved joint positions. Body orientations use the shortest rotation
+route, except joints sharing a rotary limit preserve its unwrapped relative
+angle so the drive does not request a shortcut through the physical stop. Force/torque caps apply separately to each body. A physical tip retains its
+captured local orientation relative to the desired middle pose. Influence zero
+turns off the controller's drive contribution without releasing ownership.
+
+A missing/replaced body or invalid topology stops all this controller's drives
+and records getIKError(). Valid topology can resume; after replacing a body,
+call setIKDriveTarget() again to claim it. isIKTargetReached() measures the current
+physical endpoint, so a constrained or force-limited chain may remain unreached
+without a configuration error. Clearing preserves velocities, constraints and
+independently applied loads.
+
+\param middle This Part's immediate child, with a dynamic PhysicsBody.
+\param tip Middle's immediate child, with a dynamic body or no body.
+\param target Desired endpoint in the selected coordinate space.
+\param maxForce Finite nonnegative force cap per driven body.
+\param maxTorque Finite nonnegative torque cap per driven body.
+\param space partSpace_World by default; partSpace_Sprite or partSpace_Local (root's parent frame) are also accepted.
+\param bendDirection +1 by default, or -1 for the other bend direction.
+\param influence Pose influence from zero through one; default 1.
+\param frequency Positive drive frequency in cycles per second; default 4.
+\param dampingRatio Nonnegative drive damping ratio; default 1.
+\return This Part for chaining.
+
+\note Advance the owning SpriteLayer normally. Bodies use either the basic or
+Chipmunk solver; step size, constraints and force caps affect convergence.
+Initial Sprite/Layer snapshots preserve the controller, captured joint offsets,
+body drives and shared rotary limits in either resource mode. Save the containing
+Layer when a joint or compound collider references another Sprite. Restored
+controllers retain exclusive ownership of their bodies and resume on the next step.
+
+\par Example
+\code{.js}
+const shoulder = sprite.createPart("shoulder");
+const elbow = sprite.createPart("elbow");
+const wrist = sprite.createPart("wrist");
+elbow.setParentPart(shoulder).setLocation(10, 0);
+wrist.setParentPart(elbow).setLocation(8, 0);
+shoulder.setupPhysicsBody(1, 20);
+elbow.setupPhysicsBody(1, 20);
+shoulder.physics.createPivotJoint(elbow.physics, new pdg.Point(10, 0));
+const elbowLimit = shoulder.physics.createRotaryLimit(elbow.physics, 0, 2.5);
+elbow.setIKLimits(elbowLimit);
+shoulder.setIKDriveTarget(elbow, wrist, new pdg.Point(10, 8), 100, 40,
+                         pdg.partSpace_Sprite);
+\endcode
+
+\see setIKTarget(), setIKLimits(), clearIKTarget(), PhysicsBody::setDriveTarget()
+*/

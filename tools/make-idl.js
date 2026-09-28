@@ -79,6 +79,29 @@ pdg._fakeCreateElementRef = function() {
 
 var _objects_to_not_garbage_collect = [];
 
+// Part has an instance factory. Keep its Sprite alive for the whole inspection
+// so querying ownership/bindings never sees a Part detached by garbage collection.
+pdg._fakeSetupCollider = function() {
+    const owner = new pdg.Sprite(); _objects_to_not_garbage_collect.push(owner);
+    return owner.setupCollider();
+};
+pdg._fakeCreatePhysicsConstraint = function() {
+    const a = new pdg.Sprite(), b = new pdg.Sprite(); _objects_to_not_garbage_collect.push(a, b);
+    return a.setupPhysicsBody().createPinJoint(b.setupPhysicsBody());
+};
+pdg._fakeSetupPhysicsBody = function() {
+    const owner = new pdg.Sprite();
+    const body = owner.setupPhysicsBody();
+    pdg._idlPhysicsOwner = owner;
+    return body;
+};
+pdg._fakeCreatePart = function() {
+    var sprite = new pdg.Sprite();
+    _objects_to_not_garbage_collect.push(sprite);
+    return sprite.createPart('__idl_part__');
+};
+
+
 function inspect(obj, objname, skip, objclassinfo) {
     var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 
@@ -142,6 +165,17 @@ function inspect(obj, objname, skip, objclassinfo) {
                 slist.push(sname);
             }
         }
+        // Native FunctionTemplate inheritance (for example Part : Animated)
+        // lives on the instance prototype chain, without JS.Class's superclass
+        // metadata or JavaScript's constructor prototype inheritance.
+        if (slist.length === 0) {
+            var basePrototype = Object.getPrototypeOf(inst.constructor.prototype);
+            if (basePrototype && basePrototype.constructor !== Object &&
+                basePrototype.constructor !== inst.constructor && basePrototype.constructor.name &&
+                basePrototype.constructor.name !== "Object") {
+                slist.push(basePrototype.constructor.name);
+            }
+        }
         return slist;
     }
     
@@ -171,9 +205,17 @@ function inspect(obj, objname, skip, objclassinfo) {
     }
     
     function _is_read_only(pname) {
-        var props = Object.getOwnPropertyDescriptor(obj, pname);
-        if (typeof props == "undefined") return undefined;
-        return props["writable"] ? undefined : true;
+        // Most native properties are inherited accessors on the class prototype.
+        let owner = obj;
+        while (owner) {
+            const props = Object.getOwnPropertyDescriptor(owner, pname);
+            if (props) {
+                if ("get" in props || "set" in props) return typeof props.set === "function" ? undefined : true;
+                return props.writable ? undefined : true;
+            }
+            owner = Object.getPrototypeOf(owner);
+        }
+        return undefined;
     }
 
     function _get_const_value(pname) {
@@ -457,15 +499,28 @@ function inspect(obj, objname, skip, objclassinfo) {
                 'SpriteLayer': 'createSpriteLayer',
                 'TileLayer': 'createTileLayer',
                 'Drawing': 'createDrawing',
+                'Part': 'Sprite.createPart',
+                'PhysicsBody': 'Sprite.setupPhysicsBody',
+                'Collider': 'Sprite.setupCollider',
+                'PhysicsConstraint': 'PhysicsBody.createPinJoint',
                 'ElementRef': 'Drawing.addLine'
             };
             var factoryName = factoryMap[name];
             if (factoryName) {
                 classInfo.factory = factoryName;
-                classInfo.note = "Factory-only class - use factory function: " + objname + "." + factoryName + "()";
+                classInfo.note = name === 'Part'
+                    ? "Factory-only class - call sprite.createPart(name) on a pdg.Sprite instance"
+                    : name === 'PhysicsBody'
+                    ? "Factory-only class - call setupPhysicsBody() on a Sprite or Part instance"
+                    : "Factory-only class - use factory function: " + objname + "." + factoryName + "()";
             }
         }
         classInfo.interface = inspect(inst, name, skip, classInfo);   // recursively inspect object
+        // NoPhysics is a class-level object, so prototype inspection cannot find it.
+        if (name === 'Collider' && obj[name].NoCollider) classInfo.interface.unshift({name: 'NoCollider', type: 'object Collider', readonly: true, static: true});
+        if (name === 'PhysicsBody' && obj[name].NoPhysics) {
+            classInfo.interface.unshift({name: 'NoPhysics', type: 'object PhysicsBody', readonly: true, static: true});
+        }
         
         return classInfo;
     }
@@ -548,6 +603,11 @@ function inspect(obj, objname, skip, objclassinfo) {
                 }
             }
         }
+        if (name === 'collider' && (objname === 'Sprite' || objname === 'Part' || objname === 'Particle')) { tname = 'object Collider'; }
+        if (name === 'physics' && (objname === 'Sprite' || objname === 'Part' || objname === 'Particle')) {
+            tname = 'object PhysicsBody';
+        }
+        if (name === 'emitter' && objname === 'Particle') { tname = 'object ParticleEmitter'; }
         var ro = _is_read_only(name);
         var value = _get_const_value(name);
         return {
@@ -580,7 +640,8 @@ function inspect(obj, objname, skip, objclassinfo) {
     }
 
     function _is_class(name) {
-        if (name.charAt(0).match(/[A-Z]/)) {
+        // Uppercase primitive constants (for example CopyPixels) are members.
+        if ((typeof obj[name] === 'function' || typeof obj[name] === 'object') && name.charAt(0).match(/[A-Z]/)) {
             return obj[name] && obj[name].constructor;
         } else {
             return false;
@@ -734,6 +795,10 @@ function _get_factory_function(className, parentObj) {
         'TileLayer': 'createTileLayer',
         'Drawing': 'createDrawing',
         'ElementRef': '_fakeCreateElementRef',
+        'Part': '_fakeCreatePart',
+        'PhysicsBody': '_fakeSetupPhysicsBody',
+        'Collider': '_fakeSetupCollider',
+        'PhysicsConstraint': '_fakeCreatePhysicsConstraint',
         // Add other factory-only classes as needed
     };
     
@@ -751,6 +816,10 @@ function _is_factory_only_class(className) {
         'TileLayer',
         'Drawing',
         'ElementRef',
+        'Part',
+        'PhysicsBody',
+        'Collider',
+        'PhysicsConstraint',
         // Add other factory-only classes as needed
     ];
     
@@ -783,7 +852,7 @@ function embindAllowPtr(obj, v) {
         needAllow = true;
     } else if (obj["params"] && obj["params"].length > 0) {
         var variants = obj["params"];
-        if (!(variants[0] instanceof Array)) {
+        if (!Array.isArray(variants[0])) {
             variants = [ variants ];
         }
         // check this variant to see if the params include an object
@@ -944,7 +1013,7 @@ if (format_json) {
                     if (variants.length == 0) {
                         // no params
                         write( fstr + ");\n");
-                    } else if (!(variants[0] instanceof Array)) {
+                    } else if (!Array.isArray(variants[0])) {
                         // no variants, create array with one variant
                         variants = [ variants ];
                     }
@@ -1035,12 +1104,12 @@ if (format_json) {
                         if (obj[m]["inherited_from"]) continue;  // skip inherited functions
                         var ret = (otype == "constructor") ? false : doxyType(obj[m]["returns"]);
                         if (ret) ret += " "; else ret = "";
-                        var fstr = "            "+ret+obj[m]["name"]+" (";
+                        var fstr = "            "+(obj[m]["static"] ? "static " : "")+ret+obj[m]["name"]+" (";
                         var variants = obj[m]["params"];
                         if (variants.length == 0) {
                             // no params
                             write( fstr + ");\n");
-                        } else if (!(variants[0] instanceof Array)) {
+                        } else if (!Array.isArray(variants[0])) {
                             // no variants, create array with one variant
                             variants = [ variants ];
                         }
@@ -1059,7 +1128,9 @@ if (format_json) {
                         if (obj[m]["value"] != undefined) {
                             write("            const "+obj[m]["name"]+" = "+obj[m]["value"]+";\n");
                         } else {
-                            write("            "+doxyType(otype)+" "+obj[m]["name"]+";\n");
+                            if (obj[m]["readonly"] && !obj[m]["static"]) write("            /** Read-only property. */\n");
+                            var qualifiers = obj[m]["static"] ? "static " + (obj[m]["readonly"] ? "const " : "") : "";
+                            write("            "+qualifiers+doxyType(otype)+" "+obj[m]["name"]+";\n");
                         }
                 
                     }
@@ -1157,7 +1228,7 @@ if (format_json) {
                         var variants = obj[m]["params"];
                         if (variants.length == 0) {
                             variants = [ [ ] ];
-                        } else if (!(variants[0] instanceof Array)) {
+                        } else if (!Array.isArray(variants[0])) {
                             // no variants, create array with one variant
                             variants = [ variants ];
                         }
@@ -1316,7 +1387,6 @@ if (format_json) {
 			"CpConstraint",
 			"CpSpace",
   			"ISpriteDrawHelper",
-			"ISpriteCollideHelper",
 			"Sprite",
 			"SpriteLayer",
 			"TileLayer",
@@ -1426,7 +1496,7 @@ if (format_json) {
                         if (variants.length == 0) {
                             // no params
                             write(fstr+"\", &"+ns+oname+"::"+obj[m]["name"]+embindAllowPtr(obj[m], 0)+")\n");
-                        } else if (!(variants[0] instanceof Array)) {
+                        } else if (!Array.isArray(variants[0])) {
                             // no variants, create array with one variant
                             write(fstr+"\", &"+ns+oname+"::"+obj[m]["name"]+embindAllowPtr(obj[m], 0)+")\n");
                         } else {

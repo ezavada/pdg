@@ -44,10 +44,10 @@
 #ifndef PDG_NO_EVENT_QUEUE
 #include <queue>
 #include <functional>
-#include "pdg/sys/mutex.h"
+#include <mutex>
 #endif // PDG_NO_EVENT_QUEUE
 
-//! \defgroup Managers
+//! \addtogroup Managers
 //! Collection of classes, types and constants that are the main points of interface to the Pixel Dust Game Framework
 
 namespace pdg {
@@ -119,7 +119,7 @@ public:
 #endif // PDG_NO_EVENT_QUEUE
 
 // lifecycle
-/// @cond C++
+/// @cond CXX
     virtual ~EventManager();
 /// @endcond
 
@@ -133,7 +133,7 @@ protected:
 	typedef std::queue<EventQueueEntry> EventQueueT;
 
     EventQueueT     mEventQueue;
-    Mutex           mEventQueueMutex;
+    std::mutex mEventQueueMutex;
   #endif // PDG_NO_EVENT_QUEUE
 /// @endcond
 };

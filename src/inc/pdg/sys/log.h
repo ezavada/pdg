@@ -43,6 +43,7 @@
 #include <cstdio>
 #include <string>
 #include <iostream>
+#include <format>
 
 namespace pdg {
 
@@ -69,7 +70,7 @@ public:
     virtual int8  getLogLevel() const = 0;
 
 // lifecycle
-/// @cond C++
+/// @cond CXX
     virtual ~LogManager() {};
 /// @endcond
 
@@ -86,7 +87,7 @@ protected:
 // -----------------------------------------------------------------------------------
 
 // don't build script interface to log utility class
-/// @cond C++
+/// @cond CXX
 #ifndef SWIG
 
 /*
@@ -136,23 +137,15 @@ public:
         int mLevel;
     };
     
-  #if COMPILER_TYPE_LONGLONG // support 64 bit integers where possible
-    typedef long long number;
-  #else  // don't have both long long and long at same time to prevent ambiguity
-    typedef long number;
-  #endif // COMPILER_TYPE_LONGLONG
+    using number = std::int64_t;
 
     log& operator<< (log::category inCat) { setCategory(inCat); return *this; }
     log& operator<< (log::level inLevel)  { mLevel = inLevel.mLevel; return *this; }
     log& operator<< (ELogLevelT inLevel)  { mLevel = inLevel; return *this; }
     log& operator<< (const char* inStr)   { mMessage.append(inStr); return *this; }
     log& operator<< (std::string& inStr)  { mMessage.append(inStr); return *this; }
-    log& operator<< (void* p)             { char tmp[32]; std::snprintf(tmp, 32, "%p", p); tmp[31]=0; mMessage.append(tmp); return *this; }
-  #if COMPILER_TYPE_LONGLONG // support 64 bit integers where possible
-    log& operator<< (number n)            { char tmp[64]; std::snprintf(tmp, 64, "%lld", n); tmp[63]=0; mMessage.append(tmp); return *this; }
-  #else  // don't have both long long and long at same time to prevent ambiguity
-    log& operator<< (number n)            { char tmp[32]; std::snprintf(tmp, 32, "%ld", n); tmp[31]=0; mMessage.append(tmp); return *this; }
-  #endif // COMPILER_TYPE_LONGLONG
+    log& operator<< (void* p) { mMessage += std::format("{}", p); return *this; }
+    log& operator<< (number n) { mMessage += std::format("{}", n); return *this; }
     log& operator<< (bool b)              { mMessage.append(b ? "true" : "false"); return *this; }
    
     log& operator<< (EEndLogT) 

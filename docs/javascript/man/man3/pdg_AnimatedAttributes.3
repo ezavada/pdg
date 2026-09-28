@@ -1,0 +1,1810 @@
+.TH "AnimatedAttributes" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AnimatedAttributes \- \fBDrawing\fP attributes with programmed movement and appearance animation\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.PP
+Inherits \fBAnimated\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.ti -1c
+.RI "\fBambientLight\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBandThen\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
+.br
+.RI "Advance appearance and transform animation\&. "
+.ti -1c
+.RI "\fBblendMode\fP (int blendMode)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeAmbientLight\fP (\fBColor\fP target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate ambient light color\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillColor\fP (\fBColor\fP target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate solid fill color\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate a linear fill gradient\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillOpacity\fP (number target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate fill opacity\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, \fBColor\fP endColor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate a radial fill gradient\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFrames\fP (int first, int last, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate an inclusive sequence of image frames\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeLightOffset\fP (\fBOffset\fP target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate sphere light offset\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeLineColor\fP (\fBColor\fP target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate stroke color\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeLineOpacity\fP (number target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate stroke opacity\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeLineThickness\fP (number target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate stroke thickness\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangePolarOffset\fP (\fBOffset\fP target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate sphere polar offset\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeRoundedCorners\fP (number target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate corner radius\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeSkew\fP (number x, number y, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate a relative shear\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeSphereRotation\fP (number radians, number seconds, int easing=\fBlinearTween\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Animate spherical-image rotation\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeSubsection\fP (\fBRect\fP target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate image subsection\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeTextSize\fP (number target, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate text size\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeTransform\fP (array number matrix, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate a replacement affine matrix\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBclipOverflow\fP (boolean clip)"
+.br
+.ti -1c
+.RI "\fBfillColor\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBfillOpacity\fP (number float opacity)"
+.br
+.ti -1c
+.RI "\fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBfitType\fP (int fit)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBflipX\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBflipY\fP ()"
+.br
+.ti -1c
+.RI "\fBfont\fP (\fBFont\fP font)"
+.br
+.ti -1c
+.RI "\fBframe\fP (int frame)"
+.br
+.ti -1c
+.RI "\fBColor\fP \fBgetAmbientLight\fP ()"
+.br
+.ti -1c
+.RI "int \fBgetBlendMode\fP ()"
+.br
+.ti -1c
+.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBgetClipOverflow\fP ()"
+.br
+.ti -1c
+.RI "\fBColor\fP \fBgetFillColor\fP ()"
+.br
+.ti -1c
+.RI "number float \fBgetFillOpacity\fP ()"
+.br
+.ti -1c
+.RI "int \fBgetFitType\fP ()"
+.br
+.ti -1c
+.RI "\fBFont\fP \fBgetFont\fP ()"
+.br
+.ti -1c
+.RI "int \fBgetFrame\fP ()"
+.br
+.ti -1c
+.RI "\fBPoint\fP \fBgetGradientEnd\fP ()"
+.br
+.ti -1c
+.RI "\fBColor\fP \fBgetGradientEndColor\fP ()"
+.br
+.ti -1c
+.RI "\fBPoint\fP \fBgetGradientStart\fP ()"
+.br
+.ti -1c
+.RI "\fBColor\fP \fBgetGradientStartColor\fP ()"
+.br
+.ti -1c
+.RI "int \fBgetGradientType\fP ()"
+.br
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetLightOffset\fP ()"
+.br
+.ti -1c
+.RI "\fBColor\fP \fBgetLineColor\fP ()"
+.br
+.ti -1c
+.RI "number float \fBgetLineOpacity\fP ()"
+.br
+.ti -1c
+.RI "uint \fBgetLineStyle\fP ()"
+.br
+.ti -1c
+.RI "number float \fBgetLineThickness\fP ()"
+.br
+.ti -1c
+.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetPolarOffset\fP ()"
+.br
+.ti -1c
+.RI "\fBPoint\fP \fBgetRadialGradientCenter\fP ()"
+.br
+.ti -1c
+.RI "\fBColor\fP \fBgetRadialGradientCenterColor\fP ()"
+.br
+.ti -1c
+.RI "\fBColor\fP \fBgetRadialGradientEndColor\fP ()"
+.br
+.ti -1c
+.RI "number float \fBgetRadialGradientRadius\fP ()"
+.br
+.ti -1c
+.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
+.br
+.ti -1c
+.RI "number \fBgetRotation\fP ()"
+.br
+.ti -1c
+.RI "number float \fBgetRoundedCornerRadius\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetScale\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetSize\fP ()"
+.br
+.ti -1c
+.RI "number float \fBgetSphereRotation\fP ()"
+.br
+.ti -1c
+.RI "number \fBgetSpin\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
+.br
+.ti -1c
+.RI "\fBRect\fP \fBgetSubsection\fP ()"
+.br
+.ti -1c
+.RI "number float \fBgetTextSize\fP ()"
+.br
+.ti -1c
+.RI "int \fBgetTextStyle\fP ()"
+.br
+.ti -1c
+.RI "\fBImage\fP \fBgetTexture\fP ()"
+.br
+.ti -1c
+.RI "array number \fBgetTransform\fP ()"
+.br
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBisFlippedX\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBisFlippedY\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBisSchedulePaused\fP ()"
+.br
+.ti -1c
+.RI "\fBlightOffset\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBlineColor\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBlineOpacity\fP (number float opacity)"
+.br
+.ti -1c
+.RI "\fBlineStyle\fP (int lineStyle)"
+.br
+.ti -1c
+.RI "\fBlineThickness\fP (number float thickness)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
+.br
+.ti -1c
+.RI "\fBpolarOffset\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.ti -1c
+.RI "\fBrotation\fP (number float radians, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.ti -1c
+.RI "\fBroundedCorners\fP (number float radius)"
+.br
+.ti -1c
+.RI "\fBscale\fP (number float xFactor, number float yFactor=xFactor, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBsetTransform\fP (array number matrix)"
+.br
+.RI "Replace the affine transform immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.br
+.ti -1c
+.RI "\fBskew\fP (number float xSkew, number float ySkew, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.ti -1c
+.RI "\fBsphereRotation\fP (number float rotation)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBsubsection\fP (\fBRect\fP section)"
+.br
+.ti -1c
+.RI "\fBtextSize\fP (number float size)"
+.br
+.ti -1c
+.RI "\fBtextStyle\fP (int style)"
+.br
+.ti -1c
+.RI "\fBtexture\fP (\fBImage\fP texture)"
+.br
+.ti -1c
+.RI "\fBtransform\fP (array number matrix)"
+.br
+.ti -1c
+.RI "\fBtranslation\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBwithAppearance\fP (\fBAttributes\fP overrides, boolean textOnly=false)"
+.br
+.in -1c
+
+Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandThen\fP ()"
+.br
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
+.ti -1c
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
+.br
+.RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
+.br
+.RI "Discard scheduled animations and pending sequencing\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipX\fP ()"
+.br
+.RI "Toggle the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipY\fP ()"
+.br
+.RI "Toggle the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
+.br
+.RI "Read axis-aligned logical bounds\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
+.br
+.RI "Read the rotation-center offset\&. "
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.RI "Read logical height\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.br
+.RI "Read the location in the container coordinate system\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.br
+.RI "Read the programmed movement rate\&. "
+.ti -1c
+.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
+.br
+.RI "Read rotated logical bounds\&. "
+.ti -1c
+.RI "number \fBgetRotation\fP ()"
+.br
+.RI "Read the current rotation in radians\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetScale\fP ()"
+.br
+.RI "Read independent transform scale\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetSize\fP ()"
+.br
+.RI "Read logical width and height\&. "
+.ti -1c
+.RI "number \fBgetSpin\fP ()"
+.br
+.RI "Read the programmed angular rate\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
+.br
+.RI "Read logical width and height change rates\&. "
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.RI "Read logical width\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
+.ti -1c
+.RI "boolean \fBisFlippedX\fP ()"
+.br
+.RI "Read the x reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisFlippedY\fP ()"
+.br
+.RI "Read the y reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisSchedulePaused\fP ()"
+.br
+.RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
+.br
+.RI "Pause scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Change logical size by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
+.br
+.RI "Resume scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate through a relative angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Set the rotation-center offset immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.br
+.RI "Set the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
+.br
+.RI "Set the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
+.br
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
+.br
+.RI "Set a constant programmed angular rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
+.br
+.RI "Set independent constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.br
+.RI "Set logical width immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
+.br
+.RI "Stop all programmed changes to position\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
+.br
+.RI "Stop all programmed changes to rotation\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by independent factors\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
+.br
+.RI "Delay the next timed animation request\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBDrawing\fP attributes with programmed movement and appearance animation\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+\fBAnimatedAttributes\fP combines \fBAnimated\fP and \fBAttributes\fP\&. Construct it without a \fBDrawing\fP or \fBElementRef\fP; an optional \fBAttributes\fP argument seeds a snapshot of the initial values\&. Animation tracks are not copied\&. Call animate(deltaSeconds) once per update; MVC controllers already advance their Views\&. All durations, waits and update steps are floating-point seconds\&. It has no physics body and does not animate stored geometry\&.
+.SH "Appearance channels"
+.PP
+The \fBchangeLineColor()\fP, \fBchangeLineThickness()\fP, \fBchangeLineOpacity()\fP, \fBchangeFillColor()\fP, \fBchangeFillOpacity()\fP, \fBchangeFillGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeRoundedCorners()\fP, \fBchangeTextSize()\fP, \fBchangeSubsection()\fP, \fBchangeSphereRotation()\fP, \fBchangePolarOffset()\fP, \fBchangeLightOffset()\fP and \fBchangeAmbientLight()\fP methods take their target values, an explicit duration in seconds and an optional easing constant (linearTween by default)\&. Sphere rotation also accepts an integer rotationDirection constant after easing\&.
+
+.PP
+blendMode, font, clipOverflow, lineStyle, textStyle, texture and fitType only have immediate setters\&. No texture crossfade or interpolation of enum values is implied\&. Gradient modes switch discretely when their delay expires; their numeric/color values interpolate\&. Choosing a solid, linear or radial fill interrupts all previous fill-color/gradient tracks, but leaves fill opacity and other channels alone\&. Line/fill methods resolve lineStyle_Auto when requested, as \fBAttributes\fP does\&.
+
+.PP
+changeFrames(first, last, seconds, easing) visits an inclusive sequence of integer frames in either direction, with equal time per frame before easing\&. It holds the last frame at completion\&. A wait preserves the previous frame until the sequence starts\&. Direct \fBframe()\fP calls interrupt the sequence\&.
+
+.PP
+Immediate setters interrupt their matching tracks\&. Independent channels continue\&. wait(seconds) delays the next timed request, which begins from the value at the end of the delay\&. Retargeting replaces a channel's pending request\&. \fBDrawing\fP and \fBElementRef\fP copy \fBAttributes\fP by default; use \fBElementRef::setLiveAttributes()\fP to follow subsequent samples\&.
+.SH "Transform model"
+.PP
+The initial logical size is 1 by 1, independent of \fBDrawing\fP geometry\&. Separate x/y transform scale defaults to (1,1); scaling leaves logical size unchanged\&. \fBAnimated\fP movement, rotation, size and scale share one affine transform with the appearance attributes\&. Its composition is translation, pivot, rotation, shear, logical size, independent scale, inverse-pivot\&. The inherited \fBAttributes\fP methods \fBtranslation()\fP, \fBrotation()\fP, \fBscale()\fP, \fBskew()\fP and \fBtransform()\fP postmultiply the current matrix; \fBsetTransform()\fP replaces it\&. Matrix edits and matrix tweens preserve logical width and height and update \fBAnimated\fP position, rotation and independent scale\&. Shear and singular matrices are retained\&. For example, setScale(2) followed by scale(3) leaves \fBgetScale()\fP at (6,6), without changing logical size\&. \fBgrow()\fP and \fBstretch()\fP change logical size while preserving scale\&.
+
+.PP
+Use the inherited \fBAnimated\fP methods for position, rotation, size and scale: \fBmoveTo()\fP sets an absolute location, \fBrotateTo()\fP sets an absolute angle with optional rotation direction, \fBresizeTo()\fP sets logical width/height, and \fBchangeScaleTo()\fP sets independent x/y scale\&. \fBmoveBy()\fP, \fBrotateBy()\fP, \fBresizeBy()\fP, \fBgrow()\fP and \fBstretch()\fP make relative changes\&. Their timed overloads use easeInOutQuad by default; pass linearTween explicitly for constant interpolation\&. \fBsetLocation()\fP, \fBsetRotation()\fP, \fBsetSize()\fP and \fBsetScale()\fP apply immediate changes\&. Programmed movement, spin and growth update the same matrix on each \fBanimate()\fP step\&. These changes are visible through \fBgetTransform()\fP and in \fBAttributes\fP snapshots passed to \fBDrawing\fP\&. A component request interrupts a whole-matrix tween at its current sample\&. \fBchangeSkew()\fP postmultiplies a shear onto the current matrix and interpolates to that result\&. \fBchangeTransform()\fP replaces the matrix by interpolating its six affine coefficients\&. Such interpolation can pass through a singular matrix and does not select an angular route: use \fBrotateBy()\fP/rotateTo() for rotations\&. Matrices use column-major arrays of nine numbers in JavaScript and glm::mat3 in C++\&.
+
+.PP
+The \fBAttributes\fP composition calls are immediate drawing-transform operations\&. \fBtranslation()\fP adds an offset along the current transformed axes; \fBrotation()\fP adds a rotation around the supplied local center; \fBscale()\fP multiplies the current transform around its supplied center\&. \fBsetLocation()\fP, \fBrotateTo()\fP and \fBchangeScaleTo()\fP instead target individual \fBAnimated\fP components\&. Both APIs keep the same matrix and \fBAnimated\fP state synchronized\&. Composition replaces transform tracks and stops programmed transform rates at the current sample\&. Like other immediate edits, \fBtranslation()\fP, \fBrotation()\fP and \fBscale()\fP reject a pending \fBwait()\fP or \fBandThen()\fP\&.
+
+.PP
+Translation and axis scaling preserve existing rotation, signed scale and shear; axis scaling multiplies the independent scale directly, even on collapsed axes\&. General affine edits decompose matrix column lengths into independent scale relative to the existing logical dimensions\&. A zero logical dimension can only represent a zero corresponding matrix column; an incompatible matrix request throws instead of changing that dimension\&. A queued matrix request is checked again when it starts, after any preceding resize\&.
+.SH "Language and Drawing integration"
+.PP
+In C++, this class publicly derives from both \fBAnimated\fP and \fBAttributes\fP, so it can be passed as either base reference\&. In JavaScript it inherits from \fBAnimated\fP and exposes the complete \fBAttributes\fP method surface\&. It is instanceof \fBAnimated\fP and instanceof \fBAnimatedAttributes\fP, but not instanceof \fBAttributes\fP; native \fBAttributes\fP arguments in \fBPort\fP, \fBDrawing\fP and \fBElementRef\fP accept it with the correct base-pointer conversion\&. Copies of \fBAttributes\fP contain values, without animation tracks\&.
+
+.PP
+Views derive from \fBAnimatedAttributes\fP\&. Their size remains the layout rectangle's width and height, and their location is its center\&. Passing a View directly as \fBAttributes\fP therefore maps centered unit coordinates onto the view rectangle\&. Existing ControlAttributes themes remain separate; inheriting this class does not automatically replace every themed drawing primitive's attributes\&. General MVC clipping/hit-testing for rotation and reflection remains pending\&.
+
+.PP
+.PP
+.nf
+const style = new pdg\&.AnimatedAttributes();
+style\&.fillColor(new pdg\&.Color(1, 0, 0));
+style\&.changeFillColor(new pdg\&.Color(0, 0, 1), 0\&.5, pdg\&.easeInOutQuad);
+style\&.changeFillOpacity(0\&.25, 0\&.5);
+style\&.animate(0\&.25);
+// This Drawing element captures the current sample; it is not a live association\&.
+const drawing = pdg\&.createDrawing();
+const element = drawing\&.addRect(new pdg\&.Rect(0, 0, 100, 40), style);
+// Explicitly applying a later sample remains possible:
+style\&.animate(0\&.25);
+element\&.setAttributes(style);
+.fi
+.PP
+ 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBAnimated\fP addAnimationHelper (\fBIAnimationHelper\fP helper)"
+
+.SS "ambientLight (\fBColor\fP color)"
+
+.SS "\fBAnimated\fP andThen ()"
+
+.SS "boolean animate (number deltaSeconds)"
+
+.PP
+Advance appearance and transform animation\&. Advances programmed movement, scheduled transitions, frame sequences, and animation helpers\&. Tween pause affects transitions and delays; constant rates still run\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdeltaSeconds\fP Finite nonnegative elapsed time in seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True if the update changed animation values; false otherwise\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Advance a standalone object with animate(deltaSeconds)\&. \fBDrawing\fP and \fBElementRef\fP copy a sample of \fBAttributes\fP; use \fBElementRef\&.setLiveAttributes()\fP to follow later samples\&. MVC controllers advance their Views automatically\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBAnimated::pauseSchedule()\fP, \fBchangeFillColor()\fP 
+.RE
+.PP
+
+.SS "blendMode (int blendMode)"
+
+.PP
+References \fBblendMode()\fP\&.
+.PP
+Referenced by \fBblendMode()\fP\&.
+.SS "\fBAnimated\fP cancelSchedule ()"
+
+.SS "\fBAnimatedAttributes\fP changeAmbientLight (\fBColor\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate ambient light color\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBambientLight()\fP setter interrupts this channel; unrelated channels continue\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Target \fBColor\fP for ambient lighting\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBambientLight()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetBy (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetTo (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillColor (\fBColor\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate solid fill color\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBfillColor()\fP setter interrupts this channel; unrelated channels continue\&. Selects a solid fill and replaces previous solid/gradient fill-color tracks\&. Fill opacity remains independent\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Target \fBColor\fP, interpolated component by component\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Advance a standalone object with animate(deltaSeconds)\&. \fBDrawing\fP and \fBElementRef\fP copy a sample of \fBAttributes\fP; use \fBElementRef\&.setLiveAttributes()\fP to follow later samples\&. MVC controllers advance their Views automatically\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const style = new pdg\&.AnimatedAttributes();
+style\&.fillColor(new pdg\&.Color(1, 0, 0));
+style\&.changeFillColor(new pdg\&.Color(0, 0, 1), 0\&.5);
+style\&.animate(0\&.25);
+const drawing = pdg\&.createDrawing();
+const element = drawing\&.addRect(new pdg\&.Rect(0, 0, 20, 10), style);
+style\&.animate(0\&.25);
+element\&.setAttributes(style);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBfillColor()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate a linear fill gradient\&. Switches the fill mode when the pending delay expires, then interpolates the numeric/color fields\&. Replaces other solid/gradient fill-color tracks while preserving fill opacity\&. Resolves lineStyle_Auto as a fill\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIstart\fP Target gradient start point\&. 
+.br
+\fIstartColor\fP Target color at the start\&. 
+.br
+\fIend\fP Target gradient end point\&. 
+.br
+\fIendColor\fP Target color at the end\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+style\&.changeFillGradient(new pdg\&.Point(0, 0), new pdg\&.Color(1, 0, 0),
+    new pdg\&.Point(100, 0), new pdg\&.Color(0, 0, 1), 0\&.5);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBchangeFillRadialGradient()\fP, \fBchangeFillColor()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillOpacity (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate fill opacity\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBfillOpacity()\fP setter interrupts this channel; unrelated channels continue\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Finite target opacity, normally from 0 to 1\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBfillOpacity()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, \fBColor\fP endColor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate a radial fill gradient\&. Switches the fill mode when the pending delay expires, then interpolates the numeric/color fields\&. Replaces other solid/gradient fill-color tracks while preserving fill opacity\&. Resolves lineStyle_Auto as a fill\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIcenter\fP Target gradient center\&. 
+.br
+\fIcenterColor\fP Target color at the center\&. 
+.br
+\fIradius\fP Finite target gradient radius in geometry units\&. 
+.br
+\fIendColor\fP Target color at the outer radius\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBchangeFillGradient()\fP, \fBchangeFillColor()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFrames (int first, int last, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate an inclusive sequence of image frames\&. Visits first through last in either direction, with equal time per frame before easing\&. Does not loop; holds the last frame at completion\&. A pending wait keeps the old frame until the sequence starts\&. Calling \fBframe()\fP directly cancels the sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIfirst\fP First integer frame index\&. 
+.br
+\fIlast\fP Last integer frame index, inclusive\&. 
+.br
+\fIseconds\fP Finite nonnegative duration of the entire sequence, in seconds\&. Zero selects the last frame when the delay expires\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+style\&.changeFrames(0, 7, 0\&.8);
+// Call style\&.animate(deltaSeconds) and reapply it each update\&.
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBframe()\fP, \fBAnimated::wait()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeLightOffset (\fBOffset\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate sphere light offset\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlightOffset()\fP setter interrupts this channel; unrelated channels continue\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Target \fBOffset\fP for the light position\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBlightOffset()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeLineColor (\fBColor\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate stroke color\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineColor()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Target \fBColor\fP, interpolated component by component\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Advance a standalone object with animate(deltaSeconds)\&. \fBDrawing\fP and \fBElementRef\fP copy a sample of \fBAttributes\fP; use \fBElementRef\&.setLiveAttributes()\fP to follow later samples\&. MVC controllers advance their Views automatically\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBlineColor()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeLineOpacity (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate stroke opacity\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineOpacity()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Finite target opacity, normally from 0 to 1\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBlineOpacity()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeLineThickness (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate stroke thickness\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineThickness()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Finite target stroke width in drawing/Port units\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBlineThickness()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementBy (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementTo (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changePolarOffset (\fBOffset\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate sphere polar offset\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBpolarOffset()\fP setter interrupts this channel; unrelated channels continue\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Target \fBOffset\fP for spherical image mapping\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBpolarOffset()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeRoundedCorners (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate corner radius\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBroundedCorners()\fP setter interrupts this channel; unrelated channels continue\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Finite target radius in geometry units\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBroundedCorners()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeScaleBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeScaleTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimatedAttributes\fP changeSkew (number x, number y, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate a relative shear\&. Postmultiplies the current transform by the requested shear, then interpolates the six affine matrix coefficients\&. This can pass through singular matrices\&. Replaces transform tracks; a later component request interrupts the matrix tween\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Finite coefficient added to y per unit x\&. 
+.br
+\fIy\fP Finite coefficient added to x per unit y\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBchangeTransform()\fP, \fBskew()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeSphereRotation (number radians, number seconds, int easing = \fR\fBlinearTween\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+Animate spherical-image rotation\&. Targets an absolute angle\&. Replaces the matching track and consumes the pending wait\&. Positive angles rotate clockwise\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradians\fP Finite target angle in radians\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&. 
+.br
+\fIdirection\fP Integer \fBpdg\&.rotationDirection_AsSpecified\fP, Shortest, Clockwise, or CounterClockwise (each with the rotationDirection_ prefix)\&. AsSpecified preserves the requested number of turns\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+style\&.changeSphereRotation(Math\&.PI, 0\&.5, pdg\&.easeInOutQuad,
+    pdg\&.rotationDirection_Shortest);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsphereRotation()\fP, \fBAnimated::wait()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBAnimated\fP changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeSubsection (\fBRect\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate image subsection\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBsubsection()\fP setter interrupts this channel; unrelated channels continue\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Target \fBRect\fP in source-image coordinates\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsubsection()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeTextSize (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate text size\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBtextSize()\fP setter interrupts this channel; unrelated channels continue\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Finite target font size\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBtextSize()\fP, \fBAnimated::wait()\fP, \fBanimate()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeTransform (array number matrix, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate a replacement affine matrix\&. Interpolates the six affine coefficients, which may pass through singular matrices\&. Preserves logical width and height; matrix scale updates the independent scale components\&. A nonzero matrix column requires a nonzero corresponding logical dimension\&. Use \fBrotateTo()\fP for angular paths and direction control\&. Replaces transform tracks and constant transform rates; subsequent component requests interrupt the matrix tween at its current sample\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImatrix\fP Column-major array of nine finite numbers: [a, b, 0, c, d, 0, tx, ty, 1]\&. It maps (x,y) to (a*x+c*y+tx, b*x+d*y+ty)\&. 
+.br
+\fIseconds\fP Required finite, nonnegative duration in seconds\&. Zero applies the target immediately\&. After \fBwait()\fP or \fBandThen()\fP, duration must be greater than zero\&. 
+.br
+\fIeasing\fP Integer easing constant, such as \fR\fBpdg\&.linearTween\fP\fP or \fR\fBpdg\&.easeInOutQuad\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+style\&.changeTransform([1, 0, 0, 0\&.25, 1, 0, 30, 10, 1], 0\&.5);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBrotateTo()\fP, \fBchangeSkew()\fP, \fBsetTransform()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP clearAnimationHelpers ()"
+
+.SS "\fBAnimatedAttributes\fP clipOverflow (boolean clip)"
+
+.SS "fillColor (\fBColor\fP color)"
+
+.SS "fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+
+.SS "fillOpacity (number float opacity)"
+
+.SS "fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
+
+.SS "fitType (int fit)"
+
+.SS "\fBAnimated\fP flipX ()"
+
+.SS "\fBAnimated\fP flipY ()"
+
+.SS "font (\fBFont\fP font)"
+
+.PP
+References \fBfont()\fP\&.
+.PP
+Referenced by \fBfont()\fP\&.
+.SS "frame (int frame)"
+
+.PP
+References \fBframe()\fP\&.
+.PP
+Referenced by \fBframe()\fP\&.
+.SS "\fBColor\fP getAmbientLight ()"
+
+.SS "int getBlendMode ()"
+
+.SS "\fBRect\fP getBoundingBox ()"
+
+.SS "\fBOffset\fP getCenterOffset ()"
+
+.SS "boolean getClipOverflow ()"
+
+.SS "\fBColor\fP getFillColor ()"
+
+.SS "number float getFillOpacity ()"
+
+.SS "int getFitType ()"
+
+.SS "\fBFont\fP getFont ()"
+
+.SS "int getFrame ()"
+
+.SS "\fBPoint\fP getGradientEnd ()"
+
+.SS "\fBColor\fP getGradientEndColor ()"
+
+.SS "\fBPoint\fP getGradientStart ()"
+
+.SS "\fBColor\fP getGradientStartColor ()"
+
+.SS "int getGradientType ()"
+
+.SS "number getHeight ()"
+
+.SS "\fBOffset\fP getLightOffset ()"
+
+.SS "\fBColor\fP getLineColor ()"
+
+.SS "number float getLineOpacity ()"
+
+.SS "uint getLineStyle ()"
+
+.SS "number float getLineThickness ()"
+
+.SS "\fBPoint\fP getLocation ()"
+
+.SS "\fBOffset\fP getMovement ()"
+
+.SS "\fBOffset\fP getPolarOffset ()"
+
+.SS "\fBPoint\fP getRadialGradientCenter ()"
+
+.SS "\fBColor\fP getRadialGradientCenterColor ()"
+
+.SS "\fBColor\fP getRadialGradientEndColor ()"
+
+.SS "number float getRadialGradientRadius ()"
+
+.SS "\fBRotatedRect\fP getRotatedBounds ()"
+
+.SS "number getRotation ()"
+
+.SS "number float getRoundedCornerRadius ()"
+
+.SS "\fBOffset\fP getScale ()"
+
+.SS "\fBOffset\fP getSize ()"
+
+.SS "number float getSphereRotation ()"
+
+.SS "number getSpin ()"
+
+.SS "\fBOffset\fP getStretching ()"
+
+.SS "\fBRect\fP getSubsection ()"
+
+.SS "number float getTextSize ()"
+
+.SS "int getTextStyle ()"
+
+.SS "\fBImage\fP getTexture ()"
+
+.SS "array number getTransform ()"
+
+.SS "number getWidth ()"
+
+.SS "\fBAnimated\fP grow (number factor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "boolean hasScheduledAnimations ()"
+
+.SS "boolean isFlippedX ()"
+
+.SS "boolean isFlippedY ()"
+
+.SS "boolean isSchedulePaused ()"
+
+.SS "lightOffset (\fBOffset\fP offset)"
+
+.SS "lineColor (\fBColor\fP color)"
+
+.SS "lineOpacity (number float opacity)"
+
+.SS "lineStyle (int lineStyle)"
+
+.PP
+References \fBlineStyle()\fP\&.
+.PP
+Referenced by \fBlineStyle()\fP\&.
+.SS "lineThickness (number float thickness)"
+
+.SS "\fBAnimated\fP moveBy (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveBy (\fBOffset\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveTo (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveTo (\fBPoint\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP pauseSchedule ()"
+
+.SS "polarOffset (\fBOffset\fP offset)"
+
+.SS "\fBAnimated\fP removeAnimationHelper (\fBIAnimationHelper\fP helper)"
+
+.SS "\fBAnimated\fP resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP resizeTo (number width, number height, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP resumeSchedule ()"
+
+.SS "\fBAnimated\fP rotateBy (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBAnimated\fP rotateTo (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "rotation (number float radians, \fBPoint\fP center = \fR\fBPoint\fP(0, 0)\fP)"
+
+.PP
+Referenced by \fBsphereRotation()\fP\&.
+.SS "roundedCorners (number float radius)"
+
+.SS "scale (number float xFactor, number float yFactor = \fRxFactor\fP, \fBPoint\fP center = \fR\fBPoint\fP(0, 0)\fP)"
+
+.SS "\fBAnimated\fP setCenterOffset (\fBOffset\fP offset)"
+
+.SS "\fBAnimated\fP setFlipX (boolean flip)"
+
+.SS "\fBAnimated\fP setFlipY (boolean flip)"
+
+.SS "\fBAnimated\fP setGrowing (number value)"
+
+.SS "\fBAnimated\fP setHeight (number value)"
+
+.SS "\fBAnimated\fP setLocation (number x, number y)"
+
+.SS "\fBAnimated\fP setLocation (\fBPoint\fP value)"
+
+.SS "\fBAnimated\fP setMovement (number xPerSecond, number yPerSecond)"
+
+.SS "\fBAnimated\fP setMovement (\fBVector\fP value)"
+
+.SS "\fBAnimated\fP setRotation (number value)"
+
+.SS "\fBAnimated\fP setScale (number x, number y = \fRx\fP)"
+
+.SS "\fBAnimated\fP setSize (number width, number height)"
+
+.SS "\fBAnimated\fP setSize (\fBOffset\fP value)"
+
+.SS "\fBAnimated\fP setSpin (number value)"
+
+.SS "\fBAnimated\fP setStretching (number widthPerSecond, number heightPerSecond)"
+
+.SS "\fBAnimatedAttributes\fP setTransform (array number matrix)"
+
+.PP
+Replace the affine transform immediately\&. Unlike \fBtransform()\fP, replaces the matrix instead of postmultiplying it\&. \fBAnimatedAttributes\fP preserves its logical width and height, updates its shared \fBAnimated\fP transform components, and cancels conflicting transform animation\&. It rejects nonfinite or non-affine matrices and nonzero matrix columns whose corresponding logical dimension is zero\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImatrix\fP Array of nine numbers in column-major order\&. For a 2D affine transform use [a, b, 0, c, d, 0, tx, ty, 1], mapping (x,y) to (a*x+c*y+tx, b*x+d*y+ty)\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+style\&.setTransform([1, 0, 0, 0, 1, 0, 20, 10, 1]);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBtransform()\fP, \fBgetTransform()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setWidth (number value)"
+
+.SS "skew (number float xSkew, number float ySkew, \fBPoint\fP center = \fR\fBPoint\fP(0, 0)\fP)"
+
+.SS "sphereRotation (number float rotation)"
+
+.PP
+References \fBrotation()\fP\&.
+.SS "\fBAnimated\fP stopGrowing ()"
+
+.SS "\fBAnimated\fP stopMovement ()"
+
+.SS "\fBAnimated\fP stopSpinning ()"
+
+.SS "\fBAnimated\fP stopStretching ()"
+
+.SS "\fBAnimated\fP stretch (number widthFactor, number heightFactor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "subsection (\fBRect\fP section)"
+
+.SS "textSize (number float size)"
+
+.SS "textStyle (int style)"
+
+.SS "texture (\fBImage\fP texture)"
+
+.PP
+References \fBtexture()\fP\&.
+.PP
+Referenced by \fBtexture()\fP\&.
+.SS "transform (array number matrix)"
+
+.SS "translation (\fBOffset\fP offset)"
+
+.SS "\fBAnimated\fP wait (number durationSeconds)"
+
+.SS "\fBAttributes\fP withAppearance (\fBAttributes\fP overrides, boolean textOnly = \fRfalse\fP)"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

@@ -1,9 +1,11 @@
 namespace pdg { /**
+\fn pdg::SpriteLayer::addSprite(Sprite newSprite)
+\brief Add a Sprite and its mounted descendants to this layer.
 
-\fn pdg::SpriteLayer::addSprite
+Transfers the group from its previous layer when necessary, preserving its layer-coordinate transforms and mounting relationships. Inserts the host first, followed by descendants, in front of existing sprites. A Sprite already in this layer is unchanged. Use Sprite::moveBehind() or Sprite::moveInFrontOf() to change one member's draw order.
 
-\brief add an existing sprite to the layer
+\param newSprite The Sprite to add. An attached child must first be detached with Part::detachSprite(); otherwise the call throws without changing either layer.
 
-\warning if the sprite already belongs to another layer this call is ignored
-
+\note Transfer must occur outside animation modifiers and locked physics callbacks. Root constraints and physical animation rigs are disconnected on removal; ordinary Parts, artwork and modifiers remain associated. Imported Spriter sprites retain their shared model and artwork independently of the source layer. Destroying that layer preserves transferred or retained sprites, including their playback, bone bindings and modifiers.
+\see removeSprite(), Part::attachSprite()
 **/ }

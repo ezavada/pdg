@@ -1,0 +1,12 @@
+/**
+\fn pdg::Sprite::getAnimationDrawBounds()
+\brief Copy the evaluated animation drawing bounds.
+
+Includes authored images and enabled custom drawings. Custom bounds come from their declared bone-local rectangles. These are rendering/culling bounds and do not create collision shapes.
+
+\return An object with left, top, right, bottom in owning-layer coordinates and an uncullable boolean. When uncullable is true, the rectangle cannot safely cull all content.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\see addAnimationDrawable(), getAnimationPose()
+*/

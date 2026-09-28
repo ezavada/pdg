@@ -1,0 +1,51 @@
+.TH "_particle_effects" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+_particle_effects \- Particle effects 
+.PP
+Particles provide whole-object artwork, programmed animation and optional physics without Sprite parts, subsections, attachment points, Spriter frames, bones or rigs\&. Use Image or Drawing artwork and the inherited Animated movement, rotation, size, scale and scheduling methods\&. Seconds are simulation time; rotation is in radians, clockwise positive\&. Dynamic physics owns movement and rotation; opacity and size animation can continue\&.
+
+.PP
+SpriteLayer owns active particles and standalone emitters\&. Its particle budget defaults to 10000 and also covers child emitters\&. Existing particles survive a reduced budget\&. Particles draw after the layer's Sprites, in creation order; use separate layers to order effects around other scene objects\&. Hiding a layer affects drawing only\&. Stopping layer animation pauses lifetime, programmed animation and emission; shared physics continues as for Sprites\&.
+
+.PP
+Templates share Image/Drawing resources and capture current values plus remaining scheduled actions\&. Every emission starts at age zero and gets independent animation tracks, body, collider and child-emitter state\&. The emitter supplies initial position, facing and linear velocity\&. Relative moveBy/rotateBy schedules follow the spawn pose; absolute moveTo/rotateTo destinations retain their meaning\&. Helpers, event/contact callbacks, external constraints and external body associations are not copied\&. Prefer fresh detached particles as templates\&. Detached objects advance only when animate(seconds) is called explicitly\&. Calling animate() on a layer-owned particle or emitter throws\&. Particle\&.animate() returns whether the particle is alive; ParticleEmitter\&.animate() returns whether emission is armed, and detached emitters do not emit\&.
+
+.PP
+Particles and emitters are transient and cannot be serialized individually\&. Layer snapshots omit them; restoring an initial layer snapshot clears live particles and emitters\&. Use retained effect configuration to recreate effects after loading\&.
+
+.PP
+An owned emitter's location and rotation are local to its Particle\&. Emitted particles immediately become independent layer members\&. Expiry stops the owned emitter but leaves its previous emissions alive\&. New emissions start updating on the next tick, preventing recursive same-tick emission\&. Rates accumulate fractional particles across ticks; budget overflow is dropped, not queued\&. Spawn positions are sampled at emission time; no sub-frame trajectories are synthesized\&.
+.SH "An emitter with a fading trail"
+.PP
+\fBNote\fP
+.RS 4
+Run in a GUI application with an active SpriteLayer named layer\&.
+.RE
+.PP
+.PP
+.nf
+const artwork = pdg\&.createDrawing();
+artwork\&.addEllipse(new pdg\&.Point(0, 0), 4, 4,
+    new pdg\&.Attributes()\&.fillColor('#88bbff'));
+const smoke = new pdg\&.Particle()\&.setDrawing(artwork)
+    \&.setLifetime(1)\&.grow(2, 1)\&.fadeTo(0, 1);
+const rocket = new pdg\&.Particle()\&.setDrawing(artwork)
+    \&.setLifetime(3);
+rocket\&.setupParticleEmitter()\&.setParticleTemplate(smoke)
+    \&.setEmissionRate(30)\&.startEmitting();
+const launcher = layer\&.createParticleEmitter()
+    \&.setParticleTemplate(rocket)\&.setLocation(200, 300)
+    \&.setRotation(\-Math\&.PI / 2)\&.setParticleSpeed(100, 150)
+    \&.setSpread(0\&.4)\&.setEmissionRate(2)\&.startEmitting();
+// Stops launching; existing rockets and their trails continue until expiry\&.
+// launcher\&.stopEmitting();
+.fi
+.PP
+.SH "Contacts and body thresholds"
+.PP
+Particle uses EventEmitter handlers\&. Enable Collider::setWantsContactEvents() to receive eventType_ColliderContact on the Particle\&. Set PhysicsBody::setBreakAngularSpeed() to receive eventType_ParticleBreak; its payload contains body, referenceBody (nullable), angularSpeed and breakAngularSpeed\&. Thresholds notify without clamping motion or disconnecting bodies\&.
+.SH "Ownership"
+.PP
+JavaScript handles retain their native objects\&. Particle\&.physics, Particle\&.collider and Particle\&.emitter are read-only; absence is PhysicsBody\&.NoPhysics, Collider\&.NoCollider and null respectively\&. Retained handles are never silently reused for another particle\&. 

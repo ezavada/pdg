@@ -20,7 +20,7 @@ class MyCollisionHandler : public pdg::IEventHandler {
 };
 
 class BoundsHelper : public pdg::IAnimationHelper {
-    virtual bool animate(pdg::Animated* what, uint32 msElapsed);
+    virtual bool animate(pdg::AnimatedBase* what, double deltaSeconds);
     virtual bool ownedByAnimated() { return false; } // we will just have one since we don't track state
 };
 
@@ -28,9 +28,6 @@ class MyDrawHelper : public pdg::ISpriteDrawHelper {
     virtual bool draw(pdg::Sprite* sprite, pdg::Port* port);
 };
 
-class MyCollideHelper : public pdg::ISpriteCollideHelper {
-    virtual bool allowCollision(pdg::Sprite* sprite, pdg::Sprite* withSprite);
-};
 
 void do_Init();
 void do_Idle();

@@ -2,6 +2,8 @@ namespace pdg { /**
 
 \class pdg::Attributes
 
+\ingroup Graphics
+
 \brief Container for styling and transformation attributes used in drawing operations
 
 **/ }

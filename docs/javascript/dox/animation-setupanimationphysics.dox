@@ -1,0 +1,113 @@
+/**
+\fn pdg::Sprite::setupAnimationPhysics(object definition)
+\brief Create a physical rig for the current pose.
+
+Validates the definition before creating bodies and joints. Creates an ordinary root PhysicsBody if needed, temporarily makes it kinematic, and suspends its collision filter. Clip/controller evaluation supplies the desired pose; physical bodies then supply the displayed result.
+
+Each configured bone has a Part named exactly after the bone. Obtain it with
+findPart() and operate on its PhysicsBody through the read-only `.physics`
+property. The Part's local transform is the capsule offset from the bone; its
+world transform follows the solved body. Positions and application points use
+owning-layer coordinates, and velocities use distance units or radians per second.
+
+A pre-existing Part with that name is reused only if it is bound directly to the
+same bone, has the same capsule offset and unit unreflected scale, has no parent
+Part, and has neither a PhysicsBody nor a Collider. Conflicts reject the configuration without replacing
+caller-owned Parts. While enabled, body mass, inertia, materials, velocities,
+impulses, forces, torque, damping and drive targets are available through `.physics`.
+The definition fixes bone bindings and capsule offsets: disable the
+physical rig before changing those or removing a mapped Part/body. Disable keeps
+the Parts and their names/IDs but returns their `.physics` properties to NoPhysics.
+Independently retained bodies keep their last state and detach to the basic solver.
+
+Capsules and pivot/rotary-limit joints are shared Collider and PhysicsConstraint
+components, available through each Part's collider and physics properties.
+The Sprite's physics.getMass() reports attached component mass; setMass() scales
+those components proportionally. Part mass edits and explicit attach/detach
+operations update the total without redistributing other masses. Whole-Sprite
+impulses target the selected physical root. Contact notifications use the shared
+ColliderContact event; enable them with collider.setWantsContactEvents(true).
+Initial Sprite/Layer snapshots preserve the active rig and its control state.
+
+\param definition Physical rig object described below.
+
+\return No value.
+
+\note Call enableAnimationPose() successfully before using this method. The Sprite must belong to a physics-enabled SpriteLayer, and supportsAnimationPhysics() must be true. The example assumes a bone named shoulder.
+
+\par Example
+\code{.js}
+sprite.setupAnimationPhysics({
+    bodies: [{ bone: 'shoulder', mass: 1, length: 10, radius: 1 }],
+    rootMode: pdg.animationRoot_Fixed
+});
+const shoulder = sprite.findPart('shoulder');
+const body = shoulder.physics;
+const state = body.getState();
+body.applyImpulse(new pdg.Vector(2, 0), new pdg.Point(state.x, state.y));
+body.applyTorque(0.5, 0.25); // torque integrated over a quarter second
+\endcode
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_physics_definition
+\par Physical animation definition
+| Top-level field | Default | Meaning |
+| --- | --- | --- |
+| `version` | 1 | Definition format; only integer version 1 is supported. |
+| `bodies` | Required | Nonempty array of body objects (at most 65,536), described below. Array indices identify bodies. |
+| `joints` | [] | Array of joint objects (at most 65,536), described below. |
+| `rootMode` | animationRoot_Fixed | Fixed keeps the Sprite frame independent; Follow publishes the selected body's translation to the Sprite. Both support mixed body modes. |
+| `rootBody` | 0 | Body index used for root follow and release velocity. |
+| `selfCollisions` | false | Whether physical animation bodies may collide with one another. |
+
+| Body field | Default | Meaning |
+| --- | --- | --- |
+| `bone` | Required | Bone name or ID in the current rig; one body per driven bone. |
+| `mass`, `length`, `radius` | Required | Finite mass > 0, capsule length >= 0, and radius > 0 in rig distance units. |
+| `mode` | animationBody_Dynamic | Dynamic simulation or animationBody_Kinematic following the desired pose. |
+| `offsetX`, `offsetY`, `offsetRotation` | 0 | Bone-local placement; rotation is in radians. |
+| `friction` | 0.7 | Finite nonnegative contact friction. |
+| `elasticity` | 0 | Finite bounce coefficient from 0 to 1. |
+| `categories`, `mask` | 4294967295 | Unsigned 32-bit collision category and mask bits. |
+
+| Joint field | Default | Meaning |
+| --- | --- | --- |
+| `parent`, `child` | Required | Body indices connected by the joint. |
+| `parentX`, `parentY`, `childX`, `childY` | 0 | Joint anchor positions in the respective body frames. |
+| `minAngle`, `maxAngle` | -Math.PI, Math.PI | Finite relative angular limits in radians. |
+| `maxForce` | 1000000 | Finite positive joint force limit. |
+| `collide` | false | Whether the connected bodies may collide. |
+
+Fixed-root mode keeps the Sprite frame authoritative. Follow-root mode publishes
+the selected body's translation while preserving the Sprite's rotation and scale.
+The selected body can be Kinematic, Dynamic or Driven. Sprite movement and rotation
+edit the animation target frame: controlled root bodies sweep or drive toward it,
+and dynamic descendants react through their joints. Dynamic bodies are not
+teleported. Pose/Part queries between an edit and the next solve do not discard
+the target, and followed translation does not feed back into a drive target.
+Use scheduled movement/rotation or an animation helper for a continuous path.
+
+The Sprite and driven bones require unit effective scale magnitudes; reflection is
+supported. `setFlipX()`/`setFlipY()` also reflect an active rig about the Sprite's
+local axes through its origin. Positions, linear/angular velocities, collider
+frames, internal anchors, rotary limits and rig recovery state follow the flip.
+Body, collider, shape and constraint identities and mass/inertia are preserved.
+Detached parts remain independent. Bone/Part queries, artwork and mounts use the
+same reflected frames. World-space manual drives, IK targets, forces and torques
+retain their world targets; gravity is unchanged.
+
+External linear joints retain their outside anchors. Disconnect external angular
+joints before flipping; an unsupported boundary joint, a locked solver, or a pose
+callback rejects the flip without changing it. Arbitrary live scaling does not
+resize physical bodies. Create the rig outside callbacks and a locked physics
+step; existing Sprite joints and a second enabled rig are rejected.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see disableAnimationPhysics(), findPart(), PhysicsBody::getState(), supportsAnimationPhysics()
+*/

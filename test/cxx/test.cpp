@@ -30,6 +30,7 @@
 #include "test.h"
 #include "pdg/framework.h"
 
+#include <cstdio>
 #include <string>
 
 MyHandler* gMyHandler;
@@ -172,7 +173,10 @@ MyHandler::handleEvent(pdg::EventEmitter* inEmitter, long inEventType, void* inE
     if (inEventType == pdg::eventType_PortDraw) {
         pdg::Offset lightOffset( (gWorldRot / 365.242)*40.0 + M_PI_2, 0 ); // remove *40.0 for correct day/year ratio
         pdg::Offset polarOffset(0, -23.5*M_PI/180.0 );
-        gPort->drawTexturedSphere(gEarthTextureImage, gPort->getDrawingArea().centerPoint(), 300.0f, gWorldRot, polarOffset, lightOffset );
+        pdg::Attributes earthAttrs;
+        earthAttrs.texture(gEarthTextureImage).sphereRotation(gWorldRot)
+            .polarOffset(polarOffset).lightOffset(lightOffset);
+        gPort->drawSphere(gPort->getDrawingArea().centerPoint(), 300.0f, earthAttrs);
         gWorldRot -= (M_PI/180.0f)/4.0; // rotate counterclockwise
     }
     return false; // we didn't handle this
@@ -261,20 +265,22 @@ bool do_ErasePort() {
 //    backgroundAttrs.fillColor(gBackgroundColor);
 //    gPort->drawRect(portRect, backgroundAttrs);
     std::string fps = "FPS: ";
-    std::sprintf(s, "%i", (int)pdg::GraphicsManager::instance().getFPS());
+    std::snprintf(s, sizeof(s), "%i", (int)pdg::GraphicsManager::instance().getFPS());
     fps += s;
+    pdg::Attributes fpsAttrs;
+    fpsAttrs.textSize(14).fillColor(PDG_BLACK_COLOR);
     pdg::Point where(9, 19);
-    gPort->drawText( fps.c_str(), where, 14);
+    gPort->drawText(fps.c_str(), where, fpsAttrs);
     where.x += 2;
-    gPort->drawText( fps.c_str(), where, 14);
+    gPort->drawText(fps.c_str(), where, fpsAttrs);
     where.y += 2;
-    gPort->drawText( fps.c_str(), where, 14);
+    gPort->drawText(fps.c_str(), where, fpsAttrs);
     where.x -= 2;
-    gPort->drawText( fps.c_str(), where, 14);
+    gPort->drawText(fps.c_str(), where, fpsAttrs);
     where.x += 1;
     where.y -= 1;
-    gPort->drawText( fps.c_str(), where, 14, 0, PDG_WHITE_COLOR);
-//    gPort->drawTexturedSphere(gEarthTextureImage, gPort->getDrawingArea().centerPoint(), 300.0f);
+    fpsAttrs.fillColor(PDG_WHITE_COLOR);
+    gPort->drawText(fps.c_str(), where, fpsAttrs);
     return true; // completely handled
 }
 
@@ -284,29 +290,31 @@ bool do_ErasePort() {
 // bounce if it goes out of bounds
 
  bool 
- BoundsHelper::animate(pdg::Animated* whatP, uint32 msElapsed) {
-     pdg::Animated& what = *whatP;
+ BoundsHelper::animate(pdg::AnimatedBase* whatP, double deltaSeconds) {
+     pdg::AnimatedBase& what = *whatP;
      pdg::Rect boundsRect = gPort->getDrawingArea();
 	 boundsRect.scale(4.0);
 	 pdg::Rect spriteRect = what.getBoundingBox();
-     pdg::Vector moveVector = what.getVelocity();
+     auto* sprite = dynamic_cast<pdg::Sprite*>(whatP);
+     const auto motion=what.getMovement();
+     pdg::Vector moveVector = sprite && (sprite->physics != pdg::PhysicsBody::NoPhysics) ? sprite->physics.getVelocity() : pdg::Vector(motion.x,motion.y);
 	if (boundsRect.right < spriteRect.right && moveVector.x > 0) {
 		// reverse direction of horizontal movement
 		moveVector.x = -moveVector.x;
-		what.setVelocity(moveVector);
+		if(sprite && (sprite->physics != pdg::PhysicsBody::NoPhysics)) sprite->physics.setVelocity(moveVector); else what.setMovement(moveVector);
 	} else if (boundsRect.left > spriteRect.left && moveVector.x < 0) {
 		// reverse direction of horizontal movement
 		moveVector.x = -moveVector.x;
-		what.setVelocity(moveVector);
+		if(sprite && (sprite->physics != pdg::PhysicsBody::NoPhysics)) sprite->physics.setVelocity(moveVector); else what.setMovement(moveVector);
 	}
 	if (boundsRect.bottom < spriteRect.bottom && moveVector.y > 0) {
 		// reverse direction of vertical movement
 		moveVector.y = -moveVector.y;
-		what.setVelocity(moveVector);
+		if(sprite && (sprite->physics != pdg::PhysicsBody::NoPhysics)) sprite->physics.setVelocity(moveVector); else what.setMovement(moveVector);
 	} else if (boundsRect.top > spriteRect.top && moveVector.y < 0) {
 		// reverse direction of vertical movement
 		moveVector.y = -moveVector.y;
-		what.setVelocity(moveVector);
+		if(sprite && (sprite->physics != pdg::PhysicsBody::NoPhysics)) sprite->physics.setVelocity(moveVector); else what.setMovement(moveVector);
 	}
 	return true; // keep helping
 }
@@ -326,10 +334,7 @@ MyDrawHelper::draw(pdg::Sprite* sprite, pdg::Port* port) {
     return false; // don't let sprite draw itself (ignored for post draw)
 }
 
-bool 
-MyCollideHelper::allowCollision(pdg::Sprite* sprite, pdg::Sprite* withSprite) {
-    return true;
-}
+
 
 bool 
 MyCollisionHandler::handleEvent(pdg::EventEmitter* inEmitter, long inEventType, void* inEventData) throw() {
@@ -356,11 +361,11 @@ pdg::Sprite&  CreateBallSprite() {
 	ballSprite.addFramesImage(gBallImage);
 	ballSprite.setSize(gBallImage->width, gBallImage->height);
 	float ballRadius = gBallImage->width/2;
- 	ballSprite.setCollisionRadius( ballRadius );
+	ballSprite.setupCollider().setCircle( ballRadius );
 
 	ballSprite.addHandler(new MyCollisionHandler(), pdg::eventType_SpriteCollide);
 // 	ballSprite.onCollideWall(WallCollideFunc);
-    ballSprite.setCollisionHelper(new MyCollideHelper());
+    ballSprite.collider.setCollisionFilter([](const pdg::Collider&,const pdg::Collider&){return true;});
 
     static BoundsHelper* sBoundsHelper = new BoundsHelper();
 	ballSprite.addAnimationHelper(sBoundsHelper);
@@ -385,34 +390,33 @@ void AddSprites() {
         newSprite.setLocation(loc);
 
         if (gCollisions) {
-        	newSprite.enableCollisions();
+        newSprite.setupFrameCollider();
         } else {
-        	newSprite.disableCollisions();
+        newSprite.collider.setEnabled(false);
         }
 
         pdg::Vector v;
         do {	// make sure we get movement in both axis
             v.x = pdg::OS::rand() % (kMaxSpriteMoveDelta*2+1) - kMaxSpriteMoveDelta;
             v.y = pdg::OS::rand() % (kMaxSpriteMoveDelta*2+1) - kMaxSpriteMoveDelta;
-        	newSprite.setVelocity(v);
+			newSprite.setupPhysicsBody().setVelocity(v);
         } while (v.x == 0 || v.y == 0);
     }
     pdg::Sprite& newSprite = CreateBallSprite();
     newSprite.setLocation(gPort->getDrawingArea().centerPoint());
     newSprite.grow(2.0);
-    newSprite.setMass(10);
+    newSprite.setupPhysicsBody(10, 10);
     
     
     MyDrawHelper* myHelper = new MyDrawHelper;
 
-    // FIXME: this should be setVelocity(x, y), but that isn't working
-    newSprite.setVelocityInRadians(10.0f, 10.0f);
+    newSprite.physics.setVelocity(10.0, 10.0);
 	if (gCollisions) {
-		newSprite.enableCollisions(pdg::Sprite::collide_BoundingBox);
+		newSprite.setupFrameCollider(pdg::frameCollider_Bounds);
 	} else {
-		newSprite.disableCollisions();
+		newSprite.collider.setEnabled(false);
 	}
-    newSprite.applyTorque(5000.0);
+    newSprite.physics.applyAngularImpulse(5000.0);
 	newSprite.setDrawHelper(myHelper);
 
 }

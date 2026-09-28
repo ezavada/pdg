@@ -65,60 +65,50 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Polygon,
     END
 
 CPP_MANAGED_CONSTRUCTOR_IMPL(Polygon)
-    SETUP_NON_SCRIPT_CALL;
-    
-    // Support constructor with multiple Point arguments
-    if (ARGC == 0) {
-        // Empty constructor
+    SETUP_CONSTRUCTOR_CALL;
+    if (ARGC == 0 || (ARGC == 1 && (VALUE_IS_NULL(ARGV[0]) || VALUE_IS_UNDEFINED(ARGV[0])))) {
         return new pdg::Polygon();
-    } else if (ARGC == 1 && (VALUE_IS_NULL(ARGV[0]) || VALUE_IS_UNDEFINED(ARGV[0]))) {
-        // Handle null/undefined arguments during document generation
-        return new pdg::Polygon();
+    }
+    std::vector<Point> points;
+    auto appendPoint = [&](VALUE value) {
+        Point point;
+        auto converted = VALUE_IS_POINT(value, point);
+        if (!converted.has_value()) return false;
+        if (!*converted) {
+            THROW_ARGUMENT_TYPE(1, "Point", value);
+            return false;
+        }
+        points.push_back(point);
+        return true;
+    };
     %#ifdef PDG_USING_JAVASCRIPT_CORE
-    } else if (ARGC == 1 && JSValueIsArray(ctx, ARGV[0])) {
-        // Constructor with an array of Point arguments
-        std::vector<Point> points;
+    if (ARGC == 1 && JSValueIsArray(ctx, ARGV[0])) {
         JSObjectRef array = JSValueToObject(ctx, ARGV[0], exception);
         JSStringRef lengthName = JSStringCreateWithUTF8CString("length");
         JSValueRef lengthValue = JSObjectGetProperty(ctx, array, lengthName, exception);
         JSStringRelease(lengthName);
-        unsigned length = (unsigned)JSValueToNumber(ctx, lengthValue, exception);
-        for (unsigned i = 0; i < length; i++) {
-            points.push_back(VAL2POINT(JSObjectGetPropertyAtIndex(ctx, array, i, exception)));
+        if (*exception) return nullptr;
+        double length = JSValueToNumber(ctx, lengthValue, exception);
+        if (*exception) return nullptr;
+        for (unsigned i = 0; i < length; ++i) {
+            auto value = JSObjectGetPropertyAtIndex(ctx, array, i, exception);
+            if (*exception || !appendPoint(value)) return nullptr;
         }
-        return new pdg::Polygon(points);
     %#else
-    } else if (ARGC == 1 && ARGV[0]->IsArray()) {
-        // Constructor with array of Point arguments
-        std::vector<Point> points;
-        v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(ARGV[0]);
-        v8::Local<v8::Context> context = isolate->GetCurrentContext();
-        for (uint32_t i = 0; i < array->Length(); i++) {
-            points.push_back(VAL2POINT(array->Get(context, i).ToLocalChecked()));
+    if (ARGC == 1 && ARGV[0]->IsArray()) {
+        auto array = ARGV[0].As<v8::Array>();
+        auto context = isolate->GetCurrentContext();
+        for (uint32_t i = 0; i < array->Length(); ++i) {
+            v8::Local<v8::Value> value;
+            if (!array->Get(context, i).ToLocal(&value) || !appendPoint(value)) return nullptr;
         }
-        return new pdg::Polygon(points);
     %#endif
     } else {
-        // Constructor with Point arguments
-        std::vector<Point> points;
-        for (int i = 0; i < ARGC; i++) {
-            if (!VALUE_IS_OBJECT(ARGV[i])) {
-                %#ifdef PDG_USING_JAVASCRIPT_CORE
-                JSStringRef message = JSStringCreateWithUTF8CString("Polygon constructor arguments must be Point objects");
-                JSValueRef errorArgument = JSValueMakeString(ctx, message);
-                *exception = JSObjectMakeError(ctx, 1, &errorArgument, nullptr);
-                JSStringRelease(message);
-                return nullptr;
-                %#else
-                THROW_TYPE_ERR("Polygon constructor arguments must be Point objects");
-                return nullptr;
-                %#endif
-            }
-            Point point = VAL2POINT(ARGV[i]);
-            points.push_back(point);
+        for (int i = 0; i < ARGC; ++i) {
+            if (!appendPoint(ARGV[i])) return nullptr;
         }
-        return new pdg::Polygon(points);
     }
+    return new pdg::Polygon(points);
 END
 
 METHOD_IMPL(Polygon, AddPoint)

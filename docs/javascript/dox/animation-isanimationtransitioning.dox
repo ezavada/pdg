@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::isAnimationTransitioning()
+\brief Test for an active pose transition.
+
+\return True while a transitionToAnimation() blend is running; false when complete or pose access is disabled.
+
+\see transitionToAnimation(), getAnimationTransitionProgress()
+*/

@@ -30,11 +30,13 @@
 #define ISERIALIZER_H_INCLUDED
 
 #include "pdg_project.h"
+#include <bit>
 
 #include "pdg/sys/global_types.h"
 #include "pdg/sys/color.h"
 #include "pdg/sys/coordinates.h"
 #include "pdg/sys/pdgexception.h"
+#include <stdexcept>
 
 #ifndef PDG_SERIALIZE_NO_STD_STRING_SUPPORT
 #include <string>
@@ -60,10 +62,13 @@ namespace pdg {
 	class unknown_object : public PDGException {
 		public: unknown_object(const char* msg) : PDGException(msg) {}
 	};
-	#define MAY_THROW( __specs )
-#else
-	#define MAY_THROW( __specs )
 #endif
+
+    /** Asset policy for one serialization stream. @ingroup Serialization */
+    enum SerializationResources : int {
+        serialization_Complete = 0,
+        serialization_ExternalReferences = 1
+    };
 
 	class ISerializable;
 
@@ -84,14 +89,12 @@ namespace pdg {
 		// fixed size serialization methods
 		// --------------------------------------------
 
-	  #ifndef PDG_NO_64BIT
 		//! Serialize an 8 byte (64 bit) value into a buffer
 		/*! internal pointer gets advanced by 8 bytes
 		 \param val the 64 bit value to serialize
 		 */
 		virtual void   serialize_8u(uint64 val) = 0;
 		void           serialize_8 (int64 val);
-	  #endif
 
 		//! Serialize a 4 byte (32 bit) value into a buffer
 		/*! internal pointer gets advanced by 4 bytes
@@ -223,16 +226,14 @@ namespace pdg {
 		//! Serialize a reference to a non-serializable object
 		// You must have called IDeserializer::registerObject() to give the object a unique ID 
 		// before serializing it, otherwise an unknown_object exception will be thrown.
-		template<typename T> void serialize_ref(const T* obj) MAY_THROW( unknown_object );
+		template<typename T> void serialize_ref(const T* obj);
 
 		// --------------------------------------------
 		// size checking methods for variable size
 		// --------------------------------------------
 
-#ifndef PDG_NO_64BIT
 		uint32 sizeof_8u(uint64 val) const  { return 8; }
 		uint32 sizeof_8 (int64 val) const   { return 8; }
-#endif
         uint32 sizeof_4u(uint32 val) const  { return 4; }
 		uint32 sizeof_4 (int32 val) const   { return 4; }
 		uint32 sizeof_3u(uint32 val) const  { return 3; }
@@ -286,7 +287,7 @@ namespace pdg {
 		 */
 		virtual uint32 sizeof_obj(const ISerializable* obj) = 0;
 
-		template<typename T> uint32 sizeof_ref(const T* obj) const MAY_THROW( unknown_object );
+		template<typename T> uint32 sizeof_ref(const T* obj) const;
 
         //! Turn on or off the sync tags for this steam
         // This which makes the steam slightly smaller and faster. This must be done
@@ -294,7 +295,21 @@ namespace pdg {
         // They default to ON since they provide relatively inexpensive sanity checks. 
         ISerializer& setSendTags(bool sendThem) { mSendTags = sendThem; return *this; }
 
+        /** Select embedded resources or permit external resource identifiers.
+         * Defaults to serialization_Complete. Set before sizing/writing objects.
+         * Runtime resources without an identifier are embedded in either mode.
+         */
+        virtual ISerializer& setResourceMode(int mode) {
+            if (mode != serialization_Complete && mode != serialization_ExternalReferences)
+                throw std::invalid_argument("Expected a serialization resource mode constant");
+            mResourceMode = mode;
+            return *this;
+        }
+        /** Return the resource policy for this stream. */
+        int getResourceMode() const { return mResourceMode; }
+
 	protected:
+        int mResourceMode = serialization_Complete;
 		virtual char* statusDump(int hiliteBytes = 0) = 0;
 		virtual void startMark() = 0;
 		virtual int bytesFromMark() = 0;
@@ -314,29 +329,15 @@ namespace pdg {
 	    return sizeof_ptr(static_cast<const void*>(obj));
 	}
 
-  #ifndef PDG_NO_64BIT
 	inline void    
 	ISerializer::serialize_8(int64 val) { 
 		serialize_8u(val); 
 	}
-  #endif
 
 	inline void    
 	ISerializer::serialize_d(double val) { 
 		SERIALIZE_START;
-      #ifndef PDG_NO_64BIT
-		serialize_8u(*(uint64*)&val); 
-	  #else
-	  	// for platforms without int64, we have to break it into 2 steps
-	  	// which means worrying about endianness
-	  	#ifdef PLATFORM_BIG_ENDIAN
-	  		serialize_4u(((uint32*)&val)[0]);
-	  		serialize_4u(((uint32*)&val)[1]);
-	  	#else
-	  		serialize_4u(((uint32*)&val)[1]);
-	  		serialize_4u(((uint32*)&val)[0]);
-	  	#endif
-	  #endif
+		serialize_8u(std::bit_cast<uint64>(val));
 		SERIALIZED("d   ", 8);
 	}
 
@@ -364,7 +365,7 @@ namespace pdg {
 	inline void    
 	ISerializer::serialize_f(float val) { 
 		SERIALIZE_START;
-		serialize_4u(*(uint32*)&val); 
+		serialize_4u(std::bit_cast<uint32>(val));
 		SERIALIZED("f   ", 4);
 	}
 

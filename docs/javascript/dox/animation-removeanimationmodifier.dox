@@ -1,0 +1,12 @@
+/**
+\fn pdg::Sprite::removeAnimationModifier(uint id)
+\brief Remove a modifier or IK controller.
+
+Releases its callback and diagnostic. Unknown IDs are harmless. A removal requested during evaluation is applied after the current evaluation.
+
+\param id ID returned by addAnimationModifier() or addAnimationIK().
+
+\return No value.
+
+\see addAnimationModifier(), clearAnimationModifiers()
+*/

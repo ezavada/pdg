@@ -44,6 +44,7 @@
 #include "pdg/sys/spline.h"
 #include "pdg/sys/polygon.h"
 #include "pdg/sys/renderer.h"
+#include <unordered_set>
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 #include "pdg_script_bindings.h"
@@ -51,10 +52,11 @@
 
 namespace pdg {
 
-//! \defgroup Graphics
+//! \addtogroup Graphics
 //! Collection of classes, types and constants that are used for drawing
 
 class Image;
+class ImageOpenGL;
 
 // -----------------------------------------------------------------------------------
 //! Graphics
@@ -96,9 +98,22 @@ public:
     virtual void drawText(const char* text, const Rect& rect, const Attributes& attrs) override;
     virtual void drawSphere(const Point& center, float radius, const Attributes& attrs) override;
 
-    Rect     getDrawingArea();
+    virtual Rect getDrawingArea();
+    /// Current single clip in Port coordinates; defaults to the drawing area.
     Rect     getClipRect();
+    /// Replace the clip, intersecting with the drawing area. Empty clips suppress all drawing.
     void     setClipRect(const Rect& rect);
+    /// Restore clipping to the full drawing area. There is no clip stack.
+    void     resetClipRect();
+    /** Clear the current clip to an exact RGBA color (transparent by default).
+     * Unlike drawing a translucent rectangle this replaces the pixels.
+     */
+    void clear(const Color& color = Color(0, 0, 0, 0));
+    /** Set the coordinate at the top left of an offscreen surface and reset its clip.
+     * Does not move pixels. Main/window ports reject this operation.
+     */
+    void setDrawingOrigin(const Point& origin);
+
 
     int      getTextWidth(const char* text, int size,
                             uint32 style = textStyle_Plain,
@@ -187,7 +202,9 @@ private:
    void    drawColoredSphere(const Color& color, const Point& loc, float radius, float rotation = 0.0f, const Offset& polarOffsetRadians = Offset(0,0), const Offset& lightOffsetRadians = Offset(0,0), const Color& ambientLight = Color(0.5f, 0.5f, 0.5f, 1.0f));
 
    //! draws texture on a polygon with proper texture coordinate mapping (deprecated)
-   void    drawTexturedPolygon(Image* img, const Polygon& transformedPolygon, const Polygon& untransformedPolygon, const Rect& bounds, FitType fitType = fit_Fill);
+   void    drawTexturedPolygon(Image* img, const Polygon& polygon, const Rect& bounds, const glm::mat3& transform, FitType fitType = fit_Fill);
+   void    drawTexturedPolygonImpl(Image* img, const Polygon& polygon, const Rect& bounds,
+                                  const glm::mat3& transform, FitType fitType, const glm::mat3& fitting);
 
    // text drawing and measurement
 
@@ -208,6 +225,10 @@ private:
                            Color rgba = PDG_BLACK_COLOR);
 
 
+private:
+    friend class ImageOpenGL;
+    // Non-owning links let retained images outlive their last drawing port.
+    std::unordered_set<ImageOpenGL*> mLinkedImages;
 };
 
 inline void

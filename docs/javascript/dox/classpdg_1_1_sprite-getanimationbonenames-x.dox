@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::getAnimationBoneNames()
+\brief List current bone names.
+
+\return A new array of strings in bone-ID order, or an empty array when pose access is disabled. IDs belong to this rig and should not be reused after replacing it.
+
+\see enableAnimationPose(), getAnimationBoneTransform()
+*/

@@ -1,0 +1,11 @@
+/**
+\fn pdg::Sprite::supportsAnimationPhysics()
+\brief Test this build's physical-animation support.
+
+\note Animation physics requires Chipmunk. The Basic solver supports simple shared-body physics but is intentionally not a backend for animation rigs; expanding it to complex animation physics is not planned. Enable Chipmunk on the SpriteLayer before rig setup.
+
+
+\return True when built with Chipmunk physics support. This does not test the Sprite's current layer, rig, or scale.
+
+\see setupAnimationPhysics(), isAnimationPhysicsEnabled()
+*/

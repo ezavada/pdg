@@ -85,10 +85,16 @@ describe("SpriteLayer", function() {
   		var ser = new pdg.Serializer();
   		var size = layer.getSerializedSize(ser);
   		layer.serialize(ser);
-  		expect(size).toEqual(103); // 10 bytes per sprite for first 254 sprites, + 3 bytes layer overhead
-                                    // no 3 byte stream tag here because this is a micro update
   		buffer = ser.getDataPtr();
   		expect(buffer.getDataSize()).toEqual(size);
+        // Z-order uses variable-length internal IDs; their width depends on how
+        // many Sprites earlier suites created. Check the fixed position payload
+        // separately, keeping the full micro stream for the round-trip below.
+        layer.setSerializationFlags(pdg.ser_Positions);
+        var positions = new pdg.Serializer();
+        layer.serialize(positions);
+        expect(positions.getDataSize()).toEqual(93); // 9 bytes per Sprite + 3-byte header
+        layer.setSerializationFlags(pdg.ser_Micro);
 		console.log('Micro Stream Out:');
 		console.binaryDump(buffer.getData(), buffer.getDataSize(), 16);
   	});
@@ -134,14 +140,19 @@ describe("SpriteLayer", function() {
 		  var sprite = layer.createSprite();
 		  sprite.id = i + 1;
 		  sprite.setLocation([0, i * 10]);
-		  sprite.moveTo(100, i*10, 100);
-		  sprite.wait(150).rotate(Math.PI, 50);
+		  sprite.moveTo(100, i*10, 0.1);
+		  sprite.wait(0.15).rotateBy(Math.PI, 0.05);
 	    }
   		layer.setSerializationFlags(pdg.ser_Update);
   		var ser = new pdg.Serializer();
   		var size = layer.getSerializedSize(ser);
   		layer.serialize(ser);
-  		expect(size).toEqual(557); // 11 bytes for layer, + data for 10 sprites
+		// Internal Sprite IDs use variable-length encoding, so their Z-order
+		// bytes depend on how many Sprites earlier specs created. Check the
+		// fixed payload independently; the full stream still includes IDs.
+		layer.setSerializationFlags(pdg.ser_Update & ~pdg.ser_ZOrder);
+		expect(layer.getSerializedSize(new pdg.Serializer())).toEqual(1066);
+		layer.setSerializationFlags(pdg.ser_Update);
   		buffer = ser.getDataPtr();
   		expect(buffer.getDataSize()).toEqual(size + 3);  // + 3 bytes for stream header
 		console.log('Update Stream Out: '+buffer.getDataSize()+' bytes');

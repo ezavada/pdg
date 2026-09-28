@@ -1,6 +1,8 @@
 #include "pdg_box_instance_info.h"
 
 #ifndef PDG_NO_GUI
+#include "pdg_image_file.h"
+#include "pdg_spriter_transform.h"
 #include "pdg/sys/coordinates.h"
 #include "pdg/sys/port.h"
 #include "pdg/sys/image.h"
@@ -45,59 +47,18 @@ PDGBoxInstanceInfo::PDGBoxInstanceInfo(SpriterEngine::point size)
 void PDGBoxInstanceInfo::render()
 {
 #ifndef PDG_NO_GUI
-    // Only render if debug boxes are enabled
-    if (!SpriterEngine::Settings::renderDebugBoxes) {
-        SPRITER_DEBUG_ONLY(OS::_DOUT("PDGBoxInstanceInfo: Debug boxes disabled, skipping render"));
-        return;
-    }
+    if (!SpriterEngine::Settings::renderDebugBoxes) return;
+    auto* layer = PDGImageFile::currentDrawingLayer();
+    Port* port = layer ? layer->getSpritePort() : mPort;
+    if (!layer && !port) port = GraphicsManager::getSingletonInstance()->getMainPort();
+    if (!port) return;
 
-    if (!mPort) {
-        mPort = GraphicsManager::getSingletonInstance()->getMainPort();
-        if (!mPort) {
-            SPRITER_DEBUG_ONLY(OS::_DOUT("PDGBoxInstanceInfo: No port available for rendering"));
-            return;
-        }
-    }
-
-    // Get sprite element properties from SpriterPlusPlus (same as pdg_image_file.cpp)
-    SpriterEngine::point position = getPosition();
-    SpriterEngine::real angle = getAngle();
-    SpriterEngine::point scale = getScale();
-    SpriterEngine::point pivot = getPivot();
-    
-    SPRITER_DEBUG_ONLY(OS::_DOUT("PDGBoxInstanceInfo: Rendering box at position (%.2f, %.2f) angle %.2f scale (%.2f, %.2f) pivot (%.2f, %.2f)", 
-              position.x, position.y, angle, scale.x, scale.y, pivot.x, pivot.y));
-    
-    // Calculate the destination rectangle for drawing (same approach as pdg_image_file.cpp)
-    float width = mSize.x;
-    float height = mSize.y;
-    Point pivotPoint(pivot.x * width, pivot.y * height); // this is offset from top left corner
-
-    RotatedRect drawRect(Rect(0, 0, width, height));
- 
-    drawRect.horzScale(scale.x);
-    drawRect.vertScale(scale.y);
-    Quad quad = drawRect.getQuad();
-    quad.rotateAround(angle, pivotPoint);
-
-    quad.moveDown(position.y - pivotPoint.y);
-    quad.moveRight(position.x - pivotPoint.x);
-    
-    // Draw filled semi-transparent red rectangle for collisionbox
-    mPort->drawQuad(quad, Attributes().fillColor(Color(255, 0, 0, 64)) // Semi-transparent red
-        .lineColor(Color(255, 0, 0, 255))); // outline solid red
-
-    SPRITER_DEBUG_ONLY(
-      OS::_DOUT("PDGBoxInstanceInfo: Rendered debug box at (%.2f, %.2f) "
-            "scale (%.2f, %.2f) pivot (%.2f, %.2f) angle %.2f --> pdg rotated rect (%.2f, %.2f) (%.2f, %.2f) (%.2f, %.2f) (%.2f, %.2f)",
-              position.x, position.y, scale.x, scale.y, pivot.x, pivot.y, angle,
-              quad.points[0].x, quad.points[0].y, quad.points[1].x, quad.points[1].y, 
-              quad.points[2].x, quad.points[2].y, quad.points[3].x, quad.points[3].y
-            );
-    )
-#else
-    // In non-GUI mode, rendering is not supported
-    SPRITER_DEBUG_ONLY(OS::_DOUT("PDGBoxInstanceInfo: Rendering not supported in non-GUI mode"));
+    // Use exactly the geometry exposed by Sprite collision-box queries,
+    // including signed scale and the authored pivot, then map into the port.
+    Quad quad = spriterBoxRect(*this).getQuad();
+    if (layer) quad = layer->layerToPort(quad);
+    port->drawQuad(quad, Attributes().fillColor(Color(255, 0, 0, 64))
+        .lineColor(Color(255, 0, 0, 255)));
 #endif
 }
 

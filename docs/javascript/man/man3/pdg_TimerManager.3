@@ -1,4 +1,4 @@
-.TH "TimerManager" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "TimerManager" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -117,9 +117,9 @@ manages timers that can fire at a particular time, or repeatedly at an interval
 
 
 .PP
-\fBPrecondition\fP
+\fBNote\fP
 .RS 4
-\fBAPI Stability: 3 - Stable\fP\&. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes\&. Backwards-compatibility is guaranteed\&.
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 The singleton instance of the \fBTimerManager\fP can be accessed at \fBpdg\&.tm\fP, for example:
@@ -239,7 +239,7 @@ Millisecond accuracy is attempted but not guaranteed\&. An additional delay of s
 .SS "number getMilliseconds ()"
 
 .PP
-get the current time in milliseconds Gets the current millisecond time, from an arbitrary base time prior to the application start\&.
+get the current time in milliseconds Returns elapsed milliseconds from a monotonic clock, with zero established at the first call in this process\&. System wall-clock adjustments do not affect this value\&. Use it for elapsed times and timer deadlines, not calendar dates\&. The native timestamp uses a signed 64-bit integer\&.
 
 .PP
 \fBNote\fP
@@ -494,6 +494,10 @@ get the singleton instance of the \fBTimerManager\fP used by the pdg framework
 .RE
 .PP
 
+.PP
+References \fBgetTimerManager()\fP\&.
+.PP
+Referenced by \fBgetTimerManager()\fP\&.
 
 .SH "Author"
 .PP 

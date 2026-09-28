@@ -69,13 +69,19 @@ Scrollbar::Scrollbar(Controller* controller, const Rect& scrollBarRect, Orientat
 	mScrollDownFullWindowClicked(false), 
 	mScrollSliderClicked(false)
 {
-	mAttributes
-		.stateAttributes(ControlState::Normal, Attributes().fillColor(SCROLLBAR_SLIDER_BG_COLOR))
-		.stateAttributes(ControlState::Decrement, Attributes().fillColor(PDG_GRAY_20_COLOR).lineColor(PDG_GRAY_40_COLOR))
-		.stateAttributes(ControlState::DecrementPressed, Attributes().fillColor(PDG_GRAY_40_COLOR).lineColor(PDG_BLACK_COLOR))
-		.stateAttributes(ControlState::Increment, Attributes().fillColor(PDG_GRAY_20_COLOR).lineColor(PDG_GRAY_40_COLOR))
-		.stateAttributes(ControlState::IncrementPressed, Attributes().fillColor(PDG_GRAY_40_COLOR).lineColor(PDG_BLACK_COLOR))
-		.stateAttributes(ControlState::Thumb, Attributes().fillColor(PDG_WHITE_COLOR).lineColor(PDG_BLACK_COLOR).roundedCorners(3));
+    mAttributes
+        .stateAttributes(ControlState::Normal, Attributes().fillColor(Color(235,239,244))
+            .lineStyle(lineStyle_Solid).lineColor(Color(214,221,230)).roundedCorners(4))
+        .stateAttributes(ControlState::Decrement, Attributes().fillColor(Color(226,232,240))
+            .lineStyle(lineStyle_Solid).lineColor(Color(179,191,207)).roundedCorners(4))
+        .stateAttributes(ControlState::DecrementPressed, Attributes().fillColor(Color(183,199,219))
+            .lineStyle(lineStyle_Solid).lineColor(Color(123,141,165)).roundedCorners(4))
+        .stateAttributes(ControlState::Increment, Attributes().fillColor(Color(226,232,240))
+            .lineStyle(lineStyle_Solid).lineColor(Color(179,191,207)).roundedCorners(4))
+        .stateAttributes(ControlState::IncrementPressed, Attributes().fillColor(Color(183,199,219))
+            .lineStyle(lineStyle_Solid).lineColor(Color(123,141,165)).roundedCorners(4))
+        .stateAttributes(ControlState::Thumb, Attributes().fillColor(Color(124,144,170))
+            .lineStyle(lineStyle_Solid).lineColor(Color(94,114,140)).roundedCorners(4));
 	mAttributes.merge(controller->getTopController().getControlAttributes(
 		ControlType::Scrollbar, static_cast<int>(mOrientation)));
 	calcClickableAreas();
@@ -168,22 +174,17 @@ void Scrollbar::updateSliderPointFromValue()
 
 void Scrollbar::drawArrow(const Rect& area, bool increment)
 {
-	const Point center((area.left + area.right) / 2, (area.top + area.bottom) / 2);
-	const float radius = std::max(2.0f, std::min(area.width(), area.height()) / 4);
-	Attributes line = Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(2);
-	if (mOrientation == HORIZONTAL) {
-		const float direction = increment ? 1.0f : -1.0f;
-		mPort->drawLine(localToGlobal(Point(center.x - direction * radius, center.y - radius)),
-			localToGlobal(Point(center.x + direction * radius, center.y)), line);
-		mPort->drawLine(localToGlobal(Point(center.x + direction * radius, center.y)),
-			localToGlobal(Point(center.x - direction * radius, center.y + radius)), line);
-	} else {
-		const float direction = increment ? 1.0f : -1.0f;
-		mPort->drawLine(localToGlobal(Point(center.x - radius, center.y - direction * radius)),
-			localToGlobal(Point(center.x, center.y + direction * radius)), line);
-		mPort->drawLine(localToGlobal(Point(center.x, center.y + direction * radius)),
-			localToGlobal(Point(center.x + radius, center.y - direction * radius)), line);
-	}
+    const Point center = area.centerPoint();
+    const float size = std::min(area.width(),area.height())*.25f;
+    const float direction = increment ? 1 : -1;
+    Polygon glyph;
+    const float vertices[][2] = {{-.8f,-.5f},{0,.15f},{.8f,-.5f},{1,-.2f},{0,.65f},{-1,-.2f}};
+    for (const auto& p : vertices) {
+        const float x = mOrientation == HORIZONTAL ? p[1]*direction : p[0];
+        const float y = mOrientation == HORIZONTAL ? p[0] : p[1]*direction;
+        glyph.insertPoint(glyph.getPointCount(), localToGlobal(Point(center.x+x*size,center.y+y*size)));
+    }
+    mPort->drawPolygon(glyph, getDrawingAttributes(Attributes().fillColor(Color(61,74,92)), true));
 }
 
 void Scrollbar::drawSelf()
@@ -196,19 +197,19 @@ void Scrollbar::drawSelf()
 	Rect incrementRect = mOrientation == HORIZONTAL
 		? Rect(mUpButtonPoint, inc, mViewArea.height())
 		: Rect(mDownButtonPoint, mViewArea.width(), inc);
-	mAttributes.draw(*mPort, localToGlobal(mSliderArea), ControlState::Normal);
+	mAttributes.draw(*mPort, localToGlobal(mSliderArea), ControlState::Normal, this);
 	ControlState decrementState = mScrollDownClicked && mOrientation == HORIZONTAL
 		? ControlState::DecrementPressed : (mScrollUpClicked && mOrientation != HORIZONTAL
 			? ControlState::DecrementPressed : ControlState::Decrement);
 	ControlState incrementState = mScrollUpClicked && mOrientation == HORIZONTAL
 		? ControlState::IncrementPressed : (mScrollDownClicked && mOrientation != HORIZONTAL
 			? ControlState::IncrementPressed : ControlState::Increment);
-	mAttributes.draw(*mPort, localToGlobal(decrementRect), decrementState);
-	mAttributes.draw(*mPort, localToGlobal(incrementRect), incrementState);
+	mAttributes.draw(*mPort, localToGlobal(decrementRect), decrementState, this);
+	mAttributes.draw(*mPort, localToGlobal(incrementRect), incrementState, this);
 	if (!mAttributes.state(decrementState).image) drawArrow(decrementRect, false);
 	if (!mAttributes.state(incrementState).image) drawArrow(incrementRect, true);
 	if (!mScrollSliderClicked) updateSliderPointFromValue();
-	mAttributes.draw(*mPort, localToGlobal(thumbRect()), ControlState::Thumb);
+	mAttributes.draw(*mPort, localToGlobal(thumbRect()), ControlState::Thumb, this);
 	/*char text[20];
 	std::snprintf(text, 20, "CurrPos=%d", mCurrentPosition);
     MAKE_STRING_BUFFER_SAFE(text, 20);
@@ -218,15 +219,27 @@ void Scrollbar::drawSelf()
 	Point br = textPt;
 	br = br + Point(90, 0);
 	Rect hi(tl, br);
-	mPort->drawRect(localToGlobal(hi), Attributes().fillColor(PDG_WHITE_COLOR)); 
-	mPort->drawText(text, localToGlobal(textPt), Attributes().textSize(12));
+	mPort->drawRect(localToGlobal(hi), getDrawingAttributes(Attributes().fillColor(PDG_WHITE_COLOR)));
+	mPort->drawText(text, localToGlobal(textPt), getDrawingAttributes(Attributes().textSize(12), true));
 	
 	this->drawClickableParts();
 	Rect viewArea(0,0,mViewArea.width(),mViewArea.height());
-	mPort->drawRect(localToGlobal(viewArea), Attributes().lineColor(PDG_RED_COLOR).lineThickness(1));
+	mPort->drawRect(localToGlobal(viewArea), getDrawingAttributes(Attributes().lineColor(PDG_RED_COLOR).lineThickness(1)));
 	*/
 }
 
+
+bool Scrollbar::doScrollWheel(const ScrollWheelInfo* wheel) {
+    if (!mIsEnabled || !wheel) return false;
+    const int delta = mOrientation == VERTICAL ? wheel->vertDelta : wheel->horizDelta;
+    if (!delta) return false;
+    const int next = std::max(mMinRange, std::min(mMaxRange, mCurrentPosition+delta*mStepSize));
+    if (next == mCurrentPosition) return false;
+    mCurrentPosition = next;
+    updateSliderPointFromValue();
+    notifyObservers();
+    return true;
+}
 
 void Scrollbar::scrollUp()
 {
@@ -477,7 +490,7 @@ void Scrollbar::trackScrollSlider()
 	}
 }
 
-bool Scrollbar::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw()  // return true if completely handled
+bool Scrollbar::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept  // return true if completely handled
 {
     using namespace std;
     bool handled = false;
@@ -532,6 +545,13 @@ bool Scrollbar::handleEvent(EventEmitter* inEmitter, long inEventType, void* inE
 
 }
 
+void Scrollbar::doMouseLeave(const MouseInfo*, int, int)
+{
+    if (mScrollUpClicked) scrollUpReleased();
+    if (mScrollDownClicked) scrollDownReleased();
+    if (!mScrollSliderClicked) scrollSliderAreaReleased();
+}
+
 bool Scrollbar::doMouseUp(const MouseInfo *mi, int id, int part)
 {
 	if (mScrollUpClicked)
@@ -567,6 +587,12 @@ bool Scrollbar::doMouseDown(const MouseInfo *mi, int id, int part)
 		scrollSliderAreaPressed(clickPoint);
 	}
 	return true;
+}
+
+void Scrollbar::viewAreaChanged(const Rect& previous) {
+    View::viewAreaChanged(previous);
+    if (previous.width() != mViewArea.width() || previous.height() != mViewArea.height())
+        calcClickableAreas();
 }
 
 } // namespace pdg

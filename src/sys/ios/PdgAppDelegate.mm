@@ -38,11 +38,20 @@
 @synthesize window;
 @synthesize glView;
 
-- (void) applicationDidFinishLaunching:(UIApplication *)application
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	[[UIApplication sharedApplication] setStatusBarHidden:YES];
+	self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+	self.glView = [[[PDGOpenGLView alloc] initWithFrame:self.window.bounds] autorelease];
+	self.glView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+	UIViewController *viewController = [[[UIViewController alloc] init] autorelease];
+	viewController.view = self.glView;
+	self.window.rootViewController = viewController;
+	[self.window makeKeyAndVisible];
+
 	[glView setupAccelerometer];
 	[glView startAnimation];
+	return YES;
 }
 
 - (void) applicationWillResignActive:(UIApplication *)application

@@ -120,6 +120,10 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> GetFontLeading_Tpl =
             v8::FunctionTemplate::New(isolate, GetFontLeading, v8::Local<v8::Value>(), GetFontLeading_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""FontLeading").ToLocalChecked(), GetFontLeading_Tpl);
+        v8::Local<v8::Signature> GetFontCapHeight_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetFontCapHeight_Tpl =
+            v8::FunctionTemplate::New(isolate, GetFontCapHeight, v8::Local<v8::Value>(), GetFontCapHeight_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""FontCapHeight").ToLocalChecked(), GetFontCapHeight_Tpl);
         v8::Local<v8::Signature> GetFontAscent_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetFontAscent_Tpl =
             v8::FunctionTemplate::New(isolate, GetFontAscent, v8::Local<v8::Value>(), GetFontAscent_Sig);
@@ -215,6 +219,38 @@ namespace pdg
 
         float theFontLeading = self->getFontLeading(size, style);
         { args.GetReturnValue().Set( v8::Number::New(isolate, theFontLeading) ); return; };
+    }
+
+    void FontWrap::GetFontCapHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
+        Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(number size, [number int] style = textStyle_Plain)").ToLocalChecked() ); return; };
+        };
+        if (args.Length() < 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+            return;
+        };
+        if (!args[1 -1]->IsNumber())
+        {
+            v8_ThrowArgTypeException(isolate, 1, "a number (""size"")");
+            return;
+        }
+        long size = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+        if (args.Length() >= 2 && !args[2 -1]->IsNumber())
+        {
+            v8_ThrowArgTypeException(isolate, 2, "a number (""style"")");
+            return;
+        }
+        unsigned long style = (args.Length()<2) ? textStyle_Plain : args[2 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();;
+
+        float theFontCapHeight = self->getFontCapHeight(size, style);
+        { args.GetReturnValue().Set( v8::Number::New(isolate, theFontCapHeight) ); return; };
     }
 
     void FontWrap::GetFontAscent(const v8::FunctionCallbackInfo<v8::Value>& args)

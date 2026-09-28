@@ -47,7 +47,7 @@
 
 namespace pdg {
 
-//! \defgroup Sound
+//! \addtogroup Sound
 //! Collection of classes, types and constants that are used for audio (sound and music)
 
 // -----------------------------------------------------------------------------------
@@ -195,7 +195,7 @@ public:
     virtual bool    isShuttingDown() const = 0;
 
 // lifecycle
-/// @cond C++
+/// @cond CXX
     virtual ~SoundManager() {}
 /// @endcond
 

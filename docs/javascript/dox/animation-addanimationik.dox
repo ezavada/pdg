@@ -1,0 +1,50 @@
+/**
+\fn pdg::Sprite::addAnimationIK(object config, int order)
+\brief Register a two-bone inverse-kinematics controller.
+
+Validates a trial solve before registration. The controller runs in animationStage_Constraint on each evaluation, using the freshly sampled joint offsets. Inspect its result to distinguish unreachable, limited, and stretched solutions.
+
+\param config Configuration object described below.
+\param order Signed integer ordering within the constraint stage; default 0.
+
+\return A modifier ID usable with setAnimationIKTarget(), getAnimationIKResult(), and removeAnimationModifier().
+
+\note Call enableAnimationPose() successfully before using this method. The example assumes the rig has a contiguous shoulder/forearm/hand chain.
+
+\par Example
+\code{.js}
+const ikId = sprite.addAnimationIK({
+    root: 'shoulder', middle: 'forearm', tip: 'hand',
+    targetX: 12, targetY: 8, space: pdg.animationSpace_Rig
+});
+sprite.setAnimationIKTarget(ikId, 14, 6, pdg.animationSpace_Rig);
+\endcode
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_ik_options
+\par Two-bone IK configuration
+| Field | Default | Meaning |
+| --- | --- | --- |
+| `root`, `middle`, `tip` | Required | Bone names or IDs forming a contiguous parent-child-child chain. |
+| `targetX`, `targetY` | 0 | Finite target position in the selected space. |
+| `space` | animationSpace_Rig | Local uses the root bone's parent frame; World uses the owning layer. |
+| `rootLength`, `middleLength` | 0 | Zero derives length from the rig or child offset. Explicit positive lengths must match the joint offsets. Display widths are ignored. |
+| `influence` | 1 | Finite blend weight from 0 to 1. |
+| `bendDirection` | 1 | Integer +1 or -1 selecting the elbow side. |
+| `stretch` | animationIK_NoStretch | Use animationIK_Stretch to allow extending toward out-of-reach targets. |
+| `matchOrientation` | false | Whether to aim the tip rotation as well as its position. |
+| `targetRotation` | 0 | Finite clockwise target angle in radians. |
+| `rootMin`, `middleMin` | -Math.PI | Minimum local joint angles in radians. |
+| `rootMax`, `middleMax` | Math.PI | Maximum local joint angles in radians. |
+
+Nonuniform scales and reflections are supported when effective scales are nonsingular. Zero-length segments, incompatible offsets, invalid limits, and singular transforms are rejected atomically.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see setAnimationIKTarget(), getAnimationIKResult(), removeAnimationModifier()
+*/

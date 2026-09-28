@@ -42,35 +42,41 @@
 
 namespace pdg {
 
-class Animated;
+class AnimatedBase;
 
 /* -----------------------------------------------------------------------------------
  * Animation Helper
  *
- * Implement this interface to do extra animation stuff for a specific Animated object
+ * Implement this interface to do extra animation stuff for a specific AnimatedBase object
  * then add by calling the object's addAnimationHelper() method
  * You can have multiple Animation Helpers attached to the same object.
  *
  * For those coding in Javascript, there is an implementation of IAnimationHelper 
  * that maps a function definition to the animate call. So to create a helper:
  *
- *      var myHelper = new pdg.IAnimationHelper(function(what, msElapsed) {
- *            console.log("in my animation helper for " + what + " after " + msElapsed + "ms" );
+ *      var myHelper = new pdg.IAnimationHelper(function(what, deltaSeconds) {
+ *            console.log("in my animation helper for " + what + " after " + deltaSeconds + "s" );
  *            return true; // not done, keep helping
  *      });
  *		myAnimatedObj.addAnimationHelper(myHelper);
  *
- * If you need something more complex, you can also use modern ES6 classes to create a new
- * Javascript class that derives from pdg.IAnimationHelper, and it will call the 
- * animated() method of your class. For example:
+ * Declare a JavaScript subclass for a helper with its own methods or state.
+ * The native constructor callback forwards to the subclass's animate() method:
  *
- *      class MyAnimationHelperClass extends pdg.IAnimationHelper {
- *			animate(what, msElapsed) {
- *            console.log("MyAnimationHelper.animate(" + what + ", " + msElapsed + "ms)" );
- *            return false; // all done, delete the helper
- *			}
- *		}
- *		myAnimatedObj.addAnimationHelper( new MyAnimationHelperClass() );
+ * class MyAnimationHelperClass extends pdg.IAnimationHelper {
+ *     constructor() {
+ *         super(function(what, deltaSeconds) {
+ *             return this.animate(what, deltaSeconds);
+ *         });
+ *     }
+ *
+ *     animate(what, deltaSeconds) {
+ *         console.log("Animation step:", deltaSeconds, "seconds");
+ *         return false; // finished; remove this helper from the object
+ *     }
+ * }
+ *
+ * myAnimatedObj.addAnimationHelper(new MyAnimationHelperClass());
  */
 
 class IAnimationHelper : public ISerializable {
@@ -78,15 +84,21 @@ public:
 	
 	SERIALIZABLE_TAG( CLASSTAG_ANIM_HELPER );
 
-	// what is the Animated object for which normal animation has just completed
-	// msElapsed is time (milliseconds) since last call to animate
+	// what is the AnimatedBase object for which normal animation has just completed
+	// deltaSeconds is time (seconds) since last call to animate
 	// return true if this helper should continue to be used, false
 	// if it should be removed from the helper list
-    virtual bool animate(Animated* what, ms_delta msElapsed) = 0;
+    virtual bool animate(AnimatedBase* what, double deltaSeconds) = 0;
     
-    // returning true means Animated should delete the helper when it removes it
-    // from the helper list
+    // Owned registrations retain a native reference until removed and no longer
+    // executing. Return false only for borrowed helpers that outlive registration.
     virtual bool ownedByAnimated() { return true; }
+
+/// @cond INTERNAL
+    // Script implementations also retain their callback wrapper while registered.
+    virtual void retainForAnimation() { addRef(); }
+    virtual void releaseForAnimation() { release(); }
+/// @endcond
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	SCRIPT_OBJECT_REF mIAnimationHelperScriptObj;

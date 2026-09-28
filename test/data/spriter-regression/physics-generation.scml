@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="PDG physics generation acceptance fixture" generator_version="1">
+  <entity id="0" name="zero-length-root">
+    <animation id="0" name="reference" length="1000" looping="true">
+      <mainline><key id="0" time="0">
+        <bone_ref id="0" timeline="0" key="0" />
+        <bone_ref id="1" timeline="1" key="0" parent="0" />
+      </key></mainline>
+      <timeline id="0" name="root" object_type="bone"><key id="0" time="0"><bone x="0" y="0" /></key></timeline>
+      <timeline id="1" name="helper" object_type="bone"><key id="0" time="0"><bone x="0" y="0" /></key></timeline>
+    </animation>
+  </entity>
+</spriter_data>

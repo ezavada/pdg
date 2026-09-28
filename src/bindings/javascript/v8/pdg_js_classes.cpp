@@ -76,7 +76,6 @@ namespace pdg {
 extern bool s_IEventHandler_InNewFromCpp;
 extern bool s_ISerializable_InNewFromCpp;
 extern bool s_IAnimationHelper_InNewFromCpp;
-extern bool s_ISpriteCollideHelper_InNewFromCpp;
 extern bool s_ISpriteDrawHelper_InNewFromCpp;
 
 // ========================================================================================
@@ -205,7 +204,9 @@ METHOD_IMPL(ResourceManager, GetSound)
 	if (snd == NULL) {
 		RETURN_NULL;
 	}
-    v8::Local<v8::Object> obj = SoundWrap::NewFromCpp(isolate, snd);
+    v8::Local<v8::Object> obj = snd->mSoundScriptObj.IsEmpty()
+        ? SoundWrap::NewFromCpp(isolate, snd)
+        : v8::Local<v8::Object>::New(isolate, snd->mSoundScriptObj);
 	// add a name to the sound so it's easier to keep track of
 	// TODO: make read only property
 	(void)obj->Set(isolate->GetCurrentContext(), STR2VAL("name"), STR2VAL(soundName) );
@@ -250,18 +251,43 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(ISerializable)
 //MARK: Serializer
 // ========================================================================================
 
+// Convert each native wrapper before selecting its ISerializable base. Sprite
+// and Layer use multiple inheritance, so casting an unrelated wrapper is invalid.
+ISerializable* V8_GetSerializable(v8::Isolate* isolate, v8::Local<v8::Value> value) {
+    auto* wrapper = v8script::safe_unwrap_object_wrap_or_prototype(isolate, value);
+    // Image data and snapshots are available without a rendering backend.
+    if (auto* image = dynamic_cast<ImageStripWrap*>(wrapper)) return image->getCppObject();
+    if (auto* image = dynamic_cast<ImageWrap*>(wrapper)) return image->getCppObject();
+    if (auto* sprite = dynamic_cast<SpriteWrap*>(wrapper)) return sprite->getCppObject();
+    if (auto* layer = dynamic_cast<TileLayerWrap*>(wrapper)) return static_cast<Serializable<SpriteLayer>*>(layer->getCppObject());
+    if (auto* layer = dynamic_cast<SpriteLayerWrap*>(wrapper)) return static_cast<Serializable<SpriteLayer>*>(layer->getCppObject());
+    if (auto* serializable = dynamic_cast<ISerializableWrap*>(wrapper)) {
+        auto* object = serializable->getCppObject();
+        object->mISerializableScriptObj.Reset(isolate, value.As<v8::Object>());
+        return object;
+    }
+    return nullptr;
+}
+
 METHOD_IMPL(Serializer, Serialize_obj)
 	self->mSerializerScriptObj.Reset(isolate, args.This());  // correct for callbacks
     REQUIRE_ARG_COUNT(1);
-	REQUIRE_CPP_OBJECT_OR_SUBCLASS_OR_NULL_ARG(1, obj, ISerializable);
+	ISerializable* obj = V8_GetSerializable(isolate, ARGV[0]);
+    if (!obj && !VALUE_IS_NULL(ARGV[0])) { THROW_TYPE_ERR("Expected a serializable object or null"); }
 	DEBUG_DUMP_SCRIPT_OBJECT(ARGV[0], ISerializable);
- 	self->serialize_obj(obj);
+    try { self->serialize_obj(obj); }
+    catch (const std::exception& error) { THROW_ERR(error.what()); }
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, SerializedSize)
 	METHOD_SIGNATURE("", number, 1, ({string|boolean|[number uint]|[object Color]|[object Offset]|[object Point]|[object Vector]|[object Rect]|[object RotatedRect]|[object Quad]|[object MemBlock]|[object ISerializable]} arg));
     REQUIRE_ARG_COUNT(1);
  	uint32 dataSize = 0;
+    Offset offset;
+    Rect rect;
+    RotatedRect rotatedRect;
+    Quad quad;
+    Color color;
     if (VALUE_IS_STRING(ARGV[0])) {
     	VALUE_TO_CSTRING(str, ARGV[0]);
 		dataSize = self->sizeof_str(str);
@@ -271,30 +297,35 @@ METHOD_IMPL(Serializer, SerializedSize)
     } else if (VALUE_IS_NUMBER(ARGV[0])) {
     	uint32 val = VAL2UINT(ARGV[0]);
     	dataSize = self->sizeof_uint(val);
-    } else if (VALUE_IS_COLOR(ARGV[0])) {
-    	Color c = VAL2COLOR(ARGV[0]);
-    	dataSize = self->sizeof_color(c);
-    } else if (VALUE_IS_OFFSET(ARGV[0])) {
-    	Offset o = VAL2OFFSET(ARGV[0]);
-    	dataSize = self->sizeof_offset(o);
-    } else if (VALUE_IS_RECT(ARGV[0])) {
-    	Rect r = VAL2RECT(ARGV[0]);
-    	dataSize = self->sizeof_rect(r);
-    } else if (VALUE_IS_ROTRECT(ARGV[0])) {
-    	RotatedRect rr = VAL2ROTRECT(ARGV[0]);
-    	dataSize = self->sizeof_rotr(rr);
-    } else if (VALUE_IS_QUAD(ARGV[0])) {
-    	Quad q = VAL2QUAD(ARGV[0]);
-    	dataSize = self->sizeof_quad(q);
+    } else if (auto isColor = VALUE_IS_COLOR(ARGV[0], color); !isColor.has_value()) {
+        RETURN_NULL;
+    } else if (*isColor) {
+        dataSize = self->sizeof_color(color);
+    } else if (auto isOffset = VALUE_IS_OFFSET(ARGV[0], offset); !isOffset.has_value()) {
+        RETURN_NULL;
+    } else if (*isOffset) {
+        dataSize = self->sizeof_offset(offset);
+    } else if (auto isRect = VALUE_IS_RECT(ARGV[0], rect); !isRect.has_value()) {
+        RETURN_NULL;
+    } else if (*isRect) {
+        dataSize = self->sizeof_rect(rect);
+    } else if (auto isRotatedRect = VALUE_IS_ROTRECT(ARGV[0], rotatedRect); !isRotatedRect.has_value()) {
+        RETURN_NULL;
+    } else if (*isRotatedRect) {
+        dataSize = self->sizeof_rotr(rotatedRect);
+    } else if (auto isQuad = VALUE_IS_QUAD(ARGV[0], quad); !isQuad.has_value()) {
+        RETURN_NULL;
+    } else if (*isQuad) {
+        dataSize = self->sizeof_quad(quad);
     } else if (args[0]->IsObject()) {
 		v8::Local<v8::Object> obj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-		MemBlockWrap* memBlock__ = ObjectWrap::Unwrap<MemBlockWrap>(obj);
+		MemBlockWrap* memBlock__ = dynamic_cast<MemBlockWrap*>(v8script::safe_unwrap_object_wrap(obj));
     	if (memBlock__) {
     		MemBlock* memBlock = memBlock__->getCppObject();
     		dataSize = self->sizeof_mem(memBlock->ptr, memBlock->bytes);
     	} else {
     		// perhaps it's an ISerializable?
-			EXTRACT_CPP_OBJECT_OR_SUBCLASS_ARG(1, serializable, ISerializable);
+			ISerializable* serializable = V8_GetSerializable(isolate, ARGV[0]);
 			if (serializable) {
 				DEBUG_DUMP_SCRIPT_OBJECT(self->mSerializerScriptObj, Serializer)
 				DEBUG_DUMP_SCRIPT_OBJECT(serializable->mISerializableScriptObj, ISerializable)
@@ -419,7 +450,9 @@ FUNCTION_IMPL(GetTimerManager)
 //MARK: IAnimationHelper
 // ========================================================================================
 
-CPP_MANAGED_CONSTRUCTOR_IMPL(IAnimationHelper)
+IAnimationHelper* New_IAnimationHelper(SCRIPT_ARGS) {
+    if (s_IAnimationHelper_InNewFromCpp) return nullptr;
+
 	if (HAVE_ONLY_ONE_NULL_ARG) { // for introspection
 		ScriptAnimationHelper* helper = new ScriptAnimationHelper();
 		return helper;
@@ -440,21 +473,9 @@ static v8::Persistent<v8::Function> s_CustomScriptEasing[MAX_CUSTOM_EASINGS];
 
 
 // ========================================================================================
-//MARK: ISpriteCollideHelper
 // ========================================================================================
 
-CPP_MANAGED_CONSTRUCTOR_IMPL(ISpriteCollideHelper)
-	if (HAVE_ONLY_ONE_NULL_ARG) { // for introspection
-		ScriptSpriteCollideHelper* helper = new ScriptSpriteCollideHelper();
-		return helper;
-	} else if (args.Length() != 1 || !args[0]->IsFunction()) {
-		SAVE_SYNTAX_ERR("SpriteCollideHelper must be created with a function argument (allowCollisionFunc)");
-		return 0;
-	}	
-	v8::Local<v8::Function> callback = v8::Local<v8::Function>::Cast(args[0]);
-	ScriptSpriteCollideHelper* helper = new ScriptSpriteCollideHelper(callback);
-	return helper;
-	END
+
 
 
 %#ifndef PDG_NO_GUI
@@ -662,9 +683,11 @@ ScriptEventHandler::ScriptEventHandler(FUNCTION_REF func) {
 	mScriptHandlerFunc.Reset(isolate, func);
 }
 
-bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw() {
+bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
   	v8::Local<v8::Object> jsEvent = v8::Object::New(isolate);
+    if (emitter->mEventEmitterScriptObj.IsEmpty())
+        if (auto* particle = dynamic_cast<Particle*>(emitter)) ParticleWrap::NewFromCpp(isolate, particle);
     v8::Local<v8::Object> emitter_ = v8::Local<v8::Object>::New(isolate, emitter->mEventEmitterScriptObj);
     v8::Local<v8::Object> obj1_;
     v8::Local<v8::Object> obj2_;
@@ -752,11 +775,15 @@ bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, vo
 			break;
 %#endif // PDG_NO_NETWORK
 %#ifndef PDG_NO_SOUND
-		case pdg::eventType_SoundEvent:
-            obj1_ = v8::Local<v8::Object>::New(isolate, static_cast<SoundEventInfo*>(inEventData)->sound->mSoundScriptObj);
+		case pdg::eventType_SoundEvent: {
+            auto* sound = static_cast<SoundEventInfo*>(inEventData)->sound;
+            obj1_ = sound->mSoundScriptObj.IsEmpty()
+                ? SoundWrap::NewFromCpp(isolate, sound)
+                : v8::Local<v8::Object>::New(isolate, sound->mSoundScriptObj);
 			OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("eventCode"), INT2VAL(static_cast<SoundEventInfo*>(inEventData)->eventCode));
 			OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("sound"), obj1_);
 			break;
+        }
 %#endif // PDG_NO_SOUND
 %#ifndef PDG_NO_GUI
 		case pdg::eventType_PortResized:
@@ -773,6 +800,28 @@ bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, vo
 			OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("frameNum"), INT2VAL(static_cast<PortDrawInfo*>(inEventData)->frameNum));
 			break;
 %#endif // PDG_NO_GUI
+        case pdg::eventType_ParticleBreak: {
+            const auto* info=static_cast<PhysicsBodyBreakInfo*>(inEventData);
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("angularSpeed"),NUM2VAL(info->angularSpeed));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("breakAngularSpeed"),NUM2VAL(info->breakAngularSpeed));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("body"), (info->body ? (info->body->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, info->body) : v8::Local<v8::Object>::New(isolate, info->body->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>()));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("referenceBody"), (info->referenceBody ? (info->referenceBody->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, info->referenceBody) : v8::Local<v8::Object>::New(isolate, info->referenceBody->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>()));
+            break;
+        }
+        case pdg::eventType_ColliderContact: {
+            auto* contact=static_cast<ColliderContact*>(inEventData);
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("collider"),(contact->collider->mColliderScriptObj.IsEmpty() ? ColliderWrap::NewFromCpp(isolate, contact->collider) : v8::Local<v8::Object>::New(isolate,contact->collider->mColliderScriptObj)));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("other"),(contact->other->mColliderScriptObj.IsEmpty() ? ColliderWrap::NewFromCpp(isolate, contact->other) : v8::Local<v8::Object>::New(isolate,contact->other->mColliderScriptObj)));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("shape"),NUM2VAL(contact->shape));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("otherShape"),NUM2VAL(contact->otherShape));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("phase"),NUM2VAL(contact->phase));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("penetration"),NUM2VAL(contact->penetration));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("point"),POINT2VAL(contact->point));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("normal"),VECTOR2VAL(contact->normal));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("impulse"),VECTOR2VAL(contact->impulse));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("sensor"),BOOL2VAL(contact->sensor));
+            break;
+        }
 		case pdg::eventType_SpriteCollide:
 		case pdg::eventType_SpriteBreak:
 			if (inEventType == pdg::eventType_SpriteCollide) {
@@ -810,23 +859,38 @@ bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, vo
 				OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("isFirstContact"), v8::Boolean::New(isolate, sci->isFirstContact));
 			  %#endif
  			} else {
-			  %#ifdef PDG_USE_CHIPMUNK_PHYSICS
-			  	SpriteJointBreakInfo* sjb = static_cast<SpriteJointBreakInfo*>(inEventData);
-				if (sjb->targetSprite) {
-					SPRITE_EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteJointBreakInfo* sjb->targetSprite: %p", sjb->targetSprite));
-                	obj1_ = v8::Local<v8::Object>::New(isolate, sjb->targetSprite->mSpriteScriptObj);
-					OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("targetSprite"), obj1_);
-				} else {
-					SPRITE_EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteJointBreakInfo* sjb->targetSprite is null"));
-					OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("targetSprite"), v8::Null(isolate));
-				}
-				OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("impulse"), NUM2VAL(sjb->impulse));
-				OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("force"), NUM2VAL(sjb->force));
-				OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("breakForce"), NUM2VAL(sjb->breakForce));
-				OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("joint"), cpConstraintWrap::NewFromCpp(isolate, sjb->joint));
-			  %#endif
+                auto* sjb = static_cast<SpriteJointBreakInfo*>(inEventData);
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("targetSprite"), (sjb->targetSprite ? v8::Local<v8::Value>(v8::Local<v8::Object>::New(isolate, sjb->targetSprite->mSpriteScriptObj)) : v8::Local<v8::Value>(v8::Null(isolate))));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("impulse"), NUM2VAL(sjb->impulse));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("force"), NUM2VAL(sjb->force));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("breakForce"), NUM2VAL(sjb->breakForce));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("reason"), NUM2VAL(sjb->reason));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("angularSpeed"), NUM2VAL(sjb->angularSpeed));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("breakAngularSpeed"), NUM2VAL(sjb->breakAngularSpeed));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("body"), (sjb->body ? (sjb->body->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, sjb->body) : v8::Local<v8::Object>::New(isolate, sjb->body->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>()));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("referenceBody"), (sjb->referenceBody ? (sjb->referenceBody->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, sjb->referenceBody) : v8::Local<v8::Object>::New(isolate, sjb->referenceBody->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>()));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("part"), (sjb->part ? (sjb->part->mPartScriptObj.IsEmpty() ? PartWrap::NewFromCpp(isolate, sjb->part) : v8::Local<v8::Object>::New(isolate, sjb->part->mPartScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>()));
+%#ifdef PDG_USE_CHIPMUNK_PHYSICS
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("joint"), (sjb->joint ? cpConstraintWrap::NewFromCpp(isolate, sjb->joint).As<v8::Value>() : v8::Null(isolate).As<v8::Value>()));
+%#else
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("joint"), v8::Null(isolate));
+%#endif
  			}
 			// break; fall through, collide events are a subtype of animate events
+        %#ifdef PDG_SPRITER_SUPPORT
+        case pdg::eventType_SpriteTriggerEvent: {
+            // Collision/break events also fall through to the common animation fields.
+            if (inEventType == pdg::eventType_SpriteTriggerEvent) {
+            auto* trigger=static_cast<SpriteTriggerEventInfo*>(inEventData);
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("triggerName"),STR2VAL(trigger->triggerName));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("clipName"),STR2VAL(trigger->clipName));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("entityName"),STR2VAL(trigger->entityName));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("timeSeconds"),NUM2VAL(trigger->timeSeconds));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("offsetSeconds"),NUM2VAL(trigger->offsetSeconds));
+        }
+        }
+        // Trigger events share SpriteAnimateInfo ownership fields.
+        %#endif
 		case pdg::eventType_SpriteAnimate:
 			SPRITE_EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteAnimateInfo* sai->id: %d", sai->id));
 			if (sai->actingSprite) {
@@ -846,6 +910,17 @@ bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, vo
 				OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("inLayer"), v8::Null(isolate));
 			}
 			OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("action"), INT2VAL(sai->action));
+
+            if (inEventType==pdg::eventType_SpriteAnimate && static_cast<SpriteAnimateInfo*>(inEventData)->action==Sprite::action_AnimationPhysicsRecoveryComplete) {
+                const auto* recovery=static_cast<SpriteAnimationPhysicsRecoveryInfo*>(inEventData);
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("id"), NUM2VAL(recovery->id));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("bone"), UINT2VAL(recovery->bone));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("wholeRig"), BOOL2VAL(recovery->wholeRig));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("includeDescendants"), BOOL2VAL(recovery->includeDescendants));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("mode"), INT2VAL(recovery->mode));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("bodyCount"), UINT2VAL(recovery->bodyCount));
+                OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("disabled"), BOOL2VAL(recovery->disabled));
+            }
 			SPRITE_EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteAnimateInfo* done setting properties "));
 			break;
 		case pdg::eventType_SpriteLayer:
@@ -926,7 +1001,7 @@ ScriptAnimationEventHandler::ScriptAnimationEventHandler(FUNCTION_REF func, long
 	mExpectedAction = expectedAction;
 }
 
-bool ScriptAnimationEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw() {
+bool ScriptAnimationEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
     // Only handle SpriteAnimate events
@@ -957,6 +1032,17 @@ bool ScriptAnimationEventHandler::handleEvent(EventEmitter* emitter, long inEven
     OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("emitter"), v8::Local<v8::Object>::New(isolate, emitter->mEventEmitterScriptObj));
     OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("eventType"), INT2VAL(inEventType));
     OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("action"), INT2VAL(animateInfo->action));
+    if(animateInfo->action==Sprite::action_AnimationPhysicsRecoveryComplete) {
+        const auto* recovery=static_cast<SpriteAnimationPhysicsRecoveryInfo*>(inEventData);
+        OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("id"), NUM2VAL(recovery->id));
+        OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("bone"), UINT2VAL(recovery->bone));
+        OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("wholeRig"), BOOL2VAL(recovery->wholeRig));
+        OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("includeDescendants"), BOOL2VAL(recovery->includeDescendants));
+        OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("mode"), INT2VAL(recovery->mode));
+        OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("bodyCount"), UINT2VAL(recovery->bodyCount));
+        OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("disabled"), BOOL2VAL(recovery->disabled));
+    }
+
     
     // Add additional null checks for script objects
     if (animateInfo->actingSprite->mSpriteScriptObj.IsEmpty()) {
@@ -1030,7 +1116,7 @@ ScriptTouchEventHandler::ScriptTouchEventHandler(FUNCTION_REF func, long expecte
 	mExpectedAction = expectedAction;
 }
 
-bool ScriptTouchEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw() {
+bool ScriptTouchEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
     // Only handle SpriteTouch events
@@ -1112,7 +1198,7 @@ ScriptLayerEventHandler::ScriptLayerEventHandler(FUNCTION_REF func, long expecte
 	mExpectedAction = expectedAction;
 }
 
-bool ScriptLayerEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw() {
+bool ScriptLayerEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
     // Only handle SpriteLayer events
@@ -1188,23 +1274,52 @@ ScriptAnimationHelper::ScriptAnimationHelper(FUNCTION_REF func) {
 	mScriptAnimateFunc.Reset(isolate, func);
 }
 
-bool ScriptAnimationHelper::animate(Animated* what, ms_delta msElapsed) throw() {
+ScriptAnimationHelper::~ScriptAnimationHelper() { mScriptAnimateFunc.Reset(); }
+
+void ScriptAnimationHelper::initializeScriptObject() {
+    if (mScriptAnimateFunc.IsEmpty()) return;
+    auto* isolate = v8::Isolate::GetCurrent();
+    const auto wrapper = v8::Local<v8::Object>::New(isolate, mIAnimationHelperScriptObj);
+    wrapper->DefineOwnProperty(isolate->GetCurrentContext(), STR2VAL("_pdgAnimationCallback"),
+        v8::Local<v8::Function>::New(isolate, mScriptAnimateFunc),
+        static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontEnum | v8::DontDelete)).Check();
+    mScriptAnimateFunc.Reset();
+}
+void ScriptAnimationHelper::retainForAnimation() {
+    addRef();
+    if (mAnimationRetains++ == 0 && !mIAnimationHelperScriptObj.IsEmpty())
+        mIAnimationHelperScriptObj.ClearWeak();
+}
+void ScriptAnimationHelper::releaseForAnimation() {
+    if (--mAnimationRetains == 0 && !mIAnimationHelperScriptObj.IsEmpty())
+        mIAnimationHelperScriptObj.SetWeak();
+    release();
+}
+
+bool ScriptAnimationHelper::animate(AnimatedBase* what, double deltaSeconds) noexcept {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
     v8::TryCatch try_catch(isolate);
 
     v8::Local<v8::Value> argv[2];
+    if (what->mAnimatedScriptObj.IsEmpty()) {
+        if (auto* particle = dynamic_cast<Particle*>(what)) ParticleWrap::NewFromCpp(isolate, particle);
+        else if (auto* emission = dynamic_cast<ParticleEmitter*>(what)) ParticleEmitterWrap::NewFromCpp(isolate, emission);
+        else if (auto* part = dynamic_cast<Part*>(what)) PartWrap::NewFromCpp(isolate, part);
+        else if (auto* sprite = dynamic_cast<Sprite*>(what)) SpriteWrap::NewFromCpp(isolate, sprite);
+        else AnimatedBaseWrap::NewFromCpp(isolate, what);
+    }
     argv[0] = v8::Local<v8::Object>::New(isolate, what->mAnimatedScriptObj);
-    argv[1] = v8::Local<v8::Value>::New(isolate, UINT2VAL(msElapsed));
+    argv[1] = v8::Local<v8::Value>::New(isolate, NUM2VAL(deltaSeconds));
 
-    DEBUG_DUMP_SCRIPT_OBJECT(what->mAnimatedScriptObj, Animated);
+    DEBUG_DUMP_SCRIPT_OBJECT(what->mAnimatedScriptObj, AnimatedBase);
     DEBUG_DUMP_SCRIPT_OBJECT(this->mIAnimationHelperScriptObj, IAnimationHelper);
 
     v8::Local<v8::Value> resVal;
     v8::Local<v8::Function> func;
     v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, this->mIAnimationHelperScriptObj);
-    if (!mScriptAnimateFunc.IsEmpty()) {
-		func = v8::Local<v8::Function>::New(isolate, mScriptAnimateFunc);
+    if (OBJECT_HAS_PROPERTY(obj_, STR2VAL("_pdgAnimationCallback"))) {
+        func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), STR2VAL("_pdgAnimationCallback")).ToLocalChecked());
     } else if (OBJECT_HAS_PROPERTY(obj_, STR2VAL("animate"))) {
     	func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), STR2VAL("animate")).ToLocalChecked());
 	} else {
@@ -1238,59 +1353,6 @@ bool ScriptAnimationHelper::animate(Animated* what, ms_delta msElapsed) throw() 
 //MARK: Script Sprite Collide Helper
 // ========================================================================================
 
-ScriptSpriteCollideHelper::ScriptSpriteCollideHelper(FUNCTION_REF func) {
-    v8::Isolate* isolate = v8::Isolate::GetCurrent();
-	mScriptAllowCollisionFunc.Reset(isolate, func);
-}
-
-bool ScriptSpriteCollideHelper::allowCollision(Sprite* sprite, Sprite* withSprite) throw() {
-    v8::Isolate* isolate = v8::Isolate::GetCurrent();
-
-    v8::TryCatch try_catch(isolate);
-
-    v8::Local<v8::Value> argv[2];
-    argv[0] = v8::Local<v8::Object>::New(isolate, sprite->mSpriteScriptObj);
-    argv[1] = v8::Local<v8::Object>::New(isolate, withSprite->mSpriteScriptObj);
-
-    DEBUG_DUMP_SCRIPT_OBJECT(sprite->mSpriteScriptObj, Sprite);
-    DEBUG_DUMP_SCRIPT_OBJECT(withSprite->mSpriteScriptObj, Sprite);
-    DEBUG_DUMP_SCRIPT_OBJECT(this->mISpriteCollideHelperScriptObj, ISpriteCollideHelper);
-
-    v8::Local<v8::Value> resVal;
-    v8::Local<v8::Function> func;
-    v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, this->mISpriteCollideHelperScriptObj);
-    if (!mScriptAllowCollisionFunc.IsEmpty()) {
-		func = v8::Local<v8::Function>::New(isolate, mScriptAllowCollisionFunc);
-    } else if (OBJECT_HAS_PROPERTY(obj_, STR2VAL("allowCollision"))) {
-    	func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), STR2VAL("allowCollision")).ToLocalChecked());
-	} else {
-	  DEBUG_ONLY(
-		v8::String::Utf8Value objectNameStr(isolate, obj_->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-		std::cerr << "fatal: ISpriteCollideHelper object " << *objectNameStr << " missing allowCollision() Function!!";
-		exit(1);
-	  )
-		return false;
-	}
-    resVal = CALL_SCRIPT(func, obj_, 2, argv);
-
-    if (try_catch.HasCaught()) {
-		DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling Sprite Collide Helper!!" ); )
-		FatalException(try_catch);
-		return false;
-    }
-// 	if (!resVal->IsBoolean()) {
-// 	  %#ifdef DEBUG
-// 		std::cerr << "result mismatch: return value from sprite collide helper Function must be a boolean ("
-//                << FUNCTION_GET_NAME(func) << " at " << FUNCTION_GET_FILE_AND_LINE(func) << ")\n";
-// 		exit(1);
-// 	  %#else
-// 	    return false;
-// 	  %#endif
-// 	}
-	return resVal->BooleanValue(isolate);
-}
-
-
 %#ifndef PDG_NO_GUI
 // ========================================================================================
 //MARK: Script Sprite Draw Helper
@@ -1301,7 +1363,7 @@ ScriptSpriteDrawHelper::ScriptSpriteDrawHelper(FUNCTION_REF func) {
 	mScriptDrawFunc.Reset(isolate, func);
 }
 
-bool ScriptSpriteDrawHelper::draw(Sprite* sprite, Port* port) throw() {
+bool ScriptSpriteDrawHelper::draw(Sprite* sprite, Port* port) noexcept {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::TryCatch try_catch(isolate);
 
@@ -1393,11 +1455,15 @@ void* DecodeBinary(v8::Local<v8::Value> val, size_t* outLen) {
 
 // =========================  easing functions =============================
 
-float CallScriptEasingFunc(int which, ms_delta ut, float b, float c, ms_delta ud) {
-	if (which > gNumCustomEasings) {
+// Native easing slots include all ten script bridges; script registrations
+// have their own count and must not treat those bridges as occupied callbacks.
+static int sNumScriptEasings = 0;
+
+float CallScriptEasingFunc(int which, double ut, float b, float c, double ud) {
+	if (which < 0 || which >= sNumScriptEasings) {
 	  %#ifdef DEBUG
 		std::cerr << "logic error: attempting to call an unregistered easing function #"
-		    << which << "(only "<< gNumCustomEasings <<" custom easings have been"
+		    << which << "(only "<< sNumScriptEasings <<" custom easings have been"
 		    " registered via registerEasingFunction())\n";
 		exit(1);
 	  %#else
@@ -1408,10 +1474,10 @@ float CallScriptEasingFunc(int which, ms_delta ut, float b, float c, ms_delta ud
     v8::TryCatch try_catch(isolate);
 
     v8::Local<v8::Value> argv[4];
-    argv[0] = v8::Local<v8::Value>::New(isolate, UINT2VAL(ut));
+    argv[0] = v8::Local<v8::Value>::New(isolate, NUM2VAL(ut));
     argv[1] = v8::Local<v8::Value>::New(isolate, NUM2VAL(b));
     argv[2] = v8::Local<v8::Value>::New(isolate, NUM2VAL(c));
-    argv[3] = v8::Local<v8::Value>::New(isolate, UINT2VAL(ud));
+    argv[3] = v8::Local<v8::Value>::New(isolate, NUM2VAL(ud));
     v8::Local<v8::Function> easingfunc_ = v8::Local<v8::Function>::New(isolate, s_CustomScriptEasing[which]);
 
     v8::Local<v8::Value> resVal = CALL_SCRIPT(easingfunc_, isolate->GetCurrentContext()->Global(), 4, argv);
@@ -1436,22 +1502,23 @@ float CallScriptEasingFunc(int which, ms_delta ut, float b, float c, ms_delta ud
 }
 
 FUNCTION_IMPL(RegisterEasingFunction)
-	METHOD_SIGNATURE("", undefined, 1, (function easingFunc)); 
+	METHOD_SIGNATURE("", [number int], 1, (function easingFunc)); 
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, easingFunc);
     v8::Local<v8::Function> jsEasingFunc = v8::Local<v8::Function>::New(isolate, easingFunc);
-    if (gNumCustomEasings >= MAX_CUSTOM_EASINGS) {
+    if (sNumScriptEasings >= MAX_CUSTOM_EASINGS) {
     	THROW_ERR("Can't register any more custom easing functions!!");
     } else {
-    	s_CustomScriptEasing[gNumCustomEasings].Reset(isolate, jsEasingFunc);
+    	s_CustomScriptEasing[sNumScriptEasings].Reset(isolate, jsEasingFunc);
 		v8::String::Utf8Value funcNameStr(isolate, easingFunc->GetName()->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-		int funcId = NUM_BUILTIN_EASINGS + gNumCustomEasings;
-		CallScriptEasingFunc(gNumCustomEasings, 0, 0.0f, 0.0f, 1); // test calling the function
-     	gNumCustomEasings++;
+		int funcId = NUM_BUILTIN_EASINGS + sNumScriptEasings;
+		CallScriptEasingFunc(sNumScriptEasings++, 0, 0.0f, 0.0f, 1); // validate the registered callback
+     	
      	v8::Local<v8::Object> bind_ = v8::Local<v8::Object>::New(isolate, s_BindingTarget);
      	OBJECT_SET_PROPERTY_VALUE(bind_, SYMBOL(*funcNameStr), INT2VAL(funcId));
 		DEBUG_ONLY( OS::_DOUT( "Registered custom easing Function %d as constant name %s [%d]",
-				gNumCustomEasings, *funcNameStr, funcId); )
+				sNumScriptEasings, *funcNameStr, funcId); )
+        RETURN_INT32(funcId);
     }
 	NO_RETURN;
 END
@@ -1465,13 +1532,23 @@ END
 
 SCRIPT_DEBUG_ONLY(
 static size_t sLastHeapUsed = 0;
-static long sIdleLastHeapReport = OS::getMilliseconds();
+static ms_time sIdleLastHeapReport = OS::getMilliseconds();
 )
 
 void initBindings(v8::Local<v8::Object> target);
 
 void initBindings(v8::Local<v8::Object> target) {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
+%#if defined(NDEBUG) && !defined(DEBUG)
+    const char* buildConfiguration = "Release";
+%#else
+    const char* buildConfiguration = "Debug";
+%#endif
+    target->DefineOwnProperty(isolate->GetCurrentContext(),
+        v8::String::NewFromUtf8Literal(isolate, "_buildConfiguration"),
+        v8::String::NewFromUtf8(isolate, buildConfiguration).ToLocalChecked(),
+        static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).Check();
+
     
 	// register all our customEasing functions with pdg C++
 	easingFuncToId(customEasing0);
@@ -1501,7 +1578,13 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CLASS(EventManager);
 	INIT_CLASS(TimerManager);
 	INIT_CLASS(IAnimationHelper);
-	INIT_CLASS(Animated);
+	INIT_CLASS(AnimatedBase);
+	INIT_CLASS(Part);
+    INIT_CLASS(Particle);
+    INIT_CLASS(ParticleEmitter);
+    INIT_CLASS(PhysicsBody);
+    INIT_CLASS(Collider);
+    INIT_CLASS(PhysicsConstraint);
   %#ifdef PDG_USE_CHIPMUNK_PHYSICS
 	INIT_CLASS(cpArbiter);
 	INIT_CLASS(cpConstraint);
@@ -1510,7 +1593,6 @@ void initBindings(v8::Local<v8::Object> target) {
   %#ifndef PDG_NO_GUI
 	INIT_CLASS(ISpriteDrawHelper);
   %#endif // !PDG_NO_GUI
-	INIT_CLASS(ISpriteCollideHelper);
 	INIT_CLASS(Sprite);
 	INIT_CLASS(SpriteLayer);
 	INIT_CLASS(TileLayer);
@@ -1519,6 +1601,7 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CLASS(Spline);
 	INIT_CLASS(Polygon);
 	INIT_CLASS(Attributes);
+    INIT_CLASS(AnimatedAttributesBase);
 	INIT_CLASS(ElementRef);
 	INIT_CLASS(Drawing);
   %#ifndef PDG_NO_GUI
@@ -1587,8 +1670,19 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CONSTANT("eventType_ScrollWheel", eventType_ScrollWheel);
 	INIT_CONSTANT("eventType_SpriteTouch", eventType_SpriteTouch);
 	INIT_CONSTANT("eventType_SpriteAnimate", eventType_SpriteAnimate);
+	INIT_CONSTANT("eventType_SpriteTriggerEvent", eventType_SpriteTriggerEvent);
 	INIT_CONSTANT("eventType_SpriteLayer", eventType_SpriteLayer);
 	INIT_CONSTANT("eventType_SpriteCollide", eventType_SpriteCollide);
+    INIT_CONSTANT("collisionShape_Polygon", collisionShape_Polygon);
+    INIT_CONSTANT("collisionShape_ImageMask", collisionShape_ImageMask);
+    INIT_CONSTANT("collisionShape_Capsule", collisionShape_Capsule);
+    INIT_CONSTANT("colliderSource_Explicit", colliderSource_Explicit);
+    INIT_CONSTANT("colliderSource_Frame", colliderSource_Frame);
+    INIT_CONSTANT("colliderSource_Animation", colliderSource_Animation);
+    INIT_CONSTANT("frameCollider_Bounds", frameCollider_Bounds);
+    INIT_CONSTANT("frameCollider_AlphaMask", frameCollider_AlphaMask);
+    INIT_CONSTANT("eventType_ColliderContact", eventType_ColliderContact);
+    INIT_CONSTANT("eventType_ParticleBreak", eventType_ParticleBreak);
 	INIT_CONSTANT("eventType_SpriteBreak", eventType_SpriteBreak);
 	INIT_CONSTANT("eventType_SoundEvent", eventType_SoundEvent);
 	INIT_CONSTANT("eventType_PortDraw", eventType_PortDraw);
@@ -1654,7 +1748,7 @@ void initBindings(v8::Local<v8::Object> target) {
     INIT_CONSTANT("screenPos_FaceUp", screenPos_FaceUp);
     INIT_CONSTANT("screenPos_FaceDown", screenPos_FaceDown);
     
-  %#ifndef PDG_NO_GUI
+    // Attributes stores text styles even in headless builds.
     INIT_CONSTANT("textStyle_Plain", textStyle_Plain);
 	INIT_CONSTANT("textStyle_Bold", textStyle_Bold);
 	INIT_CONSTANT("textStyle_Italic", textStyle_Italic);
@@ -1662,7 +1756,6 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CONSTANT("textStyle_Centered", textStyle_Centered);
 	INIT_CONSTANT("textStyle_LeftJustified", textStyle_LeftJustified);
 	INIT_CONSTANT("textStyle_RightJustified", textStyle_RightJustified);
-  %#endif
 
 	INIT_CONSTANT("lineStyle_Auto", lineStyle_Auto);
 	INIT_CONSTANT("lineStyle_None", lineStyle_None);
@@ -1711,8 +1804,43 @@ void initBindings(v8::Local<v8::Object> target) {
     INIT_CONSTANT("init_StdOut", LogManager::init_StdOut);
     INIT_CONSTANT("init_StdErr", LogManager::init_StdErr);
 
-	INIT_CONSTANT("duration_Constant", duration_Constant);
-	INIT_CONSTANT("duration_Instantaneous", duration_Instantaneous);
+	INIT_UINT_CONSTANT("partId_None", partId_None);
+    INIT_UINT_CONSTANT("boneId_None", boneId_None);
+    INIT_UINT_CONSTANT("physicsBody_None", physicsBody_None);
+    INIT_UINT_CONSTANT("physicsBody_Dynamic", physicsBody_Dynamic);
+    INIT_UINT_CONSTANT("physicsBody_Kinematic", physicsBody_Kinematic);
+    INIT_UINT_CONSTANT("physicsBody_Static", physicsBody_Static);
+    INIT_UINT_CONSTANT("physicsSolver_None", physicsSolver_None);
+    INIT_UINT_CONSTANT("physicsSolver_Basic", physicsSolver_Basic);
+    INIT_UINT_CONSTANT("physicsSolver_Chipmunk", physicsSolver_Chipmunk);
+    INIT_UINT_CONSTANT("physicsForce_None", physicsForce_None);
+    INIT_UINT_CONSTANT("collisionShape_None", collisionShape_None);
+    INIT_UINT_CONSTANT("collisionShape_Circle", collisionShape_Circle);
+    INIT_UINT_CONSTANT("collisionShape_Convex", collisionShape_Convex);
+    INIT_UINT_CONSTANT("collision_Begin", collision_Begin);
+    INIT_UINT_CONSTANT("collision_Stay", collision_Stay);
+    INIT_UINT_CONSTANT("collision_End", collision_End);
+    INIT_UINT_CONSTANT("constraint_Pin", constraint_Pin);
+    INIT_UINT_CONSTANT("constraint_Slide", constraint_Slide);
+    INIT_UINT_CONSTANT("constraint_Pivot", constraint_Pivot);
+    INIT_UINT_CONSTANT("constraint_Groove", constraint_Groove);
+    INIT_UINT_CONSTANT("constraint_Spring", constraint_Spring);
+    INIT_UINT_CONSTANT("constraint_RotarySpring", constraint_RotarySpring);
+    INIT_UINT_CONSTANT("constraint_RotaryLimit", constraint_RotaryLimit);
+    INIT_UINT_CONSTANT("constraint_Ratchet", constraint_Ratchet);
+    INIT_UINT_CONSTANT("constraint_Gear", constraint_Gear);
+    INIT_UINT_CONSTANT("constraint_Motor", constraint_Motor);
+
+
+    INIT_CONSTANT("partSpace_Local", partSpace_Local);
+    INIT_CONSTANT("partSpace_Sprite", partSpace_Sprite);
+    INIT_CONSTANT("partSpace_World", partSpace_World);
+    INIT_CONSTANT("partPlacement_Snap", partPlacement_Snap);
+    INIT_CONSTANT("partPlacement_PreserveWorld", partPlacement_PreserveWorld);
+    INIT_CONSTANT("rotationDirection_AsSpecified", rotationDirection_AsSpecified);
+	INIT_CONSTANT("rotationDirection_Shortest", rotationDirection_Shortest);
+	INIT_CONSTANT("rotationDirection_Clockwise", rotationDirection_Clockwise);
+	INIT_CONSTANT("rotationDirection_CounterClockwise", rotationDirection_CounterClockwise);
 		
 	INIT_CONSTANT("animate_StartToEnd", Sprite::animate_StartToEnd);
 	INIT_CONSTANT("animate_EndToStart", Sprite::animate_EndToStart);
@@ -1737,8 +1865,17 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CONSTANT("action_FadeInComplete", Sprite::action_FadeInComplete);
 	INIT_CONSTANT("action_FadeOutComplete", Sprite::action_FadeOutComplete);
 	INIT_CONSTANT("action_JointBreak", Sprite::action_JointBreak);
-	INIT_CONSTANT("action_SpriterTrigger", Sprite::action_SpriterTrigger);
+    INIT_CONSTANT("action_BodyBreak", Sprite::action_BodyBreak);
+    INIT_CONSTANT("physicsBreak_Force", physicsBreak_Force);
+    INIT_CONSTANT("physicsBreak_AngularSpeed", physicsBreak_AngularSpeed);
 	INIT_CONSTANT("action_AnimationBlendComplete", Sprite::action_AnimationBlendComplete);
+    INIT_CONSTANT("action_AnimationPhysicsRecoveryComplete", Sprite::action_AnimationPhysicsRecoveryComplete);
+    %#ifdef PDG_SPRITER_SUPPORT
+    INIT_CONSTANT("animationPhysics_Kinematic", animationPhysics_Kinematic);
+    INIT_CONSTANT("animationPhysics_Dynamic", animationPhysics_Dynamic);
+    INIT_CONSTANT("animationPhysics_Driven", animationPhysics_Driven);
+    INIT_CONSTANT("animationPhysics_Mixed", animationPhysics_Mixed);
+    %#endif
 	
 	INIT_CONSTANT("touch_MouseEnter", Sprite::touch_MouseEnter);
 	INIT_CONSTANT("touch_MouseLeave", Sprite::touch_MouseLeave);
@@ -1753,6 +1890,42 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CONSTANT("collide_AlphaChannel", Sprite::collide_AlphaChannel);
 	INIT_CONSTANT("collide_SpriterCollisionBox", Sprite::collide_SpriterCollisionBox);
 	INIT_CONSTANT("collide_Last", Sprite::collide_Last);
+
+%#ifdef PDG_SPRITER_SUPPORT
+	INIT_CONSTANT("animationSpace_Local", animationSpace_Local);
+	INIT_CONSTANT("animationSpace_Rig", animationSpace_Rig);
+	INIT_CONSTANT("animationSpace_World", animationSpace_World);
+	INIT_CONSTANT("animationDebug_None", animationDebug_None);
+	INIT_CONSTANT("animationDebug_Bones", animationDebug_Bones);
+	INIT_CONSTANT("animationDebug_Sockets", animationDebug_Sockets);
+	INIT_CONSTANT("animationDebug_Boxes", animationDebug_Boxes);
+	INIT_CONSTANT("animationDebug_All", animationDebug_All);
+	INIT_CONSTANT("animationBinding_Image", animationBinding_Image);
+	INIT_CONSTANT("animationBinding_Point", animationBinding_Point);
+	INIT_CONSTANT("animationBinding_Box", animationBinding_Box);
+	INIT_CONSTANT("animationVariable_Float", animationVariable_Float);
+	INIT_CONSTANT("animationVariable_Int", animationVariable_Int);
+	INIT_CONSTANT("animationVariable_String", animationVariable_String);
+	INIT_CONSTANT("animationStage_PreConstraint", animationStage_PreConstraint);
+	INIT_CONSTANT("animationStage_Constraint", animationStage_Constraint);
+	INIT_CONSTANT("animationStage_PostConstraint", animationStage_PostConstraint);
+	INIT_CONSTANT("animationSource_Clip", animationSource_Clip);
+	INIT_CONSTANT("animationSource_Reference", animationSource_Reference);
+	INIT_CONSTANT("animationSource_Procedural", animationSource_Procedural);
+	INIT_CONSTANT("animationBody_Dynamic", animationBody_Dynamic);
+	INIT_CONSTANT("animationBody_Kinematic", animationBody_Kinematic);
+	INIT_CONSTANT("animationRoot_Fixed", animationRoot_Fixed);
+	INIT_CONSTANT("animationRoot_Follow", animationRoot_Follow);
+	INIT_CONSTANT("animationDraw_BeforeAll", animationDraw_BeforeAll);
+	INIT_CONSTANT("animationDraw_AfterAll", animationDraw_AfterAll);
+	INIT_CONSTANT("animationDraw_BeforeSlot", animationDraw_BeforeSlot);
+	INIT_CONSTANT("animationDraw_AfterSlot", animationDraw_AfterSlot);
+	INIT_CONSTANT("animationDraw_ReplaceSlot", animationDraw_ReplaceSlot);
+	INIT_CONSTANT("animationStroke_PortPixels", animationStroke_PortPixels);
+	INIT_CONSTANT("animationStroke_Local", animationStroke_Local);
+	INIT_CONSTANT("animationIK_NoStretch", animationIK_NoStretch);
+	INIT_CONSTANT("animationIK_Stretch", animationIK_Stretch);
+%#endif
 
 	INIT_CONSTANT("action_ErasePort", SpriteLayer::action_ErasePort);
 	INIT_CONSTANT("action_PreDrawLayer", SpriteLayer::action_PreDrawLayer);
@@ -1829,6 +2002,8 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CONSTANT("ser_Micro", ser_Micro);
 	INIT_CONSTANT("ser_Update", ser_Update);
 	INIT_CONSTANT("ser_Full", ser_Full);
+    INIT_CONSTANT("serialization_Complete", serialization_Complete);
+    INIT_CONSTANT("serialization_ExternalReferences", serialization_ExternalReferences);
 
 	INIT_CONSTANT("spline_Hermite", 1);
 	INIT_CONSTANT("spline_Cardinal", 2);

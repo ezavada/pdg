@@ -1,0 +1,120 @@
+/**
+\fn uint32 pdg::SpriteLayer::getSerializedSize(ISerializer* serializer) const
+\brief Measure selected Layer state and shared Sprite resources.
+\param serializer Writer used for resource policy and shared-object size tracking; not null.
+\return Record size in bytes, excluding the stream header and enclosing object tag/length.
+Uses the Layer's serialization flags. Initial records validate supported state
+and resource availability during sizing.
+\sa SpriteLayer::serialize(), SpriteLayer::setSerializationFlags()
+*/
+
+/**
+\fn void pdg::SpriteLayer::serialize(ISerializer* serializer) const
+\brief Save selected Layer state and its ordered sprites.
+\param serializer Destination writer; not null. Select its resource mode before writing.
+The default `ser_Full` includes Layer draw transforms, initial identities, frame
+artwork, playback, programmed tweens, root and Part PhysicsBody state and active drives.
+Remaining Layer fade completion delays use seconds. Shared images are written
+once and use the writer's embedded-resource or external-reference policy.
+
+
+Updates with `ser_Animations` (including `ser_Update`) transfer sampled local Part
+transforms, reflection, constant movement and scheduled animations by Part ID.
+They preserve existing Part identities, parent links and artwork. This includes
+poses already solved by Part IK. The receiver can stop Layer animations and
+disable collisions to display only the received state. Part creation/removal,
+reparenting, artwork changes, IK controller configuration and Part body/constraint
+state require another initial snapshot; incremental Part records are not full
+physics checkpoints. A changed Part ID set is rejected.
+
+Independent Parts retain IDs/names, parent links, transforms, tweens and shared
+Image/Drawing content. Parent links resolve before body publication. Nested
+Drawing geometry/attributes are embedded; referenced images use the save policy.
+Rigid mounts retain their mounting Part, child Sprite, sampled child grip frame,
+error/held pose and nested relationships. Children retain their independent layer
+draw order. Mount links resolve after all Sprite/Part identities exist; nonphysical
+and kinematic children retain the same ownership and command restrictions.
+
+Drawing colors and image transparency colors use eight-bit channels, with opaque
+alpha omitted. Floating-point colors can change by less than one channel step
+(1/255) when restored. Image pixel data is preserved exactly.
+Drawing geometry, pixel-space attributes (including thickness, text size, offsets
+and transform translation), and image subsections use the compact coordinate
+serializers. These can discard a fractional remainder smaller than 0.001 per
+encoded coordinate component. Rectangles encode their origin and size, so those
+small errors can accumulate at the opposite edge. Physics state, collision
+geometry, constraint anchors, IK inputs and Sprite/Part transforms retain their
+existing floating-point precision.
+
+Packed boolean flags omit default values and absent payloads. Repeated images,
+Drawing storage and imported animation assets use shared object references within
+the same serializer stream. This preserves shared identity and avoids writing
+the same resource again; independently created objects remain distinct.
+
+
+Imported SCML animations retain their shared model, selected entity/clip,
+floating-point playback time, pause/events, character maps, reference pose, bone
+overrides, blends and interrupted transitions. Bone-, artwork- and socket-bound
+Parts resolve against the restored rig. Built-in rig IK modifiers and retained
+Drawing registrations preserve their IDs, options and enabled state. Animation
+colliders continue following the restored pose.
+
+Complete saves embed the imported document and its images and can load without
+the source files. Embedded XML is compressed losslessly with zlib when that makes
+it smaller; decompression is automatic. Documents are limited to 64 MiB before
+compression, and corrupt payloads or mismatched lengths cause a load error.
+External-reference saves omit the XML, resolve the original document path and
+verify that its contents have not changed; images use the selected resource policy.
+Missing or changed dependencies cause a load error.
+
+Initial records preserve Collider shapes and shape IDs, frame/animation-source options,
+material overrides, collision filters, sensor/enabled state and contact-event
+opt-in. Compound-body associations, all PhysicsConstraint types, linked IK limits
+and active physical Part IK controllers resolve after all owners exist. Captured
+IK offsets and sampled drives survive; offsets are not recaptured from a deformed
+pose. Geometry is stored in both resource modes; frame images follow the resource
+policy. Restored colliders receive new process-wide IDs.
+
+Callback collision filters/handlers are rejected; reinstall application handlers
+after loading. Solver contact caches and pending contact events are not saved,
+so loading rebuilds contacts and can produce new Begin events. A resumed simulation
+is not guaranteed to be bit-for-bit identical to an uninterrupted one.
+
+\note Initial saves support frame-based and imported Sprite collections with
+Parts, colliders, constraints, physical Part IK and rigid mounts. Active imported
+physical rigs, older attachSprite() associations, modifier/drawing callbacks,
+custom easing/helpers, Font attributes, custom Drawing implementations and links
+to other layers are rejected. Drawing content requires a GUI-capable build. Port assignment, event handlers and shared-world gravity and
+damping configuration belong to the receiving application. Discard the writer
+after a save error.
+
+\code{.cpp}
+// layer is an existing SpriteLayer without unsupported associations.
+Serializer writer;
+writer.setResourceMode(serialization_Complete);
+layer->setSerializationFlags(ser_Full);
+layer->serialize(&writer);
+// Copy the bytes into storage owned by a Deserializer, then call
+// restoredLayer->deserialize(&reader) on a layer created with createSpriteLayer().
+\endcode
+\sa SpriteLayer::deserialize(), ISerializer::setResourceMode()
+*/
+
+/**
+\fn void pdg::SpriteLayer::deserialize(IDeserializer* deserializer)
+\brief Restore Layer state or apply an incremental update.
+\param deserializer Reader positioned at a SpriteLayer record; not null.
+Initial records load into an empty or populated Layer, preserving shared resources, independent Part graphs
+and Sprite order. Mount links are validated after creating the entire collection,
+including cycle/duplicate-owner checks. Record/resource validation completes before replacing live
+membership and state. Retained old sprites are detached; restored bodies join
+the solver after validation. Layer tween pointers, including zoom, are rebound to
+the receiving object. A validation failure preserves existing state; discard the
+failed reader.
+
+The destination keeps its Port, event handlers and caller-selected serialization
+flags. Incremental updates require matching sprites and are applied directly.
+\note Call outside animation modifiers and a physical solve. The shared physical
+world is not recreated; configure gravity and damping in the application.
+\sa SpriteLayer::serialize(), SpriteLayer::setSerializationFlags()
+*/

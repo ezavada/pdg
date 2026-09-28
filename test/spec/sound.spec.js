@@ -46,6 +46,19 @@ describe("Sound", function() {
   });
 
 
+  it("retains a constructed sound across stop and replay", function() {
+    var sound = new pdg.Sound('data/clink1.mp3');
+    sound.start();
+    sound.stop();
+    sound.volume = 0.25;
+    expect(sound.volume).toBeCloseTo(0.25, 3);
+    sound.start();
+    sound.stop();
+    sound.setLooping(true);
+    expect(sound.isLooping()).toBe(true);
+  });
+
+
 
 });
 

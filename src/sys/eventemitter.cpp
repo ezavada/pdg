@@ -29,6 +29,7 @@
 
 
 #include "pdg_project.h"
+#include <format>
 
 #ifdef _MSC_VER
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
@@ -160,11 +161,9 @@ EventEmitter::postEvent(long inEventType, void* inEventData, EventEmitter* fromE
     DEBUG_ONLY(
         ms_time eventPostTime = OS::getMilliseconds();
         ms_delta eventDuration = eventPostTime - eventTime;
-        EVENT_DEBUG_ONLY( OS::_DOUT("EventEmitter::postEvent event [%d][%s] took %ld ms", inEventType, 
-                                    getEventName(inEventType), eventDuration); )
+        EVENT_DEBUG_ONLY( OS::_DOUT("%s", std::format("EventEmitter::postEvent event [{}][{}] took {} ms", inEventType, getEventName(inEventType), eventDuration).c_str()); )
         if (eventDuration > 100) {
-            DEBUG_ONLY( OS::_DOUT("EventEmitter::postEvent event [%d][%s] took %ld ms, data: %p", inEventType, 
-                                    getEventName(inEventType), eventDuration, inEventData); )
+            DEBUG_ONLY( OS::_DOUT("%s", std::format("EventEmitter::postEvent event [{}][{}] took {} ms, data: {}", inEventType, getEventName(inEventType), eventDuration, static_cast<const void*>(inEventData)).c_str()); )
         }
     )
 	return wasHandled;

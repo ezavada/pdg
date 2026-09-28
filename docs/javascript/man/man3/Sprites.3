@@ -1,0 +1,220 @@
+.TH "Sprites" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Sprites \- Sprites and layers
+.PP
+ \- Sprite and tile layers, drawing helpers, and collision helpers\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBISpriteDrawHelper\fP"
+.br
+.RI "helper for drawing sprite overlays and add-on effects "
+.ti -1c
+.RI "class \fBSprite\fP"
+.br
+.RI "animated, moving image that is automatically moved, animated, and drawn "
+.ti -1c
+.RI "struct \fBSpriteAnimateEvent\fP"
+.br
+.RI "a Sprite did some animation (\fIOptional\fP) "
+.ti -1c
+.RI "class \fBSpriteLayer\fP"
+.br
+.RI "creates and tracks collections of sprites "
+.ti -1c
+.RI "struct \fBSpriteTriggerEvent\fP"
+.br
+.RI "Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. "
+.ti -1c
+.RI "class \fBTileLayer\fP"
+.br
+.RI "efficiently handles large tile datasets, useful for backgrounds, terrains, etc\&.\&.\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Sprite and tile layers, drawing helpers, and collision helpers\&. 
+
+See \fBAuthored Spriter triggers\fP for authored Spriter notifications and their \fBpdg::SpriteTriggerEvent\fP payload\&. 
+.SH "Class Documentation"
+.PP 
+.SH "class pdg::ISpriteDrawHelper"
+.PP 
+helper for drawing sprite overlays and add-on effects 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Implement this interface to do extra drawing stuff for a specific \fBSprite\fP then start using it by calling the sprite's setDrawHelper() method\&. You can only have one \fBSprite\fP Draw Helper attached to a particular sprite for normal drawing (before the sprite would normally draw) and one for post draw (after the sprite has been drawn)
+
+.PP
+For those coding in Javascript, there is an implementation of \fBISpriteDrawHelper\fP that maps a function definition to the draw call\&. So to create a helper:
+
+.PP
+.PP
+.nf
+const myHelper = new pdg\&.ISpriteDrawHelper(function(sprite, port) {
+                console\&.log("in my sprite draw helper for " + sprite );
+                const r = sprite\&.getLayer()\&.layerToPortRect(sprite\&.getBoundingBox());
+                port\&.drawRect(r, new pdg\&.Attributes()
+                                \&.fillColor(new pdg\&.Color("black"))
+                                \&.lineColor(new pdg\&.Color("white")));
+                return false;  // don't let sprite draw itself (ignored for post draw)
+});
+mySprite\&.setDrawHelper(myHelper);
+.fi
+.PP
+
+.PP
+For a helper with its own methods or state, declare a JavaScript class that extends \fR\fBpdg\&.ISpriteDrawHelper\fP\fP\&. The native interface takes a callback in its constructor; forward that callback to your \fRdraw()\fP method through \fRsuper()\fP:
+
+.PP
+.PP
+.nf
+class MyDrawHelperClass extends pdg\&.ISpriteDrawHelper {
+    constructor() {
+        super(function(sprite, port) {
+            return this\&.draw(sprite, port);
+        });
+    }
+
+    draw(sprite, port) {
+        console\&.log("Drawing sprite:", sprite);
+        return true; // allow normal sprite drawing
+    }
+}
+
+mySprite\&.setDrawHelper(new MyDrawHelperClass());
+.fi
+.PP
+.SS "Your Custom Function:"
+As you can see from the examples above, your \fBSprite\fP Draw Helper function (or draw() method) will be called with two parameters, and return a boolean: 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsprite\fP the \fBSprite\fP that is being drawn 
+.br
+\fIport\fP the \fBPort\fP where the sprite should be drawn 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+\fBtrue\fP if the normal \fBSprite\fP drawing should happen; or \fBfalse\fP if the normal \fBSprite\fP drawing should be skipped\&. This return result only applies when called for pre-draw\&. If the helper is installed as a post-draw helper using setPostDrawHelper(), then the return result is ignored\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite\&.setDrawHelper()\fP 
+.RE
+.PP
+
+.SH "struct pdg::SpriteAnimateEvent"
+.PP 
+a Sprite did some animation (\fIOptional\fP) 
+
+A Sprite will generate one of these events when it completes an animation including fades (opacity animations), and moving on/offscreen or outside of the layer\&.
+
+.PP
+For frame based animations -- that is, calls to \fBpdg\&.Sprite\&.startFrameAnimation()\fP -- if it reaches the last frame and is not set to loop, action will be \fBpdg\&.action_AnimationEnd\fP\&. For looping animations \fBpdg\&.action_AnimationLoop\fP will be received each time the animation completes and starts over with the first frame\&.
+
+.PP
+When a Spriter animation blend started by \fBpdg::Sprite::blendToAnimation()\fP or \fBpdg::Sprite::transitionToAnimation()\fP completes, action is \fBpdg::action_AnimationBlendComplete\fP\&.
+
+.PP
+Authored Spriter triggers are delivered as \fBpdg::eventType_SpriteTriggerEvent\fP with a \fBpdg::SpriteTriggerEvent\fP payload\&. Subscribe to that event type for triggers\&.
+
+.PP
+For fades, one of three action types are possible: \fBpdg\&.action_FadeComplete\fP for calls to \fBpdg\&.Sprite\&.fadeTo()\fP, \fBpdg\&.action_FadeInComplete\fP for calls to \fBpdg\&.Sprite\&.fadeIn()\fP, and \fBpdg\&.action_FadeOutComplete\fP for calls to \fBpdg\&.Sprite\&.fadeOut()\fP\&.
+
+.PP
+When a Sprite has setWantsOffscreenEvents(true), \fBpdg\&.action_Offscreen\fP and \fBpdg\&.action_Onscreen\fP events will be generated for that sprite whenever it enters or departs the visible area of the port the layer is being rendered into\&.
+
+.PP
+When a Sprite has setWantsCollideWallEvents(true), \fBpdg\&.action_ExitLayer\fP events will be generated for that sprite whenever it moves completely outside the boundaries of the layer\&. (It will also get a \fBSpriteCollideEvent\fP when it hits the boundary)\&. 
+.PP
+.nf
+{
+    emitter: {},       // the emitter that generated this event
+    eventType: 17,     // the event type (eventType_SpriteAnimate)
+    action: 0,         // what happened (action_AnimationEnd/Loop or action_Fade/In/OutComplete)
+    actingSprite: {},  // the Sprite that was animating
+    inLayer: {}        // the SpriteLayer that contains the Sprite
+}
+
+.fi
+.PP
+
+.PP
+\fBNote\fP
+.RS 4
+Spriter eventline notifications require pdg::Sprite::enableSpriterEvents(true)\&. See \fBAuthored Spriter triggers\fP for crossing, looping, seek, and transition rules\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_SpriteAnimate\fP 
+
+.PP
+\fBpdg\&.Sprite\&.startFrameAnimation()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.blendToAnimation()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.startAnimation()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.fadeTo()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.fadeIn()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.fadeOut()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.setWantsOffscreenEvents()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.setWantsCollideWallEvents()\fP 
+.RE
+.PP
+
+.SH "struct pdg::SpriteTriggerEvent"
+.PP 
+Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. 
+
+The common JavaScript payload contains:
+
+.PP
+Field  Meaning  \fRemitter\fP  Event emitter delivering the notification  \fReventType\fP  \fBpdg::eventType_SpriteTriggerEvent\fP  \fRactingSprite\fP  Sprite whose animation crossed the trigger  \fRinLayer\fP  SpriteLayer containing that Sprite  \fRtriggerName\fP  Authored eventline name  \fRclipName\fP  Clip containing the eventline key  \fRentityName\fP  Spriter entity containing the clip  \fRtimeSeconds\fP  Authored key position from clip start, in floating-point seconds  \fRoffsetSeconds\fP  Occurrence offset from the start of the update, in floating-point seconds  
+
+.PP
+Subscribe by event type and inspect \fRtriggerName\fP to distinguish authored triggers\&. An \fRaction\fP field is not a portable trigger discriminator\&. The native compatibility field \fRframeTime\fP uses integer milliseconds and is omitted from JavaScript\&. The native event ID is currently exposed by the browser bridge but not the V8/JavaScriptCore bridges\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg::Sprite::enableSpriterEvents\fP 
+
+.PP
+\fBpdg::eventType_SpriteTriggerEvent\fP 
+
+.PP
+\fBAuthored Spriter triggers\fP 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

@@ -32,6 +32,10 @@
 
 #include "pdg_project.h"
 
+#if !__cplusplus
+#include <stdbool.h>
+#endif
+
 #if __cplusplus
 extern "C" {
 #endif
@@ -45,6 +49,9 @@ void pdg_LibInit();
     
 void pdg_LibIdle();
 void pdg_LibRun();
+
+// Returns milliseconds until the next PDG timer, or -1 when none is pending.
+long pdg_LibGetNextTimerDelay();
 
 void pdg_LibQuit();
 bool pdg_LibIsQuitting();

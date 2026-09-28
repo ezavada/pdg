@@ -1,0 +1,47 @@
+/**
+\addtogroup Physics
+
+\ref pdg::PhysicsBody controls motion, forces and material properties;
+\ref pdg::Collider supplies collision geometry and contact events, and
+\ref pdg::PhysicsConstraint connects bodies. Sprites and Parts share these APIs.
+
+\note Animation physics requires Chipmunk in C++ and JavaScript. The Basic
+solver supports simple shared PhysicsBody/PhysicsConstraint use; it is not an
+animation-rig backend and will not be expanded to support complex animation
+physics. Use supportsAnimationPhysics() to check build capability and enable
+Chipmunk on the SpriteLayer before setupAnimationPhysics() or
+setupPhysicsFromAnimationRig(). Ordinary authored playback and pose IK do not
+require physics.
+
+\section physics_solver_comparison Basic and Chipmunk solver comparison
+
+Compare the native solvers using the same physical inputs. Step time measures CPU
+cost; overlap, joint error and settling describe the resulting physical behavior.
+The measurements below apply to the native engine used by both language APIs;
+they do not measure JavaScript binding or callback overhead.
+
+\snippet{doc} CONTACT_REUSE_RESULTS.md physics-solver-results
+
+\section physics_solver_viewer Watch the solvers side by side
+
+This viewer replays recorded runs of the actual C++ solvers. Each run simulates
+2,000 dynamic bodies; a representative sample is displayed so individual contacts
+and joints remain visible. Both views use the same scale and simulation time.
+Playback speed is independent of the CPU timings above. No server, engine build
+or internet connection is needed after downloading the documentation.
+
+Select approaching circles, touching circles with opposing forces, box stacks,
+joint chains or box piles. Switch between Sprite and Part owners, enable Chipmunk
+sleeping for the box and chain scenes, or pause, scrub, step and slow playback.
+In the circle grids, rows vary offset or force direction and columns increase
+speed or force. Yellow arrows disappear when the touching pair's forces stop.
+
+\htmlonly[block]
+<p><a href="collider-viewer.html" target="_blank" rel="noopener">Open the collider viewer in a full window</a>
+(about 13 MB; recorded playback).</p>
+<iframe src="collider-viewer.html" title="Recorded Basic and Chipmunk physics comparison"
+        loading="lazy" width="100%" height="1000" style="border:1px solid #809080;border-radius:8px;">
+<a href="collider-viewer.html">Open the collider viewer</a>
+</iframe>
+\endhtmlonly
+*/

@@ -1,0 +1,9 @@
+<map id="MouseInfo" name="MouseInfo">
+<area shape="rect" id="Node000001" title=" " alt="" coords="104,79,186,105"/>
+<area shape="rect" id="Node000003" href="$structpdg_1_1_mouse_tracking_info.html" title=" " alt="" coords="5,153,138,178"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="124,115,86,154,82,150,119,116"/>
+<area shape="rect" id="Node000004" href="$structpdg_1_1_sprite_touch_info.html" title=" " alt="" coords="162,153,274,178"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="169,113,208,152,203,152,167,118"/>
+<area shape="rect" id="Node000002" href="$structpdg_1_1_modifier_key_info.html" title=" " alt="" coords="89,5,201,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,44,147,79,142,78,143,49"/>
+</map>

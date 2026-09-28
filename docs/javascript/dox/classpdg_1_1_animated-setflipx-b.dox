@@ -1,7 +1,13 @@
 namespace pdg { /**
+\fn pdg::Animated::setFlipX(boolean flip)
+\brief Set the x reflection flag immediately.
 
-\fn pdg::Animated::setFlipX(inFlipX)
+Applied before other transformations; logical dimensions are unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief sets whether the object is flipped horizontally
+\param flip Whether to reflect this axis.
 
-**/ }
+\return This object, for chaining.
+
+\see isFlippedX(), flipX()
+*/
+ }

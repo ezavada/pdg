@@ -1,4 +1,4 @@
-.TH "FileManager" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "FileManager" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -19,11 +19,11 @@ FileManager \- extras beyond what Node\&.js FileSystem provides
 .ti -1c
 .RI "string[] \fBfindDirs\fP (string name)"
 .br
-.RI "return a list of directories that match the given name "
+.RI "return a sorted list of directories that match the given name "
 .ti -1c
 .RI "string[] \fBfindFiles\fP (string name)"
 .br
-.RI "return a list of files that match the given name "
+.RI "return a sorted list of files that match the given name "
 .ti -1c
 .RI "object \fBfindFirst\fP (string inFindName)"
 .br
@@ -65,7 +65,7 @@ extras beyond what Node\&.js FileSystem provides
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 Most functions for file manipulation are provided by Node\&.js though the FileSystem class\&. The PDG \fBFileManager\fP just adds calls to get particular directory paths and to do file searchs\&.
@@ -105,7 +105,7 @@ This takes the object returned from a \fBfindFirst()\fP or \fBfindNext()\fP, and
 .SS "string[] findDirs (string name)"
 
 .PP
-return a list of directories that match the given name This uses the \fBfindFirst()\fP and \fBfindNext()\fP calls to search for any directories that match the name passed in\&. The name can contain wildcard characters (*\&.txt, or f1?\&.dat)\&. If the name includes a path, it must use Unix format (forward slash "/" as path separators)\&. Colon and backslash are both illegal characters\&.
+return a sorted list of directories that match the given name This uses the \fBfindFirst()\fP and \fBfindNext()\fP calls to search for any directories that match the name passed in\&. The name can contain wildcard characters (*\&.txt, or f1?\&.dat)\&. If the name includes a path, it must use Unix format (forward slash "/" as path separators)\&. Colon and backslash are both illegal characters\&. The returned array is sorted lexicographically by node name to provide deterministic cross-platform results\&.
 
 .PP
 \fBParameters\fP
@@ -115,7 +115,7 @@ return a list of directories that match the given name This uses the \fBfindFirs
 .PP
 \fBReturns\fP
 .RS 4
-an array of directories that match the name
+a lexicographically sorted array of directories that match the name
 .RE
 .PP
 \fBSee also\fP
@@ -130,7 +130,7 @@ an array of directories that match the name
 .SS "string[] findFiles (string name)"
 
 .PP
-return a list of files that match the given name This uses the \fBfindFirst()\fP and \fBfindNext()\fP calls to search for any files that match the name passed in\&. The name can contain wildcard characters (*\&.txt, or f1?\&.dat)\&. If the name includes a path, it must use Unix format (forward slash "/" as path separators)\&. Colon and backslash are both illegal characters\&.
+return a sorted list of files that match the given name This uses the \fBfindFirst()\fP and \fBfindNext()\fP calls to search for any files that match the name passed in\&. The name can contain wildcard characters (*\&.txt, or f1?\&.dat)\&. If the name includes a path, it must use Unix format (forward slash "/" as path separators)\&. Colon and backslash are both illegal characters\&. The returned array is sorted lexicographically by node name to provide deterministic cross-platform results\&.
 
 .PP
 \fBParameters\fP
@@ -140,7 +140,7 @@ return a list of files that match the given name This uses the \fBfindFirst()\fP
 .PP
 \fBReturns\fP
 .RS 4
-an array of files that match the name
+a lexicographically sorted array of files that match the name
 .RE
 .PP
 \fBSee also\fP
@@ -261,6 +261,10 @@ get the singleton instance of the \fBFileManager\fP used by the pdg framework
 .RE
 .PP
 
+.PP
+References \fBgetFileManager()\fP\&.
+.PP
+Referenced by \fBgetFileManager()\fP\&.
 
 .SH "Author"
 .PP 

@@ -1,0 +1,236 @@
+/**
+\fn pdg::AnimationCallbackScope::AnimationCallbackScope()
+\brief Enter an animation callback scope.
+
+Increments the current thread's callback-depth barrier. Use automatic storage so destruction always balances the scope.
+
+\see AnimationPipeline::isInsideCallback()
+*/
+
+/**
+\fn pdg::AnimationCallbackScope::~AnimationCallbackScope()
+\brief Leave an animation callback scope.
+
+Balances entry to the callback lifetime barrier.
+
+\see AnimationPipeline::isInsideCallback()
+*/
+
+/**
+\fn AnimationIKResult pdg::solveAnimationTwoBoneIK(AnimationPose & pose, const AnimationTwoBoneIK & config, const AnimationTransform & root)
+\brief Solve a contiguous two-bone chain atomically.
+
+Uses the same configuration and result contract as Sprite::addAnimationIK(). Invalid topology, lengths, transforms, or limits leave the pose unchanged.
+
+\param pose Owned pose to modify in place on success.
+\param config Two-bone configuration; see \ref animation_ik_options.
+\param root Owner root in owning-layer coordinates; identity by default.
+
+\return An AnimationIKResult containing reach error and constraint flags.
+
+\see Sprite::addAnimationIK(), Sprite::getAnimationIKResult()
+*/
+
+/**
+\fn AnimationPose pdg::AnimationPoseView::copy() const
+\brief Copy this owned pose.
+
+Copies mutable transforms and metadata while sharing the immutable rig.
+
+\return An independent AnimationPose.
+
+\note This borrowed view expires when its callback returns. Use copy() to retain an owned pose.
+
+\see getRig()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPoseView::getLocalTransform(AnimationBoneId id) const
+\brief Copy a bone transform in parent-local coordinates.
+
+Invalid IDs throw.
+
+\param id Bone ID in this pose's rig.
+
+\return An AnimationTransform value.
+
+\note This borrowed view expires when its callback returns. Use copy() to retain an owned pose.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPoseView::getTransform(AnimationBoneId id, int space) const
+\brief Copy a bone transform in a selected space.
+
+Throws after the callback returns, or for an invalid bone/space.
+
+\param id Bone ID in the current rig.
+\param space animationSpace_Local (parent-relative), animationSpace_Rig, or animationSpace_World (owning layer).
+
+\return An independent AnimationTransform value.
+
+\see copy(), getLocalTransform()
+*/
+
+/**
+\fn void pdg::AnimationPoseView::setLocalTransform(AnimationBoneId id, const AnimationTransform & transform)
+\brief Replace a bone local transform.
+
+Validates before mutation. Editing this owned pose does not change the Sprite that supplied it.
+
+\param id Bone ID in this rig.
+\param transform Complete finite parent-local transform with alpha from 0 to 1.
+
+\note This borrowed view expires when its callback returns. Use copy() to retain an owned pose.
+
+\see copy(), getLocalTransform()
+*/
+
+/**
+\fn void pdg::AnimationPoseView::rotateLocal(AnimationBoneId id, double radians)
+\brief Add a local bone rotation.
+
+Invalid IDs or nonfinite/overflowing results throw without changing the bone.
+
+\param id Bone ID in this rig.
+\param radians Finite clockwise angle to add, in radians.
+
+\note This borrowed view expires when its callback returns. Use copy() to retain an owned pose.
+
+\see getLocalTransform(), setLocalTransform()
+*/
+
+/**
+\fn AnimationModifierId pdg::AnimationPipeline::addModifier(Modifier callback, int stage, int order)
+\brief Register a procedural pose modifier.
+
+Modifiers run after source sampling and persistent overrides. They run by stage, then ascending order, then registration order. Each sees earlier successful edits. Keep evolving controller state in your own objects and apply it to each fresh pose; do not accumulate the previous final pose.
+
+\param callback Synchronous callable taking AnimationPoseView and const AnimationModifierContext&, returning void. The view expires on return.
+\param stage pdg::animationStage_PreConstraint, pdg::animationStage_Constraint, or pdg::animationStage_PostConstraint.
+\param order Signed integer sort order within the stage; default 0.
+
+\return A nonzero modifier ID.
+
+\see evaluate()
+*/
+
+/**
+\fn void pdg::AnimationPipeline::removeModifier(AnimationModifierId id)
+\brief Remove a registered modifier.
+
+Releases its callback and diagnostic. Unknown IDs are harmless. A removal requested during evaluation is applied after the current evaluation.
+
+\param id ID returned by addModifier().
+
+\see evaluate()
+*/
+
+/**
+\fn void pdg::AnimationPipeline::setModifierEnabled(AnimationModifierId id, bool enabled)
+\brief Enable or skip a registered modifier.
+
+Changes requested during evaluation take effect afterward. Throws for unknown IDs. A failed callback has been released and cannot be reenabled; register a new one.
+
+\param id Existing modifier ID.
+\param enabled True to run it; false to skip it.
+
+\see getModifierError(), isModifierEnabled()
+*/
+
+/**
+\fn bool pdg::AnimationPipeline::isModifierEnabled(AnimationModifierId id) const
+\brief Test a modifier's enabled state.
+
+Throws for an unknown ID.
+
+\param id Existing modifier ID.
+
+\return True when enabled.
+
+\see setModifierEnabled()
+*/
+
+/**
+\fn std::string pdg::AnimationPipeline::getModifierError(AnimationModifierId id) const
+\brief Read a modifier failure diagnostic.
+
+\param id An existing modifier or IK controller ID.
+
+\return An empty string if no failure is recorded, otherwise its diagnostic. Throws for an unknown ID.
+
+\see evaluate()
+*/
+
+/**
+\fn void pdg::AnimationPipeline::clearModifiers()
+\brief Remove every registered modifier.
+
+Releases callbacks and diagnostics. A request made during evaluation is applied afterward.
+
+\see evaluate()
+*/
+
+/**
+\fn void pdg::AnimationPipeline::setSource(int source)
+\brief Select the starting pose for evaluation.
+
+Clip uses the sampled animation; Reference and Procedural start from the rig reference pose. Persistent overrides and modifiers run afterward in every mode. Source selection does not create a separate playback clock. A change requested inside a callback takes effect after evaluation.
+
+\param source pdg::animationSource_Clip, pdg::animationSource_Reference, or pdg::animationSource_Procedural.
+
+\see evaluate()
+*/
+
+/**
+\fn int pdg::AnimationPipeline::getSource() const
+\brief Read the selected pose source.
+
+\return The selected AnimationSource constant; initially animationSource_Clip.
+
+\see evaluate()
+*/
+
+/**
+\fn uint64_t pdg::AnimationPipeline::getRevision() const
+\brief Read the pipeline configuration revision.
+
+\return The revision counter; changes when queued mutations are applied or a modifier fails.
+
+\see evaluate()
+*/
+
+/**
+\fn bool pdg::AnimationPipeline::isEvaluating() const
+\brief Test whether an evaluation is in progress.
+
+\return True inside this pipeline's evaluation; recursive evaluation is rejected.
+
+\see evaluate()
+*/
+
+/**
+\fn AnimationPose pdg::AnimationPipeline::evaluate(const AnimationPose & base, const AnimationTransform & root, double deltaSeconds, const std::map< AnimationBoneId, AnimationTransform > & overrides)
+\brief Evaluate a fresh pose through the modifier stages.
+
+Copies the base for Clip mode, or creates a reference pose for Reference/Procedural mode, then applies overrides and callbacks. Callback failures roll back only that callback, record a diagnostic, and continue with the remaining entries. Rejects recursive evaluation and invalid inputs.
+
+\param base Freshly sampled pose supplying the rig and clip source.
+\param root Valid owner root transform in owning-layer coordinates.
+\param deltaSeconds Finite nonnegative elapsed seconds. Zero requests reevaluation without advancing controller time.
+\param overrides Absolute parent-local transforms indexed by bone ID.
+
+\return An owned final pose. The input base is unchanged.
+
+\see addModifier(), getModifierError()
+*/
+
+/**
+\fn bool pdg::AnimationPipeline::isInsideCallback()
+\brief Test the callback lifetime barrier.
+
+\return True while the current thread is inside an animation modifier or drawing callback.
+
+\see AnimationCallbackScope
+*/

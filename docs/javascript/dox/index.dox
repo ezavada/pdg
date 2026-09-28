@@ -1,109 +1,188 @@
 namespace pdg { /**
-
 \mainpage %Pixel Dust Game Engine (PDG)
 
-PDG is an open source, professional quality 2D game engine. It provides 
-system independent abstractions of common elements needed by game developers. 
-It can be used directly from C++ or used from scripting languages like 
-Javascript.
+PDG is an open-source 2D game engine with JavaScript and C++ APIs. It provides
+rendering, sprites, animation, input, audio, resources, events, and optional
+physics. You write the application and game rules; PDG supplies the runtime
+systems that run them.
 
-This is the documentation for the Javascript API.
+This is the **JavaScript API reference** for the current source tree. Start with
+<a href="topics.html">Topics</a> to browse by task, use the
+<a href="annotated.html">class index</a> to find an object, or switch to the
+<a href="../../cxx/html/index.html">C++ introduction</a>.
 
-Features
---------
-- integrated with Node.js v24
-- high performance Javascript via Google's V8 engine
-- event driven
-- cross platform
-- 2D OpenGL hardware accelerated graphics
-- resource and file management
-- user input handling
-- timers
-- networking
-- efficient serialization and deserialization
-- sound
-- animation including jQuery-like easing functions
-- sprites
-- bone based animation via <a href="https://brashmonkey.com/spriter-pro/" target="_blank">Brash Monkey's Spriter↗️</a>
-- tile based maps
-- physics support using <a href="https://chipmunk-physics.net/" target="_blank">Chipmunk Physics↗️</a>
-- works with node inspector for Javascript debugging
-- interactive Javascript console mode
+\section js_start Try the engine
 
+The desktop `pdg` executable runs JavaScript using an embedded Node.js/V8 runtime.
+From a configured and built source checkout, run these examples at the repository
+root:
 
-Design Goals
-------------
+\code{.sh}
+./test/demo spriter
+./test/demo mvc
+\endcode
 
-PDG is focused on making a broad array of capabilities available to developers 
-regardless of the OS platform they are targeting. Currently it works on Mac OS X, 
-Windows, and iOS. The Non-GUI build (and node.js plugin) also work on Linux.
+The first is the animation showcase: ordinary and blended skeleton playback,
+mouse aiming, a Drawing sword with spring recoil, and foot IK following a
+rising, sliding rock. Let the opening zoom finish, move the pointer to a
+character's facing side, and press **I** to toggle foot IK. The second is an
+interactive gallery of MVC views, controls, dialogs, and drawing styles.
 
-The PDG API is designed to make simple things easy to do, without adding undue 
-complexity to more complicated problems.
+To run your own script, use `./pdg path/to/main.js`. Load the API with
+`const pdg = require('pdg')` in the desktop runtime. Use ordinary Node.js modules
+for services such as filesystem access, networking, and process management.
+PDG supplies its own graphics, event dispatch, timers, and logging.
 
-History
--------
+\section js_find Find the right API
 
-PDG was originally developed in 2003 by Ed Zavada of Pixel Dust Games for use in Catan Online. It was later updated by Dream Rock Studios for use in their game
-Parthenon. Those updates included OpenGL hardware acceleration, a sprite engine, and iOS support. In 2012 it was further updated with Chipmunk physics, Javascript
-bindings, and then made open source under the MIT license.
+| What you want to do | Where to start |
+| --- | --- |
+| Create a window and draw | GraphicsManager, Port, \ref Graphics |
+| Style shapes, images, and text | Attributes and AnimatedAttributes; use Drawing for reusable artwork |
+| Organize a scene | SpriteLayer, Sprite, TileLayer, \ref Sprites |
+| Move objects or animate a character | Animated and \ref Animation |
+| Respond to input and engine notifications | EventEmitter, EventManager, IEventHandler, \ref Events |
+| Load resources, schedule work, or play audio | \ref Managers and \ref Sound |
+| Save or transmit structured state | Serializer, Deserializer, \ref Serialization |
+| Add physics or PDG networking helpers | \ref Physics and \ref Network |
 
-Usage assumptions
------------------
+\section js_model Drawing, sprites, and events
 
-PDG is supplied in several different forms:
-- an ANSI C++ SDK
-- a Javascript SDK (that will eventually include a binary runtime for Mac OS X and Windows)
-- an npm package for Node.js for server side programming
+A Port is a drawing surface. Respond to `pdg.eventType_PortDraw` to issue custom
+drawing commands through its port. Attributes carries colors, gradients,
+strokes, text and image settings, and transforms. Drawing stores reusable
+elements, and ElementRef provides explicit editing access. Drawing elements
+currently copy their Attributes; changing the original Attributes afterward
+does not update those elements.
 
-No languages other than Javascript and C++ are currently supported, though Ruby bindings have been created in the past. The Javascript bindings could serve as a guide for anyone wishing to add support for other languages.
+For a managed scene, put Sprites in a SpriteLayer. Its transform and ordering
+apply to its sprites, and the engine handles their normal animation and drawing.
+Animated provides programmed movement, rotation, and size changes. For example,
+with an existing sprite in an active layer:
 
-Roles and Responsibilities
---------------------------
+\code{.js}
+sprite.moveTo(new pdg.Point(240, 180), 0.5, pdg.easeInOutQuad);
+sprite.rotateBy(Math.PI / 2, 0.5, pdg.easeInOutQuad,
+              pdg.rotationDirection_Clockwise);
+\endcode
 
-PDG is integrated with Node.js, so all of the excellent networking, file i/o, encyption, process management and debugging facilities of Node.js are available to you. For multiplayer games you can write your server with Node.js, and use PDG as an add-on module if needed. On the client side, you can run as a double clickable application with PDG providing most of the functionality, and Node.js modules available for networking and so forth.
+This moves the sprite and turns it clockwise over half a second. You schedule
+the changes once; do not also call `animate()` each frame on an object that the
+engine already advances.
 
-In most cases PDG does not duplicate functionality already in Node.js. There are, however a few notable exceptions:
+PDG events use EventEmitter and EventManager, separately from Node.js's event
+system. Sprite events propagate from the Sprite to its SpriteLayer and then to
+the EventManager until handled. See \ref Events for event constants and payloads.
 
-- **Timers**: PDG provides its own TimerManager, which greatly improves on the functionality available through standard Javascript/Node.js.  
-- **Events**: PDG has its own event system, and does not relay events through Node.js's EventEmitter. That would be easy to add at an application level if desired.
-- **Logging**: PDG has a LogManager that writes time-stamped log entries with runtime configurable logging levels.
+The optional MVC framework in `src/js/mvc-app/` adds controllers, views, dialogs,
+and controls. The framework README and control gallery show its module imports,
+layout and input handling, and application lifecycle.
 
-What's missing?
----------------
+\section js_animation Character animation
 
-There are a few things we'd like to add to PDG, but haven't had time to build yet. Some
-are pretty simple, others rather larger. In no particular order, they are:
+Sprite supports image-frame playback and Spriter SCML animation. Its pose APIs
+add clip sampling and seeking, blends and transitions, bone/binding transforms,
+procedural modifiers, two-bone IK, spring targets, contact locks, and custom
+Drawing artwork attached to a pose. Optional Chipmunk integration supports
+physical animation rigs and recovery to authored animation.
 
-- Binary distributions and release builds of the runtime
-- Pure Javascript HTML5 implementation so you can run your game in a browser
-- Port.drawRadialGradient()
-- Applying Chipmunk Physics to SCML based sprites
-- A map editor for tile layers
-- Particle System (similar to sprites but optimized for particle effects)
-- Example Code
-- More comprehensive Unit Tests
-- FluidLayer for simulating floating objects
-- OuterSpaceLayer for simulating gravitational attraction between objects
-- Android port
-- Support for graphics on Linux
-- Support for rotation of TileLayers
-- DiagonalTileLayer for Ultima Online style isometric maps
-- HexGridTileLayer for board games
+Start with Sprite::enableAnimationPose() and check its result before using the
+pose-based extensions: their rig contract is narrower than ordinary Spriter
+playback. Sprite::addAnimationIK() registers a two-bone constraint;
+Sprite::setAnimationIKTarget() updates its target. See
+\ref animation_target_adapters for spring/contact helpers and
+\ref animation_trigger_event for authored trigger notifications.
 
-Game Kits
----------
+Part currently provides an independently animated transform, identity,
+hierarchy, and optional bone binding under a Sprite. Create it with
+`sprite.createPart(name)`, rather than `new pdg.Part()`. `getBoneId()` safely
+returns `pdg.boneId_None` when unbound. Sprite and Part expose an read-only
+`.physics` property that returns `pdg.PhysicsBody.NoPhysics` until setupPhysicsBody() is
+called. Physical velocity, damping, forces and impulses belong to PhysicsBody;
+Animated supplies programmed movement/spin and sizing. Sprite bodies use Chipmunk
+on enabled layers or PDG's basic integrator otherwise. Part bodies currently use
+the basic integrator; Part artwork and contacts/constraints are still in development.
+AnimatedAttributes combines programmed transforms with eased appearance channels,
+without physics or automatic live updates to Drawing elements. The new body bindings are available in V8 and
+JavaScriptCore; browser/Wasm body bindings remain pending.
 
-PDG doesn't provide any implementation of higher level functionality commonly used in 
-games, such as AI, pathfinding, dialog trees, tooltips, character classes, dynamic map 
-generation, segmented loading of large maps, etc.. You should be able to build those 
-things as needed for your game.
+\section js_conventions Timing and API conventions
 
-We do plan to build Game Kits for a variety of game genres on top of PDG, so check to
-see if they are available and have what you need.
+- Animation durations and elapsed steps use **floating-point seconds**: `0.25`
+  means a quarter second. This includes Animated motion, sprite fades, layer
+  fades/zoom, animation helpers, and easing callbacks.
+- Angles are radians. Use integer constants such as
+  `pdg.rotationDirection_Clockwise` and `pdg.animationSpace_World` for modes and
+  coordinate spaces. Asset, clip, bone, and part names are strings.
+- Frame numbers are integers, frame-playback rates are frames per second, and
+  blend weights are dimensionless.
+- TimerManager delays and event timestamps retain their documented millisecond
+  units. Convert an elapsed millisecond interval with `/ 1000` before passing
+  it to `animate(deltaSeconds)`. For authored triggers, use `timeSeconds` and
+  `offsetSeconds`; `frameTime` is a compatibility millisecond field.
+- Some objects are created through factories. Follow the class's construction
+  instructions. Copy a borrowed pose view if you need it after its callback;
+  a JavaScript reference alone does not extend that view's validity.
 
+\section js_builds Runtime and build capabilities
 
+The source tree includes desktop builds for macOS, Windows, and Linux, headless
+builds and a Node.js addon, an iOS/JavaScriptCore integration, and an
+Emscripten/WebAssembly browser build. The browser target uses compiled engine
+code, and does not supply desktop Node.js services. API coverage varies between
+targets, particularly for newly added interfaces.
 
+Headless builds omit windowing and graphics; audio depends on the target.
+Spriter animation and Chipmunk physics are optional build capabilities. Query
+Sprite::supportsAnimationPhysics() and Sprite::isAnimationDrawingSupported()
+where applicable. Seeing an API in this reference does not enable an omitted
+runtime feature.
 
+Source builds use `./configure` and `make` on POSIX, or `configure.ps1` and
+`make.ps1` on Windows; initialize Git submodules when obtaining the source.
+Script regressions live in `test/spec/`, client entry points in `test/js/`, and
+animation demo assets and instructions in `test/data/animation-demo/`.
+Run specs with `./test/unit` (embedded runtime), `./test/unit --node` (Node addon),
+`./test/unit --web` (browser), or `./test/unit --ios` (Simulator).
+`./test/rigs` runs rig integration checks under Node; `./test/ui` opens visual
+pages, `./test/tools` validates test/build tooling, and `./test/perf` runs
+benchmarks. See `test/README.md` in the source checkout for requirements,
+selection, automated runs, and artifacts.
 
-**/ }
+\section api_stability API stability
+
+Class notes describe compatibility commitments, independently of implementation
+quality and platform support. The same public API has the same level in both
+language references; language-specific wrappers may have their own rating.
+
+| Level | Commitment |
+| --- | --- |
+| 1 — Experimental | Signatures, behavior or availability may change without a compatibility period. |
+| 2 — Evolving | Implemented and supported; the contract is still settling. Compatibility is preserved where practical and breaking changes are documented in release notes. |
+| 3 — Stable | Established public contract. Intentional breaking changes require an announced breaking release and migration guidance. |
+
+Methods, options, event payloads and result structures inherit their owning API's
+level unless separately marked. A stable Serializer/Deserializer interface does
+not guarantee stable snapshot bytes: supported record versions, resource policies
+and restoration restrictions are documented separately. Build requirements remain
+in force at every level; animation physics requires Chipmunk.
+
+The application framework's views, controls, application classes and appearance
+classes are **Level 2 — Evolving** in both C++ and JavaScript. Its JavaScript guide
+is `src/js/mvc-app/README.md`; C++ declarations live under `pdg/app/` and are not
+included in this engine reference. Unrated utilities and internal implementation
+types carry no new compatibility promise from this policy.
+
+\section js_about About PDG
+
+PDG began in 2003 with Ed Zavada at Pixel Dust Games for Catan Online, continued
+at Dream Rock Studios, and was released under the MIT license in 2012. Its
+focus remains reusable 2D engine and application systems. Game-specific AI,
+pathfinding, rules, and content-authoring workflows belong to the application.
+
+\section js_platform_requirements Platform requirements
+
+The native engine requires a C++20 compiler and standard library, including
+`std::format`. The iOS application requires **iOS 16.3 or later**.
+
+*/ }

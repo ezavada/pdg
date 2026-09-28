@@ -1,7 +1,12 @@
 namespace pdg { /**
+\fn pdg::Animated::getSpin()
+\brief Read the programmed angular rate.
 
-\fn pdg::Animated::getSpin
+Clockwise radians per second, independently of physical angular velocity.
 
-\brief get how fast the object is spinning in radians per second
 
-**/ }
+\return The current value.
+
+\see setSpin(), changeSpinTo(), stopSpinning()
+*/
+ }

@@ -1,0 +1,2165 @@
+.TH "Part" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Part \- An independently animated part owned by a \fBSprite\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.PP
+Inherits \fBAnimated\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBandThen\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
+.br
+.ti -1c
+.RI "\fBPart\fP \fBattachSprite\fP (\fBSprite\fP child, int placement, \fBPart\fP childMount)"
+.br
+.RI "Mount an independent \fBSprite\fP on this \fBPart\fP\&. "
+.ti -1c
+.RI "\fBPart\fP \fBattachSprite\fP (\fBSprite\fP child, int placement=\fBpartPlacement_Snap\fP)"
+.br
+.RI "Mount an independent \fBSprite\fP on this \fBPart\fP\&. "
+.ti -1c
+.RI "\fBPart\fP \fBbindToAnimationBinding\fP (string name)"
+.br
+.RI "Follow an authored binding\&. "
+.ti -1c
+.RI "\fBPart\fP \fBbindToAnimationSocket\fP (string name)"
+.br
+.RI "Follow an authored socket\&. "
+.ti -1c
+.RI "\fBPart\fP \fBbindToBone\fP (uint boneId)"
+.br
+.RI "Follow a bone while preserving local offsets\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.ti -1c
+.RI "\fBPart\fP \fBclearContent\fP ()"
+.br
+.RI "Remove artwork from the \fBPart\fP\&. "
+.ti -1c
+.RI "\fBPart\fP \fBclearIKLimits\fP ()"
+.br
+.RI "Remove this joint's IK rotation limits\&. "
+.ti -1c
+.RI "\fBPart\fP \fBclearIKTarget\fP ()"
+.br
+.RI "Stop this root’s scheduled IK controller\&. "
+.ti -1c
+.RI "\fBPart\fP \fBdetachSprite\fP ()"
+.br
+.RI "Release a mounted \fBSprite\fP\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipX\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBflipY\fP ()"
+.br
+.ti -1c
+.RI "string \fBgetAnimationBindingName\fP ()"
+.br
+.RI "Read the followed authored binding name\&. "
+.ti -1c
+.RI "string \fBgetAnimationSocketName\fP ()"
+.br
+.RI "Read the followed authored socket name\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBgetAttachedSprite\fP ()"
+.br
+.RI "Read the child held by a mounting \fBPart\fP\&. "
+.ti -1c
+.RI "string \fBgetAttachmentError\fP ()"
+.br
+.RI "Read the latest mount placement diagnostic\&. "
+.ti -1c
+.RI "uint \fBgetBoneId\fP ()"
+.br
+.RI "Read the directly followed bone ID\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
+.br
+.ti -1c
+.RI "\fBRect\fP \fBgetContentBounds\fP (int space=\fBpartSpace_Local\fP)"
+.br
+.RI "Read the artwork bounds\&. "
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.ti -1c
+.RI "uint \fBgetId\fP ()"
+.br
+.RI "Read the \fBPart\fP ID in its current owner\&. "
+.ti -1c
+.RI "string \fBgetIKError\fP ()"
+.br
+.RI "Read a scheduled IK configuration error\&. "
+.ti -1c
+.RI "number \fBgetIKMaxAngle\fP ()"
+.br
+.RI "Read the maximum local IK rotation\&. "
+.ti -1c
+.RI "number \fBgetIKMinAngle\fP ()"
+.br
+.RI "Read the minimum local IK rotation\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.br
+.ti -1c
+.RI "string \fBgetName\fP ()"
+.br
+.RI "Read the \fBPart\fP name\&. "
+.ti -1c
+.RI "\fBPart\fP \fBgetParentPart\fP ()"
+.br
+.RI "Read the explicit \fBPart\fP parent\&. "
+.ti -1c
+.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
+.br
+.ti -1c
+.RI "number \fBgetRotation\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetScale\fP ()"
+.br
+.ti -1c
+.RI "\fBOffset\fP \fBgetSize\fP ()"
+.br
+.ti -1c
+.RI "number \fBgetSpin\fP ()"
+.br
+.ti -1c
+.RI "\fBSprite\fP \fBgetSprite\fP ()"
+.br
+.RI "Read the owning \fBSprite\fP\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
+.br
+.ti -1c
+.RI "object \fBgetTransform\fP (int space=\fBpartSpace_Local\fP)"
+.br
+.RI "Copy the \fBPart\fP's affine transform\&. "
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "boolean \fBhasContent\fP ()"
+.br
+.RI "Test whether artwork is assigned\&. "
+.ti -1c
+.RI "boolean \fBhasIKLimits\fP ()"
+.br
+.RI "Check whether this joint has IK rotation limits\&. "
+.ti -1c
+.RI "boolean \fBhasIKTarget\fP ()"
+.br
+.RI "Check whether this \fBPart\fP owns a scheduled IK controller\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBisAttached\fP ()"
+.br
+.RI "Test whether a \fBSprite\fP owns this \fBPart\fP\&. "
+.ti -1c
+.RI "boolean \fBisBoundToBone\fP ()"
+.br
+.RI "Test for a current direct bone binding\&. "
+.ti -1c
+.RI "boolean \fBisFlippedX\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBisFlippedY\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBisIKDriven\fP ()"
+.br
+.RI "Check whether this \fBPart\fP owns a physical IK controller\&. "
+.ti -1c
+.RI "boolean \fBisIKTargetReached\fP ()"
+.br
+.RI "Check whether the scheduled IK controller has reached its target\&. "
+.ti -1c
+.RI "boolean \fBisSchedulePaused\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.ti -1c
+.RI "\fBremoveCollider\fP ()"
+.br
+.RI "Remove this owner’s collider\&. "
+.ti -1c
+.RI "\fBremovePhysicsBody\fP ()"
+.br
+.RI "Detach the optional physics body\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBPart\fP \fBsetDrawing\fP (\fBDrawing\fP drawing)"
+.br
+.RI "Assign editable \fBDrawing\fP artwork\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.ti -1c
+.RI "\fBPart\fP \fBsetIKDriveTarget\fP (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, number maxForce, number maxTorque, int space=\fBpartSpace_World\fP, int bendDirection=1, number influence=1, number frequency=4, number dampingRatio=1)"
+.br
+.RI "Drive a two-segment \fBPart\fP chain toward an IK target using bounded forces and torques\&. "
+.ti -1c
+.RI "\fBPart\fP \fBsetIKLimits\fP (number minAngle, number maxAngle)"
+.br
+.RI "Limit this joint's local rotation when solving \fBPart\fP IK\&. "
+.ti -1c
+.RI "\fBPart\fP \fBsetIKLimits\fP (\fBPhysicsConstraint\fP constraint)"
+.br
+.RI "Share a live physical rotary limit with this IK joint\&. "
+.ti -1c
+.RI "\fBPart\fP \fBsetIKTarget\fP (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, int space=\fBpartSpace_World\fP, int bendDirection=1, number influence=1)"
+.br
+.RI "Maintain a target for a contiguous two-segment \fBPart\fP chain\&. "
+.ti -1c
+.RI "\fBPart\fP \fBsetImage\fP (\fBImage\fP image, \fBRect\fP localBounds)"
+.br
+.RI "Assign an image to a local rectangle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.ti -1c
+.RI "\fBPart\fP \fBsetParentPart\fP ()"
+.br
+.RI "Select an explicit parent \fBPart\fP\&. "
+.ti -1c
+.RI "\fBPart\fP \fBsetParentPart\fP (\fBPart\fP parent)"
+.br
+.RI "Select an explicit parent \fBPart\fP\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
+.br
+.ti -1c
+.RI "\fBCollider\fP \fBsetupAnimationCollider\fP (string boxName)"
+.br
+.RI "Select one authored animation box as this \fBPart\fP's collision source\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetupCollider\fP ()"
+.br
+.RI "Set up the collision geometry association for this owner\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetupFrameCollider\fP (int mode=\fBframeCollider_AlphaMask\fP, int alphaThreshold=128)"
+.br
+.RI "Set up collision geometry from this \fBPart\fP's current artwork\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetupPhysicsBody\fP (number mass=1, number momentOfInertia=1)"
+.br
+.RI "Set up the optional physics body with the specified mass and inertia\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.br
+.ti -1c
+.RI "boolean \fBsolveIK\fP (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, int space=\fBpartSpace_World\fP, int bendDirection=1, number influence=1)"
+.br
+.RI "Aim a contiguous two-segment \fBPart\fP chain\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.ti -1c
+.RI "\fBPart\fP \fBunbindFromBone\fP ()"
+.br
+.RI "Clear authored frame bindings\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
+.br
+.in -1c
+
+Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandThen\fP ()"
+.br
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
+.ti -1c
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
+.br
+.RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
+.br
+.RI "Discard scheduled animations and pending sequencing\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipX\fP ()"
+.br
+.RI "Toggle the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipY\fP ()"
+.br
+.RI "Toggle the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
+.br
+.RI "Read axis-aligned logical bounds\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
+.br
+.RI "Read the rotation-center offset\&. "
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.RI "Read logical height\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.br
+.RI "Read the location in the container coordinate system\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.br
+.RI "Read the programmed movement rate\&. "
+.ti -1c
+.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
+.br
+.RI "Read rotated logical bounds\&. "
+.ti -1c
+.RI "number \fBgetRotation\fP ()"
+.br
+.RI "Read the current rotation in radians\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetScale\fP ()"
+.br
+.RI "Read independent transform scale\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetSize\fP ()"
+.br
+.RI "Read logical width and height\&. "
+.ti -1c
+.RI "number \fBgetSpin\fP ()"
+.br
+.RI "Read the programmed angular rate\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
+.br
+.RI "Read logical width and height change rates\&. "
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.RI "Read logical width\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
+.ti -1c
+.RI "boolean \fBisFlippedX\fP ()"
+.br
+.RI "Read the x reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisFlippedY\fP ()"
+.br
+.RI "Read the y reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisSchedulePaused\fP ()"
+.br
+.RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
+.br
+.RI "Pause scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Change logical size by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
+.br
+.RI "Resume scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate through a relative angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Set the rotation-center offset immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.br
+.RI "Set the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
+.br
+.RI "Set the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
+.br
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
+.br
+.RI "Set a constant programmed angular rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
+.br
+.RI "Set independent constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.br
+.RI "Set logical width immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
+.br
+.RI "Stop all programmed changes to position\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
+.br
+.RI "Stop all programmed changes to rotation\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by independent factors\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
+.br
+.RI "Delay the next timed animation request\&. "
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBCollider\fP \fBcollider\fP"
+.br
+.RI "Read-only \fBCollider\fP association, or shared \fBCollider::NoCollider\fP\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBphysics\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+An independently animated part owned by a \fBSprite\fP\&. 
+
+Independently animated \fBSprite\fP subsection, artwork holder, or mounting frame\&.
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Create a \fBPart\fP by calling \fBcreatePart()\fP on a \fBSprite\fP instance\&. \fBPart\fP cannot be constructed directly with \fRnew\fP\&.
+
+.PP
+.PP
+.nf
+const sprite = new pdg\&.Sprite();
+const part = sprite\&.createPart("hand");
+part\&.moveTo(new pdg\&.Point(12, 0), 0\&.25, pdg\&.easeInOutQuad);
+.fi
+.PP
+
+.PP
+\fBPart\fP inherits \fBAnimated\fP's programmed movement, rotation and size operations\&. All animation durations are floating-point seconds\&. The owning \fBSprite\fP advances its attached Parts; do not also call \fBanimate()\fP on an attached \fBPart\fP every frame\&.
+
+.PP
+Bone binding is optional\&. \fBgetBoneId()\fP is safe on an unbound \fBPart\fP and returns \fR\fBpdg\&.boneId_None\fP\fP\&. Binding and hierarchy belong to \fBPart\fP, not \fBAnimated\fP\&. \fBPart\fP has an optional \fBPhysicsBody\fP through its physics property\&. \fBsetupPhysicsBody()\fP creates it explicitly; otherwise physics returns \fBpdg\&.PhysicsBody\&.NoPhysics\fP\&. Only \fBsetupPhysicsBody()\fP/removePhysicsBody() can change the property association\&. Compare physics with \fBpdg\&.PhysicsBody\&.NoPhysics\fP to test absence\&. Removing a \fBPart\fP detaches its body and stops automatic stepping\&.
+
+.PP
+A retained \fBPart\fP remains valid after removal from its \fBSprite\fP; \fBisAttached()\fP reports false and its independent local transform remains available\&.
+
+.PP
+Create a \fBPart\fP with Sprite::createPart(name); names are unique within that \fBSprite\fP\&. Its local transform is relative to the \fBSprite\fP, an explicit parent \fBPart\fP, or an authored bone, binding or socket\&. \fBsetParentPart()\fP, \fBbindToBone()\fP, \fBbindToAnimationBinding()\fP and \fBbindToAnimationSocket()\fP select one frame without changing local offsets\&. \fBgetBoneId()\fP is always safe and returns boneId_None for an unbound \fBPart\fP (including one whose parent follows a bone)\&. Authored relationships are scoped to the current rig and safely invalidate on replacement\&.
+
+.PP
+\fBsetDrawing()\fP retains shared editable \fBDrawing\fP contents\&. setImage(image,localBounds) retains an image in an explicit local rectangle\&. Artwork changes leave identity, logical dimensions, programmed motion, parent/binding and physics untouched\&. \fBclearContent()\fP removes artwork\&. \fBgetContentBounds()\fP returns current artwork-local bounds or transformed bounds in partSpace_Sprite/partSpace_World\&. \fBPart\fP content is drawn after the owner's existing artwork, in \fBPart\fP creation order, with the owner's opacity and composed affine transform\&. Imported bindings supply transforms; this API does not duplicate or automatically replace imported artwork\&. \fBDrawing\fP still copies \fBAttributes\fP for its individual elements\&.
+.SH "Attaching an independent Sprite"
+.PP
+hostPart\&.attachSprite(child, placement, childMount) returns a new \fBPart\fP beneath hostPart\&. This mounting \fBPart\fP retains the child and supplies an \fBAnimated\fP attachment offset; \fBgetAttachedSprite()\fP and child\&.getAttachmentPart() query the relationship\&. Animate the mounting \fBPart\fP to move the held object\&. The child root rejects competing transform edits, while its own clips, internal Parts, opacity and layer order remain independent\&. Attachment neither merges \fBPart\fP ownership nor steps the child twice\&.
+
+.PP
+partPlacement_Snap aligns the child's origin, or the optional childMount frame, with the host\&. partPlacement_PreserveWorld keeps its current world placement\&. childMount must belong to the child; its frame is sampled once when attaching\&. The mount's local state is the only editable attachment offset\&. \fBdetachSprite()\fP releases the child with its last published world pose and leaves the mounting \fBPart\fP available for reuse as an ordinary \fBPart\fP\&. Removal of the host socket or owning \fBSprite\fP also detaches\&. Layer removal currently detaches mounts because placement and update scheduling require a shared layer\&. JavaScript references retain Parts and Sprites automatically\&.
+
+.PP
+Both Sprites must share a layer (or both be outside layers)\&. Cycles, an already mounted child, singular placement, or a root transform requiring shear are rejected before creating a mount\&. Independent \fBPart\fP artwork supports affine shear, but \fBSprite\fP roots do not\&. A later invalid follow placement holds the last valid child pose and reports \fBgetAttachmentError()\fP; valid placement clears it\&. Use uniform ancestor scales or aligned axes when rotating mounts\&. Rigid attachments currently require a child without a \fBPhysicsBody\fP; physical holding constraints are not supported by this attachment API\&. Release does not invent physical velocity\&.
+
+.PP
+.PP
+.nf
+const socket = hero\&.createPart("weaponGrip");
+socket\&.bindToAnimationSocket("grip");
+const held = socket\&.attachSprite(sword, pdg\&.partPlacement_Snap);
+held\&.rotateTo(0\&.3, 0\&.25, pdg\&.easeInOutQuad);
+held\&.detachSprite();
+.fi
+.PP
+ 
+.SH "Explicit Part-chain IK"
+.PP
+solveIK(middle,tip,target,space,bendDirection,influence) solves two segments whose joint offsets come from the local locations of a contiguous three-Part chain\&. It requires neither artwork nor bones\&. The target defaults to owning-layer/world coordinates; partSpace_Local means the root \fBPart\fP's parent frame\&. The root's local scale must have equal absolute axes; ancestor transforms may be affine/reflected\&. The bend direction is +1 or -1, and influence is in [0,1]\&. Unreachable targets clamp to the available reach and return false\&. Invalid topology or dynamic bodies reject the operation before changing either joint\&. Direct IK replaces rotation programming; \fBsetIKTarget()\fP and \fBsetIKDriveTarget()\fP install recurring controllers, and \fBsetIKLimits()\fP supplies fixed or shared rotary limits\&. Controller takeover requires explicit release with \fBclearIKTarget()\fP\&.
+.SH "Part bodies"
+.PP
+An unbound \fBPart\fP can create its own \fBPhysicsBody\fP without a \fBSprite\fP root body\&. It joins the Chipmunk world on a physics-enabled layer and publishes the solved state once; removal detaches the retained body back to basic integration\&. This currently covers free bodies, shared constraints, contact reporting and kinematic target scheduling\&. Use \fBsetupCollider()\fP for explicit geometry, \fBsetupFrameCollider()\fP for owned artwork or an explicitly selected image binding, and setupAnimationCollider(boxName) for one authored box\&. Bone binding alone does not create a physical joint or give the body authority to write a bone\&. Generated animation physics requires Chipmunk\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBAnimated\fP addAnimationHelper (\fBIAnimationHelper\fP helper)"
+
+.SS "\fBAnimated\fP andThen ()"
+
+.SS "boolean animate (number deltaSeconds)"
+
+.SS "\fBPart\fP attachSprite (\fBSprite\fP child, int placement, \fBPart\fP childMount)"
+
+.PP
+Mount an independent \fBSprite\fP on this \fBPart\fP\&. Creates a new child \fBPart\fP beneath this host\&. The returned mounting \fBPart\fP controls the attachment offset; animate it rather than the child \fBSprite\fP's root\&. The child's clips, internal Parts, opacity, and layer order remain independent\&. Existing root motion/tweens and physical velocity are canceled when attaching\&. A mounted kinematic body follows the same target; direct body teleport, velocity edits, and changes out of kinematic mode throw until detachment\&. In a Chipmunk layer, the target is evaluated before the solve and its sweep velocity participates in contacts\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIchild\fP \fBSprite\fP to retain and mount\&. It must share the host's layer (or both must be outside layers), have no \fBPhysicsBody\fP or a body in physicsBody_Kinematic mode, and not already be attached\&. 
+.br
+\fIplacement\fP \fBpdg\&.partPlacement_Snap\fP aligns origins; \fBpdg\&.partPlacement_PreserveWorld\fP preserves the child's current world placement\&. 
+.br
+\fIchildMount\fP Optional \fBPart\fP belonging to the child\&. Its frame is sampled once as the child's mounting point instead of its origin\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A new mounting \fBPart\fP owned by the host's \fBSprite\fP\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+To mount a physical \fBSprite\fP, create its body and set physicsBody_Kinematic before attaching\&. Cycles, singular transforms, and child-root transforms requiring shear are rejected before creating a mount\&. Removing the host from its layer removes the whole mounted group while preserving the mounts\&. Adding the host to another layer carries its descendants; detach a child before moving it independently\&. Layer coordinates are preserved during transfer\&. Use uniform ancestor scale or aligned axes when rotating attachments\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBdetachSprite()\fP, \fBgetAttachedSprite()\fP, \fBgetAttachmentError()\fP, \fBSprite::getAttachmentPart()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP attachSprite (\fBSprite\fP child, int placement = \fR\fBpartPlacement_Snap\fP\fP)"
+
+.PP
+Mount an independent \fBSprite\fP on this \fBPart\fP\&. Creates a new child \fBPart\fP beneath this host\&. The returned mounting \fBPart\fP controls the attachment offset; animate it rather than the child \fBSprite\fP's root\&. The child's clips, internal Parts, opacity, and layer order remain independent\&. Existing root motion/tweens and physical velocity are canceled when attaching\&. A mounted kinematic body follows the same target; direct body teleport, velocity edits, and changes out of kinematic mode throw until detachment\&. In a Chipmunk layer, the target is evaluated before the solve and its sweep velocity participates in contacts\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIchild\fP \fBSprite\fP to retain and mount\&. It must share the host's layer (or both must be outside layers), have no \fBPhysicsBody\fP or a body in physicsBody_Kinematic mode, and not already be attached\&. 
+.br
+\fIplacement\fP \fBpdg\&.partPlacement_Snap\fP aligns origins; \fBpdg\&.partPlacement_PreserveWorld\fP preserves the child's current world placement\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A new mounting \fBPart\fP owned by the host's \fBSprite\fP\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+To mount a physical \fBSprite\fP, create its body and set physicsBody_Kinematic before attaching\&. Cycles, singular transforms, and child-root transforms requiring shear are rejected before creating a mount\&. Removing the host from its layer removes the whole mounted group while preserving the mounts\&. Adding the host to another layer carries its descendants; detach a child before moving it independently\&. Layer coordinates are preserved during transfer\&. Use uniform ancestor scale or aligned axes when rotating attachments\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const mount = grip\&.attachSprite(sword, pdg\&.partPlacement_Snap);
+mount\&.rotateTo(0\&.3, 0\&.25, pdg\&.easeInOutQuad);
+// Later: mount\&.detachSprite();
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBdetachSprite()\fP, \fBgetAttachedSprite()\fP, \fBgetAttachmentError()\fP, \fBSprite::getAttachmentPart()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::partPlacement_Snap\fP\&.
+.SS "\fBPart\fP bindToAnimationBinding (string name)"
+
+.PP
+Follow an authored binding\&. Replaces the previous authored frame and explicit parent while retaining local offsets\&. Does not copy or hide the authored artwork\&. Replacing the rig invalidates this association\&. Unknown names or dynamic-body reparenting throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Exact authored binding name in the owner's current rig\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Enable the owning \fBSprite\fP's animation pose before binding\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationBindingName()\fP, \fBunbindFromBone()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP bindToAnimationSocket (string name)"
+
+.PP
+Follow an authored socket\&. Replaces the previous authored frame and explicit parent while retaining local offsets\&. Does not copy or hide the authored artwork\&. Replacing the rig invalidates this association\&. Unknown names or dynamic-body reparenting throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Exact authored socket name in the owner's current rig\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Enable the owning \fBSprite\fP's animation pose before binding\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationSocketName()\fP, \fBunbindFromBone()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP bindToBone (uint boneId)"
+
+.PP
+Follow a bone while preserving local offsets\&. Replaces the explicit parent and any previous authored binding\&. Local animation remains an offset from the selected frame\&. Invalid bone IDs and dynamic-body reparenting throw before changing the binding\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIboneId\fP Zero-based bone ID in the owner's current rig, or \fBpdg\&.boneId_None\fP to unbind\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+The owning \fBSprite\fP must have an enabled animation pose and the selected bone\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const boneId = sprite\&.getAnimationBoneNames()\&.indexOf('hand');
+part\&.bindToBone(boneId);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetBoneId()\fP, \fBunbindFromBone()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP cancelSchedule ()"
+
+.SS "\fBAnimated\fP changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetBy (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetTo (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementBy (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementTo (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeScaleBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeScaleTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP clearAnimationHelpers ()"
+
+.SS "\fBPart\fP clearContent ()"
+
+.PP
+Remove artwork from the \fBPart\fP\&. Releases the artwork association while preserving the \fBPart\fP, its animation, frame binding, attachments, and physics\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBhasContent()\fP, \fBsetDrawing()\fP, \fBsetImage()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP clearIKLimits ()"
+
+.PP
+Remove this joint's IK rotation limits\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. Does not change the current pose or disconnect a linked physical constraint\&. 
+.RE
+.PP
+
+.SS "\fBPart\fP clearIKTarget ()"
+
+.PP
+Stop this root’s scheduled IK controller\&. Keeps the current pose, clears its error and reached status, and releases its rotation channels for later programming\&. Physical IK also clears and releases its body drives while retaining velocities and independent loads\&. Harmless when no controller is registered\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetIKTarget()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP detachSprite ()"
+
+.PP
+Release a mounted \fBSprite\fP\&. Preserves the child's last published world pose and leaves this mounting \fBPart\fP available for reuse as an ordinary \fBPart\fP\&. Does not invent a release velocity\&. Calling on a \fBPart\fP without a child is harmless\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBattachSprite()\fP, \fBgetAttachedSprite()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP flipX ()"
+
+.SS "\fBAnimated\fP flipY ()"
+
+.SS "string getAnimationBindingName ()"
+
+.PP
+Read the followed authored binding name\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The binding name, or an empty string if none is current\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBbindToAnimationBinding()\fP 
+.RE
+.PP
+
+.SS "string getAnimationSocketName ()"
+
+.PP
+Read the followed authored socket name\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The socket name, or an empty string if none is current\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBbindToAnimationSocket()\fP 
+.RE
+.PP
+
+.SS "\fBSprite\fP getAttachedSprite ()"
+
+.PP
+Read the child held by a mounting \fBPart\fP\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The child \fBSprite\fP, or null on an ordinary \fBPart\fP or after detaching\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBattachSprite()\fP, \fBdetachSprite()\fP 
+.RE
+.PP
+
+.SS "string getAttachmentError ()"
+
+.PP
+Read the latest mount placement diagnostic\&. 
+.PP
+\fBReturns\fP
+.RS 4
+An empty string on successful placement, or a diagnostic when a later placement could not be represented\&. The child holds its last valid pose until placement becomes valid again\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBattachSprite()\fP 
+.RE
+.PP
+
+.SS "uint getBoneId ()"
+
+.PP
+Read the directly followed bone ID\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The bone ID in the current rig, or \fBpdg\&.boneId_None\fP when unbound or the rig was replaced\&. A parent \fBPart\fP following a bone does not give its child a direct bone ID\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBbindToBone()\fP, \fBisBoundToBone()\fP 
+.RE
+.PP
+
+.SS "\fBRect\fP getBoundingBox ()"
+
+.SS "\fBOffset\fP getCenterOffset ()"
+
+.SS "\fBRect\fP getContentBounds (int space = \fR\fBpartSpace_Local\fP\fP)"
+
+.PP
+Read the artwork bounds\&. Returns drawing geometry bounds\&. In \fBSprite\fP or World space, returns an axis-aligned rectangle around the transformed corners\&. Stroke extents may extend beyond these geometry bounds\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIspace\fP Integer \fR\fBpdg\&.partSpace_Local\fP\fP, \fR\fBpdg\&.partSpace_Sprite\fP\fP, or \fR\fBpdg\&.partSpace_World\fP\fP constant\&. World coordinates belong to the owning layer\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A new \fBRect\fP, or an empty \fBRect\fP when there is no artwork\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetDrawing()\fP, \fBsetImage()\fP, \fBgetTransform()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::partSpace_Local\fP\&.
+.SS "number getHeight ()"
+
+.SS "uint getId ()"
+
+.PP
+Read the \fBPart\fP ID in its current owner\&. 
+.PP
+\fBReturns\fP
+.RS 4
+An unsigned integer scoped to the owning \fBSprite\fP\&. The ID is not an index into the current list of Parts\&. \fBSprite\&.transferPart()\fP assigns a new ID in the destination; object identity and retained handles remain stable\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite::getPart()\fP 
+.RE
+.PP
+
+.SS "string getIKError ()"
+
+.PP
+Read a scheduled IK configuration error\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The last scheduled solve error, or an empty string after registration, successful solving, or clearing\&. Unreachable targets and partial influence report no error; use \fBisIKTargetReached()\fP for their result\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetIKTarget()\fP 
+.RE
+.PP
+
+.SS "number getIKMaxAngle ()"
+
+.PP
+Read the maximum local IK rotation\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The upper bound in local radians, or zero without limits\&. A linked constraint is read live; an invalid link throws\&. 
+.RE
+.PP
+
+.SS "number getIKMinAngle ()"
+
+.PP
+Read the minimum local IK rotation\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The lower bound in local radians, or zero without limits\&. A linked constraint is read live; an invalid link throws\&. 
+.RE
+.PP
+
+.SS "\fBPoint\fP getLocation ()"
+
+.SS "\fBOffset\fP getMovement ()"
+
+.SS "string getName ()"
+
+.PP
+Read the \fBPart\fP name\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The immutable name assigned when the \fBPart\fP was created\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite::findPart()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP getParentPart ()"
+
+.PP
+Read the explicit \fBPart\fP parent\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The explicit parent \fBPart\fP, or null\&. Authored bone/binding/socket parents are queried separately\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetParentPart()\fP 
+.RE
+.PP
+
+.SS "\fBRotatedRect\fP getRotatedBounds ()"
+
+.SS "number getRotation ()"
+
+.SS "\fBOffset\fP getScale ()"
+
+.SS "\fBOffset\fP getSize ()"
+
+.SS "number getSpin ()"
+
+.SS "\fBSprite\fP getSprite ()"
+
+.PP
+Read the owning \fBSprite\fP\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The owner, or null after this \fBPart\fP is removed\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBisAttached()\fP 
+.RE
+.PP
+
+.SS "\fBOffset\fP getStretching ()"
+
+.SS "object getTransform (int space = \fR\fBpartSpace_Local\fP\fP)"
+
+.PP
+Copy the \fBPart\fP's affine transform\&. Combines the requested parent/owner transforms\&. A detached \fBPart\fP retains its local frame\&. Invalid space constants throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIspace\fP Integer \fR\fBpdg\&.partSpace_Local\fP\fP, \fR\fBpdg\&.partSpace_Sprite\fP\fP, or \fR\fBpdg\&.partSpace_World\fP\fP constant\&. World coordinates belong to the owning layer\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An independent object with a, b, c, d, tx, and ty fields\&. Editing the object does not change the \fBPart\fP\&.
+.RE
+.PP
+
+.PP
+\fBPart transform fields\fP
+.RS 4
+Field  Meaning  \fRa\fP, \fRb\fP, \fRc\fP, \fRd\fP  Linear part of the affine matrix; may include scale, reflection, and shear\&.  \fRtx\fP, \fRty\fP  Translation in the selected space\&.  
+.RE
+.PP
+A local point (x, y) maps to (a*x + c*y + tx, b*x + d*y + ty)\&. Logical width, height, and center offset do not redefine a \fBPart\fP's frame\&.
+
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetParentPart()\fP, \fBgetContentBounds()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::partSpace_Local\fP\&.
+.SS "number getWidth ()"
+
+.SS "\fBAnimated\fP grow (number factor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "boolean hasContent ()"
+
+.PP
+Test whether artwork is assigned\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True when a \fBDrawing\fP or image has been assigned, even if its drawing is empty\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetDrawing()\fP, \fBsetImage()\fP, \fBclearContent()\fP 
+.RE
+.PP
+
+.SS "boolean hasIKLimits ()"
+
+.PP
+Check whether this joint has IK rotation limits\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True when \fBsetIKLimits()\fP has configured numeric limits or a constraint link, including an invalid or disconnected link\&. 
+.RE
+.PP
+
+.SS "boolean hasIKTarget ()"
+
+.PP
+Check whether this \fBPart\fP owns a scheduled IK controller\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True even while an invalidated controller is holding an error; false after clearing or root removal\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetIKTarget()\fP 
+.RE
+.PP
+
+.SS "boolean hasScheduledAnimations ()"
+
+.SS "boolean isAttached ()"
+
+.PP
+Test whether a \fBSprite\fP owns this \fBPart\fP\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True while owned and automatically updated by a \fBSprite\fP; false after removal\&. This does not test whether a child \fBSprite\fP is mounted\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetSprite()\fP, \fBgetAttachedSprite()\fP 
+.RE
+.PP
+
+.SS "boolean isBoundToBone ()"
+
+.PP
+Test for a current direct bone binding\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True when \fBgetBoneId()\fP is not \fBpdg\&.boneId_None\fP\&. Binding to an authored image/point/box or socket may also establish a bone ID\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetBoneId()\fP 
+.RE
+.PP
+
+.SS "boolean isFlippedX ()"
+
+.SS "boolean isFlippedY ()"
+
+.SS "boolean isIKDriven ()"
+
+.PP
+Check whether this \fBPart\fP owns a physical IK controller\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True for a configured physical IK controller, including while it holds a structural error; false for direct IK or no controller\&. 
+.RE
+.PP
+
+.SS "boolean isIKTargetReached ()"
+
+.PP
+Check whether the scheduled IK controller has reached its target\&. 
+.PP
+\fBReturns\fP
+.RS 4
+For direct IK, the result of the last scheduled solve, false before the first solve; later transform edits do not update it\&. For physical IK, whether the current physical endpoint reaches the target within tolerance, recomputed on each query\&. False without a controller or while it has a configuration error\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetIKTarget()\fP 
+.RE
+.PP
+
+.SS "boolean isSchedulePaused ()"
+
+.SS "\fBAnimated\fP moveBy (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveBy (\fBOffset\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveTo (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveTo (\fBPoint\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP pauseSchedule ()"
+
+.SS "\fBAnimated\fP removeAnimationHelper (\fBIAnimationHelper\fP helper)"
+
+.SS "removeCollider ()"
+
+.PP
+Remove this owner’s collider\&. Idempotent\&. Restores shared NoCollider, removes native shapes, clears contact callbacks and detaches retained handles\&. Detached geometric queries preserve the final transform\&. 
+.SS "removePhysicsBody ()"
+
+.PP
+Detach the optional physics body\&. Restores the physics property to \fBPhysicsBody\&.NoPhysics\fP\&. A retained body keeps its state, loses its owner/solver, and can be advanced with \fBPhysicsBody\&.step()\fP\&. Calling when no body exists is harmless\&. A mapped rig body requires \fBSprite::disableAnimationPhysics()\fP first; otherwise this operation throws without removing it\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetupPhysicsBody()\fP, \fBPhysicsBody::step()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP resizeTo (number width, number height, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP resumeSchedule ()"
+
+.SS "\fBAnimated\fP rotateBy (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBAnimated\fP rotateTo (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBAnimated\fP setCenterOffset (\fBOffset\fP offset)"
+
+.SS "\fBPart\fP setDrawing (\fBDrawing\fP drawing)"
+
+.PP
+Assign editable \fBDrawing\fP artwork\&. Retains shared drawing contents, including later \fBElementRef\fP edits\&. Replaces existing content without changing the \fBPart\fP's name, logical dimensions, animation, parent frame, or physics body\&. Parts draw after the owner's original artwork, in creation order\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdrawing\fP \fBDrawing\fP whose geometry is expressed in this \fBPart\fP's local coordinates\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const artwork = pdg\&.createDrawing();
+artwork\&.addRect(new pdg\&.Rect(0, \-2, 20, 2), new pdg\&.Attributes()\&.fillColor('white'));
+part\&.setDrawing(artwork);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetImage()\fP, \fBclearContent()\fP, \fBgetContentBounds()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setFlipX (boolean flip)"
+
+.SS "\fBAnimated\fP setFlipY (boolean flip)"
+
+.SS "\fBAnimated\fP setGrowing (number value)"
+
+.SS "\fBAnimated\fP setHeight (number value)"
+
+.SS "\fBPart\fP setIKDriveTarget (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, number maxForce, number maxTorque, int space = \fR\fBpartSpace_World\fP\fP, int bendDirection = \fR1\fP, number influence = \fR1\fP, number frequency = \fR4\fP, number dampingRatio = \fR1\fP)"
+
+.PP
+Drive a two-segment \fBPart\fP chain toward an IK target using bounded forces and torques\&. Installs a persistent controller\&. Each step computes a desired pose after \fBPart\fP animation and before the physics solve\&. The solver retains authority over all physical positions and rotations; registering or updating a target does not teleport the chain\&. The root and middle must have independent dynamic bodies\&. The tip may have a dynamic body or no body\&. All three Parts must form a contiguous chain in one \fBSprite\fP\&. Imported physical-rig Parts are not supported by this controller\&.
+
+.PP
+The first assignment captures the root's parent-relative anchor and the middle and tip joint offsets\&. Repeated assignments to the same chain retain those values, so physical drift cannot redefine segment lengths\&. Clear and reinstall to capture a new chain configuration\&. Ancestor movement and the current \fBPart\fP scales still apply\&. The root requires uniform absolute scale, as with \fBsolveIK()\fP\&.
+
+.PP
+The controller owns each participating body drive until \fBclearIKTarget()\fP\&. Existing independent body drives or overlapping IK controllers cause setup to throw without replacing the old controller\&. Direct setDriveTarget(), clearDrive(), stopAllForces() and changes away from dynamic mode reject while the controller owns the body\&. Impulses and other forces may still disturb it\&. No joints are created implicitly: configure pivot joints, physical angular limits and collision shapes separately\&. Any pivot or pin between adjacent driven Parts must join the captured parent offset to the child origin (pin distance zero)\&. Mismatched anchors reject setup or suspend a running controller\&. Anchors are unscaled body-local coordinates; account for \fBPart\fP scaling when configuring them\&.
+
+.PP
+The root's target position is its captured anchor; the middle and physical tip receive the solved joint positions\&. Body orientations use the shortest rotation route, except joints sharing a rotary limit preserve its unwrapped relative angle so the drive does not request a shortcut through the physical stop\&. Force/torque caps apply separately to each body\&. A physical tip retains its captured local orientation relative to the desired middle pose\&. Influence zero turns off the controller's drive contribution without releasing ownership\&.
+
+.PP
+A missing/replaced body or invalid topology stops all this controller's drives and records \fBgetIKError()\fP\&. Valid topology can resume; after replacing a body, call \fBsetIKDriveTarget()\fP again to claim it\&. \fBisIKTargetReached()\fP measures the current physical endpoint, so a constrained or force-limited chain may remain unreached without a configuration error\&. Clearing preserves velocities, constraints and independently applied loads\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImiddle\fP This \fBPart\fP's immediate child, with a dynamic \fBPhysicsBody\fP\&. 
+.br
+\fItip\fP Middle's immediate child, with a dynamic body or no body\&. 
+.br
+\fItarget\fP Desired endpoint in the selected coordinate space\&. 
+.br
+\fImaxForce\fP Finite nonnegative force cap per driven body\&. 
+.br
+\fImaxTorque\fP Finite nonnegative torque cap per driven body\&. 
+.br
+\fIspace\fP partSpace_World by default; partSpace_Sprite or partSpace_Local (root's parent frame) are also accepted\&. 
+.br
+\fIbendDirection\fP +1 by default, or -1 for the other bend direction\&. 
+.br
+\fIinfluence\fP Pose influence from zero through one; default 1\&. 
+.br
+\fIfrequency\fP Positive drive frequency in cycles per second; default 4\&. 
+.br
+\fIdampingRatio\fP Nonnegative drive damping ratio; default 1\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Advance the owning \fBSpriteLayer\fP normally\&. Bodies use either the basic or Chipmunk solver; step size, constraints and force caps affect convergence\&. Initial Sprite/Layer snapshots preserve the controller, captured joint offsets, body drives and shared rotary limits in either resource mode\&. Save the containing Layer when a joint or compound collider references another \fBSprite\fP\&. Restored controllers retain exclusive ownership of their bodies and resume on the next step\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const shoulder = sprite\&.createPart("shoulder");
+const elbow = sprite\&.createPart("elbow");
+const wrist = sprite\&.createPart("wrist");
+elbow\&.setParentPart(shoulder)\&.setLocation(10, 0);
+wrist\&.setParentPart(elbow)\&.setLocation(8, 0);
+shoulder\&.setupPhysicsBody(1, 20);
+elbow\&.setupPhysicsBody(1, 20);
+shoulder\&.physics\&.createPivotJoint(elbow\&.physics, new pdg\&.Point(10, 0));
+const elbowLimit = shoulder\&.physics\&.createRotaryLimit(elbow\&.physics, 0, 2\&.5);
+elbow\&.setIKLimits(elbowLimit);
+shoulder\&.setIKDriveTarget(elbow, wrist, new pdg\&.Point(10, 8), 100, 40,
+                         pdg\&.partSpace_Sprite);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetIKTarget()\fP, \fBsetIKLimits()\fP, \fBclearIKTarget()\fP, \fBPhysicsBody::setDriveTarget()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::partSpace_World\fP\&.
+.SS "\fBPart\fP setIKLimits (number minAngle, number maxAngle)"
+
+.PP
+Limit this joint's local rotation when solving \fBPart\fP IK\&. Angles are radians in the \fBPart\fP's parent frame\&. Both bounds must be finite, representable as \fBPart\fP rotations, and ordered, spanning at most one full turn\&. Equal bounds lock the desired angle\&. The interval may cross a multiple of a full turn by using unwrapped values, such as 6\&.0 through 6\&.5\&. Invalid input leaves the old limits intact\&. This configuration does not immediately rotate the \fBPart\fP or constrain ordinary \fBAnimated\fP calls\&.
+
+.PP
+Set limits on the root and/or middle \fBPart\fP\&. Direct and persistent IK honor them; physical IK limits its desired pose\&. Physical bodies can overshoot or be pushed outside that pose: use \fBPhysicsBody::createRotaryLimit()\fP for a physical constraint\&. When both bend solutions satisfy the limits, bendDirection selects the preferred one\&. Otherwise the solve chooses the nearest permitted endpoint in the chain's parent coordinate frame\&. Positive partial influence remains inside the allowed interval\&. Numeric limits replace any live constraint link and are included in ordinary \fBPart\fP snapshots in both resource modes\&. Use the \fBPhysicsConstraint\fP overload to share an existing physical limit\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIminAngle\fP Minimum local rotation, in radians\&. 
+.br
+\fImaxAngle\fP Maximum local rotation, in radians\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBclearIKLimits()\fP, \fBsolveIK()\fP, \fBsetIKDriveTarget()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP setIKLimits (\fBPhysicsConstraint\fP constraint)"
+
+.PP
+Share a live physical rotary limit with this IK joint\&. Retains the constraint and reads its current interval on each solve and limit query\&. Changing \fBPhysicsConstraint::setAngleLimits()\fP changes the physical limit and the IK range together\&. This replaces any numeric or linked IK limits without changing the pose, creating bodies, or creating joints\&.
+
+.PP
+The active constraint must connect this \fBPart\fP's body to its immediate parent \fBPart\fP's body, or to the owning \fBSprite\fP's body for a root \fBPart\fP\&. Either endpoint order is accepted: reversed endpoints negate and exchange the bounds, so IK queries still report this \fBPart\fP's rotation relative to its parent\&.
+
+.PP
+The parent frame must be uniform, unreflected, and aligned with the parent body's orientation\&. This \fBPart\fP must have positive effective scale axes\&. Authored source frames on a root \fBPart\fP and imported physical-rig bodies are unsupported\&. The interval must fit \fBPart\fP rotations and span at most one turn\&. Invalid setup leaves the old configuration intact\&. These conditions are checked again when used\&.
+
+.PP
+If the constraint breaks, disconnects, changes to an unsupported interval, or no longer connects the correct bodies, direct solves and angle queries throw\&. Persistent IK records \fBgetIKError()\fP and holds its pose; physical IK stops all its owned drives\&. The link remains configured, so \fBhasIKLimits()\fP stays true\&. Clear or replace it to recover; temporary frame/range errors recover when corrected\&. Clearing the link does not disconnect the physical constraint\&. Its retained handle stays safe after body removal\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIconstraint\fP An active \fBPhysicsConstraint\fP of type constraint_RotaryLimit\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Initial Sprite/Layer snapshots retain the live constraint link\&. Save the containing Layer if its constraint endpoints span Sprites\&. Disconnected links and invalid live configurations must be cleared or repaired before saving\&. Numeric limits also round-trip without physics\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint::setAngleLimits()\fP, \fBclearIKLimits()\fP, \fBsetIKDriveTarget()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP setIKTarget (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, int space = \fR\fBpartSpace_World\fP\fP, int bendDirection = \fR1\fP, number influence = \fR1\fP)"
+
+.PP
+Maintain a target for a contiguous two-segment \fBPart\fP chain\&. Registers or replaces this root's controller without changing the current pose\&. During a \fBSprite\fP step, all Parts advance their local animation and callbacks first; controllers then run in parent-before-child order, followed by physical publication\&. Calling \fBanimate()\fP directly on this \fBPart\fP also runs its controller after its own local animation\&. Do not manually step Parts that their \fBSprite\fP already updates\&.
+
+.PP
+The solver uses the same joint offsets, coordinate spaces, scale rules, elbow side, and influence as \fBsolveIK()\fP\&. Positive influence replaces rotation tweens and spin on this root and the middle joint when solving\&. Controllers that would write the same joint are rejected before replacing an existing registration\&. Independent chains may coexist\&. The target remains active until \fBclearIKTarget()\fP or removal of this root\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImiddle\fP Direct child of this \fBPart\fP\&. 
+.br
+\fItip\fP Direct child of middle, in the same \fBSprite\fP\&. 
+.br
+\fItarget\fP Finite target position in the selected space\&. 
+.br
+\fIspace\fP partSpace_Local (root's parent frame), partSpace_Sprite, or partSpace_World (owning-layer coordinates)\&. Defaults to World\&. 
+.br
+\fIbendDirection\fP Integer +1 or -1 selecting elbow side; defaults to +1\&. 
+.br
+\fIinfluence\fP Finite amount in [0,1], default 1\&. Partial influence approaches the goal on successive solves\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires valid contiguous joints, nonzero segment lengths, nonsingular parent transforms and equal absolute root scale axes\&. Dynamic bodies reject direct IK; this controller supports nonphysical and kinematic Parts\&. It does not create physical joints or drives\&. If a later edit invalidates the chain, the controller holds its rotation edits and records \fBgetIKError()\fP; valid geometry resumes solving\&. An unreachable target clamps to the available reach and is not a configuration error\&.
+.RE
+.PP
+Initial Sprite/Layer snapshots preserve the controller configuration, \fBPart\fP IDs, last reached status and error text in both resource modes\&. Links are resolved after all Parts, parents and bodies exist\&. Invalid live configurations reject saving; malformed controller references reject restoration before replacing the \fBPart\fP graph\&.
+
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const shoulder = sprite\&.createPart('shoulder');
+const elbow = sprite\&.createPart('elbow');
+const wrist = sprite\&.createPart('wrist');
+elbow\&.setParentPart(shoulder)\&.setLocation(new pdg\&.Point(10, 0));
+wrist\&.setParentPart(elbow)\&.setLocation(new pdg\&.Point(8, 0));
+shoulder\&.setIKTarget(elbow, wrist, new pdg\&.Point(12, 8), pdg\&.partSpace_Sprite);
+// The Sprite's regular animation step keeps solving toward this target\&.
+// Later: shoulder\&.clearIKTarget();
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsolveIK()\fP, \fBclearIKTarget()\fP, \fBhasIKTarget()\fP, \fBisIKTargetReached()\fP, \fBgetIKError()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::partSpace_World\fP\&.
+.SS "\fBPart\fP setImage (\fBImage\fP image, \fBRect\fP localBounds)"
+
+.PP
+Assign an image to a local rectangle\&. Retains the image and replaces existing content\&. Logical dimensions, animation, parent frame, and physics remain unchanged\&. Requires GUI support and finite rectangle coordinates\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIimage\fP \fBImage\fP to display\&. 
+.br
+\fIlocalBounds\fP Destination rectangle in the \fBPart\fP's local coordinates\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+part\&.setImage(image, new pdg\&.Rect(\-8, \-8, 8, 8));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetDrawing()\fP, \fBgetContentBounds()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setLocation (number x, number y)"
+
+.SS "\fBAnimated\fP setLocation (\fBPoint\fP value)"
+
+.SS "\fBAnimated\fP setMovement (number xPerSecond, number yPerSecond)"
+
+.SS "\fBAnimated\fP setMovement (\fBVector\fP value)"
+
+.SS "\fBPart\fP setParentPart ()"
+
+.PP
+Select an explicit parent \fBPart\fP\&. Preserves this \fBPart\fP's local state and clears authored frame bindings\&. The parent must belong to the same \fBSprite\fP; cycles and dynamic-body reparenting throw\&. Omit the argument to return to the \fBSprite\fP frame\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+hand\&.setParentPart(forearm);
+// Later, use the Sprite frame again:
+hand\&.setParentPart();
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetParentPart()\fP, \fBgetTransform()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP setParentPart (\fBPart\fP parent)"
+
+.PP
+Select an explicit parent \fBPart\fP\&. Preserves this \fBPart\fP's local state and clears authored frame bindings\&. The parent must belong to the same \fBSprite\fP; cycles and dynamic-body reparenting throw\&. Omit the argument to return to the \fBSprite\fP frame\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIparent\fP Parent \fBPart\fP\&. Omit the argument to remove the explicit parent\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetParentPart()\fP, \fBgetTransform()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setRotation (number value)"
+
+.SS "\fBAnimated\fP setScale (number x, number y = \fRx\fP)"
+
+.SS "\fBAnimated\fP setSize (number width, number height)"
+
+.SS "\fBAnimated\fP setSize (\fBOffset\fP value)"
+
+.SS "\fBAnimated\fP setSpin (number value)"
+
+.SS "\fBAnimated\fP setStretching (number widthPerSecond, number heightPerSecond)"
+
+.SS "\fBCollider\fP setupAnimationCollider (string boxName)"
+
+.PP
+Select one authored animation box as this \fBPart\fP's collision source\&. boxName must identify a box in the owning \fBSprite\fP's enabled animation pose; image and point bindings are rejected\&. The \fBPart\fP need not already be bound\&. Setup aligns the shape with the authored box, accounting for the \fBPart\fP's local transform at setup\&. Playback and the final pose update the box relative to the \fBPart\fP's current parent frame; subsequent local \fBPart\fP edits carry that shape\&. Singular parent frames yield no source shape until invertible again\&. A singular local transform at setup throws\&.
+
+.PP
+The box name is explicit: unlike \fBSprite\&.setupAnimationCollider()\fP, this method does not collect every box\&. Inactive boxes have no shape; reappearing boxes keep their source ID\&. Explicit \fBCollider\fP additions remain alongside the source\&.
+
+.PP
+Replacing/disabling the pose or transferring the \fBPart\fP to another \fBSprite\fP retires the old source without silently rebinding it\&. Select a current source before saving that \fBPart\fP; snapshots reject stale authored sources\&. Valid snapshots in both resource modes retain the selected box, setup offset and source IDs\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIboxName\fP Required, exact authored box name; empty or unknown names throw\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP's \fBCollider\fP\&. JavaScript retains the returned handle\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires Spriter support and an enabled owner pose, in GUI or headless builds\&. No physics body or Chipmunk solver is required for collider queries\&. Setup preserves configuration and replaces geometry, like \fBsetupFrameCollider()\fP\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+The enabled pose on hero contains a hand bone and a hitbox box\&. 
+.PP
+.nf
+const hand = hero\&.getAnimationBoneNames()\&.indexOf('hand');
+const hit = hero\&.createPart('handHit')\&.bindToBone(hand);
+hit\&.setupAnimationCollider('hitbox')\&.setSensor(true);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetupFrameCollider()\fP, \fBSprite::setupAnimationCollider()\fP, \fBbindToBone()\fP 
+.RE
+.PP
+
+.SS "\fBCollider\fP setupCollider ()"
+
+.PP
+Set up the collision geometry association for this owner\&. An existing collider keeps its geometry and settings; use \&.collider to access it directly\&. A new collider starts enabled with no shapes, no sensor flag and owner-body association\&. Does not create a \fBPhysicsBody\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The owned collider\&. Native callers may addRef()/release() to retain it after removal\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setupFrameCollider (int mode = \fR\fBframeCollider_AlphaMask\fP\fP, int alphaThreshold = \fR128\fP)"
+
+.PP
+Set up collision geometry from this \fBPart\fP's current artwork\&. Reuses \&.collider when present, preserving its configuration, filters, material, handlers and body association\&. Each call replaces the previous geometry source and explicit shapes\&. Later \fBCollider\fP add methods create persistent extra shapes\&. Queries and contacts refresh source geometry; source shape IDs survive artwork changes and disappearance/reappearance\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+Owned \fBDrawing\fP content takes precedence\&. Bounds uses its current local bounding rectangle, including element transforms\&. AlphaMask requires exactly one image or image-strip element using fit_Fill; \fBsetImage()\fP supplies suitable content\&. It samples the selected \fBAttributes\&.frame()\fP, with an invalid frame falling back to zero as in drawing\&. Alpha ignores stroke, fill overlays and opacity effects\&. Pixel edits to an existing \fBImage\fP require calling \fBsetupFrameCollider()\fP again\&. Unsupported vector/multi-element/other-fit alpha sources throw; use Bounds for those Drawings\&. Replacing content later with an unsupported alpha source also causes source queries to throw until corrected or another source is selected\&.
+
+.PP
+Without owned content, an explicitly bound animation image (from \fBbindToAnimationBinding()\fP) supplies its current frame and pivot\&. A bone or socket binding alone does not select artwork\&. No artwork produces no source shapes; logical \fBPart\fP width/height do not invent a frame\&. \fBPart\fP transforms, including reflection, apply normally\&. Artwork changes do not change body mass or inertia\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImode\fP frameCollider_AlphaMask (default) or frameCollider_Bounds\&. 
+.br
+\fIalphaThreshold\fP Integer 1 through 255, default 128; alpha at or above this value collides\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP's \fBCollider\fP\&. JavaScript retains the returned handle\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Owned image/Drawing content and imported image-frame adapters require a GUI-capable build\&. Enable layer collisions for contacts; queries work without a layer or body\&. Invalid setup preserves the previous collider/source\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+The enabled pose on hero contains an image binding named hand_art\&. 
+.PP
+.nf
+const grip = hero\&.createPart('gripArt')\&.bindToAnimationBinding('hand_art');
+const collider = grip\&.setupFrameCollider(pdg\&.frameCollider_AlphaMask);
+collider\&.setSensor(true);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetupAnimationCollider()\fP, \fBsetDrawing()\fP, \fBsetImage()\fP, \fBCollider\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::frameCollider_AlphaMask\fP\&.
+.SS "\fBPhysicsBody\fP setupPhysicsBody (number mass = \fR1\fP, number momentOfInertia = \fR1\fP)"
+
+.PP
+Set up the optional physics body with the specified mass and inertia\&. Every call applies both arguments, including their defaults: \fBsetupPhysicsBody()\fP sets mass and moment of inertia to 1, and setupPhysicsBody(5) sets mass to 5 and inertia to 1\&. An existing body keeps its identity, transform, velocity, mode, forces, constraints and other settings\&. Read \&.physics to access it without reconfiguration\&. Invalid mass or inertia throws before changing either value\&.
+
+.PP
+If absent, creates a dynamic body at the owner's current transform and stops programmed movement/spin\&. Removal detaches retained references; JavaScript keeps them alive automatically\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImass\fP Finite positive mass; default 1\&. 
+.br
+\fImomentOfInertia\fP Finite positive moment of inertia; default 1\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The owner's \fBPhysicsBody\fP\&. The read-only physics property refers to this same object\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Parts created by \fBSprite::setupAnimationPhysics()\fP use their solved bone and fixed capsule offset\&. Their immediate transform edits, rebinding, reparenting and removal require disabling the rig first; operate on their \fR\&.\fBphysics\fP\fP bodies to control physical motion\&.
+
+.PP
+Dynamic bodies own movement and rotation\&. Programmed movement/spin requests on their owners throw; immediate setters teleport the body\&. Dynamic and static Parts retain their world position as ancestors move; kinematic Parts follow their animated parent frame\&. Physical transforms publish in parent-before-child order after authored animation\&. Local artwork may have zero scale, but a physical \fBPart\fP requires an invertible parent frame\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const body = part\&.setupPhysicsBody(2, 4);
+body\&.applyImpulse(new pdg\&.Vector(4, 0));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBremovePhysicsBody()\fP, \fBPhysicsBody\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setWidth (number value)"
+
+.SS "boolean solveIK (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, int space = \fR\fBpartSpace_World\fP\fP, int bendDirection = \fR1\fP, number influence = \fR1\fP)"
+
+.PP
+Aim a contiguous two-segment \fBPart\fP chain\&. Rotates this \fBPart\fP and its middle child to bring the tip toward the target\&. Segment lengths come from the child joint offsets, not artwork dimensions\&. Unreachable targets clamp to available reach\&. With positive influence, this replaces rotation tweens and spin on the two solved joints\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImiddle\fP Direct child of this \fBPart\fP\&. 
+.br
+\fItip\fP Direct child of middle, in the same \fBSprite\fP\&. 
+.br
+\fItarget\fP Finite target position in the selected space\&. 
+.br
+\fIspace\fP Integer \fR\fBpdg\&.partSpace_Local\fP\fP, \fR\fBpdg\&.partSpace_Sprite\fP\fP, or \fR\fBpdg\&.partSpace_World\fP\fP constant\&. World coordinates belong to the owning layer\&. For this solver, Local means this root \fBPart\fP's parent frame\&. 
+.br
+\fIbendDirection\fP Integer +1 or -1 selecting the elbow side\&. 
+.br
+\fIinfluence\fP Finite blend amount from 0 (unchanged) to 1 (full solve)\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True when the resulting tip reaches the target within tolerance; false when it cannot, including partial influence\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+All three Parts must share a \fBSprite\fP and form a direct chain\&. The root scale must be nonzero with equal absolute axes\&. Zero-length segments, singular parent frames, and dynamic bodies are rejected before changing either joint\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const root = sprite\&.createPart('armRoot');
+const middle = sprite\&.createPart('elbow');
+const tip = sprite\&.createPart('handTip');
+middle\&.setParentPart(root)\&.setLocation(new pdg\&.Point(10, 0));
+tip\&.setParentPart(middle)\&.setLocation(new pdg\&.Point(8, 0));
+root\&.solveIK(middle, tip, new pdg\&.Point(12, 8), pdg\&.partSpace_Sprite);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetParentPart()\fP, \fBgetTransform()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::partSpace_World\fP\&.
+.SS "\fBAnimated\fP stopGrowing ()"
+
+.SS "\fBAnimated\fP stopMovement ()"
+
+.SS "\fBAnimated\fP stopSpinning ()"
+
+.SS "\fBAnimated\fP stopStretching ()"
+
+.SS "\fBAnimated\fP stretch (number widthFactor, number heightFactor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBPart\fP unbindFromBone ()"
+
+.PP
+Clear authored frame bindings\&. Clears direct bone, animation-binding, and socket associations\&. Keeps any explicit parent \fBPart\fP\&. Nonphysical and kinematic Parts keep their local transform; dynamic and static bodies keep their world position and rotation, recalculating the local transform in the remaining frame\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBbindToBone()\fP, \fBsetParentPart()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP wait (number durationSeconds)"
+
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBCollider\fP collider"
+
+.PP
+Read-only \fBCollider\fP association, or shared \fBCollider::NoCollider\fP\&. Read-only property\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBPart::setupCollider()\fP, \fBPart::removeCollider()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP physics"
+Read-only property\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

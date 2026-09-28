@@ -1,0 +1,7 @@
+<map id="Sprites and layers" name="Sprites and layers">
+<area shape="rect" id="Node000002" href="$group___animation.html" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="5,101,85,127"/>
+<area shape="rect" id="Node000001" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="292,101,418,127"/>
+<area shape="rect" id="Node000004" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="630,148,693,173"/>
+<area shape="rect" id="Node000003" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="625,32,698,57"/>
+<area shape="rect" id="Node000005" href="$group___physics.html" title="Things used for handling physics simulation." alt="" coords="628,209,696,235"/>
+</map>

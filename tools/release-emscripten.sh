@@ -5,7 +5,7 @@ set -euo pipefail
 usage() {
     echo "Usage: $0 [--tag vMAJOR.MINOR.PATCH] [--configure] [--output-dir PATH] [--skip-tests]"
     echo
-    echo "Builds, tests, and packages the PDG Emscripten release artifact."
+    echo "Builds, tests, and packages the PDG Emscripten Release and Debug artifacts."
 }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -65,8 +65,10 @@ cmake -DPDG_SOURCE_DIR="$PDG_ROOT" -DRELEASE_TAG="$RELEASE_TAG" \
 PDG_VERSION="$(tr -d '[:space:]' < "$PDG_ROOT/VERSION")"
 EMSCRIPTEN_PYTHON="${EMSDK_PYTHON:-$(command -v python3)}"
 WASM_ARCH="${PDG_WASM_ARCH:-wasm32}"
-WASM_OUTPUT_DIR="$PDG_ROOT/build/wasm/$WASM_ARCH"
-EMSCRIPTEN_CACHE="${EM_CACHE:-$WASM_OUTPUT_DIR/emscripten-cache}"
+WASM_TEST_OUTPUT_DIR="$PDG_ROOT/build/wasm/$WASM_ARCH"
+WASM_RELEASE_OUTPUT_DIR="$WASM_TEST_OUTPUT_DIR/release"
+WASM_DEBUG_OUTPUT_DIR="$WASM_TEST_OUTPUT_DIR/debug"
+EMSCRIPTEN_CACHE="${EM_CACHE:-$WASM_TEST_OUTPUT_DIR/emscripten-cache}"
 BUILD_JOBS="${PDG_BUILD_JOBS:-8}"
 
 run_emscripten_make() {
@@ -74,60 +76,89 @@ run_emscripten_make() {
         emmake make "--jobs=$BUILD_JOBS" -f "$PDG_ROOT/tools/pdg-js.mak" "$@"
 }
 
-run_emscripten_make clean
-run_emscripten_make
+if [[ $SKIP_TESTS -eq 0 ]]; then
+    run_emscripten_make WASM_BUILD=test clean
+    run_emscripten_make WASM_BUILD=test
+    for required_output in libpdg.js libpdg.wasm libpdg.wasm.map; do
+        if [[ ! -f "$WASM_TEST_OUTPUT_DIR/$required_output" ]]; then
+            echo "Expected Emscripten test output was not produced: $WASM_TEST_OUTPUT_DIR/$required_output" >&2
+            exit 1
+        fi
+    done
 
-for required_output in libpdg.js libpdg.wasm libpdg.wasm.map; do
-    if [[ ! -f "$WASM_OUTPUT_DIR/$required_output" ]]; then
-        echo "Expected Emscripten release output was not produced: $WASM_OUTPUT_DIR/$required_output" >&2
+    TEST_PORT="$("$EMSCRIPTEN_PYTHON" -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1]); s.close()')"
+    PDG_TEST_PORT="$TEST_PORT" "$PDG_ROOT/test/unit" --web --no-build --automated
+    PDG_TEST_PORT="$TEST_PORT" "$PDG_ROOT/test/ui" --web --no-build --automated
+    PDG_TEST_PORT="$TEST_PORT" "$PDG_ROOT/test/demo" --web --no-build --automated
+fi
+
+run_emscripten_make WASM_BUILD=release clean
+run_emscripten_make WASM_BUILD=release
+run_emscripten_make WASM_BUILD=debug clean
+run_emscripten_make WASM_BUILD=debug
+
+for required_output in libpdg.js libpdg.wasm; do
+    if [[ ! -f "$WASM_RELEASE_OUTPUT_DIR/$required_output" ]]; then
+        echo "Expected Emscripten release output was not produced: $WASM_RELEASE_OUTPUT_DIR/$required_output" >&2
         exit 1
     fi
 done
 
-if [[ $SKIP_TESTS -eq 0 ]]; then
-    TEST_PORT="$("$EMSCRIPTEN_PYTHON" -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1]); s.close()')"
-    PDG_TEST_PORT="$TEST_PORT" "$PDG_ROOT/test/client" --emscripten --no-build
-    PDG_TEST_PORT="$TEST_PORT" "$PDG_ROOT/test/ui" --emscripten --no-build
-fi
-
-ASSET_BASENAME="pdg-v${PDG_VERSION}-emscripten-${WASM_ARCH}"
-STAGE_DIR="$OUTPUT_DIR/stage/$ASSET_BASENAME"
-ASSET_PATH="$OUTPUT_DIR/$ASSET_BASENAME.zip"
-
-cmake -E remove_directory "$STAGE_DIR"
-cmake -E make_directory "$STAGE_DIR"
-for output in libpdg.js libpdg.wasm libpdg.wasm.map libpdg.data libpdg.js.map; do
-    if [[ -f "$WASM_OUTPUT_DIR/$output" ]]; then
-        cmake -E copy "$WASM_OUTPUT_DIR/$output" "$STAGE_DIR/$output"
+for required_output in libpdg.js libpdg.wasm libpdg.wasm.map; do
+    if [[ ! -f "$WASM_DEBUG_OUTPUT_DIR/$required_output" ]]; then
+        echo "Expected Emscripten debug output was not produced: $WASM_DEBUG_OUTPUT_DIR/$required_output" >&2
+        exit 1
     fi
 done
-cmake -E copy "$PDG_ROOT/LICENSE" "$STAGE_DIR/LICENSE"
-cmake -E copy "$PDG_ROOT/README.md" "$STAGE_DIR/README.md"
-cmake -E copy "$PDG_ROOT/VERSION" "$STAGE_DIR/VERSION"
 
-NOTICES_DIR="$STAGE_DIR/THIRD_PARTY_LICENSES"
-cmake -E make_directory "$NOTICES_DIR"
-cmake -E copy "$PDG_ROOT/deps/chipmunk/LICENSE.txt" "$NOTICES_DIR/chipmunk.txt"
-cmake -E copy "$PDG_ROOT/deps/glm/copying.txt" "$NOTICES_DIR/glm.txt"
-cmake -E copy "$PDG_ROOT/deps/libjpeg-turbo/LICENSE.md" "$NOTICES_DIR/libjpeg-turbo.txt"
-cmake -E copy "$PDG_ROOT/deps/libjpeg-turbo/README.ijg" "$NOTICES_DIR/libjpeg-turbo-IJG.txt"
-cmake -E copy "$PDG_ROOT/deps/libtess2/LICENSE.txt" "$NOTICES_DIR/libtess2.txt"
-cmake -E copy "$PDG_ROOT/deps/minizip/LICENSE" "$NOTICES_DIR/minizip.txt"
-cmake -E copy "$PDG_ROOT/deps/node/LICENSE" "$NOTICES_DIR/node.txt"
-cmake -E copy "$PDG_ROOT/deps/png/LICENSE" "$NOTICES_DIR/libpng.txt"
-cmake -E copy "$PDG_ROOT/deps/SpriterPlusPlus/LICENSE" "$NOTICES_DIR/SpriterPlusPlus.txt"
-cmake -E copy "$PDG_ROOT/deps/SpriterPlusPlus/tinyxml2/license.txt" "$NOTICES_DIR/tinyxml2.txt"
+mkdir -p "$OUTPUT_DIR"
+OUTPUT_DIR="$(cd "$OUTPUT_DIR" && pwd)"
 
-cmake -E make_directory "$OUTPUT_DIR"
-cmake -E rm -f "$ASSET_PATH" "$ASSET_PATH.sha256"
-(
-    cd "$OUTPUT_DIR/stage"
-    cmake -E tar cf "$ASSET_PATH" --format=zip "$ASSET_BASENAME"
-)
-(
-    cd "$OUTPUT_DIR"
-    cmake -E sha256sum "$(basename "$ASSET_PATH")" > "$(basename "$ASSET_PATH").sha256"
-)
+package_runtime() {
+    local RUNTIME_DIR="$1"
+    local ASSET_BASENAME="$2"
+    local STAGE_DIR="$OUTPUT_DIR/stage/$ASSET_BASENAME"
+    local ASSET_PATH="$OUTPUT_DIR/$ASSET_BASENAME.zip"
 
-echo "Created $ASSET_PATH"
-echo "Created $ASSET_PATH.sha256"
+    cmake -E remove_directory "$STAGE_DIR"
+    cmake -E make_directory "$STAGE_DIR"
+    local output
+    for output in libpdg.js libpdg.wasm libpdg.data libpdg.wasm.map; do
+        if [[ -f "$RUNTIME_DIR/$output" ]]; then
+            cmake -E copy "$RUNTIME_DIR/$output" "$STAGE_DIR/$output"
+        fi
+    done
+    cmake -E copy "$PDG_ROOT/LICENSE" "$STAGE_DIR/LICENSE"
+    cmake -E copy "$PDG_ROOT/README.md" "$STAGE_DIR/README.md"
+    cmake -E copy "$PDG_ROOT/VERSION" "$STAGE_DIR/VERSION"
+
+    local NOTICES_DIR="$STAGE_DIR/THIRD_PARTY_LICENSES"
+    cmake -E make_directory "$NOTICES_DIR"
+    cmake -E copy "$PDG_ROOT/deps/chipmunk/LICENSE.txt" "$NOTICES_DIR/chipmunk.txt"
+    cmake -E copy "$PDG_ROOT/deps/glm/copying.txt" "$NOTICES_DIR/glm.txt"
+    cmake -E copy "$PDG_ROOT/deps/libjpeg-turbo/LICENSE.md" "$NOTICES_DIR/libjpeg-turbo.txt"
+    cmake -E copy "$PDG_ROOT/deps/libjpeg-turbo/README.ijg" "$NOTICES_DIR/libjpeg-turbo-IJG.txt"
+    cmake -E copy "$PDG_ROOT/deps/libtess2/LICENSE.txt" "$NOTICES_DIR/libtess2.txt"
+    cmake -E copy "$PDG_ROOT/deps/minizip/LICENSE" "$NOTICES_DIR/minizip.txt"
+    cmake -E copy "$PDG_ROOT/deps/node/LICENSE" "$NOTICES_DIR/node.txt"
+    cmake -E copy "$PDG_ROOT/deps/png/LICENSE" "$NOTICES_DIR/libpng.txt"
+    cmake -E copy "$PDG_ROOT/deps/SpriterPlusPlus/LICENSE" "$NOTICES_DIR/SpriterPlusPlus.txt"
+    cmake -E copy "$PDG_ROOT/deps/SpriterPlusPlus/tinyxml2/license.txt" "$NOTICES_DIR/tinyxml2.txt"
+
+    cmake -E make_directory "$OUTPUT_DIR"
+    cmake -E rm -f "$ASSET_PATH" "$ASSET_PATH.sha256"
+    (
+        cd "$OUTPUT_DIR/stage"
+        cmake -E tar cf "$ASSET_PATH" --format=zip "$ASSET_BASENAME"
+    )
+    (
+        cd "$OUTPUT_DIR"
+        cmake -E sha256sum "$(basename "$ASSET_PATH")" > "$(basename "$ASSET_PATH").sha256"
+    )
+
+    echo "Created $ASSET_PATH"
+    echo "Created $ASSET_PATH.sha256"
+}
+
+package_runtime "$WASM_RELEASE_OUTPUT_DIR" "pdg-v${PDG_VERSION}-emscripten-${WASM_ARCH}"
+package_runtime "$WASM_DEBUG_OUTPUT_DIR" "pdg-debug-v${PDG_VERSION}-emscripten-${WASM_ARCH}"

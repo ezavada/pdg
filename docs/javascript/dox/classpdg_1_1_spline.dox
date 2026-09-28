@@ -2,6 +2,8 @@ namespace pdg { /**
 
 \class pdg::Spline
 
+\ingroup Graphics
+
 \brief Curved path defined by control points, supporting multiple spline types including cubic Bezier curves
 
 Splines are mathematical curves defined by control points. PDG supports several spline types:

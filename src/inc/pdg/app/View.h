@@ -11,7 +11,7 @@
 #define PDG_VIEW_H_INCLUDED
 
 #include "pdg/sys/coordinates.h"
-#include "pdg/sys/refcounted.h"
+#include "pdg/sys/animatedattributes.h"
 #include "pdg/sys/events.h"
 #include "pdg/sys/graphics.h"
 #include "pdg/app/Observer.h"
@@ -25,7 +25,15 @@ namespace pdg {
 class ResourceManager;
 class Controller;
 
-class View : public RefCountedObj
+/** Visual MVC base. Location is the center of the unrotated layout rectangle.
+ * Movement, size and appearance animation use seconds; views never own PhysicsBody objects.
+ * The inherited Attributes matrix maps centered unit coordinates to the view area.
+ * Controls compose explicit appearance overrides with their ControlAttributes state theme.
+ * Rendering and input share the View's rotation/reflection, including visual children.
+ * Custom drawSelf methods can pass this View as Attributes for centered unit drawings,
+ * or use getDrawingAttributes() for drawing in the untransformed layout rectangle.
+ */
+class View : public AnimatedAttributes<View>
 {
 public:
 
@@ -34,15 +42,16 @@ public:
 		CLICKED_PART_NONE = -1
 	};
 	
-	enum {
-        bind_Top      = 1 << 3,   // when port shrinks or grows keep top edge of view a fixed distance from top of port
-        bind_Bottom   = 1 << 4,   // when port shrinks or grows keep bottom edge of view a fixed distance from bottom of port
-        bind_Left     = 1 << 5,   // when port shrinks or grows keep left edge of view a fixed distance from left side of port
-        bind_Right    = 1 << 6,   // when port shrinks or grows keep right edge of view a fixed distance from right side of port
-		grow_Horz	= bind_Left | bind_Right,  // when port shinks or grows, keep fixed distance from left and right of port, growing or shrinking view horizontally as needed
-		grow_Vert	= bind_Top | bind_Bottom,  // when port shinks or grows, keep fixed distance from top and bottom of port, growing or shrinking view vertically as needed
-		grow        = grow_Horz | grow_Vert     // keep fixed margins from the port edges, growing or shrinking as needed
-	};
+    // Port-resize binding flags; combine individual edges with |.
+    enum Bind {
+        Top      = 1 << 3,          // keep the top margin fixed
+        Bottom   = 1 << 4,          // keep the bottom margin fixed
+        Left     = 1 << 5,          // keep the left margin fixed
+        Right    = 1 << 6,          // keep the right margin fixed
+        GrowHorz = Left | Right,    // resize horizontally to keep both margins fixed
+        GrowVert = Top | Bottom,    // resize vertically to keep both margins fixed
+        Grow     = GrowHorz | GrowVert // resize to keep all four margins fixed
+    };
 
     View(Controller* controller, const Rect& rect, int viewBinding = 0); // port taken from controller
     View(Controller* controller, Port* port, const Rect& rect, int viewBinding = 0);
@@ -52,7 +61,25 @@ public:
 	
 	virtual void draw();
 	
-	virtual void drawSelf() = 0;
+    virtual void drawSelf() = 0;
+
+    /** Compose explicitly set/animated View appearance onto a control theme.
+     * textOnly preserves the theme foreground. Transform is applied by draw().
+     */
+    Attributes getDrawingAttributes(const Attributes& theme, bool textOnly = false) const {
+        return theme.withAppearance(*this, textOnly);
+    }
+    /** Non-owning visual parent. Children stay registered with their Controller
+     * for animation/input, but are drawn once, clipped and transformed with the parent.
+     * Layout rectangles remain in Port coordinates and follow parent layout changes.
+     * Passing nullptr detaches; cycles are rejected.
+     */
+    void setParentView(View* parent);
+    View* getHitView(const Point& point, bool includeDisabled = false);
+    View* getParentView() const { return mParentView; }
+    virtual Rect getVisibleFrame() const { return mViewArea; }
+    glm::mat3 getLayoutTransform(bool includeParent = true) const;
+
 
     virtual void hideSelf();  // override to do something when hidden
     virtual void showSelf();  // override to do something when made visible
@@ -60,11 +87,16 @@ public:
 // ============================ Mouse Primatives ============================
 	// doMouseDown is called whenever the mouse button goes down within the view
 	virtual bool doMouseDown(const MouseInfo *mi, int id, int part);
+
+    //! Handle a wheel event over this view or a child. Return true to consume it.
+    virtual bool doScrollWheel(const ScrollWheelInfo* wheel) { (void)wheel; return false; }
 	
-	// doMouseUp is called whenever the mouse button goes up within the view
+	// Receives the release of a press that began here, even outside the view.
+    // part is CLICKED_PART_NONE on outside release or capture cancellation.
+    // Use doLeftClick/doRightClick for activation; use this hook for cleanup.
 	virtual bool doMouseUp(const MouseInfo *mi, int id, int part);
 	
-	// doMouseMove is called whenever the mouse moves within the view, if the view wants mouseovers
+	// Receives hover motion and captured drag motion, including outside the view.
 	virtual void doMouseMove(const MouseInfo *mi, int id, int part);
 	
 	// doMouseEnter is called whenever the mouse enter the view, if the view wants mouseovers
@@ -128,11 +160,17 @@ public:
 
 	void setViewArea(const Rect& rect); // in global/port coordinates
 	const Rect& getViewArea() const { return mViewArea; } // in global/port coordinates
-	Rect& getModifiableViewAreaRect() { return mViewArea; } // in global/port coordinates
+    /** Advance appearance and transform animation, keeping layout synchronized.
+     * @param deltaSeconds Finite nonnegative elapsed time in seconds.
+     * @return True if animation values changed.
+     * @note The owning Controller calls this before rendering. Step manually only
+     * for unmanaged Views. Edit a copy of getViewArea() through setViewArea().
+     */
+    bool animate(double deltaSeconds) override;
 	
 	virtual bool pointInViewVisibleArea(const Point& screenPoint); // in global/port coordinates
 	
-	bool pointInViewArea(const Point& screenPoint) { return mViewArea.contains(screenPoint); } // in global/port coordinates
+	bool pointInViewArea(const Point& screenPoint); // in global/port coordinates
 
 	virtual int  getPartClicked(const Point& screenPoint); // in global/port coordinates
 	virtual Rect getClickableRectFromID(int id);
@@ -148,7 +186,7 @@ public:
 
     void hide();
     void show();
-    bool isVisible() { return mVisible; }
+    bool isVisible() { return mVisible && (!mParentView || mParentView->isVisible()); }
     bool isEnabled() { return mIsEnabled; }
 	bool isDraggable() { return mIsDraggable; }
 	bool wantsMouseOvers() { return mWantsMouseOvers; }
@@ -190,6 +228,7 @@ public:
     Rect    globalToLocal(Rect inRect);
 	
 protected:
+    float getDrawingTextWidth(const char* text, int size, uint32 style = textStyle_Plain, int length = -1) const;
 
 #ifdef PDG_ALLOW_DEPRECATED_CALLS
 	// FIXME: these don't belong in view
@@ -203,6 +242,24 @@ protected:
     void    scaleImageArray(Image* arr[], int numImages, float scaleBy, Image::FilterType filter = Image::filter_Best);
     void    scaleImageArrayToFit(Image* arr[], int numImages, Rect r, Image::FilterType filter = Image::filter_Best);
 #endif // PDG_ALLOW_DEPRECATED_CALLS
+
+    void locationChanged(const Offset& delta) override;
+    void sizeChanged(float deltaW, float deltaH) override;
+    /** Respond to a changed unrotated layout rectangle after movement or resizing.
+     * The new rectangle is already available through getViewArea(). The base
+     * implementation scales local clickable regions to preserve their proportions.
+     * Overrides should call the base implementation before rebuilding custom layout.
+     * @param previous Layout rectangle before this change, in Port coordinates.
+     */
+    virtual void viewAreaChanged(const Rect& previous);
+    void syncViewArea();
+
+    View* mParentView = nullptr;
+    std::vector<View*> mChildViews;
+    Port* mRenderPort = nullptr;
+    Image* mRenderImage = nullptr;
+    bool mDrawingLayout = false;
+    void releaseRenderSurface();
 
     Controller* mController;
     Port*   mPort;  // the graphics port in which this view is drawn
@@ -233,5 +290,3 @@ private:
 
 
 #endif // PDG_VIEW_H_INCLUDED
-
-

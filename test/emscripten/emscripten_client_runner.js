@@ -2,20 +2,19 @@
 (function() {
     "use strict";
 
-    var specs = [
-        "animated", "animation_event_filtering", "color", "configmanager",
-        "drawing", "event_filtering_comprehensive", "eventemitter", "eventmanager",
-        "filemanager", "font", "graphicsmanager", "image", "imagestrip", "log",
-        "memblock", "mvc-app", "netclient", "netconnection", "netserver", "offset",
-        "point", "polygon", "port", "quad", "rect", "resourcemanager", "rotatedrect",
-        "serialization", "serialized_data", "serialized_objects", "sound", "soundmanager",
-        "spline", "sprite", "sprite_layer_event_filtering", "spritelayer", "spriter",
-        "spriter_animblend", "spriter_attach", "spriter_charmap", "spriter_collisions",
-        "spriter_events", "spriter_subentity", "tilelayer", "timermanager", "vector"
-    ];
+    var specs = window.PDG_CLIENT_SPECS.web.slice();
+    // Select focused shared specs without loading unrelated platform suites.
+    var selectedSpecs = new URLSearchParams(window.location.search).get("specs");
+    if (selectedSpecs) {
+        var requested = selectedSpecs.split(",");
+        if (requested.some(function(name) { return specs.indexOf(name) === -1; }))
+            throw new Error("Unknown client spec selection: " + selectedSpecs);
+        specs = requested;
+    }
     var moduleCache = {};
     var loadErrors = [];
     var specFailures = [];
+    var executedSpecs = 0;
     var cacheToken = Date.now().toString(36);
     var statusNode = document.getElementById("pdg-test-status");
     var loadErrorNode = document.getElementById("pdg-load-errors");
@@ -115,7 +114,8 @@
         var failed = results.failedCount + loadErrors.length;
         var result = {
             status: failed === 0 ? "passed" : "failed",
-            specs: results.totalCount,
+            specs: executedSpecs,
+            assertions: results.totalCount,
             jasmineFailures: results.failedCount,
             loadFailures: loadErrors.length,
             loadErrors: loadErrors.map(function(message) { return message.split("\n")[0]; }),
@@ -142,6 +142,7 @@
 
     function runSpecs() {
         var base = window.location.href;
+        browserRequire("./lib/jasmine_async.js", base)(window);
         setStatus("Loading SpecHelper and " + specs.length + " spec files...");
         try {
             loadHelper(base);
@@ -167,6 +168,7 @@
             },
             reportSpecResults: function(spec) {
                 var results = spec.results();
+                if (!results.skipped) ++executedSpecs;
                 console.log("[PDG TEST " + (results.passed() ? "PASS" : "FAIL") + "] " + spec.getFullName());
                 if (!results.passed()) {
                     results.getItems().forEach(function(item) {

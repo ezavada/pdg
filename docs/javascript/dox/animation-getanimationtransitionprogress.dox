@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::getAnimationTransitionProgress()
+\brief Read pose transition progress.
+
+\return A fraction from 0 to 1. Completed transitions report 1; absent/canceled transitions and disabled pose access report 0.
+
+\see transitionToAnimation(), isAnimationTransitioning()
+*/

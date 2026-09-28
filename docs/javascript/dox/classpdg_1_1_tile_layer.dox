@@ -1,9 +1,10 @@
 namespace pdg { /**
 
 \class TileLayer
+\ingroup Graphics Animation Sprites
+
 \brief efficiently handles large tile datasets, useful for backgrounds, terrains, etc...
 
-\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
 
 Capabilities
 ------------

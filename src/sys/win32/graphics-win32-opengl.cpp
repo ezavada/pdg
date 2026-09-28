@@ -30,6 +30,8 @@
 
 
 #include "pdg_project.h"
+#include <bit>
+#include <cstdint>
 
 #ifndef PDG_NO_GUI
 
@@ -47,7 +49,6 @@
 
 #include "internals-win32.h"
 
-extern int pow2(int n);
 
 namespace pdg {
 
@@ -183,8 +184,14 @@ void graphics_drawText(PortImpl& portimpl, const char* text, int len, const Quad
 		if (style & textStyle_Italic) {
 			extraWidth = size; // Add full character width (font size) for italic overhang
 		}
-		int glBufferWidth = pow2(textInfo->width + extraWidth);
-		int glBufferHeight = pow2(textInfo->charHeight);
+        const auto bufferWidth = static_cast<std::int64_t>(textInfo->width) + extraWidth;
+        const auto bufferHeight = static_cast<std::int64_t>(textInfo->charHeight);
+        if (bufferWidth < 0 || bufferHeight < 0 || bufferWidth > (1LL << 30) || bufferHeight > (1LL << 30)) {
+            WinAPI::DeleteDC(hMemDC);
+            return;
+        }
+		int glBufferWidth = std::bit_ceil(static_cast<unsigned>(bufferWidth));
+		int glBufferHeight = std::bit_ceil(static_cast<unsigned>(bufferHeight));
 
 		HBITMAP hBitmap = CreateOffscreenBitmap8(hMemDC, glBufferWidth, glBufferHeight);
 		if (!hBitmap) {
@@ -356,6 +363,13 @@ FontMetricsInfo* FontImplWin::getFontMetrics(int size, uint32 style) {
 	// get the text metrics
 	WinAPI::TEXTMETRICA textinfo;
 	WinAPI::GetTextMetricsA(dc, &textinfo); // calling ASCII version on Win98 will be ok
+	// Measure a flat-topped capital from the selected font, not its accented ascent.
+	WinAPI::GLYPHMETRICS glyph = {};
+	WinAPI::MAT2 identity = {};
+	identity.eM11.value = identity.eM22.value = 1;
+	const auto glyphResult = WinAPI::GetGlyphOutlineA(dc, 'H', GGO_METRICS, &glyph, 0, NULL, &identity);
+	mfmi->capHeight = glyphResult != GDI_ERROR ? static_cast<float>(glyph.gmBlackBoxY)
+		: static_cast<float>(textinfo.tmAscent - textinfo.tmInternalLeading);
 	// put back the font and clean up created font
 	WinAPI::SelectObject(dc, oldFont);
 	if (releaseFallbackDC) {

@@ -1,9 +1,16 @@
 namespace pdg { /**
+\fn pdg::Animated::resizeBy(number deltaWidth, number deltaHeight, number durationSeconds, int easing)
+\brief Change logical size by additive deltas.
 
-\fn pdg::Animated::resize
+Adds to width and height. The overload without duration applies immediately and preserves growth rates. A timed request replaces growth. With andThen(), deltas are applied to size at the start of the operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
-\brief change the size of an object by a given amount over time
+\param deltaWidth Logical size value or additive delta.
+\param deltaHeight Logical size value or additive delta.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
 
-Honors delay given by wait()
+\return This object, for chaining.
 
-**/ }
+\see resizeTo(), grow(), stretch()
+*/
+ }

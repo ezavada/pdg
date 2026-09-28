@@ -1,0 +1,495 @@
+/**
+\fn pdg::Part::setupPhysicsBody(number mass, number momentOfInertia)
+\brief Set up the optional physics body with the specified mass and inertia.
+
+Every call applies both arguments, including their defaults: setupPhysicsBody() sets mass and moment of inertia to 1, and setupPhysicsBody(5) sets mass to 5 and inertia to 1. An existing body keeps its identity, transform, velocity, mode, forces, constraints and other settings. Read .physics to access it without reconfiguration. Invalid mass or inertia throws before changing either value.
+
+If absent, creates a dynamic body at the owner's current transform and stops programmed movement/spin. Removal detaches retained references; JavaScript keeps them alive automatically.
+
+\param mass Finite positive mass; default 1.
+\param momentOfInertia Finite positive moment of inertia; default 1.
+
+\return The owner's PhysicsBody. The read-only physics property refers to this same object.
+
+\note Parts created by Sprite::setupAnimationPhysics() use their solved bone and fixed capsule offset. Their immediate transform edits, rebinding, reparenting and removal require disabling the rig first; operate on their `.physics` bodies to control physical motion.
+
+\note Dynamic bodies own movement and rotation. Programmed movement/spin requests on their owners throw; immediate setters teleport the body. Dynamic and static Parts retain their world position as ancestors move; kinematic Parts follow their animated parent frame. Physical transforms publish in parent-before-child order after authored animation. Local artwork may have zero scale, but a physical Part requires an invertible parent frame.
+
+\par Example
+\code{.js}
+const body = part.setupPhysicsBody(2, 4);
+body.applyImpulse(new pdg.Vector(4, 0));
+\endcode
+
+\see removePhysicsBody(), PhysicsBody
+*/
+
+/**
+\fn pdg::Part::removePhysicsBody()
+\brief Detach the optional physics body.
+
+Restores the physics property to PhysicsBody.NoPhysics. A retained body keeps its state, loses its owner/solver, and can be advanced with PhysicsBody.step(). Calling when no body exists is harmless. A mapped rig body requires Sprite::disableAnimationPhysics() first; otherwise this operation throws without removing it.
+
+\return No value.
+
+\see setupPhysicsBody(), PhysicsBody::step()
+*/
+
+/**
+\fn pdg::Part::getId()
+\brief Read the Part ID in its current owner.
+
+\return An unsigned integer scoped to the owning Sprite. The ID is not an index into the current list of Parts. Sprite.transferPart() assigns a new ID in the destination; object identity and retained handles remain stable.
+
+\see Sprite::getPart()
+*/
+
+/**
+\fn pdg::Part::getName()
+\brief Read the Part name.
+
+\return The immutable name assigned when the Part was created.
+
+\see Sprite::findPart()
+*/
+
+/**
+\fn pdg::Part::getSprite()
+\brief Read the owning Sprite.
+
+\return The owner, or null after this Part is removed.
+
+\see isAttached()
+*/
+
+/**
+\fn pdg::Part::isAttached()
+\brief Test whether a Sprite owns this Part.
+
+\return True while owned and automatically updated by a Sprite; false after removal. This does not test whether a child Sprite is mounted.
+
+\see getSprite(), getAttachedSprite()
+*/
+
+/**
+\fn pdg::Part::getBoneId()
+\brief Read the directly followed bone ID.
+
+\return The bone ID in the current rig, or pdg.boneId_None when unbound or the rig was replaced. A parent Part following a bone does not give its child a direct bone ID.
+
+\see bindToBone(), isBoundToBone()
+*/
+
+/**
+\fn pdg::Part::isBoundToBone()
+\brief Test for a current direct bone binding.
+
+\return True when getBoneId() is not pdg.boneId_None. Binding to an authored image/point/box or socket may also establish a bone ID.
+
+\see getBoneId()
+*/
+
+/**
+\fn pdg::Part::getParentPart()
+\brief Read the explicit Part parent.
+
+\return The explicit parent Part, or null. Authored bone/binding/socket parents are queried separately.
+
+\see setParentPart()
+*/
+
+/**
+\fn pdg::Part::getAnimationBindingName()
+\brief Read the followed authored binding name.
+
+\return The binding name, or an empty string if none is current.
+
+\see bindToAnimationBinding()
+*/
+
+/**
+\fn pdg::Part::getAnimationSocketName()
+\brief Read the followed authored socket name.
+
+\return The socket name, or an empty string if none is current.
+
+\see bindToAnimationSocket()
+*/
+
+/**
+\fn pdg::Part::hasContent()
+\brief Test whether artwork is assigned.
+
+\return True when a Drawing or image has been assigned, even if its drawing is empty.
+
+\see setDrawing(), setImage(), clearContent()
+*/
+
+/**
+\fn pdg::Part::getAttachedSprite()
+\brief Read the child held by a mounting Part.
+
+\return The child Sprite, or null on an ordinary Part or after detaching.
+
+\see attachSprite(), detachSprite()
+*/
+
+/**
+\fn pdg::Part::getAttachmentError()
+\brief Read the latest mount placement diagnostic.
+
+\return An empty string on successful placement, or a diagnostic when a later placement could not be represented. The child holds its last valid pose until placement becomes valid again.
+
+\see attachSprite()
+*/
+
+/**
+\fn pdg::Part::bindToBone(uint boneId)
+\brief Follow a bone while preserving local offsets.
+
+Replaces the explicit parent and any previous authored binding. Local animation remains an offset from the selected frame. Invalid bone IDs and dynamic-body reparenting throw before changing the binding.
+
+\param boneId Zero-based bone ID in the owner's current rig, or pdg.boneId_None to unbind.
+
+\return This object, for chaining.
+
+\note The owning Sprite must have an enabled animation pose and the selected bone.
+
+\par Example
+\code{.js}
+const boneId = sprite.getAnimationBoneNames().indexOf('hand');
+part.bindToBone(boneId);
+\endcode
+
+\see getBoneId(), unbindFromBone()
+*/
+
+/**
+\fn pdg::Part::unbindFromBone()
+\brief Clear authored frame bindings.
+
+Clears direct bone, animation-binding, and socket associations. Keeps any explicit parent Part. Nonphysical and kinematic Parts keep their local transform; dynamic and static bodies keep their world position and rotation, recalculating the local transform in the remaining frame.
+
+\return This object, for chaining.
+
+\see bindToBone(), setParentPart()
+*/
+
+/**
+\fn pdg::Part::bindToAnimationBinding(string name)
+\brief Follow an authored binding.
+
+Replaces the previous authored frame and explicit parent while retaining local offsets. Does not copy or hide the authored artwork. Replacing the rig invalidates this association. Unknown names or dynamic-body reparenting throw.
+
+\param name Exact authored binding name in the owner's current rig.
+
+\return This object, for chaining.
+
+\note Enable the owning Sprite's animation pose before binding.
+
+\see getAnimationBindingName(), unbindFromBone()
+*/
+
+/**
+\fn pdg::Part::bindToAnimationSocket(string name)
+\brief Follow an authored socket.
+
+Replaces the previous authored frame and explicit parent while retaining local offsets. Does not copy or hide the authored artwork. Replacing the rig invalidates this association. Unknown names or dynamic-body reparenting throw.
+
+\param name Exact authored socket name in the owner's current rig.
+
+\return This object, for chaining.
+
+\note Enable the owning Sprite's animation pose before binding.
+
+\see getAnimationSocketName(), unbindFromBone()
+*/
+
+/**
+\fn pdg::Part::setParentPart()
+\brief Select an explicit parent Part.
+
+Preserves this Part's local state and clears authored frame bindings. The parent must belong to the same Sprite; cycles and dynamic-body reparenting throw. Omit the argument to return to the Sprite frame.
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+hand.setParentPart(forearm);
+// Later, use the Sprite frame again:
+hand.setParentPart();
+\endcode
+
+\see getParentPart(), getTransform()
+*/
+
+/**
+\fn pdg::Part::setParentPart(Part parent)
+\brief Select an explicit parent Part.
+
+Preserves this Part's local state and clears authored frame bindings. The parent must belong to the same Sprite; cycles and dynamic-body reparenting throw. Omit the argument to return to the Sprite frame.
+
+\param parent Parent Part. Omit the argument to remove the explicit parent.
+
+\return This object, for chaining.
+
+\see getParentPart(), getTransform()
+*/
+
+/**
+\fn pdg::Part::getTransform(int space)
+\brief Copy the Part's affine transform.
+
+Combines the requested parent/owner transforms. A detached Part retains its local frame. Invalid space constants throw.
+
+\param space Integer \c pdg.partSpace_Local, \c pdg.partSpace_Sprite, or \c pdg.partSpace_World constant. World coordinates belong to the owning layer.
+
+\return An independent object with a, b, c, d, tx, and ty fields. Editing the object does not change the Part.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor part_transform_fields
+\par Part transform fields
+| Field | Meaning |
+| --- | --- |
+| `a`, `b`, `c`, `d` | Linear part of the affine matrix; may include scale, reflection, and shear. |
+| `tx`, `ty` | Translation in the selected space. |
+
+A local point (x, y) maps to (a*x + c*y + tx, b*x + d*y + ty). Logical width, height, and center offset do not redefine a Part's frame.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see setParentPart(), getContentBounds()
+*/
+
+/**
+\fn pdg::Part::setDrawing(Drawing drawing)
+\brief Assign editable Drawing artwork.
+
+Retains shared drawing contents, including later ElementRef edits. Replaces existing content without changing the Part's name, logical dimensions, animation, parent frame, or physics body. Parts draw after the owner's original artwork, in creation order.
+
+\param drawing Drawing whose geometry is expressed in this Part's local coordinates.
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+const artwork = pdg.createDrawing();
+artwork.addRect(new pdg.Rect(0, -2, 20, 2), new pdg.Attributes().fillColor('white'));
+part.setDrawing(artwork);
+\endcode
+
+\see setImage(), clearContent(), getContentBounds()
+*/
+
+/**
+\fn pdg::Part::setImage(Image image, Rect localBounds)
+\brief Assign an image to a local rectangle.
+
+Retains the image and replaces existing content. Logical dimensions, animation, parent frame, and physics remain unchanged. Requires GUI support and finite rectangle coordinates.
+
+\param image Image to display.
+\param localBounds Destination rectangle in the Part's local coordinates.
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+part.setImage(image, new pdg.Rect(-8, -8, 8, 8));
+\endcode
+
+\see setDrawing(), getContentBounds()
+*/
+
+/**
+\fn pdg::Part::clearContent()
+\brief Remove artwork from the Part.
+
+Releases the artwork association while preserving the Part, its animation, frame binding, attachments, and physics.
+
+\return This object, for chaining.
+
+\see hasContent(), setDrawing(), setImage()
+*/
+
+/**
+\fn pdg::Part::getContentBounds(int space)
+\brief Read the artwork bounds.
+
+Returns drawing geometry bounds. In Sprite or World space, returns an axis-aligned rectangle around the transformed corners. Stroke extents may extend beyond these geometry bounds.
+
+\param space Integer \c pdg.partSpace_Local, \c pdg.partSpace_Sprite, or \c pdg.partSpace_World constant. World coordinates belong to the owning layer.
+
+\return A new Rect, or an empty Rect when there is no artwork.
+
+\see setDrawing(), setImage(), getTransform()
+*/
+
+/**
+\fn pdg::Part::attachSprite(Sprite child, int placement)
+\brief Mount an independent Sprite on this Part.
+
+Creates a new child Part beneath this host. The returned mounting Part controls the attachment offset; animate it rather than the child Sprite's root. The child's clips, internal Parts, opacity, and layer order remain independent. Existing root motion/tweens and physical velocity are canceled when attaching. A mounted kinematic body follows the same target; direct body teleport, velocity edits, and changes out of kinematic mode throw until detachment. In a Chipmunk layer, the target is evaluated before the solve and its sweep velocity participates in contacts.
+
+\param child Sprite to retain and mount. It must share the host's layer (or both must be outside layers), have no PhysicsBody or a body in physicsBody_Kinematic mode, and not already be attached.
+\param placement pdg.partPlacement_Snap aligns origins; pdg.partPlacement_PreserveWorld preserves the child's current world placement.
+
+\return A new mounting Part owned by the host's Sprite.
+
+\note To mount a physical Sprite, create its body and set physicsBody_Kinematic before attaching. Cycles, singular transforms, and child-root transforms requiring shear are rejected before creating a mount. Removing the host from its layer removes the whole mounted group while preserving the mounts. Adding the host to another layer carries its descendants; detach a child before moving it independently. Layer coordinates are preserved during transfer. Use uniform ancestor scale or aligned axes when rotating attachments.
+
+\par Example
+\code{.js}
+const mount = grip.attachSprite(sword, pdg.partPlacement_Snap);
+mount.rotateTo(0.3, 0.25, pdg.easeInOutQuad);
+// Later: mount.detachSprite();
+\endcode
+
+\see detachSprite(), getAttachedSprite(), getAttachmentError(), Sprite::getAttachmentPart()
+*/
+
+/**
+\fn pdg::Part::attachSprite(Sprite child, int placement, Part childMount)
+\brief Mount an independent Sprite on this Part.
+
+Creates a new child Part beneath this host. The returned mounting Part controls the attachment offset; animate it rather than the child Sprite's root. The child's clips, internal Parts, opacity, and layer order remain independent. Existing root motion/tweens and physical velocity are canceled when attaching. A mounted kinematic body follows the same target; direct body teleport, velocity edits, and changes out of kinematic mode throw until detachment. In a Chipmunk layer, the target is evaluated before the solve and its sweep velocity participates in contacts.
+
+\param child Sprite to retain and mount. It must share the host's layer (or both must be outside layers), have no PhysicsBody or a body in physicsBody_Kinematic mode, and not already be attached.
+\param placement pdg.partPlacement_Snap aligns origins; pdg.partPlacement_PreserveWorld preserves the child's current world placement.
+\param childMount Optional Part belonging to the child. Its frame is sampled once as the child's mounting point instead of its origin.
+
+\return A new mounting Part owned by the host's Sprite.
+
+\note To mount a physical Sprite, create its body and set physicsBody_Kinematic before attaching. Cycles, singular transforms, and child-root transforms requiring shear are rejected before creating a mount. Removing the host from its layer removes the whole mounted group while preserving the mounts. Adding the host to another layer carries its descendants; detach a child before moving it independently. Layer coordinates are preserved during transfer. Use uniform ancestor scale or aligned axes when rotating attachments.
+
+\see detachSprite(), getAttachedSprite(), getAttachmentError(), Sprite::getAttachmentPart()
+*/
+
+/**
+\fn pdg::Part::detachSprite()
+\brief Release a mounted Sprite.
+
+Preserves the child's last published world pose and leaves this mounting Part available for reuse as an ordinary Part. Does not invent a release velocity. Calling on a Part without a child is harmless.
+
+\return This object, for chaining.
+
+\see attachSprite(), getAttachedSprite()
+*/
+
+/**
+\fn pdg::Part::solveIK(Part middle, Part tip, Point target, int space, int bendDirection, number influence)
+\brief Aim a contiguous two-segment Part chain.
+
+Rotates this Part and its middle child to bring the tip toward the target. Segment lengths come from the child joint offsets, not artwork dimensions. Unreachable targets clamp to available reach. With positive influence, this replaces rotation tweens and spin on the two solved joints.
+
+\param middle Direct child of this Part.
+\param tip Direct child of middle, in the same Sprite.
+\param target Finite target position in the selected space.
+\param space Integer \c pdg.partSpace_Local, \c pdg.partSpace_Sprite, or \c pdg.partSpace_World constant. World coordinates belong to the owning layer. For this solver, Local means this root Part's parent frame.
+\param bendDirection Integer +1 or -1 selecting the elbow side.
+\param influence Finite blend amount from 0 (unchanged) to 1 (full solve).
+
+\return True when the resulting tip reaches the target within tolerance; false when it cannot, including partial influence.
+
+\note All three Parts must share a Sprite and form a direct chain. The root scale must be nonzero with equal absolute axes. Zero-length segments, singular parent frames, and dynamic bodies are rejected before changing either joint.
+
+\par Example
+\code{.js}
+const root = sprite.createPart('armRoot');
+const middle = sprite.createPart('elbow');
+const tip = sprite.createPart('handTip');
+middle.setParentPart(root).setLocation(new pdg.Point(10, 0));
+tip.setParentPart(middle).setLocation(new pdg.Point(8, 0));
+root.solveIK(middle, tip, new pdg.Point(12, 8), pdg.partSpace_Sprite);
+\endcode
+
+\see setParentPart(), getTransform()
+*/
+
+/**
+\fn pdg::Part::setIKTarget(Part middle, Part tip, Point target, int space, int bendDirection, number influence)
+\brief Maintain a target for a contiguous two-segment Part chain.
+
+Registers or replaces this root's controller without changing the current pose.
+During a Sprite step, all Parts advance their local animation and callbacks first;
+controllers then run in parent-before-child order, followed by physical publication.
+Calling animate() directly on this Part also runs its controller after its own
+local animation. Do not manually step Parts that their Sprite already updates.
+
+The solver uses the same joint offsets, coordinate spaces, scale rules, elbow side,
+and influence as solveIK(). Positive influence replaces rotation tweens and spin on
+this root and the middle joint when solving. Controllers that would write the same
+joint are rejected before replacing an existing registration. Independent chains
+may coexist. The target remains active until clearIKTarget() or removal of this root.
+
+\param middle Direct child of this Part.
+\param tip Direct child of middle, in the same Sprite.
+\param target Finite target position in the selected space.
+\param space partSpace_Local (root's parent frame), partSpace_Sprite, or partSpace_World (owning-layer coordinates). Defaults to World.
+\param bendDirection Integer +1 or -1 selecting elbow side; defaults to +1.
+\param influence Finite amount in [0,1], default 1. Partial influence approaches the goal on successive solves.
+\return This Part, for chaining.
+
+\note Requires valid contiguous joints, nonzero segment lengths, nonsingular
+parent transforms and equal absolute root scale axes. Dynamic bodies reject direct
+IK; this controller supports nonphysical and kinematic Parts. It does not create
+physical joints or drives. If a later edit invalidates the chain, the controller
+holds its rotation edits and records getIKError(); valid geometry resumes solving.
+An unreachable target clamps to the available reach and is not a configuration error.
+
+Initial Sprite/Layer snapshots preserve the controller configuration, Part IDs,
+last reached status and error text in both resource modes. Links are resolved after
+all Parts, parents and bodies exist. Invalid live configurations reject saving;
+malformed controller references reject restoration before replacing the Part graph.
+
+\par Example
+\code{.js}
+const shoulder = sprite.createPart('shoulder');
+const elbow = sprite.createPart('elbow');
+const wrist = sprite.createPart('wrist');
+elbow.setParentPart(shoulder).setLocation(new pdg.Point(10, 0));
+wrist.setParentPart(elbow).setLocation(new pdg.Point(8, 0));
+shoulder.setIKTarget(elbow, wrist, new pdg.Point(12, 8), pdg.partSpace_Sprite);
+// The Sprite's regular animation step keeps solving toward this target.
+// Later: shoulder.clearIKTarget();
+\endcode
+\see solveIK(), clearIKTarget(), hasIKTarget(), isIKTargetReached(), getIKError()
+*/
+
+/**
+\fn pdg::Part::clearIKTarget()
+\brief Stop this root’s scheduled IK controller.
+
+Keeps the current pose, clears its error and reached status, and releases its rotation channels for later programming. Physical IK also clears and releases its body drives while retaining velocities and independent loads. Harmless when no controller is registered.
+
+\return This Part, for chaining.
+\see setIKTarget()
+*/
+
+/**
+\fn pdg::Part::hasIKTarget()
+\brief Check whether this Part owns a scheduled IK controller.
+
+\return True even while an invalidated controller is holding an error; false after clearing or root removal.
+\see setIKTarget()
+*/
+
+/**
+\fn pdg::Part::isIKTargetReached()
+\brief Check whether the scheduled IK controller has reached its target.
+
+\return For direct IK, the result of the last scheduled solve, false before the first solve; later transform edits do not update it. For physical IK, whether the current physical endpoint reaches the target within tolerance, recomputed on each query. False without a controller or while it has a configuration error.
+\see setIKTarget()
+*/
+
+/**
+\fn pdg::Part::getIKError()
+\brief Read a scheduled IK configuration error.
+
+\return The last scheduled solve error, or an empty string after registration, successful solving, or clearing. Unreachable targets and partial influence report no error; use isIKTargetReached() for their result.
+\see setIKTarget()
+*/

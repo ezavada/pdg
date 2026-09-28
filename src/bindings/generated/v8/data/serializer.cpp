@@ -112,7 +112,14 @@ namespace pdg
         v8::Local<v8::String> name_str = v8::String::NewFromUtf8(isolate, "Serializer").ToLocalChecked();
         t->SetClassName(name_str);
         constructorTpl_.Reset(isolate, t);
-#ifndef PDG_NO_64BIT
+        v8::Local<v8::Signature> SetResourceMode_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetResourceMode_Tpl =
+            v8::FunctionTemplate::New(isolate, SetResourceMode, v8::Local<v8::Value>(), SetResourceMode_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setResourceMode").ToLocalChecked(), SetResourceMode_Tpl);
+        v8::Local<v8::Signature> GetResourceMode_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetResourceMode_Tpl =
+            v8::FunctionTemplate::New(isolate, GetResourceMode, v8::Local<v8::Value>(), GetResourceMode_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getResourceMode").ToLocalChecked(), GetResourceMode_Tpl);
         v8::Local<v8::Signature> Serialize_8_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> Serialize_8_Tpl =
             v8::FunctionTemplate::New(isolate, Serialize_8, v8::Local<v8::Value>(), Serialize_8_Sig);
@@ -129,7 +136,6 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> Sizeof_8u_Tpl =
             v8::FunctionTemplate::New(isolate, Sizeof_8u, v8::Local<v8::Value>(), Sizeof_8u_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "sizeof_8u").ToLocalChecked(), Sizeof_8u_Tpl);
-#endif
         v8::Local<v8::Signature> Serialize_d_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> Serialize_d_Tpl =
             v8::FunctionTemplate::New(isolate, Serialize_d, v8::Local<v8::Value>(), Serialize_d_Sig);
@@ -319,6 +325,72 @@ namespace pdg
 
     }
 
+    void SerializerWrap::SetResourceMode(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
+        Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Serializer]" " function" "([number int] mode)" " - " "select embedded or externally referenced resources").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            return;
+        };
+        if (!args[1 -1]->IsNumber())
+        {
+            v8_ThrowArgTypeException(isolate, 1, "a number (""mode"")");
+            return;
+        }
+        double mode_temp = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+        if (mode_temp < -2147483648.0 || mode_temp > 2147483647.0 || mode_temp != (long)mode_temp)
+        {
+            v8_ThrowArgTypeException(isolate, 1, "a number in range [-2147483648, 2147483647] (""mode"")");
+            return;
+        }
+        int32 mode = (int32)mode_temp;
+        try
+        {
+            self->setResourceMode(mode);
+            {
+                args.GetReturnValue().Set( args.This() ); return;
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SerializerWrap::GetResourceMode(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SerializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SerializerWrap>(args.This());
+        Serializer* self = dynamic_cast<Serializer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number int]" " function" "()" " - " "get this stream's resource policy").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+        { args.GetReturnValue().Set( v8::Integer::New(isolate, self->getResourceMode()) ); return; };
+    }
+
     void SerializerWrap::Serialize_d(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
@@ -368,7 +440,6 @@ namespace pdg
         self->serialize_f(val);
         args.GetReturnValue().SetUndefined();
     }
-#ifndef PDG_NO_64BIT
 
     void SerializerWrap::Serialize_8(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
@@ -419,7 +490,6 @@ namespace pdg
         self->serialize_8u(val);
         args.GetReturnValue().SetUndefined();
     }
-#endif
 
     void SerializerWrap::Serialize_4(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
@@ -703,12 +773,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsColor(isolate, args[1 -1]))
+        pdg::Color val;
+        auto val_isColor = v8_ValueIsColor(isolate, args[1 -1], val);
+        if (!val_isColor.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isColor)
         {
             v8_ThrowArgTypeException(isolate, 1, "Color", *args[1 -1]);
             return;
-        }
-        pdg::Color val = v8_ValueToColor(isolate, args[1 -1]);
+        };
         self->serialize_color(val);
         args.GetReturnValue().SetUndefined();
     }
@@ -728,12 +805,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
+        pdg::Offset val;
+        auto val_isOffset = v8_ValueIsOffset(isolate, args[1 -1], val);
+        if (!val_isOffset.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isOffset)
         {
             v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
             return;
-        }
-        pdg::Offset val = v8_ValueToOffset(isolate, args[1 -1]);
+        };
         self->serialize_offset(val);
         args.GetReturnValue().SetUndefined();
     }
@@ -753,12 +837,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point val;
+        auto val_isPoint = v8_ValueIsPoint(isolate, args[1 -1], val);
+        if (!val_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point val = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         self->serialize_point(val);
         args.GetReturnValue().SetUndefined();
     }
@@ -778,12 +869,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsVector(isolate, args[1 -1]))
+        pdg::Vector val;
+        auto val_isVector = v8_ValueIsVector(isolate, args[1 -1], val);
+        if (!val_isVector.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isVector)
         {
             v8_ThrowArgTypeException(isolate, 1, "Vector", *args[1 -1]);
             return;
-        }
-        pdg::Vector val = v8_ValueToVector(isolate, args[1 -1]);
+        };
         self->serialize_vector(val);
         args.GetReturnValue().SetUndefined();
     }
@@ -803,12 +901,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsRect(isolate, args[1 -1]))
+        pdg::Rect r;
+        auto r_isRect = v8_ValueIsRect(isolate, args[1 -1], r);
+        if (!r_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*r_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
-        }
-        pdg::Rect r = v8_ValueToRect(isolate, args[1 -1]);
+        };
         self->serialize_rect(r);
         args.GetReturnValue().SetUndefined();
     }
@@ -828,12 +933,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsRotatedRect(isolate, args[1 -1]))
+        pdg::RotatedRect val;
+        auto val_isRotatedRect = v8_ValueIsRotatedRect(isolate, args[1 -1], val);
+        if (!val_isRotatedRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isRotatedRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "RotatedRect", *args[1 -1]);
             return;
-        }
-        pdg::RotatedRect val = v8_ValueToRotatedRect(isolate, args[1 -1]);
+        };
         self->serialize_rotr(val);
         args.GetReturnValue().SetUndefined();
     }
@@ -853,12 +965,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsQuad(isolate, args[1 -1]))
+        pdg::Quad val;
+        auto val_isQuad = v8_ValueIsQuad(isolate, args[1 -1], val);
+        if (!val_isQuad.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isQuad)
         {
             v8_ThrowArgTypeException(isolate, 1, "Quad", *args[1 -1]);
             return;
-        }
-        pdg::Quad val = v8_ValueToQuad(isolate, args[1 -1]);
+        };
         self->serialize_quad(val);
         args.GetReturnValue().SetUndefined();
     }
@@ -1214,7 +1333,6 @@ namespace pdg
         size_t n = self->sizeof_4u(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
-#ifndef PDG_NO_64BIT
 
     void SerializerWrap::Sizeof_8(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
@@ -1265,7 +1383,6 @@ namespace pdg
         size_t n = self->sizeof_8u(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
-#endif
 
     void SerializerWrap::Sizeof_f(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
@@ -1408,12 +1525,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point val;
+        auto val_isPoint = v8_ValueIsPoint(isolate, args[1 -1], val);
+        if (!val_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point val = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         size_t n = self->sizeof_point(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
@@ -1433,12 +1557,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
+        pdg::Offset val;
+        auto val_isOffset = v8_ValueIsOffset(isolate, args[1 -1], val);
+        if (!val_isOffset.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isOffset)
         {
             v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
             return;
-        }
-        pdg::Offset val = v8_ValueToOffset(isolate, args[1 -1]);
+        };
         size_t n = self->sizeof_offset(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
@@ -1458,12 +1589,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsVector(isolate, args[1 -1]))
+        pdg::Vector val;
+        auto val_isVector = v8_ValueIsVector(isolate, args[1 -1], val);
+        if (!val_isVector.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isVector)
         {
             v8_ThrowArgTypeException(isolate, 1, "Vector", *args[1 -1]);
             return;
-        }
-        pdg::Vector val = v8_ValueToVector(isolate, args[1 -1]);
+        };
         size_t n = self->sizeof_vector(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
@@ -1483,12 +1621,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsRect(isolate, args[1 -1]))
+        pdg::Rect val;
+        auto val_isRect = v8_ValueIsRect(isolate, args[1 -1], val);
+        if (!val_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
-        }
-        pdg::Rect val = v8_ValueToRect(isolate, args[1 -1]);
+        };
         size_t n = self->sizeof_rect(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
@@ -1508,12 +1653,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsRotatedRect(isolate, args[1 -1]))
+        pdg::RotatedRect val;
+        auto val_isRotatedRect = v8_ValueIsRotatedRect(isolate, args[1 -1], val);
+        if (!val_isRotatedRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isRotatedRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "RotatedRect", *args[1 -1]);
             return;
-        }
-        pdg::RotatedRect val = v8_ValueToRotatedRect(isolate, args[1 -1]);
+        };
         size_t n = self->sizeof_rotr(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
@@ -1533,12 +1685,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsQuad(isolate, args[1 -1]))
+        pdg::Quad val;
+        auto val_isQuad = v8_ValueIsQuad(isolate, args[1 -1], val);
+        if (!val_isQuad.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isQuad)
         {
             v8_ThrowArgTypeException(isolate, 1, "Quad", *args[1 -1]);
             return;
-        }
-        pdg::Quad val = v8_ValueToQuad(isolate, args[1 -1]);
+        };
         size_t n = self->sizeof_quad(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
@@ -1558,12 +1717,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsColor(isolate, args[1 -1]))
+        pdg::Color val;
+        auto val_isColor = v8_ValueIsColor(isolate, args[1 -1], val);
+        if (!val_isColor.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*val_isColor)
         {
             v8_ThrowArgTypeException(isolate, 1, "Color", *args[1 -1]);
             return;
-        }
-        pdg::Color val = v8_ValueToColor(isolate, args[1 -1]);
+        };
         size_t n = self->sizeof_color(val);
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
     }
@@ -1604,8 +1770,49 @@ namespace pdg
             size_t n = 3;
             { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, n) ); return; };
         }
-        REQUIRE_CPP_OBJECT_OR_SUBCLASS_ARG(1, val, ISerializable);
-        size_t n = self->sizeof_obj(val);
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        ISerializable* val = JSC_GetSerializable(ctx, args[0]);
+        if (!val)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected a serializable object";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+#else
+        ISerializable* val = V8_GetSerializable(isolate, args[0]);
+        if (!val)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected a serializable object";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+#endif
+        size_t n;
+        try { n = self->sizeof_obj(val); }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
 #ifdef PDG_USING_JAVASCRIPT_CORE
         if (RestorePendingScriptException(exception))
         {
@@ -1661,7 +1868,11 @@ namespace pdg
 
     SerializerWrap::SerializerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_Serializer(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_Serializer(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_Serializer_InNewFromCpp)
         {
             {

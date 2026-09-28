@@ -43,7 +43,9 @@
 #include "pdg/sys/events.h"
 #include "pdg/sys/eventemitter.h"
 #include "pdg/sys/animated.h"
-#include "pdg/sys/ispritecollidehelper.h"
+#include "pdg/sys/physicsbody.h"
+#include "pdg/sys/collider.h"
+#include "pdg/sys/part.h"
 #include "pdg/sys/serializable.h"
 
 #ifndef PDG_NO_GUI
@@ -67,6 +69,10 @@
 #endif
 
 #ifdef PDG_SPRITER_SUPPORT
+#include "pdg/sys/animationpose.h"
+#include "pdg/sys/animationcontroller.h"
+#include "pdg/sys/animationphysics.h"
+#include "pdg/sys/animationdrawing.h"
 // Suppress SpriterPlusPlus virtual function warnings (Clang only; MSVC does not use these pragmas)
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -83,6 +89,8 @@
 #define MAX_BREAKABLE_JOINTS_PER_SPRITE 16
 
 namespace pdg {
+class SpriterPoseAdapter;
+struct SpriterRigSchema;
 
 class ImageImpl;  // internal implementation class
 
@@ -94,14 +102,87 @@ class ImageImpl;  // internal implementation class
 // completed animations, going offscreen, etc... will generate events 
 // -----------------------------------------------------------------------------------
 
-class Sprite : public EventEmitter, public Animated {
+class Sprite : public EventEmitter, public Animated<Sprite> {
+    friend class PhysicsBodyRef<Sprite>;
+    friend class ColliderRef<Sprite>;
+    void initializePhysicsBody(PhysicsBody& body);
     friend class SpriteLayer;
     friend class TileLayer;
     friend class SpriteManager;
+    friend class Part;
+    /// @cond INTERNAL
+    friend class PhysicsGraphSnapshot;
+    friend class SpriteAnimationSnapshot;
+    /// @endcond
+    std::vector<Part*> mParts;
+    PartId mNextPartId = 0;
+    void animateParts(double deltaSeconds);
+    std::vector<Part*> orderedParts() const;
+    void refreshPartPhysics();
+    bool mRefreshingPartPhysics = false;
+    bool mAnimationPrepared = false;
+    void advanceAnimation(ms_delta elapsed);
+    void publishBodyBreak(Part* part, const PhysicsBodyBreakInfo& info);
+    void finishAnimation(ms_delta elapsed, bool layerDoCollisions);
+    void updatePartAttachments();
+    bool mUpdatingPartAttachments = false;
+    Part* mAttachmentPart = nullptr;
+    void validateTransformEdit() const override;
+    bool attachmentReaches(const Sprite* target) const;
+    bool mPublishingPhysics = false;
+    void validateProgrammedTransform() const override;
+    void centerChanged(const Offset& delta) override;
+    SpatialTransform partRootTransform() const;
+    void validateInitialSnapshot(bool layerGraph = false) const;
+    uint32 partSnapshotSize(ISerializer*) const;
+    void serializeParts(ISerializer*) const;
+    void deserializeParts(IDeserializer*);
+    uint32 partMotionSize(ISerializer*) const;
+    void serializePartMotion(ISerializer*) const;
+    void deserializePartMotion(IDeserializer*);
 public:
+    /** Optional physics body; querying never creates one.
+     * Convert physics to PhysicsBody& and retain with addRef/release to keep
+     * that body after removal. Only setupPhysicsBody()/removePhysicsBody()
+     * change the association; callers cannot assign this member. Immediate transform
+     * setters teleport it; dynamic bodies reject programmed movement/spin.
+     */
+    PhysicsBodyRef<Sprite> physics;
+    /** Optional collision geometry; reading never creates a collider. */
+    ColliderRef<Sprite> collider;
+    Collider& setupCollider();
+    void removeCollider();
+    /** Set up the associated body, applying mass and inertia on every call.
+     * Omitted arguments use 1, including when a body already exists.
+     * Retains an existing body's identity, motion, mode and constraints.
+     * Read physics to access the body without reconfiguring it.
+     */
+    PhysicsBody& setupPhysicsBody(double mass = 1, double momentOfInertia = 1);
+    void removePhysicsBody();
 
-	SERIALIZABLE_TAG( CLASSTAG_SPRITE );
-	SERIALIZABLE_METHODS();
+    /** Create an empty independent Part with a unique nonempty name.
+     * Returned pointer is borrowed; addRef() to retain it across removal. */
+    Part* createPart(const std::string& name);
+    /** Move an existing Part into this Sprite, preserving world placement and handles.
+     * Both owners must share a layer, or both be off-layer. Includes Part and
+     * physical-rig descendants by default. Names must be unique here; moved Parts
+     * receive new per-Sprite IDs. Internal joints survive; boundary joints disconnect.
+     * Source skeleton bindings and assembly membership are released. Attach to a
+     * destination rig explicitly. See the method reference for controller restrictions.
+     * Returns the same borrowed Part pointer. */
+    Part* transferPart(Part* part, bool includeDescendants = true);
+    Part* getPart(PartId id) const;
+    Part* findPart(const std::string& name) const;
+    Part* getAttachmentPart() const { return mAttachmentPart; }
+    size_t getPartCount() const { return mParts.size(); }
+    std::vector<std::string> getPartNames() const;
+    bool removePart(PartId id);
+    void clearParts();
+
+    uint32 getMyClassTag() const override { return CLASSTAG_SPRITE; }
+    uint32 getSerializedSize(ISerializer* serializer) const override;
+    void serialize(ISerializer* serializer) const override;
+    void deserialize(IDeserializer* deserializer) override;
 	static pdg::ISerializable* CreateInstance() { return new Sprite; }
 
 	enum {
@@ -136,8 +217,9 @@ public:
 		action_FadeInComplete = 11,
 		action_FadeOutComplete = 12,
 		action_JointBreak = 13, // only available with chipmunk physics
-        action_SpriterTrigger = 14, // Spriter trigger events (only when PDG is compiled with Spriter support)
-        action_AnimationBlendComplete = 15, // Animation blending completed
+        action_AnimationPhysicsRecoveryComplete = 17, //!< physical recovery reached the requested animation control mode.
+        action_BodyBreak = 16, //!< a PhysicsBody exceeded its angular-speed threshold.
+        action_AnimationBlendComplete = 15, //!< blendToAnimation() or transitionToAnimation() completed; eventType_SpriteAnimate with SpriteAnimateInfo.
 
 		// touch types for SpritTouchInfo
 		touch_MouseEnter = 20, /** NOT IMPLEMENTED **/
@@ -152,7 +234,7 @@ public:
 		collide_BoundingBox = 2,
 		collide_CollisionRadius = 3,
 		collide_AlphaChannel = 4,
-		collide_SpriterCollisionBox = 5, // Animated collision boxes from Spriter
+		collide_SpriterCollisionBox = 5, // AnimatedBase collision boxes from Spriter
 		collide_Last = collide_SpriterCollisionBox
 	};
 
@@ -191,12 +273,91 @@ public:
     void	addFramesImage(Image* image, int startingFrame = start_FromFirstFrame, int numFrames = all_Frames);
 	
   #ifdef PDG_SPRITER_SUPPORT
+    // Opt-in fixed-hierarchy pose evaluation. Reference is the explicitly
+    // selected clip at time zero; failures leave existing playback available.
+    // GUI capability is explicit in headless builds. Debug drawing is opt-in,
+    // per instance, and uses the final pose in the current layer/port.
+    void seekAnimation(const char* clip, double timeSeconds);
+    void transitionToAnimation(const char* clip, double timeSeconds, double durationSeconds);
+    bool isAnimationTransitioning() const;
+    double getAnimationTransitionProgress() const;
+    AnimationModifierId addAnimationIK(const AnimationTwoBoneIK& config, int order = 0);
+    void setAnimationIKTarget(AnimationModifierId id, double x, double y, int space = animationSpace_Rig);
+    AnimationIKResult getAnimationIKResult(AnimationModifierId id) const;
+    AnimationModifierId addAnimationModifier(AnimationPipeline::Modifier callback, int stage = animationStage_PreConstraint, int order = 0);
+    void removeAnimationModifier(AnimationModifierId id);
+    void clearAnimationModifiers();
+    std::string getAnimationModifierError(AnimationModifierId id) const;
+    void setAnimationSource(int source);
+    int getAnimationSource() const;
+    bool isAnimationDrawingSupported() const;
+    void setAnimationDebugDraw(int flags);
+    int getAnimationDebugDraw() const;
+    // Persistent artwork shares editable Drawing contents; callbacks return owned handles.
+    AnimationDrawableId addAnimationDrawable(const AnimationDrawableOptions& options, const Drawing& drawing);
+    AnimationDrawableId addAnimationDrawable(const AnimationDrawableOptions& options, AnimationDrawings::Callback callback);
+    void removeAnimationDrawable(AnimationDrawableId id);
+    void clearAnimationDrawables();
+    void setAnimationDrawableEnabled(AnimationDrawableId id, bool enabled);
+    std::string getAnimationDrawableError(AnimationDrawableId id) const;
+    AnimationDrawBounds getAnimationDrawBounds() const;
+    static bool supportsAnimationPhysics();
+    /** Create constrained bodies on bone-named Parts; access them through findPart(name)->physics.
+     * Existing names must match an unparented Part without a body or collider with the same bone/offset.
+     * Disable before changing mapped bindings, offsets or removing Parts.
+     */
+    void setupAnimationPhysics(const AnimationPhysicsDefinition& definition);
+    /** Generate a dynamic rig from the enabled reference skeleton. The optional
+     * unitsPerMeter converts the designated root's 1 mm zero-length fallback.
+     * Parts expose generated capsules and pivot joints through collider/physics.
+     */
+    Sprite& setupPhysicsFromAnimationRig(double totalMass, double unitsPerMeter = 1);
+    /// Register a same-Sprite physical Part in the rig assembly; joints are explicit.
+    Sprite& attachAnimationPhysicsPart(Part* part, Part* parent = nullptr);
+    /// Release membership/control and disconnect boundary joints, preserving internal joints.
+    Sprite& detachAnimationPhysicsPart(Part* part, bool includeDescendants = true);
+    bool isAnimationPhysicsPartAttached(const Part* part) const;
+    Sprite& setAnimationPhysicsRoot(AnimationBoneId bone);
+    Sprite& setAnimationPhysicsRoot(const char* bone);
+    AnimationBoneId getAnimationPhysicsRoot() const;
+    Sprite& clearAnimationPhysicsRoot();
+    std::vector<std::string> getAnimationPhysicsSetupWarnings() const { return mAnimationPhysicsSetupWarnings; }
+    Sprite& setAnimationPhysicsMode(int mode, double recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
+    Sprite& setAnimationPhysicsMode(int mode, AnimationBoneId bone, bool includeDescendants = false,
+        double recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
+    Sprite& setAnimationPhysicsMode(int mode, const char* bone, bool includeDescendants = false,
+        double recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
+    int getAnimationPhysicsMode() const;
+    int getAnimationPhysicsMode(AnimationBoneId bone, bool includeDescendants = false) const;
+    int getAnimationPhysicsMode(const char* bone, bool includeDescendants = false) const;
+    Sprite& setAnimationPhysicsDriveSettings(const AnimationPhysicsDriveSettings& settings);
+    Sprite& setAnimationPhysicsDriveSettings(const AnimationPhysicsDriveSettings& settings, AnimationBoneId bone, bool includeDescendants = false);
+    Sprite& setAnimationPhysicsDriveSettings(const AnimationPhysicsDriveSettings& settings, const char* bone, bool includeDescendants = false);
+    std::optional<AnimationPhysicsDriveSettings> getAnimationPhysicsDriveSettings(AnimationBoneId bone) const;
+    std::optional<AnimationPhysicsDriveSettings> getAnimationPhysicsDriveSettings(const char* bone) const;
+    void disableAnimationPhysics(double recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
+    bool isAnimationPhysicsEnabled() const;
+    bool enableAnimationPose(const char* referenceAnimation);
+    void disableAnimationPose();
+    bool isAnimationPoseEnabled() const;
+    std::string getAnimationRigError() const;
+    std::shared_ptr<const AnimationRig> getAnimationRig() const;
+    AnimationPose getAnimationPose() const;
+    AnimationPose sampleAnimationPose(const char* clip, double timeSeconds) const;
+    std::vector<std::string> getAnimationBoneNames() const;
+    std::vector<std::string> getAnimationBindingNames() const;
+    AnimationTransform getAnimationBoneTransform(const char* name, int space = animationSpace_Local) const;
+    AnimationTransform getAnimationBindingTransform(const char* name, int space = animationSpace_Local) const;
+    // Absolute local overrides survive ticks/clip changes, never accumulate,
+    // and are cleared by disable/re-enable or an entity change.
+    void setAnimationBoneTransform(const char* name, const AnimationTransform& transform);
+    void clearAnimationBoneTransforms();
+
     bool	isSpriterSprite() const;
   	bool	hasAnimation(const char* animationName);
   	bool	hasAnimation(int animationId);
   	void	startAnimation(const char* animationName);
   	void	startAnimation(int animationId);
-  	Sprite& setEntityScale(int xScale, int yScale);
   	
   	// Character Maps
   	void applyCharacterMap(const char* mapName);
@@ -208,7 +369,8 @@ public:
   	void enableSpriterEvents(bool enable = true);
   	bool areSpriterEventsEnabled() const;
   	
-  	// Animation blending
+	// Animation blend durations are floating-point seconds; progress is a normalized [0, 1] fraction.
+	// Invalid targets/nonfinite durations are ignored. Stop retains pause semantics.
   	void blendToAnimation(const char* animationName, float blendTime);
   	void blendToAnimation(int animationId, float blendTime);
   	bool isBlending() const;
@@ -222,6 +384,7 @@ public:
   	
   	// Attachment Points
 	bool hasAttachPoint(const char* attachPointName) const;
+	// Offset from the sprite root, expressed in SpriteLayer axes (not bone-local).
 	Offset getAttachPoint(const char* attachPointName) const;
 	void attachSprite(Sprite* sprite, const char* attachPointName);
 	void detachSprite(Sprite* sprite);
@@ -270,11 +433,11 @@ public:
 	// fading, with 1.0 being complete opaque and 0.0 being completely transparent
 	Sprite& setOpacity(float opacity);
 	float	getOpacity();
-	void	fadeTo(float targetOpacity, ms_delta msDuration, 
+	void	fadeTo(float targetOpacity, double durationSeconds, 
                             EasingFunc easing = linearTween);  // fadeComplete notification when done
-	void	fadeIn(ms_delta msDuration, 
+	void	fadeIn(double durationSeconds, 
                             EasingFunc easing = linearTween);  // fadeInComplete notification when done
-	void	fadeOut(ms_delta msDuration, 
+	void	fadeOut(double durationSeconds, 
                             EasingFunc easing = linearTween);  // fadeOutComplete notification when done
 
 	// arrange sprites within the layer
@@ -288,21 +451,12 @@ public:
 	// collisions
 	bool getWantsCollideWallEvents() { return wantsWallCollide; }
 	Sprite& setWantsCollideWallEvents(bool wantsThem = true); // collisions for hitting bounds of sprite layer
-	Sprite& enableCollisions(int collisionType = collide_AlphaChannel);
-	Sprite& disableCollisions();
-	int		getCollisionType() const { return mDoCollisions; }
-	// calling setCollisionRadius > 0 when collision are off is same as calling enableCollisions(collide_CollisionRadious)
-	Sprite& setCollisionRadius(float pixelRadius);
-	float	getCollisionRadius();	
-	// define a collision mask image for all the frames that use the given image
-	void	useCollisionMask(Image* frameImage, Image* maskImage);
-	// define a helper that decides if two sprites that just met all other collision criteria actually collide or not
-	void    setCollisionHelper(ISpriteCollideHelper* helper);
-
-	// 1.0 perfectly elastic collisions, 0.0 perfectly inelastic (no bounce)
-	// for chipmunk physics, using 1.0 is not recommended
-	Sprite& setElasticity(float elasticity);
-	float	getElasticity();
+    /// Follow the current frame using bounds or opaque pixel geometry; returns .collider.
+    Collider& setupFrameCollider(int mode = frameCollider_AlphaMask, int alphaThreshold = 128);
+    /// Follow active authored animation boxes; returns .collider.
+    Collider& setupAnimationCollider();
+    /// Assign an optional mask to all frames using this artwork. Null removes the mask.
+    Sprite& setFrameCollisionMask(Image* frameImage, Image* maskImage);
 
   #ifndef PDG_NO_GUI
 	bool    getWantsMouseOverEvents() { return wantsMouseOver; }
@@ -315,15 +469,6 @@ public:
 	Sprite& setMouseDetectMode(int collisionType = collide_BoundingBox); // how we detect when the mouse is over a sprite
 	Sprite& setWantsOffscreenEvents(bool wantsThem = true); // events for when sprite moves offscreen
   #endif // ! PDG_NO_GUI
-
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-	// override of what is provided by Animated
-	virtual void	applyForce(const Vector& force, ms_delta msDuration = duration_Instantaneous);
-	virtual void	applyTorque(float forceSpin, ms_delta msDuration = duration_Instantaneous);
-	virtual void	stopAllForces();  // removes all forces that were set by applyForce (but not friction)
-    virtual Animated&    setVelocity(const Vector& deltaPerSec);
-	virtual Vector  getVelocity();
-  #endif
 
 	void setUserData(UserData* userData);
 	void freeUserData();
@@ -345,19 +490,13 @@ public:
 	SCRIPT_OBJECT_REF mSpriteScriptObj;
   #endif
 
+#ifndef PDG_INTERNAL_LIB
+protected:
+#endif
+    /// @cond INTERNAL
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
     cpBody* mBody;
     cpShape* mCollideShape;
-    
-    // this sprite becomes a static body that isn't affected by physics, though
-    // non-static objects can collide with it. This would be used for walls or platforms.
-    // This should be done before setting anything else about the sprite
-    // returns itself so you can call Sprite* sprite = layer->createSprite()->makeStatic();
-    Sprite&         makeStatic();
-
-	virtual Animated&	setMass(float mass);  // override
-    virtual Animated&   setFriction(float friction); // override
-    float           getFriction();
 
     // used to mark things that are in the same group and so shouldn't collide with one another
     // mainly used with sprites that are joined together
@@ -434,8 +573,8 @@ public:
 
     void            makeJointBreakable(cpConstraint* joint, float breakingForce, Sound* breakSound = 0);
     void            makeJointUnbreakable(cpConstraint* joint);
-
   #endif // PDG_USE_CHIPMUNK_PHYSICS
+    /// @endcond
 
 #ifndef PDG_INTERNAL_LIB
 protected:
@@ -445,28 +584,22 @@ protected:
 
   #ifdef PDG_SPRITER_SUPPORT
     // for use by SpriteLayer::createSpriteFromSpriter functions
+    // Borrowed-model construction is used by native adapters that own the model.
     Sprite(SpriterEngine::EntityInstance* entityInstance, SpriterEngine::SpriterModel* spriterModel);
+    Sprite(SpriterEngine::EntityInstance* entityInstance, const std::shared_ptr<SpriterEngine::SpriterModel>& spriterModel);
   #endif
 
-    virtual void easingCompleted(const Animation& a);
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    
-    cpSpace*        getSpace();
-    
-    // override these to set values in chipmunk or spriter
-	virtual void	locationChanged(const Offset& delta);
-	virtual void	sizeChanged(float deltaW, float deltaH);
-	virtual void	rotationChanged(float deltaRadians);
-	virtual void	centerChanged(const Offset& delta);
-	virtual void	flipChanged(bool xFlipped, bool yFlipped);
+    void animationStarting(Animation& a) override;
+    virtual void easingCompleted(const Animation& a) override;
 
-    // hide these since they don't do what is expected
-	Animated&     	setMoveFriction(float frictionCoefficient) { return *this; }
-	Animated&    	setSpinFriction(float frictionCoefficient) { return *this; }
-	Animated&    	setSizeFriction(float frictionCoefficient) { return *this; }
-	float   		getMoveFriction() { return 0; }
-	float   		getSpinFriction() { return 0; }
-	float   		getSizeFriction() { return 0; }
+	virtual void locationChanged(const Offset& delta) override;
+	virtual void sizeChanged(float deltaW, float deltaH) override;
+    virtual void scaleChanged(const Offset& delta) override;
+	virtual void rotationChanged(float deltaRadians) override;
+	virtual void flipChanged(bool xFlipped, bool yFlipped) override;
+
+  #ifdef PDG_USE_CHIPMUNK_PHYSICS
+    cpSpace* getSpace();
     
     void            setupCollideGroup(Sprite* otherSprite);
     
@@ -481,27 +614,15 @@ protected:
 
     virtual ~Sprite();
 
-	// checks to see if the movingSprite collides with any features of the spriteLayer.  
-	//	Determines the number of pixels that overlap based on the specified alphaThreshold
-	//AB 10/2/10 - currently only returns 0 or 1
-    //	virtual int    checkCollision(Sprite *movingSprite, uint8 alphaThreshold) const;
-
-	// will apply the impulse based on each sprites' elasticity 
-	void impartCollisionImpulse(Sprite* sprite, Vector& outNormal, Vector& outImpulse, float& outKineticEnergy);
-
-	// return true if this sprite has collided with sprite paased in
-	// saves the force and angle of the collision on the sprite in the 
-	// sprite's collision info
-	bool collidesWith(Sprite* sprite);
-	
-	bool collidesWith(const Point& p);
+    // Mouse hit testing remains independent of physical collider selection.
+	bool hitTest(const Point& p);
 	
 	void recalcOnscreenAndInBounds();
     
 	
 	// override the way we post events to go to the sprite layer first rather than directly to
 	// the sprite manager
-	virtual bool postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter = 0); // returns true if event handled
+	virtual bool postEvent(long inEventType, void* inEventData, EventEmitter* fromEmitter = 0) override; // returns true if event handled
     
 	// functions called from the layer
 	virtual void	draw();
@@ -532,14 +653,14 @@ protected:
 	bool			mSpriteAnimating;
 	bool			mSpriteAnimatingBackwardsNow;
 	
-	int				mDoCollisions;
-	float			mCollisionRadius;
-	float			mElasticity;
 	int				mMouseDetectMode;
 
   #ifdef PDG_SPRITER_SUPPORT
+    AnimationBoneId mAnimationPhysicsRootOverride = animation_NoBone;
+    std::vector<std::string> mAnimationPhysicsSetupWarnings;
 	SpriterEngine::EntityInstance*	mEntityInstance;
 	SpriterEngine::SpriterModel*	mSpriterModel;
+    std::shared_ptr<SpriterEngine::SpriterModel> mSpriterModelOwner;
 	float					mEntityScaleX;
 	float					mEntityScaleY;
 	
@@ -550,30 +671,75 @@ protected:
 	bool mSpriterEventsEnabled;
 	
 	// Animation state
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    std::unique_ptr<AnimationPhysicsRig> mAnimationPhysics;
+    std::vector<Part*> mAnimationPhysicsParts;
+    std::map<Part*, Part*> mAnimationPhysicsMembers;
+    void updateAnimationPhysicsMembers(std::map<Part*, Part*> members, bool disconnectBoundary = true);
+    uint32_t selectAnimationPhysicsMemberRoot(const std::map<Part*, Part*>& members) const;
+    std::unique_ptr<AnimationPose> mAnimationDesired;
+    cpBodyType mAnimationSavedBodyType = CP_BODY_TYPE_DYNAMIC;
+    cpShapeFilter mAnimationSavedFilter = CP_SHAPE_FILTER_ALL;
+    double mAnimationSavedMass = 1, mAnimationSavedMoment = 1;
+    double mAnimationPhysicsUnitsPerMeter = 1;
+    void prepareAnimationPhysics(ms_delta elapsed);
+    void publishAnimationPhysics();
+    void finishAnimationPhysics();
+    AnimationPhysicsRig& animationPhysicsControl() const;
+#endif
+    Sprite& changeAnimationPhysicsMode(int mode, std::optional<AnimationBoneId> bone, bool descendants,
+        double seconds, int direction, bool disabling = false);
+    AnimationBoneId animationPhysicsBone(const char* name) const;
+    void releaseAnimationPhysics();
+    void notifyAnimationPhysicsRecovery(const AnimationPhysicsRecovery& recovery);
+    void dispatchSpriterTriggers(double deltaSeconds);
+    AnimationDrawings mAnimationDrawings;
+    void drawAnimationArt();
+	mutable std::unique_ptr<SpriterPoseAdapter> mAnimationPoseAdapter;
+    mutable std::shared_ptr<AnimationPipeline> mAnimationPipeline;
+    struct AnimationIKState { AnimationTwoBoneIK config; AnimationIKResult result; };
+    mutable std::map<AnimationModifierId, std::shared_ptr<AnimationIKState>> mAnimationIK;
+	std::shared_ptr<SpriterRigSchema> mAnimationRigSchema;
+	mutable std::string mAnimationRigError;
+	mutable int mAnimationDebugDraw = animationDebug_None;
+	std::string mBlendTargetName;
 	bool mIsBlending;
-	float mBlendTime;
+	double mBlendDurationMs;
+	double mBlendElapsedMs;
 	float mBlendProgress;
-	std::string mCurrentAnimation;
-	std::string mTargetAnimation;
+	std::vector<std::string> mSpriterAnimationNames;
 	bool mIsAnimationPaused;
+	bool mIsAnimationFinished;
 	
 	// AttachPoint tracking
+    Sprite* mSpriterAttachmentOwner = nullptr;
 	std::map<std::string, Sprite*> mAttachedSprites;
 	
 	// Collision box cache and bounds optimization
 	mutable std::map<std::string, RotatedRect> mSpriterCollisionBoxCache;
 	mutable bool mSpriterCollisionBoxCacheValid;
 	mutable std::string mFallbackCollisionBoxName;
-	std::string mLastCollisionName; // For collision event info
-	bool mIsFirstContact; // Track if this is the first contact in a collision sequence
 	mutable Rect mColliderBounds;
 	mutable bool mColliderBoundsValid;
+	mutable bool mSpriterPoseDirty;
+
+	// Rebuilt only when selecting an entity, never by hasAnimation().
+	void cacheSpriterAnimationNames();
+	void invalidateSpriterPose() const;
+	void refreshSpriterPose() const;
+	AnimationTransform spriterRootTransform() const;
+	void publishSpriterPose(double deltaSeconds = 0) const;
+    void selectAnimationTime(const char* clip, double normalizedSeconds);
+	void drawAnimationDebug() const;
+	void updateAttachedSprites() const;
+	void syncSpriterRoot() const;
+	void resumeSpriterBlend();
+	void clearAttachedSprites();
 
 	// Private helper methods for Spriter collision boxes
 	void calcColliderBounds() const;
 	std::map<std::string, RotatedRect> getActiveSpriterCollisionBoxes() const;
 	std::vector<std::string> getActiveSpriterCollisionBoxNames() const;
-	bool checkSpriterCollisionBoxCollision(Sprite* otherSprite);
 	bool checkSpriterCollisionBoxPointCollision(const Point& p);
   #endif // PDG_SPRITER_SUPPORT
 
@@ -596,7 +762,7 @@ protected:
 	ISpriteDrawHelper*	mPostDrawHelper;
   #endif	
 
-	ISpriteCollideHelper* mCollisionHelper;
+
 
 	bool mOnscreen;
 	bool mInBounds;

@@ -60,7 +60,7 @@ enum { all_events = 0 };
  * The EventEmitter expects the game developer to implement IEventHandler subclasses
  * and register them to handle various events they are interested in.
  * @see IEventHandler
- * \ingroup Managers
+ * \ingroup Events
  */
 class EventEmitter {
 friend class EventManager;
@@ -96,7 +96,7 @@ public:
     		INIT_SCRIPT_OBJECT(mEventEmitterScriptObj);
     	#endif
     };
-/// @cond C++
+/// @cond CXX
     virtual ~EventEmitter();
 /// @endcond
 

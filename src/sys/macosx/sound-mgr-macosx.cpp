@@ -34,6 +34,8 @@
 #include "sound-macosx.h"
 #include "pdg/sys/resource.h"
 #include "pdg-lib.h"
+#include <algorithm>
+#include <utility>
 
 namespace pdg {
 
@@ -43,11 +45,8 @@ SoundManagerMac::SoundManagerMac() {
 }
 
 SoundManagerMac::~SoundManagerMac() {
-    SoundsList::reverse_iterator it = mSounds.rbegin();
-    while (it != mSounds.rend()) {
-        (*it)->release();
-        ++it;
-    }
+    // Sound destructors call soundStopped(); detach the list before releasing it.
+    auto sounds = std::exchange(mSounds, {});
 }
 
 // set volume for all sounds. Individual sounds may have separate volumes, but they are 
@@ -66,17 +65,13 @@ SoundManagerMac::setMute(bool muted) {
 // give time to the sound layer to do anything it may need to do, such as refilling buffers
 void    
 SoundManagerMac::idle() {
-    SoundsList::iterator it = mSounds.begin();
-    while (it != mSounds.end()) {
-        mSoundsItemDeleted = false;
-        SoundMac* sound = static_cast<SoundMac*>(*it);
-        if (sound) {
-            sound->idle();
+    // Completion handlers may stop, restart, or add sounds. Keep this pass alive
+    // independently of the live list, and skip sounds stopped by earlier handlers.
+    const auto sounds = mSounds;
+    for (const auto& sound : sounds) {
+        if (std::find(mSounds.begin(), mSounds.end(), sound) != mSounds.end()) {
+            static_cast<SoundMac*>(sound.get())->idle();
         }
-        if (mSoundsItemDeleted) { // something in idle caused list item to be deleted
-            continue;
-        }
-        ++it;
     }
     
     // Process deferred audio cleanup to prevent resource leaks
@@ -118,22 +113,21 @@ SoundManagerMac::stopAllSounds() {
 // inform the Sound Manager there is a new sound playing
 void
 SoundManagerMac::soundPlaying(Sound* sound) {
+    if (std::any_of(mSounds.begin(), mSounds.end(),
+        [sound](const auto& entry) { return entry.get() == sound; })) return;
     sound->addRef();
-    mSounds.push_back(sound);   // track the sound
+    mSounds.push_back(std::shared_ptr<Sound>(sound, [](Sound* value) { value->release(); }));
 }
 
 // inform the Sound Manager there is a new sound playing
 void
 SoundManagerMac::soundStopped(Sound* sound) {
-    SoundsList::iterator it = mSounds.begin();
-    while (it != mSounds.end()) {
-        if (*it == sound) {
-            mSounds.erase(it);
-            sound->release();
-            mSoundsItemDeleted = true; // in case we were idling when this happened
-            break;
-        }
-        ++it;
+    auto it = std::find_if(mSounds.begin(), mSounds.end(),
+        [sound](const auto& entry) { return entry.get() == sound; });
+    if (it != mSounds.end()) {
+        // Release only after erase has finished: destruction can reenter here.
+        auto retained = std::move(*it);
+        mSounds.erase(it);
     }
 }
 
@@ -144,5 +138,4 @@ SoundManager* SoundManager::createSingletonInstance() {
 }
 
 } // end namespace pdg
-
 

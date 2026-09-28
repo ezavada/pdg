@@ -1,7 +1,13 @@
 namespace pdg { /**
+\fn pdg::Animated::setCenterOffset(Offset offset)
+\brief Set the rotation-center offset immediately.
 
-\fn pdg::Animated::setCenterOffset
+Cancels scheduled center-offset changes. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief set the offset of the center point relative to the true center
+\param offset Pivot offset in the owning object coordinate system.
 
-**/ }
+\return This object, for chaining.
+
+\see getCenterOffset(), changeCenterOffsetTo()
+*/
+ }

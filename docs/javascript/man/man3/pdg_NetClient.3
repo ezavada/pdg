@@ -1,4 +1,4 @@
-.TH "NetClient" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "NetClient" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -41,7 +41,7 @@ a network endpoint that can initiate a connection
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 \fBNetClient\fP is part of the PDG Engine's custom protocol for games\&. It handles protocol negotiation and optional connections\&. It establishes both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server\&.
@@ -72,7 +72,7 @@ a network endpoint that can initiate a connection
 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBNetClient\fP (object opts = \fRnull\fP)"
+.SS "NetClient (object opts = \fRnull\fP)"
 
 .PP
 constructor for \fBNetClient\fP, sets client options Construct a new \fBNetClient\fP with particular options or using default values if no options are specified\&.

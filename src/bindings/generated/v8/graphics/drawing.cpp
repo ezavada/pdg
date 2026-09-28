@@ -130,6 +130,18 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> SetAttributes_Tpl =
             v8::FunctionTemplate::New(isolate, SetAttributes, v8::Local<v8::Value>(), SetAttributes_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setAttributes").ToLocalChecked(), SetAttributes_Tpl);
+        v8::Local<v8::Signature> SetLiveAttributes_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetLiveAttributes_Tpl =
+            v8::FunctionTemplate::New(isolate, SetLiveAttributes, v8::Local<v8::Value>(), SetLiveAttributes_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setLiveAttributes").ToLocalChecked(), SetLiveAttributes_Tpl);
+        v8::Local<v8::Signature> ClearLiveAttributes_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ClearLiveAttributes_Tpl =
+            v8::FunctionTemplate::New(isolate, ClearLiveAttributes, v8::Local<v8::Value>(), ClearLiveAttributes_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "clearLiveAttributes").ToLocalChecked(), ClearLiveAttributes_Tpl);
+        v8::Local<v8::Signature> HasLiveAttributes_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> HasLiveAttributes_Tpl =
+            v8::FunctionTemplate::New(isolate, HasLiveAttributes, v8::Local<v8::Value>(), HasLiveAttributes_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "hasLiveAttributes").ToLocalChecked(), HasLiveAttributes_Tpl);
         v8::Local<v8::Signature> MoveForward_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> MoveForward_Tpl =
             v8::FunctionTemplate::New(isolate, MoveForward, v8::Local<v8::Value>(), MoveForward_Sig);
@@ -157,7 +169,11 @@ namespace pdg
 
     ElementRefWrap::ElementRefWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_ElementRef(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_ElementRef(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_ElementRef_InNewFromCpp)
         {
             {
@@ -305,12 +321,19 @@ namespace pdg
             return;
         }
         unsigned long controlPointIndex = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-        if (!v8_ValueIsPoint(isolate, args[2 -1]))
+        pdg::Point controlPoint;
+        auto controlPoint_isPoint = v8_ValueIsPoint(isolate, args[2 -1], controlPoint);
+        if (!controlPoint_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*controlPoint_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
             return;
-        }
-        pdg::Point controlPoint = v8_ValueToPoint(isolate, args[2 -1]);
+        };
         try
         {
             self->changeControlPoint(controlPointIndex, controlPoint);
@@ -373,9 +396,98 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        REQUIRE_CPP_OBJECT_ARG(1, attrs, Attributes);
+
+        Attributes* attrs = ExtractAttributes(args[1 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         self->setAttributes(*attrs);
         args.GetReturnValue().SetUndefined();
+    }
+
+    void ElementRefWrap::SetLiveAttributes(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
+        ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            return;
+        };
+
+        Attributes* attrs = ExtractAttributes(args[1 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
+        self->setLiveAttributes(*attrs);
+        args.GetReturnValue().SetUndefined();
+    }
+
+    void ElementRefWrap::ClearLiveAttributes(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
+        ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+        self->clearLiveAttributes();
+        args.GetReturnValue().SetUndefined();
+    }
+
+    void ElementRefWrap::HasLiveAttributes(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ElementRefWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ElementRefWrap>(args.This());
+        ElementRef* self = dynamic_cast<ElementRef*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+        { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->hasLiveAttributes()) ); return; };
     }
 
     void ElementRefWrap::MoveForward(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -614,7 +726,11 @@ namespace pdg
 
     DrawingWrap::DrawingWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_Drawing(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_Drawing(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_Drawing_InNewFromCpp)
         {
             {
@@ -677,19 +793,49 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 3);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point from;
+        auto from_isPoint = v8_ValueIsPoint(isolate, args[1 -1], from);
+        if (!from_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*from_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
+        };
+        pdg::Point to;
+        auto to_isPoint = v8_ValueIsPoint(isolate, args[2 -1], to);
+        if (!to_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
         }
-        pdg::Point from = v8_ValueToPoint(isolate, args[1 -1]);
-        if (!v8_ValueIsPoint(isolate, args[2 -1]))
+        if (!*to_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
             return;
-        }
-        pdg::Point to = v8_ValueToPoint(isolate, args[2 -1]);
-        REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+        };
+
+        Attributes* attrs = ExtractAttributes(args[3 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addLine(from, to, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -719,7 +865,23 @@ namespace pdg
             return;
         };
         REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
-        REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+
+        Attributes* attrs = ExtractAttributes(args[2 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addSpline(std::move(*spline), *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -748,13 +910,36 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 2);
             return;
         };
-        if (!v8_ValueIsRect(isolate, args[1 -1]))
+        pdg::Rect rect;
+        auto rect_isRect = v8_ValueIsRect(isolate, args[1 -1], rect);
+        if (!rect_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*rect_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
-        }
-        pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
-        REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+        };
+
+        Attributes* attrs = ExtractAttributes(args[2 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addRect(rect, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -783,13 +968,36 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 2);
             return;
         };
-        if (!v8_ValueIsQuad(isolate, args[1 -1]))
+        pdg::Quad quad;
+        auto quad_isQuad = v8_ValueIsQuad(isolate, args[1 -1], quad);
+        if (!quad_isQuad.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*quad_isQuad)
         {
             v8_ThrowArgTypeException(isolate, 1, "Quad", *args[1 -1]);
             return;
-        }
-        pdg::Quad quad = v8_ValueToQuad(isolate, args[1 -1]);
-        REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+        };
+
+        Attributes* attrs = ExtractAttributes(args[2 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addQuad(quad, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -819,7 +1027,23 @@ namespace pdg
             return;
         };
         REQUIRE_CPP_OBJECT_ARG(1, polygon, Polygon);
-        REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+
+        Attributes* attrs = ExtractAttributes(args[2 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addPolygon(std::move(*polygon), *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -848,12 +1072,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 4);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point center;
+        auto center_isPoint = v8_ValueIsPoint(isolate, args[1 -1], center);
+        if (!center_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*center_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point center = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         if (!args[2 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 2, "a number (""xRadius"")");
@@ -866,7 +1097,23 @@ namespace pdg
             return;
         }
         double yRadius = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        REQUIRE_CPP_OBJECT_ARG(4, attrs, Attributes);
+
+        Attributes* attrs = ExtractAttributes(args[4 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addEllipse(center, xRadius, yRadius, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -895,12 +1142,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 6);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point center;
+        auto center_isPoint = v8_ValueIsPoint(isolate, args[1 -1], center);
+        if (!center_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*center_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point center = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         if (!args[2 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 2, "a number (""xRadius"")");
@@ -925,7 +1179,23 @@ namespace pdg
             return;
         }
         double endAngle = args[5 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        REQUIRE_CPP_OBJECT_ARG(6, attrs, Attributes);
+
+        Attributes* attrs = ExtractAttributes(args[6 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addArc(center, xRadius, yRadius, startAngle, endAngle, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -954,14 +1224,37 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 3);
             return;
         };
-        if (!v8_ValueIsRect(isolate, args[1 -1]))
+        pdg::Rect rect;
+        auto rect_isRect = v8_ValueIsRect(isolate, args[1 -1], rect);
+        if (!rect_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*rect_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
-        }
-        pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
+        };
         REQUIRE_CPP_OBJECT_ARG(2, image, Image);
-        REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+
+        Attributes* attrs = ExtractAttributes(args[3 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addImage(rect, *image, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -990,14 +1283,37 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 3);
             return;
         };
-        if (!v8_ValueIsRect(isolate, args[1 -1]))
+        pdg::Rect rect;
+        auto rect_isRect = v8_ValueIsRect(isolate, args[1 -1], rect);
+        if (!rect_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*rect_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
-        }
-        pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
+        };
         REQUIRE_CPP_OBJECT_ARG(2, imageStrip, ImageStrip);
-        REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+
+        Attributes* attrs = ExtractAttributes(args[3 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
         ElementRef* result = self->addImageStrip(rect, *imageStrip, *attrs);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())
@@ -1026,25 +1342,62 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 3);
             return;
         };
-        if (!v8_ValueIsRect(isolate, args[1 -1]))
+        pdg::Rect rect;
+        auto rect_isRect = v8_ValueIsRect(isolate, args[1 -1], rect);
+        if (!rect_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*rect_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
-        }
-        pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
-        REQUIRE_CPP_OBJECT_ARG(2, drawing, Drawing);
-        REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
-        ElementRef* result = self->addDrawing(rect, *drawing, *attrs);
-        if (!result) { args.GetReturnValue().SetNull(); return; };
-        if (result->mElementRefScriptObj.IsEmpty())
-        {
-            { args.GetReturnValue().Set( ElementRefWrap::NewFromCpp(isolate, result) ); return; };
-        }
-        else
-        {
-            v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, result->mElementRefScriptObj );
-            { args.GetReturnValue().Set( obj__ ); return; };
         };
+        REQUIRE_CPP_OBJECT_ARG(2, drawing, Drawing);
+
+        Attributes* attrs = ExtractAttributes(args[3 -1]);
+        if (!attrs)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "Expected Attributes or AnimatedAttributes";
+            isolate->ThrowException( v8::Exception::TypeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        };
+        try
+        {
+            ElementRef* result = self->addDrawing(rect, *drawing, *attrs);
+            if (!result) { args.GetReturnValue().SetNull(); return; };
+            if (result->mElementRefScriptObj.IsEmpty())
+            {
+                { args.GetReturnValue().Set( ElementRefWrap::NewFromCpp(isolate, result) ); return; };
+            }
+            else
+            {
+                v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, result->mElementRefScriptObj );
+                { args.GetReturnValue().Set( obj__ ); return; };
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
     }
 
     void DrawingWrap::GetElementCount(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1129,12 +1482,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point point;
+        auto point_isPoint = v8_ValueIsPoint(isolate, args[1 -1], point);
+        if (!point_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*point_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point point = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         ElementRef* result = self->getElementHitBy(point);
         if (!result) { args.GetReturnValue().SetNull(); return; };
         if (result->mElementRefScriptObj.IsEmpty())

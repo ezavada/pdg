@@ -83,7 +83,7 @@ mLogMgr(&controller->getApplication().getLogManager())
 	}
 	std::string aString("");
 	mResMgr.getString(aString,resourceID);
-	int nTextWidth = mPort->getTextWidth("W",mFontSize,mStyle,1); 
+	int nTextWidth = getDrawingTextWidth("W",mFontSize,mStyle,1);
 	int charViewable = ( mViewArea.width() - (LEFT_MARGIN + RIGHT_MARGIN) )  / nTextWidth;
 	if (aString.length() > (unsigned)charViewable)
 	{
@@ -203,7 +203,7 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 				// convert str from UTF16 to UTF8
 				std::string aString("");
 				OS::utf16to8(aString, str);
-				highlightStartPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+				highlightStartPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 			}
 			else
 			{
@@ -228,13 +228,13 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 				// convert str from UTF16 to UTF8
 				std::string aString("");
 				OS::utf16to8(aString, str);
-				highlightStartPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+				highlightStartPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 
 				str = mText.substr(0,highlightEndCharIndex);
 				// convert str from UTF16 to UTF8
 				aString = "";
 				OS::utf16to8(aString, str);
-				highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+				highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 			}
 			else
 			{
@@ -243,7 +243,7 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 				// convert str from UTF16 to UTF8
 				std::string aString = "";
 				OS::utf16to8(aString, str);
-				highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+				highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 			}
 		}
 		else
@@ -264,13 +264,13 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 					// convert str from UTF16 to UTF8
 					std::string aString("");
 					OS::utf16to8(aString, str);
-					highlightStartPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+					highlightStartPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 
 					str = mText.substr(0,highlightEndCharIndex);
 					// convert str from UTF16 to UTF8
 					aString = "";
 					OS::utf16to8(aString, str);
-					highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+					highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 				}
 				else
 				{
@@ -279,7 +279,7 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 					// convert str from UTF16 to UTF8
 					std::string aString("");
 					OS::utf16to8(aString, str);
-					highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+					highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 				}
 			}
 			else
@@ -302,13 +302,13 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 					// convert str from UTF16 to UTF8
 					std::string aString("");
 					OS::utf16to8(aString, str);
-					highlightStartPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+					highlightStartPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 
 					str = mText.substr(0,highlightEndCharIndex);
 					// convert str from UTF16 to UTF8
 					aString = "";
 					OS::utf16to8(aString, str);
-					highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+					highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 				}
 				else
 				{
@@ -317,7 +317,7 @@ bool EditText::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 					// convert str from UTF16 to UTF8
 					std::string aString = "";
 					OS::utf16to8(aString, str);
-					highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+					highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 				}
 			}
 			else
@@ -440,28 +440,30 @@ void EditText::drawSelf()
 	std::string aString("");
 	OS::utf16to8(aString, mText);
 	// fill text rect
-	mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
+	mPort->drawRect(tempRect, getDrawingAttributes(Attributes().fillColor(mbkColor)));
 	// draw text 
 	Point textPoint = tempRect.leftTop();
 	textPoint.x += LEFT_MARGIN;	// left
-	textPoint.y = textPoint.y + mPort->getCurrentFont()->getFontHeight(mFontSize,mStyle);// + TEXT_HEIGHT_OFFSET/2; //top	
+	const Attributes textAttrs = getDrawingAttributes(Attributes().textSize(mFontSize).textStyle(mStyle), true);
+    Font* textFont = textAttrs.getFont() ? textAttrs.getFont() : mPort->getCurrentFont(textAttrs.getTextStyle());
+    textPoint.y += textFont->getFontHeight(textAttrs.getTextSize(), textAttrs.getTextStyle());// + TEXT_HEIGHT_OFFSET/2; //top
 	if (-1 != highlightStartCharIndex ) {
 		if (highlightStartCharIndex > highlightEndCharIndex)
 		{
 			Rect highlightRect = mViewArea;			
 		highlightRect.left = LEFT_MARGIN + mViewArea.left + highlightEndPoint.y;
 		highlightRect.right = mViewArea.left + LEFT_MARGIN + highlightStartPoint.y;
-		mPort->drawRect(highlightRect, Attributes().fillColor(EDITTEXT_COLOR));
+		mPort->drawRect(highlightRect, getDrawingAttributes(Attributes().fillColor(EDITTEXT_COLOR)));
 	}
 		else if (highlightStartCharIndex < highlightEndCharIndex)
 		{
 		Rect highlightRect = mViewArea;
 		highlightRect.left = LEFT_MARGIN + mViewArea.left + highlightStartPoint.y;
 		highlightRect.right = LEFT_MARGIN + mViewArea.left + highlightEndPoint.y;
-		mPort->drawRect(highlightRect, Attributes().fillColor(EDITTEXT_COLOR));
+		mPort->drawRect(highlightRect, getDrawingAttributes(Attributes().fillColor(EDITTEXT_COLOR)));
 	}
 }
-	mPort->drawText(aString.c_str(), textPoint, Attributes().textSize(mFontSize).textStyle(mStyle).fillColor(mTextColor));
+	mPort->drawText(aString.c_str(), textPoint, getDrawingAttributes(Attributes().textSize(mFontSize).textStyle(mStyle).fillColor(mTextColor), true));
 	// draw border
 	drawBorder();	
 	// draw caret
@@ -478,16 +480,16 @@ void EditText::drawCaret()
 		std::string aString("");
 		OS::utf16to8(aString, str);
 
-		int nTextWidth = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length()); 
+		int nTextWidth = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 		Rect caretRect = mViewArea;
 		caretRect.left = caretRect.left + nTextWidth + LEFT_MARGIN;
 		caretRect.right = caretRect.left+1;
 	caretRect.top += 1;
 	caretRect.bottom -= 1;
 	if (mbShowCaret)
-		mPort->drawRect(caretRect, Attributes().fillColor(PDG_BLACK_COLOR));
+		mPort->drawRect(caretRect, getDrawingAttributes(Attributes().fillColor(PDG_BLACK_COLOR)));
 	else
-		mPort->drawRect(caretRect, Attributes().fillColor(mbkColor));
+		mPort->drawRect(caretRect, getDrawingAttributes(Attributes().fillColor(mbkColor)));
 	}
 }
 
@@ -506,8 +508,8 @@ void EditText::drawBorder()
 	leftBottom.y -= 2;
 	rightBottom = Point(tempRect.right,tempRect.bottom);
 
-	mPort->drawLine(leftTop,rightTop, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(2));
-	mPort->drawLine(leftTop,leftBottom, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(2));
+	mPort->drawLine(leftTop, rightTop, getDrawingAttributes(Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(2), true));
+	mPort->drawLine(leftTop, leftBottom, getDrawingAttributes(Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(2), true));
 
 /*	tempRect.shrink(2);
 	leftTop = Point(tempRect.left,tempRect.top);
@@ -531,7 +533,7 @@ void EditText::setFocus(bool bFocus)
 
 
 // catch the time events here, and handle accordingly
-bool EditText::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw()  // return true if completely handled
+bool EditText::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept  // return true if completely handled
 {
 	bool handled = false;
 	if (inEventType == eventType_Timer)
@@ -563,7 +565,7 @@ bool EditText::canFitInDisplayArea(const KeyPressInfo* ki)
 	strTemp += utf16char(ki->unicode);
 	std::string aString("");
 	OS::utf16to8(aString, strTemp);
-	if ( (mViewArea.width()-LEFT_MARGIN-RIGHT_MARGIN) > mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length())) 
+	if ( (mViewArea.width()-LEFT_MARGIN-RIGHT_MARGIN) > getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length()))
 		return true; 
 	else
 		return false;
@@ -620,7 +622,7 @@ void EditText::doMouseMove(const MouseInfo *mi, int id, int part)
 			{
 				str += mText.at(i);
 				OS::utf16to8(UTF8str, str);
-				if (mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
+				if (globalToLocal(mi->mousePos).x >= (LEFT_MARGIN + getDrawingTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
 					caretPos += 1;
 				else
 					break;
@@ -630,14 +632,14 @@ void EditText::doMouseMove(const MouseInfo *mi, int id, int part)
 			// convert str from UTF16 to UTF8
 			std::string aString("");
 			OS::utf16to8(aString, str);
-			highlightStartPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+			highlightStartPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 
 			highlightEndCharIndex = caretPos;
 			str = mText.substr(0,highlightEndCharIndex);
 			// convert str from UTF16 to UTF8
 			aString = "";
 			OS::utf16to8(aString, str);
-			highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+			highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 		}
 		// show caret at appropriate location
 		View::draw();
@@ -665,7 +667,7 @@ bool EditText::doMouseDown(const MouseInfo *mi, int id, int part)
 	{
 		str += mText.at(i);
 		OS::utf16to8(UTF8str, str);
-		if (mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
+		if (globalToLocal(mi->mousePos).x >= (LEFT_MARGIN + getDrawingTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
 			caretPos += 1;
 		else
 			break;
@@ -674,14 +676,14 @@ bool EditText::doMouseDown(const MouseInfo *mi, int id, int part)
 	// convert str from UTF16 to UTF8
 	std::string aString("");
 	OS::utf16to8(aString, str);
-	highlightStartPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+	highlightStartPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 
 	highlightEndCharIndex = caretPos;
 	str = mText.substr(0,highlightEndCharIndex);
 	// convert str from UTF16 to UTF8
 	aString = "";
 	OS::utf16to8(aString, str);
-	highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+	highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 	// show caret at appropriate location
 	View::draw();
 	return true;
@@ -705,7 +707,7 @@ bool EditText::doMouseUp(const MouseInfo *mi, int id, int part)
 		{
 			str += mText.at(i);
 			OS::utf16to8(UTF8str, str);
-			if (mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
+			if (globalToLocal(mi->mousePos).x >= (LEFT_MARGIN + getDrawingTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
 				caretPos += 1;
 			else
 				break;
@@ -715,7 +717,7 @@ bool EditText::doMouseUp(const MouseInfo *mi, int id, int part)
 		// convert str from UTF16 to UTF8
 		std::string aString("");
 		OS::utf16to8(aString, str);		
-		highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+		highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 	}
 	// show caret at appropriate location
 	View::draw();
@@ -766,7 +768,7 @@ bool EditText::doDoubleClick(const MouseInfo *mi, int id, int part, int clickCou
 			// one or more spaces
 			str += mText.at(i);
 			OS::utf16to8(UTF8str, str);
-			if (mi->mousePos.x >= (mViewArea.left + LEFT_MARGIN + mPort->getTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
+			if (globalToLocal(mi->mousePos).x >= (LEFT_MARGIN + getDrawingTextWidth(UTF8str.c_str(),mFontSize,mStyle,UTF8str.length())))
 				caretPos += 1;
 			else
 				break;
@@ -796,13 +798,13 @@ bool EditText::doDoubleClick(const MouseInfo *mi, int id, int part, int clickCou
 			// convert str from UTF16 to UTF8
 			std::string aString("");
 			OS::utf16to8(aString, str);
-			highlightStartPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+			highlightStartPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 
 			str = mText.substr(0,highlightEndCharIndex);
 			// convert str from UTF16 to UTF8
 			aString = "";
 			OS::utf16to8(aString, str);
-			highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+			highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 			View::draw();
 		}
 	}
@@ -827,7 +829,7 @@ void EditText::selectAll()
 		// convert str from UTF16 to UTF8
 		std::string aString("");
 		OS::utf16to8(aString, str);
-		highlightEndPoint.y = mPort->getTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
+		highlightEndPoint.y = getDrawingTextWidth(aString.c_str(),mFontSize,mStyle,aString.length());
 	}
 	View::draw();
 }

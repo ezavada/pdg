@@ -11,6 +11,7 @@
  *   --methods    Check for missing method documentation for a specific class
  *   --class NAME Check methods for specific class (use with --methods)
  *   --all        Check both classes and all methods
+ *   --topics SITE Check generated C++ and JavaScript topic coverage
  */
 
 const fs = require('fs');
@@ -360,6 +361,117 @@ function createDoxFile(filePath, className, methodName, method, params) {
 }
 
 /**
+ * Audit the generated class tables, rather than merely looking for an ingroup
+ * directive in sources. This also catches undefined or unreachable groups.
+ * Doxygen may inline small classes in group/namespace pages, so identify them by
+ * their compound ID, whether it is a filename or an anchor.
+ */
+function checkTopics(siteDir) {
+    let failures = 0;
+    const classId = href => {
+        const [file, anchor] = href.split('#');
+        const id = anchor || path.basename(file, '.html');
+        return /^(class|struct|interface)\w+$/.test(id) ? id : null;
+    };
+    const links = text => [...text.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
+    const textContent = text => text.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&#160;|&nbsp;/g, ' ').trim();
+
+    for (const language of ['cxx', 'javascript']) {
+        const htmlDir = path.join(siteDir, language, 'html');
+        const pages = new Map();
+        const readPage = name => {
+            if (!pages.has(name)) pages.set(name, fs.readFileSync(path.join(htmlDir, name), 'utf8'));
+            return pages.get(name);
+        };
+        const validateLink = (href, source) => {
+            const [file, anchor] = href.split('#');
+            const page = readPage(file || source);
+            if (anchor && !page.includes(`id="${anchor}"`) && !page.includes(`name="${anchor}"`)) {
+                throw new Error(`${language}: missing anchor ${href} linked from ${source}`);
+            }
+        };
+        const classes = new Map();
+        // Limit the inventory to the class index's entry cells, excluding links
+        // in descriptions (e.g. Sprite's description links back to Animated).
+        for (const cell of readPage('annotated.html').matchAll(/<td\b[^>]*\bclass="entry"[^>]*>([\s\S]*?)<\/td>/g)) {
+            for (const [, href, label] of links(cell[1])) {
+                const id = classId(href);
+                if (id) {
+                    classes.set(id, textContent(label));
+                    validateLink(href, 'annotated.html');
+                }
+            }
+        }
+        if (!classes.size) throw new Error(`${language}: no class index entries found`);
+
+        const groups = new Set(links(readPage('topics.html'))
+            .map(link => link[1]).filter(href => /^group_\w+\.html$/.test(href)));
+        if (!groups.size) throw new Error(`${language}: no topics found`);
+        const memberships = new Map();
+        for (const group of groups) {
+            for (const table of readPage(group).matchAll(/<table class="memberdecls">([\s\S]*?)<\/table>/g)) {
+                if (!/\b(?:id|name)="nested-classes"/.test(table[1])) continue;
+                for (const cell of table[1].matchAll(/<td\b[^>]*\bclass="memItemRight"[^>]*>([\s\S]*?)<\/td>/g)) {
+                    for (const [, href] of links(cell[1])) {
+                        const id = classId(href);
+                        if (id) {
+                            validateLink(href, group);
+                            if (!memberships.has(id)) memberships.set(id, new Set());
+                            memberships.get(id).add(group);
+                        }
+                    }
+                }
+            }
+        }
+        const missing = [...classes].filter(([id]) => !memberships.has(id));
+        for (const [, name] of missing) console.error(`${language}: ${name} is missing from Topics`);
+        failures += missing.length;
+
+        if (language === 'javascript') {
+            const exposed = loadPDGInterface().interface.filter(item => item.type === 'class');
+            const indexedNames = new Set(classes.values());
+            for (const cls of exposed) {
+                if (!indexedNames.has(cls.name)) {
+                    console.error(`javascript: exposed class ${cls.name} is missing from the class index`);
+                    failures++;
+                }
+            }
+            console.log(`javascript: checked ${exposed.length} exposed classes against the class index`);
+        }
+        console.log(`${language}: ${classes.size - missing.length}/${classes.size} classes and structures listed in ${groups.size} topics`);
+
+        // Event constants need their own check: an untagged constant can appear
+        // in the namespace reference while every class still passes the audit.
+        const expectedEvents = language === 'javascript'
+            ? loadPDGInterface().interface.filter(item => item.name.startsWith('eventType_')).map(item => item.name)
+            : [...fs.readFileSync(path.join(__dirname, '..', 'src/inc/pdg/sys/events.h'), 'utf8')
+                .matchAll(/\b(eventType_\w+)\s*=/g)].map(match => match[1]);
+        const listedEvents = new Set();
+        const eventsGroup = 'group___events.html';
+        if (groups.has(eventsGroup)) {
+            for (const table of readPage(eventsGroup).matchAll(/<table class="memberdecls">([\s\S]*?)<\/table>/g)) {
+                if (!/\b(?:id|name)="(?:enum|var)-members"/.test(table[1])) continue;
+                for (const cell of table[1].matchAll(/<td\b[^>]*\bclass="memItemRight"[^>]*>([\s\S]*?)<\/td>/g)) {
+                    for (const [, href, label] of links(cell[1])) {
+                        const name = textContent(label);
+                        if (name.startsWith('eventType_')) {
+                            listedEvents.add(name);
+                            validateLink(href, eventsGroup);
+                        }
+                    }
+                }
+            }
+        }
+        const missingEvents = expectedEvents.filter(name => !listedEvents.has(name));
+        for (const name of missingEvents) console.error(`${language}: ${name} is missing from the Events topic`);
+        failures += missingEvents.length;
+        console.log(`${language}: ${expectedEvents.length - missingEvents.length}/${expectedEvents.length} public event types listed in Events`);
+    }
+    return failures;
+}
+
+/**
  * Main function
  */
 function main() {
@@ -372,6 +484,7 @@ function main() {
         console.log('  --class NAME        Check methods for specific class (use with --methods)');
         console.log('  --all               Check both classes and all methods');
         console.log('  --create            Create missing dox files with templates');
+        console.log('  --topics SITE       Audit generated C++ and JavaScript Topics pages');
         console.log('');
         console.log('Examples:');
         console.log('  node check-missing-docs.js --classes');
@@ -381,6 +494,22 @@ function main() {
         return;
     }
     
+    if (args.includes('--topics')) {
+        const siteDir = args[args.indexOf('--topics') + 1];
+        if (!siteDir || siteDir.startsWith('--')) {
+            console.error('--topics requires the generated site directory containing cxx/ and javascript/');
+            process.exitCode = 1;
+            return;
+        }
+        try {
+            if (checkTopics(path.resolve(siteDir))) process.exitCode = 1;
+        } catch (error) {
+            console.error(error.message);
+            process.exitCode = 1;
+        }
+        return;
+    }
+
     console.log('Loading PDG JavaScript interface...');
     const interface = loadPDGInterface();
     
@@ -414,6 +543,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+    checkTopics,
     loadPDGInterface,
     getExistingDoxFiles,
     classToDoxFilename,

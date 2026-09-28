@@ -1,0 +1,811 @@
+/**
+\class pdg::Animated
+\brief Programmed transforms, constant rates and scheduled animation.
+\ingroup Animation
+
+Animated<T> returns the selected owner type from every chainable operation.
+Sprite derives from Animated<Sprite>, Part from Animated<Part>, and SpriteLayer
+from Animated<SpriteLayer>. Animated<> is a standalone object. Use AnimatedBase&
+or AnimatedBase* for a common interface, including IAnimationHelper callbacks.
+The shared base owns all state and scheduling; the template adds no second state.
+Further subclasses retain their selected owner's return type.
+
+Animated separates immediate edits and constant rates from scheduled transitions.
+All animation durations and waits use floating-point seconds. Setters are immediate
+and chainable; they cannot consume a wait() or andThen(). Timed change methods
+require explicit seconds; explicit zero applies immediately outside a sequence.
+To names specify targets; By names specify additive deltas. grow() and stretch()
+use factors and change logical size; changeScaleTo()/changeScaleBy() change the
+independent transform scale. Constant rates continue after a rate transition ends.
+
+Scheduled operations normally run concurrently. andThen() sequences the next
+operation after the most recently scheduled one; wait() delays the next timed
+request. Immediate calls after either throw before changing state. cancelSchedule()
+clears pending sequencing and scheduled work while retaining current constant rates.
+
+\par Example
+\code
+sprite.setMovement(40, 0);
+sprite.changeMovementTo(0, 0, 0.5); // Ease the rate to a stop in half a second.
+sprite.setGrowing(8);             // Add eight logical size units per second.
+sprite.changeGrowingTo(0, 0.25);  // Ease the growth rate to zero.
+\endcode
+
+*/
+/**
+\fn Rect pdg::AnimatedBase::getBoundingBox() const
+\brief Read axis-aligned logical bounds.
+
+Includes logical size, transform scale and rotation; this is not a query of Drawing geometry.
+
+
+\return The current value, returned as a new coordinate object.
+
+\see getRotatedBounds(), getSize(), getScale()
+*/
+
+/**
+\fn RotatedRect pdg::AnimatedBase::getRotatedBounds() const
+\brief Read rotated logical bounds.
+
+Includes logical size, transform scale, rotation and center offset.
+
+
+\return The current value, returned as a new coordinate object.
+
+\see getBoundingBox(), getSize()
+*/
+
+/**
+\fn Point pdg::AnimatedBase::getLocation() const
+\brief Read the location in the container coordinate system.
+
+
+
+
+\return The current value, returned as a new coordinate object.
+
+\see setLocation(), moveTo(), moveBy()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setLocation(const Point& loc)
+\brief Set the location immediately.
+
+Cancels scheduled position changes and preserves independently configured movement rates. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param loc Location in the container coordinate system.
+
+\return This object, for chaining.
+
+\see getLocation(), moveTo(), setMovement()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setLocation(float x, float y)
+\brief Set the location immediately.
+
+Cancels scheduled position changes and preserves independently configured movement rates. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param x Location in the container coordinate system.
+\param y Location in the container coordinate system.
+
+\return This object, for chaining.
+
+\see getLocation(), moveTo(), setMovement()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::moveTo(float x, float y)
+\brief Move to a location.
+
+The overload without duration applies immediately. The timed overload replaces programmed movement with a transition to the target location. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param x Location in the container coordinate system.
+\param y Location in the container coordinate system.
+
+\return This object, for chaining.
+
+\see setLocation(), moveBy(), wait()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::moveTo(const Point& where)
+\brief Move to a location.
+
+The overload without duration applies immediately. The timed overload replaces programmed movement with a transition to the target location. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param where Location in the container coordinate system.
+
+\return This object, for chaining.
+
+\see setLocation(), moveBy(), wait()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::moveBy(float deltaX, float deltaY)
+\brief Move by an offset.
+
+Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param deltaX Relative offset in the container coordinate system.
+\param deltaY Relative offset in the container coordinate system.
+
+\return This object, for chaining.
+
+\see moveTo(), setLocation(), andThen()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::moveBy(const Offset& delta)
+\brief Move by an offset.
+
+Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param delta Relative offset in the container coordinate system.
+
+\return This object, for chaining.
+
+\see moveTo(), setLocation(), andThen()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::moveTo(const Point& loc, double durationSeconds, EasingFunc easing)
+\brief Move to a location.
+
+The overload without duration applies immediately. The timed overload replaces programmed movement with a transition to the target location. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param loc Location in the container coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setLocation(), moveBy(), wait()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::moveTo(float x, float y, double durationSeconds, EasingFunc easing)
+\brief Move to a location.
+
+The overload without duration applies immediately. The timed overload replaces programmed movement with a transition to the target location. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param x Location in the container coordinate system.
+\param y Location in the container coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setLocation(), moveBy(), wait()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::moveBy(float deltaX, float deltaY, double durationSeconds, EasingFunc easing)
+\brief Move by an offset.
+
+Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaX Relative offset in the container coordinate system.
+\param deltaY Relative offset in the container coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see moveTo(), setLocation(), andThen()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::moveBy(const Offset& delta, double durationSeconds, EasingFunc easing)
+\brief Move by an offset.
+
+Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param delta Relative offset in the container coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see moveTo(), setLocation(), andThen()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setMovement(const Vector& movement)
+\brief Set a constant programmed movement rate immediately.
+
+Uses distance units per second. Replaces position animations and movement-rate transitions. The rate continues until changed or stopped. Dynamic PhysicsBody owners reject programmed movement. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param movement Movement rate in distance units per second.
+
+\return This object, for chaining.
+
+\see getMovement(), changeMovementTo(), stopMovement()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setMovement(float xPerSecond, float yPerSecond)
+\brief Set a constant programmed movement rate immediately.
+
+Uses distance units per second. Replaces position animations and movement-rate transitions. The rate continues until changed or stopped. Dynamic PhysicsBody owners reject programmed movement. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param xPerSecond Movement rate in distance units per second.
+\param yPerSecond Movement rate in distance units per second.
+
+\return This object, for chaining.
+
+\see getMovement(), changeMovementTo(), stopMovement()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::stopMovement()
+\brief Stop all programmed changes to position.
+
+Clears the corresponding constant rates, rate transitions and scheduled target animations. Other properties continue. This does not stop a PhysicsBody. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+
+\return This object, for chaining.
+
+\see cancelSchedule()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeMovementBy(const Vector& deltaMovement, double durationSeconds, EasingFunc easing)
+\brief Animate the movement rate by an additive delta.
+
+Uses distance units per second. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Dynamic PhysicsBody owners reject this operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaMovement Change in movement rate in distance units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setMovement(), changeMovementTo()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeMovementBy(float deltaXPerSecond, float deltaYPerSecond, double durationSeconds, EasingFunc easing)
+\brief Animate the movement rate by an additive delta.
+
+Uses distance units per second. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Dynamic PhysicsBody owners reject this operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaXPerSecond Change in movement rate in distance units per second.
+\param deltaYPerSecond Change in movement rate in distance units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setMovement(), changeMovementTo()
+*/
+
+/**
+\fn Offset pdg::AnimatedBase::getSize() const
+\brief Read logical width and height.
+
+Returns width in x and height in y; transform scale is independent.
+
+
+\return The current value, returned as a new coordinate object.
+
+\see setSize(), resizeTo(), getScale()
+*/
+
+/**
+\fn float pdg::AnimatedBase::getWidth() const
+\brief Read logical width.
+
+Transform scale is independent of logical size.
+
+
+\return The current value.
+
+\see getSize(), setWidth()
+*/
+
+/**
+\fn float pdg::AnimatedBase::getHeight() const
+\brief Read logical height.
+
+Transform scale is independent of logical size.
+
+
+\return The current value.
+
+\see getSize(), setHeight()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setSize(float width, float height)
+\brief Set logical width and height immediately.
+
+Cancels scheduled size changes and preserves separately configured growth rates. Does not change transform scale. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param width Logical size value.
+\param height Logical size value.
+
+\return This object, for chaining.
+
+\see getSize(), resizeTo(), setStretching()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setSize(const Offset& size)
+\brief Set logical width and height immediately.
+
+Cancels scheduled size changes and preserves separately configured growth rates. Does not change transform scale. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param size Logical size value.
+
+\return This object, for chaining.
+
+\see getSize(), resizeTo(), setStretching()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setWidth(float width)
+\brief Set logical width immediately.
+
+Cancels scheduled width changes and preserves the width growth rate. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param width Logical size value.
+
+\return This object, for chaining.
+
+\see setSize(), resizeTo()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setHeight(float height)
+\brief Set logical height immediately.
+
+Cancels scheduled height changes and preserves the height growth rate. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param height Logical size value.
+
+\return This object, for chaining.
+
+\see setSize(), resizeTo()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::resizeBy(float deltaWidth, float deltaHeight)
+\brief Change logical size by additive deltas.
+
+Adds to width and height. The overload without duration applies immediately and preserves growth rates. A timed request replaces growth. With andThen(), deltas are applied to size at the start of the operation. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param deltaWidth Logical size value or additive delta.
+\param deltaHeight Logical size value or additive delta.
+
+\return This object, for chaining.
+
+\see resizeTo(), grow(), stretch()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::grow(float factor)
+\brief Multiply logical width and height by one factor.
+
+The overload without duration applies immediately and preserves growth rates. A timed request replaces growth. With andThen(), the factor is applied to size at the start of the operation. Transform scale remains unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param factor Multiplicative factor for logical size.
+
+\return This object, for chaining.
+
+\see stretch(), resizeBy(), setGrowing()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::stretch(float widthFactor, float heightFactor)
+\brief Multiply logical width and height by independent factors.
+
+The overload without duration applies immediately and preserves growth rates. A timed request replaces growth. With andThen(), factors are applied to size at the start of the operation. Transform scale remains unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param widthFactor Multiplicative factor for logical size.
+\param heightFactor Multiplicative factor for logical size.
+
+\return This object, for chaining.
+
+\see grow(), resizeBy(), setStretching()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::resizeTo(float width, float height, double durationSeconds, EasingFunc easing)
+\brief Animate logical size to a target.
+
+Replaces constant growth and size animations; independent transform scale is unchanged. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param width Logical size value.
+\param height Logical size value.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setSize(), resizeBy(), grow()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::resizeBy(float deltaWidth, float deltaHeight, double durationSeconds, EasingFunc easing)
+\brief Change logical size by additive deltas.
+
+Adds to width and height. The overload without duration applies immediately and preserves growth rates. A timed request replaces growth. With andThen(), deltas are applied to size at the start of the operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaWidth Logical size value or additive delta.
+\param deltaHeight Logical size value or additive delta.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see resizeTo(), grow(), stretch()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::grow(float factor, double durationSeconds, EasingFunc easing)
+\brief Multiply logical width and height by one factor.
+
+The overload without duration applies immediately and preserves growth rates. A timed request replaces growth. With andThen(), the factor is applied to size at the start of the operation. Transform scale remains unchanged. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param factor Multiplicative factor for logical size.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see stretch(), resizeBy(), setGrowing()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::stretch(float widthFactor, float heightFactor, double durationSeconds, EasingFunc easing)
+\brief Multiply logical width and height by independent factors.
+
+The overload without duration applies immediately and preserves growth rates. A timed request replaces growth. With andThen(), factors are applied to size at the start of the operation. Transform scale remains unchanged. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param widthFactor Multiplicative factor for logical size.
+\param heightFactor Multiplicative factor for logical size.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see grow(), resizeBy(), setStretching()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setGrowing(float amountPerSecond)
+\brief Set equal constant growth rates immediately.
+
+Adds the same logical units per second to width and height. Replaces size animations and growth-rate transitions. Growth continues until changed or stopped. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param amountPerSecond Growth rate in logical size units per second.
+
+\return This object, for chaining.
+
+\see setStretching(), changeGrowingTo(), stopGrowing()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setStretching(float widthPerSecond, float heightPerSecond)
+\brief Set independent constant growth rates immediately.
+
+Adds logical units per second to width and height. Replaces size animations and growth-rate transitions. Growth continues until changed or stopped. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param widthPerSecond Growth rate in logical size units per second.
+\param heightPerSecond Growth rate in logical size units per second.
+
+\return This object, for chaining.
+
+\see getStretching(), changeStretchingTo(), stopStretching()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::stopGrowing()
+\brief Stop all programmed changes to logical size.
+
+Clears the corresponding constant rates, rate transitions and scheduled target animations. Other properties continue. This does not stop a PhysicsBody. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+
+\return This object, for chaining.
+
+\see cancelSchedule()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::stopStretching()
+\brief Stop all programmed changes to logical size.
+
+Clears the corresponding constant rates, rate transitions and scheduled target animations. Other properties continue. This does not stop a PhysicsBody. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+
+\return This object, for chaining.
+
+\see cancelSchedule()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeGrowingBy(float deltaPerSecond, double durationSeconds, EasingFunc easing)
+\brief Animate the growing rate by an additive delta.
+
+Uses logical units per second equally on both axes. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Logical size changes independently of transform scale. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaPerSecond Change in growth rate in logical size units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setGrowing(), changeGrowingTo()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeStretchingBy(float deltaWidthPerSecond, float deltaHeightPerSecond, double durationSeconds, EasingFunc easing)
+\brief Animate the stretching rate by an additive delta.
+
+Uses logical units per second independently on each axis. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Logical size changes independently of transform scale. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaWidthPerSecond Change in growth rate in logical size units per second.
+\param deltaHeightPerSecond Change in growth rate in logical size units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setStretching(), changeStretchingTo()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeScaleBy(float deltaX, float deltaY, double durationSeconds, EasingFunc easing)
+\brief Animate independent scale by additive deltas.
+
+Does not change logical size. Adds to the scale components: starting at 2, adding 0.5 yields 2.5. Attributes::scale(0.5) instead multiplies and yields 1. With andThen(), deltas are applied to scale at the start of the operation. Negative scale reflects; zero collapses an axis and makes inverse transforms singular. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaX Additive dimensionless scale delta.
+\param deltaY Additive dimensionless scale delta.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setScale(), getScale(), changeScaleTo()
+*/
+
+/**
+\fn float pdg::AnimatedBase::getRotation() const
+\brief Read the current rotation in radians.
+
+Clockwise is positive; angles may retain complete turns.
+
+
+\return The current value.
+
+\see setRotation(), rotateTo(), rotateBy()
+*/
+
+/**
+\fn Offset pdg::AnimatedBase::getCenterOffset() const
+\brief Read the rotation-center offset.
+
+Interpreted in the owning object coordinate system. AnimatedAttributes applies it as the local matrix pivot.
+
+
+\return The current value, returned as a new coordinate object.
+
+\see setCenterOffset(), changeCenterOffsetTo()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setRotation(float radiansRotation)
+\brief Set rotation immediately.
+
+Cancels scheduled rotation changes and preserves the spin rate. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param radiansRotation Angle in radians, clockwise positive.
+
+\return This object, for chaining.
+
+\see getRotation(), rotateTo(), setSpin()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setCenterOffset(const Offset& offset)
+\brief Set the rotation-center offset immediately.
+
+Cancels scheduled center-offset changes. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param offset Pivot offset in the owning object coordinate system.
+
+\return This object, for chaining.
+
+\see getCenterOffset(), changeCenterOffsetTo()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeCenterOffsetTo(float xCenterOffset, float yCenterOffset, double durationSeconds, EasingFunc easing)
+\brief Animate the rotation-center offset to a target.
+
+Changes the pivot offset, not the location. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param xCenterOffset Pivot offset in the owning object coordinate system.
+\param yCenterOffset Pivot offset in the owning object coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setCenterOffset(), changeCenterOffsetBy()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeCenterOffsetTo(const Offset& centerOffset, double durationSeconds, EasingFunc easing)
+\brief Animate the rotation-center offset to a target.
+
+Changes the pivot offset, not the location. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param centerOffset Pivot offset in the owning object coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setCenterOffset(), changeCenterOffsetBy()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeCenterOffsetBy(float deltaXOffset, float deltaYOffset, double durationSeconds, EasingFunc easing)
+\brief Animate the rotation-center offset by a delta.
+
+Adds to the pivot offset. With andThen(), the delta is applied to the offset when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaXOffset Relative pivot delta in the owning object coordinate system.
+\param deltaYOffset Relative pivot delta in the owning object coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setCenterOffset(), changeCenterOffsetTo()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeCenterOffsetBy(const Offset& deltaCenterOffset, double durationSeconds, EasingFunc easing)
+\brief Animate the rotation-center offset by a delta.
+
+Adds to the pivot offset. With andThen(), the delta is applied to the offset when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaCenterOffset Relative pivot delta in the owning object coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setCenterOffset(), changeCenterOffsetTo()
+*/
+
+/**
+\fn float pdg::AnimatedBase::getSpin() const
+\brief Read the programmed angular rate.
+
+Clockwise radians per second, independently of physical angular velocity.
+
+
+\return The current value.
+
+\see setSpin(), changeSpinTo(), stopSpinning()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setSpin(float radiansPerSecond)
+\brief Set a constant programmed angular rate immediately.
+
+Uses clockwise radians per second. Replaces rotation animations and spin-rate transitions. The rate continues until changed or stopped. Dynamic PhysicsBody owners reject programmed spin. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param radiansPerSecond Angular rate in clockwise radians per second.
+
+\return This object, for chaining.
+
+\see getSpin(), changeSpinTo(), stopSpinning()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::stopSpinning()
+\brief Stop all programmed changes to rotation.
+
+Clears the corresponding constant rates, rate transitions and scheduled target animations. Other properties continue. This does not stop a PhysicsBody. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+
+\return This object, for chaining.
+
+\see cancelSchedule()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::changeSpinBy(float deltaRadiansPerSecond, double durationSeconds, EasingFunc easing)
+\brief Animate the spin rate by an additive delta.
+
+Uses clockwise radians per second. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Dynamic PhysicsBody owners reject this operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param deltaRadiansPerSecond Change in angular rate in clockwise radians per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing EasingFunc callback; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setSpin(), changeSpinTo()
+*/
+
+/**
+\fn bool pdg::AnimatedBase::isFlippedX() const
+\brief Read the x reflection flag.
+
+
+
+
+\return True if the reflection flag is set; otherwise false.
+
+\see setFlipX(), flipX()
+*/
+
+/**
+\fn bool pdg::AnimatedBase::isFlippedY() const
+\brief Read the y reflection flag.
+
+
+
+
+\return True if the reflection flag is set; otherwise false.
+
+\see setFlipY(), flipY()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setFlipX(bool flip)
+\brief Set the x reflection flag immediately.
+
+Applied before other transformations; logical dimensions are unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param flip Whether to reflect this axis.
+
+\return This object, for chaining.
+
+\see isFlippedX(), flipX()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::setFlipY(bool flip)
+\brief Set the y reflection flag immediately.
+
+Applied before other transformations; logical dimensions are unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param flip Whether to reflect this axis.
+
+\return This object, for chaining.
+
+\see isFlippedY(), flipY()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::flipX()
+\brief Toggle the x reflection flag immediately.
+
+Applied before other transformations; logical dimensions are unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+
+\return This object, for chaining.
+
+\see isFlippedX(), setFlipX()
+*/
+
+/**
+\fn AnimatedBase& pdg::AnimatedBase::flipY()
+\brief Toggle the y reflection flag immediately.
+
+Applied before other transformations; logical dimensions are unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+
+\return This object, for chaining.
+
+\see isFlippedY(), setFlipY()
+*/

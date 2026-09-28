@@ -1,0 +1,222 @@
+/**
+\fn pdg::AnimationSpringTarget::AnimationSpringTarget(number mass, number stiffness, number damping)
+\brief Create a damped spring target.
+
+Starts with zero position and velocity. The helper owns its state independently of Sprites and does not update automatically. All inputs must be finite.
+
+\param mass Positive mass; default 1.
+\param stiffness Nonnegative restoring spring coefficient; default 100.
+\param damping Nonnegative damping coefficient; default 20.
+
+\par Example
+\code{.js}
+const recoil = new pdg.AnimationSpringTarget(1, 100, 20);
+recoil.applyImpulse(-2, 0);
+const offset = recoil.update(0, 0, 1 / 60);
+// Apply offset.x/y to a freshly sampled pose.
+\endcode
+
+\see update(), applyImpulse()
+*/
+
+/**
+\fn pdg::AnimationSpringTarget::getState()
+\brief Copy spring position and velocity.
+
+Editing the returned object does not change the helper.
+
+\return An independent state object described below.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_spring_state
+\par Spring state
+| Field | Meaning |
+| --- | --- |
+| `x`, `y` | Position in the application's chosen coordinate frame. |
+| `velocityX`, `velocityY` | Velocity in that frame's distance units per second. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see setState(), update()
+*/
+
+/**
+\fn pdg::AnimationSpringTarget::setState(object state)
+\brief Replace spring position and velocity.
+
+Validates all components before changing the state. Invalid or overflowing values leave it unchanged.
+
+\param state Object with finite x, y, velocityX, and velocityY fields; see \ref animation_spring_state.
+
+\return No value.
+
+\see getState(), applyImpulse()
+*/
+
+/**
+\fn pdg::AnimationSpringTarget::applyImpulse(number x, number y)
+\brief Change spring velocity immediately.
+
+Each velocity component increases by impulse divided by mass. Position remains unchanged. Invalid or overflowing results leave state unchanged.
+
+\param x Finite horizontal impulse in mass times distance per second.
+\param y Finite vertical impulse in mass times distance per second.
+
+\return No value.
+
+\see update(), getState()
+*/
+
+/**
+\fn pdg::AnimationSpringTarget::update(number targetX, number targetY, number deltaSeconds)
+\brief Advance the spring toward a fixed target.
+
+Uses analytic damped-spring integration, treating the target as constant throughout this step. Zero elapsed time preserves state. Invalid or overflowing results leave state unchanged.
+
+\param targetX Finite target x in the same frame as the spring state.
+\param targetY Finite target y in the same frame as the spring state.
+\param deltaSeconds Finite nonnegative elapsed time in seconds.
+
+\return An owned copy of the new state; see \ref animation_spring_state.
+
+\see getState(), applyImpulse()
+*/
+
+/**
+\fn pdg::AnimationContactTarget::AnimationContactTarget()
+\brief Create an unlocked contact target.
+
+Starts at (0, 0), with influence 0 and locked false. The application chooses when contact starts and whether it remains reachable.
+
+\par Example
+\code{.js}
+const contact = new pdg.AnimationContactTarget();
+contact.lockWorld(20, 10);
+const state = contact.update(1 / 60, true, true);
+console.log(state.x, state.y, state.influence);
+\endcode
+
+\see lockWorld(), lockPlatform()
+*/
+
+/**
+\fn pdg::AnimationContactTarget::getState()
+\brief Copy the current contact point and influence.
+
+Editing the returned object does not change the helper.
+
+\return An independent state object described below.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_contact_state
+\par Contact state
+| Field | Meaning |
+| --- | --- |
+| `x`, `y` | Locked or last-released point in owning-layer coordinates. |
+| `influence` | Weight from 0 to 1; fades after release. |
+| `locked` | True while tracking a world point or platform; false during and after release. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see update(), release()
+*/
+
+/**
+\fn pdg::AnimationContactTarget::lockWorld(number x, number y)
+\brief Lock a contact to a fixed world point.
+
+Replaces any previous lock and resets influence to 1. The point remains fixed until release; it does not follow platform motion.
+
+\param x Finite contact x in owning-layer coordinates.
+\param y Finite contact y in owning-layer coordinates.
+
+\return No value.
+
+\see lockPlatform(), release()
+*/
+
+/**
+\fn pdg::AnimationContactTarget::lockPlatform(number x, number y, number support, object frame)
+\brief Lock a contact to a moving support.
+
+Converts the world point into the platform frame. Subsequent update() calls transform that local point using the same support's current frame. Replaces any previous lock and resets influence to 1. Singular frames throw.
+
+\param x Finite contact x in owning-layer coordinates.
+\param y Finite contact y in owning-layer coordinates.
+\param support Stable nonzero integer support ID, at most Number.MAX_SAFE_INTEGER. It is an application identity, not a retained body pointer.
+\param frame An object containing finite \c x, \c y, \c rotation (radians), \c scaleX, \c scaleY, and \c alpha (0 to 1) values. It maps the platform into the owning layer; both scales must be nonzero.
+
+\return No value.
+
+\par Example
+\code{.js}
+const frame = { x: 10, y: 0, rotation: 0, scaleX: 1, scaleY: 1, alpha: 1 };
+contact.lockPlatform(12, 0, 1, frame);
+frame.x = 11;
+const state = contact.update(1 / 60, true, true, 1, frame);
+// state.x is now 13.
+\endcode
+
+\see update(), lockWorld()
+*/
+
+/**
+\fn pdg::AnimationContactTarget::release(number fadeSeconds)
+\brief Release the lock with an optional fade.
+
+Sets locked false immediately and preserves the last position. Influence falls linearly to zero as update() advances time. An already released target is unchanged; release does not restart its fade.
+
+\param fadeSeconds Finite nonnegative fade duration in seconds; zero clears influence immediately.
+
+\return No value.
+
+\see update(), lockWorld()
+*/
+
+/**
+\fn pdg::AnimationContactTarget::update(number deltaSeconds, boolean contactActive, boolean withinReach, number support, object frame, number releaseSeconds)
+\brief Follow a support or advance the release fade.
+
+Inactive contact, an unreachable target, or a missing/replaced platform ID releases the lock. World locks do not require a support. Released targets never reacquire automatically; call a lock method on the next contact edge. A zero time step preserves fade progress but can still update a platform point or release a lock.
+
+\param deltaSeconds Finite nonnegative elapsed time in seconds.
+\param contactActive Whether the application's contact window remains active.
+\param withinReach Whether the application considers this contact reachable.
+\param support Current support ID, or 0 when absent. Must be a nonnegative safe integer.
+\param frame Current full platform transform; required only while a platform lock remains active. Both scales must be nonzero.
+\param releaseSeconds Finite nonnegative fade duration used if this update releases the lock.
+
+\return An owned contact state; see \ref animation_contact_state.
+
+\see lockWorld(), lockPlatform(), release()
+*/
+
+/**
+\fn pdg::animationHasTag(object pose, string object, string tag)
+\brief Test sampled animation metadata for a tag.
+
+Reads an owned snapshot without changing playback. Object and tag names are exact and case-sensitive. Missing objects/tags return false; an invalid snapshot or non-string names throw.
+
+\param pose Snapshot returned by Sprite.getAnimationPose() or sampleAnimationPose().
+\param object Authored object name, or an empty string for entity metadata.
+\param tag Tag name to find.
+
+\return True if the selected object's sampled tag set contains the name.
+
+\par Example
+\code{.js}
+const touching = pdg.animationHasTag(sprite.getAnimationPose(), 'hand', 'contact');
+\endcode
+
+\see Sprite::getAnimationPose(), AnimationContactTarget::update()
+*/

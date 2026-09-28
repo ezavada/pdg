@@ -1,4 +1,4 @@
-.TH "ConfigManager" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ConfigManager" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -67,9 +67,9 @@ used for loading and saving application configuration info
 
 
 .PP
-\fBPrecondition\fP
+\fBNote\fP
 .RS 4
-\fBAPI Stability: 3 - Stable\fP\&. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes\&. Backwards-compatibility is guaranteed\&.
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 Interface to Save and Load game config values\&. This class provides simple platform neutral configuration management\&. It does the right thing on each platform to save and load values that need to persist between game sessions\&. It is not intended to be used to hold saved games\&.
@@ -237,6 +237,10 @@ get the singleton instance of the \fBConfigManager\fP used by the pdg framework
 .RE
 .PP
 
+.PP
+References \fBgetConfigManager()\fP\&.
+.PP
+Referenced by \fBgetConfigManager()\fP\&.
 
 .SH "Author"
 .PP 

@@ -1,6 +1,6 @@
 # WebSocket and WebTransport Networking Plan
 
-Status: proposed
+Status: proposed  
 Last reviewed: 2026-08-30
 
 ## Objective

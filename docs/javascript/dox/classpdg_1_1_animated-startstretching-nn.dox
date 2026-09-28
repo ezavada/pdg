@@ -1,7 +1,15 @@
-namespace pdg { /**
+/**
+\fn pdg::Animated::changeStretchingTo(number widthPerSecond, number heightPerSecond, number durationSeconds, int easing)
+\brief Animate the stretching rate to a target.
 
-\fn pdg::Animated::startStretching
+Uses logical units per second independently on each axis. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. Logical size changes independently of transform scale. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
-\brief set the growth rate of the object in pixels/sec, with varied rates for width and height
+\param widthPerSecond Growth rate in logical size units per second.
+\param heightPerSecond Growth rate in logical size units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
 
-**/ }
+\return This object, for chaining.
+
+\see setStretching(), changeStretchingBy()
+*/

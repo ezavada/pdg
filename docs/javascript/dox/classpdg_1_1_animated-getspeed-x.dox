@@ -1,8 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Animated::getSpeed
-
-\brief get how fast the object is moving in pixels/sec
-
-
-**/ }

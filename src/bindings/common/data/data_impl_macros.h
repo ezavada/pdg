@@ -12,16 +12,18 @@
 		[number uint], 1, ([object Serializer] serializer)); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
     REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer); CR \
-    uint32 dataSize = self->getSerializedSize(serializer); CR \
-	RETURN_UINT32(dataSize); CR \
+    try { CR \
+        uint32 dataSize = self->getSerializedSize(serializer); CR \
+        RETURN_UINT32(dataSize); CR \
+    } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
 	END CR \
   METHOD_IMPL(klass, Serialize) CR \
 	METHOD_SIGNATURE("write this object's data into the given stream", CR \
 		undefined, 1, ([object Serializer] serializer)); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
     REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer); CR \
-    self->serialize(serializer); CR \
-	NO_RETURN; CR \
+    try { self->serialize(serializer); NO_RETURN; } CR \
+    catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
 	END CR \
   METHOD_IMPL(klass, Deserialize) CR \
 	METHOD_SIGNATURE("read this object's data from the given stream", CR \
@@ -39,6 +41,6 @@
     	THROW_ERR(e.what()); CR \
 	} catch(unknown_object& e) { CR \
     	THROW_ERR(e.what()); CR \
-	} CR \
+	} catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
 	END CR \
 

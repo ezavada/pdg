@@ -1,0 +1,129 @@
+/**
+\fn Sprite & pdg::Sprite::setupPhysicsFromAnimationRig(double totalMass, double unitsPerMeter)
+\brief Generate a dynamic physical rig from the reference skeleton.
+
+Creates bone-named Parts with shared PhysicsBodies, capsule Colliders and pivot
+PhysicsConstraints. Bodies start dynamic; the Sprite follows the selected root's
+translation. Its coordinating body stays kinematic and does not add simulated
+mass. The initial body pose and velocity come from the current Sprite pose/motion.
+
+Geometry uses the pose chosen by enableAnimationPose(). A branching bone spans
+its farthest child connection points; one child gives the span from the bone's
+own joint to that child. A leaf uses the longer axis of its image bounds' union
+in bone-local coordinates, including reference transforms and pivots. Bounds use
+authored SCML image dimensions. Missing artwork is diagnosed and skipped. Other
+zero-length segments are skipped, except the selected root: it receives a 1 mm
+physical segment converted with unitsPerMeter. The authored skeleton is unchanged.
+Lengths are measured after reference bone scaling. Capsule radius is 10% of
+that physical length. Generated Parts expose a rigid body frame in layer distance
+units, so nonuniform bone display scales do not deform the capsules. Local/Sprite
+transform queries convert that same rigid frame into the requested space. Included segment lengths determine mass
+fractions; the coordinating body and unrelated Parts are excluded.
+
+Each included child connects to its nearest included ancestor at the child's
+current joint location. Distinct skeletal trees remain separate components.
+Pivots have unlimited strength, no break threshold and free rotation. Components
+share a nonzero collision group to suppress internal contacts; callers can edit
+their filters. There are no automatically inferred angular limits or drives.
+
+Repeated setup requires the original membership (all generated Parts, no added
+accessories); edited membership must first be restored. It reapplies the original mass fractions,
+scaling inertia proportionally while keeping bodies, colliders, joints, edited
+geometry, velocity and independent loads. Changing unitsPerMeter or switching
+from an explicit definition requires disableAnimationPhysics() first. Ordinary
+physics.setMass() preserves the current, possibly tuned, mass fractions instead.
+An existing bone-named Part must have the same binding/offset, no parent, unit
+unreflected local scale, and no body or collider. Conflicts throw before replacing
+caller-owned associations. Mapped offsets/bindings and Part removal
+remain fixed until disabled. Change body control with setAnimationPhysicsMode(). Edit physical properties and geometry through the
+Part's physics/collider objects; changing geometry does not recalculate inertia.
+
+The Sprite's physics.getMass() reports component mass; physics.setMass() scales
+all component masses and inertia atomically. Individual mass edits change the
+total without redistributing. Whole-Sprite linear/angular impulses target the
+selected root, including the world-point lever arm. Velocities, continuous
+forces/torques and manual drives should be applied to the component bodies.
+Single-body setupPhysicsBody(mass, inertia) and aggregate setMomentOfInertia()
+reject while this rig is active. Inertia/angular-momentum queries on the Sprite
+still describe its coordinating body, not a pose-dependent assembly sum.
+
+\param totalMass Finite positive mass in application mass units.
+\param unitsPerMeter Finite positive number of layer distance units per meter;
+default 1 means meter coordinates for the fallback conversion. For example, 1000
+makes the 1 mm fallback one layer unit. Other authored dimensions are already in
+layer/rig units and are not converted by this argument.
+\return This Sprite, for chaining.
+
+\note Requires an enabled animation pose, Chipmunk support and a physics-enabled
+SpriteLayer. Configure the layer before adding Sprites. Bone scales must be nonsingular; nonuniform authored bone scales and reflected
+initial poses are supported. The Sprite root needs uniform scale. Set Sprite
+scale/flip before setup: dynamic physical bones keep their initial effective
+scales while enabled. Call
+outside pose modifiers and locked solver callbacks. Initial Sprite/Layer snapshots preserve active rigs, edited components,
+membership and control/recovery state. The example assumes a bone named forearm and successful pose setup.
+
+\par Example
+\code{.cpp}
+sprite.setupPhysicsFromAnimationRig(70);
+sprite.findPart("forearm")->physics.setMass(3); // changes the total
+sprite.physics.setMass(80); // scales the current distribution
+sprite.physics.applyImpulse(pdg::Vector(20, 0));
+\endcode
+
+\see findPart(), setAnimationPhysicsRoot(), getAnimationPhysicsSetupWarnings(), disableAnimationPhysics()
+*/
+
+/**
+\fn Sprite & pdg::Sprite::setAnimationPhysicsRoot(AnimationBoneId bone)
+\brief Select the bone receiving whole-Sprite impulses and root follow.
+
+Selection normally prefers the exact name root, otherwise the bone with the most
+skeletal descendants; ties use the lowest bone ID. This call takes precedence.
+Before setup, selecting a zero-length bone gives it the 1 mm fallback on setup.
+For a live generated rig, the bone must have an attached component; disable and
+select the root before rebuilding if it was previously skipped. Live changes
+preserve component identities and mass. Explicitly authored rigs keep the root
+specified by their definition. Invalid selection throws without changing it.
+Root overrides are runtime configuration and are not yet included in snapshots.
+
+\param bone Bone selector in the current enabled animation rig.
+\return This Sprite, for chaining.
+\see clearAnimationPhysicsRoot(), getAnimationPhysicsRoot()
+*/
+
+/**
+\fn AnimationBoneId pdg::Sprite::getAnimationPhysicsRoot() const
+\brief Read the selected physical root bone ID.
+
+\return Current rig bone ID, using automatic selection when no override exists.
+Requires an enabled pose; does not require a physical rig.
+\see setAnimationPhysicsRoot()
+*/
+
+/**
+\fn Sprite & pdg::Sprite::clearAnimationPhysicsRoot()
+\brief Restore automatic physical root selection.
+
+Applies the same live-mapping validation as setAnimationPhysicsRoot().
+\return This Sprite, for chaining.
+\see setAnimationPhysicsRoot()
+*/
+
+/**
+\fn std::vector< std::string > pdg::Sprite::getAnimationPhysicsSetupWarnings() const
+\brief Copy diagnostics from the last successful generated setup.
+
+Reports reference-artwork inference, missing artwork, skipped segments and any
+1 mm root fallback. Geometry remains inspectable through each Part's Collider.
+Failed setup preserves the previous diagnostics. Rig replacement clears them.
+\return Independent vector of diagnostic strings; empty before generated setup.
+\see setupPhysicsFromAnimationRig()
+*/
+
+/**
+\fn Sprite & pdg::Sprite::setAnimationPhysicsRoot(const char * bone)
+\brief Select a physical root by its exact bone name.
+\param bone Non-null name in the current enabled animation rig.
+\return This Sprite, for chaining.
+\see setAnimationPhysicsRoot(AnimationBoneId)
+*/

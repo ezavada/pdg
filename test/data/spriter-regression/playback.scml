@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="PDG review fixture" generator_version="1">
+    <entity id="0" name="probe">
+        <obj_info name="socket" type="point"/>
+        <obj_info name="hitbox" type="box" w="20" h="10"/>
+        <animation id="0" name="a" length="1000" looping="true">
+            <mainline><key id="0"><object_ref id="0" timeline="0" key="0" z_index="0"/><object_ref id="1" timeline="1" key="0" z_index="1"/></key></mainline>
+            <timeline id="0" name="socket" object_type="point"><key id="0"><object x="10" y="0"/></key></timeline>
+            <timeline id="1" name="hitbox" object_type="box"><key id="0"><object x="10" y="0" pivot_x="0" pivot_y="0"/></key></timeline>
+        </animation>
+        <animation id="1" name="b" length="1000" looping="true">
+            <mainline><key id="0"><object_ref id="0" timeline="0" key="0" z_index="0"/><object_ref id="1" timeline="1" key="0" z_index="1"/></key></mainline>
+            <timeline id="0" name="socket" object_type="point"><key id="0"><object x="110" y="0"/></key></timeline>
+            <timeline id="1" name="hitbox" object_type="box"><key id="0"><object x="110" y="0" pivot_x="0" pivot_y="0"/></key></timeline>
+        </animation>
+        <animation id="2" name="empty" length="1000" looping="true">
+            <mainline><key id="0"/></mainline>
+        </animation>
+        <animation id="3" name="once" length="100" looping="false">
+            <mainline><key id="0"><object_ref id="0" timeline="0" key="0" z_index="0"/><object_ref id="1" timeline="1" key="0" z_index="1"/></key></mainline>
+            <timeline id="0" name="socket" object_type="point"><key id="0"><object x="10" y="0"/></key></timeline>
+            <timeline id="1" name="hitbox" object_type="box"><key id="0"><object x="10" y="0" pivot_x="0" pivot_y="0"/></key></timeline>
+        </animation>
+    </entity>
+    <entity id="1" name="alternate">
+        <obj_info name="socket" type="point"/>
+        <obj_info name="hitbox" type="box" w="20" h="10"/>
+        <animation id="0" name="a" length="1000" looping="true">
+            <mainline><key id="0"><object_ref id="0" timeline="0" key="0" z_index="0"/><object_ref id="1" timeline="1" key="0" z_index="1"/></key></mainline>
+            <timeline id="0" name="socket" object_type="point"><key id="0"><object x="10" y="0"/></key></timeline>
+            <timeline id="1" name="hitbox" object_type="box"><key id="0"><object x="10" y="0" pivot_x="0" pivot_y="0"/></key></timeline>
+        </animation>
+        <animation id="1" name="b" length="1000" looping="true">
+            <mainline><key id="0"><object_ref id="0" timeline="0" key="0" z_index="0"/><object_ref id="1" timeline="1" key="0" z_index="1"/></key></mainline>
+            <timeline id="0" name="socket" object_type="point"><key id="0"><object x="110" y="0"/></key></timeline>
+            <timeline id="1" name="hitbox" object_type="box"><key id="0"><object x="110" y="0" pivot_x="0" pivot_y="0"/></key></timeline>
+        </animation>
+        <animation id="2" name="empty" length="1000" looping="true">
+            <mainline><key id="0"/></mainline>
+        </animation>
+        <animation id="3" name="once" length="100" looping="false">
+            <mainline><key id="0"><object_ref id="0" timeline="0" key="0" z_index="0"/><object_ref id="1" timeline="1" key="0" z_index="1"/></key></mainline>
+            <timeline id="0" name="socket" object_type="point"><key id="0"><object x="10" y="0"/></key></timeline>
+            <timeline id="1" name="hitbox" object_type="box"><key id="0"><object x="10" y="0" pivot_x="0" pivot_y="0"/></key></timeline>
+        </animation>
+    </entity>
+</spriter_data>

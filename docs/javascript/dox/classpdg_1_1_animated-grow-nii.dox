@@ -1,11 +1,15 @@
 namespace pdg { /**
+\fn pdg::Animated::grow(number factor, number durationSeconds, int easing)
+\brief Multiply logical width and height by one factor.
 
-\fn pdg::Animated::grow
+The overload without duration applies immediately and preserves growth rates. A timed request replaces growth. With andThen(), the factor is applied to size at the start of the operation. Transform scale remains unchanged. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
-\brief change size of the object by a factor over time
+\param factor Multiplicative factor for logical size.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
 
-If factor is greater than 1.0, the object will grow, if less than 1.0, the object will shrink.
+\return This object, for chaining.
 
-Honors delay given by wait()
-
-**/ }
+\see stretch(), resizeBy(), setGrowing()
+*/
+ }

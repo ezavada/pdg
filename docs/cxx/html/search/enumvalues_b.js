@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['obj_5frefcountedrelease_0',['obj_RefCountedRelease',['../namespacepdg.html#a8f4137f9127425b4cb84765380a06d5ea7bf28ed237515748e2501c106bc0c56d',1,'pdg']]]
+  ['none_0',['none',['../classpdg_1_1log.html#a7362dd6fce60e092ae37b7496b83de0aab7e4e0120a041dbe6528b050c04269e0',1,'pdg::log']]]
 ];

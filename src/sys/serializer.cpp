@@ -40,6 +40,8 @@
 #include <cstdlib>
 #include <map>
 #include <fstream>
+#include <format>
+#include <limits>
 
 #define SERIALIZER_MALLOC_BLOCK_SIZE 1024
 
@@ -48,31 +50,29 @@ namespace pdg {
 bool ISerializer::s_DebugMode = false;
 
 
-#ifndef PDG_NO_64BIT
 //! Serialize an 8 byte (64 bit) value into a buffer
 void   Serializer::serialize_8u(uint64 val) {
 	ensureSpace(8);
 	SERIALIZE_START;
-	*p++ = (val >> 56) & 0xff;
-	*p++ = (val >> 48) & 0xff;
-	*p++ = (val >> 40) & 0xff;
-	*p++ = (val >> 32) & 0xff;
-	*p++ = (val >> 24) & 0xff;
-	*p++ = (val >> 16) & 0xff;
-	*p++ = (val >> 8) & 0xff;
-	*p++ = val & 0xff;
+	mData[mOffset++] = (val >> 56) & 0xff;
+	mData[mOffset++] = (val >> 48) & 0xff;
+	mData[mOffset++] = (val >> 40) & 0xff;
+	mData[mOffset++] = (val >> 32) & 0xff;
+	mData[mOffset++] = (val >> 24) & 0xff;
+	mData[mOffset++] = (val >> 16) & 0xff;
+	mData[mOffset++] = (val >> 8) & 0xff;
+	mData[mOffset++] = val & 0xff;
 	SERIALIZED("8u  ", 8);
 }
-#endif
 
 //! Serialize a 4 byte (32 bit) value into a buffer
 void   Serializer::serialize_4u(uint32 val) {
 	ensureSpace(4);
 	SERIALIZE_START;
-	*p++ = (val >> 24) & 0xff;
-	*p++ = (val >> 16) & 0xff;
-	*p++ = (val >> 8) & 0xff;
-	*p++ = val & 0xff;
+	mData[mOffset++] = (val >> 24) & 0xff;
+	mData[mOffset++] = (val >> 16) & 0xff;
+	mData[mOffset++] = (val >> 8) & 0xff;
+	mData[mOffset++] = val & 0xff;
 	SERIALIZED("4u  ", 4);
 }
 
@@ -80,9 +80,9 @@ void   Serializer::serialize_4u(uint32 val) {
 void   Serializer::serialize_3u(uint32 val) {
 	ensureSpace(3);
 	SERIALIZE_START;
-	*p++ = (val >> 16) & 0xff;
-	*p++ = (val >> 8) & 0xff;
-	*p++ = val & 0xff;
+	mData[mOffset++] = (val >> 16) & 0xff;
+	mData[mOffset++] = (val >> 8) & 0xff;
+	mData[mOffset++] = val & 0xff;
 	SERIALIZED("3u  ", 3);
 }
 
@@ -90,8 +90,8 @@ void   Serializer::serialize_3u(uint32 val) {
 void   Serializer::serialize_2u(uint16 val) {
 	ensureSpace(2);
 	SERIALIZE_START;
-	*p++ = (val >> 8) & 0xff;
-	*p++ = val & 0xff;
+	mData[mOffset++] = (val >> 8) & 0xff;
+	mData[mOffset++] = val & 0xff;
 	SERIALIZED("2u  ", 2);
 }
 
@@ -99,7 +99,7 @@ void   Serializer::serialize_2u(uint16 val) {
 void   Serializer::serialize_1u(uint8 val) {
 	ensureSpace(1);
 	SERIALIZE_START;
-	*p++ = val & 0xff;
+	mData[mOffset++] = val & 0xff;
 	SERIALIZED("1u  ", 1);
 }
 
@@ -107,23 +107,23 @@ void
 Serializer::serialize_bool(bool val) {
 	ensureSpace(1);
 	SERIALIZE_START;
-	if (mLastBoolPtr) {
-		uint8 byte = *mLastBoolPtr;
+	if (mLastBoolOffset) {
+		uint8 byte = mData[*mLastBoolOffset];
 		if (val) {
 			byte |= (1 << mBoolBitOffset);
-			*mLastBoolPtr = byte;
+			mData[*mLastBoolOffset] = byte;
 		}
 		mBoolBitOffset++;
 		if (mBoolBitOffset > 7) {
 			// filled the current byte with bits, reset
-			mLastBoolPtr = 0;
+			mLastBoolOffset.reset();
 			mBoolBitOffset = 0;
 		}
 		SERIALIZED("bool", 0);
 	} else {
-		mLastBoolPtr = p;
+		mLastBoolOffset = mOffset;
 		mBoolBitOffset = 1;
-		*p++ = val ? 1 : 0;
+		mData[mOffset++] = val ? 1 : 0;
 		SERIALIZED("bool", 1);
 	}
 	// if we actually serialized a boolean, reset the size count
@@ -153,7 +153,7 @@ Serializer::serialize_uint(uint32 len) {
 
 void
 Serializer::serialize_mem(const void* mem, uint32 memLen) {
-	ensureSpace(memLen + 8);
+	ensureSpace(static_cast<size_t>(memLen) + 8);
 	SERIALIZE_START;
     if (mUsingTags) {
     	serialize_3u(tag_mem);
@@ -161,8 +161,9 @@ Serializer::serialize_mem(const void* mem, uint32 memLen) {
 	if (mem == 0) memLen = 0;
 	serialize_uint(memLen);
 	if (memLen > 0) {
-		std::memcpy(p, mem, memLen);
-		p += memLen;
+        ensureSpace(memLen);
+		std::memcpy(mData.data() + mOffset, mem, memLen);
+		mOffset += memLen;
 	}
 	SERIALIZED("mem ", 0);
 }
@@ -178,8 +179,8 @@ Serializer::serialize_str(const char* str) {
 	serialize_uint((uint32)len);
 	if (len > 0) {
 		ensureSpace(len);
-		std::memcpy(p, str, len);
-		p += len;
+		std::memcpy(mData.data() + mOffset, str, len);
+		mOffset += len;
 	}
 	SERIALIZED("str ", 0);
 }
@@ -211,7 +212,22 @@ Serializer::serialize_obj(const ISerializable* obj) {
     if (mUsingTags) {
     	serialize_2u(mSerializedInstances.size());
     }
-	uint32 objLen = obj->getSerializedSize(this);
+    // Size this record against the objects actually emitted so far. Descendant
+    // size calls share this temporary set, so repeated assets count only once.
+    auto priorSized = std::move(mSerializedSizeInstances);
+    mSerializedSizeInstances = mSerializedInstances;
+    // A prior preflight may have advanced the sizing cursor. The envelope
+    // describes the bytes we will emit from the current packed-boolean position.
+    mBoolSizeCount = mBoolBitOffset;
+    uint32 objLen;
+    try { objLen = obj->getSerializedSize(this); }
+    catch (...) {
+        mBoolSizeCount = mBoolBitOffset;
+        mSerializedSizeInstances = std::move(priorSized);
+        throw;
+    }
+    mBoolSizeCount = mBoolBitOffset;
+    mSerializedSizeInstances = std::move(priorSized);
 	serialize_uint(objLen);
 	SERIALIZED("obj ", 0);   // stop here so we can see the object being serialized
 	obj->serialize(this);
@@ -311,7 +327,7 @@ Serializer::serialize_ptr(const void* ptr) {
 uint32
 Serializer::sizeof_mem(const void* mem, uint32 memLen) const {
 	uint32 lenOfLen = sizeof_uint(memLen);
-    if (mUsingTags) {
+    if (!mData.empty() ? mUsingTags : mSendTags) {
     	lenOfLen += 3;
     }
 	if (mem == 0) memLen = 0;
@@ -409,7 +425,7 @@ uint32
 Serializer::sizeof_str(const char* str) const { 
 	size_t strLen = std::strlen(str);
 	size_t lenOfLen = sizeof_uint((uint32)strLen);
-    if (mUsingTags) {
+    if (!mData.empty() ? mUsingTags : mSendTags) {
     	lenOfLen += 3;
     }
 	return (uint32)(lenOfLen + strLen);
@@ -420,32 +436,13 @@ Serializer::sizeof_obj(const ISerializable* obj) {
 	if (obj == 0) {
 		return 3;
 	}
-	if (mSerializeObjDepth == 0) {
-		// when this is called before actually serializing objects, we need
-		// to get size estimates based on what would be serialized verses
-		// just stored as references
-		for (uint16 i = 0; i < mSerializedSizeInstances.size(); i++) {
-			if (mSerializedSizeInstances[i] == obj) {
-				return sizeof_uint(i) + 3;
-			}
-		}
-		// wasn't previously serialized, calculate full serialized size
-		mSerializedSizeInstances.push_back(obj);
-//		obj->addRef();
-	} else {
-		// when called while serializing objects, we need
-		// to get size estimates based on what has actually been
-		// serialized, not based on what has been sized
-		// see if the object has already been serialized
-		for (uint16 i = 0; i < mSerializedInstances.size(); i++) {
-			if (mSerializedInstances[i] == obj) {
-				return sizeof_uint(i) + 3;
-			}
-		}
-	}
+    for (size_t i = 0; i < mSerializedSizeInstances.size(); ++i) {
+        if (mSerializedSizeInstances[i] == obj) return sizeof_uint(static_cast<uint32>(i)) + 3;
+    }
+    mSerializedSizeInstances.push_back(obj);
 	uint32 objLen = obj->getSerializedSize(this);
 	uint32 len = 3 + 4;
-    if (mUsingTags) {
+    if (!mData.empty() ? mUsingTags : mSendTags) {
     	len += 2;
     }
 	len += sizeof_uint(objLen);
@@ -468,7 +465,7 @@ Serializer::sizeof_ptr(const void* ptr) const {
         throw unknown_object("");
     }
     uint32 result = 0;
-    if (mUsingTags) {
+    if (!mData.empty() ? mUsingTags : mSendTags) {
     	result += 3;
     }
 	result += sizeof_uint(uniqueId);
@@ -476,44 +473,38 @@ Serializer::sizeof_ptr(const void* ptr) const {
 }
 
 
-void  Serializer::ensureSpace(size_t bytes) {
-	size_t currSize = getDataSize();
-	size_t blocksNeeded = ((currSize + bytes) / mBlockSize) + 1;
-	size_t blocksAllocated = mAllocatedSize / mBlockSize;
-	if (blocksNeeded > blocksAllocated) {
-	    bool firstAlloc = (mAllocatedSize == 0);
-		mAllocatedSize = blocksNeeded * mBlockSize;
-		size_t offset = p - mDataPtr;
-		mDataPtr = (uint8*)std::realloc(mDataPtr, mAllocatedSize);
-		p = mDataPtr + offset;
-		mDataEnd = mDataPtr + mAllocatedSize;
-        // clear the new buffer for easier debugging
-        memset(p, 0, mDataEnd - p);
-		if (firstAlloc && mSendTags) {  // checks what we gave in setSendTags()
-            mUsingTags = true;  // prevents changes via setSendTags() during life of stream
-            serialize_3u(tag_pdgTaggedStream);  // save a tag that shows we are using tags
-		}
-	}
+void Serializer::ensureSpace(size_t bytes) {
+    constexpr size_t blockSize = SERIALIZER_MALLOC_BLOCK_SIZE;
+    const size_t maximum = mData.max_size();
+    if (bytes > maximum - mOffset) throw std::length_error("Serialized buffer is too large");
+    const size_t needed = mOffset + bytes;
+    if (needed <= mData.size()) return;
+    const bool firstAllocation = mData.empty();
+    const size_t padding = blockSize - needed % blockSize;
+    const size_t allocated = padding <= maximum - needed ? needed + padding : needed;
+    mData.resize(allocated);
+    if (firstAllocation && mSendTags) {
+        mUsingTags = true;
+        serialize_3u(tag_pdgTaggedStream);
+    }
 }
 
 // --------------------------------------------
 // constructors
 // --------------------------------------------
 
+ISerializer& Serializer::setResourceMode(int mode) {
+    if (mode == getResourceMode()) return *this;
+    if (mode != getResourceMode() && getDataSize() != 0)
+        throw std::logic_error("Set the resource mode before serializing objects");
+    ISerializer::setResourceMode(mode);
+    mSerializedSizeInstances.clear();
+    mBoolSizeCount = 0;
+    return *this;
+}
+
 Serializer::Serializer()
- :  mDataPtr(0),
-    mDataEnd(0),
-	p(0),
-	mAllocatedSize(0),
-	mBlockSize(SERIALIZER_MALLOC_BLOCK_SIZE),
-	mSerializedInstances(),
-	mSerializedSizeInstances(),
-	mSerializeObjDepth(0),
-	mMark(0),
-	mLastBoolPtr(0),
-	mBoolBitOffset(0),
-	mBoolSizeCount(0),
-	mUsingTags(false)
+ : mSerializeObjDepth(0), mBoolBitOffset(0), mBoolSizeCount(0), mUsingTags(false)
 {
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	INIT_SCRIPT_OBJECT(mSerializerScriptObj);
@@ -521,37 +512,29 @@ Serializer::Serializer()
 }
 
 Serializer::~Serializer() {
-	if (mDataPtr) {
-		std::free(mDataPtr);
-		mDataPtr = 0;
-	}
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	CleanupSerializerScriptObject(mSerializerScriptObj);
 #endif
 }
 
 char* Serializer::statusDump(int hiliteBytes) {
-	static char buf[1024];
-	char* targBuf = buf + 22;
-	size_t blockNum = (mMark - mDataPtr)/16;
-	size_t blockStart = 16 * blockNum;
-	int blockLen = 20;
-	if ((blockStart + blockLen) > mAllocatedSize) blockLen = (int)(mAllocatedSize - blockStart);
-	int hiliteStart = (int)((mMark - mDataPtr) - blockStart);
-	std::snprintf(buf, sizeof(buf), "@%05lu/%05lu:  %04lX | ", (unsigned long)(p - mDataPtr), (unsigned long)(mAllocatedSize), (unsigned long)(blockStart));
-	OS::binaryDump(targBuf, 1000, (char*)(mDataPtr + blockStart), blockLen, 20, hiliteStart, hiliteBytes);
-	return buf;
+    thread_local std::string result;
+    const size_t blockStart = mMark / 16 * 16;
+    const size_t blockLen = std::min<size_t>(20, mData.size() - blockStart);
+    char dump[1000] = {};
+    OS::binaryDump(dump, sizeof(dump), reinterpret_cast<const char*>((mData.empty() ? nullptr : mData.data() + blockStart)),
+        static_cast<int>(blockLen), 20, static_cast<int>(mMark - blockStart), hiliteBytes);
+    result = std::format("@{:05}/{:05}:  {:04X} | {}", mOffset, mData.size(), blockStart, dump);
+    return result.data();
 }
 
 void Serializer::startMark() {
-	if (!p) {
-		ensureSpace(1);
-	}
-	mMark = p;
+    if (mData.empty()) ensureSpace(1);
+    mMark = mOffset;
 }
 
-int Serializer::bytesFromMark() { 
-	return (mMark && p) ? (int)(p - mMark) : 0;
+int Serializer::bytesFromMark() {
+    return static_cast<int>(mOffset - mMark);
 }
 
 } // end namespace pdg

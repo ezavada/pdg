@@ -1,0 +1,46 @@
+
+/**
+\fn Collider& pdg::Sprite::setupFrameCollider(int mode, int alphaThreshold)
+\brief Set up collision geometry that follows the current frame.
+
+Creates the read-only .collider association only when absent; otherwise reuses it. Preserves enabled/sensor state, filters, material, handlers and body association. Every call replaces previous geometry with the selected source and applies the supplied mode and threshold, including their defaults. Bounds follow frame dimensions and pivots; alpha mode uses the assigned frame mask or the frame image. A Sprite without image frames uses its logical bounds. Explicit add methods then add persistent geometry; see \ref collider_geometry_sources. Pixel edits to the same image require selecting the source again.
+
+\param mode frameCollider_AlphaMask (default) or frameCollider_Bounds.
+\param alphaThreshold Integer from 1 through 255, default 128; applies to alpha masks.
+
+\return The Sprite's Collider, for chaining.
+
+\note Enable collisions on the owning SpriteLayer for contacts. Queries also
+work without a layer or physics body. Returned Collider references are borrowed.
+
+\par Example
+\code{.cpp}
+sprite.setSize(24, 40);
+auto& collider = sprite.setupFrameCollider(pdg::frameCollider_Bounds);
+auto extra = collider.addPolygon({pdg::Point(12,-4), pdg::Point(24,0), pdg::Point(12,4)});
+sprite.setSize(30, 40); // The frame shape updates; extra remains.
+collider.removeShape(extra);
+\endcode
+*/
+
+/**
+\fn Collider& pdg::Sprite::setupAnimationCollider()
+\brief Set up collision geometry that follows active authored animation boxes.
+
+Reuses or creates .collider, preserving its configuration and replacing its geometry source. Active boxes follow playback and the final pose. Names identify stable shape IDs across disappearance and reappearance. Requires an imported animation Sprite; unsupported owners/builds throw without changing the association. Explicit additions remain active alongside source geometry. See \ref collider_geometry_sources.
+
+
+\return The Sprite's Collider, for chaining.
+*/
+
+/**
+\fn Sprite& pdg::Sprite::setFrameCollisionMask(Image* frameImage, Image* maskImage)
+\brief Assign a mask to frames using an image.
+
+Retains the mask for every Sprite frame using frameImage. The alpha frame collider samples it instead of the visible artwork. Passing nullptr removes the override. A multi-frame mask must contain each referenced frame; a single-frame mask is reused.
+
+\param frameImage Artwork image identifying the frames to update.
+\param maskImage Mask image, or nullptr to restore artwork alpha.
+
+\return This Sprite for chaining.
+*/

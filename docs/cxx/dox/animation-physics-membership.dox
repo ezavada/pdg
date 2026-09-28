@@ -1,0 +1,97 @@
+/**
+\fn Sprite & pdg::Sprite::attachAnimationPhysicsPart(Part * part, Part * parent)
+\brief Register a physical Part in a physical rig's mass assembly.
+
+Adds the Part's existing mass to physics.getMass(). No other body's mass or
+inertia changes. The Part must belong to this Sprite and already have a body.
+An accessory must have no Part parent, bone/slot/socket binding, or mounted
+Sprite. Its current control mode is retained. Skeletal Parts previously detached
+from this rig can be registered again; they start Dynamic.
+
+The optional parent records assembly hierarchy for subtree detachment. It does
+not create a joint, move a body, bind artwork, or claim an animation drive.
+Create joints explicitly with PhysicsBody. For skeletal Parts, the nearest
+attached skeletal ancestor is automatic, and an explicit parent must match.
+For accessories, an omitted or null parent means an independent assembly member.
+Registering the same Part again is harmless; changing its parent requires detach.
+
+Only registered bodies contribute to the total; arbitrary joint connectivity
+never adds mass. Whole-rig animation modes and recovery select attached skeletal
+bodies. An accessory keeps its own body control, responding through its joints.
+
+\param part Physical Part owned by this Sprite.
+\param parent Attached Part used for assembly hierarchy; optional, default null.
+\return This Sprite, for chaining.
+
+\note Requires an enabled rig from setupPhysicsFromAnimationRig() or
+setupAnimationPhysics(), and a Chipmunk layer. Use transferPart() to move a foreign Part into this Sprite before registering it. Call outside animation modifiers and locked physics callbacks. Finish
+or cancel active recovery first. Explicitly release manual/Part-IK drives before
+reattaching skeletal bodies. Invalid edits throw before changing membership.
+Membership edits cancel pending mode-completion notices. The example assumes a
+rig with a hand Part and layer coordinates measured in centimeters.
+\par Example
+\code{.cpp}
+auto* hand = sprite.findPart("hand");
+auto* weight = sprite.createPart("weight");
+auto& body = weight->setupPhysicsBody(10, 400); // kg and kg*cm^2
+const auto grip = hand->physics.getState();
+body.teleport(pdg::Point(grip.x, grip.y), grip.rotation);
+weight->setupCollider().setBox(pdg::Rect(-10, -5, 10, 5));
+sprite.attachAnimationPhysicsPart(weight, hand);
+hand->physics.createPivotJoint(body);
+hand->physics.createGear(body, 1, 0);
+sprite.detachAnimationPhysicsPart(weight); // bodies remain Sprite-owned
+\endcode
+
+\see detachAnimationPhysicsPart(), isAnimationPhysicsPartAttached(), setupPhysicsFromAnimationRig()
+*/
+
+/**
+\fn Sprite & pdg::Sprite::detachAnimationPhysicsPart(Part * part, bool includeDescendants)
+\brief Release a Part or subtree from the physics assembly.
+
+Removes the selected members' masses from the Sprite total without redistributing
+any mass or inertia. Skeletal bodies become Dynamic and stop following animation;
+artwork continues following their physical bones. Body identity, pose, velocity,
+collider geometry and collision filters are retained. Joints within the selected
+set remain intact; every joint crossing its boundary is disconnected, including
+connections to external bodies. Retained disconnected constraint handles are
+safe to inspect but report inactive.
+
+Descendants follow assembly hierarchy, including registered accessories. With
+includeDescendants false, surviving children are logically reparented to the
+nearest surviving ancestor; no replacement physical joints are created.
+Detached bodies are excluded from whole-rig control, recovery and aggregate
+mass edits. Address them directly through their Part's physics object.
+
+If the selected root leaves, the remaining attached skeletal bone named root is
+preferred, otherwise the one with the most assembly descendants (ties use body
+definition order). Whole-Sprite impulses and root follow use this replacement.
+At least one skeletal body must remain; disableAnimationPhysics() tears down the
+whole rig. Detaching a nonmember is a no-op.
+
+This releases assembly membership, not Sprite ownership. Parts and bodies remain
+alive while this Sprite/rig does. Disabling the rig removes all originally mapped
+bodies, including detached ones. Ordinary accessory Parts retain their bodies
+but stop contributing to the aggregate. Removing an accessory Part or its body
+also removes its membership. Mapped Part removal still requires rig disable; transferPart() can instead release mapped bodies into another Sprite.
+
+\param part Part owned by this Sprite.
+\param includeDescendants Include the assembly subtree; optional, default true.
+\return This Sprite, for chaining.
+
+\note The same rig, callback and recovery restrictions as
+attachAnimationPhysicsPart() apply. Release manual/Part-IK drives on selected
+skeletal bodies first. Reattachment does not restore disconnected joints or snap
+the piece into place; restore the desired pose/constraints explicitly.
+\see attachAnimationPhysicsPart(), isAnimationPhysicsPartAttached(), disableAnimationPhysics()
+*/
+
+/**
+\fn bool pdg::Sprite::isAnimationPhysicsPartAttached(const Part * part) const
+\brief Check whether a Part contributes to this Sprite's physical assembly.
+\param part Part to query.
+\return True for a registered skeletal or accessory Part; false for a detached
+Part, another Sprite's Part, or a disabled rig.
+\see attachAnimationPhysicsPart(), detachAnimationPhysicsPart()
+*/

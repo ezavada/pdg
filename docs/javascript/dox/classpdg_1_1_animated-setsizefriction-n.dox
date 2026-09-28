@@ -1,7 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Animated::setSizeFriction
-
-\brief set the friction applied for object resizing
-
-**/ }

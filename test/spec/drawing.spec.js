@@ -29,6 +29,62 @@
 
 describe("Drawing", function() {
 
+  describe("live attributes", function() {
+    it("updates shared elements and hit tests while preserving snapshots", function() {
+      var d=pdg.createDrawing(), a=new pdg.AnimatedAttributes();
+      var first=d.addRect(new pdg.Rect(0,0,10,10),a);
+      var second=d.addRect(new pdg.Rect(20,0,30,10),a);
+      var copied=d.addRect(new pdg.Rect(-20,0,-10,10),a);
+      first.setLiveAttributes(a); second.setLiveAttributes(a);
+      expect(first.hasLiveAttributes()).toBe(true);
+      expect(copied.hasLiveAttributes()).toBe(false);
+      d.getBounds(); // Populate the cache before the source changes.
+      a.moveTo(100,0,1,pdg.linearTween).changeFillOpacity(0,1,pdg.linearTween);
+      a.animate(.5);
+      expect(d.getBounds().right).toBeCloseTo(80,5);
+      expect(first.getAttributes().getFillOpacity()).toBeCloseTo(.5,5);
+      expect(second.getAttributes().getTransform()[6]).toBeCloseTo(50,5);
+      expect(copied.getAttributes().getTransform()[6]).toBe(0);
+      expect(d.getElementHitBy(new pdg.Point(55,5))).not.toBeNull();
+      expect(d.getElementHitBy(new pdg.Point(5,5))).toBeNull();
+      first.clearLiveAttributes();
+      a.animate(.5);
+      expect(first.hasLiveAttributes()).toBe(false);
+      expect(first.getAttributes().getTransform()[6]).toBeCloseTo(50,5);
+      expect(second.getAttributes().getTransform()[6]).toBeCloseTo(100,5);
+      second.setAttributes(new pdg.Attributes().translation(new pdg.Offset(3,0)));
+      a.setLocation(200,0);
+      expect(second.hasLiveAttributes()).toBe(false);
+      expect(second.getAttributes().getTransform()[6]).toBe(3);
+    });
+    it("keeps references attached to their element across reorder and removal", function() {
+      var d=pdg.createDrawing(), a=new pdg.Attributes();
+      var first=d.addRect(new pdg.Rect(0,0,10,10),a);
+      var second=d.addRect(new pdg.Rect(20,0,30,10),a);
+      var alias=d.getElement(0);
+      first.setLiveAttributes(a);
+      first.moveToFront();
+      alias.changeControlPoint(0,new pdg.Point(2,3));
+      expect(first.getControlPoint(0).x).toBe(2);
+      expect(second.getControlPoint(0).x).toBe(20);
+      expect(alias.hasLiveAttributes()).toBe(true);
+      alias.remove();
+      expect(first.type()).toBe(0);
+      first.setLiveAttributes(new pdg.Attributes());
+      first.remove();
+      expect(d.getElementCount()).toBe(1);
+      expect(second.hasLiveAttributes()).toBe(false);
+    });
+    it("freezes the final sample when a browser source is deleted", function() {
+      var d=pdg.createDrawing(), a=new pdg.AnimatedAttributes();
+      var e=d.addRect(new pdg.Rect(0,0,10,10),new pdg.Attributes());
+      e.setLiveAttributes(a); a.setLocation(40,0);
+      if (typeof a.delete === 'function') a.delete();
+      expect(d.getBounds().left).toBe(40);
+      expect(e.getAttributes().getTransform()[6]).toBe(40);
+    });
+  });
+
   describe("availability", function() {
 
     it("checks if Drawing is available", function() {
@@ -46,6 +102,33 @@ describe("Drawing", function() {
       expect(typeof pdg.ElementRef).toBe('function');
     });
 
+  });
+
+  describe("retained contents and bounds", function() {
+    it("rejects direct and indirect nested drawing cycles", function() {
+      var a=pdg.createDrawing(), b=pdg.createDrawing(), rect=new pdg.Rect(0,0,10,10), attrs=new pdg.Attributes();
+      expect(function(){a.addDrawing(rect,a,attrs);}).toThrow();
+      a.addDrawing(rect,b,attrs);
+      expect(function(){b.addDrawing(rect,a,attrs);}).toThrow();
+      expect(a.getElementCount()).toBe(1);
+      expect(b.getElementCount()).toBe(0);
+    });
+    it("updates nested drawing placement through its element reference", function() {
+      var child=pdg.createDrawing(), parent=pdg.createDrawing();
+      child.addRect(new pdg.Rect(0,0,1,1),new pdg.Attributes());
+      var element=parent.addDrawing(new pdg.Rect(10,20,30,40),child,new pdg.Attributes());
+      element.changeControlPoint(2,new pdg.Point(50,60));
+      expect(parent.getBounds().right).toBe(50);expect(parent.getBounds().bottom).toBe(60);
+      expect(element.getControlPoint(1).x).toBe(50);
+    });
+    it("includes horizontal line geometry and transformed quad bounds", function() {
+      var drawing=pdg.createDrawing();
+      drawing.addLine(new pdg.Point(20,30),new pdg.Point(40,30),new pdg.Attributes());
+      var bounds=drawing.getBounds();
+      expect(bounds.left).toBe(20);expect(bounds.right).toBe(40);expect(bounds.top).toBe(30);
+      drawing.addQuad(new pdg.Quad(new pdg.Rect(0,0,2,3)),new pdg.Attributes().translation(new pdg.Offset(50,60)));
+      bounds=drawing.getBounds();expect(bounds.right).toBe(52);expect(bounds.bottom).toBe(63);
+    });
   });
 
   describe("construction", function() {

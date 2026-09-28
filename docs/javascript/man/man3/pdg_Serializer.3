@@ -1,4 +1,4 @@
-.TH "Serializer" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Serializer" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -20,6 +20,10 @@ Serializer \- serialize data into memory
 .RI "number \fBgetDataSize\fP ()"
 .br
 .RI "get the size of the serialized data "
+.ti -1c
+.RI "int \fBgetResourceMode\fP ()"
+.br
+.RI "Return the resource policy selected for this writer\&. "
 .ti -1c
 .RI "\fBserialize_1\fP (int val)"
 .br
@@ -120,6 +124,10 @@ Serializer \- serialize data into memory
 .RI "\fBserialize_vector\fP (\fBVector\fP val)"
 .br
 .RI "serialize a \fBVector\fP's (x,y) values "
+.ti -1c
+.RI "\fBSerializer\fP \fBsetResourceMode\fP (int mode)"
+.br
+.RI "Choose embedded image resources or permit external resource references\&. "
 .ti -1c
 .RI "uint \fBsizeof_1\fP (int val)"
 .br
@@ -227,10 +235,13 @@ serialize data into memory
 
 
 .PP
-\fBPrecondition\fP
+\fBNote\fP
 .RS 4
-\fBAPI Stability: 3 - Stable\fP\&. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes\&. Backwards-compatibility is guaranteed\&.
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
 .RE
+.PP
+API stability does not promise a fixed snapshot byte format; see \fBAPI stability\fP\&.
+
 .PP
 \fBSerializer\fP stores complex data into memory in a way that it can be read back from a \fBDeserializer\fP\&. It can correctly store entire object hierarchies without duplication\&.
 
@@ -303,6 +314,17 @@ This is really only useful after one or more serialize_X methods have been calle
 \fBSee also\fP
 .RS 4
 \fBgetDataPtr\fP 
+.RE
+.PP
+
+.SS "int getResourceMode ()"
+
+.PP
+Return the resource policy selected for this writer\&. 
+.PP
+\fBReturns\fP
+.RS 4
+\fR\fBpdg\&.serialization_Complete\fP\fP or \fR\fBpdg\&.serialization_ExternalReferences\fP\fP\&. 
 .RE
 .PP
 
@@ -861,6 +883,51 @@ serializedSize(Vector)
 
 .PP
 \fBDeserializer\&.deserialize_vector()\fP 
+.RE
+.PP
+
+.SS "\fBSerializer\fP setResourceMode (int mode)"
+
+.PP
+Choose embedded image resources or permit external resource references\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImode\fP \fR\fBpdg\&.serialization_Complete\fP\fP (the default) embeds pixels; \fR\fBpdg\&.serialization_ExternalReferences\fP\fP permits named file/resource references\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSerializer\fP for chaining\&.
+.RE
+.PP
+The policy belongs to this writer\&. Set it before writing data; changing the policy after writing begins throws\&. Unknown constants, fractional values and non-numbers throw without changing the policy\&. \fBImage\fP records identify their representation, so readers need no matching option\&.
+
+.PP
+Complete records load without their original files or resource cache\&. Reference records resolve the original file path or \fBResourceManager\fP resource name on load\&. Missing resources and changed dimensions throw with the resource identifier\&. Anonymous runtime images and images whose pixels have been modified are embedded in either mode\&. Frame layout, opacity, edge clamping and subsection/frame selection are preserved\&. Initial \fBSprite\fP frame records use the same policy for artwork and collision masks\&. Resource policy does not change the flags selecting object state\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Runtime-created and modified images retain their pixels\&. Named images can reload their pixels during a complete save; call \fBImage::retainData()\fP before drawing if the source will become unavailable before saving\&. Missing pixels produce an explicit save error; complete mode never silently falls back to a reference\&. Discard the writer after a failed serialization operation\&.
+.RE
+.PP
+.PP
+.nf
+// image is an existing pdg\&.Image or pdg\&.ImageStrip\&.
+const writer = new pdg\&.Serializer();
+writer\&.setResourceMode(pdg\&.serialization_Complete);
+image\&.serialize(writer);
+const saved = writer\&.getDataPtr();
+// Select pdg\&.serialization_ExternalReferences on a new writer to permit
+// smaller records that reload their named resources\&.
+.fi
+.PP
+ 
+.PP
+\fBSee also\fP
+.RS 4
+\fBSerializer::getResourceMode()\fP, \fBImage::serialize()\fP 
 .RE
 .PP
 

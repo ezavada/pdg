@@ -220,7 +220,7 @@ describe('Sprite Layer Event Filtering', function() {
             sprite = spriteLayer.createSprite();
             sprite.setSize(50, 50);
             sprite.moveTo(100, 100);
-            sprite.setVelocity(50, 0); // Make it move to trigger events
+            sprite.setMovement(50, 0); // Make it move to trigger events
         });
         
         afterEach(function() {

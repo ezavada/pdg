@@ -1,0 +1,59 @@
+/**
+\fn Part * pdg::Sprite::transferPart(Part * part, bool includeDescendants)
+\brief Transfer an existing Part and optional subtree into this Sprite.
+
+Moves the same Part objects; retained Part, PhysicsBody, Collider and internal
+PhysicsConstraint handles remain valid. Names and Part-owned Image/Drawing content
+are retained. The destination assigns fresh per-Sprite IDs and appends the moved
+Parts in their source order. Read getId() again after transfer. Transferring a Part
+already owned by this Sprite is a no-op.
+
+World transforms, body mass/inertia, velocities, loads, manual world-space drives
+and collision settings are preserved. The moved root loses its old Part parent;
+parents inside the transferred set are retained. With includeDescendants false,
+children left behind keep their world placement and nearest remaining Part ancestor.
+Movement, rotation and scale programming is canceled on Parts whose parent frame
+changes. Logical size animation and other local state remain.
+
+Descendants include ordinary Part children, physical-rig bone descendants and
+registered assembly children. Joints within the selected set survive. Joints to
+any body outside it disconnect; retained handles report inactive. Source assembly
+mass decreases by the transferred member masses without redistributing the others.
+The destination does not automatically register the transferred bodies in its rig:
+use attachAnimationPhysicsPart() and create any new joints explicitly.
+
+Mapped rig bodies are released from the source controller and become ordinary
+Dynamic Part bodies. At least one attached skeletal body must remain in the source
+rig; transferring its selected root chooses a remaining root using the usual rule.
+Source bone/artwork/socket bindings are cleared rather than rebound by name. The
+source skeleton, animation clips, imported artwork and animation-drawing registrations
+remain source-owned; use Part.setDrawing()/setImage() for artwork that moves with
+the Part. The source rig can subsequently be disabled or destroyed without removing
+the transferred bodies. Layer snapshots preserve the resulting ownership and joints.
+
+\param part Part currently owned by a Sprite.
+\param includeDescendants Transfer descendants too; optional, default true.
+\return The same Part, now owned by this Sprite. The pointer is borrowed; use
+addRef()/release() if retaining it beyond removal or destination destruction.
+
+\note Both Sprites must share a layer, or both be off-layer. Names must be unique
+in the destination. Singular/sheared placements that cannot be represented by Part
+transforms and Sprite-mount cycles reject before transfer. Call outside animation
+modifiers, drawing callbacks and locked physics callbacks. Finish or cancel source
+rig recovery first. Clear any Part IK target involving a selected Part; re-establish
+it after transfer. Release manual drives before detaching attached skeletal bodies,
+following the existing explicit drive-handoff contract. Independent or already
+detached bodies retain their manual drives. Parent-relative IK limits are cleared
+when their frame changes. The example assumes a physical weight Part and a hand
+in the receiving Sprite's active rig.
+
+\par Example
+\code{.cpp}
+auto* weight = receiver.transferPart(donor.findPart("weight"));
+auto* hand = receiver.findPart("hand");
+receiver.attachAnimationPhysicsPart(weight, hand);
+hand->physics.createPivotJoint(weight->physics);
+\endcode
+
+\see createPart(), Part::getId(), attachAnimationPhysicsPart(), detachAnimationPhysicsPart()
+*/

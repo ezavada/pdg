@@ -1,0 +1,17 @@
+namespace pdg { /**
+
+\class pdg::AnimationContactTarget
+\ingroup Animation Physics
+\brief World and platform contact locks with timed release.
+
+Preserves a contact point in owning-layer coordinates. lockWorld() holds a fixed
+point; lockPlatform() follows a support identified by the application. update()
+checks the supplied contact/reach policy and advances release fades in seconds.
+
+The helper starts unlocked and never reacquires automatically. Call a lock method
+on a confirmed contact edge. getState() returns an independent copy of the point,
+influence, and lock flag.
+
+\see lockWorld(), lockPlatform(), update(), \ref animation_target_adapters
+
+**/ }

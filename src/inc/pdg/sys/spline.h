@@ -92,6 +92,7 @@ namespace pdg {
 		SCRIPT_OBJECT_REF mSplineScriptObj;
 	  #endif
 	private:
+        friend struct DrawingSnapshot;
 		int mType;
 		std::vector< Point > mPoints;
 		bool mLooping;

@@ -1,0 +1,87 @@
+/**
+\fn Serializer Serializer::setResourceMode(int mode)
+\brief Choose embedded image resources or permit external resource references.
+\param mode `pdg.serialization_Complete` (the default) embeds pixels;
+`pdg.serialization_ExternalReferences` permits named file/resource references.
+\return This Serializer for chaining.
+
+The policy belongs to this writer. Set it before writing data; changing the policy
+after writing begins throws. Unknown constants, fractional values and non-numbers
+throw without changing the policy. Image records identify their representation,
+so readers need no matching option.
+
+Complete records load without their original files or resource cache. Reference
+records resolve the original file path or ResourceManager resource name on load.
+Missing resources and changed dimensions throw with the resource identifier.
+Anonymous runtime images and images whose pixels have been modified are embedded
+in either mode. Frame layout, opacity, edge clamping and subsection/frame selection
+are preserved. Initial Sprite frame records use the same policy for artwork and collision masks.
+Resource policy does not change the flags selecting object state.
+
+\note Runtime-created and modified images retain their pixels. Named images can
+reload their pixels during a complete save; call Image::retainData() before drawing
+if the source will become unavailable before saving. Missing pixels produce an
+explicit save error; complete mode never silently falls back to a reference.
+Discard the writer after a failed serialization operation.
+
+\code{.js}
+// image is an existing pdg.Image or pdg.ImageStrip.
+const writer = new pdg.Serializer();
+writer.setResourceMode(pdg.serialization_Complete);
+image.serialize(writer);
+const saved = writer.getDataPtr();
+// Select pdg.serialization_ExternalReferences on a new writer to permit
+// smaller records that reload their named resources.
+\endcode
+\sa Serializer::getResourceMode(), Image::serialize()
+*/
+
+/**
+\fn int Serializer::getResourceMode()
+\brief Return the resource policy selected for this writer.
+\return `pdg.serialization_Complete` or `pdg.serialization_ExternalReferences`.
+*/
+
+/**
+\fn uint Image::getSerializedSize(Serializer serializer)
+\brief Measure an image record using this writer's resource policy.
+\param serializer Destination writer used for sizing.
+\return Image record size in bytes, excluding the stream header and enclosing object tag/length.
+Sizing validates availability of embedded pixels and may reload a named image.
+Embedded records support RGB/RGBA pixels, dimensions up to 32768 on each axis,
+and at most 512 MiB of pixel data.
+\sa Image::serialize(), Serializer::setResourceMode()
+*/
+
+/**
+\fn undefined Image::serialize(Serializer serializer)
+\brief Save this image with pixels or a resolvable resource reference.
+\param serializer Destination writer; its resource mode selects the representation.
+Frame layout, opacity, edge clamping and subsection selection are included.
+Anonymous runtime images and modified pixels embed in either mode. This writes a
+raw record; restore it by calling Image::deserialize() on an existing image.
+\sa Serializer::setResourceMode(), Image::getSerializedSize()
+*/
+
+/**
+\fn undefined Image::deserialize(Deserializer deserializer)
+\brief Replace this image from a saved image record.
+\param deserializer Reader positioned at a raw image record written by Image::serialize().
+The saved record determines whether pixels are embedded or resources must be
+resolved. Missing resources, changed resource dimensions and malformed data throw.
+The old image content remains unchanged on validation failure. Decoded pixels and
+shared source-image references remain retained by the image.
+\note This changes the image seen by all existing references to it.
+\code{.js}
+// image is an existing image; saved is a MemBlock from an image snapshot.
+const reader = new pdg.Deserializer();
+reader.setDataPtr(saved);
+image.deserialize(reader);
+\endcode
+\sa Image::serialize(), Serializer::setResourceMode()
+*/
+
+/** \fn number Image::getMyClassTag()
+\brief Return the native serialization class identifier for images.
+\return The image class tag, shared by Image and ImageStrip.
+*/

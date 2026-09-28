@@ -121,7 +121,7 @@ public:
 
     
 // lifecycle
-/// @cond C++
+/// @cond CXX
     virtual ~ResourceManager();
 /// @endcond
 

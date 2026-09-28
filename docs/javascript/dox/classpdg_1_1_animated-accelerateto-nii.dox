@@ -1,9 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Animated::accelerateTo
-
-\brief change the object's speed to a particular value over time
-
-Honors delay given by wait()
-
-**/ }

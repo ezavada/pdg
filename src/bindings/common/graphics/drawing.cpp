@@ -9,6 +9,7 @@
 // -----------------------------------------------
 
 #include "pdg_script_macros.h"
+#include "graphics_macros.h"
 
 %#include "pdg_project.h"
 
@@ -37,6 +38,9 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(ElementRef,
         HAS_METHOD(ElementRef, "changeControlPoint", ChangeControlPoint)
         HAS_METHOD(ElementRef, "getAttributes", GetAttributes)
         HAS_METHOD(ElementRef, "setAttributes", SetAttributes)
+        HAS_METHOD(ElementRef, "setLiveAttributes", SetLiveAttributes)
+        HAS_METHOD(ElementRef, "clearLiveAttributes", ClearLiveAttributes)
+        HAS_METHOD(ElementRef, "hasLiveAttributes", HasLiveAttributes)
         HAS_METHOD(ElementRef, "moveForward", MoveForward)
         HAS_METHOD(ElementRef, "moveBackward", MoveBackward)
         HAS_METHOD(ElementRef, "moveToFront", MoveToFront)
@@ -123,9 +127,28 @@ METHOD_IMPL(ElementRef, GetAttributes)
 METHOD_IMPL(ElementRef, SetAttributes)
     METHOD_SIGNATURE("", undefined, 1, ([object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(1);
-    REQUIRE_CPP_OBJECT_ARG(1, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(1, attrs);
     self->setAttributes(*attrs);
     NO_RETURN;
+    END
+
+METHOD_IMPL(ElementRef, SetLiveAttributes)
+    METHOD_SIGNATURE("", undefined, 1, ([object Attributes] attrs));
+    REQUIRE_ARG_COUNT(1);
+    REQUIRE_ATTRIBUTES_ARG(1, attrs);
+    self->setLiveAttributes(*attrs);
+    NO_RETURN;
+    END
+METHOD_IMPL(ElementRef, ClearLiveAttributes)
+    METHOD_SIGNATURE("", undefined, 0, ());
+    REQUIRE_ARG_COUNT(0);
+    self->clearLiveAttributes();
+    NO_RETURN;
+    END
+METHOD_IMPL(ElementRef, HasLiveAttributes)
+    METHOD_SIGNATURE("", boolean, 0, ());
+    REQUIRE_ARG_COUNT(0);
+    RETURN_BOOL(self->hasLiveAttributes());
     END
 
 METHOD_IMPL(ElementRef, MoveForward)
@@ -214,7 +237,7 @@ METHOD_IMPL(Drawing, AddLine)
     REQUIRE_ARG_COUNT(3);
     REQUIRE_POINT_ARG(1, from);
     REQUIRE_POINT_ARG(2, to);
-    REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(3, attrs);
     ElementRef* result = self->addLine(from, to, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -223,7 +246,7 @@ METHOD_IMPL(Drawing, AddSpline)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Spline] spline, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(2);
     REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
-    REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(2, attrs);
     ElementRef* result = self->addSpline(std::move(*spline), *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -232,7 +255,7 @@ METHOD_IMPL(Drawing, AddRect)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(2);
     REQUIRE_RECT_ARG(1, rect);
-    REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(2, attrs);
     ElementRef* result = self->addRect(rect, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -241,7 +264,7 @@ METHOD_IMPL(Drawing, AddQuad)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Quad] quad, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(2);
     REQUIRE_QUAD_ARG(1, quad);
-    REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(2, attrs);
     ElementRef* result = self->addQuad(quad, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -250,7 +273,7 @@ METHOD_IMPL(Drawing, AddPolygon)
     METHOD_SIGNATURE("", [object ElementRef], 2, ([object Polygon] polygon, [object Attributes] attrs)); 
     REQUIRE_ARG_COUNT(2);
     REQUIRE_CPP_OBJECT_ARG(1, polygon, Polygon);
-    REQUIRE_CPP_OBJECT_ARG(2, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(2, attrs);
     ElementRef* result = self->addPolygon(std::move(*polygon), *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -261,7 +284,7 @@ METHOD_IMPL(Drawing, AddEllipse)
     REQUIRE_POINT_ARG(1, center);
     REQUIRE_NUMBER_ARG(2, xRadius);
     REQUIRE_NUMBER_ARG(3, yRadius);
-    REQUIRE_CPP_OBJECT_ARG(4, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(4, attrs);
     ElementRef* result = self->addEllipse(center, xRadius, yRadius, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -274,7 +297,7 @@ METHOD_IMPL(Drawing, AddArc)
     REQUIRE_NUMBER_ARG(3, yRadius);
     REQUIRE_NUMBER_ARG(4, startAngle);
     REQUIRE_NUMBER_ARG(5, endAngle);
-    REQUIRE_CPP_OBJECT_ARG(6, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(6, attrs);
     ElementRef* result = self->addArc(center, xRadius, yRadius, startAngle, endAngle, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -284,7 +307,7 @@ METHOD_IMPL(Drawing, AddImage)
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
     REQUIRE_CPP_OBJECT_ARG(2, image, Image);
-    REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(3, attrs);
     ElementRef* result = self->addImage(rect, *image, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -294,7 +317,7 @@ METHOD_IMPL(Drawing, AddImageStrip)
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
     REQUIRE_CPP_OBJECT_ARG(2, imageStrip, ImageStrip);
-    REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
+    REQUIRE_ATTRIBUTES_ARG(3, attrs);
     ElementRef* result = self->addImageStrip(rect, *imageStrip, *attrs);
     RETURN_CPP_OBJECT(result, ElementRef);
     END
@@ -304,9 +327,13 @@ METHOD_IMPL(Drawing, AddDrawing)
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
     REQUIRE_CPP_OBJECT_ARG(2, drawing, Drawing);
-    REQUIRE_CPP_OBJECT_ARG(3, attrs, Attributes);
-    ElementRef* result = self->addDrawing(rect, *drawing, *attrs);
-    RETURN_CPP_OBJECT(result, ElementRef);
+    REQUIRE_ATTRIBUTES_ARG(3, attrs);
+    try {
+        ElementRef* result = self->addDrawing(rect, *drawing, *attrs);
+        RETURN_CPP_OBJECT(result, ElementRef);
+    } catch (const std::exception& error) {
+        THROW_ERR(error.what());
+    }
     END
 
 METHOD_IMPL(Drawing, GetElementCount)

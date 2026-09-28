@@ -9,6 +9,8 @@ namespace pdg { /**
 \defgroup Animation Animation
 \brief Things related to animation
 
+See \ref ParticleEffects for lightweight particles, point emitters and nested trails.
+
 \defgroup Sound Sound
 \brief Things used for audio (sound and music)
 
@@ -30,3 +32,8 @@ namespace pdg { /**
 
 
 **/ }
+
+/** \defgroup Sprites Sprites and layers
+ * \ingroup Animation Graphics
+ * \brief Sprite and tile layers, drawing helpers, and collision helpers.
+ */

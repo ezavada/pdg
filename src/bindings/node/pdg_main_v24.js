@@ -2,7 +2,7 @@
 //
 // Improved version using Node.js v24's built-in capabilities
 // instead of custom _loadScript approach
-// Uses standard Node.js require() and vm.runInNewContext() instead of ES modules
+// Entry scripts use CommonJS module scope and the normal Node.js global environment.
 //
 // AUTO-EXIT FEATURE:
 // This version automatically detects when scripts complete execution and exits gracefully
@@ -81,9 +81,7 @@ if (typeof global !== 'undefined' && global.pdg) {
 // Load required Node.js modules
 const path = require('path');
 const fs = require('fs');
-const vm = require('node:vm');
 const Module = require('module');
-const { SourceTextModule } = require('node:vm');
 
 // Set up REPL functionality
 pdg.startRepl = function() {
@@ -149,7 +147,8 @@ pdg.startRepl = function() {
     });
 };
 
-// Improved script loading using Node.js v24's VM module
+// Compile disk/resource entry scripts as CommonJS modules. Hot top-level variables
+// stay local instead of going through contextified global property interceptors.
 function loadAndRunScript(scriptContent, filename) {
     try {
         // Create a proper process.argv for the script context
@@ -173,62 +172,33 @@ function loadAndRunScript(scriptContent, filename) {
             }
         }
         
-        // Create a per-file require function that resolves paths relative to the script's location
-        // This is essential for relative requires (e.g., require('./mymodule.js')) to work correctly
-        const standardRequire = Module.createRequire(path.resolve(filename));
-        
-        // Create a hybrid require that checks PDG native modules first, then falls back to standard require
-        const fileRequire = function(moduleName) {
-            // Try PDG native modules first (dump, coordinates, color, etc.)
+        const resolved = path.resolve(filename);
+        const entry = new Module(resolved);
+        entry.filename = resolved;
+        entry.paths = Module._nodeModulePaths(path.dirname(resolved));
+        entry.id = '.';
+        // Preserve the entry script's linked-module imports (coordinates, dump,
+        // etc.), then use Node's normal relative/package resolution.
+        const moduleRequire = entry.require.bind(entry);
+        entry.require = function(name) {
             try {
-                const nativeModule = process._linkedBinding(moduleName);
-                if (nativeModule) {
-                    return nativeModule;
-                }
-            } catch (e) {
-                // Not a PDG native module, continue to standard require
-            }
-            
-            // Fall back to standard Node.js require for file system and npm modules
-            return standardRequire(moduleName);
+                const native = process._linkedBinding(name);
+                if (native) return native;
+            } catch (_) {}
+            return moduleRequire(name);
         };
-        
-        // Copy over the resolve and cache properties from standard require
-        fileRequire.resolve = standardRequire.resolve.bind(standardRequire);
-        fileRequire.cache = standardRequire.cache;
-        fileRequire.extensions = standardRequire.extensions;
-        fileRequire.main = standardRequire.main;
-        
-        // Create a context with PDG bindings and standard globals
-        const context = vm.createContext({
-            pdg: pdg,
-            console: console,
-            process: {
-                ...process,
-                argv: scriptArgv
-            },
-            global: global,
-            Buffer: Buffer,
-            setTimeout: setTimeout,
-            setInterval: setInterval,
-            clearTimeout: clearTimeout,
-            clearInterval: clearInterval,
-            setImmediate: setImmediate,
-            clearImmediate: clearImmediate,
-            require: fileRequire, // Use per-file require for proper relative path resolution
-            module: module,
-            exports: exports,
-            __filename: filename,
-            __dirname: path.dirname(filename),
-            // Add other globals as needed
-        });
+        process.argv = scriptArgv;
+        process.mainModule = entry;
+        Module._cache[resolved] = entry;
+        try {
+            entry._compile(scriptContent, resolved);
+            entry.loaded = true;
+        } catch (error) {
+            delete Module._cache[resolved];
+            throw error;
+        }
+        const result = entry.exports;
 
-        // Run the script in the context
-        const result = vm.runInContext(scriptContent, context, {
-            filename: filename,
-            displayErrors: true
-        });
-        
         pdg._debug_log(`[PDG] pdg_main.js: Successfully loaded and executed: ${filename}`);
         
         // Schedule automatic exit detection after script execution
@@ -410,32 +380,6 @@ function checkAndExit(scriptName) {
     } catch (error) {
         pdg._debug_log(`[PDG] pdg_main.js: Error during auto-exit check: ${error.message}`);
         pdg._debug_log(`[PDG] pdg_main.js: Continuing normal execution...`);
-    }
-}
-
-// Alternative approach using vm.runInContext for simpler scripts
-function runScriptInContext(scriptContent, filename) {
-    try {
-        // Create a context with PDG bindings
-        const context = vm.createContext({
-            pdg: pdg,
-            console: console,
-            process: process,
-            global: global,
-            // Add other necessary globals
-        });
-
-        // Run the script in the context
-        const result = vm.runInContext(scriptContent, context, {
-            filename: filename,
-            importModuleDynamically: vm.constants.USE_MAIN_CONTEXT_DEFAULT_LOADER
-        });
-
-        pdg._debug_log(`[PDG] pdg_main.js: Successfully executed: ${filename}`);
-        return result;
-    } catch (error) {
-        console.error(`Error executing script ${filename}:`, error);
-        throw error;
     }
 }
 

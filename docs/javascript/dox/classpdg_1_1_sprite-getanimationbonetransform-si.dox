@@ -1,0 +1,15 @@
+/**
+\fn pdg::Sprite::getAnimationBoneTransform(string name, int space)
+\brief Copy an evaluated bone transform.
+
+Evaluates the current pose, including overrides and controllers. Unknown names, unavailable poses, and invalid spaces throw. Returned values are independent of the live Sprite.
+
+\param name Exact bone name returned by getAnimationBoneNames().
+\param space Integer coordinate-space constant: \c pdg.animationSpace_Local (parent frame), \c pdg.animationSpace_Rig, or \c pdg.animationSpace_World (owning layer).
+
+\return An object with x, y, rotation, scaleX, scaleY, and alpha; see \ref animation_pose_snapshot.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\see getAnimationBoneNames(), getAnimationPose()
+*/

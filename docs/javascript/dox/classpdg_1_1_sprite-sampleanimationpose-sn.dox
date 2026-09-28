@@ -1,0 +1,21 @@
+/**
+\fn pdg::Sprite::sampleAnimationPose(string clip, number timeSeconds)
+\brief Sample a clip without changing playback.
+
+Samples the authored clip independently of the live clock, bone overrides, and controllers. Does not emit trigger events or change rendering. Unknown or incompatible clips and nonfinite times throw.
+
+\param clip Name of a compatible clip in the current Spriter entity.
+\param timeSeconds Finite sample time in seconds. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints.
+
+\return An owned snapshot with the fields in \ref animation_pose_snapshot.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\par Example
+\code{.js}
+const halfway = sprite.sampleAnimationPose('reference', 0.5);
+console.log(halfway.bones.map(bone => bone.name));
+\endcode
+
+\see getAnimationPose(), seekAnimation()
+*/

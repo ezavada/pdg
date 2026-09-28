@@ -10,7 +10,7 @@ This is the documentation for the Javascript API.
 
 Features
 --------
-- integrated with Node.js v24
+- integrated with Node.js v24.21.0 LTS
 - high performance Javascript via Google's V8 engine
 - event driven
 - cross platform
@@ -29,12 +29,61 @@ Features
 - works with node inspector for Javascript debugging
 - interactive Javascript console mode
 
+Build requirements
+------------------
+
+PDG requires a C++20 compiler and standard library, including `std::format`.
+The iOS application requires **iOS 16.3 or later**; both Debug and Release
+configurations use that deployment target. Use an Xcode toolchain with C++20
+library support when building the iOS project.
+
+The `deps/node` submodule pins Node.js **v24.21.0**. After updating the checkout,
+run `git submodule update --init deps/node`, `./configure`, and `make pdg pdg-node`
+(Windows: `configure.ps1` followed by `make.ps1 -Target pdg` and
+`make.ps1 -Target pdg-node`). Node builds record their source version so a version
+change triggers a rebuild of the cached runtime and libraries. Node builds
+accept Python 3.9 through 3.14.
+
 Documentation
 -------------
+
+Read the [v1.1 release notes](docs/RELEASE_NOTES_1.1.md) for features, detailed
+changes from v1.0, and API migration guidance.
+
+For unit tests, rig regressions, tooling checks, visual pages, and interactive
+demos, see the [testing guide](test/README.md): `test/unit`, `test/rigs`,
+`test/tools`, `test/ui`, and `test/demo`
+(with `.sh` and `.ps1` launchers).
 
 Documentation (HTML and Man pages) are included in the docs directory, and can also be found online (along with comment areas) at:
 
 http://ezavada.com/pdg/javascript/html/
+
+To regenerate the documentation locally, run `make docs` after `./configure` (or run
+`./tools/build-docs.sh` directly). This runs Doxygen for the C++ HTML, JavaScript
+HTML, and JavaScript manual pages, then packages the results into a ZIP archive.
+Missing Doxygen and Graphviz tools are installed automatically on supported systems.
+
+The regenerated pages replace `docs/cxx/html/`, `docs/javascript/html/`, and
+`docs/javascript/man/`, so existing local bookmarks show the current API. These
+are generated directories; keep documentation edits in the source headers and
+`.dox` files. The complete site is also available at
+`artifacts/docs/site/pdg-docs-v<VERSION>/index.html`, where `<VERSION>` is the value
+in the root `VERSION` file. The archive and SHA-256 checksum are in
+`artifacts/docs/`, and Doxygen progress and warning logs are in
+`artifacts/docs/work/`. Use `./tools/build-docs.sh --no-local-copy` when only the
+artifact site and archive are needed.
+
+JavaScript documentation uses the declarations in `docs/javascript/pdg-js.h`.
+After API changes, build the current runtime with `make pdg`, then run
+`./tools/build-docs.sh --refresh-api` to refresh those declarations from the runtime
+before regenerating and packaging the documentation.
+
+To audit class coverage on both Topics pages after generation, run
+`node tools/check-missing-docs.js --topics artifacts/docs/site/pdg-docs-v<VERSION>`.
+The check verifies topic membership and links for every indexed class and structure,
+checks the JavaScript class index against the generated API inventory, and verifies
+that every public event type appears in Events.
 
 Design Goals
 ------------
@@ -57,7 +106,7 @@ Usage assumptions
 -----------------
 
 PDG is supplied in several different forms:
-- an ANSI C++ SDK
+- a C++20 SDK
 - a Javascript SDK (that will eventually include a binary runtime for Mac OS X and Windows)
 - an npm package for Node.js for server side programming
 
@@ -113,49 +162,37 @@ Building From Source
 
 **Windows**:
 
-- Install CMake 3.0 or later
-- Install Python 2.7
-- Install Git
-- Install Visual Studio 2013 Express
-- In Visual Studio Command Console:
+Install Git, CMake 3.16 or later, Python in the supported range above, and a
+Visual Studio C++ toolchain with C++20 standard-library support. In a developer
+PowerShell session:
 
-        C:\> git clone --recurse-submodules git@github.com:ezavada/pdg.git pdg
-        C:\> cd pdg
-        C:\pdg> configure
-        C:\pdg> make
+```powershell
+git clone --recurse-submodules git@github.com:ezavada/pdg.git pdg
+cd pdg
+.\configure.ps1
+.\make.ps1 -Target pdg
+.\test\unit.ps1
+.\test\ui.ps1
+.\test\demo.ps1
+```
 
-  If you already cloned without submodules, run:
+**macOS**:
 
-        C:\pdg> git submodule update --init --recursive
-    
-  Test it with any of the following:
+Install Git, CMake 3.16 or later, Python in the supported range above, and Xcode
+with its command-line tools and C++20 standard-library support. In Terminal:
 
-        C:\pdg> pdg
-        C:\pdg> test\pdg
-        C:\pdg> test\client 
-    
+```sh
+git clone --recurse-submodules git@github.com:ezavada/pdg.git pdg
+cd pdg
+./configure
+make pdg
+./test/unit
+./test/ui
+./test/demo
+```
 
-**Mac OS X**:
-
-- Install CMake 3.0 or later
-- Install XCode 5 or later, including command line tools
-- In Terminal Window:
-
-        $ git clone --recurse-submodules git@github.com:ezavada/pdg.git pdg
-        $ cd pdg
-        $ ./configure
-        $ make
-
-  If you already cloned without submodules, run:
-  
-        $ git submodule update --init --recursive
-
-  Test it with any of the following:
-  
-        $ ./pdg test/js/main.js
-        $ test/pdg
-        $ test/client
-        $ test/node
-        $ test/ui
-        $ ./pdg
-
+For an existing checkout, initialize dependencies with
+`git submodule update --init --recursive`. Build the Node addon with `make pdg-node`
+(Windows: `.\make.ps1 -Target pdg-node`) before running `test/unit --node` or
+`test/rigs`. See the [testing guide](test/README.md) for browser, iOS, headless,
+performance, and tooling checks.

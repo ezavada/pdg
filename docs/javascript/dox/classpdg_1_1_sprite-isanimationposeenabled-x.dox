@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::isAnimationPoseEnabled()
+\brief Test whether a pose rig is available.
+
+\return True after successful enableAnimationPose() and until it is disabled or its entity is replaced.
+
+\see enableAnimationPose(), getAnimationRigError()
+*/

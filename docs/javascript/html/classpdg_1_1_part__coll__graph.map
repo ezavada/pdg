@@ -1,0 +1,11 @@
+<map id="Part" name="Part">
+<area shape="rect" id="Node000001" title="An independently animated part owned by a Sprite." alt="" coords="116,102,161,128"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="5,5,82,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="67,40,128,100,124,102,65,44"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle." alt="" coords="106,5,171,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="140,45,141,102,136,100,136,48"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="186,8,194,12,197,19,189,28,172,30,171,25,187,23,192,18,191,15,186,13"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_physics_body.html" title="Optional physical motion for a Sprite or Part, using seconds." alt="" coords="288,5,386,31"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="300,39,162,105,160,100,295,37"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="402,9,413,18,404,27,387,30,386,25,402,22,407,18,401,14"/>
+</map>

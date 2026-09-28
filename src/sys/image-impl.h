@@ -61,9 +61,12 @@ namespace pdg {
 		uint32  dataSize;           // total size as allocated of the data ptr in memory
 		bool	mRetainData;
 		bool	mRetainAlpha;
+        bool mSnapshotPixelsChanged = false;
 
 		SERIALIZABLE_TAG( CLASSTAG_IMAGE );
 		SERIALIZABLE_METHODS();
+        int snapshotKind(ISerializer*) const;
+        void requireSnapshotPixels() const;
 
 	  #ifdef PDG_NO_GUI
 		static pdg::ISerializable* CreateInstance() { return new ImageImpl(); }
@@ -142,6 +145,9 @@ ImageImpl::retainAlpha() {
 
 inline void*    
 ImageImpl::getData() { 
+    // The returned pixels are mutable; preserve them rather than referring to
+    // an original resource which may no longer describe their contents.
+    mSnapshotPixelsChanged = true; mRetainData = true;
 	return data; 
 }
 

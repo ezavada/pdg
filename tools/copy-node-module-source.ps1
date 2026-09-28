@@ -153,6 +153,7 @@ Copy-DirectoryContents (Get-RepoPath "deps\minizip") (Join-Path $resolvedTargetD
 
 Write-Host " * deps/png ==> $resolvedTargetDir\deps\png"
 Copy-DirectoryContents (Get-RepoPath "deps\png") (Join-Path $resolvedTargetDir "deps\png")
+Copy-Item -LiteralPath (Get-RepoPath "deps\png\scripts\pnglibconf.h.prebuilt") -Destination (Join-Path $resolvedTargetDir "deps\png\pnglibconf.h") -Force
 Remove-Item -LiteralPath (Join-Path $resolvedTargetDir "deps\png\.gitignore") -Force -ErrorAction SilentlyContinue
 
 Write-Host " * docs/javascript/man/* ==> $resolvedTargetDir\man"
@@ -160,5 +161,11 @@ Copy-DirectoryContents (Get-RepoPath "docs\javascript\man") (Join-Path $resolved
 
 Write-Host " * VERSION ==> $resolvedTargetDir"
 Copy-Item -LiteralPath (Get-RepoPath "VERSION") -Destination (Join-Path $resolvedTargetDir "VERSION") -Force
+
+# VERSION is authoritative even when the package template has not been updated.
+$packagePath = Join-Path $resolvedTargetDir "package.json"
+$manifest = Get-Content -LiteralPath $packagePath -Raw | ConvertFrom-Json
+$manifest.version = (Get-Content -LiteralPath (Join-Path $resolvedTargetDir "VERSION") -Raw).Trim()
+[System.IO.File]::WriteAllText($packagePath, ($manifest | ConvertTo-Json -Depth 100) + "`n")
 
 Write-Host "Copied all source files to $resolvedTargetDir." -ForegroundColor Green

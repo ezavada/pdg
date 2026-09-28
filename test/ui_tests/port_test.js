@@ -5,7 +5,7 @@ console.log("=== STANDALONE PORT TEST SCRIPT ===");
 console.log("Testing multi-monitor support simultaneously...");
 
 // Check for --wait parameter
-var waitForUser = false;
+var waitForUser = !!pdg.visualTestSession;
 for (var i = 0; i < process.argv.length; i++) {
     if (process.argv[i] === '--wait') {
         waitForUser = true;
@@ -14,7 +14,7 @@ for (var i = 0; i < process.argv.length; i++) {
 }
 
 if (waitForUser) {
-    console.log("Manual mode: Press SPACE or ESC to end test");
+    console.log(pdg.visualTestSession ? pdg.visualTestSession.instructions : "Manual mode: Press SPACE or ESC to end test");
 } else {
     console.log("Auto mode: Test will run for 10 seconds, press any key to end early");
 }
@@ -89,8 +89,10 @@ function setupDrawHandler() {
             return false; // Not one of our ports, let other handlers process
         }
         
-        portInfo.frameCount++;
-        frameCount++;
+        if (!pdg.visualTestSession || !pdg.visualTestSession.paused) {
+            portInfo.frameCount++;
+            frameCount++;
+        }
         
         var port = portInfo.port;
         var screenNum = portInfo.screenNum;
@@ -158,7 +160,7 @@ function setupDrawHandler() {
         port.drawText(frameText, framePoint, frameAttrs);
         
         // Draw instructions based on mode
-        var instructionText = waitForUser ? "Press SPACE or ESC to end test" : "Press any key to end early";
+        var instructionText = pdg.visualTestSession ? pdg.visualTestSession.instructions : waitForUser ? "Press SPACE or ESC to end test" : "Press any key to end early";
         var instructionPoint = new pdg.Point(actualWidth/2, actualHeight - 100);
         var instructionAttrs = new pdg.Attributes().textSize(14).textStyle(pdg.textStyle_Centered).fillColor("black");
         port.drawText(instructionText, instructionPoint, instructionAttrs);
@@ -170,6 +172,7 @@ function setupDrawHandler() {
 }
 
 function setupKeyHandler() {
+    if (pdg.visualTestSession) return null;
     var keyHandler = pdg.on(pdg.eventType_KeyPress, function(evt) {
         if (waitForUser) {
             // In wait mode, only SPACE or ESC end the test

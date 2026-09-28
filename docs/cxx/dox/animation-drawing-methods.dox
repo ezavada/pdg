@@ -1,0 +1,230 @@
+/**
+\fn AnimationDrawableId pdg::AnimationDrawings::add(const AnimationDrawableOptions & options, Callback callback, const AnimationRig & rig)
+\brief Register a drawing callback.
+
+Validates bone, placement, slot, and bounds against the rig before registering. Changes requested between beginFrame() and endFrame() are deferred.
+
+\param options Drawing placement and culling settings; see \ref animation_drawable_options.
+\param callback Synchronous callable returning a shared Drawing or nullptr. Its context expires when it returns.
+\param rig Immutable schema used to validate referenced bones and slots.
+
+\return A nonzero registration ID.
+
+\see remove(), collect()
+*/
+
+/**
+\fn void pdg::AnimationDrawings::remove(AnimationDrawableId id)
+\brief Remove a custom drawing registration.
+
+Releases the Drawing or callback and its diagnostic. An unknown valid ID is harmless. Changes requested while drawing are deferred until the current draw finishes.
+
+\param id Existing registration ID returned by add(); remove() also accepts absent IDs.
+
+\see add(), collect()
+*/
+
+/**
+\fn void pdg::AnimationDrawings::clear()
+\brief Remove all custom drawing registrations.
+
+Releases retained Drawings and callbacks. During drawing, clearing takes effect after the current draw finishes.
+
+\see add(), collect()
+*/
+
+/**
+\fn void pdg::AnimationDrawings::setEnabled(AnimationDrawableId id, bool enabled)
+\brief Enable or hide a registered drawing.
+
+Does not remove the registration. Throws for an unknown ID. A callback disabled by a failure cannot be reenabled; remove it and register a corrected callback.
+
+\param id Existing registration ID returned by add(); remove() also accepts absent IDs.
+\param enabled True to include the drawing; false to skip it.
+
+\see add(), collect()
+*/
+
+/**
+\fn bool pdg::AnimationDrawings::isEnabled(AnimationDrawableId id) const
+\brief Test a registration's enabled state.
+
+Throws for an unknown ID.
+
+\param id Existing drawing registration ID.
+
+\return True if this registration is enabled.
+
+\see setEnabled()
+*/
+
+/**
+\fn std::string pdg::AnimationDrawings::error(AnimationDrawableId id) const
+\brief Read a drawing callback diagnostic.
+
+\param id Existing registration ID returned by add(); remove() also accepts absent IDs.
+
+\return An empty string when no error is recorded, otherwise the failure text. Throws for an unknown ID.
+
+\see add(), collect()
+*/
+
+/**
+\fn void pdg::AnimationDrawings::fail(AnimationDrawableId id, const std::string & error)
+\brief Record a drawing failure and disable its callback.
+
+Releases the callback immediately. To retry, remove the entry and register a new callback. Unknown IDs throw.
+
+\param id Existing drawing registration ID.
+\param error Diagnostic to expose through error().
+
+\see error(), add()
+*/
+
+/**
+\fn void pdg::AnimationDrawings::beginFrame()
+\brief Begin a stable drawing pass.
+
+Snapshots and sorts registrations by order, preserving registration order for ties. Rejects recursive drawing. Pair with endFrame(), including on exceptional exit.
+
+\see collect(), endFrame()
+*/
+
+/**
+\fn void pdg::AnimationDrawings::endFrame()
+\brief Finish the drawing pass.
+
+Releases the frame snapshot and applies deferred registration changes.
+
+\see beginFrame()
+*/
+
+/**
+\fn bool pdg::AnimationDrawings::isDrawing() const
+\brief Test whether a frame is open.
+
+\return True between beginFrame() and endFrame().
+
+\see beginFrame()
+*/
+
+/**
+\fn bool pdg::AnimationDrawings::empty() const
+\brief Test whether any registrations exist.
+
+\return True if there are no entries. Disabled entries still make this false.
+
+\see clear(), options()
+*/
+
+/**
+\fn std::vector< AnimationDrawingSubmission > pdg::AnimationDrawings::collect(int placement, const std::string & slot, const AnimationPose & pose, const AnimationTransform & root)
+\brief Evaluate callbacks for a placement within an open frame.
+
+Requires beginFrame(). Exceptions disable only the failing callback and record its error. Null drawings emit no submission. In headless builds, returns an empty vector.
+
+\param placement One AnimationDrawPlacement value.
+\param slot Image binding name for slot placement; empty for BeforeAll/AfterAll.
+\param pose Current evaluated pose belonging to the registered rig.
+\param root Sprite root in owning-layer coordinates.
+
+\return Ordered drawing submissions retaining their Drawing and copied world transform.
+
+\see beginFrame(), endFrame(), error()
+*/
+
+/**
+\fn std::vector< AnimationDrawableOptions > pdg::AnimationDrawings::options() const
+\brief Copy enabled registration options.
+
+\return A vector of options for enabled registrations, in registration order.
+
+\see setEnabled()
+*/
+
+/**
+\fn std::shared_ptr< Drawing > pdg::Drawing::share() const
+\brief Retain the same editable drawing contents.
+
+The returned handle owns shared contents independently of this wrapper. ElementRef edits remain visible through either handle.
+
+\return A shared_ptr<Drawing> that keeps the contents alive.
+
+\see Sprite::addAnimationDrawable(), Part::setDrawing()
+*/
+
+/**
+\fn void pdg::Drawing::drawTransformed(Port * port, const Attributes & parent, bool localStrokes) const
+\brief Replay drawing contents with parent attributes.
+
+Composes parent and element transforms/opacity without changing stored element attributes. Requires a GUI-capable build.
+
+\param port Destination Port.
+\param parent Parent transform and appearance applied to every element.
+\param localStrokes False keeps stroke thickness in Port pixels. True scales thickness by sqrt(abs(det(composed transform))).
+
+\see destinationTransform()
+*/
+
+/**
+\fn glm::mat3 pdg::Drawing::destinationTransform(const Quad & destination) const
+\brief Map drawing bounds into an affine destination.
+
+Requires a finite parallelogram; non-affine quads throw. Degenerate source axes retain unit scale instead of dividing by zero.
+
+\param destination Destination corners corresponding to the drawing bounds.
+
+\return A column-major affine glm::mat3 mapping source geometry into the destination.
+
+\see drawTransformed()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationDrawingContext::getTransform(int space) const
+\brief Copy the registered bone's transform.
+
+The context is borrowed and expires on callback return; subsequent use throws. Invalid spaces also throw.
+
+\param space animationSpace_Local, Rig, or World (each with animationSpace_ prefix); defaults to owning-layer World.
+
+\return An AnimationTransform value safe to retain.
+
+\see copyPose(), Sprite::addAnimationDrawable()
+*/
+
+/**
+\fn AnimationPose pdg::AnimationDrawingContext::copyPose() const
+\brief Copy the evaluated drawing pose.
+
+Throws after the drawing callback returns.
+
+\return An owned AnimationPose safe to retain independently of this context.
+
+\see getTransform()
+*/
+
+/**
+\fn pdg::ElementRef::ElementRef(Drawing * drawing, uint32_t index)
+\brief Retain an editable drawing element.
+
+Keeps the Drawing contents alive independently of the original wrapper. Application code normally receives ElementRef pointers from Drawing::addRect() and other add methods.
+
+\param drawing Non-null owner Drawing.
+\param index Existing element index belonging to that Drawing.
+
+\see Drawing::share()
+*/
+
+/**
+\fn AnimationDrawableOptions pdg::decodeAnimationDrawableOptions(const std::vector< double > & values, const std::string & slot)
+\brief Decode binding-layer drawing options.
+
+Native applications should normally construct AnimationDrawableOptions directly. Rejects wrong size, nonfinite values, or invalid numeric enum/ID fields; rig-specific validation happens at registration.
+
+\param values Nine values: bone, placement, order, uncullable (0/1), left, top, right, bottom, strokeSpace.
+\param slot Authored image-binding name, or empty for whole-Sprite placement.
+
+\return Decoded AnimationDrawableOptions.
+
+\see Sprite::addAnimationDrawable()
+*/

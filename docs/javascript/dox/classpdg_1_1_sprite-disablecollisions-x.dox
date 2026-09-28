@@ -1,7 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Sprite::disableCollisions
-
-\brief stop checking for collisions with this sprite
-
-**/ }

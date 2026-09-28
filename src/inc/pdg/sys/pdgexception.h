@@ -54,7 +54,7 @@ namespace pdg {
 class PDGException : public std::exception {
 public:
 	PDGException(const char* desc) { describe(desc); }
-	virtual const char* what() const throw() { return description; }
+	virtual const char* what() const noexcept { return description; }
 private:
 	enum { maxStrBuf = 256 };
 	void describe( const char* whatStr ) {

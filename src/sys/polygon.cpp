@@ -57,8 +57,11 @@ namespace pdg {
 	Polygon::Polygon(Polygon&& other) noexcept 
 		: mPoints(std::move(other.mPoints)),
 		  mCachedBounds(std::move(other.mCachedBounds)),
-		  mBoundsDirty(other.mBoundsDirty)
+		  mBoundsDirty(other.mBoundsDirty),
+		  mCachedTessellation(std::move(other.mCachedTessellation)),
+		  mTessellationDirty(other.mTessellationDirty)
 	{
+		other.invalidateGeometry();
 		#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 			mPolygonScriptObj = std::move(other.mPolygonScriptObj);
 		#endif
@@ -74,6 +77,9 @@ namespace pdg {
 			mPoints = std::move(other.mPoints);
 			mCachedBounds = std::move(other.mCachedBounds);
 			mBoundsDirty = other.mBoundsDirty;
+			mCachedTessellation = std::move(other.mCachedTessellation);
+			mTessellationDirty = other.mTessellationDirty;
+			other.invalidateGeometry();
 			
 			#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 				mPolygonScriptObj = std::move(other.mPolygonScriptObj);
@@ -98,7 +104,7 @@ namespace pdg {
 			}
 		}
 		mPoints.push_back(p);
-		invalidateBounds();
+		invalidateGeometry();
 	}
 	
 	void Polygon::addSpline(Spline* spline, float uStep) {
@@ -157,8 +163,8 @@ namespace pdg {
 			}
 		}
 		
-		// Invalidate bounds since we added points
-		invalidateBounds();
+		// Invalidate bounds and tessellation since we added points
+		invalidateGeometry();
 	}
 	
 	void Polygon::insertPoint(size_t index, const Point& p) {
@@ -167,7 +173,7 @@ namespace pdg {
 		} else {
 			mPoints.insert(mPoints.begin() + index, p);
 		}
-		invalidateBounds();
+		invalidateGeometry();
 	}
 	
 	size_t Polygon::getPointCount() const {
@@ -179,7 +185,7 @@ namespace pdg {
 			throw std::out_of_range("Polygon::removePoint: index out of range");
 		}
 		mPoints.erase(mPoints.begin() + index);
-		invalidateBounds();
+		invalidateGeometry();
 	}
 	
 	Point Polygon::getPoint(size_t index) const {
@@ -194,12 +200,12 @@ namespace pdg {
 			throw std::out_of_range("Polygon::setPoint: index out of range");
 		}
 		mPoints[index] = p;
-		invalidateBounds();
+		invalidateGeometry();
 	}
 	
 	void Polygon::clearPoints() {
 		mPoints.clear();
-		invalidateBounds();
+		invalidateGeometry();
 	}
 	
 	// Geometric operations
@@ -283,7 +289,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i] += delta;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -291,7 +297,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i].x -= delta;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -299,7 +305,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i].x += delta;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -307,7 +313,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i].y -= delta;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -315,7 +321,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i].y += delta;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -325,7 +331,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i].x += offset;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -335,7 +341,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i].y += offset;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -347,7 +353,7 @@ namespace pdg {
 			mPoints[i].x += offsetX;
 			mPoints[i].y += offsetY;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -361,7 +367,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i] += offset;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -379,7 +385,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i].x *= factor;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -387,7 +393,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i].y *= factor;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -397,7 +403,7 @@ namespace pdg {
 			offset *= factor;
 			mPoints[i] = centerPoint + offset;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -417,7 +423,7 @@ namespace pdg {
 			mPoints[i].x = centerPoint.x + (dx * cos_angle - dy * sin_angle);
 			mPoints[i].y = centerPoint.y + (dx * sin_angle + dy * cos_angle);
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -431,7 +437,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i] += offset;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -439,7 +445,7 @@ namespace pdg {
 		for (size_t i = 0; i < mPoints.size(); i++) {
 			mPoints[i] -= offset;
 		}
-		invalidateBounds();
+		invalidateGeometry();
 		return *this;
 	}
 	
@@ -817,6 +823,19 @@ bool Polygon::isSelfIntersecting() const {
 }
 
 std::vector<Point> Polygon::tessellate() const {
+	return tessellatedPoints();
+}
+
+const std::vector<Point>& Polygon::tessellatedPoints() const {
+	if (mTessellationDirty) {
+		// Publish only a completed result; allocation failures leave the cache dirty.
+		mCachedTessellation = buildTessellation();
+		mTessellationDirty = false;
+	}
+	return mCachedTessellation;
+}
+
+std::vector<Point> Polygon::buildTessellation() const {
 	std::vector<Point> triangles;
 
 // we only need to support tessellation for rendering (GUI builds)
@@ -824,6 +843,40 @@ std::vector<Point> Polygon::tessellate() const {
 	
 	if (mPoints.size() < 3) {
 		return triangles; // Need at least 3 points
+	}
+
+	// Most renderer contours are small convex shapes (especially rectangles).
+	// Avoid constructing a general tessellator for each such draw. Checking only
+	// consecutive turns is insufficient: a pentagram can turn the same way at
+	// every vertex. Require all other vertices to lie strictly on the same side
+	// of every directed edge, which also excludes crossing/degenerate contours.
+	// Bound this quadratic check; larger or ambiguous contours use libtess2.
+	if (mPoints.size() <= 8) {
+		const auto side = [](const Point& a, const Point& b, const Point& p) {
+			return (double(b.x) - a.x) * (double(p.y) - a.y)
+			     - (double(b.y) - a.y) * (double(p.x) - a.x);
+		};
+		const double winding = side(mPoints[0], mPoints[1], mPoints[2]);
+		bool convex = winding != 0;
+		for (size_t i = 0; convex && i < mPoints.size(); ++i) {
+			const size_t next = (i + 1) % mPoints.size();
+			for (size_t j = 0; j < mPoints.size(); ++j) {
+				if (j == i || j == next) continue;
+				if (!(side(mPoints[i], mPoints[next], mPoints[j]) * winding > 0)) {
+					convex = false;
+					break;
+				}
+			}
+		}
+		if (convex) {
+			triangles.reserve((mPoints.size() - 2) * 3);
+			for (size_t i = 1; i + 1 < mPoints.size(); ++i) {
+				triangles.push_back(mPoints[0]);
+				triangles.push_back(mPoints[i]);
+				triangles.push_back(mPoints[i + 1]);
+			}
+			return triangles;
+		}
 	}
 	
 	// Create tessellator

@@ -30,6 +30,7 @@
 
 
 #include "pdg_project.h"
+#include <numbers>
 
 #ifndef PDG_NO_GUI
 
@@ -47,8 +48,12 @@
 #include <algorithm>
 #include <string>
 #include <cmath>
+#include <limits>
+#include <stdexcept>
 
+#include "opengl-framebuffer.h"
 #include "graphics-opengl.h"
+#include "image-opengl.h"
 #include "include-opengl.h"
 
 // Uncomment line below to get baselines and bounding boxes for text drawn automatically
@@ -83,9 +88,158 @@ bool gModesSet = false;
 
 extern GLuint gBoundTexture;
 
+static PortImpl* gDrawingPort = nullptr;
+static std::vector<std::weak_ptr<OffscreenSurface>> gOffscreenSurfaces;
+
+ScopedOffscreenDrawing::ScopedOffscreenDrawing(Port* port) {
+    // Custom renderers can implement Port without the OpenGL backend's state.
+    auto* implementation = dynamic_cast<PortImpl*>(port);
+    if (implementation && implementation->mOffscreen) begin(*implementation->mOffscreen, implementation);
+}
+
+ScopedOffscreenDrawing::ScopedOffscreenDrawing(OffscreenSurface& offscreen, PortImpl* port) { begin(offscreen, port); }
+
+void ScopedOffscreenDrawing::begin(OffscreenSurface& offscreen, PortImpl* port) {
+    if (port && gDrawingPort == port) return;
+    surface = &offscreen;
+    target = port;
+    previous = gDrawingPort;
+    PortImpl* previousContext = previous ? (previous->mOffscreen ? previous->mOffscreen->contextPort : previous)
+        : static_cast<PortImpl*>(GraphicsManager::instance().getMainPort());
+    switchedContext = previousContext && previousContext != offscreen.contextPort;
+    platform_startDrawing(offscreen.contextPort->mPlatformWindowRef);
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &texture);
+    glGetIntegerv(GL_RENDERBUFFER_BINDING, &renderbuffer);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glGetIntegerv(GL_SCISSOR_BOX, scissor);
+    glGetIntegerv(GL_MATRIX_MODE, &matrixMode);
+    glGetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+    glGetFloatv(GL_PROJECTION_MATRIX, projection);
+    glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
+    scissorEnabled = glIsEnabled(GL_SCISSOR_TEST);
+    savedDirty = gPortDirty;
+    framebuffer::BindFramebuffer(GL_FRAMEBUFFER, offscreen.framebuffer);
+    glViewport(0, 0, offscreen.width, offscreen.height);
+    glMatrixMode(GL_PROJECTION); glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW); glLoadIdentity();
+    gDrawingPort = port;
+    gModesSet = false;
+    gBoundTexture = GLuint(-1);
+    if (port) { port->beginFrame(); port->mStateCache.resetState(); port->setClipRect(port->getClipRect()); }
+}
+
+ScopedOffscreenDrawing::~ScopedOffscreenDrawing() {
+    if (!surface) return;
+    framebuffer::BindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    framebuffer::BindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+    glScissor(scissor[0], scissor[1], scissor[2], scissor[3]);
+    if (scissorEnabled) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
+    glMatrixMode(GL_PROJECTION); glLoadMatrixf(projection);
+    glMatrixMode(GL_MODELVIEW); glLoadMatrixf(modelview);
+    glMatrixMode(matrixMode);
+    glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+    glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
+    if (target) ++surface->revision;
+    if (switchedContext) {
+        PortImpl* context = previous ? (previous->mOffscreen ? previous->mOffscreen->contextPort : previous)
+            : static_cast<PortImpl*>(GraphicsManager::instance().getMainPort());
+        if (context) platform_startDrawing(context->mPlatformWindowRef);
+    }
+    gDrawingPort = previous;
+    gPortDirty = savedDirty;
+    gModesSet = false;
+    gBoundTexture = GLuint(-1);
+    surface->contextPort->mStateCache.resetState();
+    if (previous) { previous->mStateCache.resetState(); previous->setClipRect(previous->getClipRect()); }
+}
+
+bool PortImpl::initOffscreen(long width, long height, PortImpl* contextPort) {
+    platform_startDrawing(contextPort->mPlatformWindowRef);
+    if (!framebuffer::available()) return false;
+    auto surface = std::make_shared<OffscreenSurface>();
+    surface->contextPort = contextPort; surface->width = width; surface->height = height;
+    {
+        ScopedOffscreenDrawing scope(*surface);
+        GLint maximum = 0; glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maximum);
+        if (width > maximum || height > maximum) return false;
+        glGenTextures(1, &surface->texture);
+        glBindTexture(GL_TEXTURE_2D, surface->texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        framebuffer::GenFramebuffers(1, &surface->framebuffer);
+        framebuffer::BindFramebuffer(GL_FRAMEBUFFER, surface->framebuffer);
+        framebuffer::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, surface->texture, 0);
+        framebuffer::GenRenderbuffers(1, &surface->depth);
+        framebuffer::BindRenderbuffer(GL_RENDERBUFFER, surface->depth);
+        framebuffer::RenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+        framebuffer::FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, surface->depth);
+        if (framebuffer::CheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) return false;
+        glDisable(GL_SCISSOR_TEST);
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+    mOffscreen = surface;
+    setPortRects(Rect(width, height));
+    std::erase_if(gOffscreenSurfaces, [](const auto& entry) { return entry.expired(); });
+    gOffscreenSurfaces.push_back(surface);
+    return true;
+}
+
+void OffscreenSurface::readPixels() {
+    if (!contextPort || pixelRevision == revision) return;
+    ScopedOffscreenDrawing scope(*this);
+    pixels.resize(static_cast<size_t>(width) * height * 4);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    // Offscreen coordinates put the top row at texture v=0. Convert the
+    // composited premultiplied RGB to the straight RGBA used by Image pixels.
+    for (size_t i = 0; i < pixels.size(); i += 4) {
+        const unsigned alpha = pixels[i+3];
+        for (int channel = 0; channel < 3; ++channel)
+            pixels[i+channel] = alpha ? std::min(255u, (pixels[i+channel]*255u + alpha/2)/alpha) : 0;
+    }
+    pixelRevision = revision;
+}
+
+OffscreenSurface::~OffscreenSurface() {
+    if (contextPort) {
+        ScopedOffscreenDrawing scope(*this);
+        framebuffer::DeleteFramebuffers(1, &framebuffer);
+        framebuffer::DeleteRenderbuffers(1, &depth);
+        glDeleteTextures(1, &texture);
+    }
+}
+
+void OffscreenSurface::releaseContext() {
+    if (!contextPort) return;
+    readPixels(); // Surviving live images keep their final pixels after context destruction.
+    {
+        ScopedOffscreenDrawing scope(*this);
+        framebuffer::DeleteFramebuffers(1, &framebuffer);
+        framebuffer::DeleteRenderbuffers(1, &depth);
+        glDeleteTextures(1, &texture);
+    }
+    framebuffer = texture = depth = 0;
+    contextPort = nullptr;
+}
+
+void releaseOffscreenSurfacesForContext(PortImpl* port) {
+    for (auto& entry : gOffscreenSurfaces)
+        if (auto surface = entry.lock(); surface && surface->contextPort == port) surface->releaseContext();
+    if (gDrawingPort == port) gDrawingPort = nullptr;
+}
+
 void graphics_startDrawing(Port* port) {
 	pdg::PortImpl* thePort = dynamic_cast<pdg::PortImpl*>(port);
 	platform_startDrawing(thePort->mPlatformWindowRef);
+    gDrawingPort = thePort;
 	GLsizei w = thePort->getDrawingArea().width();
 	GLsizei h = thePort->getDrawingArea().height();
 	if (   (gEffectiveScreenPos == pdg::screenPos_Rotated90Clockwise)
@@ -94,6 +248,8 @@ void graphics_startDrawing(Port* port) {
 	} else {
 		glViewport(0, 0, w, h);
 	}
+	glDisable(GL_SCISSOR_TEST); // Frame clearing is independent of the previous draw clip.
+    thePort->setClipRect(thePort->getClipRect());
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	
@@ -191,13 +347,33 @@ Port::getClipRect() {
 void
 Port::setClipRect(const Rect& rect) {
     PortImpl& port = static_cast<PortImpl&>(*this); // get us access to our private data
-    // make sure clip rect is never outside drawing area
-    port.mClipRect.top = std::max<long>(rect.top, port.mDrawingRect.top);
-    port.mClipRect.left = std::max<long>(rect.left, port.mDrawingRect.left);
-    port.mClipRect.bottom = std::min<long>(rect.bottom, port.mDrawingRect.bottom);
-    port.mClipRect.right = std::min<long>(rect.right, port.mDrawingRect.right);
+    // Preserve fractional coordinates and distinguish empty from the full-area reset.
+    port.mClipRect = rect.intersection(port.mDrawingRect);
     mClipChanged = true;
 }
+
+void Port::clear(const Color& color) {
+    ScopedOffscreenDrawing scope(this);
+    auto& port = static_cast<PortImpl&>(*this);
+    port.setOpenGLModesForDrawing(false);
+    GLfloat previous[4]; glGetFloatv(GL_COLOR_CLEAR_VALUE, previous);
+    const float alpha = std::clamp(color.alpha, 0.0f, 1.0f);
+    const float rgbScale = port.mOffscreen ? alpha : 1.0f;
+    glClearColor(color.red * rgbScale, color.green * rgbScale, color.blue * rgbScale, alpha);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(previous[0], previous[1], previous[2], previous[3]);
+    port.mNeedRedraw = gPortDirty = true;
+}
+
+void Port::setDrawingOrigin(const Point& origin) {
+    auto& port = static_cast<PortImpl&>(*this);
+    if (!port.mOffscreen) throw std::invalid_argument("Drawing origin requires an offscreen Port");
+    if (!std::isfinite(origin.x) || !std::isfinite(origin.y)) throw std::invalid_argument("Drawing origin must be finite");
+    port.setPortRects(Rect(origin, port.mDrawingRect.width(), port.mDrawingRect.height()));
+    gModesSet = false;
+}
+
+void Port::resetClipRect() { setClipRect(getDrawingArea()); }
 
 // returns the font currently in use for the port
 Font*     
@@ -354,7 +530,7 @@ Port::drawTexturedSphere(ImageStrip* img, int frame, const Point& loc, float rad
 void
 Port::drawColoredSphere(const Color& color, const Point& loc, float radius, float rotation, const Offset& polarOffsetRadians, const Offset& lightOffsetRadians, const Color& ambientLight) {
 	// Decide how many slices to draw (very crude LOD)
-	GLint slices = log2f(radius) * 4;
+	GLint slices = std::log2(radius) * 4;
 	if (slices < 5) slices = 5;
 	
 	PortImpl& port = static_cast<PortImpl&>(*this);
@@ -372,7 +548,7 @@ Port::drawColoredSphere(const Color& color, const Point& loc, float radius, floa
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 	
 	// Setup lighting
-	float degreesRot = rotation * 180.0 / M_PI;
+	float degreesRot = rotation * 180.0 / std::numbers::pi;
 	static GLfloat light_position[] = { 0, 0, -10, 1 };
 	GLfloat model_ambient[] = { ambientLight.red, ambientLight.green, ambientLight.blue, ambientLight.alpha };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, model_ambient);
@@ -399,8 +575,8 @@ Port::drawColoredSphere(const Color& color, const Point& loc, float radius, floa
 	
 	glScalef(-radius, radius, 1.0f);
 	
-	GLfloat xRotDeg = (polarOffsetRadians.x * 180.0 / M_PI) - 90.0;
-	GLfloat yRotDeg = polarOffsetRadians.y * 180.0 / M_PI;
+	GLfloat xRotDeg = (polarOffsetRadians.x * 180.0 / std::numbers::pi) - 90.0;
+	GLfloat yRotDeg = polarOffsetRadians.y * 180.0 / std::numbers::pi;
 	glRotatef(xRotDeg, 1.0f, 0.0f, 0.0);
 	glRotatef(yRotDeg, 0.0f, 1.0f, 0.0);
 	
@@ -562,6 +738,13 @@ Port::Port() : mClipChanged(false)
 
 Port::~Port()
 {
+    // The derived port already released its cache. Clear links without trying
+    // to release entries through that destroyed cache (including custom Ports).
+    for (auto* image : mLinkedImages) {
+        image->mCacheKey = 0;
+        image->Image::setPort(nullptr);
+    }
+    mLinkedImages.clear();
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	CleanupPortScriptObject(mPortScriptObj);
 #endif
@@ -718,13 +901,14 @@ PortImpl::resizePort(long width, long height) {
     Rect r(width, height);
     mDrawingRect = r;
     mClipRect = r;
+    mClipChanged = true;
     mNeedRedraw = true;
 }
 
 //	bool avoidRecursion = false;
 
 void
-PortImpl::setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode) {
+PortImpl::setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode, bool premultiplied) {
 //	if (avoidRecursion) return;
 //	avoidRecursion = true;
     if (!gModesSet) {
@@ -732,8 +916,8 @@ PortImpl::setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode) {
         long height = mDrawingRect.height();
         long swidth = width;
         long sheight = height;
-        if (   (gEffectiveScreenPos == pdg::screenPos_Rotated90Clockwise)
-            || (gEffectiveScreenPos == pdg::screenPos_Rotated90CounterClockwise)) {
+        if (!mOffscreen && ((gEffectiveScreenPos == pdg::screenPos_Rotated90Clockwise)
+            || (gEffectiveScreenPos == pdg::screenPos_Rotated90CounterClockwise))) {
             sheight = width;
             swidth = height;
         }
@@ -741,9 +925,9 @@ PortImpl::setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode) {
         // set orthograhic 1:1  pixel transform in local view coords
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        glScalef(2.0f / swidth, -2.0f /  sheight, 1.0f);
-        glRotatef(gRotationAngle, 0, 0, 1);
-        glTranslatef(-width / 2.0f, -height / 2.0f, 0.0f);
+        glScalef(2.0f / swidth, (mOffscreen ? 2.0f : -2.0f) / sheight, 1.0f);
+        if (!mOffscreen) glRotatef(gRotationAngle, 0, 0, 1);
+        glTranslatef(-width / 2.0f - mDrawingRect.left, -height / 2.0f - mDrawingRect.top, 0.0f);
         glDisable(GL_DEPTH_TEST); // ensure stuff we are about to draw is not removed by depth test
         gModesSet = true; // don't do this again till next frame
     }
@@ -758,7 +942,8 @@ PortImpl::setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode) {
 		switch (blendMode) {
 			case blendMode_Normal:
 				glBlendEquation(GL_FUNC_ADD);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				if (mOffscreen) framebuffer::BlendFuncSeparate(premultiplied ? GL_ONE : GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                else glBlendFunc(premultiplied ? GL_ONE : GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				break;
 			case blendMode_Additive:
 				glBlendEquation(GL_FUNC_ADD);
@@ -784,7 +969,8 @@ PortImpl::setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode) {
 				break;
 			default:
 				glBlendEquation(GL_FUNC_ADD);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				if (mOffscreen) framebuffer::BlendFuncSeparate(premultiplied ? GL_ONE : GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                else glBlendFunc(premultiplied ? GL_ONE : GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				break;
 		}
 	} else {
@@ -793,20 +979,24 @@ PortImpl::setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode) {
 
     if ( mClipChanged) {
         if ( mClipRect.empty() ) {
-            glDisable(GL_SCISSOR_TEST);
+            glScissor(0, 0, 0, 0);
+            glEnable(GL_SCISSOR_TEST);
         } else {
-            // scissor is in OpenGL window coordinates, so 0,0 is bottom left with flipped Y axis
-            if (gEffectiveScreenPos == screenPos_Normal) {
-                glScissor(mClipRect.left, mDrawingRect.bottom - mClipRect.bottom, mClipRect.width(), mClipRect.height() );
-            } else if (gEffectiveScreenPos == screenPos_Rotated180) {
-                glScissor(mDrawingRect.right - mClipRect.right, mClipRect.top, mClipRect.width(), mClipRect.height() );
-            } else if (gEffectiveScreenPos == screenPos_Rotated90Clockwise) {
-                glScissor(mClipRect.top, mClipRect.left, mClipRect.height(), mClipRect.width() );
-            } else if (gEffectiveScreenPos == screenPos_Rotated90CounterClockwise) {
-                Rect sr(mClipRect.height(), mClipRect.width() );
-                sr.moveTo(mDrawingRect.bottom - mClipRect.bottom, mDrawingRect.right - mClipRect.right);
-                glScissor(sr.left, sr.top, sr.width(), sr.height() );
-            }
+            const int left = int(std::ceil(mClipRect.left - mDrawingRect.left - 0.5f));
+            const int top = int(std::ceil(mClipRect.top - mDrawingRect.top - 0.5f));
+            const int right = int(std::ceil(mClipRect.right - mDrawingRect.left - 0.5f));
+            const int bottom = int(std::ceil(mClipRect.bottom - mDrawingRect.top - 0.5f));
+            const int width = std::max(0, right - left), height = std::max(0, bottom - top);
+            if (mOffscreen)
+                glScissor(left, top, width, height);
+            else if (gEffectiveScreenPos == screenPos_Rotated180)
+                glScissor(mDrawingRect.right - right, top, width, height);
+            else if (gEffectiveScreenPos == screenPos_Rotated90Clockwise)
+                glScissor(top, left, height, width);
+            else if (gEffectiveScreenPos == screenPos_Rotated90CounterClockwise)
+                glScissor(mDrawingRect.bottom - bottom, mDrawingRect.right - right, height, width);
+            else
+                glScissor(left, mDrawingRect.bottom - bottom, width, height);
             glEnable(GL_SCISSOR_TEST);  // make sure we are clipping
         }
         mClipChanged = false;
@@ -826,7 +1016,8 @@ PortImpl::PortImpl(GraphicsManager* graphicsMgr)
   mCurrentCursorBackground(0),
   mFontScalingFactor(0.0),
   mImageCache(0),
-  mTextCache(0)
+  mTextCache(0),
+  mPlatformWindowRef(nullptr)
 {
 	for (int i = 0; i<NUM_TEXT_STYLES; i++) {
 		mFontForStyle[i] = 0;
@@ -841,6 +1032,14 @@ PortImpl::PortImpl(GraphicsManager* graphicsMgr)
 
 PortImpl::~PortImpl()
 {
+    // Window teardown invalidates texture IDs before destroying its context.
+    // Offscreen teardown keeps that context current and releases textures here.
+    while (mTextCache) {
+        auto* entry = mTextCache;
+        mTextCache = entry->nextEntry;
+        if (entry->texture) glDeleteTextures(1, &entry->texture);
+        delete entry;
+    }
     // Clean up fonts
     for (int i = 0; i < NUM_TEXT_STYLES; i++) {
         if (mFontForStyle[i]) {

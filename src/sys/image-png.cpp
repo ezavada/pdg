@@ -41,6 +41,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <limits>
 
 
 extern "C" {
@@ -103,13 +104,14 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 		return;
 	}
 
-	png_bytep* row_pointers = 0;
+	// Keep cleanup pointers valid across libpng's longjmp error path.
+	png_bytep* volatile row_pointers = nullptr;
+	unsigned char* volatile pixels = nullptr;
 
     // define a block to handle cleanup after an error
 	if (setjmp(png_jmpbuf(png_ptr))) {
-	    if (row_pointers) {
-	        delete [] row_pointers;
-	    }
+	    std::free(row_pointers);
+	    std::free(pixels);
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 		return;
 	}
@@ -148,33 +150,36 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 		png_set_gray_to_rgb(png_ptr);
 	}
 
-	*outWidth = width;
-	*outHeight = height;
-	*outBufferWidth = width;
-	*outBufferHeight = height;
-	png_uint_32 pitch;
-	if (color_type & PNG_COLOR_MASK_ALPHA) {
-		*outFormat = GL_RGBA;
-		pitch = width * 4;
-	} else {
-		*outFormat = GL_RGB;
-		pitch = width * 3;
+	// Palette and tRNS expansion can add an alpha channel even when the PNG
+	// header has no alpha bit. Query the transformed layout before allocating:
+	// using the original color_type under-allocated transparent palette images.
+	png_set_interlace_handling(png_ptr);
+	png_read_update_info(png_ptr, info_ptr);
+	const int channels = png_get_channels(png_ptr, info_ptr);
+	const png_size_t pitch = png_get_rowbytes(png_ptr, info_ptr);
+	if ((channels != 3 && channels != 4) || png_get_bit_depth(png_ptr, info_ptr) != 8 ||
+	    !pitch || pitch > size_t(std::numeric_limits<long>::max()) ||
+	    height > std::numeric_limits<size_t>::max() / pitch ||
+	    size_t(height) > std::numeric_limits<size_t>::max() / sizeof(png_bytep)) {
+		png_error(png_ptr, "Unsupported PNG pixel layout");
 	}
-	*outBufferPitch = pitch;
-	void* dataP = std::malloc(pitch * height);
-	*outDataPtr = (unsigned char*) dataP;
-	if (dataP) {
-		// define the row pointers
-		png_bytep* row_pointers = new png_bytep[height];
-		for (png_uint_32 i = 0; i < height; i++) {
-			row_pointers[i] = &((png_bytep)dataP)[pitch * i];
-		}
-		// now read in the image
-		png_read_image(png_ptr, row_pointers);
-		delete [] row_pointers;
+	pixels = static_cast<unsigned char*>(std::malloc(pitch * height));
+	row_pointers = static_cast<png_bytep*>(std::malloc(sizeof(png_bytep) * height));
+	if (!pixels || !row_pointers) png_error(png_ptr, "Cannot allocate PNG pixels");
+	for (png_uint_32 i = 0; i < height; i++) {
+		row_pointers[i] = pixels + pitch * i;
 	}
-	// read comments, etc...
+	png_read_image(png_ptr, row_pointers);
 	png_read_end(png_ptr, end_info);
+	std::free(row_pointers);
+	row_pointers = nullptr;
+
+	// Publish only a complete decode. The caller owns the malloc'd pixels.
+	*outWidth = *outBufferWidth = width;
+	*outHeight = *outBufferHeight = height;
+	*outBufferPitch = pitch;
+	*outFormat = channels == 4 ? GL_RGBA : GL_RGB;
+	*outDataPtr = pixels;
 	// clean up
 	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 }
@@ -183,14 +188,10 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 
 void pdg_png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
 	pdg_png_data* read_io_ptr = (pdg_png_data*) png_get_io_ptr(png_ptr);
-	if (read_io_ptr->currOffset >= read_io_ptr->imageDataLen) {
-		// we are at end of file
-        png_error(png_ptr, "Read Error");
-        return;
-	}
-	if (read_io_ptr->currOffset + length > read_io_ptr->imageDataLen) {
-		// don't read past end of file
-		length = read_io_ptr->imageDataLen - read_io_ptr->currOffset;
+	if (read_io_ptr->currOffset > read_io_ptr->imageDataLen ||
+	    length > read_io_ptr->imageDataLen - read_io_ptr->currOffset) {
+		png_error(png_ptr, "Read Error");
+		return;
 	}
 	memcpy(data, &read_io_ptr->imageData[read_io_ptr->currOffset], length);
 	read_io_ptr->currOffset += length;

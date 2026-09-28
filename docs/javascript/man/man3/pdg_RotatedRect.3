@@ -1,4 +1,4 @@
-.TH "RotatedRect" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "RotatedRect" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -41,13 +41,13 @@ Public Member Functions inherited from \fBRect\fP
 .RI "\fBRect\fP ()"
 .br
 .ti -1c
-.RI "\fBRect\fP (number \fBleft\fP, number \fBtop\fP, number \fBright\fP, number \fBbottom\fP)"
+.RI "\fBRect\fP (number left, number top, number right, number bottom)"
 .br
 .ti -1c
 .RI "\fBRect\fP (number w, number h)"
 .br
 .ti -1c
-.RI "\fBRect\fP (\fBPoint\fP \fBleftTop\fP, \fBPoint\fP \fBrightBottom\fP)"
+.RI "\fBRect\fP (\fBPoint\fP leftTop, \fBPoint\fP rightBottom)"
 .br
 .ti -1c
 .RI "\fBRect\fP (\fBPoint\fP topLeft, number w, number h)"
@@ -335,10 +335,17 @@ Public Attributes inherited from \fBRect\fP
 .PP 
 rectangle with rotation for 2D coordinate system\&. 
 
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
+.RE
+.PP
 \fBRotatedRect\fP is a class that provides support for dealing with rotating rectangles in 2 dimensional space\&. 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBRotatedRect\fP (\fBRect\fP rect = \fR\fBRect\fP(0, 0)\fP, number rotationRadians = \fR0\&.0\fP, \fBOffset\fP cpOffset = \fRnull\fP)"
+.SS "RotatedRect (\fBRect\fP rect = \fR\fBRect\fP(0, 0)\fP, number rotationRadians = \fR0\&.0\fP, \fBOffset\fP cpOffset = \fRnull\fP)"
 
 .PP
 References \fBRect::Rect()\fP\&.

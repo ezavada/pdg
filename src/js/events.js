@@ -56,7 +56,7 @@ var eventType_Startup       = 1,        // application startup, data = startup i
 	eventType_SpriteLayer	= 18,       // something happened to a sprite layer
 	eventType_SpriteTouch	= 19,		// the user did something directly to a sprite: a tap, mouse click, mouse over, etc...
 	eventType_SpriteCollide = 20,		// a sprite was involved in a collision
-    eventType_SpriteBreak   = 21,       // Chipmunk Physics Only: a joint on a sprite broke apart
+    eventType_SpriteBreak   = 21,       // a joint broke or a body exceeded its angular-speed threshold
 	eventType_MouseEnter	= 22,		// the mouse entered a tracking area
 	eventType_MouseLeave	= 23,		// the mouse left a tracking area
 	eventType_PortDraw		= 24,		// a port wants to be redrawn

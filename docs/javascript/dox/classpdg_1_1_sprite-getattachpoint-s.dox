@@ -4,4 +4,8 @@ namespace pdg { /**
 
 \brief returns the position of the specified attach point
 
+Returns the offset from the Sprite root in SpriteLayer axes, after authored and
+root rotation/scale/reflection. Add sprite.getLocation() once for the position
+in the layer. Missing or inactive points return an offset with NaN components.
+
 **/ }

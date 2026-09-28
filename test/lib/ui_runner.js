@@ -18,6 +18,7 @@ function sanitizeSegment(value, fallbackValue) {
 }
 
 function resolvePdgExecutable(envInfo) {
+    if (process.env.PDG_EXECUTABLE) return process.env.PDG_EXECUTABLE;
     var candidates = process.platform === 'win32'
         ? [
             path.join(envInfo.repoRoot, 'pdg.exe'),
@@ -70,8 +71,10 @@ function runUiTests() {
         return 1;
     }
 
+    var selected = process.argv.slice(2).filter(function(arg) { return arg.charAt(0) !== '-'; });
+    if (selected.length) UI_TESTS = UI_TESTS.filter(function(entry) { return selected.indexOf(entry.id) >= 0; });
     var forwardedArgs = process.argv.slice(2).filter(function(arg) {
-        return arg !== '--list';
+        return arg !== '--list' && selected.indexOf(arg) === -1;
     });
     var summary = {
         suite: 'ui',

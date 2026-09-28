@@ -31,13 +31,13 @@ namespace pdg {
 
 BINDING_INITIALIZER_IMPL(Serializer)
     EXPORT_CLASS_SYMBOLS("Serializer", Serializer, , ,
+        HAS_METHOD(Serializer, "setResourceMode", SetResourceMode)
+        HAS_METHOD(Serializer, "getResourceMode", GetResourceMode)
     	// method section
-	  %#ifndef PDG_NO_64BIT CR
 		HAS_METHOD(Serializer, "serialize_8", Serialize_8)   // no 64 bit int in Script
 		HAS_METHOD(Serializer, "serialize_8u", Serialize_8u)
 		HAS_METHOD(Serializer, "sizeof_8", Sizeof_8)
 		HAS_METHOD(Serializer, "sizeof_8u", Sizeof_8u)
-	  %#endif CR
 		HAS_METHOD(Serializer, "serialize_d", Serialize_d)
 		HAS_METHOD(Serializer, "serialize_f", Serialize_f)
 		HAS_METHOD(Serializer, "serialize_4", Serialize_4)
@@ -87,6 +87,18 @@ BINDING_INITIALIZER_IMPL(Serializer)
 		HAS_METHOD(Serializer, "getDataPtr", GetDataPtr)
     );
 	END
+METHOD_IMPL(Serializer, SetResourceMode)
+    METHOD_SIGNATURE("select embedded or externally referenced resources", [object Serializer], 1, ([number int] mode));
+    REQUIRE_ARG_COUNT(1);
+    REQUIRE_INT32_ARG_RANGE(1, mode);
+    try { self->setResourceMode(mode); RETURN_THIS; }
+    catch (const std::exception& error) { THROW_ERR(error.what()); }
+    END
+METHOD_IMPL(Serializer, GetResourceMode)
+    METHOD_SIGNATURE("get this stream's resource policy", [number int], 0, ());
+    REQUIRE_ARG_COUNT(0);
+    RETURN_INT32(self->getResourceMode());
+    END
 METHOD_IMPL(Serializer, Serialize_d)
 	METHOD_SIGNATURE("", undefined, 1, (number val));
     REQUIRE_ARG_COUNT(1);
@@ -101,7 +113,6 @@ METHOD_IMPL(Serializer, Serialize_f)
 	self->serialize_f(val);
 	NO_RETURN;
 	END
-%#ifndef PDG_NO_64BIT
 METHOD_IMPL(Serializer, Serialize_8)
 	METHOD_SIGNATURE("", undefined, 1, (number val));
     REQUIRE_ARG_COUNT(1);
@@ -116,7 +127,6 @@ METHOD_IMPL(Serializer, Serialize_8u)
 	self->serialize_8u(val);
 	NO_RETURN;
 	END
-%#endif
 METHOD_IMPL(Serializer, Serialize_4)
 	METHOD_SIGNATURE("", undefined, 1, ([number int] val));
     REQUIRE_ARG_COUNT(1);
@@ -280,10 +290,8 @@ SERIALIZER_SIZE_OF_METHOD_IMPL(2u)
 SERIALIZER_SIZE_OF_METHOD_IMPL(3u)
 SERIALIZER_SIZE_OF_METHOD_IMPL(4)
 SERIALIZER_SIZE_OF_METHOD_IMPL(4u)
-%#ifndef PDG_NO_64BIT
 SERIALIZER_SIZE_OF_METHOD_IMPL(8)
 SERIALIZER_SIZE_OF_METHOD_IMPL(8u)
-%#endif
 SERIALIZER_SIZE_OF_METHOD_IMPL(f)
 SERIALIZER_SIZE_OF_METHOD_IMPL(d)
 SERIALIZER_SIZE_OF_METHOD_IMPL(uint)
@@ -304,8 +312,16 @@ METHOD_IMPL(Serializer, Sizeof_obj)
         size_t n = 3; // 3 bytes for null object tag
         RETURN_UNSIGNED(n);
     }
-    REQUIRE_CPP_OBJECT_OR_SUBCLASS_ARG(1, val, ISerializable);
-    size_t n = self->sizeof_obj(val);
+  %#ifdef PDG_USING_JAVASCRIPT_CORE
+    ISerializable* val = JSC_GetSerializable(ctx, ARGV[0]);
+    if (!val) { THROW_TYPE_ERR("Expected a serializable object"); }
+  %#else
+    ISerializable* val = V8_GetSerializable(isolate, ARGV[0]);
+    if (!val) { THROW_TYPE_ERR("Expected a serializable object"); }
+  %#endif
+    size_t n;
+    try { n = self->sizeof_obj(val); }
+    catch (const std::exception& error) { THROW_ERR(error.what()); }
   %#ifdef PDG_USING_JAVASCRIPT_CORE
     if (RestorePendingScriptException(exception)) {
         return JSValueMakeUndefined(ctx);

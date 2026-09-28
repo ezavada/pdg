@@ -1,4 +1,4 @@
-.TH "Animated" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Animated" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,262 +10,302 @@ Animated \- something that can be automatically moved, spun or resized over time
 .PP
 \fR#include <pdg\-js\&.h>\fP
 .PP
-Inherited by \fBSprite\fP, and \fBSpriteLayer\fP\&.
+Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEmitter\fP, \fBSprite\fP, and \fBSpriteLayer\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
-.RI "\fBaccelerate\fP (number deltaSpeed, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBlinearTween\fP)"
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
-.RI "change the object's speed over time "
+.RI "Register a callback after the object's normal animation step\&. "
 .ti -1c
-.RI "\fBaccelerateTo\fP (number speed, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBlinearTween\fP)"
+.RI "\fBAnimated\fP \fBandThen\fP ()"
 .br
-.RI "change the object's speed to a particular value over time "
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
 .ti -1c
-.RI "\fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
-.RI "setup a helper to handle custom animation "
+.RI "Advance programmed animation by elapsed seconds\&. "
 .ti -1c
-.RI "boolean \fBanimate\fP (int msElapsed)"
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
 .br
-.RI "animate based on the passage of time "
+.RI "Discard scheduled animations and pending sequencing\&. "
 .ti -1c
-.RI "\fBapplyForce\fP (\fBVector\fP force, int msDuration=\fBduration_Instantaneous\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "apply a force to the object over time "
+.RI "Animate the rotation-center offset by a delta\&. "
 .ti -1c
-.RI "\fBapplyTorque\fP (number forceSpin, int msDuration=\fBduration_Instantaneous\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "apply torque to the object over time "
+.RI "Animate the rotation-center offset by a delta\&. "
 .ti -1c
-.RI "\fBchangeCenter\fP (\fBOffset\fP offset, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "shift the center point of the object over time "
+.RI "Animate the rotation-center offset to a target\&. "
 .ti -1c
-.RI "\fBchangeCenterTo\fP (\fBOffset\fP offset, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "shift the center point of the object to a particular offset from true center over time "
+.RI "Animate the rotation-center offset to a target\&. "
 .ti -1c
-.RI "\fBclearAnimationHelpers\fP ()"
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
-.RI "remove all previously added animation helpers "
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBflipX\fP ()"
 .br
-.RI "flips the object horizontally, center offset is flipped too\&. Applied before other transformations\&. "
+.RI "Toggle the x reflection flag immediately\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBflipY\fP ()"
 .br
-.RI "flips the object vertically, center offset is flipped too\&. Applied before other transformations\&. "
+.RI "Toggle the y reflection flag immediately\&. "
 .ti -1c
 .RI "\fBRect\fP \fBgetBoundingBox\fP ()"
 .br
-.RI "get the rectangle that completely encloses the object "
+.RI "Read axis-aligned logical bounds\&. "
 .ti -1c
 .RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
 .br
-.RI "get the current offset of the center relative to the true center point "
+.RI "Read the rotation-center offset\&. "
 .ti -1c
 .RI "number \fBgetHeight\fP ()"
 .br
-.RI "get height of the object "
+.RI "Read logical height\&. "
 .ti -1c
 .RI "\fBPoint\fP \fBgetLocation\fP ()"
 .br
-.RI "get the position of the object "
+.RI "Read the location in the container coordinate system\&. "
 .ti -1c
-.RI "number \fBgetMass\fP ()"
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
 .br
-.RI "get the mass of the object "
-.ti -1c
-.RI "number \fBgetMoveFriction\fP ()"
-.br
-.RI "get the amount of friction for movement "
-.ti -1c
-.RI "number \fBgetMovementDirectionInRadians\fP ()"
-.br
-.RI "get the direction the object is moving "
+.RI "Read the programmed movement rate\&. "
 .ti -1c
 .RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
 .br
-.RI "get the bounds with rotation "
+.RI "Read rotated logical bounds\&. "
 .ti -1c
 .RI "number \fBgetRotation\fP ()"
 .br
-.RI "get how much the object is rotated "
+.RI "Read the current rotation in radians\&. "
 .ti -1c
-.RI "number \fBgetSizeFriction\fP ()"
+.RI "\fBOffset\fP \fBgetScale\fP ()"
 .br
-.RI "get the friction applied to size changes (growing or shrinking) "
+.RI "Read independent transform scale\&. "
 .ti -1c
-.RI "number \fBgetSpeed\fP ()"
+.RI "\fBOffset\fP \fBgetSize\fP ()"
 .br
-.RI "get how fast the object is moving in pixels/sec "
+.RI "Read logical width and height\&. "
 .ti -1c
 .RI "number \fBgetSpin\fP ()"
 .br
-.RI "get how fast the object is spinning in radians per second "
+.RI "Read the programmed angular rate\&. "
 .ti -1c
-.RI "number \fBgetSpinFriction\fP ()"
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
 .br
-.RI "get the friction applied toward spinning "
-.ti -1c
-.RI "\fBVector\fP \fBgetVelocity\fP ()"
-.br
-.RI "get the vector that expresses magnitude and direction of the object's movement in pixels/sec "
+.RI "Read logical width and height change rates\&. "
 .ti -1c
 .RI "number \fBgetWidth\fP ()"
 .br
-.RI "get the width of the object "
+.RI "Read logical width\&. "
 .ti -1c
-.RI "\fBgrow\fP (number factor, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "change size of the object by a factor over time "
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
 .ti -1c
 .RI "boolean \fBisFlippedX\fP ()"
 .br
-.RI "returns true if the object is flipped horizontally "
+.RI "Read the x reflection flag\&. "
 .ti -1c
 .RI "boolean \fBisFlippedY\fP ()"
 .br
-.RI "returns true if the object is flipped vertically "
+.RI "Read the y reflection flag\&. "
 .ti -1c
-.RI "\fBmove\fP (\fBOffset\fP delta, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "boolean \fBisSchedulePaused\fP ()"
 .br
-.RI "move the object by a certain amount over time "
+.RI "Test whether scheduled animation advancement is paused\&. "
 .ti -1c
-.RI "\fBmoveTo\fP (\fBPoint\fP where, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "move the object to a particular location over time "
+.RI "Move by an offset\&. "
 .ti -1c
-.RI "\fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "remove a specific animation helper "
+.RI "Move by an offset\&. "
 .ti -1c
-.RI "\fBresize\fP (number deltaWidth, number deltaHeight, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "change the size of an object by a given amount over time "
+.RI "Move to a location\&. "
 .ti -1c
-.RI "\fBresizeTo\fP (number width, number height, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "resize the object to a specific size over time "
+.RI "Move to a location\&. "
 .ti -1c
-.RI "\fBrotate\fP (number radians, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
 .br
-.RI "rotate the object by a specific amount over time "
+.RI "Pause scheduled animations and their delays\&. "
 .ti -1c
-.RI "\fBrotateTo\fP (number radiansRotation, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
-.RI "rotate the object to face a particular direction over time "
+.RI "Retire a specific animation helper\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP inCenterOffset)"
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "set the offset of the center point relative to the true center "
+.RI "Change logical size by additive deltas\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean inFlipX)"
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "sets whether the object is flipped horizontally "
+.RI "Animate logical size to a target\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean inFlipY)"
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
 .br
-.RI "sets whether the object is flipped vertically "
+.RI "Resume scheduled animations and their delays\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFriction\fP (number frictionCoefficient)"
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
-.RI "set friction for movement, rotation and resizing all at once "
+.RI "Rotate through a relative angle\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetHeight\fP (number inHeight)"
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
-.RI "set the object's height "
+.RI "Rotate to an absolute angle\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP inLocation)"
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
 .br
-.RI "place the object at a particular location "
+.RI "Set the rotation-center offset immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetMass\fP (number inMass)"
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
 .br
-.RI "set the object's mass, used when forces are applied "
+.RI "Set the x reflection flag immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetMoveFriction\fP (number inMoveFriction)"
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
 .br
-.RI "set the object's friction for movement "
+.RI "Set the y reflection flag immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetRotation\fP (number inRotation)"
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
 .br
-.RI "set the direction the object is facing in radians "
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
 .br
-.RI "set the size of the object "
+.RI "Set logical width and height immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSizeFriction\fP (number inSizeFriction)"
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
 .br
-.RI "set the friction applied for object resizing "
+.RI "Set logical width and height immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpeed\fP (number inSpeed)"
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
 .br
-.RI "set the speed the object is moving in its current direction of motion "
+.RI "Set a constant programmed angular rate immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpin\fP (number inSpin)"
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
 .br
-.RI "set the rate at which the object is spinning, in radians/sec "
+.RI "Set independent constant growth rates immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpinFriction\fP (number inSpinFriction)"
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
 .br
-.RI "set the friction the object faces for spinning "
+.RI "Set logical width immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocity\fP (number deltaXPerSec, number deltaYPerSec)"
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to logical size\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocity\fP (\fBVector\fP deltaPerSec)"
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to position\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocityInRadians\fP (number speed, number direction)"
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to rotation\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetWidth\fP (number inWidth)"
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
 .br
-.RI "set the width of the object "
+.RI "Stop all programmed changes to logical size\&. "
 .ti -1c
-.RI "\fBstartGrowing\fP (number amountPerSecond)"
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "set the growth rate of the object in pixels/sec "
+.RI "Multiply logical width and height by independent factors\&. "
 .ti -1c
-.RI "\fBstartStretching\fP (number widthPerSecond, number heightPerSecond)"
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
 .br
-.RI "set the growth rate of the object in pixels/sec, with varied rates for width and height "
-.ti -1c
-.RI "\fBstopAllForces\fP ()"
-.br
-.RI "remove all forces that were acting on the object (except friction) "
-.ti -1c
-.RI "\fBstopGrowing\fP ()"
-.br
-.RI "stop any size change "
-.ti -1c
-.RI "\fBstopMoving\fP ()"
-.br
-.RI "stop any movement the object was doing (except spinning) "
-.ti -1c
-.RI "\fBstopSpinning\fP ()"
-.br
-.RI "stop any spinning the object was doing "
-.ti -1c
-.RI "\fBstopStretching\fP ()"
-.br
-.RI "stop any stretching the object was doing "
-.ti -1c
-.RI "\fBstretch\fP (number widthFactor, number heightFactor, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "change the dimensions of the object over time "
-.ti -1c
-.RI "\fBAnimated\fP \fBwait\fP (int msDuration)"
-.br
-.RI "wait before beginning the next animation call that operates over time "
+.RI "Delay the next timed animation request\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -275,8 +315,31 @@ something that can be automatically moved, spun or resized over time\&.
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
+.PP
+\fBAnimated\fP separates immediate edits and constant rates from scheduled transitions\&. All animation durations and waits use floating-point seconds\&. Setters are immediate and chainable; they cannot consume a \fBwait()\fP or \fBandThen()\fP\&. Timed change methods require explicit seconds; explicit zero applies immediately outside a sequence\&. To names specify targets; By names specify additive deltas\&. \fBgrow()\fP and \fBstretch()\fP use factors and change logical size; \fBchangeScaleTo()\fP/changeScaleBy() change the independent transform scale\&. Constant rates continue after a rate transition ends\&.
+
+.PP
+Scheduled operations normally run concurrently\&. \fBandThen()\fP sequences the next operation after the most recently scheduled one; \fBwait()\fP delays the next timed request\&. Immediate calls after either throw before changing state\&. \fBcancelSchedule()\fP clears pending sequencing and scheduled work while retaining current constant rates\&.
+
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.setMovement(40, 0);
+sprite\&.changeMovementTo(0, 0, 0\&.5); // Ease the rate to a stop in half a second\&.
+sprite\&.setGrowing(8);             // Add eight logical size units per second\&.
+sprite\&.changeGrowingTo(0, 0\&.25);  // Ease the growth rate to zero\&.
+
+.fi
+.PP
+.RE
+.PP
+\fBPhysicsBody\fP owns physical velocity, mass, damping, forces and impulses\&.
+
 .PP
 It has no drawing capabilities, so it is not intended to be used directly in most cases, but rather as a base class for items that can be animated\&. It could be used on a server to drive animation that is rendered on the client\&.
 
@@ -292,355 +355,1690 @@ It has no drawing capabilities, so it is not intended to be used directly in mos
 
 .SH "Member Function Documentation"
 .PP 
-.SS "accelerate (number deltaSpeed, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBlinearTween\fP\fP)"
+.SS "\fBAnimated\fP addAnimationHelper (\fBIAnimationHelper\fP helper)"
 
 .PP
-change the object's speed over time Change the speed of an object in the current direction of motion\&.
+Register a callback after the object's normal animation step\&. The callback runs as \fRcallback\&.call(helper, owner, deltaSeconds)\fP and returns a boolean: true keeps its registration, false retires it\&. Helpers run in registration order\&. Adding the same helper twice to one owner has no effect; a helper may also be registered on several owners\&. A retained helper can be added again after it finishes\&.
 
 .PP
-Honors delay given by \fBwait()\fP 
-.PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::linearTween\fP\&.
-.SS "accelerateTo (number speed, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBlinearTween\fP\fP)"
+Callbacks may remove themselves, remove another helper, or clear the owner's helpers\&. Removed callbacks do not run later in the same step\&. Additions first run on the next step\&. Removing and re-adding the current helper creates a new registration, which is unaffected by the old callback returning false\&.
 
 .PP
-change the object's speed to a particular value over time Honors delay given by \fBwait()\fP 
-.PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::linearTween\fP\&.
-.SS "addAnimationHelper (\fBIAnimationHelper\fP helper)"
-
-.PP
-setup a helper to handle custom animation 
-.PP
-\fBSee also\fP
+\fBParameters\fP
 .RS 4
-\fBIAnimationHelper\fP 
+\fIhelper\fP An \fBIAnimationHelper\fP constructed from a callback\&. Active registrations retain it\&. After retirement, normal JavaScript references determine its lifetime\&. 
 .RE
-.PP
-
-.SS "boolean animate (int msElapsed)"
-
-.PP
-animate based on the passage of time 
 .PP
 \fBReturns\fP
 .RS 4
-true if anything (position, size, movement, etc\&.\&.\&.) changed 
+The original owner object, for chaining\&.
 .RE
 .PP
-
-.SS "applyForce (\fBVector\fP force, int msDuration = \fR\fBduration_Instantaneous\fP\fP)"
-
-.PP
-apply a force to the object over time Honors delay given by \fBwait()\fP 
-.PP
-References \fBpdg::duration_Instantaneous\fP\&.
-.SS "applyTorque (number forceSpin, int msDuration = \fR\fBduration_Instantaneous\fP\fP)"
+\fBExample\fP
+.RS 4
 
 .PP
-apply torque to the object over time Honors delay given by \fBwait()\fP 
-.PP
-References \fBpdg::duration_Instantaneous\fP\&.
-.SS "changeCenter (\fBOffset\fP offset, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+.nf
+const helper = new pdg\&.IAnimationHelper(function(owner, deltaSeconds) {
+    owner\&.rotateBy(deltaSeconds * 0\&.5);
+    return true;
+});
+sprite\&.addAnimationHelper(helper)\&.setMovement(20, 0);
+// Later: sprite\&.removeAnimationHelper(helper);
 
+.fi
 .PP
-shift the center point of the object over time Honors delay given by \fBwait()\fP 
-.PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "changeCenterTo (\fBOffset\fP offset, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-shift the center point of the object to a particular offset from true center over time Honors delay given by \fBwait()\fP 
-.PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "clearAnimationHelpers ()"
-
-.PP
-remove all previously added animation helpers 
+ 
+.RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBaddAnimationHelper\fP 
+\fBremoveAnimationHelper()\fP, \fBclearAnimationHelpers()\fP, \fBIAnimationHelper\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP andThen ()"
+
+.PP
+Start the next timed operation after the most recently scheduled operation finishes\&. Uses its remaining duration and delay, not the longest of all concurrent operations\&. The next request consumes this sequencing state; later calls again run concurrently unless sequenced\&. A successor acquires its properties and resolves relative targets when it starts\&. Immediate calls after \fBandThen()\fP throw even if the predecessor has finished\&. No then() method is provided, so returning an \fBAnimated\fP object from an async JavaScript function is safe\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBwait()\fP, \fBcancelSchedule()\fP 
+.RE
+.PP
+
+.SS "boolean animate (number deltaSeconds)"
+
+.PP
+Advance programmed animation by elapsed seconds\&. Advances constant rates, scheduled animations and helpers\&. MVC controllers advance their Views automatically\&. Standalone \fBAnimatedAttributes\fP instances must be advanced explicitly; \fBDrawing\fP copies \fBAttributes\fP samples\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdeltaSeconds\fP Finite nonnegative elapsed seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True if any animation value changed\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBpauseSchedule()\fP, \fBaddAnimationHelper()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP cancelSchedule ()"
+
+.PP
+Discard scheduled animations and pending sequencing\&. Keeps current values, constant rates and the paused state\&. Clears pending \fBwait()\fP/andThen() state\&. \fBAnimatedAttributes\fP also clears appearance and frame transitions\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBhasScheduledAnimations()\fP, \fBpauseSchedule()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate the rotation-center offset by a delta\&. Adds to the pivot offset\&. With \fBandThen()\fP, the delta is applied to the offset when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Relative pivot delta in the owning object coordinate system\&. 
+.br
+\fIy\fP Relative pivot delta in the owning object coordinate system\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCenterOffset()\fP, \fBchangeCenterOffsetTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetBy (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate the rotation-center offset by a delta\&. Adds to the pivot offset\&. With \fBandThen()\fP, the delta is applied to the offset when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Relative pivot delta in the owning object coordinate system\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCenterOffset()\fP, \fBchangeCenterOffsetTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate the rotation-center offset to a target\&. Changes the pivot offset, not the location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Pivot offset in the owning object coordinate system\&. 
+.br
+\fIy\fP Pivot offset in the owning object coordinate system\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCenterOffset()\fP, \fBchangeCenterOffsetBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeCenterOffsetTo (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate the rotation-center offset to a target\&. Changes the pivot offset, not the location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Pivot offset in the owning object coordinate system\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCenterOffset()\fP, \fBchangeCenterOffsetBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the growing rate by an additive delta\&. Uses logical units per second equally on both axes\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIamountPerSecond\fP Change in growth rate in logical size units per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetGrowing()\fP, \fBchangeGrowingTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the growing rate to a target\&. Uses logical units per second equally on both axes\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIamountPerSecond\fP Growth rate in logical size units per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetGrowing()\fP, \fBchangeGrowingBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the movement rate by an additive delta\&. Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIxPerSecond\fP Change in movement rate in distance units per second\&. 
+.br
+\fIyPerSecond\fP Change in movement rate in distance units per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetMovement()\fP, \fBchangeMovementTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementBy (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the movement rate by an additive delta\&. Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Change in movement rate in distance units per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetMovement()\fP, \fBchangeMovementTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the movement rate to a target\&. Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIxPerSecond\fP Movement rate in distance units per second\&. 
+.br
+\fIyPerSecond\fP Movement rate in distance units per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetMovement()\fP, \fBchangeMovementBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeMovementTo (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the movement rate to a target\&. Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Movement rate in distance units per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetMovement()\fP, \fBchangeMovementBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeScaleBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate independent scale by additive deltas\&. Does not change logical size\&. Adds to the scale components: starting at 2, adding 0\&.5 yields 2\&.5\&. \fBAttributes::scale\fP(0\&.5) instead multiplies and yields 1\&. With \fBandThen()\fP, deltas are applied to scale at the start of the operation\&. Negative scale reflects; zero collapses an axis and makes inverse transforms singular\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Additive dimensionless scale delta\&. 
+.br
+\fIy\fP Additive dimensionless scale delta\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetScale()\fP, \fBgetScale()\fP, \fBchangeScaleTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeScaleTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate independent scale to a target\&. Does not change logical size\&. Negative scale reflects; zero collapses an axis and makes inverse transforms singular\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Dimensionless scale factor\&. 
+.br
+\fIy\fP Dimensionless scale factor\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetScale()\fP, \fBgetScale()\fP, \fBchangeScaleBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the spin rate by an additive delta\&. Uses clockwise radians per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradiansPerSecond\fP Change in angular rate in clockwise radians per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetSpin()\fP, \fBchangeSpinTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the spin rate to a target\&. Uses clockwise radians per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradiansPerSecond\fP Angular rate in clockwise radians per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetSpin()\fP, \fBchangeSpinBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the stretching rate by an additive delta\&. Uses logical units per second independently on each axis\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIwidthPerSecond\fP Change in growth rate in logical size units per second\&. 
+.br
+\fIheightPerSecond\fP Change in growth rate in logical size units per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetStretching()\fP, \fBchangeStretchingTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate the stretching rate to a target\&. Uses logical units per second independently on each axis\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIwidthPerSecond\fP Growth rate in logical size units per second\&. 
+.br
+\fIheightPerSecond\fP Growth rate in logical size units per second\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetStretching()\fP, \fBchangeStretchingBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP clearAnimationHelpers ()"
+
+.PP
+Retire all helpers on this object\&. Only this owner's registrations are removed; a retained helper may be registered again\&. Safe inside a callback: removed helpers do not run again on this step, and the currently executing callback remains alive until it returns\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The original owner object, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationHelper()\fP 
 .RE
 .PP
 
 .SS "\fBAnimated\fP flipX ()"
 
 .PP
-flips the object horizontally, center offset is flipped too\&. Applied before other transformations\&. 
-.SS "\fBAnimated\fP flipY ()"
+Toggle the x reflection flag immediately\&. Applied before other transformations; logical dimensions are unchanged\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
 
-.PP
-flips the object vertically, center offset is flipped too\&. Applied before other transformations\&. 
-.SS "\fBRect\fP getBoundingBox ()"
-
-.PP
-get the rectangle that completely encloses the object 
-.SS "\fBOffset\fP getCenterOffset ()"
-
-.PP
-get the current offset of the center relative to the true center point 
-.SS "number getHeight ()"
-
-.PP
-get height of the object 
-.SS "\fBPoint\fP getLocation ()"
-
-.PP
-get the position of the object 
-.SS "number getMass ()"
-
-.PP
-get the mass of the object 
-.SS "number getMoveFriction ()"
-
-.PP
-get the amount of friction for movement 
-.SS "number getMovementDirectionInRadians ()"
-
-.PP
-get the direction the object is moving 
-.SS "\fBRotatedRect\fP getRotatedBounds ()"
-
-.PP
-get the bounds with rotation 
 .PP
 \fBReturns\fP
 .RS 4
-\fBRotatedRect\fP 
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBisFlippedX()\fP, \fBsetFlipX()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP flipY ()"
+
+.PP
+Toggle the y reflection flag immediately\&. Applied before other transformations; logical dimensions are unchanged\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBisFlippedY()\fP, \fBsetFlipY()\fP 
+.RE
+.PP
+
+.SS "\fBRect\fP getBoundingBox ()"
+
+.PP
+Read axis-aligned logical bounds\&. Includes logical size, transform scale and rotation; this is not a query of \fBDrawing\fP geometry\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current value, returned as a new coordinate object\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetRotatedBounds()\fP, \fBgetSize()\fP, \fBgetScale()\fP 
+.RE
+.PP
+
+.SS "\fBOffset\fP getCenterOffset ()"
+
+.PP
+Read the rotation-center offset\&. Interpreted in the owning object coordinate system\&. \fBAnimatedAttributes\fP applies it as the local matrix pivot\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current value, returned as a new coordinate object\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCenterOffset()\fP, \fBchangeCenterOffsetTo()\fP 
+.RE
+.PP
+
+.SS "number getHeight ()"
+
+.PP
+Read logical height\&. Transform scale is independent of logical size\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetSize()\fP, \fBsetHeight()\fP 
+.RE
+.PP
+
+.SS "\fBPoint\fP getLocation ()"
+
+.PP
+Read the location in the container coordinate system\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current value, returned as a new coordinate object\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetLocation()\fP, \fBmoveTo()\fP, \fBmoveBy()\fP 
+.RE
+.PP
+
+.SS "\fBOffset\fP getMovement ()"
+
+.PP
+Read the programmed movement rate\&. Returns x/y distance units per second, independently of physical velocity\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current value, returned as a new coordinate object\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetMovement()\fP, \fBchangeMovementTo()\fP, \fBstopMovement()\fP 
+.RE
+.PP
+
+.SS "\fBRotatedRect\fP getRotatedBounds ()"
+
+.PP
+Read rotated logical bounds\&. Includes logical size, transform scale, rotation and center offset\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current value, returned as a new coordinate object\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetBoundingBox()\fP, \fBgetSize()\fP 
 .RE
 .PP
 
 .SS "number getRotation ()"
 
 .PP
-get how much the object is rotated 
-.SS "number getSizeFriction ()"
+Read the current rotation in radians\&. Clockwise is positive; angles may retain complete turns\&.
 
 .PP
-get the friction applied to size changes (growing or shrinking) 
-.SS "number getSpeed ()"
+\fBReturns\fP
+.RS 4
+The current value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetRotation()\fP, \fBrotateTo()\fP, \fBrotateBy()\fP 
+.RE
+.PP
+
+.SS "\fBOffset\fP getScale ()"
 
 .PP
-get how fast the object is moving in pixels/sec 
+Read independent transform scale\&. Returns dimensionless x/y scale factors; the initial factors are (1,1)\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current value, returned as a new coordinate object\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetScale()\fP, \fBchangeScaleTo()\fP, \fBchangeScaleBy()\fP 
+.RE
+.PP
+
+.SS "\fBOffset\fP getSize ()"
+
+.PP
+Read logical width and height\&. Returns width in x and height in y; transform scale is independent\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current value, returned as a new coordinate object\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetSize()\fP, \fBresizeTo()\fP, \fBgetScale()\fP 
+.RE
+.PP
+
 .SS "number getSpin ()"
 
 .PP
-get how fast the object is spinning in radians per second 
-.SS "number getSpinFriction ()"
+Read the programmed angular rate\&. Clockwise radians per second, independently of physical angular velocity\&.
 
 .PP
-get the friction applied toward spinning 
-.SS "\fBVector\fP getVelocity ()"
+\fBReturns\fP
+.RS 4
+The current value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetSpin()\fP, \fBchangeSpinTo()\fP, \fBstopSpinning()\fP 
+.RE
+.PP
+
+.SS "\fBOffset\fP getStretching ()"
 
 .PP
-get the vector that expresses magnitude and direction of the object's movement in pixels/sec 
+Read logical width and height change rates\&. Returns additive logical units per second for each dimension\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current value, returned as a new coordinate object\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetStretching()\fP, \fBchangeStretchingTo()\fP, \fBstopStretching()\fP 
+.RE
+.PP
+
 .SS "number getWidth ()"
 
 .PP
-get the width of the object 
-.SS "grow (number factor, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+Read logical width\&. Transform scale is independent of logical size\&.
 
 .PP
-change size of the object by a factor over time If factor is greater than 1\&.0, the object will grow, if less than 1\&.0, the object will shrink\&.
+\fBReturns\fP
+.RS 4
+The current value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetSize()\fP, \fBsetWidth()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP grow (number factor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Honors delay given by \fBwait()\fP 
+Multiply logical width and height by one factor\&. The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, the factor is applied to size at the start of the operation\&. Transform scale remains unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
 .PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
+\fBParameters\fP
+.RS 4
+\fIfactor\fP Multiplicative factor for logical size\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBstretch()\fP, \fBresizeBy()\fP, \fBsetGrowing()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "boolean hasScheduledAnimations ()"
+
+.PP
+Test whether animations are running or queued\&. A pending \fBwait()\fP or \fBandThen()\fP alone does not count as a scheduled animation\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+True if an animation is running or queued\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBcancelSchedule()\fP, \fBandThen()\fP 
+.RE
+.PP
+
 .SS "boolean isFlippedX ()"
 
 .PP
-returns true if the object is flipped horizontally 
+Read the x reflection flag\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True if the reflection flag is set; otherwise false\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetFlipX()\fP, \fBflipX()\fP 
+.RE
+.PP
+
 .SS "boolean isFlippedY ()"
 
 .PP
-returns true if the object is flipped vertically 
-.SS "move (\fBOffset\fP delta, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
+Read the y reflection flag\&. 
 .PP
-move the object by a certain amount over time Honors delay given by \fBwait()\fP 
-.PP
-.nf
-myAnimated\&.wait(10)\&.move(offset); // waits 10 ms before move
-
-myAnimated\&.move(offset); // move immediately
-
-.fi
-.PP
- 
-.PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "moveTo (\fBPoint\fP where, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-move the object to a particular location over time Honors delay given by \fBwait()\fP 
-.PP
-.nf
-myAnimated\&.wait(10)\&.moveTo(p); // waits 10 ms before move
-
-myAnimated\&.moveTo(p); // move immediately
-
-.fi
-.PP
- 
-.PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "removeAnimationHelper (\fBIAnimationHelper\fP helper)"
-
-.PP
-remove a specific animation helper 
+\fBReturns\fP
+.RS 4
+True if the reflection flag is set; otherwise false\&.
+.RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBaddAnimationHelper\fP 
+\fBsetFlipY()\fP, \fBflipY()\fP 
 .RE
 .PP
 
-.SS "resize (number deltaWidth, number deltaHeight, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+.SS "boolean isSchedulePaused ()"
 
 .PP
-change the size of an object by a given amount over time Honors delay given by \fBwait()\fP 
-.PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "resizeTo (number width, number height, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+Test whether scheduled animation advancement is paused\&. This does not report whether constant motion or physics is running\&.
 
 .PP
-resize the object to a specific size over time Honors delay given by \fBwait()\fP 
+\fBReturns\fP
+.RS 4
+True if scheduled animation is paused\&.
+.RE
 .PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "rotate (number radians, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+\fBSee also\fP
+.RS 4
+\fBpauseSchedule()\fP, \fBresumeSchedule()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP moveBy (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-rotate the object by a specific amount over time Honors delay given by \fBwait()\fP 
-.PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "rotateTo (number radiansRotation, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+Move by an offset\&. Adds the offset to the location\&. The overload without duration applies immediately\&. A timed request replaces programmed movement\&. With \fBandThen()\fP, the relative target is resolved when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
-rotate the object to face a particular direction over time Honors delay given by \fBwait()\fP 
+\fBParameters\fP
+.RS 4
+\fIx\fP Relative offset in the container coordinate system\&. 
+.br
+\fIy\fP Relative offset in the container coordinate system\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
 .PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP setCenterOffset (\fBOffset\fP inCenterOffset)"
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBmoveTo()\fP, \fBsetLocation()\fP, \fBandThen()\fP 
+.RE
+.PP
 
 .PP
-set the offset of the center point relative to the true center 
-.SS "\fBAnimated\fP setFlipX (boolean inFlipX)"
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveBy (\fBOffset\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-sets whether the object is flipped horizontally 
-.SS "\fBAnimated\fP setFlipY (boolean inFlipY)"
+Move by an offset\&. Adds the offset to the location\&. The overload without duration applies immediately\&. A timed request replaces programmed movement\&. With \fBandThen()\fP, the relative target is resolved when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
-sets whether the object is flipped vertically 
-.SS "\fBAnimated\fP setFriction (number frictionCoefficient)"
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Relative offset in the container coordinate system\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBmoveTo()\fP, \fBsetLocation()\fP, \fBandThen()\fP 
+.RE
+.PP
 
 .PP
-set friction for movement, rotation and resizing all at once 
-.SS "\fBAnimated\fP setHeight (number inHeight)"
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveTo (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-set the object's height 
-.SS "\fBAnimated\fP setLocation (\fBPoint\fP inLocation)"
+Move to a location\&. The overload without duration applies immediately\&. The timed overload replaces programmed movement with a transition to the target location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
-place the object at a particular location 
-.SS "\fBAnimated\fP setMass (number inMass)"
+\fBParameters\fP
+.RS 4
+\fIx\fP Location in the container coordinate system\&. 
+.br
+\fIy\fP Location in the container coordinate system\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetLocation()\fP, \fBmoveBy()\fP, \fBwait()\fP 
+.RE
+.PP
 
 .PP
-set the object's mass, used when forces are applied 
-.SS "\fBAnimated\fP setMoveFriction (number inMoveFriction)"
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP moveTo (\fBPoint\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-set the object's friction for movement 
-.SS "\fBAnimated\fP setRotation (number inRotation)"
+Move to a location\&. The overload without duration applies immediately\&. The timed overload replaces programmed movement with a transition to the target location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
-set the direction the object is facing in radians 
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Location in the container coordinate system\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetLocation()\fP, \fBmoveBy()\fP, \fBwait()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP pauseSchedule ()"
+
+.PP
+Pause scheduled animations and their delays\&. Constant rates, helpers, clips and physics continue\&. Pausing a rate transition holds its current rate while movement, spin or growth continues at that rate\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBresumeSchedule()\fP, \fBisSchedulePaused()\fP, \fBcancelSchedule()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP removeAnimationHelper (\fBIAnimationHelper\fP helper)"
+
+.PP
+Retire a specific animation helper\&. An absent helper is ignored\&. Other owners' registrations are unaffected\&. A retained helper may be registered again\&. Safe inside a callback: removed helpers do not run again on this step, and the currently executing callback remains alive until it returns\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIhelper\fP Helper to remove from this owner\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The original owner object, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationHelper()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Change logical size by additive deltas\&. Adds to width and height\&. The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, deltas are applied to size at the start of the operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdeltaWidth\fP Logical size value or additive delta\&. 
+.br
+\fIdeltaHeight\fP Logical size value or additive delta\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBresizeTo()\fP, \fBgrow()\fP, \fBstretch()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP resizeTo (number width, number height, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate logical size to a target\&. Replaces constant growth and size animations; independent transform scale is unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIwidth\fP Logical size value\&. 
+.br
+\fIheight\fP Logical size value\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetSize()\fP, \fBresizeBy()\fP, \fBgrow()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP resumeSchedule ()"
+
+.PP
+Resume scheduled animations and their delays\&. Resumes from the current samples without advancing through the paused time\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBpauseSchedule()\fP, \fBisSchedulePaused()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP rotateBy (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+Rotate through a relative angle\&. The immediate overload preserves spin\&. The timed overload replaces spin and retains explicitly requested complete turns\&. Clockwise/counterclockwise direction selects the sign; AsSpecified and Shortest preserve the signed relative travel\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradians\fP Angle in radians, clockwise positive\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&. 
+.br
+\fIdirection\fP Integer rotationDirection_AsSpecified, rotationDirection_Shortest, rotationDirection_Clockwise or rotationDirection_CounterClockwise constant\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBrotateTo()\fP, \fBsetRotation()\fP, \fBchangeSpinBy()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBAnimated\fP rotateTo (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+Rotate to an absolute angle\&. The immediate overload preserves spin\&. The timed overload replaces spin and follows the selected angular route\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradians\fP Angle in radians, clockwise positive\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&. 
+.br
+\fIdirection\fP Integer rotationDirection_AsSpecified, rotationDirection_Shortest, rotationDirection_Clockwise or rotationDirection_CounterClockwise constant\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetRotation()\fP, \fBrotateBy()\fP, \fBchangeSpinTo()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBAnimated\fP setCenterOffset (\fBOffset\fP offset)"
+
+.PP
+Set the rotation-center offset immediately\&. Cancels scheduled center-offset changes\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIoffset\fP Pivot offset in the owning object coordinate system\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetCenterOffset()\fP, \fBchangeCenterOffsetTo()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setFlipX (boolean flip)"
+
+.PP
+Set the x reflection flag immediately\&. Applied before other transformations; logical dimensions are unchanged\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIflip\fP Whether to reflect this axis\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBisFlippedX()\fP, \fBflipX()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setFlipY (boolean flip)"
+
+.PP
+Set the y reflection flag immediately\&. Applied before other transformations; logical dimensions are unchanged\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIflip\fP Whether to reflect this axis\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBisFlippedY()\fP, \fBflipY()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setGrowing (number value)"
+
+.PP
+Set equal constant growth rates immediately\&. Adds the same logical units per second to width and height\&. Replaces size animations and growth-rate transitions\&. Growth continues until changed or stopped\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Growth rate in logical size units per second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetStretching()\fP, \fBchangeGrowingTo()\fP, \fBstopGrowing()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setHeight (number value)"
+
+.PP
+Set logical height immediately\&. Cancels scheduled height changes and preserves the height growth rate\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Logical size value\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetSize()\fP, \fBresizeTo()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setLocation (number x, number y)"
+
+.PP
+Set the location immediately\&. Cancels scheduled position changes and preserves independently configured movement rates\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Location in the container coordinate system\&. 
+.br
+\fIy\fP Location in the container coordinate system\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetLocation()\fP, \fBmoveTo()\fP, \fBsetMovement()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setLocation (\fBPoint\fP value)"
+
+.PP
+Set the location immediately\&. Cancels scheduled position changes and preserves independently configured movement rates\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Location in the container coordinate system\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetLocation()\fP, \fBmoveTo()\fP, \fBsetMovement()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setMovement (number xPerSecond, number yPerSecond)"
+
+.PP
+Set a constant programmed movement rate immediately\&. Uses distance units per second\&. Replaces position animations and movement-rate transitions\&. The rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject programmed movement\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIxPerSecond\fP Movement rate in distance units per second\&. 
+.br
+\fIyPerSecond\fP Movement rate in distance units per second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMovement()\fP, \fBchangeMovementTo()\fP, \fBstopMovement()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setMovement (\fBVector\fP value)"
+
+.PP
+Set a constant programmed movement rate immediately\&. Uses distance units per second\&. Replaces position animations and movement-rate transitions\&. The rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject programmed movement\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Movement rate in distance units per second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMovement()\fP, \fBchangeMovementTo()\fP, \fBstopMovement()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setRotation (number value)"
+
+.PP
+Set rotation immediately\&. Cancels scheduled rotation changes and preserves the spin rate\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Angle in radians, clockwise positive\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetRotation()\fP, \fBrotateTo()\fP, \fBsetSpin()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setScale (number x, number y = \fRx\fP)"
+
+.PP
+Set independent transform scale immediately\&. Cancels scheduled scale changes\&. Logical width and height are unchanged\&. Negative scale reflects an axis; zero collapses it and makes the transform singular\&. The single-value overload sets both axes\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Dimensionless scale factor\&. 
+.br
+\fIy\fP Dimensionless scale factor\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetScale()\fP, \fBchangeScaleTo()\fP, \fBchangeScaleBy()\fP 
+.RE
+.PP
+
 .SS "\fBAnimated\fP setSize (number width, number height)"
 
 .PP
-set the size of the object 
-.SS "\fBAnimated\fP setSizeFriction (number inSizeFriction)"
+Set logical width and height immediately\&. Cancels scheduled size changes and preserves separately configured growth rates\&. Does not change transform scale\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
 
 .PP
-set the friction applied for object resizing 
-.SS "\fBAnimated\fP setSpeed (number inSpeed)"
-
+\fBParameters\fP
+.RS 4
+\fIwidth\fP Logical size value\&. 
+.br
+\fIheight\fP Logical size value\&.
+.RE
 .PP
-set the speed the object is moving in its current direction of motion 
-.SS "\fBAnimated\fP setSpin (number inSpin)"
-
-.PP
-set the rate at which the object is spinning, in radians/sec 
-.SS "\fBAnimated\fP setSpinFriction (number inSpinFriction)"
-
-.PP
-set the friction the object faces for spinning 
-.SS "\fBAnimated\fP setVelocity (number deltaXPerSec, number deltaYPerSec)"
-
-.PP
-set the speed and direction the object is moving 
-.SS "\fBAnimated\fP setVelocity (\fBVector\fP deltaPerSec)"
-
-.PP
-set the speed and direction the object is moving 
-.SS "\fBAnimated\fP setVelocityInRadians (number speed, number direction)"
-
-.PP
-set the speed and direction the object is moving 
-.SS "\fBAnimated\fP setWidth (number inWidth)"
-
-.PP
-set the width of the object 
-.SS "startGrowing (number amountPerSecond)"
-
-.PP
-set the growth rate of the object in pixels/sec 
-.SS "startStretching (number widthPerSecond, number heightPerSecond)"
-
-.PP
-set the growth rate of the object in pixels/sec, with varied rates for width and height 
-.SS "stopAllForces ()"
-
-.PP
-remove all forces that were acting on the object (except friction) 
-.SS "stopGrowing ()"
-
-.PP
-stop any size change 
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBstartGrowing\fP 
+\fBgetSize()\fP, \fBresizeTo()\fP, \fBsetStretching()\fP 
 .RE
 .PP
 
-.SS "stopMoving ()"
+.SS "\fBAnimated\fP setSize (\fBOffset\fP value)"
 
 .PP
-stop any movement the object was doing (except spinning) 
-.SS "stopSpinning ()"
+Set logical width and height immediately\&. Cancels scheduled size changes and preserves separately configured growth rates\&. Does not change transform scale\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
 
 .PP
-stop any spinning the object was doing 
-.SS "stopStretching ()"
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Logical size value\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetSize()\fP, \fBresizeTo()\fP, \fBsetStretching()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setSpin (number value)"
 
 .PP
-stop any stretching the object was doing 
-.SS "stretch (number widthFactor, number heightFactor, int msDuration = \fR\fBduration_Instantaneous\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+Set a constant programmed angular rate immediately\&. Uses clockwise radians per second\&. Replaces rotation animations and spin-rate transitions\&. The rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject programmed spin\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
 
 .PP
-change the dimensions of the object over time Honors delay given by \fBwait()\fP 
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Angular rate in clockwise radians per second\&.
+.RE
 .PP
-References \fBpdg::duration_Instantaneous\fP, and \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP wait (int msDuration)"
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetSpin()\fP, \fBchangeSpinTo()\fP, \fBstopSpinning()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setStretching (number widthPerSecond, number heightPerSecond)"
 
 .PP
-wait before beginning the next animation call that operates over time Only applies to the next call, and only applies to calls where a duration can be passed in
+Set independent constant growth rates immediately\&. Adds logical units per second to width and height\&. Replaces size animations and growth-rate transitions\&. Growth continues until changed or stopped\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
 
 .PP
-Works with: \fBmove()\fP, \fBmoveTo()\fP, \fBaccelerateTo()\fP, \fBresize()\fP, \fBstretch()\fP, \fBgrow()\fP, \fBresizeTo()\fP, \fBrotate()\fP, \fBrotateTo()\fP, \fBchangeCenter()\fP, \fBchangeCenterTo()\fP, \fBapplyForce()\fP, \fBapplyTorque()\fP, 
+\fBParameters\fP
+.RS 4
+\fIwidthPerSecond\fP Growth rate in logical size units per second\&. 
+.br
+\fIheightPerSecond\fP Growth rate in logical size units per second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetStretching()\fP, \fBchangeStretchingTo()\fP, \fBstopStretching()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP setWidth (number value)"
+
+.PP
+Set logical width immediately\&. Cancels scheduled width changes and preserves the width growth rate\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Logical size value\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetSize()\fP, \fBresizeTo()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP stopGrowing ()"
+
+.PP
+Stop all programmed changes to logical size\&. Clears the corresponding constant rates, rate transitions and scheduled target animations\&. Other properties continue\&. This does not stop a \fBPhysicsBody\fP\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBcancelSchedule()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP stopMovement ()"
+
+.PP
+Stop all programmed changes to position\&. Clears the corresponding constant rates, rate transitions and scheduled target animations\&. Other properties continue\&. This does not stop a \fBPhysicsBody\fP\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBcancelSchedule()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP stopSpinning ()"
+
+.PP
+Stop all programmed changes to rotation\&. Clears the corresponding constant rates, rate transitions and scheduled target animations\&. Other properties continue\&. This does not stop a \fBPhysicsBody\fP\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBcancelSchedule()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP stopStretching ()"
+
+.PP
+Stop all programmed changes to logical size\&. Clears the corresponding constant rates, rate transitions and scheduled target animations\&. Other properties continue\&. This does not stop a \fBPhysicsBody\fP\&. This is an immediate, chainable operation\&. It throws after \fBwait()\fP or \fBandThen()\fP; only operations with a duration can be part of a timed animation sequence\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBcancelSchedule()\fP 
+.RE
+.PP
+
+.SS "\fBAnimated\fP stretch (number widthFactor, number heightFactor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Multiply logical width and height by independent factors\&. The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, factors are applied to size at the start of the operation\&. Transform scale remains unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIwidthFactor\fP Multiplicative factor for logical size\&. 
+.br
+\fIheightFactor\fP Multiplicative factor for logical size\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Integer easing constant; elapsed time and duration use seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgrow()\fP, \fBresizeBy()\fP, \fBsetStretching()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP wait (number durationSeconds)"
+
+.PP
+Delay the next timed animation request\&. The next timed operation consumes this delay\&. Replaces pending sequencing\&. Immediate setters and operations cannot follow it until a timed request consumes it or \fBcancelSchedule()\fP clears it, even for wait(0)\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdurationSeconds\fP Finite nonnegative delay in seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBandThen()\fP, \fBcancelSchedule()\fP 
+.RE
+.PP
+
 
 .SH "Author"
 .PP 

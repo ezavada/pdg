@@ -1,7 +1,12 @@
 namespace pdg { /**
+\fn pdg::Animated::getWidth()
+\brief Read logical width.
 
-\fn pdg::Animated::getWidth
+Transform scale is independent of logical size.
 
-\brief get the width of the object
 
-**/ }
+\return The current value.
+
+\see getSize(), setWidth()
+*/
+ }

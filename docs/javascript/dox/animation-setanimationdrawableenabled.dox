@@ -1,0 +1,13 @@
+/**
+\fn pdg::Sprite::setAnimationDrawableEnabled(uint id, boolean enabled)
+\brief Enable or hide a registered drawing.
+
+Does not remove the registration. Throws for an unknown ID. A callback disabled by a failure cannot be reenabled; remove it and register a corrected callback.
+
+\param id Existing ID returned by addAnimationDrawable().
+\param enabled True to include the drawing; false to skip it.
+
+\return No value.
+
+\see getAnimationDrawableError(), removeAnimationDrawable()
+*/

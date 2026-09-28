@@ -1,0 +1,138 @@
+{
+  "benchmarkId": "cpp-pdgmark",
+  "compositeScore": 143839,
+  "framePacing": "uncapped",
+  "language": "C++",
+  "loadFactor": 1.5,
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "mode": "quick",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "synthetic": true,
+  "testName": "QuickPDGMark",
+  "tests": {
+    "alpha": {
+      "atOrAboveTarget": false,
+      "averageFPS": 47.7982674127492,
+      "durationSeconds": 3.01266149997711,
+      "estimatedCapacity": 33697.7785259882,
+      "fixedLoad": 42300,
+      "frameTime": {
+        "maxMs": 25.1575419902802,
+        "meanMs": 20.9212604165077,
+        "minMs": 19.5361250638962,
+        "percentile95Ms": 23.0598340034485,
+        "percentile99Ms": 24.256500005722
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 28200,
+      "referenceScore": 36659.9986553192,
+      "requestedSampleSeconds": 3,
+      "score": 43807,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 144,
+      "warmupSeconds": 1
+    },
+    "bitmap": {
+      "atOrAboveTarget": true,
+      "averageFPS": 59.9476107838663,
+      "durationSeconds": 3.00262174999714,
+      "estimatedCapacity": 47658.3505731737,
+      "fixedLoad": 47700,
+      "frameTime": {
+        "maxMs": 17.6545420885086,
+        "meanMs": 16.6812319444285,
+        "minMs": 15.5666660070419,
+        "percentile95Ms": 16.8592500686646,
+        "percentile99Ms": 17.2153749465942
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 31800,
+      "referenceScore": 31800,
+      "requestedSampleSeconds": 3,
+      "score": 47658,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 180,
+      "warmupSeconds": 1
+    },
+    "drawing": {
+      "atOrAboveTarget": false,
+      "averageFPS": 52.0988141520488,
+      "durationSeconds": 3.01350429093838,
+      "estimatedCapacity": 24030.5780276325,
+      "fixedLoad": 27675,
+      "frameTime": {
+        "maxMs": 23.8700000047684,
+        "meanMs": 19.1942948467413,
+        "minMs": 17.8907080888748,
+        "percentile95Ms": 22.5912499427795,
+        "percentile99Ms": 23.8286250829697
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 18450,
+      "referenceScore": 22140.0008797646,
+      "requestedSampleSeconds": 3,
+      "score": 28837,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 157,
+      "warmupSeconds": 1
+    },
+    "polygon": {
+      "atOrAboveTarget": false,
+      "averageFPS": 50.2930946652149,
+      "durationSeconds": 3.00240025007725,
+      "estimatedCapacity": 15423.2156973326,
+      "fixedLoad": 18400,
+      "frameTime": {
+        "maxMs": 28.1087919473648,
+        "meanMs": 19.88344536475,
+        "minMs": 17.9347089529037,
+        "percentile95Ms": 25.2964580059052,
+        "percentile99Ms": 27.4281250238419
+      },
+      "loadFactor": 4,
+      "referenceLoad": 4600,
+      "referenceScore": 6900,
+      "requestedSampleSeconds": 3,
+      "score": 23135,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 151,
+      "warmupSeconds": 1
+    },
+    "text": {
+      "atOrAboveTarget": false,
+      "averageFPS": 37.0910212892376,
+      "durationSeconds": 3.01959870898724,
+      "estimatedCapacity": 287.455414991592,
+      "fixedLoad": 465,
+      "frameTime": {
+        "maxMs": 31.0922079086304,
+        "meanMs": 26.9607027588146,
+        "minMs": 25.2966669797897,
+        "percentile95Ms": 30.5645830631256,
+        "percentile99Ms": 31.0591669082642
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 310,
+      "referenceScore": 433.999992609024,
+      "requestedSampleSeconds": 3,
+      "score": 402,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 112,
+      "warmupSeconds": 1
+    }
+  },
+  "timestamp": "2026-09-28T16:44:14Z",
+  "build": {
+    "configuration": "Release",
+    "kind": "native-cpp",
+    "executable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/pdgmark.app/Contents/MacOS/pdgmark",
+    "resolvedExecutable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/pdgmark.app/Contents/MacOS/pdgmark",
+    "directory": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release"
+  }
+}

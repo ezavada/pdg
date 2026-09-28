@@ -21,7 +21,7 @@ This file applies to `src`.
 ## Generated And Derived Files
 
 - `src/bindings/generated/**` is generated output.
-- Prefer editing the inputs in `src/bindings/common`, `src/bindings/javascript`, `src/bindings/node`, and the generator scripts under `tools`.
+- Prefer editing the inputs in `src/bindings/common`, `src/bindings/javascript`, `src/bindings/node`, `src/bindings/jsc-ios`, and the generator scripts under `tools`.
 - If you touch generated bindings, document why regeneration was not used.
 
 ## Useful Mental Model
@@ -29,10 +29,10 @@ This file applies to `src`.
 - Native engine behavior usually starts in `src/sys`.
 - Public C++ surface area is exposed from `src/inc`.
 - JavaScript exposure flows through the binding layer and runtime helper files.
-- App-framework behavior may also need mirrored test coverage in `test/spec` or `test/misc`.
+- App-framework behavior may also need mirrored test coverage in `test/spec` or `test/rig_tests`.
 
 ## Verification
 
 - For binding or public API changes, run the smallest relevant spec coverage under `test/spec`.
-- For rendering, UI, or event changes, check `test/ui_tests`, `test/misc`, and any affected client-side specs.
+- For rendering, UI, or event changes, check `test/ui_tests`, `test/rig_tests`, and any affected client-side specs.
 - For platform-specific work, verify the target platform files still compile cleanly and do not break other backends conceptually.

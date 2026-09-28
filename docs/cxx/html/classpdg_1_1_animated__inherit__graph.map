@@ -1,13 +1,9 @@
-<map id="Animated" name="Animated">
-<area shape="rect" id="Node000001" title=" " alt="" coords="43,153,119,178"/>
-<area shape="rect" id="Node000004" href="$classpdg_1_1_sprite.html" title=" " alt="" coords="5,226,61,252"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="67,193,43,227,39,224,62,190"/>
-<area shape="rect" id="Node000005" href="$classpdg_1_1_sprite_layer.html" title=" " alt="" coords="85,226,173,252"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="100,190,123,224,119,227,95,193"/>
-<area shape="rect" id="Node000002" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="35,79,127,105"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,120,84,152,78,152,78,120"/>
-<area shape="rect" id="Node000003" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="25,5,137,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="84,46,84,79,78,79,78,46"/>
-<area shape="rect" id="Node000006" href="$classpdg_1_1_tile_layer.html" title=" " alt="" coords="92,300,166,326"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="132,267,132,300,126,300,126,267"/>
+<map id="Animated&lt; T, Base &gt;" name="Animated&lt; T, Base &gt;">
+<area shape="rect" id="Node000001" title="Programmed transforms, constant rates and scheduled animation." alt="" coords="5,226,150,252"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="24,153,131,178"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="79,192,80,227,75,225,76,196"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="31,79,124,105"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="79,118,80,153,75,152,76,123"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="22,5,133,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="78,44,80,79,75,78,77,49"/>
 </map>

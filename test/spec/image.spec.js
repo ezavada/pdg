@@ -29,6 +29,19 @@
 
 describe("Image", function() {
 
+  it("provides read-only boolean image copy modes", function() {
+    expect(pdg.CopyPixels).toBe(true);
+    expect(pdg.SharedSurface).toBe(false);
+    expect(Object.getOwnPropertyDescriptor(pdg,'CopyPixels').writable).toBe(false);
+    expect(Object.getOwnPropertyDescriptor(pdg,'SharedSurface').writable).toBe(false);
+  });
+
+  it("uses the native fit-mode values in every runtime", function() {
+    ['None', 'Fill', 'Height', 'Width', 'Inside', 'Overflow', 'Clipped', 'TileX', 'TileY', 'Tile'].forEach(function(name, value) {
+      expect(pdg['fit_' + name]).toBe(value);
+    });
+  });
+
   var testImage;
   var subsectionImage;
 
@@ -41,12 +54,14 @@ describe("Image", function() {
     it("exists", function() {
       console.log('* Testing Image...');
       expect(pdg.Image).toBeDefined();
+      expect('createImageFromOffscreenPort' in pdg.Image).toBe(false);
     });
 
     it("can be created with file path", function() {
       var image = new pdg.Image('./data/yinyang.png');
       expect(image).toBeDefined();
       expect(image.constructor.name).toBe('Image');
+      expect(image instanceof pdg.Image).toBe(true);
     });
 
     it("has correct dimensions", function() {

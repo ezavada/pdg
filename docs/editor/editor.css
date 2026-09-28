@@ -140,3 +140,27 @@
 	font-size: 0.8em;
 	font-weight: bold;
 }
+
+/* Shared option reference within an overloaded method's documentation. */
+.shared-api-options {
+    margin: 1.5em 0;
+    padding: 1em 1.25em;
+    border: 1px solid #8aa386;
+    border-left: 4px solid #356E30;
+    border-radius: 6px;
+    background-color: #f5f8f4;
+    overflow-x: auto;
+}
+
+.shared-api-options > dl.section.user:first-of-type {
+    margin-top: 0;
+}
+
+.shared-api-options > dl.section.user:first-of-type > dt {
+    color: #356E30;
+    font-size: 115%;
+}
+
+.shared-api-options > :last-child {
+    margin-bottom: 0;
+}

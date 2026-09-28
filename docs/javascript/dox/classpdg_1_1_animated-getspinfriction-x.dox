@@ -1,7 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Animated::getSpinFriction
-
-\brief get the friction applied toward spinning
-
-**/ }

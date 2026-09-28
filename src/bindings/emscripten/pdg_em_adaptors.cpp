@@ -6,11 +6,13 @@
 
 #ifndef PDG_NO_GUI
 #include "glfw/internals-glfw.h"
+#include "image-opengl.h"
 #endif
 
 #include <emscripten.h>
 
 #include <algorithm>
+#include <array>
 #include <stdexcept>
 #include <memory>
 #include <unordered_map>
@@ -52,14 +54,15 @@ public:
     explicit EmscriptenEventBridge(const emscripten::val& jsEmitter)
         : mJsEmitter(jsEmitter), mRefs(0) {}
 
-    void addRef() const throw() override { ++mRefs; }
-    void release() const throw() override {
+    void addRef() const noexcept override { ++mRefs; }
+    void release() const noexcept override {
         if (--mRefs == 0) delete this;
     }
 
-    bool handleEvent(EventEmitter*, long eventType, void* eventData) throw() override {
+    bool handleEvent(EventEmitter*, long eventType, void* eventData) noexcept override {
         try {
             emscripten::val event = emscripten::val::object();
+            event.set("emitter", mJsEmitter);
             if (eventData && eventType == eventType_Shutdown) {
                 const ShutdownInfo* info = static_cast<const ShutdownInfo*>(eventData);
                 event.set("exitReason", info->exitReason);
@@ -106,12 +109,51 @@ public:
                 event.set("action", info->action);
                 event.set("actingLayer", mJsEmitter);
                 event.set("millisec", static_cast<double>(info->millisec));
+            } else if (eventData && eventType == eventType_ColliderContact) {
+                const auto* info = static_cast<const ColliderContact*>(eventData);
+                auto handle=[](Collider* c) { c->addRef(); return std::shared_ptr<Collider>(c,[](Collider* p){p->release();}); };
+                const auto canonical=emscripten::val::global("pdg")["_canonicalPhysicsOwner"];
+                event.set("collider",canonical(emscripten::val(handle(info->collider))));
+                event.set("other",canonical(emscripten::val(handle(info->other))));
+                event.set("shape",info->shape);event.set("otherShape",info->otherShape);event.set("phase",info->phase);
+                event.set("point",pointToVal(info->point));event.set("normal",pointToVal(Point(info->normal.x,info->normal.y)));
+                event.set("impulse",pointToVal(Point(info->impulse.x,info->impulse.y)));
+                event.set("penetration",info->penetration);event.set("sensor",info->sensor);
+            } else if (eventData && eventType == eventType_ParticleBreak) {
+                const auto* info = static_cast<const PhysicsBodyBreakInfo*>(eventData);
+                const auto canonical=emscripten::val::global("pdg")["_canonicalPhysicsOwner"];
+                auto handle=[&](PhysicsBody* value) {
+                    if (!value) return emscripten::val::null();
+                    value->addRef();
+                    return canonical(emscripten::val(std::shared_ptr<PhysicsBody>(value,[](PhysicsBody* p){p->release();})));
+                };
+                event.set("body",handle(info->body)); event.set("referenceBody",handle(info->referenceBody));
+                event.set("angularSpeed",info->angularSpeed); event.set("breakAngularSpeed",info->breakAngularSpeed);
+            } else if (eventData && eventType == eventType_SpriteBreak) {
+                const auto* info = static_cast<const SpriteJointBreakInfo*>(eventData);
+                const auto canonical=emscripten::val::global("pdg")["_canonicalPhysicsOwner"];
+                auto handle=[&](auto* value) {
+                    using T = std::remove_pointer_t<decltype(value)>;
+                    if (!value) return emscripten::val::null();
+                    value->addRef();
+                    return canonical(emscripten::val(std::shared_ptr<T>(value,[](T* p){p->release();})));
+                };
+                event.set("action",info->action); event.set("reason",info->reason);
+                event.set("actingSprite",handle(info->actingSprite));
+                event.set("inLayerIdentity",reinterpret_cast<uintptr_t>(info->inLayer));
+                event.set("targetSprite",emscripten::val::null()); event.set("joint",emscripten::val::null());
+                event.set("body",handle(info->body)); event.set("part",handle(info->part));
+                event.set("referenceBody",handle(info->referenceBody));
+                event.set("angularSpeed",info->angularSpeed); event.set("breakAngularSpeed",info->breakAngularSpeed);
+                event.set("impulse",info->impulse); event.set("force",info->force); event.set("breakForce",info->breakForce);
             } else if (eventData && eventType == eventType_SpriteCollide) {
                 const SpriteCollideInfo* info = static_cast<const SpriteCollideInfo*>(eventData);
                 event.set("action", info->action);
                 event.set("actingSprite", mJsEmitter);
-                event.set("inLayer", true);
-                event.set("targetSprite", true);
+                event.set("inLayerIdentity", reinterpret_cast<uintptr_t>(info->inLayer));
+                event.set("targetSpriteIdentity", reinterpret_cast<uintptr_t>(info->targetSprite));
+                event.set("normal", pointToVal(Point(info->normal.x, info->normal.y)));
+                event.set("impulse", pointToVal(Point(info->impulse.x, info->impulse.y)));
                 event.set("force", info->force);
                 event.set("kineticEnergy", info->kineticEnergy);
                 event.set("isFirstContact", info->isFirstContact);
@@ -119,12 +161,26 @@ public:
                     ? emscripten::val(info->collisionName) : emscripten::val::null());
                 event.set("withCollisionName", info->withCollisionName
                     ? emscripten::val(info->withCollisionName) : emscripten::val::null());
+            } else if (eventData && eventType == eventType_SpriteTriggerEvent) {
+                const auto* info=static_cast<const SpriteTriggerEventInfo*>(eventData);
+                event.set("triggerName",std::string(info->triggerName));event.set("clipName",std::string(info->clipName));event.set("entityName",std::string(info->entityName));
+                event.set("timeSeconds",info->timeSeconds);event.set("offsetSeconds",info->offsetSeconds);
+                event.set("actingSprite",mJsEmitter);event.set("inLayerIdentity",reinterpret_cast<uintptr_t>(info->inLayer));event.set("id",info->id);
             } else if (eventData && eventType == eventType_SpriteAnimate) {
                 const SpriteAnimateInfo* info = static_cast<const SpriteAnimateInfo*>(eventData);
                 event.set("action", info->action);
                 event.set("actingSprite", mJsEmitter);
-                event.set("inLayer", true);
+                event.set("inLayerIdentity",reinterpret_cast<uintptr_t>(info->inLayer));
                 event.set("id", info->id);
+                if(info->action==Sprite::action_AnimationPhysicsRecoveryComplete) {
+                    const auto* recovery=static_cast<const SpriteAnimationPhysicsRecoveryInfo*>(info);
+                    event.set("bone",recovery->bone);
+                    event.set("wholeRig",recovery->wholeRig);
+                    event.set("includeDescendants",recovery->includeDescendants);
+                    event.set("mode",recovery->mode);
+                    event.set("bodyCount",recovery->bodyCount);
+                    event.set("disabled",recovery->disabled);
+                }
             } else if (eventData && eventType == eventType_SoundEvent) {
                 const SoundEventInfo* info = static_cast<const SoundEventInfo*>(eventData);
                 event.set("eventCode", info->eventCode);
@@ -243,14 +299,36 @@ Font* emscriptenGraphicsCreateFont(GraphicsManager& manager, const std::string& 
     return manager.createFont(name.c_str(), scalingFactor);
 }
 
-static bool emscriptenDestinationIsRect(const emscripten::val& destination) {
-    return !destination["right"].isUndefined() && !destination["bottom"].isUndefined();
+static bool emscriptenReadDestinationRect(const emscripten::val& destination, Rect& rect) {
+    const auto right = destination["right"];
+    if (right.isUndefined()) return false;
+    const auto bottom = destination["bottom"];
+    if (bottom.isUndefined()) return false;
+    // Retain value-object validation while reusing the dispatch reads.
+    const auto readRequiredEdge = [](const emscripten::val& value) {
+        if (value.isUndefined()) {
+            emscripten::val::global("TypeError").new_(
+                std::string("Rect requires left and top fields")).throw_();
+        }
+        return value.as<PDG_BASE_COORD_TYPE>();
+    };
+    const auto leftNumber = readRequiredEdge(destination["left"]);
+    const auto topNumber = readRequiredEdge(destination["top"]);
+    const auto rightNumber = right.as<PDG_BASE_COORD_TYPE>();
+    const auto bottomNumber = bottom.as<PDG_BASE_COORD_TYPE>();
+    rect = Rect(leftNumber, topNumber, rightNumber, bottomNumber);
+    return true;
 }
 
 void emscriptenPortDrawImage(Port& port, Image* image, const emscripten::val& destination,
                              const Attributes& attributes) {
-    if (emscriptenDestinationIsRect(destination)) {
-        port.drawImage(image, destination.as<Rect>(), attributes);
+    const auto points = destination["points"];
+    Rect rect;
+    if (!points.isUndefined()) {
+        const auto vertices = points.as<std::array<Point, 4>>();
+        port.drawImage(image, Quad(vertices[0], vertices[1], vertices[2], vertices[3]), attributes);
+    } else if (emscriptenReadDestinationRect(destination, rect)) {
+        port.drawImage(image, rect, attributes);
     } else {
         port.drawImage(image, destination.as<Point>(), attributes);
     }
@@ -258,8 +336,9 @@ void emscriptenPortDrawImage(Port& port, Image* image, const emscripten::val& de
 
 void emscriptenPortDrawDrawing(Port& port, const Drawing& drawing,
                                const emscripten::val& destination, const Attributes& attributes) {
-    if (emscriptenDestinationIsRect(destination)) {
-        port.drawDrawing(drawing, destination.as<Rect>(), attributes);
+    Rect rect;
+    if (emscriptenReadDestinationRect(destination, rect)) {
+        port.drawDrawing(drawing, rect, attributes);
     } else {
         port.drawDrawing(drawing, destination.as<Point>(), attributes);
     }
@@ -267,8 +346,9 @@ void emscriptenPortDrawDrawing(Port& port, const Drawing& drawing,
 
 void emscriptenPortDrawText(Port& port, const std::string& text,
                             const emscripten::val& destination, const Attributes& attributes) {
-    if (emscriptenDestinationIsRect(destination)) {
-        port.drawText(text.c_str(), destination.as<Rect>(), attributes);
+    Rect rect;
+    if (emscriptenReadDestinationRect(destination, rect)) {
+        port.drawText(text.c_str(), rect, attributes);
     } else {
         port.drawText(text.c_str(), destination.as<Point>(), attributes);
     }
@@ -307,6 +387,10 @@ float emscriptenFontGetLeading(Font& font, int size, int style) {
     return font.getFontLeading(size, static_cast<uint32>(style));
 }
 
+float emscriptenFontGetCapHeight(Font& font, int size, int style) {
+    return font.getFontCapHeight(size, static_cast<uint32>(style));
+}
+
 float emscriptenFontGetAscent(Font& font, int size, int style) {
     return font.getFontAscent(size, static_cast<uint32>(style));
 }
@@ -320,10 +404,196 @@ void emscriptenDrawingDraw(Drawing& drawing, Port* port) {
 }
 
 #ifdef PDG_SPRITER_SUPPORT
+
+namespace {
+using ScriptValue = emscripten::val;
+ScriptValue poseTransformValue(const AnimationTransform& transform) {
+    auto result = ScriptValue::object();
+    result.set("x", transform.x); result.set("y", transform.y);
+    result.set("rotation", transform.rotation);
+    result.set("scaleX", transform.scaleX); result.set("scaleY", transform.scaleY);
+    result.set("alpha", transform.alpha);
+    return result;
+}
+ScriptValue poseNamesValue(const std::vector<std::string>& names) {
+    auto result = ScriptValue::array();
+    for (size_t i = 0; i < names.size(); ++i) result.set(i, names[i]);
+    return result;
+}
+ScriptValue poseSnapshotValue(const AnimationPose& pose) {
+    auto result = ScriptValue::object(), bones = ScriptValue::array(), bindings = ScriptValue::array();
+    const auto& rig = pose.getRig();
+    result.set("rigRevision", std::to_string(rig->getRevision()));
+    for (AnimationBoneId id = 0; id < rig->getBoneCount(); ++id) {
+        const auto& bone = rig->getBone(id);
+        auto value = poseTransformValue(pose.getLocalTransform(id));
+        value.set("name", bone.name);
+        value.set("parent", bone.parent == animation_NoBone ? ScriptValue::null() : ScriptValue(bone.parent));
+        bones.set(id, value);
+    }
+    for (AnimationBindingId id = 0; id < rig->getBindingCount(); ++id) {
+        const auto& binding = rig->getBinding(id);
+        auto value = poseTransformValue(pose.getBindingLocalTransform(id));
+        value.set("name", binding.name);
+        value.set("parent", binding.bone == animation_NoBone ? ScriptValue::null() : ScriptValue(binding.bone));
+        value.set("kind", static_cast<int>(binding.kind));
+        bindings.set(id, value);
+    }
+    auto variables = ScriptValue::array(), tags = ScriptValue::array();
+    size_t id = 0;
+    for (const auto& variable : pose.getMetadata().variables) {
+        auto value = ScriptValue::object(); value.set("object", variable.object); value.set("name", variable.name);
+        if (const auto* number = std::get_if<double>(&variable.value)) { value.set("type", static_cast<int>(animationVariable_Float)); value.set("value", *number); }
+        else if (const auto* integer = std::get_if<int>(&variable.value)) { value.set("type", static_cast<int>(animationVariable_Int)); value.set("value", *integer); }
+        else { value.set("type", static_cast<int>(animationVariable_String)); value.set("value", std::get<std::string>(variable.value)); }
+        variables.set(id++, value);
+    }
+    id = 0;
+    for (const auto& group : pose.getMetadata().tags) {
+        auto value = ScriptValue::object(); value.set("object", group.object); value.set("tags", poseNamesValue(group.tags));
+        tags.set(id++, value);
+    }
+    result.set("bones", bones); result.set("bindings", bindings);
+    result.set("variables", variables); result.set("tags", tags);
+    return result;
+}
+template<class Operation> auto poseScriptCall(Operation operation) -> decltype(operation()) {
+    try { return operation(); }
+    catch (const std::exception& error) { ScriptValue::global("Error").new_(std::string(error.what())).throw_(); }
+}
+}
+
+void emscriptenSpriteSeekAnimation(Sprite& sprite,const std::string& clip,double seconds) {poseScriptCall([&]{sprite.seekAnimation(clip.c_str(),seconds);});}
+void emscriptenSpriteTransitionToAnimation(Sprite& sprite,const std::string& clip,double seconds,double duration) {poseScriptCall([&]{sprite.transitionToAnimation(clip.c_str(),seconds,duration);});}
+void emscriptenSpriteSetupAnimationPhysics(Sprite& sprite,emscripten::val values){poseScriptCall([&]{
+    if(!ScriptValue::global("Array").call<bool>("isArray",values))throw std::invalid_argument("Invalid physical rig array");
+    std::vector<double> numbers;const auto count=values["length"].as<unsigned>();if(count>1500000)throw std::invalid_argument("Invalid physical rig array length");
+    for(unsigned i=0;i<count;++i){if(values[i].typeOf().as<std::string>()!="number")throw std::invalid_argument("Invalid physical rig number");numbers.push_back(values[i].as<double>());}
+    sprite.setupAnimationPhysics(decodeAnimationPhysicsDefinition(numbers));});}
+void emscriptenSpriteDisableAnimationPhysics(Sprite& sprite,double seconds,int direction){poseScriptCall([&]{sprite.disableAnimationPhysics(seconds,direction);});}
+void emscriptenSpriteSetAnimationPhysicsMode(Sprite& sprite,int mode,double bone,bool descendants,double seconds,int direction){poseScriptCall([&]{if(bone<0)sprite.setAnimationPhysicsMode(mode,seconds,direction);else sprite.setAnimationPhysicsMode(mode,AnimationBoneId(bone),descendants,seconds,direction);});}
+int emscriptenSpriteGetAnimationPhysicsMode(const Sprite& sprite,double bone,bool descendants){return poseScriptCall([&]{return bone<0?sprite.getAnimationPhysicsMode():sprite.getAnimationPhysicsMode(AnimationBoneId(bone),descendants);});}
+void emscriptenSpriteSetAnimationPhysicsDriveSettings(Sprite& sprite,double force,double torque,double frequency,double damping,int direction,double bone,bool descendants){poseScriptCall([&]{AnimationPhysicsDriveSettings settings{force,torque,frequency,damping,direction};if(bone<0)sprite.setAnimationPhysicsDriveSettings(settings);else sprite.setAnimationPhysicsDriveSettings(settings,AnimationBoneId(bone),descendants);});}
+emscripten::val emscriptenSpriteGetAnimationPhysicsDriveSettings(const Sprite& sprite,uint32_t bone){return poseScriptCall([&]{const auto settings=sprite.getAnimationPhysicsDriveSettings(bone);if(!settings)return emscripten::val::null();auto result=emscripten::val::array();int i=0;for(double value:{settings->maxForce,settings->maxTorque,settings->frequency,settings->dampingRatio,double(settings->direction)})result.set(i++,value);return result;});}
+void emscriptenSpriteSetupPhysicsFromAnimationRig(Sprite& sprite,double mass,double units){poseScriptCall([&]{sprite.setupPhysicsFromAnimationRig(mass,units);});}
+void emscriptenSpriteAttachAnimationPhysicsPart(Sprite& sprite,Part* part,Part* parent){poseScriptCall([&]{sprite.attachAnimationPhysicsPart(part,parent);});}
+void emscriptenSpriteDetachAnimationPhysicsPart(Sprite& sprite,Part* part,bool descendants){poseScriptCall([&]{sprite.detachAnimationPhysicsPart(part,descendants);});}
+void emscriptenSpriteSetAnimationPhysicsRoot(Sprite& sprite,uint32_t bone){poseScriptCall([&]{sprite.setAnimationPhysicsRoot(bone);});}
+void emscriptenSpriteClearAnimationPhysicsRoot(Sprite& sprite){poseScriptCall([&]{sprite.clearAnimationPhysicsRoot();});}
+uint32_t emscriptenSpriteGetAnimationPhysicsRoot(const Sprite& sprite){return poseScriptCall([&]{return sprite.getAnimationPhysicsRoot();});}
+
+uint32_t emscriptenSpriteAddAnimationDrawable(Sprite& sprite,emscripten::val callback,emscripten::val values,const std::string& slot){return poseScriptCall([&]{
+    if(!ScriptValue::global("Array").call<bool>("isArray",values)||values["length"].as<unsigned>()!=9)throw std::invalid_argument("Invalid drawing options");
+    std::vector<double> numbers;for(unsigned i=0;i<9;++i){if(values[i].typeOf().as<std::string>()!="number")throw std::invalid_argument("Invalid drawing option");numbers.push_back(values[i].as<double>());}
+    auto options=decodeAnimationDrawableOptions(numbers,slot);
+    if(callback.typeOf().as<std::string>()!="function"){
+        auto* drawing=callback.as<Drawing*>(emscripten::allow_raw_pointers());
+        if(!drawing)throw std::invalid_argument("Expected a Drawing or callback");
+        return sprite.addAnimationDrawable(options,*drawing);
+    }
+    return sprite.addAnimationDrawable(options,[callback](AnimationDrawingContext context)->std::shared_ptr<Drawing>{
+        auto result=callback(poseSnapshotValue(context.copyPose()),poseTransformValue(context.getTransform(animationSpace_Local)),poseTransformValue(context.getTransform(animationSpace_Rig)),poseTransformValue(context.getTransform(animationSpace_World)));
+        if(result.typeOf().as<std::string>()=="string")throw std::runtime_error(result.as<std::string>());
+        if(result.isNull())return {};
+        auto* drawing=result.as<Drawing*>(emscripten::allow_raw_pointers());
+        if(!drawing)throw std::invalid_argument("Animation drawing callback must return a Drawing or null");
+        return drawing->share();
+    });});}
+void emscriptenSpriteSetAnimationDrawableEnabled(Sprite& sprite,uint32_t id,bool enabled){poseScriptCall([&]{sprite.setAnimationDrawableEnabled(id,enabled);});}
+std::string emscriptenSpriteGetAnimationDrawableError(const Sprite& sprite,uint32_t id){return poseScriptCall([&]{return sprite.getAnimationDrawableError(id);});}
+emscripten::val emscriptenSpriteGetAnimationDrawBounds(const Sprite& sprite){return poseScriptCall([&]{const auto bounds=sprite.getAnimationDrawBounds();auto result=ScriptValue::object();result.set("left",bounds.left);result.set("top",bounds.top);result.set("right",bounds.right);result.set("bottom",bounds.bottom);result.set("uncullable",bounds.uncullable);return result;});}
+
+uint32_t emscriptenSpriteAddAnimationIK(Sprite& sprite, emscripten::val object, int order) {
+    return poseScriptCall([&]{AnimationTwoBoneIK config;
+        config.root=object["root"].as<unsigned>();
+        config.middle=object["middle"].as<unsigned>();
+        config.tip=object["tip"].as<unsigned>();
+        config.rootLength=object["rootLength"].as<double>();
+        config.middleLength=object["middleLength"].as<double>();
+        config.targetX=object["targetX"].as<double>();
+        config.targetY=object["targetY"].as<double>();
+        config.influence=object["influence"].as<double>();
+        config.space=object["space"].as<int>();
+        config.bendDirection=object["bendDirection"].as<int>();
+        config.stretch=object["stretch"].as<int>();
+        config.matchOrientation=object["matchOrientation"].as<int>();
+        config.targetRotation=object["targetRotation"].as<double>();
+        config.rootMin=object["rootMin"].as<double>();
+        config.rootMax=object["rootMax"].as<double>();
+        config.middleMin=object["middleMin"].as<double>();
+        config.middleMax=object["middleMax"].as<double>();
+        return sprite.addAnimationIK(config,order);});
+}
+void emscriptenSpriteSetAnimationIKTarget(Sprite& sprite,uint32_t id,double x,double y,int space) {poseScriptCall([&]{sprite.setAnimationIKTarget(id,x,y,space);});}
+emscripten::val emscriptenSpriteGetAnimationIKResult(const Sprite& sprite,uint32_t id) {
+    return poseScriptCall([&]{auto value=sprite.getAnimationIKResult(id);auto result=ScriptValue::object();
+        result.set("reachError",value.reachError);
+        result.set("reachable",value.reachable);
+        result.set("clamped",value.clamped);
+        result.set("limited",value.limited);
+        result.set("stretched",value.stretched);
+        return result;});
+}
+
+uint32_t emscriptenSpriteAddAnimationModifier(Sprite& sprite, emscripten::val callback, int stage, int order) {
+    return poseScriptCall([&] { return sprite.addAnimationModifier([callback](AnimationPoseView view,const AnimationModifierContext& context) {
+        auto info=ScriptValue::object();info.set("deltaSeconds",context.deltaSeconds);info.set("root",poseTransformValue(context.root));info.set("revision",std::to_string(context.revision));
+        const auto snapshot=view.copy();auto edits=callback(poseSnapshotValue(snapshot),info);
+        if (edits.typeOf().as<std::string>()=="string") throw std::runtime_error(edits.as<std::string>());
+        if (!ScriptValue::global("Array").call<bool>("isArray",edits) || edits["length"].as<unsigned>()!=snapshot.getRig()->getBoneCount()) throw std::runtime_error("Wrong modifier bone count");
+        const char* names[]={"x","y","rotation","scaleX","scaleY","alpha"};
+        for (AnimationBoneId id=0;id<snapshot.getRig()->getBoneCount();++id) {
+            AnimationTransform value;double* fields[]={&value.x,&value.y,&value.rotation,&value.scaleX,&value.scaleY,&value.alpha};
+            for(int field=0;field<6;++field){auto number=edits[id][names[field]];if(number.typeOf().as<std::string>()!="number")throw std::invalid_argument("Invalid modifier transform");*fields[field]=number.as<double>();}
+            view.setLocalTransform(id,value);
+        }
+    },stage,order); });
+}
+void emscriptenSpriteSetAnimationSource(Sprite& sprite,int source) { poseScriptCall([&]{sprite.setAnimationSource(source);}); }
+std::string emscriptenSpriteGetAnimationModifierError(const Sprite& sprite,uint32_t id) { return poseScriptCall([&]{return sprite.getAnimationModifierError(id);}); }
+
+void emscriptenSpriteSetAnimationDebugDraw(Sprite& sprite, int flags) {
+    poseScriptCall([&] { sprite.setAnimationDebugDraw(flags); });
+}
+bool emscriptenSpriteEnableAnimationPose(Sprite& sprite, const std::string& clip) { return sprite.enableAnimationPose(clip.c_str()); }
+emscripten::val emscriptenSpriteGetAnimationPose(const Sprite& sprite) {
+    return poseScriptCall([&] { return poseSnapshotValue(sprite.getAnimationPose()); });
+}
+emscripten::val emscriptenSpriteSampleAnimationPose(const Sprite& sprite, const std::string& clip, double seconds) {
+    return poseScriptCall([&] { return poseSnapshotValue(sprite.sampleAnimationPose(clip.c_str(), seconds)); });
+}
+emscripten::val emscriptenSpriteGetAnimationBoneNames(const Sprite& sprite) { return poseNamesValue(sprite.getAnimationBoneNames()); }
+emscripten::val emscriptenSpriteGetAnimationPhysicsSetupWarnings(const Sprite& sprite) { return poseNamesValue(sprite.getAnimationPhysicsSetupWarnings()); }
+emscripten::val emscriptenSpriteGetAnimationBindingNames(const Sprite& sprite) { return poseNamesValue(sprite.getAnimationBindingNames()); }
+emscripten::val emscriptenSpriteGetAnimationBoneTransform(const Sprite& sprite, const std::string& name, int space) {
+    return poseScriptCall([&] { return poseTransformValue(sprite.getAnimationBoneTransform(name.c_str(), space)); });
+}
+emscripten::val emscriptenSpriteGetAnimationBindingTransform(const Sprite& sprite, const std::string& name, int space) {
+    return poseScriptCall([&] { return poseTransformValue(sprite.getAnimationBindingTransform(name.c_str(), space)); });
+}
+void emscriptenSpriteSetAnimationBoneTransform(Sprite& sprite, const std::string& name, const emscripten::val& transform) {
+    poseScriptCall([&] {
+        if (transform.isNull() || transform.typeOf().as<std::string>() != "object")
+            throw std::invalid_argument("Animation transform must be an object");
+        AnimationTransform value;
+        const char* fields[] = {"x", "y", "rotation", "scaleX", "scaleY", "alpha"};
+        double* values[] = {&value.x, &value.y, &value.rotation, &value.scaleX, &value.scaleY, &value.alpha};
+        for (size_t i = 0; i < 6; ++i) {
+            const auto property = transform[fields[i]];
+            if (property.typeOf().as<std::string>() != "number") throw std::invalid_argument("Animation transform fields must be numbers");
+            *values[i] = property.as<double>();
+        }
+        sprite.setAnimationBoneTransform(name.c_str(), value);
+    });
+}
+
 bool emscriptenSpriteHasAnimation(Sprite& sprite, const emscripten::val& animation) {
-    return animation.typeOf().as<std::string>() == "number"
-        ? sprite.hasAnimation(animation.as<int>())
-        : sprite.hasAnimation(animation.isNull() ? "" : animation.as<std::string>().c_str());
+    if (animation.typeOf().as<std::string>() == "number") {
+        const double id = animation.as<double>();
+        return std::isfinite(id) && id >= 0 && id <= 4294967295.0
+            && id == std::floor(id) && sprite.hasAnimation(static_cast<uint32>(id));
+    }
+    return sprite.hasAnimation(animation.isNull() ? "" : animation.as<std::string>().c_str());
 }
 
 void emscriptenSpriteStartAnimation(Sprite& sprite, const emscripten::val& animation) {
@@ -484,12 +754,12 @@ Polygon* emscriptenPolygonUnion(Polygon& polygon, const Polygon& other) {
 }
 
 static EasingFunc emscriptenAnimatedEasing(int easing, int fallback) {
-    int index = (easing >= 0 && easing < NUM_EASING_FUNCTIONS) ? easing : fallback;
-    return gEasingFunctions[index];
+    if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+        throw std::invalid_argument("Unknown easing constant");
+    return gEasingFunctions[easing];
 }
 
-emscripten::val emscriptenAnimatedGetRotatedBounds(Animated& animated) {
-    RotatedRect bounds = animated.getRotatedBounds();
+static emscripten::val rotatedBoundsValue(const RotatedRect& bounds) {
     emscripten::val result = emscripten::val::object();
     result.set("left", bounds.left);
     result.set("top", bounds.top);
@@ -503,48 +773,101 @@ emscripten::val emscriptenAnimatedGetRotatedBounds(Animated& animated) {
     return result;
 }
 
-void emscriptenAnimatedMoveTo(Animated& animated, const Point& point, ms_delta duration, int easing) {
-    animated.moveTo(point, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+emscripten::val emscriptenAnimatedGetRotatedBounds(AnimatedBase& animated) {
+    return rotatedBoundsValue(animated.getRotatedBounds());
+}
+emscripten::val emscriptenSpriteGetFrameRotatedBounds(Sprite& sprite, int frame) {
+    return rotatedBoundsValue(sprite.getFrameRotatedBounds(frame));
 }
 
-void emscriptenAnimatedMove(Animated& animated, const Offset& offset, ms_delta duration, int easing) {
-    animated.move(offset, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedMoveTo(AnimatedBase& animated, const Point& value, double seconds, int easing) {
+    poseScriptCall([&] { animated.moveTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
 }
 
-void emscriptenAnimatedGrow(Animated& animated, float factor, ms_delta duration, int easing) {
-    animated.grow(factor, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedMoveBy(AnimatedBase& animated, const Offset& value, double seconds, int easing) {
+    poseScriptCall([&] { animated.moveBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
 }
 
-void emscriptenAnimatedStretch(Animated& animated, float widthFactor, float heightFactor, ms_delta duration, int easing) {
-    animated.stretch(widthFactor, heightFactor, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedChangeMovementTo(AnimatedBase& animated, const Vector& value, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeMovementTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
 }
 
-void emscriptenAnimatedResize(Animated& animated, float width, float height, ms_delta duration, int easing) {
-    animated.resize(width, height, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedChangeMovementBy(AnimatedBase& animated, const Vector& value, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeMovementBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
 }
 
-void emscriptenAnimatedResizeTo(Animated& animated, float width, float height, ms_delta duration, int easing) {
-    animated.resizeTo(width, height, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedChangeCenterOffsetTo(AnimatedBase& animated, const Offset& value, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeCenterOffsetTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
 }
 
-void emscriptenAnimatedRotate(Animated& animated, float radians, ms_delta duration, int easing) {
-    animated.rotate(radians, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedChangeCenterOffsetBy(AnimatedBase& animated, const Offset& value, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeCenterOffsetBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
 }
 
-void emscriptenAnimatedRotateTo(Animated& animated, float radians, ms_delta duration, int easing) {
-    animated.rotateTo(radians, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedGrow(AnimatedBase& animated, float value, double seconds, int easing) {
+    poseScriptCall([&] { animated.grow(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
 }
 
-void emscriptenAnimatedChangeCenter(Animated& animated, const Offset& offset, ms_delta duration, int easing) {
-    animated.changeCenter(offset, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedRotateTo(AnimatedBase& animated, float value, double seconds, int easing, int direction) {
+    poseScriptCall([&] { animated.rotateTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad), direction); });
 }
 
-void emscriptenAnimatedChangeCenterTo(Animated& animated, const Offset& offset, ms_delta duration, int easing) {
-    animated.changeCenterTo(offset, duration, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad));
+void emscriptenAnimatedRotateBy(AnimatedBase& animated, float value, double seconds, int easing, int direction) {
+    poseScriptCall([&] { animated.rotateBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad), direction); });
 }
 
-bool emscriptenAnimatedAnimate(Animated& animated, ms_delta elapsed) {
+void emscriptenAnimatedChangeSpinTo(AnimatedBase& animated, float value, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeSpinTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
+}
+
+void emscriptenAnimatedChangeSpinBy(AnimatedBase& animated, float value, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeSpinBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
+}
+
+void emscriptenAnimatedChangeGrowingTo(AnimatedBase& animated, float value, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeGrowingTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
+}
+
+void emscriptenAnimatedChangeGrowingBy(AnimatedBase& animated, float value, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeGrowingBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
+}
+
+void emscriptenAnimatedStretch(AnimatedBase& animated, float x, float y, double seconds, int easing) {
+    poseScriptCall([&] { animated.stretch(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
+}
+
+void emscriptenAnimatedResizeTo(AnimatedBase& animated, float x, float y, double seconds, int easing) {
+    poseScriptCall([&] { animated.resizeTo(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
+}
+
+void emscriptenAnimatedResizeBy(AnimatedBase& animated, float x, float y, double seconds, int easing) {
+    poseScriptCall([&] { animated.resizeBy(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
+}
+
+void emscriptenAnimatedChangeScaleTo(AnimatedBase& animated, float x, float y, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeScaleTo(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
+}
+
+void emscriptenAnimatedChangeScaleBy(AnimatedBase& animated, float x, float y, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeScaleBy(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
+}
+
+void emscriptenAnimatedChangeStretchingTo(AnimatedBase& animated, float x, float y, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeStretchingTo(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
+}
+
+void emscriptenAnimatedChangeStretchingBy(AnimatedBase& animated, float x, float y, double seconds, int easing) {
+    poseScriptCall([&] { animated.changeStretchingBy(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
+}
+
+bool emscriptenAnimatedAnimate(AnimatedBase& animated, double elapsed) {
     return animated.animate(elapsed);
+}
+
+ImageStrip* emscriptenCreateSnapshotImage() {
+    auto* image = new ImageOpenGL();
+    image->addRef();
+    return image;
 }
 
 Image* emscriptenCreateImage(const std::string& path) {
@@ -612,30 +935,42 @@ ImageStrip* emscriptenResourceGetImageStrip(ResourceManager& manager, const std:
 }
 
 void emscriptenAttributesSetLineStyle(Attributes& attributes, int style) {
+    poseScriptCall([&] {
     attributes.lineStyle(static_cast<LineStyle>(style));
+    });
 }
 
 void emscriptenAttributesSetFitType(Attributes& attributes, int fit) {
+    poseScriptCall([&] {
     attributes.fitType(static_cast<FitType>(fit));
+    });
 }
 
 void emscriptenAttributesSetBlendMode(Attributes& attributes, int mode) {
+    poseScriptCall([&] {
     attributes.blendMode(static_cast<BlendMode>(mode));
+    });
 }
 
 void emscriptenAttributesRotate(Attributes& attributes, float radians, const Point& center) {
+    poseScriptCall([&] {
     attributes.rotation(radians, center);
+    });
 }
 
 void emscriptenAttributesScale(Attributes& attributes, float xFactor, float yFactor, const Point& center) {
+    poseScriptCall([&] {
     attributes.scale(xFactor, yFactor, center);
+    });
 }
 
 void emscriptenAttributesSkew(Attributes& attributes, float xSkew, float ySkew, const Point& center) {
+    poseScriptCall([&] {
     attributes.skew(xSkew, ySkew, center);
+    });
 }
 
-void emscriptenAttributesTransform(Attributes& attributes, const emscripten::val& matrix) {
+static glm::mat3 attributesMatrix(const emscripten::val& matrix) {
     if (!emscripten::val::global("Array").call<bool>("isArray", matrix) || matrix["length"].as<int>() != 9) {
         throw std::invalid_argument("Attributes.transform requires an array of 9 numbers");
     }
@@ -650,7 +985,133 @@ void emscriptenAttributesTransform(Attributes& attributes, const emscripten::val
             nativeMatrix[column][row] = value.as<float>();
         }
     }
-    attributes.transform(nativeMatrix);
+    return nativeMatrix;
+}
+
+void emscriptenAttributesTransform(Attributes& attributes, const emscripten::val& matrix) {
+    poseScriptCall([&] {
+    attributes.transform(attributesMatrix(matrix));
+    });
+}
+
+void emscriptenAttributesSetTransform(Attributes& attributes, const emscripten::val& matrix) {
+    poseScriptCall([&] {
+    attributes.setTransform(attributesMatrix(matrix));
+    });
+}
+
+// Embind has one registered base per class. Adjust to the Attributes subobject
+// here; the returned handle borrows storage from its AnimatedAttributesBase owner.
+Attributes* emscriptenAnimatedAttributesBase(AnimatedAttributesBase& self) {
+    return static_cast<Attributes*>(&self);
+}
+
+static EasingFunc animatedAttributesEasing(int easing) {
+    if (easing < 0 || easing >= NUM_EASING_FUNCTIONS)
+        throw std::invalid_argument("Invalid appearance easing constant");
+    return gEasingFunctions[easing];
+}
+
+void emscriptenAnimatedAttributesChangeLineColor(AnimatedAttributesBase& self, const Color& target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeLineColor(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeLineThickness(AnimatedAttributesBase& self, float target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeLineThickness(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeLineOpacity(AnimatedAttributesBase& self, float target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeLineOpacity(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeFillColor(AnimatedAttributesBase& self, const Color& target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeFillColor(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeFillOpacity(AnimatedAttributesBase& self, float target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeFillOpacity(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeRoundedCorners(AnimatedAttributesBase& self, float target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeRoundedCorners(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeTextSize(AnimatedAttributesBase& self, float target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeTextSize(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeSubsection(AnimatedAttributesBase& self, const Rect& target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeSubsection(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangePolarOffset(AnimatedAttributesBase& self, const Offset& target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changePolarOffset(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeLightOffset(AnimatedAttributesBase& self, const Offset& target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeLightOffset(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeAmbientLight(AnimatedAttributesBase& self, const Color& target, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeAmbientLight(target, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeSkew(AnimatedAttributesBase& self, float x, float y, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeSkew(x, y, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeSphereRotation(AnimatedAttributesBase& self, float radians, double seconds, int easing, int direction) {
+    poseScriptCall([&] {
+    self.changeSphereRotation(radians, seconds, animatedAttributesEasing(easing), direction);
+    });
+}
+
+void emscriptenAnimatedAttributesChangeFrames(AnimatedAttributesBase& self, int first, int last, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeFrames(first, last, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeFillGradient(AnimatedAttributesBase& self, const Point& start, const Color& startColor, const Point& end, const Color& endColor, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeFillGradient(start, startColor, end, endColor, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeFillRadialGradient(AnimatedAttributesBase& self, const Point& center, const Color& centerColor, float radius, const Color& endColor, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeFillRadialGradient(center, centerColor, radius, endColor, seconds, animatedAttributesEasing(easing));
+    });
+}
+
+void emscriptenAnimatedAttributesChangeTransform(AnimatedAttributesBase& self, const emscripten::val& matrix, double seconds, int easing) {
+    poseScriptCall([&] {
+    self.changeTransform(attributesMatrix(matrix), seconds, animatedAttributesEasing(easing));
+    });
 }
 
 emscripten::val emscriptenAttributesGetTransform(Attributes& attributes) {

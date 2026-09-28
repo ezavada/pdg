@@ -256,7 +256,7 @@ describe("MemBlock", function() {
 
   });
 
-  describe("known limitations", function() {
+  describe("bounded access", function() {
 
     var memBlock;
 
@@ -274,10 +274,20 @@ describe("MemBlock", function() {
       expect(buffer.length).toEqual(0);
     });
 
-    it("note: byte access methods may cause segmentation faults on empty MemBlocks", function() {
-      // Note: The getByte and getBytes methods may cause segmentation faults
-      // when called on empty MemBlocks. This is a known limitation.
-      expect(true).toBeTruthy(); // Placeholder test
+    it("safely reads an empty block", function() {
+      expect(memBlock.getByte(0)).toBe(0);
+      expect(memBlock.getBytes(0, 100)).toBe('');
+    });
+
+    it("clamps reads to the available bytes", function() {
+      var serializer = new pdg.Serializer();
+      serializer.serialize_str('bounds');
+      var block = serializer.getDataPtr();
+      var bytes = block.getData();
+      expect(block.getBytes(bytes.length - 1, 100)).toBe(bytes.slice(-1));
+      expect(block.getBytes(bytes.length, 1)).toBe('');
+      expect(block.getBytes(0, 0xffffffff)).toBe(bytes);
+      expect(block.getByte(bytes.length)).toBe(0);
     });
 
   });

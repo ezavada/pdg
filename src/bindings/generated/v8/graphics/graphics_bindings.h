@@ -27,6 +27,9 @@
 
 
 
+#ifndef PDG_NO_GUI
+#endif
+
 #ifndef PDG_GRAPHICS_BINDINGS_H_INCLUDED
 #define PDG_GRAPHICS_BINDINGS_H_INCLUDED
 
@@ -54,6 +57,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -68,6 +72,10 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Image* cppObj);
             ImageWrap(Image* obj) : cppPtr_(obj) {}
 
+            static void GetSerializedSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Serialize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Deserialize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetMyClassTag (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetTransparentColor (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetTransparentColor (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -91,6 +99,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -105,6 +114,10 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, ImageStrip* cppObj);
             ImageStripWrap(ImageStrip* obj) : cppPtr_(obj) {}
 
+            static void GetSerializedSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Serialize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Deserialize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetMyClassTag (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetTransparentColor (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetTransparentColor (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -133,6 +146,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -165,6 +179,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -218,6 +233,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -237,6 +253,9 @@ namespace pdg
             static void GetControlPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetAttributes (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetAttributes (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetLiveAttributes (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearLiveAttributes (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasLiveAttributes (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void ChangeControlPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void MoveForward (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void MoveBackward (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -252,6 +271,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -266,6 +286,7 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Attributes* cppObj);
             AttributesWrap(Attributes* obj) : cppPtr_(obj) {}
 
+            static void WithAppearance (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LineColor (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LineThickness (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LineOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -280,6 +301,7 @@ namespace pdg
             static void Scale (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Skew (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Transform (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetTransform (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetBlendMode (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void TextSize (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void TextStyle (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -329,6 +351,177 @@ namespace pdg
             static void GetTexture (const v8::FunctionCallbackInfo<v8::Value>& args);
     };
 
+    AnimatedAttributesBase* New_AnimatedAttributesBase(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+    class AnimatedAttributesBaseWrap : public jswrap::ObjectWrap
+    {
+        public:
+            static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
+            static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
+        protected:
+            static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
+        public:
+            AnimatedAttributesBase* getCppObject() { return cppPtr_; }
+        protected:
+            AnimatedAttributesBase* cppPtr_;
+
+            AnimatedAttributesBaseWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+            ~AnimatedAttributesBaseWrap();
+
+        public:
+            static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, AnimatedAttributesBase* cppObj);
+            AnimatedAttributesBaseWrap(AnimatedAttributesBase* obj) : cppPtr_(obj) {}
+
+            static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Grow (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stretch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopSpinning (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CancelSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndThen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsSchedulePaused (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasScheduledAnimations (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Wait (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AddAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RemoveAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearAnimationHelpers (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void WithAppearance (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void LineColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void LineThickness (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void LineOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetLineStyle (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FillColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FillOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FillGradient (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FillRadialGradient (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RoundedCorners (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Translation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Rotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Scale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Skew (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Transform (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetTransform (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetBlendMode (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TextSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TextStyle (const v8::FunctionCallbackInfo<v8::Value>& args);
+#ifndef PDG_NO_GUI
+            static void SetFont (const v8::FunctionCallbackInfo<v8::Value>& args);
+#endif
+            static void Frame (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFitType (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClipOverflow (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Subsection (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SphereRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PolarOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void LightOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AmbientLight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Texture (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLineColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLineThickness (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLineOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLineStyle (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetFillColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetFillOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRoundedCornerRadius (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetGradientType (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetGradientStart (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetGradientEnd (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetGradientStartColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetGradientEndColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRadialGradientCenter (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRadialGradientRadius (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRadialGradientCenterColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRadialGradientEndColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetTransform (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetBlendMode (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetTextSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetTextStyle (const v8::FunctionCallbackInfo<v8::Value>& args);
+#ifndef PDG_NO_GUI
+            static void GetFont (const v8::FunctionCallbackInfo<v8::Value>& args);
+#endif
+            static void GetFrame (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetFitType (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetClipOverflow (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSubsection (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSphereRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetPolarOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLightOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetAmbientLight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetTexture (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetDrawingLayout (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Animate (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeLineColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeLineThickness (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeLineOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeFillColor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeFillOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeRoundedCorners (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeTextSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSubsection (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangePolarOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeLightOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeAmbientLight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeFillGradient (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeFillRadialGradient (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSphereRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeFrames (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSkew (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeTransform (const v8::FunctionCallbackInfo<v8::Value>& args);
+    };
+
+    Attributes* ExtractAttributes(v8::Local<v8::Value> value);
+
     Drawing* New_Drawing(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     class DrawingWrap : public jswrap::ObjectWrap
@@ -336,6 +529,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -380,6 +574,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -405,6 +600,8 @@ namespace pdg
             static void GetScreenBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetScreenMode (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void CreateWindowPort (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CreateOffscreenPort (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CreateImageFromOffscreenPort (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void CreateFullScreenPort (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void CloseGraphicsPort (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void CloseAllGraphicsPorts (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -424,6 +621,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -441,6 +639,7 @@ namespace pdg
             static void GetFontName (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetFontHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetFontLeading (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetFontCapHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetFontAscent (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetFontDescent (const v8::FunctionCallbackInfo<v8::Value>& args);
     };
@@ -450,6 +649,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -466,6 +666,9 @@ namespace pdg
 
             static void GetClipRect (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetClipRect (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResetClipRect (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Clear (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetDrawingOrigin (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetCursor (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetCursor (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetDrawingArea (const v8::FunctionCallbackInfo<v8::Value>& args);

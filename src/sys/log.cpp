@@ -159,12 +159,10 @@ LogManagerImpl::writeLogEntry(int8 level, const char* category, const char* mess
         	    level = log::trace;
         	}
             ms_time msTime = OS::getMilliseconds();
-        	char msStr[40];
-        	std::snprintf(msStr, 40, "%.10lu\t", msTime);
-            MAKE_STRING_BUFFER_SAFE(msStr, 40);
+            const auto msStr = std::format("{:010}\t", msTime);
         	// following section is mutexed so we don't have multiple threads
         	// attempting to alter the file at once
-        	AutoMutex mutex(&mWriteMutex);
+            std::lock_guard lock(mWriteMutex);
         	CHECK_PTR(&theLevelStrings[level*LEVEL_STR_LEN], theLevelStrings, 37);
             *mStream << dateTimeStr << msStr << &theLevelStrings[level*LEVEL_STR_LEN] 
                     << '\t' << category << '\t' << message << '\n';

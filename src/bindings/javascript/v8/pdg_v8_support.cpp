@@ -39,6 +39,8 @@
 #include <cassert>
 #include <cstring>
 
+#include "color-utils.h"
+
 namespace pdg {
 
 namespace v8script {
@@ -75,13 +77,7 @@ jswrap::ObjectWrap* safe_unwrap_object_wrap_or_prototype(v8::Isolate* isolate, v
 
 } // end namespace v8script
 
-static v8::Local<v8::Value>  MakeCppOffset(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Offset &o, bool canFail = false);
-static v8::Local<v8::Value>  MakeCppPoint(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Point &p, bool canFail = false);
 //static v8::Local<v8::Value>  MakeCppVector(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Vector &v, bool canFail = false);
-static v8::Local<v8::Value>  MakeCppRect(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Rect &r, bool canFail = false);
-static v8::Local<v8::Value>  MakeCppRect(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::RotatedRect &r, bool canFail = false);
-static v8::Local<v8::Value>  MakeCppQuad(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Quad &q, bool canFail = false);
-static v8::Local<v8::Value>  MakeCppColor(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Color &c, bool canFail = false);
 
 #define X_Symbol _V8_STR("x")
 #define Y_Symbol _V8_STR("y")
@@ -302,411 +298,235 @@ v8::Local<v8::Object> v8_MakeJavascriptMemBlock(v8::Isolate* isolate, pdg::MemBl
     return scope.Escape(obj);
 }
 
-v8::Local<v8::Value> MakeCppOffset(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Offset& o, bool canFail) {
-    v8::EscapableHandleScope scope(isolate);
-	if (val->IsArray()) {
-		v8::Local<v8::Array> arr_ = v8::Local<v8::Array>::Cast(val);
-		if (arr_->Length() == 2) {
-			// convert 2 element array to point assuming x,y order
-			o.x = arr_->Get(isolate->GetCurrentContext(), 0).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			o.y = arr_->Get(isolate->GetCurrentContext(), 1).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-		} else if (canFail) {
-			return scope.Escape( BOOL2VAL(false) );
-		} else {
-			THROW_SYNTAX_ERR("Point from Array must be: 2 Numbers [x, y]");
-		}
-	} else if (val->IsObject()) {
-		// convert object with "x" and "y" values
-		v8::Local<v8::Object> obj_ = val->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-		if (obj_->Has(isolate->GetCurrentContext(), X_Symbol).ToChecked() && obj_->Has(isolate->GetCurrentContext(), Y_Symbol).ToChecked()) {
-			o.x = obj_->Get(isolate->GetCurrentContext(), X_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			o.y = obj_->Get(isolate->GetCurrentContext(), Y_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-		} else if (canFail) {
-			return scope.Escape( BOOL2VAL(false) );
-		} else {
-			THROW_SYNTAX_ERR("Point from Object must be: {x:Number, y:Number}");
-		}
-	} else {
-		return scope.Escape( BOOL2VAL(false) );
-  	}
-//	SCRIPT_DEBUG_ONLY( OS::_DOUT( "Point: (x:%.1f, y:%.1f)", o.x, o.y); )
-	return scope.Escape( BOOL2VAL(true) );
+std::optional<bool> v8_ValueIsOffset(v8::Isolate* isolate, v8::Local<v8::Value> val, Offset& value) {
+    Point point;
+    auto converted = v8_ValueIsPoint(isolate, val, point);
+    if (converted.value_or(false)) value = Offset(point.x, point.y);
+    return converted;
 }
 
-v8::Local<v8::Value> MakeCppPoint(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Point& p, bool canFail) {
-	return MakeCppOffset(isolate, val, p, canFail);
+std::optional<bool> v8_ValueIsVector(v8::Isolate* isolate, v8::Local<v8::Value> val, Vector& value) {
+    Point point;
+    auto converted = v8_ValueIsPoint(isolate, val, point);
+    if (converted.value_or(false)) value = Vector(point.x, point.y);
+    return converted;
 }
 
-// v8::Local<v8::Value> MakeCppVector(v8::Local<v8::Value> val, pdg::Vector& v, bool canFail) {
-// 	return MakeCppOffset(val, v, canFail);
-// }
-// 
+// A failed property read leaves the original JavaScript exception pending.
+// Subsequent reads stop immediately, including reads of nested coordinate types.
+class V8PropertyReader {
+public:
+    explicit V8PropertyReader(v8::Isolate* isolate) : isolate(isolate), context(isolate->GetCurrentContext()) {}
+    template<size_t N> bool has(v8::Local<v8::Object> object, const char (&name)[N]) {
+        if (failed) return false;
+        bool present = false;
+        auto key = v8::String::NewFromUtf8Literal(isolate, name, v8::NewStringType::kInternalized);
+        if (!object->Has(context, key).To(&present)) failed = true;
+        return present;
+    }
+    template<size_t N> v8::Local<v8::Value> get(v8::Local<v8::Object> object, const char (&name)[N]) {
+        if (failed) return v8::Undefined(isolate);
+        auto key = v8::String::NewFromUtf8Literal(isolate, name, v8::NewStringType::kInternalized);
+        return read(object, key);
+    }
+    v8::Local<v8::Value> get(v8::Local<v8::Object> object, uint32_t index) { return read(object, index); }
+    double number(v8::Local<v8::Value> value) {
+        double result = 0;
+        if (!failed && !value->NumberValue(context).To(&result)) failed = true;
+        return result;
+    }
+    bool failed = false;
+private:
+    template<class Key> v8::Local<v8::Value> read(v8::Local<v8::Object> object, Key key) {
+        v8::Local<v8::Value> value;
+        if (!failed && object->Get(context, key).ToLocal(&value)) return value;
+        failed = true;
+        return v8::Undefined(isolate);
+    }
+    v8::Isolate* isolate;
+    v8::Local<v8::Context> context;
+};
 
-v8::Local<v8::Value> MakeCppRect(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Rect& r, bool canFail) {
-    v8::EscapableHandleScope scope(isolate);
-  	pdg::Point p;
-	if (val->IsArray()) {
-		v8::Local<v8::Array> arr_ = v8::Local<v8::Array>::Cast(val);
-		if (arr_->Length() == 2) {
-			// convert 2 element array of points assuming leftTop, rightBottom order
-			v8::Local<v8::Value> resVal = MakeCppPoint(isolate, arr_->Get(isolate->GetCurrentContext(), 0).ToLocalChecked(), p, canFail);
-			if (resVal->IsTrue()) {
-				r.left = p.x;
-				r.top = p.y;			
-				resVal = MakeCppPoint(isolate, arr_->Get(isolate->GetCurrentContext(), 1).ToLocalChecked(), p, canFail);
-				if (!resVal->IsTrue()) {
-				    return scope.Escape(resVal);
-				}
-				r.right = p.x;
-				r.bottom = p.y;
-			} else {
-				// convert 2 element array to width, height
-				r.top = 0;
-				r.left = 0;
-				r.right = arr_->Get(isolate->GetCurrentContext(), 0).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-				r.bottom = arr_->Get(isolate->GetCurrentContext(), 1).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			}
-		} else if (arr_->Length() == 4) {
-			// convert 4 element array to left, top, right, bottom (ie: x1, y1, x2, y2)
-			r.left = arr_->Get(isolate->GetCurrentContext(), 0).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			r.top = arr_->Get(isolate->GetCurrentContext(), 1).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			r.right = arr_->Get(isolate->GetCurrentContext(), 2).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			r.bottom = arr_->Get(isolate->GetCurrentContext(), 3).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-		} else if (canFail) {
-			return scope.Escape( BOOL2VAL(false) );
-		} else {
-			THROW_SYNTAX_ERR("Rect from Array must be: 2 points [topLeft, botRight], or "
-					"2 Numbers [width, height], or 4 Numbers [left, top, right, bottom]");
-		}
-	} else if (val->IsObject()) {
-		v8::Local<v8::Object> obj_ = val->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-		if (obj_->Has(isolate->GetCurrentContext(), Top_Symbol).ToChecked() && obj_->Has(isolate->GetCurrentContext(), Left_Symbol).ToChecked() 
-		  && obj_->Has(isolate->GetCurrentContext(), Right_Symbol).ToChecked() && obj_->Has(isolate->GetCurrentContext(), Bottom_Symbol).ToChecked()) {
-			// convert object with "top" "left" "right" and "bottom" values
-			r.left = obj_->Get(isolate->GetCurrentContext(), Left_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			r.top = obj_->Get(isolate->GetCurrentContext(), Top_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			r.right = obj_->Get(isolate->GetCurrentContext(), Right_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			r.bottom = obj_->Get(isolate->GetCurrentContext(), Bottom_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-		} else if (obj_->Has(isolate->GetCurrentContext(), Width_Symbol).ToChecked() && obj_->Has(isolate->GetCurrentContext(), Height_Symbol).ToChecked()) {
-			// convert object with "width" and "height" values (and optional "topleft")
-			if (obj_->Has(isolate->GetCurrentContext(), TopLeft_Symbol).ToChecked()) {
-				v8::Local<v8::Value> resVal = MakeCppPoint(isolate, obj_->Get(isolate->GetCurrentContext(), TopLeft_Symbol).ToLocalChecked(), p, canFail);
-				if (!resVal->IsTrue()) {
-				    return scope.Escape(resVal);
-				}
-				r.left = p.x;
-				r.top = p.y;
-			} else {
-				r.left = 0;
-				r.top = 0;
-			}
-			r.setWidth( obj_->Get(isolate->GetCurrentContext(), Width_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked() );
-			r.setHeight( obj_->Get(isolate->GetCurrentContext(), Height_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked() );
-		} else if (obj_->Has(isolate->GetCurrentContext(), TopLeft_Symbol).ToChecked() && obj_->Has(isolate->GetCurrentContext(), BottomRight_Symbol).ToChecked()) {
-			// convert object with "topleft" and "bottomright" values
-			v8::Local<v8::Value> resVal = MakeCppPoint(isolate, obj_->Get(isolate->GetCurrentContext(), TopLeft_Symbol).ToLocalChecked(), p, canFail);
-			if (!resVal->IsTrue()) {
-				return scope.Escape(resVal);
-			}
-			r.left = p.x;
-			r.top = p.y;
-			resVal = MakeCppPoint(isolate, obj_->Get(isolate->GetCurrentContext(), BottomRight_Symbol).ToLocalChecked(), p, canFail);
-			if (!resVal->IsTrue()) {
-			    return scope.Escape(resVal);
-			}
-			r.right = p.x;
-			r.bottom = p.y;
-		} else if (canFail) {
-			return scope.Escape( BOOL2VAL(false) );
-		} else {
-			THROW_SYNTAX_ERR("Rect from Object must be: \n"
-				"  { top:n, right:n, bottom:n, left:n [, radians:n] }, or \n"
-				"  { height:n, width:n [, topleft : {x:n, y:n} ] [, radians:n] }, or \n"
-				"  { topleft: {x:n, y:n}, bottomright: {x:n, y:n} [, radians:n] }" );
-		}
-	} else {
-		return scope.Escape( BOOL2VAL(false) );
-	}
-// 	SCRIPT_DEBUG_ONLY( OS::_DOUT( "Rect: (t:%.1f, l:%.1f, r:%.1f, b:%.1f)",
-// 			r.top, r.left, r.right, r.bottom ); )
-	return scope.Escape( BOOL2VAL(true) );
-}
-
-v8::Local<v8::Value> MakeCppRect(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::RotatedRect& rr, bool canFail) {
-    v8::EscapableHandleScope scope(isolate);
-  	pdg::Rect r;
-  	if (MakeCppRect(isolate, val, r, canFail)->IsTrue()) {
-  		// always accept a rectangle as a Quad
-  		rr = pdg::RotatedRect(r);
-  		// check for optional rotation
-  		if (val->IsObject()) {
-			v8::Local<v8::Object> obj_ = val->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-			if (obj_->Has(isolate->GetCurrentContext(), Radians_Symbol).ToChecked()) {
-				float radians = obj_->Get(isolate->GetCurrentContext(), Radians_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-				rr.radians = radians;
-			}
-			pdg::Point centerPtOffset;
-			if (obj_->Has(isolate->GetCurrentContext(), CenterOffset_Symbol).ToChecked()) {
-				MakeCppPoint(isolate, obj_->Get(isolate->GetCurrentContext(), CenterOffset_Symbol).ToLocalChecked(), centerPtOffset, canFail);
-			}
-			rr.centerOffset = centerPtOffset;
-		}
-  	} else if (canFail) {
-		return scope.Escape( BOOL2VAL(false) );
-  	} else {
-		THROW_SYNTAX_ERR("Rect from Object must be: \n"
-			"  { top:n, right:n, bottom:n, left:n [, radians:n] [, centeroffset: Point] }, or \n"
-			"  { height:n, width:n [, topleft : {x:n, y:n} ] [, radians:n] [, centeroffset: Point] }, or \n"
-			"  { topleft: {x:n, y:n}, bottomright: {x:n, y:n} [, radians:n] [, centeroffset: Point] }" );
-  	}
-// 	SCRIPT_DEBUG_ONLY( OS::_DOUT( "RotatedRect: (t:%.1f, l:%.1f, r:%.1f, b:%.1f, r:%.1f, co.x:%.1f, co.y:%.1f)",
-// 			rr.top, rr.left, rr.right, rr.bottom, rr.radians, rr.centerOffset.x, rr.centerOffset.y ); )
-	return scope.Escape( BOOL2VAL(true) );
-}
-  	
-v8::Local<v8::Value> MakeCppQuad(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Quad& q, bool canFail) {
-    v8::EscapableHandleScope scope(isolate);
-  	pdg::Rect r;
-  	if (MakeCppRect(isolate, val, r, canFail)->IsTrue()) {
-  		// always accept a rectangle as a Quad
-  		q = pdg::Quad(r);
-  		// check for optional rotation
-  		if (val->IsObject()) {
-			v8::Local<v8::Object> obj_ = val->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-			if (obj_->Has(isolate->GetCurrentContext(), Radians_Symbol).ToChecked()) {
-				float radians = obj_->Get(isolate->GetCurrentContext(), Radians_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-				pdg::Point centerPtOffset;
-				if (obj_->Has(isolate->GetCurrentContext(), CenterOffset_Symbol).ToChecked()) {
-					MakeCppPoint(isolate, obj_->Get(isolate->GetCurrentContext(), CenterOffset_Symbol).ToLocalChecked(), centerPtOffset, canFail);
-				}
-				q.rotate(radians, centerPtOffset);
-			}
-		}
-  	} else if (val->IsArray()) {
-		v8::Local<v8::Array> arr_ = v8::Local<v8::Array>::Cast(val);
-		if (arr_->Length() == 4) {
-			// convert array of points into quad
-			v8::Local<v8::Value> resVal;
-			for (int i = 0; i < 4; i++) {
-				resVal = MakeCppPoint(isolate, arr_->Get(isolate->GetCurrentContext(), i).ToLocalChecked(), q.points[i], canFail);
-				if (!resVal->IsTrue())  {
-				    return scope.Escape(resVal);
-				}
-			}
-		} else if (canFail) {
-			return scope.Escape( BOOL2VAL(false) );
-		} else {
-			THROW_SYNTAX_ERR("Quad from Array must be: Array[4] of points");
-		}
-	} else if (val->IsObject()) {
-		// Handle JavaScript pdg.Quad() object with points property
-		v8::Local<v8::Object> obj_ = val->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-		if (obj_->Has(isolate->GetCurrentContext(), Points_Symbol).ToChecked()) {
-			v8::Local<v8::Value> pointsVal = obj_->Get(isolate->GetCurrentContext(), Points_Symbol).ToLocalChecked();
-			if (pointsVal->IsArray()) {
-				v8::Local<v8::Array> pointsArr = v8::Local<v8::Array>::Cast(pointsVal);
-				if (pointsArr->Length() == 4) {
-					// convert array of points into quad
-					v8::Local<v8::Value> resVal;
-					for (int i = 0; i < 4; i++) {
-						resVal = MakeCppPoint(isolate, pointsArr->Get(isolate->GetCurrentContext(), i).ToLocalChecked(), q.points[i], canFail);
-						if (!resVal->IsTrue()) {
-							return scope.Escape(resVal);
-						}
-					}
-				} else if (canFail) {
-					return scope.Escape( BOOL2VAL(false) );
-				} else {
-					THROW_SYNTAX_ERR("Quad points array must have exactly 4 points");
-				}
-			} else if (canFail) {
-				return scope.Escape( BOOL2VAL(false) );
-			} else {
-				THROW_SYNTAX_ERR("Quad points property must be an array");
-			}
-		} else if (canFail) {
-			return scope.Escape( BOOL2VAL(false) );
-		} else {
-			THROW_SYNTAX_ERR("Quad object must have a points property");
-		}
-	} else {
-		return scope.Escape( BOOL2VAL(false) );
-	}
-// 	SCRIPT_DEBUG_ONLY( OS::_DOUT( "Quad: (%.1f, %.1f), (%.1f, %.1f), (%.1f, %.1f), (%.1f, %.1f)",
-// 			q.points[0].x, q.points[0].y, q.points[1].x, q.points[1].y, 
-// 			q.points[2].x, q.points[2].y, q.points[3].x, q.points[3].y ); )
-	return scope.Escape( BOOL2VAL(true) );
+std::optional<bool> v8_ValueIsRect(v8::Isolate* isolate, v8::Local<v8::Value> val, Rect& rect) {
+    if (!val->IsObject()) return false;
+    v8::HandleScope scope(isolate);
+    V8PropertyReader read(isolate);
+    auto object = val.As<v8::Object>();
+    Rect result;
+    if (val->IsArray()) {
+        auto array = val.As<v8::Array>();
+        if (array->Length() == 2) {
+            auto first = read.get(object, 0);
+            if (read.failed) return std::nullopt;
+            Point topLeft, bottomRight;
+            auto isPoint = v8_ValueIsPoint(isolate, first, topLeft);
+            if (!isPoint.has_value()) return std::nullopt;
+            if (*isPoint) {
+                auto second = read.get(object, 1);
+                if (read.failed) return std::nullopt;
+                isPoint = v8_ValueIsPoint(isolate, second, bottomRight);
+                if (!isPoint.value_or(false)) return isPoint;
+                result = Rect(topLeft, bottomRight);
+            } else {
+                double width = read.number(first);
+                double height = read.number(read.get(object, 1));
+                result = Rect(width, height);
+            }
+        } else if (array->Length() == 4) {
+            double left = read.number(read.get(object, 0));
+            double top = read.number(read.get(object, 1));
+            double right = read.number(read.get(object, 2));
+            double bottom = read.number(read.get(object, 3));
+            result = Rect(left, top, right, bottom);
+        } else {
+            return false;
+        }
+    } else if (read.has(object, "top") && read.has(object, "left") &&
+               read.has(object, "right") && read.has(object, "bottom")) {
+        double left = read.number(read.get(object, "left"));
+        double top = read.number(read.get(object, "top"));
+        double right = read.number(read.get(object, "right"));
+        double bottom = read.number(read.get(object, "bottom"));
+        result = Rect(left, top, right, bottom);
+    } else if (read.has(object, "width") && read.has(object, "height")) {
+        Point topLeft;
+        if (read.has(object, "topLeft")) {
+            auto corner = read.get(object, "topLeft");
+            if (read.failed) return std::nullopt;
+            auto isPoint = v8_ValueIsPoint(isolate, corner, topLeft);
+            if (!isPoint.value_or(false)) return isPoint;
+        }
+        double width = read.number(read.get(object, "width"));
+        double height = read.number(read.get(object, "height"));
+        result = Rect(topLeft, width, height);
+    } else if (read.has(object, "topLeft") && read.has(object, "bottomRight")) {
+        auto corner = read.get(object, "topLeft");
+        if (read.failed) return std::nullopt;
+        Point topLeft, bottomRight;
+        auto isPoint = v8_ValueIsPoint(isolate, corner, topLeft);
+        if (!isPoint.value_or(false)) return isPoint;
+        corner = read.get(object, "bottomRight");
+        if (read.failed) return std::nullopt;
+        isPoint = v8_ValueIsPoint(isolate, corner, bottomRight);
+        if (!isPoint.value_or(false)) return isPoint;
+        result = Rect(topLeft, bottomRight);
+    } else {
+        return read.failed ? std::optional<bool>() : false;
+    }
+    if (read.failed) return std::nullopt;
+    rect = result;
+    return true;
 }
 
-v8::Local<v8::Value> MakeCppColor(v8::Isolate* isolate, v8::Local<v8::Value> val, pdg::Color& c, bool canFail) {
-    v8::EscapableHandleScope scope(isolate);
-  	if (val->IsUint32()) {
-		// convert uint32 to color by breaking apart elements
-		c = val->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-  	} else if (val->IsArray()) {
-		// convert 3 or 4 element array to color assuming RGBA order
-		v8::Local<v8::Array> arr_ = v8::Local<v8::Array>::Cast(val);
-		if (arr_->Length() == 3 || arr_->Length() == 4) {
-			c.red = arr_->Get(isolate->GetCurrentContext(), 0).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			c.green = arr_->Get(isolate->GetCurrentContext(), 1).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			c.blue = arr_->Get(isolate->GetCurrentContext(), 2).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			if (arr_->Length() == 4) {
-				c.alpha = arr_->Get(isolate->GetCurrentContext(), 3).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			} else {
-				c.alpha = 1.0f;
-			}
-		} else if (canFail) {
-			return scope.Escape( BOOL2VAL(false) );
-		} else {
-			THROW_SYNTAX_ERR("Color from Array must be: 3 or 4 Numbers [red, green, blue] or "
-					"[red, green, blue, alpha]");
-		}
-	} else if (val->IsString()) {
-		v8::String::Utf8Value strVal(isolate, val->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-		const char* str = *strVal;
-		if (str[0] == '#') {
-			// convert string with #hhhhhh or #hhh (css style) value
-			int red = 0, green = 0, blue = 0;
-			if (str[4] == 0) {  // 3 char str
-				if (sscanf(str, "#%1x%1x%1x", &red, &green, &blue) == 3) {
-					red = (red << 8) & red;
-					green = (green << 8) & green;
-					blue = (blue << 8) & blue;
-				}
-			} else if (str[7] == 0) { // 7 char str
-				sscanf(str, "#%2x%2x%2x", &red, &green, &blue);
-			} else {
-				THROW_SYNTAX_ERR("Color from String must be: '#rgb', '#rrggbb', or css color name" );
-			}
-			c = Color(red, green, blue);
-		} else {
-			// convert string with standard css color names 
-			const int NUM_COLORS = 147;
-			const char* colorNames[NUM_COLORS] = {
-				"aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black",
-				"blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse",
-				"chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue",
-				"darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki",
-				"darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon",
-				"darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise",
-				"darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue",
-				"firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite",
-				"gold", "goldenrod", "gray", "green", "greenyellow", "grey", "honeydew", "hotpink",
-				"indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen",
-				"lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow",
-				"lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon", "lightseagreen",
-				"lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow",
-				"lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue",
-				"mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen",
-				"mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose",
-				"moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange",
-				"orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred",
-				"papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "red",
-				"rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen",
-				"seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey",
-				"snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "turquoise",
-				"violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"
-			};
-			uint32 colorValues[NUM_COLORS] = {
-				0xf0f8ff, 0xfaebd7, 0x00ffff, 0x7fffd4, 0xf0ffff, 0xf5f5dc, 0xffe4c4, 0x000000,
-				0xffebcd, 0x0000ff, 0x8a2be2, 0xa52a2a, 0xdeb887, 0x5f9ea0, 0x7fff00, 0xd2691e,
-				0xff7f50, 0x6495ed, 0xfff8dc, 0xdc143c, 0x00ffff, 0x00008b, 0x008b8b, 0xb8860b,
-				0xa9a9a9, 0x006400, 0xa9a9a9, 0xbdb76b, 0x8b008b, 0x556b2f, 0xff8c00, 0x9932cc,
-				0x8b0000, 0xe9967a, 0x8fbc8f, 0x483d8b, 0x2f4f4f, 0x2f4f4f, 0x00ced1, 0x9400d3,
-				0xff1493, 0x00bfff, 0x696969, 0x696969, 0x1e90ff, 0xb22222, 0xfffaf0, 0x228b22,
-				0xff00ff, 0xdcdcdc, 0xf8f8ff, 0xffd700, 0xdaa520, 0x808080, 0x008000, 0xadff2f,
-				0x808080, 0xf0fff0, 0xff69b4, 0xcd5c5c, 0x4b0082, 0xfffff0, 0xf0e68c, 0xe6e6fa,
-				0xfff0f5, 0x7cfc00, 0xfffacd, 0xadd8e6, 0xf08080, 0xe0ffff, 0xfafad2, 0xd3d3d3,
-				0x90ee90, 0xd3d3d3, 0xffb6c1, 0xffa07a, 0x20b2aa, 0x87cefa, 0x778899, 0x778899,
-				0xb0c4de, 0xffffe0, 0x00ff00, 0x32cd32, 0xfaf0e6, 0xff00ff, 0x800000, 0x66cdaa,
-				0x0000cd, 0xba55d3, 0x9370db, 0x3cb371, 0x7b68ee, 0x00fa9a, 0x48d1cc, 0xc71585,
-				0x000080, 0xf5fffa, 0xffe4e1, 0xffe4b5, 0xffdead, 0x000080, 0xfdf5e6, 0x808000,
-				0x6b8e23, 0xffa500, 0xff4500, 0xda70d6, 0xeee8aa, 0x98fb98, 0xafeeee, 0xdb7093,
-				0xffefd5, 0xffdab9, 0xcd853f, 0xffc0cb, 0xdda0dd, 0xb0e0e6, 0x800080, 0xff0000,
-				0xbc8f8f, 0x4169e1, 0x8b4513, 0xfa8072, 0xf4a460, 0x2e8b57, 0xfff5ee, 0xa0522d,
-				0xc0c0c0, 0x87ceeb, 0x6a5acd, 0x708090, 0x708090, 0xfffafa, 0x00ff7f, 0x4682b4,
-				0xd2b48c, 0x008080, 0xd8bfd8, 0xff6347, 0x40e0d0, 0xee82ee, 0xf5deb3, 0xffffff,
-				0xf5f5f5, 0xffff00, 0x9acd32
-			};
-			bool found = false;
-			for (int i = 0; i<NUM_COLORS; i++) {
-				if (strcmp(str, colorNames[i]) == 0) {
-					c = colorValues[i] | 0xff000000;
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				if (canFail) {
-			        return scope.Escape( BOOL2VAL(false) );
-				} else {
-					std::ostringstream msg;
-					msg << "Invalid color name \"" << str << "\". Valid names are:";
-					for (int i = 0; i<NUM_COLORS; i++) {
-						msg << " " << colorNames[i];
-					}
-					THROW_RANGE_ERR(msg.str().c_str());
-				}
-			}
-		}
-	} else if (val->IsObject()) {
-		// convert object with "red" "green" "blue" and optional "alpha" values
-		v8::Local<v8::Object> obj_ = val->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-		if (obj_->Has(isolate->GetCurrentContext(), Red_Symbol).ToChecked() && obj_->Has(isolate->GetCurrentContext(), Green_Symbol).ToChecked() 
-		  && obj_->Has(isolate->GetCurrentContext(), Blue_Symbol).ToChecked()) {
-			c.red = obj_->Get(isolate->GetCurrentContext(), Red_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			c.green = obj_->Get(isolate->GetCurrentContext(), Green_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			c.blue = obj_->Get(isolate->GetCurrentContext(), Blue_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			if (obj_->Has(isolate->GetCurrentContext(), Alpha_Symbol).ToChecked()) {
-				c.alpha = obj_->Get(isolate->GetCurrentContext(), Alpha_Symbol).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).ToChecked();
-			} else {
-				c.alpha = 1.0f;
-			}
-		} else if (canFail) {
-			return scope.Escape( BOOL2VAL(false) );
-		} else {
-			THROW_SYNTAX_ERR("Color from Object must be: { red:n, green:n, blue:n [, alpha:n] }" );
-		}
-	} else {
-		return scope.Escape( BOOL2VAL(false) );
-	}
-// 	SCRIPT_DEBUG_ONLY( OS::_DOUT( "Color: (r:%.1f, g:%.1f, b:%.1f, a:%.1f)", 
-// 			c.red, c.green, c.blue, c.alpha ); )
-	return scope.Escape( BOOL2VAL(true) );
+static std::optional<bool> v8_ReadRectRotation(v8::Isolate* isolate, v8::Local<v8::Object> object, RotatedRect& rect) {
+    V8PropertyReader read(isolate);
+    if (read.has(object, "radians")) rect.radians = read.number(read.get(object, "radians"));
+    if (read.has(object, "centerOffset")) {
+        auto center = read.get(object, "centerOffset");
+        if (read.failed) return std::nullopt;
+        auto isPoint = v8_ValueIsOffset(isolate, center, rect.centerOffset);
+        if (!isPoint.value_or(false)) return isPoint;
+    }
+    if (read.failed) return std::nullopt;
+    return true;
 }
 
-bool v8_ValueIsOffset(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::Offset o;
-	return MakeCppOffset(isolate, val, o, true)->IsTrue();
+std::optional<bool> v8_ValueIsRotatedRect(v8::Isolate* isolate, v8::Local<v8::Value> val, RotatedRect& rect) {
+    v8::HandleScope scope(isolate);
+    Rect base;
+    auto converted = v8_ValueIsRect(isolate, val, base);
+    if (!converted.value_or(false)) return converted;
+    RotatedRect result(base);
+    converted = v8_ReadRectRotation(isolate, val.As<v8::Object>(), result);
+    if (!converted.value_or(false)) return converted;
+    rect = result;
+    return true;
 }
 
-bool v8_ValueIsPoint(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	return v8_ValueIsOffset(isolate, val);
+std::optional<bool> v8_ValueIsQuad(v8::Isolate* isolate, v8::Local<v8::Value> val, Quad& quad) {
+    if (!val->IsObject()) return false;
+    v8::HandleScope scope(isolate);
+    V8PropertyReader read(isolate);
+    auto object = val.As<v8::Object>();
+    auto points = val;
+    bool explicitPoints = false;
+    if (!val->IsArray() && read.has(object, "points")) {
+        points = read.get(object, "points");
+        explicitPoints = true;
+    }
+    if (read.failed) return std::nullopt;
+    if (points->IsArray() && points.As<v8::Array>()->Length() == 4) {
+        auto array = points.As<v8::Object>();
+        auto first = read.get(array, 0);
+        if (read.failed) return std::nullopt;
+        Quad result;
+        auto isPoint = v8_ValueIsPoint(isolate, first, result.points[0]);
+        if (!isPoint.has_value()) return std::nullopt;
+        if (*isPoint) {
+            for (uint32_t i = 1; i < 4; ++i) {
+                auto value = read.get(array, i);
+                if (read.failed) return std::nullopt;
+                isPoint = v8_ValueIsPoint(isolate, value, result.points[i]);
+                if (!isPoint.value_or(false)) return isPoint;
+            }
+            quad = result;
+            return true;
+        }
+        if (explicitPoints) return false;
+        double left = read.number(first);
+        double top = read.number(read.get(array, 1));
+        double right = read.number(read.get(array, 2));
+        double bottom = read.number(read.get(array, 3));
+        if (read.failed) return std::nullopt;
+        RotatedRect rect(Rect(left, top, right, bottom));
+        auto converted = v8_ReadRectRotation(isolate, object, rect);
+        if (!converted.value_or(false)) return converted;
+        quad = rect.radians == 0 ? Quad(static_cast<Rect>(rect)) : Quad(rect);
+        return true;
+    }
+    if (explicitPoints) return false;
+    RotatedRect rect;
+    auto converted = v8_ValueIsRotatedRect(isolate, val, rect);
+    if (!converted.value_or(false)) return converted;
+    quad = rect.radians == 0 ? Quad(static_cast<Rect>(rect)) : Quad(rect);
+    return true;
 }
 
-bool v8_ValueIsVector(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	return v8_ValueIsOffset(isolate, val);
+std::optional<bool> v8_ValueIsColor(v8::Isolate* isolate, v8::Local<v8::Value> val, Color& color) {
+    if (val->IsUint32()) {
+        color = Color(val.As<v8::Uint32>()->Value());
+        return true;
+    }
+    v8::HandleScope scope(isolate);
+    if (val->IsString()) {
+        v8::String::Utf8Value text(isolate, val);
+        if (!*text) return std::nullopt;
+        return parseCssColor(std::string_view(*text, text.length()), color);
+    }
+    if (!val->IsObject()) return false;
+    auto object = val.As<v8::Object>();
+    V8PropertyReader read(isolate);
+    Color result;
+    if (val->IsArray()) {
+        auto length = val.As<v8::Array>()->Length();
+        if (length != 3 && length != 4) return false;
+        result.red = read.number(read.get(object, 0));
+        result.green = read.number(read.get(object, 1));
+        result.blue = read.number(read.get(object, 2));
+        if (length == 4) result.alpha = read.number(read.get(object, 3));
+    } else if (read.has(object, "red") && read.has(object, "green") && read.has(object, "blue")) {
+        result.red = read.number(read.get(object, "red"));
+        result.green = read.number(read.get(object, "green"));
+        result.blue = read.number(read.get(object, "blue"));
+        if (read.has(object, "alpha")) result.alpha = read.number(read.get(object, "alpha"));
+    } else {
+        return read.failed ? std::optional<bool>() : false;
+    }
+    if (read.failed) return std::nullopt;
+    color = result;
+    return true;
 }
 
-bool v8_ValueIsRect(v8::Isolate* isolate, v8::Local<v8::Value> val, bool arrayCheck) {
-	pdg::Rect r;
-	return MakeCppRect(isolate, val, r, true)->IsTrue();
-}
-
-bool v8_ValueIsRotatedRect(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::RotatedRect rr;
-	return MakeCppRect(isolate, val, rr, true)->IsTrue();
-}
-
-bool v8_ValueIsQuad(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::Quad q;
-	return MakeCppQuad(isolate, val, q, true)->IsTrue();
-}
-
-bool v8_ValueIsColor(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::Color c;
-	return MakeCppColor(isolate, val, c, true)->IsTrue();
-}
 
 bool v8_ValueIsSpline(v8::Isolate* isolate, v8::Local<v8::Value> val) {
 	if (!val->IsObject()) return false;
@@ -714,50 +534,66 @@ bool v8_ValueIsSpline(v8::Isolate* isolate, v8::Local<v8::Value> val) {
 	return obj->InternalFieldCount() > 0;
 }
 
-Offset  	
-v8_ValueToOffset(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::Offset o;
-	MakeCppOffset(isolate, val, o, true);
-	return o;
+
+
+// Validate and convert together; nullopt preserves an exception from a getter
+// or numeric conversion. Internalized keys belong to the current isolate.
+std::optional<bool> v8_ValueIsPoint(v8::Isolate* isolate, v8::Local<v8::Value> val, Point& point) {
+    if (!val->IsObject()) return false;
+    v8::HandleScope scope(isolate);
+    auto context = isolate->GetCurrentContext();
+    auto object = val.As<v8::Object>();
+    auto readNumber = [&](auto key, double& number) {
+        v8::Local<v8::Value> value;
+        return object->Get(context, key).ToLocal(&value) && value->NumberValue(context).To(&number);
+    };
+    double xNumber, yNumber;
+    if (val->IsArray()) {
+        if (val.As<v8::Array>()->Length() != 2) return false;
+        if (!readNumber(0, xNumber) || !readNumber(1, yNumber))
+            return std::nullopt;
+    } else {
+        auto xKey = v8::String::NewFromUtf8Literal(isolate, "x", v8::NewStringType::kInternalized);
+        auto yKey = v8::String::NewFromUtf8Literal(isolate, "y", v8::NewStringType::kInternalized);
+        auto hasX = object->Has(context, xKey);
+        if (hasX.IsNothing()) return std::nullopt;
+        if (!hasX.FromJust()) return false;
+        auto hasY = object->Has(context, yKey);
+        if (hasY.IsNothing()) return std::nullopt;
+        if (!hasY.FromJust()) return false;
+        if (!readNumber(xKey, xNumber) || !readNumber(yKey, yNumber))
+            return std::nullopt;
+    }
+    point = Point(xNumber, yNumber);
+    return true;
 }
 
-Point  		
-v8_ValueToPoint(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	return v8_ValueToOffset(isolate, val);
+
+
+
+
+Rect v8_ValueToRect(v8::Isolate* isolate, v8::Local<v8::Value> val) {
+    Rect result;
+    auto converted = v8_ValueIsRect(isolate, val, result);
+    if (converted.has_value() && !*converted) { v8_ThrowArgTypeException(isolate, 1, "Rect", *val); }
+    return result;
 }
 
-Vector  	
-v8_ValueToVector(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	return v8_ValueToOffset(isolate, val);
+RotatedRect v8_ValueToRotatedRect(v8::Isolate* isolate, v8::Local<v8::Value> val) {
+    RotatedRect result;
+    auto converted = v8_ValueIsRotatedRect(isolate, val, result);
+    if (converted.has_value() && !*converted) { v8_ThrowArgTypeException(isolate, 1, "RotatedRect", *val); }
+    return result;
 }
 
-Rect  		
-v8_ValueToRect(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::Rect r;
-	MakeCppRect(isolate, val, r, true);
-	return r;
+Quad v8_ValueToQuad(v8::Isolate* isolate, v8::Local<v8::Value> val) {
+    Quad result;
+    auto converted = v8_ValueIsQuad(isolate, val, result);
+    if (converted.has_value() && !*converted) { v8_ThrowArgTypeException(isolate, 1, "Quad", *val); }
+    return result;
 }
 
-RotatedRect 
-v8_ValueToRotatedRect(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::RotatedRect rr;
-	MakeCppRect(isolate, val, rr, true);
-	return rr;
-}
 
-Quad  		
-v8_ValueToQuad(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::Quad q;
-	MakeCppQuad(isolate, val, q, true);
-	return q;
-}
-
-Color  		
-v8_ValueToColor(v8::Isolate* isolate, v8::Local<v8::Value> val) {
-	pdg::Color c;
-	MakeCppColor(isolate, val, c, true);
-	return c;
-}
 
 Spline*		
 v8_ValueToSpline(v8::Isolate* isolate, v8::Local<v8::Value> val) {

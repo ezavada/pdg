@@ -1,4 +1,4 @@
-.TH "EventManager" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "EventManager" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -77,9 +77,9 @@ Distributes events to event handlers\&.
 
 
 .PP
-\fBPrecondition\fP
+\fBNote\fP
 .RS 4
-\fBAPI Stability: 3 - Stable\fP\&. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes\&. Backwards-compatibility is guaranteed\&.
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 The \fBEventManager\fP is the core ofthe Pixel Dust Games Framework\&. All inputs to your game arrive as events via the Event Manager\&. This includes network messages and system level notifications in addition to user inputs such as keystrokes and mouse movements\&.
@@ -238,6 +238,10 @@ get the singleton instance of the \fBEventManager\fP used by the pdg framework
 .RE
 .PP
 
+.PP
+References \fBgetEventManager()\fP\&.
+.PP
+Referenced by \fBgetEventManager()\fP\&.
 
 .SH "Author"
 .PP 

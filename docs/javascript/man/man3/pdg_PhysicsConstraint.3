@@ -1,0 +1,583 @@
+.TH "PhysicsConstraint" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PhysicsConstraint \- A retained physical relationship between any two \fBPhysicsBody\fP owners\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBdisconnect\fP ()"
+.br
+.RI "Disconnect this constraint safely\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetAnchorA\fP ()"
+.br
+.RI "Read the connection point on body A\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetAnchorB\fP ()"
+.br
+.RI "Read the connection point on body B\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBgetBodyA\fP ()"
+.br
+.RI "Read endpoint A\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBgetBodyB\fP ()"
+.br
+.RI "Read endpoint B\&. "
+.ti -1c
+.RI "number \fBgetBreakForce\fP ()"
+.br
+.RI "Read the breaking threshold\&. "
+.ti -1c
+.RI "boolean \fBgetCollideBodies\fP ()"
+.br
+.RI "Read the connected-body collision preference\&. "
+.ti -1c
+.RI "number \fBgetForce\fP ()"
+.br
+.RI "Read the latest average constraint force or torque\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetGrooveEnd\fP ()"
+.br
+.RI "Read the end of a groove joint's track\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetGrooveStart\fP ()"
+.br
+.RI "Read the start of a groove joint's track\&. "
+.ti -1c
+.RI "number \fBgetImpulse\fP ()"
+.br
+.RI "Read the latest constraint impulse magnitude\&. "
+.ti -1c
+.RI "number \fBgetMaxAngle\fP ()"
+.br
+.RI "Read the rotary limit's maximum relative angle\&. "
+.ti -1c
+.RI "number \fBgetMaxForce\fP ()"
+.br
+.RI "Read the force or torque cap\&. "
+.ti -1c
+.RI "number \fBgetMinAngle\fP ()"
+.br
+.RI "Read the rotary limit's minimum relative angle\&. "
+.ti -1c
+.RI "number \fBgetType\fP ()"
+.br
+.RI "Read the constraint family\&. "
+.ti -1c
+.RI "boolean \fBisActive\fP ()"
+.br
+.RI "Test whether the endpoints remain connected\&. "
+.ti -1c
+.RI "boolean \fBisBroken\fP ()"
+.br
+.RI "Test whether the break threshold disconnected this handle\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBsetAnchorA\fP (\fBPoint\fP anchor)"
+.br
+.RI "Move the connection point on body A\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBsetAnchorB\fP (\fBPoint\fP anchor)"
+.br
+.RI "Move the connection point on body B\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBsetAnchors\fP (\fBPoint\fP anchorA, \fBPoint\fP anchorB)"
+.br
+.RI "Move both connection points atomically\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBsetAngleLimits\fP (number minAngle, number maxAngle)"
+.br
+.RI "Change both bounds of a rotary-limit constraint\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBsetBreakForce\fP (number value)"
+.br
+.RI "Choose the force or torque that breaks this constraint\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBsetCollideBodies\fP (boolean value)"
+.br
+.RI "Allow contacts between connected endpoints\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBsetGroove\fP (\fBPoint\fP start, \fBPoint\fP end)"
+.br
+.RI "Move both endpoints of a groove joint's track atomically\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBsetMaxForce\fP (number value)"
+.br
+.RI "Set the maximum constraint force or torque\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A retained physical relationship between any two \fBPhysicsBody\fP owners\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Create through \fBPhysicsBody\fP methods, such as createPinJoint(), createSpring() or createMotor()\&. The same API joins Sprite-to-Sprite, Sprite-to-Part and Part-to-Part\&. Shapes are optional\&. A constraint never changes a \fBPart\fP's parent or bone binding\&. Do not construct this class directly\&.
+
+.PP
+The factory receiver is body A; the \fRother\fP argument is B\&. Anchor coordinates are local to the physical body, without artwork scaling\&. Relative angles and angular speeds mean B minus A, clockwise positive, in radians and radians/second\&. Motors and forces act on physical state; they do not schedule \fBAnimated\fP operations\&.
+
+.PP
+Bodies retain their active constraints\&. Removing a body or removing/transferring an owner from its layer disconnects them\&. Retained JavaScript handles remain safe and return \fBPhysicsBody::NoPhysics\fP for both endpoints\&. A retained native handle requires addRef()/release()\&. Constraints created before insertion stay dormant until both bodies share a world\&. Joining two different layer worlds throws\&.
+
+.PP
+Basic uses bounded impulse approximations; Chipmunk uses native constraints\&. Neither promises exact preservation under arbitrary loads or large timesteps\&. Both support force/torque caps, break thresholds and connected-body collision suppression\&. No response is applied when neither endpoint is dynamic\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Instantiate both PhysicsBodies first\&. Owner updates advance constraints; calling \fBPhysicsBody::step()\fP on one detached body does not advance the other\&. Native custom worlds can call PhysicsBody::solveConstraints() with both endpoints\&.
+.RE
+.PP
+.PP
+.nf
+const mount = sprite\&.createPart('mount');
+const pendant = sprite\&.createPart('pendant');
+mount\&.setupPhysicsBody()\&.setMode(pdg\&.physicsBody_Static);
+pendant\&.setLocation(0, 30);
+pendant\&.setupPhysicsBody(1, 20);
+const tether = mount\&.physics\&.createSpring(pendant\&.physics,
+    new pdg\&.Point(0, 0), new pdg\&.Point(0, 0), 30, 20, 5);
+tether\&.setMaxForce(100)\&.setBreakForce(90);
+.fi
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBCollider\fP, \fBPhysicsBody\fP 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "disconnect ()"
+
+.PP
+Disconnect this constraint safely\&. Idempotent\&. Both endpoint lists drop it; a retained handle remains usable and reports NoPhysics endpoints\&. No implicit reconnection occurs\&. 
+.SS "\fBPoint\fP getAnchorA ()"
+
+.PP
+Read the connection point on body A\&. Pin, slide, pivot and spring constraints support this getter\&. For a groove, use \fBgetGrooveStart()\fP and \fBgetGrooveEnd()\fP instead\&. Other constraint types throw\&. Coordinates are unscaled body-local distance units, relative to \fBgetBodyA()\fP's physical frame, not a bone's joint origin or the \fBSprite\fP's frame\&. A retained disconnected constraint stays queryable\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+A copied \fBPoint\fP; changing it does not change the constraint\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnchorA()\fP, \fBsetAnchors()\fP 
+.RE
+.PP
+
+.SS "\fBPoint\fP getAnchorB ()"
+
+.PP
+Read the connection point on body B\&. Pin, slide, pivot, groove and spring constraints support this getter\&. Other constraint types throw\&. Coordinates are unscaled body-local distance units, relative to \fBgetBodyB()\fP's physical frame, not a bone's joint origin or the \fBSprite\fP's frame\&. A retained disconnected constraint stays queryable\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+A copied \fBPoint\fP; changing it does not change the constraint\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnchorB()\fP, \fBsetAnchors()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP getBodyA ()"
+
+.PP
+Read endpoint A\&. A is the factory receiver; B is the other body\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The body, or shared \fBPhysicsBody\&.NoPhysics\fP after disconnection\&. 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP getBodyB ()"
+
+.PP
+Read endpoint B\&. A is the factory receiver; B is the other body\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The body, or shared \fBPhysicsBody\&.NoPhysics\fP after disconnection\&. 
+.RE
+.PP
+
+.SS "number getBreakForce ()"
+
+.PP
+Read the breaking threshold\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Threshold, or zero when breaking is disabled\&. 
+.RE
+.PP
+
+.SS "boolean getCollideBodies ()"
+
+.PP
+Read the connected-body collision preference\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Whether this constraint allows its endpoints to collide\&. 
+.RE
+.PP
+
+.SS "number getForce ()"
+
+.PP
+Read the latest average constraint force or torque\&. Computed from the latest impulse divided by elapsed seconds\&. Zero before a solve\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Nonnegative force or torque magnitude\&. 
+.RE
+.PP
+
+.SS "\fBPoint\fP getGrooveEnd ()"
+
+.PP
+Read the end of a groove joint's track\&. Only groove constraints support this getter; other types throw\&. Retained disconnected grooves remain queryable\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+A copied \fBPoint\fP in body A's unscaled local distance units\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetGroove()\fP, \fBgetAnchorB()\fP 
+.RE
+.PP
+
+.SS "\fBPoint\fP getGrooveStart ()"
+
+.PP
+Read the start of a groove joint's track\&. Only groove constraints support this getter; other types throw\&. Retained disconnected grooves remain queryable\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+A copied \fBPoint\fP in body A's unscaled local distance units\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetGroove()\fP, \fBgetAnchorB()\fP 
+.RE
+.PP
+
+.SS "number getImpulse ()"
+
+.PP
+Read the latest constraint impulse magnitude\&. Linear constraints report momentum impulse; angular constraints report angular impulse\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Nonnegative magnitude from the most recent solve\&. 
+.RE
+.PP
+
+.SS "number getMaxAngle ()"
+
+.PP
+Read the rotary limit's maximum relative angle\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The upper bound for body B's rotation minus body A's, in radians, clockwise positive\&. Throws for other constraint types\&. A retained disconnected rotary limit remains queryable\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAngleLimits()\fP, \fBPart::setIKLimits()\fP 
+.RE
+.PP
+
+.SS "number getMaxForce ()"
+
+.PP
+Read the force or torque cap\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Nonnegative cap, possibly infinity\&. 
+.RE
+.PP
+
+.SS "number getMinAngle ()"
+
+.PP
+Read the rotary limit's minimum relative angle\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The lower bound for body B's rotation minus body A's, in radians, clockwise positive\&. Throws for other constraint types\&. A retained disconnected rotary limit remains queryable\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAngleLimits()\fP, \fBPart::setIKLimits()\fP 
+.RE
+.PP
+
+.SS "number getType ()"
+
+.PP
+Read the constraint family\&. 
+.PP
+\fBReturns\fP
+.RS 4
+An integer constraint_ constant\&. 
+.RE
+.PP
+
+.SS "boolean isActive ()"
+
+.PP
+Test whether the endpoints remain connected\&. A connected constraint can be dormant while its owners are outside a layer\&. This does not promise that a solver has advanced it\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+False after disconnect, endpoint removal/transfer, or breaking\&. 
+.RE
+.PP
+
+.SS "boolean isBroken ()"
+
+.PP
+Test whether the break threshold disconnected this handle\&. Manual disconnect does not mark a constraint broken\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Whether it broke during a physical solve\&. 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP setAnchorA (\fBPoint\fP anchor)"
+
+.PP
+Move the connection point on body A\&. Pin, slide, pivot and spring constraints support this setter\&. For a groove, use \fBsetGroove()\fP instead\&. Other constraint types throw\&. Finite coordinates are required; invalid input leaves the constraint unchanged\&. Only this endpoint changes\&. See \fBsetAnchors()\fP for solver timing, geometry and lifetime behavior\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIanchor\fP New point in body A's unscaled local distance units; copied\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This constraint for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnchorA()\fP, \fBsetAnchors()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP setAnchorB (\fBPoint\fP anchor)"
+
+.PP
+Move the connection point on body B\&. Pin, slide, pivot, groove and spring constraints support this setter\&. Other constraint types throw\&. Finite coordinates are required; invalid input leaves the constraint unchanged\&. Only this endpoint changes\&. See \fBsetAnchors()\fP for solver timing, geometry and lifetime behavior\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIanchor\fP New point in body B's unscaled local distance units; copied\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This constraint for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnchorB()\fP, \fBsetAnchors()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP setAnchors (\fBPoint\fP anchorA, \fBPoint\fP anchorB)"
+
+.PP
+Move both connection points atomically\&. Supports pin, slide, pivot and spring constraints\&. Groove and angular-only constraints throw\&. Both Points must have finite coordinates\&. Validation occurs before either stored point changes; getters report successful edits immediately\&.
+
+.PP
+The next physics step uses the new anchors\&. This includes edits requested in a collision callback: the active solver joint is not mutated during that solve\&. Connected sleeping bodies wake when the edit reaches the native solver\&. Repeating the same coordinates does not restart the joint\&. The public constraint handle, body endpoints, force/break limits and collision policy are preserved\&.
+
+.PP
+Moving anchors does not teleport bodies, change velocities, resize colliders, recalculate mass/inertia, or change a pin's distance, slide limits or spring rest length\&. The solver may move bodies to satisfy the new geometry\&. Edited anchors are saved in scene snapshots, including edits made before the next solve\&. A retained disconnected constraint stays editable but is not reconnected\&.
+
+.PP
+This edits physical connection points, not animation bones or \fBPart\fP offsets\&. Physical \fBPart\fP IK continues to validate its joint geometry against its \fBPart\fP chain; incompatible anchors produce a controller error instead of silently moving its captured chain offsets\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIanchorA\fP New point in body A's unscaled local distance units; copied\&. 
+.br
+\fIanchorB\fP New point in body B's unscaled local distance units; copied\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This constraint for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+The example assumes upperArm and forearm are Parts with physics bodies in the same layer, with millimeters as the application's distance unit\&. The coordinates are relative to each body's origin\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const elbow = upperArm\&.physics\&.createPivotJoint(forearm\&.physics,
+    new pdg\&.Point(0, 150), new pdg\&.Point(0, \-130));
+elbow\&.setAnchors(new pdg\&.Point(0, 145), new pdg\&.Point(0, \-125));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnchorA()\fP, \fBgetAnchorB()\fP, \fBsetAnchorA()\fP, \fBsetAnchorB()\fP, \fBsetGroove()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP setAngleLimits (number minAngle, number maxAngle)"
+
+.PP
+Change both bounds of a rotary-limit constraint\&. Both bounds must be finite and ordered; equal values lock the relative angle\&. Invalid input leaves both old bounds intact\&. Other constraint types throw\&. Getters and linked \fBPart\fP IK see the change immediately\&. Both physics solvers apply it on the next constraint step\&. This does not teleport either body or reconnect a disconnected constraint\&. The physical interval may span multiple turns; \fBPart\fP IK links accept at most one turn and report an error for a wider interval\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIminAngle\fP Minimum body B rotation relative to A, in radians\&. 
+.br
+\fImaxAngle\fP Maximum body B rotation relative to A, in radians\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This constraint for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMinAngle()\fP, \fBgetMaxAngle()\fP, \fBPart::setIKLimits()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP setBreakForce (number value)"
+
+.PP
+Choose the force or torque that breaks this constraint\&. The threshold is checked after each solve against impulse divided by elapsed seconds\&. Breaking disconnects only this constraint, leaving the handle queryable\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative threshold; zero disables breaking\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP setCollideBodies (boolean value)"
+
+.PP
+Allow contacts between connected endpoints\&. Defaults to false\&. Collision masks, groups and layers still apply when enabled\&. This does not create collision geometry\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Whether the two bodies may collide\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP setGroove (\fBPoint\fP start, \fBPoint\fP end)"
+
+.PP
+Move both endpoints of a groove joint's track atomically\&. Only groove constraints support this setter\&. Coordinates must be finite and the endpoints more than 1e-8 local distance units apart\&. Invalid input leaves both endpoints unchanged\&. Body B's anchor stays unchanged; use \fBsetAnchorB()\fP to edit it\&. Getters report the change immediately; the solver adopts it on the next step\&. The same timing, lifetime and body-state rules as \fBsetAnchors()\fP apply\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIstart\fP New track start in body A's unscaled local distance units; copied\&. 
+.br
+\fIend\fP New track end in body A's unscaled local distance units; copied\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This constraint for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetGrooveStart()\fP, \fBgetGrooveEnd()\fP, \fBsetAnchorB()\fP, \fBsetAnchors()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP setMaxForce (number value)"
+
+.PP
+Set the maximum constraint force or torque\&. Linear constraints use force; angular constraints use torque\&. Takes effect on the next solve\&. Both solvers cap the impulse per step to this value times elapsed seconds\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Nonnegative maximum, including positive infinity\&. Default is infinity except motors\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

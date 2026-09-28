@@ -233,7 +233,11 @@ namespace pdg
 
     PolygonWrap::PolygonWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_Polygon(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_Polygon(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_Polygon_InNewFromCpp)
         {
             {
@@ -257,866 +261,903 @@ namespace pdg
         if (s_Polygon_InNewFromCpp) return nullptr;
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         ;
-
-        if (args.Length() == 0)
+        if (args.Length() == 0 || (args.Length() == 1 && (args[0]->IsNull() || args[0]->IsUndefined())))
         {
-
             return new pdg::Polygon();
         }
-        else if (args.Length() == 1 && (args[0]->IsNull() || args[0]->IsUndefined()))
+        std::vector<Point> points;
+        auto appendPoint = [&](v8::Local<v8::Value> value)
         {
-
-            return new pdg::Polygon();
+            Point point;
+            auto converted = v8_ValueIsPoint(isolate, value, point);
+            if (!converted.has_value()) return false;
+            if (!*converted)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Point", *value);
+                return false;
+            }
+            points.push_back(point);
+            return true;
+        };
 #ifdef PDG_USING_JAVASCRIPT_CORE
-        }
-        else if (args.Length() == 1 && JSValueIsArray(ctx, args[0]))
+        if (args.Length() == 1 && JSValueIsArray(ctx, args[0]))
         {
-
-            std::vector<Point> points;
             JSObjectRef array = JSValueToObject(ctx, args[0], exception);
             JSStringRef lengthName = JSStringCreateWithUTF8CString("length");
             JSValueRef lengthValue = JSObjectGetProperty(ctx, array, lengthName, exception);
             JSStringRelease(lengthName);
-            unsigned length = (unsigned)JSValueToNumber(ctx, lengthValue, exception);
-            for (unsigned i = 0; i < length; i++)
+            if (*exception) return nullptr;
+            double length = JSValueToNumber(ctx, lengthValue, exception);
+            if (*exception) return nullptr;
+            for (unsigned i = 0; i < length; ++i)
             {
-                points.push_back(v8_ValueToPoint(isolate, JSObjectGetPropertyAtIndex(ctx, array, i, exception)));
+                auto value = JSObjectGetPropertyAtIndex(ctx, array, i, exception);
+                if (*exception || !appendPoint(value)) return nullptr;
             }
-            return new pdg::Polygon(points);
 #else
-        }
-        else if (args.Length() == 1 && args[0]->IsArray())
-        {
-
-            std::vector<Point> points;
-            v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(args[0]);
-            v8::Local<v8::Context> context = isolate->GetCurrentContext();
-            for (uint32_t i = 0; i < array->Length(); i++)
+            if (args.Length() == 1 && args[0]->IsArray())
             {
-                points.push_back(v8_ValueToPoint(isolate, array->Get(context, i).ToLocalChecked()));
-            }
-            return new pdg::Polygon(points);
-#endif
-        }
-        else
-        {
-
-            std::vector<Point> points;
-            for (int i = 0; i < args.Length(); i++)
-            {
-                if (!args[i]->IsObject())
+                auto array = args[0].As<v8::Array>();
+                auto context = isolate->GetCurrentContext();
+                for (uint32_t i = 0; i < array->Length(); ++i)
                 {
-#ifdef PDG_USING_JAVASCRIPT_CORE
-                    JSStringRef message = JSStringCreateWithUTF8CString("Polygon constructor arguments must be Point objects");
-                    JSValueRef errorArgument = JSValueMakeString(ctx, message);
-                    *exception = JSObjectMakeError(ctx, 1, &errorArgument, nullptr);
-                    JSStringRelease(message);
-                    return nullptr;
-#else
-                    std::ostringstream excpt_;
-                    excpt_ << "Polygon constructor arguments must be Point objects";
-                    isolate->ThrowException( v8::Exception::TypeError( ([&]()
-                    {
-                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                            return maybe.IsEmpty() ?
-                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-                    }())));
-                    return nullptr;
-#endif
+                    v8::Local<v8::Value> value;
+                    if (!array->Get(context, i).ToLocal(&value) || !appendPoint(value)) return nullptr;
                 }
-                Point point = v8_ValueToPoint(isolate, args[i]);
-                points.push_back(point);
+#endif
+            }
+            else
+            {
+                for (int i = 0; i < args.Length(); ++i)
+                {
+                    if (!appendPoint(args[i])) return nullptr;
+                }
             }
             return new pdg::Polygon(points);
         }
-    }
 
-    void PolygonWrap::AddPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::AddPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] point)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
-            return;
-        }
-        pdg::Point point = v8_ValueToPoint(isolate, args[1 -1]);
-        self->addPoint(point);
-        args.GetReturnValue().SetUndefined();
-    }
-
-    void PolygonWrap::AddSpline(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Spline] spline, [number] uStep)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
-        float uStep = 0.01f;
-        if (args.Length() >= 2 && !args[1]->IsUndefined() && !args[1]->IsNull())
-        {
-            if (!args[2 -1]->IsNumber())
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""uStepArg"")");
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] point)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
                 return;
+            };
+            pdg::Point point;
+            auto point_isPoint = v8_ValueIsPoint(isolate, args[1 -1], point);
+            if (!point_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
             }
-            double uStepArg = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            uStep = uStepArg;
-        }
-        self->addSpline(spline, uStep);
-        args.GetReturnValue().SetUndefined();
-    }
-
-    void PolygonWrap::InsertPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] index, [object Point] point)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""index"")");
-            return;
-        }
-        unsigned long index = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-        if (!v8_ValueIsPoint(isolate, args[2 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
-            return;
-        }
-        pdg::Point point = v8_ValueToPoint(isolate, args[2 -1]);
-        self->insertPoint(index, point);
-        args.GetReturnValue().SetUndefined();
-    }
-
-    void PolygonWrap::RemovePoint(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] index)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""index"")");
-            return;
-        }
-        unsigned long index = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-        try
-        {
-            self->removePoint(index);
-        }
-        catch (const std::out_of_range& e)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "Polygon::removePoint: index out of range";
-            isolate->ThrowException( v8::Exception::RangeError( ([&]()
+            if (!*point_isPoint)
             {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-        }
-        args.GetReturnValue().SetUndefined();
-    }
-
-    void PolygonWrap::GetPointCount(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        size_t count = self->getPointCount();
-        { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, count) ); return; };
-    }
-
-    void PolygonWrap::GetPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "([number uint] index)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""index"")");
-            return;
-        }
-        unsigned long index = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-        try
-        {
-            Point point = self->getPoint(index);
-            { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, point) ); return; };
-        }
-        catch (const std::out_of_range& e)
-        {
-            std::ostringstream excpt_;
-            excpt_ << "Polygon::getPoint: index out of range";
-            isolate->ThrowException( v8::Exception::RangeError( ([&]()
-            {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-        }
-    }
-
-    void PolygonWrap::SetPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] index, [object Point] point)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""index"")");
-            return;
-        }
-        unsigned long index = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-        if (!v8_ValueIsPoint(isolate, args[2 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
-            return;
-        }
-        pdg::Point point = v8_ValueToPoint(isolate, args[2 -1]);
-        try
-        {
-            self->setPoint(index, point);
+                v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
+                return;
+            };
+            self->addPoint(point);
             args.GetReturnValue().SetUndefined();
         }
-        catch (const std::out_of_range& e)
+
+        void PolygonWrap::AddSpline(const v8::FunctionCallbackInfo<v8::Value>& args)
         {
-            std::ostringstream excpt_;
-            excpt_ << "Polygon::setPoint: index out of range";
-            isolate->ThrowException( v8::Exception::RangeError( ([&]()
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
-                    return maybe.IsEmpty() ?
-                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Spline] spline, [number] uStep)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
+            float uStep = 0.01f;
+            if (args.Length() >= 2 && !args[1]->IsUndefined() && !args[1]->IsNull())
+            {
+                if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""uStepArg"")");
+                    return;
+                }
+                double uStepArg = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                uStep = uStepArg;
+            }
+            self->addSpline(spline, uStep);
+            args.GetReturnValue().SetUndefined();
         }
-    }
 
-    void PolygonWrap::ClearPoints(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::InsertPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->clearPoints();
-        args.GetReturnValue().SetUndefined();
-    }
-
-    void PolygonWrap::GetBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        Rect bounds = self->getBounds();
-        { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, bounds) ); return; };
-    }
-
-    void PolygonWrap::CenterPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        Point center = self->centerPoint();
-        { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, center) ); return; };
-    }
-
-    void PolygonWrap::Contains(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[boolean]" " function" "([object Point] point)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] index, [object Point] point)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""index"")");
+                return;
+            }
+            unsigned long index = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
+            pdg::Point point;
+            auto point_isPoint = v8_ValueIsPoint(isolate, args[2 -1], point);
+            if (!point_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*point_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
+                return;
+            };
+            self->insertPoint(index, point);
+            args.GetReturnValue().SetUndefined();
         }
-        pdg::Point point = v8_ValueToPoint(isolate, args[1 -1]);
-        bool contains = self->contains(point);
-        { args.GetReturnValue().Set( v8::Boolean::New(isolate, contains) ); return; };
-    }
 
-    void PolygonWrap::Empty(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::RemovePoint(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[boolean]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        bool empty = self->empty();
-        { args.GetReturnValue().Set( v8::Boolean::New(isolate, empty) ); return; };
-    }
-
-    void PolygonWrap::Equals(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[boolean]" " function" "([object Polygon] other)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
-        { args.GetReturnValue().Set( v8::Boolean::New(isolate, *self == *other) ); return; };
-    }
-
-    void PolygonWrap::Move(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "([object Offset] offset)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] index)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""index"")");
+                return;
+            }
+            unsigned long index = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
+            try
+            {
+                self->removePoint(index);
+            }
+            catch (const std::out_of_range& e)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Polygon::removePoint: index out of range";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }())));
+            }
+            args.GetReturnValue().SetUndefined();
         }
-        pdg::Offset offset = v8_ValueToOffset(isolate, args[1 -1]);
-        self->move(offset);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::MoveLeft(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::GetPointCount(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number delta)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""delta"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            size_t count = self->getPointCount();
+            { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, count) ); return; };
         }
-        double delta = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->moveLeft(delta);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::MoveRight(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::GetPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "(number delta)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""delta"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "([number uint] index)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""index"")");
+                return;
+            }
+            unsigned long index = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
+            try
+            {
+                Point point = self->getPoint(index);
+                { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, point) ); return; };
+            }
+            catch (const std::out_of_range& e)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Polygon::getPoint: index out of range";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }())));
+            }
         }
-        double delta = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->moveRight(delta);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::MoveUp(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::SetPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "(number delta)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""delta"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] index, [object Point] point)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""index"")");
+                return;
+            }
+            unsigned long index = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
+            pdg::Point point;
+            auto point_isPoint = v8_ValueIsPoint(isolate, args[2 -1], point);
+            if (!point_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*point_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
+                return;
+            };
+            try
+            {
+                self->setPoint(index, point);
+                args.GetReturnValue().SetUndefined();
+            }
+            catch (const std::out_of_range& e)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Polygon::setPoint: index out of range";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }())));
+            }
         }
-        double delta = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->moveUp(delta);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::MoveDown(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::ClearPoints(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "(number delta)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""delta"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->clearPoints();
+            args.GetReturnValue().SetUndefined();
         }
-        double delta = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->moveDown(delta);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::MoveXTo(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::GetBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number x)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            Rect bounds = self->getBounds();
+            { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, bounds) ); return; };
         }
-        double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->moveXTo(x);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::MoveYTo(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::CenterPoint(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number y)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""y"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            Point center = self->centerPoint();
+            { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, center) ); return; };
         }
-        double y = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->moveYTo(y);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::MoveTo(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::Contains(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number x, number y)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[boolean]" " function" "([object Point] point)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            pdg::Point point;
+            auto point_isPoint = v8_ValueIsPoint(isolate, args[1 -1], point);
+            if (!point_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*point_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
+                return;
+            };
+            bool contains = self->contains(point);
+            { args.GetReturnValue().Set( v8::Boolean::New(isolate, contains) ); return; };
         }
-        double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!args[2 -1]->IsNumber())
+
+        void PolygonWrap::Empty(const v8::FunctionCallbackInfo<v8::Value>& args)
         {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
-            return;
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[boolean]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            bool empty = self->empty();
+            { args.GetReturnValue().Set( v8::Boolean::New(isolate, empty) ); return; };
         }
-        double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->moveTo(x, y);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::Center(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::Equals(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] point)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[boolean]" " function" "([object Polygon] other)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+            { args.GetReturnValue().Set( v8::Boolean::New(isolate, *self == *other) ); return; };
         }
-        pdg::Point point = v8_ValueToPoint(isolate, args[1 -1]);
-        self->center(point);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::Scale(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::Move(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "([object Offset] offset)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            pdg::Offset offset;
+            auto offset_isOffset = v8_ValueIsOffset(isolate, args[1 -1], offset);
+            if (!offset_isOffset.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*offset_isOffset)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
+                return;
+            };
+            self->move(offset);
+            args.GetReturnValue().SetUndefined();
         }
-        double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->scale(factor);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::HorzScale(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::MoveLeft(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number delta)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""delta"")");
+                return;
+            }
+            double delta = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->moveLeft(delta);
+            args.GetReturnValue().SetUndefined();
         }
-        double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->horzScale(factor);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::VertScale(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::MoveRight(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "(number delta)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""delta"")");
+                return;
+            }
+            double delta = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->moveRight(delta);
+            args.GetReturnValue().SetUndefined();
         }
-        double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->vertScale(factor);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::ScaleAround(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::MoveUp(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor, [object Point] centerPoint)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "(number delta)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""delta"")");
+                return;
+            }
+            double delta = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->moveUp(delta);
+            args.GetReturnValue().SetUndefined();
         }
-        double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!v8_ValueIsPoint(isolate, args[2 -1]))
+
+        void PolygonWrap::MoveDown(const v8::FunctionCallbackInfo<v8::Value>& args)
         {
-            v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
-            return;
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "(number delta)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""delta"")");
+                return;
+            }
+            double delta = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->moveDown(delta);
+            args.GetReturnValue().SetUndefined();
         }
-        pdg::Point centerPoint = v8_ValueToPoint(isolate, args[2 -1]);
-        self->scaleAround(factor, centerPoint);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::Rotate(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::MoveXTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number radians)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""radians"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number x)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
+                return;
+            }
+            double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->moveXTo(x);
+            args.GetReturnValue().SetUndefined();
         }
-        double radians = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->rotate(radians);
-        args.GetReturnValue().SetUndefined();
-    }
 
-    void PolygonWrap::RotateAround(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+        void PolygonWrap::MoveYTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number radians, [object Point] centerPoint)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""radians"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number y)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""y"")");
+                return;
+            }
+            double y = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->moveYTo(y);
+            args.GetReturnValue().SetUndefined();
         }
-        double radians = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!v8_ValueIsPoint(isolate, args[2 -1]))
+
+        void PolygonWrap::MoveTo(const v8::FunctionCallbackInfo<v8::Value>& args)
         {
-            v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
-            return;
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number x, number y)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
+                return;
+            }
+            double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
+                return;
+            }
+            double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->moveTo(x, y);
+            args.GetReturnValue().SetUndefined();
         }
-        pdg::Point centerPoint = v8_ValueToPoint(isolate, args[2 -1]);
-        self->rotateAround(radians, centerPoint);
-        args.GetReturnValue().SetUndefined();
+
+        void PolygonWrap::Center(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] point)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            pdg::Point point;
+            auto point_isPoint = v8_ValueIsPoint(isolate, args[1 -1], point);
+            if (!point_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*point_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
+                return;
+            };
+            self->center(point);
+            args.GetReturnValue().SetUndefined();
+        }
+
+        void PolygonWrap::Scale(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
+            }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->scale(factor);
+            args.GetReturnValue().SetUndefined();
+        }
+
+        void PolygonWrap::HorzScale(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
+            }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->horzScale(factor);
+            args.GetReturnValue().SetUndefined();
+        }
+
+        void PolygonWrap::VertScale(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
+            }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->vertScale(factor);
+            args.GetReturnValue().SetUndefined();
+        }
+
+        void PolygonWrap::ScaleAround(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor, [object Point] centerPoint)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
+            }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            pdg::Point centerPoint;
+            auto centerPoint_isPoint = v8_ValueIsPoint(isolate, args[2 -1], centerPoint);
+            if (!centerPoint_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*centerPoint_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
+                return;
+            };
+            self->scaleAround(factor, centerPoint);
+            args.GetReturnValue().SetUndefined();
+        }
+
+        void PolygonWrap::Rotate(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number radians)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""radians"")");
+                return;
+            }
+            double radians = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->rotate(radians);
+            args.GetReturnValue().SetUndefined();
+        }
+
+        void PolygonWrap::RotateAround(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number radians, [object Point] centerPoint)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""radians"")");
+                return;
+            }
+            double radians = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            pdg::Point centerPoint;
+            auto centerPoint_isPoint = v8_ValueIsPoint(isolate, args[2 -1], centerPoint);
+            if (!centerPoint_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*centerPoint_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
+                return;
+            };
+            self->rotateAround(radians, centerPoint);
+            args.GetReturnValue().SetUndefined();
+        }
+
+        void PolygonWrap::Intersection(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "([object Polygon] other)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+            Polygon* result = new Polygon(self->intersection(*other));
+            if (!result) { args.GetReturnValue().SetNull(); return; };
+            { args.GetReturnValue().Set( PolygonWrap::NewFromCpp(isolate, result) ); return; };
+            ;
+        }
+
+        void PolygonWrap::UnionWith(const v8::FunctionCallbackInfo<v8::Value>& args)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
+            Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
+
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "([object Polygon] other)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
+            Polygon* result = new Polygon(self->unionWith(*other));
+            if (!result) { args.GetReturnValue().SetNull(); return; };
+            { args.GetReturnValue().Set( PolygonWrap::NewFromCpp(isolate, result) ); return; };
+            ;
+        }
+
+        void CleanupPolygonScriptObject(v8::UniquePersistent<v8::Object> &obj) { }
+
     }
-
-    void PolygonWrap::Intersection(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "([object Polygon] other)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
-        Polygon* result = new Polygon(self->intersection(*other));
-        if (!result) { args.GetReturnValue().SetNull(); return; };
-        { args.GetReturnValue().Set( PolygonWrap::NewFromCpp(isolate, result) ); return; };
-        ;
-    }
-
-    void PolygonWrap::UnionWith(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        PolygonWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PolygonWrap>(args.This());
-        Polygon* self = dynamic_cast<Polygon*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Polygon]" " function" "([object Polygon] other)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
-        Polygon* result = new Polygon(self->unionWith(*other));
-        if (!result) { args.GetReturnValue().SetNull(); return; };
-        { args.GetReturnValue().Set( PolygonWrap::NewFromCpp(isolate, result) ); return; };
-        ;
-    }
-
-    void CleanupPolygonScriptObject(v8::UniquePersistent<v8::Object> &obj) { }
-
-}

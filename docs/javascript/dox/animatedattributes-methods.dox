@@ -1,0 +1,335 @@
+/**
+\fn pdg::AnimatedAttributes::changeLineColor(Color target, number seconds, int easing)
+\brief Animate stroke color.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate lineColor() setter interrupts this channel; unrelated channels continue. Resolves lineStyle_Auto to a solid stroke.
+
+\param target Target Color, interpolated component by component.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\note Advance a standalone object with animate(deltaSeconds). Drawing and ElementRef copy a sample of Attributes; use ElementRef.setLiveAttributes() to follow later samples. MVC controllers advance their Views automatically.
+
+\see lineColor(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeLineThickness(number target, number seconds, int easing)
+\brief Animate stroke thickness.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate lineThickness() setter interrupts this channel; unrelated channels continue. Resolves lineStyle_Auto to a solid stroke.
+
+\param target Finite target stroke width in drawing/Port units.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see lineThickness(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeLineOpacity(number target, number seconds, int easing)
+\brief Animate stroke opacity.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate lineOpacity() setter interrupts this channel; unrelated channels continue. Resolves lineStyle_Auto to a solid stroke.
+
+\param target Finite target opacity, normally from 0 to 1.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see lineOpacity(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeFillColor(Color target, number seconds, int easing)
+\brief Animate solid fill color.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate fillColor() setter interrupts this channel; unrelated channels continue. Selects a solid fill and replaces previous solid/gradient fill-color tracks. Fill opacity remains independent.
+
+\param target Target Color, interpolated component by component.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\note Advance a standalone object with animate(deltaSeconds). Drawing and ElementRef copy a sample of Attributes; use ElementRef.setLiveAttributes() to follow later samples. MVC controllers advance their Views automatically.
+
+\par Example
+\code{.js}
+const style = new pdg.AnimatedAttributes();
+style.fillColor(new pdg.Color(1, 0, 0));
+style.changeFillColor(new pdg.Color(0, 0, 1), 0.5);
+style.animate(0.25);
+const drawing = pdg.createDrawing();
+const element = drawing.addRect(new pdg.Rect(0, 0, 20, 10), style);
+style.animate(0.25);
+element.setAttributes(style);
+\endcode
+
+\see fillColor(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeFillOpacity(number target, number seconds, int easing)
+\brief Animate fill opacity.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate fillOpacity() setter interrupts this channel; unrelated channels continue.
+
+\param target Finite target opacity, normally from 0 to 1.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see fillOpacity(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeRoundedCorners(number target, number seconds, int easing)
+\brief Animate corner radius.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate roundedCorners() setter interrupts this channel; unrelated channels continue.
+
+\param target Finite target radius in geometry units.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see roundedCorners(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeTextSize(number target, number seconds, int easing)
+\brief Animate text size.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate textSize() setter interrupts this channel; unrelated channels continue.
+
+\param target Finite target font size.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see textSize(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeSubsection(Rect target, number seconds, int easing)
+\brief Animate image subsection.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate subsection() setter interrupts this channel; unrelated channels continue.
+
+\param target Target Rect in source-image coordinates.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see subsection(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changePolarOffset(Offset target, number seconds, int easing)
+\brief Animate sphere polar offset.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate polarOffset() setter interrupts this channel; unrelated channels continue.
+
+\param target Target Offset for spherical image mapping.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see polarOffset(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeLightOffset(Offset target, number seconds, int easing)
+\brief Animate sphere light offset.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate lightOffset() setter interrupts this channel; unrelated channels continue.
+
+\param target Target Offset for the light position.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see lightOffset(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeAmbientLight(Color target, number seconds, int easing)
+\brief Animate ambient light color.
+
+Replaces the matching pending transition and consumes the pending wait. The immediate ambientLight() setter interrupts this channel; unrelated channels continue.
+
+\param target Target Color for ambient lighting.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see ambientLight(), Animated::wait(), animate()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::animate(number deltaSeconds)
+\brief Advance appearance and transform animation.
+
+Advances programmed movement, scheduled transitions, frame sequences, and animation helpers. Tween pause affects transitions and delays; constant rates still run.
+
+\param deltaSeconds Finite nonnegative elapsed time in seconds.
+
+\return True if the update changed animation values; false otherwise.
+
+\note Advance a standalone object with animate(deltaSeconds). Drawing and ElementRef copy a sample of Attributes; use ElementRef.setLiveAttributes() to follow later samples. MVC controllers advance their Views automatically.
+
+\see Animated::pauseSchedule(), changeFillColor()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeFillGradient(Point start, Color startColor, Point end, Color endColor, number seconds, int easing)
+\brief Animate a linear fill gradient.
+
+Switches the fill mode when the pending delay expires, then interpolates the numeric/color fields. Replaces other solid/gradient fill-color tracks while preserving fill opacity. Resolves lineStyle_Auto as a fill.
+
+\param start Target gradient start point.
+\param startColor Target color at the start.
+\param end Target gradient end point.
+\param endColor Target color at the end.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+style.changeFillGradient(new pdg.Point(0, 0), new pdg.Color(1, 0, 0),
+    new pdg.Point(100, 0), new pdg.Color(0, 0, 1), 0.5);
+\endcode
+
+\see changeFillRadialGradient(), changeFillColor()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeFillRadialGradient(Point center, Color centerColor, number radius, Color endColor, number seconds, int easing)
+\brief Animate a radial fill gradient.
+
+Switches the fill mode when the pending delay expires, then interpolates the numeric/color fields. Replaces other solid/gradient fill-color tracks while preserving fill opacity. Resolves lineStyle_Auto as a fill.
+
+\param center Target gradient center.
+\param centerColor Target color at the center.
+\param radius Finite target gradient radius in geometry units.
+\param endColor Target color at the outer radius.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see changeFillGradient(), changeFillColor()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeSphereRotation(number radians, number seconds, int easing, int direction)
+\brief Animate spherical-image rotation.
+
+Targets an absolute angle. Replaces the matching track and consumes the pending wait. Positive angles rotate clockwise.
+
+\param radians Finite target angle in radians.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+\param direction Integer pdg.rotationDirection_AsSpecified, Shortest, Clockwise, or CounterClockwise (each with the rotationDirection_ prefix). AsSpecified preserves the requested number of turns.
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+style.changeSphereRotation(Math.PI, 0.5, pdg.easeInOutQuad,
+    pdg.rotationDirection_Shortest);
+\endcode
+
+\see sphereRotation(), Animated::wait()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeFrames(int first, int last, number seconds, int easing)
+\brief Animate an inclusive sequence of image frames.
+
+Visits first through last in either direction, with equal time per frame before easing. Does not loop; holds the last frame at completion. A pending wait keeps the old frame until the sequence starts. Calling frame() directly cancels the sequence.
+
+\param first First integer frame index.
+\param last Last integer frame index, inclusive.
+\param seconds Finite nonnegative duration of the entire sequence, in seconds. Zero selects the last frame when the delay expires.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+style.changeFrames(0, 7, 0.8);
+// Call style.animate(deltaSeconds) and reapply it each update.
+\endcode
+
+\see frame(), Animated::wait()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeSkew(number x, number y, number seconds, int easing)
+\brief Animate a relative shear.
+
+Postmultiplies the current transform by the requested shear, then interpolates the six affine matrix coefficients. This can pass through singular matrices. Replaces transform tracks; a later component request interrupts the matrix tween.
+
+\param x Finite coefficient added to y per unit x.
+\param y Finite coefficient added to x per unit y.
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\see changeTransform(), skew()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::changeTransform(array number matrix, number seconds, int easing)
+\brief Animate a replacement affine matrix.
+
+Interpolates the six affine coefficients, which may pass through singular matrices. Preserves logical width and height; matrix scale updates the independent scale components. A nonzero matrix column requires a nonzero corresponding logical dimension. Use rotateTo() for angular paths and direction control. Replaces transform tracks and constant transform rates; subsequent component requests interrupt the matrix tween at its current sample.
+
+\param matrix Column-major array of nine finite numbers: [a, b, 0, c, d, 0, tx, ty, 1]. It maps (x,y) to (a*x+c*y+tx, b*x+d*y+ty).
+\param seconds Required finite, nonnegative duration in seconds. Zero applies the target immediately. After wait() or andThen(), duration must be greater than zero.
+\param easing Integer easing constant, such as \c pdg.linearTween or \c pdg.easeInOutQuad.
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+style.changeTransform([1, 0, 0, 0.25, 1, 0, 30, 10, 1], 0.5);
+\endcode
+
+\see rotateTo(), changeSkew(), setTransform()
+*/
+
+/**
+\fn pdg::AnimatedAttributes::setTransform(array number matrix)
+\brief Replace the affine transform immediately.
+
+Unlike transform(), replaces the matrix instead of postmultiplying it. AnimatedAttributes preserves its logical width and height, updates its shared Animated transform components, and cancels conflicting transform animation. It rejects nonfinite or non-affine matrices and nonzero matrix columns whose corresponding logical dimension is zero.
+
+\param matrix Array of nine numbers in column-major order. For a 2D affine transform use [a, b, 0, c, d, 0, tx, ty, 1], mapping (x,y) to (a*x+c*y+tx, b*x+d*y+ty).
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+style.setTransform([1, 0, 0, 0, 1, 0, 20, 10, 1]);
+\endcode
+
+\see transform(), getTransform()
+*/

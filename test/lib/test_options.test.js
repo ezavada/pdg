@@ -1,0 +1,37 @@
+'use strict';
+const assert = require('assert');
+const {parse, visualPages, pageIndex} = require('./test_options');
+const fs = require('fs');
+const path = require('path');
+const catalog = require('./ui_test_catalog');
+assert.deepStrictEqual(parse('unit', ['--node','color','point']).suites, ['color','point']);
+assert.throws(() => parse('ui', ['--bogus']), /Unknown option/);
+assert.throws(() => parse('ui', ['--web','--ios']), /only one/);
+assert.throws(() => parse('unit', ['--page','2']), /applies to/);
+assert.throws(() => parse('ui', ['--page']), /requires/);
+assert.throws(() => visualPages(parse('ui', ['astra'])), /Unknown ui suite/);
+const shapes = visualPages(parse('ui', ['shape']));
+assert.strictEqual(shapes.length, 13);
+assert.strictEqual(pageIndex(shapes, 'transforms'), 12);
+assert.strictEqual(pageIndex(shapes, 'pentagram'), 7);
+assert.strictEqual(pageIndex(shapes, '8'), 7);
+assert.throws(() => pageIndex(shapes, '0'), /Unknown page/);
+assert.throws(() => pageIndex(shapes, '14'), /Unknown page/);
+assert.deepStrictEqual(visualPages(parse('ui', ['compositing'])).map(p => p.id),
+    ['compositing/stroke-opacity', 'compositing/blend-modes']);
+assert.strictEqual(visualPages(parse('demo', [])).length, 7);
+assert.strictEqual(visualPages(parse('ui', [])).length, 38);
+const allSpecs = fs.readdirSync(path.resolve(__dirname, '../spec')).filter(n => /\.spec\.js$/.test(n)).map(n => n.slice(0, -8)).sort();
+const clients = require('./client_spec_catalog');
+assert.deepStrictEqual(clients.web.slice().sort(), allSpecs, 'Browser suite catalog is stale');
+assert.deepStrictEqual(clients.ios.slice().sort(), allSpecs, 'iOS suite catalog is stale');
+catalog.forEach(entry => assert(fs.existsSync(path.resolve(__dirname, entry.workingDir === 'repo' ? '../..' : '..', entry.scriptPath)), entry.id));
+const specRunner = require('./spec_runner');
+const config = specRunner.parseRunnerArgs(['pdg','color','point'], path.resolve(__dirname,'../spec'), fs);
+const jasmine = specRunner.createJasmineOptions({specDir:'.',reportDir:'.'}, config, {exit:function(){}});
+assert(jasmine.regExpSpec.test('color.spec.js'));
+assert(jasmine.regExpSpec.test('point.spec.js'));
+assert(!jasmine.regExpSpec.test('sprite.spec.js'));
+console.log('PASS: runner selection, catalog and multi-suite filtering');
+
+assert.strictEqual(visualPages(parse('demo',['control-gallery']))[0].suite,'mvc');

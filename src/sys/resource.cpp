@@ -44,6 +44,7 @@
 #include <cctype>
 #include <cstdarg>
 #include <fstream>
+#include <filesystem>
 #include <string>
 #include <cstdlib>
 #include <algorithm>
@@ -84,26 +85,18 @@ struct FileInfo {
 #endif // PDG_NO_ZIP
 };
 
-bool fileExists(const char* path);
-size_t fileSize(const char* path);
-const char* localizedName(const char* filename, const char* lang);
-
 bool fileExists(const char* path) {
-	std::ifstream file;
-	file.open(path, std::ios::binary);
-	file.seekg(0, std::ios::end);
-    std::streamsize len = file.tellg();
-	file.close();
-	return (len != -1);
+    std::error_code error;
+    return path && std::filesystem::is_regular_file(path, error);
 }
 size_t fileSize(const char* path) {
-	std::ifstream file;
-	file.open(path, std::ios::binary);
-	file.seekg(0, std::ios::end);
-	std::streamsize len = file.tellg();
-	file.close();
-	return (len != -1) ? (size_t)len : 0;
+    if (!path) return 0;
+    std::error_code error;
+    const auto size = std::filesystem::file_size(path, error);
+    return error ? 0 : static_cast<size_t>(size);
 }
+
+const char* localizedName(const char* filename, const char* lang);
 
 const char* localizedName(const char* filename, const char* lang) {
 	static char outName[256];

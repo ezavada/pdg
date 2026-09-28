@@ -59,6 +59,11 @@ namespace pdg {
 		return fmi->leading;
 	}
 
+	float FontImpl::getFontCapHeight(int size, uint32 style) {
+		const FontMetricsInfo* fmi = fetchFontMetricsWithCaching(size, style);
+		return fmi ? fmi->capHeight : 0.0f;
+	}
+
 	float    FontImpl::getFontAscent(int size, uint32 style) {
 		const FontMetricsInfo* fmi = fetchFontMetricsWithCaching(size, style);
 		if (!fmi) return 0.0f;

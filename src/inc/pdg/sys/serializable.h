@@ -38,7 +38,7 @@
 #include "pdg_script_bindings.h"
 #endif
 
-//! \defgroup Serialization
+//! \addtogroup Serialization
 //! Collection of classes, types and constants used for serializing and deserialing data
 
 // reserved class tags (all tags in range 0xFFFFFF00 to 0xFFFFFFFF are reserved by PDG)
@@ -51,6 +51,7 @@
 #define CLASSTAG_COLLIDE_HELPER 0xFFFFFF06
 #define CLASSTAG_DRAW_HELPER    0xFFFFFF07
 #define CLASSTAG_IMAGE    		0xFFFFFF08
+#define CLASSTAG_DRAWING_CONTENT 0xFFFFFF09
 
 #define CLASSTAG_ACTION  		0xFFFFFF10
 #define CLASSTAG_REQUEST 		0xFFFFFF11
@@ -136,7 +137,7 @@ namespace pdg {
 		virtual void serialize(ISerializer* serializer) const = 0;
 		
 		//! Read self from a deserializer
-		/*! \param buffer pointer to a deserializer
+		/*! \param deserializer pointer to a deserializer
 		 \sa serialize() and getSerializedSize();
 		 */
 		virtual void deserialize(IDeserializer* deserializer) = 0;

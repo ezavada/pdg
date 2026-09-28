@@ -1,0 +1,456 @@
+/**
+\fn pdg::AnimationPose::AnimationPose(std::shared_ptr< const AnimationRig > rig)
+\brief Create an owned reference pose.
+
+Copies reference bone and binding transforms and starts with empty sampled metadata. Requires a nonempty rig pointer.
+
+\param rig Shared immutable rig retained by this pose.
+
+\see resetToReference(), copy()
+*/
+
+/**
+\fn const std::shared_ptr< const AnimationRig > & pdg::AnimationPose::getRig() const
+\brief Read the shared immutable schema.
+
+\return A const reference to this pose's shared rig pointer. Copy the shared_ptr to retain the rig independently.
+
+\see AnimationRig::findBone()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPose::getLocalTransform(AnimationBoneId id) const
+\brief Copy a bone transform in parent-local coordinates.
+
+Invalid IDs throw.
+
+\param id Bone ID in this pose's rig.
+
+\return An AnimationTransform value.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn void pdg::AnimationPose::setLocalTransform(AnimationBoneId id, const AnimationTransform & transform)
+\brief Replace a bone local transform.
+
+Validates before mutation. Editing this owned pose does not change the Sprite that supplied it.
+
+\param id Bone ID in this rig.
+\param transform Complete finite parent-local transform with alpha from 0 to 1.
+
+\see copy(), getLocalTransform()
+*/
+
+/**
+\fn void pdg::AnimationPose::setLocalTransforms(const std::vector< AnimationTransform > & transforms)
+\brief Replace all bone-local transforms atomically.
+
+Requires exactly one valid transform per bone. Invalid size or components leave the pose unchanged.
+
+\param transforms Transforms in bone-ID order.
+
+\see setLocalTransform()
+*/
+
+/**
+\fn void pdg::AnimationPose::rotateLocal(AnimationBoneId id, double deltaRadians)
+\brief Add a local bone rotation.
+
+Invalid IDs or nonfinite/overflowing results throw without changing the bone.
+
+\param id Bone ID in this rig.
+\param deltaRadians Finite clockwise angle to add, in radians.
+
+\see getLocalTransform(), setLocalTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPose::getGlobalTransform(AnimationBoneId id) const
+\brief Copy a bone transform in rig coordinates.
+
+Invalid IDs throw.
+
+\param id Bone ID in this pose's rig.
+
+\return An AnimationTransform value.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPose::getWorldTransform(AnimationBoneId id, const AnimationTransform & root) const
+\brief Copy a bone transform in owning-layer coordinates.
+
+Invalid IDs throw. World evaluation composes the root through each ancestor, preserving Spriter's reflection/nonuniform-scale rules.
+
+\param id Bone ID in this pose's rig.
+\param root Valid Sprite/owner root transform in the owning layer.
+
+\return An AnimationTransform value.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPose::getSocketTransform(AnimationSocketId id) const
+\brief Copy a socket transform in rig coordinates.
+
+Invalid IDs throw. Sockets linked to an animated binding follow its sampled transform.
+
+\param id Socket ID in this pose's rig.
+
+\return An AnimationTransform value.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPose::getWorldSocketTransform(AnimationSocketId id, const AnimationTransform & root) const
+\brief Copy a socket transform in owning-layer coordinates.
+
+Invalid IDs throw. World evaluation composes the root through each ancestor, preserving Spriter's reflection/nonuniform-scale rules.
+
+\param id Socket ID in this pose's rig.
+\param root Valid Sprite/owner root transform in the owning layer.
+
+\return An AnimationTransform value.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPose::getBindingLocalTransform(AnimationBindingId id) const
+\brief Copy a binding transform in parent-local coordinates.
+
+Invalid IDs throw.
+
+\param id Binding ID in this pose's rig.
+
+\return An AnimationTransform value.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn void pdg::AnimationPose::setBindingLocalTransform(AnimationBindingId id, const AnimationTransform & transform)
+\brief Replace a binding local transform.
+
+Validates before mutation. Editing this owned pose does not change the Sprite that supplied it.
+
+\param id Binding ID in this rig.
+\param transform Complete finite parent-local transform with alpha from 0 to 1.
+
+\see copy(), getLocalTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPose::getBindingTransform(AnimationBindingId id) const
+\brief Copy a binding transform in rig coordinates.
+
+Invalid IDs throw.
+
+\param id Binding ID in this pose's rig.
+
+\return An AnimationTransform value.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPose::getWorldBindingTransform(AnimationBindingId id, const AnimationTransform & root) const
+\brief Copy a binding transform in owning-layer coordinates.
+
+Invalid IDs throw. World evaluation composes the root through each ancestor, preserving Spriter's reflection/nonuniform-scale rules.
+
+\param id Binding ID in this pose's rig.
+\param root Valid Sprite/owner root transform in the owning layer.
+
+\return An AnimationTransform value.
+
+\see getRig(), setLocalTransform()
+*/
+
+/**
+\fn const AnimationMetadata & pdg::AnimationPose::getMetadata() const
+\brief Read sampled variables and tags.
+
+\return A const reference to the owned AnimationMetadata; valid until this pose is modified or destroyed.
+
+\see setMetadata(), animationHasTag()
+*/
+
+/**
+\fn void pdg::AnimationPose::setMetadata(AnimationMetadata metadata)
+\brief Replace sampled variables and tags.
+
+Validates before replacing metadata. Variable names must be nonempty and unique within each object; floating values must be finite. Tag scopes must be unique, with nonempty unique tag names. An empty object name denotes entity metadata.
+
+\param metadata Metadata to move into this pose.
+
+\see getMetadata(), animationHasTag()
+*/
+
+/**
+\fn AnimationPose pdg::AnimationPose::copy() const
+\brief Copy this owned pose.
+
+Copies mutable transforms and metadata while sharing the immutable rig.
+
+\return An independent AnimationPose.
+
+\see getRig()
+*/
+
+/**
+\fn void pdg::AnimationPose::resetToReference()
+\brief Restore the rig reference transforms.
+
+Resets bones and bindings and clears sampled metadata. The immutable rig is retained.
+
+\see AnimationPose()
+*/
+
+/**
+\fn AnimationPose pdg::AnimationPose::blend(const AnimationPose & from, const AnimationPose & to, double influence)
+\brief Blend two compatible owned poses.
+
+Both inputs must share the same rig instance. Bone and binding transforms interpolate without modifying the inputs; rotation follows the shortest path. Numeric metadata interpolates, integer values truncate, and strings/tags switch at halfway.
+
+\param from Starting pose.
+\param to Destination pose sharing from's rig.
+\param influence Finite blend weight from 0 to 1.
+
+\return A new blended pose.
+
+\see AnimationTransform::interpolate()
+*/
+
+/**
+\fn SpatialTransform pdg::SpatialTransform::fromTRS(double x, double y, double radians, double scaleX, double scaleY)
+\brief Build a translation-rotation-scale matrix.
+
+\param x Horizontal translation.
+\param y Vertical translation.
+\param radians Clockwise rotation in radians.
+\param scaleX Horizontal scale, default 1; negatives reflect.
+\param scaleY Vertical scale, default 1; negatives reflect.
+
+\return A SpatialTransform applying scale, then rotation, then translation.
+
+\par Example
+\code{.cpp}
+auto transform = pdg::SpatialTransform::fromTRS(10, 20, 0, 2, 2);
+auto world = transform.transformPoint(pdg::Point(3, 4)); // (16, 28)
+auto local = transform.inverse().transformPoint(world);
+\endcode
+
+\see compose(), inverse()
+*/
+
+/**
+\fn SpatialTransform pdg::SpatialTransform::compose(const SpatialTransform & parent, const SpatialTransform & local)
+\brief Compose two affine frames.
+
+Preserves affine shear and reflection.
+
+\param parent Parent-to-destination transform.
+\param local Local-to-parent transform.
+
+\return The matrix product parent * local.
+
+\see transformPoint(), AnimationTransform::compose()
+*/
+
+/**
+\fn Point pdg::SpatialTransform::transformPoint(const Point & p) const
+\brief Map a point through this affine frame.
+
+\param p Point in source coordinates.
+
+\return Point (a*x+c*y+tx, b*x+d*y+ty).
+
+\see inverse()
+*/
+
+/**
+\fn SpatialTransform pdg::SpatialTransform::inverse() const
+\brief Invert an affine frame.
+
+Throws std::invalid_argument when the determinant is zero or nonfinite.
+
+\return A new inverse transform.
+
+\see transformPoint()
+*/
+
+/**
+\fn std::shared_ptr< const AnimationRig > pdg::AnimationRig::create(std::vector< AnimationBone > bones, std::vector< AnimationSocket > sockets, uint64_t revision, std::vector< AnimationBinding > bindings)
+\brief Validate and create an immutable animation rig.
+
+Names must be nonempty and unique within each collection. Parents and binding references must be valid; bone cycles, invalid transforms, negative/nonfinite lengths, and revision zero throw before publication. Input bone order need not be parent-first.
+
+\param bones Bone definitions; vector indices become IDs.
+\param sockets Socket definitions, optionally following point bindings.
+\param revision Nonzero source revision used to identify this schema.
+\param bindings Image, point, and box definitions; vector indices become IDs.
+
+\return A shared immutable rig.
+
+\par Example
+\code{.cpp}
+pdg::AnimationBone bone;
+bone.name = "root";
+auto rig = pdg::AnimationRig::create({bone});
+pdg::AnimationPose pose(rig);
+\endcode
+
+\see AnimationPose::AnimationPose()
+*/
+
+/**
+\fn uint64_t pdg::AnimationRig::getRevision() const
+\brief Read the rig revision.
+
+\return The nonzero revision supplied at creation.
+
+\see create()
+*/
+
+/**
+\fn size_t pdg::AnimationRig::getBoneCount() const
+\brief Count rig bones.
+
+\return The size of the bone collection. Valid IDs are smaller than this count.
+
+\see getBone()
+*/
+
+/**
+\fn size_t pdg::AnimationRig::getSocketCount() const
+\brief Count rig sockets.
+
+\return The size of the socket collection. Valid IDs are smaller than this count.
+
+\see getSocket()
+*/
+
+/**
+\fn size_t pdg::AnimationRig::getBindingCount() const
+\brief Count rig bindings.
+
+\return The size of the binding collection. Valid IDs are smaller than this count.
+
+\see getBinding()
+*/
+
+/**
+\fn AnimationBindingId pdg::AnimationRig::findBinding(const std::string & name) const
+\brief Find a binding by name.
+
+\param name Exact case-sensitive name.
+
+\return Its collection index, or animation_NoBinding if absent.
+
+\see getBinding()
+*/
+
+/**
+\fn const AnimationBinding & pdg::AnimationRig::getBinding(AnimationBindingId id) const
+\brief Read a binding definition.
+
+Throws std::out_of_range for an invalid ID.
+
+\param id Binding ID scoped to this rig.
+
+\return A const reference valid while this rig remains alive.
+
+\see findBinding()
+*/
+
+/**
+\fn AnimationBoneId pdg::AnimationRig::findBone(const std::string & name) const
+\brief Find a bone by name.
+
+\param name Exact case-sensitive name.
+
+\return Its collection index, or animation_NoBone if absent.
+
+\see getBone()
+*/
+
+/**
+\fn AnimationSocketId pdg::AnimationRig::findSocket(const std::string & name) const
+\brief Find a socket by name.
+
+\param name Exact case-sensitive name.
+
+\return Its collection index, or animation_NoSocket if absent.
+
+\see getSocket()
+*/
+
+/**
+\fn const AnimationBone & pdg::AnimationRig::getBone(AnimationBoneId id) const
+\brief Read a bone definition.
+
+Throws std::out_of_range for an invalid ID.
+
+\param id Bone ID scoped to this rig.
+
+\return A const reference valid while this rig remains alive.
+
+\see findBone()
+*/
+
+/**
+\fn const AnimationSocket & pdg::AnimationRig::getSocket(AnimationSocketId id) const
+\brief Read a socket definition.
+
+Throws std::out_of_range for an invalid ID.
+
+\param id Socket ID scoped to this rig.
+
+\return A const reference valid while this rig remains alive.
+
+\see findSocket()
+*/
+
+/**
+\fn bool pdg::AnimationTransform::isValid() const
+\brief Check transform components.
+
+\return True when all six components are finite and alpha is from 0 to 1. Zero and negative scale are valid for forward transforms.
+
+\see compose(), interpolate()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationTransform::compose(const AnimationTransform & parent, const AnimationTransform & local)
+\brief Compose a parent and local animation transform.
+
+Uses Spriter component composition, including reversing the child angle under an odd-axis reflection. Does not introduce affine shear. Composition is not associative under nonuniform scale; evaluate the full ancestor chain for world transforms. Invalid inputs or overflow throw.
+
+\param parent Valid parent transform.
+\param local Valid child transform in the parent frame.
+
+\return The composed transform.
+
+\see AnimationPose::getWorldTransform(), SpatialTransform::compose()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationTransform::interpolate(const AnimationTransform & from, const AnimationTransform & to, double influence)
+\brief Blend two animation transforms.
+
+Interpolates position, scale, and alpha linearly and rotation along the shortest angular path. Reflected scales may cross zero. Invalid inputs or influence throw.
+
+\param from Start transform.
+\param to End transform.
+\param influence Finite weight from 0 to 1; endpoints return their corresponding input.
+
+\return A new interpolated AnimationTransform.
+
+\see AnimationPose::blend()
+*/

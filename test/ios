@@ -1,0 +1,255 @@
+#!/usr/bin/env bash
+# Build and run the private PDG JavaScriptCore test app in an iOS Simulator.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PDG_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT="$PDG_ROOT/ios/pdg.xcodeproj"
+DERIVED_DATA="$PDG_ROOT/build/ios/DerivedData"
+APP="$DERIVED_DATA/Build/Products/Debug-iphonesimulator/pdg-js-test.app"
+BUNDLE_ID="com.dreamrockstudios.pdg-js-test"
+RESULT_DIR="$PDG_ROOT/artifacts/test-results/ios/simulator"
+LOG_FILE="$RESULT_DIR/latest.log"
+BUILD_LOG="$RESULT_DIR/build.log"
+
+usage() {
+    echo "Usage: test/ios [--iphone | --ipad] [--ui [ui-test] | --client | --headless | --non-gui | spec-name | runner-options]"
+    echo
+    echo "  no arguments  build and run the interactive UI test suite"
+    echo "  --iphone      use an available iPhone Simulator"
+    echo "  --ipad        use an available iPad Simulator"
+    echo "  --ui [name]   run all UI tests, or one UI test by catalog name"
+    echo "  --client      build and run the full client spec suite"
+    echo "  --headless    build and run the non-GUI client specs"
+    echo "  --non-gui     alias for --headless"
+    echo "  --no-build    install/run the existing simulator build"
+    echo "  --prepare     build/install only (used by interactive page navigation)"
+    echo "  spec-name     build and run one client spec, for example: serialization"
+    echo
+    echo "Environment:"
+    echo "  PDG_IOS_DEVICE_ID  exact simulator UDID (takes precedence over device family)"
+}
+
+DEVICE_FAMILY=""
+SKIP_BUILD=no
+PREPARE_ONLY=no
+PARSED_ARGS=()
+for ARG in "$@"; do
+    case "$ARG" in
+        --no-build) SKIP_BUILD=yes ;;
+        --prepare) PREPARE_ONLY=yes ;;
+        --iphone)
+            if [[ -n "$DEVICE_FAMILY" && "$DEVICE_FAMILY" != "iPhone" ]]; then
+                echo "Specify only one of --iphone or --ipad." >&2
+                exit 2
+            fi
+            DEVICE_FAMILY="iPhone"
+            ;;
+        --ipad)
+            if [[ -n "$DEVICE_FAMILY" && "$DEVICE_FAMILY" != "iPad" ]]; then
+                echo "Specify only one of --iphone or --ipad." >&2
+                exit 2
+            fi
+            DEVICE_FAMILY="iPad"
+            ;;
+        *)
+            PARSED_ARGS+=("$ARG")
+            ;;
+    esac
+done
+set -- "${PARSED_ARGS[@]}"
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+    usage
+    exit 0
+fi
+
+MODE="client"
+UI_TEST_FILTER=""
+APP_ARGS=()
+if [[ $# -eq 0 ]]; then
+    MODE="ui"
+elif [[ "$1" == "--ui" ]]; then
+    MODE="ui"
+    shift
+    UI_TEST_FILTER="${1:-}"
+    if [[ $# -gt 1 ]]; then
+        echo "Only one UI test name may follow --ui." >&2
+        exit 2
+    fi
+elif [[ "$1" == "--client" ]]; then
+    shift
+    APP_ARGS=("$@")
+elif [[ "$1" == "--headless" ]]; then
+    shift
+    APP_ARGS=(--non-gui "$@")
+else
+    APP_ARGS=("$@")
+fi
+
+DEVICE_ID="${PDG_IOS_DEVICE_ID:-}"
+if [[ -z "$DEVICE_ID" ]]; then
+    if [[ -n "$DEVICE_FAMILY" ]]; then
+        DEVICE_ID="$(xcrun simctl list devices booted | sed -nE "s/^[[:space:]]*$DEVICE_FAMILY.*\(([0-9A-F-]{36})\) \(Booted\).*/\1/p" | head -n 1)"
+    else
+        DEVICE_ID="$(xcrun simctl list devices booted | sed -nE 's/.*\(([0-9A-F-]{36})\) \(Booted\).*/\1/p' | head -n 1)"
+    fi
+fi
+if [[ -z "$DEVICE_ID" ]]; then
+    if [[ -n "$DEVICE_FAMILY" ]]; then
+        DEVICE_ID="$(xcrun simctl list devices available | sed -nE "s/^[[:space:]]*$DEVICE_FAMILY.*\(([0-9A-F-]{36})\) \(Shutdown\).*/\1/p" | head -n 1)"
+    else
+        DEVICE_ID="$(xcrun simctl list devices available | sed -nE 's/.*\(([0-9A-F-]{36})\) \(Shutdown\).*/\1/p' | head -n 1)"
+    fi
+fi
+if [[ -z "$DEVICE_ID" ]]; then
+    echo "No available ${DEVICE_FAMILY:-iOS} Simulator was found." >&2
+    exit 2
+fi
+
+DEVICE_NAME="$(xcrun simctl list devices | sed -nE "s/^[[:space:]]*(.*) \($DEVICE_ID\) \([^)]+\).*/\1/p" | head -n 1)"
+DEVICE_STATE="$(xcrun simctl list devices | sed -nE "s/.*\($DEVICE_ID\) \(([^)]+)\).*/\1/p" | head -n 1)"
+echo "Using ${DEVICE_NAME:-iOS Simulator} ($DEVICE_ID)..."
+if [[ "$DEVICE_STATE" != "Booted" ]]; then
+    echo "Booting iOS Simulator $DEVICE_ID..."
+    xcrun simctl boot "$DEVICE_ID"
+    xcrun simctl bootstatus "$DEVICE_ID" -b
+fi
+
+mkdir -p "$RESULT_DIR"
+if [[ "$SKIP_BUILD" != yes ]]; then
+echo "Building pdg-js-test..."
+if ! xcodebuild -quiet \
+    -project "$PROJECT" \
+    -scheme pdg-js-test \
+    -configuration Debug \
+    -sdk iphonesimulator \
+    -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+    -derivedDataPath "$DERIVED_DATA" \
+    CODE_SIGNING_ALLOWED=NO \
+    build >"$BUILD_LOG" 2>&1; then
+    cat "$BUILD_LOG" >&2
+    exit 2
+fi
+
+fi
+
+if [[ ! -d "$APP" ]]; then
+    echo "Expected simulator application was not produced at: $APP" >&2
+    exit 2
+fi
+
+echo "Installing pdg-js-test..."
+xcrun simctl install "$DEVICE_ID" "$APP"
+if [[ "$PREPARE_ONLY" == yes ]]; then
+    echo "PDG_IOS_PREPARED=$DEVICE_ID"
+    exit 0
+fi
+
+if [[ "$MODE" == "ui" ]]; then
+    echo "Bringing iOS Simulator to the foreground..."
+    open -a Simulator --args -CurrentDeviceUDID "$DEVICE_ID"
+
+    NODE_BIN="$PDG_ROOT/tools/node"
+    if [[ ! -x "$NODE_BIN" ]]; then
+        NODE_BIN="$(command -v node || true)"
+    fi
+    if [[ -z "$NODE_BIN" ]]; then
+        echo "Could not find Node.js to read the shared UI test catalog." >&2
+        exit 2
+    fi
+
+    UI_FAILURES=0
+    UI_TESTS_RUN=0
+    while IFS=$'\t' read -r TEST_ID TEST_NAME; do
+        [[ -n "$TEST_ID" ]] || continue
+        if [[ -n "$UI_TEST_FILTER" && "$UI_TEST_FILTER" != "$TEST_ID" ]]; then
+            continue
+        fi
+        UI_TESTS_RUN=$((UI_TESTS_RUN + 1))
+        UI_LOG_FILE="$RESULT_DIR/ui-$TEST_ID.log"
+        echo "Running $TEST_NAME..."
+        set +e
+        xcrun simctl launch --terminate-running-process --console-pty \
+            "$DEVICE_ID" "$BUNDLE_ID" --ui-test "$TEST_ID" 2>&1 \
+            | tee "$UI_LOG_FILE" \
+            | awk '
+                /Starting test [0-9]+\/[0-9]+|PASS:|FAIL:|ERROR:|No screens detected/ {
+                    print
+                    fflush()
+                    next
+                }
+                /\[PDG IOS BOOTSTRAP FAIL\]|Fatal Exception|An error was encountered|error:/ {
+                    print
+                    fflush()
+                }
+            '
+        LAUNCH_STATUS=${PIPESTATUS[0]}
+        set -e
+
+        cp "$UI_LOG_FILE" "$LOG_FILE"
+        if grep -q 'Fatal Exception\|\[PDG IOS BOOTSTRAP FAIL\]\|\[PDG IOS UI RESULT\].*"status":"failed"' "$UI_LOG_FILE"; then
+            echo "FAIL: $TEST_NAME (see $UI_LOG_FILE)" >&2
+            UI_FAILURES=$((UI_FAILURES + 1))
+        elif grep -q '\[PDG IOS UI RESULT\].*"status":"passed"' "$UI_LOG_FILE"; then
+            echo "PASS: $TEST_NAME"
+        else
+            echo "FAIL: $TEST_NAME (see $UI_LOG_FILE)" >&2
+            UI_FAILURES=$((UI_FAILURES + 1))
+            if [[ $LAUNCH_STATUS -ne 0 ]]; then
+                echo "The iOS UI test app exited with status $LAUNCH_STATUS." >&2
+            fi
+        fi
+    done < <("$NODE_BIN" "$PDG_ROOT/test/lib/ui_test_catalog.js")
+
+    if [[ $UI_TESTS_RUN -eq 0 ]]; then
+        echo "Unknown UI test: $UI_TEST_FILTER" >&2
+        echo "Run test/ui --list to see the UI test catalog." >&2
+        exit 2
+    fi
+    if [[ $UI_FAILURES -ne 0 ]]; then
+        echo "FAIL: $UI_FAILURES iOS UI test(s) failed"
+        exit 1
+    fi
+    echo "PASS: all iOS UI tests completed"
+    exit 0
+fi
+
+echo "Running iOS client tests..."
+set +e
+xcrun simctl launch --terminate-running-process --console-pty \
+    "$DEVICE_ID" "$BUNDLE_ID" "${APP_ARGS[@]}" 2>&1 \
+    | tee "$LOG_FILE" \
+    | awk '
+        /\[PDG IOS DISPLAY\] / {
+            line = $0
+            sub(/^.*\[PDG IOS DISPLAY\] /, "", line)
+            sub(/\r$/, "", line)
+            print line
+            fflush()
+            next
+        }
+        /\[PDG IOS BOOTSTRAP FAIL\]|Fatal Exception|An error was encountered|error:/ {
+            print
+            fflush()
+        }
+    '
+LAUNCH_STATUS=${PIPESTATUS[0]}
+set -e
+
+if grep -q '\[PDG IOS RESULT\].*"status":"passed"' "$LOG_FILE"; then
+    exit 0
+fi
+if grep -q '\[PDG IOS RESULT\].*"status":"failed"' "$LOG_FILE"; then
+    exit 1
+fi
+if grep -q 'Fatal Exception\|\[PDG IOS BOOTSTRAP FAIL\]' "$LOG_FILE"; then
+    exit 1
+fi
+if [[ $LAUNCH_STATUS -ne 0 ]]; then
+    echo "The iOS test app failed to launch; see $LOG_FILE" >&2
+    exit "$LAUNCH_STATUS"
+fi
+echo "The iOS test app exited without a result; see $LOG_FILE" >&2
+exit 2

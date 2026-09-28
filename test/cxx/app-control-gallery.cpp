@@ -3,13 +3,15 @@
 #include "pdg/framework.h"
 #include "pdg/app/ControlAttributes.h"
 #include "pdg/app/RadioButton.h"
+#include "pdg/app/ListBox.h"
 
 #include <string>
+#include <cmath>
 
 namespace {
 
 constexpr int kWindowWidth = 960;
-constexpr int kWindowHeight = 640;
+constexpr int kWindowHeight = 840;
 
 enum ViewId {
     kDefaultButton = 100,
@@ -69,6 +71,55 @@ public:
     }
 };
 
+class ScrollingGallery : public pdg::ScrollingView {
+public:
+    explicit ScrollingGallery(pdg::Controller* controller)
+        : ScrollingView(controller,pdg::Rect(330,642,590,792),0,bind_None) {
+        setViewArea(pdg::Rect(330,642,590,1002)); setRotation(.035f);
+    }
+    bool animate(double seconds) override {
+        mTime+=seconds;
+        const float top=642-60*(1-std::cos(mTime));
+        setViewArea(pdg::Rect(330,top,590,top+360));
+        return View::animate(seconds);
+    }
+    void drawSelf() override {
+        for (int row=0;row<12;++row) {
+            const float y=mViewArea.top+row*30;
+            mPort->drawRect(pdg::Rect(300,y,620,y+30),pdg::Attributes().fillColor(
+                row%2 ? pdg::Color(199,230,247) : pdg::Color(240,250,255)));
+            const std::string text="Scrolling row "+std::to_string(row+1);
+            mPort->drawText(text.c_str(),pdg::Point(342,y+21),pdg::Attributes().textSize(14).fillColor(pdg::Color(36,71,102)));
+        }
+    }
+private:
+    double mTime=0;
+};
+
+class AnimatedGalleryButton : public pdg::Button {
+public:
+    AnimatedGalleryButton(pdg::Controller* controller, const pdg::Rect& area, int id)
+        : Button(controller,area,id) {
+        fillColor(pdg::Color(46,125,173)).roundedCorners(4);
+        setRotation(-.12f);
+    }
+    bool animate(double seconds) override {
+        mRemaining -= seconds;
+        if (mRemaining <= 0) {
+            mForward = !mForward;
+            mRemaining = 2;
+            rotateTo(mForward ? .12f : -.12f,2);
+            moveTo(pdg::Point(mForward ? 170 : 160,673),2);
+            changeFillColor(mForward ? pdg::Color(117,69,184) : pdg::Color(46,125,173),2);
+            changeRoundedCorners(mForward ? 18 : 4,2);
+        }
+        return Button::animate(seconds);
+    }
+private:
+    double mRemaining = 0;
+    bool mForward = false;
+};
+
 class GalleryController : public pdg::Controller {
 public:
     explicit GalleryController(pdg::Application* app, pdg::Image* exampleImage)
@@ -95,8 +146,13 @@ public:
         addButton(pdg::Rect(535, 125, 705, 165), kThemedButton, "Draw routine", themedButton);
 
         pdg::ControlAttributes imageButton;
-        if (exampleImage) imageButton.stateImage(pdg::ControlState::Normal, exampleImage);
-        imageButton.stateForeground(pdg::ControlState::Normal, PDG_WHITE_COLOR);
+        const pdg::ControlState states[] = {pdg::ControlState::Normal,pdg::ControlState::Hovered,
+            pdg::ControlState::Pressed,pdg::ControlState::Disabled};
+        const pdg::Color overlays[] = {pdg::Color(0.f,0.f,0.f,0.f),pdg::Color(1.f,.8f,.35f,.12f),
+            pdg::Color(0.f,0.f,0.f,.28f),pdg::Color(.65f,.65f,.65f,.65f)};
+        for (int i=0;i<4;++i) imageButton.stateImage(states[i],exampleImage)
+            .stateAttributes(states[i],pdg::Attributes().fillColor(overlays[i]))
+            .stateForeground(states[i],pdg::Color(255,235,179));
         addButton(pdg::Rect(730, 125, 900, 165), kImageButton, "Image state", imageButton);
 
         addCheckbox(pdg::Rect(55, 245, 360, 277), kDefaultCheckbox,
@@ -145,6 +201,17 @@ public:
             "Open default dialog", {});
 		addButton(pdg::Rect(535, 447, 735, 487), kThemedDialogButton,
             "Open themed dialog", themedButton);
+        auto* animated = new AnimatedGalleryButton(this,pdg::Rect(55,654,265,692),200);
+        animated->setText("Animated - click me");
+        addView(animated,200);
+        addButton(pdg::Rect(55,727,265,765),201,"Reflected - click me",{})->setFlipX(true);
+        addView(new ScrollingGallery(this),202);
+        auto* list=new pdg::ListBox(this,pdg::Rect(640,650,895,780),6,PDG_WHITE_COLOR,pdg::Color(178,214,255));
+        for (const char* text : {"Alpha","Bravo","Charlie","Delta","Echo","Foxtrot","Golf","Hotel"})
+            list->addToList(text,PDG_BLACK_COLOR);
+        addView(list,203);
+        // Keep the scrollbar after its owner for front-to-back input routing.
+        list->setRotation(-.035f).resizeTo(230,list->getHeight(),1,pdg::linearTween);
     }
 
     pdg::ControlAttributes getControlAttributes(pdg::ControlType type) override {
@@ -153,10 +220,10 @@ public:
             attributes.stateDrawRoutine(pdg::ControlState::Normal,
                 [](pdg::Port& port, const pdg::Rect& area,
                    const pdg::ControlStateAttributes&) {
-                    port.drawRect(area, pdg::Attributes()
+                    port.drawRect(pdg::Rect(area).shrink(2.5f), pdg::Attributes()
                         .fillGradient(area.leftTop(), pdg::Color(244, 236, 255),
                                       area.rightBottom(), pdg::Color(178, 211, 255))
-                        .lineColor(pdg::Color(74, 57, 145)).lineThickness(5).roundedCorners(12));
+                        .lineStyle(pdg::lineStyle_Solid).lineColor(pdg::Color(74, 57, 145)).lineThickness(5).roundedCorners(12));
                 });
         }
         return attributes;
@@ -186,16 +253,16 @@ public:
 private:
     static void drawAccentButton(pdg::Port& port, const pdg::Rect& area,
                                  const pdg::ControlStateAttributes&) {
-        port.drawRect(area, pdg::Attributes()
+        port.drawRect(pdg::Rect(area).shrink(1), pdg::Attributes()
             .fillGradient(area.leftTop(), pdg::Color(94, 86, 220),
                           area.rightBottom(), pdg::Color(38, 167, 190))
-            .lineColor(pdg::Color(30, 30, 80)).lineThickness(2).roundedCorners(10));
+            .lineStyle(pdg::lineStyle_Solid).lineColor(pdg::Color(30, 30, 80)).lineThickness(2).roundedCorners(10));
     }
 
     static void drawPressedAccentButton(pdg::Port& port, const pdg::Rect& area,
                                         const pdg::ControlStateAttributes&) {
-        port.drawRect(area, pdg::Attributes().fillColor(pdg::Color(42, 83, 135))
-            .lineColor(PDG_WHITE_COLOR).lineThickness(2).roundedCorners(10));
+        port.drawRect(pdg::Rect(area).shrink(1), pdg::Attributes().fillColor(pdg::Color(42, 83, 135))
+            .lineStyle(pdg::lineStyle_Solid).lineColor(PDG_WHITE_COLOR).lineThickness(2).roundedCorners(10));
     }
 
     pdg::Button* addButton(const pdg::Rect& rect, int id, const char* text,
@@ -250,9 +317,9 @@ void GalleryCanvas::drawSelf() {
     pdg::Rect defaultPanel(30, 92, 450, 500);
     pdg::Rect overridePanel(510, 92, 930, 500);
     mPort->drawRect(defaultPanel, pdg::Attributes().fillColor(PDG_WHITE_COLOR)
-        .lineColor(pdg::Color(185, 191, 202)).roundedCorners(10));
+        .lineStyle(pdg::lineStyle_Solid).lineColor(pdg::Color(185, 191, 202)).roundedCorners(10));
     mPort->drawRect(overridePanel, pdg::Attributes().fillColor(pdg::Color(250, 248, 255))
-        .lineColor(pdg::Color(124, 109, 180)).lineThickness(2).roundedCorners(10));
+        .lineStyle(pdg::lineStyle_Solid).lineColor(pdg::Color(124, 109, 180)).lineThickness(2).roundedCorners(10));
     mPort->drawText("Built-in defaults", pdg::Point(50, 116),
         pdg::Attributes().textSize(17).textStyle(pdg::textStyle_Bold).fillColor(pdg::Color(45, 52, 66)));
     mPort->drawText("Per-control overrides", pdg::Point(530, 116),
@@ -266,6 +333,8 @@ void GalleryCanvas::drawSelf() {
         .fillColor(pdg::Color(32, 39, 54)).roundedCorners(8));
     mPort->drawText(status.c_str(), pdg::Point(50, 557),
         pdg::Attributes().textSize(16).fillColor(PDG_WHITE_COLOR));
+    mPort->drawText("Live appearance / transforms      Clipped scrolling      Composite list",
+        pdg::Point(50,622),pdg::Attributes().textSize(16).fillColor(pdg::Color(50,60,80)));
     mPort->drawText("Overrides demonstrated: state colors, image, custom draw routine, click routine.",
         pdg::Point(50, 580), pdg::Attributes().textSize(12).fillColor(pdg::Color(190, 203, 225)));
 }
@@ -278,13 +347,13 @@ public:
         (void)argc;
         (void)argv;
         const std::string resourceImage =
-            std::string(pdg::OS::getApplicationResourceDirectory()) + "yinyang.png";
+            std::string(pdg::OS::getApplicationResourceDirectory()) + "wood-brass-button.png";
         const std::string paths[] = {
             resourceImage,
-            "test/data/yinyang.png",
-            "../test/data/yinyang.png",
-            "../../../../test/data/yinyang.png",
-            "yinyang.png"
+            "test/data/wood-brass-button.png",
+            "../test/data/wood-brass-button.png",
+            "../../../../test/data/wood-brass-button.png",
+            "wood-brass-button.png"
         };
         for (const std::string& path : paths) {
             try {

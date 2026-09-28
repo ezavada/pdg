@@ -35,7 +35,6 @@
 #include "internals.h"
 #include "pdg-main.h"
 
-#include <sys/time.h>
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
@@ -43,31 +42,21 @@
 
 #include <unistd.h>
 #include <assert.h>
-#include <dirent.h>
 #include <string.h>
 #include <fnmatch.h>
 
 #define PosixAPI
-#define MAX_PATH 4096
 
 
 namespace pdg {
 
-
-struct PrivateFindData {
-    DIR* findData;
-    struct dirent *entry;
-    char  searchName[FindDataT::MAX_NODE_NAME_SIZE];  // filename we are comparing to
-};
-
-std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks = true);  // assumes relative to application if relative path
 
 // return false if illegal characters are found
 bool os_path2native(const char *inStdFileName, char* outNativeFileName, int len) {
     if (std::strchr(inStdFileName, '\\')) {
         return false;   // backslash is an illegal character
     }
-    if (std::strchr(inStdFileName+2, ':')) {
+    if (std::string_view(inStdFileName).find(':', 2) != std::string_view::npos) {
         return false;   // colon is an illegal character after 2nd position
     }
     std::strncpy(outNativeFileName, inStdFileName, len - 1);
@@ -76,221 +65,8 @@ bool os_path2native(const char *inStdFileName, char* outNativeFileName, int len)
     return true;
 }
 
-std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks) {
-	char workingBuf[MAX_PATH];
-	workingBuf[0] = 0;
-	if (fromPath) {
-		// make an absolute path
-		if (fromPath[0] != '/') {
-			std::strncpy(workingBuf, OS::getApplicationDirectory(), MAX_PATH - 1);
-			workingBuf[MAX_PATH - 1] = '\0';
-			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-			std::strncat(workingBuf, "/", sizeof(workingBuf) - strlen(workingBuf) - 1); 
-			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-			std::strncat(workingBuf, fromPath, sizeof(workingBuf) - strlen(workingBuf) - 1);
-			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-		} else {
-			std::strncpy(workingBuf, fromPath, MAX_PATH - 1);
-			workingBuf[MAX_PATH - 1] = '\0';
-			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-		}
-		// remove double slashes '//', empty path segments '/./', and backtracking '/<dir>/../'
-		// also resolve sim links if desired
-		char* lastSlash = workingBuf;
-		char* p = workingBuf;
-		while (*p) {
-			if (*p == '/') {
-				// found a slash, see what follows it
-				if (p[1] == '/') {
-					// another slash, remove
-					char* q = p;
-					while(q[1]) {
-					    q[0] = q[1];
-					    q++;
-					}
-					*q = 0;
-				} else if (std::strncmp(p, "/./", 3) == 0) {
-					// an empty segment, remove
-					char* q = p;
-					while(q[2]) {
-					    q[0] = q[2];
-					    q++;
-					}
-					*q = 0;
-				} else if (std::strncmp(p, "/../", 4) == 0) {
-					// a backtrack, remove along with the prior directory segment
-					char* q = p+3;  // skip over the backtrack section
-					p = lastSlash+1; // go back to the start of the prior segment
-					while(q[1]) {   // copy everything from after the backtrack
-					    *p++ = q[1];  // into the prior segment
-					    q++;
-					}
-					*p = 0;
-					p = lastSlash+1;
-					// now search backwards for prev segment
-				} else {
-					// something else, so we are starting a new path segment
-					// save this as the new last slash
-					lastSlash = p;
-					p++;
-				}
-				if (resolveSimLinks && (*p == '/')) {
-					char buf[MAX_PATH];
-					*p = 0;
-					ssize_t len = readlink(workingBuf, buf, MAX_PATH);
-					if (len > 0 && len < MAX_PATH) {
-						char buf2[MAX_PATH];
-						std::strncpy(buf2, &p[1], sizeof(buf2) - 1); // this is safe because p[1] starts a string that is always shorter than MAX_PATH
-						buf2[sizeof(buf2) - 1] = '\0';
-						std::strncpy(workingBuf, buf, sizeof(workingBuf) - 1); // also safe, buf always shorter than MAX_PATH
-						workingBuf[sizeof(workingBuf) - 1] = '\0';
-						std::strncat(workingBuf, "/", sizeof(workingBuf) - strlen(workingBuf) - 1);
-						MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-						std::strncat(workingBuf, buf2, sizeof(workingBuf) - strlen(workingBuf) - 1);
-						MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-						p = workingBuf; p += len;
-					}
-					*p = '/'; // restore our separator so we can pick up where we left off
-				}
-			} else {
-				p++;
-			}
-		}
-		if (resolveSimLinks) {
-			// final resolution of sim link
-			char buf[MAX_PATH];
-			ssize_t len = readlink(workingBuf, buf, MAX_PATH);
-			if (len > 0 && len < MAX_PATH) {
-				std::strncpy(workingBuf, buf, sizeof(workingBuf) - 1); // also safe, buf always shorter than MAX_PATH
-				workingBuf[sizeof(workingBuf) - 1] = '\0';
-			}
-		}
-	}
-	return std::string(workingBuf);
-}
-
-std::string OS::makeCanonicalPath(const char* fromPath, bool resolveSimLinks ) {
-	return os_makeCanonicalPath(fromPath, resolveSimLinks);
-}
-
-bool OS::findFirst(const char* inFindName, FindDataT& outFindData) {
-  char searchName[MAX_PATH];
-
-  if (!os_path2native(inFindName, searchName, MAX_PATH)) {
-     return false;   // illegal characters
-  }
-  outFindData.privateData = new PrivateFindData;
-  PrivateFindData* pData = static_cast<PrivateFindData*>(outFindData.privateData);
-
-// terminate the string at the last path separator to get the directory name
-  std::string dirName("");
-  std::string fileName("");
-
-  const char* end = std::strrchr(inFindName, '/');  // find the last path separator
-  if (end != 0) {
-    char* start = (char*)inFindName;
-
-    if (start[0] == '/') {
-      dirName = '/';
-    }
-    while(start != end) {
-      dirName += *start;
-      start++;
-    }
-
-    end++; //points to start of filename
-    fileName = end;
-  } else {
-    fileName = (char*)inFindName;
-  }
-  dirName = os_makeCanonicalPath(dirName.c_str());
-
-  std::strncpy(pData->searchName,fileName.c_str(),FindDataT::MAX_NODE_NAME_SIZE);
-  MAKE_STRING_BUFFER_SAFE(pData->searchName, FindDataT::MAX_NODE_NAME_SIZE);
-
-  pData->findData = PosixAPI::opendir(dirName.c_str());
-
-  if (0 == pData->findData) {
-    return false;
-  }
-  
-  // search for first occurance of file that matches the find criteria
-  pData->entry = PosixAPI::readdir(pData->findData);
-  while (pData->entry != 0) {
-    if (PosixAPI::fnmatch(fileName.c_str(), pData->entry->d_name, FNM_FILE_NAME )==0) {
-      // copy results of find into our platform independent struct
-      if (pData->entry->d_type == DT_DIR) {
-        outFindData.isDirectory = true;
-      } else {
-        outFindData.isDirectory = false;
-      }
-
-      std::strncpy(const_cast<char*>(outFindData.nodeName), pData->entry->d_name, FindDataT::MAX_NODE_NAME_SIZE);
-      MAKE_STRING_BUFFER_SAFE(const_cast<char*>(outFindData.nodeName), FindDataT::MAX_NODE_NAME_SIZE);
-      break;
-    }
-    pData->entry = PosixAPI::readdir(pData->findData);
-  }
-  return (pData->entry != NULL);
-}
-
-
-bool OS::findNext(FindDataT& ioFindData) {
-    PrivateFindData* pData = static_cast<PrivateFindData*>(ioFindData.privateData);
-
-    while( (pData->entry = PosixAPI::readdir(pData->findData)) != 0) {
-      if (PosixAPI::fnmatch(pData->searchName, pData->entry->d_name, FNM_FILE_NAME )==0) {
-      // copy results of find into our platform independent struct
-        if (pData->entry->d_type == DT_DIR) {
-          ioFindData.isDirectory = true;
-        } else {
-          ioFindData.isDirectory = false;
-        }
-
-        std::strncpy(const_cast<char*>(ioFindData.nodeName), pData->entry->d_name, FindDataT::MAX_NODE_NAME_SIZE);
-        MAKE_STRING_BUFFER_SAFE(const_cast<char*>(ioFindData.nodeName), FindDataT::MAX_NODE_NAME_SIZE);
-        break;
-     }
-  }
-   return (pData->entry != NULL);
-}
-
-// cleans up after a find, should always be called when done, even if no file was found on find first
-void OS::findClose(FindDataT& inFindData) {
-    if (inFindData.privateData) {
-        PrivateFindData* pData = static_cast<PrivateFindData*>(inFindData.privateData);
-        if (pData->findData) {
-            PosixAPI::closedir(pData->findData); // stop the find
-        }
-        delete pData;
-    }
-    inFindData.privateData = 0;
-}
-
-// Deletes a file. Returns true for success, false for failure.
-bool
-OS::deleteFile(const char* inFileName) {
-	return (remove(inFileName) == 0);
-}
-
-// Rename a file. Returns true for success, false for failure.
-bool
-OS::renameFile(const char* inFileName, const char* inNewFileName) {
-	return (rename (inFileName, inNewFileName) == 0);
-}
-	
-ms_time
-OS::getMilliseconds() {
-	static ms_time firstTime = 0;
-    unsigned long mstime = 0;
-    // this is a more accurate way on Unix to get this
-    struct timeval currTime;
-    gettimeofday( &currTime, NULL );
-    mstime = (currTime.tv_usec/1000) + (currTime.tv_sec*1000);
-	if (firstTime == 0) {
-		firstTime = mstime;
-	}
-    return mstime - firstTime;
+bool os_matchesFilename(const char* pattern, const char* name) {
+    return ::fnmatch(pattern, name, FNM_PATHNAME) == 0;
 }
 
 } // end namespace pdg 
@@ -307,12 +83,6 @@ void pdg::OS::_DEBUGGER(const char* str) {
     assert(debugger_break_for_assert);
 }
 
-
-#if COMPILER_GCC
-namespace std {
-    using ::vsnprintf;
-}
-#endif // COMPILER_GCC
 
 void pdg::OS::_DOUT( const char * fmt, ...) {
     static const int bufsize = 4068;

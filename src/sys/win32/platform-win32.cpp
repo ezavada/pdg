@@ -70,13 +70,6 @@
 
 #define WHITESPACE " \t\r\n\v"
 
-int pow2(int n) {
-	int x = 1;
-	while(x < n) {
-		x <<= 1;
-	}
-	return x;
-}
 
 
 namespace pdg {
@@ -940,7 +933,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 					gMaxAttachedMouse = button;
 				}
 		        MouseInfo mi;
-		        unsigned long ms = OS::getMilliseconds();
+		        ms_time ms = OS::getMilliseconds();
 		        mi.lastClickElapsed = ms - gLastClickMillisec;
 		        mi.mousePos.x = GET_X_LPARAM(lparam);
 		        mi.mousePos.y = GET_Y_LPARAM(lparam);
@@ -970,7 +963,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         case WM_MOUSEMOVE:
 			if (gAppIsActive && !gGameIsPaused) {
                 MouseInfo mi;
-				unsigned long ms = OS::getMilliseconds();
+				ms_time ms = OS::getMilliseconds();
 				bool isDown[3] = { (wparam & MK_LBUTTON), (wparam & MK_RBUTTON), (wparam & MK_MBUTTON) };
 				// fix incorrect button states for events that happened outside our window
 				for (int button = 0; button<3; button++) {

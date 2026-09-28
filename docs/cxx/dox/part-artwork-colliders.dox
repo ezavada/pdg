@@ -1,0 +1,80 @@
+/**
+\fn Collider& pdg::Part::setupFrameCollider(int mode, int alphaThreshold)
+\brief Set up collision geometry from this Part's current artwork.
+
+Reuses .collider when present, preserving its configuration, filters, material,
+handlers and body association. Each call replaces the previous geometry source
+and explicit shapes. Later Collider add methods create persistent extra shapes.
+Queries and contacts refresh source geometry; source shape IDs survive artwork
+changes and disappearance/reappearance. See \ref collider_geometry_sources.
+
+Owned Drawing content takes precedence. Bounds uses its current local bounding
+rectangle, including element transforms. AlphaMask requires exactly one image
+or image-strip element using fit_Fill; setImage() supplies suitable content.
+It samples the selected Attributes.frame(), with an invalid frame falling back
+to zero as in drawing. Alpha ignores stroke, fill overlays and opacity effects.
+Pixel edits to an existing Image require calling setupFrameCollider() again.
+Unsupported vector/multi-element/other-fit alpha sources throw; use Bounds for
+those Drawings. Replacing content later with an unsupported alpha source also
+causes source queries to throw until corrected or another source is selected.
+
+Without owned content, an explicitly bound animation image (from
+bindToAnimationBinding()) supplies its current frame and pivot. A bone or socket
+binding alone does not select artwork. No artwork produces no source shapes;
+logical Part width/height do not invent a frame. Part transforms, including
+reflection, apply normally. Artwork changes do not change body mass or inertia.
+
+\param mode frameCollider_AlphaMask (default) or frameCollider_Bounds.
+\param alphaThreshold Integer 1 through 255, default 128; alpha at or above this value collides.
+\return This Part's Collider. The reference is borrowed from the Part.
+\note Owned image/Drawing content and imported image-frame adapters require a
+GUI-capable build. Enable layer collisions for contacts; queries work without a
+layer or body. Invalid setup preserves the previous collider/source.
+
+\par Example
+The enabled pose on hero contains an image binding named hand_art.
+\code{.cpp}
+auto* grip = hero.createPart("gripArt"); // borrowed from hero
+ grip->bindToAnimationBinding("hand_art");
+ auto& collider = grip->setupFrameCollider(pdg::frameCollider_AlphaMask);
+ collider.setSensor(true);
+\endcode
+\see setupAnimationCollider(), setDrawing(), setImage(), Collider
+*/
+
+/**
+\fn Collider& pdg::Part::setupAnimationCollider(const std::string& boxName)
+\brief Select one authored animation box as this Part's collision source.
+
+boxName must identify a box in the owning Sprite's enabled animation pose;
+image and point bindings are rejected. The Part need not already be bound.
+Setup aligns the shape with the authored box, accounting for the Part's local
+transform at setup. Playback and the final pose update the box relative to the
+Part's current parent frame; subsequent local Part edits carry that shape.
+Singular parent frames yield no source shape until invertible again. A singular
+local transform at setup throws.
+
+The box name is explicit: unlike Sprite.setupAnimationCollider(), this method
+does not collect every box. Inactive boxes have no shape; reappearing boxes keep
+their source ID. Explicit Collider additions remain alongside the source.
+
+Replacing/disabling the pose or transferring the Part to another Sprite retires
+the old source without silently rebinding it. Select a current source before
+saving that Part; snapshots reject stale authored sources. Valid snapshots in
+both resource modes retain the selected box, setup offset and source IDs.
+
+\param boxName Required, exact authored box name; empty or unknown names throw.
+\return This Part's Collider. The reference is borrowed from the Part.
+\note Requires Spriter support and an enabled owner pose, in GUI or headless
+builds. No physics body or Chipmunk solver is required for collider queries.
+Setup preserves configuration and replaces geometry, like setupFrameCollider().
+
+\par Example
+The enabled pose on hero contains a hand bone and a hitbox box.
+\code{.cpp}
+auto* hit = hero.createPart("handHit");
+hit->bindToBone(hero.getAnimationRig()->findBone("hand"));
+hit->setupAnimationCollider("hitbox").setSensor(true);
+\endcode
+\see setupFrameCollider(), Sprite::setupAnimationCollider(), bindToBone()
+*/

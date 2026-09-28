@@ -8,7 +8,7 @@ namespace pdg { /**
 
 \sa enableCollisionsWithLayer
 \sa Sprite.setCollideGroup()
-\sa Sprite.enableCollisions()
+\sa Sprite.setupCollider()
 \sa Sprite.setCollisionHelper()
 
 **/ }

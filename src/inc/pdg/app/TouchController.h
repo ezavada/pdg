@@ -37,9 +37,9 @@ public:
 	virtual bool doTouchMove( const pdg::Point& delta, bool flick, pdg::View* view, int id, int part);
 	virtual bool doSwipeMove( const pdg::Point& delta, pdg::View* view, int id, int part);
 	virtual bool doPinchMove( const pdg::Point& delta1, const pdg::Point& delta2, float distance, float deltaDistance, pdg::View* view, int id, int part);
-	virtual bool doSnapback(uint32 msSinceLastSnapback, uint32 msSinceMouseUp, pdg::View* view, int id, int part);
+	virtual bool doSnapback(ms_delta msSinceLastSnapback, ms_delta msSinceMouseUp, pdg::View* view, int id, int part);
 		
-	virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw();  // return true if completely handled
+	virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept;  // return true if completely handled
 	
 	void stopFlick();
 	
@@ -56,9 +56,9 @@ private:
 	int mFlickID;
 	int mSnapbackID;
 	int mSnapbackPart;
-	uint32 mLastMovedMs;
-	uint32 mLastSnapbackMs;
-	uint32 mLastMouseUpMs;
+	ms_time mLastMovedMs;
+	ms_time mLastSnapbackMs;
+	ms_time mLastMouseUpMs;
 	
 };
 

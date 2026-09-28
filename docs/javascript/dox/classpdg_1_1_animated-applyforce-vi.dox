@@ -1,9 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Animated::applyForce
-
-\brief apply a force to the object over time
-
-Honors delay given by wait()
-
-**/ }

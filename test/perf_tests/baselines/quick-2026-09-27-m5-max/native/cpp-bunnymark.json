@@ -1,0 +1,40 @@
+{
+  "benchmarkId": "cpp-bunnymark",
+  "bunnymarkScore": 47214,
+  "compositeScore": 47214,
+  "framePacing": "uncapped",
+  "language": "C++",
+  "loadFactor": 1.5,
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "mode": "quick",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "synthetic": true,
+  "testName": "QuickBunnyMark",
+  "tests": {
+    "bunnies": {
+      "atOrAboveTarget": true,
+      "averageFPS": 59.9538962939014,
+      "durationSeconds": 3.00230695796013,
+      "estimatedCapacity": 47213.6933314473,
+      "fixedLoad": 47250,
+      "frameTime": {
+        "maxMs": 17.9769579768181,
+        "meanMs": 16.6794830997785,
+        "minMs": 16.0534589886665,
+        "percentile95Ms": 17.144416987896,
+        "percentile99Ms": 17.6332079768181
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 31500,
+      "referenceScore": 31500,
+      "requestedSampleSeconds": 3,
+      "score": 47214,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 180,
+      "warmupSeconds": 1
+    }
+  },
+  "timestamp": "2026-09-27T21:30:12Z"
+}

@@ -1,4 +1,4 @@
-.TH "NetServer" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "NetServer" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -65,6 +65,9 @@ NetServer \- a network endpoint that can accept incoming connections
 .br
 .RI "the address (interface) on which the server listens 0\&.0\&.0\&.0 means all interfaces on the computer "
 .ti -1c
+.RI "object \fBserverInfo\fP"
+.br
+.ti -1c
 .RI "number \fBserverPort\fP"
 .br
 .RI "the port on which the server listens "
@@ -77,7 +80,7 @@ a network endpoint that can accept incoming connections
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 .SS "Overview"
@@ -130,7 +133,7 @@ There are 5 different ways you can allow clients to connect:
 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBNetServer\fP (object opts = \fRnull\fP)"
+.SS "NetServer (object opts = \fRnull\fP)"
 
 .PP
 constructor for a \fBNetServer\fP, sets server options Construct a new \fBNetServer\fP with particular options or using default values if no options are specified\&.
@@ -332,6 +335,8 @@ This can be changed at any time \fIbefore\fP calling \fBlisten()\fP\&. It should
 
 .PP
 0\&.0\&.0\&.0 means all interfaces on the computer 
+.SS "object serverInfo"
+
 .SS "number serverPort"
 
 .PP

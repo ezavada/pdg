@@ -1,0 +1,93 @@
+/**
+\fn pdg::AnimationPhysicsRig::AnimationPhysicsRig(cpSpace * space, const AnimationPhysicsDefinition & definition, const AnimationPose & pose, const AnimationTransform & root, double velocityX, double velocityY, double angularVelocity)
+\brief Create physical bodies for an animation pose.
+
+\note Animation physics requires Chipmunk. The Basic solver supports simple shared-body physics but is intentionally not a backend for animation rigs; expanding it to complex animation physics is not planned. Enable Chipmunk on the SpriteLayer before rig setup.
+
+
+Validates topology and dimensions before allocating simulation state. Requires Chipmunk support. Keep the space alive until rig destruction and any deferred teardown have completed.
+
+This standalone passive adapter requires all bodies to be Dynamic when using
+Follow mode. Sprite::setupAnimationPhysics() supplies the controller needed for
+mixed body modes with Follow.
+
+\param space Non-null unlocked cpSpace owned by the caller.
+\param definition Version-1 capsule/joint configuration; see \ref animation_physics_definition.
+\param pose Initial owned pose supplying the immutable rig.
+\param root Initial root in owning-layer coordinates. Driven bones need unit, unreflected effective scale.
+\param velocityX Finite initial horizontal velocity in layer units per second.
+\param velocityY Finite initial vertical velocity in layer units per second.
+\param angularVelocity Finite initial clockwise angular velocity in radians per second.
+
+\see prepare(), publish()
+*/
+
+/**
+\fn pdg::AnimationPhysicsRig::~AnimationPhysicsRig()
+\brief Remove the rig's Chipmunk objects.
+
+Removes and frees constraints, shapes, and bodies. If the space is locked, removal is scheduled after the step; the caller must keep the space alive until that completes.
+*/
+
+/**
+\fn void pdg::AnimationPhysicsRig::prepare(const AnimationPose & desired, const AnimationTransform & root, double deltaSeconds)
+\brief Set kinematic targets before stepping the space.
+
+Sets kinematic velocity to reach the desired endpoint over this step. Dynamic bodies are not teleported. A zero step sets kinematic velocities to zero.
+
+\param desired Fresh desired pose using this rig's schema.
+\param root Current owner root in owning-layer coordinates.
+\param deltaSeconds Finite nonnegative upcoming step duration in seconds.
+
+\see publish()
+*/
+
+/**
+\fn AnimationPose pdg::AnimationPhysicsRig::publish(const AnimationPose & desired, const AnimationTransform & root) const
+\brief Copy simulation results into a new pose.
+
+Preserves desired metadata and local alpha while deriving driven bone transforms from simulation. Rejects incompatible rigs or effective scales.
+
+\param desired Desired pose whose un-driven values are retained.
+\param root Current root in owning-layer coordinates, after applying followingRoot() if appropriate.
+
+\return A new owned AnimationPose.
+
+\see prepare(), followingRoot()
+*/
+
+/**
+\fn AnimationTransform pdg::AnimationPhysicsRig::followingRoot(const AnimationPose & desired, const AnimationTransform & root) const
+\brief Calculate root translation from the simulated root body.
+
+Fixed mode returns the supplied root unchanged. Follow mode adjusts x/y so the sampled root bone matches the simulated position; it preserves root rotation and scale.
+
+\param desired Desired pose using this rig's schema.
+\param root Current owner transform in owning-layer coordinates.
+
+\return The root transform to use when publishing.
+
+\see publish()
+*/
+
+/**
+\fn const AnimationPhysicsDefinition & pdg::AnimationPhysicsRig::definition() const
+\brief Read the validated rig definition.
+
+\return A const reference valid while this physical rig remains alive.
+
+\see Sprite::setupAnimationPhysics()
+*/
+
+/**
+\fn AnimationPhysicsDefinition pdg::decodeAnimationPhysicsDefinition(const std::vector< double > & values)
+\brief Decode a binding-layer physical definition.
+
+Native applications should normally construct AnimationPhysicsDefinition directly. Rejects missing/trailing values and invalid numeric fields. Physical topology and dimension validation occurs when constructing the rig.
+
+\param values Packed header [version, rootMode, rootBody, selfCollisions, bodyCount], followed by body records, jointCount, and joint records. Body records contain bone, mode, mass, length, radius, offsetX, offsetY, offsetRotation, friction, elasticity, categories, mask. Joint records contain parent, child, parentX, parentY, childX, childY, minAngle, maxAngle, maxForce, collide. Boolean fields use 0 or 1.
+
+\return Decoded AnimationPhysicsDefinition.
+
+\see AnimationPhysicsRig::AnimationPhysicsRig()
+*/

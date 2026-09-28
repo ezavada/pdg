@@ -2,6 +2,11 @@ namespace pdg { /**
 
 \fn pdg::Sprite::enableSpriterEvents(enable)
 
-\brief enables or disables spriter-specific events for this sprite
+\ingroup Animation
+\brief Enable or disable authored Spriter trigger notifications for this Sprite.
+
+Register an IEventHandler for pdg::eventType_SpriteTriggerEvent to receive a
+pdg::SpriteTriggerEvent payload. This flag does not gate blend-completion
+notifications. See \ref animation_trigger_event for delivery and timing rules.
 
 **/ }

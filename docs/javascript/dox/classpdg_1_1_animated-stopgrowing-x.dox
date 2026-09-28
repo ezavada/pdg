@@ -1,9 +1,12 @@
 namespace pdg { /**
+\fn pdg::Animated::stopGrowing()
+\brief Stop all programmed changes to logical size.
 
-\fn pdg::Animated::stopGrowing
+Clears the corresponding constant rates, rate transitions and scheduled target animations. Other properties continue. This does not stop a PhysicsBody. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief stop any size change
 
-\sa startGrowing
+\return This object, for chaining.
 
-**/ }
+\see cancelSchedule()
+*/
+ }

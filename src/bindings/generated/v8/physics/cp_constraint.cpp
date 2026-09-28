@@ -620,12 +620,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
+        pdg::Offset theAnchor;
+        auto theAnchor_isOffset = v8_ValueIsOffset(isolate, args[1 -1], theAnchor);
+        if (!theAnchor_isOffset.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*theAnchor_isOffset)
         {
             v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
             return;
-        }
-        pdg::Offset theAnchor = v8_ValueToOffset(isolate, args[1 -1]);
+        };
 
         cpVect anchor = cpv(theAnchor.x, theAnchor.y);
         if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
@@ -721,12 +728,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
+        pdg::Offset theOtherAnchor;
+        auto theOtherAnchor_isOffset = v8_ValueIsOffset(isolate, args[1 -1], theOtherAnchor);
+        if (!theOtherAnchor_isOffset.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*theOtherAnchor_isOffset)
         {
             v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
             return;
-        }
-        pdg::Offset theOtherAnchor = v8_ValueToOffset(isolate, args[1 -1]);
+        };
 
         cpVect anchor = cpv(theOtherAnchor.x, theOtherAnchor.y);
         if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
@@ -998,12 +1012,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
+        pdg::Offset theGrooveStart;
+        auto theGrooveStart_isOffset = v8_ValueIsOffset(isolate, args[1 -1], theGrooveStart);
+        if (!theGrooveStart_isOffset.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*theGrooveStart_isOffset)
         {
             v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
             return;
-        }
-        pdg::Offset theGrooveStart = v8_ValueToOffset(isolate, args[1 -1]);
+        };
 
         if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
         {
@@ -1063,12 +1084,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
+        pdg::Offset theGrooveEnd;
+        auto theGrooveEnd_isOffset = v8_ValueIsOffset(isolate, args[1 -1], theGrooveEnd);
+        if (!theGrooveEnd_isOffset.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*theGrooveEnd_isOffset)
         {
             v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
             return;
-        }
-        pdg::Offset theGrooveEnd = v8_ValueToOffset(isolate, args[1 -1]);
+        };
 
         if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
         {

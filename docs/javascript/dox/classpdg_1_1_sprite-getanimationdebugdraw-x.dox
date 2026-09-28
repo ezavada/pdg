@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::getAnimationDebugDraw()
+\brief Read the selected debug overlays.
+
+\return The current animationDebug bitmask; zero means no overlays.
+
+\see setAnimationDebugDraw()
+*/

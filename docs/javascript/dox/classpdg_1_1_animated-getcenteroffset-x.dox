@@ -1,7 +1,12 @@
 namespace pdg { /**
+\fn pdg::Animated::getCenterOffset()
+\brief Read the rotation-center offset.
 
-\fn pdg::Animated::getCenterOffset
+Interpreted in the owning object coordinate system. AnimatedAttributes applies it as the local matrix pivot.
 
-\brief get the current offset of the center relative to the true center point
 
-**/ }
+\return The current value, returned as a new coordinate object.
+
+\see setCenterOffset(), changeCenterOffsetTo()
+*/
+ }

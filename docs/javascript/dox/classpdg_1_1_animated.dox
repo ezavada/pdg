@@ -3,7 +3,30 @@ namespace pdg { /**
 \class Animated
 \brief something that can be automatically moved, spun or resized over time.
 
-\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
+
+
+Animated separates immediate edits and constant rates from scheduled transitions.
+All animation durations and waits use floating-point seconds. Setters are immediate
+and chainable; they cannot consume a wait() or andThen(). Timed change methods
+require explicit seconds; explicit zero applies immediately outside a sequence.
+To names specify targets; By names specify additive deltas. grow() and stretch()
+use factors and change logical size; changeScaleTo()/changeScaleBy() change the
+independent transform scale. Constant rates continue after a rate transition ends.
+
+Scheduled operations normally run concurrently. andThen() sequences the next
+operation after the most recently scheduled one; wait() delays the next timed
+request. Immediate calls after either throw before changing state. cancelSchedule()
+clears pending sequencing and scheduled work while retaining current constant rates.
+
+\par Example
+\code
+sprite.setMovement(40, 0);
+sprite.changeMovementTo(0, 0, 0.5); // Ease the rate to a stop in half a second.
+sprite.setGrowing(8);             // Add eight logical size units per second.
+sprite.changeGrowingTo(0, 0.25);  // Ease the growth rate to zero.
+\endcode
+
+PhysicsBody owns physical velocity, mass, damping, forces and impulses.
 
 It has no drawing capabilities, so it is not intended to be used directly in most cases, but rather as a base class for items that can be animated. It could be used on a server to drive animation that is rendered on the client.
 

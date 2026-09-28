@@ -110,6 +110,9 @@ public:
 	PopupMenu(Controller* controller, Point topLeft = Point(0,0), Color bkColor = Color(0xCC,0xCC,0xCC), Color sTextColor = Color(0,0,0), Color highlightColor = Color(0,0,0xFF), int nTextSize = 14);
 	PopupMenu(Controller* controller, Rect topLeft, Color bkColor = Color(0xCC,0xCC,0xCC), Color sTextColor = Color(0,0,0), Color highlightColor = Color(0,0,0xFF), int nTextSize = 14);
 	~PopupMenu();
+protected:
+    void viewAreaChanged(const Rect& previous) override;
+public:
 
 	int addMenuItem(int itemID, int resourceID,
 		Style textStyle = (Style)(textStyle_Plain + textStyle_LeftJustified), int index = -1);
@@ -132,12 +135,12 @@ public:
 	int getIndex(int itemID);
 	int getIndex(const char* text);
 
-	void drawSelf();     
-	void showSelf(); 
-	void doMouseMove(const MouseInfo *mi, int id, int part);
-	void doMouseLeave(const MouseInfo *mi,int id, int part);
-	void doMouseEnter(const MouseInfo *mi,int id, int part);
-	int  getPartClicked(const Point& screenPoint); // returns itemID of part clicked.
+	void drawSelf() override;
+	void showSelf() override;
+	void doMouseMove(const MouseInfo *mi, int id, int part) override;
+	void doMouseLeave(const MouseInfo *mi,int id, int part) override;
+	void doMouseEnter(const MouseInfo *mi,int id, int part) override;
+	int  getPartClicked(const Point& screenPoint) override; // returns itemID of part clicked.
 	void scrollMenu(int nItems); // scroll menu by nItems up or down. If +ve scroll down, -ve scroll up.
 	void sanitiseViewArea();
 	void setTextSize(int nSize);

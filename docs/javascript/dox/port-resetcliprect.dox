@@ -1,0 +1,9 @@
+namespace pdg { /**
+\fn pdg::Port::resetClipRect()
+\brief Restore the clipping rectangle to the full drawing area.
+
+Use this to allow drawing throughout the Port. setClipRect(new Rect()) instead
+suppresses all drawing. Resizing the Port also resets its clip to the drawing area.
+\return Nothing.
+\see getClipRect(), setClipRect()
+**/ }

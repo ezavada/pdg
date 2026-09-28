@@ -1,11 +1,9 @@
-namespace pdg { /**
-
-\fn pdg::Sprite::getSerializedSize
-
-\brief get the bytes needed to serialize the layer
-
-Takes into account the serialization mode of the layer it is in
-
-\sa SpriteLayer.setSerializationFlags()
-
-**/ }
+/**
+\fn uint Sprite::getSerializedSize(Serializer serializer)
+\brief Measure the selected Sprite record and its resource payloads.
+\param serializer Writer used to size shared resources and select their save policy.
+\return Record size in bytes, excluding the stream header and enclosing object tag/length.
+Uses the owning layer's serialization flags, or `pdg.ser_Full` off-layer.
+Initial records validate supported state and image availability during sizing.
+\sa Sprite::serialize(), SpriteLayer::setSerializationFlags()
+*/

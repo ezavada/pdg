@@ -3,7 +3,6 @@ namespace pdg { /**
 \class Serializer
 \brief serialize data into memory
 
-\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
 
 Serializer stores complex data into memory in a way that it can be read back from a Deserializer. It can correctly store entire object hierarchies without duplication. 
 

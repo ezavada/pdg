@@ -1,0 +1,13 @@
+<map id="Particle" name="Particle">
+<area shape="rect" id="Node000001" title=" " alt="" coords="93,300,159,326"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,226,103,252"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,260,116,299,111,300,76,265"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated.html" title=" " alt="" coords="127,226,272,252"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="179,262,140,302,137,297,174,264"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="146,153,252,178"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="201,192,202,227,197,225,198,196"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="153,79,246,105"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="201,118,202,153,197,151,198,123"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="144,5,255,31"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="200,44,202,79,197,78,198,49"/>
+</map>

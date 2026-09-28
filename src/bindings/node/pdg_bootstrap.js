@@ -32,39 +32,24 @@ global.pdg = pdgSystem;
 _debug_log('[PDG] pdg_bootstrap.js: process.pdg has ' + Object.keys(process.pdg).length + ' properties');
 _debug_log('[PDG] pdg_bootstrap.js: pdgSystem has ' + Object.keys(pdgSystem).length + ' properties');
 
-// Make PDG module available through normal require() calls
-// This allows scripts to use require('pdg') instead of process._linkedBinding('pdg')
-_debug_log('[PDG] pdg_bootstrap.js: Registering PDG module in require cache...');
-try {
-    const Module = require('module');
-    if (Module._cache) {
-        Module._cache['pdg'] = {
-            id: 'pdg',
-            filename: 'pdg',
-            loaded: true,
-            children: [],
-            parent: null,
-            paths: [],
-            exports: pdgSystem
-        };
-        _debug_log('[PDG] pdg_bootstrap.js: PDG module registered in Module._cache');
-    } else if (publicRequire.cache) {
-        publicRequire.cache['pdg'] = {
-            id: 'pdg',
-            filename: 'pdg',
-            loaded: true,
-            children: [],
-            parent: null,
-            paths: [],
-            exports: pdgSystem
-        };
-        _debug_log('[PDG] pdg_bootstrap.js: PDG module registered in publicRequire.cache');
-    } else {
-        console.log('[PDG] pdg_bootstrap.js: Warning: Could not register PDG module in require cache');
-    }
-} catch (err) {
-    console.error('[PDG] pdg_bootstrap.js: Error registering PDG module in cache:', err.message);
-}
+// Register the embedded singleton for ordinary CommonJS modules as well as
+// the entry script's linked-binding require. Node resolves a filename BEFORE
+// consulting Module._cache: a bare 'pdg' cache key alone is not sufficient.
+// Without this alias, nested imports load an unrelated npm copy (or fail when
+// no package is installed). Only the exact public module name is intercepted;
+// relative paths, built-ins, and all other packages keep Node's normal lookup.
+const Module = require('module');
+const pdgModule = new Module('pdg');
+pdgModule.filename = 'pdg';
+pdgModule.loaded = true;
+pdgModule.exports = pdgSystem;
+Module._cache.pdg = pdgModule;
+const resolveFilename = Module._resolveFilename;
+Module._resolveFilename = function(request, parent, isMain, options) {
+    if (request === 'pdg') return 'pdg';
+    return resolveFilename.apply(this, arguments);
+};
+_debug_log('[PDG] pdg_bootstrap.js: Embedded PDG registered for CommonJS imports');
 
 _debug_log('[PDG] pdg_bootstrap.js: PDG system loaded, scheduled further execution into event loop');
 

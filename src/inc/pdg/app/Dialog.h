@@ -43,9 +43,8 @@ class Button;
 // You can return false from attemptChildClose (or skip calling the base class) if you weren't ready to
 // close, for example if the user hasn't filled in all the required info.
 //
-// If you need more than two buttons, override the doMouseDown method to check for the additional
-// button ids, set their Views to the clicked state, and set mButtonWithMouseDown to the button
-// in question. See Dialog::doMouseDown for an example
+// For additional buttons, override doLeftClick to handle their IDs. Controller
+// routes the press and release to the original View, including releases outside.
 
 class Dialog : public Controller {
 public:
@@ -93,7 +92,6 @@ public:
     
 protected:
  
-	Button*     mButtonWithMouseDown;
 	int         mOkButtonId;
 	int         mCancelButtonId;
 	uint32      mFlags;

@@ -37,7 +37,7 @@
 
 namespace pdg {
 
-//! \defgroup Graphics
+//! \addtogroup Graphics
 //! Collection of classes, types and constants that are used for drawing
 
 // -----------------------------------------------------------------------------------

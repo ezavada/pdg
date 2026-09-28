@@ -32,11 +32,22 @@ namespace pdg {
 //MARK: Sound
 // ========================================================================================
 
-WRAPPER_INITIALIZER_IMPL_CUSTOM(Sound, 
-    OBJECT_SAVE(cppObj->mEventEmitterScriptObj, obj); 
-    OBJECT_SAVE(cppObj->mSoundScriptObj, obj);
+// The wrapper and the playing-sounds list each own a native reference.
+%#ifdef PDG_USING_JAVASCRIPT_CORE
+static void Sound_finalize(JSObjectRef object) {
+    auto* sound = static_cast<Sound*>(JSObjectGetPrivate(object));
+    if (!sound) return;
+    sound->mSoundScriptObj = nullptr;
+    sound->mEventEmitterScriptObj = nullptr;
+    JSObjectSetPrivate(object, nullptr);
+    sound->release();
+}
+%#endif
+BINDING_INITIALIZER_IMPL_REFCOUNTED(Sound,
+    OBJECT_SAVE_WEAK(cppObj->mEventEmitterScriptObj, obj);
+    OBJECT_SAVE_WEAK(cppObj->mSoundScriptObj, obj);
     cppObj->addRef() )
-      EXPORT_CLASS_SYMBOLS("Sound", Sound, , ,
+      EXPORT_FINALIZED_CLASS_SYMBOLS("Sound", Sound, Sound_finalize, , ,
           // method section
           HAS_EMITTER_METHODS(Sound)
           HAS_PROPERTY(Sound, Volume)
@@ -59,6 +70,21 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Sound,
           HAS_METHOD(Sound, "skipTo", SkipTo)
       );
       END
+%#ifndef PDG_USING_JAVASCRIPT_CORE
+SoundWrap::SoundWrap(SCRIPT_ARGS) : cppPtr_(New_Sound(args)) {
+    if (!cppPtr_ && !s_Sound_InNewFromCpp) {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        THROW_ERR_LITERAL("Failed to create Sound instance");
+    }
+}
+SoundWrap::~SoundWrap() {
+    if (cppPtr_) {
+        cppPtr_->mSoundScriptObj.Reset();
+        cppPtr_->mEventEmitterScriptObj.Reset();
+        cppPtr_->release();
+    }
+}
+%#endif
   EMITTER_BASE_CLASS_IMPL(Sound)
   PROPERTY_IMPL(Sound, Volume, NUMBER)
   METHOD_IMPL(Sound, Play)
@@ -208,7 +234,11 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Sound,
   
   CLEANUP_IMPL(Sound)
   
-  CPP_MANAGED_CONSTRUCTOR_IMPL(Sound)
+  Sound* New_Sound(SCRIPT_ARGS) {
+%#ifndef PDG_USING_JAVASCRIPT_CORE
+      if (s_Sound_InNewFromCpp) return nullptr;
+      [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+%#endif
       SETUP_NON_SCRIPT_CALL;
       if (ARGC < 1) {
           return 0;

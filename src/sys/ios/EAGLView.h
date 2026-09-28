@@ -53,6 +53,7 @@
 	// isn't available.
 	id displayLink;
     NSTimer *animationTimer;
+    NSTimer *engineTimer;
 }
 
 @property (readonly, nonatomic, getter=isAnimating) BOOL animating;
@@ -61,5 +62,6 @@
 - (void) startAnimation;
 - (void) stopAnimation;
 - (void) drawView:(id)sender;
+- (void) scheduleEngineTimer;
 
 @end

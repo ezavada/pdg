@@ -2,6 +2,11 @@ namespace pdg { /**
 
 \fn pdg::Sprite::onAnimationBlendComplete(func)
 
-\brief Register a callback function to be called when an animation blend completes
+\ingroup Animation
+\brief Register a callback function to be called when an animation blend or transition completes.
+
+Filters pdg::eventType_SpriteAnimate for pdg::action_AnimationBlendComplete. The
+callback receives a pdg::SpriteAnimateEvent. Covers pdg::Sprite::blendToAnimation()
+and pdg::Sprite::transitionToAnimation(); enabling authored triggers is independent.
 
 **/ }

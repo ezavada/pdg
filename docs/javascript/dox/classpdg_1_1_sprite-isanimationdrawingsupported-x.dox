@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::isAnimationDrawingSupported()
+\brief Test whether this build supports animation drawing.
+
+\return True in GUI-capable builds; false in headless builds. This does not test whether a Port is currently open.
+
+\see addAnimationDrawable(), setAnimationDebugDraw()
+*/

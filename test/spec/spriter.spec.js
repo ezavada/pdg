@@ -135,16 +135,16 @@ describe('SpriterPlusPlus Integration' + (hasSpriterSupport ? ' (Spriter Support
         it('should have entity scale methods', function() {
             expect(spriterSprite).not.toBeNull();
             
-            // Test setEntityScale method
-            expect(typeof spriterSprite.setEntityScale).toBe('function');
+            // Test setScale method
+            expect(typeof spriterSprite.setScale).toBe('function');
             
             // Test the method call
             expect(function() {
-                spriterSprite.setEntityScale(1.0, 1.0);
+                spriterSprite.setScale(1.0, 1.0);
             }).not.toThrow();
             
             // Test that it returns the sprite for chaining
-            var result = spriterSprite.setEntityScale(2.0, 2.0);
+            var result = spriterSprite.setScale(2.0, 2.0);
             expect(result).toBe(spriterSprite);
         });
         
@@ -195,7 +195,7 @@ describe('SpriterPlusPlus Integration' + (hasSpriterSupport ? ' (Spriter Support
             
             // Test animation methods
             expect(typeof sprite.startAnimation).toBe('function');
-            expect(typeof sprite.rotate).toBe('function');
+            expect(typeof sprite.rotateBy).toBe('function');
         });
         
         it('should have all required Spriter API methods', function() {
@@ -204,7 +204,7 @@ describe('SpriterPlusPlus Integration' + (hasSpriterSupport ? ' (Spriter Support
             // Verify all Phase 1 Spriter methods exist
             expect(typeof spriterSprite.hasAnimation).toBe('function');
             expect(typeof spriterSprite.startAnimation).toBe('function');
-            expect(typeof spriterSprite.setEntityScale).toBe('function');
+            expect(typeof spriterSprite.setScale).toBe('function');
             
             // Verify SpriteLayer methods exist
             expect(typeof spriteLayer.createSpriteFromSpriterFile).toBe('function');
@@ -218,33 +218,33 @@ describe('SpriterPlusPlus Integration' + (hasSpriterSupport ? ' (Spriter Support
             
             // Test different scale combinations
             expect(function() {
-                spriterSprite.setEntityScale(0.5, 0.5);  // Scale down
+                spriterSprite.setScale(0.5, 0.5);  // Scale down
             }).not.toThrow();
             
             expect(function() {
-                spriterSprite.setEntityScale(2.0, 2.0);  // Scale up
+                spriterSprite.setScale(2.0, 2.0);  // Scale up
             }).not.toThrow();
             
             expect(function() {
-                spriterSprite.setEntityScale(1.0, 2.0);  // Different X and Y scales
+                spriterSprite.setScale(1.0, 2.0);  // Different X and Y scales
             }).not.toThrow();
             
             expect(function() {
-                spriterSprite.setEntityScale(0.1, 10.0);  // Extreme scales
+                spriterSprite.setScale(0.1, 10.0);  // Extreme scales
             }).not.toThrow();
         });
         
         it('should support method chaining', function() {
             expect(spriterSprite).not.toBeNull();
             
-            // Test that setEntityScale returns the sprite for chaining
-            var result = spriterSprite.setEntityScale(1.0, 1.0);
+            // Test that setScale returns the sprite for chaining
+            var result = spriterSprite.setScale(1.0, 1.0);
             expect(result).toBe(spriterSprite);
             
             // Test chaining multiple calls
             var chainResult = spriterSprite
-                .setEntityScale(1.5, 1.5)
-                .setEntityScale(2.0, 2.0);
+                .setScale(1.5, 1.5)
+                .setScale(2.0, 2.0);
             expect(chainResult).toBe(spriterSprite);
         });
     });
@@ -323,15 +323,15 @@ describe('SpriterPlusPlus Integration' + (hasSpriterSupport ? ' (Spriter Support
             
             // Test with invalid scale values
             expect(function() {
-                spriterSprite.setEntityScale(0, 0);
+                spriterSprite.setScale(0, 0);
             }).not.toThrow();
             
             expect(function() {
-                spriterSprite.setEntityScale(-1, -1);
+                spriterSprite.setScale(-1, -1);
             }).not.toThrow();
             
             expect(function() {
-                spriterSprite.setEntityScale(1000, 1000);
+                spriterSprite.setScale(1000, 1000);
             }).not.toThrow();
         });
     });

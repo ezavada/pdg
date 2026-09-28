@@ -27,7 +27,7 @@ class FloodEvent {
 public:
 	int eVId;		// nominal identifier
 	uint32 state;	// nominal state
-	uint32 tmTag;	// time (in milliseconds) this event was added to the list
+	ms_time tmTag;	// time (in milliseconds) this event was added to the list
 
 	FloodEvent( uint32 eState );
 };
@@ -58,7 +58,7 @@ protected:
 	int discardOpt;
 	uint16 maxSize;					// the max number of items to be queued
 	bool locked;					// current state of this flood lock
-	uint32 last_addition;			// time of newest record added
+	ms_time last_addition;			// time of newest record added
 	uint32 wSize;					// window size in millisecs
 	uint32 count;					// number of items queued since constructed
 	uint32 rejected;				// number of items rejected since constructed

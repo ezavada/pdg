@@ -1,0 +1,76 @@
+namespace pdg {
+/**
+\class Collider
+\ingroup Physics
+\brief Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle.
+
+Use Sprite::setupCollider(), Part::setupCollider() or Particle::setupCollider(). Their read-only `collider`
+property returns the same handle until removeCollider(); beforehand it returns
+shared Collider::NoCollider. Collider is independent of animation, artwork and
+physical motion. Creating one never creates a PhysicsBody.
+
+Local circles, capsules, rectangles and polygons follow their owner's affine
+transform, including parent/bone motion, scale and reflection. Nonuniformly
+scaled or sheared circles and capsules use convex approximations; see
+\ref collider_capsule_geometry. Singular geometry
+does not participate in the collision world. getBounds(), contains() and
+overlaps() are explicit geometric queries and ignore event filters.
+
+Enable SpriteLayer::enableCollisions() for contacts within a layer, or
+SpriteLayer::enableCollisionsWithLayer() for a linked pair of layers. Connected
+PhysicsBodies suppress their mutual contacts unless each connecting constraint
+allows them. Multiple shapes on the same body do not collide with one another.
+Contacts between linked layers using different solvers use basic impulse response.
+
+A solid collider uses its owner's body by default. Without a body it acts as an
+externally positioned, immovable surface with no simulated velocity. Use a
+kinematic PhysicsBody for a moving platform that must carry or push objects.
+setPhysicsBody() explicitly contributes a Part's geometry to a compound body;
+useOwnerPhysics() restores the default association. Sensors report overlaps
+without impulses and work without any physical body.
+
+\note Both Sprite and Part owners advance automatically. Native contact callbacks
+and opted-in eventType_ColliderContact events run after solving. Callbacks can
+remove colliders, bodies, owners or layers; contact payloads describe the solved
+frame, so another callback may already have detached a referenced collider.
+
+\code{.js}
+const layer = pdg.createSpriteLayer();
+layer.enableCollisions();
+const sprite = layer.createSprite();
+const foot = sprite.createPart('foot');
+foot.setupPhysicsBody(1, 10);
+foot.setupCollider().setCircle(8).setWantsContactEvents(true);
+sprite.addHandler(new pdg.IEventHandler(function(event) {
+    if (event.phase === pdg.collision_Begin && event.collider === foot.collider) {
+        console.log('Foot contacted shape ' + event.otherShape);
+    }
+    return true;
+}), pdg.eventType_ColliderContact);
+\endcode
+
+Retained handles remain queryable after removal, using the final transform;
+callbacks and physical associations are cleared. Initial Sprite/Layer snapshots
+preserve collider geometry/configuration, compound body links and constraints.
+Use a Layer snapshot for links between Sprites. Callback filters and contact handlers
+cannot be saved; reinstall them after loading. Native callers can also use
+independent Collider and CollisionWorld objects for custom owner types.
+
+\see PhysicsBody, PhysicsConstraint, ColliderContact
+*/
+/**
+\var Collider::NoCollider
+\brief Shared absence object for every Sprite or Part without collision geometry.
+
+Compare by identity. Mutators safely do nothing, with a debug diagnostic; they
+do not accumulate settings for later creation. Its geometry is empty.
+*/
+/** \var Sprite::collider
+\brief Read-only Collider association, or shared Collider::NoCollider.
+\see Sprite::setupCollider(), Sprite::removeCollider()
+*/
+/** \var Part::collider
+\brief Read-only Collider association, or shared Collider::NoCollider.
+\see Part::setupCollider(), Part::removeCollider()
+*/
+}

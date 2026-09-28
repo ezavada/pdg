@@ -53,6 +53,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -100,6 +101,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:

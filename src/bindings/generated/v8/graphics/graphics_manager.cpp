@@ -172,6 +172,14 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> CreateWindowPort_Tpl =
             v8::FunctionTemplate::New(isolate, CreateWindowPort, v8::Local<v8::Value>(), CreateWindowPort_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "createWindowPort").ToLocalChecked(), CreateWindowPort_Tpl);
+        v8::Local<v8::Signature> CreateOffscreenPort_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> CreateOffscreenPort_Tpl =
+            v8::FunctionTemplate::New(isolate, CreateOffscreenPort, v8::Local<v8::Value>(), CreateOffscreenPort_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "createOffscreenPort").ToLocalChecked(), CreateOffscreenPort_Tpl);
+        v8::Local<v8::Signature> CreateImageFromOffscreenPort_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> CreateImageFromOffscreenPort_Tpl =
+            v8::FunctionTemplate::New(isolate, CreateImageFromOffscreenPort, v8::Local<v8::Value>(), CreateImageFromOffscreenPort_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "_createImageFromOffscreenPort").ToLocalChecked(), CreateImageFromOffscreenPort_Tpl);
         v8::Local<v8::Signature> CreateFullScreenPort_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> CreateFullScreenPort_Tpl =
             v8::FunctionTemplate::New(isolate, CreateFullScreenPort, v8::Local<v8::Value>(), CreateFullScreenPort_Sig);
@@ -407,12 +415,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
             return;
         };
-        if (!v8_ValueIsRect(isolate, args[1 -1]))
+        pdg::Rect rect;
+        auto rect_isRect = v8_ValueIsRect(isolate, args[1 -1], rect);
+        if (!rect_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*rect_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
-        }
-        pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
+        };
         if (args.Length() >= 2 && !args[2 -1]->IsString())
         {
             v8_ThrowArgTypeException(isolate, 2, "a string  (""windName"")");
@@ -427,6 +442,84 @@ namespace pdg
         }
         long bpp = (args.Length()<3) ? 0 : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
         Port* port = self->createWindowPort(rect, windName, bpp);
+        if (!port) { args.GetReturnValue().SetNull(); return; };
+        if (port->mPortScriptObj.IsEmpty())
+        {
+            { args.GetReturnValue().Set( PortWrap::NewFromCpp(isolate, port) ); return; };
+        }
+        else
+        {
+            v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, port->mPortScriptObj );
+            { args.GetReturnValue().Set( obj__ ); return; };
+        };
+    }
+
+    void GraphicsManagerWrap::CreateImageFromOffscreenPort(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
+        GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Image]" " function" "([object Port] port, boolean copyPixels = true)" " - " "create a snapshot or live image of an offscreen port").ToLocalChecked() ); return; };
+        };
+
+        if (args.Length() < 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+            return;
+        };
+        REQUIRE_CPP_OBJECT_ARG(1, port, Port);
+        if (args.Length() >= 2 && !args[2 -1]->IsBoolean())
+        {
+            v8_ThrowArgTypeException(isolate, 2, "a boolean (""copyPixels"")");
+            return;
+        }
+        bool copyPixels = (args.Length()<2) ? true : args[2 -1]->BooleanValue(isolate);;
+        Image* image = Image::createImageFromOffscreenPort(port, copyPixels);
+        if (!image) { args.GetReturnValue().SetNull(); return; };
+        if (image->mImageScriptObj.IsEmpty())
+        {
+            { args.GetReturnValue().Set( ImageWrap::NewFromCpp(isolate, image) ); return; };
+        }
+        else
+        {
+            v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, image->mImageScriptObj );
+            { args.GetReturnValue().Set( obj__ ); return; };
+        };
+    }
+
+    void GraphicsManagerWrap::CreateOffscreenPort(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
+        GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Port]" " function" "([object Rect] rect)" " - " "create a persistent transparent drawing surface without a window").ToLocalChecked() ); return; };
+        };
+
+        if (args.Length() != 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            return;
+        };
+        pdg::Rect rect;
+        auto rect_isRect = v8_ValueIsRect(isolate, args[1 -1], rect);
+        if (!rect_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*rect_isRect)
+        {
+            v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
+            return;
+        };
+        Port* port = self->createOffscreenPort(rect);
         if (!port) { args.GetReturnValue().SetNull(); return; };
         if (port->mPortScriptObj.IsEmpty())
         {
@@ -455,12 +548,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
             return;
         };
-        if (!v8_ValueIsRect(isolate, args[1 -1]))
+        pdg::Rect rect;
+        auto rect_isRect = v8_ValueIsRect(isolate, args[1 -1], rect);
+        if (!rect_isRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*rect_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
-        }
-        pdg::Rect rect = v8_ValueToRect(isolate, args[1 -1]);
+        };
         if (args.Length() >= 2 && !args[2 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 2, "a number (""screenNum"")");
@@ -728,7 +828,11 @@ namespace pdg
 
     GraphicsManagerWrap::GraphicsManagerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_GraphicsManager(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_GraphicsManager(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_GraphicsManager_InNewFromCpp)
         {
             {

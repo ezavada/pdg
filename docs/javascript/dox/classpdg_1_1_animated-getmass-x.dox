@@ -1,7 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Animated::getMass
-
-\brief get the mass of the object
-
-**/ }

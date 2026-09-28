@@ -1,0 +1,17 @@
+/**
+\fn pdg::Attributes::setTransform(array number matrix)
+\brief Replace the affine transform immediately.
+
+Unlike transform(), replaces the matrix instead of postmultiplying it. AnimatedAttributes adopts it as its shared Animated state and cancels conflicting transform animation. AnimatedAttributes rejects nonfinite or non-affine matrices.
+
+\param matrix Array of nine numbers in column-major order. For a 2D affine transform use [a, b, 0, c, d, 0, tx, ty, 1], mapping (x,y) to (a*x+c*y+tx, b*x+d*y+ty).
+
+\return This object, for chaining.
+
+\par Example
+\code{.js}
+style.setTransform([1, 0, 0, 0, 1, 0, 20, 10, 1]);
+\endcode
+
+\see transform(), getTransform()
+*/

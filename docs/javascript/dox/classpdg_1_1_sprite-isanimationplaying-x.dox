@@ -4,4 +4,7 @@ namespace pdg { /**
 
 \brief returns true if an animation is currently playing
 
+Returns false while paused or after natural completion of a nonlooping clip.
+Natural completion does not set isAnimationPaused().
+
 **/ }

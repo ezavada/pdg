@@ -41,6 +41,7 @@
 #include "pdg/sys/image.h"
 
 #include <vector>
+#include <memory>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -95,6 +96,13 @@ namespace pdg {
         Attributes();
         Attributes(const Attributes& other);
         Attributes& operator=(const Attributes& other);
+
+        /** Return a copy with explicitly assigned appearance channels from overrides.
+         * Transforms are preserved from this base. Unset channels retain the base style.
+         * textOnly keeps the base foreground and applies only text/font, fill opacity
+         * and blend settings, so control labels remain distinct from their backgrounds.
+         */
+        Attributes withAppearance(const Attributes& overrides, bool textOnly = false) const;
 
         // Line attributes
         Attributes& lineColor(const Color& color);
@@ -163,7 +171,7 @@ namespace pdg {
 
         float getRoundedCornerRadius() const { return mRoundedCornerRadius; }
         
-        const glm::mat3& getTransform() const { return mTransform; }
+        virtual const glm::mat3& getTransform() const { return mTransform; }
         BlendMode getBlendMode() const { return mBlendMode; }
 
         // Getters for new attributes
@@ -188,15 +196,31 @@ namespace pdg {
         SCRIPT_OBJECT_REF mAttributesScriptObj;
       #endif
 
-        virtual ~Attributes() {
-        #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
-          #ifndef PDG_NO_GUI
-            CleanupAttributesScriptObject(mAttributesScriptObj);
-          #endif
-        #endif
-        }
+        virtual ~Attributes();
+
+        /// @cond INTERNAL
+        // A live sample survives its source; destruction freezes its final values.
+        struct LiveSample;
+        std::shared_ptr<LiveSample> liveSample() const;
+        /// @endcond
+
+    protected:
+        virtual void assignAttributes(const Attributes& other);
+        virtual void setTransformImpl(const glm::mat3& matrix);
+        enum class TransformOperation { General, Translation, Scale };
+        virtual Attributes& composeTransform(const glm::mat3& matrix, TransformOperation operation);
+        enum AttributeChannel { LineColor, LineThickness, LineOpacity, Fill, FillOpacity, RoundedCorners, TextSize, Frame, Subsection, SphereRotation, PolarOffset, LightOffset, AmbientLight, StrokeStyle, Texture, Fit, Clip, Blend, TextStyle, Typeface };
+        virtual void validateAttributeEdit() const {}
+        virtual void attributeChanging(AttributeChannel channel) { markAppearance(channel); }
+        void markAppearance(AttributeChannel channel) { mAppearanceMask |= uint64(1) << channel; }
 
     private:
+        friend class AnimatedAttributesBase;
+        friend struct DrawingSnapshot;
+        mutable std::weak_ptr<LiveSample> mLiveSample;
+        std::shared_ptr<Image> mRetainedTexture;
+        std::shared_ptr<Font> mRetainedFont;
+        uint64 mAppearanceMask = 0;
         // Line properties
         Color mLineColor;
         float mLineThickness;
@@ -245,6 +269,15 @@ namespace pdg {
         Color mAmbientLight;
         Image* mTexture;
     };
+
+    /// @cond INTERNAL
+    struct Attributes::LiveSample {
+        const Attributes* source;
+        Attributes frozen;
+        explicit LiveSample(const Attributes* value) : source(value) {}
+        const Attributes& get() const { return source ? *source : frozen; }
+    };
+    /// @endcond
 
 } // end namespace pdg
 

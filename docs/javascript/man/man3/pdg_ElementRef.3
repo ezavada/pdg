@@ -1,4 +1,4 @@
-.TH "ElementRef" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ElementRef" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -17,6 +17,10 @@ ElementRef \- Reference to a drawing element that allows modification of its pro
 .br
 .RI "changes the control point at the specified index "
 .ti -1c
+.RI "\fBclearLiveAttributes\fP ()"
+.br
+.RI "Freeze the current attribute sample and release its live association\&. "
+.ti -1c
 .RI "\fBAttributes\fP \fBgetAttributes\fP ()"
 .br
 .RI "returns the attributes of the element "
@@ -28,6 +32,10 @@ ElementRef \- Reference to a drawing element that allows modification of its pro
 .RI "array \fBgetControlPoints\fP ()"
 .br
 .RI "returns all control points of the element "
+.ti -1c
+.RI "boolean \fBhasLiveAttributes\fP ()"
+.br
+.RI "Test whether this element holds a live sample association\&. "
 .ti -1c
 .RI "\fBmoveBackward\fP ()"
 .br
@@ -53,6 +61,10 @@ ElementRef \- Reference to a drawing element that allows modification of its pro
 .br
 .RI "sets the attributes of the element "
 .ti -1c
+.RI "\fBsetLiveAttributes\fP (\fBAttributes\fP attrs)"
+.br
+.RI "Associate an element with a live \fBAttributes\fP or \fBAnimatedAttributes\fP source\&. "
+.ti -1c
 .RI "uint \fBtype\fP ()"
 .br
 .RI "returns the type of the element "
@@ -60,16 +72,48 @@ ElementRef \- Reference to a drawing element that allows modification of its pro
 .SH "Detailed Description"
 .PP 
 Reference to a drawing element that allows modification of its properties and control points\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&. 
+.RE
+.PP
+
 .SH "Member Function Documentation"
 .PP 
 .SS "changeControlPoint (uint controlPointIndex, \fBPoint\fP controlPoint)"
 
 .PP
 changes the control point at the specified index 
+.SS "clearLiveAttributes ()"
+
+.PP
+Freeze the current attribute sample and release its live association\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Nothing\&. A removed or already unassociated element is unchanged\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetLiveAttributes()\fP 
+.RE
+.PP
+
 .SS "\fBAttributes\fP getAttributes ()"
 
 .PP
-returns the attributes of the element 
+returns the attributes of the element Returns an independent snapshot of the current values, including a live source sample\&. 
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetLiveAttributes()\fP, \fBsetAttributes()\fP 
+.RE
+.PP
+
 .SS "\fBPoint\fP getControlPoint (uint controlPointIndex)"
 
 .PP
@@ -78,6 +122,17 @@ returns the control point at the specified index
 
 .PP
 returns all control points of the element 
+.SS "boolean hasLiveAttributes ()"
+
+.PP
+Test whether this element holds a live sample association\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True until \fBclearLiveAttributes()\fP, \fBsetAttributes()\fP or removal, including an association holding a frozen sample after source destruction\&. 
+.RE
+.PP
+
 .SS "moveBackward ()"
 
 .PP
@@ -101,7 +156,60 @@ removes the element from the drawing
 .SS "setAttributes (\fBAttributes\fP attrs)"
 
 .PP
-sets the attributes of the element 
+sets the attributes of the element Copies the current values and clears any live association\&. Later source changes do not affect this element\&. 
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetLiveAttributes()\fP, \fBclearLiveAttributes()\fP, \fBgetAttributes()\fP 
+.RE
+.PP
+
+.SS "setLiveAttributes (\fBAttributes\fP attrs)"
+
+.PP
+Associate an element with a live \fBAttributes\fP or \fBAnimatedAttributes\fP source\&. Rendering, bounds queries and hit tests read the source's current values\&. Multiple elements may share one source\&. Geometry and control points remain unchanged\&. The association follows the element when it is reordered; removed references never retarget a different element\&. Calling \fBsetAttributes()\fP replaces the association with a copy\&. \fBclearLiveAttributes()\fP freezes its current sample\&.
+
+.PP
+The association retains its final values and image/font resources if the source is destroyed or garbage collected\&. It does not retain or run the source's animation schedule\&. Advance a standalone \fBAnimatedAttributes\fP with animate(deltaSeconds), once per update regardless of how many elements share it or how often they are drawn\&. Keep a reference to the source while you intend to edit or advance it\&.
+
+.PP
+\fBDrawing\fP snapshots serialize current values, not the association or its schedule\&. \fBgetAttributes()\fP continues to return an independent value snapshot\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIattrs\fP Source whose values the element should follow\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Nothing\&. A removed element ignores this call\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const drawing = pdg\&.createDrawing();
+const style = new pdg\&.AnimatedAttributes()\&.fillColor(new pdg\&.Color(1, 0, 0));
+const element = drawing\&.addRect(new pdg\&.Rect(0, 0, 40, 40), style);
+element\&.setLiveAttributes(style);
+style\&.moveTo(100, 0, 1, pdg\&.linearTween);
+// In your update callback, advance style\&.animate(deltaSeconds) once\&.
+// Every subsequent draw uses the current sample automatically\&.
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBclearLiveAttributes()\fP, \fBhasLiveAttributes()\fP, \fBsetAttributes()\fP, \fBgetAttributes()\fP 
+.RE
+.PP
+
 .SS "uint type ()"
 
 .PP

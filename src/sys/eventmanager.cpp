@@ -29,6 +29,7 @@
 
 
 #include "pdg_project.h"
+#include <vector>
 
 #ifdef _MSC_VER
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
@@ -39,7 +40,7 @@
 #include "pdg/sys/events.h"
 
 #ifndef PDG_NO_EVENT_QUEUE
-#include "pdg/sys/mutex.h"
+#include <mutex>
 #endif // PDG_NO_EVENT_QUEUE
 
 // define the following in your build environment, or uncomment it here to get
@@ -57,6 +58,10 @@ namespace pdg {
 
 const char* getEventName(long eventType) {
     switch (eventType) {
+    case eventType_ParticleBreak:
+        return "eventType_ParticleBreak";
+    case eventType_ColliderContact:
+        return "eventType_ColliderContact";
     case all_events:
     	return "ALL EVENTS";
 	case eventType_Startup:
@@ -99,6 +104,8 @@ const char* getEventName(long eventType) {
 		return "eventType_SpriteTouch";
 	case eventType_SpriteCollide:
 		return "eventType_SpriteCollide";
+    case eventType_SpriteBreak:
+        return "eventType_SpriteBreak";
 	case eventType_MouseEnter:
 		return "eventType_MouseEnter";
 	case eventType_MouseLeave:
@@ -161,7 +168,7 @@ void
 EventManager::clear(bool doRelease) {
     EventEmitter::clear(doRelease);
 #ifndef PDG_NO_EVENT_QUEUE
-    AutoMutex mutex(&mEventQueueMutex);
+    std::lock_guard lock(mEventQueueMutex);
     DEBUG_ONLY( if (mEventQueue.size() != 0) OS::_DOUT("WARNING: unhandled events in queue when EventMgr::clear() called"); )
     while (mEventQueue.size() > 0) {
         EventQueueEntry& evt = mEventQueue.front();
@@ -191,7 +198,7 @@ EventManager::unblockEvent(long inEventType) {
 void 
 EventManager::enqueueEvent(long inEventType, UserData* inEventData, EventEmitter* inEmitter) {
  // mutexed for posting events between threads
-    AutoMutex mutex(&mEventQueueMutex);
+    std::lock_guard lock(mEventQueueMutex);
     DEBUG_ASSERT(inEventData != 0, "bad event data ptr");
     EventQueueEntry entry(inEventType, inEventData, inEmitter);
     mEventQueue.push(entry);
@@ -200,7 +207,7 @@ EventManager::enqueueEvent(long inEventType, UserData* inEventData, EventEmitter
 bool 
 EventManager::getQueuedEvent(long& outEventType, UserData*& outEventData, EventEmitter*& outEmitter) {
  // mutexed for posting events between threads
-    AutoMutex mutex(&mEventQueueMutex);
+    std::lock_guard lock(mEventQueueMutex);
     if (mEventQueue.size() == 0) {
         return false;
     } else {
@@ -213,55 +220,30 @@ EventManager::getQueuedEvent(long& outEventType, UserData*& outEventData, EventE
     }
 }
 
-void 
+void
 EventManager::RemoveEnqueuedEventsForEmitter(EventEmitter* emitter) {
-    AutoMutex mutex(&mEventQueueMutex);
-    if (mEventQueue.empty()) {
-        return;
-    }
-    std::queue<EventQueueEntry> temp_q;
-    while (!mEventQueue.empty()) {
-        EventQueueEntry entry = mEventQueue.front();
-        mEventQueue.pop();
-        if (entry.emitter != emitter) {
-            temp_q.push(entry);
-        }
-    }
-    mEventQueue = temp_q; // Transfer elements back
+    RemoveEnqueuedEvents([emitter](EventQueueEntry entry){return entry.emitter==emitter;});
 }
-
 void
 EventManager::RemoveEnqueuedEvents(std::function<bool(EventQueueEntry)> predicate) {
-    AutoMutex mutex(&mEventQueueMutex);
-    if (mEventQueue.empty()) {
-        return;
-    }
-    std::queue<EventQueueEntry> temp_q;
-    while (!mEventQueue.empty()) {
-        EventQueueEntry entry = mEventQueue.front();
-        mEventQueue.pop();
-        if (!predicate(entry)) {
-            temp_q.push(entry);
+    std::vector<UserData*> removed;
+    {
+        std::lock_guard lock(mEventQueueMutex);
+        std::queue<EventQueueEntry> retained;
+        while(!mEventQueue.empty()) {
+            auto entry=mEventQueue.front();mEventQueue.pop();
+            if(predicate(entry))removed.push_back(entry.userData);
+            else retained.push(entry);
         }
+        mEventQueue.swap(retained);
     }
-    mEventQueue = temp_q; // Transfer elements back
+    // Releasing an event can destroy its last Sprite reference and reenter the
+    // event manager. Never run ownership callbacks under the queue mutex.
+    for(auto* data:removed)if(data)data->release();
 }
-
 void
 EventManager::RemoveEnqueuedEventsByType(long eventType) {
-    AutoMutex mutex(&mEventQueueMutex);
-    if (mEventQueue.empty()) {
-        return;
-    }
-    std::queue<EventQueueEntry> temp_q;
-    while (!mEventQueue.empty()) {
-        EventQueueEntry entry = mEventQueue.front();
-        mEventQueue.pop();
-        if (entry.eventType != eventType) {
-            temp_q.push(entry);
-        }
-    }
-    mEventQueue = temp_q; // Transfer elements back
+    RemoveEnqueuedEvents([eventType](EventQueueEntry entry){return entry.eventType==eventType;});
 }
 
 #endif // PDG_NO_EVENT_QUEUE

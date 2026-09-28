@@ -47,8 +47,8 @@ mbkColor(bkColor),mTextColor(sTextColor),mhighlightColor(highlightColor),mTextSi
 	mShowDownArrow = false;
 	mOldScrollPos = Point(0,0);
 
-	mViewArea.left = topLeft.x;
-	mViewArea.top = topLeft.y;
+	setViewArea(Rect(topLeft, 0, 0));
+    mBaseRect = getViewArea();
 
     mMinWidth = 0;
 }
@@ -65,8 +65,7 @@ mbkColor(bkColor),mTextColor(sTextColor),mhighlightColor(highlightColor),mTextSi
 	mShowDownArrow = false;
 	mOldScrollPos = Point(0,0);
 
-	mViewArea.left = area.left;
-	mViewArea.top = area.top;
+	setViewArea(area);
 
     mMinWidth = area.width();
     
@@ -82,7 +81,7 @@ void PopupMenu::sanitiseViewArea()
 {
     // figure out how big we need to be
 	int fontHeight = mPort->getCurrentFont()->getFontHeight(mTextSize) + ITEM_SIZE_OFFSET;
-	int requiredWidth = TEXT_WIDTH_OFFSET + mPort->getTextWidth(mLongestText.c_str(),mTextSize,(Style)(textStyle_Bold + textStyle_Italic + textStyle_Underline),mLongestText.length()); 
+	int requiredWidth = TEXT_WIDTH_OFFSET + getDrawingTextWidth(mLongestText.c_str(),mTextSize,(Style)(textStyle_Bold + textStyle_Italic + textStyle_Underline),mLongestText.length());
     if (mMinWidth && (requiredWidth < mMinWidth)) {
         requiredWidth = mMinWidth;
     }
@@ -92,11 +91,11 @@ void PopupMenu::sanitiseViewArea()
     int requiredHeight = mItemList.size() * fontHeight;
 
     // always start from where the item is located    
-    mViewArea = mBaseRect;
+    Rect area = mBaseRect;
 
     // now adjust width and height to accomodate items
-	mViewArea.setWidth(requiredWidth);
-	mViewArea.setHeight(requiredHeight);
+	area.setWidth(requiredWidth);
+	area.setHeight(requiredHeight);
 
     // sanitize the rectangle
 
@@ -104,59 +103,60 @@ void PopupMenu::sanitiseViewArea()
 
 // first check height and width of view area is less than mPort->getDrawingArea()
 // if not reduce it to fit in mPort->getDrawingArea()
-	if (!parentGlobalRect.contains(mViewArea))
+	if (!parentGlobalRect.contains(area))
 	{
 // check if width and/or height of menu view is more than mPort->getDrawingArea()
 		int parentHeight = parentGlobalRect.height();
 		int parentWidth = parentGlobalRect.width();
 		
-		int viewHeight = mViewArea.height();
-		int viewWidth = mViewArea.width();
+		int viewHeight = area.height();
+		int viewWidth = area.width();
 		
 		if (parentHeight < viewHeight) // adjust menu view Height
 		{
-			mViewArea.setHeight(parentHeight);
+			area.setHeight(parentHeight);
 		}
 		if (parentWidth < viewWidth) // adjust menu view width
 		{
-			mViewArea.setWidth(parentWidth - VIEW_WIDTH_OFFSET);
+			area.setWidth(parentWidth - VIEW_WIDTH_OFFSET);
 		}
 
 // check if menu view is crossing bottom boundaries of mPort->getDrawingArea(),
 // if yes, shift it up.
 
-		if (mViewArea.bottom > parentGlobalRect.bottom) // menu view is crossing left boundary of parent
+		if (area.bottom > parentGlobalRect.bottom) // menu view is crossing left boundary of parent
 		{
-			int vShift = (mViewArea.bottom - parentGlobalRect.bottom);
-			mViewArea.moveUp(vShift);
+			int vShift = (area.bottom - parentGlobalRect.bottom);
+			area.moveUp(vShift);
 		}
 
 // check if menu view is crossing left/right boundaries of mPort->getDrawingArea(),
 // if yes, shift it left or right.
 
-		if (mViewArea.left < parentGlobalRect.left) // menu view is crossing left boundary of parent
+		if (area.left < parentGlobalRect.left) // menu view is crossing left boundary of parent
 		{
-			int hShift = (parentGlobalRect.left - mViewArea.left) + VIEW_HSHIFT_OFFSET;
-			mViewArea.moveRight(hShift);
+			int hShift = (parentGlobalRect.left - area.left) + VIEW_HSHIFT_OFFSET;
+			area.moveRight(hShift);
 		}
-		if (mViewArea.right > parentGlobalRect.right) // menu view is crossing right boundary of parent
+		if (area.right > parentGlobalRect.right) // menu view is crossing right boundary of parent
 		{
-			int hShift = (mViewArea.right - parentGlobalRect.right) + VIEW_HSHIFT_OFFSET;
-			mViewArea.moveLeft(hShift);
+			int hShift = (area.right - parentGlobalRect.right) + VIEW_HSHIFT_OFFSET;
+			area.moveLeft(hShift);
 		}
 	}
 
 // do we need scrollable menu?
-	mItemShowable = mViewArea.height() / fontHeight;
+	mItemShowable = area.height() / fontHeight;
 	if ((unsigned)mItemShowable < mItemList.size()) {
 		mNeedScrolling = true;
 	} else {
 	    mNeedScrolling = false;
 	}
 
-	if (mItemShowable * fontHeight < mViewArea.height()) {
-	    mViewArea.setHeight(mItemShowable * fontHeight);
+	if (mItemShowable * fontHeight < area.height()) {
+	    area.setHeight(mItemShowable * fontHeight);
 	}
+    setViewArea(area);
 }
 
 void PopupMenu::scrollMenu(int nItems) 
@@ -229,87 +229,99 @@ void PopupMenu::drawSelf()
 // to highlight item
 		if (mHotItem == item.mItemID)
 		{
-			mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
+			mPort->drawRect(tempRect, getDrawingAttributes(Attributes().fillColor(mbkColor)));
 			tempRect.shrink(HIGHLIGHT_AREA_MARGIN);
-			mPort->drawRect(tempRect, Attributes().fillColor(mhighlightColor));
+			mPort->drawRect(tempRect, getDrawingAttributes(Attributes().fillColor(mhighlightColor)));
 		}
 		else
 		{
-			mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
+			mPort->drawRect(tempRect, getDrawingAttributes(Attributes().fillColor(mbkColor)));
 			tempRect.shrink(HIGHLIGHT_AREA_MARGIN);
 		}
 // draw item vertically centered
-		int fontHeight = mPort->getCurrentFont(item.mStyle)->getFontHeight(mTextSize,item.mStyle);
+		const Attributes textAttrs = getDrawingAttributes(Attributes().textSize(mTextSize).textStyle(item.mStyle), true);
+        Font* font = textAttrs.getFont() ? textAttrs.getFont() : mPort->getCurrentFont(textAttrs.getTextStyle());
+        int fontHeight = font->getFontHeight(textAttrs.getTextSize(), textAttrs.getTextStyle());
 		Point textPoint(tempRect.left,tempRect.top); 
 		textPoint.y = textPoint.y + fontHeight - (tempRect.height() - fontHeight)/2 ;
 		textPoint.x += HIGHLIGHT_AREA_MARGIN + TEXT_LEFT_MARGIN;
 // check if text is crossing width of menu, if yes, draw cliped text
-		int fontWidth = mPort->getTextWidth(item.mItemString.c_str(),mTextSize,item.mStyle,item.mItemString.length());
+		int fontWidth = getDrawingTextWidth(item.mItemString.c_str(),mTextSize,item.mStyle,item.mItemString.length());
 		if (fontWidth > mViewArea.width() - HIGHLIGHT_AREA_MARGIN + TEXT_LEFT_MARGIN)
 		{
-			int clipTextWidth = mPort->getTextWidth(CLIP_TEXT,mTextSize,item.mStyle);
+			int clipTextWidth = getDrawingTextWidth(CLIP_TEXT,mTextSize,item.mStyle);
 			int drawableTextWidth = mViewArea.width() - clipTextWidth - (HIGHLIGHT_AREA_MARGIN *4) - TEXT_LEFT_MARGIN;
 			std::string aString;
 			for(unsigned int i=0; i< item.mItemString.length(); i++)
 			{
 				aString = item.mItemString.substr(0,i);
-				fontWidth = mPort->getTextWidth(aString.c_str(),mTextSize,item.mStyle,aString.length());
+				fontWidth = getDrawingTextWidth(aString.c_str(),mTextSize,item.mStyle,aString.length());
 				if (fontWidth >= drawableTextWidth)
 					break;
 			}
 			aString += CLIP_TEXT;
-			mPort->drawText(aString.c_str(), textPoint, Attributes().textSize(mTextSize).textStyle(item.mStyle).fillColor(mTextColor));
+			mPort->drawText(aString.c_str(), textPoint, getDrawingAttributes(Attributes().textSize(mTextSize).textStyle(item.mStyle).fillColor(mTextColor), true));
 		}
 		else
-			mPort->drawText(item.mItemString.c_str(), textPoint, Attributes().textSize(mTextSize).textStyle(item.mStyle).fillColor(mTextColor));
+			mPort->drawText(item.mItemString.c_str(), textPoint, getDrawingAttributes(Attributes().textSize(mTextSize).textStyle(item.mStyle).fillColor(mTextColor), true));
 	}
 
 /*	if (mNeedScrolling && mScrollImages[0] && mScrollImages[1] && mScrollImages[2] && mScrollImages[3])
 	{
 // for up arrow
 		Rect tempRect = localToGlobal(View::getClickableRectFromID(ITEM_UP_ARROW));
-			mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
+			mPort->drawRect(tempRect, getDrawingAttributes(Attributes().fillColor(mbkColor)));
 		if (mShowUpArrow) // draw enabled up arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[0]->width) /2 ;
 			imagePoint.y += (tempRect.height() - mScrollImages[0]->height) /2;
-			mPort->drawImage(mScrollImages[0], imagePoint, Attributes());
+			mPort->drawImage(mScrollImages[0], imagePoint, getDrawingAttributes(Attributes()));
 		}
 		else // draw disabled up arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[1]->width) /2 ;
 			imagePoint.y += (tempRect.height() - mScrollImages[1]->height) /2;
-			mPort->drawImage(mScrollImages[1], imagePoint, Attributes());
+			mPort->drawImage(mScrollImages[1], imagePoint, getDrawingAttributes(Attributes()));
 		}
 
 // for down arrow
 		tempRect = localToGlobal(View::getClickableRectFromID(ITEM_DOWN_ARROW));
-		mPort->drawRect(tempRect, Attributes().fillColor(mbkColor));
+		mPort->drawRect(tempRect, getDrawingAttributes(Attributes().fillColor(mbkColor)));
 		if (mShowDownArrow) // draw enabled down arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[2]->width) /2 ;
 			imagePoint.y += (tempRect.height() - mScrollImages[2]->height) /2;
-			mPort->drawImage(mScrollImages[2], imagePoint, Attributes());
+			mPort->drawImage(mScrollImages[2], imagePoint, getDrawingAttributes(Attributes()));
 		}
 		else // draw disabled down arrow
 		{
 			Point imagePoint = tempRect.leftTop(); 
 			imagePoint.x += (tempRect.width() - mScrollImages[3]->width) /2 ;
 			imagePoint.y += (tempRect.height() - mScrollImages[3]->height) /2;
-			mPort->drawImage(mScrollImages[3], imagePoint, Attributes());
+			mPort->drawImage(mScrollImages[3], imagePoint, getDrawingAttributes(Attributes()));
 		}
 	} */
 
 	if (mItemList.size() > 0)// draw menu border
 	{
-		mPort->drawLine(leftTop,rightTop, Attributes().lineColor(PDG_GRAY_50_COLOR).lineThickness(1));
-		mPort->drawLine(leftTop,leftBottom, Attributes().lineColor(PDG_GRAY_50_COLOR).lineThickness(1));
-		mPort->drawLine(rightTop,rightBottom, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1));
-		mPort->drawLine(leftBottom,rightBottom, Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1));
+		mPort->drawLine(leftTop, rightTop, getDrawingAttributes(Attributes().lineColor(PDG_GRAY_50_COLOR).lineThickness(1), true));
+		mPort->drawLine(leftTop, leftBottom, getDrawingAttributes(Attributes().lineColor(PDG_GRAY_50_COLOR).lineThickness(1), true));
+		mPort->drawLine(rightTop, rightBottom, getDrawingAttributes(Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1), true));
+		mPort->drawLine(leftBottom, rightBottom, getDrawingAttributes(Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1), true));
 	}
+}
+
+void PopupMenu::viewAreaChanged(const Rect& previous) {
+    View::viewAreaChanged(previous);
+    const float sx = previous.width() ? mViewArea.width()/previous.width() : 1;
+    const float sy = previous.height() ? mViewArea.height()/previous.height() : 1;
+    for (auto& item : mDrawableItemList) {
+        item.first.left *= sx; item.first.right *= sx;
+        item.first.top *= sy; item.first.bottom *= sy;
+    }
 }
 
 void PopupMenu::calcClickableAreas()
@@ -336,8 +348,8 @@ void PopupMenu::calcClickableAreas()
 		{
 			Rect clickArea(itemTLPoint, itemBRPoint);
 			ItemInfo item = *itr;
-			this->addClickablePart(globalToLocal(clickArea),item.mItemID);
-			addDrawableItemPart(globalToLocal(clickArea),item);
+			this->addClickablePart(clickArea - mViewArea.leftTop(),item.mItemID);
+			addDrawableItemPart(clickArea - mViewArea.leftTop(),item);
 			itemTLPoint.y += fontHeight;
 			itemBRPoint.y += fontHeight;
 		}
@@ -352,8 +364,8 @@ void PopupMenu::calcClickableAreas()
 		{
 			Rect clickArea(itemTLPoint, itemBRPoint);
 			ItemInfo item = *itr;
-			this->addClickablePart(globalToLocal(clickArea),item.mItemID);
-			addDrawableItemPart(globalToLocal(clickArea),item);
+			this->addClickablePart(clickArea - mViewArea.leftTop(),item.mItemID);
+			addDrawableItemPart(clickArea - mViewArea.leftTop(),item);
 			itemTLPoint.y += fontHeight;
 			itemBRPoint.y += fontHeight;
 		}
@@ -368,7 +380,7 @@ void PopupMenu::calcClickableAreas()
 		itemBRPoint.x = itemTLPoint.x + (mViewArea.width() / MAX_ARROW_IMAGES);
 // add rect for up arrow
 		Rect clickArea(itemTLPoint, itemBRPoint);
-		this->addClickablePart(globalToLocal(clickArea), ITEM_UP_ARROW);
+		this->addClickablePart(clickArea - mViewArea.leftTop(), ITEM_UP_ARROW);
 		itemTLPoint.x = itemBRPoint.x;
 		itemBRPoint.x = mViewArea.right;
 		this->addClickablePart(globalToLocal(Rect(itemTLPoint, itemBRPoint)),ITEM_DOWN_ARROW);
@@ -600,8 +612,7 @@ const char* PopupMenu::getItemStringByIndex(int index)
 	{
 		if (index == count)
 		{
-			ItemInfo item = *itr;
-			return item.mItemString.c_str();						
+			return itr->mItemString.c_str();
 		}
 	}
 	return NULL;

@@ -52,8 +52,12 @@
 #endif
 
 #include <vector>
+#include <set>
 
 namespace pdg {
+class CollisionWorld;
+class Particle;
+class ParticleEmitter;
 
 #ifndef PDG_NO_GUI
 class Port;
@@ -90,7 +94,7 @@ enum {
 	ser_InitialData =   1 << 14, // send whatever is needed to initialize everything
 	ser_Micro =	ser_Positions | ser_ZOrder,
 	ser_Update = ser_Micro | ser_Sizes | ser_Animations | ser_Motion | ser_Forces | ser_Physics,
-	ser_Full = ser_Update | ser_ImageRefs | ser_SCMLRefs | ser_HelperRefs | ser_InitialData
+	ser_Full = ser_Update | ser_LayerDraw | ser_ImageRefs | ser_SCMLRefs | ser_HelperRefs | ser_InitialData
 };
 
 // -----------------------------------------------------------------------------------
@@ -98,14 +102,44 @@ enum {
 // Used to create and track collections of sprites
 // -----------------------------------------------------------------------------------
 
-class SpriteLayer : public EventEmitter, public Animated, public Serializable<SpriteLayer> 
+class SpriteLayer : public EventEmitter, public Animated<SpriteLayer>, public Serializable<SpriteLayer>
 {
 friend class Sprite;
+    /// @cond INTERNAL
+    friend class PhysicsGraphSnapshot;
+    /// @endcond
+friend class Part;
+friend class Particle;
+friend class ParticleEmitter;
 friend class SpriteManager;
+    std::vector<Particle*> mParticles, mParticleStep;
+    std::vector<ParticleEmitter*> mParticleEmitters;
+    uint32 mMaxParticles = 10000;
+    bool mParticlesPrepared = false;
+    void advanceParticles(double seconds);
+    void finishParticles(double seconds);
+    std::unique_ptr<CollisionWorld> mCollisionWorld;
+    bool allowsColliderWorld(const void* other) const;
+    void prepareColliders(void* space);
+    void solveColliders(double seconds);
 public:
+    /** Create a layer-owned particle; null when the particle budget is full. */
+    Particle* createParticle();
+    void addParticle(Particle* particle);
+    void removeParticle(Particle* particle);
+    void removeAllParticles();
+    uint32 getParticleCount() const { return static_cast<uint32>(mParticles.size()); }
+    Particle* getNthParticle(uint32 index) const;
+    SpriteLayer& setMaxParticles(uint32 count) { mMaxParticles = count; return *this; }
+    uint32 getMaxParticles() const { return mMaxParticles; }
+    ParticleEmitter* createParticleEmitter();
+    void removeParticleEmitter(ParticleEmitter* emitter);
+    void removeAllParticleEmitters();
     
-	SERIALIZABLE_TAG( CLASSTAG_SPRITE_LAYER )
-	SERIALIZABLE_METHODS()
+    uint32 getMyClassTag() const override { return CLASSTAG_SPRITE_LAYER; }
+    uint32 getSerializedSize(ISerializer*) const override;
+    void serialize(ISerializer*) const override;
+    void deserialize(IDeserializer*) override;
 	void setSerializationFlags(uint32 flags);
 
 	enum {
@@ -147,8 +181,8 @@ public:
     virtual void	hide();
     virtual void	show();
 	virtual bool	isHidden();
-	virtual void	fadeIn(ms_delta msDuration, EasingFunc easing = linearTween);  // fadeInComplete notification when done
-	virtual void	fadeOut(ms_delta msDuration, EasingFunc easing = linearTween);  // fadeOutComplete notification when done
+	virtual void	fadeIn(double durationSeconds, EasingFunc easing = linearTween);  // fadeInComplete notification when done
+	virtual void	fadeOut(double durationSeconds, EasingFunc easing = linearTween);  // fadeOutComplete notification when done
 	
 	// arrange layers
 	virtual void	moveBehind(SpriteLayer* layer);
@@ -181,9 +215,9 @@ public:
 	float           getZoom() const;
 
 	 // keeps centered, taking into account layer center offset
-	virtual void	zoomTo(float zoomLevel, ms_delta msDuration, EasingFunc easing = easeInOutQuad, 
+	virtual void	zoomTo(float zoomLevel, double durationSeconds, EasingFunc easing = easeInOutQuad, 
 							Rect keepInRect = Rect(0,0), const Point* centerOn = 0);
-	void			zoom(float deltaZoomLevel, ms_delta msDuration, EasingFunc easing = easeInOutQuad, 
+	void			zoom(float deltaZoomLevel, double durationSeconds, EasingFunc easing = easeInOutQuad, 
 							Rect keepInRect = Rect(0,0), const Point* centerOn = 0);
   #endif // ! PDG_NO_GUI
 
@@ -272,9 +306,21 @@ public:
 #ifndef PDG_INTERNAL_LIB
 protected:
 #endif
-/// @cond C++
+/// @cond CXX
+
+    std::vector<const float*> tweenFields() const override;
+    void validateInitialSnapshot() const;
+    void readSerializedState(IDeserializer* deserializer, uint32 flags);
+    void adoptInitialSnapshot(SpriteLayer& staged);
+    uint32 mountSnapshotSize(ISerializer*) const;
+    void serializeMounts(ISerializer*) const;
+    void deserializeMounts(IDeserializer*);
 
 	Sprite*	findSpriteByInternalId(uint32 iid) const; 	// find a sprite in the layer by internal id.
+    static std::vector<Sprite*> attachmentGroup(Sprite* root);
+    void insertSprite(Sprite* sprite, Sprite* after);
+    void unlinkSprite(Sprite* sprite);
+    void reorderSprite(Sprite* sprite, Sprite* after);
 	void quickSwapSprites(Sprite* s1, Sprite* s2);  // swap z-order of two sprites already in layer
 
   #ifndef PDG_NO_GUI
@@ -282,12 +328,12 @@ protected:
   #endif
     SpriteLayer();
     virtual ~SpriteLayer();
-	virtual void	locationChanged(const Offset& delta);
-    virtual void    rotationChanged(float deltaRadians);
+	virtual void	locationChanged(const Offset& delta) override;
+    virtual void    rotationChanged(float deltaRadians) override;
 
   #ifndef PDG_NO_GUI
   	// zoom is a visual effect only, so we don't worry about it on a non-gui build
-    virtual void    easingCompleted(const Animation& a);  // override for zoom-based easing
+    virtual void    easingCompleted(const Animation& a) override;  // override for zoom-based easing
 	virtual void	zoomChanged(float deltaZoom);
 	// layer drawing
 	virtual void drawLayer();
@@ -296,7 +342,6 @@ protected:
 	virtual void animateLayer(ms_delta msElapsed);
 
     // do collision between layers
-	virtual void    collide(ms_delta msElapsed, SpriteLayer* withLayer, bool deferEvents = false);
 
 	// sprite action notifications
 	// normally these notifications will be enqueued to be handled at the end of the event loop,
@@ -332,8 +377,8 @@ protected:
 	bool mDoCollisions;
 	bool mWantsMouseOver;
 	bool mWantsClicks;
-	ms_time mDoneFadingInAt;
-	ms_time mDoneFadingOutAt;
+	ms_time mDoneFadingInAt = 0;
+	ms_time mDoneFadingOutAt = 0;
 
   #ifndef PDG_NO_GUI
 	float mZoom;
@@ -350,7 +395,7 @@ protected:
   #endif
 
   #ifdef PDG_SPRITER_SUPPORT
-	std::list<std::pair<std::string, SpriterEngine::SpriterModel*>> mModels;
+	std::list<std::pair<std::string, std::shared_ptr<SpriterEngine::SpriterModel>>> mModels;
   #endif
 
 	SpriteLayer* mNextLayer;
@@ -424,9 +469,9 @@ SpriteLayer::getZoom() const {
 }
 
 inline void	
-SpriteLayer::zoom(float deltaZoom, ms_delta msDuration, EasingFunc easing, 
+SpriteLayer::zoom(float deltaZoom, double durationSeconds, EasingFunc easing, 
 				Rect keepInRect, const Point* centerOn) {
-	zoomTo(mZoom * deltaZoom, msDuration, easing, keepInRect, centerOn);
+	zoomTo(mZoom * deltaZoom, durationSeconds, easing, keepInRect, centerOn);
 }
 
 inline Port*   
@@ -444,6 +489,8 @@ SpriteLayer::setStaticLayer(bool isStatic) {
 
 inline void
 SpriteLayer::setUseChipmunkPhysics(bool useIt) {
+	if (useIt != mUseChipmunkPhysics && !mParticles.empty())
+        throw std::logic_error("Configure layer physics before adding particles");
 	DEBUG_ASSERT(mFirstSprite == 0, "SpriteLayer::setUseChipmunkPhysics() must be called before any sprites are added to this layer");
     mUseChipmunkPhysics = useIt;
 }

@@ -1,0 +1,122 @@
+/**
+\fn Port pdg::GraphicsManager::createOffscreenPort(Rect rect)
+\brief Create a transparent drawing surface without opening a window.
+
+The returned Port supports the usual drawing methods, fonts, Attributes, retained
+Drawings, and clipping. It starts with transparent black pixels. Drawing persists
+between calls; the frame loop does not clear the surface or send it PortDraw events.
+Draw directly whenever its contents need updating.
+
+\param rect Its width and height must be positive whole numbers within the graphics
+backend's texture-size limit. Its position is ignored; the drawing area starts at (0, 0).
+\return A Port managed by GraphicsManager, or null if the size is invalid or the
+backend cannot allocate the surface. Release it with closeGraphicsPort(). Do not
+use a Port after closing it.
+
+\note Requires a graphics-enabled build, including web builds. A main port or visible
+window is not required. Offscreen ports do not become the main port. If a main port
+exists at creation, they share its graphics context; closing that window also closes
+its offscreen ports. Images already created from them remain valid.
+\note API stability: 2 — Evolving.
+
+\par Example
+\code{.js}
+const surface = pdg.gfx.createOffscreenPort(new pdg.Rect(256, 128));
+if (!surface) throw new Error('Could not allocate drawing surface');
+surface.drawRect(new pdg.Rect(16, 16, 240, 112),
+    new pdg.Attributes().fillColor('blue').lineStyle(pdg.lineStyle_None));
+const image = new pdg.Image(surface, pdg.CopyPixels);
+pdg.gfx.closeGraphicsPort(surface);
+// image can now be used with Port.drawImage(), Attributes.texture(), or a Sprite.
+\endcode
+\see Image::Image(Port, boolean), closeGraphicsPort()
+*/
+
+/**
+\fn pdg::Image::Image(Port port, boolean copyPixels)
+\brief Create an independent snapshot or a live image of an offscreen surface.
+
+\param port An open Port returned by GraphicsManager::createOffscreenPort().
+\param copyPixels Defaults to pdg.CopyPixels (true): copy the current RGBA pixels into
+an independent image. With pdg.SharedSurface (false), retain the shared drawing surface:
+subsequent Port drawing is visible the next time the image is drawn, without constructing
+another image or uploading pixels when both use the same graphics context. Literal
+booleans remain supported; an omitted or undefined flag uses CopyPixels.
+
+Creates an Image with the port's dimensions and transparency. Throws an Error for an
+onscreen port and TypeError for a non-boolean copyPixels. Use new with this constructor.
+
+Both kinds of image remain usable after the source port closes. Closing a port with
+live images prevents further drawing through that port but retains its final surface
+until the last live image is released. Closing the underlying graphics context preserves
+its final pixels for surviving images. Drawing does not depend on which clip rectangle
+was active when the image was created: the image always represents the whole surface.
+
+Pixel reads and serialization of live images read the current contents. Serialized
+images are snapshots and do not restore a connection to a Port. Drawing across independent
+graphics contexts, or drawing a live image back into its own source, uses a pixel snapshot.
+Calling setTransparentColor() on a live image converts that image to an independent
+snapshot before applying the color key.
+
+\note Requires a graphics-enabled build. Shared images retain graphics memory until
+released, even after closeGraphicsPort(). An image's opacity is independent of the port.
+\note API stability: 2 — Evolving.
+
+\par Example
+\code{.js}
+const surface = pdg.gfx.createOffscreenPort(new pdg.Rect(128, 128));
+if (!surface) throw new Error('Could not allocate drawing surface');
+const live = new pdg.Image(surface, pdg.SharedSurface);
+surface.drawEllipse(new pdg.Point(64, 64), 40, 40,
+    new pdg.Attributes().fillColor('red').lineStyle(pdg.lineStyle_None));
+// Drawing live now shows the red circle; further surface drawing updates it too.
+const frozen = new pdg.Image(surface, pdg.CopyPixels);
+// frozen keeps this circle even when the surface changes.
+\endcode
+\see GraphicsManager::createOffscreenPort(), Port::drawImage(), getPixel()
+*/
+
+/**
+\var pdg::CopyPixels
+\brief Copy an offscreen surface's current pixels into an independent Image.
+Read-only boolean constant equal to true. The default for Image::Image(Port, boolean).
+Available in every JavaScript runtime;
+constructing images from a Port requires graphics support.
+\ingroup Graphics
+*/
+
+/**
+\var pdg::SharedSurface
+\brief Share an offscreen surface so later Port drawing updates the Image.
+Read-only boolean constant equal to false. Use new pdg.Image(port, pdg.SharedSurface).
+The Image retains the surface after the source Port closes. Available in every
+JavaScript runtime; constructing images from a Port requires graphics support.
+\ingroup Graphics
+*/
+
+/**
+\fn undefined pdg::Port::clear(Color color)
+\brief Replace pixels inside the current clip with an exact color.
+\param color Defaults to transparent black. Alpha replaces the previous alpha;
+this differs from drawing a translucent rectangle, which blends with existing pixels.
+
+Works on graphics-enabled onscreen and offscreen ports. The current clip is unchanged.
+Live images made from an offscreen port reflect the clear on their next draw.
+\note API stability: 2 — Evolving.
+\see setClipRect(), resetClipRect(), GraphicsManager::createOffscreenPort()
+*/
+
+/**
+\fn undefined pdg::Port::setDrawingOrigin(Point origin)
+\brief Set the Port coordinate at the top left of an offscreen surface.
+\param origin Finite coordinates for the drawing area's top left. Initially (0, 0).
+
+Pixel dimensions and stored pixels do not change. getDrawingArea() reports the new
+origin and the clip resets to that area. Drawing and clipping now use those coordinates;
+Image pixel coordinates remain zero-based. This supports rendering a View into a reusable
+surface without changing its layout coordinates. Onscreen ports and nonfinite origins
+are rejected with an error.
+\note Requires a Port from GraphicsManager::createOffscreenPort().
+\note API stability: 2 — Evolving.
+\see clear(), getDrawingArea(), Image::Image(Port, boolean)
+*/

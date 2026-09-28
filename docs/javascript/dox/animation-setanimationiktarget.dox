@@ -1,0 +1,15 @@
+/**
+\fn pdg::Sprite::setAnimationIKTarget(uint id, number x, number y, int space)
+\brief Change an IK controller's target.
+
+Invalidates the pose so the next evaluation uses the new target. Unknown IDs, nonfinite coordinates, and invalid spaces throw.
+
+\param id ID returned by addAnimationIK().
+\param x Finite target x coordinate.
+\param y Finite target y coordinate.
+\param space Integer coordinate-space constant: \c pdg.animationSpace_Local (parent frame), \c pdg.animationSpace_Rig, or \c pdg.animationSpace_World (owning layer). Local uses the root bone's parent frame.
+
+\return No value.
+
+\see addAnimationIK(), getAnimationIKResult()
+*/

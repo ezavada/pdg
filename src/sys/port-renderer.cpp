@@ -28,10 +28,13 @@
 // -----------------------------------------------
 
 #include "pdg_project.h"
+#include <bit>
+#include <numbers>
 
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
 
 #include "pdg/sys/port.h"
+#include "port-clip.h"
 #include "pdg/sys/renderer.h"
 #include "pdg/sys/graphics.h"
 #include "pdg/sys/drawing.h"
@@ -40,13 +43,229 @@
 #include "include-opengl.h"
 #include "pdg/sys/os.h"
 #include <algorithm>
+#include <array>
 #include <cmath>
 
 
 namespace pdg {
 
+    // Helper structure to hold calculated texture UV coordinates
+    struct TextureUVBounds {
+        float uMin, vMin, uMax, vMax;  // UV coordinates in texture space
+        Rect drawRect;                  // Adjusted drawing rectangle for fit modes
+        bool useDrawRect;               // Whether to use drawRect instead of original shape
+    };
+
+    namespace {
+    // Bound solid-fill vertices before submission. In particular, ES1 can render
+    // incorrect clipped edges when an oversized scrolling background surrounds
+    // the entire viewport. Clip each tessellated triangle so concave/crossing
+    // contours retain their even-odd fill, including disconnected visible pieces.
+    void drawClippedTriangle(const Point& a, const Point& b, const Point& c, const Rect& bounds) {
+        std::array<Point, 8> polygon{{a, b, c}};
+        int count = 3;
+        const float edges[] = {bounds.left, bounds.right, bounds.top, bounds.bottom};
+        for (int edge = 0; edge < 4 && count; ++edge) {
+            std::array<Point, 8> output;
+            int size = 0;
+            const bool xAxis = edge < 2, above = (edge % 2) == 0;
+            auto distance = [&](const Point& p) {
+                return ((xAxis ? p.x : p.y) - edges[edge]) * (above ? 1 : -1);
+            };
+            Point previous = polygon[count-1];
+            float previousDistance = distance(previous);
+            for (int i = 0; i < count; ++i) {
+                const Point& current = polygon[i];
+                const float currentDistance = distance(current);
+                if ((currentDistance >= 0) != (previousDistance >= 0)) {
+                    const float t = previousDistance / (previousDistance - currentDistance);
+                    Point intersection(previous.x + t * (current.x - previous.x),
+                                       previous.y + t * (current.y - previous.y));
+                    if (xAxis) intersection.x = edges[edge]; else intersection.y = edges[edge];
+                    output[size++] = intersection;
+                }
+                if (currentDistance >= 0) output[size++] = current;
+                previous = current; previousDistance = currentDistance;
+            }
+            polygon = output; count = size;
+        }
+        for (int i = 1; i + 1 < count; ++i) {
+            glVertex2f(polygon[0].x, polygon[0].y);
+            glVertex2f(polygon[i].x, polygon[i].y);
+            glVertex2f(polygon[i+1].x, polygon[i+1].y);
+        }
+    }
+
+    // Repeat within the image, not its backing buffer. WebGL 1 cannot repeat
+    // NPOT textures, and repeating a padded texture would include the padding.
+    // Split triangles at tile boundaries in UV space, preserving their mapping
+    // through skew, rotation and the tessellation of concave/crossing contours.
+    class TextureTriangles {
+    public:
+        struct Vertex { Point position; float u, v; };
+
+        TextureTriangles(const ImageOpenGL& image, const TextureUVBounds& uv,
+                         const Rect& bounds, FitType fit)
+            : uMin(uv.uMin), vMin(uv.vMin), uMax(uv.uMax), vMax(uv.vMax) {
+            tiled = fit == fit_Tile || fit == fit_TileX || fit == fit_TileY;
+            if (tiled) {
+                uRepeat = fit == fit_TileY ? 1.0f : bounds.width() / image.width;
+                vRepeat = fit == fit_TileX ? 1.0f : bounds.height() / image.height;
+                uMin = vMin = 0;
+                uMax = static_cast<float>(image.width) / image.mBufferWidth;
+                vMax = static_cast<float>(image.height) / image.mBufferHeight;
+                splitTiles = image.width != image.mBufferWidth || image.height != image.mBufferHeight ||
+                    image.mBufferWidth <= 0 || image.mBufferHeight <= 0 ||
+                    !std::has_single_bit(static_cast<unsigned long>(image.mBufferWidth)) ||
+                    !std::has_single_bit(static_cast<unsigned long>(image.mBufferHeight));
+                glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, &savedS);
+                glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &savedT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, splitTiles ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, splitTiles ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+            }
+            glBegin(GL_TRIANGLES);
+        }
+
+        ~TextureTriangles() {
+            glEnd();
+            if (tiled) {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, savedS);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, savedT);
+            }
+        }
+
+        Vertex vertex(const Point& p, float u, float v) const { return {p, u * uRepeat, v * vRepeat}; }
+
+        void triangle(const Vertex& a, const Vertex& b, const Vertex& c) const {
+            if (!splitTiles) { emit(a); emit(b); emit(c); return; }
+            const int firstX = static_cast<int>(std::floor(std::min({a.u,b.u,c.u})));
+            const int firstY = static_cast<int>(std::floor(std::min({a.v,b.v,c.v})));
+            const int lastX = static_cast<int>(std::ceil(std::max({a.u,b.u,c.u}))) - 1;
+            const int lastY = static_cast<int>(std::ceil(std::max({a.v,b.v,c.v}))) - 1;
+            for (int y = firstY; y <= lastY; ++y) {
+                for (int x = firstX; x <= lastX; ++x) {
+                    std::array<Vertex, 8> polygon{{a,b,c}};
+                    int count = 3;
+                    clip(polygon, count, true, x, true);
+                    clip(polygon, count, true, x+1, false);
+                    clip(polygon, count, false, y, true);
+                    clip(polygon, count, false, y+1, false);
+                    for (int i = 1; i+1 < count; ++i) {
+                        emit(polygon[0], x, y); emit(polygon[i], x, y); emit(polygon[i+1], x, y);
+                    }
+                }
+            }
+        }
+
+    private:
+        static void clip(std::array<Vertex, 8>& polygon, int& count, bool uAxis, float edge, bool above) {
+            if (!count) return;
+            std::array<Vertex, 8> output{};
+            int size = 0;
+            auto distance = [&](const Vertex& p) { return ((uAxis ? p.u : p.v) - edge) * (above ? 1 : -1); };
+            Vertex previous = polygon[count-1];
+            float previousDistance = distance(previous);
+            for (int i = 0; i < count; ++i) {
+                const Vertex& current = polygon[i];
+                const float currentDistance = distance(current);
+                if ((currentDistance >= 0) != (previousDistance >= 0)) {
+                    const float t = previousDistance / (previousDistance - currentDistance);
+                    Vertex intersection{
+                        Point(previous.position.x + t * (current.position.x - previous.position.x),
+                              previous.position.y + t * (current.position.y - previous.position.y)),
+                        previous.u + t * (current.u - previous.u), previous.v + t * (current.v - previous.v)};
+                    if (uAxis) intersection.u = edge; else intersection.v = edge;
+                    output[size++] = intersection;
+                }
+                if (currentDistance >= 0) output[size++] = current;
+                previous = current; previousDistance = currentDistance;
+            }
+            polygon = output; count = size;
+        }
+
+        void emit(const Vertex& p, int tileX = 0, int tileY = 0) const {
+            glTexCoord2f(uMin + (p.u - tileX) * (uMax - uMin), vMin + (p.v - tileY) * (vMax - vMin));
+            glVertex2f(p.position.x, p.position.y);
+        }
+        float uMin, vMin, uMax, vMax, uRepeat = 1, vRepeat = 1;
+        bool tiled = false, splitTiles = false;
+        GLint savedS = GL_CLAMP_TO_EDGE, savedT = GL_CLAMP_TO_EDGE;
+    };
+    }
+
     // helper function to make a rounded rect polygon
     void MakeRoundedRectPolygon(const Rect& rect, float xRadius, float yRadius, Polygon& polygon);
+
+    // OpenGL interpolates vertex colors linearly. Radial color needs interior
+    // samples as well: tessellation vertices alone can all lie outside the
+    // gradient radius, even when its center is inside a filled triangle.
+    struct RadialPolygonGradient {
+        Point center;
+        float radius;
+        Color startColor, endColor;
+
+        float factor(const Point& p) const {
+            return radius <= 0.0f ? 0.0f : std::min(1.0f, std::hypot(p.x - center.x, p.y - center.y) / radius);
+        }
+
+        void vertex(const Point& p, float t) const {
+            glColor4f(startColor.red + (endColor.red - startColor.red) * t,
+                      startColor.green + (endColor.green - startColor.green) * t,
+                      startColor.blue + (endColor.blue - startColor.blue) * t,
+                      startColor.alpha + (endColor.alpha - startColor.alpha) * t);
+            glVertex2f(p.x, p.y);
+        }
+
+        void triangle(const Point& a, const Point& b, const Point& c,
+                      float ta, float tb, float tc, int depth = 0) const {
+            Point ab((a.x + b.x) * 0.5f, (a.y + b.y) * 0.5f);
+            Point bc((b.x + c.x) * 0.5f, (b.y + c.y) * 0.5f);
+            Point ca((c.x + a.x) * 0.5f, (c.y + a.y) * 0.5f);
+            float tab = factor(ab), tbc = factor(bc), tca = factor(ca);
+            float error = std::max({std::abs(tab - (ta + tb) * 0.5f),
+                                    std::abs(tbc - (tb + tc) * 0.5f),
+                                    std::abs(tca - (tc + ta) * 0.5f),
+                                    std::abs(factor(Point((a.x + b.x + c.x) / 3.0f,
+                                                         (a.y + b.y + c.y) / 3.0f)) - (ta + tb + tc) / 3.0f)});
+
+            // Test the closest points too, so a small gradient between the
+            // midpoint samples cannot be mistaken for a constant-color region.
+            float maxEdgeSquared = 0.0f;
+            auto checkEdge = [&](const Point& p, const Point& q, float tp, float tq) {
+                float dx = q.x - p.x, dy = q.y - p.y;
+                float lengthSquared = dx * dx + dy * dy;
+                maxEdgeSquared = std::max(maxEdgeSquared, lengthSquared);
+                if (lengthSquared == 0.0f) return;
+                float u = std::clamp(((center.x - p.x) * dx + (center.y - p.y) * dy) / lengthSquared, 0.0f, 1.0f);
+                error = std::max(error, std::abs(factor(Point(p.x + u * dx, p.y + u * dy)) - (tp + u * (tq - tp))));
+            };
+            checkEdge(a, b, ta, tb);
+            checkEdge(b, c, tb, tc);
+            checkEdge(c, a, tc, ta);
+            float area = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+            if (area != 0.0f) {
+                float wb = ((center.x - a.x) * (c.y - a.y) - (center.y - a.y) * (c.x - a.x)) / area;
+                float wc = ((b.x - a.x) * (center.y - a.y) - (b.y - a.y) * (center.x - a.x)) / area;
+                float wa = 1.0f - wb - wc;
+                if (wa >= 0.0f && wb >= 0.0f && wc >= 0.0f) {
+                    error = std::max(error, std::abs(wa * ta + wb * tb + wc * tc));
+                }
+            }
+
+            // Refine when sampled color error exceeds one 8-bit step. Limit
+            // work for very small gradients or very large coordinates.
+            if (error > 1.0f / 255.0f && depth < 8 && maxEdgeSquared > 1.0f) {
+                triangle(a, ab, ca, ta, tab, tca, depth + 1);
+                triangle(ab, b, bc, tab, tb, tbc, depth + 1);
+                triangle(ca, bc, c, tca, tbc, tc, depth + 1);
+                triangle(ab, bc, ca, tab, tbc, tca, depth + 1);
+            } else {
+                vertex(a, ta);
+                vertex(b, tb);
+                vertex(c, tc);
+            }
+        }
+    };
 
     // Choose enough vertices to keep the maximum gap between an ellipse and
     // its polygonal approximation below a quarter of a screen pixel.
@@ -72,16 +291,53 @@ namespace pdg {
         if (screenRadius <= maxError) return minSegments;
 
         float cosine = std::clamp(1.0f - maxError / screenRadius, -1.0f, 1.0f);
-        int segments = static_cast<int>(std::ceil(M_PI / std::acos(cosine)));
+        int segments = static_cast<int>(std::ceil(std::numbers::pi / std::acos(cosine)));
         return std::clamp(segments, minSegments, maxSegments);
     }
 
-    // Helper structure to hold calculated texture UV coordinates
-    struct TextureUVBounds {
-        float uMin, vMin, uMax, vMax;  // UV coordinates in texture space
-        Rect drawRect;                  // Adjusted drawing rectangle for fit modes
-        bool useDrawRect;               // Whether to use drawRect instead of original shape
-    };
+    // Tessellate a joined, centered outline in screen pixels. GL_LINE_LOOP
+    // leaves gaps at thick joins and WebGL implementations may only support width 1.
+    static void drawClosedStroke(PortImpl& port, const std::vector<Point>& points,
+                                 float thickness, const Color& color, BlendMode blend) {
+        if (points.size() < 3 || thickness <= 0) return;
+        std::vector<Point> normals(points.size());
+        for (size_t i = 0; i < points.size(); ++i) {
+            const Point& a = points[i];
+            const Point& b = points[(i+1)%points.size()];
+            const float length = std::hypot(b.x-a.x, b.y-a.y);
+            normals[i] = length > 0.00001f ? Point(-(b.y-a.y)/length, (b.x-a.x)/length) : Point();
+        }
+        std::vector<Point> joins(points.size());
+        for (size_t i = 0; i < points.size(); ++i) {
+            const Point a = normals[(i+points.size()-1)%points.size()];
+            const Point b = normals[i];
+            const float denominator = 1 + a.x*b.x + a.y*b.y;
+            const float scale = denominator > 0.125f ? 1/denominator : 1;
+            joins[i] = Point((a.x+b.x)*scale, (a.y+b.y)*scale);
+        }
+        port.setOpenGLModesForDrawing(true, blend);
+        const float half = thickness/2;
+        auto vertex = [&](size_t i, float offset, float alpha) {
+            glVertexColor4f(color.red, color.green, color.blue, color.alpha*alpha);
+            glVertex2f(points[i].x+joins[i].x*offset, points[i].y+joins[i].y*offset);
+        };
+        const float offsets[] = {-half-0.5f, -half, half, half+0.5f};
+        const float coverage[] = {0,1,1,0};
+        // Three joined strips: outside fringe, solid stroke, inside fringe.
+        // Bound batches by the ES1 emulation color-array capacity (1024 floats).
+        for (int band = 0; band < 3; ++band) {
+            for (size_t start = 0; start < points.size(); start += 120) {
+                const size_t end = std::min(start+120, points.size());
+                glBegin(GL_TRIANGLE_STRIP);
+                for (size_t i = start; i <= end; ++i) {
+                    const size_t index = i%points.size();
+                    vertex(index, offsets[band], coverage[band]);
+                    vertex(index, offsets[band+1], coverage[band+1]);
+                }
+                glEnd();
+            }
+        }
+    }
 
     // Helper function to calculate proper UV coordinates based on fitType
     // Takes into account texture buffer size vs actual image size, and applies fitType
@@ -200,6 +456,8 @@ namespace pdg {
     // -----------------------------------------------------------------------------------
 
     void Port::drawLine(const Point& from, const Point& to, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        ScopedPortClip clip(this, Rect(std::min(from.x,to.x), std::min(from.y,to.y), std::max(from.x,to.x), std::max(from.y,to.y)), attrs, std::max(0.5f, attrs.getLineThickness()/2));
         // Apply transformation if needed
         Point transformedFrom = from;
         Point transformedTo = to;
@@ -219,11 +477,12 @@ namespace pdg {
         PortImpl& port = static_cast<PortImpl&>(*this);
         Rect drawableRect = port.drawableRect();
         
-        // Check for lines entirely outside the drawable area
-        if (from.x < drawableRect.left && to.y < drawableRect.left) return;
-        if (from.x > drawableRect.right && to.y > drawableRect.right) return;
-        if (from.y < drawableRect.top && to.y < drawableRect.top) return;
-        if (from.y > drawableRect.bottom && to.y > drawableRect.bottom) return;
+        Rect lineBounds(std::min(transformedFrom.x, transformedTo.x), std::min(transformedFrom.y, transformedTo.y),
+                        std::max(transformedFrom.x, transformedTo.x), std::max(transformedFrom.y, transformedTo.y));
+        const float padding = std::max(0.5f, attrs.getLineThickness()/2);
+        lineBounds.left -= padding; lineBounds.top -= padding;
+        lineBounds.right += padding; lineBounds.bottom += padding;
+        if (lineBounds.intersection(drawableRect).empty()) return;
 
         // Set up OpenGL state
         port.setOpenGLModesForDrawing(lineColor.alpha < 1.0f, attrs.getBlendMode());
@@ -252,6 +511,7 @@ namespace pdg {
     }
 
     void Port::drawRect(const Rect& rect, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
 
         // Handle rounded corners by creating and drawing a polygon
         if (attrs.getRoundedCornerRadius() > 0.0f) {
@@ -269,6 +529,8 @@ namespace pdg {
     }
 
     void Port::drawQuad(const Quad& quad, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        ScopedPortClip clip(this, quad.getBounds(), attrs);
         // Get port implementation for OpenGL access
         PortImpl& port = static_cast<PortImpl&>(*this);
 
@@ -332,90 +594,27 @@ namespace pdg {
             // Bind the texture using the image's bindTexture method
             if (imgOpenGL) {
                 imgOpenGL->bindTexture();
-                port.setOpenGLModesForDrawing(texture->getOpacity() < 255, attrs.getBlendMode());
+                port.setOpenGLModesForDrawing(texture->getOpacity() < 255 || imgOpenGL->mTextureFormat == GL_RGBA, attrs.getBlendMode(), imgOpenGL->usesPremultipliedAlpha());
                 
                 // Set color to white so texture shows properly
-                glColor4f(1.0f, 1.0f, 1.0f, (float)texture->getOpacity() / 255.0f);
+                imgOpenGL->setDrawColor();
                 
-                // Handle tile modes specially
-                if (fitType == fit_Tile || fitType == fit_TileX || fitType == fit_TileY) {
-                    // For tiling, calculate how many times to repeat the texture
-                    float imgWidth = (float)texture->width;
-                    float imgHeight = (float)texture->height;
-                    Rect originalBounds = quad.getBounds();
-                    float shapeWidth = originalBounds.width();
-                    float shapeHeight = originalBounds.height();
-                    
-                    float uRepeat = (fitType == fit_Tile || fitType == fit_TileX) ? (shapeWidth / imgWidth) : 1.0f;
-                    float vRepeat = (fitType == fit_Tile || fitType == fit_TileY) ? (shapeHeight / imgHeight) : 1.0f;
-                    
-                    // Scale UV max by repeat count, but keep buffer scaling
-                    uvBounds.uMax = uvBounds.uMax * uRepeat;
-                    uvBounds.vMax = uvBounds.vMax * vRepeat;
-                    
-                    // Set texture wrapping mode for tiling
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+                // Keep the existing four-triangle mapping for distorted quads.
+                {
+                    TextureTriangles triangles(*imgOpenGL, uvBounds, quad.getBounds(), fitType);
+                    const Point center((transformedQuad.points[0].x + transformedQuad.points[1].x +
+                                        transformedQuad.points[2].x + transformedQuad.points[3].x) * 0.25f,
+                                       (transformedQuad.points[0].y + transformedQuad.points[1].y +
+                                        transformedQuad.points[2].y + transformedQuad.points[3].y) * 0.25f);
+                    const auto middle = triangles.vertex(center, 0.5f, 0.5f);
+                    const std::array<TextureTriangles::Vertex, 4> corners{{
+                        triangles.vertex(transformedQuad.points[0], 0, 0),
+                        triangles.vertex(transformedQuad.points[1], 1, 0),
+                        triangles.vertex(transformedQuad.points[2], 1, 1),
+                        triangles.vertex(transformedQuad.points[3], 0, 1)}};
+                    for (int i = 0; i < 4; ++i) triangles.triangle(corners[i], corners[(i+1)%4], middle);
                 }
-                
-                // Draw quad with texture coordinates
-                // For non-rectangular quads, use a fan triangulation from the center
-                // to minimize texture distortion. This creates 4 triangles sharing a center point.
-                // Quad point indices: lftTop=0, rgtTop=1, rgtBot=2, lftBot=3
-                
-                // Calculate center point using bilinear interpolation (u=0.5, v=0.5)
-                float centerX = (transformedQuad.points[lftTop].x + transformedQuad.points[rgtTop].x +
-                                 transformedQuad.points[rgtBot].x + transformedQuad.points[lftBot].x) * 0.25f;
-                float centerY = (transformedQuad.points[lftTop].y + transformedQuad.points[rgtTop].y +
-                                 transformedQuad.points[rgtBot].y + transformedQuad.points[lftBot].y) * 0.25f;
-                
-                // Calculate center UV coordinates
-                float centerU = (uvBounds.uMin + uvBounds.uMax) * 0.5f;
-                float centerV = (uvBounds.vMin + uvBounds.vMax) * 0.5f;
-                
-                // Draw 4 triangles in a fan from center
-                glBegin(GL_TRIANGLES);
-                
-                // Triangle 1: lftTop -> rgtTop -> center
-                glTexCoord2f(uvBounds.uMin, uvBounds.vMin);
-                glVertex2f(transformedQuad.points[lftTop].x, transformedQuad.points[lftTop].y);
-                glTexCoord2f(uvBounds.uMax, uvBounds.vMin);
-                glVertex2f(transformedQuad.points[rgtTop].x, transformedQuad.points[rgtTop].y);
-                glTexCoord2f(centerU, centerV);
-                glVertex2f(centerX, centerY);
-                
-                // Triangle 2: rgtTop -> rgtBot -> center
-                glTexCoord2f(uvBounds.uMax, uvBounds.vMin);
-                glVertex2f(transformedQuad.points[rgtTop].x, transformedQuad.points[rgtTop].y);
-                glTexCoord2f(uvBounds.uMax, uvBounds.vMax);
-                glVertex2f(transformedQuad.points[rgtBot].x, transformedQuad.points[rgtBot].y);
-                glTexCoord2f(centerU, centerV);
-                glVertex2f(centerX, centerY);
-                
-                // Triangle 3: rgtBot -> lftBot -> center
-                glTexCoord2f(uvBounds.uMax, uvBounds.vMax);
-                glVertex2f(transformedQuad.points[rgtBot].x, transformedQuad.points[rgtBot].y);
-                glTexCoord2f(uvBounds.uMin, uvBounds.vMax);
-                glVertex2f(transformedQuad.points[lftBot].x, transformedQuad.points[lftBot].y);
-                glTexCoord2f(centerU, centerV);
-                glVertex2f(centerX, centerY);
-                
-                // Triangle 4: lftBot -> lftTop -> center
-                glTexCoord2f(uvBounds.uMin, uvBounds.vMax);
-                glVertex2f(transformedQuad.points[lftBot].x, transformedQuad.points[lftBot].y);
-                glTexCoord2f(uvBounds.uMin, uvBounds.vMin);
-                glVertex2f(transformedQuad.points[lftTop].x, transformedQuad.points[lftTop].y);
-                glTexCoord2f(centerU, centerV);
-                glVertex2f(centerX, centerY);
-                
-                glEnd();
-                
-                // Restore texture wrapping mode if we changed it
-                if (fitType == fit_Tile || fitType == fit_TileX || fitType == fit_TileY) {
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                }
-                
+
                 glDisable(GL_TEXTURE_2D);
                 glDisable(GL_BLEND);
             }
@@ -567,34 +766,19 @@ namespace pdg {
             for (const Point& point : transformedQuad.points) {
                 fillPolygon.addPoint(point);
             }
-            std::vector<Point> triangles = fillPolygon.tessellate();
-
+            const std::vector<Point>& triangles = fillPolygon.tessellatedPoints();
             glBegin(GL_TRIANGLES);
-            for (const Point& point : triangles) {
-                glVertex2f(point.x, point.y);
+            const Rect clipBounds = port.drawableRect();
+            for (size_t i = 0; i + 2 < triangles.size(); i += 3) {
+                drawClippedTriangle(triangles[i], triangles[i+1], triangles[i+2], clipBounds);
             }
             glEnd();
         }
 
         // Draw outline if needed
         if (lineStyle != lineStyle_None && attrs.getLineThickness() > 0.0f && lineColor.alpha > 0.0f) {
-            port.setOpenGLModesForDrawing(lineColor.alpha < 1.0f, attrs.getBlendMode());
-            glColor4f(lineColor.red, lineColor.green, lineColor.blue, lineColor.alpha);
-            
-            if (attrs.getLineThickness() > 1.0f) {
-                glLineWidth(attrs.getLineThickness());
-            }
-            
-            glBegin(GL_LINE_LOOP);
-            glVertex2f(transformedQuad.points[0].x, transformedQuad.points[0].y);
-            glVertex2f(transformedQuad.points[1].x, transformedQuad.points[1].y);
-            glVertex2f(transformedQuad.points[2].x, transformedQuad.points[2].y);
-            glVertex2f(transformedQuad.points[3].x, transformedQuad.points[3].y);
-            glEnd();
-            
-            if (attrs.getLineThickness() > 1.0f) {
-                glLineWidth(1.0f);
-            }
+            drawClosedStroke(port, std::vector<Point>(transformedQuad.points, transformedQuad.points+4),
+                attrs.getLineThickness(), lineColor, attrs.getBlendMode());
         }
         
         // Mark port as needing redraw
@@ -602,6 +786,8 @@ namespace pdg {
     }
 
     void Port::drawPolygon(const Polygon& polygon, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        ScopedPortClip clip(this, polygon.getBounds(), attrs);
         // Get port implementation for OpenGL access
         PortImpl& port = static_cast<PortImpl&>(*this);
 
@@ -612,93 +798,62 @@ namespace pdg {
         fillColor.alpha *= attrs.getFillOpacity();
         LineStyle lineStyle = attrs.getLineStyle();
 
-        // Determine the polygon to draw based on texture fitting (if texture is present)
-        Polygon drawPolygon;
-        TextureUVBounds uvBounds;
-        uvBounds.uMin = uvBounds.vMin = 0.0f;
-        uvBounds.uMax = uvBounds.vMax = 1.0f;
-        uvBounds.useDrawRect = false;
-        
-        // Copy points from the original polygon
-        for (size_t i = 0; i < polygon.getPointCount(); i++) {
-            drawPolygon.addPoint(polygon.getPoint(i));
-        }
-        
-        Image* texture = attrs.getTexture();
-        if (texture) {
-            // Calculate fit based on ORIGINAL polygon bounds (before transformation)
-            Rect originalBounds = polygon.getBounds();
-            FitType fitType = attrs.getFitType();
-            uvBounds = calculateTextureFitUVs(texture, originalBounds, fitType);
-            
-            // For fit modes that adjust the drawing area, scale the polygon
-            if (uvBounds.useDrawRect) {
-                float scaleX = uvBounds.drawRect.width() / originalBounds.width();
-                float scaleY = uvBounds.drawRect.height() / originalBounds.height();
-                Point originalCenter = originalBounds.centerPoint();
-                Point newCenter = uvBounds.drawRect.centerPoint();
-                
-                // Scale and reposition each point of the polygon
-                for (size_t i = 0; i < drawPolygon.getPointCount(); i++) {
-                    Point p = drawPolygon.getPoint(i);
-                    float dx = p.x - originalCenter.x;
-                    float dy = p.y - originalCenter.y;
-                    p.x = newCenter.x + dx * scaleX;
-                    p.y = newCenter.y + dy * scaleY;
-                    drawPolygon.setPoint(i, p);
-                }
-            }
-        }
-        
-        // NOW apply transformation to the (possibly fitted) polygon
-        Polygon transformedPolygon;
-        for (size_t i = 0; i < drawPolygon.getPointCount(); i++) {
-            transformedPolygon.addPoint(drawPolygon.getPoint(i));
-        }
-        
-        if (attrs.getTransform() != glm::mat3(1.0f)) {  // not identity matrix
-            // Transform all points in the polygon
-            for (size_t i = 0; i < drawPolygon.getPointCount(); i++) {
-                Point originalPoint = drawPolygon.getPoint(i);
-                glm::vec3 transformed = attrs.getTransform() * glm::vec3(originalPoint.x, originalPoint.y, 1.0f);
-                transformedPolygon.setPoint(i, Point(transformed.x, transformed.y));
-            }
-        }
-        
-        // Check if polygon is within drawable area
-        if (transformedPolygon.empty()) return;
-        if (transformedPolygon.getBounds().intersection(port.drawableRect()).empty()) return;
+        if (polygon.empty()) return;
 
-        // Handle texture first (highest priority)
+        // Fit and transform the source contour at draw time. Keep tessellation
+        // on the source Polygon so changing Attributes never rebuilds its mesh.
+        const Rect originalBounds = polygon.getBounds();
+        Rect drawBounds = originalBounds;
+        glm::mat3 fitting(1.0f);
+        Image* texture = attrs.getTexture();
+        // Match quad rendering: a failed image load has no usable texture,
+        // so continue through the gradient/solid fill path.
+        if (texture && (texture->width <= 0 || texture->height <= 0)) texture = nullptr;
         if (texture) {
-            // Apply texture opacity
+            const auto uvBounds = calculateTextureFitUVs(texture, originalBounds, attrs.getFitType());
+            if (uvBounds.useDrawRect) {
+                if (originalBounds.empty()) return;
+                drawBounds = uvBounds.drawRect;
+                const float scaleX = drawBounds.width() / originalBounds.width();
+                const float scaleY = drawBounds.height() / originalBounds.height();
+                const Point originalCenter = originalBounds.centerPoint();
+                const Point newCenter = drawBounds.centerPoint();
+                fitting[0][0] = scaleX;
+                fitting[1][1] = scaleY;
+                fitting[2][0] = newCenter.x - originalCenter.x * scaleX;
+                fitting[2][1] = newCenter.y - originalCenter.y * scaleY;
+            }
+        }
+        const glm::mat3 transform = attrs.getTransform() * fitting;
+        const bool hasTransform = transform != glm::mat3(1.0f);
+        const auto transformPoint = [&](const Point& p) {
+            if (!hasTransform) return p;
+            const auto result = transform * glm::vec3(p.x, p.y, 1.0f);
+            return Point(result.x, result.y);
+        };
+        // The transformed contour is needed for culling and the stroke, but
+        // never for tessellation (including even-odd intersection vertices).
+        std::vector<Point> outline;
+        outline.reserve(polygon.getPointCount());
+        Point first = transformPoint(polygon.getPoint(0));
+        Rect transformedBounds(first.x, first.y, first.x, first.y);
+        for (size_t i = 0; i < polygon.getPointCount(); ++i) {
+            Point p = transformPoint(polygon.getPoint(i));
+            outline.push_back(p);
+            transformedBounds.left = std::min(transformedBounds.left, p.x);
+            transformedBounds.right = std::max(transformedBounds.right, p.x);
+            transformedBounds.top = std::min(transformedBounds.top, p.y);
+            transformedBounds.bottom = std::max(transformedBounds.bottom, p.y);
+        }
+        if (transformedBounds.intersection(port.drawableRect()).empty()) return;
+
+        // Handle texture first (highest priority).
+        if (texture) {
             uint8 originalOpacity = texture->getOpacity();
             if (attrs.getFillOpacity() < 1.0f) {
                 texture->setOpacity((uint8)(255 * attrs.getFillOpacity()));
             }
-            
-            // For polygons, we need to calculate texture coordinates based on original bounding box
-            Rect originalBounds = polygon.getBounds();
-            Rect drawBounds = drawPolygon.getBounds();
-            FitType fitType = attrs.getFitType();
-            
-            // Check if texture is an ImageStrip
-            ImageStrip* imgStrip = dynamic_cast<ImageStrip*>(texture);
-            if (imgStrip && imgStrip->frames > 0) {
-                int frame = attrs.getFrame();
-                if (frame < 0 || frame >= imgStrip->frames) {
-                    frame = 0; // Default to first frame
-                }
-                // For ImageStrip, draw each triangle with texture coordinates
-                // Pass both transformed (for drawing) and fitted (for UV mapping)
-                drawTexturedPolygon(texture, transformedPolygon, drawPolygon, drawBounds, fitType);
-            } else {
-                // Draw regular texture on polygon
-                // Pass both transformed (for drawing) and fitted (for UV mapping)
-                drawTexturedPolygon(texture, transformedPolygon, drawPolygon, drawBounds, fitType);
-            }
-            
-            // Restore original opacity
+            drawTexturedPolygonImpl(texture, polygon, drawBounds, attrs.getTransform(), attrs.getFitType(), fitting);
             texture->setOpacity(originalOpacity);
         }
         // Handle gradients
@@ -743,34 +898,17 @@ namespace pdg {
                     return result;
                 };
                 
-                // Triangulate the polygon and draw with gradient colors
-                size_t pointCount = transformedPolygon.getPointCount();
-                if (pointCount >= 3) {
-                    // Use triangle fan for simple polygons
-                    glBegin(GL_TRIANGLE_FAN);
-                    
-                    // First vertex (center-ish point for fan)
-                    Point centerPoint = transformedPolygon.getPoint(0);
-                    Color centerColor = calculateGradientColor(centerPoint.x, centerPoint.y);
-                    glColor4f(centerColor.red, centerColor.green, centerColor.blue, centerColor.alpha);
-                    glVertex2f(centerPoint.x, centerPoint.y);
-                    
-                    // Add all vertices with their gradient colors
-                    for (size_t i = 0; i < pointCount; i++) {
-                        Point p = transformedPolygon.getPoint(i);
-                        Color vertexColor = calculateGradientColor(p.x, p.y);
-                        glColor4f(vertexColor.red, vertexColor.green, vertexColor.blue, vertexColor.alpha);
-                        glVertex2f(p.x, p.y);
-                    }
-                    
-                    // Close the fan by repeating the first vertex
-                    Point firstPoint = transformedPolygon.getPoint(0);
-                    Color firstColor = calculateGradientColor(firstPoint.x, firstPoint.y);
-                    glColor4f(firstColor.red, firstColor.green, firstColor.blue, firstColor.alpha);
-                    glVertex2f(firstPoint.x, firstPoint.y);
-                    
-                    glEnd();
+                // All fills use the same even-odd tessellation, including
+                // intersection vertices and holes in self-crossing contours.
+                const std::vector<Point>& triangles = polygon.tessellatedPoints();
+                glBegin(GL_TRIANGLES);
+                for (const Point& local : triangles) {
+                    const Point p = transformPoint(local);
+                    Color color = calculateGradientColor(p.x, p.y);
+                    glColor4f(color.red, color.green, color.blue, color.alpha);
+                    glVertex2f(p.x, p.y);
                 }
+                glEnd();
             }
             else if (attrs.getGradientType() == gradientType_Radial) {
                 // Get radial gradient parameters
@@ -786,112 +924,44 @@ namespace pdg {
                 // Draw radial gradient directly with OpenGL
                 port.setOpenGLModesForDrawing((centerColor.alpha < 1.0f) || (endColor.alpha < 1.0f), attrs.getBlendMode());
                 
-                // Helper function to calculate color at a point based on distance from center
-                auto calculateRadialGradientColor = [&](float x, float y) -> Color {
-                    if (radius == 0.0f) return centerColor;
-                    
-                    // Calculate distance from center
-                    float dx = x - center.x;
-                    float dy = y - center.y;
-                    float distance = sqrt(dx * dx + dy * dy);
-                    
-                    // Normalize distance by radius and clamp to [0, 1]
-                    float t = std::max(0.0f, std::min(1.0f, distance / radius));
-                    
-                    // Interpolate colors
-                    Color result;
-                    result.red = centerColor.red + (endColor.red - centerColor.red) * t;
-                    result.green = centerColor.green + (endColor.green - centerColor.green) * t;
-                    result.blue = centerColor.blue + (endColor.blue - centerColor.blue) * t;
-                    result.alpha = centerColor.alpha + (endColor.alpha - centerColor.alpha) * t;
-                    return result;
-                };
-                
-                // Draw as triangle fan from gradient center point to create proper radial gradient
-                size_t pointCount = transformedPolygon.getPointCount();
-                if (pointCount >= 3) {
-                    glBegin(GL_TRIANGLE_FAN);
-                    
-                    // Center point of the radial gradient - always gets the center color
-                    glColor4f(centerColor.red, centerColor.green, centerColor.blue, centerColor.alpha);
-                    glVertex2f(center.x, center.y);
-                    
-                    // Add all polygon vertices with their gradient colors
-                    for (size_t i = 0; i < pointCount; i++) {
-                        Point p = transformedPolygon.getPoint(i);
-                        Color vertexColor = calculateRadialGradientColor(p.x, p.y);
-                        glColor4f(vertexColor.red, vertexColor.green, vertexColor.blue, vertexColor.alpha);
-                        glVertex2f(p.x, p.y);
-                    }
-                    
-                    // Close the fan by repeating the first polygon vertex
-                    Point firstPoint = transformedPolygon.getPoint(0);
-                    Color firstVertexColor = calculateRadialGradientColor(firstPoint.x, firstPoint.y);
-                    glColor4f(firstVertexColor.red, firstVertexColor.green, firstVertexColor.blue, firstVertexColor.alpha);
-                    glVertex2f(firstPoint.x, firstPoint.y);
-                    
-                    glEnd();
+                // Refine only the filled triangles to preserve radial shading
+                // without a fan that crosses concave gaps or fills contour holes.
+                RadialPolygonGradient gradient{center, radius, centerColor, endColor};
+                const std::vector<Point>& triangles = polygon.tessellatedPoints();
+                glBegin(GL_TRIANGLES);
+                for (size_t i = 0; i + 2 < triangles.size(); i += 3) {
+                    const Point a = transformPoint(triangles[i]);
+                    const Point b = transformPoint(triangles[i + 1]);
+                    const Point c = transformPoint(triangles[i + 2]);
+                    gradient.triangle(a, b, c, gradient.factor(a), gradient.factor(b), gradient.factor(c));
                 }
+                glEnd();
             }
         } else if (attrs.hasFill()) {
             // Fill with solid color using direct OpenGL
             port.setOpenGLModesForDrawing(fillColor.alpha < 1.0f, attrs.getBlendMode());
             glColor4f(fillColor.red, fillColor.green, fillColor.blue, fillColor.alpha);
             
-            size_t pointCount = transformedPolygon.getPointCount();
-            if (pointCount < 3) return; // Need at least 3 points for a polygon
-
-            if (pointCount == 3) {
-                // Simple triangle - just draw it
-                glBegin(GL_TRIANGLES);
-                for (size_t i = 0; i < 3; i++) {
-                    Point p = transformedPolygon.getPoint(i);
-                    glVertex2f(p.x, p.y);
-                }
-                glEnd();
-            } else {
-                // A triangle fan is only valid for convex polygons. Use libtess2
-                // for every larger contour so concave and self-intersecting
-                // polygons follow the even-odd fill rule as well.
-                std::vector<Point> triangles = transformedPolygon.tessellate();
-                
-                // Render each triangle
-                glBegin(GL_TRIANGLES);
-                for (size_t i = 0; i < triangles.size(); i++) {
-                    Point p = triangles[i];
-                    glVertex2f(p.x, p.y);
-                }
-                glEnd();
-            }
-        }
- 
-        // Draw outline if needed
-        if (lineStyle != lineStyle_None && attrs.getLineThickness() > 0.0f && lineColor.alpha > 0.0f) {
-            port.setOpenGLModesForDrawing(lineColor.alpha < 1.0f, attrs.getBlendMode());
-            glColor4f(lineColor.red, lineColor.green, lineColor.blue, lineColor.alpha);
-            
-            if (attrs.getLineThickness() > 1.0f) {
-                glLineWidth(attrs.getLineThickness());
-            }
-            
-            glBegin(GL_LINE_LOOP);
-            size_t pointCount = transformedPolygon.getPointCount();
-            for (size_t i = 0; i < pointCount; i++) {
-                Point p = transformedPolygon.getPoint(i);
+            const std::vector<Point>& triangles = polygon.tessellatedPoints();
+            glBegin(GL_TRIANGLES);
+            for (const Point& local : triangles) {
+                const Point p = transformPoint(local);
                 glVertex2f(p.x, p.y);
             }
             glEnd();
-            
-            if (attrs.getLineThickness() > 1.0f) {
-                glLineWidth(1.0f);
-            }
         }
-        
+
+        if (lineStyle != lineStyle_None && attrs.getLineThickness() > 0.0f && lineColor.alpha > 0.0f) {
+            drawClosedStroke(port, outline, attrs.getLineThickness(), lineColor, attrs.getBlendMode());
+        }
+
         // Mark port as needing redraw
         port.mNeedRedraw = true;
     }
 
     void Port::drawSpline(const Spline& spline, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        ScopedPortClip clip(this, spline.getBounds(), attrs, std::max(0.5f, attrs.getLineThickness()/2));
         if (!attrs.hasLine()) return;
         // Apply colors with opacity
         Color lineColor = attrs.getLineColor();
@@ -920,12 +990,16 @@ namespace pdg {
             glLineWidth(attrs.getLineThickness());
         }
 
-        Point lastPoint = spline.getFirstOrder(0.0f);
+        auto transformPoint = [&](const Point& p) {
+            const auto value = attrs.getTransform() * glm::vec3(p.x, p.y, 1);
+            return Point(value.x, value.y);
+        };
+        Point lastPoint = transformPoint(spline.getFirstOrder(0.0f));
         glBegin(GL_LINE_STRIP);
         glVertex2f(lastPoint.x, lastPoint.y);
         for (int i = 0; i <= numSegments; i++) {
             float u = ((float)i / (float)numSegments) * maxU;
-            Point currentPoint = spline.getFirstOrder(u);
+            Point currentPoint = transformPoint(spline.getFirstOrder(u));
             if (currentPoint.distanceSquared(lastPoint) < 1.0f) continue; // skip if the point is too close to the last point
             glVertex2f(currentPoint.x, currentPoint.y);
             lastPoint = currentPoint;
@@ -939,6 +1013,8 @@ namespace pdg {
      }
 
     void Port::drawEllipse(const Point& center, float xRadius, float yRadius, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        ScopedPortClip clip(this, Rect(center.x-std::abs(xRadius), center.y-std::abs(yRadius), center.x+std::abs(xRadius), center.y+std::abs(yRadius)), attrs);
         // Get port implementation for OpenGL access
         PortImpl& port = static_cast<PortImpl&>(*this);
         
@@ -959,6 +1035,7 @@ namespace pdg {
         uvBounds.useDrawRect = false;
         
         Image* texture = attrs.getTexture();
+        if (texture && (texture->width <= 0 || texture->height <= 0)) texture = nullptr;
         if (texture) {
             // Calculate fit based on ORIGINAL ellipse bounds (before transformation)
             Rect originalBounds(center.x - xRadius, center.y - yRadius,
@@ -1009,70 +1086,31 @@ namespace pdg {
             // Bind the texture using the image's bindTexture method
             if (imgOpenGL) {
                 imgOpenGL->bindTexture();
-                port.setOpenGLModesForDrawing(texture->getOpacity() < 255, attrs.getBlendMode());
+                port.setOpenGLModesForDrawing(texture->getOpacity() < 255 || imgOpenGL->mTextureFormat == GL_RGBA, attrs.getBlendMode(), imgOpenGL->usesPremultipliedAlpha());
                 
                 // Set color to white so texture shows properly
-                glColor4f(1.0f, 1.0f, 1.0f, (float)texture->getOpacity() / 255.0f);
+                imgOpenGL->setDrawColor();
             
-                // Handle tile modes specially
-                if (fitType == fit_Tile || fitType == fit_TileX || fitType == fit_TileY) {
-                    float imgWidth = (float)texture->width;
-                    float imgHeight = (float)texture->height;
-                    float shapeWidth = 2.0f * drawXRadius;
-                    float shapeHeight = 2.0f * drawYRadius;
-                    
-                    float uRepeat = (fitType == fit_Tile || fitType == fit_TileX) ? (shapeWidth / imgWidth) : 1.0f;
-                    float vRepeat = (fitType == fit_Tile || fitType == fit_TileY) ? (shapeHeight / imgHeight) : 1.0f;
-                    
-                    uvBounds.uMax = uvBounds.uMax * uRepeat;
-                    uvBounds.vMax = uvBounds.vMax * vRepeat;
-                    
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-                }
-            
-                // Draw ellipse using triangle fan with rectangular texture mapping
-                glBegin(GL_TRIANGLE_FAN);
-                
-                // Center point with center UV coordinates
-                float centerU = (uvBounds.uMin + uvBounds.uMax) / 2.0f;
-                float centerV = (uvBounds.vMin + uvBounds.vMax) / 2.0f;
-                glTexCoord2f(centerU, centerV);
-                glVertex2f(transformedCenter.x, transformedCenter.y);
-                
-                // Calculate bounds for UV mapping (in original space)
-                Rect uvMappingBounds(drawCenter.x - drawXRadius, drawCenter.y - drawYRadius,
-                                    drawCenter.x + drawXRadius, drawCenter.y + drawYRadius);
-                
-                for (int i = 0; i <= segments; i++) {
-                    float angle = 2.0f * M_PI * i / segments;
-                    float x = drawCenter.x + drawXRadius * cos(angle);
-                    float y = drawCenter.y + drawYRadius * sin(angle);
-                    
-                    // Apply transformation to the vertex
-                    float transformedX = x;
-                    float transformedY = y;
-                    if (hasTransform) {
-                        glm::vec3 transformed = attrs.getTransform() * glm::vec3(x, y, 1.0f);
-                        transformedX = transformed.x;
-                        transformedY = transformed.y;
+                {
+                    const Rect uvMappingBounds(drawCenter.x - drawXRadius, drawCenter.y - drawYRadius,
+                                               drawCenter.x + drawXRadius, drawCenter.y + drawYRadius);
+                    TextureTriangles triangles(*imgOpenGL, uvBounds, uvMappingBounds, fitType);
+                    const auto middle = triangles.vertex(transformedCenter, 0.5f, 0.5f);
+                    auto edge = [&](int i) {
+                        const float angle = 2.0f * std::numbers::pi * i / segments;
+                        const float x = std::cos(angle), y = std::sin(angle);
+                        const auto p = attrs.getTransform() *
+                            glm::vec3(drawCenter.x + drawXRadius*x, drawCenter.y + drawYRadius*y, 1);
+                        return triangles.vertex(Point(p.x,p.y), (x+1)*0.5f, (y+1)*0.5f);
+                    };
+                    auto previous = edge(0);
+                    for (int i = 1; i <= segments; ++i) {
+                        const auto current = edge(i);
+                        triangles.triangle(middle, previous, current);
+                        previous = current;
                     }
-                    
-                    // Calculate rectangular texture coordinates (not radial)
-                    // Map based on original (untransformed) position
-                    float texU = uvBounds.uMin + (x - uvMappingBounds.left) / uvMappingBounds.width() * (uvBounds.uMax - uvBounds.uMin);
-                    float texV = uvBounds.vMin + (y - uvMappingBounds.top) / uvMappingBounds.height() * (uvBounds.vMax - uvBounds.vMin);
-                    glTexCoord2f(texU, texV);
-                    glVertex2f(transformedX, transformedY);
                 }
-                glEnd();
-                
-                // Restore texture wrapping mode if we changed it
-                if (fitType == fit_Tile || fitType == fit_TileX || fitType == fit_TileY) {
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                }
-                
+
                 glDisable(GL_TEXTURE_2D);
                 glDisable(GL_BLEND);
             }
@@ -1130,7 +1168,7 @@ namespace pdg {
             glVertex2f(transformedCenter.x, transformedCenter.y);
             
             for (int i = 0; i <= segments; i++) {
-                float angle = 2.0f * M_PI * i / segments;
+                float angle = 2.0f * std::numbers::pi * i / segments;
                 float x = center.x + xRadius * cos(angle);
                 float y = center.y + yRadius * sin(angle);
                 
@@ -1191,7 +1229,7 @@ namespace pdg {
             glVertex2f(gradCenter.x, gradCenter.y);
             
             for (int i = 0; i <= segments; i++) {
-                float angle = 2.0f * M_PI * i / segments;
+                float angle = 2.0f * std::numbers::pi * i / segments;
                 float x = center.x + xRadius * cos(angle);
                 float y = center.y + yRadius * sin(angle);
                 
@@ -1221,7 +1259,7 @@ namespace pdg {
             glVertex2f(transformedCenter.x, transformedCenter.y); // Center point
             
             for (int i = 0; i <= segments; i++) {
-                float angle = 2.0f * M_PI * i / segments;
+                float angle = 2.0f * std::numbers::pi * i / segments;
                 float x = center.x + xRadius * cos(angle);
                 float y = center.y + yRadius * sin(angle);
                 
@@ -1238,33 +1276,14 @@ namespace pdg {
 
         // Draw outline if needed using direct OpenGL
         if (lineStyle != lineStyle_None && attrs.getLineThickness() > 0.0f && lineColor.alpha > 0.0f) {
-            port.setOpenGLModesForDrawing(lineColor.alpha < 1.0f, attrs.getBlendMode());
-            glColor4f(lineColor.red, lineColor.green, lineColor.blue, lineColor.alpha);
-            
-            if (attrs.getLineThickness() > 1.0f) {
-                glLineWidth(attrs.getLineThickness());
+            std::vector<Point> outline;
+            for (int i = 0; i < segments; ++i) {
+                const float angle = 2.0f*std::numbers::pi*i/segments;
+                const glm::vec3 p = attrs.getTransform() * glm::vec3(
+                    center.x+xRadius*std::cos(angle), center.y+yRadius*std::sin(angle), 1);
+                outline.emplace_back(p.x, p.y);
             }
-            
-            // Draw ellipse outline using line loop
-            glBegin(GL_LINE_LOOP);
-            for (int i = 0; i < segments; i++) {
-                float angle = 2.0f * M_PI * i / segments;
-                float x = center.x + xRadius * cos(angle);
-                float y = center.y + yRadius * sin(angle);
-                
-                // Apply transformation to each vertex
-                if (hasTransform) {
-                    glm::vec3 transformed = attrs.getTransform() * glm::vec3(x, y, 1.0f);
-                    glVertex2f(transformed.x, transformed.y);
-                } else {
-                    glVertex2f(x, y);
-                }
-            }
-            glEnd();
-            
-            if (attrs.getLineThickness() > 1.0f) {
-                glLineWidth(1.0f);
-            }
+            drawClosedStroke(port, outline, attrs.getLineThickness(), lineColor, attrs.getBlendMode());
         }
         
         // Mark port as needing redraw
@@ -1273,6 +1292,8 @@ namespace pdg {
 
 
     void Port::drawArc(const Point& center, float xRadius, float yRadius, float startAngle, float endAngle, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        ScopedPortClip clip(this, Rect(center.x-std::abs(xRadius), center.y-std::abs(yRadius), center.x+std::abs(xRadius), center.y+std::abs(yRadius)), attrs, std::max(0.5f, attrs.getLineThickness()/2));
         if (!attrs.hasLine()) return;
         // Apply transformation if needed
         Point transformedCenter = center;
@@ -1287,8 +1308,11 @@ namespace pdg {
         PortImpl& port = static_cast<PortImpl&>(*this);
         
         // Check if arc is within drawable area
-        Rect arcBounds = Rect(transformedCenter.x - xRadius, transformedCenter.y - yRadius, 
-                             transformedCenter.x + xRadius, transformedCenter.y + yRadius);
+        const auto& matrix = attrs.getTransform();
+        const float extentX = std::hypot(matrix[0][0]*xRadius, matrix[1][0]*yRadius) + attrs.getLineThickness()/2;
+        const float extentY = std::hypot(matrix[0][1]*xRadius, matrix[1][1]*yRadius) + attrs.getLineThickness()/2;
+        Rect arcBounds(transformedCenter.x-extentX, transformedCenter.y-extentY,
+                       transformedCenter.x+extentX, transformedCenter.y+extentY);
         if (arcBounds.intersection(port.drawableRect()).empty()) return;
 
         // Apply colors with opacity
@@ -1311,7 +1335,7 @@ namespace pdg {
         for (int i = 0; i <= segments; i++) {
             float angle = startAngle + i * angleStep;
             // Convert from mathematical angle (0 = right) to screen angle (0 = up)
-            float screenAngle = angle - M_PI/2;
+            float screenAngle = angle - std::numbers::pi/2;
             float x = center.x + xRadius * cos(screenAngle);
             float y = center.y + yRadius * sin(screenAngle);
             if (needsTransform) {
@@ -1333,54 +1357,28 @@ namespace pdg {
     }
 
     void MakeRoundedRectPolygon(const Rect& rect, float xRadius, float yRadius, Polygon& polygon) {
-        if (xRadius > rect.width() / 2) {
-            xRadius = rect.width() / 2;
-        }
-        if (yRadius > rect.height() / 2) {
-            yRadius = rect.height() / 2;
-        }    
-        // Create a proper rounded rectangle polygon
-        const int segments = 8; // Number of segments per quarter circle     
-        // Top edge (left to right)
-        polygon.addPoint(Point(rect.left + xRadius, rect.top));
-        polygon.addPoint(Point(rect.right - xRadius, rect.top));       
-        // Top-right corner arc
-        Point topRightCenter = Point(rect.right - xRadius, rect.top + yRadius);
-        for (int i = 1; i < segments; i++) {
-            float angle = -M_PI/2 + (i * M_PI/2) / segments; // -90° to 0°
-            float x = topRightCenter.x + xRadius * cos(angle);
-            float y = topRightCenter.y + yRadius * sin(angle);
-            polygon.addPoint(Point(x, y));
-        }    
-        // Right edge (top to bottom)
-        polygon.addPoint(Point(rect.right, rect.bottom - yRadius));     
-        // Bottom-right corner arc
-        Point bottomRightCenter = Point(rect.right - xRadius, rect.bottom - yRadius);
-        for (int i = 1; i < segments; i++) {
-            float angle = 0 + (i * M_PI/2) / segments; // 0° to 90°
-            float x = bottomRightCenter.x + xRadius * cos(angle);
-            float y = bottomRightCenter.y + yRadius * sin(angle);
-            polygon.addPoint(Point(x, y));
-        }  
-        // Bottom edge (right to left)
-        polygon.addPoint(Point(rect.left + xRadius, rect.bottom));      
-        // Bottom-left corner arc
-        Point bottomLeftCenter = Point(rect.left + xRadius, rect.bottom - yRadius);
-        for (int i = 1; i < segments; i++) {
-            float angle = M_PI/2 + (i * M_PI/2) / segments; // 90° to 180°
-            float x = bottomLeftCenter.x + xRadius * cos(angle);
-            float y = bottomLeftCenter.y + yRadius * sin(angle);
-            polygon.addPoint(Point(x, y));
-        }   
-        // Left edge (bottom to top)
-        polygon.addPoint(Point(rect.left, rect.top + yRadius));
-        // Top-left corner arc
-        Point topLeftCenter = Point(rect.left + xRadius, rect.top + yRadius);
-        for (int i = 1; i < segments; i++) {
-            float angle = M_PI + (i * M_PI/2) / segments; // 180° to 270°
-            float x = topLeftCenter.x + xRadius * cos(angle);
-            float y = topLeftCenter.y + yRadius * sin(angle);
-            polygon.addPoint(Point(x, y));
+        xRadius = std::min(xRadius, rect.width() / 2);
+        yRadius = std::min(yRadius, rect.height() / 2);
+        const Point centers[] = {
+            Point(rect.right-xRadius, rect.top+yRadius),
+            Point(rect.right-xRadius, rect.bottom-yRadius),
+            Point(rect.left+xRadius, rect.bottom-yRadius),
+            Point(rect.left+xRadius, rect.top+yRadius)
+        };
+        const int segments = std::clamp(calculateEllipseSegments(Point(), xRadius, yRadius,
+            glm::mat3(1.0f), false) / 4, 8, 32);
+        for (int corner = 0; corner < 4; ++corner) {
+            // Include both tangent points. Preserve deliberately sampled curve
+            // points even when they are less than addPoint's minimum distance apart.
+            for (int i = 0; i <= segments; ++i) {
+                const float angle = (corner - 1 + float(i)/segments) * std::numbers::pi/2;
+                const Point point(centers[corner].x + xRadius*std::cos(angle),
+                                  centers[corner].y + yRadius*std::sin(angle));
+                if (polygon.getPointCount() && point.distance(polygon.getPoint(polygon.getPointCount()-1)) < 0.0001f) continue;
+                if (corner == 3 && i == segments && polygon.getPointCount() &&
+                    point.distance(polygon.getPoint(0)) < 0.0001f) continue;
+                polygon.insertPoint(polygon.getPointCount(), point);
+            }
         }
     }
 
@@ -1389,144 +1387,94 @@ namespace pdg {
     // -----------------------------------------------------------------------------------
 
     void Port::drawImage(Image* img, const Point& loc, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
         if (!img) return;
-        
-        // If there's a transformation (rotation/scale/etc), we need to draw as a quad
-        if (attrs.getTransform() != glm::mat3(1.0f)) {
-            // Create a rectangle for the image at the given location
-            Rect imageRect(loc.x, loc.y, loc.x + img->width, loc.y + img->height);
-            
-            // Use the drawImage(Rect) version which handles transformations properly
-            drawImage(img, imageRect, attrs);
-            return;
-        }
-        
-        // No transformation - use simple point drawing
-        // Save current image opacity
-        uint8 originalOpacity = img->getOpacity();
-        
-        // Apply opacity from attributes
-        if (attrs.getFillOpacity() < 1.0f) {
-            img->setOpacity((uint8)(255 * attrs.getFillOpacity()));
-        }
-        
-        // Handle ImageStrip frame selection
-        ImageStrip* imgStrip = dynamic_cast<ImageStrip*>(img);
-        if (imgStrip && imgStrip->frames > 0) {
-            int frame = attrs.getFrame();
-            if (frame < 0 || frame >= imgStrip->frames) {
-                frame = 0; // Default to first frame
-            }
-            drawImage(imgStrip, frame, loc);
-        } else {
-            drawImage(img, loc);
-        }
-        
-        // Restore original opacity
-        img->setOpacity(originalOpacity);
+        drawImage(img, Rect(loc, img->getWidth(), img->getHeight()), attrs);
     }
 
     void Port::drawImage(Image* img, const Rect& rect, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
         drawImage(img, Quad(rect), attrs);
     }
     
     void Port::drawImage(Image* img, const Quad& quad, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
         if (!img) return;
-        
-        // Apply transformation if needed
-        if (attrs.getTransform() != glm::mat3(1.0f)) {
-            // Transform all four corners of the quad
-            glm::vec3 topLeft = attrs.getTransform() * glm::vec3(quad.points[0].x, quad.points[0].y, 1.0f);
-            glm::vec3 topRight = attrs.getTransform() * glm::vec3(quad.points[1].x, quad.points[1].y, 1.0f);
-            glm::vec3 bottomRight = attrs.getTransform() * glm::vec3(quad.points[2].x, quad.points[2].y, 1.0f);
-            glm::vec3 bottomLeft = attrs.getTransform() * glm::vec3(quad.points[3].x, quad.points[3].y, 1.0f);
-            
-            // Create transformed quad
-            Quad transformedQuad;
-            transformedQuad.points[0] = Point(topLeft.x, topLeft.y);
-            transformedQuad.points[1] = Point(topRight.x, topRight.y);
-            transformedQuad.points[2] = Point(bottomRight.x, bottomRight.y);
-            transformedQuad.points[3] = Point(bottomLeft.x, bottomLeft.y);
-            
-            // Draw as quad instead of rect
-            drawImage(img, transformedQuad);
-            if (attrs.hasLine() || attrs.hasFill()) {
-                drawQuad(transformedQuad, attrs);
-            }
-            return;
-        }
-        
-        // Save current image opacity
-        uint8 originalOpacity = img->getOpacity();
-        
-        // Apply opacity from attributes
-        if (attrs.getFillOpacity() < 1.0f) {
-            img->setOpacity((uint8)(255 * attrs.getFillOpacity()));
-        }
-        
-        // Handle ImageStrip frame selection and fit type
-        // For Quad, fitType applies to the bounding rect of the quad
-        Rect quadBounds = quad.getBounds();
-        ImageStrip* imgStrip = dynamic_cast<ImageStrip*>(img);
-        if (imgStrip && imgStrip->frames > 0) {
-            int frame = attrs.getFrame();
-            if (frame < 0 || frame >= imgStrip->frames) {
-                frame = 0; // Default to first frame
-            }
-            drawImage(imgStrip, frame, quadBounds, attrs.getFitType(), attrs.getClipOverflow());
+        ScopedPortClip clip(this, quad.getBounds(), attrs);
+        struct RestoreOpacity {
+            Image* image; uint8 opacity;
+            ~RestoreOpacity() { image->setOpacity(opacity); }
+        } restore{img, img->getOpacity()};
+        img->setOpacity(static_cast<uint8>(restore.opacity * std::clamp(attrs.getFillOpacity(), 0.0f, 1.0f)));
+        img->setPort(this);
+        auto* strip = dynamic_cast<ImageStrip*>(img);
+        const int frame = strip && attrs.getFrame() >= 0 && attrs.getFrame() < strip->frames ? attrs.getFrame() : 0;
+        Rect source(img->getWidth(), img->getHeight());
+        if (!attrs.getSubsection().empty()) source = source.intersection(attrs.getSubsection());
+        if (source.empty()) return;
+        if (strip) source += Offset(frame * img->getWidth(), 0);
+        const float width = std::hypot(quad.points[1].x-quad.points[0].x, quad.points[1].y-quad.points[0].y);
+        const float height = std::hypot(quad.points[3].x-quad.points[0].x, quad.points[3].y-quad.points[0].y);
+        if (width <= 0 || height <= 0) return;
+        auto point = [&](float x, float y) {
+            const auto& q = quad.points;
+            const float u=x/width, v=y/height;
+            const auto p = (1-u)*(1-v)*glm::vec2(q[0].x,q[0].y) + u*(1-v)*glm::vec2(q[1].x,q[1].y)
+                         + u*v*glm::vec2(q[2].x,q[2].y) + (1-u)*v*glm::vec2(q[3].x,q[3].y);
+            const auto t = attrs.getTransform()*glm::vec3(p,1);
+            return Point(t.x,t.y);
+        };
+        auto draw = [&](const Rect& destination, bool crop) {
+            Rect visible = crop ? destination.intersection(Rect(width,height)) : destination;
+            if (visible.empty()) return;
+            Rect pixels(source.left + (visible.left-destination.left)/destination.width()*source.width(),
+                        source.top + (visible.top-destination.top)/destination.height()*source.height(),
+                        source.left + (visible.right-destination.left)/destination.width()*source.width(),
+                        source.top + (visible.bottom-destination.top)/destination.height()*source.height());
+            Quad q; q.points[0]=point(visible.left,visible.top); q.points[1]=point(visible.right,visible.top);
+            q.points[2]=point(visible.right,visible.bottom); q.points[3]=point(visible.left,visible.bottom);
+            img->drawSection(q,pixels);
+        };
+        const FitType fit = attrs.getFitType();
+        if (fit == fit_Tile || fit == fit_TileX || fit == fit_TileY) {
+            const float tileWidth = fit == fit_TileY ? width : source.width();
+            const float tileHeight = fit == fit_TileX ? height : source.height();
+            for (float y=0; y<height; y+=tileHeight)
+                for (float x=0; x<width; x+=tileWidth)
+                    draw(Rect(x,y,x+tileWidth,y+tileHeight),true);
         } else {
-            drawImage(img, quadBounds, attrs.getFitType(), attrs.getClipOverflow());
+            float w=width, h=height;
+            if (fit != fit_Fill) {
+                float scale=1;
+                if (fit == fit_Width) scale=width/source.width();
+                else if (fit == fit_Height) scale=height/source.height();
+                else if (fit == fit_Inside) scale=std::min(width/source.width(),height/source.height());
+                else if (fit == fit_Overflow || fit == fit_Clipped) scale=std::max(width/source.width(),height/source.height());
+                w=source.width()*scale; h=source.height()*scale;
+            }
+            draw(Rect((width-w)/2,(height-h)/2,(width+w)/2,(height+h)/2), attrs.getClipOverflow() || fit == fit_Clipped);
         }
-        
-        // Restore original opacity
-        img->setOpacity(originalOpacity);
-        if (attrs.hasLine() || attrs.hasFill()) {
-            drawQuad(quad, attrs);
-        }
+        if (attrs.hasLine() || attrs.hasFill()) drawQuad(quad, attrs);
     }
 
     void Port::drawDrawing(const Drawing& drawing, const Point& loc, const Attributes& attrs) {
-        // Apply transformation if needed
-        Point transformedLoc = loc;
-        if (attrs.getTransform() != glm::mat3(1.0f)) {
-            glm::vec3 transformed = attrs.getTransform() * glm::vec3(loc.x, loc.y, 1.0f);
-            transformedLoc = Point(transformed.x, transformed.y);
-        }
-        
-        // For now, delegate to the existing Drawing::draw method
-        // TODO: Apply attributes like opacity, blend modes, etc.
-        const_cast<Drawing&>(drawing).draw(this);
+        ScopedOffscreenDrawing offscreenScope(this);
+        glm::mat3 offset(1);
+        offset[2] = glm::vec3(loc.x, loc.y, 1);
+        Attributes parent(attrs);
+        parent.setTransform(attrs.getTransform() * offset);
+        drawing.drawTransformed(this, parent);
     }
 
     void Port::drawDrawing(const Drawing& drawing, const Rect& rect, const Attributes& attrs) {
-        // Apply transformation if needed
-        Rect transformedRect = rect;
-        if (attrs.getTransform() != glm::mat3(1.0f)) {
-            // Transform all four corners of the rectangle
-            glm::vec3 topLeft = attrs.getTransform() * glm::vec3(rect.left, rect.top, 1.0f);
-            glm::vec3 topRight = attrs.getTransform() * glm::vec3(rect.right, rect.top, 1.0f);
-            glm::vec3 bottomRight = attrs.getTransform() * glm::vec3(rect.right, rect.bottom, 1.0f);
-            glm::vec3 bottomLeft = attrs.getTransform() * glm::vec3(rect.left, rect.bottom, 1.0f);
-            
-            // Create transformed quad
-            Quad transformedQuad;
-            transformedQuad.points[0] = Point(topLeft.x, topLeft.y);
-            transformedQuad.points[1] = Point(topRight.x, topRight.y);
-            transformedQuad.points[2] = Point(bottomRight.x, bottomRight.y);
-            transformedQuad.points[3] = Point(bottomLeft.x, bottomLeft.y);
-            
-            // Draw as quad instead of rect
-            // For now, just draw at the transformed location
-            drawDrawing(drawing, Point(transformedQuad.points[0].x, transformedQuad.points[0].y), attrs);
-            return;
-        }
-        
-        // For now, delegate to the existing Drawing::draw method
-        // TODO: Apply attributes like opacity, blend modes, scaling to fit rect, etc.
-        const_cast<Drawing&>(drawing).draw(this);
+        ScopedOffscreenDrawing offscreenScope(this);
+        Attributes parent(attrs);
+        parent.setTransform(attrs.getTransform() * drawing.destinationTransform(Quad(rect)));
+        drawing.drawTransformed(this, parent);
     }
 
     void Port::drawText(const char* text, const Point& loc, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
         if (!text) return;
         
         // Get text properties from attributes
@@ -1541,6 +1489,15 @@ namespace pdg {
             setFont(font);
         }
         
+        Font* metrics = font ? font : getCurrentFont(style);
+        const float width = getTextWidth(text, int(size), style);
+        float left = loc.x;
+        if (style & textStyle_Centered) left -= width/2;
+        else if (style & textStyle_RightJustified) left -= width;
+        Rect ink(left, loc.y - (metrics ? metrics->getFontAscent(int(size),style) : size),
+                 left + width, loc.y + (metrics ? metrics->getFontDescent(int(size),style) : 0));
+        ScopedPortClip clip(this, ink, attrs);
+
         // Get color from fill attributes (text color)
         Color textColor = attrs.getFillColor();
         textColor.alpha *= attrs.getFillOpacity();
@@ -1558,26 +1515,9 @@ namespace pdg {
                 return;
             }
             
-            int textWidth = getTextWidth(text, (int)size, style);
-            float textHeight = currentFont->getFontHeight((int)size, style);
-            
-            // Create a rectangle for the text based on its location and size
-            // The location point is the baseline, so we need to account for that
-            Rect textRect;
-            textRect.left = loc.x;
-            textRect.top = loc.y - textHeight * 0.8f; // Approximate ascent
-            textRect.right = textRect.left + textWidth;
-            textRect.bottom = loc.y + textHeight * 0.2f; // Approximate descent
-            
-            // Adjust for text justification
-            if (style & textStyle_Centered) {
-                textRect.left -= textWidth / 2.0f;
-                textRect.right -= textWidth / 2.0f;
-            } else if (style & textStyle_RightJustified) {
-                textRect.left -= textWidth;
-                textRect.right -= textWidth;
-            }
-            
+            // Use the same measured baseline bounds for layout and overflow clipping.
+            const Rect textRect = ink;
+
             // Transform all four corners of the rectangle
             glm::vec3 topLeft = attrs.getTransform() * glm::vec3(textRect.left, textRect.top, 1.0f);
             glm::vec3 topRight = attrs.getTransform() * glm::vec3(textRect.right, textRect.top, 1.0f);
@@ -1611,6 +1551,8 @@ namespace pdg {
     }
 
     void Port::drawText(const char* text, const Rect& rect, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        ScopedPortClip clip(this, rect, attrs);
         if (!text) return;
         
         // Get text properties from attributes
@@ -1664,6 +1606,8 @@ namespace pdg {
     }
 
     void Port::drawSphere(const Point& center, float radius, const Attributes& attrs) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        ScopedPortClip clip(this, Rect(center.x-radius, center.y-radius, center.x+radius, center.y+radius), attrs);
         // Apply transformation if needed
         Point transformedCenter = center;
         float transformedRadius = radius;
@@ -1713,8 +1657,14 @@ namespace pdg {
     }
 
     // Helper method to draw textured polygons
-    void Port::drawTexturedPolygon(Image* texture, const Polygon& transformedPolygon, const Polygon& untransformedPolygon, const Rect& bounds, FitType fitType) {
-        if (!texture || transformedPolygon.getPointCount() < 3) return;
+    void Port::drawTexturedPolygon(Image* texture, const Polygon& polygon, const Rect& bounds, const glm::mat3& transform, FitType fitType) {
+        drawTexturedPolygonImpl(texture, polygon, bounds, transform, fitType, glm::mat3(1.0f));
+    }
+
+    void Port::drawTexturedPolygonImpl(Image* texture, const Polygon& polygon, const Rect& bounds,
+                                       const glm::mat3& transform, FitType fitType, const glm::mat3& fitting) {
+        ScopedOffscreenDrawing offscreenScope(this);
+        if (!texture || polygon.getPointCount() < 3 || bounds.empty()) return;
         
         ImageOpenGL* imgOpenGL = static_cast<ImageOpenGL*>(texture);
         
@@ -1732,93 +1682,28 @@ namespace pdg {
         // Bind the texture using the image's bindTexture method
         if (imgOpenGL) {
             imgOpenGL->bindTexture();
-            port.setOpenGLModesForDrawing(texture->getOpacity() < 255, blendMode_Normal);
+            port.setOpenGLModesForDrawing(texture->getOpacity() < 255 || imgOpenGL->mTextureFormat == GL_RGBA, blendMode_Normal, imgOpenGL->usesPremultipliedAlpha());
             
             // Set color to white so texture shows properly
-            glColor4f(1.0f, 1.0f, 1.0f, (float)texture->getOpacity() / 255.0f);
+            imgOpenGL->setDrawColor();
             
-            // Handle tile modes specially
-            if (fitType == fit_Tile || fitType == fit_TileX || fitType == fit_TileY) {
-                // For tiling, calculate how many times to repeat the texture
-                float imgWidth = (float)texture->width;
-                float imgHeight = (float)texture->height;
-                float shapeWidth = bounds.width();
-                float shapeHeight = bounds.height();
-                
-                float uRepeat = (fitType == fit_Tile || fitType == fit_TileX) ? (shapeWidth / imgWidth) : 1.0f;
-                float vRepeat = (fitType == fit_Tile || fitType == fit_TileY) ? (shapeHeight / imgHeight) : 1.0f;
-                
-                // Scale UV max by repeat count
-                uvBounds.uMax = uvBounds.uMax * uRepeat;
-                uvBounds.vMax = uvBounds.vMax * vRepeat;
-                
-                // Set texture wrapping mode for tiling
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            // Tessellate in local space so crossing-contour intersections get
+            // the same UV mapping as authored vertices. Tile clipping then
+            // preserves those triangles and the even-odd holes between them.
+            const std::vector<Point>& vertices = polygon.tessellatedPoints();
+            {
+                TextureTriangles triangles(*imgOpenGL, uvBounds, bounds, fitType);
+                auto vertex = [&](const Point& local) {
+                    const auto fitted = fitting * glm::vec3(local.x,local.y,1);
+                    const Point p(fitted.x, fitted.y);
+                    const auto position = transform * fitted;
+                    return triangles.vertex(Point(position.x,position.y),
+                        (p.x-bounds.left)/bounds.width(), (p.y-bounds.top)/bounds.height());
+                };
+                for (size_t i = 0; i+2 < vertices.size(); i += 3)
+                    triangles.triangle(vertex(vertices[i]), vertex(vertices[i+1]), vertex(vertices[i+2]));
             }
-            
-            size_t pointCount = transformedPolygon.getPointCount();
-            
-            // Helper lambda to map point to UV coordinates
-            // Uses untransformed point position for UV calculation
-            auto pointToUV = [&](size_t index) -> std::pair<float, float> {
-                Point p = untransformedPolygon.getPoint(index);
-                float u = uvBounds.uMin + (p.x - bounds.left) / bounds.width() * (uvBounds.uMax - uvBounds.uMin);
-                float v = uvBounds.vMin + (p.y - bounds.top) / bounds.height() * (uvBounds.vMax - uvBounds.vMin);
-                return std::make_pair(u, v);
-            };
-        
-            // For simple convex polygons, use triangle fan
-            if (pointCount <= 6) {
-                glBegin(GL_TRIANGLE_FAN);
-                
-                // Center point (first vertex) - UV from untransformed, position from transformed
-                Point center = transformedPolygon.getPoint(0);
-                auto centerUV = pointToUV(0);
-                glTexCoord2f(centerUV.first, centerUV.second);
-                glVertex2f(center.x, center.y);
-                
-                // All vertices with texture coordinates
-                for (size_t i = 0; i < pointCount; i++) {
-                    Point p = transformedPolygon.getPoint(i);
-                    auto uv = pointToUV(i);
-                    glTexCoord2f(uv.first, uv.second);
-                    glVertex2f(p.x, p.y);
-                }
-                
-                // Close the fan
-                Point first = transformedPolygon.getPoint(0);
-                auto firstUV = pointToUV(0);
-                glTexCoord2f(firstUV.first, firstUV.second);
-                glVertex2f(first.x, first.y);
-                
-                glEnd();
-            } else {
-                // For complex polygons, use triangulation
-                // Note: triangulation operates on the transformed polygon
-                std::vector<Point> triangles = transformedPolygon.triangulate();
-                
-                // We need to map triangulated points back to original indices
-                // This is complex, so for now just use bounding box mapping
-                glBegin(GL_TRIANGLES);
-                for (size_t i = 0; i < triangles.size(); i++) {
-                    Point p = triangles[i];
-                    // Find closest point in untransformed polygon for UV
-                    // This is an approximation for triangulated points
-                    float u = uvBounds.uMin + (p.x - bounds.left) / bounds.width() * (uvBounds.uMax - uvBounds.uMin);
-                    float v = uvBounds.vMin + (p.y - bounds.top) / bounds.height() * (uvBounds.vMax - uvBounds.vMin);
-                    glTexCoord2f(u, v);
-                    glVertex2f(p.x, p.y);
-                }
-                glEnd();
-            }
-            
-            // Restore texture wrapping mode if we changed it
-            if (fitType == fit_Tile || fitType == fit_TileX || fitType == fit_TileY) {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            }
-        
+
             glDisable(GL_TEXTURE_2D);
             glDisable(GL_BLEND);
         }

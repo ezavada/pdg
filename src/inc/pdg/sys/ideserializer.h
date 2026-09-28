@@ -30,6 +30,7 @@
 #define IDESERIALIZER_H_INCLUDED
 
 #include "pdg_project.h"
+#include <bit>
 
 #include "pdg/sys/global_types.h"
 #include "pdg/sys/color.h"
@@ -80,53 +81,51 @@ namespace pdg {
 
 		typedef ISerializable* (*CreateSerializableFunc)();
 		
-	  #ifndef PDG_NO_64BIT
 		//! Deserialize an 8 byte (64 bit) value
 		/*! internal pointer is advanced 8 btyes
 		 \return the deserialized 64 bit value
 		 */
-		virtual uint64 deserialize_8u() MAY_THROW( out_of_data ) = 0;
-		int64          deserialize_8 () MAY_THROW( out_of_data );
-	  #endif
+		virtual uint64 deserialize_8u() = 0;
+		int64          deserialize_8 ();
 
 		//! Deserialize a 4 byte (32 bit) value
 		/*! internal pointer is advanced 4 btyes
 		 \return the deserialized 32 bit value
 		 */
-		virtual uint32 deserialize_4u() MAY_THROW( out_of_data ) = 0;
-		int32          deserialize_4 () MAY_THROW( out_of_data );
+		virtual uint32 deserialize_4u() = 0;
+		int32          deserialize_4 ();
 		
 		//! Deserialize a 3 byte (24 bit) value
 		/*! internal pointer is advanced 3 btyes
 		 \return the deserialized 24 bit value
 		 */
-		virtual uint32 deserialize_3u() MAY_THROW( out_of_data ) = 0;
+		virtual uint32 deserialize_3u() = 0;
 		
 		//! Deserialize a 2 byte (16 bit) value
 		/*! internal pointer is advanced 2 btyes
 		 \return the deserialized 16 bit value
 		 */
-		virtual uint16 deserialize_2u() MAY_THROW( out_of_data ) = 0;
-		int16          deserialize_2 () MAY_THROW( out_of_data );
+		virtual uint16 deserialize_2u() = 0;
+		int16          deserialize_2 ();
 		
 		//! Deserialize an 1 byte (8 bit) value
 		/*! internal pointer is advanced 1 btye
 		 \return the deserialized 8 bit value
 		 */
-		virtual uint8 deserialize_1u() MAY_THROW( out_of_data ) = 0;
-		int8          deserialize_1 () MAY_THROW( out_of_data );
+		virtual uint8 deserialize_1u() = 0;
+		int8          deserialize_1 ();
 		
 		//! Serialize a floating point value into a buffer
 		/*! internal pointer gets advanced by 4 bytes
 		 \return the floating point value that was deserialized
 		 */
-		float         deserialize_f() MAY_THROW( out_of_data );
+		float         deserialize_f();
 
 		//! Serialize a double precision floating point value into a buffer
 		/*! internal pointer gets advanced by 8 bytes
 		 \return the floating point value that was deserialized
 		 */
-		double        deserialize_d() MAY_THROW( out_of_data );
+		double        deserialize_d();
 
 		//! Deserialize a boolean (1 bit) value
 		/*! internal pointer gets advanced by 1 or 0 bytes, depending on bytes required to store the value
@@ -134,55 +133,55 @@ namespace pdg {
 		 This is optimized for series of boolean values, so that between 1 and 8 bools serialized 
 		 sequentially only use a single byte
 		 */
-		virtual bool   deserialize_bool() MAY_THROW( out_of_data ) = 0;
+		virtual bool   deserialize_bool() = 0;
 
 		//! Deserialize an unsigned value
 		/*! internal pointer is advanced by 1, 3 or 5 bytes, depending on bytes required to store value
 		 \return the unsigned value that was deserialized
 		 */
-		virtual uint32 deserialize_uint() MAY_THROW( out_of_data ) = 0;
+		virtual uint32 deserialize_uint() = 0;
 
 		//! Deserialize a pdg::Color value
 		/*! internal pointer is advanced by ? bytes, depending on bytes required to store value
 		 \return the Color that was deserialized
 		 */
-		virtual Color deserialize_color() MAY_THROW( out_of_data ) = 0;
+		virtual Color deserialize_color() = 0;
 
 		//! Deserialize a pdg::Offset value
 		/*! internal pointer is advanced by 1 to 9 bytes, depending on bytes required to store value
 		 \return the Offset that was deserialized
 		 */
-		virtual Offset deserialize_offset() MAY_THROW( out_of_data ) = 0;
+		virtual Offset deserialize_offset() = 0;
 
 		//! Deserialize a pdg::Point value
 		/*! internal pointer is advanced by 1 to 9 bytes, depending on bytes required to store value
 		 \return the Point that was deserialized
 		 */
-		Point          deserialize_point() MAY_THROW( out_of_data );
+		Point          deserialize_point();
 
 		//! Deserialize a pdg::Vector value
 		/*! internal pointer is advanced by 1 to 9 bytes, depending on bytes required to store value
 		 \return the Vector that was deserialized
 		 */
-		Vector         deserialize_vector() MAY_THROW( out_of_data );
+		Vector         deserialize_vector();
 
 		//! Deserialize a pdg::Rect
 		/*! internal pointer is advanced by ? bytes, depending on bytes required to store value
 		 \return the Rect that was deserialized
 		 */
-		virtual Rect   deserialize_rect() MAY_THROW( out_of_data ) = 0;
+		virtual Rect   deserialize_rect() = 0;
 
 		//! Deserialize a pdg::RotatedRect
 		/*! internal pointer is advanced by ? bytes, depending on bytes required to store value
 		 \return the RotatedRect that was deserialized
 		 */
-		virtual RotatedRect   deserialize_rotr() MAY_THROW( out_of_data ) = 0;
+		virtual RotatedRect   deserialize_rotr() = 0;
 
 		//! Deserialize a pdg::Quad
 		/*! internal pointer is advanced by 1, 3 or 5 bytes, depending on bytes required to store value
 		 \return the Quad that was deserialized
 		 */
-		virtual Quad   deserialize_quad() MAY_THROW( out_of_data ) = 0;
+		virtual Quad   deserialize_quad() = 0;
 
 
 		//! Deserialize a string value
@@ -192,20 +191,20 @@ namespace pdg {
 		 still be advanced past the string to the start of the next entity in the internal buffer.
 		 \return the length of the string in bytes (not including NUL terminator)
 		 */
-		virtual uint32 deserialize_str(char* outStr, size_t strMaxLen) MAY_THROW( (out_of_data, bad_tag) ) = 0;
+		virtual uint32 deserialize_str(char* outStr, size_t strMaxLen) = 0;
 
 		//! get length of a string value, including NUL terminator, as if it were deserialized
 		/*! internal pointer is NOT advanced. Use this to pre-flight allocation for longer strings
 		 \return the length of the serialized string plus nul terminator in bytes
 		 */
-		virtual uint32 deserialize_strGetLen() MAY_THROW( (out_of_data, bad_tag) ) = 0;
+		virtual uint32 deserialize_strGetLen() = 0;
 
 	  #ifndef PDG_SERIALIZE_NO_STD_STRING_SUPPORT
 		//! Deserialize a string value into a std::string
 		/*! \param outStr, a std::string to hold the resulting string
 		 \return none
 		 */
-		void           deserialize_string(std::string& outStr) MAY_THROW( (out_of_data, bad_tag) );
+		void           deserialize_string(std::string& outStr);
 	  #endif
 		
 		//! Deserialize an arbitrary block of memory
@@ -216,13 +215,13 @@ namespace pdg {
 		 still be advanced past the memory block to the start of the next entity in the buffer.
 		 \return the length of the string in bytes
 		 */
-		virtual uint32 deserialize_mem(void* outMem, uint32 memMaxLen) MAY_THROW( (out_of_data, bad_tag) ) = 0;
+		virtual uint32 deserialize_mem(void* outMem, uint32 memMaxLen) = 0;
 
 		//! Deserialize an string value
 		/*! internal pointer is NOT advanced. Use this to pre-flight allocation for blocks of memory
 		 \return the length of the serialized block of memory in bytes
 		 */
-		virtual uint32 deserialize_memGetLen() MAY_THROW( (out_of_data, bad_tag) ) = 0;
+		virtual uint32 deserialize_memGetLen() = 0;
 
 		//! Deserialize a serializable object
 		/*! internal pointer gets advanced past object to start of next entity in buffer
@@ -231,12 +230,12 @@ namespace pdg {
 		 If object could not be deserialized, either because the subclass was unknown or because the data was corrupt,
 		 the internal pointer will still be advanced past the object to the start of the next entity in the buffer.
 		 */
-		virtual ISerializable* deserialize_obj() MAY_THROW( (out_of_data, bad_tag, sync_error, unknown_object) ) = 0;
+		virtual ISerializable* deserialize_obj() = 0;
 		
 		//! Deserialize a reference to a non-serializable object
 		// You must have called IDeserializer::registerObject() to assign specific object for
 		// this unique ID before deserializing it, otherwise an unknown_object exception will be thrown.
-		template<typename T> T* deserialize_ref() MAY_THROW( (out_of_data, bad_tag, sync_error, unknown_object) );
+		template<typename T> T* deserialize_ref();
 
 		// ------------------------------------------------------------------
 		// class registry methods
@@ -266,7 +265,7 @@ namespace pdg {
 	protected:
 		IDeserializer() : traceDepth(0) {}
 		virtual char* statusDump(int hiliteBytes = 0) = 0;
-		virtual void* deserialize_ptr() MAY_THROW( (out_of_data, bad_tag, sync_error, unknown_object) ) = 0;
+		virtual void* deserialize_ptr() = 0;
 	};
 	
 	template<typename T> inline T* IDeserializer::deserialize_ref() {
@@ -280,7 +279,6 @@ namespace pdg {
 	    IDeserializer::registerClass(tmp.getMyClassTag(), T::CreateInstance); 
 	}
 
-  #ifndef PDG_NO_64BIT
 	inline int64
 	IDeserializer::deserialize_8() { 
 		DESERIALIZE_IN("8   ", 8);
@@ -288,27 +286,13 @@ namespace pdg {
 		DESERIALIZE_OUT;
 		return val;
 	}
-  #endif
 	
 	inline double
 	IDeserializer::deserialize_d() { 
 		DESERIALIZE_IN("d   ", 8);
-      #ifndef PDG_NO_64BIT
-		uint64 n = deserialize_8u(); 
-	  #else
-	  	// for platforms without int64, we have to break it into 2 steps
-	  	// which means worrying about endianness
-	    uint32 n[2];
-	  	#ifdef PLATFORM_BIG_ENDIAN
-	  		n[0] = deserialize_4u();
-	  		n[1] = deserialize_4u();
-	  	#else
-	  		n[1] = deserialize_4u();
-	  		n[0] = deserialize_4u();
-	  	#endif
-	  #endif
+			uint64 n = deserialize_8u();
 	  	DESERIALIZE_OUT;
-		return *(double*)&n; 
+		return std::bit_cast<double>(n);
 	}
 
 	inline int32
@@ -340,7 +324,7 @@ namespace pdg {
 		DESERIALIZE_IN("f   ", 4);
 		uint32 n = deserialize_4u(); 
 		DESERIALIZE_OUT;
-		return *(float*)&n; 	
+		return std::bit_cast<float>(n);
 	}
 
 	inline Point
@@ -363,7 +347,8 @@ namespace pdg {
 	inline void
 	IDeserializer::deserialize_string(std::string& outStr) { 
 		outStr.resize(deserialize_strGetLen()); 
-		deserialize_str(const_cast<char*>(outStr.data()), outStr.size());
+		const auto copied = deserialize_str(const_cast<char*>(outStr.data()), outStr.size());
+        outStr.resize(copied);
 	}
   #endif
 

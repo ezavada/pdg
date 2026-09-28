@@ -80,6 +80,7 @@
 // used to save a Local VALUE/OBJECT/FUNCTION into SAVED_VALUE/OBJECT/FUNCTION storage space
 #define VALUE_SAVE(dst, val)		dst.Reset(isolate, val)
 #define OBJECT_SAVE(dst, obj)		dst.Reset(isolate, obj)
+#define OBJECT_SAVE_WEAK(dst, obj) dst.Reset(isolate, obj); dst.SetWeak()
 #define FUNCTION_SAVE(dst, func)	dst.Reset(isolate, func)
 
 // calling conventions for C++ functions called from javascript
@@ -157,23 +158,20 @@
 #define QUAD2VAL(q)		v8_MakeJavascriptQuad(isolate, q)
 #define COLOR2VAL(c)	v8_MakeJavascriptColor(isolate, c)
 
-#define VAL2OFFSET(val)		v8_ValueToOffset(isolate, val)
-#define VAL2POINT(val)		v8_ValueToPoint(isolate, val)
-#define VAL2VECTOR(val)		v8_ValueToVector(isolate, val)
 #define VAL2RECT(val)		v8_ValueToRect(isolate, val)
 #define VAL2SPLINE(val)		v8_ValueToSpline(isolate, val)
 #define VAL2ROTRECT(val)	v8_ValueToRotatedRect(isolate, val)
 #define VAL2QUAD(val)		v8_ValueToQuad(isolate, val)
-#define VAL2COLOR(val)		v8_ValueToColor(isolate, val)
 
-#define VALUE_IS_OFFSET(val)	v8_ValueIsOffset(isolate, val)
-#define VALUE_IS_POINT(val)		v8_ValueIsPoint(isolate, val)
-#define VALUE_IS_VECTOR(val)	v8_ValueIsVector(isolate, val)
-#define VALUE_IS_RECT(val)		v8_ValueIsRect(isolate, val)
+#define VALUE_IS_OFFSET(val, value) v8_ValueIsOffset(isolate, val, value)
+// Fills point on success; false means invalid, nullopt preserves a script exception.
+#define VALUE_IS_POINT(val, point) v8_ValueIsPoint(isolate, val, point)
+#define VALUE_IS_VECTOR(val, value) v8_ValueIsVector(isolate, val, value)
+#define VALUE_IS_RECT(val, value) v8_ValueIsRect(isolate, val, value)
 #define VALUE_IS_SPLINE(val)	v8_ValueIsSpline(isolate, val)
-#define VALUE_IS_ROTRECT(val)	v8_ValueIsRotatedRect(isolate, val)
-#define VALUE_IS_QUAD(val)		v8_ValueIsQuad(isolate, val)
-#define VALUE_IS_COLOR(val)		v8_ValueIsColor(isolate, val)
+#define VALUE_IS_ROTRECT(val, value) v8_ValueIsRotatedRect(isolate, val, value)
+#define VALUE_IS_QUAD(val, value) v8_ValueIsQuad(isolate, val, value)
+#define VALUE_IS_COLOR(val, value) v8_ValueIsColor(isolate, val, value)
 
 // JavaScript Value query functions
 #define VALUE_IS_UNDEFINED(val)	val->IsUndefined()
@@ -292,6 +290,9 @@
 //	SETUP_NON_SCRIPT_EXCEPTION
 
 
+#define SETUP_CONSTRUCTOR_CALL
+#define THROW_ARGUMENT_TYPE(n, type, value) v8_ThrowArgTypeException(isolate, n, type, *value)
+
 // Execute arbitrary javascript, with the result put into the JavaScript Value valVar.
 // Whatever you pass as obj will be the "this" pointer when the code is evaluated,
 // or you can pass NULL to use the global object.
@@ -327,6 +328,9 @@
 #define THROW_ERR_LITERAL(msg) _V8_THROW_ERR_LITERAL(msg, Error)
 
 #define THROW_ERR(msg) _V8_THROW_ERR(msg, Error)
+
+// Preserve a native validation message, including dynamically constructed text.
+#define THROW_ERR_MESSAGE(msg) _V8_THROW_ERR(msg, Error)
 
 #define THROW_TYPE_ERR(msg) _V8_THROW_ERR(msg, TypeError)
 
@@ -379,7 +383,11 @@
 
 #define _V8_MANAGED_CPP_INSTANCE_IMPL(klass, wrapper) \
 	wrapper::wrapper(SCRIPT_ARGS) : cppPtr_(NULL) {                 CR \
-			cppPtr_ = New_##klass(args);                            CR \
+            { CR \
+                v8::TryCatch caught(args.GetIsolate()); CR \
+                cppPtr_ = New_##klass(args); CR \
+                if (caught.HasCaught()) { caught.ReThrow(); return; } CR \
+            } CR \
 			if (!cppPtr_ && !s_##klass##_InNewFromCpp) {            CR \
 				THROW_ERR_LITERAL("Failed to create " #klass " instance");  CR \
 			}                                                       CR \
@@ -423,6 +431,7 @@ class klass superklasses {                                          CR \
   public:                                                           CR \
     static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target); CR \
     static void New(SCRIPT_ARGS);                                   CR \
+    static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); } CR \
   protected:                                                        CR \
     static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
 
@@ -597,6 +606,34 @@ v8::Local<v8::Object> wrapper::NewFromCpp(v8::Isolate* isolate, klass* cppObj) {
     return scope.Escape(instance);                                   CR \
 }                                                                    CR CR \
 
+#define _V8_REFCOUNTED_WRAPPER_NEW_FROM_CPP_IMPL(klass, wrapper, extra)    \
+v8::Local<v8::Object> wrapper::NewFromCpp(v8::Isolate* isolate, klass* cppObj) {  CR \
+	s_##klass##_InNewFromCpp = true;							     CR \
+    v8::EscapableHandleScope scope(isolate);                         CR \
+    v8::Local<v8::FunctionTemplate> constructor =                    \
+            v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_);   CR \
+    v8::MaybeLocal<v8::Function> maybeFunc = constructor->GetFunction(isolate->GetCurrentContext()); CR \
+    if (maybeFunc.IsEmpty()) {                                       CR \
+        s_##klass##_InNewFromCpp = false;                            CR \
+        return v8::Local<v8::Object>();                              CR \
+    }                                                                CR \
+    v8::Local<v8::Function> func = maybeFunc.ToLocalChecked();      CR \
+    v8::MaybeLocal<v8::Object> maybeInstance = func->NewInstance(isolate->GetCurrentContext()); CR \
+    if (maybeInstance.IsEmpty()) {                                   CR \
+        s_##klass##_InNewFromCpp = false;                            CR \
+        return v8::Local<v8::Object>();                              CR \
+    }                                                                CR \
+    v8::Local<v8::Object> instance = maybeInstance.ToLocalChecked(); CR \
+    wrapper* objWrapper = jswrap::ObjectWrap::Unwrap<wrapper>(instance);  CR \
+    { [[maybe_unused]] v8::Local<v8::Object> obj = instance; extra; } CR \
+    DEBUG_ASSERT(objWrapper->cppPtr_ == 0, 						     \
+    	"NewFromCpp() already have C++ object!"); 		             CR \
+    if (objWrapper->cppPtr_) objWrapper->cppPtr_->release();             CR \
+    objWrapper->cppPtr_ = cppObj;                                    CR \
+    s_##klass##_InNewFromCpp = false;					   	         CR \
+    return scope.Escape(instance);                                   CR \
+}                                                                    CR CR \
+
 // Sets up the methods and fields needed for a singleton 
 // Use GetScriptSingletonInstance() to get the Javascript v8::Object
 //   or to create it if it doesn't exist
@@ -727,10 +764,34 @@ static bool s_##klass##_InNewFromCpp = false;		     CR CR \
     extraNewFromCpp )                                    CR \
   _V8_CLASS_INIT_IMPL(klass,klass##Wrap)                 CR \
 
+// Constructible callbacks: the JS wrapper and active native users each retain
+// a reference. Unlike BINDING_INITIALIZER_IMPL, an inactive wrapper is collectible.
+#define BINDING_INITIALIZER_IMPL_REFCOUNTED(klass, extraNewFromCpp) \
+bool s_##klass##_InNewFromCpp = false; CR CR \
+  _V8_WRAPPER_NEW_IMPL(klass, klass##Wrap, \
+    if (auto* cppObj = objWrapper->getCppObject()) { \
+      v8::Local<v8::Object> obj = THIS; extraNewFromCpp; }) CR \
+  _V8_REFCOUNTED_WRAPPER_NEW_FROM_CPP_IMPL(klass, klass##Wrap, extraNewFromCpp) CR \
+  _V8_CLASS_INIT_IMPL(klass,klass##Wrap) CR
+
+#define WRAPPER_INITIALIZER_IMPL_REFCOUNTED_CUSTOM(klass, extraNewFromCpp) \
+static bool s_##klass##_InNewFromCpp = false; CR CR \
+  _V8_WRAPPER_NEW_IMPL(klass, klass##Wrap, ) CR \
+  _V8_REFCOUNTED_WRAPPER_NEW_FROM_CPP_IMPL(klass, klass##Wrap, extraNewFromCpp) CR \
+  _V8_CLASS_INIT_IMPL(klass,klass##Wrap) CR \
+
 #define WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(klass, factoryFunction, extraNewFromCpp)    \
 static bool s_##klass##_InNewFromCpp = false;		     CR CR \
   _V8_FACTORY_ONLY_WRAPPER_NEW_IMPL(klass, klass##Wrap, factoryFunction)    		 CR \
   _V8_WRAPPER_NEW_FROM_CPP_IMPL(klass, klass##Wrap,      CR \
+    extraNewFromCpp )                                    CR \
+  _V8_CLASS_INIT_IMPL(klass,klass##Wrap)                 CR \
+
+
+#define WRAPPER_INITIALIZER_IMPL_REFCOUNTED_FACTORY(klass, factoryFunction, extraNewFromCpp)    \
+static bool s_##klass##_InNewFromCpp = false;		     CR CR \
+  _V8_FACTORY_ONLY_WRAPPER_NEW_IMPL(klass, klass##Wrap, factoryFunction)    		 CR \
+  _V8_REFCOUNTED_WRAPPER_NEW_FROM_CPP_IMPL(klass, klass##Wrap,      CR \
     extraNewFromCpp )                                    CR \
   _V8_CLASS_INIT_IMPL(klass,klass##Wrap)                 CR \
 
@@ -799,6 +860,25 @@ klass* New_##klass(SCRIPT_ARGS) {						   CR \
 	}                                                      CR \
 	initialized = true;                                    CR \
 	v8::Local<v8::FunctionTemplate> t = v8::FunctionTemplate::New(isolate, New); CR \
+    t->InstanceTemplate()->SetInternalFieldCount(1);       CR \
+	v8::Local<v8::String> name_str = _V8_STR(name);        CR \
+    t->SetClassName(name_str);                             CR \
+    constructorTpl_.Reset(isolate, t);                     CR \
+	consts_def	props_def	meth_def						  \
+	v8::Local<v8::Function> func = t->GetFunction(isolate->GetCurrentContext()).ToLocalChecked(); CR \
+	target->Set(isolate->GetCurrentContext(), name_str, func).ToChecked()
+
+#define EXPORT_FINALIZED_CLASS_SYMBOLS(name, klass, finalizer, consts_def, props_def, meth_def) \
+    EXPORT_CLASS_SYMBOLS(name, klass, consts_def, props_def, meth_def)
+
+#define EXPORT_DERIVED_CLASS_SYMBOLS(name, klass, base, finalizer, consts_def, props_def, meth_def) \
+	static bool initialized = false;                       CR \
+	if (initialized) {                                     CR \
+		return;                                            CR \
+	}                                                      CR \
+	initialized = true;                                    CR \
+	v8::Local<v8::FunctionTemplate> t = v8::FunctionTemplate::New(isolate, New); CR \
+    t->Inherit(base##Wrap::GetTemplate(isolate)); CR \
     t->InstanceTemplate()->SetInternalFieldCount(1);       CR \
 	v8::Local<v8::String> name_str = _V8_STR(name);        CR \
     t->SetClassName(name_str);                             CR \
@@ -946,20 +1026,26 @@ klass* New_##klass(SCRIPT_ARGS) {						   CR \
 	v8::Local<v8::Function> paramName = v8::Local<v8::Function>::Cast(args[n-1]);
 
 
-#define REQUIRE_OFFSET_ARG(n, paramName)   \
-	if (!VALUE_IS_OFFSET(ARGV[n-1])) {                       			CR \
-		v8_ThrowArgTypeException(isolate, n, "Offset", *ARGV[n-1]); 	CR \
-		return;                       	                                CR \
-	}								 								    CR \
-	pdg::Offset paramName = VAL2OFFSET(ARGV[n-1])
-	
+#define REQUIRE_OFFSET_ARG(n, paramName) \
+    pdg::Offset paramName; CR \
+    auto paramName##_isOffset = VALUE_IS_OFFSET(ARGV[n-1], paramName); CR \
+    if (!paramName##_isOffset.has_value()) { RETURN_NULL; } CR \
+    if (!*paramName##_isOffset) { CR \
+        v8_ThrowArgTypeException(isolate, n, "Offset", *ARGV[n-1]); CR \
+        return; CR \
+    }
 
-#define REQUIRE_POINT_ARG(n, paramName)   \
-	if (!VALUE_IS_POINT(ARGV[n-1])) { 	                       			CR \
-		v8_ThrowArgTypeException(isolate, n, "Point", *ARGV[n-1]); 		CR \
-		return;                                                     	CR \
-	}																	CR \
-	pdg::Point paramName = VAL2POINT(ARGV[n-1])
+
+
+#define REQUIRE_POINT_ARG(n, paramName) \
+    pdg::Point paramName; CR \
+    auto paramName##_isPoint = VALUE_IS_POINT(ARGV[n-1], paramName); CR \
+    if (!paramName##_isPoint.has_value()) { RETURN_NULL; } CR \
+    if (!*paramName##_isPoint) { CR \
+        v8_ThrowArgTypeException(isolate, n, "Point", *ARGV[n-1]); CR \
+        return; CR \
+    }
+
 
 #define REQUIRE_SPLINE_ARG(n, paramName)   \
 	if (!VALUE_IS_SPLINE(ARGV[n-1])) { 	                       			CR \
@@ -969,44 +1055,59 @@ klass* New_##klass(SCRIPT_ARGS) {						   CR \
 	pdg::Spline* paramName = VAL2SPLINE(ARGV[n-1])
 
 
-#define REQUIRE_VECTOR_ARG(n, paramName)   \
-	if (!VALUE_IS_VECTOR(ARGV[n-1])) {                        			CR \
-		v8_ThrowArgTypeException(isolate, n, "Vector", *ARGV[n-1]); 	CR \
-		return;                                                     	CR \
-	}																	CR \
-	pdg::Vector paramName = VAL2VECTOR(ARGV[n-1])
+#define REQUIRE_VECTOR_ARG(n, paramName) \
+    pdg::Vector paramName; CR \
+    auto paramName##_isVector = VALUE_IS_VECTOR(ARGV[n-1], paramName); CR \
+    if (!paramName##_isVector.has_value()) { RETURN_NULL; } CR \
+    if (!*paramName##_isVector) { CR \
+        v8_ThrowArgTypeException(isolate, n, "Vector", *ARGV[n-1]); CR \
+        return; CR \
+    }
 
 
-#define REQUIRE_RECT_ARG(n, paramName)   \
-	if (!VALUE_IS_RECT(ARGV[n-1])) {                          			CR \
-		v8_ThrowArgTypeException(isolate, n,	"Rect", *ARGV[n-1]); 	CR \
-		return;                                                     	CR \
-	}																	CR \
-	pdg::Rect paramName = VAL2RECT(ARGV[n-1])
+
+#define REQUIRE_RECT_ARG(n, paramName) \
+    pdg::Rect paramName; CR \
+    auto paramName##_isRect = VALUE_IS_RECT(ARGV[n-1], paramName); CR \
+    if (!paramName##_isRect.has_value()) { RETURN_NULL; } CR \
+    if (!*paramName##_isRect) { CR \
+        v8_ThrowArgTypeException(isolate, n, "Rect", *ARGV[n-1]); CR \
+        return; CR \
+    }
 
 
-#define REQUIRE_ROTATED_RECT_ARG(n, paramName)   \
-	if (!VALUE_IS_ROTRECT(ARGV[n-1])) {                       			 CR \
-		v8_ThrowArgTypeException(isolate, n, "RotatedRect", *ARGV[n-1]); CR \
-		return;                                                     	 CR \
-	}																	 CR \
-	pdg::RotatedRect paramName = VAL2ROTRECT(ARGV[n-1])
+
+#define REQUIRE_ROTATED_RECT_ARG(n, paramName) \
+    pdg::RotatedRect paramName; CR \
+    auto paramName##_isRotatedRect = VALUE_IS_ROTRECT(ARGV[n-1], paramName); CR \
+    if (!paramName##_isRotatedRect.has_value()) { RETURN_NULL; } CR \
+    if (!*paramName##_isRotatedRect) { CR \
+        v8_ThrowArgTypeException(isolate, n, "RotatedRect", *ARGV[n-1]); CR \
+        return; CR \
+    }
 
 
-#define REQUIRE_QUAD_ARG(n, paramName)   \
-	if (!VALUE_IS_QUAD(ARGV[n-1])) {                          			CR \
-		v8_ThrowArgTypeException(isolate, n, "Quad", *ARGV[n-1]); 		CR \
-		return;                                                     	 CR \
-	}																	 CR \
-	pdg::Quad paramName = VAL2QUAD(ARGV[n-1])
+
+#define REQUIRE_QUAD_ARG(n, paramName) \
+    pdg::Quad paramName; CR \
+    auto paramName##_isQuad = VALUE_IS_QUAD(ARGV[n-1], paramName); CR \
+    if (!paramName##_isQuad.has_value()) { RETURN_NULL; } CR \
+    if (!*paramName##_isQuad) { CR \
+        v8_ThrowArgTypeException(isolate, n, "Quad", *ARGV[n-1]); CR \
+        return; CR \
+    }
 
 
-#define REQUIRE_COLOR_ARG(n, paramName)   \
-	if (!VALUE_IS_COLOR(ARGV[n-1])) {                         			CR \
-		v8_ThrowArgTypeException(isolate, n, "Color", *ARGV[n-1]); 		CR \
-		return;                                                     	 CR \
-	}																	 CR \
-	pdg::Color paramName = VAL2COLOR(ARGV[n-1])
+
+#define REQUIRE_COLOR_ARG(n, paramName) \
+    pdg::Color paramName; CR \
+    auto paramName##_isColor = VALUE_IS_COLOR(ARGV[n-1], paramName); CR \
+    if (!paramName##_isColor.has_value()) { RETURN_NULL; } CR \
+    if (!*paramName##_isColor) { CR \
+        v8_ThrowArgTypeException(isolate, n, "Color", *ARGV[n-1]); CR \
+        return; CR \
+    }
+
 
 
 #define OPTIONAL_STRING_ARG(n, paramName, defaultVal)   \
@@ -1207,57 +1308,94 @@ klass* New_##klass(SCRIPT_ARGS) {						   CR \
 	uint64 paramName = (uint64)paramName##_temp
 
 
-#define OPTIONAL_OFFSET_ARG(n, paramName, defaultVal)   \
-    if (ARGC >= n && !VALUE_IS_OFFSET(ARGV[n-1])) {     					CR \
-		v8_ThrowArgTypeException(isolate, n, "Offset", *ARGV[n-1]); 	CR \
-		return;                                                           CR \
-	}																	 CR \
-    pdg::Offset paramName = (ARGC<n) ? defaultVal : VAL2OFFSET(ARGV[n-1])
+#define OPTIONAL_OFFSET_ARG(n, paramName, defaultVal) \
+    pdg::Offset paramName; CR \
+    if (ARGC < n) { CR \
+        paramName = defaultVal; CR \
+    } else { CR \
+        auto paramName##_isOffset = VALUE_IS_OFFSET(ARGV[n-1], paramName); CR \
+        if (!paramName##_isOffset.has_value()) { RETURN_NULL; } CR \
+        if (!*paramName##_isOffset) { CR \
+            v8_ThrowArgTypeException(isolate, n, "Offset", *ARGV[n-1]); CR \
+        return; CR \
+        } CR \
+    }
 
 
-#define OPTIONAL_POINT_ARG(n, paramName, defaultVal)   \
-	if (ARGC >= n && !VALUE_IS_POINT(ARGV[n-1])) {      					CR \
-		v8_ThrowArgTypeException(isolate, n, "Point", *ARGV[n-1]); 		CR \
-		return;                                                           CR \
-	}																	 CR \
-	pdg::Point paramName = (ARGC<n) ? defaultVal : VAL2POINT(ARGV[n-1])
+
+#define OPTIONAL_POINT_ARG(n, paramName, defaultVal) \
+    pdg::Point paramName; CR \
+    if (ARGC < n) { CR \
+        paramName = defaultVal; CR \
+    } else { CR \
+        auto paramName##_isPoint = VALUE_IS_POINT(ARGV[n-1], paramName); CR \
+        if (!paramName##_isPoint.has_value()) { RETURN_NULL; } CR \
+        if (!*paramName##_isPoint) { CR \
+            v8_ThrowArgTypeException(isolate, n, "Point", *ARGV[n-1]); CR \
+        return; CR \
+        } CR \
+    }
 
 
-#define OPTIONAL_RECT_ARG(n, paramName, defaultVal)   \
-	if (ARGC >= n && !VALUE_IS_RECT(ARGV[n-1])) {     					CR \
-		v8_ThrowArgTypeException(isolate, n, "Rect", *ARGV[n-1]); 		CR \
-		return;                                                           CR \
-	}																	 CR \
-	pdg::Rect paramName = (ARGC<n) ? defaultVal : VAL2RECT(ARGV[n-1])
+#define OPTIONAL_RECT_ARG(n, paramName, defaultVal) \
+    pdg::Rect paramName; CR \
+    if (ARGC < n) { CR \
+        paramName = defaultVal; CR \
+    } else { CR \
+        auto paramName##_isRect = VALUE_IS_RECT(ARGV[n-1], paramName); CR \
+        if (!paramName##_isRect.has_value()) { RETURN_NULL; } CR \
+        if (!*paramName##_isRect) { CR \
+            v8_ThrowArgTypeException(isolate, n, "Rect", *ARGV[n-1]); CR \
+        return; CR \
+        } CR \
+    }
 
 
-#define OPTIONAL_ROTATED_RECT_ARG(n, paramName, defaultVal)   \
-	if (ARGC >= n && !VALUE_IS_ROTRECT(ARGV[n-1])) {    					 CR \
-		v8_ThrowArgTypeException(isolate, n, "RotatedRect", *ARGV[n-1]); CR \
-		return;                                                           CR \
-	}																	 CR \
-	pdg::RotatedRect paramName = (ARGC<n) ? defaultVal : VAL2ROTRECT(ARGV[n-1])
+
+#define OPTIONAL_ROTATED_RECT_ARG(n, paramName, defaultVal) \
+    pdg::RotatedRect paramName; CR \
+    if (ARGC < n) { CR \
+        paramName = defaultVal; CR \
+    } else { CR \
+        auto paramName##_isRotatedRect = VALUE_IS_ROTRECT(ARGV[n-1], paramName); CR \
+        if (!paramName##_isRotatedRect.has_value()) { RETURN_NULL; } CR \
+        if (!*paramName##_isRotatedRect) { CR \
+            v8_ThrowArgTypeException(isolate, n, "RotatedRect", *ARGV[n-1]); CR \
+        return; CR \
+        } CR \
+    }
 
 
-#define OPTIONAL_QUAD_ARG(n, paramName, defaultVal)   \
-	if (ARGC >= n && !VALUE_IS_QUAD(ARGV[n-1])) {     					CR \
-		v8_ThrowArgTypeException(isolate, n, "Quad", *ARGV[n-1]); 		CR \
-		return;                                                           CR \
-	}																	 CR \
-	pdg::Quad paramName = (ARGC<n) ? defaultVal : VAL2QUAD(ARGV[n-1])
+
+#define OPTIONAL_QUAD_ARG(n, paramName, defaultVal) \
+    pdg::Quad paramName; CR \
+    if (ARGC < n) { CR \
+        paramName = defaultVal; CR \
+    } else { CR \
+        auto paramName##_isQuad = VALUE_IS_QUAD(ARGV[n-1], paramName); CR \
+        if (!paramName##_isQuad.has_value()) { RETURN_NULL; } CR \
+        if (!*paramName##_isQuad) { CR \
+            v8_ThrowArgTypeException(isolate, n, "Quad", *ARGV[n-1]); CR \
+        return; CR \
+        } CR \
+    }
 
 
-#define OPTIONAL_COLOR_ARG(n, paramName, defaultVal)   \
-	if (ARGC >= n && !VALUE_IS_COLOR(ARGV[n-1])) {     					CR \
-		v8_ThrowArgTypeException(isolate, n, "Color", *ARGV[n-1]); 		CR \
-		return;                                                           CR \
-	}																	 CR \
-	pdg::Color paramName = (ARGC<n) ? defaultVal : VAL2COLOR(ARGV[n-1])
+
+#define OPTIONAL_COLOR_ARG(n, paramName, defaultVal) \
+    pdg::Color paramName; CR \
+    if (ARGC < n) { CR \
+        paramName = defaultVal; CR \
+    } else { CR \
+        auto paramName##_isColor = VALUE_IS_COLOR(ARGV[n-1], paramName); CR \
+        if (!paramName##_isColor.has_value()) { RETURN_NULL; } CR \
+        if (!*paramName##_isColor) { CR \
+            v8_ThrowArgTypeException(isolate, n, "Color", *ARGV[n-1]); CR \
+        return; CR \
+        } CR \
+    }
 
 
-// ========================================================================================
-//MARK: RETURN VALUE MACROS
-// ========================================================================================
 
 #define RETURN(what) { args.GetReturnValue().Set( what ); return; }
 
@@ -1514,3 +1652,6 @@ METHOD_IMPL(Serializer, Sizeof_##type)   CR \
 
 
 #endif // PDG_SCRIPT_MACROS_H_INCLUDED
+
+#define INIT_UINT_CONSTANT(name, value) \
+    target->DefineOwnProperty(isolate->GetCurrentContext(), _V8_STR(name), UINT2VAL(value), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked()

@@ -29,6 +29,8 @@
 
 
 #include "pdg_project.h"
+#include <numbers>
+#include "snapshot-codec.h"
 
 #include "pdg/msvcfix.h"
 #include "image-impl.h"
@@ -40,7 +42,12 @@
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
+#include <stdexcept>
 #include <iostream>
+#include <vector>
+#include <cmath>
+#include "pdg/sys/iserializer.h"
+#include "pdg/sys/ideserializer.h"
 
 #ifdef PDG_GFX_POINTER_SAFETY_CHECKS
     #define GFX_CHECK_PTR(ptr, block, block_size) CHECK_PTR(ptr, block, block_size)
@@ -63,27 +70,176 @@ typedef char* addr;
 namespace pdg {
 
 
-uint32 ImageImpl::getSerializedSize(pdg::ISerializer* serializer) const { 
-#ifndef COMPILER_MSVC
-	#warning implement ImageImpl::getSerializedSize()
-#endif
-	return 0; 
+namespace {
+constexpr uint64 maxImageSnapshotBytes = 512ull * 1024 * 1024;
+bool defaultImageColor(const Color& color) {
+    const Color defaults;
+    return color.red==defaults.red && color.green==defaults.green && color.blue==defaults.blue && color.alpha==defaults.alpha;
+}
+void checkImageColor(const Color& color) {
+    for (float channel : {color.red, color.green, color.blue, color.alpha})
+        if (!std::isfinite(channel) || channel < 0 || channel > 1)
+            throw std::runtime_error("Image snapshot color channels must be between zero and one");
+}
+void checkImageSection(const Quad& section) {
+    for (const auto& point : section.points)
+        if (!std::isfinite(point.x) || !std::isfinite(point.y))
+            throw std::runtime_error("Invalid image subsection coordinates");
+}
+void checkImageDimensions(long width, long height) {
+    if (width <= 0 || height <= 0 || width > 32768 || height > 32768)
+        throw std::runtime_error("Invalid image snapshot dimensions");
+}
+uint32 imagePixelBytes(long width, long height, unsigned bits) {
+    checkImageDimensions(width, height);
+    if (bits != 24 && bits != 32) throw std::runtime_error("Image snapshot requires RGB or RGBA pixels");
+    const uint64 bytes = uint64(width) * uint64(height) * (bits / 8);
+    if (bytes > maxImageSnapshotBytes) throw std::runtime_error("Image snapshot exceeds 512 MiB");
+    return static_cast<uint32>(bytes);
+}
 }
 
-
-void ImageImpl::serialize(pdg::ISerializer* serializer) const {
-#ifndef COMPILER_MSVC
-	#warning implement ImageImpl::serialize()
-#endif
+int ImageImpl::snapshotKind(ISerializer* serializer) const {
+    checkImageDimensions(width, height);
+    if (mSuperImage) return 2;
+    if (serializer->getResourceMode() == serialization_ExternalReferences && !mSnapshotPixelsChanged &&
+        (mSourceName.rfind("file:", 0) == 0 || mSourceName.rfind("res:", 0) == 0)) return 1;
+    requireSnapshotPixels();
+    return 0;
 }
-
-
-void ImageImpl::deserialize(pdg::IDeserializer* deserializer) {
-#ifndef COMPILER_MSVC
-	#warning implement ImageImpl::deserialize()
-#endif
+void ImageImpl::requireSnapshotPixels() const {
+    // Texture upload may have discarded the CPU copy. Named images can reload;
+    // anonymous and modified runtime images retain their pixels automatically.
+    auto* image = const_cast<ImageImpl*>(this);
+    if (!data && !mSourceName.empty() && !mSnapshotPixelsChanged) image->reloadData();
+    if (!data) throw std::runtime_error("Image pixels unavailable for complete save: " + mSourceName + "; retain named image data if its resource may disappear");
+    imagePixelBytes(width, height, bpp);
+    if (pitch < width * (bpp / 8)) throw std::runtime_error("Invalid image snapshot row stride");
 }
-
+uint32 ImageImpl::getSerializedSize(ISerializer* serializer) const {
+    const int kind = snapshotKind(serializer);
+    checkImageColor(transparentColor);
+    SnapshotWriter out(serializer,false);
+    out.integer(width);out.integer(height);out.integer(frames);out.integer(frameWidth);
+    if(out.flag(opacity!=255))out.byte(opacity);
+    out.flag(mUseEdgeClamp);
+    const bool colorPresent=out.flag(!defaultImageColor(transparentColor));
+    uint32 headerSize = 2 + out.size();
+    if(colorPresent)headerSize+=serializer->sizeof_color(transparentColor);
+    if (kind == 1) return headerSize + serializer->sizeof_str(mSourceName.c_str());
+    if (kind == 2) {
+        const Quad section = mIsQuadSection ? mSectionQuad : Quad(mSectionRect);
+        checkImageSection(section);
+        uint32 size = headerSize + serializer->sizeof_obj(mSuperImage);
+        SnapshotWriter sectionFields(serializer,false);sectionFields.signedInteger(mFrameNum,-1);sectionFields.flag(mIsQuadSection);
+        size+=sectionFields.size();
+        if(mFrameNum<0) size+=mIsQuadSection ? serializer->sizeof_quad(section) : serializer->sizeof_rect(mSectionRect);
+        return size;
+    }
+    return headerSize + 1 + serializer->sizeof_mem(data, imagePixelBytes(width, height, bpp));
+}
+void ImageImpl::serialize(ISerializer* serializer) const {
+    const int kind = snapshotKind(serializer);
+    checkImageColor(transparentColor);
+    serializer->serialize_1u(4); serializer->serialize_1u(kind);
+    SnapshotWriter out(serializer,true);
+    out.integer(width);out.integer(height);out.integer(frames);out.integer(frameWidth);
+    if(out.flag(opacity!=255))out.byte(opacity);
+    out.flag(mUseEdgeClamp);
+    if(out.flag(!defaultImageColor(transparentColor)))serializer->serialize_color(transparentColor);
+    if (kind == 1) serializer->serialize_string(mSourceName);
+    else if (kind == 2) {
+        serializer->serialize_obj(mSuperImage);
+        out.signedInteger(mFrameNum,-1);out.flag(mIsQuadSection);
+        const Quad section = mIsQuadSection ? mSectionQuad : Quad(mSectionRect);
+        checkImageSection(section);
+        if(mFrameNum<0) {
+            if(mIsQuadSection)serializer->serialize_quad(section);else serializer->serialize_rect(mSectionRect);
+        }
+    } else {
+        const uint32 bytes = imagePixelBytes(width, height, bpp);
+        const size_t row = width * (bpp / 8);
+        std::vector<uint8> pixels(bytes);
+        for (long y = 0; y < height; ++y) std::memcpy(pixels.data()+y*row, static_cast<const uint8*>(data)+y*pitch, row);
+        serializer->serialize_1u(bpp); serializer->serialize_mem(pixels.data(), bytes);
+    }
+}
+void ImageImpl::deserialize(IDeserializer* deserializer) {
+    if (deserializer->deserialize_1u() != 4) throw std::runtime_error("Unsupported image snapshot version");
+    const auto kind = deserializer->deserialize_1u();
+    if (kind > 2) throw std::runtime_error("Invalid image resource record");
+    SnapshotReader in(deserializer);
+    const long w = in.integer(), h = in.integer();
+    checkImageDimensions(w, h);
+    const auto count = in.integer(), fw = in.integer();
+    if ((fw == 0 && count != 0) || (fw != 0 && (fw > uint32(w) || count == 0 || count > uint32(w)/fw)))
+        throw std::runtime_error("Invalid image frame layout");
+    const auto alpha = in.flag() ? in.byte() : 255;
+    const bool clamp=in.flag();
+    const Color savedColor = in.flag() ? deserializer->deserialize_color() : Color();
+#ifdef PDG_NO_GUI
+    ImageImpl replacement;
+#else
+    ImageOpenGL replacement;
+#endif
+    replacement.width=w; replacement.height=h;
+    if (kind == 1) {
+        const auto nameLength=deserializer->deserialize_strGetLen();
+        if (nameLength == 0 || nameLength > 65536) throw std::runtime_error("Invalid image resource identifier length");
+        deserializer->deserialize_string(replacement.mSourceName);
+        if (replacement.mSourceName.rfind("file:",0) != 0 && replacement.mSourceName.rfind("res:",0) != 0)
+            throw std::runtime_error("Unsupported image resource identifier: " + replacement.mSourceName);
+        if (!replacement.reloadData() || !replacement.data)
+            throw std::runtime_error("Missing image resource: " + replacement.mSourceName);
+        if (replacement.width != w || replacement.height != h)
+            throw std::runtime_error("Image resource dimensions changed: " + replacement.mSourceName);
+    } else if (kind == 2) {
+        auto* object = deserializer->deserialize_obj();
+        replacement.mSuperImage = dynamic_cast<Image*>(object);
+        if (!replacement.mSuperImage) { if (object) object->release(); throw std::runtime_error("Expected a parent image"); }
+        for (auto* parent = replacement.mSuperImage; parent;) {
+            if (parent == this) { replacement.mSuperImage=nullptr; object->release(); throw std::runtime_error("Cyclic image snapshot"); }
+            auto* implementation=dynamic_cast<ImageImpl*>(parent);
+            parent=implementation ? implementation->mSuperImage : nullptr;
+        }
+        replacement.mFrameNum=in.signedInteger(-1);
+        const bool quad=in.flag();
+        if (replacement.mFrameNum < -1) throw std::runtime_error("Invalid image subsection record");
+        replacement.mIsQuadSection=quad != 0;
+        if(replacement.mFrameNum<0) {
+            if(quad)replacement.mSectionQuad=deserializer->deserialize_quad();
+            else replacement.mSectionQuad=Quad(deserializer->deserialize_rect());
+            checkImageSection(replacement.mSectionQuad);
+            replacement.mSectionRect=Rect(replacement.mSectionQuad.points[0], replacement.mSectionQuad.points[2]);
+        }
+        auto* strip=dynamic_cast<ImageStrip*>(replacement.mSuperImage);
+        if (replacement.mFrameNum >= 0 && (!strip || replacement.mFrameNum >= strip->getNumFrames()))
+            throw std::runtime_error("Invalid image frame index");
+    } else {
+        const auto bits=deserializer->deserialize_1u();
+        const auto bytes=imagePixelBytes(w,h,bits);
+        if (deserializer->deserialize_memGetLen() != bytes) throw std::runtime_error("Invalid image pixel payload size");
+        replacement.initEmpty(w,h,bits);
+        if (!replacement.data) throw std::bad_alloc();
+        if (deserializer->deserialize_mem(replacement.data,bytes) != bytes) throw std::runtime_error("Truncated image pixels");
+        replacement.mBufferWidth=w; replacement.mBufferHeight=h;
+        replacement.mTextureFormat=bits == 32 ? GL_RGBA : GL_RGB;
+    }
+#ifndef PDG_NO_GUI
+    if (auto* drawable=dynamic_cast<ImageOpenGL*>(this)) { auto* port=mPort; drawable->setPort(nullptr); drawable->setPort(port); }
+#endif
+    if (data) std::free(data);
+    if (mSuperImage) mSuperImage->release();
+    data=replacement.data; replacement.data=nullptr;
+    mSuperImage=replacement.mSuperImage; replacement.mSuperImage=nullptr;
+    width=w; height=h; frames=count; frameWidth=fw; opacity=alpha; mUseEdgeClamp=clamp != 0;
+    transparentColor=savedColor;
+    bpp=replacement.bpp; pitch=replacement.pitch; dataSize=replacement.dataSize;
+    mBufferWidth=replacement.mBufferWidth; mBufferHeight=replacement.mBufferHeight;
+    mTextureFormat=replacement.mTextureFormat; mFrameNum=replacement.mFrameNum;
+    mIsQuadSection=replacement.mIsQuadSection; mSectionRect=replacement.mSectionRect; mSectionQuad=replacement.mSectionQuad;
+    mSourceName=std::move(replacement.mSourceName); mRetainData=true; mSnapshotPixelsChanged=false;
+}
 
 Image*  ImageImpl::getFrame(int frame) {
 	ImageImpl* img = NEW_IMAGE(mPort);
@@ -137,6 +293,8 @@ void
 ImageImpl::setTransparentColor(Color rgb) {
 	if (mSuperImage) return;  // don't do for subimage
 	if (!data) return;  // no data assigned, can't do this yet
+	mSnapshotPixelsChanged = true;
+    mRetainData = true;
 	transparentColor = rgb;
 	// FIXME: this probably needs to be different for GL_RGBA
 	transparentPixel = (uint32)rgb.red << 16 | (uint32)rgb.green << 8 | (uint32)rgb.blue;
@@ -167,6 +325,7 @@ ImageImpl::setTransparentColor(Color rgb) {
 		data = tempData;
 		pitch = tempPitch;
 		mTextureFormat = GL_RGBA;
+        bpp = 32; dataSize = static_cast<uint32>(pitch * mBufferHeight);
 	}
 	// assign values in the Alpha Channel, 1 wherever transparent pixel appears, 0 where it doesn't
 	uint8 tcc[3];
@@ -242,8 +401,10 @@ ImageImpl::initFromData(char* imageData, long imageDataLen, const char* sourceNa
 	// Store filename with "file:" prefix for direct file loading
 	// pass this on to our platform code
 	mSourceName = sourceName;
+    if (mSourceName.empty()) mRetainData = true;
 	platform_initImageData((unsigned char*)imageData, imageDataLen, (unsigned char**)&data, &width, 
 			&height, &mBufferWidth, &mBufferHeight, &pitch, &mTextureFormat);
+	dataSize = data ? static_cast<uint32>(pitch * mBufferHeight) : 0;
 	if (mTextureFormat == GL_RGBA) {
 		bpp = 32;
 //			RedMask   = 0xff000000;
@@ -290,6 +451,7 @@ ImageImpl::initFromFile(const char* imageFileName, const char* sourceName) {
 	
 void
 ImageImpl::initEmpty(long w, long h, uint8 inBitsPerPixel) {
+    mRetainData = true;
     // set the output params
     width = w;
     height = h;
@@ -308,9 +470,9 @@ ImageImpl::initEmpty(long w, long h, uint8 inBitsPerPixel) {
 
 ImageImpl::ImageImpl() 
 	 : ImageStrip(), data(0), pitch(0), transparentPixel(0), opacity(255), 
-	   dataSize(0), mRetainData(false), mRetainAlpha(false),
+	   bpp(0), dataSize(0), mRetainData(false), mRetainAlpha(false),
 	   mBufferWidth(0), 
-	   mBufferHeight(0), mUseEdgeClamp(true), mSuperImage(0), mFrameNum(-1), 
+	   mBufferHeight(0), mUseEdgeClamp(true), mTextureFormat(0), mSuperImage(0), mFrameNum(-1),
 	   mIsQuadSection(false) 
 {
 	mSourceName = "";
@@ -318,6 +480,7 @@ ImageImpl::ImageImpl()
 
 
 ImageImpl::~ImageImpl() {
+    if (mSuperImage) { mSuperImage->release(); mSuperImage = nullptr; }
 	if (data) {
 		std::free(data);
 		data = 0;
@@ -370,7 +533,7 @@ Image::createImageFromResourceFile(const char* resourceName, const char* imageFi
   #endif // ! PDG_NO_GUI
 	ImageImpl *img = NEW_IMAGE(port);
 	std::string sourceNameStr = "res:";
-	sourceNameStr += imageFileName;
+	sourceNameStr += resourceName;
 	img->initFromFile(imageFileName, sourceNameStr.c_str());
 	img->addRef();
 	return img;
@@ -451,17 +614,7 @@ ImageImpl::reloadData() {
 		return true;
 	}
 	
-	// was created from data, so we can't reload.
-	// user needs to use image.retainData() to keep the data around
-	DEBUG_ONLY(
-		if (data == 0) {
-			const char* sourceName = this->mSourceName.c_str();
-			DEBUG_PRINT("ERROR: Image [%s]", sourceName);
-			DEBUG_BREAK("Attempted to reloadData() when no pixel data available. "
-				"This usually means you are trying to reuse an image created from a resource in a different port after the resource was closed."
-				"Do you need to call retainData()?");
-		}
-	);
+	// Let the caller report missing source data without triggering a debug trap.
 	return false;
 }
 
@@ -727,12 +880,6 @@ triangle_filter(double t) {
 	return(0.0);
 }
 
-#ifndef PI
-#define PI       3.141592        /* the venerable pi */
-#endif
-#ifndef M_PI
-#define M_PI PI
-#endif
 
 double
 bell_filter(double t) {
@@ -764,7 +911,7 @@ double sinc(double x);
     
 double
 sinc(double x) {
-	x *= M_PI;
+	x *= std::numbers::pi;
 	if(x != 0) return(std::sin(x) / x);
 	return(1.0);
 }

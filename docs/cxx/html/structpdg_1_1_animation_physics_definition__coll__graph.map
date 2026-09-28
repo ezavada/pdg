@@ -1,0 +1,7 @@
+<map id="AnimationPhysicsDefinition" name="AnimationPhysicsDefinition">
+<area shape="rect" id="Node000001" title=" " alt="" coords="130,117,311,143"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,209,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="141,54,210,116,204,117,139,59"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="233,5,437,46"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="304,56,235,119,232,114,299,57"/>
+</map>

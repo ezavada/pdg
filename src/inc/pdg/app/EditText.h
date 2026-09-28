@@ -73,7 +73,7 @@ protected:
 
 	void loadString(std::string& aString,int resourceID, int numStrings);
 	void drawBorder();	
-	bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw();  // return true if completely handled
+	bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept;  // return true if completely handled
 	void drawCaret();
 	bool canFitInDisplayArea(const KeyPressInfo* ki);
 };

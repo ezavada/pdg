@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\fn pdg::Font::getFontCapHeight
+\brief Get the height of an unaccented capital letter, such as H.
+
+Use this metric to align an icon or control with the visible capitals in a label.
+It excludes accents, descenders, and line spacing, unlike the full font ascent or height.
+
+\param size Font size, using the same units as Port::drawText().
+\param style Optional text style flags; defaults to textStyle_Plain.
+\return Distance from the baseline to the top of the capital, in port pixels.
+\see getFontAscent, getFontHeight
+
+**/ }

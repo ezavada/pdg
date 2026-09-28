@@ -62,6 +62,11 @@ ListBox::ListBox(Controller* controller, const Rect& viewArea, int textLines, co
 
 ListBox::~ListBox()
 {
+    if (mScrollbar) {
+        mScrollbar->removeObserver(this);
+        mParentController->removeView(mScrollbar);
+        mScrollbar->View::release();
+    }
     // clean up all the memory used for the list
     while (mListText.size() > 0) {
         ListBoxLine textLine = mListText.back();
@@ -83,7 +88,9 @@ void ListBox::calcClickableAreas()
 	// Create Scrollbar
 	Rect scrollbarArea(mViewArea.width() - 16, 1, mViewArea.width(), mViewArea.height());
 	mScrollbar = new Scrollbar(mController, localToGlobal(scrollbarArea), Scrollbar::VERTICAL, 0, mVisibleTextLines, 1);
+    mScrollbar->View::addRef(); // The composite retains its child independently of registration.
 	mParentController->addView(mScrollbar, ListBox::VIEW_ID_LIST_BOX_SCROLLBAR);
+    mScrollbar->setParentView(this);
 
 	// The ListBox will observe the scrollbar for changes.
 	mScrollbar->addObserver(this);
@@ -101,20 +108,24 @@ void ListBox::calcClickableAreas()
 
 }
 
+bool ListBox::doScrollWheel(const ScrollWheelInfo* wheel) {
+    return mIsEnabled && mScrollbar && mScrollbar->doScrollWheel(wheel);
+}
+
 void ListBox::drawSelf()
 {
 
 	// Erase old text
 	Rect boxRect = Rect(mViewArea.width(), mViewArea.height());
-	mPort->drawRect(localToGlobal(boxRect), Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1));
+	mPort->drawRect(localToGlobal(boxRect), getDrawingAttributes(Attributes().lineColor(PDG_BLACK_COLOR).lineThickness(1)));
 	boxRect.left +=1;
 	boxRect.top +=1;
 	boxRect.right -=0;
 	boxRect.bottom -=0;
-    mPort->drawRect(localToGlobal(boxRect), Attributes().fillColor(mBkColor));
+    mPort->drawRect(localToGlobal(boxRect), getDrawingAttributes(Attributes().fillColor(mBkColor)));
 
 	// draw scroll bar
-	mScrollbar->draw();
+
 
     Style style = textStyle_Plain;
 	int voffset = mPort->getCurrentFont(style)->getFontHeight(DESC_TEXT_SIZE, style) + 
@@ -133,62 +144,62 @@ void ListBox::drawSelf()
 		if (textLine.text) 
 		{
 		    if (textLine.text[0] == '@')
-    		{
-    			std::string command = CMD_BREAK2;
-    			if (command == textLine.text)
-    			{
-    				if (!firstTime)
-    				{
-    					textPoint.y += 4;
-    				}
-    				else
-    				{
-    					firstTime = false;
-    				}
-    			}
-    		}
-    		else
-    		{
-    			Rect textRect(textPoint.x, textPoint.y - voffset + DESC_TEXT_DECENT, mViewArea.width() - 16, textPoint.y + DESC_TEXT_DECENT);
-    			mPort->drawRect(localToGlobal(textRect), Attributes().fillColor(textLine.bgcolor));
-    			Point textTextPoint = textPoint;
-    			textTextPoint.x += 5; 
-    			// clip text if exceeds view area
-    			int fontWidth = mPort->getTextWidth(textLine.text,DESC_TEXT_SIZE,style,std::strlen(textLine.text));
-    			
-    			int scrollbarWidth = 0;
-    			if (mScrollbar)
-    				scrollbarWidth = mScrollbar->getViewArea().width();
+		{
+			std::string command = CMD_BREAK2;
+			if (command == textLine.text)
+			{
+				if (!firstTime)
+				{
+					textPoint.y += 4;
+				}
+				else
+				{
+					firstTime = false;
+				}
+			}
+		}
+		else
+		{
+			Rect textRect(textPoint.x, textPoint.y - voffset + DESC_TEXT_DECENT, mViewArea.width() - 16, textPoint.y + DESC_TEXT_DECENT);
+			mPort->drawRect(localToGlobal(textRect), getDrawingAttributes(Attributes().fillColor(textLine.bgcolor)));
+			Point textTextPoint = textPoint;
+			textTextPoint.x += 5;
+			// clip text if exceeds view area
+			int fontWidth = getDrawingTextWidth(textLine.text,DESC_TEXT_SIZE,style,std::strlen(textLine.text));
 
-    			if (fontWidth > mViewArea.width())
-    			{
-    				int clipTextWidth = mPort->getTextWidth(CLIP_TEXT,DESC_TEXT_SIZE,style);
-    				int drawableTextWidth = mViewArea.width() - clipTextWidth - scrollbarWidth - RIGHT_MARGIN;
-    				std::string aString("");
-    				std::string textStr = textLine.text;
-    				for(unsigned int i=0; i<= std::strlen(textLine.text); i++)
-    				{
-    					aString = textStr.substr(0,i);
-    					fontWidth = mPort->getTextWidth(aString.c_str(),DESC_TEXT_SIZE,style,aString.length());
-    					if (fontWidth >= drawableTextWidth)
-    						break;
-   				}
-   				aString += CLIP_TEXT;
-   				mPort->drawText(aString.c_str(), localToGlobal(textTextPoint), Attributes().textSize(DESC_TEXT_SIZE).textStyle(style).fillColor(textLine.fgcolor));
-              	}
-   			else
-   			{		
-   				mPort->drawText(textLine.text, localToGlobal(textTextPoint), Attributes().textSize(DESC_TEXT_SIZE).textStyle(style).fillColor(textLine.fgcolor));
-   			}
-    			textPoint.y += voffset;
-    			firstTime = false;
-    		}
+			int scrollbarWidth = 0;
+			if (mScrollbar)
+				scrollbarWidth = mScrollbar->getViewArea().width();
+
+			if (fontWidth > mViewArea.width())
+			{
+				int clipTextWidth = getDrawingTextWidth(CLIP_TEXT,DESC_TEXT_SIZE,style);
+				int drawableTextWidth = mViewArea.width() - clipTextWidth - scrollbarWidth - RIGHT_MARGIN;
+				std::string aString("");
+				std::string textStr = textLine.text;
+				for(unsigned int i=0; i<= std::strlen(textLine.text); i++)
+				{
+					aString = textStr.substr(0,i);
+					fontWidth = getDrawingTextWidth(aString.c_str(),DESC_TEXT_SIZE,style,aString.length());
+					if (fontWidth >= drawableTextWidth)
+						break;
+				}
+				aString += CLIP_TEXT;
+				mPort->drawText(aString.c_str(), localToGlobal(textTextPoint), getDrawingAttributes(Attributes().textSize(DESC_TEXT_SIZE).textStyle(style).fillColor(textLine.fgcolor), true));
+	}
+			else
+			{
+				mPort->drawText(textLine.text, localToGlobal(textTextPoint), getDrawingAttributes(Attributes().textSize(DESC_TEXT_SIZE).textStyle(style).fillColor(textLine.fgcolor), true));
+			}
+			textPoint.y += voffset;
+			firstTime = false;
+		}
 		}
 	}
 
 	// Left in for debug purposes
 	//Rect viewArea(0,0,mViewArea.height(), mViewArea.width());
-    //mPort->drawRect(localToGlobal(viewArea), Attributes().lineColor(PDG_GREEN_COLOR));
+    //mPort->drawRect(localToGlobal(viewArea), getDrawingAttributes(Attributes().lineColor(PDG_GREEN_COLOR)));
 
 	//this->drawClickableParts();
 }
@@ -295,21 +306,21 @@ bool ListBox::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
     else if (ki->unicode == key_DownArrow) {
 		int currLastVisible = mWindowTopLineIndex + (mVisibleTextLines-1);
 		if (mSelectedIndex < ((int)mListText.size() - 1)) { // make sure we are within the list limits
-    		if ((mSelectedIndex == currLastVisible) && (mSelectedIndex >= (mVisibleTextLines - 1))) {
-    			mWindowTopLineIndex = mWindowTopLineIndex+1;
+		if ((mSelectedIndex == currLastVisible) && (mSelectedIndex >= (mVisibleTextLines - 1))) {
+			mWindowTopLineIndex = mWindowTopLineIndex+1;
 	            if ((mSelectedIndex != NO_SELECTION) && (mSelectedIndex < (int)mListText.size())) {
-    			    mListText[mSelectedIndex].bgcolor = mBkColor;
-    			}
-    			mListText[++mSelectedIndex].bgcolor = mHtColor;
-    			draw();
-    		} else if (currLastVisible>mSelectedIndex) {
+			    mListText[mSelectedIndex].bgcolor = mBkColor;
+			}
+			mListText[++mSelectedIndex].bgcolor = mHtColor;
+			draw();
+		} else if (currLastVisible>mSelectedIndex) {
 	            if ((mSelectedIndex != NO_SELECTION) && (mSelectedIndex < (int)mListText.size())) {
-    			    mListText[mSelectedIndex].bgcolor = mBkColor;
-    			}
-    			mListText[++mSelectedIndex].bgcolor = mHtColor;
-    			draw();
-    		}
-    	}
+			    mListText[mSelectedIndex].bgcolor = mBkColor;
+			}
+			mListText[++mSelectedIndex].bgcolor = mHtColor;
+			draw();
+		}
+	}
 		return true;
 	} else if (ki->unicode == key_PageUp) {
 		if (mListText.size() > 0) {
@@ -343,6 +354,22 @@ bool ListBox::doKeyPress(const KeyPressInfo* ki, View* view, int id, int part)
 	
 	return true;
 		
+}
+
+void ListBox::viewAreaChanged(const Rect& previous) {
+    // List rows keep their font-defined height. The scrollbar remains aligned
+    // to the right edge as the owning view moves or resizes.
+    View::viewAreaChanged(previous);
+    if (!mScrollbar) return;
+    mScrollbar->setViewArea(Rect(mViewArea.right - 16, mViewArea.top + 1,
+                                 mViewArea.right, mViewArea.bottom));
+    const int rowHeight = mPort->getCurrentFont(textStyle_Plain)->getFontHeight(DESC_TEXT_SIZE, textStyle_Plain)
+        + mPort->getCurrentFont(textStyle_Plain)->getFontLeading(DESC_TEXT_SIZE, textStyle_Plain);
+    for (int i = 0; i < mVisibleTextLines; ++i) {
+        removeClickablePart(VIEW_ID_SELECTION_START + i);
+        addClickablePart(Rect(1, 1 + i*rowHeight, mViewArea.width()-17,
+                              1 + (i+1)*rowHeight), VIEW_ID_SELECTION_START + i);
+    }
 }
 
 } // namespace pdg

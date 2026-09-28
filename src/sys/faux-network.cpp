@@ -67,7 +67,7 @@ static int clientPacketNum = 0;
 
 class FauxConnect : public pdg::RefCountedImpl< pdg::IEventHandler > {
 public:
-    bool handleEvent(EventEmitter*, long, void* inEventData) throw() {
+    bool handleEvent(EventEmitter*, long, void* inEventData) noexcept {
         pdg::TimerInfo* ti = static_cast<pdg::TimerInfo*>(inEventData);
         if (ti->id == TIMER_NET_CONNECT) {
             pdg::NetConnect nc;
@@ -93,7 +93,7 @@ public:
 
 class FauxDisconnect : public pdg::RefCountedImpl< pdg::IEventHandler > {
 public:
-    bool handleEvent(EventEmitter*, long, void* inEventData) throw() {
+    bool handleEvent(EventEmitter*, long, void* inEventData) noexcept {
         pdg::TimerInfo* ti = static_cast<pdg::TimerInfo*>(inEventData);
         if (ti->id == TIMER_NET_CLOSE) {
             pdg::NetDisconnect ndc;
@@ -117,7 +117,7 @@ public:
 
 class FauxData : public pdg::RefCountedImpl< pdg::IEventHandler > {
 public:
-    bool handleEvent(EventEmitter*, long, void* inEventData) throw() {
+    bool handleEvent(EventEmitter*, long, void* inEventData) noexcept {
         pdg::TimerInfo* ti = static_cast<pdg::TimerInfo*>(inEventData);
         if (ti->id == TIMER_NET_DATA) {
             pdg::NetData nd;

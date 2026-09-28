@@ -2,19 +2,31 @@
 (function() {
     "use strict";
 
-    var tests = {
-        "port": "port_test.js",
-        "font": "font_test.js",
-        "drawing": "drawing_test.js",
-        "shape-fill": "shape_fill_test.js",
-        "image": "image_test.js",
-        "animation": "animation_test.js",
-        "spriter-sound": "spriter_sound_test.js",
-        "mvc": "../src/js/mvc-app/sample.js"
-    };
-    var testIds = ["port", "font", "drawing", "shape-fill", "image", "animation", "spriter-sound", "mvc"];
+    var catalog = window.PDG_VISUAL_CATALOG;
+    var tests = {};
+    catalog.forEach(function(entry) {
+        tests[entry.id] = entry.workingDir === 'repo' ? '../' + entry.scriptPath : entry.scriptPath;
+    });
+    var testIds = catalog.map(function(entry) { return entry.id; });
     var params = new URLSearchParams(window.location.search);
     var testId = params.get("test");
+    if (testId === "control-gallery") testId = "mvc";
+    var interactive = params.get('interactive') === '1';
+    var visualPages = [], visualIndex = 0;
+    if (interactive) {
+        var selected = (params.get('suites') || '').split(',').filter(Boolean);
+        var kind = params.get('kind') || 'ui';
+        catalog.filter(function(entry) {
+            return entry.kind === kind && (!selected.length || selected.indexOf(entry.id) >= 0);
+        }).forEach(function(entry) {
+            entry.pages.forEach(function(name, index) {
+                visualPages.push({entry: entry, page: index, name: entry.id + '/' + name});
+            });
+        });
+        visualIndex = Number(params.get('page') || 1) - 1;
+        if (!visualPages[visualIndex]) throw Error('Unknown visual page; use test/' + kind + ' --list.');
+        testId = visualPages[visualIndex].entry.id;
+    }
     var automated = params.get("automated") === "1";
     var statusNode = document.getElementById("pdg-ui-status");
     var resultNode = document.getElementById("pdg-ui-result-json");
@@ -24,6 +36,7 @@
     var runtimeError = null;
     var fontColorsSeen = { white: false, yellow: false };
     var drawingSpheresSeen = false;
+    var shapeFillChecks = 0;
     var moduleCache = {};
 
     function sampleFontColors() {
@@ -121,6 +134,16 @@
 
     function browserRequire(request, parentUrl) {
         if (request === "pdg") return window.pdg;
+        if (request === 'path') return {
+            sep: '/',
+            resolve: function() {
+                var parts = [];
+                Array.prototype.slice.call(arguments).join('/').split('/').forEach(function(part) {
+                    if (part === '..') parts.pop(); else if (part && part !== '.') parts.push(part);
+                });
+                return '/' + parts.join('/');
+            }
+        };
         if (request.charAt(0) !== "." && request.charAt(0) !== "/") {
             return window.require(request);
         }
@@ -159,6 +182,10 @@
             status = "failed";
             message = "sphere framebuffer did not contain round colored and JPEG-textured spheres";
         }
+        if (status === "passed" && automated && testId === "shape-fill" && !shapeFillChecks) {
+            status = "failed";
+            message = "polygon fill and texture transform checks did not run";
+        }
         if (status === "passed" && testId === "spriter-sound") {
             var signals = window.pdgSpriterSoundTest || {};
             if (signals.spriterFilesLoaded < 2 || signals.soundObjectsLoaded < 3 ||
@@ -167,13 +194,21 @@
                 message = "Spriter examples or sound playback calls were incomplete";
             }
         }
-        if (status === "passed" && testId === "mvc") {
-            var mvcSignals = window.pdgMvcSampleTest || {};
-            if (!mvcSignals.initialized || mvcSignals.frames === 0 || mvcSignals.buttons < 5 ||
-                mvcSignals.checkboxes < 1 || mvcSignals.editTexts < 2 ||
-                mvcSignals.listItems < 6 || !mvcSignals.scrollbar) {
+        if (status === "passed" && testId === "animation-physics") {
+            var rigDemo = window.pdgAnimationPhysicsDemo;
+            if (rigDemo && rigDemo.stats.error) {
                 status = "failed";
-                message = "MVC sample did not initialize and render all expected controls";
+                message = rigDemo.stats.error;
+            } else if ((automated || params.get("suite") === "1") &&
+                (!rigDemo || rigDemo.stats.steps !== 2 || rigDemo.stats.bones !== 16 || rigDemo.stats.drawings !== 16 || rigDemo.stats.groundChecks !== 9 || rigDemo.stats.blockerChecks !== 2 || rigDemo.stats.ragdollChecks !== 2 || rigDemo.stats.pushChecks !== 2 || rigDemo.stats.recoveryEvents !== 3 || rigDemo.stats.handChecks !== 2 || rigDemo.stats.fastTiltChecks !== 3 || rigDemo.stats.poseChecks !== 3)) {
+                status = "failed";
+                message = "human rig did not complete clips, ground IK, blocker, ragdoll, shoulder pushes, recovery, hand control, fast tilt and held-pose checks";
+            }
+        }
+        if (status === "passed" && testId === "mvc") {
+            if ((automated || params.get("suite") === "1") && !(window.pdgControlGalleryTest || {}).passed) {
+                status = "failed";
+                message = "MVC gallery did not complete its rendering and animation checks";
             }
         }
         var result = {
@@ -182,6 +217,9 @@
             frames: frameCount,
             message: message || ""
         };
+        if (shapeFillChecks) result.shapeFillChecks = shapeFillChecks;
+        if (testId === 'animation-physics' && window.pdgAnimationPhysicsDemo)
+            result.checks = window.pdgAnimationPhysicsDemo.stats;
         window.pdgUiTestResult = result;
         document.documentElement.setAttribute("data-status", status);
         resultNode.textContent = JSON.stringify(result);
@@ -334,6 +372,16 @@
                     var handled = callback(event);
                     sampleFontColors();
                     sampleDrawingSpheres();
+                    if (automated && testId === "shape-fill" && !shapeFillChecks && !finished) {
+                        try {
+                            shapeFillChecks = browserRequire('./shape_fill_check.js',
+                                new URL('emscripten/emscripten_ui_runner.js', window.location.href).href)(
+                                    window.pdg, event.port, window.Module.ctx, document.getElementById('pdg-canvas'));
+                        } catch (error) {
+                            runtimeError = error.stack || String(error);
+                            finish("failed", runtimeError);
+                        }
+                    }
                     return handled;
                 });
             }
@@ -347,17 +395,38 @@
         };
 
         window.process.argv = ["pdg", tests[testId]];
-        if (testId === "mvc") window.process.argv.push("--ui-test");
+        if (interactive || ((testId === "animation-physics" || testId === "wheel-chains") && !automated && params.get("suite") !== "1"))
+            window.process.argv.push("--wait");
+        if (!interactive && (testId === "mvc" || testId === "layer-serialization" || testId === "astra" || testId === "spriter") && (automated || params.get("suite") === "1"))
+            window.process.argv.push("--ui-test");
         window.process.exit = function(code) {
-            var details = testId === "mvc" && window.pdgMvcSampleTest
-                ? " " + JSON.stringify(window.pdgMvcSampleTest) : "";
+            var details = testId === "mvc" && window.pdgControlGalleryTest
+                    ? " " + JSON.stringify(window.pdgControlGalleryTest)
+                    : testId === "layer-serialization" && window.pdgLayerSerializationTest
+                        ? " " + JSON.stringify(window.pdgLayerSerializationTest) : "";
             finish(code ? "failed" : "passed", "process.exit(" + code + ")" + details);
             if (code) throw new Error("UI test exited with status " + code);
             window.pdg.quit();
         };
 
         statusNode.textContent = "Running " + testId + " UI test…";
-        var sourcePath = testId === "mvc" ? tests[testId] : "ui_tests/" + tests[testId];
+        var session;
+        if (interactive) {
+            var page = visualPages[visualIndex];
+            session = browserRequire('../lib/visual_session', new URL('emscripten/emscripten_ui_runner.js', window.location.href).href)
+                .install(window.pdg, {page: page.page,
+                    title: (visualIndex + 1) + '/' + visualPages.length + '  ' + page.name,
+                    navigate: function(action) {
+                        if (action === 'quit') {
+                            session.close();
+                            statusNode.textContent = 'Session ended. Close this tab; Ctrl+C stops the test server.';
+                            return;
+                        }
+                        params.set('page', String((visualIndex + (action === 'next' ? 1 : -1) + visualPages.length) % visualPages.length + 1));
+                        window.location.search = params.toString();
+                    }});
+        }
+        var sourcePath = tests[testId];
         var sourceUrl = new URL(sourcePath, window.location.href).href;
         var source = requestSource(sourcePath);
         var module = { exports: {} };
@@ -366,9 +435,28 @@
             source + "\n//# sourceURL=" + sourceUrl);
         factory(localRequire, module, module.exports, sourceUrl, sourceUrl.replace(/\/[^/]*$/, ""));
 
+        if (session) {
+            session.ready();
+            statusNode.textContent = session.title + ' — ' + session.instructions;
+            window.pdgVisualSession = session;
+            return;
+        }
+        if ((testId === "mvc" || testId === "layer-serialization" || testId === "animation-physics" || testId === "wheel-chains" || testId === "astra") && !automated && params.get("suite") !== "1") {
+            statusNode.textContent = testId === "astra"
+                ? "Astra — blinking and a gentle breeze, animated with live drawing attributes."
+                : testId === "wheel-chains"
+                ? "Wheel and chains — drag wheel, 1/2: spin speed, V: reverse, Space: stop, S: shake, D: release/hold, B: bones, F: frame policy, R: reset."
+                : testId === "animation-physics"
+                ? "Human animation rig — P: pose me, 1/2/3: clips, G/F: tilt, L: limp hand, drag hand: pull, O: blocker, S/H: pushes, D/U: ragdoll/recover, E/W: elbow/weight, B/C: bones/capsules."
+                : testId === "layer-serialization"
+                ? "Live layer serialization — click packet fields; M/P/U: presets, A: target animation, C: target collisions, L: link."
+                : "Interactive control gallery — hover, click, toggle, and open the dialogs.";
+            return;
+        }
         nativeSetTimeout(function() {
             if (!finished) finish("failed", "UI test timed out");
-        }, automated ? 30000 : 900000);
+        }, automated ? (catalog.find(function(entry) { return entry.id === testId; }).smokeTimeoutMs ||
+            (testId === 'wheel-chains' ? 90000 : 30000)) : 900000);
     }
 
     function waitForPdg(deadline) {
