@@ -1,0 +1,1184 @@
+.TH "Collider" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Collider \- Optional shapes, filtering, sensors and contacts for a \fBSprite\fP, \fBPart\fP or \fBParticle\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "uint \fBaddBox\fP (\fBRect\fP bounds)"
+.br
+.RI "Add a local rectangle\&. "
+.ti -1c
+.RI "uint \fBaddCapsule\fP (\fBPoint\fP start, \fBPoint\fP end, number radius)"
+.br
+.RI "Add a capsule while retaining existing shapes\&. "
+.ti -1c
+.RI "uint \fBaddCircle\fP (number radius, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.RI "Add a local circle\&. "
+.ti -1c
+.RI "uint \fBaddImageMask\fP (\fBImage\fP image, \fBRect\fP localBounds, int alphaThreshold=128)"
+.br
+.RI "Copy opaque image pixels into collision geometry\&. "
+.ti -1c
+.RI "uint \fBaddPolygon\fP (array vertices)"
+.br
+.RI "Add a simple local polygon, including concave outlines\&. "
+.ti -1c
+.RI "uint \fBaddPolygon\fP (\fBPolygon\fP polygon)"
+.br
+.RI "Copy collision geometry from a \fBPolygon\fP\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBclearShapes\fP ()"
+.br
+.RI "Remove every collision shape\&. "
+.ti -1c
+.RI "boolean \fBcontains\fP (\fBPoint\fP worldPoint)"
+.br
+.RI "Test a world point against the geometry\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetBounds\fP ()"
+.br
+.RI "Compute the union of transformed shape bounds\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetCapsuleEnd\fP (uint shapeId)"
+.br
+.RI "Read the capsule's end\&. "
+.ti -1c
+.RI "number \fBgetCapsuleRadius\fP (uint shapeId)"
+.br
+.RI "Read the capsule's radius\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetCapsuleStart\fP (uint shapeId)"
+.br
+.RI "Read the capsule's start\&. "
+.ti -1c
+.RI "number \fBgetCategory\fP ()"
+.br
+.RI "Read category bits\&. "
+.ti -1c
+.RI "number \fBgetCircleRadius\fP (uint shapeId)"
+.br
+.RI "Inspect collider geometry\&. "
+.ti -1c
+.RI "number \fBgetCollisionMask\fP ()"
+.br
+.RI "Read accepted category bits\&. "
+.ti -1c
+.RI "string \fBgetContactError\fP ()"
+.br
+.RI "Read the last native contact-dispatch error\&. "
+.ti -1c
+.RI "number \fBgetFriction\fP ()"
+.br
+.RI "Read the effective contact friction\&. "
+.ti -1c
+.RI "number \fBgetGeometrySource\fP ()"
+.br
+.RI "Inspect collider geometry\&. "
+.ti -1c
+.RI "number \fBgetGroup\fP ()"
+.br
+.RI "Read the collision exclusion group\&. "
+.ti -1c
+.RI "number \fBgetId\fP ()"
+.br
+.RI "Read this collider’s process-local identity\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBgetPhysicsBody\fP ()"
+.br
+.RI "Read the effective body association\&. "
+.ti -1c
+.RI "number \fBgetRestitution\fP ()"
+.br
+.RI "Read the effective restitution\&. "
+.ti -1c
+.RI "number \fBgetShapeCount\fP ()"
+.br
+.RI "Count the current shapes\&. "
+.ti -1c
+.RI "uint \fBgetShapeId\fP (uint id)"
+.br
+.RI "Find the stable ID at a current list index\&. "
+.ti -1c
+.RI "string \fBgetShapeName\fP (uint shapeId)"
+.br
+.RI "Inspect collider geometry\&. "
+.ti -1c
+.RI "number \fBgetShapeType\fP (uint shapeId)"
+.br
+.RI "Inspect collider geometry\&. "
+.ti -1c
+.RI "boolean \fBgetWantsContactEvents\fP ()"
+.br
+.RI "Read owner-event delivery preference\&. "
+.ti -1c
+.RI "boolean \fBisAttached\fP ()"
+.br
+.RI "Test whether this collider still has an owner\&. "
+.ti -1c
+.RI "boolean \fBisEnabled\fP ()"
+.br
+.RI "Read collision participation\&. "
+.ti -1c
+.RI "boolean \fBisPresent\fP ()"
+.br
+.RI "Test whether this is a real collider\&. "
+.ti -1c
+.RI "boolean \fBisSensor\fP ()"
+.br
+.RI "Read sensor mode\&. "
+.ti -1c
+.RI "boolean \fBisSourceShape\fP (uint shapeId)"
+.br
+.RI "Inspect collider geometry\&. "
+.ti -1c
+.RI "boolean \fBoverlaps\fP (\fBCollider\fP other)"
+.br
+.RI "Test two colliders geometrically\&. "
+.ti -1c
+.RI "boolean \fBremoveShape\fP (uint id)"
+.br
+.RI "Remove one shape by its stable ID\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetBox\fP (\fBRect\fP bounds)"
+.br
+.RI "Replace all geometry with one rectangle\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetCapsule\fP (\fBPoint\fP start, \fBPoint\fP end, number radius)"
+.br
+.RI "Replace all geometry with one capsule\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetCategory\fP (uint value)"
+.br
+.RI "Set this collider’s category bits\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetCircle\fP (number radius, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.RI "Replace all geometry with one circle\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetCollisionFilter\fP (function callback)"
+.br
+.RI "Filter contacts independently of owner type\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetCollisionMask\fP (uint value)"
+.br
+.RI "Set the categories this collider accepts\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetContactHandler\fP (function callback)"
+.br
+.RI "Install a contact listener\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetEnabled\fP (boolean value)"
+.br
+.RI "Enable or suspend participation in collision worlds\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetFriction\fP (number value)"
+.br
+.RI "Override this collider’s contact friction\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetGroup\fP (uint value)"
+.br
+.RI "Set an optional collision exclusion group\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetImageMask\fP (\fBImage\fP image, \fBRect\fP localBounds, int alphaThreshold=128)"
+.br
+.RI "Copy opaque image pixels into collision geometry\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetPhysicsBody\fP (\fBPhysicsBody\fP body)"
+.br
+.RI "Associate these shapes with an explicit compound body\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetPolygon\fP (array vertices)"
+.br
+.RI "Replace all geometry with one polygon\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetPolygon\fP (\fBPolygon\fP polygon)"
+.br
+.RI "Copy collision geometry from a \fBPolygon\fP\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetRestitution\fP (number value)"
+.br
+.RI "Override this collider’s restitution\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetSensor\fP (boolean value)"
+.br
+.RI "Choose overlap-only contact reporting\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetWantsContactEvents\fP (boolean wanted)"
+.br
+.RI "Enable contact events on the owning \fBSprite\fP\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBuseBodyMaterial\fP ()"
+.br
+.RI "Clear both per-collider material overrides\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBuseOwnerPhysics\fP ()"
+.br
+.RI "Restore the owner’s current body association\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const \fBCollider\fP \fBNoCollider\fP"
+.br
+.RI "Shared absence object for every \fBSprite\fP or \fBPart\fP without collision geometry\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Optional shapes, filtering, sensors and contacts for a \fBSprite\fP, \fBPart\fP or \fBParticle\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Use \fBSprite::setupCollider()\fP, \fBPart::setupCollider()\fP or \fBParticle::setupCollider()\fP\&. Their read-only \fRcollider\fP property returns the same handle until removeCollider(); beforehand it returns shared \fBCollider::NoCollider\fP\&. \fBCollider\fP is independent of animation, artwork and physical motion\&. Creating one never creates a \fBPhysicsBody\fP\&.
+
+.PP
+Local circles, capsules, rectangles and polygons follow their owner's affine transform, including parent/bone motion, scale and reflection\&. Nonuniformly scaled or sheared circles and capsules use convex approximations; see \fBcollider_capsule_geometry\fP\&. Singular geometry does not participate in the collision world\&. \fBgetBounds()\fP, \fBcontains()\fP and \fBoverlaps()\fP are explicit geometric queries and ignore event filters\&.
+
+.PP
+Enable \fBSpriteLayer::enableCollisions()\fP for contacts within a layer, or \fBSpriteLayer::enableCollisionsWithLayer()\fP for a linked pair of layers\&. Connected PhysicsBodies suppress their mutual contacts unless each connecting constraint allows them\&. Multiple shapes on the same body do not collide with one another\&. Contacts between linked layers using different solvers use basic impulse response\&.
+
+.PP
+A solid collider uses its owner's body by default\&. Without a body it acts as an externally positioned, immovable surface with no simulated velocity\&. Use a kinematic \fBPhysicsBody\fP for a moving platform that must carry or push objects\&. \fBsetPhysicsBody()\fP explicitly contributes a \fBPart\fP's geometry to a compound body; \fBuseOwnerPhysics()\fP restores the default association\&. Sensors report overlaps without impulses and work without any physical body\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Both \fBSprite\fP and \fBPart\fP owners advance automatically\&. Native contact callbacks and opted-in eventType_ColliderContact events run after solving\&. Callbacks can remove colliders, bodies, owners or layers; contact payloads describe the solved frame, so another callback may already have detached a referenced collider\&.
+.RE
+.PP
+.PP
+.nf
+const layer = pdg\&.createSpriteLayer();
+layer\&.enableCollisions();
+const sprite = layer\&.createSprite();
+const foot = sprite\&.createPart('foot');
+foot\&.setupPhysicsBody(1, 10);
+foot\&.setupCollider()\&.setCircle(8)\&.setWantsContactEvents(true);
+sprite\&.addHandler(new pdg\&.IEventHandler(function(event) {
+    if (event\&.phase === pdg\&.collision_Begin && event\&.collider === foot\&.collider) {
+        console\&.log('Foot contacted shape ' + event\&.otherShape);
+    }
+    return true;
+}), pdg\&.eventType_ColliderContact);
+.fi
+.PP
+
+.PP
+Retained handles remain queryable after removal, using the final transform; callbacks and physical associations are cleared\&. Initial Sprite/Layer snapshots preserve collider geometry/configuration, compound body links and constraints\&. Use a Layer snapshot for links between Sprites\&. Callback filters and contact handlers cannot be saved; reinstall them after loading\&. Native callers can also use independent \fBCollider\fP and CollisionWorld objects for custom owner types\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsBody\fP, \fBPhysicsConstraint\fP, \fBColliderContact\fP
+.RE
+.PP
+
+.PP
+\fBGeometry sources and explicit additions\fP
+.RS 4
+
+.RE
+.PP
+Operation  Frame/animation source  Caller-added shapes  \fBSprite\&.setupFrameCollider\fP / setupAnimationCollider  Selects the source and follows subsequent artwork updates  Clears previous geometry when selecting the source  addCircle / addCapsule / addBox / addPolygon / addImageMask  Continues updating  Adds a persistent shape in owner-local coordinates  removeShape  Throws for a source-controlled ID  Removes that addition only  setCircle / setCapsule / setBox / setPolygon / setImageMask  Stops following artwork  Replaces all geometry with the supplied shape  clearShapes  Stops following artwork  Removes all geometry  
+
+.PP
+Source updates preserve IDs by frame or authored box name\&. Source IDs may be inactive while an animation box is absent, and return when the box reappears\&. \fBgetShapeCount()\fP/getShapeId() enumerate the currently present shapes\&. \fBgetShapeName()\fP returns the authored box name, "frame" for a frame source, or an empty string for an explicit shape\&. Contacts aggregate convex pieces under each public shape ID\&.
+
+.PP
+ 
+.SH "Member Function Documentation"
+.PP 
+.SS "uint addBox (\fBRect\fP bounds)"
+
+.PP
+Add a local rectangle\&. Existing shape IDs remain unchanged\&. Shapes follow the owner’s position, rotation, scale and parent transforms\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIbounds\fP Finite local bounds with positive width and height\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Stable nonzero shape ID, or collisionShape_None for NoCollider\&. 
+.RE
+.PP
+
+.SS "uint addCapsule (\fBPoint\fP start, \fBPoint\fP end, number radius)"
+
+.PP
+Add a capsule while retaining existing shapes\&. Uses the geometry and transform rules in \fBcollider_capsule_geometry\fP\&. The new capsule has a stable ID\&. Existing shape IDs and any frame/animation geometry source remain intact; later source updates preserve this addition\&. Invalid input leaves the collider unchanged\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIstart\fP Finite local center of the first cap\&. 
+.br
+\fIend\fP Finite local center of the second cap; may equal start\&. 
+.br
+\fIradius\fP Finite positive radius in owner-local distance units\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new nonzero shape ID, or collisionShape_None for NoCollider\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCapsule()\fP, \fBremoveShape()\fP, \fBgetShapeType()\fP 
+.RE
+.PP
+
+.SS "uint addCircle (number radius, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
+
+.PP
+Add a local circle\&. Existing shape IDs remain unchanged\&. Shapes follow the owner’s position, rotation, scale and parent transforms\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradius\fP Finite positive radius in owner-local units\&. 
+.br
+\fIcenter\fP Finite local center; defaults to the origin\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Stable nonzero shape ID, or collisionShape_None for NoCollider\&. 
+.RE
+.PP
+
+.SS "uint addImageMask (\fBImage\fP image, \fBRect\fP localBounds, int alphaThreshold = \fR128\fP)"
+
+.PP
+Copy opaque image pixels into collision geometry\&. Uses the entire supplied image, mapped to localBounds\&. Pixels with alpha at least alphaThreshold become merged convex rectangles; transparent holes and disconnected islands remain empty\&. Geometry is copied, so subsequent pixel edits require another call\&. An entirely transparent image has no contact area\&. Named images can reload discarded CPU pixels; unavailable pixels throw\&. At most 65536 convex pieces are supported\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIimage\fP \fBImage\fP to sample; use a frame image for a single strip frame\&. 
+.br
+\fIlocalBounds\fP Finite rectangle with positive dimensions in owner-local coordinates\&. 
+.br
+\fIalphaThreshold\fP Integer from 1 through 255; defaults to 128\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+One stable shape ID for the complete mask\&. 
+.RE
+.PP
+
+.SS "uint addPolygon (array vertices)"
+
+.PP
+Add a simple local polygon, including concave outlines\&. Copies the outline and decomposes concave regions into convex solver pieces, retaining one public shape ID\&. Collinear edge points and a repeated closing point are accepted; crossings, touching edges, zero-area outlines and nonfinite points are rejected without changing existing geometry\&. Basic and Chipmunk use the same decomposition\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvertices\fP Three through 4096 finite Points in perimeter order, clockwise or counterclockwise\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Stable nonzero shape ID, or collisionShape_None for NoCollider\&. 
+.RE
+.PP
+
+.SS "uint addPolygon (\fBPolygon\fP polygon)"
+
+.PP
+Copy collision geometry from a \fBPolygon\fP\&. The \fBPolygon\fP is copied; later edits to it do not change the collider\&. Concave outlines preserve their gaps through convex decomposition\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIpolygon\fP A simple polygon in owner-local coordinates\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The stable ID of the added shape\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP clearShapes ()"
+
+.PP
+Remove every collision shape\&. The collider remains attached and keeps its filters, material and body association\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "boolean contains (\fBPoint\fP worldPoint)"
+
+.PP
+Test a world point against the geometry\&. Ignores enabled/sensor flags and category/mask/group filters\&. Nonfinite coordinates throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIworldPoint\fP \fBPoint\fP in owning-layer/world coordinates\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Whether any shape contains or touches the point\&. 
+.RE
+.PP
+
+.SS "\fBRect\fP getBounds ()"
+
+.PP
+Compute the union of transformed shape bounds\&. Uses owning-layer/world coordinates\&. Disabled and detached colliders remain queryable\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Axis-aligned \fBRect\fP, or an empty \fBRect\fP when there are no shapes\&. 
+.RE
+.PP
+
+.SS "\fBPoint\fP getCapsuleEnd (uint shapeId)"
+
+.PP
+Read the capsule's end\&. Throws for an unknown ID or a shape whose type is not collisionShape_Capsule\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIshapeId\fP The capsule's stable shape ID\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A copy of the second cap center in owner-local coordinates\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCapsule()\fP, \fBgetShapeType()\fP 
+.RE
+.PP
+
+.SS "number getCapsuleRadius (uint shapeId)"
+
+.PP
+Read the capsule's radius\&. Throws for an unknown ID or a shape whose type is not collisionShape_Capsule\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIshapeId\fP The capsule's stable shape ID\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The radius in owner-local distance units, before scaling\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCapsule()\fP, \fBgetShapeType()\fP 
+.RE
+.PP
+
+.SS "\fBPoint\fP getCapsuleStart (uint shapeId)"
+
+.PP
+Read the capsule's start\&. Throws for an unknown ID or a shape whose type is not collisionShape_Capsule\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIshapeId\fP The capsule's stable shape ID\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A copy of the first cap center in owner-local coordinates\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetCapsule()\fP, \fBgetShapeType()\fP 
+.RE
+.PP
+
+.SS "number getCategory ()"
+
+.PP
+Read category bits\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Unsigned 32-bit bitset\&. 
+.RE
+.PP
+
+.SS "number getCircleRadius (uint shapeId)"
+
+.PP
+Inspect collider geometry\&. Unknown or currently inactive IDs throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIshapeId\fP An active shape ID\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The circle radius in owner-local units; throws for a non-circle shape\&. 
+.RE
+.PP
+
+.SS "number getCollisionMask ()"
+
+.PP
+Read accepted category bits\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Unsigned 32-bit bitset\&. 
+.RE
+.PP
+
+.SS "string getContactError ()"
+
+.PP
+Read the last native contact-dispatch error\&. An exception reaching the native dispatcher is contained; a later successful dispatch clears the message\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Diagnostic string, or empty when the last dispatch succeeded\&. 
+.RE
+.PP
+
+.SS "number getFriction ()"
+
+.PP
+Read the effective contact friction\&. Defaults to the associated body’s friction, or one for a bodyless surface\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Effective coefficient; zero for NoCollider\&. 
+.RE
+.PP
+
+.SS "number getGeometrySource ()"
+
+.PP
+Inspect collider geometry\&. The read-only source kind identifies whether artwork is supplying geometry\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+colliderSource_Explicit, colliderSource_Frame or colliderSource_Animation\&. 
+.RE
+.PP
+
+.SS "number getGroup ()"
+
+.PP
+Read the collision exclusion group\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Unsigned group ID, or zero\&. 
+.RE
+.PP
+
+.SS "number getId ()"
+
+.PP
+Read this collider’s process-local identity\&. IDs are independent of shape IDs and are not persistent save-game identifiers\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero identity, or zero for NoCollider\&. 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP getPhysicsBody ()"
+
+.PP
+Read the effective body association\&. Does not allocate or instantiate physics\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The explicit compound body, owner’s current body, or shared \fBPhysicsBody\&.NoPhysics\fP\&. 
+.RE
+.PP
+
+.SS "number getRestitution ()"
+
+.PP
+Read the effective restitution\&. Defaults to the associated body’s restitution, or one for a bodyless surface\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Effective coefficient; zero for NoCollider\&. 
+.RE
+.PP
+
+.SS "number getShapeCount ()"
+
+.PP
+Count the current shapes\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Number of shapes; zero for NoCollider\&. 
+.RE
+.PP
+
+.SS "uint getShapeId (uint id)"
+
+.PP
+Find the stable ID at a current list index\&. List indices shift when shapes are removed\&. An out-of-range index throws\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP Zero-based shape index\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Stable shape ID\&. 
+.RE
+.PP
+
+.SS "string getShapeName (uint shapeId)"
+
+.PP
+Inspect collider geometry\&. Unknown or currently inactive IDs throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIshapeId\fP An active shape ID\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The source name, or an empty string for explicit geometry\&. 
+.RE
+.PP
+
+.SS "number getShapeType (uint shapeId)"
+
+.PP
+Inspect collider geometry\&. Unknown or currently inactive IDs throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIshapeId\fP An active shape ID\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+collisionShape_Circle, collisionShape_Convex, collisionShape_Polygon, collisionShape_ImageMask or collisionShape_Capsule\&. 
+.RE
+.PP
+
+.SS "boolean getWantsContactEvents ()"
+
+.PP
+Read owner-event delivery preference\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Whether owner events are requested\&. 
+.RE
+.PP
+
+.SS "boolean isAttached ()"
+
+.PP
+Test whether this collider still has an owner\&. Removal detaches a retained collider; queries continue to use its last transform\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Whether an owner still supplies its transform\&. 
+.RE
+.PP
+
+.SS "boolean isEnabled ()"
+
+.PP
+Read collision participation\&. 
+.PP
+\fBReturns\fP
+.RS 4
+False when disabled or absent\&. 
+.RE
+.PP
+
+.SS "boolean isPresent ()"
+
+.PP
+Test whether this is a real collider\&. 
+.PP
+\fBReturns\fP
+.RS 4
+False only for the shared NoCollider object\&. 
+.RE
+.PP
+
+.SS "boolean isSensor ()"
+
+.PP
+Read sensor mode\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Whether contacts are overlap-only\&. 
+.RE
+.PP
+
+.SS "boolean isSourceShape (uint shapeId)"
+
+.PP
+Inspect collider geometry\&. Unknown or currently inactive IDs throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIshapeId\fP An active shape ID\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True when the active shape is controlled by artwork\&. 
+.RE
+.PP
+
+.SS "boolean overlaps (\fBCollider\fP other)"
+
+.PP
+Test two colliders geometrically\&. Ignores layers, physical bodies, filters and enabled/sensor flags\&. Both geometries must be interpreted in the same coordinate system\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other collider to query\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Whether any pair of shapes overlaps or touches\&. 
+.RE
+.PP
+
+.SS "boolean removeShape (uint id)"
+
+.PP
+Remove one shape by its stable ID\&. IDs are never reassigned within a collider\&. Removing an added shape ends its contacts at the next update\&. Source-controlled frame/animation shapes cannot be removed individually; attempting that throws\&. Removing an addition leaves the source active\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP ID returned by an add method or \fBgetShapeId()\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True if a shape was removed; false for an unknown ID or NoCollider\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setBox (\fBRect\fP bounds)"
+
+.PP
+Replace all geometry with one rectangle\&. Validation occurs before replacing the previous shapes\&. The new shape receives a fresh ID\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIbounds\fP Finite local bounds with positive width and height\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setCapsule (\fBPoint\fP start, \fBPoint\fP end, number radius)"
+
+.PP
+Replace all geometry with one capsule\&. The capsule consists of the line segment between start and end, expanded by radius in every direction\&. Endpoints are the centers of the rounded ends in owner-local coordinates\&. Total length is the distance between the endpoints plus twice the radius, and width is twice the radius\&. Coincident endpoints behave as a circle while retaining collisionShape_Capsule as the public type\&.
+
+.PP
+Coordinates are copied\&. Validation finishes before existing shapes are replaced; the capsule receives a fresh shape ID\&. This stops any frame/animation geometry source, while preserving collider settings, owner/body association, mass and inertia\&. NoCollider ignores the operation\&.
+
+.PP
+Queries and both solvers use exact capsule geometry under translation, rotation, reflection and uniform scale\&. Nonuniform scale or shear uses a convex outline with 16 straight segments per semicircle plus the two straight sides; coincident endpoints use the same 32-sided approximation as a deformed circle\&. All pieces remain one public shape ID\&. Capsule geometry and IDs survive scene snapshots; older readers without capsule support reject that shape kind\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIstart\fP Finite local center of the first cap\&. 
+.br
+\fIend\fP Finite local center of the second cap; may equal start\&. 
+.br
+\fIradius\fP Finite positive radius in owner-local distance units\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBCollider\fP, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Available in both GUI and headless builds; artwork is not required\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const sprite = new pdg\&.Sprite();
+sprite\&.setupPhysicsBody(2, 30);
+sprite\&.setupCollider()\&.setCapsule(new pdg\&.Point(\-12, 0), new pdg\&.Point(12, 0), 3);
+const shape = sprite\&.collider\&.getShapeId(0);
+const start = sprite\&.collider\&.getCapsuleStart(shape);
+
+.fi
+.PP
+.RE
+.PP
+The example creates a capsule 30 units long and 6 units wide\&. Add the \fBSprite\fP to an active collision-enabled layer to simulate contacts\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddCapsule()\fP, \fBgetCapsuleStart()\fP, \fBgetCapsuleEnd()\fP, \fBgetCapsuleRadius()\fP, \fBsetCircle()\fP 
+.RE
+.PP
+
+.SS "\fBCollider\fP setCategory (uint value)"
+
+.PP
+Set this collider’s category bits\&. A pair requires each collider’s category to intersect the other’s mask\&. Geometric queries ignore filters\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Unsigned 32-bit bitset\&. Default is 1\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setCircle (number radius, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
+
+.PP
+Replace all geometry with one circle\&. Validation occurs before replacing the previous shapes\&. The new shape receives a fresh ID\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradius\fP Finite positive radius in owner-local units\&. 
+.br
+\fIcenter\fP Finite local center; defaults to the origin\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setCollisionFilter (function callback)"
+
+.PP
+Filter contacts independently of owner type\&. The predicate receives this \fBCollider\fP and the other \fBCollider\fP and must return a boolean\&. Returning false suppresses response and contact notifications\&. It can run multiple times during a step; keep it a read-only decision\&. Geometric \fBcontains()\fP/overlaps() queries ignore it\&. Exceptions reject the pair and are recorded by \fBgetContactError()\fP\&. Pass null to clear the callback\&. Owner detachment clears callbacks\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIcallback\fP Callback to install, or null to clear it\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBCollider\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setCollisionMask (uint value)"
+
+.PP
+Set the categories this collider accepts\&. A zero mask suppresses contacts\&. Both endpoints’ masks must accept the other category\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Unsigned 32-bit bitset\&. Default accepts all categories\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setContactHandler (function callback)"
+
+.PP
+Install a contact listener\&. The callback receives a contact with collider/other, shape/otherShape, phase, point, normal, impulse, penetration and sensor\&. It runs after solving and may remove owners\&. It is independent of owner event delivery through \fBsetWantsContactEvents()\fP\&. Pass null to clear the callback\&. Owner detachment clears callbacks\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIcallback\fP Callback to install, or null to clear it\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBCollider\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setEnabled (boolean value)"
+
+.PP
+Enable or suspend participation in collision worlds\&. Disabling preserves geometry and explicit geometric queries\&. Existing contacts end on the next world update\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Whether this collider participates\&. Defaults to true on creation\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setFriction (number value)"
+
+.PP
+Override this collider’s contact friction\&. The two colliders’ coefficients are multiplied\&. This overrides the associated body’s material without changing that body\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative Coulomb coefficient\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setGroup (uint value)"
+
+.PP
+Set an optional collision exclusion group\&. Two colliders in the same nonzero group do not collide, regardless of category/mask\&. Zero disables group exclusion\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Unsigned 32-bit group; default zero\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setImageMask (\fBImage\fP image, \fBRect\fP localBounds, int alphaThreshold = \fR128\fP)"
+
+.PP
+Copy opaque image pixels into collision geometry\&. Uses the entire supplied image, mapped to localBounds\&. Pixels with alpha at least alphaThreshold become merged convex rectangles; transparent holes and disconnected islands remain empty\&. Geometry is copied, so subsequent pixel edits require another call\&. An entirely transparent image has no contact area\&. Named images can reload discarded CPU pixels; unavailable pixels throw\&. At most 65536 convex pieces are supported\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIimage\fP \fBImage\fP to sample; use a frame image for a single strip frame\&. 
+.br
+\fIlocalBounds\fP Finite rectangle with positive dimensions in owner-local coordinates\&. 
+.br
+\fIalphaThreshold\fP Integer from 1 through 255; defaults to 128\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBCollider\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setPhysicsBody (\fBPhysicsBody\fP body)"
+
+.PP
+Associate these shapes with an explicit compound body\&. Shapes continue to follow their own owner’s transform but transmit impulses to this body\&. Shapes on the same body do not collide with each other\&. The body is retained until reset/removal\&. At world synchronization, removal or transfer of that body resets the association to the owner\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIbody\fP Instantiated \fBPhysicsBody\fP in the same layer/world; NoPhysics is rejected\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setPolygon (array vertices)"
+
+.PP
+Replace all geometry with one polygon\&. Stops any frame/animation source after validation succeeds\&. Accepts the same outlines as \fBaddPolygon()\fP\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvertices\fP Points in perimeter order, in owner-local coordinates\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBCollider\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setPolygon (\fBPolygon\fP polygon)"
+
+.PP
+Copy collision geometry from a \fBPolygon\fP\&. The \fBPolygon\fP is copied; later edits to it do not change the collider\&. Concave outlines preserve their gaps through convex decomposition\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIpolygon\fP A simple polygon in owner-local coordinates\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBCollider\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setRestitution (number value)"
+
+.PP
+Override this collider’s restitution\&. The two colliders’ coefficients are multiplied\&. Zero is inelastic; one preserves normal rebound speed\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite coefficient from zero through one\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setSensor (boolean value)"
+
+.PP
+Choose overlap-only contact reporting\&. A sensor never applies a physical response\&. Enable owner events separately with \fBsetWantsContactEvents()\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP True for a sensor; false for a solid\&. Creation defaults to false\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setWantsContactEvents (boolean wanted)"
+
+.PP
+Enable contact events on the owning \fBSprite\fP\&. Both a \fBSprite\fP collider and its Parts’ colliders deliver eventType_ColliderContact through that \fBSprite\fP\&. Delivery is synchronous after the solve; contacts identify the exact collider and shape\&. Native contact listeners are independent\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIwanted\fP True to opt in; default false\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP useBodyMaterial ()"
+
+.PP
+Clear both per-collider material overrides\&. Subsequent contacts follow the body’s material; bodyless surfaces use neutral coefficients of one\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP useOwnerPhysics ()"
+
+.PP
+Restore the owner’s current body association\&. This is the default\&. Later setupPhysicsBody()/removePhysicsBody() calls on the owner are followed automatically\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "const \fBCollider\fP NoCollider\fR [static]\fP"
+
+.PP
+Shared absence object for every \fBSprite\fP or \fBPart\fP without collision geometry\&. Compare by identity\&. Mutators safely do nothing, with a debug diagnostic; they do not accumulate settings for later creation\&. Its geometry is empty\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

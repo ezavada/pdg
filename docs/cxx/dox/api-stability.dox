@@ -1,0 +1,229 @@
+// Class-level compatibility policy; one note per public class.
+
+/** \class pdg::Animated
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimatedAttributes
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimatedAttributesBase
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimatedBase
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationContactTarget
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationDrawingContext
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationDrawings
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationPhysicsRig
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationPipeline
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationPose
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationPoseView
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationRig
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::AnimationSpringTarget
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::Attributes
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::Collider
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \struct pdg::Color
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::ConfigManager
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::Deserializer
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+
+API stability does not promise a fixed snapshot byte format; see \ref api_stability.
+*/
+
+/** \class pdg::Drawing
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::ElementRef
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::EventEmitter
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::EventManager
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::Font
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::GraphicsManager
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::IAnimationHelper
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::IEventHandler
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::ISerializable
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+
+API stability does not promise a fixed snapshot byte format; see \ref api_stability.
+*/
+
+/** \class pdg::ISpriteDrawHelper
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::Image
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::ImageStrip
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::LogManager
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::OffsetT
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::Part
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::Particle
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::ParticleEmitter
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::PhysicsBody
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::PhysicsConstraint
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::PointT
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::Polygon
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::Port
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::QuadT
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::RectT
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::ResourceManager
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::RotatedRectT
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::Serializer
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+
+API stability does not promise a fixed snapshot byte format; see \ref api_stability.
+*/
+
+/** \class pdg::Sound
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::SoundManager
+\note **API Stability: 1 — Experimental**. This API is exploratory. Its signatures, behavior, or availability may change without a compatibility period. See \ref api_stability.
+*/
+
+/** \class pdg::Spline
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::Sprite
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::SpriteLayer
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::TileLayer
+\note **API Stability: 2 — Evolving**. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See \ref api_stability.
+*/
+
+/** \class pdg::TimerManager
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::VectorT
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+*/
+
+/** \class pdg::ISerializer
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+API stability does not promise a fixed snapshot byte format.
+*/
+
+/** \class pdg::IDeserializer
+\note **API Stability: 3 — Stable**. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See \ref api_stability.
+API stability does not promise a fixed snapshot byte format.
+*/

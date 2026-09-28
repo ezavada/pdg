@@ -1,0 +1,45 @@
+{
+  "fixture": "arm.scml (3 bones, 5 bindings)",
+  "runtime": "v24.3.0",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "note": "API microbenchmark including bindings and allocations. No physics throughput, sustained transition stepping, or frame-budget claim.",
+  "results": [
+    {
+      "name": "owned final pose snapshot",
+      "iterations": 2000,
+      "totalSeconds": 0.035128792,
+      "secondsPerOperation": 0.000017564396
+    },
+    {
+      "name": "silent authored sample (fresh evaluator)",
+      "iterations": 2000,
+      "totalSeconds": 0.180059375,
+      "secondsPerOperation": 0.00009002968749999999
+    },
+    {
+      "name": "atomic seek and publication",
+      "iterations": 2000,
+      "totalSeconds": 0.222326958,
+      "secondsPerOperation": 0.00011116347899999999
+    },
+    {
+      "name": "seek and publication with script modifier",
+      "iterations": 2000,
+      "totalSeconds": 0.277386583,
+      "secondsPerOperation": 0.0001386932915
+    },
+    {
+      "name": "seek and publication with modifier and IK",
+      "iterations": 2000,
+      "totalSeconds": 0.315484291,
+      "secondsPerOperation": 0.00015774214549999998
+    },
+    {
+      "name": "independent transition selection/interruption",
+      "iterations": 2000,
+      "totalSeconds": 0.232382292,
+      "secondsPerOperation": 0.000116191146
+    }
+  ]
+}

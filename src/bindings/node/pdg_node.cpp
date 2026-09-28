@@ -47,14 +47,6 @@
 #ifdef PDG_STANDALONE_NODE_APP
 
 #include "cppgc/platform.h"
-#define NODE_WANT_INTERNALS 1
-#include "node_internals.h"
-#include "node_binding.h"
-#include "node_errors.h"
-#include "env.h"
-#include "env-inl.h"
-#include "node_realm.h"
-#include "node_context_data.h"
 #include <memory>
 #endif
 
@@ -98,6 +90,13 @@ extern "C" const char* cpVersionString;
 #include "../javascript/v8/pdg_v8_support.h"
 #endif
 
+static void cleanupPdgModule(void*) {
+    // These sentinels outlive the Node environment. Release their JavaScript
+    // handles while V8 is alive, before the process runs static destructors.
+    pdg::Collider::NoCollider.mColliderScriptObj.Reset();
+    pdg::PhysicsBody::NoPhysics.mPhysicsBodyScriptObj.Reset();
+}
+
 #ifndef WANT_TRACE
   #define TRACE(msg)
   #define TRACEIN
@@ -107,25 +106,6 @@ extern "C" const char* cpVersionString;
   #define TRACEIN TRACE("ENTER")
   #define TRACEOUT TRACE("EXIT")
 #endif
-
-// Stub for missing node::SnapshotBuilder::GetEmbeddedSnapshotData()
-// This prevents linker errors when Node.js snapshots are not properly built
-namespace node {
-    struct SnapshotData;  // Forward declaration
-    
-    // Define the SnapshotBuilder class with the missing function
-    class SnapshotBuilder {
-    public:
-        static const SnapshotData* GetEmbeddedSnapshotData();
-    };
-}
-
-// Implementation of the stub function
-const node::SnapshotData* node::SnapshotBuilder::GetEmbeddedSnapshotData() {
-    std::cerr << "WARNING: node::SnapshotBuilder::GetEmbeddedSnapshotData() called but not implemented. "
-              << "Node.js snapshots are disabled in this build." << std::endl;
-    return nullptr;
-}
 
 // Forward declarations
 int RunNodeInstance(node::MultiIsolatePlatform* platform,
@@ -787,6 +767,9 @@ int RunNodeInstance(node::MultiIsolatePlatform* platform,
     v8::HandleScope handle_scope(isolate);
     // The v8::Context needs to be entered when node::LoadEnvironment() is called
     v8::Context::Scope context_scope(setup->context());
+    // Register only on the owning environment. Node also invokes the preload
+    // callback for workers, whose teardown must not reset the main handles.
+    node::AddEnvironmentCleanupHook(isolate, cleanupPdgModule, nullptr);
 
     // Find pdg_bootstrap.js content to pass as the main script
     std::string pdg_bootstrap_script;
@@ -846,22 +829,9 @@ int RunNodeInstance(node::MultiIsolatePlatform* platform,
     std::cerr << "[PDG] RunNodeInstance: Event loop completed, performing proper shutdown" << std::endl;
 #endif
     
-    // Ensure proper environment shutdown to prevent segfaults
-    // This follows the Node.js shutdown sequence from NodeMainInstance
-    env->set_can_call_into_js(false);
-#ifdef WANT_VERBOSE_DEBUG_LOG
-    std::cerr << "[PDG] RunNodeInstance: Calling set_stopping(true)" << std::endl;
-#endif
-    env->set_stopping(true);
-    env->stop_sub_worker_contexts();
-#ifdef WANT_VERBOSE_DEBUG_LOG
-    std::cerr << "[PDG] RunNodeInstance: Calling RunCleanup" << std::endl;
-#endif
-    env->RunCleanup();
-#ifdef WANT_VERBOSE_DEBUG_LOG
-    std::cerr << "[PDG] RunNodeInstance: Calling stop" << std::endl;
-#endif
-    // Stop the environment properly
+    // Use the public embedder API; CommonEnvironmentSetup owns cleanup of the
+    // environment and worker contexts when it leaves scope. Accessing private
+    // Environment fields here depends on Node's internal build configuration.
     node::Stop(env);
   }
 
@@ -1326,6 +1296,7 @@ static void initializePdgModule(v8::Local<v8::Object> exports,
     
     // Also set up process.pdg for addon mode compatibility
     v8::Isolate* isolate = context->GetIsolate();
+    node::AddEnvironmentCleanupHook(isolate, cleanupPdgModule, nullptr);
     v8::Local<v8::Object> global = context->Global();
     v8::Local<v8::String> process_symbol = v8::String::NewFromUtf8(isolate, "process").ToLocalChecked();
     v8::Local<v8::Value> process_val = global->Get(context, process_symbol).ToLocalChecked();

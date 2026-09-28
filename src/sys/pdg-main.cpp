@@ -31,6 +31,7 @@
 // see pdg_node.cpp and pdg_main_v24.js for JavaScript apps
 
 #include "pdg_project.h"
+#include <format>
 
 #include "pdg/msvcfix.h" // fixes GCC too
 
@@ -80,6 +81,9 @@
 #include <dlfcn.h>
 #endif
 #include <vector>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 // Global flag to prevent double cleanup
 static bool gCleanupCalled = false;
@@ -166,14 +170,14 @@ bool gCharKeyStates[MAX_CHAR_KEYS];
 // click tracking
 Point   gMouseLoc[MAX_POINTERS];
 Point   gLastClickPos;
-unsigned long  gLastClickMillisec;
-unsigned long gFPSBaseMs = 0;
+ms_time gLastClickMillisec;
+ms_time gFPSBaseMs = 0;
 int gMaxAttachedMouse = 0;
 
 int gFPSFrameCount = 0;
 float gCurrentFPS = 0;
 float gTargetFPS = 40; // fps
-unsigned long gNextRedrawMillisec = 0;
+ms_time gNextRedrawMillisec = 0;
 uint32 gFrameNum = 0;
 
 #endif // PDG_NO_GUI
@@ -201,6 +205,19 @@ void main_setTargetFPS(float fps) {
 
 float main_getTargetFPS() {
 	return gTargetFPS;
+}
+
+bool main_isPerformanceUncapped() {
+  #ifdef __EMSCRIPTEN__
+    // The browser process.env shim is separate from libc's environment.
+    return EM_ASM_INT({
+        return !!(globalThis.process && globalThis.process.env &&
+            globalThis.process.env.PDG_PERF_UNCAPPED === '1');
+    });
+  #else
+    const char* value = std::getenv("PDG_PERF_UNCAPPED");
+    return value && std::strcmp(value, "1") == 0;
+  #endif
 }
 #endif //!PDG_NO_GUI
 
@@ -451,16 +468,16 @@ int main_init(int argc, const char* argv[], bool isInitialized) {
 // -----------------------------------------------
 void main_run() {
 
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld - ENTERING main_run()", OS::getMilliseconds()); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} - ENTERING main_run()", OS::getMilliseconds()).c_str()); )
 
   #ifndef PDG_NO_GUI
 	ms_time currMs = OS::getMilliseconds();
+	const bool performanceUncapped = main_isPerformanceUncapped();
 
 	DRAWING_DEBUG_ONLY(
 		static int mainLoopCounter = 0;
 		if (++mainLoopCounter % 100 == 0) {
-			OS::_DOUT("main loop interation: %ld @%lu (%lu)", mainLoopCounter, currMs, 
-				gNextRedrawMillisec);
+			OS::_DOUT("%s", std::format("main loop interation: {} @{} ({})", mainLoopCounter, currMs, gNextRedrawMillisec).c_str());
 		}
 	)
 
@@ -468,30 +485,29 @@ void main_run() {
 	Port* mainPort = GraphicsManager::instance().getMainPort();
 	if (mainPort) {
 		// calc our frames per second
-		if (currMs >= gNextRedrawMillisec) {
-			if ((gFrameNum % 100) == 0) {
+		if (performanceUncapped || currMs >= gNextRedrawMillisec) {
+			if ((gFrameNum % 100) == 0 && currMs > gFPSBaseMs) {
 				// calculate our fps
-				long fpsMsDelta = currMs - gFPSBaseMs;
+				ms_delta fpsMsDelta = currMs - gFPSBaseMs;
 				// it's been more than 1 second, take average
 				gCurrentFPS = 1000.0 * (float)gFPSFrameCount / (float)fpsMsDelta;
 				gFPSBaseMs = currMs;
 				gFPSFrameCount = 0;
 				DRAWING_DEBUG_ONLY(
-                    long lag = currMs - gNextRedrawMillisec;
-					OS::_DOUT("frame: %ld lag: %ld ms fps: %01.2f", gFrameNum, 
-					lag, gCurrentFPS);
+                    ms_delta lag = currMs - gNextRedrawMillisec;
+					OS::_DOUT("%s", std::format("frame: {} lag: {} ms fps: {:1.2f}", gFrameNum, lag, gCurrentFPS).c_str());
 				)
 				DEBUG_ONLY( 
 					float warnFps = 0.8f * gTargetFPS;
-					if (gCurrentFPS < warnFps) {
-						OS::_DOUT("WARNING: FPS drop!!! FPS: %01.2f @ %ld", gCurrentFPS, OS::getMilliseconds());
+					if (!performanceUncapped && gCurrentFPS < warnFps) {
+						OS::_DOUT("%s", std::format("WARNING: FPS drop!!! FPS: {:1.2f} @ {}", gCurrentFPS, OS::getMilliseconds()).c_str());
 					}
 				)
 			}
-			gNextRedrawMillisec = currMs + std::floor(1000.0 / gTargetFPS);
+			gNextRedrawMillisec = currMs + (performanceUncapped ? 0 : std::floor(1000.0 / gTargetFPS));
 			gFPSFrameCount++; gFrameNum++;
 
-			RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    About to Draw", OS::getMilliseconds()); )
+			RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    About to Draw", OS::getMilliseconds()).c_str()); )
 			
 			// Get all active ports and post draw events for each one
 			std::vector<Port*> activePorts = GraphicsManager::instance().getAllActivePorts();
@@ -507,7 +523,7 @@ void main_run() {
 					EventManager::instance().postEvent(eventType_PortDraw, &pdi);
 
 					graphics_finishDrawing(port);
-					RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Drawing Event complete for port %zu", OS::getMilliseconds(), i); )
+					RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Drawing Event complete for port {}", OS::getMilliseconds(), i).c_str()); )
 				}
 			}
 		}
@@ -518,7 +534,7 @@ void main_run() {
 
 	TimerManager::instance().checkTimers();
 
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Timer check/fire complete", OS::getMilliseconds()); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Timer check/fire complete", OS::getMilliseconds()).c_str()); )
 
   #ifndef PDG_NO_SLEEP
 	// now figure out how long we need to sleep and block for that long
@@ -535,13 +551,13 @@ void main_run() {
 	}
 //	if (maxSleepMs > 1) maxSleepMs -= 1; // adjust for 1 ms timer delay in Cocoa layer
 	
-    //            OS::_DOUT("Sleeping for %d ms", maxSleepMs);
+    //            OS::_DOUT("%s", std::format("Sleeping for {} ms", maxSleepMs).c_str());
 	// most likely reason for a signal will be data on the network
 	// network events will be on the event queue, so we don't need to do anything special
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    About to sleep for %ld ms", OS::getMilliseconds(), maxSleepMs); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    About to sleep for {} ms", OS::getMilliseconds(), maxSleepMs).c_str()); )
 	
 	/* bool signaled = */ gWakeupSemaphore.awaitSignal( maxSleepMs );
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Awakened from sleep", OS::getMilliseconds()); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Awakened from sleep", OS::getMilliseconds()).c_str()); )
   #endif
 
   #ifndef PDG_NO_EVENT_QUEUE
@@ -560,9 +576,9 @@ void main_run() {
 		DEBUG_ONLY(
 			ms_time eventPostTime = OS::getMilliseconds();
 			ms_delta eventDuration = eventPostTime - eventTime;
-			RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Posted event %s at %ld, took %ld ms", eventTime, getEventName(eventType), eventPostTime, eventDuration); )
+			RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Posted event {} at {}, took {} ms", eventTime, getEventName(eventType), eventPostTime, eventDuration).c_str()); )
 			if (eventDuration > 100) {
-				DEBUG_ONLY(OS::_DOUT("%12ld -    Posted event %s at %ld, took %ld ms", eventTime, getEventName(eventType), eventPostTime, eventDuration); )
+				DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Posted event {} at {}, took {} ms", eventTime, getEventName(eventType), eventPostTime, eventDuration).c_str()); )
 			}
 		)
 		eventData->release();
@@ -570,20 +586,20 @@ void main_run() {
 		eventEmitter = 0;
 		RUN_LOOP_DEBUG_ONLY(eventCount++;)
 	}
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Dequeued %d event(s) queued during sleep", OS::getMilliseconds(), eventCount); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Dequeued {} event(s) queued during sleep", OS::getMilliseconds(), eventCount).c_str()); )
   #endif // NO_EVENT_QUEUE
 
   #ifndef PDG_NO_NETWORK
     NetworkManager::instance().idle();
-    RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Network Idle complete", OS::getMilliseconds()); )
+    RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Network Idle complete", OS::getMilliseconds()).c_str()); )
   #endif // PDG_NO_NETWORK
 
   #ifndef PDG_NO_SOUND
     SoundManager::instance().idle();
-    RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld -    Sound Manager Idle complete", OS::getMilliseconds()); )
+    RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Sound Manager Idle complete", OS::getMilliseconds()).c_str()); )
   #endif // PDG_NO_SOUND
 
-	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%12ld - EXITING main_run()", OS::getMilliseconds()); )
+	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} - EXITING main_run()", OS::getMilliseconds()).c_str()); )
 }
 
 // -----------------------------------------------

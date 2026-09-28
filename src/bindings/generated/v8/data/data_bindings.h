@@ -52,6 +52,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -79,6 +80,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -117,6 +119,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
 
@@ -144,6 +147,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -158,12 +162,12 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Serializer* cppObj);
             SerializerWrap(Serializer* obj) : cppPtr_(obj) {}
 
-#ifndef PDG_NO_64BIT
+            static void SetResourceMode (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetResourceMode (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Serialize_8 (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Serialize_8u (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Sizeof_8 (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Sizeof_8u (const v8::FunctionCallbackInfo<v8::Value>& args);
-#endif
             static void Serialize_d (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Serialize_f (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Serialize_4 (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -220,6 +224,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:
@@ -234,10 +239,8 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Deserializer* cppObj);
             DeserializerWrap(Deserializer* obj) : cppPtr_(obj) {}
 
-#ifndef PDG_NO_64BIT
             static void Deserialize_8 (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Deserialize_8u (const v8::FunctionCallbackInfo<v8::Value>& args);
-#endif
             static void Deserialize_d (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Deserialize_f (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Deserialize_4 (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -272,6 +275,7 @@ namespace pdg
         public:
             static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
             static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
         protected:
             static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
         public:

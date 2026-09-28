@@ -1,0 +1,15 @@
+/**
+\var pdg::physicsBreak_AngularSpeed
+\brief SpriteBreakEvent reason for exceeding a body's angular-speed threshold.
+\ingroup Physics
+*/
+/**
+\var pdg::physicsBreak_Force
+\brief SpriteBreakEvent reason for a legacy Chipmunk joint-force break.
+\ingroup Physics
+*/
+/**
+\var pdg::action_BodyBreak
+\brief SpriteBreakEvent action for body angular-speed notifications.
+\ingroup Events
+*/

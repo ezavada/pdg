@@ -29,9 +29,15 @@
 
 
 #include "pdg_project.h"
+#include "pdg/sys/animationcontroller.h"
+#include <stdexcept>
+#include <map>
+#include <algorithm>
+#include "pdg/sys/animationphysics.h"
 
 #include "pdg/sys/sprite.h"
 #include "pdg/sys/spritelayer.h"
+#include "pdg/sys/particle.h"
 #include "pdg/sys/tilelayer.h"
 #include "pdg/sys/os.h"
 
@@ -60,9 +66,197 @@
 //#define SPRITE_IGNORE_ANIMATION_TIMER_DRIFT
 
 namespace pdg {
+namespace {
+// One contiguous snapshot avoids allocating a shared_ptr control block for
+// every Sprite on every tick, while retaining objects across helper callbacks.
+template<class T> struct RetainedFrame {
+    std::vector<T*> items;
+    void add(T* value) { items.push_back(value); value->addRef(); }
+    ~RetainedFrame() { for (auto* value : items) value->release(); }
+};
+
+// Event and draw helpers may request layer removal during traversal. Keep all
+// traversed layers alive until the outermost update/draw returns, with or
+// without physics enabled. Nested dispatch cannot clear an outer guard.
+struct LayerTraversalScope {
+    SpriteManager& manager;
+    explicit LayerTraversalScope(SpriteManager& value) : manager(value) {
+        ++manager.mLayerUpdateDepth;
+    }
+    ~LayerTraversalScope() { manager.finishLayerTraversal(); }
+};
+}
+void SpriteManager::finishLayerTraversal() {
+    if (--mLayerUpdateDepth) return;
+    auto pending = std::move(mDeferredLayerCleanup);
+    mDeferredLayerCleanup.clear();
+    for (auto* doomed : pending) {
+        // Releasing one layer can also remove a later queued layer.
+        auto* alive = mFirstLayer;
+        while (alive && alive != doomed) alive = alive->mNextLayer;
+        if (alive) cleanupLayer(alive);
+    }
+}
+
 	
 
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
+
+namespace { std::map<cpBody*,Sprite*> rootBodyOwners; }
+void SpriteManager::registerBody(cpBody* body,Sprite* sprite){if(sprite)rootBodyOwners[body]=sprite;else rootBodyOwners.erase(body);}
+Sprite* SpriteManager::bodyOwner(cpBody* body){
+    if(auto* rig=AnimationPhysicsRig::find(body))return static_cast<Sprite*>(rig->owner);
+    auto found=rootBodyOwners.find(body);return found==rootBodyOwners.end()?nullptr:found->second;
+}
+void SpriteManager::stepAnimationPhysics(ms_delta elapsed) {
+    LayerTraversalScope traversal(*this);
+#ifdef PDG_SPRITER_SUPPORT
+    const auto hasDynamicRigBodies=[](const Sprite* sprite) {
+        if(!sprite->mAnimationPhysics)return false;
+        // Assembly queries intentionally exclude removed limbs and accessories.
+        // Those bodies still share this physics world and need the same stable
+        // steps/iterations after the animated skeleton returns to Kinematic.
+        return std::any_of(sprite->mParts.begin(),sprite->mParts.end(),[](const Part* part) {
+            return part->physics.getMode()==physicsBody_Dynamic;
+        });
+    };
+    // Articulated drives and contacts need small steps, including when the
+    // animation timer is late. Advance the whole shared space together with the
+    // sampled animation targets; subdividing only the solver would hold stale
+    // drive forces and kinematic targets throughout the catch-up interval.
+    ms_delta maxRigStep=SPRITE_TIMER_INTERVAL_MS;
+    bool articulated=false;
+    if(elapsed>1) {
+        for(auto* layer=mFirstLayer;layer;layer=layer->mNextLayer)
+            if(layer->mUseChipmunkPhysics)
+                for(auto* sprite=layer->mFirstSprite;sprite;sprite=sprite->mNextSprite)
+                    if(hasDynamicRigBodies(sprite)) {
+                        articulated=true;
+                        if(sprite->mAnimationPhysics->definition().bodies.size()>8)maxRigStep=std::min(maxRigStep,ms_delta(5));
+                        // A fast chain can rotate through a large angle even
+                        // in 5 ms. Keep angular travel near one degree per solve
+                        // so curved pivot paths do not pull the links apart.
+                        for(auto* part:sprite->mParts)if(part->physics.isPresent()) {
+                            const double speed=std::abs(part->physics.getAngularVelocity());
+                            if(speed>0)maxRigStep=std::min(maxRigStep,
+                                ms_delta(std::max(1.0,std::min(double(maxRigStep),std::floor(20.0/speed)))));
+                        }
+                    }
+    }
+    if(articulated && elapsed>maxRigStep) {
+        const ms_delta count=1+(elapsed-1)/maxRigStep;
+        const ms_delta step=elapsed/count,remainder=elapsed%count;
+        for(ms_delta n=0;n<count;++n)stepAnimationPhysics(step+(n<remainder?1:0));
+        return;
+    }
+#endif
+    RetainedFrame<Sprite> sprites;
+    RetainedFrame<Particle> particles;
+    RetainedFrame<PhysicsBody> bodies;
+    for (auto* layer=mFirstLayer; layer; layer=layer->mNextLayer) {
+        if (!layer->mUseChipmunkPhysics) continue;
+        for (auto* sprite=layer->mFirstSprite; sprite; sprite=sprite->mNextSprite) {
+            sprites.add(sprite);
+            auto capture = [&](PhysicsBody& body) {
+                if (body == PhysicsBody::NoPhysics) return;
+                bodies.add(&body);
+                body.beginKinematicStep();
+            };
+            capture(sprite->physics);
+            for (auto* part : sprite->mParts) { part->syncPhysicsSolver(); if (!part->mAnimationPhysicsBody) capture(part->physics); }
+        }
+    }
+    for (auto* layer=mFirstLayer; layer; layer=layer->mNextLayer) {
+        if (!layer->mUseChipmunkPhysics) continue;
+        for (auto* particle : layer->mParticles) {
+            particles.add(particle); particle->syncPhysicsSolver();
+            if (particle->physics.isPresent()) { bodies.add(particle->physics.operator->()); particle->physics->beginKinematicStep(); }
+        }
+    }
+    const double seconds=double(elapsed)/1000.0;
+    for (auto* layer=mFirstLayer; layer; layer=layer->mNextLayer)
+        if (layer->mUseChipmunkPhysics) layer->advanceParticles(seconds);
+    for (auto* sprite : sprites.items) {
+        if (!sprite->mLayer) continue;
+        if (sprite->mLayer->mAnimating) {
+            sprite->advanceAnimation(elapsed);
+            sprite->mAnimationPrepared=sprite->mLayer != nullptr;
+        }
+#if defined(PDG_SPRITER_SUPPORT)
+        try { sprite->prepareAnimationPhysics(elapsed); }
+        catch (const std::exception& error) { sprite->mAnimationRigError=error.what(); sprite->releaseAnimationPhysics(); }
+#endif
+    }
+    // Resolve all mounts after independent clips, before collecting world targets.
+    for (auto* sprite : sprites.items)
+        if (sprite->mLayer && !sprite->mAttachmentPart) sprite->updatePartAttachments();
+    for (auto* body : bodies.items) body->prepareKinematicStep(seconds);
+    if (seconds>0) {
+        std::vector<PhysicsBody*> constraintBodies;
+        for (auto* layer=mFirstLayer; layer; layer=layer->mNextLayer)
+            for (auto* sprite=layer->mFirstSprite; sprite; sprite=sprite->mNextSprite) {
+                if (sprite->physics != PhysicsBody::NoPhysics) {
+                    sprite->physics->prepareWorldStep(seconds);
+                    constraintBodies.push_back(sprite->physics.operator->());
+                }
+                for (auto* part : sprite->mParts) {
+                    part->syncPhysicsSolver();
+                    if (part->physics != PhysicsBody::NoPhysics) {
+                        part->physics->prepareWorldStep(seconds);
+                        constraintBodies.push_back(part->physics.operator->());
+                    }
+                }
+            }
+        for (auto* particle : particles.items) if (particle->mLayer && particle->physics.isPresent()) {
+            particle->physics->prepareWorldStep(seconds);
+            constraintBodies.push_back(particle->physics.operator->());
+        }
+        for(auto* layer=mFirstLayer;layer;layer=layer->mNextLayer)
+            layer->prepareColliders(layer->mUseChipmunkPhysics ? mSpace : nullptr);
+        PhysicsBody::prepareConstraints(constraintBodies);
+        const int savedIterations=cpSpaceGetIterations(mSpace);
+#ifdef PDG_SPRITER_SUPPORT
+        // Long articulated chains need enough solver passes to propagate the
+        // contact and motor impulses through their pivots in the same step.
+        int iterations=savedIterations;
+        for(auto* sprite:sprites.items)
+            if(sprite->mLayer && hasDynamicRigBodies(sprite))
+                iterations=std::max(iterations,std::min(64,8+2*int(sprite->mAnimationPhysics->definition().bodies.size())));
+        cpSpaceSetIterations(mSpace,iterations);
+#endif
+        cpSpaceStep(mSpace,seconds);
+        cpSpaceSetIterations(mSpace,savedIterations);
+    }
+    // Observe solved velocities before restoring temporary kinematic sweep rates.
+    // Break callbacks run outside cpSpaceStep, where topology edits are safe.
+    if (seconds > 0) {
+        std::vector<PhysicsBody*> monitored;
+        for (auto* sprite : sprites.items) if (sprite->mLayer) {
+            if (sprite->physics.getBreakAngularSpeed() > 0) monitored.push_back(sprite->physics.operator->());
+            for (auto* part : sprite->mParts) if (part->physics.getBreakAngularSpeed() > 0) monitored.push_back(part->physics.operator->());
+        }
+        for (auto* particle : particles.items) if (particle->mLayer && particle->physics.getBreakAngularSpeed() > 0)
+            monitored.push_back(particle->physics.operator->());
+        PhysicsBody::checkBreakAngularSpeeds(monitored);
+    }
+    for (auto* body : bodies.items) body->finishKinematicStep();
+    for (auto* particle : particles.items)
+        if (particle->mLayer && particle->physics.isPresent()) particle->physics->publishWorldStep();
+    for (auto* sprite : sprites.items) {
+        if (!sprite->mLayer) continue;
+        if (sprite->physics != PhysicsBody::NoPhysics) sprite->physics->publishWorldStep();
+#if defined(PDG_SPRITER_SUPPORT)
+        try { sprite->publishAnimationPhysics(); }
+        catch (const std::exception& error) { sprite->mAnimationRigError=error.what(); sprite->releaseAnimationPhysics(); }
+#endif
+        sprite->refreshPartPhysics();
+#if defined(PDG_SPRITER_SUPPORT)
+        sprite->finishAnimationPhysics();
+#endif
+    }
+    for (auto* sprite : sprites.items)
+        if (sprite->mLayer && !sprite->mAttachmentPart) sprite->updatePartAttachments();
+}
 
 cpBool 
 SpriteManager::ChipmunkSpriteCollisionBeginFunc(cpArbiter *arb, struct cpSpace *space, void *data) {
@@ -73,11 +267,11 @@ SpriteManager::ChipmunkSpriteCollisionBeginFunc(cpArbiter *arb, struct cpSpace *
     // Their order matches the order of the collision types passed
     // to the collision handler this function was defined for
     CP_ARBITER_GET_BODIES(arb, sprite1, sprite2);
-    Sprite* s1 = static_cast<Sprite*>(cpBodyGetUserData(sprite1));
-    if (!s1->mDoCollisions) return false;
-    Sprite* s2 = static_cast<Sprite*>(cpBodyGetUserData(sprite2));
-    if (!s2->mDoCollisions) return false;
-	if (!s1->mLayer || !s2->mLayer) {
+    Sprite* s1 = bodyOwner(sprite1);
+    if(!s1)return false;
+    Sprite* s2 = bodyOwner(sprite2);
+    if (!s2) return false;
+	if (!s2 || !s1->mLayer || !s2->mLayer) {
 		CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionBeginFunc s1->mLayer or s2->mLayer is null, skipping"));
 		return false;
 	}
@@ -108,13 +302,6 @@ SpriteManager::ChipmunkSpriteCollisionBeginFunc(cpArbiter *arb, struct cpSpace *
 			}
 		}
     }
-    // if we have a collision helper for either of the sprites, check it
-    if (canCollide && s1->mCollisionHelper) {
-    	canCollide = s1->mCollisionHelper->allowCollision(s1, s2);
-    }
-    if (canCollide && s2->mCollisionHelper) {
-    	canCollide = s2->mCollisionHelper->allowCollision(s1, s2);
-    }
     return canCollide;
 }
 
@@ -122,9 +309,10 @@ void
 SpriteManager::ChipmunkSpriteCollisionPostSolveFunc(cpArbiter *arb, cpSpace *space, void *data) {
     // this is only called if we have approved the collision
     CP_ARBITER_GET_BODIES(arb, sprite1, sprite2);
-    Sprite* s1 = static_cast<Sprite*>(cpBodyGetUserData(sprite1));
-   	Sprite* s2 = static_cast<Sprite*>(cpBodyGetUserData(sprite2));
-	if (!s1->mLayer || !s2->mLayer) {
+    Sprite* s1 = bodyOwner(sprite1);
+    if(!s1)return;
+    Sprite* s2 = bodyOwner(sprite2);
+	if (!s2 || !s1->mLayer || !s2->mLayer) {
 		CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionPostSolveFunc s1->mLayer or s2->mLayer is null, skipping"));
 		return;
 	}
@@ -141,13 +329,13 @@ SpriteManager::ChipmunkSpriteCollisionPostSolveFunc(cpArbiter *arb, cpSpace *spa
     Vector normal(norm.x, norm.y);
     Vector impulse(imp.x, imp.y);
     cpFloat kineticEnergy = cpArbiterTotalKE(arb);
-    cpFloat dt = ((float)SPRITE_TIMER_INTERVAL_MS)/1000.0f;
-    cpFloat force = impulse.vectorLength() / dt;
+    const cpFloat dt = cpSpaceGetCurrentTimeStep(space);
+    const cpFloat force = dt > 0 ? impulse.vectorLength() / dt : 0;
 	CHIPMUNK_DEBUG_ONLY(OS::_DOUT("SpriteManager::ChipmunkSpriteCollisionPostSolveFunc calling notifyCollisionAction sprite"));
     s1->mLayer->notifyCollisionAction(Sprite::action_CollideSprite, s1, normal, impulse, force, kineticEnergy, arb, 
 		#ifdef PDG_SPRITER_SUPPORT
-			nullptr,
-			nullptr,
+            AnimationPhysicsRig::find(sprite1) && s1->getAnimationRig() ? s1->getAnimationRig()->getBone(AnimationPhysicsRig::find(sprite1)->definition().bodies[AnimationPhysicsRig::find(sprite1)->bodyIndex(sprite1)].bone).name.c_str() : nullptr,
+            AnimationPhysicsRig::find(sprite2) && s2->getAnimationRig() ? s2->getAnimationRig()->getBone(AnimationPhysicsRig::find(sprite2)->definition().bodies[AnimationPhysicsRig::find(sprite2)->bodyIndex(sprite2)].bone).name.c_str() : nullptr,
 			cpArbiterIsFirstContact(arb),
 		#endif // PDG_SPRITER_SUPPORT
 		s2);
@@ -193,6 +381,20 @@ SpriteManager::createTileLayer() {
 
 void
 SpriteManager::cleanupLayer(SpriteLayer* layer) {
+    if (AnimationPipeline::isInsideCallback()) throw std::logic_error("Layer membership cannot change inside an animation modifier");
+    if(!layer)return;
+    auto* manager=SpriteManager::getSingletonInstance();
+    if(manager->mLayerUpdateDepth){
+        auto& queue=manager->mDeferredLayerCleanup;
+        if(std::find(queue.begin(),queue.end(),layer)==queue.end())queue.push_back(layer);
+        return;
+    }
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if(cpSpaceIsLocked(manager->mSpace)){
+        cpSpaceAddPostStepCallback(manager->mSpace,[](cpSpace*,void* key,void*){cleanupLayer(static_cast<SpriteLayer*>(key));},layer,nullptr);
+        return;
+    }
+#endif
     delete layer;
 }
 
@@ -257,6 +459,11 @@ SpriteManager::SpriteManager(EventManager* eventMgr, TimerManager* timerMgr):
     cpCollisionHandler* spriteToSpriteHdlr = cpSpaceAddCollisionHandler(mSpace, CP_COLLIDE_TYPE_SPRITE, CP_COLLIDE_TYPE_SPRITE);
     spriteToSpriteHdlr->beginFunc = ChipmunkSpriteCollisionBeginFunc;
     spriteToSpriteHdlr->postSolveFunc = ChipmunkSpriteCollisionPostSolveFunc;
+    // Imported physical rigs still own their capsule primitives. Route their
+    // contacts with shared Collider shapes through the rig event adapter too.
+    auto* rigToCollider = cpSpaceAddCollisionHandler(mSpace, CP_COLLIDE_TYPE_SPRITE, 0x434f4c4c);
+    rigToCollider->beginFunc = ChipmunkSpriteCollisionBeginFunc;
+    rigToCollider->postSolveFunc = ChipmunkSpriteCollisionPostSolveFunc;
 
     cpCollisionHandler* spriteToWallHdlr = cpSpaceAddCollisionHandler(mSpace, CP_COLLIDE_TYPE_SPRITE, CP_COLLIDE_TYPE_WALL);
     spriteToWallHdlr->beginFunc = ChipmunkWallCollisionBeginFunc;
@@ -273,7 +480,7 @@ SpriteManager::~SpriteManager() {
 }
 
 // return true if completely handled
-bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw() {
+bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept {
 	if (inEventType == eventType_Timer) {
 		//SpriteLayer* layer = dynamic_cast<SpriteLayer*>(mFirstLayer);
 		pdg::TimerInfo* infoP = static_cast<TimerInfo*>(inEventData);
@@ -295,10 +502,19 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 			SpriteLayerInfo evntInfo;
 			// Animate all the layers to their position at the next draw loop
 			SpriteLayer* layer = mFirstLayer;
+            LayerTraversalScope traversal(*this);
 			evntInfo.actingLayer = mFirstLayer;
 			evntInfo.action = SpriteLayer::action_AnimationStart;
 			evntInfo.millisec = infoP->millisec;
 			mFirstLayer->postEvent(eventType_SpriteLayer, &evntInfo);
+
+            // Pre-animation handlers may choose this tick's IK/kinematic
+            // targets. Deliver them before evaluating or solving any layer.
+            for (auto* preparing=mFirstLayer; preparing; preparing=preparing->mNextLayer) {
+                SpriteLayerInfo pre;
+                pre.actingLayer=preparing; pre.action=SpriteLayer::action_PreAnimateLayer;
+                preparing->postEvent(eventType_SpriteLayer, &pre);
+            }
 
           #ifdef PDG_USE_CHIPMUNK_PHYSICS
             // Chipmunk docs say it is highly recommended we use a regular step amount, 
@@ -306,15 +522,11 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
             // to the time it actually took, we get erratic movement. Instead we
             // try to do a lot of simulations with a small step decoupled from the
             // drawing loop and that seems to work well
-            cpFloat dt = (float) elapsedMs / 1000.0f;
-            cpSpaceStep(mSpace, dt);
+            stepAnimationPhysics(elapsedMs);
           #endif
 
+			layer=mFirstLayer;
 			while (layer) {
-				SpriteLayerInfo evntInfo2;
-				evntInfo2.actingLayer = layer;
-				evntInfo2.action = SpriteLayer::action_PreAnimateLayer;
-				layer->postEvent(eventType_SpriteLayer, &evntInfo2);
 				layer->animateLayer(elapsedMs);
 				SpriteLayerInfo evntInfo3;
 				evntInfo3.actingLayer = layer;
@@ -325,7 +537,8 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 			SpriteLayerInfo evntInfo4;
 			evntInfo4.actingLayer = mLastLayer;
 			evntInfo4.action = SpriteLayer::action_AnimationComplete;
-			mLastLayer->postEvent(eventType_SpriteLayer, &evntInfo4);
+            if(mLastLayer)mLastLayer->postEvent(eventType_SpriteLayer, &evntInfo4);
+
 			
 			return true;
 		}
@@ -351,6 +564,7 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 		}
 
 		if (firstLayerForPort) {
+            LayerTraversalScope traversal(*this);
 			SpriteLayerInfo evntInfo;
 			evntInfo.actingLayer = firstLayerForPort;
 			evntInfo.action = SpriteLayer::action_ErasePort;
@@ -362,6 +576,7 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 			}
 
 			SpriteLayer* layer = mFirstLayer;
+
 			while (layer) {
 				if (belongsToPort(layer)) {
 					SpriteLayerInfo evntInfo2;
@@ -399,10 +614,7 @@ bool SpriteManager::handleEvent(EventEmitter* inEmitter, long inEventType, void*
 			  #endif
 				while (sprite) {
 					if (sprite->wantsClicks) {
-						int collideMode = sprite->mDoCollisions;
-						sprite->mDoCollisions = sprite->mMouseDetectMode;
-						bool didCollide = sprite->collidesWith(clickPt);
-						sprite->mDoCollisions = collideMode;
+                        bool didCollide = sprite->hitTest(clickPt);
 						if (didCollide) {
 							hitSprite = sprite;
 							break;

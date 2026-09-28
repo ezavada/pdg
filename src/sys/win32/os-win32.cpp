@@ -45,6 +45,9 @@
 #include <cstdio>
 #include <cstdarg>
 #include <iostream>
+#include <regex>
+#include <format>
+#include <string_view>
 #include <time.h>
 #include <assert.h>
 #include <io.h>
@@ -60,21 +63,10 @@
 
 #define WinAPI
 
-#ifdef PDG_VS_NEED__IMP__VSNPRINTF
-extern "C" int _imp__vsnprintf(char * s, size_t n, const char * fmt, va_list arg) { 
-	return std::vsnprintf(s, n, fmt, arg); 
-}
-#endif
 
 namespace pdg {
 
 
-struct PrivateFindData {
-    WinAPI::_finddata_t findData;
-    intptr_t            findRef;
-};
-
-std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks = true);  // assumes relative to application if relative path
 bool native2path(const char *inNativeFileName, char* outStdFileName, int len);
 
 const char* os_getPlatformErrorMessage(long err) {
@@ -99,7 +91,7 @@ bool os_path2native(const char *inStdFileName, char* outNativeFileName, int len)
     outNativeFileName[0] = 0;
     
     // Check for illegal characters: colon after 2nd position
-    if (std::strchr(inStdFileName+2, ':')) {
+    if (std::string_view(inStdFileName).find(':', 2) != std::string_view::npos) {
         return false;   // colon is an illegal character after 2nd position
     }
     
@@ -148,186 +140,22 @@ bool native2path(const char *inNativeFileName, char* outStdFileName, int len) {
     return true;
 }
 
-std::string os_makeCanonicalPath(const char* inFromPath, bool resolveSimLinks) {
-	char fromPath[MAX_PATH];
-	char workingBuf[MAX_PATH];
-	workingBuf[0] = 0;
-	if (std::strchr(inFromPath,'/')) {
-		if (!os_path2native(inFromPath, fromPath, MAX_PATH)) {
-			DEBUG_PRINT("os_path2native failed for [%s]", inFromPath);
-		}
-//		DEBUG_PRINT("os_makeCanonicalPath convert to native path [%s]", fromPath);
-	} else {
-		std::strncpy(fromPath, inFromPath, MAX_PATH - 1);
-		fromPath[MAX_PATH - 1] = '\0';
-		MAKE_STRING_BUFFER_SAFE(fromPath, MAX_PATH);
-//		DEBUG_PRINT("os_makeCanonicalPath given native path [%s]", fromPath);
-	}
-	if (fromPath[0] != 0) {
-		// make an absolute path
-		if (!os_isAbsolutePath(fromPath)) {
-			std::strncpy(workingBuf, OS::getApplicationDirectory(), MAX_PATH - 1);
-			workingBuf[MAX_PATH - 1] = '\0';
-			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-			std::strncat(workingBuf, "\\", sizeof(workingBuf) - strlen(workingBuf) - 1); 
-			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-			std::strncat(workingBuf, fromPath, sizeof(workingBuf) - strlen(workingBuf) - 1);
-			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-		} else {
-			std::strncpy(workingBuf, fromPath, MAX_PATH - 1);
-			workingBuf[MAX_PATH - 1] = '\0';
-			MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-		}
-		// remove double backslashes '\\', empty path segments '\.\', and backtracking '\<dir>\..\'
-		// also resolve sim links if desired
-		char* lastSlash = workingBuf;
-		char* p = workingBuf;
-		while (*p) {
-			if (*p == '\\') {
-				// found a backslash, see what follows it
-				if (p[1] == '\\') {
-					// another slash, remove
-					char* q = p;
-					while(q[1]) {
-					    q[0] = q[1];
-					    q++;
-					}
-					*q = 0;
-				} else if (std::strncmp(p, "\\.\\", 3) == 0) {
-					// an empty segment, remove
-					char* q = p;
-					while(q[2]) {
-					    q[0] = q[2];
-					    q++;
-					}
-					*q = 0;
-				} else if (std::strncmp(p, "\\..\\", 4) == 0) {
-					// a backtrack, remove along with the prior directory segment
-					char* q = p+3;  // skip over the backtrack section
-					p = lastSlash+1; // go back to the start of the prior segment
-					while(q[1]) {   // copy everything from after the backtrack
-					    *p++ = q[1];  // into the prior segment
-					    q++;
-					}
-					*p = 0;
-					p = lastSlash+1;
-					// now search backwards for prev segment
-				} else {
-					// something else, so we are starting a new path segment
-					// save this as the new last slash
-					lastSlash = p;
-					p++;
-				}
-// 				if (resolveSimLinks && (*p == '\\')) {
-// 					char buf[MAX_PATH];
-// 					*p = 0;
-// 					int len = readlink(workingBuf, buf, MAX_PATH);
-// 					if (len > 0 && len < MAX_PATH) {
-// 						char buf2[MAX_PATH];
-// 						std::strcpy(buf2, &p[1]); // this is safe because p[1] starts a string that is always shorter than MAX_PATH
-// 						std::strcpy(workingBuf, buf); // also safe, buf always shorter than MAX_PATH
-// 						std::strncat(workingBuf, "\\", MAX_PATH);
-// 						MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-// 						std::strncat(workingBuf, buf2, MAX_PATH);
-// 						MAKE_STRING_BUFFER_SAFE(workingBuf, MAX_PATH);
-// 						p = workingBuf; p += len;
-// 					}
-// 					*p = '\\'; // restore our separator so we can pick up where we left off
-// 				}
-			} else {
-				p++;
-			}
-		}
-// 		if (resolveSimLinks) {
-// 			// final resolution of sim link
-// 			char buf[MAX_PATH];
-// 			int len = readlink(workingBuf, buf, MAX_PATH);
-// 			if (len > 0 && len < MAX_PATH) {
-// 				std::strcpy(workingBuf, buf); // also safe, buf always shorter than MAX_PATH
-// 			}
-// 		}
-	}
-	return std::string(workingBuf);
-}
-
-
-std::string OS::makeCanonicalPath(const char* fromPath, bool resolveSimLinks ) {
-	return os_makeCanonicalPath(fromPath, resolveSimLinks);
-}
-
-// returns true if a file was found, false if no file was found
-bool
-OS::findFirst(const char* inFindName, FindDataT& outFindData) {
-	outFindData.privateData = 0;	// make sure this is good for later
-    char searchName[MAX_PATH];
-    if (!os_path2native(inFindName, searchName, MAX_PATH)) {
-        return false;   // illegal characters
+bool os_matchesFilename(const char* pattern, const char* name) {
+    // Match the documented * and ? wildcards, preserving Windows case folding.
+    std::string expression;
+    std::string_view wildcard(pattern);
+    if (wildcard == "*.*") wildcard = "*";
+    for (char c : wildcard) {
+        if (c == '*') expression += ".*";
+        else if (c == '?') expression += '.';
+        else {
+            if (std::string_view(R"(\.^$|()[]{}+)").find(c) != std::string_view::npos)
+                expression += '\\';
+            expression += c;
+        }
     }
-    outFindData.privateData = new PrivateFindData;
-    DEBUG_ASSERT(outFindData.privateData, "New failed but didn't throw an exception. Turn exceptions on in the compiler");
-    PrivateFindData* pData = static_cast<PrivateFindData*>(outFindData.privateData);
-    // Initialize the findData structure to avoid garbage data
-    memset(&pData->findData, 0, sizeof(pData->findData));
-    pData->findRef = WinAPI::_findfirst(searchName, &pData->findData);
-	if(pData->findRef != -1)
-	{
-		// copy results of find into our platform independent struct
-		outFindData.isDirectory = (pData->findData.attrib == _A_SUBDIR);
-		std::strncpy(const_cast<char*>(outFindData.nodeName), pData->findData.name, FindDataT::MAX_NODE_NAME_SIZE);
-		MAKE_STRING_BUFFER_SAFE(const_cast<char*>(outFindData.nodeName), FindDataT::MAX_NODE_NAME_SIZE);
-	}
-    return (pData->findRef != -1);
+    return std::regex_match(name, std::regex(expression, std::regex::icase));
 }
-
-bool
-OS::findNext(FindDataT& ioFindData) {
-    PrivateFindData* pData = static_cast<PrivateFindData*>(ioFindData.privateData);
-    if (!pData) {
-        return false; // Invalid private data
-    }
-    if (pData->findRef == -1) {
-        return false; // Invalid file handle
-    }
-    int result = WinAPI::_findnext(pData->findRef, &pData->findData);
-	if(result != -1)
-	{
-		// copy results of find into our platform independent struct
-		ioFindData.isDirectory = (pData->findData.attrib == _A_SUBDIR);
-		std::strncpy(const_cast<char*>(ioFindData.nodeName), pData->findData.name, FindDataT::MAX_NODE_NAME_SIZE);
-		MAKE_STRING_BUFFER_SAFE(const_cast<char*>(ioFindData.nodeName), FindDataT::MAX_NODE_NAME_SIZE);
-	}
-    return (result != -1);
-}
-
-// cleans up after a find, should always be called when done, even if no file was found on find first
-void
-OS::findClose(FindDataT& inFindData) {
-    if (inFindData.privateData) {
-        PrivateFindData* pData = static_cast<PrivateFindData*>(inFindData.privateData);
-        WinAPI::_findclose(pData->findRef); // stop the _find
-        delete pData;
-    }
-    inFindData.privateData = 0;
-}
-
-// Deletes a file. Returns true for success, false for failure.
-bool
-OS::deleteFile(const char* inFileName)
-{
-	return (WinAPI::DeleteFileA(inFileName) != 0);
-}
-
-// Renames a file. Returns true for success, false for failure.
-bool 
-OS::renameFile(const char* inFileName, const char* inNewFileName)
-{
-	return (WinAPI::rename(inFileName, inNewFileName) != 0);
-}
-
-ms_time OS::getMilliseconds() {
-    return WinAPI::GetTickCount();
-}
-
 
 #ifdef DEBUG
 
@@ -380,9 +208,7 @@ void OS::_DOUT( const char * fmt, ...) {
 	lclTime = time(NULL);
 	now = gmtime(&lclTime);
 	strftime(dateTimeStr, 40, "%y%m%d %H:%M:%S ", now);
-    unsigned long mstime = OS::getMilliseconds();
-    char msStr[40];
-    std::snprintf(msStr, 40, "%0#10lu\t", mstime);
+    const auto msStr = std::format("{:010}\t", OS::getMilliseconds());
 	std::cout << dateTimeStr << msStr << '\t' << buf << std::endl;
 
 }

@@ -29,6 +29,8 @@
 
 
 #include "pdg_project.h"
+#include <format>
+#include <limits>
 
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
 
@@ -79,9 +81,9 @@ TimerManager::startTimer(long id, ms_delta delay, bool oneShot, UserData* userDa
     if (id == 0) return;
     TIMER_DEBUG_ONLY( 
         if (oneShot) {
-            OS::_DOUT("TimerMgr::startTimer oneshot [%ld] fires in [%ld] ms", id, delay); 
+            OS::_DOUT("%s", std::format("TimerMgr::startTimer oneshot [{}] fires in [{}] ms", id, delay).c_str());
         } else {
-            OS::_DOUT("TimerMgr::startTimer [%ld] interval [%ld]", id, delay); 
+            OS::_DOUT("%s", std::format("TimerMgr::startTimer [{}] interval [{}]", id, delay).c_str());
         }
     )
     Timer* t = findTimer(id);
@@ -112,7 +114,7 @@ TimerManager::startTimer(long id, ms_delta delay, bool oneShot, UserData* userDa
 // if the timer is paused this simply adds additional time to it when it is unpaused, but leaves it paused
 void 
 TimerManager::delayTimer(long id, ms_delta delay) {
-    TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::delayTimer [%ld] delay [%ld]", id, delay); )
+    TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("TimerMgr::delayTimer [{}] delay [{}]", id, delay).c_str()); )
     if (firing.id == id) {
         TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::delayTimer [%ld] already firing, save delay", id); )
         addDelay += delay;
@@ -121,7 +123,7 @@ TimerManager::delayTimer(long id, ms_delta delay) {
         while (t) {
             if (t->id == id) {
                 t->fire += delay;
-                TIMER_DEBUG_ONLY( OS::_DOUT("Timer [%p] id [%ld] now fires at [%ld]", t, t->id, t->fire); )
+                TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("Timer [{}] id [{}] now fires at [{}]", static_cast<const void*>(t), t->id, t->fire).c_str()); )
                 break;  // stop looking
             }
             t = t->next;
@@ -135,7 +137,7 @@ TimerManager::delayTimer(long id, ms_delta delay) {
 // if the timer is paused, this will unpause it
 void 
 TimerManager::delayTimerUntil(long id, ms_time msTime) {
-    TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::delayTimerUntil [%ld] when [%ld]", id, msTime); )
+    TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("TimerMgr::delayTimerUntil [{}] when [{}]", id, msTime).c_str()); )
     if (firing.id == id) {
         TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::delayTimerUntil [%ld] already firing, save delay", id); )
         delayUntil = msTime;
@@ -147,7 +149,7 @@ TimerManager::delayTimerUntil(long id, ms_time msTime) {
                 t->paused = false;
                 if (t->fire < msTime) {
                     t->fire = msTime;
-                    TIMER_DEBUG_ONLY( OS::_DOUT("Timer [%p] id [%ld] now fires at [%ld]", t, t->id, t->fire); )
+                    TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("Timer [{}] id [{}] now fires at [{}]", static_cast<const void*>(t), t->id, t->fire).c_str()); )
                 }
                 break;  // stop looking
             }
@@ -215,7 +217,7 @@ TimerManager::pauseTimer(long id) {
             // convert from  milliseconds remaining to absolute ms time
             if (t->fire) {
                 t->fire = msTime + t->fire;
-                TIMER_DEBUG_ONLY( OS::_DOUT("Timer [%p] id [%ld] now fires at [%ld]", t, t->id, t->fire); )
+                TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("Timer [{}] id [{}] now fires at [{}]", static_cast<const void*>(t), t->id, t->fire).c_str()); )
             } else {
                 t->fire = msTime;
             }
@@ -237,7 +239,7 @@ TimerManager::unpauseTimer(long id) {
             // convert from  milliseconds remaining to absolute ms time
             if (t->fire) {
                 t->fire = msTime + t->interval;
-                TIMER_DEBUG_ONLY( OS::_DOUT("Timer [%p] id [%ld] now fires at [%ld]", t, t->id, t->fire); )
+                TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("Timer [{}] id [{}] now fires at [{}]", static_cast<const void*>(t), t->id, t->fire).c_str()); )
             } else {
                 t->fire = msTime;
             }
@@ -354,7 +356,7 @@ TimerManager::checkTimers() {
 
     Timer* t = timers;
     ms_time ms = OS::getMilliseconds();
-//    TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::checkTimers at ms [%ld]", ms); )
+//    TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("TimerMgr::checkTimers at ms [{}]", ms).c_str()); )
 	try {
 		while (t) {
 			deleted = false;
@@ -375,7 +377,7 @@ TimerManager::checkTimers() {
 				TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::checkTimers firing timer [%ld]", ti.id); )
 				DEBUG_ONLY( ms_delta behindMs = ms - t->fire;
                     if (behindMs > 100) {
-					OS::_DOUT("TimerMgr::timer [%ld] fired %ld ms late! Targeted for %ld", t->id, behindMs, t->fire);
+					OS::_DOUT("%s", std::format("TimerMgr::timer [{}] fired {} ms late! Targeted for {}", t->id, behindMs, t->fire).c_str());
                     }
                 )
 				// cache the next timer in case of deletion
@@ -447,16 +449,16 @@ TimerManager::checkTimers() {
 					// repeating timer, reset the timer to fire again after interval
 					// include any additional delay added by the timer's handler
 					t->fire = ms + addDelay + t->interval;
-                    TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::checkTimers calculated normal interval: fire = %ld (ms = %ld addDelay = %ld + interval = %ld)", t->fire, ms, addDelay, t->interval); )
+                    TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("TimerMgr::checkTimers calculated normal interval: fire = {} (ms = {} addDelay = {} + interval = {})", t->fire, ms, addDelay, t->interval).c_str()); )
 					// if we have a new firing time from a delayUntil call, we must
 					// see if that would extend the firing time
 					if (t->fire < delayUntil) {
 						// repeating timer, reset the timer to fire at the exact time
 						// specified by delayTimerUntil() any additional delay added by the timer's handler
 						t->fire = delayUntil + addDelay;
-                        TIMER_DEBUG_ONLY( OS::_DOUT("TimerMgr::checkTimers using delayUntil: fire = %ld (delayUntil = %ld addDelay = %ld)", t->fire, delayUntil, addDelay); )
+                        TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("TimerMgr::checkTimers using delayUntil: fire = {} (delayUntil = {} addDelay = {})", t->fire, delayUntil, addDelay).c_str()); )
 					}
-					TIMER_DEBUG_ONLY( OS::_DOUT("Timer [%p] id [%ld] now fires at [%ld]", t, t->id, t->fire); )
+					TIMER_DEBUG_ONLY( OS::_DOUT("%s", std::format("Timer [{}] id [{}] now fires at [{}]", static_cast<const void*>(t), t->id, t->fire).c_str()); )
 				}
 			}
 			t = t->next;
@@ -476,9 +478,13 @@ TimerManager::msTillNextFire() {
  // tells us how long it will be (in milliseconds) till the next timer fires
     Timer* t = timers;
     ms_time ms = OS::getMilliseconds();
-    ms_delta shortestTime = LONG_MAX;
+    ms_delta shortestTime = std::numeric_limits<ms_delta>::max();
     while (t) {
-		if (!t->paused && (ms >= t->fire)) {
+        if (t->paused) {
+            t = t->next;
+            continue;
+        }
+		if (ms >= t->fire) {
             return 0;   // timer is overdue to fire
         }
         ms_delta diff = t->fire - ms;
@@ -487,7 +493,7 @@ TimerManager::msTillNextFire() {
         }
         t = t->next;
     }
-    DEBUG_ASSERT(shortestTime <= LONG_MAX, "ERROR: TimerManager::msTillNextFire() returned possible negative number");
+    DEBUG_ASSERT(shortestTime >= 0, "ERROR: TimerManager::msTillNextFire() returned possible negative number");
     return shortestTime;
 }
 

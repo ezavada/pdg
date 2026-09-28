@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::getAnimationSource()
+\brief Read the selected pose source.
+
+\return The animationSource constant last selected, or pdg.animationSource_Clip when pose access is disabled.
+
+\see setAnimationSource()
+*/

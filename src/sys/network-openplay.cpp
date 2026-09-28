@@ -95,7 +95,7 @@ NetEndpoint::NetEndpoint(OpenPlayNetworkManager* mgr, PEndpointRef ref, void* us
     mName[PDG_MAX_NET_CONNECTION_NAME_LEN-1] = 0;  // make sure this is nul terminated
      // add this endpoint to the maps
     NetManagerData* netDataP = &mNetMgr->getNetData();
-    AutoMutex mutex(&(netDataP->dataMutex));
+    std::lock_guard lock(netDataP->dataMutex);
     netDataP->endpointRefs.insert(EndpointRefMap::value_type(mEndpoint, this));
 }
 
@@ -117,7 +117,7 @@ NetEndpoint::initialize(void* userContext) {
     mName[0] = 0;
      // add this endpoint to the maps
     NetManagerData* netDataP = &mNetMgr->getNetData();
-    AutoMutex mutex(&(netDataP->dataMutex));
+    std::lock_guard lock(netDataP->dataMutex);
     mId = ++sLastEndpointID;
     netDataP->endpointIds.insert(EndpointIdMap::value_type(mId, this));
 }
@@ -126,7 +126,7 @@ NetEndpoint::~NetEndpoint() {
     // remove this endpoint from the maps
     if (mNetMgr) {
         NetManagerData* netDataP = &mNetMgr->getNetData();
-        AutoMutex mutex(&(netDataP->dataMutex));
+        std::lock_guard lock(netDataP->dataMutex);
         netDataP->endpointRefs.erase(EndpointRefMap::key_type(mEndpoint));
         netDataP->endpointIds.erase(EndpointIdMap::key_type(mId));
     }
@@ -134,7 +134,7 @@ NetEndpoint::~NetEndpoint() {
 
 void
 NetEndpoint::receive() {
-    AutoMutex mutex(&mReceiveMutex);    // don't allow two threads to receive on same endpoint at same time
+    std::lock_guard lock(mReceiveMutex);    // don't allow two threads to receive on same endpoint at same time
     if (mEndpoint == NULL) {
         mReceivePending = true;
         NET_DEBUG_ONLY( OS::_DOUT("NetEndpoint receive delayed, not connected"); )
@@ -278,7 +278,7 @@ NetEndpoint::receive() {
                     nd.dataPtr = (char*)mInProgressPacket + PACKET_DATA_OFFSET;
                     nd.arrivalMs = OS::getMilliseconds();
                     {
-                        AutoMutex mutex(&mDataPtrMapMutex);
+                        std::lock_guard lock(mDataPtrMapMutex);
                         mDataPtrMap.insert(PacketDataMap::value_type((void*)nd.dataPtr, mInProgressPacket));
                     }
                     evtMgr->enqueueEvent(eventType_NetData, &nd, sizeof(NetData));
@@ -317,7 +317,7 @@ NetEndpoint::sendPacket(NetPacket* inPacket) {
     if (waitingToSend()) {
         ASYNC_DEBUG_OUT("Packets already waiting, queuing outgoing packet", DEBUG_TRIVIA | DEBUG_PACKETS);
         NetPacket* p = clonePacket(inPacket);  // packet will be freed by caller, so we must make a copy
-        AutoMutex mutex(&mOutgoingQueueMutex);
+        std::lock_guard lock(mOutgoingQueueMutex);
         mOutgoingPackets.push(p);        
     } else {
         long packetLen = inPacket->packetLen;
@@ -359,7 +359,7 @@ NetEndpoint::sendPacket(NetPacket* inPacket) {
             if (err == kNMFlowErr) {
                 ASYNC_DEBUG_OUT("Flow error, queuing outgoing packet ", DEBUG_TRIVIA | DEBUG_PACKETS);
                 NetPacket *p = clonePacket(inPacket);  // packet will be freed by caller, so we must make a copy
-                AutoMutex mutex(&mOutgoingQueueMutex);
+                std::lock_guard lock(mOutgoingQueueMutex);
                 mOutgoingPackets.push(p);
             } else {
                 mLastError = err;
@@ -383,13 +383,13 @@ NetEndpoint::sendPacket(NetPacket* inPacket) {
 
 bool
 NetEndpoint::waitingToSend() {
-    AutoMutex mutex(&mOutgoingQueueMutex);
+    std::lock_guard lock(mOutgoingQueueMutex);
     return !mOutgoingPackets.empty();
 }
 
 void
 NetEndpoint::sendWaitingPackets() {
-    AutoMutex mutex(&mOutgoingQueueMutex);
+    std::lock_guard lock(mOutgoingQueueMutex);
     while (!mOutgoingPackets.empty()) {
         NetPacket* p = mOutgoingPackets.front();
         long packetLen = p->packetLen;
@@ -460,7 +460,7 @@ NetPacket*
 NetEndpoint::createPacket(uint32 inLen) {  
     NetPacket* resultPacket = 0;
     if (inLen >= sizeof(NetPacket)) {
-        AutoMutex mutex(&mPacketMemMutex);
+        std::lock_guard lock(mPacketMemMutex);
         resultPacket = (NetPacket*)std::malloc(inLen);
     }
     if (resultPacket) {
@@ -489,7 +489,7 @@ NetEndpoint::releasePacket(NetPacket* inPacket) {
         mNetMgr->getNetData().packetStats.recordPacketFreed(inPacket); // record globally for all endpoints
         mPacketStats.recordPacketFreed(inPacket); // record locally for this endpoint
     }
-    AutoMutex mutex(&mPacketMemMutex);
+    std::lock_guard lock(mPacketMemMutex);
     std::free(inPacket);
 }
 
@@ -500,7 +500,7 @@ NetEndpoint::releasePacketFromDataPtr(void* dataPtr) {
     if (!dataPtr) {
         return;
     }
-    AutoMutex mutex(&mDataPtrMapMutex);
+    std::lock_guard lock(mDataPtrMapMutex);
     PacketDataMap::iterator it = mDataPtrMap.find(dataPtr);
     if (it != mDataPtrMap.end()) {
         NetPacket* packet = (*it).second;
@@ -516,7 +516,7 @@ NetPacket*
 NetEndpoint::clonePacket(const NetPacket* inPacket) {
     NetPacket* resultPacket = createPacket(inPacket->packetLen);
     if (resultPacket) { // create could return NULL
-        AutoMutex mutex(&mPacketMemMutex);
+        std::lock_guard lock(mPacketMemMutex);
         std::memcpy((void*)resultPacket,(void*)inPacket, inPacket->packetLen);
     }
     return resultPacket; 
@@ -601,7 +601,7 @@ NetEndpoint::connected(PEndpointRef ref) {
     mName[PDG_MAX_NET_CONNECTION_NAME_LEN-1] = 0;  // make sure this is nul terminated
     // add to the endpoint ref map
     NetManagerData* netDataP = &mNetMgr->getNetData();
-    AutoMutex mutex(&(netDataP->dataMutex));
+    std::lock_guard lock(netDataP->dataMutex);
     netDataP->endpointRefs.insert(EndpointRefMap::value_type(ref, this));
 }
 
@@ -718,7 +718,7 @@ OpenPlayNetworkManager::~OpenPlayNetworkManager() {
         }
         lit++;
     }
-    AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+    std::lock_guard lock(mNetData.dataMutex);     // endpoints map could be changed by worker thread
     EndpointRefMap& endpointRefs = mNetData.endpointRefs;
     EndpointRefMap::iterator it = endpointRefs.begin();
     if (it != endpointRefs.end()) {
@@ -746,7 +746,7 @@ OpenPlayNetworkManager::~OpenPlayNetworkManager() {
 void
 OpenPlayNetworkManager::idle() {
     // handle any delayed receives
-    AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+    std::lock_guard lock(mNetData.dataMutex);     // endpoints map could be changed by worker thread
     EndpointIdMap& endpointIds = mNetData.endpointIds;
     EndpointIdMap::iterator it = endpointIds.begin();
     if (it != endpointIds.end()) {
@@ -852,7 +852,7 @@ OpenPlayNetworkManager::openConnection(const char* destination, void* userContex
 // close a connection, with an optional error code, clean close if error = 0
 void
 OpenPlayNetworkManager::closeConnection(long id, int error) {
-    AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+    std::unique_lock lock(mNetData.dataMutex); // endpoints map could be changed by worker thread
     EndpointIdMap& endpointIds = mNetData.endpointIds;
     EndpointIdMap::iterator it = endpointIds.find(id);
     if (it != endpointIds.end()) {
@@ -861,7 +861,7 @@ OpenPlayNetworkManager::closeConnection(long id, int error) {
         if (ep) {
             PEndpointRef opep = ep->getOpenPlayEndpoint();
             bool orderlyShutdown = (error == 0); // orderly shutdown unless we are doing an error close
-            mNetData.dataMutex.release();   // release the mutex so we don't get a deadlock, since this might be do callback in same thread
+            lock.unlock(); // callbacks may take this lock; do not unlock again on scope exit
             ProtocolCloseEndpoint(opep, orderlyShutdown);
             // the callback for the endpoint will delete the NetEndpoint and send the NetDisconnect event
         }
@@ -871,7 +871,7 @@ OpenPlayNetworkManager::closeConnection(long id, int error) {
 // send data on a particular established connection
 void
 OpenPlayNetworkManager::sendData(long id, void* data, long dataLen) {
-    AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+    std::lock_guard lock(mNetData.dataMutex);     // endpoints map could be changed by worker thread
     EndpointIdMap& endpointIds = mNetData.endpointIds;
     EndpointIdMap::iterator it = endpointIds.find(id);
     if (it != endpointIds.end()) {
@@ -902,7 +902,7 @@ OpenPlayNetworkManager::sendData(long id, void* data, long dataLen) {
 void    
 OpenPlayNetworkManager::releaseNetData(NetData* data) {
     if ( (data != 0) && (data->dataPtr != 0) ) {
-        AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+        std::lock_guard lock(mNetData.dataMutex);     // endpoints map could be changed by worker thread
         EndpointIdMap& endpointIds = mNetData.endpointIds;
         EndpointIdMap::iterator it = endpointIds.find(data->id);
         bool freed = false;
@@ -945,7 +945,7 @@ OpenPlayNetworkManager::setConnectionContext(long id, void* userContext) {
         // this lets it keep working even if for some reason endpoints are being assigned
         // negative id numbers
     }
-    AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+    std::lock_guard lock(mNetData.dataMutex);     // endpoints map could be changed by worker thread
     EndpointIdMap& endpointIds = mNetData.endpointIds;
     EndpointIdMap::iterator it = endpointIds.find(id);
     if (it != endpointIds.end()) {
@@ -961,7 +961,7 @@ OpenPlayNetworkManager::setConnectionContext(long id, void* userContext) {
 
 void   
 OpenPlayNetworkManager::setMaxIncomingPacketSize(long id, long maxLen) {
-    AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+    std::lock_guard lock(mNetData.dataMutex);     // endpoints map could be changed by worker thread
     EndpointIdMap& endpointIds = mNetData.endpointIds;
     EndpointIdMap::iterator it = endpointIds.find(id);
     if (it != endpointIds.end()) {
@@ -1038,7 +1038,7 @@ OpenPlayNetworkManager::createServerPort(short portNum, void* userContext, unsig
         } else {
             { // reduce scope for auto mutex
                 // add the new listener to the map
-                AutoMutex mutex(&mNetData.dataMutex);
+                std::lock_guard lock(mNetData.dataMutex);
                 listeners.insert( ListenerPortMap::value_type(portNum, opep) );
             }
             if (connectFlags & flag_PublicPort) {
@@ -1090,7 +1090,7 @@ OpenPlayNetworkManager::closeServerPort(short portNum) {
         PEndpointRef opep = (*it).second;
         { // reduce scope for automutex
             // remove it from the map
-            AutoMutex mutex(&mNetData.dataMutex);
+            std::lock_guard lock(mNetData.dataMutex);
             listeners.erase(it);
         }
         // shut down the listening port
@@ -1193,7 +1193,7 @@ OpenPlayNetworkManager::broadcastData(void* inEventData, long dataLen) {
 
 bool 
 OpenPlayNetworkManager::hasActiveConnections() {
-    AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+    std::lock_guard lock(mNetData.dataMutex);     // endpoints map could be changed by worker thread
     EndpointIdMap& endpointIds = mNetData.endpointIds;
     return !endpointIds.empty();
 }
@@ -1216,7 +1216,7 @@ OpenPlayNetworkManager::doOrderlyShutdown() {
         }
         lit++;
     }
-    AutoMutex mutex(&(mNetData.dataMutex));     // endpoints map could be changed by worker thread
+    std::lock_guard lock(mNetData.dataMutex);     // endpoints map could be changed by worker thread
     EndpointRefMap& endpointRefs = mNetData.endpointRefs;
     EndpointRefMap::iterator it = endpointRefs.begin();
     if (it != endpointRefs.end()) {

@@ -3,11 +3,12 @@ namespace pdg { /**
 \class Image
 \brief A bitmap image that can be blitted onto the screen
 
-\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
-You can create an image directly from a file, or by loading it from resource files with the ResourceManager.
+You can create an image from a file or an offscreen Port, or load it from resource files with the ResourceManager.
 
 \code
-    var img = new pdg.Image("myImage.png");
+    const img = new pdg.Image("myImage.png");
+    // Given an offscreen Port named surface:
+    const live = new pdg.Image(surface, pdg.SharedSurface);
 \endcode
 
 Images are just a data object. Methods in Port are used to draw them onscreen.
@@ -20,3 +21,10 @@ Images are just a data object. Methods in Port are used to draw them onscreen.
 
 
 **/ }
+
+/**
+\fn pdg::Image::Image(string filename)
+\brief Load a bitmap image from a file.
+\param filename Image file path, resolved using the runtime's file/resource lookup.
+\see Image(Port, boolean), ResourceManager::getImage()
+*/

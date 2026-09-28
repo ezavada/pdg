@@ -1,0 +1,12 @@
+/**
+\fn pdg::Sprite::disableAnimationPose()
+\brief Release the current pose rig.
+
+Disables animation physics and clears pose overrides, modifiers, IK, custom drawing registrations, and debug flags. Parts following the old rig become unbound. Ordinary Sprite animation remains available. Calling when disabled is harmless.
+
+\return No value.
+
+\note Call outside animation callbacks.
+
+\see enableAnimationPose(), isAnimationPoseEnabled()
+*/

@@ -136,6 +136,8 @@ if (typeof bindings.Sound != "undefined") {  // might be non-gui build
 }
 bindings.EventManager.superclass = bindings.EventEmitter;
 bindings.TimerManager.superclass = bindings.EventEmitter;
+if (bindings.Particle) bindings.Particle.superclass = [bindings.Animated, bindings.EventEmitter];
+if (bindings.ParticleEmitter) bindings.ParticleEmitter.superclass = bindings.Animated;
 bindings.Sprite.superclass = new Array( bindings.Animated, bindings.EventEmitter, bindings.ISerializable );
 bindings.SpriteLayer.superclass = new Array( bindings.Animated, bindings.EventEmitter, bindings.ISerializable );
 bindings.TileLayer.superclass = bindings.SpriteLayer;
@@ -147,6 +149,7 @@ bindings.quitting = false;
 
 // Add a flag to track when pdg.run() is actively running
 bindings._pdgRunLoopActive = false;
+var performanceRunChannel = null;
 
 bindings.quit = function() {
 	var _sig = methodSignature("", arguments, "undefined", 0, "()"); if (_sig != null) return _sig;
@@ -170,11 +173,26 @@ bindings.__run = function() {
 	if (!bindings.quitting && !bindings._isQuitting() ) {
 		bindings.idle();
 		if (inbrowser) {
-			setTimeout(bindings.__run, 0);
+			if (process.env.PDG_PERF_UNCAPPED === '1' && typeof MessageChannel === 'function') {
+				// Quick benchmarks must not inherit the browser's nested-timer delay.
+				// Yield between frames so input, painting and browser controls still run.
+				if (!performanceRunChannel) {
+					performanceRunChannel = new MessageChannel();
+					performanceRunChannel.port1.onmessage = bindings.__run;
+				}
+				performanceRunChannel.port2.postMessage(null);
+			} else {
+				setTimeout(bindings.__run, 0);
+			}
 		} else {
 			setImmediate(bindings.__run);
 		}
 	} else {
+		if (performanceRunChannel) {
+			performanceRunChannel.port1.close();
+			performanceRunChannel.port2.close();
+			performanceRunChannel = null;
+		}
 		bindings._quit();
 		// Clear the run loop active flag when stopping
 		bindings._pdgRunLoopActive = false;
@@ -292,6 +310,49 @@ if (!inbrowser) {
 
 // save the original version of require
 bindings._base_require = require;
+
+// The standalone JSC runtime loads the application's main script from the
+// bundle after pdg.js has initialized. Compile that source through the JSC
+// CommonJS module implementation so relative require() calls keep working.
+if (jsc) {
+	var JSCModule = bindings._base_require('module');
+
+	bindings._loadScript = function(contents, file) {
+		var loadedModule = new JSCModule(file, module);
+		JSCModule._cache[file] = loadedModule;
+		loadedModule.require = bindings._custom_require;
+		try {
+			loadedModule._compile(contents, file);
+			if (file === 'main.js') {
+				process.mainModule = loadedModule;
+				loadedModule.id = '.';
+			}
+		} catch (error) {
+			delete JSCModule._cache[file];
+			throw error;
+		}
+		return loadedModule.exports;
+	};
+
+	bindings._custom_require = function(file) {
+		var extensionIndex = file.lastIndexOf('.');
+		var extension = extensionIndex >= 0 ? file.substring(extensionIndex) : '';
+		var resourceManager = bindings.getResourceManager();
+		var scriptSize = resourceManager.getResourceSize(file);
+		if ((extension === '.js' || extension === '.jsi') && scriptSize > 0) {
+			var cachedModule = JSCModule._cache[file];
+			if (cachedModule) return cachedModule.exports;
+			return bindings._loadScript(resourceManager.getResource(file), file);
+		}
+
+		var relativeModule = new JSCModule(file, module);
+		try {
+			return relativeModule.require(file);
+		} catch (error) {
+			return relativeModule.require('./' + file);
+		}
+	};
+}
 
 }  // end !inbrowser
 
@@ -467,7 +528,7 @@ bindings.getResourceManager = singletonGetter(_nativeGetResourceManager, binding
 bindings.getConfigManager = singletonGetter(_nativeGetConfigManager, bindings.cfg);
 bindings.getLogManager = singletonGetter(_nativeGetLogManager, bindings.lm);
 
-if (inbrowser && typeof bindings.MemBlock !== "undefined") {
+if ((inbrowser || jsc) && typeof bindings.MemBlock !== "undefined") {
     bindings.MemBlock.prototype.toBuffer = function() {
         var data = this.getData();
         var bytes = new Uint8Array(data.length);
@@ -536,166 +597,131 @@ if (inbrowser && typeof bindings.Polygon !== "undefined") {
 
 if (inbrowser && typeof bindings.Animated !== "undefined") {
     (function(Animated) {
-        var proto = Animated.prototype;
-
-        function xyValue(value, y) {
-            if (value === null || typeof value === "undefined") return null;
-            if (typeof value === "number") return { x: value, y: y };
-            if (Array.isArray(value)) return { x: value[0], y: value[1] };
-            return { x: value.x, y: value.y };
+        const proto = Animated.prototype;
+        function finite(value) {
+            if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError("Expected a finite number");
+            return value;
         }
-
-        function easingOrDefault(easing) {
-            return typeof easing === "undefined" ? bindings.easeInOutQuad : easing;
+        function xy(value, y) {
+            if (typeof value === "number") return { x: finite(value), y: finite(y) };
+            if (!value) throw new TypeError("Expected a coordinate value");
+            return { x: finite(Array.isArray(value) ? value[0] : value.x), y: finite(Array.isArray(value) ? value[1] : value.y) };
         }
-
-        function chain(nativeMethod, self, args) {
-            nativeMethod.apply(self, args);
-            return self;
+        function chain(self, method, args) { self[method].apply(self, args); return self; }
+        function timing(value) {
+            finite(value);
+            if (value < 0) throw new RangeError("Duration must be nonnegative seconds");
+            return value;
         }
-
-        proto.getBoundingBox = function() {
-            return new bindings.Rect(this._getBoundingBox());
-        };
+        function easing(value, fallback) {
+            if (value === undefined) return fallback;
+            if (!Number.isInteger(value)) throw new TypeError("Expected an easing constant");
+            return value;
+        }
+        function vectorMethod(name, timed, optional, rate) {
+            proto[name] = function(...args) {
+                const count = typeof args[0] === "number" ? 2 : 1;
+                const value = xy(args[0], args[1]);
+                if (!timed || (optional && args.length === count)) {
+                    if (args.length !== count) throw new TypeError("Immediate setters do not accept a duration");
+                    return chain(this, "_" + name, name === "setSize" ? [value.x, value.y] : [value]);
+                }
+                return chain(this, "_" + name + (optional ? "Timed" : ""),
+                    [value, timing(args[count]), easing(args[count + 1], rate ? bindings.linearTween : bindings.easeInOutQuad)]);
+            };
+        }
+        function numberMethod(name, count, timed, optional, rate, rotation) {
+            proto[name] = function(...args) {
+                const values = Array.from({ length: count }, (_, i) => finite(args[i]));
+                if (!timed || (optional && args.length === count)) {
+                    if (args.length !== count) throw new TypeError("Immediate setters do not accept a duration");
+                    return chain(this, "_" + name, values);
+                }
+                values.push(timing(args[count]), easing(args[count + 1], rate ? bindings.linearTween : bindings.easeInOutQuad));
+                if (rotation) {
+                    const direction = args[count + 2] === undefined ? bindings.rotationDirection_AsSpecified : args[count + 2];
+                    if (!Number.isInteger(direction) || direction < 0 || direction > 3) throw new TypeError("Invalid rotation direction constant");
+                    values.push(direction);
+                }
+                return chain(this, "_" + name + (optional ? "Timed" : ""), values);
+            };
+        }
+        vectorMethod("setLocation", false);
+        vectorMethod("setSize", false);
+        vectorMethod("setMovement", false);
+        vectorMethod("setCenterOffset", false);
+        vectorMethod("moveTo", true, true, false);
+        vectorMethod("moveBy", true, true, false);
+        vectorMethod("changeMovementTo", true, false, true);
+        vectorMethod("changeMovementBy", true, false, true);
+        vectorMethod("changeCenterOffsetTo", true, false, false);
+        vectorMethod("changeCenterOffsetBy", true, false, false);
+        numberMethod("setWidth", 1, false);
+        numberMethod("setHeight", 1, false);
+        numberMethod("setRotation", 1, false);
+        numberMethod("setSpin", 1, false);
+        numberMethod("setGrowing", 1, false);
+        numberMethod("setStretching", 2, false);
+        numberMethod("grow", 1, true, true, false, false);
+        numberMethod("rotateTo", 1, true, true, false, true);
+        numberMethod("rotateBy", 1, true, true, false, true);
+        numberMethod("changeSpinTo", 1, true, false, true, false);
+        numberMethod("changeSpinBy", 1, true, false, true, false);
+        numberMethod("changeGrowingTo", 1, true, false, true, false);
+        numberMethod("changeGrowingBy", 1, true, false, true, false);
+        numberMethod("stretch", 2, true, true, false, false);
+        numberMethod("resizeTo", 2, true, false, false, false);
+        numberMethod("resizeBy", 2, true, true, false, false);
+        numberMethod("changeScaleTo", 2, true, false, false, false);
+        numberMethod("changeScaleBy", 2, true, false, false, false);
+        numberMethod("changeStretchingTo", 2, true, false, true, false);
+        numberMethod("changeStretchingBy", 2, true, false, true, false);
+        proto.setScale = function(x, y = x) { return chain(this, "_setScale", [finite(x), finite(y)]); };
+        proto.getBoundingBox = function() { return new bindings.Rect(this._getBoundingBox()); };
         proto.getRotatedBounds = function() {
-            var bounds = this._getRotatedBounds();
-            return new bindings.RotatedRect(bounds, bounds.radians, bounds.centerOffset);
+            const b = this._getRotatedBounds(); return new bindings.RotatedRect(b, b.radians, b.centerOffset);
         };
-        proto.setLocation = function(location) {
-            var value = xyValue(location);
-            return value ? chain(this._setLocation, this, [value]) : this;
-        };
-        proto.getLocation = function() {
-            return new bindings.Point(this._getLocation());
-        };
-        proto.moveTo = function(where, duration, easing) {
-            var value;
-            if (typeof where === "number") {
-                value = xyValue(where, duration);
-                duration = arguments[2];
-                easing = arguments[3];
-            } else {
-                value = xyValue(where);
-            }
-            if (!value) return this;
-            return duration
-                ? chain(this._moveToTimed, this, [value, duration, easingOrDefault(easing)])
-                : chain(this._moveTo, this, [value]);
-        };
-        proto.move = function(offset, duration, easing) {
-            var value;
-            if (typeof offset === "number") {
-                value = xyValue(offset, duration);
-                duration = arguments[2];
-                easing = arguments[3];
-            } else {
-                value = xyValue(offset);
-            }
-            if (!value) return this;
-            return duration
-                ? chain(this._moveTimed, this, [value, duration, easingOrDefault(easing)])
-                : chain(this._move, this, [value]);
-        };
-        proto.setVelocity = function(velocity, y) {
-            var value = xyValue(velocity, y);
-            return value ? chain(this._setVelocity, this, [value]) : this;
-        };
-        proto.getVelocity = function() {
-            return new bindings.Vector(this._getVelocity());
-        };
-        proto.setSpeed = function(speed) { return chain(this._setSpeed, this, [speed]); };
-        proto.setVelocityInRadians = function(speed, direction) {
-            return chain(this._setVelocityInRadians, this, [speed, direction]);
-        };
-        proto.stopMoving = function() { return chain(this._stopMoving, this, []); };
-        proto.setSize = function(width, height) { return chain(this._setSize, this, [width, height]); };
-        proto.setWidth = function(width) { return chain(this._setWidth, this, [width]); };
-        proto.setHeight = function(height) { return chain(this._setHeight, this, [height]); };
-        proto.grow = function(factor, duration, easing) {
-            return duration
-                ? chain(this._growTimed, this, [factor, duration, easingOrDefault(easing)])
-                : chain(this._grow, this, [factor]);
-        };
-        proto.stretch = function(width, height, duration, easing) {
-            return duration
-                ? chain(this._stretchTimed, this, [width, height, duration, easingOrDefault(easing)])
-                : chain(this._stretch, this, [width, height]);
-        };
-        proto.startGrowing = function(amount) { return chain(this._startGrowing, this, [amount]); };
-        proto.stopGrowing = function() { return chain(this._stopGrowing, this, []); };
-        proto.startStretching = function(width, height) {
-            return chain(this._startStretching, this, [width, height]);
-        };
-        proto.stopStretching = function() { return chain(this._stopStretching, this, []); };
-        proto.resize = function(width, height, duration, easing) {
-            return chain(this._resize, this, [width, height, duration || 0, easingOrDefault(easing)]);
-        };
-        proto.resizeTo = function(width, height, duration, easing) {
-            return chain(this._resizeTo, this, [width, height, duration || 0, easingOrDefault(easing)]);
-        };
-        proto.setRotation = function(radians) { return chain(this._setRotation, this, [radians]); };
-        proto.rotate = function(radians, duration, easing) {
-            return duration
-                ? chain(this._rotateTimed, this, [radians, duration, easingOrDefault(easing)])
-                : chain(this._rotate, this, [radians]);
-        };
-        proto.rotateTo = function(radians, duration, easing) {
-            return duration
-                ? chain(this._rotateToTimed, this, [radians, duration, easingOrDefault(easing)])
-                : chain(this._rotateTo, this, [radians]);
-        };
-        proto.setFlipX = function(flip) { return chain(this._setFlipX, this, [flip]); };
-        proto.setFlipY = function(flip) { return chain(this._setFlipY, this, [flip]); };
-        proto.flipX = function() { return chain(this._flipX, this, []); };
-        proto.flipY = function() { return chain(this._flipY, this, []); };
-        proto.setSpin = function(spin) { return chain(this._setSpin, this, [spin]); };
-        proto.stopSpinning = function() { return chain(this._stopSpinning, this, []); };
-        proto.setCenterOffset = function(offset) {
-            var value = xyValue(offset);
-            return value ? chain(this._setCenterOffset, this, [value]) : this;
-        };
-        proto.getCenterOffset = function() {
-            return new bindings.Offset(this._getCenterOffset());
-        };
-        proto.changeCenter = function(offset, duration, easing) {
-            var value;
-            if (typeof offset === "number") {
-                value = xyValue(offset, duration);
-                duration = arguments[2];
-                easing = arguments[3];
-            } else {
-                value = xyValue(offset);
-            }
-            if (!value) return this;
-            return chain(this._changeCenter, this, [value, duration || 0, easingOrDefault(easing)]);
-        };
-        proto.changeCenterTo = function(offset, duration, easing) {
-            var value;
-            if (typeof offset === "number") {
-                value = xyValue(offset, duration);
-                duration = arguments[2];
-                easing = arguments[3];
-            } else {
-                value = xyValue(offset);
-            }
-            if (!value) return this;
-            return chain(this._changeCenterTo, this, [value, duration || 0, easingOrDefault(easing)]);
-        };
-        proto.wait = function(duration) { return chain(this._wait, this, [duration]); };
-        proto.setMass = function(mass) { return chain(this._setMass, this, [mass]); };
-        proto.setFriction = function(value) { return chain(this._setFriction, this, [value]); };
-        proto.setMoveFriction = function(value) { return chain(this._setMoveFriction, this, [value]); };
-        proto.setSpinFriction = function(value) { return chain(this._setSpinFriction, this, [value]); };
-        proto.setSizeFriction = function(value) { return chain(this._setSizeFriction, this, [value]); };
-        proto.applyForce = function(force, duration) {
-            var value = xyValue(force);
-            return value ? chain(this._applyForce, this, [value, duration || 0]) : this;
-        };
-        proto.applyTorque = function(force, duration) {
-            return chain(this._applyTorque, this, [force, duration || 0]);
-        };
-        proto.stopAllForces = function() { return chain(this._stopAllForces, this, []); };
+        proto.getLocation = function() { return new bindings.Point(this._getLocation()); };
+        ["getSize", "getMovement", "getScale", "getStretching", "getCenterOffset"].forEach(function(name) {
+            proto[name] = function() { return new bindings.Offset(this["_" + name]()); };
+        });
+        ["stopMovement", "stopSpinning", "stopGrowing", "stopStretching", "pauseSchedule", "resumeSchedule", "cancelSchedule", "flipX", "flipY", "andThen"].forEach(function(name) {
+            proto[name] = function() { return chain(this, "_" + name, []); };
+        });
+        proto.setFlipX = function(flip) { return chain(this, "_setFlipX", [flip]); };
+        proto.setFlipY = function(flip) { return chain(this, "_setFlipY", [flip]); };
+        proto.wait = function(seconds) { return chain(this, "_wait", [timing(seconds)]); };
     })(bindings.Animated);
+}
+
+Object.defineProperties(bindings, {
+    CopyPixels: {value: true, enumerable: true, writable: false, configurable: false},
+    SharedSurface: {value: false, enumerable: true, writable: false, configurable: false}
+});
+
+if (bindings.Image) {
+    (function(NativeImage) {
+        function Image(source, copyPixels = bindings.CopyPixels) {
+            if (!new.target) throw new TypeError("Image requires new");
+            var image;
+            if (bindings.Port && source instanceof bindings.Port) {
+                if (arguments.length > 2) throw new TypeError("Expected a Port and optional copyPixels flag");
+                if (typeof copyPixels !== 'boolean') throw new TypeError("copyPixels must be a boolean");
+                image = inbrowser ? NativeImage._createImageFromOffscreenPort(source, copyPixels) :
+                    bindings.gfx._createImageFromOffscreenPort(source, copyPixels);
+                if (!image) throw new Error("Image requires an open offscreen Port");
+            } else {
+                // Preserve filename construction and the native null introspection sentinel.
+                image = Reflect.construct(NativeImage, Array.prototype.slice.call(arguments));
+            }
+            if (new.target !== Image) Object.setPrototypeOf(image, new.target.prototype);
+            return image;
+        }
+        // Native images and ImageStrips keep their existing prototypes/instanceof behavior.
+        Image.prototype = NativeImage.prototype;
+        Object.setPrototypeOf(Image, NativeImage);
+        bindings.Image = Image;
+    })(bindings.Image);
 }
 
 if (inbrowser && typeof bindings.Image !== "undefined") {
@@ -800,6 +826,8 @@ if (inbrowser && typeof bindings.Attributes !== "undefined") {
         };
         proto.texture = function(value) { return chain(this, "_texture", [value]); };
         proto.fitType = function(value) { return chain(this, "_fitType", [value]); };
+        proto.font = function(value) { return chain(this,"_font",[value]); };
+        proto.withAppearance = function(overrides, textOnly) { return this._withAppearance(browserAttributes(overrides), !!textOnly); };
         proto.clipOverflow = function(value) { return chain(this, "_clipOverflow", [value]); };
         proto.roundedCorners = function(value) { return chain(this, "_roundedCorners", [value]); };
         proto.translation = function(value) { return chain(this, "_translation", [point(value)]); };
@@ -822,6 +850,7 @@ if (inbrowser && typeof bindings.Attributes !== "undefined") {
             }
             return chain(this, "_transform", [matrix]);
         };
+        proto.setTransform = function(matrix) { return chain(this, "_setTransform", [matrix]); };
         proto.blendMode = function(value) { return chain(this, "_blendMode", [value]); };
         proto.textSize = function(value) { return chain(this, "_textSize", [value]); };
         proto.textStyle = function(value) { return chain(this, "_textStyle", [value]); };
@@ -848,6 +877,137 @@ if (inbrowser && typeof bindings.Attributes !== "undefined") {
     })(bindings.Attributes.prototype);
 }
 
+// Embind supports one native base: AnimatedAttributes inherits Animated there.
+// Attribute calls borrow its adjusted second-base pointer for the duration of
+// the call; no copied state and no independently owned Attributes allocation.
+function browserAttributes(value) {
+    if (bindings.AnimatedAttributes && value instanceof bindings.AnimatedAttributes) {
+        if (value.isDeleted()) throw new Error("AnimatedAttributes has been deleted");
+        return value._attributes();
+    }
+    if (value instanceof bindings.Attributes) return value;
+    throw new TypeError("Expected Attributes or AnimatedAttributes");
+}
+
+if (inbrowser && bindings.AnimatedAttributes) {
+    (function(NativeAnimatedAttributes) {
+        var proto = Object.create(NativeAnimatedAttributes.prototype);
+        function AnimatedAttributes(source) {
+            if (!new.target) throw new TypeError("AnimatedAttributes requires new");
+            if (arguments.length > 1) throw new TypeError("Expected an optional Attributes snapshot");
+            var native = source != null ? new NativeAnimatedAttributes(browserAttributes(source))
+                : new NativeAnimatedAttributes();
+            // Embind returns a native handle from its constructor. Restore the
+            // actual JS subclass (View, Button, etc.) after super() constructs it.
+            Object.setPrototypeOf(native, new.target.prototype);
+            return native;
+        }
+        AnimatedAttributes.prototype = proto;
+        Object.defineProperty(proto, "constructor", { value: AnimatedAttributes, writable: true, configurable: true });
+        Object.setPrototypeOf(AnimatedAttributes, NativeAnimatedAttributes);
+        bindings.AnimatedAttributes = AnimatedAttributes;
+
+        Object.getOwnPropertyNames(bindings.Attributes.prototype).forEach(function(name) {
+            if (name === "constructor" || name.charAt(0) === "_") return;
+            var method = bindings.Attributes.prototype[name];
+            if (typeof method !== "function") return;
+            proto[name] = function() {
+                var attributes = browserAttributes(this);
+                var result = method.apply(attributes, arguments);
+                return result === attributes ? this : result;
+            };
+        });
+
+        function finite(value, name) {
+            if (typeof value !== "number" || !Number.isFinite(value))
+                throw new TypeError(name + " must be a finite number");
+            return value;
+        }
+        function integer(value, name) {
+            finite(value, name);
+            if (!Number.isInteger(value) || value < -2147483648 || value > 2147483647)
+                throw new TypeError(name + " must be an integer");
+            return value;
+        }
+        function seconds(value) {
+            finite(value, "duration");
+            if (value < 0) throw new RangeError("Duration must be nonnegative seconds");
+            return value;
+        }
+        function easing(value) {
+            return value === undefined ? bindings.linearTween : integer(value, "easing");
+        }
+        function direction(value) {
+            return value === undefined ? bindings.rotationDirection_AsSpecified : integer(value, "direction");
+        }
+        function point(value) { return { x: finite(value.x, "x"), y: finite(value.y, "y") }; }
+        function color(value) {
+            if (typeof value === "string" || typeof value === "number") value = new bindings.Color(value);
+            return { red: finite(value.red, "red"), green: finite(value.green, "green"),
+                blue: finite(value.blue, "blue"), alpha: finite(value.alpha, "alpha") };
+        }
+        function rect(value) {
+            return { left: finite(value.left, "left"), top: finite(value.top, "top"),
+                right: finite(value.right, "right"), bottom: finite(value.bottom, "bottom") };
+        }
+        var channels = {
+            changeLineColor: color, changeLineThickness: finite, changeLineOpacity: finite,
+            changeFillColor: color, changeFillOpacity: finite, changeRoundedCorners: finite, changeTextSize: finite,
+            changeSubsection: rect, changePolarOffset: point, changeLightOffset: point, changeAmbientLight: color
+        };
+        Object.keys(channels).forEach(function(name) {
+            proto[name] = function(target, duration, curve) {
+                this["_" + name](channels[name](target, name), seconds(duration), easing(curve));
+                return this;
+            };
+        });
+        proto.changeSkew = function(x, y, duration, curve) {
+            this._changeSkew(finite(x, "x"), finite(y, "y"), seconds(duration), easing(curve));
+            return this;
+        };
+        proto.changeSphereRotation = function(radians, duration, curve, travel) {
+            this._changeSphereRotation(finite(radians, "radians"), seconds(duration), easing(curve), direction(travel));
+            return this;
+        };
+        proto.changeFrames = function(first, last, duration, curve) {
+            this._changeFrames(integer(first, "first frame"), integer(last, "last frame"), seconds(duration), easing(curve));
+            return this;
+        };
+        proto.changeFillGradient = function(start, startColor, end, endColor, duration, curve) {
+            this._changeFillGradient(point(start), color(startColor), point(end), color(endColor), seconds(duration), easing(curve));
+            return this;
+        };
+        proto.changeFillRadialGradient = function(center, centerColor, radius, endColor, duration, curve) {
+            this._changeFillRadialGradient(point(center), color(centerColor), finite(radius, "radius"), color(endColor), seconds(duration), easing(curve));
+            return this;
+        };
+        proto.changeTransform = function(matrix, duration, curve) {
+            this._changeTransform(matrix, seconds(duration), easing(curve));
+            return this;
+        };
+    })(bindings.AnimatedAttributes);
+
+    // Attribute-consuming native methods receive the correctly adjusted base.
+    function acceptsBrowserAttributes(proto, name) {
+        var native = proto[name];
+        proto[name] = function() {
+            var args = Array.prototype.slice.call(arguments);
+            args[args.length - 1] = browserAttributes(args[args.length - 1]);
+            return native.apply(this, args);
+        };
+    }
+    ["addLine", "addSpline", "addArc", "addRect", "addQuad", "addPolygon", "addEllipse",
+     "addImage", "addImageStrip", "addDrawing"].forEach(function(name) {
+        acceptsBrowserAttributes(bindings.Drawing.prototype, name);
+    });
+    acceptsBrowserAttributes(bindings.ElementRef.prototype, "setAttributes");
+    acceptsBrowserAttributes(bindings.ElementRef.prototype, "setLiveAttributes");
+    ["drawLine", "drawRect", "drawQuad", "drawPolygon", "drawSpline", "drawCircle",
+     "drawEllipse", "drawArc", "drawImage", "drawDrawing", "drawText", "drawSphere"].forEach(function(name) {
+        acceptsBrowserAttributes(bindings.Port.prototype, name);
+    });
+}
+
 if (inbrowser && typeof bindings.Drawing !== "undefined") {
     bindings.Drawing.prototype.getBounds = function() {
         return new bindings.Rect(this._getBounds());
@@ -866,11 +1026,54 @@ if (inbrowser && typeof bindings.Drawing !== "undefined") {
 if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
     (function() {
         var layerSprites = new WeakMap();
+        var nativeObjects = new Map();
+        var weakObjects = typeof WeakRef === 'function';
+        function remember(object) {
+            if (object) nativeObjects.set(object._getNativeIdentity(),
+                weakObjects ? new WeakRef(object) : object);
+            return object;
+        }
+        bindings._emscriptenRememberObject = remember;
+        bindings._emscriptenObjectForIdentity = function(identity) {
+            var entry = nativeObjects.get(identity);
+            var object = weakObjects && entry ? entry.deref() : entry;
+            if (!object) nativeObjects.delete(identity);
+            return object || null;
+        };
+        var nativeCleanupLayer = bindings.cleanupLayer;
+        bindings.cleanupLayer = function(layer) {
+            if (!layer) return nativeCleanupLayer(layer);
+            var identity = layer._getNativeIdentity();
+            var sprites = layerSprites.get(layer) || [];
+            var spriteIdentities = sprites.filter(function(sprite) { return sprite && !sprite.isDeleted(); })
+                .map(function(sprite) { return sprite._getNativeIdentity(); });
+            nativeCleanupLayer(layer);
+            nativeObjects.delete(identity);
+            spriteIdentities.forEach(function(id) { nativeObjects.delete(id); });
+            layerSprites.delete(layer);
+        };
         var layerProto = bindings.SpriteLayer.prototype;
+        layerProto.getOrigin = function() {
+            var p = this._getOrigin();
+            return new bindings.Point(p.x, p.y);
+        };
         var spriteProto = bindings.Sprite.prototype;
+        spriteProto.addFramesImage = function(image, first, count) {
+            this._addFramesImage(image, first === undefined ? -1 : first, count === undefined ? 0 : count);
+        };
+        spriteProto.startFrameAnimation = function(fps, first, count, flags) {
+            this._startFrameAnimation(fps, first === undefined ? -1 : first,
+                count === undefined ? 0 : count, flags === undefined ? 4 : flags);
+        };
+        spriteProto.getFrameRotatedBounds = function(frame) {
+            var bounds = this._getFrameRotatedBounds(frame === undefined ? -1 : frame);
+            return new bindings.RotatedRect(bounds, bounds.radians, bounds.centerOffset);
+        };
+
 
         layerProto.createSprite = function() {
-            var sprite = this._createSprite();
+            remember(this);
+            var sprite = remember(this._createSprite());
             var sprites = layerSprites.get(this);
             if (!sprites) {
                 sprites = [];
@@ -880,14 +1083,20 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
             return sprite;
         };
         layerProto.getNthSprite = function(index) {
-            var sprites = layerSprites.get(this);
-            if (sprites && sprites[index]) return sprites[index];
-            return this._getNthSprite(index);
+            // Layer order and membership may change through a mounted host.
+            // Query native order, then reuse a retained handle by identity.
+            var sprite = this._getNthSprite(index);
+            if (!sprite) return null;
+            if (bindings._canonicalPhysicsOwner) return bindings._canonicalPhysicsOwner(sprite);
+            var existing = bindings._emscriptenObjectForIdentity(sprite._getNativeIdentity());
+            if (existing && !existing.isDeleted()) { sprite.delete(); return existing; }
+            return remember(sprite);
         };
         if (typeof layerProto._createSpriteFromSpriterFile === "function") {
             layerProto.createSpriteFromSpriterFile = function(path, entity) {
-                var sprite = this._createSpriteFromSpriterFile(path,
-                    typeof entity === "undefined" || entity === null ? "" : entity);
+                remember(this);
+                var sprite = remember(this._createSpriteFromSpriterFile(path,
+                    typeof entity === "undefined" || entity === null ? "" : entity));
                 if (sprite) {
                     var sprites = layerSprites.get(this) || [];
                     if (!layerSprites.has(this)) layerSprites.set(this, sprites);
@@ -896,15 +1105,45 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
                 return sprite;
             };
 
-            var nativeSetEntityScale = spriteProto.setEntityScale;
+            var nativeCreateFromEntity = layerProto.createSpriteFromSpriterEntity;
+            layerProto.createSpriteFromSpriterEntity = function(name) {
+                remember(this);
+                var sprite = remember(nativeCreateFromEntity.call(this, name));
+                if (sprite) {
+                    var sprites = layerSprites.get(this) || [];
+                    if (!layerSprites.has(this)) layerSprites.set(this, sprites);
+                    sprites.push(sprite);
+                }
+                return sprite;
+            };
+
+            spriteProto.setAnimationDebugDraw = function(flags) {
+                if (typeof flags !== "number" || !isFinite(flags) || Math.floor(flags) !== flags ||
+                    flags < bindings.animationDebug_None || flags > bindings.animationDebug_All) {
+                    throw new RangeError("Expected animationDebug integer flag bits");
+                }
+                this._setAnimationDebugDraw(flags);
+            };
+            var nativeSampleAnimationPose = spriteProto.sampleAnimationPose;
+            spriteProto.sampleAnimationPose = function(clip, timeSeconds) {
+                if (typeof timeSeconds !== "number") throw new TypeError("Sample time must be floating-point seconds");
+                return nativeSampleAnimationPose.call(this, clip, timeSeconds);
+            };
+            ["Bone", "Binding"].forEach(function(kind) {
+                spriteProto["getAnimation" + kind + "Transform"] = function(name, space) {
+                    if (typeof space === "undefined") space = bindings.animationSpace_Local;
+                    if (typeof space !== "number" || (space !== bindings.animationSpace_Local &&
+                        space !== bindings.animationSpace_Rig && space !== bindings.animationSpace_World)) {
+                        throw new RangeError("Expected an animationSpace integer constant");
+                    }
+                    return this["_getAnimation" + kind + "Transform"](name, space);
+                };
+            });
+
             var nativeGetSpriterCollisionBox = spriteProto.getSpriterCollisionBox;
             var nativeHasAttachPoint = spriteProto.hasAttachPoint;
             var nativeAttachSprite = spriteProto.attachSprite;
             var nativeActivateSubEntity = spriteProto.activateSubEntity;
-            spriteProto.setEntityScale = function(x, y) {
-                nativeSetEntityScale.call(this, x, y);
-                return this;
-            };
             spriteProto.getSpriterCollisionBox = function(name) {
                 var value = nativeGetSpriterCollisionBox.call(this, name);
                 return new bindings.RotatedRect(new bindings.Rect(value), value.radians,
@@ -928,23 +1167,19 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
                     typeof animation === "undefined" ? "idle" : animation);
             };
         }
+        if(typeof layerProto._setGravity==='function')layerProto.setGravity=function(gravity,keepItDownward){
+            if(typeof gravity!=='number'||!isFinite(gravity))throw new TypeError('Gravity must be finite');
+            this._setGravity(gravity,typeof keepItDownward==='undefined'?true:!!keepItDownward);return this;
+        };
         layerProto.setUseChipmunkPhysics = function(useIt) {
             if (typeof this._setUseChipmunkPhysics === "function") {
                 this._setUseChipmunkPhysics(useIt !== false);
             }
             return this;
         };
-        spriteProto.enableCollisions = function(collisionType) {
-            this._enableCollisions(typeof collisionType === "undefined" ? bindings.collide_AlphaChannel : collisionType);
-            return this;
-        };
         var nativeSetWantsCollideWallEvents = spriteProto.setWantsCollideWallEvents;
         spriteProto.setWantsCollideWallEvents = function(wantsThem) {
             nativeSetWantsCollideWallEvents.call(this, wantsThem !== false);
-            return this;
-        };
-        spriteProto.setElasticity = function(value) {
-            this._setElasticity(value);
             return this;
         };
     })();
@@ -1014,6 +1249,14 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
         proto.serialize_rotr = function(value) { return this._serialize_rotr(value); };
         proto.serialize_quad = function(value) { return this._serialize_quad(value); };
 
+        proto.setResourceMode = function(mode) {
+            if (!Number.isInteger(mode)) throw new TypeError("Expected an integer serialization resource mode");
+            if (this._pdgSerializedObjects && this._pdgSerializedObjects.length && mode !== this.getResourceMode())
+                throw new Error("Set the resource mode before serializing objects");
+            this._setResourceMode(mode);
+            this._pdgSizedObjects = [];
+            return this;
+        };
         proto.sizeof_1 = proto.sizeof_1u = fixedSize(1);
         proto.sizeof_2 = proto.sizeof_2u = fixedSize(2);
         proto.sizeof_3u = fixedSize(3);
@@ -1131,6 +1374,16 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
             serializableClasses[tag] = constructor;
         };
 
+        // Images are native resources and share a single class tag. Restore a
+        // strip-capable image so saved frame layout remains directly accessible.
+        if (bindings._createSnapshotImage) {
+            serializableClasses[0xffffff08] = function() { return bindings._createSnapshotImage(); };
+        }
+
+        if (bindings.Sprite) {
+            serializableClasses[0xffffff01] = function() { return new bindings.Sprite(); };
+        }
+
         var serializerProto = bindings.Serializer.prototype;
         serializerProto.sizeof_obj = function(obj) {
             if (obj === null) return 3;
@@ -1160,7 +1413,14 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
             this.serialize_4u(classTagOf(obj));
             this.serialize_2u(obj._pdgRequiresExplicitRegistration && !obj._pdgRegistered
                 ? 0 : this._pdgSerializedObjects.length);
-            this.serialize_uint(getSizeOf(obj, this));
+            var writer = this, priorSized = this._pdgSizedObjects, objectSize;
+            this._pdgSizedObjects = this._pdgSerializedObjects.slice();
+            try {
+                objectSize = this._measureObjectBody(function() { return getSizeOf(obj, writer); });
+            } finally {
+                this._pdgSizedObjects = priorSized;
+            }
+            this.serialize_uint(objectSize);
             serializeObjectData(obj, this);
         };
 
@@ -1370,6 +1630,8 @@ if (bindings.hasGraphics) {
             };
 
             var portProto = bindings.Port.prototype;
+            portProto.clear = function(color) { this._clear(color || new bindings.Color(0,0,0,0)); };
+            portProto.setDrawingOrigin = function(origin) { this._setDrawingOrigin(origin); };
             var nativeGetDrawingArea = portProto.getDrawingArea;
             var nativeGetClipRect = portProto.getClipRect;
             var nativeGetTextWidth = portProto._getTextWidth;
@@ -1415,7 +1677,7 @@ if (bindings.hasGraphics) {
             });
 
             var fontProto = bindings.Font.prototype;
-            ["Height", "Leading", "Ascent", "Descent"].forEach(function(metric) {
+            ["Height", "Leading", "Ascent", "Descent", "CapHeight"].forEach(function(metric) {
                 var nativeMetric = fontProto["_getFont" + metric];
                 fontProto["getFont" + metric] = function(size, style) {
                     return nativeMetric.call(this, size,
@@ -1464,6 +1726,7 @@ if (inbrowser) {
             bindings.EventManager,
             bindings.TimerManager,
             bindings.Sprite,
+            bindings.Particle,
             bindings.SpriteLayer,
             bindings.TileLayer
         ];
@@ -1562,6 +1825,14 @@ function postEvent(eventType, event) {
         bindings._emscriptenPortsById) {
         event.port = bindings._emscriptenPortsById.get(event.portIdentity) || null;
     }
+            ['inLayer', 'targetSprite'].forEach(function(field) {
+                if (typeof event[field + 'Identity'] !== 'undefined')
+                    event[field] = bindings._emscriptenObjectForIdentity(event[field + 'Identity']);
+            });
+            if (eventType === bindings.eventType_SpriteCollide) {
+                if (event.normal) event.normal = new bindings.Vector(event.normal.x, event.normal.y);
+                if (event.impulse) event.impulse = new bindings.Vector(event.impulse.x, event.impulse.y);
+            }
             var state = getEmitterState(this);
             if (state.blocked[eventType]) return false;
             if (dispatchHandlers(state.handlers[eventType], event)) return true;
@@ -1610,7 +1881,8 @@ function postEvent(eventType, event) {
             onFadeComplete: [bindings.eventType_SpriteAnimate, 10],
             onFadeInComplete: [bindings.eventType_SpriteAnimate, 11],
             onFadeOutComplete: [bindings.eventType_SpriteAnimate, 12],
-            onAnimationBlendComplete: [bindings.eventType_SpriteAnimate, 15]
+            onAnimationBlendComplete: [bindings.eventType_SpriteAnimate, 15],
+            onAnimationPhysicsRecoveryComplete: [bindings.eventType_SpriteAnimate, 17]
         };
         var touchActions = {
             onMouseEnter: 20,
@@ -2230,6 +2502,1015 @@ _debug_log('[PDG] pdg.js: bindings has ' + Object.keys(bindings).length + ' prop
 // console.log('[PDG] pdg.js: process.pdg has tm?', typeof bindings.tm);
 // console.log('[PDG] pdg.js: process.pdg has getResourceManager?', typeof bindings.getResourceManager);
 
+// Shared borrowed-pose facade for V8, JSC and WebAssembly.
+(function() {
+var proto = bindings.Sprite && bindings.Sprite.prototype;
+if (!proto || typeof proto.addAnimationModifier !== 'function') return;
+var depth = 0;
+function integer(value, low, high, label) {
+    if (typeof value !== 'number' || !isFinite(value) || Math.floor(value) !== value ||
+        value < low || value > high)
+        throw new RangeError('Invalid ' + label);
+    return value;
+}
+function transform(value) {
+    var result = {};
+    ['x', 'y', 'rotation', 'scaleX', 'scaleY', 'alpha'].forEach(function(key) {
+        if (!value || typeof value[key] !== 'number' || !isFinite(value[key]))
+            throw new TypeError('Invalid transform ' + key);
+        result[key] = value[key];
+    });
+    if (result.alpha < 0 || result.alpha > 1) throw new RangeError('Invalid transform alpha');
+    return result;
+}
+function compose(parent, local) {
+    var c = Math.cos(parent.rotation), s = Math.sin(parent.rotation);
+    return transform({
+        x: parent.x + local.x * parent.scaleX * c - local.y * parent.scaleY * s,
+        y: parent.y + local.x * parent.scaleX * s + local.y * parent.scaleY * c,
+        rotation: parent.rotation +
+            (parent.scaleX * parent.scaleY < 0 ? -local.rotation : local.rotation),
+        scaleX: parent.scaleX * local.scaleX,
+        scaleY: parent.scaleY * local.scaleY,
+        alpha: parent.alpha * local.alpha
+    });
+}
+
+
+['seekAnimation', 'transitionToAnimation'].forEach(function(name) {
+    var original = proto[name];
+    proto[name] = function(clip, seconds, duration) {
+        if (arguments.length === 1 && clip === null) return original.call(this, null);
+        if (depth) throw new Error(name + ' must occur outside an animation modifier');
+        if (typeof clip !== 'string' || typeof seconds !== 'number' || !isFinite(seconds))
+            throw new TypeError('Animation clip and finite seconds are required');
+        if (name === 'transitionToAnimation') {
+            if (typeof duration !== 'number' || !isFinite(duration) || duration < 0)
+                throw new TypeError('Transition duration must be nonnegative seconds');
+            return original.call(this, clip, seconds, duration);
+        }
+        return original.call(this, clip, seconds);
+    };
+});
+
+
+function finiteTarget(value, label) {
+    if (typeof value !== 'number' || !isFinite(value)) throw new TypeError('Invalid ' + label);
+    return value;
+}
+function positiveTime(value) {
+    finiteTarget(value, 'seconds');
+    if (value < 0) throw new RangeError('Seconds must be nonnegative');
+    return value;
+}
+bindings.AnimationSpringTarget = function AnimationSpringTarget(mass, stiffness, damping) {
+    if (!(this instanceof bindings.AnimationSpringTarget))
+        return new bindings.AnimationSpringTarget(mass, stiffness, damping);
+    if (arguments.length === 1 && mass === null)
+        mass = undefined;  // runtime API metadata inspection
+    mass = typeof mass === 'undefined' ? 1 : finiteTarget(mass, 'mass');
+    stiffness = typeof stiffness === 'undefined' ? 100 : finiteTarget(stiffness, 'stiffness');
+    damping = typeof damping === 'undefined' ? 20 : finiteTarget(damping, 'damping');
+    if (mass <= 0 || stiffness < 0 || damping < 0 || !isFinite(stiffness / mass) ||
+        !isFinite(damping / mass) || !isFinite(Math.pow(damping / (2 * mass), 2)))
+        throw new RangeError('Invalid spring coefficients');
+    var state = {x: 0, y: 0, velocityX: 0, velocityY: 0};
+    function copy() {
+        return {x: state.x, y: state.y, velocityX: state.velocityX, velocityY: state.velocityY};
+    }
+    function setState(value) {
+        var next = {};
+        Object.keys(state).forEach(function(key) {
+            next[key] = finiteTarget(value[key], 'spring ' + key);
+        });
+        state = next;
+    }
+    function step(position, velocity, target, dt) {
+        var a = damping / (2 * mass), w2 = stiffness / mass, disc = a * a - w2,
+            y = position - target, v = velocity, nextY, nextV;
+        if (stiffness === 0) {
+            if (damping === 0) {
+                nextY = y + v * dt;
+                nextV = v;
+            } else {
+                var factor = Math.exp(-damping / mass * dt);
+                nextY = y + v * (-Math.expm1(-damping / mass * dt)) / (damping / mass);
+                nextV = v * factor;
+            }
+        } else if (Math.abs(disc) <= 1e-12 * Math.max(1, w2)) {
+            var b = v + a * y, e = Math.exp(-a * dt);
+            nextY = e * (y + b * dt);
+            nextV = e * (v - a * b * dt);
+        } else if (disc < 0) {
+            var w = Math.sqrt(-disc), c = Math.cos(w * dt), s = Math.sin(w * dt),
+                e = Math.exp(-a * dt);
+            nextY = e * (y * c + (v + a * y) * s / w);
+            nextV = e * (v * c - (a * v + w2 * y) * s / w);
+        } else {
+            var d = Math.sqrt(disc), r1 = -w2 / (a + d), r2 = -a - d, c1 = (v - r2 * y) / (r1 - r2),
+                c2 = y - c1, e1 = Math.exp(r1 * dt), e2 = Math.exp(r2 * dt);
+            nextY = c1 * e1 + c2 * e2;
+            nextV = r1 * c1 * e1 + r2 * c2 * e2;
+        }
+        return [target + nextY, nextV];
+    }
+    Object.assign(this, {
+        getState: copy,
+        setState: setState,
+        applyImpulse: function(x, y) {
+            finiteTarget(x, 'impulse');
+            finiteTarget(y, 'impulse');
+            var next = copy();
+            next.velocityX += x / mass;
+            next.velocityY += y / mass;
+            setState(next);
+        },
+        update: function(x, y, deltaSeconds) {
+            finiteTarget(x, 'target');
+            finiteTarget(y, 'target');
+            positiveTime(deltaSeconds);
+            if (deltaSeconds === 0) return copy();
+            var px = step(state.x, state.velocityX, x, deltaSeconds),
+                py = step(state.y, state.velocityY, y, deltaSeconds);
+            setState({x: px[0], y: py[0], velocityX: px[1], velocityY: py[1]});
+            return copy();
+        }
+    });
+};
+bindings.AnimationContactTarget = function AnimationContactTarget() {
+    if (!(this instanceof bindings.AnimationContactTarget))
+        return new bindings.AnimationContactTarget();
+    var state = {x: 0, y: 0, influence: 0, locked: false}, support = 0, localX = 0, localY = 0,
+        remaining = 0, duration = 0;
+    function copy() {
+        return {x: state.x, y: state.y, influence: state.influence, locked: state.locked};
+    }
+    function world(x, y) {
+        finiteTarget(x, 'contact');
+        finiteTarget(y, 'contact');
+        state = {x: x, y: y, influence: 1, locked: true};
+        support = 0;
+        remaining = duration = 0;
+    }
+    function release(seconds) {
+        seconds = typeof seconds === 'undefined' ? 0 : positiveTime(seconds);
+        if (!state.locked) return;
+        state.locked = false;
+        support = 0;
+        remaining = duration = seconds;
+        if (seconds === 0) state.influence = 0;
+    }
+    Object.assign(this, {
+        getState: copy,
+        lockWorld: world,
+        lockPlatform: function(x, y, id, frame) {
+            integer(id, 1, 9007199254740991, 'support ID');
+            frame = transform(frame);
+            if (!frame.scaleX || !frame.scaleY) throw new RangeError('Singular platform frame');
+            finiteTarget(x, 'contact');
+            finiteTarget(y, 'contact');
+            var dx = x - frame.x, dy = y - frame.y, c = Math.cos(frame.rotation),
+                s = Math.sin(frame.rotation);
+            var lx = finiteTarget((c * dx + s * dy) / frame.scaleX, 'platform x'),
+                ly = finiteTarget((-s * dx + c * dy) / frame.scaleY, 'platform y');
+            world(x, y);
+            support = id;
+            localX = lx;
+            localY = ly;
+        },
+        release: release,
+        update: function(deltaSeconds, contactActive, withinReach, id, frame, releaseSeconds) {
+            positiveTime(deltaSeconds);
+            releaseSeconds =
+                typeof releaseSeconds === 'undefined' ? 0 : positiveTime(releaseSeconds);
+            if (typeof contactActive !== 'boolean' || typeof withinReach !== 'boolean')
+                throw new TypeError('Contact and reach flags must be boolean');
+            id = typeof id === 'undefined' ? 0 : integer(id, 0, 9007199254740991, 'support ID');
+            if (state.locked && (!contactActive || !withinReach || (support && support !== id)))
+                release(releaseSeconds);
+            if (state.locked && support) {
+                frame = transform(frame);
+                if (!frame.scaleX || !frame.scaleY) throw new RangeError('Singular platform frame');
+                var point = compose(
+                    frame, {x: localX, y: localY, rotation: 0, scaleX: 1, scaleY: 1, alpha: 1});
+                state.x = point.x;
+                state.y = point.y;
+            }
+            if (!state.locked && duration > 0) {
+                remaining = Math.max(0, remaining - deltaSeconds);
+                state.influence = remaining / duration;
+            }
+            return copy();
+        }
+    });
+};
+bindings.animationHasTag = function(pose, object, tag) {
+    if (!pose || !Array.isArray(pose.tags) || typeof object !== 'string' || typeof tag !== 'string')
+        throw new TypeError('Expected owned pose metadata and tag names');
+    return pose.tags.some(function(group) {
+        return group.object === object && group.tags.indexOf(tag) >= 0;
+    });
+};
+
+var nativeDrawing = proto.addAnimationDrawable;
+proto.addAnimationDrawable = function(callback, options) {
+    if (arguments.length === 1 && callback === null) return nativeDrawing.call(this, null);
+    if ((typeof callback !== 'function' && !(bindings.Drawing && callback instanceof bindings.Drawing)) || !options || typeof options !== 'object')
+        throw new TypeError('Drawing or callback and options are required');
+    var names = this.getAnimationBoneNames(),
+        bone = typeof options.bone === 'string' ? names.indexOf(options.bone) : options.bone;
+    integer(bone, 0, names.length - 1, 'drawing bone');
+    var placement = typeof options.placement === 'undefined' ?
+        bindings.animationDraw_AfterAll :
+        integer(options.placement, 0, 4, 'drawing placement');
+    var order = typeof options.order === 'undefined' ?
+        0 :
+        integer(options.order, -2147483648, 2147483647, 'drawing order');
+    var slot = typeof options.slot === 'undefined' ? '' : options.slot;
+    if (typeof slot !== 'string') throw new TypeError('Drawing slot must be a name');
+    var bounds = options.bounds,
+        uncullable = typeof options.uncullable === 'undefined' ? !bounds : options.uncullable;
+    if (typeof uncullable !== 'boolean')
+        throw new TypeError('Drawing uncullable flag must be boolean');
+    var data = [bone, placement, order, uncullable ? 1 : 0];
+    ['left', 'top', 'right', 'bottom'].forEach(function(key) {
+        data.push(bounds ? finiteTarget(bounds[key], 'drawing bounds') : 0);
+    });
+    data.push(typeof options.strokeSpace === 'undefined' ? bindings.animationStroke_PortPixels :
+        integer(options.strokeSpace, 0, 1, 'drawing stroke space'));
+    if (typeof callback !== 'function') return nativeDrawing.call(this, callback, data, slot);
+    function bridge(snapshot, local, rig, world) {
+        var active = true;
+        function check() {
+            if (!active) throw new Error('Animation drawing context has expired');
+        }
+        var context = Object.freeze({
+            getTransform: function(space) {
+                check();
+                space = typeof space === 'undefined' ? bindings.animationSpace_World :
+                    integer(space, 0, 2, 'drawing coordinate space');
+                return transform([local, rig, world][space]);
+            },
+            copyPose: function() { check(); return JSON.parse(JSON.stringify(snapshot)); }
+        });
+        ++depth;
+        try {
+            var result = callback(context);
+            if (result && typeof result.then === 'function') {
+                if (typeof result.catch === 'function') result.catch(function() {});
+                throw new Error('Animation drawing callbacks must be synchronous');
+            }
+            if (result !== null && !(bindings.Drawing && result instanceof bindings.Drawing))
+                throw new TypeError('Animation drawing callback must return a Drawing or null');
+            return result;
+        } catch (error) {
+            return String(error && error.message ? error.message : error);
+        } finally {
+            active = false;
+            --depth;
+        }
+    }
+    return nativeDrawing.call(this, bridge, data, slot);
+};
+['removeAnimationDrawable', 'getAnimationDrawableError'].forEach(function(name) {
+    var original = proto[name];
+    proto[name] = function(id) {
+        if (arguments.length === 1 && id === null) return original.call(this, null);
+        return original.call(this, integer(id, 1, 4294967295, 'drawable ID'));
+    };
+});
+var nativeDrawingEnabled = proto.setAnimationDrawableEnabled;
+proto.setAnimationDrawableEnabled = function(id, enabled) {
+    if (arguments.length === 1 && id === null) return nativeDrawingEnabled.call(this, null);
+    integer(id, 1, 4294967295, 'drawable ID');
+    if (typeof enabled !== 'boolean') throw new TypeError('Drawable enabled flag must be boolean');
+    return nativeDrawingEnabled.call(this, id, enabled);
+};
+
+var nativePhysical = proto.setupAnimationPhysics;
+var nativeGeneratedPhysical = proto.setupPhysicsFromAnimationRig;
+proto.setupPhysicsFromAnimationRig = function(totalMass, unitsPerMeter) {
+    if (arguments.length === 1 && totalMass === null) return nativeGeneratedPhysical.call(this, null);
+    unitsPerMeter = typeof unitsPerMeter === 'undefined' ? 1 : unitsPerMeter;
+    if (typeof totalMass !== 'number' || !isFinite(totalMass) || totalMass <= 0 ||
+        typeof unitsPerMeter !== 'number' || !isFinite(unitsPerMeter) || unitsPerMeter <= 0)
+        throw new TypeError('Total mass and unitsPerMeter must be finite positive numbers');
+    if (depth) throw new Error('Physical rig changes must occur outside modifiers');
+    nativeGeneratedPhysical.call(this,totalMass,unitsPerMeter); return this;
+};
+var nativePhysicalRoot = proto.setAnimationPhysicsRoot;
+var nativeAttachPhysicalPart=proto.attachAnimationPhysicsPart;
+proto.attachAnimationPhysicsPart=function(part,parent) {
+    if(arguments.length===1 && part===null)return nativeAttachPhysicalPart.call(this,null);
+    if(!(part instanceof bindings.Part) || (parent!=null && !(parent instanceof bindings.Part)))throw new TypeError('Expected Part objects');
+    if(depth)throw new Error('Change rig membership outside modifiers');
+    nativeAttachPhysicalPart.call(this,part,parent==null?null:parent);return this;
+};
+var nativeDetachPhysicalPart=proto.detachAnimationPhysicsPart;
+proto.detachAnimationPhysicsPart=function(part,includeDescendants) {
+    if(arguments.length===1 && part===null)return nativeDetachPhysicalPart.call(this,null);
+    if(!(part instanceof bindings.Part))throw new TypeError('Expected a Part');
+    if(typeof includeDescendants==='undefined')includeDescendants=true;
+    if(typeof includeDescendants!=='boolean')throw new TypeError('includeDescendants must be boolean');
+    if(depth)throw new Error('Change rig membership outside modifiers');
+    nativeDetachPhysicalPart.call(this,part,includeDescendants);return this;
+};
+var nativeIsPhysicalPartAttached=proto.isAnimationPhysicsPartAttached;
+proto.isAnimationPhysicsPartAttached=function(part) {
+    if(arguments.length===1 && part===null)return nativeIsPhysicalPartAttached.call(this,null);
+    if(!(part instanceof bindings.Part))throw new TypeError('Expected a Part');
+    return nativeIsPhysicalPartAttached.call(this,part);
+};
+proto.setAnimationPhysicsRoot = function(bone) {
+    if (arguments.length === 1 && bone === null) return nativePhysicalRoot.call(this,null);
+    var names = this.getAnimationBoneNames();
+    if (typeof bone === 'string') bone = names.indexOf(bone);
+    integer(bone,0,names.length-1,'physical root bone');
+    if (depth) throw new Error('Physical root changes must occur outside modifiers');
+    nativePhysicalRoot.call(this,bone); return this;
+};
+var nativeClearPhysicalRoot = proto.clearAnimationPhysicsRoot;
+proto.clearAnimationPhysicsRoot = function() {
+    if (arguments.length === 1 && arguments[0] === null) return nativeClearPhysicalRoot.call(this,null);
+    if (depth) throw new Error('Physical root changes must occur outside modifiers');
+    nativeClearPhysicalRoot.call(this); return this;
+};
+proto.setupAnimationPhysics = function(config) {
+    if (config === null) return nativePhysical.call(this, null);
+    if (!config || typeof config !== 'object')
+        throw new TypeError('Physical rig definition is required');
+    if (!Array.isArray(config.bodies) || !config.bodies.length || config.bodies.length > 65536)
+        throw new RangeError('Physical rig needs bodies');
+    var names = this.getAnimationBoneNames();
+    function number(value, fallback) {
+        if (typeof value === 'undefined') value = fallback;
+        if (typeof value !== 'number' || !isFinite(value))
+            throw new TypeError('Physical values must be finite numbers');
+        return value;
+    }
+    function flag(value) {
+        if (typeof value === 'undefined') return 0;
+        if (typeof value !== 'boolean') throw new TypeError('Physical flags must be boolean');
+        return value ? 1 : 0;
+    }
+    var data = [
+        integer(number(config.version, 1), 1, 1, 'physical version'),
+        integer(number(config.rootMode, 0), 0, 1, 'physical root mode'),
+        integer(number(config.rootBody, 0), 0, config.bodies.length - 1, 'physical root body'),
+        flag(config.selfCollisions), config.bodies.length
+    ];
+    config.bodies.forEach(function(body) {
+        if (!body || typeof body !== 'object')
+            throw new TypeError('Physical body definition required');
+        var bone = typeof body.bone === 'string' ? names.indexOf(body.bone) : body.bone;
+        data.push(
+            integer(bone, 0, names.length - 1, 'physical bone'),
+            integer(number(body.mode, 0), 0, 1, 'physical body mode'));
+        // Shape dimensions are authored explicitly; bone display widths never supply them.
+        ['mass', 'length', 'radius'].forEach(function(key) {
+            data.push(number(body[key]));
+        });
+        ['offsetX', 'offsetY', 'offsetRotation', 'friction', 'elasticity'].forEach(function(key) {
+            data.push(number(body[key], key === 'friction' ? .7 : 0));
+        });
+        data.push(
+            integer(number(body.categories, 4294967295), 0, 4294967295, 'categories'),
+            integer(number(body.mask, 4294967295), 0, 4294967295, 'mask'));
+    });
+    var joints = typeof config.joints === 'undefined' ? [] : config.joints;
+    if (!Array.isArray(joints) || joints.length > 65536)
+        throw new TypeError('Physical joints must be an array');
+    data.push(joints.length);
+    joints.forEach(function(joint) {
+        if (!joint || typeof joint !== 'object')
+            throw new TypeError('Physical joint definition required');
+        data.push(
+            integer(joint.parent, 0, config.bodies.length - 1, 'joint parent'),
+            integer(joint.child, 0, config.bodies.length - 1, 'joint child'));
+        ['parentX', 'parentY', 'childX', 'childY'].forEach(function(key) {
+            data.push(number(joint[key], 0));
+        });
+        data.push(
+            number(joint.minAngle, -Math.PI), number(joint.maxAngle, Math.PI),
+            number(joint.maxForce, 1e6), flag(joint.collide));
+    });
+    if (depth) throw new Error('Physical rig changes must occur outside modifiers');
+    return nativePhysical.call(this, data);
+};
+function physicalNumber(value, fallback) {
+    if(value===undefined)value=fallback;
+    if(typeof value!=='number'||!isFinite(value))throw new TypeError('Physical values must be finite numbers');
+    return value;
+}
+function physicalSelection(sprite, bone, descendants, required) {
+    if (typeof descendants !== 'undefined' && typeof descendants !== 'boolean') throw new TypeError('includeDescendants must be boolean');
+    if (bone === undefined && !required) return -1;
+    var names=sprite.getAnimationBoneNames();
+    if (typeof bone === 'string') bone=names.indexOf(bone);
+    return integer(bone,0,names.length-1,'physical animation bone');
+}
+var nativePhysicalMode=proto.setAnimationPhysicsMode;
+proto.setAnimationPhysicsMode=function(mode,bone,descendants,seconds,direction) {
+    if(arguments.length===1 && mode===null)return nativePhysicalMode.call(this,null);
+    integer(mode,0,2,'animation physics mode');
+    bone=physicalSelection(this,bone,descendants,false);
+    seconds=seconds===undefined?0.5:physicalNumber(seconds);
+    if(seconds<0)throw new TypeError('Recovery duration must be nonnegative seconds');
+    direction=direction===undefined?bindings.rotationDirection_AsSpecified:integer(direction,0,3,'rotation direction');
+    if(depth)throw new Error('Physical control changes must occur outside modifiers');
+    nativePhysicalMode.call(this,mode,bone,descendants===true,seconds,direction);return this;
+};
+var nativeGetPhysicalMode=proto.getAnimationPhysicsMode;
+proto.getAnimationPhysicsMode=function(bone,descendants) {
+    if(arguments.length===1 && bone===null)return nativeGetPhysicalMode.call(this,null);
+    return nativeGetPhysicalMode.call(this,physicalSelection(this,bone,descendants,false),descendants===true);
+};
+var nativeDriveSettings=proto.setAnimationPhysicsDriveSettings;
+proto.setAnimationPhysicsDriveSettings=function(settings,bone,descendants) {
+    if(arguments.length===1 && settings===null)return nativeDriveSettings.call(this,null);
+    if(!settings || typeof settings!=='object' || Array.isArray(settings))throw new TypeError('Drive settings object required');
+    bone=physicalSelection(this,bone,descendants,false);
+    var force=physicalNumber(settings.maxForce),torque=physicalNumber(settings.maxTorque),frequency=physicalNumber(settings.frequency,4),damping=physicalNumber(settings.dampingRatio,1);
+    if(force<0 || torque<0 || frequency<=0 || damping<0)throw new TypeError('Invalid drive settings');
+    var direction=settings.direction===undefined?bindings.rotationDirection_Shortest:integer(settings.direction,0,3,'rotation direction');
+    if(depth)throw new Error('Physical control changes must occur outside modifiers');
+    nativeDriveSettings.call(this,force,torque,frequency,damping,direction,bone,descendants===true);return this;
+};
+var nativeGetDriveSettings=proto.getAnimationPhysicsDriveSettings;
+proto.getAnimationPhysicsDriveSettings=function(bone) {
+    if(arguments.length===1 && bone===null)return nativeGetDriveSettings.call(this,null);
+    var values=nativeGetDriveSettings.call(this,physicalSelection(this,bone,undefined,true));
+    return values===null?null:{maxForce:values[0],maxTorque:values[1],frequency:values[2],dampingRatio:values[3],direction:values[4]};
+};
+var nativeDisablePhysical = proto.disableAnimationPhysics;
+proto.disableAnimationPhysics = function(seconds,direction) {
+    if (arguments.length===1 && seconds === null) return nativeDisablePhysical.call(this, null);
+    seconds = typeof seconds === 'undefined' ? 0.5 : seconds;
+    if (typeof seconds !== 'number' || !isFinite(seconds) || seconds < 0)
+        throw new TypeError('Recovery duration must be nonnegative seconds');
+    direction=direction===undefined?bindings.rotationDirection_AsSpecified:integer(direction,0,3,'rotation direction');
+    if (depth) throw new Error('Physical rig changes must occur outside modifiers');
+    return nativeDisablePhysical.call(this, seconds,direction);
+};
+var nativeIK = proto.addAnimationIK;
+proto.addAnimationIK = function(config, order) {
+    if (arguments.length === 1 && config === null) return nativeIK.call(this, null);
+    if (!config || typeof config !== 'object') throw new TypeError('IK configuration is required');
+    var names = this.getAnimationBoneNames(), normalized = {};
+    ['root', 'middle', 'tip'].forEach(function(key) {
+        var value = config[key];
+        if (typeof value === 'string') value = names.indexOf(value);
+        normalized[key] = integer(value, 0, names.length - 1, 'IK ' + key);
+    });
+    var defaults = {
+        rootLength: 0,
+        middleLength: 0,
+        targetX: 0,
+        targetY: 0,
+        influence: 1,
+        space: bindings.animationSpace_Rig,
+        bendDirection: 1,
+        stretch: bindings.animationIK_NoStretch,
+        targetRotation: 0,
+        rootMin: -Math.PI,
+        rootMax: Math.PI,
+        middleMin: -Math.PI,
+        middleMax: Math.PI
+    };
+    Object.keys(defaults).forEach(function(key) {
+        var value = config[key];
+        if (typeof value === 'undefined') value = defaults[key];
+        if (typeof value !== 'number' || !isFinite(value)) throw new TypeError('Invalid IK ' + key);
+        normalized[key] = value;
+    });
+    integer(normalized.space, 0, 2, 'IK space');
+    integer(normalized.bendDirection, -1, 1, 'IK bend direction');
+    if (normalized.bendDirection === 0) throw new RangeError('IK bend direction must be -1 or 1');
+    integer(normalized.stretch, 0, 1, 'IK stretch policy');
+    var orientation = config.matchOrientation;
+    if (typeof orientation !== 'undefined' && typeof orientation !== 'boolean')
+        throw new TypeError('Invalid IK orientation flag');
+    normalized.matchOrientation = orientation ? 1 : 0;
+    order = typeof order === 'undefined' ? 0 : integer(order, -2147483648, 2147483647, 'IK order');
+    return nativeIK.call(this, normalized, order);
+};
+var nativeTarget = proto.setAnimationIKTarget;
+proto.setAnimationIKTarget = function(id, x, y, space) {
+    if (arguments.length === 1 && id === null) return nativeTarget.call(this, null);
+    integer(id, 1, 4294967295, 'IK ID');
+    if (typeof x !== 'number' || !isFinite(x) || typeof y !== 'number' || !isFinite(y))
+        throw new TypeError('Invalid IK target');
+    space = typeof space === 'undefined' ? bindings.animationSpace_Rig :
+                                           integer(space, 0, 2, 'IK space');
+    return nativeTarget.call(this, id, x, y, space);
+};
+var nativeIKResult = proto.getAnimationIKResult;
+proto.getAnimationIKResult = function(id) {
+    if (arguments.length === 1 && id === null) return nativeIKResult.call(this, null);
+    return nativeIKResult.call(this, integer(id, 1, 4294967295, 'IK ID'));
+};
+
+var nativeAdd = proto.addAnimationModifier;
+proto.addAnimationModifier = function(callback, stage, order) {
+    if (arguments.length === 1 && callback === null) return nativeAdd.call(this, null);
+    if (typeof callback !== 'function') throw new TypeError('A modifier callback is required');
+    stage = typeof stage === 'undefined' ? bindings.animationStage_PreConstraint :
+                                           integer(stage, 0, 2, 'modifier stage');
+    order = typeof order === 'undefined' ?
+        0 :
+        integer(order, -2147483648, 2147483647, 'modifier order');
+    return nativeAdd.call(this, function(snapshot, context) {
+        var active = true;
+        function valid() {
+            if (!active) throw new Error('Animation pose view has expired; retain copy() instead');
+        }
+        function boneId(id) {
+            valid();
+            if (typeof id === 'string') {
+                for (var i = 0; i < snapshot.bones.length; ++i)
+                    if (snapshot.bones[i].name === id) return i;
+                throw new RangeError('Unknown bone ' + id);
+            }
+            return integer(id, 0, snapshot.bones.length - 1, 'bone ID');
+        }
+        var view = {
+            copy: function() {
+                valid();
+                return JSON.parse(JSON.stringify(snapshot));
+            },
+            getLocalTransform: function(id) {
+                return transform(snapshot.bones[boneId(id)]);
+            },
+            setLocalTransform: function(id, value) {
+                id = boneId(id);
+                var next = transform(value);
+                Object.keys(next).forEach(function(key) {
+                    snapshot.bones[id][key] = next[key];
+                });
+            },
+            rotateLocal: function(id, angle) {
+                if (typeof angle !== 'number' || !isFinite(angle))
+                    throw new TypeError('Invalid angle');
+                var value = this.getLocalTransform(id);
+                value.rotation += angle;
+                this.setLocalTransform(id, value);
+            },
+            getTransform: function(id, space) {
+                id = boneId(id);
+                space = typeof space === 'undefined' ? bindings.animationSpace_Local :
+                                                       integer(space, 0, 2, 'animation space');
+                if (space === bindings.animationSpace_Local) return transform(snapshot.bones[id]);
+                var chain = [], parent = id;
+                while (parent !== null) {
+                    chain.push(snapshot.bones[parent]);
+                    parent = snapshot.bones[parent].parent;
+                }
+                var result = space === bindings.animationSpace_World ?
+                    transform(context.root) :
+                    {x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, alpha: 1};
+                for (var i = chain.length - 1; i >= 0; --i) result = compose(result, chain[i]);
+                return result;
+            }
+        };
+        Object.freeze(context.root);
+        Object.freeze(context);
+        Object.freeze(view);
+        ++depth;
+        try {
+            var result = callback(view, context);
+            if (result && typeof result.then === 'function') {
+                if (typeof result.catch === 'function') result.catch(function() {});
+                throw new TypeError('Animation modifiers must be synchronous');
+            }
+            return snapshot.bones;
+        } catch (error) {
+            // Catch before crossing the WebAssembly import boundary so native
+            // rollback and RAII always run, even when JavaScript throws.
+            try {
+                return String(error && error.message || error);
+            } catch (ignored) {
+                return 'Animation modifier script failed';
+            }
+        } finally {
+            active = false;
+            --depth;
+        }
+    }, stage, order);
+};
+// Destructive owner/playback changes cannot invalidate an executing callback.
+// Registration and source changes use the native deferred mutation queue.
+function guard(owner, names) {
+    names.forEach(function(name) {
+        var original = owner[name];
+        if (typeof original !== 'function') return;
+        owner[name] = function() {
+            if (depth) throw new Error(name + ' must occur outside an animation modifier');
+            return original.apply(this, arguments);
+        };
+    });
+}
+guard(bindings, ['cleanupLayer']);
+guard(bindings.SpriteLayer.prototype, [
+    'addSprite', 'addSpriteInFrontOf', 'removeSprite', 'removeAllSprites', 'createSprite',
+    'createSpriteFromSpriterFile', 'createSpriteFromSpriterEntity'
+]);
+guard(proto, [
+    'enableAnimationPose', 'disableAnimationPose', 'activateSubEntity', 'startAnimation',
+    'blendToAnimation', 'pauseAnimation', 'resumeAnimation', 'stopAnimation',
+    'setAnimationBoneTransform', 'clearAnimationBoneTransforms', 'getAttachPoint', 'hasAttachPoint',
+    'getSpriterCollisionBox', 'isSpriterCollisionActive', 'checkSpriterCollisionBoxPointCollision'
+]);
+var nativeSource = proto.setAnimationSource;
+proto.setAnimationSource = function(source) {
+    if (arguments.length === 1 && source === null) return nativeSource.call(this, null);
+    return nativeSource.call(this, integer(source, 0, 2, 'animation source'));
+};
+['removeAnimationModifier', 'getAnimationModifierError'].forEach(function(name) {
+    var original = proto[name];
+    proto[name] = function(id) {
+        if (arguments.length === 1 && id === null) return original.call(this, null);
+        return original.call(this, integer(id, 1, 4294967295, 'modifier ID'));
+    };
+});
+})();
+
+if (inbrowser && bindings.Animated) {
+    (function() {
+        const registrations = new WeakMap();
+        function IAnimationHelper(callback) {
+            if (!new.target || typeof callback !== 'function')
+                throw new TypeError('IAnimationHelper requires an animation callback');
+            this.animate = callback;
+        }
+        bindings.IAnimationHelper = IAnimationHelper;
+        const proto = bindings.Animated.prototype;
+        proto.addAnimationHelper = function(helper) {
+            if (!(helper instanceof IAnimationHelper)) throw new TypeError('Expected IAnimationHelper');
+            let active = registrations.get(this);
+            if (!active) { active = new Map(); registrations.set(this, active); }
+            if (active.has(helper)) return this;
+            const owner = this;
+            const id = this._addBrowserAnimationHelper(function(seconds) {
+                let keep = false;
+                try { keep = Boolean(helper.animate.call(helper, owner, seconds)); }
+                catch (error) { console.error('Animation helper failed:', error); }
+                if (!keep && active.get(helper) === id) active.delete(helper);
+                return keep;
+            });
+            active.set(helper, id);
+            return this;
+        };
+        proto.removeAnimationHelper = function(helper) {
+            const active = registrations.get(this), id = active && active.get(helper);
+            if (id !== undefined) { this._removeBrowserAnimationHelper(id); active.delete(helper); }
+            return this;
+        };
+        proto.clearAnimationHelpers = function() {
+            this._clearBrowserAnimationHelpers();
+            const active = registrations.get(this);
+            if (active) active.clear();
+            return this;
+        };
+        const easingIds = new Map();
+        bindings.registerEasingFunction = function(callback) {
+            if (typeof callback !== 'function') throw new TypeError('Expected an easing callback');
+            if (easingIds.has(callback)) return easingIds.get(callback);
+            const id = bindings._registerBrowserEasing(function(t, begin, change, duration) {
+                try {
+                    const result = callback(t, begin, change, duration);
+                    if (typeof result === 'number' && Number.isFinite(result)) return result;
+                    throw new TypeError('Easing callback must return a finite number');
+                } catch (error) {
+                    console.error('Easing callback failed:', error);
+                    return duration > 0 ? begin + change * t / duration : begin + change;
+                }
+            });
+            easingIds.set(callback, id);
+            return id;
+        };
+    })();
+}
+
+// Retain one JavaScript identity for each native Part/body. Factories hand back
+// retained handles; discard duplicate handles, never the owner's reference.
+if (inbrowser && bindings.Part && bindings.PhysicsBody) {
+    (function() {
+        const handles = new Map();
+        function canonical(value) {
+            if (!value) return null;
+            const id = value._getNativeIdentity();
+            const entry = handles.get(id);
+            let existing = entry && entry.deref();
+            if (existing && existing.isDeleted()) existing = null;
+            if (!existing && bindings._emscriptenObjectForIdentity)
+                existing = bindings._emscriptenObjectForIdentity(id);
+            if (existing && !existing.isDeleted()) {
+                if (existing !== value) value.delete();
+                return existing;
+            }
+            handles.set(id, new WeakRef(value));
+            return value;
+        }
+        bindings._canonicalPhysicsOwner = canonical;
+        const NativeSprite = bindings.Sprite;
+        function Sprite() {
+            if (!new.target) throw new TypeError('Sprite requires new');
+            return canonical(new NativeSprite());
+        }
+        Sprite.prototype = NativeSprite.prototype;
+        Object.setPrototypeOf(Sprite, NativeSprite);
+        bindings.Sprite = Sprite;
+        function integer(value, min, max, label) {
+            if (!Number.isInteger(value) || value < min || value > max)
+                throw new RangeError('Expected ' + label + ' integer');
+            return value;
+        }
+        function space(value) { return integer(value === undefined ? 0 : value, 0, 2, 'partSpace'); }
+        function id(value) { return integer(value, 0, 4294967295, 'ID'); }
+        const sprite = Sprite.prototype, part = bindings.Part.prototype, body = bindings.PhysicsBody.prototype;
+        const getAttachedSprite = sprite.getAttachedSprite;
+        if (getAttachedSprite) sprite.getAttachedSprite = function(name) {
+            return canonical(getAttachedSprite.call(this, name));
+        };
+        body.setBreakAngularSpeed = function(speed, reference) {
+            if (arguments.length < 1 || arguments.length > 2 || typeof speed !== 'number' || !Number.isFinite(speed))
+                throw new TypeError('Expected an angular speed and optional PhysicsBody');
+            if (reference != null && !(reference instanceof bindings.PhysicsBody)) throw new TypeError('Expected PhysicsBody reference');
+            this._setBreakAngularSpeed(speed, reference == null ? null : reference);
+            return this;
+        };
+        body.getBreakAngularSpeedReference = function() { return canonical(this._getBreakAngularSpeedReference()); };
+        body.setDriveTarget = function(point, radians, maxForce, maxTorque, frequency, dampingRatio, direction) {
+            if (arguments.length < 4) throw new TypeError('setDriveTarget requires position, angle and both force limits');
+            [radians, maxForce, maxTorque, frequency === undefined ? 4 : frequency, dampingRatio === undefined ? 1 : dampingRatio].forEach(function(value) {
+                if (typeof value !== 'number' || !Number.isFinite(value)) throw new TypeError('Expected finite drive numbers');
+            });
+            this._setDriveTarget(point,radians,maxForce,maxTorque,frequency === undefined ? 4 : frequency,
+                dampingRatio === undefined ? 1 : dampingRatio,integer(direction === undefined ? 1 : direction,0,3,'rotationDirection'));
+            return this;
+        };
+        const removePart = sprite.removePart, removeForce = body.removeForce;
+        sprite.transferPart = function(value, descendants) {
+            if (!(value instanceof bindings.Part)) throw new TypeError('Expected a Part');
+            if (descendants !== undefined && typeof descendants !== 'boolean') throw new TypeError('Expected includeDescendants boolean');
+            return canonical(this._transferPart(value, descendants === undefined ? true : descendants));
+        };
+        sprite.removePart = function(value) { return removePart.call(this, id(value)); };
+        body.removeForce = function(value) { return removeForce.call(this, id(value)); };
+        ['createPart', 'getPart', 'findPart', 'getAttachmentPart'].forEach(function(name) {
+            sprite[name] = function(value) { return canonical(name === 'getAttachmentPart' ? this['_' + name]() : this['_' + name](name === 'getPart' ? id(value) : value)); };
+        });
+        ['getSprite', 'getAttachedSprite', 'getParentPart'].forEach(function(name) {
+            part[name] = function() { return canonical(this['_' + name]()); };
+        });
+        ['bindToAnimationBinding', 'bindToAnimationSocket', 'setDrawing', 'setImage', 'unbindFromBone', 'clearContent', 'detachSprite'].forEach(function(name) {
+            part[name] = function() { this['_' + name].apply(this, arguments); return this; };
+        });
+        part.bindToBone = function(value) { this._bindToBone(id(value)); return this; };
+        part.setParentPart = function(parent) { this._setParentPart(parent || null); return this; };
+        part.getTransform = function(value) { return this._getTransform(space(value)); };
+        part.getContentBounds = function(value) { return new bindings.Rect(this._getContentBounds(space(value))); };
+        part.attachSprite = function(child, placement, mount) {
+            return canonical(this._attachSprite(child, integer(placement === undefined ? 0 : placement, 0, 1, 'placement'), mount || null));
+        };
+        part.solveIK = function(middle, tip, target, targetSpace, bend, influence) {
+            return this._solveIK(middle, tip, target, space(targetSpace === undefined ? 2 : targetSpace),
+                integer(bend === undefined ? 1 : bend, -1, 1, 'bend direction'), influence === undefined ? 1 : influence);
+        };
+        part.setIKTarget = function(middle, tip, target, targetSpace, bend, influence) {
+            this._setIKTarget(middle, tip, target, space(targetSpace === undefined ? 2 : targetSpace),
+                integer(bend === undefined ? 1 : bend, -1, 1, 'bend direction'), influence === undefined ? 1 : influence);
+            return this;
+        };
+        part.setIKLimits = function(lo,hi) {
+            if(arguments.length===1 && lo instanceof bindings.PhysicsConstraint) { this._setIKConstraint(lo);return this; }
+            if(arguments.length!==2) throw new TypeError('Expected a PhysicsConstraint or two limit angles');
+            if(typeof lo!=='number' || typeof hi!=='number' || !Number.isFinite(lo) || !Number.isFinite(hi))
+                throw new TypeError('Expected finite IK limit angles');
+            this._setIKLimits(lo,hi); return this;
+        };
+        part.clearIKLimits = function() { this._clearIKLimits(); return this; };
+        part.setIKDriveTarget = function(middle,tip,target,force,torque,targetSpace,bend,influence,frequency,damping) {
+            if(arguments.length<5) throw new TypeError('setIKDriveTarget requires a chain, target and both force limits');
+            [force,torque,influence===undefined?1:influence,frequency===undefined?4:frequency,damping===undefined?1:damping].forEach(function(value) {
+                if(typeof value!=='number' || !Number.isFinite(value)) throw new TypeError('Expected finite IK drive numbers');
+            });
+            this._setIKDriveTarget(middle,tip,target,force,torque,space(targetSpace===undefined?2:targetSpace),
+                integer(bend===undefined?1:bend,-1,1,'bend direction'),influence===undefined?1:influence,
+                frequency===undefined?4:frequency,damping===undefined?1:damping);
+            return this;
+        };
+        part.clearIKTarget = function() { this._clearIKTarget(); return this; };
+        [sprite, part, bindings.Particle && bindings.Particle.prototype].filter(Boolean).forEach(function(proto) {
+            const read = proto._readPhysics;
+            proto._readPhysics = function() { return canonical(read.call(this)); };
+            proto.setupPhysicsBody = function(mass, inertia) {
+                return canonical(this._setupPhysicsBody(mass === undefined ? 1 : mass, inertia === undefined ? 1 : inertia));
+            };
+        });
+        ['setMass', 'setMomentOfInertia', 'setSpeed', 'setAngularVelocity', 'setLinearDamping', 'setAngularDamping',
+         'setFriction', 'setRestitution', 'applyAngularImpulse', 'stopMoving', 'stopSpinning', 'stopAllForces', 'clearDrive',
+         'setVelocityInRadians', 'teleport'].forEach(function(name) {
+            body[name] = function() { this['_' + name].apply(this, arguments); return this; };
+        });
+        body.setMode = function(mode) { this._setMode(integer(mode, 1, 3, 'body mode')); return this; };
+        body.getVelocity = function() { return new bindings.Vector(this._getVelocity()); };
+        body.setVelocity = function(x, y) { this._setVelocity(typeof x === 'number' ? { x: x, y: y } : x); return this; };
+        body.applyImpulse = function(value, point) {
+            if (point === undefined) this._applyImpulse(value); else this._applyImpulseAt(value, point);
+            return this;
+        };
+        body.applyForce = function(value, seconds, delay, point) {
+            return point === undefined ? this._applyForce(value, seconds, delay === undefined ? 0 : delay)
+                : this._applyForceAt(value, seconds, delay === undefined ? 0 : delay, point);
+        };
+        body.applyTorque = function(value, seconds, delay) { return this._applyTorque(value, seconds, delay === undefined ? 0 : delay); };
+    })();
+}
+
+if (inbrowser && bindings.Collider) {
+    const canonical = bindings._canonicalPhysicsOwner;
+    const collider = bindings.Collider.prototype, constraint = bindings.PhysicsConstraint.prototype;
+    function unsigned(value) {
+        if (!Number.isInteger(value) || value < 0 || value > 4294967295)
+            throw new RangeError('Expected an unsigned 32-bit integer');
+        return value;
+    }
+    [bindings.Sprite, bindings.Part, bindings.Particle].filter(Boolean).forEach(function(type) {
+        const read = type.prototype._readCollider;
+        type.prototype._readCollider = function() { return canonical(read.call(this)); };
+        type.prototype.setupCollider = function() { return canonical(this._setupCollider()); };
+    });
+    ['setFriction','setRestitution','useBodyMaterial','setEnabled','setSensor','setWantsContactEvents','setCategory','setCollisionMask','setGroup',
+     'setCapsule','setBox','setPolygon','clearShapes','setPhysicsBody','useOwnerPhysics'].forEach(function(name) {
+        collider[name] = function() { this['_' + name].apply(this, arguments); return this; };
+    });
+    ['setCircle','addCircle'].forEach(function(name) {
+        collider[name] = function(radius, center) { const result = this['_' + name](radius, center === undefined ? {x:0,y:0} : center); return name === 'setCircle' ? this : result; };
+    });
+    ['addCapsule','addBox','addPolygon','removeShape','getShapeId','contains','overlaps'].forEach(function(name) {
+        collider[name] = function() { return this['_' + name].apply(this, arguments); };
+    });
+    ['setCategory','setCollisionMask','setGroup'].forEach(function(name) {
+        collider[name] = function(value) { this['_' + name](unsigned(value)); return this; };
+    });
+    ['getShapeId','removeShape','isSourceShape','getShapeName','getShapeType','getCircleRadius','getCapsuleRadius'].forEach(function(name) {
+        collider[name] = function(value) { return this['_' + name](unsigned(value)); };
+    });
+    ['getCapsuleStart','getCapsuleEnd'].forEach(function(name) {
+        collider[name] = function(value) { return new bindings.Point(this['_' + name](unsigned(value))); };
+    });
+    collider.addPolygon = function(vertices) {
+        if (!Array.isArray(vertices)) throw new TypeError('Expected an array of Points');
+        return this._addPolygon(vertices);
+    };
+    function alphaThreshold(value) {
+        if(value===undefined)return 128;
+        if(!Number.isInteger(value)||value<1||value>255)throw new RangeError('Expected an integer alpha threshold from 1 to 255');
+        return value;
+    }
+    ['setImageMask','addImageMask'].forEach(function(name) {
+        collider[name]=function(image,bounds,threshold) {
+            const result=this['_'+name](image,bounds,alphaThreshold(threshold));
+            return name==='setImageMask'?this:result;
+        };
+    });
+    bindings.Part.prototype.setupFrameCollider=bindings.Sprite.prototype.setupFrameCollider=function(mode,threshold) {
+        return canonical(this._setupFrameCollider(mode===undefined?1:unsigned(mode),alphaThreshold(threshold)));
+    };
+    bindings.Part.prototype.setupAnimationCollider=function(name) {
+        if(typeof name!=='string')throw new TypeError('Expected a collision box name');
+        return canonical(this._setupAnimationCollider(name));
+    };
+    bindings.Sprite.prototype.setupAnimationCollider=function() { return canonical(this._setupAnimationCollider()); };
+    bindings.Sprite.prototype.setFrameCollisionMask=function(image,mask) { this._setFrameCollisionMask(image,mask);return this; };
+    collider.setContactHandler=function(callback) {
+        if(callback!==null && typeof callback!=='function') throw new TypeError('Expected a function or null');
+        this._setContactHandler(callback===null?null:function(event) {
+            event.collider=canonical(event.collider);event.other=canonical(event.other);callback(event);
+        });return this;
+    };
+    collider.setCollisionFilter=function(callback) {
+        if(callback!==null && typeof callback!=='function') throw new TypeError('Expected a function or null');
+        this._setCollisionFilter(callback===null?null:function(a,b) {return callback(canonical(a),canonical(b));});return this;
+    };
+    collider.getBounds = function() { return new bindings.Rect(this._getBounds()); };
+    collider.getPhysicsBody = function() { return canonical(this._getPhysicsBody()); };
+    ['setMaxForce','setBreakForce','setCollideBodies'].forEach(function(name) {
+        constraint[name] = function(value) { this['_' + name](value); return this; };
+    });
+    ['getAnchorA','getAnchorB','getGrooveStart','getGrooveEnd'].forEach(function(name) {
+        constraint[name] = function() {
+            if(arguments.length!==0) throw new TypeError('Expected no arguments');
+            return new bindings.Point(this['_'+name]());
+        };
+    });
+    ['setAnchorA','setAnchorB','setAnchors','setGroove'].forEach(function(name) {
+        constraint[name] = function() {
+            const count=(name==='setAnchors'||name==='setGroove')?2:1;
+            if(arguments.length!==count) throw new TypeError('Expected '+count+' Points');
+            for(const p of arguments) {
+                if(!p || typeof p.x!=='number' || typeof p.y!=='number' || !Number.isFinite(p.x) || !Number.isFinite(p.y))
+                    throw new TypeError('Expected finite Point coordinates');
+            }
+            this['_'+name].apply(this,arguments);return this;
+        };
+    });
+    constraint.setAngleLimits = function(lo,hi) {
+        if(arguments.length!==2 || typeof lo!=='number' || typeof hi!=='number' || !Number.isFinite(lo) || !Number.isFinite(hi))
+            throw new TypeError('Expected two finite angle limits');
+        this._setAngleLimits(lo,hi);return this;
+    };
+    ['getBodyA','getBodyB'].forEach(function(name) { constraint[name] = function() { return canonical(this['_' + name]()); }; });
+    const body = bindings.PhysicsBody.prototype;
+    ['createPinJoint','createPivotJoint'].forEach(function(name) {
+        body[name] = function(other, a, b) { return canonical(this['_' + name](other, a === undefined ? {x:0,y:0} : a, b === undefined ? {x:0,y:0} : b)); };
+    });
+    ['createSlideJoint','createGrooveJoint','createSpring','createRotarySpring','createRotaryLimit','createMotor','getConstraint'].forEach(function(name) {
+        body[name] = function() { return canonical(this['_' + name].apply(this, arguments)); };
+    });
+    ['createRatchet','createGear'].forEach(function(name) { body[name] = function(other, value, phase) { return canonical(this['_' + name](other, value, phase === undefined ? 0 : phase)); }; });
+    body.getConstraint = function(index) { return canonical(this._getConstraint(unsigned(index))); };
+    body.disconnect = function(other) { this._disconnect(other || null); return this; };
+}
+
+// Particle constructors and factories preserve one identity per live native object.
+if (bindings.Particle && bindings.ParticleEmitter) {
+    if (inbrowser) {
+        const canonical = bindings._canonicalPhysicsOwner;
+        function uint(value) {
+            if (!Number.isInteger(value) || value < 0 || value > 4294967295) throw new RangeError('Expected uint32');
+            return value;
+        }
+        ['Particle', 'ParticleEmitter'].forEach(function(name) {
+            const Native = bindings[name];
+            const Construct = function() {
+                if (!new.target) throw new TypeError(name + ' requires new');
+                return canonical(new Native());
+            };
+            Construct.prototype = Native.prototype; Object.setPrototypeOf(Construct, Native); bindings[name] = Construct;
+            Native.prototype.getLayer = function() { return bindings._emscriptenObjectForIdentity(this._getLayerIdentity()); };
+        });
+        const particle = bindings.Particle.prototype, emitter = bindings.ParticleEmitter.prototype;
+        ['setOpacity','setLifetime','setImage','setDrawing','clearContent'].forEach(function(name) {
+            if (particle['_' + name]) particle[name] = function() { this['_' + name].apply(this, arguments); return this; };
+        });
+        particle.fadeTo = function(opacity, seconds, easing) {
+            this._fadeTo(opacity, seconds, uint(easing === undefined ? bindings.linearTween : easing)); return this;
+        };
+        ['setupParticleEmitter','getParticleEmitter'].forEach(function(name) {
+            particle[name] = function() { return canonical(this['_' + name]()); };
+        });
+        ['setParticleTemplate','setEmissionRate','setSpread','setVelocityInheritance','startEmitting','stopEmitting'].forEach(function(name) {
+            emitter[name] = function() { this['_' + name].apply(this, arguments); return this; };
+        });
+        emitter.setSeed = function(seed) { this._setSeed(uint(seed)); return this; };
+        emitter.setParticleSpeed = function(min, max) { this._setParticleSpeed(min, max === undefined ? min : max); return this; };
+        emitter.emit = function(count) { return this._emit(uint(count === undefined ? 1 : count)); };
+        emitter.getParticle = function() { return canonical(this._getParticle()); };
+        const layer = bindings.SpriteLayer.prototype;
+        ['createParticle','createParticleEmitter'].forEach(function(name) {
+            layer[name] = function() { bindings._emscriptenRememberObject(this); return canonical(this['_' + name]()); };
+        });
+        ['addParticle','removeParticle','removeParticleEmitter'].forEach(function(name) {
+            layer[name] = function(value) { bindings._emscriptenRememberObject(this); return this['_' + name](value); };
+        });
+        layer.getNthParticle = function(index) { return canonical(this._getNthParticle(uint(index))); };
+        layer.setMaxParticles = function(count) { this._setMaxParticles(uint(count)); return this; };
+    }
+    Object.defineProperty(bindings.Particle.prototype, 'emitter', {
+        get: function() { return this.getParticleEmitter(); }, enumerable: true
+    });
+}
+
+// Collision ownership is optional and read-only, like body ownership.
+if (bindings.Collider && bindings.Sprite) {
+    const noCollider = new bindings.Sprite()._readCollider();
+    Object.defineProperty(bindings.Collider, 'NoCollider', { value: noCollider, enumerable: true });
+    [bindings.Sprite, bindings.Part, bindings.Particle].filter(Boolean).forEach(function(type) {
+        if (!type) return;
+        Object.defineProperty(type.prototype, 'collider', {
+            get: function() { return this._readCollider(); }, enumerable: true
+        });
+    });
+}
+// Body ownership is deliberately absent from Animated and SpriteLayer.
+if (bindings.PhysicsBody && bindings.Sprite) {
+    const noPhysics = new bindings.Sprite()._readPhysics();
+    Object.defineProperty(bindings.PhysicsBody, 'NoPhysics', {
+        value: noPhysics, enumerable: true
+    });
+    Object.defineProperty(bindings, 'NoPhysics', { value: noPhysics, enumerable: true });
+    [bindings.Sprite, bindings.Part, bindings.Particle].filter(Boolean).forEach(function(type) {
+        if (!type) return;
+        const read = type.prototype._readPhysics;
+        Object.defineProperty(type.prototype, 'physics', {
+            get: function() { return read.call(this); },
+            enumerable: true
+        });
+    });
+}
+
 if (typeof module !== 'undefined' && module.exports) {
     for (var key in process.pdg) {
         if (bindings.hasOwnProperty(key)) {
@@ -2243,17 +3524,34 @@ if (typeof module !== 'undefined' && module.exports) {
             }
         }
     }
-    _debug_log('[PDG] pdg.js: Copied ' + Object.keys(process.pdg).length + ' properties to module.exports');
+    _debug_log(
+        '[PDG] pdg.js: Copied ' + Object.keys(process.pdg).length +
+        ' properties to module.exports');
     _debug_log('[PDG] pdg.js: module.exports has tm? ' + typeof module.exports.tm);
-	_debug_log('[PDG] pdg.js: typeof tm.onTimeout is ' + typeof module.exports.tm.onTimeout);
+    _debug_log('[PDG] pdg.js: typeof tm.onTimeout is ' + typeof module.exports.tm.onTimeout);
 }
 
 // Call scriptSetupCompleted after all JavaScript modules are loaded and prototypes are set up
-_debug_log('[PDG] pdg.js: About to call _finishedScriptSetup, bindings._finishedScriptSetup is ' + typeof bindings._finishedScriptSetup);
+_debug_log(
+    '[PDG] pdg.js: About to call _finishedScriptSetup, bindings._finishedScriptSetup is ' +
+    typeof bindings._finishedScriptSetup);
 if (typeof bindings._finishedScriptSetup === 'function') {
     _debug_log('[PDG] pdg.js: Calling _finishedScriptSetup after modules loaded...');
     bindings._finishedScriptSetup();
     _debug_log('[PDG] pdg.js: _finishedScriptSetup completed');
 } else {
     _debug_log('[PDG] pdg.js: _finishedScriptSetup is not available');
+}
+
+if(bindings.Collider) {
+    ['addPolygon','setPolygon'].forEach(function(name) {
+        const native=bindings.Collider.prototype[name];
+        bindings.Collider.prototype[name]=function(polygon) {
+            if(bindings.Polygon && polygon instanceof bindings.Polygon) {
+                const points=[];for(let i=0;i<polygon.getPointCount();++i)points.push(polygon.getPoint(i));
+                return native.call(this,points);
+            }
+            return native.apply(this,arguments);
+        };
+    });
 }

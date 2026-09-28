@@ -12,14 +12,14 @@ using Lines = std::vector<std::string>;
 Lines wrap(const char* text, int width)
 {
     Lines lines;
-    const int count = pdg::app::detail::forEachWrappedLine(
+    const int count = pdg::app::forEachWrappedLine(
         text,
         width,
-        [](const std::string&, std::size_t length) {
+        [](std::string_view, std::size_t length) {
             return static_cast<int>(length);
         },
-        [&lines](const std::string& line) {
-            lines.push_back(line);
+        [&lines](std::string_view line) {
+            lines.emplace_back(line);
         });
 
     if (count != static_cast<int>(lines.size())) {
@@ -36,11 +36,11 @@ void expectLines(const char* testName, const Lines& actual, const Lines& expecte
     }
 
     std::cerr << testName << " failed\n  expected:";
-    for (const std::string& line : expected) {
+    for (std::string_view line : expected) {
         std::cerr << " [" << line << ']';
     }
     std::cerr << "\n  actual:  ";
-    for (const std::string& line : actual) {
+    for (std::string_view line : actual) {
         std::cerr << " [" << line << ']';
     }
     std::cerr << '\n';

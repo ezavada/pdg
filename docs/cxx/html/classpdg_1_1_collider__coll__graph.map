@@ -1,0 +1,9 @@
+<map id="Collider" name="Collider">
+<area shape="rect" id="Node000001" title=" " alt="" coords="34,177,99,203"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,5,117,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,46,69,177,63,176,59,47"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_collider.html" title=" " alt="" coords="83,80,148,106"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="80,41,109,80,104,81,79,46"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="105,119,75,178,71,175,100,120"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="164,85,175,93,166,101,150,103,148,98,164,96,170,93,164,90"/>
+</map>

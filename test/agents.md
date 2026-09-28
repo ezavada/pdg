@@ -9,17 +9,19 @@ This file applies to `test`.
 - `test/js/client_test.js` is the GUI/client-oriented spec entry.
 - `test/js/node_test.js` is the headless Node-oriented spec entry.
 - `test/cxx` contains native C++ tests.
-- `test/misc` contains focused regression, reproduction, and behavior probes.
+- `test/rig_tests` contains asset/controller integration checks, run with `test/rigs`.
+- `test/lib` contains shared harnesses, tooling checks (`test/tools`), and build-support payloads.
+- `test/spec/fixtures` contains subprocess inputs used by behavioral specs.
 - `test/ui_tests` contains GUI drawing and `PortDraw`-oriented tests.
-- `test/perf` contains performance benchmarks, not just pass/fail correctness checks.
-- `test/data` and `test/sprinter-private` hold assets and fixtures.
+- `test/perf_tests` contains performance benchmarks, not just pass/fail correctness checks.
+- `test/data` holds assets and fixtures.
 
 ## Editing Guidance
 
 - Prefer adding or updating the narrowest test that proves the changed behavior.
 - If you change a public API or runtime contract, update both GUI/client and headless coverage when the behavior exists in both modes.
 - Keep shared runner behavior centralized in `test/lib/spec_runner.js` rather than duplicating path or environment logic.
-- Treat `test/perf` baselines as performance artifacts, not routine correctness fixtures.
+- Treat `test/perf_tests` baselines as performance artifacts, not routine correctness fixtures.
 - Treat large asset trees and licensed sample packs conservatively. Do not rename, reformat, or churn them unless the task truly requires it.
 
 ## Runtime Expectations
@@ -31,6 +33,7 @@ This file applies to `test`.
 ## Verification
 
 - For GUI/client specs, use the client entry path under `test`.
-- For headless behavior, use `test/node` or the equivalent platform wrapper.
+- For headless behavior, use `test/unit --node` or the equivalent platform wrapper.
 - For native changes, update or run the relevant files in `test/cxx`.
-- When fixing regressions, prefer leaving a focused reproducer in `test/misc` or `test/spec`.
+- When fixing regressions, add coverage to `test/spec`, `test/cxx`, or the relevant `test/rig_tests` suite.
+- Use `test/ui` for visual pages and `test/demo` for interactive demos; `test/README.md` documents all runners.

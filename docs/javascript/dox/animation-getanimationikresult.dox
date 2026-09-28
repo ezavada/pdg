@@ -1,0 +1,30 @@
+/**
+\fn pdg::Sprite::getAnimationIKResult(uint id)
+\brief Copy the latest IK solve result.
+
+Refreshes the pose first. Throws for an unknown IK ID or a controller whose last evaluation failed; getAnimationModifierError() exposes the diagnostic.
+
+\param id ID returned by addAnimationIK().
+
+\return An independent result object described below.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_ik_result
+\par IK result fields
+| Field | Meaning |
+| --- | --- |
+| `reachError` | Remaining target distance in the owning-layer coordinates. |
+| `reachable` | Whether the resulting tip reaches the target within tolerance. |
+| `clamped` | Whether the target was clamped to available reach. |
+| `limited` | Whether joint-angle limits constrained the solve. |
+| `stretched` | Whether allowed stretch extended a segment. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see setAnimationIKTarget(), getAnimationModifierError()
+*/

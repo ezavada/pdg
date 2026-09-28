@@ -50,14 +50,18 @@ public:
 	bool doMouseDown(const MouseInfo* mi, int id, int part) override;
 	bool doMouseUp(const MouseInfo* mi, int id, int part) override;
 	bool doLeftClick(const MouseInfo* mi, int id, int part) override;
-//    bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw();  // return true if completely handled
+//    bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept;  // return true if completely handled
 
  	// to display tooltips	
 	void showToolTip(int nArea, Point pts,Rect & rToolRect);
 	bool IsMouseInToolArea(Point pts,Rect & rToolRect);
 	void setToolTipText(std::string sText);
+	void doMouseEnter(const MouseInfo* mi, int id, int part) override { doMouseMove(mi, id, part); }
 	void doMouseMove(const MouseInfo *mi, int id, int part) override;
 	void doMouseLeave(const MouseInfo *mi, int id, int part) override;
+
+protected:
+    void viewAreaChanged(const Rect& previous) override;
 
 private:
     void initializeButton(int resourceTextID, short substring);
@@ -68,6 +72,7 @@ private:
 	int mButtonID;
 	int mStyleId;
 	bool mIsButtonPressed;
+    bool mMouseIsDown = false;
 	bool mIsHovered;
 	ControlAttributes mAttributes;
 // for tooltip window

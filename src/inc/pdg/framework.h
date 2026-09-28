@@ -44,16 +44,13 @@
 // Major Features:
 //#define PDG_NO_NETWORK       		// disable networking
 //#define PDG_NO_EVENT_QUEUE   		// disable multithread event queue
-//#define PDG_NO_THREAD_SAFETY 		// disable thread safety (mutexes, semaphores and critical sections do nothing)
 //#define PDG_NO_GUI           		// disable GUI stuff
 //#define PDG_NO_SOUND         		// disable sound stuff
 //#define PDG_USE_CHIPMUNK_PHYSICS	// use Chipmunk library for sprite physics
 //#define PDG_HACK_GL_QUAD_SUPPORT	// emulate support for GL_QUADS when using OpenGL ES
-//#define PDG_NO_MERSENNE_TWISTER	// disable built-in Mersenne Twister algorithm for OS::gameCriticalRandom()
 //#define PDG_SPRITER_SUPPORT     // enable Spriter animation support
 
 // Build Environment/Target:
-//#define PDG_NO_64BIT							// don't add support for int64, uint64
 //#define PDG_LIBRARY		   					// we are building a library, so don't include main()
 //#define PDG_INTERNAL_LIB	   					// pdg is internal to other code, such as a scripting language plugin
 //#define PDG_COMPILING_FOR_SCRIPT_BINDINGS     // enable code that supports any script binding
@@ -78,7 +75,6 @@
 //#define PDG_SERIALIZATION_DEBUG		// dynamic debug mode in serializer and deserializer that dumps serialization info
 
 // Library Debugging:
-//#define PDG_DEBUG_MUTEX				// detailed info on mutex blocking
 //#define PDG_DEBUG_EVENTS				// detailed info on event handling
 //#define PDG_DEBUG_NETWORKING			// detailed info on networking
 //#define PDG_DEBUG_TIMERS				// detailed info on timers
@@ -112,6 +108,11 @@
 #include "pdg/sys/spline.h"
 #include "pdg/sys/polygon.h"
 #include "pdg/sys/animated.h"
+#include "pdg/sys/animatedattributes.h"
+#include "pdg/sys/part.h"
+#include "pdg/sys/particle.h"
+#include "pdg/sys/particleemitter.h"
+#include "pdg/sys/physicsbody.h"
 #include "pdg/sys/serializer.h"
 #include "pdg/sys/deserializer.h"
 #include "pdg/sys/serializable.h"

@@ -46,7 +46,7 @@ if (runConfig.help) {
 try {
     console.log('Running jasmine-node on:', envInfo.specDir);
     if (runConfig.requestedTarget) {
-        console.log('Target spec:', runConfig.requestedTarget);
+        console.log('Target specs:', runConfig.requestedTargets.join(', '));
     }
     specRunner.runJasmineSpecs(envInfo, runConfig, process);
 } catch (e) {

@@ -1,0 +1,11 @@
+<map id="Attributes" name="Attributes">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,76,83,102"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated_attributes_base.html" title=" " alt="" coords="131,76,293,102"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,86,132,87,128,90,99,91"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated.html" title=" " alt="" coords="357,5,562,76"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="296,70,359,60,354,61,298,75"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_animated.html" title=" " alt="" coords="341,100,578,171"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="299,102,343,113,338,113,299,108"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_animated_attributes.html" title="Drawing attributes with programmed movement and appearance animation." alt="" coords="626,122,791,148"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="594,133,628,135,623,135,594,138"/>
+</map>

@@ -1,0 +1,199 @@
+.TH "AnimationSpringTarget" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AnimationSpringTarget \- Spring target smoothing and recoil impulses\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAnimationSpringTarget\fP (number mass=1, number stiffness=100, number damping=20)"
+.br
+.RI "Create a damped spring target\&. "
+.ti -1c
+.RI "\fBapplyImpulse\fP (number x, number y)"
+.br
+.RI "Change spring velocity immediately\&. "
+.ti -1c
+.RI "object \fBgetState\fP ()"
+.br
+.RI "Copy spring position and velocity\&. "
+.ti -1c
+.RI "\fBsetState\fP (object state)"
+.br
+.RI "Replace spring position and velocity\&. "
+.ti -1c
+.RI "object \fBupdate\fP (number targetX, number targetY, number deltaSeconds)"
+.br
+.RI "Advance the spring toward a fixed target\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Spring target smoothing and recoil impulses\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Keeps position and velocity independently of a \fBSprite\fP\&. Call \fBupdate()\fP with a target and elapsed seconds to smooth motion, or \fBapplyImpulse()\fP to produce recoil\&. \fBgetState()\fP returns a copy; \fBsetState()\fP replaces all position and velocity fields\&.
+
+.PP
+The helper does not update automatically\&. Apply each sample to a freshly evaluated pose instead of adding it repeatedly to the previous final pose\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBAnimationSpringTarget()\fP, \fBupdate()\fP, \fBAnimation target adapters\fP 
+.RE
+.PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "AnimationSpringTarget (number mass = \fR1\fP, number stiffness = \fR100\fP, number damping = \fR20\fP)"
+
+.PP
+Create a damped spring target\&. Starts with zero position and velocity\&. The helper owns its state independently of Sprites and does not update automatically\&. All inputs must be finite\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImass\fP Positive mass; default 1\&. 
+.br
+\fIstiffness\fP Nonnegative restoring spring coefficient; default 100\&. 
+.br
+\fIdamping\fP Nonnegative damping coefficient; default 20\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const recoil = new pdg\&.AnimationSpringTarget(1, 100, 20);
+recoil\&.applyImpulse(\-2, 0);
+const offset = recoil\&.update(0, 0, 1 / 60);
+// Apply offset\&.x/y to a freshly sampled pose\&.
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBupdate()\fP, \fBapplyImpulse()\fP 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "applyImpulse (number x, number y)"
+
+.PP
+Change spring velocity immediately\&. Each velocity component increases by impulse divided by mass\&. Position remains unchanged\&. Invalid or overflowing results leave state unchanged\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Finite horizontal impulse in mass times distance per second\&. 
+.br
+\fIy\fP Finite vertical impulse in mass times distance per second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBupdate()\fP, \fBgetState()\fP 
+.RE
+.PP
+
+.SS "object getState ()"
+
+.PP
+Copy spring position and velocity\&. Editing the returned object does not change the helper\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An independent state object described below\&.
+.RE
+.PP
+
+.PP
+\fBSpring state\fP
+.RS 4
+Field  Meaning  \fRx\fP, \fRy\fP  Position in the application's chosen coordinate frame\&.  \fRvelocityX\fP, \fRvelocityY\fP  Velocity in that frame's distance units per second\&.  
+.RE
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetState()\fP, \fBupdate()\fP 
+.RE
+.PP
+
+.SS "setState (object state)"
+
+.PP
+Replace spring position and velocity\&. Validates all components before changing the state\&. Invalid or overflowing values leave it unchanged\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP Object with finite x, y, velocityX, and velocityY fields; see \fBanimation_spring_state\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetState()\fP, \fBapplyImpulse()\fP 
+.RE
+.PP
+
+.SS "object update (number targetX, number targetY, number deltaSeconds)"
+
+.PP
+Advance the spring toward a fixed target\&. Uses analytic damped-spring integration, treating the target as constant throughout this step\&. Zero elapsed time preserves state\&. Invalid or overflowing results leave state unchanged\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItargetX\fP Finite target x in the same frame as the spring state\&. 
+.br
+\fItargetY\fP Finite target y in the same frame as the spring state\&. 
+.br
+\fIdeltaSeconds\fP Finite nonnegative elapsed time in seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An owned copy of the new state; see \fBanimation_spring_state\fP\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetState()\fP, \fBapplyImpulse()\fP 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

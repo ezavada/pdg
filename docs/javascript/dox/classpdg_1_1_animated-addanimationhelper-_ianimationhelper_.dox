@@ -1,9 +1,29 @@
-namespace pdg { /**
+/**
+\fn pdg::Animated::addAnimationHelper(IAnimationHelper helper)
+\brief Register a callback after the object's normal animation step.
 
-\fn pdg::Animated::addAnimationHelper
+The callback runs as `callback.call(helper, owner, deltaSeconds)` and returns a
+boolean: true keeps its registration, false retires it. Helpers run in registration
+order. Adding the same helper twice to one owner has no effect; a helper may also
+be registered on several owners. A retained helper can be added again after it finishes.
 
-\brief setup a helper to handle custom animation
+Callbacks may remove themselves, remove another helper, or clear the owner's
+helpers. Removed callbacks do not run later in the same step. Additions first run
+on the next step. Removing and re-adding the current helper creates a new
+registration, which is unaffected by the old callback returning false.
 
-\sa IAnimationHelper
+\param helper An IAnimationHelper constructed from a callback. Active registrations
+retain it. After retirement, normal JavaScript references determine its lifetime.
+\return The original owner object, for chaining.
 
-**/ }
+\par Example
+\code{.js}
+const helper = new pdg.IAnimationHelper(function(owner, deltaSeconds) {
+    owner.rotateBy(deltaSeconds * 0.5);
+    return true;
+});
+sprite.addAnimationHelper(helper).setMovement(20, 0);
+// Later: sprite.removeAnimationHelper(helper);
+\endcode
+\see removeAnimationHelper(), clearAnimationHelpers(), IAnimationHelper
+*/

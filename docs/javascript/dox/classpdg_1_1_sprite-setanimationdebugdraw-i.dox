@@ -1,0 +1,17 @@
+/**
+\fn pdg::Sprite::setAnimationDebugDraw(int flags)
+\brief Select pose debug overlays.
+
+Flags are combined with bitwise OR. Disabling overlays with zero is safe without a pose or GUI. Nonzero flags require both. Disabling/replacing the pose clears the flags.
+
+\param flags pdg.animationDebug_None (0), Bones (1), Sockets (2), Boxes (4), or All (7), using the animationDebug_ prefix for each constant.
+
+\return No value.
+
+\par Example
+\code{.js}
+sprite.setAnimationDebugDraw(pdg.animationDebug_Bones | pdg.animationDebug_Sockets);
+\endcode
+
+\see getAnimationDebugDraw(), isAnimationDrawingSupported()
+*/

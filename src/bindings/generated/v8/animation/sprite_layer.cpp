@@ -140,139 +140,147 @@ namespace pdg
         v8::Local<v8::Signature> GetBoundingBox_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetBoundingBox_Tpl =
             v8::FunctionTemplate::New(isolate, GetBoundingBox, v8::Local<v8::Value>(), GetBoundingBox_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""BoundingBox").ToLocalChecked(), GetBoundingBox_Tpl);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getBoundingBox").ToLocalChecked(), GetBoundingBox_Tpl);
         v8::Local<v8::Signature> GetRotatedBounds_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetRotatedBounds_Tpl =
             v8::FunctionTemplate::New(isolate, GetRotatedBounds, v8::Local<v8::Value>(), GetRotatedBounds_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""RotatedBounds").ToLocalChecked(), GetRotatedBounds_Tpl);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getRotatedBounds").ToLocalChecked(), GetRotatedBounds_Tpl);
         v8::Local<v8::Signature> GetLocation_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetLocation_Tpl =
             v8::FunctionTemplate::New(isolate, GetLocation, v8::Local<v8::Value>(), GetLocation_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""Location").ToLocalChecked(), GetLocation_Tpl);
-        v8::Local<v8::Signature> SetLocation_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetLocation_Tpl =
-            v8::FunctionTemplate::New(isolate, SetLocation, v8::Local<v8::Value>(), SetLocation_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""Location").ToLocalChecked(), SetLocation_Tpl);
-        v8::Local<v8::Signature> GetSpeed_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> GetSpeed_Tpl =
-            v8::FunctionTemplate::New(isolate, GetSpeed, v8::Local<v8::Value>(), GetSpeed_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""Speed").ToLocalChecked(), GetSpeed_Tpl);
-        v8::Local<v8::Signature> SetSpeed_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetSpeed_Tpl =
-            v8::FunctionTemplate::New(isolate, SetSpeed, v8::Local<v8::Value>(), SetSpeed_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""Speed").ToLocalChecked(), SetSpeed_Tpl);
-        v8::Local<v8::Signature> GetVelocity_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> GetVelocity_Tpl =
-            v8::FunctionTemplate::New(isolate, GetVelocity, v8::Local<v8::Value>(), GetVelocity_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""Velocity").ToLocalChecked(), GetVelocity_Tpl);
-        v8::Local<v8::Signature> SetVelocity_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetVelocity_Tpl =
-            v8::FunctionTemplate::New(isolate, SetVelocity, v8::Local<v8::Value>(), SetVelocity_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""Velocity").ToLocalChecked(), SetVelocity_Tpl);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getLocation").ToLocalChecked(), GetLocation_Tpl);
+        v8::Local<v8::Signature> GetMovement_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetMovement_Tpl =
+            v8::FunctionTemplate::New(isolate, GetMovement, v8::Local<v8::Value>(), GetMovement_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getMovement").ToLocalChecked(), GetMovement_Tpl);
+        v8::Local<v8::Signature> GetSize_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetSize_Tpl =
+            v8::FunctionTemplate::New(isolate, GetSize, v8::Local<v8::Value>(), GetSize_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getSize").ToLocalChecked(), GetSize_Tpl);
         v8::Local<v8::Signature> GetWidth_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetWidth_Tpl =
             v8::FunctionTemplate::New(isolate, GetWidth, v8::Local<v8::Value>(), GetWidth_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""Width").ToLocalChecked(), GetWidth_Tpl);
-        v8::Local<v8::Signature> SetWidth_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetWidth_Tpl =
-            v8::FunctionTemplate::New(isolate, SetWidth, v8::Local<v8::Value>(), SetWidth_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""Width").ToLocalChecked(), SetWidth_Tpl);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getWidth").ToLocalChecked(), GetWidth_Tpl);
         v8::Local<v8::Signature> GetHeight_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetHeight_Tpl =
             v8::FunctionTemplate::New(isolate, GetHeight, v8::Local<v8::Value>(), GetHeight_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""Height").ToLocalChecked(), GetHeight_Tpl);
-        v8::Local<v8::Signature> SetHeight_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetHeight_Tpl =
-            v8::FunctionTemplate::New(isolate, SetHeight, v8::Local<v8::Value>(), SetHeight_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""Height").ToLocalChecked(), SetHeight_Tpl);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getHeight").ToLocalChecked(), GetHeight_Tpl);
+        v8::Local<v8::Signature> GetScale_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetScale_Tpl =
+            v8::FunctionTemplate::New(isolate, GetScale, v8::Local<v8::Value>(), GetScale_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getScale").ToLocalChecked(), GetScale_Tpl);
+        v8::Local<v8::Signature> GetStretching_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetStretching_Tpl =
+            v8::FunctionTemplate::New(isolate, GetStretching, v8::Local<v8::Value>(), GetStretching_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getStretching").ToLocalChecked(), GetStretching_Tpl);
         v8::Local<v8::Signature> GetRotation_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetRotation_Tpl =
             v8::FunctionTemplate::New(isolate, GetRotation, v8::Local<v8::Value>(), GetRotation_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""Rotation").ToLocalChecked(), GetRotation_Tpl);
-        v8::Local<v8::Signature> SetRotation_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetRotation_Tpl =
-            v8::FunctionTemplate::New(isolate, SetRotation, v8::Local<v8::Value>(), SetRotation_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""Rotation").ToLocalChecked(), SetRotation_Tpl);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getRotation").ToLocalChecked(), GetRotation_Tpl);
         v8::Local<v8::Signature> GetCenterOffset_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetCenterOffset_Tpl =
             v8::FunctionTemplate::New(isolate, GetCenterOffset, v8::Local<v8::Value>(), GetCenterOffset_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""CenterOffset").ToLocalChecked(), GetCenterOffset_Tpl);
-        v8::Local<v8::Signature> SetCenterOffset_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetCenterOffset_Tpl =
-            v8::FunctionTemplate::New(isolate, SetCenterOffset, v8::Local<v8::Value>(), SetCenterOffset_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""CenterOffset").ToLocalChecked(), SetCenterOffset_Tpl);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getCenterOffset").ToLocalChecked(), GetCenterOffset_Tpl);
         v8::Local<v8::Signature> GetSpin_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetSpin_Tpl =
             v8::FunctionTemplate::New(isolate, GetSpin, v8::Local<v8::Value>(), GetSpin_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""Spin").ToLocalChecked(), GetSpin_Tpl);
-        v8::Local<v8::Signature> SetSpin_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetSpin_Tpl =
-            v8::FunctionTemplate::New(isolate, SetSpin, v8::Local<v8::Value>(), SetSpin_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""Spin").ToLocalChecked(), SetSpin_Tpl);
-        v8::Local<v8::Signature> GetMass_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> GetMass_Tpl =
-            v8::FunctionTemplate::New(isolate, GetMass, v8::Local<v8::Value>(), GetMass_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""Mass").ToLocalChecked(), GetMass_Tpl);
-        v8::Local<v8::Signature> SetMass_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetMass_Tpl =
-            v8::FunctionTemplate::New(isolate, SetMass, v8::Local<v8::Value>(), SetMass_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""Mass").ToLocalChecked(), SetMass_Tpl);
-        v8::Local<v8::Signature> GetMoveFriction_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> GetMoveFriction_Tpl =
-            v8::FunctionTemplate::New(isolate, GetMoveFriction, v8::Local<v8::Value>(), GetMoveFriction_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""MoveFriction").ToLocalChecked(), GetMoveFriction_Tpl);
-        v8::Local<v8::Signature> SetMoveFriction_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetMoveFriction_Tpl =
-            v8::FunctionTemplate::New(isolate, SetMoveFriction, v8::Local<v8::Value>(), SetMoveFriction_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""MoveFriction").ToLocalChecked(), SetMoveFriction_Tpl);
-        v8::Local<v8::Signature> GetSpinFriction_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> GetSpinFriction_Tpl =
-            v8::FunctionTemplate::New(isolate, GetSpinFriction, v8::Local<v8::Value>(), GetSpinFriction_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""SpinFriction").ToLocalChecked(), GetSpinFriction_Tpl);
-        v8::Local<v8::Signature> SetSpinFriction_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetSpinFriction_Tpl =
-            v8::FunctionTemplate::New(isolate, SetSpinFriction, v8::Local<v8::Value>(), SetSpinFriction_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""SpinFriction").ToLocalChecked(), SetSpinFriction_Tpl);
-        v8::Local<v8::Signature> GetSizeFriction_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> GetSizeFriction_Tpl =
-            v8::FunctionTemplate::New(isolate, GetSizeFriction, v8::Local<v8::Value>(), GetSizeFriction_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""SizeFriction").ToLocalChecked(), GetSizeFriction_Tpl);
-        v8::Local<v8::Signature> SetSizeFriction_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetSizeFriction_Tpl =
-            v8::FunctionTemplate::New(isolate, SetSizeFriction, v8::Local<v8::Value>(), SetSizeFriction_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""SizeFriction").ToLocalChecked(), SetSizeFriction_Tpl);
-        v8::Local<v8::Signature> Move_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> Move_Tpl =
-            v8::FunctionTemplate::New(isolate, Move, v8::Local<v8::Value>(), Move_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "move").ToLocalChecked(), Move_Tpl);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getSpin").ToLocalChecked(), GetSpin_Tpl);
+        v8::Local<v8::Signature> SetLocation_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetLocation_Tpl =
+            v8::FunctionTemplate::New(isolate, SetLocation, v8::Local<v8::Value>(), SetLocation_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setLocation").ToLocalChecked(), SetLocation_Tpl);
         v8::Local<v8::Signature> MoveTo_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> MoveTo_Tpl =
             v8::FunctionTemplate::New(isolate, MoveTo, v8::Local<v8::Value>(), MoveTo_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "moveTo").ToLocalChecked(), MoveTo_Tpl);
-        v8::Local<v8::Signature> SetVelocityInRadians_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetVelocityInRadians_Tpl =
-            v8::FunctionTemplate::New(isolate, SetVelocityInRadians, v8::Local<v8::Value>(), SetVelocityInRadians_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setVelocityInRadians").ToLocalChecked(), SetVelocityInRadians_Tpl);
-        v8::Local<v8::Signature> GetMovementDirectionInRadians_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> GetMovementDirectionInRadians_Tpl =
-            v8::FunctionTemplate::New(isolate, GetMovementDirectionInRadians, v8::Local<v8::Value>(), GetMovementDirectionInRadians_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getMovementDirectionInRadians").ToLocalChecked(), GetMovementDirectionInRadians_Tpl);
-        v8::Local<v8::Signature> StopMoving_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> StopMoving_Tpl =
-            v8::FunctionTemplate::New(isolate, StopMoving, v8::Local<v8::Value>(), StopMoving_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopMoving").ToLocalChecked(), StopMoving_Tpl);
-        v8::Local<v8::Signature> Accelerate_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> Accelerate_Tpl =
-            v8::FunctionTemplate::New(isolate, Accelerate, v8::Local<v8::Value>(), Accelerate_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "accelerate").ToLocalChecked(), Accelerate_Tpl);
-        v8::Local<v8::Signature> AccelerateTo_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> AccelerateTo_Tpl =
-            v8::FunctionTemplate::New(isolate, AccelerateTo, v8::Local<v8::Value>(), AccelerateTo_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "accelerateTo").ToLocalChecked(), AccelerateTo_Tpl);
+        v8::Local<v8::Signature> MoveBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> MoveBy_Tpl =
+            v8::FunctionTemplate::New(isolate, MoveBy, v8::Local<v8::Value>(), MoveBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "moveBy").ToLocalChecked(), MoveBy_Tpl);
+        v8::Local<v8::Signature> SetMovement_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetMovement_Tpl =
+            v8::FunctionTemplate::New(isolate, SetMovement, v8::Local<v8::Value>(), SetMovement_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setMovement").ToLocalChecked(), SetMovement_Tpl);
+        v8::Local<v8::Signature> ChangeMovementTo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeMovementTo_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeMovementTo, v8::Local<v8::Value>(), ChangeMovementTo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeMovementTo").ToLocalChecked(), ChangeMovementTo_Tpl);
+        v8::Local<v8::Signature> ChangeMovementBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeMovementBy_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeMovementBy, v8::Local<v8::Value>(), ChangeMovementBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeMovementBy").ToLocalChecked(), ChangeMovementBy_Tpl);
         v8::Local<v8::Signature> SetSize_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> SetSize_Tpl =
             v8::FunctionTemplate::New(isolate, SetSize, v8::Local<v8::Value>(), SetSize_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setSize").ToLocalChecked(), SetSize_Tpl);
+        v8::Local<v8::Signature> ChangeCenterOffsetTo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeCenterOffsetTo_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeCenterOffsetTo, v8::Local<v8::Value>(), ChangeCenterOffsetTo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeCenterOffsetTo").ToLocalChecked(), ChangeCenterOffsetTo_Tpl);
+        v8::Local<v8::Signature> ChangeCenterOffsetBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeCenterOffsetBy_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeCenterOffsetBy, v8::Local<v8::Value>(), ChangeCenterOffsetBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeCenterOffsetBy").ToLocalChecked(), ChangeCenterOffsetBy_Tpl);
+        v8::Local<v8::Signature> SetWidth_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetWidth_Tpl =
+            v8::FunctionTemplate::New(isolate, SetWidth, v8::Local<v8::Value>(), SetWidth_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setWidth").ToLocalChecked(), SetWidth_Tpl);
+        v8::Local<v8::Signature> SetHeight_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetHeight_Tpl =
+            v8::FunctionTemplate::New(isolate, SetHeight, v8::Local<v8::Value>(), SetHeight_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setHeight").ToLocalChecked(), SetHeight_Tpl);
+        v8::Local<v8::Signature> SetRotation_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetRotation_Tpl =
+            v8::FunctionTemplate::New(isolate, SetRotation, v8::Local<v8::Value>(), SetRotation_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setRotation").ToLocalChecked(), SetRotation_Tpl);
+        v8::Local<v8::Signature> SetSpin_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetSpin_Tpl =
+            v8::FunctionTemplate::New(isolate, SetSpin, v8::Local<v8::Value>(), SetSpin_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setSpin").ToLocalChecked(), SetSpin_Tpl);
+        v8::Local<v8::Signature> SetGrowing_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetGrowing_Tpl =
+            v8::FunctionTemplate::New(isolate, SetGrowing, v8::Local<v8::Value>(), SetGrowing_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setGrowing").ToLocalChecked(), SetGrowing_Tpl);
+        v8::Local<v8::Signature> SetStretching_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetStretching_Tpl =
+            v8::FunctionTemplate::New(isolate, SetStretching, v8::Local<v8::Value>(), SetStretching_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setStretching").ToLocalChecked(), SetStretching_Tpl);
+        v8::Local<v8::Signature> SetScale_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetScale_Tpl =
+            v8::FunctionTemplate::New(isolate, SetScale, v8::Local<v8::Value>(), SetScale_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setScale").ToLocalChecked(), SetScale_Tpl);
+        v8::Local<v8::Signature> ChangeSpinTo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeSpinTo_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeSpinTo, v8::Local<v8::Value>(), ChangeSpinTo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeSpinTo").ToLocalChecked(), ChangeSpinTo_Tpl);
+        v8::Local<v8::Signature> ChangeSpinBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeSpinBy_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeSpinBy, v8::Local<v8::Value>(), ChangeSpinBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeSpinBy").ToLocalChecked(), ChangeSpinBy_Tpl);
+        v8::Local<v8::Signature> ChangeGrowingTo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeGrowingTo_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeGrowingTo, v8::Local<v8::Value>(), ChangeGrowingTo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeGrowingTo").ToLocalChecked(), ChangeGrowingTo_Tpl);
+        v8::Local<v8::Signature> ChangeGrowingBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeGrowingBy_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeGrowingBy, v8::Local<v8::Value>(), ChangeGrowingBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeGrowingBy").ToLocalChecked(), ChangeGrowingBy_Tpl);
+        v8::Local<v8::Signature> ChangeStretchingTo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeStretchingTo_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeStretchingTo, v8::Local<v8::Value>(), ChangeStretchingTo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeStretchingTo").ToLocalChecked(), ChangeStretchingTo_Tpl);
+        v8::Local<v8::Signature> ChangeStretchingBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeStretchingBy_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeStretchingBy, v8::Local<v8::Value>(), ChangeStretchingBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeStretchingBy").ToLocalChecked(), ChangeStretchingBy_Tpl);
+        v8::Local<v8::Signature> ChangeScaleTo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeScaleTo_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeScaleTo, v8::Local<v8::Value>(), ChangeScaleTo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeScaleTo").ToLocalChecked(), ChangeScaleTo_Tpl);
+        v8::Local<v8::Signature> ChangeScaleBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ChangeScaleBy_Tpl =
+            v8::FunctionTemplate::New(isolate, ChangeScaleBy, v8::Local<v8::Value>(), ChangeScaleBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeScaleBy").ToLocalChecked(), ChangeScaleBy_Tpl);
         v8::Local<v8::Signature> Grow_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> Grow_Tpl =
             v8::FunctionTemplate::New(isolate, Grow, v8::Local<v8::Value>(), Grow_Sig);
@@ -281,30 +289,26 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> Stretch_Tpl =
             v8::FunctionTemplate::New(isolate, Stretch, v8::Local<v8::Value>(), Stretch_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stretch").ToLocalChecked(), Stretch_Tpl);
-        v8::Local<v8::Signature> StartGrowing_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> StartGrowing_Tpl =
-            v8::FunctionTemplate::New(isolate, StartGrowing, v8::Local<v8::Value>(), StartGrowing_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "startGrowing").ToLocalChecked(), StartGrowing_Tpl);
-        v8::Local<v8::Signature> StopGrowing_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> StopGrowing_Tpl =
-            v8::FunctionTemplate::New(isolate, StopGrowing, v8::Local<v8::Value>(), StopGrowing_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopGrowing").ToLocalChecked(), StopGrowing_Tpl);
-        v8::Local<v8::Signature> StartStretching_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> StartStretching_Tpl =
-            v8::FunctionTemplate::New(isolate, StartStretching, v8::Local<v8::Value>(), StartStretching_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "startStretching").ToLocalChecked(), StartStretching_Tpl);
-        v8::Local<v8::Signature> StopStretching_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> StopStretching_Tpl =
-            v8::FunctionTemplate::New(isolate, StopStretching, v8::Local<v8::Value>(), StopStretching_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopStretching").ToLocalChecked(), StopStretching_Tpl);
-        v8::Local<v8::Signature> Resize_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> Resize_Tpl =
-            v8::FunctionTemplate::New(isolate, Resize, v8::Local<v8::Value>(), Resize_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "resize").ToLocalChecked(), Resize_Tpl);
+        v8::Local<v8::Signature> ResizeBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ResizeBy_Tpl =
+            v8::FunctionTemplate::New(isolate, ResizeBy, v8::Local<v8::Value>(), ResizeBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "resizeBy").ToLocalChecked(), ResizeBy_Tpl);
         v8::Local<v8::Signature> ResizeTo_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> ResizeTo_Tpl =
             v8::FunctionTemplate::New(isolate, ResizeTo, v8::Local<v8::Value>(), ResizeTo_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "resizeTo").ToLocalChecked(), ResizeTo_Tpl);
+        v8::Local<v8::Signature> RotateBy_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> RotateBy_Tpl =
+            v8::FunctionTemplate::New(isolate, RotateBy, v8::Local<v8::Value>(), RotateBy_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "rotateBy").ToLocalChecked(), RotateBy_Tpl);
+        v8::Local<v8::Signature> RotateTo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> RotateTo_Tpl =
+            v8::FunctionTemplate::New(isolate, RotateTo, v8::Local<v8::Value>(), RotateTo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "rotateTo").ToLocalChecked(), RotateTo_Tpl);
+        v8::Local<v8::Signature> SetCenterOffset_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetCenterOffset_Tpl =
+            v8::FunctionTemplate::New(isolate, SetCenterOffset, v8::Local<v8::Value>(), SetCenterOffset_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setCenterOffset").ToLocalChecked(), SetCenterOffset_Tpl);
         v8::Local<v8::Signature> SetFlipX_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> SetFlipX_Tpl =
             v8::FunctionTemplate::New(isolate, SetFlipX, v8::Local<v8::Value>(), SetFlipX_Sig);
@@ -313,6 +317,34 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> SetFlipY_Tpl =
             v8::FunctionTemplate::New(isolate, SetFlipY, v8::Local<v8::Value>(), SetFlipY_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setFlipY").ToLocalChecked(), SetFlipY_Tpl);
+        v8::Local<v8::Signature> StopMovement_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> StopMovement_Tpl =
+            v8::FunctionTemplate::New(isolate, StopMovement, v8::Local<v8::Value>(), StopMovement_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopMovement").ToLocalChecked(), StopMovement_Tpl);
+        v8::Local<v8::Signature> StopSpinning_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> StopSpinning_Tpl =
+            v8::FunctionTemplate::New(isolate, StopSpinning, v8::Local<v8::Value>(), StopSpinning_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopSpinning").ToLocalChecked(), StopSpinning_Tpl);
+        v8::Local<v8::Signature> StopGrowing_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> StopGrowing_Tpl =
+            v8::FunctionTemplate::New(isolate, StopGrowing, v8::Local<v8::Value>(), StopGrowing_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopGrowing").ToLocalChecked(), StopGrowing_Tpl);
+        v8::Local<v8::Signature> StopStretching_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> StopStretching_Tpl =
+            v8::FunctionTemplate::New(isolate, StopStretching, v8::Local<v8::Value>(), StopStretching_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopStretching").ToLocalChecked(), StopStretching_Tpl);
+        v8::Local<v8::Signature> PauseSchedule_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> PauseSchedule_Tpl =
+            v8::FunctionTemplate::New(isolate, PauseSchedule, v8::Local<v8::Value>(), PauseSchedule_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "pauseSchedule").ToLocalChecked(), PauseSchedule_Tpl);
+        v8::Local<v8::Signature> ResumeSchedule_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ResumeSchedule_Tpl =
+            v8::FunctionTemplate::New(isolate, ResumeSchedule, v8::Local<v8::Value>(), ResumeSchedule_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "resumeSchedule").ToLocalChecked(), ResumeSchedule_Tpl);
+        v8::Local<v8::Signature> CancelSchedule_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> CancelSchedule_Tpl =
+            v8::FunctionTemplate::New(isolate, CancelSchedule, v8::Local<v8::Value>(), CancelSchedule_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "cancelSchedule").ToLocalChecked(), CancelSchedule_Tpl);
         v8::Local<v8::Signature> FlipX_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> FlipX_Tpl =
             v8::FunctionTemplate::New(isolate, FlipX, v8::Local<v8::Value>(), FlipX_Sig);
@@ -321,6 +353,10 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> FlipY_Tpl =
             v8::FunctionTemplate::New(isolate, FlipY, v8::Local<v8::Value>(), FlipY_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "flipY").ToLocalChecked(), FlipY_Tpl);
+        v8::Local<v8::Signature> AndThen_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> AndThen_Tpl =
+            v8::FunctionTemplate::New(isolate, AndThen, v8::Local<v8::Value>(), AndThen_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "andThen").ToLocalChecked(), AndThen_Tpl);
         v8::Local<v8::Signature> IsFlippedX_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> IsFlippedX_Tpl =
             v8::FunctionTemplate::New(isolate, IsFlippedX, v8::Local<v8::Value>(), IsFlippedX_Sig);
@@ -329,46 +365,18 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> IsFlippedY_Tpl =
             v8::FunctionTemplate::New(isolate, IsFlippedY, v8::Local<v8::Value>(), IsFlippedY_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "isFlippedY").ToLocalChecked(), IsFlippedY_Tpl);
-        v8::Local<v8::Signature> Rotate_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> Rotate_Tpl =
-            v8::FunctionTemplate::New(isolate, Rotate, v8::Local<v8::Value>(), Rotate_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "rotate").ToLocalChecked(), Rotate_Tpl);
-        v8::Local<v8::Signature> RotateTo_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> RotateTo_Tpl =
-            v8::FunctionTemplate::New(isolate, RotateTo, v8::Local<v8::Value>(), RotateTo_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "rotateTo").ToLocalChecked(), RotateTo_Tpl);
-        v8::Local<v8::Signature> StopSpinning_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> StopSpinning_Tpl =
-            v8::FunctionTemplate::New(isolate, StopSpinning, v8::Local<v8::Value>(), StopSpinning_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopSpinning").ToLocalChecked(), StopSpinning_Tpl);
-        v8::Local<v8::Signature> ChangeCenter_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> ChangeCenter_Tpl =
-            v8::FunctionTemplate::New(isolate, ChangeCenter, v8::Local<v8::Value>(), ChangeCenter_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeCenter").ToLocalChecked(), ChangeCenter_Tpl);
-        v8::Local<v8::Signature> ChangeCenterTo_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> ChangeCenterTo_Tpl =
-            v8::FunctionTemplate::New(isolate, ChangeCenterTo, v8::Local<v8::Value>(), ChangeCenterTo_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "changeCenterTo").ToLocalChecked(), ChangeCenterTo_Tpl);
+        v8::Local<v8::Signature> IsSchedulePaused_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> IsSchedulePaused_Tpl =
+            v8::FunctionTemplate::New(isolate, IsSchedulePaused, v8::Local<v8::Value>(), IsSchedulePaused_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "isSchedulePaused").ToLocalChecked(), IsSchedulePaused_Tpl);
+        v8::Local<v8::Signature> HasScheduledAnimations_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> HasScheduledAnimations_Tpl =
+            v8::FunctionTemplate::New(isolate, HasScheduledAnimations, v8::Local<v8::Value>(), HasScheduledAnimations_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "hasScheduledAnimations").ToLocalChecked(), HasScheduledAnimations_Tpl);
         v8::Local<v8::Signature> Wait_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> Wait_Tpl =
             v8::FunctionTemplate::New(isolate, Wait, v8::Local<v8::Value>(), Wait_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "wait").ToLocalChecked(), Wait_Tpl);
-        v8::Local<v8::Signature> SetFriction_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> SetFriction_Tpl =
-            v8::FunctionTemplate::New(isolate, SetFriction, v8::Local<v8::Value>(), SetFriction_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setFriction").ToLocalChecked(), SetFriction_Tpl);
-        v8::Local<v8::Signature> ApplyForce_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> ApplyForce_Tpl =
-            v8::FunctionTemplate::New(isolate, ApplyForce, v8::Local<v8::Value>(), ApplyForce_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "applyForce").ToLocalChecked(), ApplyForce_Tpl);
-        v8::Local<v8::Signature> ApplyTorque_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> ApplyTorque_Tpl =
-            v8::FunctionTemplate::New(isolate, ApplyTorque, v8::Local<v8::Value>(), ApplyTorque_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "applyTorque").ToLocalChecked(), ApplyTorque_Tpl);
-        v8::Local<v8::Signature> StopAllForces_Sig = v8::Signature::New(isolate, t);
-        v8::Local<v8::FunctionTemplate> StopAllForces_Tpl =
-            v8::FunctionTemplate::New(isolate, StopAllForces, v8::Local<v8::Value>(), StopAllForces_Sig);
-        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopAllForces").ToLocalChecked(), StopAllForces_Tpl);
         v8::Local<v8::Signature> AddAnimationHelper_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> AddAnimationHelper_Tpl =
             v8::FunctionTemplate::New(isolate, AddAnimationHelper, v8::Local<v8::Value>(), AddAnimationHelper_Sig);
@@ -397,6 +405,50 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> Deserialize_Tpl =
             v8::FunctionTemplate::New(isolate, Deserialize, v8::Local<v8::Value>(), Deserialize_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "deserialize").ToLocalChecked(), Deserialize_Tpl);
+        v8::Local<v8::Signature> CreateParticle_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> CreateParticle_Tpl =
+            v8::FunctionTemplate::New(isolate, CreateParticle, v8::Local<v8::Value>(), CreateParticle_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "createParticle").ToLocalChecked(), CreateParticle_Tpl);
+        v8::Local<v8::Signature> AddParticle_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> AddParticle_Tpl =
+            v8::FunctionTemplate::New(isolate, AddParticle, v8::Local<v8::Value>(), AddParticle_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "addParticle").ToLocalChecked(), AddParticle_Tpl);
+        v8::Local<v8::Signature> RemoveParticle_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> RemoveParticle_Tpl =
+            v8::FunctionTemplate::New(isolate, RemoveParticle, v8::Local<v8::Value>(), RemoveParticle_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "removeParticle").ToLocalChecked(), RemoveParticle_Tpl);
+        v8::Local<v8::Signature> RemoveAllParticles_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> RemoveAllParticles_Tpl =
+            v8::FunctionTemplate::New(isolate, RemoveAllParticles, v8::Local<v8::Value>(), RemoveAllParticles_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "removeAllParticles").ToLocalChecked(), RemoveAllParticles_Tpl);
+        v8::Local<v8::Signature> GetParticleCount_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetParticleCount_Tpl =
+            v8::FunctionTemplate::New(isolate, GetParticleCount, v8::Local<v8::Value>(), GetParticleCount_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getParticleCount").ToLocalChecked(), GetParticleCount_Tpl);
+        v8::Local<v8::Signature> GetNthParticle_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetNthParticle_Tpl =
+            v8::FunctionTemplate::New(isolate, GetNthParticle, v8::Local<v8::Value>(), GetNthParticle_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getNthParticle").ToLocalChecked(), GetNthParticle_Tpl);
+        v8::Local<v8::Signature> SetMaxParticles_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetMaxParticles_Tpl =
+            v8::FunctionTemplate::New(isolate, SetMaxParticles, v8::Local<v8::Value>(), SetMaxParticles_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "setMaxParticles").ToLocalChecked(), SetMaxParticles_Tpl);
+        v8::Local<v8::Signature> GetMaxParticles_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetMaxParticles_Tpl =
+            v8::FunctionTemplate::New(isolate, GetMaxParticles, v8::Local<v8::Value>(), GetMaxParticles_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getMaxParticles").ToLocalChecked(), GetMaxParticles_Tpl);
+        v8::Local<v8::Signature> CreateParticleEmitter_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> CreateParticleEmitter_Tpl =
+            v8::FunctionTemplate::New(isolate, CreateParticleEmitter, v8::Local<v8::Value>(), CreateParticleEmitter_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "createParticleEmitter").ToLocalChecked(), CreateParticleEmitter_Tpl);
+        v8::Local<v8::Signature> RemoveParticleEmitter_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> RemoveParticleEmitter_Tpl =
+            v8::FunctionTemplate::New(isolate, RemoveParticleEmitter, v8::Local<v8::Value>(), RemoveParticleEmitter_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "removeParticleEmitter").ToLocalChecked(), RemoveParticleEmitter_Tpl);
+        v8::Local<v8::Signature> RemoveAllParticleEmitters_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> RemoveAllParticleEmitters_Tpl =
+            v8::FunctionTemplate::New(isolate, RemoveAllParticleEmitters, v8::Local<v8::Value>(), RemoveAllParticleEmitters_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "removeAllParticleEmitters").ToLocalChecked(), RemoveAllParticleEmitters_Tpl);
         v8::Local<v8::Signature> SetSerializationFlags_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> SetSerializationFlags_Tpl =
             v8::FunctionTemplate::New(isolate, SetSerializationFlags, v8::Local<v8::Value>(), SetSerializationFlags_Sig);
@@ -926,6 +978,46 @@ namespace pdg
         args.GetReturnValue().SetUndefined();
     }
 
+    void SpriteLayerWrap::GetBoundingBox(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+
+        pdg::Rect theBoundingBox = self->getBoundingBox();
+        { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, theBoundingBox) ); return; };
+    }
+
+    void SpriteLayerWrap::GetRotatedBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object RotatedRect]" " function" "()").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+
+        pdg::RotatedRect theRotatedBounds = self->getRotatedBounds();
+        { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, theRotatedBounds) ); return; };
+    }
+
     void SpriteLayerWrap::GetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
@@ -946,7 +1038,7 @@ namespace pdg
         { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, theLocation) ); return; };
     }
 
-    void SpriteLayerWrap::SetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::GetMovement(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
@@ -954,33 +1046,7 @@ namespace pdg
 
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "([object Point] inLocation)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
-            return;
-        }
-        pdg::Point theLocation = v8_ValueToPoint(isolate, args[1 -1]);
-
-        self->setLocation(theLocation);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::GetSpeed(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
         };
         if (args.Length() != 0)
         {
@@ -988,11 +1054,11 @@ namespace pdg
             return;
         };
 
-        double theSpeed = self->getSpeed();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theSpeed) ); return; };
+        pdg::Offset theMovement = self->getMovement();
+        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theMovement) ); return; };
     }
 
-    void SpriteLayerWrap::SetSpeed(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::GetSize(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
@@ -1000,22 +1066,16 @@ namespace pdg
 
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inSpeed)").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
         };
-        if (args.Length() != 1)
+        if (args.Length() != 0)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theSpeed"")");
-            return;
-        }
-        double theSpeed = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        self->setSpeed(theSpeed);
-        { args.GetReturnValue().Set( args.This() ); return; };
+        pdg::Offset theSize = self->getSize();
+        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theSize) ); return; };
     }
 
     void SpriteLayerWrap::GetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1038,32 +1098,6 @@ namespace pdg
         { args.GetReturnValue().Set( v8::Number::New(isolate, theWidth) ); return; };
     }
 
-    void SpriteLayerWrap::SetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inWidth)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theWidth"")");
-            return;
-        }
-        double theWidth = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-
-        self->setWidth(theWidth);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
     void SpriteLayerWrap::GetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
@@ -1084,7 +1118,7 @@ namespace pdg
         { args.GetReturnValue().Set( v8::Number::New(isolate, theHeight) ); return; };
     }
 
-    void SpriteLayerWrap::SetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::GetScale(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
@@ -1092,25 +1126,19 @@ namespace pdg
 
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inHeight)").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
         };
-        if (args.Length() != 1)
+        if (args.Length() != 0)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theHeight"")");
-            return;
-        }
-        double theHeight = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        self->setHeight(theHeight);
-        { args.GetReturnValue().Set( args.This() ); return; };
+        pdg::Offset theScale = self->getScale();
+        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theScale) ); return; };
     }
 
-    void SpriteLayerWrap::SetFlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::GetStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
@@ -1118,48 +1146,16 @@ namespace pdg
 
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(boolean inFlipX)").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
         };
-        if (args.Length() != 1)
+        if (args.Length() != 0)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
-        if (!args[1 -1]->IsBoolean())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a boolean (""theFlipX"")");
-            return;
-        }
-        bool theFlipX = args[1 -1]->BooleanValue(isolate);
 
-        self->setFlipX(theFlipX);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::SetFlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(boolean inFlipY)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsBoolean())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a boolean (""theFlipY"")");
-            return;
-        }
-        bool theFlipY = args[1 -1]->BooleanValue(isolate);
-
-        self->setFlipY(theFlipY);
-        { args.GetReturnValue().Set( args.This() ); return; };
+        pdg::Offset theStretching = self->getStretching();
+        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theStretching) ); return; };
     }
 
     void SpriteLayerWrap::GetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1182,32 +1178,6 @@ namespace pdg
         { args.GetReturnValue().Set( v8::Number::New(isolate, theRotation) ); return; };
     }
 
-    void SpriteLayerWrap::SetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inRotation)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theRotation"")");
-            return;
-        }
-        double theRotation = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-
-        self->setRotation(theRotation);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
     void SpriteLayerWrap::GetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
@@ -1226,32 +1196,6 @@ namespace pdg
 
         pdg::Offset theCenterOffset = self->getCenterOffset();
         { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theCenterOffset) ); return; };
-    }
-
-    void SpriteLayerWrap::SetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "([object Offset] inCenterOffset)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
-            return;
-        }
-        pdg::Offset theCenterOffset = v8_ValueToOffset(isolate, args[1 -1]);
-
-        self->setCenterOffset(theCenterOffset);
-        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void SpriteLayerWrap::GetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1274,337 +1218,73 @@ namespace pdg
         { args.GetReturnValue().Set( v8::Number::New(isolate, theSpin) ); return; };
     }
 
-    void SpriteLayerWrap::SetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::SetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inSpin)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theSpin"")");
-            return;
-        }
-        double theSpin = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-
-        self->setSpin(theSpin);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::GetMass(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        double theMass = self->getMass();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theMass) ); return; };
-    }
-
-    void SpriteLayerWrap::SetMass(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inMass)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theMass"")");
-            return;
-        }
-        double theMass = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-
-        self->setMass(theMass);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::GetMoveFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        double theMoveFriction = self->getMoveFriction();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theMoveFriction) ); return; };
-    }
-
-    void SpriteLayerWrap::SetMoveFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inMoveFriction)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theMoveFriction"")");
-            return;
-        }
-        double theMoveFriction = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-
-        self->setMoveFriction(theMoveFriction);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::GetSpinFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        double theSpinFriction = self->getSpinFriction();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theSpinFriction) ); return; };
-    }
-
-    void SpriteLayerWrap::SetSpinFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inSpinFriction)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theSpinFriction"")");
-            return;
-        }
-        double theSpinFriction = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-
-        self->setSpinFriction(theSpinFriction);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::GetSizeFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        double theSizeFriction = self->getSizeFriction();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theSizeFriction) ); return; };
-    }
-
-    void SpriteLayerWrap::SetSizeFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "(number inSizeFriction)").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""theSizeFriction"")");
-            return;
-        }
-        double theSizeFriction = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-
-        self->setSizeFriction(theSizeFriction);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::GetBoundingBox(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        pdg::Rect r = self->getBoundingBox();
-        { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, r) ); return; };
-    }
-
-    void SpriteLayerWrap::GetRotatedBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object RotatedRect]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        pdg::RotatedRect r = self->getRotatedBounds();
-        { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, r) ); return; };
-    }
-
-    void SpriteLayerWrap::Move(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Offset] delta, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        pdg::Offset delta;
-        int32 msDuration;
-        int easing;
-        if (v8_ValueIsOffset(isolate, args[0]))
-        {
-            delta = v8_ValueToOffset(isolate, args[0]);
-            if (args.Length() >= 2 && !args[2 -1]->IsNumber())
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration_2"")");
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Point] value|number x, number y})" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
                 return;
-            }
-            long msDuration_2 = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            };
+            pdg::Point value;
+            auto isPoint = v8_ValueIsPoint(isolate, args[0], value);
+            if (!isPoint.has_value())
             {
-                v8_ThrowArgTypeException(isolate, 3, "a number (""easing_3"")");
-                return;
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
             }
-            long easing_3 = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            msDuration = msDuration_2;
-            easing = easing_3;
-        }
-        else
-        {
-            if (!args[1 -1]->IsNumber())
+            if (*isPoint)
             {
-                v8_ThrowArgTypeException(isolate, 1, "a number (""deltaX"")");
-                return;
-            }
-            double deltaX = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            if (!args[2 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""deltaY"")");
-                return;
-            }
-            double deltaY = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            delta.x = deltaX;
-            delta.y = deltaY;
-            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 3, "a number (""msDuration_3"")");
-                return;
-            }
-            long msDuration_3 = (args.Length()<3) ? duration_Instantaneous : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 4, "a number (""easing_4"")");
-                return;
-            }
-            long easing_4 = (args.Length()<4) ? EasingFuncRef::easeInOutQuad : args[4 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            msDuration = msDuration_3;
-            easing = easing_4;
-        }
-        if (msDuration || self->mDelayMs)
-        {
-            if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-            {
-                self->move(delta, msDuration, gEasingFunctions[easing]);
+                if (args.Length() != 1)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 1);
+                    return;
+                };
+                self->setLocation(value); { args.GetReturnValue().Set( args.This() ); return; };
             }
             else
             {
-                self->move(delta, msDuration);
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
+                    return;
+                }
+                double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
+                    return;
+                }
+                double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() != 2)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 2);
+                    return;
+                };
+                self->setLocation(x, y); { args.GetReturnValue().Set( args.This() ); return; };
             }
         }
-        else
+        catch (const std::exception& error)
         {
-            self->move(delta);
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
         }
-        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void SpriteLayerWrap::MoveTo(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1613,38 +1293,1871 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] where, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        pdg::Point where;
-        int32 msDuration;
-        int easing;
-        if (v8_ValueIsPoint(isolate, args[0]))
-        {
-            where = v8_ValueToPoint(isolate, args[0]);
-            if (args.Length() >= 2 && !args[2 -1]->IsNumber())
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration_2"")");
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Point] value|number x, number y}, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            pdg::Point value;
+            auto isPoint = v8_ValueIsPoint(isolate, args[0], value);
+            if (!isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (*isPoint)
+            {
+                if (args.Length() == 1)
+                {
+                    self->moveTo(value);
+                    {
+                        args.GetReturnValue().Set( args.This() ); return;
+                    };
+                }
+                if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->moveTo(value, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
+                    return;
+                }
+                double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
+                    return;
+                }
+                double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() == 2)
+                {
+                    self->moveTo(x, y);
+                    {
+                        args.GetReturnValue().Set( args.This() ); return;
+                    };
+                }
+                if (!args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->moveTo(x, y, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::MoveBy(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Offset] value|number x, number y}, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            pdg::Offset value;
+            auto converted = v8_ValueIsOffset(isolate, args[0], value);
+            if (!converted.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (*converted)
+            {
+                if (args.Length() == 1)
+                {
+                    self->moveBy(value);
+                    {
+                        args.GetReturnValue().Set( args.This() ); return;
+                    };
+                }
+                if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->moveBy(value, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
+                    return;
+                }
+                double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
+                    return;
+                }
+                double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() == 2)
+                {
+                    self->moveBy(x, y);
+                    {
+                        args.GetReturnValue().Set( args.This() ); return;
+                    };
+                }
+                if (!args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->moveBy(x, y, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetMovement(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Vector] value|number xPerSecond, number yPerSecond})" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            pdg::Vector value;
+            auto converted = v8_ValueIsVector(isolate, args[0], value);
+            if (!converted.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (*converted)
+            {
+                if (args.Length() != 1)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 1);
+                    return;
+                };
+                self->setMovement(value); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""xPerSecond"")");
+                    return;
+                }
+                double xPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""yPerSecond"")");
+                    return;
+                }
+                double yPerSecond = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() != 2)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 2);
+                    return;
+                };
+                self->setMovement(xPerSecond, yPerSecond); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeMovementTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Vector] value|number xPerSecond, number yPerSecond}, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            pdg::Vector value;
+            auto converted = v8_ValueIsVector(isolate, args[0], value);
+            if (!converted.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (*converted)
+            {
+                if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::linearTween) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->changeMovementTo(value, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""xPerSecond"")");
+                    return;
+                }
+                double xPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""yPerSecond"")");
+                    return;
+                }
+                double yPerSecond = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (!args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::linearTween) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->changeMovementTo(xPerSecond, yPerSecond, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeMovementBy(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Vector] value|number xPerSecond, number yPerSecond}, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            pdg::Vector value;
+            auto converted = v8_ValueIsVector(isolate, args[0], value);
+            if (!converted.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (*converted)
+            {
+                if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::linearTween) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->changeMovementBy(value, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""xPerSecond"")");
+                    return;
+                }
+                double xPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""yPerSecond"")");
+                    return;
+                }
+                double yPerSecond = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (!args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::linearTween) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->changeMovementBy(xPerSecond, yPerSecond, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetSize(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Offset] value|number width, number height})" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            pdg::Offset value;
+            auto converted = v8_ValueIsOffset(isolate, args[0], value);
+            if (!converted.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (*converted)
+            {
+                if (args.Length() != 1)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 1);
+                    return;
+                };
+                self->setSize(value); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""width"")");
+                    return;
+                }
+                double width = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""height"")");
+                    return;
+                }
+                double height = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() != 2)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 2);
+                    return;
+                };
+                self->setSize(width, height); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeCenterOffsetTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Offset] value|number x, number y}, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            pdg::Offset value;
+            auto converted = v8_ValueIsOffset(isolate, args[0], value);
+            if (!converted.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (*converted)
+            {
+                if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->changeCenterOffsetTo(value, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
+                    return;
+                }
+                double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
+                    return;
+                }
+                double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (!args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->changeCenterOffsetTo(x, y, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeCenterOffsetBy(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Offset] value|number x, number y}, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            pdg::Offset value;
+            auto converted = v8_ValueIsOffset(isolate, args[0], value);
+            if (!converted.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (*converted)
+            {
+                if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->changeCenterOffsetBy(value, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
+                    return;
+                }
+                double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!args[2 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
+                    return;
+                }
+                double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (!args[3 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                    return;
+                }
+                double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+                if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                    return;
+                }
+                double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Expected an integer easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                const int easing = static_cast<int>(easingValue);
+                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "Unknown easing constant";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->changeCenterOffsetBy(x, y, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""value"")");
                 return;
             }
-            long msDuration_2 = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
+            double value = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            self->setWidth(value); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""value"")");
+                return;
+            }
+            double value = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            self->setHeight(value); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""value"")");
+                return;
+            }
+            double value = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            self->setRotation(value); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""value"")");
+                return;
+            }
+            double value = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            self->setSpin(value); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""value"")");
+                return;
+            }
+            double value = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            self->setGrowing(value); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number widthPerSecond, number heightPerSecond)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""widthPerSecond"")");
+                return;
+            }
+            double widthPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""heightPerSecond"")");
+                return;
+            }
+            double heightPerSecond = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() != 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2);
+                return;
+            };
+            self->setStretching(widthPerSecond, heightPerSecond); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetScale(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number x, number y = x)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
+                return;
+            }
+            double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (args.Length() >= 2 && !args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
+                return;
+            }
+            double y = (args.Length()<2) ? x : args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            self->setScale(x, y); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeSpinTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number radiansPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""radiansPerSecond"")");
+                return;
+            }
+            double radiansPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
             if (args.Length() >= 3 && !args[3 -1]->IsNumber())
             {
-                v8_ThrowArgTypeException(isolate, 3, "a number (""easing_3"")");
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
                 return;
             }
-            long easing_3 = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            easing = easing_3;
-            msDuration = msDuration_2;
+            double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::linearTween) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->changeSpinTo(radiansPerSecond, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        else
+        catch (const std::exception& error)
         {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeSpinBy(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number radiansPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""radiansPerSecond"")");
+                return;
+            }
+            double radiansPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::linearTween) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->changeSpinBy(radiansPerSecond, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeGrowingTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number amountPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""amountPerSecond"")");
+                return;
+            }
+            double amountPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::linearTween) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->changeGrowingTo(amountPerSecond, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeGrowingBy(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number amountPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""amountPerSecond"")");
+                return;
+            }
+            double amountPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::linearTween) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->changeGrowingBy(amountPerSecond, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeStretchingTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number widthPerSecond, number heightPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""widthPerSecond"")");
+                return;
+            }
+            double widthPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""heightPerSecond"")");
+                return;
+            }
+            double heightPerSecond = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::linearTween) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->changeStretchingTo(widthPerSecond, heightPerSecond, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeStretchingBy(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number widthPerSecond, number heightPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""widthPerSecond"")");
+                return;
+            }
+            double widthPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""heightPerSecond"")");
+                return;
+            }
+            double heightPerSecond = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::linearTween) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->changeStretchingBy(widthPerSecond, heightPerSecond, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::ChangeScaleTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number x, number y, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
             if (!args[1 -1]->IsNumber())
             {
                 v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
@@ -1657,287 +3170,151 @@ namespace pdg
                 return;
             }
             double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            where.x = x;
-            where.y = y;
-            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            if (!args[3 -1]->IsNumber())
             {
-                v8_ThrowArgTypeException(isolate, 3, "a number (""msDuration3"")");
+                v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
                 return;
             }
-            long msDuration3 = (args.Length()<3) ? duration_Instantaneous : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
+            double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
             if (args.Length() >= 4 && !args[4 -1]->IsNumber())
             {
-                v8_ThrowArgTypeException(isolate, 4, "a number (""easing_4"")");
+                v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
                 return;
             }
-            long easing_4 = (args.Length()<4) ? EasingFuncRef::easeInOutQuad : args[4 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            easing = easing_4;
-            msDuration = msDuration3;
-        }
-        if (msDuration || self->mDelayMs)
-        {
-            if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
+            double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
             {
-                self->moveTo(where, msDuration, gEasingFunctions[easing]);
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
             }
-            else
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
             {
-                self->moveTo(where, msDuration);
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
             }
+            self->changeScaleTo(x, y, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        else
+        catch (const std::exception& error)
         {
-            self->moveTo(where);
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
         }
-        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
-    void SpriteLayerWrap::SetVelocityInRadians(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::ChangeScaleBy(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number speed, number direction)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""speed"")");
-            return;
-        }
-        double speed = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""direction"")");
-            return;
-        }
-        double direction = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->setVelocityInRadians(speed, direction);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::GetMovementDirectionInRadians(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        float dir = self->getMovementDirectionInRadians();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, dir) ); return; };
-    }
-
-    void SpriteLayerWrap::SetVelocity(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Vector] deltaPerSec|number deltaXPerSec, number deltaYPerSec})" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        pdg::Vector deltaPerSec;
-        if (v8_ValueIsVector(isolate, args[0]))
-        {
-            deltaPerSec = v8_ValueToVector(isolate, args[0]);
-            self->setVelocity(deltaPerSec);
-        }
-        else
-        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number x, number y, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
             if (!args[1 -1]->IsNumber())
             {
-                v8_ThrowArgTypeException(isolate, 1, "a number (""deltaXPerSec"")");
+                v8_ThrowArgTypeException(isolate, 1, "a number (""x"")");
                 return;
             }
-            double deltaXPerSec = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            double x = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
             if (!args[2 -1]->IsNumber())
             {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""deltaYPerSec"")");
+                v8_ThrowArgTypeException(isolate, 2, "a number (""y"")");
                 return;
             }
-            double deltaYPerSec = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            self->setVelocity(Vector(deltaXPerSec, deltaYPerSec));
+            double y = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->changeScaleBy(x, y, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::GetVelocity(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
+        catch (const std::exception& error)
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Vector]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::Vector theVelocity = self->getVelocity();
-        { args.GetReturnValue().Set( v8_MakeJavascriptVector(isolate, theVelocity) ); return; };
-    }
-
-    void SpriteLayerWrap::StopMoving(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->stopMoving();
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::Accelerate(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number deltaSpeed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""deltaSpeed"")");
-            return;
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
         }
-        double deltaSpeed = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 2 && !args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
-            return;
-        }
-        long easing = (args.Length()<3) ? EasingFuncRef::linearTween : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->accelerate(deltaSpeed, msDuration, gEasingFunctions[easing]);
-        }
-        else
-        {
-            self->accelerate(deltaSpeed, msDuration);
-        }
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::AccelerateTo(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number speed, [number int] msDuration = duration_Instantaneous, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""speed"")");
-            return;
-        }
-        double speed = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 2 && !args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
-            return;
-        }
-        long easing = (args.Length()<3) ? EasingFuncRef::linearTween : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->accelerateTo(speed, msDuration, gEasingFunctions[easing]);
-        }
-        else
-        {
-            self->accelerateTo(speed, msDuration);
-        }
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::SetSize(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number width, number height)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""width"")");
-            return;
-        }
-        double width = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""height"")");
-            return;
-        }
-        double height = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->setSize(width, height);
-        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void SpriteLayerWrap::Grow(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1946,49 +3323,87 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number factor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
-            return;
-        }
-        double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 2 && !args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
-            return;
-        }
-        long easing = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (msDuration == 0)
-        {
-            self->grow(factor);
-        }
-        else
-        {
-            if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                self->grow(factor, msDuration, gEasingFunctions[easing]);
-            }
-            else
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number factor, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
             {
-                self->grow(factor, msDuration);
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
             }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() == 1)
+            {
+                self->grow(factor);
+                {
+                    args.GetReturnValue().Set( args.This() ); return;
+                };
+            }
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->grow(factor, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        { args.GetReturnValue().Set( args.This() ); return; };
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::Stretch(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1997,199 +3412,188 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number widthFactor, number heightFactor, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""widthFactor"")");
-            return;
-        }
-        double widthFactor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""heightFactor"")");
-            return;
-        }
-        double heightFactor = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 3, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<3) ? 0 : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 4 && !args[4 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 4, "a number (""easing"")");
-            return;
-        }
-        long easing = (args.Length()<4) ? EasingFuncRef::easeInOutQuad : args[4 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (msDuration == 0)
-        {
-            self->stretch(widthFactor, heightFactor);
-        }
-        else
-        {
-            if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                self->stretch(widthFactor, heightFactor, msDuration, gEasingFunctions[easing]);
-            }
-            else
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number widthFactor, number heightFactor, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 2)
             {
-                self->stretch(widthFactor, heightFactor, msDuration);
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""widthFactor"")");
+                return;
             }
+            double widthFactor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""heightFactor"")");
+                return;
+            }
+            double heightFactor = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() == 2)
+            {
+                self->stretch(widthFactor, heightFactor);
+                {
+                    args.GetReturnValue().Set( args.This() ); return;
+                };
+            }
+            if (!args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->stretch(widthFactor, heightFactor, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        { args.GetReturnValue().Set( args.This() ); return; };
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
-    void SpriteLayerWrap::StartGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::ResizeBy(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number amountPerSecond)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""amountPerSecond"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number deltaWidth, number deltaHeight, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""deltaWidth"")");
+                return;
+            }
+            double deltaWidth = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""deltaHeight"")");
+                return;
+            }
+            double deltaHeight = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() == 2)
+            {
+                self->resizeBy(deltaWidth, deltaHeight);
+                {
+                    args.GetReturnValue().Set( args.This() ); return;
+                };
+            }
+            if (!args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->resizeBy(deltaWidth, deltaHeight, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        double amountPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->startGrowing(amountPerSecond);
-        args.GetReturnValue().SetUndefined();
-    }
-
-    void SpriteLayerWrap::StopGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
+        catch (const std::exception& error)
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->stopGrowing();
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::StartStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number widthPerSecond, number heightPerSecond)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 2)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 2);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""widthPerSecond"")");
-            return;
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
         }
-        double widthPerSecond = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""heightPerSecond"")");
-            return;
-        }
-        double heightPerSecond = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->startStretching(widthPerSecond, heightPerSecond);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::StopStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->stopStretching();
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::Resize(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number deltaWidth, number deltaHeight, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 3)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 3, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""deltaWidth"")");
-            return;
-        }
-        double deltaWidth = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""deltaHeight"")");
-            return;
-        }
-        double deltaHeight = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 3, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<3) ? duration_Instantaneous : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 4 && !args[4 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 4, "a number (""easing"")");
-            return;
-        }
-        long easing = (args.Length()<4) ? EasingFuncRef::easeInOutQuad : args[4 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->resize(deltaWidth, deltaHeight, msDuration, gEasingFunctions[easing]);
-        }
-        else
-        {
-            self->resize(deltaWidth, deltaHeight, msDuration);
-        }
-        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void SpriteLayerWrap::ResizeTo(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2198,175 +3602,197 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number width, number height, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 3)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 3, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""width"")");
-            return;
-        }
-        double width = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (!args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""height"")");
-            return;
-        }
-        double height = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 3, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<3) ? duration_Instantaneous : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 4 && !args[4 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 4, "a number (""easing"")");
-            return;
-        }
-        long easing = (args.Length()<4) ? EasingFuncRef::easeInOutQuad : args[4 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->resizeTo(width, height, msDuration, gEasingFunctions[easing]);
-        }
-        else
-        {
-            self->resizeTo(width, height, msDuration);
-        }
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::FlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "flips the object horizontally, center offset is flipped too. Applied before other transformations.").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->flipX();
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::FlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "flips the object vertically, center offset is flipped too. Applied before other transformations.").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->flipY();
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::IsFlippedX(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "returns true if the object is flipped horizontally").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        bool theFlipX = self->isFlippedX();
-        { args.GetReturnValue().Set( v8::Boolean::New(isolate, theFlipX) ); return; };
-    }
-
-    void SpriteLayerWrap::IsFlippedY(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "returns true if the object is flipped vertically").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        bool theFlipY = self->isFlippedY();
-        { args.GetReturnValue().Set( v8::Boolean::New(isolate, theFlipY) ); return; };
-    }
-
-    void SpriteLayerWrap::Rotate(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number radians, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""radians"")");
-            return;
-        }
-        double radians = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 2 && !args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<2) ? 0 : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
-            return;
-        }
-        long easing = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (msDuration == 0)
-        {
-            self->rotate(radians);
-        }
-        else
-        {
-            if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                self->rotate(radians, msDuration, gEasingFunctions[easing]);
-            }
-            else
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number width, number height, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 2)
             {
-                self->rotate(radians, msDuration);
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""width"")");
+                return;
             }
+            double width = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""height"")");
+                return;
+            }
+            double height = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 4, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            self->resizeTo(width, height, durationSeconds, gEasingFunctions[easing]); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        { args.GetReturnValue().Set( args.This() ); return; };
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::RotateBy(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number radians, number durationSeconds = 0, [number int] easing = easeInOutQuad, [number int] direction = rotationDirection_AsSpecified)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""radians"")");
+                return;
+            }
+            double radians = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() == 1)
+            {
+                self->rotateBy(radians);
+                {
+                    args.GetReturnValue().Set( args.This() ); return;
+                };
+            }
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 4, "a number (""directionValue"")");
+                return;
+            }
+            double directionValue = (args.Length()<4) ? static_cast<int>(rotationDirection_AsSpecified) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(directionValue) || std::floor(directionValue) != directionValue || directionValue < 0 || directionValue > 3)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer rotation direction";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int direction = static_cast<int>(directionValue);
+            self->rotateBy(radians, durationSeconds, gEasingFunctions[easing], direction); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::RotateTo(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2375,49 +3801,265 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number radiansRotation, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""radiansRotation"")");
-            return;
-        }
-        double radiansRotation = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 2 && !args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
-            return;
-        }
-        long easing = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (msDuration == 0)
-        {
-            self->rotateTo(radiansRotation);
-        }
-        else
-        {
-            if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                self->rotateTo(radiansRotation, msDuration, gEasingFunctions[easing]);
-            }
-            else
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number radians, number durationSeconds = 0, [number int] easing = easeInOutQuad, [number int] direction = rotationDirection_AsSpecified)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
             {
-                self->rotateTo(radiansRotation, msDuration);
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""radians"")");
+                return;
             }
+            double radians = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() == 1)
+            {
+                self->rotateTo(radians);
+                {
+                    args.GetReturnValue().Set( args.This() ); return;
+                };
+            }
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easingValue"")");
+                return;
+            }
+            double easingValue = (args.Length()<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : args[3 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int easing = static_cast<int>(easingValue);
+            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Unknown easing constant";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 4, "a number (""directionValue"")");
+                return;
+            }
+            double directionValue = (args.Length()<4) ? static_cast<int>(rotationDirection_AsSpecified) : args[4 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (!std::isfinite(directionValue) || std::floor(directionValue) != directionValue || directionValue < 0 || directionValue > 3)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "Expected an integer rotation direction";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            const int direction = static_cast<int>(directionValue);
+            self->rotateTo(radians, durationSeconds, gEasingFunctions[easing], direction); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        { args.GetReturnValue().Set( args.This() ); return; };
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "([object Offset] offset)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            }; pdg::Offset offset;
+            auto offset_isOffset = v8_ValueIsOffset(isolate, args[1 -1], offset);
+            if (!offset_isOffset.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*offset_isOffset)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
+                return;
+            };
+            self->setCenterOffset(offset); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetFlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(boolean flip)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsBoolean())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a boolean (""flip"")");
+                return;
+            }
+            bool flip = args[1 -1]->BooleanValue(isolate);
+            self->setFlipX(flip); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetFlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(boolean flip)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsBoolean())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a boolean (""flip"")");
+                return;
+            }
+            bool flip = args[1 -1]->BooleanValue(isolate);
+            self->setFlipY(flip); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::StopMovement(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->stopMovement(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::StopSpinning(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2426,173 +4068,427 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->stopSpinning(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->stopSpinning();
-        { args.GetReturnValue().Set( args.This() ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
-    void SpriteLayerWrap::ChangeCenter(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::StopGrowing(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        pdg::Offset offset;
-        int32 msDuration;
-        int easing;
-        if (v8_ValueIsOffset(isolate, args[0]))
-        {
-            offset = v8_ValueToOffset(isolate, args[0]);
-            if (args.Length() >= 2 && !args[2 -1]->IsNumber())
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration_2"")");
-                return;
-            }
-            long msDuration_2 = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
             {
-                v8_ThrowArgTypeException(isolate, 3, "a number (""easing_3"")");
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
                 return;
-            }
-            long easing_3 = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            easing = easing_3;
-            msDuration = msDuration_2;
+            };
+            self->stopGrowing(); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        else
+        catch (const std::exception& error)
         {
-            if (!args[1 -1]->IsNumber())
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
             {
-                v8_ThrowArgTypeException(isolate, 1, "a number (""deltaXOffset"")");
-                return;
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }
-            double deltaXOffset = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            if (!args[2 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""deltaYOffset"")");
-                return;
-            }
-            double deltaYOffset = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            offset.x = deltaXOffset;
-            offset.y = deltaYOffset;
-            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 3, "a number (""msDuration_3"")");
-                return;
-            }
-            long msDuration_3 = (args.Length()<3) ? duration_Instantaneous : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 4, "a number (""easing_4"")");
-                return;
-            }
-            long easing_4 = (args.Length()<4) ? EasingFuncRef::easeInOutQuad : args[4 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            easing = easing_4;
-            msDuration = msDuration_3;
+            ())));
         }
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->changeCenter(offset, msDuration, gEasingFunctions[easing]);
-        }
-        else
-        {
-            self->changeCenter(offset, msDuration);
-        }
-        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
-    void SpriteLayerWrap::ChangeCenterTo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    void SpriteLayerWrap::StopStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Offset] offset, [number int] msDuration = duration_Instantaneous, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        pdg::Offset offset;
-        int32 msDuration;
-        int easing;
-        if (v8_ValueIsOffset(isolate, args[0]))
-        {
-            offset = v8_ValueToOffset(isolate, args[0]);
-            if (args.Length() >= 2 && !args[2 -1]->IsNumber())
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration_2"")");
-                return;
-            }
-            long msDuration_2 = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
             {
-                v8_ThrowArgTypeException(isolate, 3, "a number (""easing_3"")");
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
                 return;
-            }
-            long easing_3 = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            easing = easing_3;
-            msDuration = msDuration_2;
+            };
+            self->stopStretching(); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        else
+        catch (const std::exception& error)
         {
-            if (!args[1 -1]->IsNumber())
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
             {
-                v8_ThrowArgTypeException(isolate, 1, "a number (""deltaXOffset"")");
-                return;
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }
-            double deltaXOffset = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            if (!args[2 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 2, "a number (""deltaYOffset"")");
-                return;
-            }
-            double deltaYOffset = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-            offset.x = deltaXOffset;
-            offset.y = deltaYOffset;
-            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 3, "a number (""msDuration_3"")");
-                return;
-            }
-            long msDuration_3 = (args.Length()<3) ? duration_Instantaneous : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            if (args.Length() >= 4 && !args[4 -1]->IsNumber())
-            {
-                v8_ThrowArgTypeException(isolate, 4, "a number (""easing_4"")");
-                return;
-            }
-            long easing_4 = (args.Length()<4) ? EasingFuncRef::easeInOutQuad : args[4 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-            easing = easing_4;
-            msDuration = msDuration_3;
+            ())));
         }
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
+    }
+
+    void SpriteLayerWrap::PauseSchedule(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
         {
-            self->changeCenterTo(offset, msDuration, gEasingFunctions[easing]);
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->pauseSchedule(); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        else
+        catch (const std::exception& error)
         {
-            self->changeCenterTo(offset, msDuration);
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
         }
-        { args.GetReturnValue().Set( args.This() ); return; };
+    }
+
+    void SpriteLayerWrap::ResumeSchedule(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->resumeSchedule(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::CancelSchedule(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->cancelSchedule(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::FlipX(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->flipX(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::FlipY(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->flipY(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::AndThen(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->andThen(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::IsFlippedX(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->isFlippedX()) ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::IsFlippedY(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->isFlippedY()) ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::IsSchedulePaused(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->isSchedulePaused()) ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::HasScheduledAnimations(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        try
+        {
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->hasScheduledAnimations()) ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::Wait(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2601,129 +4497,42 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "([number int] msDuration)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""msDuration"")");
-            return;
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number durationSeconds)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""durationSeconds"")");
+                return;
+            }
+            double durationSeconds = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            self->wait(durationSeconds); { args.GetReturnValue().Set( args.This() ); return; };
         }
-        long msDuration = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
-        self->wait(msDuration);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::SetFriction(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
+        catch (const std::exception& error)
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number frictionCoefficient)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""frictionCoefficient"")");
-            return;
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
         }
-        double frictionCoefficient = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        self->setFriction(frictionCoefficient);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::ApplyForce(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Vector] force, [number int] msDuration = duration_Instantaneous)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        if (!v8_ValueIsVector(isolate, args[1 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 1, "Vector", *args[1 -1]);
-            return;
-        }
-        pdg::Vector force = v8_ValueToVector(isolate, args[1 -1]);
-        if (args.Length() >= 2 && !args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        self->applyForce(force, msDuration);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::ApplyTorque(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number forceSpin, [number int] msDuration = duration_Instantaneous)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() < 1)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
-            return;
-        };
-        if (!args[1 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""forceSpin"")");
-            return;
-        }
-        double forceSpin = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
-        if (args.Length() >= 2 && !args[2 -1]->IsNumber())
-        {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
-            return;
-        }
-        long msDuration = (args.Length()<2) ? duration_Instantaneous : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        self->applyTorque(forceSpin, msDuration);
-        { args.GetReturnValue().Set( args.This() ); return; };
-    }
-
-    void SpriteLayerWrap::StopAllForces(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
-        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
-
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
-        {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->stopAllForces();
-        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void SpriteLayerWrap::AddAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2732,56 +4541,71 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object IAnimationHelper] helper)" " - " "").ToLocalChecked() ); return; };
-        };
-        self->mAnimatedScriptObj.Reset(isolate, args.This());
-        SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
-        {
-            std::cerr << __func__<<":"<< 92 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
-        }
-        else if (!args[0]->IsObject())
-        {
-            std::cerr << __func__<<":"<< 92 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
-        }
-        else
-        {
-            v8::Local<v8::Object> obj_ = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                v8::String::Utf8Value objNameStr(isolate, obj_->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-                char* objName = *objNameStr;
-                IAnimationHelperWrap* obj__ = dynamic_cast<IAnimationHelperWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                if (!obj__)
+            if (args.Length() == 1 && args[0]->IsNull())
             {
-                v8::Local<v8::Value> protoVal_ = obj_->GetPrototypeV2();
-                    if (!protoVal_.IsEmpty() && protoVal_->IsObject())
-                {
-                    obj_ = protoVal_->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                        obj__ = dynamic_cast<IAnimationHelperWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                }
-                if (obj__)
-                {
-                    std::cout << __func__<<":"<< 92 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""IAnimationHelper""\n";
-                }
-                else
-                {
-                    std::cout << __func__<<":"<< 92 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""IAnimationHelper""\n";
-                }
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "([object IAnimationHelper] helper)" " - " "").ToLocalChecked() ); return; };
+            };
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
+            {
+                std::cerr << __func__<<":"<< 92 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            }
+            else if (!args[0]->IsObject())
+            {
+                std::cerr << __func__<<":"<< 92 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
             }
             else
             {
-                IAnimationHelper* obj = dynamic_cast<IAnimationHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 92 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""IAnimationHelper"" ("<<(void*)obj<<")\n";
-            }
-        } );
-        if (args.Length() != 1)
+                v8::Local<v8::Object> obj_ = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+                    v8::String::Utf8Value objNameStr(isolate, obj_->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+                    char* objName = *objNameStr;
+                    IAnimationHelperWrap* obj__ = dynamic_cast<IAnimationHelperWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
+                    if (!obj__)
+                {
+                    v8::Local<v8::Value> protoVal_ = obj_->GetPrototypeV2();
+                        if (!protoVal_.IsEmpty() && protoVal_->IsObject())
+                    {
+                        obj_ = protoVal_->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+                            obj__ = dynamic_cast<IAnimationHelperWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
+                    }
+                    if (obj__)
+                    {
+                        std::cout << __func__<<":"<< 92 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""IAnimationHelper""\n";
+                    }
+                    else
+                    {
+                        std::cout << __func__<<":"<< 92 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""IAnimationHelper""\n";
+                    }
+                }
+                else
+                {
+                    IAnimationHelper* obj = dynamic_cast<IAnimationHelper*>(obj__->getCppObject());
+                        std::cout << __func__<<":"<< 92 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""IAnimationHelper"" ("<<(void*)obj<<")\n";
+                }
+            } );
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_OR_SUBCLASS_ARG(1, helper, IAnimationHelper);
+            self->addAnimationHelper(helper);
+            { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        REQUIRE_CPP_OBJECT_OR_SUBCLASS_ARG(1, helper, IAnimationHelper);
-        self->addAnimationHelper(helper);
-        args.GetReturnValue().SetUndefined();
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::RemoveAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2790,18 +4614,33 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object IAnimationHelper] helper)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "([object IAnimationHelper] helper)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1, helper, IAnimationHelper);
+            self->removeAnimationHelper(helper);
+            { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        REQUIRE_CPP_OBJECT_ARG(1, helper, IAnimationHelper);
-        self->removeAnimationHelper(helper);
-        args.GetReturnValue().SetUndefined();
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::ClearAnimationHelpers(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2810,17 +4649,32 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->clearAnimationHelpers();
+            { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->clearAnimationHelpers();
-        args.GetReturnValue().SetUndefined();
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::GetMyClassTag(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2859,8 +4713,23 @@ namespace pdg
             return;
         };
         REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer);
-        uint32 dataSize = self->getSerializedSize(serializer);
-        { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, dataSize) ); return; };
+        try
+        {
+            uint32 dataSize = self->getSerializedSize(serializer);
+            { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, dataSize) ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::Serialize(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2879,8 +4748,19 @@ namespace pdg
             return;
         };
         REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer);
-        self->serialize(serializer);
-        args.GetReturnValue().SetUndefined();
+        try { self->serialize(serializer); args.GetReturnValue().SetUndefined(); }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::Deserialize(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -2947,6 +4827,18 @@ namespace pdg
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }())));
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
         }
     }
 
@@ -3015,12 +4907,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point origin;
+        auto origin_isPoint = v8_ValueIsPoint(isolate, args[1 -1], origin);
+        if (!origin_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*origin_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point origin = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         self->setOrigin(origin);
         args.GetReturnValue().SetUndefined();
     }
@@ -3136,7 +5035,7 @@ namespace pdg
 
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number zoomLevel, [number int] msDuration, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) )" " - " "").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number zoomLevel, number durationSeconds, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) )" " - " "").ToLocalChecked() ); return; };
         };
         if (args.Length() < 2)
         {
@@ -3151,36 +5050,64 @@ namespace pdg
         double zoomLevel = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
         if (!args[2 -1]->IsNumber())
         {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
+            v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
             return;
         }
-        long msDuration = args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+        double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
         if (args.Length() >= 3 && !args[3 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
             return;
         }
         long easing = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 4 && !v8_ValueIsRect(isolate, args[4 -1]))
+        pdg::Rect keepInRect;
+        if (args.Length() < 4)
         {
-            v8_ThrowArgTypeException(isolate, 4, "Rect", *args[4 -1]);
-            return;
-        }
-        pdg::Rect keepInRect = (args.Length()<4) ? pdg::Rect(0,0) : v8_ValueToRect(isolate, args[4 -1]);
-        if (args.Length() >= 5 && !v8_ValueIsPoint(isolate, args[5 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 5, "Point", *args[5 -1]);
-            return;
-        }
-        pdg::Point centerOn = (args.Length()<5) ? pdg::Point(0,0) : v8_ValueToPoint(isolate, args[5 -1]);
-        pdg::Point* centerOnPtr = (args.Length() >= 5) ? &centerOn : 0;
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->zoomTo(zoomLevel, msDuration, gEasingFunctions[easing], keepInRect, centerOnPtr);
+            keepInRect = pdg::Rect(0,0);
         }
         else
         {
-            self->zoomTo(zoomLevel, msDuration);
+            auto keepInRect_isRect = v8_ValueIsRect(isolate, args[4 -1], keepInRect);
+            if (!keepInRect_isRect.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*keepInRect_isRect)
+            {
+                v8_ThrowArgTypeException(isolate, 4, "Rect", *args[4 -1]);
+                return;
+            }
+        };
+        pdg::Point centerOn;
+        if (args.Length() < 5)
+        {
+            centerOn = pdg::Point(0,0);
+        }
+        else
+        {
+            auto centerOn_isPoint = v8_ValueIsPoint(isolate, args[5 -1], centerOn);
+            if (!centerOn_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*centerOn_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 5, "Point", *args[5 -1]);
+                return;
+            }
+        };
+        pdg::Point* centerOnPtr = (args.Length() >= 5) ? &centerOn : 0;
+        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
+        {
+            self->zoomTo(zoomLevel, durationSeconds, gEasingFunctions[easing], keepInRect, centerOnPtr);
+        }
+        else
+        {
+            self->zoomTo(zoomLevel, durationSeconds);
         }
         { args.GetReturnValue().Set( args.This() ); return; };
     }
@@ -3193,7 +5120,7 @@ namespace pdg
 
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number deltaZoomLevel, [number int] msDuration, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) )" " - " "").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number deltaZoomLevel, number durationSeconds, [number int] easing = easeInOutQuad, [object Rect] keepInRect = Rect(0,0), [object Point] centerOn = Point(0,0) )" " - " "").ToLocalChecked() ); return; };
         };
         if (args.Length() < 2)
         {
@@ -3208,36 +5135,64 @@ namespace pdg
         double deltaZoomLevel = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
         if (!args[2 -1]->IsNumber())
         {
-            v8_ThrowArgTypeException(isolate, 2, "a number (""msDuration"")");
+            v8_ThrowArgTypeException(isolate, 2, "a number (""durationSeconds"")");
             return;
         }
-        long msDuration = args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+        double durationSeconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
         if (args.Length() >= 3 && !args[3 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
             return;
         }
         long easing = (args.Length()<3) ? EasingFuncRef::easeInOutQuad : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        if (args.Length() >= 4 && !v8_ValueIsRect(isolate, args[4 -1]))
+        pdg::Rect keepInRect;
+        if (args.Length() < 4)
         {
-            v8_ThrowArgTypeException(isolate, 4, "Rect", *args[4 -1]);
-            return;
-        }
-        pdg::Rect keepInRect = (args.Length()<4) ? pdg::Rect(0,0) : v8_ValueToRect(isolate, args[4 -1]);
-        if (args.Length() >= 5 && !v8_ValueIsPoint(isolate, args[5 -1]))
-        {
-            v8_ThrowArgTypeException(isolate, 5, "Point", *args[5 -1]);
-            return;
-        }
-        pdg::Point centerOn = (args.Length()<5) ? pdg::Point(0,0) : v8_ValueToPoint(isolate, args[5 -1]);
-        pdg::Point* centerOnPtr = (args.Length() >= 5) ? &centerOn : 0;
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->zoom(deltaZoomLevel, msDuration, gEasingFunctions[easing], keepInRect, centerOnPtr);
+            keepInRect = pdg::Rect(0,0);
         }
         else
         {
-            self->zoom(deltaZoomLevel, msDuration);
+            auto keepInRect_isRect = v8_ValueIsRect(isolate, args[4 -1], keepInRect);
+            if (!keepInRect_isRect.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*keepInRect_isRect)
+            {
+                v8_ThrowArgTypeException(isolate, 4, "Rect", *args[4 -1]);
+                return;
+            }
+        };
+        pdg::Point centerOn;
+        if (args.Length() < 5)
+        {
+            centerOn = pdg::Point(0,0);
+        }
+        else
+        {
+            auto centerOn_isPoint = v8_ValueIsPoint(isolate, args[5 -1], centerOn);
+            if (!centerOn_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*centerOn_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 5, "Point", *args[5 -1]);
+                return;
+            }
+        };
+        pdg::Point* centerOnPtr = (args.Length() >= 5) ? &centerOn : 0;
+        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
+        {
+            self->zoom(deltaZoomLevel, durationSeconds, gEasingFunctions[easing], keepInRect, centerOnPtr);
+        }
+        else
+        {
+            self->zoom(deltaZoomLevel, durationSeconds);
         }
         { args.GetReturnValue().Set( args.This() ); return; };
     }
@@ -3257,12 +5212,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point p;
+        auto p_isPoint = v8_ValueIsPoint(isolate, args[1 -1], p);
+        if (!p_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*p_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point p = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         Point out = self->layerToPort(p);
         { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, out) ); return; };
     }
@@ -3282,12 +5244,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
+        pdg::Offset o;
+        auto o_isOffset = v8_ValueIsOffset(isolate, args[1 -1], o);
+        if (!o_isOffset.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*o_isOffset)
         {
             v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
             return;
-        }
-        pdg::Offset o = v8_ValueToOffset(isolate, args[1 -1]);
+        };
         Offset out = self->layerToPort(o);
         { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, out) ); return; };
     }
@@ -3307,12 +5276,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsVector(isolate, args[1 -1]))
+        pdg::Vector v;
+        auto v_isVector = v8_ValueIsVector(isolate, args[1 -1], v);
+        if (!v_isVector.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*v_isVector)
         {
             v8_ThrowArgTypeException(isolate, 1, "Vector", *args[1 -1]);
             return;
-        }
-        pdg::Vector v = v8_ValueToVector(isolate, args[1 -1]);
+        };
         Vector out = self->layerToPort(v);
         { args.GetReturnValue().Set( v8_MakeJavascriptVector(isolate, out) ); return; };
     }
@@ -3332,12 +5308,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsRotatedRect(isolate, args[1 -1]))
+        pdg::RotatedRect r;
+        auto r_isRotatedRect = v8_ValueIsRotatedRect(isolate, args[1 -1], r);
+        if (!r_isRotatedRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*r_isRotatedRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "RotatedRect", *args[1 -1]);
             return;
-        }
-        pdg::RotatedRect r = v8_ValueToRotatedRect(isolate, args[1 -1]);
+        };
         RotatedRect out = self->layerToPort(r);
         { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, out) ); return; };
     }
@@ -3357,12 +5340,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsQuad(isolate, args[1 -1]))
+        pdg::Quad q;
+        auto q_isQuad = v8_ValueIsQuad(isolate, args[1 -1], q);
+        if (!q_isQuad.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*q_isQuad)
         {
             v8_ThrowArgTypeException(isolate, 1, "Quad", *args[1 -1]);
             return;
-        }
-        pdg::Quad q = v8_ValueToQuad(isolate, args[1 -1]);
+        };
         Quad out = self->layerToPort(q);
         { args.GetReturnValue().Set( v8_MakeJavascriptQuad(isolate, out) ); return; };
     }
@@ -3382,12 +5372,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point p;
+        auto p_isPoint = v8_ValueIsPoint(isolate, args[1 -1], p);
+        if (!p_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*p_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point p = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         Point out = self->portToLayer(p);
         { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, out) ); return; };
     }
@@ -3407,12 +5404,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsOffset(isolate, args[1 -1]))
+        pdg::Offset o;
+        auto o_isOffset = v8_ValueIsOffset(isolate, args[1 -1], o);
+        if (!o_isOffset.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*o_isOffset)
         {
             v8_ThrowArgTypeException(isolate, 1, "Offset", *args[1 -1]);
             return;
-        }
-        pdg::Offset o = v8_ValueToOffset(isolate, args[1 -1]);
+        };
         Offset out = self->portToLayer(o);
         { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, out) ); return; };
     }
@@ -3432,12 +5436,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsVector(isolate, args[1 -1]))
+        pdg::Vector v;
+        auto v_isVector = v8_ValueIsVector(isolate, args[1 -1], v);
+        if (!v_isVector.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*v_isVector)
         {
             v8_ThrowArgTypeException(isolate, 1, "Vector", *args[1 -1]);
             return;
-        }
-        pdg::Vector v = v8_ValueToVector(isolate, args[1 -1]);
+        };
         Vector out = self->portToLayer(v);
         { args.GetReturnValue().Set( v8_MakeJavascriptVector(isolate, out) ); return; };
     }
@@ -3457,12 +5468,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsRotatedRect(isolate, args[1 -1]))
+        pdg::RotatedRect r;
+        auto r_isRotatedRect = v8_ValueIsRotatedRect(isolate, args[1 -1], r);
+        if (!r_isRotatedRect.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*r_isRotatedRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "RotatedRect", *args[1 -1]);
             return;
-        }
-        pdg::RotatedRect r = v8_ValueToRotatedRect(isolate, args[1 -1]);
+        };
         RotatedRect out = self->portToLayer(r);
         { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, out) ); return; };
     }
@@ -3482,16 +5500,436 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsQuad(isolate, args[1 -1]))
+        pdg::Quad q;
+        auto q_isQuad = v8_ValueIsQuad(isolate, args[1 -1], q);
+        if (!q_isQuad.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*q_isQuad)
         {
             v8_ThrowArgTypeException(isolate, 1, "Quad", *args[1 -1]);
             return;
-        }
-        pdg::Quad q = v8_ValueToQuad(isolate, args[1 -1]);
+        };
         Quad out = self->portToLayer(q);
         { args.GetReturnValue().Set( v8_MakeJavascriptQuad(isolate, out) ); return; };
     }
 #endif
+
+    void SpriteLayerWrap::CreateParticle(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Particle]" " function" "()" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            auto* result=self->createParticle(); if (!result)
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+            if (result->mParticleScriptObj.IsEmpty())
+            {
+                { args.GetReturnValue().Set( ParticleWrap::NewFromCpp(isolate, result) ); return; };
+            }
+            else
+            {
+                v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, result->mParticleScriptObj );
+                { args.GetReturnValue().Set( obj__ ); return; };
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::AddParticle(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Particle] value)" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1,value,Particle); self->addParticle(value); args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::RemoveParticle(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Particle] value)" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1,value,Particle); self->removeParticle(value); args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::RemoveAllParticles(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->removeAllParticles(); args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::GetParticleCount(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "()" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            {
+                args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, self->getParticleCount()) ); return;
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::GetNthParticle(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Particle]" " function" "([number uint] value)" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""value"")");
+                return;
+            }
+            double value = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!std::isfinite(value) || value < 0 || value > UINT32_MAX || std::floor(value)!=value) throw std::invalid_argument("Expected a particle count or index"); auto* result=self->getNthParticle(static_cast<uint32_t>(value)); if (!result) { args.GetReturnValue().SetNull(); return; };
+            if (result->mParticleScriptObj.IsEmpty())
+            {
+                { args.GetReturnValue().Set( ParticleWrap::NewFromCpp(isolate, result) ); return; };
+            }
+            else
+            {
+                v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, result->mParticleScriptObj );
+                { args.GetReturnValue().Set( obj__ ); return; };
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::SetMaxParticles(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "([number uint] value)" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""value"")");
+                return;
+            }
+            double value = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked(); if (!std::isfinite(value) || value < 0 || value > UINT32_MAX || std::floor(value)!=value) throw std::invalid_argument("Expected a particle count or index"); self->setMaxParticles(static_cast<uint32_t>(value));
+            {
+                args.GetReturnValue().Set( args.This() ); return;
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::GetMaxParticles(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "()" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            {
+                args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, self->getMaxParticles()) ); return;
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::CreateParticleEmitter(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object ParticleEmitter]" " function" "()" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            auto* result=self->createParticleEmitter(); if (!result)
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+            if (result->mParticleEmitterScriptObj.IsEmpty())
+            {
+                { args.GetReturnValue().Set( ParticleEmitterWrap::NewFromCpp(isolate, result) ); return; };
+            }
+            else
+            {
+                v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, result->mParticleEmitterScriptObj );
+                { args.GetReturnValue().Set( obj__ ); return; };
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::RemoveParticleEmitter(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object ParticleEmitter] value)" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1,value,ParticleEmitter); self->removeParticleEmitter(value); args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteLayerWrap::RemoveAllParticleEmitters(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
+        SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
+        };
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->removeAllParticleEmitters(); args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
 
     void SpriteLayerWrap::SetSerializationFlags(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
@@ -3621,7 +6059,7 @@ namespace pdg
 
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] msDuration, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
         };
         if (args.Length() < 1)
         {
@@ -3630,10 +6068,10 @@ namespace pdg
         };
         if (!args[1 -1]->IsNumber())
         {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""msDuration"")");
+            v8_ThrowArgTypeException(isolate, 1, "a number (""durationSeconds"")");
             return;
         }
-        long msDuration = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+        double durationSeconds = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
         if (args.Length() >= 2 && !args[2 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 2, "a number (""easing"")");
@@ -3642,11 +6080,11 @@ namespace pdg
         long easing = (args.Length()<2) ? EasingFuncRef::linearTween : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
-            self->fadeIn(msDuration, gEasingFunctions[easing]);
+            self->fadeIn(durationSeconds, gEasingFunctions[easing]);
         }
         else
         {
-            self->fadeIn(msDuration);
+            self->fadeIn(durationSeconds);
         }
         { args.GetReturnValue().Set( args.This() ); return; };
     }
@@ -3659,7 +6097,7 @@ namespace pdg
 
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] msDuration, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
         };
         if (args.Length() < 1)
         {
@@ -3668,10 +6106,10 @@ namespace pdg
         };
         if (!args[1 -1]->IsNumber())
         {
-            v8_ThrowArgTypeException(isolate, 1, "a number (""msDuration"")");
+            v8_ThrowArgTypeException(isolate, 1, "a number (""durationSeconds"")");
             return;
         }
-        long msDuration = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+        double durationSeconds = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
         if (args.Length() >= 2 && !args[2 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 2, "a number (""easing"")");
@@ -3680,11 +6118,11 @@ namespace pdg
         long easing = (args.Length()<2) ? EasingFuncRef::linearTween : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
-            self->fadeOut(msDuration, gEasingFunctions[easing]);
+            self->fadeOut(durationSeconds, gEasingFunctions[easing]);
         }
         else
         {
-            self->fadeOut(msDuration);
+            self->fadeOut(durationSeconds);
         }
         { args.GetReturnValue().Set( args.This() ); return; };
     }
@@ -3953,18 +6391,33 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Sprite] newSprite)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Sprite] newSprite)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1, newSprite, Sprite);
+            self->addSprite(newSprite);
+            args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        REQUIRE_CPP_OBJECT_ARG(1, newSprite, Sprite);
-        self->addSprite(newSprite);
-        args.GetReturnValue().SetUndefined();
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::RemoveSprite(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -3973,18 +6426,33 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Sprite] oldSprite)" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 1)
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Sprite] oldSprite)" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            REQUIRE_CPP_OBJECT_ARG(1, oldSprite, Sprite);
+            self->removeSprite(oldSprite);
+            args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 1);
-            return;
-        };
-        REQUIRE_CPP_OBJECT_ARG(1, oldSprite, Sprite);
-        self->removeSprite(oldSprite);
-        args.GetReturnValue().SetUndefined();
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::RemoveAllSprites(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -3993,17 +6461,32 @@ namespace pdg
         SpriteLayerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteLayerWrap>(args.This());
         SpriteLayer* self = dynamic_cast<SpriteLayer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            if (args.Length() == 1 && args[0]->IsNull())
+            {
+                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
+            };
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->removeAllSprites();
+            args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-        self->removeAllSprites();
-        args.GetReturnValue().SetUndefined();
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteLayerWrap::EnableCollisions(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -5394,7 +7877,11 @@ namespace pdg
 
     SpriteLayerWrap::SpriteLayerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_SpriteLayer(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_SpriteLayer(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_SpriteLayer_InNewFromCpp)
         {
             {

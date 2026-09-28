@@ -1,4 +1,4 @@
-.TH "Physics" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Physics" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,6 +13,22 @@ Physics \- Physics
 
 .in +1c
 .ti -1c
+.RI "class \fBAnimationContactTarget\fP"
+.br
+.RI "World and platform contact locks with timed release\&. "
+.ti -1c
+.RI "class \fBAnimationSpringTarget\fP"
+.br
+.RI "Spring target smoothing and recoil impulses\&. "
+.ti -1c
+.RI "class \fBCollider\fP"
+.br
+.RI "Optional shapes, filtering, sensors and contacts for a \fBSprite\fP, \fBPart\fP or \fBParticle\fP\&. "
+.ti -1c
+.RI "struct \fBColliderContact\fP"
+.br
+.RI "One shape contact delivered as eventType_ColliderContact\&. "
+.ti -1c
 .RI "class \fBCpArbiter\fP"
 .br
 .RI "arbitrates collisions between sprites using Chipmunk Physics (\fIChipmunk Physics Only\fP) "
@@ -25,13 +41,25 @@ Physics \- Physics
 .br
 .RI "container for simulating objects (\fIChipmunk Physics Only\fP) "
 .ti -1c
-.RI "class \fBISpriteCollideHelper\fP"
+.RI "class \fBParticle\fP"
 .br
-.RI "helper for deciding whether 2 sprites should collide or not "
+.RI "Lightweight whole-body artwork and optional physics\&. "
+.ti -1c
+.RI "class \fBParticleEmitter\fP"
+.br
+.RI "A configurable point source of independent particles\&. "
+.ti -1c
+.RI "class \fBPhysicsBody\fP"
+.br
+.RI "Optional physical motion for a \fBSprite\fP or \fBPart\fP, using seconds\&. "
+.ti -1c
+.RI "class \fBPhysicsConstraint\fP"
+.br
+.RI "A retained physical relationship between any two \fBPhysicsBody\fP owners\&. "
 .ti -1c
 .RI "struct \fBSpriteBreakEvent\fP"
 .br
-.RI "a Sprite joint is breaking because it was overstressed (\fIChipmunk Physics Only\fP) "
+.RI "A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. "
 .ti -1c
 .RI "struct \fBSpriteCollideEvent\fP"
 .br
@@ -50,147 +78,119 @@ Physics \- Physics
 .ti -1c
 .RI "const \fBaction_JointBreak\fP = 13"
 .br
+.ti -1c
+.RI "const \fBphysicsBreak_AngularSpeed\fP = 1"
+.br
+.RI "\fBSpriteBreakEvent\fP reason for exceeding a body's angular-speed threshold\&. "
+.ti -1c
+.RI "const \fBphysicsBreak_Force\fP = 0"
+.br
+.RI "\fBSpriteBreakEvent\fP reason for a legacy Chipmunk joint-force break\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
 Things used for handling physics simulation\&. 
 
+\fBPhysicsBody\fP controls motion, forces and material properties; \fBCollider\fP supplies collision geometry and contact events, and \fBPhysicsConstraint\fP connects bodies\&. Sprites and Parts share these APIs\&.
 
+.PP
+\fBNote\fP
+.RS 4
+Animation physics requires Chipmunk in C++ and JavaScript\&. The Basic solver supports simple shared PhysicsBody/PhysicsConstraint use; it is not an animation-rig backend and will not be expanded to support complex animation physics\&. Use supportsAnimationPhysics() to check build capability and enable Chipmunk on the \fBSpriteLayer\fP before setupAnimationPhysics() or setupPhysicsFromAnimationRig()\&. Ordinary authored playback and pose IK do not require physics\&.
+.RE
+.PP
+.SH "Basic and Chipmunk solver comparison"
+.PP
+Compare the native solvers using the same physical inputs\&. Step time measures CPU cost; overlap, joint error and settling describe the resulting physical behavior\&. The measurements below apply to the native engine used by both language APIs; they do not measure JavaScript binding or callback overhead\&.
+
+.PP
+Latest measurements with all implemented improvements, \fB2,000 dynamic bodies and colliders\fP per test\&. Stack and pile tests add static supports; chains add static anchors\&.
+
+.PP
+\fBMean time per simulation step, in milliseconds\&. Lower is faster\&.\fP Each step advances 0\&.01 simulated seconds\&.
+
+.PP
+Test  Owner  Basic  Chipmunk  Chipmunk with sleeping  Approaching circle pairs  \fBSprite\fP  0\&.536  0\&.789  —  Approaching circle pairs  \fBPart\fP  0\&.540  0\&.749  —  Touching pairs with angled forces  \fBSprite\fP  0\&.566  0\&.818  —  Touching pairs with angled forces  \fBPart\fP  0\&.561  0\&.765  —  Stacks of 10 boxes  \fBSprite\fP  1\&.559  2\&.346  1\&.499  Stacks of 10 boxes  \fBPart\fP  1\&.469  2\&.218  1\&.010  Chains of 10 pivoted links  \fBSprite\fP  1\&.200  1\&.805  1\&.720  Chains of 10 pivoted links  \fBPart\fP  1\&.125  1\&.632  1\&.701  Piles of 40 boxes  \fBSprite\fP  2\&.953  2\&.292  1\&.421  Piles of 40 boxes  \fBPart\fP  3\&.091  2\&.211  1\&.389  
+
+.PP
+Basic and the main Chipmunk column keep all bodies awake\&. The last column enables Chipmunk sleeping after 0\&.5 seconds of inactivity; its timing includes the initial awake period\&. All 2,000 stack and pile bodies eventually slept\&. No chain bodies slept\&. “—” means sleeping was not tested for that workload\&.
+
+.PP
+The approach grid varies vertical offset by row and first-contact time from 10 to 1 seconds by column\&. Both solvers hit all 830 intended pairs and avoid all 170 misses, with at most 0\&.01 seconds of contact-time error\&. The touching grid varies force direction from inward to vertical and magnitude from 0\&.5 to 8; both solvers release 995 pairs and keep the five head-on pairs under force\&.
+
+.PP
+\fBPhysical accuracy and settling, with sleeping disabled\&.\fP Errors are maximum world distances at the end of the run; lower is better\&. Boxes are 2 units wide\&. Settling times include warmup; “Unsettled” means the scene had not settled by 21\&.2 simulated seconds\&.
+
+.PP
+Test  Owner  Error measured  Basic error  Chipmunk error  Basic settled at  Chipmunk settled at  Stacks of 10 boxes  \fBSprite\fP  Box overlap  0\&.790635  0\&.001428  Unsettled  6\&.50 s  Stacks of 10 boxes  \fBPart\fP  Box overlap  0\&.790635  0\&.001296  Unsettled  1\&.20 s  Chains of 10 pivoted links  \fBSprite\fP  Joint anchor separation  0\&.046692  0\&.000002  Unsettled  Unsettled  Chains of 10 pivoted links  \fBPart\fP  Joint anchor separation  0\&.046692  0\&.000002  Unsettled  Unsettled  Piles of 40 boxes  \fBSprite\fP  Box overlap  0\&.897555  0\&.096559  Unsettled  11\&.93 s  Piles of 40 boxes  \fBPart\fP  Box overlap  0\&.965468  0\&.097151  Unsettled  10\&.82 s  
+
+.PP
+Settling requires every body below 0\&.05 units/second and 0\&.05 radians/second for a full simulated second\&. No bodies escaped their test areas\&.
+
+.PP
+\fBMeasurement setup:\fP Apple M5 Max, 48 GiB RAM, macOS arm64; optimized native engine, contact listeners enabled, no rendering or JavaScript\&. Chipmunk uses the default bounding-box tree and 10 solver iterations\&. All tests use 120 warmup steps\&. Circle results are medians of three run means over 2,000 measured steps; stack, chain and pile results each use one run of 2,000 measured steps\&. Small timing differences in the single-run tests should not be treated as conclusive\&. Measured 2026-09-22\&.
+.SH "Watch the solvers side by side"
+.PP
+This viewer replays recorded runs of the actual C++ solvers\&. Each run simulates 2,000 dynamic bodies; a representative sample is displayed so individual contacts and joints remain visible\&. Both views use the same scale and simulation time\&. Playback speed is independent of the CPU timings above\&. No server, engine build or internet connection is needed after downloading the documentation\&.
+
+.PP
+Select approaching circles, touching circles with opposing forces, box stacks, joint chains or box piles\&. Switch between \fBSprite\fP and \fBPart\fP owners, enable Chipmunk sleeping for the box and chain scenes, or pause, scrub, step and slow playback\&. In the circle grids, rows vary offset or force direction and columns increase speed or force\&. Yellow arrows disappear when the touching pair's forces stop\&.
+
+.PP
+ 
 .SH "Class Documentation"
 .PP 
-.SH "class pdg::ISpriteCollideHelper"
+.SH "struct ColliderContact"
 .PP 
-helper for deciding whether 2 sprites should collide or not 
+One shape contact delivered as eventType_ColliderContact\&. 
 
+Enable Collider::setWantsContactEvents() on each collider whose owner should receive notifications\&. Both Sprite and Part colliders deliver through the owning Sprite\&. Each receiving collider sees itself as \fRcollider\fP; vectors reverse for the other endpoint\&. Delivery occurs synchronously after the solve\&.
 
 .PP
-\fBWarning\fP
+
+.PP
+\fBContact fields\fP
 .RS 4
-\fBAPI Stability: 1 - Experimental\fP\&. This API was introduced recently and gotten little or no real use\&. It may change or be removed in future versions\&. It may not be completely implemented and may be missing important pieces of functionality\&. Please try it out and provide feedback\&.
+
 .RE
 .PP
-Implement this interface to do handle special case collision logic between two sprites\&. For example, you might want bullet sprites to collide with enemy sprites but not with one another\&. If a collide helper is installed, then on initial contact between two sprites the collide helper for the moving sprite will be called, and you the helper can decide if the collision should happen or not\&.
+Field  Meaning  emitter  Owning Sprite receiving this event  eventType  \fBpdg::eventType_ColliderContact\fP  collider, other  Shared Collider handles identifying both endpoints  shape, otherShape  Stable shape IDs within the corresponding colliders  phase  collision_Begin, collision_Stay or collision_End  point  Approximate contact Point in owning-layer/world coordinates  normal  Unit Vector directed from collider toward other  impulse  Actual impulse applied to other; zero for sensors, sleeping contacts and end contacts  penetration  Nonnegative overlap depth; zero for an end contact  sensor  Whether either collider is a sensor  
 
-.PP
-For those coding in Javascript, there is an implementation of \fBISpriteCollideHelper\fP that maps a function definition to the draw call\&. So to create a helper:
-
-.PP
-.PP
-.nf
-var myHelper = new pdg\&.ISpriteCollideHelper(function(sprite, withSprite) {
-                console\&.log("in my sprite collide helper for " + sprite );
-                if (withSprite\&.id == 100) {
-                                return true;  // only collide with the player sprite (id 100)
-                }
-                return false;  // don't collide with anything else
-});
-mySprite\&.setCollisionHelper(myHelper);
-.fi
 .PP
 
 .PP
-If you need something more complex, you can also use classify to create a new Javascript class that derives from \fBpdg\&.ISpriteCollideHelper\fP, and it will call the allowCollision() method of your class\&. For example:
+Chipmunk contacts reuse its solved manifold: point is the mean of the contact midpoints and penetration is the greatest overlap depth\&. Sleeping pairs continue to report collision_Stay without a new impulse\&.
 
 .PP
-.PP
-.nf
-classify(pdg\&.ISpriteCollideHelper, 'MyCollideHelperClass', function() {
-                def('allowCollision', function(sprite, withSprite) {
-                                console\&.log("MyCollideHelperClass\&.allowCollision(" + sprite + ", " + withSprite + ")" );
-                                return true;  // let these sprites collide
-                });
-});
-mySprite\&.setCollisionHelper( new MyDrawHelperClass() );
-.fi
-.PP
-.SS "Your Custom Function:"
-As you can see from the examples above, your \fBSprite\fP Collide Helper function (or allowCollision() method) will be called with two parameters, and return a boolean: 
-.PP
-\fBParameters\fP
-.RS 4
-\fIsprite\fP the \fBSprite\fP that is moving 
-.br
-\fIwithSprite\fP the \fBSprite\fP it came in contact with 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-\fBtrue\fP if the collision should happen; or \fBfalse\fP if the collision should be ignored\&.
-.RE
-.PP
-\fBNote\fP
-.RS 4
-You should use other techniques wherever possible to eliminate unnecessary collision helper callback, since these callbacks are relatively expensive\&. You should turn off collisions for sprites that never collide with anything; put sets of sprites that collide only with each other in separate layers; and use collision groups to set up groups of sprites that collide with other things but not each other\&.
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBSprite\&.setCollisionHelper()\fP 
-
-.PP
-\fBSprite\&.enableCollisions()\fP 
-
-.PP
-\fBSprite\&.disableCollisions()\fP 
-
-.PP
-\fBSprite\&.setCollideGroup()\fP 
-
-.PP
-\fBSpriteLayer\&.enableCollisions()\fP 
-
-.PP
-\fBSpriteLayer\&.disableCollisions()\fP 
-
-.PP
-\fBSpriteLayer\&.enableCollisionsWithLayer()\fP 
-
-.PP
-\fBSpriteLayer\&.disableCollisionsWithLayer()\fP 
-.RE
-.PP
-
+Geometry, filters and physical associations are evaluated for the solved frame\&. A callback can remove an endpoint before another notification is delivered; retained handles remain safe and isAttached() reports their current state\&. Contact identity is per shape pair, so compound geometry can generate several notifications for the same two owners\&. Native \fBColliderContact\fP pointers are borrowed only for the callback; JavaScript retains its Collider handles\&. 
 .SH "struct pdg::SpriteBreakEvent"
 .PP 
-a Sprite joint is breaking because it was overstressed (\fIChipmunk Physics Only\fP) 
+A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. 
 
-This event is generated by a Sprite whenever the forces acting on a joint with another Sprite are greater then the breaking force of the joint\&. To prevent the break from happening, return true from the handler that gets this event\&. If you return false then the joint will go ahead and break\&. 
-.PP
-.nf
-{
-    emitter: {},            // the emitter that generated this event
-    eventType: 21,          // the event type (eventType_SpriteBreak)
-    action: 13,             // what happened (action_JointBreak)
-    actingSprite: {},       // the Sprite to which the forces were applied
-    inLayer: {},            // the SpriteLayer that contains the Sprite
-    targetSprite: {},       // the Sprite that was previously joined
-    impulse: 29\&.35,         // the magnitude of the impulse that broke the joint
-    force: 384\&.0,           // the force of the collision
-    breakForce: 100\&.0,      // the maximum force the joint could stand before breaking
-    joint: {}               // the CpConstraint that defines the joint
-}
-
-.fi
-.PP
+Register an IEventHandler for eventType_SpriteBreak on the owning Sprite\&. Part body notifications use their owning Sprite's route\&. Inspect reason to distinguish the two event forms\&. Body notifications work with both basic and Chipmunk solvers\&.
 
 .PP
-\fBNote\fP
+ 
+.PP
+\fBBreak event fields\fP
 .RS 4
-Only joints that have a breaking force assigned will generate these events; without it joints between sprites are considered unbreakable\&.
+
 .RE
+.PP
+Field  Meaning  emitter, eventType  Standard event emitter and eventType_SpriteBreak\&.  actingSprite, inLayer  Owning Sprite and its layer (null outside a layer)\&.  reason  physicsBreak_AngularSpeed or physicsBreak_Force\&.  action  action_BodyBreak for speed; action_JointBreak for legacy force breaks\&.  body, part  Source PhysicsBody and optional Part for speed; null for legacy force breaks\&.  referenceBody  Optional angular-speed reference PhysicsBody, otherwise null\&.  angularSpeed  Measured speed magnitude in radians/second; zero for force breaks\&.  breakAngularSpeed  Configured speed threshold in radians/second; zero for force breaks\&.  targetSprite, joint  Legacy joint endpoint and CpConstraint; null for speed events\&.  impulse, force, breakForce  Legacy joint impulse, solved force and break threshold; zero for speed events\&.  
+
+.PP
+
+.PP
+Angular-speed notifications do not clamp speed, apply braking, disconnect joints or split artwork, regardless of the handler's return value\&. They fire once per sampled excursion above the limit; returning to or below the limit rearms them\&. See PhysicsBody\&.setBreakAngularSpeed() for sampling and reference lifetime rules\&.
+
+.PP
+Legacy Chipmunk joint-force events retain their existing behavior: returning true handles the notification; an unhandled event invokes the existing disconnect path\&. Shared PhysicsConstraint force breaking retains its existing behavior too; this body feature does not add force events to that separate constraint path\&.
+
 .PP
 \fBSee also\fP
 .RS 4
-\fBpdg\&.eventType_SpriteBreak\fP 
-
-.PP
-\fBpdg\&.Sprite\&.makeJointBreakable()\fP 
-
-.PP
-\fBpdg\&.Sprite\&.makeJointUnbreakable()\fP 
-
-.PP
-\fBPhysics\fP 
+PhysicsBody\&.setBreakAngularSpeed(), \fBpdg\&.eventType_SpriteBreak\fP 
 .RE
 .PP
 
@@ -198,7 +198,7 @@ Only joints that have a breaking force assigned will generate these events; with
 .PP 
 a Sprite collided with something (\fIOptional\fP) 
 
-This event is generated by a Sprite whenever it hits something\&. If it hits another Sprite action will be \fBpdg\&.action_CollideSprite\fP, if it hits a wall it will be \fBpdg\&.action_CollideWall\fP\&. 
+This event reports Sprite layer-wall notifications and imported physical-rig contacts\&. Shared Collider contacts use eventType_ColliderContact and Collider\&.setContactHandler(), with stable collider and shape identities\&. 
 .PP
 .nf
 {
@@ -232,7 +232,7 @@ This event is generated by a Sprite whenever it hits something\&. If it hits ano
 .PP
 \fBNote\fP
 .RS 4
-Collisions must be turned on for each Sprite using Sprite\&.enableCollisions() or Sprite\&.setCollisionRadius()
+Enable layer collisions with SpriteLayer\&.enableCollisions()\&. Use Collider\&.setContactHandler() for ordinary Sprite and Part contacts\&.
 .RE
 .PP
 \fBSee also\fP
@@ -246,10 +246,10 @@ Collisions must be turned on for each Sprite using Sprite\&.enableCollisions() o
 \fBpdg\&.action_CollideWall\fP 
 
 .PP
-\fBpdg\&.Sprite\&.enableCollisions()\fP 
+\fBpdg\&.Collider\&.setContactHandler()\fP 
 
 .PP
-\fBpdg\&.Sprite\&.setCollisionRadius()\fP 
+\fBpdg\&.Sprite\&.setupFrameCollider()\fP 
 .RE
 .PP
 
@@ -280,6 +280,14 @@ eventType_SpriteAnimate action: a sprite has hit the edge of the sprite layer Th
 
 .SS "const action_JointBreak = 13"
 
+.SS "const physicsBreak_AngularSpeed = 1"
+
+.PP
+\fBSpriteBreakEvent\fP reason for exceeding a body's angular-speed threshold\&. 
+.SS "const physicsBreak_Force = 0"
+
+.PP
+\fBSpriteBreakEvent\fP reason for a legacy Chipmunk joint-force break\&. 
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

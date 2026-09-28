@@ -76,6 +76,12 @@ public:
 	//! the amount of space between two lines on the font, between the bottom of the decender of the
 	//! line above and the top of the ascender of the line below
     virtual float    getFontLeading(int size, uint32 style = textStyle_Plain) = 0;
+    /*! \brief Height of an unaccented capital letter (such as H), in port pixels.
+     * \param size Font size, in the same units as drawText().
+     * \param style Text style flags; defaults to textStyle_Plain.
+     * \return Distance above the baseline, excluding accents, descenders and leading.
+     */
+    virtual float getFontCapHeight(int size, uint32 style = textStyle_Plain) = 0;
     //! the height from the baseline to the top of the tallest character in the font
     virtual float    getFontAscent(int size, uint32 style = textStyle_Plain) = 0;
 	//! the height from the baseline to the bottom of the lowest descending character in the font

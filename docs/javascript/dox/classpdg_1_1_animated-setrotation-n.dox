@@ -1,7 +1,13 @@
 namespace pdg { /**
+\fn pdg::Animated::setRotation(number value)
+\brief Set rotation immediately.
 
-\fn pdg::Animated::setRotation
+Cancels scheduled rotation changes and preserves the spin rate. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief set the direction the object is facing in radians
+\param value Angle in radians, clockwise positive.
 
-**/ }
+\return This object, for chaining.
+
+\see getRotation(), rotateTo(), setSpin()
+*/
+ }

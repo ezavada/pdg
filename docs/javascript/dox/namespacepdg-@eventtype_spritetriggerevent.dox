@@ -1,0 +1,14 @@
+namespace pdg { /**
+
+\var pdg::eventType_SpriteTriggerEvent
+\ingroup Events
+\brief An enabled Spriter animation crosses an authored eventline key.
+
+Call pdg::Sprite::enableSpriterEvents(true) and register an IEventHandler for this
+event type. The payload is pdg::SpriteTriggerEvent. Authored clip time and the
+offset within the current update are floating-point seconds.
+
+\sa pdg::SpriteTriggerEvent
+\sa \ref animation_trigger_event
+
+**/ }

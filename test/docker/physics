@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd "$(dirname "$0")/../.." && pwd)
+image=${PDG_DOCKER_IMAGE:-pdg-physics-linux:ubuntu24.04}
+results="$root/artifacts/test-results/linux-docker"
+mkdir -p "$results"
+docker build -t "$image" "$root/test/docker"
+docker run --rm --init -e "PDG_JOBS=${PDG_JOBS:-6}" \
+    --mount "type=bind,src=$root,dst=/input,readonly" \
+    --mount "type=bind,src=$results,dst=/results" \
+    --mount type=volume,src=pdg-physics-linux-build,dst=/work \
+    "$image" 2>&1 | tee "$results/latest.log"

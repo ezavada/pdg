@@ -1,0 +1,50 @@
+{
+  "testName": "QuickBunnyMark",
+  "benchmarkId": "bunnymark",
+  "language": "JavaScript",
+  "mode": "quick",
+  "synthetic": true,
+  "timestamp": "2026-09-28T16:42:58.910Z",
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "loadFactor": 1.5,
+  "framePacing": "uncapped",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "tests": {
+    "bunnies": {
+      "synthetic": true,
+      "fixedLoad": 9600,
+      "loadFactor": 1.5,
+      "referenceLoad": 6400,
+      "referenceScore": 6400,
+      "targetFPS": 60,
+      "estimatedCapacity": 29405.445739126473,
+      "score": 29405,
+      "averageFPS": 183.78403586954045,
+      "totalFrames": 552,
+      "durationSeconds": 3.0035252920000004,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 5.441169007246377,
+        "minMs": 4.344417000000249,
+        "maxMs": 8.770791000000145,
+        "percentile95Ms": 7.855791999999838,
+        "percentile99Ms": 8.541833999999653
+      },
+      "atOrAboveTarget": true
+    }
+  },
+  "compositeScore": 29405,
+  "bunnymarkScore": 29405,
+  "build": {
+    "configuration": "Release",
+    "node": "24.21.0",
+    "hasGraphics": true,
+    "module": "pdg:embedded",
+    "executable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/pdg",
+    "resolvedExecutable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/pdg.app/Contents/MacOS/pdg",
+    "kind": "embedded",
+    "directory": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release"
+  }
+}

@@ -1,0 +1,19 @@
+/**
+\page animation_trigger_event Authored Spriter triggers
+\ingroup Events
+
+Enable with pdg::Sprite::enableSpriterEvents(true), then subscribe to pdg::eventType_SpriteTriggerEvent through the existing EventEmitter/IEventHandler API. The payload is pdg::SpriteTriggerEvent. SCML eventline keys are delivered in chronological order for every crossing in (start, end], including multiple loops. Equal authored times retain track/key order. A time-zero key fires at loop wrap, not on initial selection or silent seek.
+
+The payload contains triggerName, clipName, entityName, timeSeconds (relative to clip start), offsetSeconds (relative to the start of this update), actingSprite and inLayer. The native event ID is exposed by the browser bridge but not the V8/JavaScriptCore bridges. String payloads are owned copies. Animation timing fields are floating-point seconds. Native frameTime is an existing integer-millisecond compatibility exception; new script payloads omit it. Independent transitions deliver destination events only, existing phase-aligned blends retain source ownership, and independent samples, seeks, queries and drawing are silent.
+
+The queue retains the acting Sprite until delivery or cancellation. Layer teardown purges matching events and releases owned strings and Sprite references. A clip change does not erase events for crossings already completed in a previous update. Sound events and general nested-entity trigger forwarding are separate capabilities.
+*/
+
+/** \addtogroup Animation
+ * Authored eventline notifications are described in \ref animation_trigger_event
+ * and delivered with the pdg::SpriteTriggerEvent payload.
+ */
+/** \addtogroup Sprites
+ * See \ref animation_trigger_event for authored Spriter notifications and their
+ * pdg::SpriteTriggerEvent payload.
+ */

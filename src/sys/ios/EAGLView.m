@@ -29,6 +29,7 @@
 //
 
 #import "pdg_project.h"
+#include "pdg-lib.h"
 
 #import "EAGLView.h"
 
@@ -46,11 +47,8 @@
     return [CAEAGLLayer class];
 }
 
-//The GL view is stored in the nib file. When it's unarchived it's sent -initWithCoder:
-- (id) initWithCoder:(NSCoder*)coder
-{    
-    if ((self = [super initWithCoder:coder]))
-	{
+- (BOOL)setupRenderer
+{
         // Get the layer
         CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
         
@@ -67,8 +65,7 @@
 			
 			if (!renderer)
 			{
-				[self release];
-				return nil;
+				return NO;
 			}
 		}
         
@@ -80,21 +77,58 @@
 		animationFrameInterval = 2;  // Max 30 FPS
 		displayLink = nil;
 		animationTimer = nil;
+		engineTimer = nil;
 		
-		// A system version of 3.1 or greater is required to use CADisplayLink. The NSTimer
-		// class is used as fallback when it isn't available.
-		NSString *reqSysVer = @"3.1";
-		NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
-		if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
-			displayLinkSupported = TRUE;
-    }
-	
-    return self;
+		displayLinkSupported = TRUE;
+		return YES;
+}
+
+- (id)initWithFrame:(CGRect)frame
+{
+	if ((self = [super initWithFrame:frame]) && ![self setupRenderer]) {
+		[self release];
+		return nil;
+	}
+	return self;
+}
+
+- (id)initWithCoder:(NSCoder *)coder
+{
+	if ((self = [super initWithCoder:coder]) && ![self setupRenderer]) {
+		[self release];
+		return nil;
+	}
+	return self;
 }
 
 - (void) drawView:(id)sender
 {
+    if (sender == engineTimer) {
+        engineTimer = nil;
+    }
     [renderer render];
+    [self scheduleEngineTimer];
+}
+
+- (void) scheduleEngineTimer
+{
+    [engineTimer invalidate];
+    engineTimer = nil;
+
+    long delayMs = pdg_LibGetNextTimerDelay();
+    if (delayMs < 0) {
+        return;
+    }
+
+    // A zero-delay callback must return to the UIKit run loop rather than
+    // recursively entering the engine from inside a timer handler.
+    NSTimeInterval delay = MAX(delayMs, 1L) / 1000.0;
+    engineTimer = [NSTimer timerWithTimeInterval:delay
+                                          target:self
+                                        selector:@selector(drawView:)
+                                        userInfo:nil
+                                         repeats:NO];
+    [[NSRunLoop mainRunLoop] addTimer:engineTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void) layoutSubviews
@@ -134,12 +168,8 @@
 	{
 		if (displayLinkSupported)
 		{
-			// CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
-			// if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
-			// not be called in system versions earlier than 3.1.
-
-			displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
-			[displayLink setFrameInterval:animationFrameInterval];
+			displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawView:)];
+			[displayLink setPreferredFramesPerSecond:60 / animationFrameInterval];
 			[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 		}
 		else
@@ -163,6 +193,8 @@
 			[animationTimer invalidate];
 			animationTimer = nil;
 		}
+		[engineTimer invalidate];
+		engineTimer = nil;
 		
 		animating = FALSE;
 	}
@@ -170,6 +202,7 @@
 
 - (void) dealloc
 {
+	[engineTimer invalidate];
     [renderer release];
 	
     [super dealloc];

@@ -3,7 +3,6 @@ namespace pdg { /**
 \class Font
 \brief font for text drawing and measuring (*GUI Only*)
 
-\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
 
 You cannot create fonts directly, they must be loaded by the Graphics Manager. Drawing text is done through the Port class after assigning a font. The Font object is read only, and has methods for getting measurement info (Font Metrics) for the font.
 

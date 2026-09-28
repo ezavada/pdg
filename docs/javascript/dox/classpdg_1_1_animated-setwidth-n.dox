@@ -1,7 +1,13 @@
 namespace pdg { /**
+\fn pdg::Animated::setWidth(number value)
+\brief Set logical width immediately.
 
-\fn pdg::Animated::setWidth
+Cancels scheduled width changes and preserves the width growth rate. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief set the width of the object
+\param value Logical size value.
 
-**/ }
+\return This object, for chaining.
+
+\see setSize(), resizeTo()
+*/
+ }

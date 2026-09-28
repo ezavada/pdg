@@ -79,15 +79,21 @@
 #include "pdg-main.h"
 
 #ifndef STADIUM_SERVER
-    #include "pdg/sys/mutex.h"
-    #define RAND_MUTEX      pdg::AutoMutex mutex(&sRandFuncMutex)
-    static pdg::Mutex sRandFuncMutex; // used to ensure multiple threads cannot cause out of bounds array access
+    #include <mutex>
+    static std::mutex sRandFuncMutex; // used to ensure multiple threads cannot cause out of bounds array access
 #endif // !STADIUM_SERVER
 
 #include <cstdio>
 #include <cstring>
 #include <cctype>
 #include <cstdlib>
+#include <random>
+#include <chrono>
+#include <filesystem>
+#include <memory>
+#include <string_view>
+#include <algorithm>
+#include <format>
 
 #ifdef LEAK_AND_EXCEPTION_CHECKS
 #include "..\LeakCheck\LeakCheck.h"
@@ -176,19 +182,113 @@ std::string gApplicationDirectory;
 std::string gApplicationDataDirectory;
 std::string gApplicationResourceDirectory;
 
-bool 
-os_isAbsolutePath(const char* path) {
-  #ifdef PLATFORM_WIN32
-  	if (path[0] == '"') path++; // ignore leading quotes
-    if ((path[0] == 0) || (path[1] == 0) || (path[2] == 0)) return false;
-    return (std::isalpha(path[0]) && path[1] == ':' && (path[2] == '\\' || path[2] == '/'));
-  #else
-    return (path[0] == '/');
-  #endif
+bool os_isAbsolutePath(const char* path) {
+    return path && std::filesystem::path(path).is_absolute();
+}
+
+std::string OS::makeCanonicalPath(const char* fromPath, bool resolveSimLinks) {
+    if (!fromPath) return {};
+    std::filesystem::path path(fromPath);
+    if (!path.is_absolute()) path = std::filesystem::path(getApplicationDirectory()) / path;
+    if (resolveSimLinks) {
+        std::error_code error;
+        auto resolved = std::filesystem::weakly_canonical(path, error);
+        if (!error) return resolved.string();
+    }
+    return path.lexically_normal().string();
+}
+
+namespace {
+struct FileSearch {
+    std::filesystem::directory_iterator iterator;
+    std::string pattern;
+};
+}
+
+bool os_matchesFilename(const char* pattern, const char* name);
+
+bool OS::findFirst(const char* inFindName, FindDataT& outFindData) {
+    outFindData.privateData = nullptr;
+    outFindData.nodeName[0] = 0;
+    if (!inFindName || !*inFindName) return false;
+    const std::filesystem::path path(inFindName);
+    auto search = std::make_unique<FileSearch>();
+    search->pattern = path.filename().string();
+    std::error_code error;
+    search->iterator = std::filesystem::directory_iterator(
+        makeCanonicalPath(path.parent_path().string().c_str()), error);
+    if (error) return false;
+    outFindData.privateData = search.release();
+    return findNext(outFindData);
+}
+
+bool OS::findNext(FindDataT& data) {
+    auto* search = static_cast<FileSearch*>(data.privateData);
+    if (!search) return false;
+    const std::filesystem::directory_iterator end;
+    while (search->iterator != end) {
+        const auto entry = *search->iterator;
+        std::error_code error;
+        search->iterator.increment(error);
+        if (error) search->iterator = end;
+        const auto name = entry.path().filename().string();
+        if (os_matchesFilename(search->pattern.c_str(), name.c_str())) {
+            // The public result has a fixed-size name; never return a truncated match.
+            if (name.size() >= sizeof(data.nodeName)) continue;
+            std::copy(name.begin(), name.end(), data.nodeName);
+            data.nodeName[name.size()] = 0;
+            data.isDirectory = entry.is_directory(error);
+            return true;
+        }
+    }
     return false;
 }
 
-	
+void OS::findClose(FindDataT& data) {
+    delete static_cast<FileSearch*>(data.privateData);
+    data.privateData = nullptr;
+}
+
+bool OS::deleteFile(const char* filename) {
+    if (!filename) return false;
+    std::error_code error;
+    return std::filesystem::remove(filename, error);
+}
+
+bool OS::renameFile(const char* filename, const char* newFilename) {
+    if (!filename || !newFilename) return false;
+    std::error_code error;
+    std::filesystem::rename(filename, newFilename, error);
+    return !error;
+}
+
+ms_time OS::getMilliseconds() {
+    static const auto epoch = std::chrono::steady_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - epoch).count();
+}
+
+#ifdef DEBUG
+void OS::debugFailure(std::string_view kind, std::string_view expression,
+    std::string_view message, std::source_location location) {
+    const auto text = std::format("{}: {}:{} ({}) {}", kind, location.file_name(),
+        location.line(), expression, message);
+    _DOUT("%s", text.c_str());
+    _DEBUGGER(text.c_str());
+}
+
+void OS::checkPointer(const void* pointer, const void* block, size_t size,
+    std::source_location location) {
+    const auto address = reinterpret_cast<std::uintptr_t>(pointer);
+    const auto base = reinterpret_cast<std::uintptr_t>(block);
+    if (address < base || address - base >= size) {
+        debugFailure("PTR ERROR", "", std::format("{} is outside block {} of {} bytes",
+            pointer, block, size), location);
+    }
+}
+#endif
+
+
 void 
 os_setApplicationDirectory(const char* dir) {
 	gApplicationDirectory = dir;
@@ -257,15 +357,7 @@ Point OS::getMouse(int mouseNumber) {
 
 #ifndef STADIUM_SERVER
 
-#define N 624
-#define M 397
-#define MATRIX_A 0x9908b0dfUL   /* constant vector a */
-#define UPPER_MASK 0x80000000UL /* most significant w-r bits */
-#define LOWER_MASK 0x7fffffffUL /* least significant r bits */
-
-static unsigned long mt[N]; /* the array for the state vector  */
-static int mti=N+1; /* mti==N+1 means mt[N] is not initialized */
-
+static std::mt19937 sGameRandom;
 
 void
 OS::getDeviceOrientation(float& roll, float& pitch, float& yaw, bool absolute) {
@@ -288,64 +380,15 @@ OS::rand() {
 // not be repeatable because the user can't repeatably do the same actions.
 unsigned long
 OS::gameCriticalRandom() {
-  #ifdef PDG_NO_MERSENNE_TWISTER
-    return (unsigned long) std::rand();
-  #else
-    RAND_MUTEX;
-    unsigned long y;
-    static unsigned long mag01[2]={0x0UL, MATRIX_A};
-    /* mag01[x] = x * MATRIX_A  for x=0,1 */
-
-    if (mti >= N) { /* generate N words at one time */
-        int kk;
-
-        if (mti == N+1)   /* if srand() has not been called, */
-            srand(5489UL); /* a default initial seed is used */
-
-        for (kk=0;kk<N-M;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
-        }
-        for (;kk<N-1;kk++) {
-            y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-            mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
-        }
-        y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
-        mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
-
-        mti = 0;
-    }
-
-    y = mt[mti++];
-    
-    /* Tempering */
-    y ^= (y >> 11);
-    y ^= (y << 7) & 0x9d2c5680UL;
-    y ^= (y << 15) & 0xefc60000UL;
-    y ^= (y >> 18);
-    
-    return y;
-  #endif // !PDG_NO_MERSENNE_TWISTER
+    std::lock_guard lock(sRandFuncMutex);
+    return sGameRandom();
 }
 
 void
 OS::srand(unsigned long seed) {
-    std::srand((unsigned int)seed);   // this seeds the non-critical random number generation
-  #ifndef PDG_NO_MERSENNE_TWISTER
-    // following seeds critical random number generation
-    RAND_MUTEX;
-    mt[0]= seed & 0xffffffffUL;
-    for (mti=1; mti<N; mti++) {
-        mt[mti] =
-        (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti);
-        /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
-        /* In the previous versions, MSBs of the seed affect   */
-        /* only MSBs of the array mt[].                        */
-        /* 2002/01/09 modified by Makoto Matsumoto             */
-        mt[mti] &= 0xffffffffUL;
-        /* for >32 bit machines */
-    }
-  #endif  // ! PDG_NO_MERSENNE_TWISTER
+    std::lock_guard lock(sRandFuncMutex);
+    std::srand(static_cast<unsigned int>(seed));
+    sGameRandom.seed(static_cast<std::uint32_t>(seed));
 }
 #endif // !STADIUM_SERVER
 
@@ -427,11 +470,11 @@ OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, i
 			    CHECK_PTR_WRITE(hexbuf + ex + ch*3, 4, hexbuf, hexBufLen); // 3 + NUL
 				std::strncpy( hexbuf + ex + ch*3, "   ", 4 );
 			}
-			CHECK_PTR_WRITE(&outBuf[outPos], lineLen + 4, outBuf, outBufSize) // " | " + NUL
+			CHECK_PTR_WRITE(&outBuf[outPos], lineLen + 4, outBuf, outBufSize); // " | " + NUL
 	        std::snprintf(&outBuf[outPos], outBufSize - outPos, "%s | %s", hexbuf, ascbuf);
 	        outPos += lineLen + 3;
 		} else {
-			CHECK_PTR_WRITE(&outBuf[outPos], lineLen + 5, outBuf, outBufSize) // " | " + "\n" + NUL
+			CHECK_PTR_WRITE(&outBuf[outPos], lineLen + 5, outBuf, outBufSize); // " | " + "\n" + NUL
 			std::snprintf(&outBuf[outPos], outBufSize - outPos, "%s | %s\n", hexbuf, ascbuf);
 	        outPos += lineLen + 4;
 		}

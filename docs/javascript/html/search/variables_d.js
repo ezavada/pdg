@@ -9,5 +9,9 @@ var searchData=
   ['rgtbot_6',['rgtBot',['../namespacepdg.html#af1c7b4584d1a6380ee40c4ef161fd195',1,'pdg']]],
   ['rgttop_7',['rgtTop',['../namespacepdg.html#afb24c82a90e2d9d45f0da140c72dfc36',1,'pdg']]],
   ['right_8',['right',['../classpdg_1_1_rect.html#aec7af6ad24e4c06da3066ef1ad155837',1,'pdg::Rect::right'],['../classpdg_1_1_rotated_rect.html#aec7af6ad24e4c06da3066ef1ad155837',1,'pdg::RotatedRect::right']]],
-  ['running_9',['running',['../namespacepdg.html#a2bb58b88ac256b165a95a806ae3b41e5',1,'pdg']]]
+  ['rotationdirection_5fasspecified_9',['rotationDirection_AsSpecified',['../namespacepdg.html#acbb255bec4017e1180a9f0cc8723c763',1,'pdg']]],
+  ['rotationdirection_5fclockwise_10',['rotationDirection_Clockwise',['../namespacepdg.html#aad0814358f2db379279662eca780db15',1,'pdg']]],
+  ['rotationdirection_5fcounterclockwise_11',['rotationDirection_CounterClockwise',['../namespacepdg.html#a6995e9e31ebe372d22f4809504c2eac2',1,'pdg']]],
+  ['rotationdirection_5fshortest_12',['rotationDirection_Shortest',['../namespacepdg.html#a458db03c94813e18c0faef391b54171f',1,'pdg']]],
+  ['running_13',['running',['../namespacepdg.html#a2bb58b88ac256b165a95a806ae3b41e5',1,'pdg']]]
 ];

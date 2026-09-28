@@ -2,7 +2,7 @@
 
 console.log("=== SPRITER AND SOUND UI TEST ===");
 
-var waitForUser = process.argv.indexOf('--wait') >= 0;
+var waitForUser = !!pdg.visualTestSession || process.argv.indexOf('--wait') >= 0;
 var port = null;
 var layer = null;
 var sounds = [];
@@ -26,7 +26,7 @@ function loadSpriterSprite(fileName, location, scale, animationName) {
     if (!sprite) fail("Could not load Spriter example " + fileName);
     signals.spriterFilesLoaded++;
     sprite.setLocation(location);
-    sprite.setEntityScale(scale, scale);
+    sprite.setScale(scale, scale);
     if (sprite.hasAnimation(animationName)) sprite.startAnimation(animationName);
     return sprite;
 }
@@ -99,9 +99,16 @@ function setup() {
     var clink1 = loadSound("data/clink1.mp3", 0.45);
     var clink2 = loadSound("data/clink2.mp3", 0.45);
 
+    if (pdg.visualTestSession) {
+        pdg.visualTestSession.onPause.push(function(paused) {
+            [music, clink1, clink2].forEach(function(sound) {
+                if (paused) sound.pause(); else if (sound.isPaused()) sound.resume();
+            });
+        });
+    }
     playSound(music, "background music");
-    setTimeout(function() { playSound(clink1, "clink 1"); }, 1500);
-    setTimeout(function() { playSound(clink2, "clink 2"); }, 3000);
+    (pdg.visualTestSession ? pdg.visualTestSession.setTimeout : setTimeout)(function() { playSound(clink1, "clink 1"); }, 1500);
+    (pdg.visualTestSession ? pdg.visualTestSession.setTimeout : setTimeout)(function() { playSound(clink2, "clink 2"); }, 3000);
 
     if (!waitForUser) {
         setTimeout(finish, 7000);

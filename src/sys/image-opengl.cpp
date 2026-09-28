@@ -33,9 +33,13 @@
 #define _USE_MATH_DEFINES // for MSVC
 
 #include "pdg_project.h"
+#include <numbers>
 
 #include "pdg/msvcfix.h"
 #include "image-opengl.h"
+#include <algorithm>
+#include <cstring>
+#include <sstream>
 #include "graphics-opengl.h"
 #include "imagecache-opengl.h"
 #include "pdg/sys/os.h"
@@ -45,20 +49,6 @@
 #include <fstream>
 #include <cmath>
 
-#ifdef _MSC_VER
-// Calculates log2 of number.  
-
-	float Log2F(float n) {  
-
-		// log(n)/log(2) is log2.  
-
-		return log(n) / 0.30102999566; // log( 2 ) = 0.30102999566  
-
-	}
-	#ifndef log2f
-		#define log2f Log2F
-	#endif
-#endif
 
 #ifndef GL_CLAMP_TO_EDGE
 #define GL_CLAMP_TO_EDGE GL_CLAMP
@@ -68,6 +58,74 @@ namespace pdg {
 	
     GLuint gBoundTexture;   // this gets cleared by graphics_startDrawing
     
+    static uint64 offscreenImageSerial = 0;
+
+    Image* Image::createImageFromOffscreenPort(Port* source, bool copyPixels) {
+        auto* port = dynamic_cast<PortImpl*>(source);
+        if (!port || !port->mOffscreen) return nullptr;
+        auto image = std::make_unique<ImageOpenGL>(GraphicsManager::instance().getMainPort());
+        image->width = image->mBufferWidth = port->mOffscreen->width;
+        image->height = image->mBufferHeight = port->mOffscreen->height;
+        image->frameWidth = image->width; image->frames = 1;
+        image->bpp = 32; image->pitch = image->width * 4;
+        image->dataSize = image->pitch * image->height;
+        image->mTextureFormat = GL_RGBA; image->mRetainData = true;
+        // Runtime snapshots must never alias a cache entry for another image.
+        std::ostringstream name; name << "offscreen:" << ++offscreenImageSerial;
+        image->mSourceName = name.str();
+        image->mOffscreen = port->mOffscreen;
+        if (copyPixels) {
+            image->syncOffscreenPixels();
+            image->mOffscreen.reset();
+        }
+        image->addRef();
+        return image.release();
+    }
+
+    bool ImageOpenGL::usesPremultipliedAlpha() const {
+        if (!mOffscreen || !mOffscreen->contextPort || !mPort) return false;
+        auto* destination = static_cast<PortImpl*>(mPort);
+        auto* context = destination->mOffscreen ? destination->mOffscreen->contextPort : destination;
+        // Sampling the current render target is undefined. A different context
+        // also cannot sample this GL texture; use a current pixel snapshot there.
+        return context == mOffscreen->contextPort && destination->mOffscreen != mOffscreen;
+    }
+
+    void ImageOpenGL::setDrawColor() const {
+        const float alpha = opacity / 255.0f;
+        const float rgb = usesPremultipliedAlpha() ? alpha : 1.0f;
+        glColor4f(rgb, rgb, rgb, alpha);
+    }
+
+    void ImageOpenGL::syncOffscreenPixels() const {
+        if (!mOffscreen || (data && mPixelRevision == mOffscreen->revision)) return;
+        mOffscreen->readPixels();
+        auto* image = const_cast<ImageOpenGL*>(this);
+        if (!image->data) image->data = std::malloc(image->dataSize);
+        if (!image->data) throw std::bad_alloc();
+        std::memcpy(image->data, mOffscreen->pixels.data(), image->dataSize);
+        mPixelRevision = mOffscreen->revision;
+        image->mSourceName = "offscreen:" + std::to_string(++offscreenImageSerial);
+        // A fallback upload in a different GL context must be refreshed too.
+        if (image->mCacheKey && image->mPort) {
+            static_cast<PortImpl*>(image->mPort)->releaseCachedEntry(image->mCacheKey);
+            image->mCacheKey = 0;
+        }
+    }
+
+    Color ImageOpenGL::getPixel(int32 x, int32 y) const { syncOffscreenPixels(); return ImageImpl::getPixel(x,y); }
+    uint8 ImageOpenGL::getAlphaValue(int32 x, int32 y) const { syncOffscreenPixels(); return ImageImpl::getAlphaValue(x,y); }
+    void* ImageOpenGL::getData() { syncOffscreenPixels(); return ImageImpl::getData(); }
+    uint32 ImageOpenGL::getSerializedSize(ISerializer* serializer) const { syncOffscreenPixels(); return ImageImpl::getSerializedSize(serializer); }
+    void ImageOpenGL::serialize(ISerializer* serializer) const { syncOffscreenPixels(); ImageImpl::serialize(serializer); }
+    void ImageOpenGL::deserialize(IDeserializer* deserializer) { ImageImpl::deserialize(deserializer); mOffscreen.reset(); mPixelRevision=0; }
+    Image* ImageOpenGL::createImageScaled(float xscale, float yscale, FilterType filterType) {
+        syncOffscreenPixels(); return ImageImpl::createImageScaled(xscale, yscale, filterType);
+    }
+    void ImageOpenGL::setTransparentColor(Color rgb) {
+        syncOffscreenPixels(); mOffscreen.reset(); ImageImpl::setTransparentColor(rgb);
+    }
+
 	Port*
 	ImageOpenGL::setPort(Port* newPort) {
 		if (newPort != mPort && mCacheKey != 0) {
@@ -79,6 +137,10 @@ namespace pdg {
 			// Reset cache key - will be acquired from new port on first use
 			mCacheKey = 0;
 		}
+        if (newPort != mPort) {
+            if (mPort) mPort->mLinkedImages.erase(this);
+            if (newPort) newPort->mLinkedImages.insert(this);
+        }
 		return ImageImpl::setPort(newPort);
 	}
 
@@ -107,69 +169,10 @@ namespace pdg {
 	
 	void 
 	ImageOpenGL::draw(const Rect& r, FitType fitType, bool clipOverflow) {
-		if (mSuperImage) {
-			// pass to super image
-            uint8 opac = mSuperImage->getOpacity();
-            mSuperImage->setOpacity(opacity);
-			if (mFrameNum >= 0) {
-				mSuperImage->drawFrame(r, mFrameNum, fitType, clipOverflow);
-			} else if (mIsQuadSection) {
-				// TODO: make use of fitType and clipOverflow
-				mSuperImage->drawSection(r, mSectionQuad);
-			} else {
-				// TODO: make use of fitType and clipOverflow
-				mSuperImage->drawSection(r, mSectionRect);
-			}
-            mSuperImage->setOpacity(opac);
-		} else if (fitType == fit_Fill) {
-			draw( Quad(r) );
-		} else if (fitType == fit_Width) {
-			Rect fr(width, height);
-			float wRatio = r.width() / width;
-			fr.scale(wRatio);
-			fr.center(r.centerPoint());
-			// TODO: make clipOverflow
-			draw( Quad(fr) );
-		} else if (fitType == fit_Height) {
-			Rect fr(width, height);
-			float hRatio = r.height() / height;
-			fr.scale(hRatio);
-			fr.center(r.centerPoint());
-			// TODO: make clipOverflow
-			draw( Quad(fr) );
-		} else if (fitType == fit_Inside) {
-			Rect fr(width, height);
-			float wRatio = r.width() / width;
-			float hRatio = r.height() / height;
-			if (wRatio < hRatio) {
-				fr.scale(wRatio);
-			} else {
-				fr.scale(hRatio);
-			}
-			fr.center(r.centerPoint());
-			draw( Quad(fr) );
-		} else if (fitType == fit_Overflow) {
-			Rect fr(width, height);
-			float wRatio = r.width() / width;
-			float hRatio = r.height() / height;
-			if (wRatio > hRatio) {
-				fr.scale(wRatio);
-			} else {
-				fr.scale(hRatio);
-			}
-			fr.center(r.centerPoint());
-			draw( Quad(fr) );
-		} else if (fitType == fit_Clipped) {
-			// TODO: implement
-		} else if (fitType == fit_TileX) {
-			// TODO: implement
-		} else if (fitType == fit_TileY) {
-			// TODO: implement
-		} else if (fitType == fit_Tile) {
-			// TODO: implement
-		}
-	}
-	
+        mPort->drawImage(this, r, Attributes().fitType(fitType).clipOverflow(clipOverflow));
+    }
+
+
 	void 
 	ImageOpenGL::draw(const Quad& quad) {
 		if (quad.getBounds().intersection(mPort->getDrawingArea()).empty()) {
@@ -190,7 +193,7 @@ namespace pdg {
 		} else {
 			bindTexture();
 			PortImpl& port = static_cast<PortImpl&>(*mPort); // get us access to our private data
-			port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA); 
+			port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA, blendMode_Normal, usesPremultipliedAlpha());
 			
 			// calculate the clamping, to prevent sampling of texture pixels from outside the texture
 			// when the destination is not at a precise pixel boundary.
@@ -223,12 +226,10 @@ namespace pdg {
 	
 	void       
 	ImageOpenGL::drawFrame(const Rect& r, int frame, FitType fitType, bool clipOverflow) {
-		if (mSuperImage) return;  // don't do for subimage
-		if (fitType == fit_Fill) {
-			drawFrame( Quad(r), frame );
-		}
-	}
-	
+        mPort->drawImage(this, r, Attributes().frame(frame).fitType(fitType).clipOverflow(clipOverflow));
+    }
+
+
 	void       
 	ImageOpenGL::drawFrame(const Quad& quad, int frame) {
 		if (mSuperImage) return;  // don't do for subimage
@@ -237,7 +238,7 @@ namespace pdg {
 		}
 		bindTexture();
 		PortImpl& port = static_cast<PortImpl&>(*mPort); // get us access to our private data
-		port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA);  // no alpha for now
+		port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA, blendMode_Normal, usesPremultipliedAlpha());  // no alpha for now
 		
 		// calculate the clamping, to prevent sampling of texture pixels from outside the texture
 		// when the destination is not at a precise pixel boundary. 
@@ -346,7 +347,7 @@ namespace pdg {
             mSuperImage->setOpacity(opac);
 		} else {
             // decide how many slices to draw (very crude LOD)
-            GLint slices = log2f(radius) * 4;
+            GLint slices = std::log2(radius) * 4;
             if (slices < 5) slices = 5;
 
 			bindTexture();
@@ -354,7 +355,7 @@ namespace pdg {
 			port.setOpenGLModesForDrawing(false); 
 
 
-            float degreesRot = rotation * 180.0 / M_PI;
+            float degreesRot = rotation * 180.0 / std::numbers::pi;
             static GLfloat light_position[] = { 0, 0, -10, 1 };
             GLfloat model_ambient[] = { ambientLight.red, ambientLight.green, ambientLight.blue, ambientLight.alpha };
             glLightModelfv(GL_LIGHT_MODEL_AMBIENT, model_ambient);
@@ -391,8 +392,8 @@ namespace pdg {
 
             glScalef(-radius, radius, 1.0f);
 
-            GLfloat xRotDeg = (polarOffsetRadians.x * 180.0 / M_PI) - 90.0;
-            GLfloat yRotDeg = polarOffsetRadians.y * 180.0 / M_PI;
+            GLfloat xRotDeg = (polarOffsetRadians.x * 180.0 / std::numbers::pi) - 90.0;
+            GLfloat yRotDeg = polarOffsetRadians.y * 180.0 / std::numbers::pi;
             glRotatef(xRotDeg, 1.0f, 0.0f, 0.0);
             glRotatef(yRotDeg, 0.0f, 1.0f, 0.0);
 
@@ -428,7 +429,7 @@ namespace pdg {
 		
 		bindTexture();
 		PortImpl& port = static_cast<PortImpl&>(*mPort); // get us access to our private data
-		port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA); 
+		port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA, blendMode_Normal, usesPremultipliedAlpha());
 		
 		// calculate the clamping, to prevent sampling of texture pixels from outside the texture
 		// when the destination is not at a precise pixel boundary.
@@ -480,7 +481,7 @@ namespace pdg {
 		
 		bindTexture();
 		PortImpl& port = static_cast<PortImpl&>(*mPort); // get us access to our private data
-		port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA); 
+		port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA, blendMode_Normal, usesPremultipliedAlpha());
 		
 		// calculate the clamping, to prevent sampling of texture pixels from outside the texture
 		// when the destination is not at a precise pixel boundary.
@@ -514,20 +515,35 @@ namespace pdg {
 	
 	void 
 	ImageOpenGL::drawSection(const Quad& q, const Rect& section) {
-		if (mSuperImage) return;  // don't do for subimage
 		drawSection(q, Quad(section));
 	}
 	
 	void 
 	ImageOpenGL::drawSection(const Quad& q, const Quad& section) {
-		if (mSuperImage) return;  // don't do for subimage
+        if (mSuperImage) {
+            if (width <= 0 || height <= 0) return;
+            Quad region = mIsQuadSection ? mSectionQuad : Quad(mSectionRect);
+            if (mFrameNum >= 0) region = Quad(Rect(mFrameNum * width, 0, (mFrameNum + 1) * width, height));
+            Quad mapped;
+            for (int i=0; i<4; ++i) {
+                const float u=section.points[i].x/width, v=section.points[i].y/height;
+                const auto& p=region.points;
+                mapped.points[i] = Point((1-u)*(1-v)*p[0].x+u*(1-v)*p[1].x+u*v*p[2].x+(1-u)*v*p[3].x,
+                                         (1-u)*(1-v)*p[0].y+u*(1-v)*p[1].y+u*v*p[2].y+(1-u)*v*p[3].y);
+            }
+            const uint8 saved=mSuperImage->getOpacity();
+            mSuperImage->setPort(mPort); mSuperImage->setOpacity(opacity);
+            mSuperImage->drawSection(q,mapped);
+            mSuperImage->setOpacity(saved);
+            return;
+        }
 		if (q.getBounds().intersection(mPort->getDrawingArea()).empty()) {
 			return;
 		}
 		
 		bindTexture();
 		PortImpl& port = static_cast<PortImpl&>(*mPort); // get us access to our private data
-		port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA); 
+		port.setOpenGLModesForDrawing(opacity != 255 || mTextureFormat == GL_RGBA, blendMode_Normal, usesPremultipliedAlpha());
 		
 		// calculate the clamping, to prevent sampling of texture pixels from outside the texture
 		// when the destination is not at a precise pixel boundary.
@@ -562,14 +578,22 @@ namespace pdg {
 
 	void	
 	ImageOpenGL::prepareToRasterize() {
-		if (mSuperImage) return;  // don't do for subimage
+		if (mSuperImage || !mPort) return;  // Subimages or images with no drawing destination.
 		bindTexture(GL_LINEAR);
 	}
 
 	void    
 	ImageOpenGL::bindTexture(GLint mipMode) {
 		if (mSuperImage) return;  // don't do for subimage
-		
+        if (usesPremultipliedAlpha()) {
+            auto& port = *static_cast<PortImpl*>(mPort);
+            glEnable(GL_TEXTURE_2D);
+            port.mStateCache.bindTexture(mOffscreen->texture);
+            gBoundTexture = mOffscreen->texture;
+            setDrawColor();
+            return;
+        }
+        syncOffscreenPixels();
 		PortImpl& port = static_cast<PortImpl&>(*mPort);
 		
 		// Get cache key on first use
@@ -638,7 +662,7 @@ namespace pdg {
 		glEnable(GL_TEXTURE_2D);
 		port.mStateCache.bindTexture(texture);
 		gBoundTexture = texture;
-		glColor4f(1.0f,1.0f,1.0f, (float) opacity / 255.0f );
+		setDrawColor();
 	}
 
 	GLuint
@@ -657,16 +681,11 @@ namespace pdg {
 	}
 
 	ImageOpenGL::~ImageOpenGL() {
+        setPort(nullptr); // Drop the cache reference and unlink while the port is alive.
 		if (mSuperImage) {
 			DEBUG_ASSERT(mCacheKey == 0, "Error: Sub-Image has cache key! Should not be!!");
 			mSuperImage->release();	// one fewer reference to the super image
 			mSuperImage = 0;
-		} else if (mCacheKey != 0)  {
-			// Release our reference to the cached texture
-			// Cache owns the texture and will delete it when appropriate
-			PortImpl& port = static_cast<PortImpl&>(*mPort);
-			port.releaseCachedEntry(mCacheKey);
-			mCacheKey = 0;
 		}
 /*		if (mTransparentMaskData) {
 			std::free(mTransparentMaskData);

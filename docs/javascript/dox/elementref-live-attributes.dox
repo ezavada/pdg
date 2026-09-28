@@ -1,0 +1,48 @@
+namespace pdg {
+/**
+\fn pdg::ElementRef::setLiveAttributes(Attributes attrs)
+\brief Associate an element with a live Attributes or AnimatedAttributes source.
+
+Rendering, bounds queries and hit tests read the source's current values. Multiple
+elements may share one source. Geometry and control points remain unchanged.
+The association follows the element when it is reordered; removed references never
+retarget a different element. Calling setAttributes() replaces the association
+with a copy. clearLiveAttributes() freezes its current sample.
+
+The association retains its final values and image/font resources if the source
+is destroyed or garbage collected. It does not retain or run the source's animation
+schedule. Advance a standalone AnimatedAttributes with animate(deltaSeconds), once
+per update regardless of how many elements share it or how often they are drawn.
+Keep a reference to the source while you intend to edit or advance it.
+
+Drawing snapshots serialize current values, not the association or its schedule.
+getAttributes() continues to return an independent value snapshot.
+
+\param attrs Source whose values the element should follow.
+
+\return Nothing. A removed element ignores this call.
+\par Example
+\code{.js}
+const drawing = pdg.createDrawing();
+const style = new pdg.AnimatedAttributes().fillColor(new pdg.Color(1, 0, 0));
+const element = drawing.addRect(new pdg.Rect(0, 0, 40, 40), style);
+element.setLiveAttributes(style);
+style.moveTo(100, 0, 1, pdg.linearTween);
+// In your update callback, advance style.animate(deltaSeconds) once.
+// Every subsequent draw uses the current sample automatically.
+\endcode
+\see clearLiveAttributes(), hasLiveAttributes(), setAttributes(), getAttributes()
+*/
+/**
+\fn pdg::ElementRef::clearLiveAttributes()
+\brief Freeze the current attribute sample and release its live association.
+\return Nothing. A removed or already unassociated element is unchanged.
+\see setLiveAttributes()
+*/
+/**
+\fn pdg::ElementRef::hasLiveAttributes()
+\brief Test whether this element holds a live sample association.
+\return True until clearLiveAttributes(), setAttributes() or removal, including
+an association holding a frozen sample after source destruction.
+*/
+}

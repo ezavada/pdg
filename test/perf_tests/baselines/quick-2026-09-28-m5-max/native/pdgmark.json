@@ -1,0 +1,141 @@
+{
+  "testName": "QuickPDGMark",
+  "benchmarkId": "pdgmark",
+  "language": "JavaScript",
+  "mode": "quick",
+  "synthetic": true,
+  "timestamp": "2026-09-28T16:43:19.677Z",
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "loadFactor": 1.5,
+  "framePacing": "uncapped",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "tests": {
+    "bitmap": {
+      "synthetic": true,
+      "fixedLoad": 4950,
+      "loadFactor": 1.5,
+      "referenceLoad": 3300,
+      "referenceScore": 3300,
+      "targetFPS": 60,
+      "estimatedCapacity": 22996.922859357746,
+      "score": 22997,
+      "averageFPS": 278.75058011342725,
+      "totalFrames": 837,
+      "durationSeconds": 3.002684334,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 3.5874364802867382,
+        "minMs": 2.8329579999999623,
+        "maxMs": 10.841082999999799,
+        "percentile95Ms": 7.1104999999997744,
+        "percentile99Ms": 7.562415999999985
+      },
+      "atOrAboveTarget": true
+    },
+    "drawing": {
+      "synthetic": true,
+      "fixedLoad": 3750,
+      "loadFactor": 1.5,
+      "referenceLoad": 2500,
+      "referenceScore": 3000,
+      "targetFPS": 60,
+      "estimatedCapacity": 14882.535579437606,
+      "score": 17859,
+      "averageFPS": 238.12056927100173,
+      "totalFrames": 715,
+      "durationSeconds": 3.0026805420000002,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 4.199553205594405,
+        "minMs": 3.293333999999959,
+        "maxMs": 14.105499999999665,
+        "percentile95Ms": 6.440249999999651,
+        "percentile99Ms": 6.911167000000205
+      },
+      "atOrAboveTarget": true
+    },
+    "alpha": {
+      "synthetic": true,
+      "fixedLoad": 3000,
+      "loadFactor": 1.5,
+      "referenceLoad": 2000,
+      "referenceScore": 2600,
+      "targetFPS": 60,
+      "estimatedCapacity": 15005.85953166516,
+      "score": 19508,
+      "averageFPS": 300.1171906333032,
+      "totalFrames": 901,
+      "durationSeconds": 3.0021605830000007,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 3.3320317236404002,
+        "minMs": 2.490750000000844,
+        "maxMs": 7.319667000001573,
+        "percentile95Ms": 6.292457999999897,
+        "percentile99Ms": 6.74645799999962
+      },
+      "atOrAboveTarget": true
+    },
+    "polygon": {
+      "synthetic": true,
+      "fixedLoad": 3800,
+      "loadFactor": 4,
+      "referenceLoad": 950,
+      "referenceScore": 1425,
+      "targetFPS": 60,
+      "estimatedCapacity": 11390.343521147111,
+      "score": 17086,
+      "averageFPS": 179.84752928127017,
+      "totalFrames": 540,
+      "durationSeconds": 3.0025433329999998,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 5.560265431481481,
+        "minMs": 4.198374999999942,
+        "maxMs": 8.408583000000363,
+        "percentile95Ms": 7.8524170000000595,
+        "percentile99Ms": 8.068459000000075
+      },
+      "atOrAboveTarget": true
+    },
+    "text": {
+      "synthetic": true,
+      "fixedLoad": 450,
+      "loadFactor": 1.5,
+      "referenceLoad": 300,
+      "referenceScore": 420,
+      "targetFPS": 60,
+      "estimatedCapacity": 299.6909104828735,
+      "score": 420,
+      "averageFPS": 39.95878806438313,
+      "totalFrames": 120,
+      "durationSeconds": 3.003094083,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 25.025784025,
+        "minMs": 23.77049999999872,
+        "maxMs": 26.706708000001527,
+        "percentile95Ms": 26.053957999996783,
+        "percentile99Ms": 26.31524999999965
+      },
+      "atOrAboveTarget": false
+    }
+  },
+  "compositeScore": 77870,
+  "build": {
+    "configuration": "Release",
+    "node": "24.21.0",
+    "hasGraphics": true,
+    "module": "pdg:embedded",
+    "executable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/pdg",
+    "resolvedExecutable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/pdg.app/Contents/MacOS/pdg",
+    "kind": "embedded",
+    "directory": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release"
+  }
+}

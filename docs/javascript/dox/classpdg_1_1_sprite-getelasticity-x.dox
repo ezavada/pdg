@@ -1,9 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Sprite::getElasticity
-
-\brief get the elasticity for this sprite's collisions
-
-\sa setElasticity()
-
-**/ }

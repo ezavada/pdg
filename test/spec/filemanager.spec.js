@@ -239,8 +239,9 @@ describe("FileManager", function() {
   describe("Directory Finding", function() {
     it("can find directories with basic patterns", function() {
       var dirs = fileManager.findDirs('*');
-      var knownDirs = ['cxx', 'data', 'js', 'misc', 'perf', 'spec'];
-      expect(dirs.length).toBeGreaterThan(5);
+      // Only require tracked directories included in every test runtime.
+      var knownDirs = ['cxx', 'data', 'js', 'perf_tests', 'spec'];
+      expect(dirs.length).toBeGreaterThan(knownDirs.length - 1);
       var knownDirPositions = knownDirs.map(function(dirName) {
         var index = dirs.indexOf(dirName);
         expect(index).toBeGreaterThan(-1);

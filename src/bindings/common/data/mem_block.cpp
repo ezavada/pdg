@@ -53,14 +53,15 @@ METHOD_IMPL(MemBlock, GetByte)
 	METHOD_SIGNATURE("", number, 1, ([number uint] i))
     REQUIRE_ARG_COUNT(1);
     REQUIRE_UINT32_ARG(1, i);
-	RETURN_UNSIGNED(self->ptr[i]);
+	RETURN_UNSIGNED(self->getByte(i));
 	END
 METHOD_IMPL(MemBlock, GetBytes)
 	METHOD_SIGNATURE("", [string Binary], 2, ([number uint] start, [number uint] len))
     REQUIRE_ARG_COUNT(2);
     REQUIRE_UINT32_ARG(1, start);
     REQUIRE_UINT32_ARG(2, len);
-	VALUE resultVal = EncodeBinary(self->ptr + start, len);
+	const std::string bytes = self->getBytes(start, len);
+	VALUE resultVal = EncodeBinary(bytes.data(), bytes.size());
 	RETURN(resultVal);
 	END
 

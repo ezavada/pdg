@@ -1,0 +1,1877 @@
+.TH "PhysicsBody" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PhysicsBody \- Optional physical motion for a \fBSprite\fP or \fBPart\fP, using seconds\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "uint \fBaddContinuousForce\fP (\fBVector\fP force)"
+.br
+.RI "Apply continuous force\&. "
+.ti -1c
+.RI "uint \fBaddContinuousTorque\fP (number torque)"
+.br
+.RI "Apply continuous torque\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBapplyAngularImpulse\fP (number impulse)"
+.br
+.RI "Change angular momentum immediately\&. "
+.ti -1c
+.RI "uint \fBapplyForce\fP (\fBVector\fP force, number durationSeconds, number delaySeconds, \fBPoint\fP worldPoint)"
+.br
+.RI "Apply a force for a finite duration\&. "
+.ti -1c
+.RI "uint \fBapplyForce\fP (\fBVector\fP force, number durationSeconds, number delaySeconds=0)"
+.br
+.RI "Apply a force for a finite duration\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBapplyImpulse\fP (\fBVector\fP impulse)"
+.br
+.RI "Change momentum immediately\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBapplyImpulse\fP (\fBVector\fP impulse, \fBPoint\fP worldPoint)"
+.br
+.RI "Change momentum immediately\&. "
+.ti -1c
+.RI "uint \fBapplyTorque\fP (number torque, number durationSeconds, number delaySeconds=0)"
+.br
+.RI "Apply torque for a finite duration\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBclearDrive\fP ()"
+.br
+.RI "Remove the active physical drive\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreateGear\fP (\fBPhysicsBody\fP other, number ratio, number phase=0)"
+.br
+.RI "Couple rotations at a fixed ratio\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreateGrooveJoint\fP (\fBPhysicsBody\fP other, \fBPoint\fP start, \fBPoint\fP end, \fBPoint\fP otherAnchor)"
+.br
+.RI "Slide an anchor along a segment on this body\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreateMotor\fP (\fBPhysicsBody\fP other, number radiansPerSecond, number maxTorque)"
+.br
+.RI "Drive a relative angular speed with a torque limit\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreatePinJoint\fP (\fBPhysicsBody\fP other, \fBPoint\fP anchor=\fBPoint\fP(0, 0), \fBPoint\fP otherAnchor=\fBPoint\fP(0, 0))"
+.br
+.RI "Preserve the initial distance between two anchors\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreatePivotJoint\fP (\fBPhysicsBody\fP other, \fBPoint\fP anchor=\fBPoint\fP(0, 0), \fBPoint\fP otherAnchor=\fBPoint\fP(0, 0))"
+.br
+.RI "Keep two body-local anchors coincident\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreateRatchet\fP (\fBPhysicsBody\fP other, number interval, number phase=0)"
+.br
+.RI "Permit rotation through discrete one-way teeth\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreateRotaryLimit\fP (\fBPhysicsBody\fP other, number minAngle, number maxAngle)"
+.br
+.RI "Limit the relative angle of two bodies\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreateRotarySpring\fP (\fBPhysicsBody\fP other, number restAngle, number stiffness, number damping)"
+.br
+.RI "Join rotations with a damped torsional spring\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreateSlideJoint\fP (\fBPhysicsBody\fP other, \fBPoint\fP anchor, \fBPoint\fP otherAnchor, number minDistance, number maxDistance)"
+.br
+.RI "Limit the separation of two anchors\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBcreateSpring\fP (\fBPhysicsBody\fP other, \fBPoint\fP anchor, \fBPoint\fP otherAnchor, number restLength, number stiffness, number damping)"
+.br
+.RI "Join anchors with a damped linear spring\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBdisconnect\fP (\fBPhysicsBody\fP other=null)"
+.br
+.RI "Disconnect this body’s constraints\&. "
+.ti -1c
+.RI "number \fBgetAngularDamping\fP ()"
+.br
+.RI "Read the body's angular damping\&. "
+.ti -1c
+.RI "number \fBgetAngularMomentum\fP ()"
+.br
+.RI "Read rotational momentum\&. "
+.ti -1c
+.RI "number \fBgetAngularVelocity\fP ()"
+.br
+.RI "Read the body's angular velocity\&. "
+.ti -1c
+.RI "number \fBgetBreakAngularSpeed\fP ()"
+.br
+.RI "Read the configured angular-speed threshold\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBgetBreakAngularSpeedReference\fP ()"
+.br
+.RI "Read the optional angular-speed reference body\&. "
+.ti -1c
+.RI "\fBPhysicsConstraint\fP \fBgetConstraint\fP (uint index)"
+.br
+.RI "Read a connected constraint by list index\&. "
+.ti -1c
+.RI "number \fBgetConstraintCount\fP ()"
+.br
+.RI "Count connected constraints on this body\&. "
+.ti -1c
+.RI "object \fBgetDriveState\fP ()"
+.br
+.RI "Copy the drive target, last actuation and current target error\&. "
+.ti -1c
+.RI "number \fBgetFriction\fP ()"
+.br
+.RI "Read the body's contact friction\&. "
+.ti -1c
+.RI "number \fBgetLinearDamping\fP ()"
+.br
+.RI "Read the body's linear damping\&. "
+.ti -1c
+.RI "number \fBgetMass\fP ()"
+.br
+.RI "Read the body's mass\&. "
+.ti -1c
+.RI "number \fBgetMode\fP ()"
+.br
+.RI "Read the body's simulation mode\&. "
+.ti -1c
+.RI "number \fBgetMomentOfInertia\fP ()"
+.br
+.RI "Read the body's moment of inertia\&. "
+.ti -1c
+.RI "number \fBgetMovementDirectionInRadians\fP ()"
+.br
+.RI "Read the direction of linear velocity\&. "
+.ti -1c
+.RI "number \fBgetRestitution\fP ()"
+.br
+.RI "Read the body's restitution\&. "
+.ti -1c
+.RI "number \fBgetSolver\fP ()"
+.br
+.RI "Identify the active physics solver\&. "
+.ti -1c
+.RI "number \fBgetSpeed\fP ()"
+.br
+.RI "Read the body's speed\&. "
+.ti -1c
+.RI "object \fBgetState\fP ()"
+.br
+.RI "Copy the current physical state\&. "
+.ti -1c
+.RI "\fBVector\fP \fBgetVelocity\fP ()"
+.br
+.RI "Read linear velocity\&. "
+.ti -1c
+.RI "boolean \fBisAttached\fP ()"
+.br
+.RI "Test whether an owner publishes this body's motion\&. "
+.ti -1c
+.RI "boolean \fBisDriveEnabled\fP ()"
+.br
+.RI "Test whether a physical drive is enabled\&. "
+.ti -1c
+.RI "boolean \fBisPresent\fP ()"
+.br
+.RI "Test whether this is a real physics body\&. "
+.ti -1c
+.RI "boolean \fBremoveForce\fP (uint id)"
+.br
+.RI "Cancel a force or torque registration\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetAngularDamping\fP (number value)"
+.br
+.RI "Set the body's angular damping\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetAngularVelocity\fP (number value)"
+.br
+.RI "Set the body's angular velocity\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetBreakAngularSpeed\fP (number radiansPerSecond)"
+.br
+.RI "Notify when absolute angular speed exceeds the limit\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetBreakAngularSpeed\fP (number radiansPerSecond, \fBPhysicsBody\fP referenceBody)"
+.br
+.RI "Notify when a body exceeds an angular-speed threshold\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetDriveTarget\fP (\fBPoint\fP position, number radians, number maxForce, number maxTorque, number frequency=4, number dampingRatio=1, int direction=\fBrotationDirection_Shortest\fP)"
+.br
+.RI "Drive a dynamic body toward a position and orientation using bounded force and torque\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetFriction\fP (number value)"
+.br
+.RI "Set the body's contact friction\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetLinearDamping\fP (number value)"
+.br
+.RI "Set the body's linear damping\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetMass\fP (number value)"
+.br
+.RI "Set the body's mass\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetMode\fP (number value)"
+.br
+.RI "Set the body's simulation mode\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetMomentOfInertia\fP (number value)"
+.br
+.RI "Set the body's moment of inertia\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetRestitution\fP (number value)"
+.br
+.RI "Set the body's restitution\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetSpeed\fP (number value)"
+.br
+.RI "Set the body's speed\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetVelocity\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set linear velocity\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetVelocity\fP (\fBVector\fP velocity)"
+.br
+.RI "Set linear velocity\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetVelocityInRadians\fP (number speed, number direction)"
+.br
+.RI "Set velocity from speed and direction\&. "
+.ti -1c
+.RI "\fBstep\fP (number deltaSeconds)"
+.br
+.RI "Advance a detached body with the basic solver\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBstopAllForces\fP ()"
+.br
+.RI "Clear active and delayed forces, torques and the physical drive\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBstopMoving\fP ()"
+.br
+.RI "Clear linear velocity\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBstopSpinning\fP ()"
+.br
+.RI "Clear angular velocity\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBteleport\fP (\fBPoint\fP position, number radians)"
+.br
+.RI "Move a body immediately\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const \fBPhysicsBody\fP \fBNoPhysics\fP"
+.br
+.RI "Shared absence object returned by \fBSprite\&.physics\fP and \fBPart\&.physics\fP until a body is created\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Optional physical motion for a \fBSprite\fP or \fBPart\fP, using seconds\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Create through sprite\&.setupPhysicsBody(mass, momentOfInertia) or the matching \fBPart\fP method\&. Their physics property returns the body, or shared \fBpdg\&.PhysicsBody\&.NoPhysics\fP when absent\&. Queries do not allocate\&. NoPhysics safely ignores physical commands, with a diagnostic in debug builds\&. The physics property is read-only: callers can operate on the returned body but cannot replace it by assignment\&. Use setupPhysicsBody()/removePhysicsBody() to change the association\&. Use identity comparison with \fBpdg\&.PhysicsBody\&.NoPhysics\fP to test absence\&. The pdg\&.NoPhysics export refers to the same singleton\&. \fBgetSolver()\fP returns a physicsSolver_ constant\&. Layers and \fBAnimated\fP have no physics property or physical methods\&.
+
+.PP
+.PP
+.nf
+const body = sprite\&.setupPhysicsBody(2, 4);
+body\&.applyImpulse(new pdg\&.Vector(4, 0)); // immediate momentum change
+body\&.applyForce(new pdg\&.Vector(8, 0), 0\&.25); // force for a quarter second
+body\&.applyAngularImpulse(2);
+body\&.applyTorque(8, 0\&.25);
+.fi
+.PP
+
+.PP
+Linear impulse changes velocity by impulse/mass; angular impulse changes angular velocity by impulse/momentOfInertia\&. Force and torque integrate over a finite duration, in floating-point seconds\&. Zero duration contributes nothing\&. Continuous loads have explicit add/remove methods\&. Physical linear/angular damping is an exponential rate per second; contact friction and restitution are separate\&.
+
+.PP
+State and vectors use owning-layer/world coordinates, radians and seconds\&. An optional application \fBPoint\fP contributes angular response around the center of mass\&. Off-center force captures the lever arm at submission\&. In JavaScript the optional worldPoint follows durationSeconds and delaySeconds in \fBapplyForce()\fP\&.
+
+.PP
+\fBSprite\fP bodies use Chipmunk when its layer enables it, otherwise PDG's basic integrator\&. Unbound \fBPart\fP bodies also join the Chipmunk world on a physics-enabled layer; otherwise they use the basic solver\&. Optional \fBCollider\fP geometry supplies contacts for \fBSprite\fP and \fBPart\fP bodies alike\&. The basic solver adds approximate linear/angular contact impulses, Coulomb friction, penetration correction and body-to-body constraints\&. Chipmunk uses its native shapes and constraints\&. Free motion and timed loads remain analytically integrated by the basic solver\&. Numerical trajectories can differ with timestep and solver settings\&.
+
+.PP
+Owners advance their bodies automatically\&. removePhysicsBody() returns the owner to NoPhysics and detaches retained body references\&. A detached basic body can be advanced explicitly with step(seconds)\&. Dynamic bodies reject programmed movement/spin on their owner; immediate transform setters teleport\&. Growth and stretching remain \fBAnimated\fP operations\&. Set inertia explicitly when appropriate\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite\fP 
+
+.PP
+\fBPart\fP 
+
+.PP
+\fBAnimated\fP 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "uint addContinuousForce (\fBVector\fP force)"
+
+.PP
+Apply continuous force\&. Begins immediately and continues until removed, cleared, or an ordinary body leaves dynamic mode\&. Assembly loads follow the separate rules below\&.
+
+.PP
+For active \fBSprite\fP rigs, see \fBphysics_assembly_loads\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIforce\fP Finite force vector in owning-layer axes, in mass times distance per second squared\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero force ID, or physicsForce_None (0) for a non-Dynamic recipient/absent body\&. An assembly uses its selected root as recipient\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const id = body\&.addContinuousForce(new pdg\&.Vector(0, 9\&.8));
+// Later: body\&.removeForce(id);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBremoveForce()\fP, \fBstopAllForces()\fP 
+.RE
+.PP
+
+.SS "uint addContinuousTorque (number torque)"
+
+.PP
+Apply continuous torque\&. Begins immediately and continues until removed, cleared, or an ordinary body leaves dynamic mode\&. Assembly loads follow the separate rules below\&.
+
+.PP
+For active \fBSprite\fP rigs, see \fBphysics_assembly_loads\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItorque\fP Finite clockwise torque in mass times distance squared per second squared\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero force ID, or physicsForce_None (0) for a non-Dynamic recipient/absent body\&. An assembly uses its selected root as recipient\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const id = body\&.addContinuousTorque(2);
+// Later: body\&.removeForce(id);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBremoveForce()\fP, \fBstopAllForces()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP applyAngularImpulse (number impulse)"
+
+.PP
+Change angular momentum immediately\&. On a \fBSprite\fP using setupPhysicsFromAnimationRig(), routes the impulse to the selected root component and returns the coordinating body for chaining\&. A world application point keeps its lever arm relative to that root\&.
+
+.PP
+Angular velocity changes by impulse divided by moment of inertia\&. Only dynamic bodies respond\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIimpulse\fP Finite clockwise angular impulse in mass times distance squared per second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBapplyTorque()\fP, \fBgetAngularMomentum()\fP 
+.RE
+.PP
+
+.SS "uint applyForce (\fBVector\fP force, number durationSeconds, number delaySeconds, \fBPoint\fP worldPoint)"
+
+.PP
+Apply a force for a finite duration\&. Force integrates over time; it does not change velocity immediately\&. Use the point overload to add torque around the center of mass\&. JavaScript places worldPoint after durationSeconds and delaySeconds\&.
+
+.PP
+For active \fBSprite\fP rigs, see \fBphysics_assembly_loads\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIforce\fP Finite force vector in owning-layer axes, in mass times distance per second squared\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative active duration in seconds; zero applies no force\&. 
+.br
+\fIdelaySeconds\fP Finite nonnegative delay before the force begins, in seconds\&. 
+.br
+\fIworldPoint\fP Finite application point in owning-layer coordinates\&. The lever arm is captured when the force is submitted\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero force ID for \fBremoveForce()\fP, or \fR\fBpdg\&.physicsForce_None\fP\fP (0) for zero duration or a non-Dynamic recipient/absent body\&. An assembly uses its selected root as recipient\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBapplyImpulse()\fP, \fBremoveForce()\fP 
+.RE
+.PP
+
+.SS "uint applyForce (\fBVector\fP force, number durationSeconds, number delaySeconds = \fR0\fP)"
+
+.PP
+Apply a force for a finite duration\&. Force integrates over time; it does not change velocity immediately\&. Use the point overload to add torque around the center of mass\&. JavaScript places worldPoint after durationSeconds and delaySeconds\&.
+
+.PP
+ 
+.PP
+\fBLoads on an active Sprite rig\fP
+.RS 4
+Finite and continuous forces/torques on \fRsprite\&.physics\fP act on the selected physical root\&. The coordinating \fBSprite\fP stays Kinematic and adds no simulated mass\&. A new registration requires a Dynamic root; otherwise it returns zero\&. Driven roots count as Dynamic, and these loads coexist with their controller\&.
+.RE
+.PP
+The \fBSprite\fP owns the returned IDs\&. Root reassignment or detachment routes existing loads to the replacement root; cancel them through the same \fRsprite\&.physics\fP\&. Component registrations use independent IDs and are not cancelled by clearing \fBSprite\fP loads\&. Delays and durations advance once per physics step\&. While the selected root is Kinematic, existing loads age without exerting force and resume if it becomes Dynamic\&. Snapshots preserve IDs and remaining durations\&. Loads surviving rig disable continue on a Dynamic single body; a Kinematic/Static handoff clears them\&.
+
+.PP
+An off-center force captures its lever arm relative to the selected root at submission\&. World force vectors and signed torques keep their world coordinates across a \fBSprite\fP flip\&. They are not reflected with the rig's pose and velocity\&. 
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIforce\fP Finite force vector in owning-layer axes, in mass times distance per second squared\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative active duration in seconds; zero applies no force\&. 
+.br
+\fIdelaySeconds\fP Finite nonnegative delay before the force begins, in seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero force ID for \fBremoveForce()\fP, or \fR\fBpdg\&.physicsForce_None\fP\fP (0) for zero duration or a non-Dynamic recipient/absent body\&. An assembly uses its selected root as recipient\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const forceId = body\&.applyForce(new pdg\&.Vector(8, 0), 0\&.25);
+// Off\-center force, starting after 0\&.1 seconds:
+body\&.applyForce(new pdg\&.Vector(0, 8), 0\&.25, 0\&.1, new pdg\&.Point(110, 50));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBapplyImpulse()\fP, \fBremoveForce()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP applyImpulse (\fBVector\fP impulse)"
+
+.PP
+Change momentum immediately\&. On a \fBSprite\fP using setupPhysicsFromAnimationRig(), routes the impulse to the selected root component and returns the coordinating body for chaining\&. A world application point keeps its lever arm relative to that root\&.
+
+.PP
+Linear velocity changes by impulse divided by mass\&. The overload with a world point also changes angular velocity using its lever arm\&. Only dynamic bodies respond; static, kinematic, and absent bodies ignore impulses\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIimpulse\fP Finite momentum-change vector in owning-layer axes\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+body\&.applyImpulse(new pdg\&.Vector(4, 0));
+body\&.applyImpulse(new pdg\&.Vector(0, 2), new pdg\&.Point(110, 50));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBapplyForce()\fP, \fBapplyAngularImpulse()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP applyImpulse (\fBVector\fP impulse, \fBPoint\fP worldPoint)"
+
+.PP
+Change momentum immediately\&. On a \fBSprite\fP using setupPhysicsFromAnimationRig(), routes the impulse to the selected root component and returns the coordinating body for chaining\&. A world application point keeps its lever arm relative to that root\&.
+
+.PP
+Linear velocity changes by impulse divided by mass\&. The overload with a world point also changes angular velocity using its lever arm\&. Only dynamic bodies respond; static, kinematic, and absent bodies ignore impulses\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIimpulse\fP Finite momentum-change vector in owning-layer axes\&. 
+.br
+\fIworldPoint\fP Finite application point in owning-layer coordinates\&. Omitting it applies at the center of mass\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBapplyForce()\fP, \fBapplyAngularImpulse()\fP 
+.RE
+.PP
+
+.SS "uint applyTorque (number torque, number durationSeconds, number delaySeconds = \fR0\fP)"
+
+.PP
+Apply torque for a finite duration\&. Torque changes angular velocity according to moment of inertia\&. Only dynamic bodies respond\&.
+
+.PP
+For active \fBSprite\fP rigs, see \fBphysics_assembly_loads\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItorque\fP Finite clockwise torque in mass times distance squared per second squared\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative active duration in seconds; zero applies no force\&. 
+.br
+\fIdelaySeconds\fP Finite nonnegative delay before the force begins, in seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero force ID for \fBremoveForce()\fP, or \fR\fBpdg\&.physicsForce_None\fP\fP (0) for zero duration or a non-Dynamic recipient/absent body\&. An assembly uses its selected root as recipient\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBapplyAngularImpulse()\fP, \fBremoveForce()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP clearDrive ()"
+
+.PP
+Remove the active physical drive\&. Preserves current position, linear/angular velocity and separately registered forces/torques\&. Calling when no drive exists is harmless\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPhysicsBody\fP, including NoPhysics\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetDriveTarget()\fP, \fBstopAllForces()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createGear (\fBPhysicsBody\fP other, number ratio, number phase = \fR0\fP)"
+
+.PP
+Couple rotations at a fixed ratio\&. Maintains other\&.rotation * ratio - this\&.rotation = phase\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIratio\fP Finite nonzero signed ratio\&. 
+.br
+\fIphase\fP Finite angular phase in radians; default zero\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createGrooveJoint (\fBPhysicsBody\fP other, \fBPoint\fP start, \fBPoint\fP end, \fBPoint\fP otherAnchor)"
+
+.PP
+Slide an anchor along a segment on this body\&. Motion along the segment remains free; its endpoints limit travel\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIstart\fP Finite segment start in this body’s local coordinates\&. 
+.br
+\fIend\fP Finite distinct segment end in this body’s local coordinates\&. 
+.br
+\fIotherAnchor\fP Anchor in the other body’s local distance coordinates; default origin where optional\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createMotor (\fBPhysicsBody\fP other, number radiansPerSecond, number maxTorque)"
+
+.PP
+Drive a relative angular speed with a torque limit\&. Positive speed turns B clockwise relative to A\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIradiansPerSecond\fP Finite target B-minus-A angular speed, in radians/second\&. 
+.br
+\fImaxTorque\fP Finite nonnegative maximum torque\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createPinJoint (\fBPhysicsBody\fP other, \fBPoint\fP anchor = \fR\fBPoint\fP(0,0)\fP, \fBPoint\fP otherAnchor = \fR\fBPoint\fP(0,0)\fP)"
+
+.PP
+Preserve the initial distance between two anchors\&. Captures distance at creation\&. Coincident anchors behave as a pivot\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIanchor\fP Anchor in this body’s local distance coordinates; default origin where optional\&. 
+.br
+\fIotherAnchor\fP Anchor in the other body’s local distance coordinates; default origin where optional\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createPivotJoint (\fBPhysicsBody\fP other, \fBPoint\fP anchor = \fR\fBPoint\fP(0,0)\fP, \fBPoint\fP otherAnchor = \fR\fBPoint\fP(0,0)\fP)"
+
+.PP
+Keep two body-local anchors coincident\&. The two anchors need not initially coincide\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIanchor\fP Anchor in this body’s local distance coordinates; default origin where optional\&. 
+.br
+\fIotherAnchor\fP Anchor in the other body’s local distance coordinates; default origin where optional\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createRatchet (\fBPhysicsBody\fP other, number interval, number phase = \fR0\fP)"
+
+.PP
+Permit rotation through discrete one-way teeth\&. Positive interval permits increasing B-minus-A rotation; negative interval reverses the direction\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIinterval\fP Finite nonzero signed tooth interval in radians\&. 
+.br
+\fIphase\fP Finite angular tooth offset in radians; default zero\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createRotaryLimit (\fBPhysicsBody\fP other, number minAngle, number maxAngle)"
+
+.PP
+Limit the relative angle of two bodies\&. Limits apply to B rotation minus A rotation, in unwrapped radians\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIminAngle\fP Finite minimum clockwise relative angle\&. 
+.br
+\fImaxAngle\fP Finite maximum angle, at least the minimum\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createRotarySpring (\fBPhysicsBody\fP other, number restAngle, number stiffness, number damping)"
+
+.PP
+Join rotations with a damped torsional spring\&. Rest angle is body B rotation minus body A rotation, clockwise positive\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIrestAngle\fP Finite rest angle in radians\&. 
+.br
+\fIstiffness\fP Finite nonnegative torque per radian\&. 
+.br
+\fIdamping\fP Finite nonnegative torque per radian/second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createSlideJoint (\fBPhysicsBody\fP other, \fBPoint\fP anchor, \fBPoint\fP otherAnchor, number minDistance, number maxDistance)"
+
+.PP
+Limit the separation of two anchors\&. The anchors move freely between the limits\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIanchor\fP Anchor in this body’s local distance coordinates; default origin where optional\&. 
+.br
+\fIotherAnchor\fP Anchor in the other body’s local distance coordinates; default origin where optional\&. 
+.br
+\fIminDistance\fP Finite nonnegative minimum distance\&. 
+.br
+\fImaxDistance\fP Finite maximum distance, at least the minimum\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP createSpring (\fBPhysicsBody\fP other, \fBPoint\fP anchor, \fBPoint\fP otherAnchor, number restLength, number stiffness, number damping)"
+
+.PP
+Join anchors with a damped linear spring\&. Pulls or pushes toward the rest length\&. Requires two distinct instantiated bodies in the same world\&. Anchors are unscaled body-local coordinates, independent of artwork scaling\&. Basic and Chipmunk implement the same relationship with different numerical trajectories\&. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Other instantiated \fBPhysicsBody\fP; may belong to a \fBSprite\fP or \fBPart\fP\&. 
+.br
+\fIanchor\fP Anchor in this body’s local distance coordinates; default origin where optional\&. 
+.br
+\fIotherAnchor\fP Anchor in the other body’s local distance coordinates; default origin where optional\&. 
+.br
+\fIrestLength\fP Finite nonnegative rest length\&. 
+.br
+\fIstiffness\fP Finite nonnegative force per distance unit\&. 
+.br
+\fIdamping\fP Finite nonnegative force per unit relative speed\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPhysicsConstraint\fP handle\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsConstraint\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP disconnect (\fBPhysicsBody\fP other = \fRnull\fP)"
+
+.PP
+Disconnect this body’s constraints\&. Retained constraint handles remain safe and report NoPhysics endpoints\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Optional other endpoint; omission or null disconnects all\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&. 
+.RE
+.PP
+
+.SS "number getAngularDamping ()"
+
+.PP
+Read the body's angular damping\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current angular damping\&. Returns zero for NoPhysics\&. Units are inverse seconds\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAngularDamping()\fP 
+.RE
+.PP
+
+.SS "number getAngularMomentum ()"
+
+.PP
+Read rotational momentum\&. For an active \fBSprite\fP rig, sum component spin and orbital momentum about the assembly center of mass: \fRsum(I_i * omega_i + m_i * cross(r_i - COM, v_i - VCOM))\fP\&. This includes attached Kinematic bodies, excludes the coordinating body and unregistered/detached parts, and does not assume all parts rotate together\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Signed clockwise angular momentum in mass times distance squared per second\&. For a single body, moment of inertia multiplied by angular velocity\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMomentOfInertia()\fP, \fBgetAngularVelocity()\fP, \fBapplyAngularImpulse()\fP 
+.RE
+.PP
+
+.SS "number getAngularVelocity ()"
+
+.PP
+Read the body's angular velocity\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current angular velocity\&. Returns zero for NoPhysics\&. Units are clockwise radians per second\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAngularVelocity()\fP 
+.RE
+.PP
+
+.SS "number getBreakAngularSpeed ()"
+
+.PP
+Read the configured angular-speed threshold\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The threshold in radians/second; zero means disabled, including NoPhysics\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetBreakAngularSpeed()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP getBreakAngularSpeedReference ()"
+
+.PP
+Read the optional angular-speed reference body\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The borrowed reference body, or null for absolute speed or disabled monitoring\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetBreakAngularSpeed()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsConstraint\fP getConstraint (uint index)"
+
+.PP
+Read a connected constraint by list index\&. Indices shift after disconnection\&. Out-of-range indices throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIindex\fP Zero-based index into this body’s current connections\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Borrowed native reference to the shared constraint; JavaScript retains the handle\&. 
+.RE
+.PP
+
+.SS "number getConstraintCount ()"
+
+.PP
+Count connected constraints on this body\&. The same constraint appears on both endpoint bodies\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Number of active connections; zero for NoPhysics\&. 
+.RE
+.PP
+
+.SS "object getDriveState ()"
+
+.PP
+Copy the drive target, last actuation and current target error\&. Returns an independent snapshot\&. When disabled, enabled is false and numeric fields are zero\&. Reading never creates a body or emits a NoPhysics warning\&.
+
+.PP
+
+.PP
+\fBReturns\fP
+.RS 4
+A plain object with the fields above\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetDriveTarget()\fP, \fBisDriveEnabled()\fP 
+.RE
+.PP
+
+.SS "number getFriction ()"
+
+.PP
+Read the body's contact friction\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current contact friction\&. Returns zero for NoPhysics\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetFriction()\fP 
+.RE
+.PP
+
+.SS "number getLinearDamping ()"
+
+.PP
+Read the body's linear damping\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current linear damping\&. Returns zero for NoPhysics\&. Units are inverse seconds\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetLinearDamping()\fP 
+.RE
+.PP
+
+.SS "number getMass ()"
+
+.PP
+Read the body's mass\&. For a \fBSprite\fP with an active explicit or generated animation physics rig, this is the sum of registered component masses, including Kinematic components; unrelated and detached Parts are excluded\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current mass\&. Returns zero for NoPhysics\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetMass()\fP 
+.RE
+.PP
+
+.SS "number getMode ()"
+
+.PP
+Read the body's simulation mode\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current simulation mode\&. Returns \fBpdg\&.physicsBody_None\fP for NoPhysics\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetMode()\fP 
+.RE
+.PP
+
+.SS "number getMomentOfInertia ()"
+
+.PP
+Read the body's moment of inertia\&. For an active \fBSprite\fP rig, return the instantaneous inertia about its center of mass: \fRsum(I_i + m_i * distanceSquared(r_i, COM))\fP\&. This is the inertia the current pose would have if locked rigidly; it changes as articulated parts move\&. It counts exactly the same attached components as \fBgetMass()\fP, including Kinematic bodies\&. The coordinating body's saved single-body inertia is not included\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The current moment of inertia in mass times distance squared\&. Returns zero for NoPhysics\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetMomentOfInertia()\fP 
+.RE
+.PP
+
+.SS "number getMovementDirectionInRadians ()"
+
+.PP
+Read the direction of linear velocity\&. 
+.PP
+\fBReturns\fP
+.RS 4
+atan2(velocity\&.y, velocity\&.x), in radians\&. Zero points along positive x; positive angles turn clockwise\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetVelocityInRadians()\fP, \fBgetSpeed()\fP 
+.RE
+.PP
+
+.SS "number getRestitution ()"
+
+.PP
+Read the body's restitution\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current restitution\&. Returns zero for NoPhysics\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetRestitution()\fP 
+.RE
+.PP
+
+.SS "number getSolver ()"
+
+.PP
+Identify the active physics solver\&. 
+.PP
+\fBReturns\fP
+.RS 4
+\fR\fBpdg\&.physicsSolver_None\fP\fP for NoPhysics, \fR\fBpdg\&.physicsSolver_Basic\fP\fP for the analytic integrator, or \fR\fBpdg\&.physicsSolver_Chipmunk\fP\fP for a layer-owned solver\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBisPresent()\fP, \fBstep()\fP 
+.RE
+.PP
+
+.SS "number getSpeed ()"
+
+.PP
+Read the body's speed\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current speed\&. Returns zero for NoPhysics\&. Units are distance per second\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetSpeed()\fP 
+.RE
+.PP
+
+.SS "object getState ()"
+
+.PP
+Copy the current physical state\&. Reads the active solver when one is attached\&. Changing the returned object does not change the body\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An owned object with the fields below\&.
+.RE
+.PP
+
+.PP
+\fBPhysics state\fP
+.RS 4
+Field  Meaning  \fRx\fP, \fRy\fP  Center position in owning-layer distance units\&.  \fRrotation\fP  Clockwise angle in radians\&.  \fRvelocityX\fP, \fRvelocityY\fP  Linear velocity in distance units per second\&.  \fRangularVelocity\fP  Clockwise angular velocity in radians per second\&.  
+.RE
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBteleport()\fP, \fBsetVelocity()\fP 
+.RE
+.PP
+
+.SS "\fBVector\fP getVelocity ()"
+
+.PP
+Read linear velocity\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A new \fBVector\fP in owning-layer distance units per second\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetVelocity()\fP, \fBgetSpeed()\fP 
+.RE
+.PP
+
+.SS "boolean isAttached ()"
+
+.PP
+Test whether an owner publishes this body's motion\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True while associated with a \fBSprite\fP or \fBPart\fP\&. False after removal; a retained detached body remains usable\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBstep()\fP 
+.RE
+.PP
+
+.SS "boolean isDriveEnabled ()"
+
+.PP
+Test whether a physical drive is enabled\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True while a drive is installed, including when its target is blocked or already reached\&. False for NoPhysics\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetDriveState()\fP, \fBclearDrive()\fP 
+.RE
+.PP
+
+.SS "boolean isPresent ()"
+
+.PP
+Test whether this is a real physics body\&. 
+.PP
+\fBReturns\fP
+.RS 4
+False for the shared NoPhysics object; true for a body created explicitly\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMode()\fP, \fBisAttached()\fP 
+.RE
+.PP
+
+.SS "boolean removeForce (uint id)"
+
+.PP
+Cancel a force or torque registration\&. Works for pending, finite, and continuous loads\&. Removing an expired or unknown ID is harmless\&.
+
+.PP
+For active \fBSprite\fP rigs, see \fBphysics_assembly_loads\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP The ID returned when the force or torque was registered\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True if a pending/active load was removed; false otherwise\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBapplyForce()\fP, \fBapplyTorque()\fP, \fBstopAllForces()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setAngularDamping (number value)"
+
+.PP
+Set the body's angular damping\&. Damping slows angular velocity over time; it is separate from contact friction\&. Invalid values throw on a present body\&. NoPhysics ignores the operation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative exponential damping rate per second\&. Zero disables damping\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAngularDamping()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setAngularVelocity (number value)"
+
+.PP
+Set the body's angular velocity\&. Static bodies retain zero angular velocity\&. Invalid values throw on a present body\&. NoPhysics ignores the operation\&.
+
+.PP
+A rigidly mounted \fBSprite\fP's body rejects this operation; animate its mounting \fBPart\fP or detach it first\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite angular velocity in radians per second; positive is clockwise\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAngularVelocity()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setBreakAngularSpeed (number radiansPerSecond)"
+
+.PP
+Notify when absolute angular speed exceeds the limit\&. This selects absolute angular speed and clears any previous reference body\&. See the reference-body overload for sampling, rearming, events and snapshots\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradiansPerSecond\fP Finite nonnegative radians/second; zero disables\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPhysicsBody\fP, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetBreakAngularSpeed(number, PhysicsBody)\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setBreakAngularSpeed (number radiansPerSecond, \fBPhysicsBody\fP referenceBody)"
+
+.PP
+Notify when a body exceeds an angular-speed threshold\&. The threshold is a notification condition, not a speed clamp\&. It does not apply braking, disconnect constraints, or split artwork\&. Existing motor and force-break behavior is unchanged\&. Both basic and Chipmunk solvers support it, including kinematic bodies and bodies without a collider or joint\&.
+
+.PP
+A positive-duration physics step compares the magnitude of the solved angular velocity against the threshold\&. Equality does not trigger an event\&. One event is sent per excursion above the limit; a later sampled speed at or below the limit rearms it\&. Sampling occurs after each world step (before restoring temporary Chipmunk kinematic sweep velocities), or after \fBstep()\fP for a detached basic body\&. It does not detect peaks between those samples\&. Setters and zero-duration steps never dispatch events synchronously\&.
+
+.PP
+Changing the threshold or reference rearms monitoring\&. Repeating the same settings preserves the notification state\&. Invalid edits throw without changing settings or rearming\&. Zero disables monitoring and clears the reference\&. NoPhysics ignores this operation and always reports zero\&.
+
+.PP
+With a reference, speed means \fRabs(body\&.angularVelocity - referenceBody\&.angularVelocity)\fP; otherwise it means \fRabs(body\&.angularVelocity)\fP\&. The reference must be a different present body in the same \fBSpriteLayer\fP, or both bodies must be outside a layer\&. The association is weak: removing its body from its owner or destroying it disables dependent monitors\&. A world mismatch detected at sampling also disables the monitor\&. A detached body retains its absolute threshold; relative monitoring is cleared on detachment\&.
+
+.PP
+\fBSprite\fP bodies emit eventType_SpriteBreak on their \fBSprite\fP; \fBPart\fP bodies emit it on the owning \fBSprite\fP with the \fBPart\fP identified\&. Returning false leaves the body and joints unchanged\&. Snapshots preserve settings and the notification latch\&. Relative references require a Sprite/Layer graph containing both bodies; external references are rejected\&. Event handlers are not saved\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIradiansPerSecond\fP Finite nonnegative magnitude in radians/second\&. Default body setting is zero (disabled)\&. 
+.br
+\fIreferenceBody\fP Optional borrowed reference body; omitted, null or undefined selects absolute speed\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPhysicsBody\fP, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+The example assumes \fBSprite\fP objects named sprite and housing in the same layer\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const shaft = sprite\&.setupPhysicsBody();
+shaft\&.setBreakAngularSpeed(3000 * 2 * Math\&.PI / 60); // 3,000 RPM
+sprite\&.addHandler(new pdg\&.IEventHandler(function(event) {
+    if (event\&.reason === pdg\&.physicsBreak_AngularSpeed) {
+        console\&.log('Shaft overspeed:', event\&.angularSpeed);
+        // Decide which attachments to release in your game\&.
+    }
+    return true;
+}), pdg\&.eventType_SpriteBreak);
+// Or measure relative to a housing body in the same layer:
+shaft\&.setBreakAngularSpeed(100, housing\&.setupPhysicsBody());
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetBreakAngularSpeed()\fP, \fBgetBreakAngularSpeedReference()\fP, \fBSpriteBreakEvent\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setDriveTarget (\fBPoint\fP position, number radians, number maxForce, number maxTorque, number frequency = \fR4\fP, number dampingRatio = \fR1\fP, int direction = \fR\fBrotationDirection_Shortest\fP\fP)"
+
+.PP
+Drive a dynamic body toward a position and orientation using bounded force and torque\&. Installs or replaces an active spring/damper target\&. The operation preserves the current position and velocity\&. Each physics step adds a drive contribution to other applied loads; collisions and constraints still determine the solved pose\&. Repeated successful manual \fBsetDriveTarget()\fP calls replace the same manual target; the last call wins\&. Invalid updates preserve the previous target\&. A blocked or force-limited body may never reach its target\&. The drive stays enabled until \fBclearDrive()\fP, \fBstopAllForces()\fP, or a change to kinematic/static mode\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIposition\fP Target in owning-layer coordinates; a detached body uses its world frame\&. 
+.br
+\fIradians\fP Target orientation in radians, positive clockwise\&. 
+.br
+\fImaxForce\fP Finite nonnegative limit on the magnitude of the linear drive force, in mass units times distance units per second squared\&. Zero disables translation actuation\&. 
+.br
+\fImaxTorque\fP Finite nonnegative angular drive torque limit, in inertia units times radians per second squared\&. Zero disables angular actuation\&. 
+.br
+\fIfrequency\fP Finite positive response frequency in cycles per second; default 4\&. Larger values request faster correction, subject to the force limits\&. 
+.br
+\fIdampingRatio\fP Finite nonnegative damping ratio; default 1 requests critical damping in the unconstrained linear model\&. Zero permits oscillation\&. 
+.br
+\fIdirection\fP Integer rotationDirection constant; default rotationDirection_Shortest\&. Clockwise/CounterClockwise select a signed route at assignment\&. AsSpecified retains the unwrapped target, including full turns\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPhysicsBody\fP\&. NoPhysics returns the shared singleton without storing a target\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires a dynamic body\&. Invalid numeric values, unsupported direction constants, or competing rigid-mount ownership throw before changing the target\&. Limits bound only the drive contribution; independent impulses, forces, gravity and constraint responses can produce additional motion\&. The basic solver uses bounded spring/damper integration, while Chipmunk applies the drive before its shared contact/constraint solve\&. Numerical trajectories need not match exactly\&.
+.RE
+.PP
+.PP
+.nf
+const body = sprite\&.setupPhysicsBody(2, 4);
+body\&.setDriveTarget(new pdg\&.Point(120, 80), 0\&.5, 40, 12, 3, 1,
+                    pdg\&.rotationDirection_Shortest);
+// The Sprite/Part world advances its body\&. Query whether the goal is still blocked:
+const remaining = body\&.getDriveState()\&.positionError;
+.fi
+.PP
+
+.PP
+\fBNote\fP
+.RS 4
+Rig tracking and \fBPart\fP IK controllers reserve their participating drives\&. Release rig tracking with Sprite::setAnimationPhysicsMode(animationPhysics_Dynamic)\&. Call \fBPart::clearIKTarget()\fP to release a \fBPart\fP IK chain before replacing or clearing such a drive, stopping all forces, or changing away from dynamic mode\&. Independent impulses and forces remain available\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetDriveState()\fP, \fBclearDrive()\fP, \fBsetMode()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::rotationDirection_Shortest\fP\&.
+.SS "\fBPhysicsBody\fP setFriction (number value)"
+
+.PP
+Set the body's contact friction\&. Affects contacts, not free-motion damping\&. \fBSprite\fP and \fBPart\fP collider shapes use this material unless they override it\&. Invalid values throw on a present body\&. NoPhysics ignores the operation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative friction coefficient\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetFriction()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setLinearDamping (number value)"
+
+.PP
+Set the body's linear damping\&. Damping slows velocity over time; it is separate from contact friction\&. Invalid values throw on a present body\&. NoPhysics ignores the operation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative exponential damping rate per second\&. Zero disables damping\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetLinearDamping()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setMass (number value)"
+
+.PP
+Set the body's mass\&. Scales inertia by newMass / oldMass, preserving a tuned inertia-to-mass ratio\&. Linear/angular velocity is unchanged, so momentum changes\&. Invalid or overflowing mass/inertia throws before changing state\&. NoPhysics ignores the operation\&.
+
+.PP
+For a \fBSprite\fP with an active explicit or generated animation physics rig, scales every registered component's mass/inertia while preserving their current proportions\&. A component edit changes only that body and consequently the total\&. The coordinating body adds no simulated mass\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite positive mass in your application's mass units\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMass()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setMode (number value)"
+
+.PP
+Set the body's simulation mode\&. For ordinary bodies, switching out of dynamic mode clears forces\&. Static mode also clears linear and angular velocity\&. The absence value physicsBody_None cannot be assigned; remove the body from its owner instead\&. Invalid values throw on a present body\&. NoPhysics ignores the operation\&. Switching an owned body to dynamic mode cancels competing programmed movement/rotation tracks and rates while retaining size/appearance animation\&. A mounted \fBSprite\fP body must remain kinematic until detached\&.
+
+.PP
+Mapped animation bodies instead route through \fBSprite::setAnimationPhysicsMode()\fP: Dynamic releases rig tracking, Kinematic begins default 0\&.5-second recovery, and Static is rejected\&. Recovery reports a dynamic body until it reaches its target\&. This path preserves independent scheduled loads and rejects conflicting manual or \fBPart\fP IK drives until explicitly released\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP One of \fR\fBpdg\&.physicsBody_Dynamic\fP\fP, \fR\fBpdg\&.physicsBody_Kinematic\fP\fP, or \fR\fBpdg\&.physicsBody_Static\fP\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMode()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setMomentOfInertia (number value)"
+
+.PP
+Set the body's moment of inertia\&. Changes inertia without changing angular velocity\&. Visual resizing does not recalculate inertia\&. On an active rig, set inertia on each component; the coordinating \fBSprite\fP body rejects this setter\&. Invalid values throw on a present body\&. NoPhysics ignores the operation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite positive rotational inertia in mass times distance squared\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMomentOfInertia()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setRestitution (number value)"
+
+.PP
+Set the body's restitution\&. Controls bounce during contacts\&. It is independent of damping\&. Invalid values throw on a present body\&. NoPhysics ignores the operation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite coefficient from 0 (inelastic) through 1 (fully elastic)\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetRestitution()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setSpeed (number value)"
+
+.PP
+Set the body's speed\&. Preserves the current movement direction\&. A stationary body uses direction zero (positive x)\&. Static bodies retain zero velocity\&. Invalid values throw on a present body\&. NoPhysics ignores the operation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative speed in distance units per second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetSpeed()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setVelocity (number xPerSecond, number yPerSecond)"
+
+.PP
+Set linear velocity\&. Sets physical velocity immediately\&. Static bodies remain stationary; NoPhysics ignores the call\&.
+
+.PP
+A rigidly mounted \fBSprite\fP's body rejects this operation; animate its mounting \fBPart\fP or detach it first\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIxPerSecond\fP Finite horizontal velocity\&. 
+.br
+\fIyPerSecond\fP Finite vertical velocity\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetVelocity()\fP, \fBapplyImpulse()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setVelocity (\fBVector\fP velocity)"
+
+.PP
+Set linear velocity\&. Sets physical velocity immediately\&. Static bodies remain stationary; NoPhysics ignores the call\&.
+
+.PP
+A rigidly mounted \fBSprite\fP's body rejects this operation; animate its mounting \fBPart\fP or detach it first\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIvelocity\fP Velocity vector in owning-layer distance units per second\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.setupPhysicsBody()\&.setVelocity(new pdg\&.Vector(20, 0));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetVelocity()\fP, \fBapplyImpulse()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setVelocityInRadians (number speed, number direction)"
+
+.PP
+Set velocity from speed and direction\&. Static bodies remain stationary\&. Invalid values throw; NoPhysics ignores the call\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIspeed\fP Finite nonnegative speed in distance units per second\&. 
+.br
+\fIdirection\fP Finite clockwise direction in radians, measured from positive x\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetMovementDirectionInRadians()\fP, \fBsetVelocity()\fP 
+.RE
+.PP
+
+.SS "step (number deltaSeconds)"
+
+.PP
+Advance a detached body with the basic solver\&. Integrates motion and load lifetimes\&. Throws if a Chipmunk solver owns the body or the time is invalid\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdeltaSeconds\fP Finite nonnegative elapsed time in seconds\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+\fBSprite\fP and \fBPart\fP owners advance attached bodies automatically\&. Call \fBstep()\fP yourself only after detaching a retained basic body\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBisAttached()\fP, \fBgetSolver()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP stopAllForces ()"
+
+.PP
+Clear active and delayed forces, torques and the physical drive\&. Current linear and angular velocity are preserved\&. Use \fBstopMoving()\fP and \fBstopSpinning()\fP to clear those separately\&.
+
+.PP
+For active \fBSprite\fP rigs, see \fBphysics_assembly_loads\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBremoveForce()\fP, \fBstopMoving()\fP, \fBstopSpinning()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP stopMoving ()"
+
+.PP
+Clear linear velocity\&. Does not clear forces; an active force can accelerate the body again on the next step\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBstopAllForces()\fP, \fBsetVelocity()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP stopSpinning ()"
+
+.PP
+Clear angular velocity\&. Does not clear torque; an active torque can accelerate rotation again on the next step\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBstopAllForces()\fP, \fBsetAngularVelocity()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP teleport (\fBPoint\fP position, number radians)"
+
+.PP
+Move a body immediately\&. Changes position and rotation while preserving velocity\&. An attached owner receives the new transform immediately\&. NoPhysics ignores the call\&.
+
+.PP
+A rigidly mounted \fBSprite\fP's body rejects this operation; animate its mounting \fBPart\fP or detach it first\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIposition\fP Finite center position in owning-layer coordinates\&. 
+.br
+\fIradians\fP Finite clockwise rotation in radians\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+body\&.teleport(new pdg\&.Point(100, 50), 0);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetState()\fP 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "const \fBPhysicsBody\fP NoPhysics\fR [static]\fP"
+
+.PP
+Shared absence object returned by \fBSprite\&.physics\fP and \fBPart\&.physics\fP until a body is created\&. Compare by identity to test for absence\&. Use removePhysicsBody() to restore the shared absence object\&. Valid mutating calls are ignored; they do not change the singleton or queue work for later body creation\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite\fP 
+
+.PP
+\fBPart\fP 
+
+.PP
+\fBAnimated\fP 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

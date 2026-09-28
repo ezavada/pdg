@@ -1,7 +1,21 @@
-namespace pdg { /**
+/**
+\fn undefined SpriteLayer::deserialize(Deserializer deserializer)
+\brief Restore Layer state or apply an incremental update.
+\param deserializer Reader positioned at a record written by SpriteLayer::serialize().
+An initial record restores sprites, independent/authored Parts, shared artwork, order, transforms and active
+state into an empty or populated Layer. Loading validates records and resources
+before replacing the existing collection, including mount endpoint, cycle and
+duplicate-owner checks. Old sprites retained by script are
+detached; new bodies join the destination solver after validation. Tween channels
+are rebound to the destination Layer, including zoom.
 
-\fn pdg::SpriteLayer::deserialize
+The Layer keeps its Port, application event handlers and caller-selected
+serialization flags. Its saved identities and state replace their previous values.
+A record/resource validation error leaves the existing Layer collection and state
+intact; discard the failed reader. Incremental updates modify existing sprites and
+require matching identities/order. They are not staged scene replacement.
 
-\brief deserialize a sprite layer
-
-**/ }
+\note Call outside animation modifiers and a physics solve. The shared physical
+world is not recreated; configure its gravity and damping in the application.
+\sa SpriteLayer::serialize(), SpriteLayer::setSerializationFlags()
+*/

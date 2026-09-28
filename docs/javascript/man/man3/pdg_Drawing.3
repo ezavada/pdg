@@ -1,4 +1,4 @@
-.TH "Drawing" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Drawing" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -84,6 +84,18 @@ Drawing \- Container for drawing elements (lines, shapes, images) that can be re
 .SH "Detailed Description"
 .PP 
 Container for drawing elements (lines, shapes, images) that can be rendered to a \fBPort\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+\fBDrawing\fP contents are shared by nested drawings and animation attachments\&. \fBElementRef\fP retains its drawing contents, so elements remain editable while those owners exist\&. Nested drawing cycles are rejected\&. Persistent animation artwork is registered with Sprite\&.addAnimationDrawable(drawing, options); dynamic callbacks return a \fBDrawing\fP or null\&.
+
+.PP
+Port\&.drawDrawing(drawing, point, attributes) translates drawing coordinates by the point before applying the parent transform\&. Its rectangle overload maps the drawing's geometric bounds into that rectangle\&. Nested \fBDrawing\fP elements use the same bounds mapping\&. Native Quad/RotatedRect \fBDrawing\fP destinations require a finite affine parallelogram; degenerate source bounds retain unit scale on that axis\&. Inherited transforms and opacities do not mutate stored element \fBAttributes\fP\&. 
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBElementRef\fP addArc (\fBPoint\fP center, number xRadius, number yRadius, number startAngle, number endAngle, \fBAttributes\fP attrs)"

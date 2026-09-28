@@ -34,9 +34,9 @@
 #include "pdg_project.h"
 
 #ifdef __cplusplus
-   #include <climits>
+   #include <cstdint>
 #else
-  #include <limits.h>
+  #include <stdint.h>
 #endif
 
 // -----------------------------------------------------------------------------------
@@ -59,40 +59,35 @@
 
 #endif
 
-typedef unsigned char  	    uint8;
-typedef signed char          int8;
-typedef unsigned short 	    uint16;
-typedef signed short         int16;
-
-#if !defined( _UINT32 ) || defined( PDG_DECORATE_GLOBAL_TYPES )
-  #if (ULONG_MAX > 4294967295) && (UINT_MAX == 4294967295)
-    // handle compilation on systems were unsigned long is 64 bit
-    typedef unsigned int    uint32;
-  #else
-    typedef unsigned long   uint32;
-  #endif
-#define _UINT32  // this keeps Apple headers from blowing up
-#endif
-#if (ULONG_MAX > 4294967295) && (UINT_MAX == 4294967295)
-// handle compilation on systems were long is 64 bit
-  typedef signed int         int32;
+#ifdef __cplusplus
+using uint8 = std::uint8_t;
+using int8 = std::int8_t;
+using uint16 = std::uint16_t;
+using int16 = std::int16_t;
+using uint32 = std::uint32_t;
+using int32 = std::int32_t;
+using uint64 = std::uint64_t;
+using int64 = std::int64_t;
+using ms_delta = std::int64_t;
+using ms_time = std::int64_t;
 #else
-  typedef signed long        int32;
+typedef uint8_t uint8;
+typedef int8_t int8;
+typedef uint16_t uint16;
+typedef int16_t int16;
+typedef uint32_t uint32;
+typedef int32_t int32;
+typedef uint64_t uint64;
+typedef int64_t int64;
+typedef int64_t ms_delta;
+typedef int64_t ms_time;
 #endif
-
-#ifndef PDG_NO_64BIT
-typedef unsigned long long  uint64;
-typedef signed long long     int64;
-#endif
-
-typedef long    ms_delta;
-typedef long    ms_time;
 
 #ifdef __cplusplus
 namespace pdg {
 #endif
 
-#if defined(__cplusplus) && (__cplusplus >= 201103L)
+#ifdef __cplusplus
 typedef char16_t        utf16char;
 #else
 typedef uint16          utf16char;

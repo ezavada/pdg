@@ -39,7 +39,7 @@
 
 namespace pdg {
 
-//! \defgroup Graphics
+//! \addtogroup Graphics
 //! Collection of classes, types and constants that are used for drawing
 
 // -----------------------------------------------------------------------------------
@@ -99,6 +99,13 @@ public:
     //! bpp is the bits per pixel used for the back buffer of the window. Use bpp of zero (0) to match current screen
     //! color depth settings
     virtual Port*   createWindowPort(const Rect& rect, const char* windName = 0, int bpp = 0);
+
+    //! Create a transparent RGBA drawing surface without a window.
+    //! Uses rect's positive integer width/height; the drawing origin is (0, 0).
+    //! Returns null on invalid size or graphics allocation failure. No main port is required.
+    //! Draw directly with Port methods; pixels persist and no PortDraw events are posted.
+    //! Close with closeGraphicsPort(). Closing its graphics context also closes this port.
+    virtual Port*   createOffscreenPort(const Rect& rect);
 
     //! create a full screen graphics port.
     //! desired screen resolution is in rect, desired screen color depth is in
@@ -171,7 +178,7 @@ public:
 
 
 // lifecycle
-/// @cond C++
+/// @cond CXX
     virtual ~GraphicsManager();
 /// @endcond
 
@@ -193,6 +200,8 @@ protected:
 	
 	// Track all active ports
 	std::vector<PortImpl*> mActivePorts;
+    std::vector<PortImpl*> mOffscreenPorts;
+    PortImpl* mOffscreenContextPort = nullptr;
 	
 	// Add port to active list
 	void addActivePort(PortImpl* port);

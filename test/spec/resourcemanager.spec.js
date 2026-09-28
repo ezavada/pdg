@@ -365,7 +365,9 @@ describe("ResourceManager", function() {
     });
 
     it("can get resource size", function() {
-      var expectedSize = fs.readFileSync('data/strings.txt').length;
+      var expectedSize = (typeof process !== 'undefined' && process.ios)
+        ? fs.statSync('data/strings.txt').size
+        : fs.readFileSync('data/strings.txt').length;
       var size = resourceManager.getResourceSize('strings.txt');
       expect(typeof size).toBe('number');
       expect(size > 0).toBe(true);
@@ -569,6 +571,7 @@ describe("ResourceManager", function() {
     });
 
     it("can handle resource lifecycle", function() {
+      var pathsBefore = resourceManager.getResourcePaths();
       // Open resource file
       dataRefNum = resourceManager.openResourceFile('data');
       expect(dataRefNum !== 0).toBe(true);
@@ -576,6 +579,7 @@ describe("ResourceManager", function() {
       // Get resource paths
       var paths = resourceManager.getResourcePaths();
       expect(paths).toContain('/data/');
+      expect(paths).not.toBe(pathsBefore);
       
       // Get string resources - ensure we're in English mode
       resourceManager.setLanguage('en');
@@ -599,9 +603,10 @@ describe("ResourceManager", function() {
       resourceManager.closeResourceFile(dataRefNum);
       dataRefNum = 0;
       
-      // Verify resource file is closed
+      // Restore the original search paths. The simulator's bundle path itself
+      // contains /data/, so that substring does not identify our resource file.
       var pathsAfter = resourceManager.getResourcePaths();
-      expect(pathsAfter).not.toContain('/data/');
+      expect(pathsAfter).toBe(pathsBefore);
     });
   });
 

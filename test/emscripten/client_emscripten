@@ -36,6 +36,7 @@ RESULT_HTML="$RESULT_DIR/result.html"
 SERVER_LOG="$RESULT_DIR/server.log"
 SERVER_PID=""
 TEST_URL="http://127.0.0.1:$PORT/test/client.html"
+if [ -n "${PDG_TEST_SPECS:-}" ]; then TEST_URL="$TEST_URL?specs=$PDG_TEST_SPECS"; fi
 USING_EXISTING_SERVER=no
 
 cleanup() {
@@ -52,7 +53,7 @@ if curl -fsS "$TEST_URL" >/dev/null 2>&1; then
     USING_EXISTING_SERVER=yes
     echo "Using existing test server at http://127.0.0.1:$PORT"
 else
-    (cd "$PDG_ROOT" && python3 -m http.server "$PORT" --bind 127.0.0.1 >"$SERVER_LOG" 2>&1) &
+    (cd "$PDG_ROOT" && exec python3 -m http.server "$PORT" --bind 127.0.0.1 >"$SERVER_LOG" 2>&1) &
     SERVER_PID=$!
     for unused in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
         if curl -fsS "$TEST_URL" >/dev/null 2>&1; then
@@ -69,8 +70,8 @@ if [ "$READY" != yes ]; then
     exit 2
 fi
 
-"$BROWSER" --headless=new --enable-unsafe-swiftshader --dump-dom --virtual-time-budget=60000 \
-    "$TEST_URL" >"$RESULT_HTML" 2>/dev/null
+"${PDG_NODE:-node}" "$PDG_ROOT/test/emscripten/run_ui_browser.js" \
+    "$BROWSER" "$TEST_URL" "$RESULT_HTML" pdg-result-json >"$RESULT_DIR/browser.log" 2>&1
 BROWSER_EXIT=$?
 RESULT_JSON="$(sed -n 's/.*<pre id="pdg-result-json">\([^<]*\)<\/pre>.*/\1/p' "$RESULT_HTML" | tail -1)"
 
@@ -82,7 +83,7 @@ else
     exit 2
 fi
 
-if echo "$RESULT_JSON" | grep -q '"status":"passed"'; then
+if [ "$BROWSER_EXIT" -eq 0 ] && echo "$RESULT_JSON" | grep -q '"status":"passed"'; then
     exit 0
 fi
 

@@ -1,14 +1,12 @@
-namespace pdg { /**
-
+/**
 \fn pdg::Sprite::onCollideSprite
+\brief Register a Sprite collision event handler for imported physical rigs.
 
-\brief set event handler for sprite-to-sprite collision events
+Imported physical bone contacts emit SpriteCollideEvent, including bone names
+and the solver arbiter. Ordinary Sprite and Part colliders report ColliderContact;
+use Collider.setContactHandler() for those contacts.
 
-The happens whenever this sprite collides with another sprite, but only if enableCollisions() or setCollisionRadius() was called
-
-\sa enableCollisions()
-\sa setCollisionRadius()
 \sa SpriteCollideEvent
+\sa Collider::setContactHandler()
 \sa IEventHandler
-
-**/ }
+*/

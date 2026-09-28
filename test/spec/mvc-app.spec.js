@@ -435,6 +435,84 @@ describe("MVC Application Framework", function() {
 
   });
 
+  describe("Pointer capture", function() {
+    function fixture() {
+      const app = new TestApplication(), controller = new TestController(app, app.graphicsMgr.getMainPort());
+      const a = new Button(controller, new pdg.Rect(10,10,110,40),7);
+      const b = new Button(controller, new pdg.Rect(150,10,250,40),8);
+      const info = (x,y=25) => ({mousePos:new pdg.Point(x,y),rightButton:false,lastClickElapsed:1000});
+      return {controller,a,b,info};
+    }
+    it("clears pressed appearance on exit and releases only the original view", function() {
+      const {controller,a,b,info}=fixture(); let releases=0, otherReleases=0, releasePart;
+      const up=a.doMouseUp.bind(a);
+      a.doMouseUp=(mi,id,part)=>{++releases;releasePart=part;return up(mi,id,part);};
+      b.doMouseUp=()=>{++otherReleases;return false;};
+      // No preceding mouse-move event: the press itself establishes capture.
+      controller.onMouseDown(info(50)); expect(a.isPressed()).toBe(true);
+      controller.onMouseMove(info(200)); expect(a.isPressed()).toBe(false);
+      controller.onMouseUp(info(200));
+      expect(releases).toBe(1);expect(otherReleases).toBe(0);expect(releasePart).toBe(-1);
+      expect(controller.buttonWasClicked).toBe(false);
+      controller.onMouseUp(info(50)); // a stray release cannot finish the old press
+      expect(releases).toBe(1);expect(controller.buttonWasClicked).toBe(false);
+    });
+    it("rearms on reentry and ignores releases of another mouse button", function() {
+      const {controller,a,info}=fixture();
+      controller.onMouseDown(info(50));controller.onMouseMove(info(300));
+      expect(a.isPressed()).toBe(false);
+      controller.onMouseMove(info(50));expect(a.isPressed()).toBe(true);
+      controller.onMouseUp(Object.assign(info(50),{rightButton:true}));
+      expect(a.isPressed()).toBe(true);expect(controller.buttonWasClicked).toBe(false);
+      controller.onMouseUp(info(50));expect(a.isPressed()).toBe(false);
+      expect(controller.buttonWasClicked).toBe(true);
+    });
+    it("cancels hidden, disabled, removed, or deactivated presses", function() {
+      for (const cancel of [(c,a)=>a.setEnabled(false),(c,a)=>a.hide(),
+          (c,a)=>c.removeView(a),(c,a)=>c.setActive(false)]) {
+        const {controller,a,info}=fixture();
+        controller.onMouseDown(info(50));cancel(controller,a);controller.onMouseUp(info(50));
+        expect(a.isPressed()).toBe(false);expect(controller.buttonWasClicked).toBe(false);
+      }
+    });
+    it("does not click a view removed by its release callback", function() {
+      const {controller,a,info}=fixture(), up=a.doMouseUp.bind(a);
+      a.doMouseUp=(mi,id,part)=>{up(mi,id,part);controller.removeView(a);return false;};
+      controller.onMouseDown(info(50));controller.onMouseUp(info(50));
+      expect(controller.buttonWasClicked).toBe(false);
+    });
+    it("captures generic views without IDs and continues drag motion outside", function() {
+      const {controller,info}=fixture();
+      const view=new TestView(controller,new pdg.Rect(10,80,110,120));
+      view.setID(-1); let ups=0, moves=0, clicks=0;
+      view.doMouseMove=()=>++moves;view.doMouseUp=()=>{++ups;return false;};
+      view.doLeftClick=()=>{++clicks;return true;};
+      controller.onMouseDown(info(50,100));controller.onMouseMove(info(300,100));controller.onMouseUp(info(300,100));
+      expect(moves).toBe(1);expect(ups).toBe(1);expect(clicks).toBe(0);
+    });
+    it("requires release over the same radio option or checkbox", function() {
+      const {controller,info}=fixture();
+      const radio=new RadioButton(controller,new pdg.Rect(10,80,310,120),-1,3);
+      controller.onMouseDown(info(150,100));controller.onMouseUp(info(250,100));
+      expect(radio.getSelectedIndex()).toBe(0);
+      controller.onMouseUp(info(150,100));expect(radio.getSelectedIndex()).toBe(0);
+      controller.onMouseDown(info(150,100));controller.onMouseUp(info(150,100));
+      expect(radio.getSelectedIndex()).toBe(1);
+      const checkbox=new Checkbox(controller,new pdg.Rect(10,150,150,180));
+      controller.onMouseDown(info(20,160));controller.onMouseUp(info(350,160));
+      expect(checkbox.isChecked()).toBe(false);
+    });
+    it("stops scrollbar repeat when released outside", function() {
+      const {controller,info}=fixture();
+      const bar=new Scrollbar(controller,new pdg.Rect(350,10,370,210),ScrollbarOrientation.VERTICAL,20,10,100);
+      controller.onMouseDown(info(360,200));
+      expect(bar.scrollDownClicked).toBe(true);
+      controller.onMouseMove(info(450,250));controller.onMouseUp(info(450,250));
+      expect(bar.scrollDownClicked).toBe(false);
+      bar.destroy();
+    });
+  });
+
   describe("Checkbox", function() {
 
     it("should use the C++ default text size, style, and font-metric layout", function() {
@@ -442,6 +520,7 @@ describe("MVC Application Framework", function() {
       const controller = new TestController(app, app.graphicsMgr.getMainPort());
       controller.port.getCurrentFont = () => ({
         getFontAscent: () => 12,
+        getFontCapHeight: () => 9,
         getFontDescent: () => 3
       });
       let textCall = null;
@@ -455,27 +534,22 @@ describe("MVC Application Framework", function() {
       checkbox.drawSelf();
 
       expect(checkbox.getViewArea().bottom).toEqual(120);
-      expect(textCall.point.x).toEqual(67);
+      expect(textCall.point.x).toEqual(69);
       expect(textCall.point.y).toEqual(115);
       expect(textCall.attributes.getTextSize()).toEqual(16);
       expect(textCall.attributes.getTextStyle()).toEqual(1);
     });
 
-    it("should draw its checkmark with the native three-argument line API", function() {
+    it("should draw a bold checkmark spanning most of the larger box", function() {
       const app = new TestApplication();
       const controller = new TestController(app, app.graphicsMgr.getMainPort());
-      const checkbox = new Checkbox(controller, new pdg.Rect(50, 100, 150, 125));
-      const calls = [];
-      controller.port.drawLine = function(from, to, attributes) {
-        if (arguments.length !== 3) throw new Error('drawLine requires three arguments');
-        calls.push({ from, to, attributes });
-      };
-
-      checkbox.drawCheckmark(new pdg.Rect(50, 105, 64, 119), new pdg.Color(0, 0, 0, 1));
-
-      expect(calls.length).toEqual(2);
-      expect(calls[0].from instanceof pdg.Point).toBe(true);
-      expect(calls[0].to instanceof pdg.Point).toBe(true);
+      const checkbox = new Checkbox(controller, new pdg.Rect(50,100,150,125));
+      let mark = null;
+      controller.port.drawPolygon = (polygon) => { mark = polygon; };
+      checkbox.drawCheckmark(new pdg.Rect(50,105,64,119), new pdg.Color(0,0,0,1));
+      expect(mark.getPointCount()).toBe(6);
+      expect(mark.getBounds().width()).toBeGreaterThan(11);
+      expect(mark.getBounds().height()).toBeGreaterThan(11);
     });
 
     it("should create and manage checkbox properties", function() {
@@ -511,6 +585,45 @@ describe("MVC Application Framework", function() {
 
   });
 
+  describe("Control input and cap-height alignment", function() {
+    it("keeps disabled radio selection unchanged for pointer, key, and direct clicks", function() {
+      const app = new TestApplication(), controller = new TestController(app,app.graphicsMgr.getMainPort());
+      const radio = new RadioButton(controller,new pdg.Rect(10,10,310,50),-1,3);
+      let clicks=0;
+      radio.setAttributes(new ControlAttributes().clickRoutine(()=>++clicks));
+      radio.setEnabled(false);
+      const info={mousePos:new pdg.Point(150,30),lastClickElapsed:1000};
+      controller.onMouseDown(info);controller.onMouseUp(info);
+      radio.doClick(1);radio.doKeyPress({keyCode:40});
+      expect(radio.getSelectedIndex()).toBe(0);expect(clicks).toBe(0);
+    });
+    it("aligns the radio circle to the label capitals and greys its disabled dot", function() {
+      const app = new TestApplication(), controller = new TestController(app,app.graphicsMgr.getMainPort());
+      controller.port.getCurrentFont=()=>({getFontCapHeight:()=>10});
+      let circle, text, dot;
+      controller.port.drawEllipse=(center,x,y)=>{if (!circle) circle={center,x,y};};
+      controller.port.drawCircle=(center,radius,attrs)=>{dot=attrs.getFillColor();};
+      controller.port.drawText=(value,point)=>{if (!text) text=point;};
+      const radio = new RadioButton(controller,new pdg.Rect(10,10,310,50),-1,3);
+      radio.setEnabled(false);radio.drawSelf();
+      expect(circle.x).toBe(circle.y);expect(circle.x*2+1).toBe(14);
+      expect(text.y-circle.center.y).toBe(5);
+      expect(dot.red).toBeGreaterThan(.5);expect(dot.red).toEqual(dot.green);
+    });
+    it("scrolls vertically in both directions, clamps, notifies, and respects disabled state", function() {
+      const app=new TestApplication(), controller=new TestController(app,app.graphicsMgr.getMainPort());
+      const bar=new Scrollbar(controller,new pdg.Rect(10,10,26,210),ScrollbarOrientation.VERTICAL,20,10,100);
+      let notices=0;bar.addObserver({notify:()=>++notices});
+      expect(bar.doScrollWheel({vertDelta:3,horizDelta:0})).toBe(true);
+      expect(bar.getCurrentPosition()).toBe(23);
+      bar.doScrollWheel({vertDelta:-100,horizDelta:0});expect(bar.getCurrentPosition()).toBe(0);
+      expect(bar.doScrollWheel({vertDelta:-1,horizDelta:0})).toBe(false);
+      bar.setEnabled(false);expect(bar.doScrollWheel({vertDelta:10,horizDelta:0})).toBe(false);
+      expect(bar.getCurrentPosition()).toBe(0);expect(notices).toBe(2);
+      bar.destroy();
+    });
+  });
+
   describe("Dialog", function() {
 
     it("should create a themeable background view", function() {
@@ -536,7 +649,7 @@ describe("MVC Application Framework", function() {
       expect(dialog.backgroundView.getPartClicked(new pdg.Point(260, 210))).toEqual(1);
     });
 
-    it("should draw the default dialog fill and black border separately", function() {
+    it("should keep all four default dialog borders inside its viewport", function() {
       const app = new TestApplication();
       const controller = new TestController(app, app.graphicsMgr.getMainPort());
       const dialog = new Dialog(controller, 300, 200, DialogFlags.dialog_Standard, 1, 2);
@@ -546,8 +659,8 @@ describe("MVC Application Framework", function() {
       dialog.backgroundView.drawSelf(port);
 
       expect(draws.length).toEqual(2);
-      expect(draws[0].area).toBe(dialog.backgroundView.getViewArea());
-      expect(draws[1].area).toBe(dialog.backgroundView.getViewArea());
+      expect(draws[0].area).toEqual(dialog.backgroundView.getViewArea());
+      expect(draws[1].area).toEqual(new pdg.Rect(dialog.backgroundView.getViewArea()).shrink(.5));
     });
 
     it("should reactivate its parent after closing", function() {

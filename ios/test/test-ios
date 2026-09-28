@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Compatibility entry point; the maintained simulator runner lives in test/ios.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+exec "$SCRIPT_DIR/../../test/ios" "$@"

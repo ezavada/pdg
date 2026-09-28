@@ -1,7 +1,27 @@
 namespace pdg { /**
+\fn pdg::Attributes::clipOverflow(boolean clip)
+\brief Confine drawing overflow to the operation's bounds.
 
-\fn pdg::Attributes::clipOverflow()
+Defaults to false. When true, the operation temporarily intersects the current
+Port clip with its transformed axis-aligned bounds, restoring the Port clip on
+return. False allows operation overflow but never disables the Port clip.
 
-\brief Sets whether image overflow should be clipped when drawn
+Bounds are the supplied rectangle, quad or polygon bounds for closed shapes;
+the ellipse or sphere bounding rectangle; measured text bounds for point text;
+the supplied rectangle for rectangle text; and Drawing geometry bounds mapped
+into the requested destination for Drawing replay. Line and spline bounds include
+half the stroke width in Port pixels, so horizontal and vertical paths remain
+visible; arc bounds use their ellipse with the same stroke allowance. Other
+closed-shape bounds exclude the outer half of their stroke. Bounds follow
+translation, rotation, scaling and reflection as an axis-aligned enclosing rectangle.
 
+Images and image strips also crop fitted artwork to the destination before its
+transform, including rotated destinations, subsection/frame selection and all fit
+modes. fit_Clipped always crops; tiling crops partial edge tiles. Nested Drawing
+replay respects its enclosing operation clip without exposing a public clip stack.
+
+\param clip True to clip overflow; false to allow it within the Port clip.
+
+\return This Attributes object, for chaining.
+\see Port::setClipRect(), Port::resetClipRect()
 **/ }

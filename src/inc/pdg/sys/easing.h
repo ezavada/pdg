@@ -37,74 +37,78 @@
 
 namespace pdg {
 
+/** \addtogroup AnimationEasing
+ * @{
+ */
+
 // -----------------------------------------------------------------------------------
 // Easing Functions
 //
-// timeMs: current time offset since start of animation, 
+// timeSeconds: current time offset since start of animation, 
 // beginVal: beginning value at start of animation, 
 // change: complete change in value over entire animation,
-// durationMs: duration for entire animation
+// durationSeconds: duration for entire animation
 // returns new value as of current time offset
 
-typedef float (*EasingFunc)(ms_delta timeOffsetMs, float beginVal, float change, ms_delta durationMs);
+typedef float (*EasingFunc)(double timeOffsetSeconds, float beginVal, float change, double durationSeconds);
 
 // Predefined Easing Functions:
 
 // --- LINEAR EASING: basic linear motion --------------------------------------------
 
-float linearTween(ms_delta ut, float b, float c, ms_delta ud);
+float linearTween(double ut, float b, float c, double ud);
 // easeInX - accelerating from zero velocity
 // easeOutX - decelerating to zero velocity
 // easeInOutX - acceleration until halfway, then deceleration
 
 // --- QUADRATIC EASING: t^2 ---------------------------------------------------------
-float easeInQuad(ms_delta ut, float b, float c, ms_delta ud);
-float easeOutQuad(ms_delta ut, float b, float c, ms_delta ud);
-float easeInOutQuad(ms_delta ut, float b, float c, ms_delta ud);
+float easeInQuad(double ut, float b, float c, double ud);
+float easeOutQuad(double ut, float b, float c, double ud);
+float easeInOutQuad(double ut, float b, float c, double ud);
 
 // --- CUBIC EASING: t^3 -------------------------------------------------------------
-float easeInCubic(ms_delta ut, float b, float c, ms_delta ud);
-float easeOutCubic(ms_delta ut, float b, float c, ms_delta ud);
-float easeInOutCubic(ms_delta ut, float b, float c, ms_delta ud);
+float easeInCubic(double ut, float b, float c, double ud);
+float easeOutCubic(double ut, float b, float c, double ud);
+float easeInOutCubic(double ut, float b, float c, double ud);
 
 // --- QUARTIC EASING: t^4 -----------------------------------------------------------
-float easeInQuart(ms_delta ut, float b, float c, ms_delta ud);
-float easeOutQuart(ms_delta ut, float b, float c, ms_delta ud);
-float easeInOutQuart(ms_delta ut, float b, float c, ms_delta ud);
+float easeInQuart(double ut, float b, float c, double ud);
+float easeOutQuart(double ut, float b, float c, double ud);
+float easeInOutQuart(double ut, float b, float c, double ud);
 
 // --- QUINTIC EASING: t^5 -----------------------------------------------------------
-float easeInQuint(ms_delta ut, float b, float c, ms_delta ud);
-float easeOutQuint(ms_delta ut, float b, float c, ms_delta ud);
-float easeInOutQuint(ms_delta ut, float b, float c, ms_delta ud);
+float easeInQuint(double ut, float b, float c, double ud);
+float easeOutQuint(double ut, float b, float c, double ud);
+float easeInOutQuint(double ut, float b, float c, double ud);
 
 // --- SINUSOIDAL EASING: sin(t) -----------------------------------------------------
-float easeInSine(ms_delta ut, float b, float c, ms_delta ud);
-float easeOutSine(ms_delta ut, float b, float c, ms_delta ud);
-float easeInOutSine(ms_delta ut, float b, float c, ms_delta ud);
+float easeInSine(double ut, float b, float c, double ud);
+float easeOutSine(double ut, float b, float c, double ud);
+float easeInOutSine(double ut, float b, float c, double ud);
 
 // --- EXPONENTIAL EASING: 2^t -------------------------------------------------------
-float easeInExpo(ms_delta ut, float b, float c, ms_delta ud);
-float easeOutExpo(ms_delta ut, float b, float c, ms_delta ud);
-float easeInOutExpo(ms_delta ut, float b, float c, ms_delta ud);
+float easeInExpo(double ut, float b, float c, double ud);
+float easeOutExpo(double ut, float b, float c, double ud);
+float easeInOutExpo(double ut, float b, float c, double ud);
 
 // --- CIRCULAR EASING: sqrt(1-t^2) --------------------------------------------------
-float easeInCirc(ms_delta ut, float b, float c, ms_delta ud);
-float easeOutCirc(ms_delta ut, float b, float c, ms_delta ud);
-float easeInOutCirc(ms_delta ut, float b, float c, ms_delta ud);
+float easeInCirc(double ut, float b, float c, double ud);
+float easeOutCirc(double ut, float b, float c, double ud);
+float easeInOutCirc(double ut, float b, float c, double ud);
 
 // --- BOUNCE EASING: exponentially decaying parabolic bounce ------------------------
-float easeInBounce(ms_delta ut, float b, float c, ms_delta ud);
-float easeOutBounce(ms_delta ut, float b, float c, ms_delta ud);
-float easeInOutBounce(ms_delta ut, float b, float c, ms_delta ud);
+float easeInBounce(double ut, float b, float c, double ud);
+float easeOutBounce(double ut, float b, float c, double ud);
+float easeInOutBounce(double ut, float b, float c, double ud);
 
 // --- BACK EASING: overshooting cubic easing: (s+1)*t^3 - s*t^2 ---------------------
 //     backtracking slightly, then reversing direction and moving to target
-float easeInBack(ms_delta ut, float b, float c, ms_delta ud);
+float easeInBack(double ut, float b, float c, double ud);
 //     moving towards target, overshooting it slightly, then reversing and coming back to target
-float easeOutBack(ms_delta ut, float b, float c, ms_delta ud);
+float easeOutBack(double ut, float b, float c, double ud);
 //     backtracking slightly, then reversing direction and moving to target,
 //     then overshooting target, reversing, and finally coming back to target
-float easeInOutBack(ms_delta ut, float b, float c, ms_delta ud);
+float easeInOutBack(double ut, float b, float c, double ud);
 
 
 #define NUM_BUILTIN_EASINGS		28
@@ -140,6 +144,8 @@ extern int gNumCustomEasings;
 
 uint8 easingFuncToId(EasingFunc func);
 EasingFunc easingIdToFunc(uint8 id);
+
+/** @} */
 
 } // end namespace pdg
 

@@ -1,4 +1,4 @@
-.TH "Attributes" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Attributes" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -20,9 +20,9 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .br
 .RI "sets the blend mode for rendering operations "
 .ti -1c
-.RI "\fBclipOverflow\fP ()"
+.RI "\fBAttributes\fP \fBclipOverflow\fP (boolean clip)"
 .br
-.RI "Sets whether image overflow should be clipped when drawn\&. "
+.RI "Confine drawing overflow to the operation's bounds\&. "
 .ti -1c
 .RI "\fBfillColor\fP (\fBColor\fP color)"
 .br
@@ -161,7 +161,7 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .ti -1c
 .RI "int \fBgetTextStyle\fP ()"
 .br
-.RI "Gets text style flags (bold, italic, underline, alignment) "
+.RI "Gets text style flags (bold, italic, underline, alignment)\&. "
 .ti -1c
 .RI "\fBImage\fP \fBgetTexture\fP ()"
 .br
@@ -203,15 +203,19 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .br
 .RI "sets the radius for rounded corners "
 .ti -1c
-.RI "\fBscale\fP (number float xFactor, number float yFactor=xFactor)"
+.RI "\fBscale\fP (number float xFactor, number float yFactor=xFactor, \fBPoint\fP center=\fBPoint\fP(0, 0))"
 .br
 .RI "sets the scaling factors for x and y axes "
 .ti -1c
-.RI "\fBskew\fP (number float xSkew, number float ySkew)"
+.RI "\fBAttributes\fP \fBsetTransform\fP (array number matrix)"
+.br
+.RI "Replace the affine transform immediately\&. "
+.ti -1c
+.RI "\fBskew\fP (number float xSkew, number float ySkew, \fBPoint\fP center=\fBPoint\fP(0, 0))"
 .br
 .RI "sets the skew transformation for x and y axes "
 .ti -1c
-.RI "\fBsphereRotation\fP (number float \fBrotation\fP)"
+.RI "\fBsphereRotation\fP (number float rotation)"
 .br
 .RI "Sets the rotation angle in radians for a textured sphere\&. "
 .ti -1c
@@ -225,7 +229,7 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .ti -1c
 .RI "\fBtextStyle\fP (int style)"
 .br
-.RI "Sets text style flags (bold, italic, underline, alignment) "
+.RI "Sets text style flags (bold, italic, underline, alignment)\&. "
 .ti -1c
 .RI "\fBtexture\fP (\fBImage\fP texture)"
 .br
@@ -238,10 +242,23 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .RI "\fBtranslation\fP (\fBOffset\fP offset)"
 .br
 .RI "sets the translation offset for transformations "
+.ti -1c
+.RI "\fBAttributes\fP \fBwithAppearance\fP (\fBAttributes\fP overrides, boolean textOnly=false)"
+.br
+.RI "Copy this drawing style with explicitly assigned appearance overrides\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
 Container for styling and transformation attributes used in drawing operations\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&. 
+.RE
+.PP
+
 .SH "Member Function Documentation"
 .PP 
 .SS "ambientLight (\fBColor\fP color)"
@@ -254,10 +271,34 @@ sets the blend mode for rendering operations
 References \fBblendMode()\fP\&.
 .PP
 Referenced by \fBblendMode()\fP\&.
-.SS "clipOverflow ()"
+.SS "\fBAttributes\fP clipOverflow (boolean clip)"
 
 .PP
-Sets whether image overflow should be clipped when drawn\&. 
+Confine drawing overflow to the operation's bounds\&. Defaults to false\&. When true, the operation temporarily intersects the current \fBPort\fP clip with its transformed axis-aligned bounds, restoring the \fBPort\fP clip on return\&. False allows operation overflow but never disables the \fBPort\fP clip\&.
+
+.PP
+Bounds are the supplied rectangle, quad or polygon bounds for closed shapes; the ellipse or sphere bounding rectangle; measured text bounds for point text; the supplied rectangle for rectangle text; and \fBDrawing\fP geometry bounds mapped into the requested destination for \fBDrawing\fP replay\&. Line and spline bounds include half the stroke width in \fBPort\fP pixels, so horizontal and vertical paths remain visible; arc bounds use their ellipse with the same stroke allowance\&. Other closed-shape bounds exclude the outer half of their stroke\&. Bounds follow translation, rotation, scaling and reflection as an axis-aligned enclosing rectangle\&.
+
+.PP
+Images and image strips also crop fitted artwork to the destination before its transform, including rotated destinations, subsection/frame selection and all fit modes\&. fit_Clipped always crops; tiling crops partial edge tiles\&. Nested \fBDrawing\fP replay respects its enclosing operation clip without exposing a public clip stack\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIclip\fP True to clip overflow; false to allow it within the \fBPort\fP clip\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBAttributes\fP object, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPort::setClipRect()\fP, \fBPort::resetClipRect()\fP 
+.RE
+.PP
+
 .SS "fillColor (\fBColor\fP color)"
 
 .PP
@@ -269,7 +310,7 @@ sets a linear gradient fill from start point to end point
 .SS "fillOpacity (number float opacity)"
 
 .PP
-sets the opacity for fill operations (0\&.0 to 1\&.0) Set the opacity of filled areas (0\&.0 = transparent, 1\&.0 = opaque) 
+sets the opacity for fill operations (0\&.0 to 1\&.0) Set the opacity of filled areas (0\&.0 = transparent, 1\&.0 = opaque)\&. 
 .SS "fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
 
 .PP
@@ -403,7 +444,7 @@ Gets the text size in points for drawing text\&.
 .SS "int getTextStyle ()"
 
 .PP
-Gets text style flags (bold, italic, underline, alignment) 
+Gets text style flags (bold, italic, underline, alignment)\&. 
 .SS "\fBImage\fP getTexture ()"
 
 .PP
@@ -453,11 +494,44 @@ Referenced by \fBsphereRotation()\fP\&.
 
 .PP
 sets the radius for rounded corners 
-.SS "scale (number float xFactor, number float yFactor = \fRxFactor\fP)"
+.SS "scale (number float xFactor, number float yFactor = \fRxFactor\fP, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
 
 .PP
 sets the scaling factors for x and y axes 
-.SS "skew (number float xSkew, number float ySkew)"
+.SS "\fBAttributes\fP setTransform (array number matrix)"
+
+.PP
+Replace the affine transform immediately\&. Unlike \fBtransform()\fP, replaces the matrix instead of postmultiplying it\&. \fBAnimatedAttributes\fP adopts it as its shared \fBAnimated\fP state and cancels conflicting transform animation\&. \fBAnimatedAttributes\fP rejects nonfinite or non-affine matrices\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImatrix\fP Array of nine numbers in column-major order\&. For a 2D affine transform use [a, b, 0, c, d, 0, tx, ty, 1], mapping (x,y) to (a*x+c*y+tx, b*x+d*y+ty)\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object, for chaining\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+style\&.setTransform([1, 0, 0, 0, 1, 0, 20, 10, 1]);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBtransform()\fP, \fBgetTransform()\fP 
+.RE
+.PP
+
+.SS "skew (number float xSkew, number float ySkew, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
 
 .PP
 sets the skew transformation for x and y axes 
@@ -478,7 +552,7 @@ Sets the text size in points for drawing text\&.
 .SS "textStyle (int style)"
 
 .PP
-Sets text style flags (bold, italic, underline, alignment) 
+Sets text style flags (bold, italic, underline, alignment)\&. 
 .SS "texture (\fBImage\fP texture)"
 
 .PP
@@ -495,6 +569,31 @@ sets the transformation matrix directly
 
 .PP
 sets the translation offset for transformations 
+.SS "\fBAttributes\fP withAppearance (\fBAttributes\fP overrides, boolean textOnly = \fRfalse\fP)"
+
+.PP
+Copy this drawing style with explicitly assigned appearance overrides\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIoverrides\fP An \fBAttributes\fP or \fBAnimatedAttributes\fP sample\&. Only channels explicitly set or scheduled on that source override this base\&. Setting a default value is explicit; for example, roundedCorners(0) removes a base style's rounded corners\&. 
+.br
+\fItextOnly\fP Defaults to false\&. True applies only text size, text style, font, fill opacity and blend mode, preserving the base foreground and other styling\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An independent \fBAttributes\fP snapshot\&. Neither source changes, and this base's transform is preserved\&. Transform, location and size from overrides are not copied\&.
+.RE
+.PP
+Appearance animation owns its channel when scheduled and contributes its current value; this method does not advance either source\&. MVC uses this to compose View appearance with the selected ControlAttributes state\&. Custom draw routines can use the same method\&. 
+.PP
+\fBNote\fP
+.RS 4
+API stability: 2 — Evolving\&. 
+.RE
+.PP
+
 
 .SH "Author"
 .PP 

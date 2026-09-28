@@ -1,0 +1,13 @@
+<map id="ModifierKeyInfo" name="ModifierKeyInfo">
+<area shape="rect" id="Node000001" title=" " alt="" coords="115,5,228,31"/>
+<area shape="rect" id="Node000002" href="$structpdg_1_1_key_press_info.html" title=" " alt="" coords="5,79,106,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,41,77,81,74,76,141,37"/>
+<area shape="rect" id="Node000003" href="$structpdg_1_1_mouse_info.html" title=" " alt="" coords="130,79,213,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="173,44,174,80,169,77,170,49"/>
+<area shape="rect" id="Node000006" href="$structpdg_1_1_scroll_wheel_info.html" title=" " alt="" coords="236,79,350,105"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="206,37,275,78,270,79,205,42"/>
+<area shape="rect" id="Node000004" href="$structpdg_1_1_mouse_tracking_info.html" title=" " alt="" coords="32,153,164,178"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="151,115,112,154,109,150,146,116"/>
+<area shape="rect" id="Node000005" href="$structpdg_1_1_sprite_touch_info.html" title=" " alt="" coords="189,153,301,178"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="196,113,235,152,230,152,194,118"/>
+</map>

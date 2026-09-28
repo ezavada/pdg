@@ -1,0 +1,23 @@
+namespace pdg { /**
+\fn void pdg::SpriteLayer::addSprite(Sprite* newSprite)
+\brief Add a Sprite and its mounted descendants to this layer.
+
+Transfers the group from its previous layer when necessary, preserving its layer-coordinate transforms and mounting relationships. Inserts the host first, followed by descendants, in front of existing sprites. A Sprite already in this layer is unchanged. Use Sprite::moveBehind() or Sprite::moveInFrontOf() to change one member's draw order.
+
+\param newSprite The Sprite to add. An attached child must first be detached with Part::detachSprite(); otherwise the call throws without changing either layer. A null pointer is ignored.
+
+\note Transfer must occur outside animation modifiers and locked physics callbacks. Root constraints and physical animation rigs are disconnected on removal; ordinary Parts, artwork and modifiers remain associated. Imported Spriter sprites retain their shared model and artwork independently of the source layer. Destroying that layer preserves transferred or retained sprites, including their playback, bone bindings and modifiers.
+\see removeSprite(), Part::attachSprite()
+**/ }
+
+namespace pdg { /**
+\fn void pdg::SpriteLayer::removeSprite(Sprite* oldSprite)
+\brief Remove a Sprite and its mounted descendants from this layer.
+
+Preserves mount relationships and layer-coordinate transforms. Retained groups can be animated off-layer and added to another layer. Removing a mounted child independently throws; detach it first. Sprites outside this layer are unchanged. Physics bodies leave the shared solver and retain their state for basic integration; root constraints and physical animation rigs are disconnected.
+
+\param oldSprite The root of the group to remove.
+
+\note Native callers must retain the host with addRef()/release() to keep it alive after removal. JavaScript handles retain automatically. Removal from a locked physics callback is deferred until the solve ends. Animation modifiers cannot change layer membership.
+\see addSprite(), Part::detachSprite(), removeAllSprites()
+**/ }

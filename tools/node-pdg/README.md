@@ -43,6 +43,11 @@ complexity to more complicated problems.
 Node Plugin
 -----------
 
+When building this package from pdg-devel, `VERSION` is the source of the npm
+package version and native `process.versions.pdg` value. The source-copy scripts
+stamp the staged `package.json` before packing, and node-gyp reads the staged
+`VERSION` when compiling. `npm test` checks that all three agree.
+
 The node plugin version is aimed at game servers, so it leaves out the graphics
 and sound systems. However, it still includes all the Sprite and Physics capabilities
 for server side simulation.

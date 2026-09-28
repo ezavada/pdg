@@ -1,0 +1,245 @@
+/**
+\defgroup Animation Animation
+\brief Sprite playback, poses, procedural animation, constraints, and custom artwork.
+
+\section animation_start Choosing an API
+
+| Task | C++ entry points |
+| --- | --- |
+| Program object movement, rotation, or size changes | pdg::Animated (typed fluent interface), inherited by pdg::Sprite, pdg::SpriteLayer, and pdg::Part |
+| Share an animation interface across different owners | pdg::AnimatedBase |
+| Share appearance-animation state across different owners | pdg::AnimatedAttributesBase |
+| Animate drawing colors, opacity, gradients, text size or transforms | pdg::AnimatedAttributes |
+| Create an independently animated part with optional bone binding | pdg::Sprite::createPart(), pdg::Part |
+| Play image frames | pdg::Sprite::addFramesImage(), pdg::Sprite::startFrameAnimation(), pdg::Sprite::stopFrameAnimation() |
+| Play and blend Spriter clips | pdg::Sprite::startAnimation(), pdg::Sprite::blendToAnimation(), pdg::Sprite::pauseAnimation(), pdg::Sprite::resumeAnimation() |
+| Enable pose evaluation and inspect a rig | pdg::Sprite::enableAnimationPose(), pdg::Sprite::getAnimationRig(), pdg::Sprite::getAnimationRigError() |
+| Seek, sample, or transition to a clip position | pdg::Sprite::seekAnimation(), pdg::Sprite::sampleAnimationPose(), pdg::Sprite::transitionToAnimation() |
+| Inspect or override bone and binding transforms | pdg::Sprite::getAnimationPose(), pdg::Sprite::getAnimationBoneTransform(), pdg::Sprite::getAnimationBindingTransform(), pdg::Sprite::setAnimationBoneTransform() |
+| Add procedural pose changes or inverse kinematics | pdg::Sprite::addAnimationModifier(), pdg::Sprite::addAnimationIK(), pdg::Sprite::setAnimationSource(), \ref AnimationModifiers |
+| Smooth targets or lock contacts to world/platform positions | \ref AnimationTargets |
+| Drive bones with physics and recover to animation | pdg::Sprite::setupAnimationPhysics(), pdg::Sprite::disableAnimationPhysics(), \ref AnimationPhysics |
+| Attach custom artwork or display rig diagnostics | pdg::Sprite::addAnimationDrawable(), pdg::Sprite::setAnimationDebugDraw(), \ref AnimationDrawing |
+| Manage authored appearances and attachments | pdg::Sprite::applyCharacterMap(), pdg::Sprite::attachSprite(), pdg::Sprite::getAttachPoint() |
+| Emit sparks, smoke and trails | pdg::Particle, pdg::ParticleEmitter, \ref ParticleEffects |
+| Control animation for a layer | pdg::SpriteLayer::startAnimations(), pdg::SpriteLayer::stopAnimations() |
+| Receive animation notifications | pdg::SpriteAnimateInfo, pdg::SpriteTriggerEventInfo, pdg::SpriteLayerInfo |
+| Extend object motion or select easing curves | pdg::IAnimationHelper, \ref AnimationEasing |
+
+\section animation_programming Programmed transforms and schedule controls
+
+setScale(x,y) (or a uniform setScale(factor)) sets independent dimensionless scale;
+changeScaleTo(x,y,seconds,easing) transitions it. getScale() returns a fresh Offset.
+Logical width/height, resizeTo(), grow() and stretch() retain their size meanings.
+Negative scale reflects an axis, and flip flags combine with its sign. Zero scale
+is valid for display; inverse coordinate queries reject singular transforms.
+Sprites use this same API for both image and Spriter artwork. Imported asset
+normalization is private; Animated scale and ancestor transforms each apply once.
+
+setGrowing(rate) and setStretching(xRate,yRate) immediately set constant logical
+size changes per second. changeGrowingTo()/changeGrowingBy() and
+changeStretchingTo()/changeStretchingBy() transition these rates over explicit
+seconds. The final rate continues after the transition. getStretching() returns
+the current two rates as an Offset. Size setters preserve growth rates;
+stopGrowing()/stopStretching() cancel growth-rate and scheduled size changes.
+These rates are programmed animation, without physical damping or forces.
+
+pauseSchedule()/resumeSchedule() freeze/resume scheduled transitions and their delays.
+They do not stop helpers, constant movement/spin/growth, Sprite clips or physics.
+A paused rate transition holds its current rate while that motion continues.
+cancelSchedule() discards scheduled targets and the pending wait, holding sampled
+values and preserving the paused state. It emits no completion notification.
+hasScheduledAnimations() includes delayed and paused transitions; isSchedulePaused() reports
+the independent clock state. AnimatedAttributes includes appearance and frame
+tracks in these controls.
+
+Sprite snapshots preserve scale, scale/growth transitions, pause state and the
+pending wait in animation record revision 3. Layer update snapshots also preserve active tween tracks, directed rotation,
+rate transitions and pending waits. Standalone Animated records preserve its
+transform, rates and tween state; subclass artwork/appearance/controller records
+are separate. Full Layer graph reconstruction remains incomplete. Rect-returning
+Layer conversions use conservative axis-aligned bounds when independent scale or
+reflection is active; use the Quad overloads for exact corners, including shear.
+Explicit collision radii, body mass and inertia are unchanged by visual scale;
+Sprite bounding-box shapes follow scaled dimensions.
+
+\section animation_availability Build capabilities
+
+Spriter playback and the Sprite pose, modifier, IK, physics, and drawing entry
+points require `PDG_SPRITER_SUPPORT`. Enable pose evaluation with
+pdg::Sprite::enableAnimationPose() before using the pose-based Sprite extensions.
+Physics simulation additionally requires `PDG_USE_CHIPMUNK_PHYSICS`; query
+pdg::Sprite::supportsAnimationPhysics() for build support. Drawing replay requires
+a GUI-capable build; query pdg::Sprite::isAnimationDrawingSupported(). Rig and
+pose data, pose modifiers, and target helpers can be used without rendering.
+
+The C++ reference includes the optional Spriter and Chipmunk interfaces so they
+remain discoverable. Their presence in these pages does not enable them in an
+application build.
+
+\section animation_events Animation events
+
+| Notification | Event type and payload |
+| --- | --- |
+| Authored Spriter eventline crossing | pdg::eventType_SpriteTriggerEvent with pdg::SpriteTriggerEventInfo; enable with pdg::Sprite::enableSpriterEvents(true) |
+| Blend or independent transition completion | pdg::eventType_SpriteAnimate with pdg::SpriteAnimateInfo and action pdg::Sprite::action_AnimationBlendComplete |
+
+The authored-trigger payload is listed under Events, Animation, and Sprites.
+Use `triggerName` to identify its authored track. `timeSeconds` is relative to clip
+start; `offsetSeconds` is relative to the current update. The inherited `action`
+field is not used to identify triggers. Subscribe to the trigger event type and
+inspect its authored name.
+Blend completion covers both pdg::Sprite::blendToAnimation() and
+pdg::Sprite::transitionToAnimation(), independently of authored-trigger enablement.
+
+\section animation_timing Animation timing
+
+**Floating-point seconds are the current animation timing convention.** For
+example, pass `0.25` for a quarter-second blend, sample time, transition duration,
+contact-release duration, or physics-recovery duration. Modifier callbacks receive
+elapsed seconds in pdg::AnimationModifierContext::deltaSeconds.
+
+Timed Animated operations, wait(), sprite fades, layer fades/zoom,
+IAnimationHelper::animate(), and built-in/custom EasingFunc callbacks now use
+floating-point seconds. Physical forces and velocities belong to PhysicsBody;
+Animated contains only programmed transform changes.
+
+The remaining millisecond boundaries are:
+
+| Existing API or field | Current time units |
+| --- | --- |
+| pdg::SpriteLayer::animateLayer() | `ms_delta msElapsed`; this layer scheduler entry point still takes milliseconds and converts to seconds for Animated stepping |
+| pdg::SpriteLayerInfo::millisec | Integer millisecond timestamp |
+| pdg::SpriteTriggerEventInfo::frameTime | Compatibility integer millisecond field; use `timeSeconds` for authored clip time and `offsetSeconds` for the occurrence offset within the update |
+| pdg::TimerManager::startTimer() and general event timestamps | Milliseconds; convert elapsed intervals explicitly when driving animation |
+
+Do not infer units from a number's magnitude. When migrating an older caller of
+a now-seconds API, convert its millisecond duration by dividing by `1000.0`.
+
+Frame indices and counts are integers, `startFrameAnimation()` takes frames per
+second, and animation/blend progress is a dimensionless fraction. These are not
+time-duration arguments. Angles in pose transforms are radians; fixed choices
+such as pdg::AnimationSpace use integer enum constants. Clip, bone, and slot names
+remain strings.
+*/
+
+/**
+\defgroup AnimationPoses Rigs, poses, and transforms
+\ingroup Animation
+\brief Rig structure, owned pose snapshots, coordinate spaces, and authored metadata.
+
+pdg::AnimationRig stores immutable bones, sockets, and bindings. A
+pdg::AnimationPose owns its mutable transforms and shares the rig; copying a pose
+does not share mutable transforms. pdg::AnimationTransform describes translation,
+rotation, scale, and opacity. pdg::AnimationSpace selects local, rig, or world
+coordinates; world coordinates belong to the Sprite's owning layer.
+
+pdg::AnimationMetadata retains authored variables and tags. Bone, socket, and
+binding IDs are scoped to their rig instance and revision.
+*/
+
+/**
+\defgroup AnimationModifiers Pose modifiers and inverse kinematics
+\ingroup Animation
+\brief Ordered pose callbacks, animation sources, and two-bone IK.
+
+pdg::AnimationPipeline evaluates callbacks in pdg::AnimationModifierStage order.
+A callback receives a pdg::AnimationPoseView and pdg::AnimationModifierContext;
+the view expires when the callback returns. Call pdg::AnimationPoseView::copy()
+to retain an owned snapshot. Select clip, reference, or procedural input with
+pdg::AnimationSource.
+
+pdg::AnimationTwoBoneIK describes a two-bone chain and its target. Use
+pdg::solveAnimationTwoBoneIK() for an owned pose, or register a constraint with
+pdg::Sprite::addAnimationIK(). pdg::AnimationIKResult reports reach and constraint
+limits. Zero length fields use rig-declared lengths, or current child offsets
+when the rig declares none; this follows animated joint offsets without using
+visual bone widths. Explicit/declared lengths must match the offsets. Nonsingular
+nonuniform scales and reflections are supported under PDG's component-transform
+composition. Check pdg::Sprite::getAnimationModifierError() for callback failures.
+*/
+
+/**
+\defgroup AnimationTargets Spring and contact targets
+\ingroup Animation
+\brief Spring integration, recoil impulses, and world or platform contact locks.
+
+pdg::AnimationSpringTarget updates a position and velocity toward a target and
+accepts recoil impulses. pdg::AnimationContactTarget locks a contact in world or
+platform coordinates and releases it over a duration in seconds. Their snapshots
+are pdg::AnimationTargetState and pdg::AnimationContactState.
+Use pdg::animationHasTag() to query authored pose tags when deciding contact state.
+*/
+
+/**
+\defgroup AnimationPhysics Animation physics
+\ingroup Animation Physics
+\brief Bone bodies, joints, simulation state, and recovery to authored animation.
+
+pdg::AnimationPhysicsDefinition contains pdg::AnimationPhysicsBody and
+pdg::AnimationPhysicsJoint entries. pdg::AnimationPhysicsBodyMode selects dynamic
+or kinematic bodies; pdg::AnimationPhysicsRootMode selects fixed or following
+roots. pdg::PhysicsBodyState reports positions and velocities through each mapped Part's physics property.
+
+Use the Sprite physics methods for integration with its layer. The native
+pdg::AnimationPhysicsRig provides direct integration with a Chipmunk space when
+`PDG_USE_CHIPMUNK_PHYSICS` is enabled. Recovery durations are seconds, angular
+values are radians, and velocities are per second.
+*/
+
+/**
+\defgroup AnimationDrawing Animation artwork and diagnostics
+\ingroup Animation Graphics
+\brief Shared Drawing artwork attached to the evaluated pose and authored slots.
+
+pdg::Sprite::addAnimationDrawable() accepts persistent pdg::Drawing artwork or a
+synchronous pdg::AnimationDrawings::Callback returning a shared Drawing handle.
+Returning an empty handle skips drawing for that invocation. Artwork shares
+editable Drawing contents, including edits through pdg::ElementRef.
+
+pdg::AnimationDrawableOptions selects a bone, slot placement, order, stroke space,
+and optional bounds. Use pdg::AnimationDrawPlacement and pdg::AnimationStrokeSpace
+constants. pdg::AnimationDrawingContext provides the invocation's transform and
+an owned pose copy; the context expires when the callback returns.
+
+pdg::AnimationDrawBounds describes bounds used for culling. Query
+pdg::Sprite::getAnimationDrawableError() for callback failures. Use
+pdg::AnimationDebugDraw flags with pdg::Sprite::setAnimationDebugDraw() to display
+bones, sockets, and collision boxes.
+*/
+
+/**
+\defgroup AnimationEasing Easing functions
+\ingroup Animation
+\brief Built-in interpolation curves and the easing callback signature.
+
+pdg::EasingFunc describes a value over time; pdg::linearTween() and the ease-in,
+ease-out, and ease-in-out families supply built-in curves. Elapsed time and
+duration are floating-point seconds for both built-in and custom callbacks;
+see \ref animation_timing.
+*/
+
+/** \class pdg::Animated
+ * \ingroup Animation
+ * \brief Base class for programmed movement, rotation, and resizing over time.
+ */
+/** \class pdg::Sprite
+ * \ingroup Animation
+ * \brief Animated image frames, Spriter playback, and pose-based animation extensions.
+ */
+/** \class pdg::SpriteLayer
+ * \ingroup Animation
+ * \brief Collection of sprites with shared animation control and layer transforms.
+ */
+/** \class pdg::IAnimationHelper
+ * \ingroup Animation
+ * \brief Callback interface for extending an Animated object's motion.
+ */
+/** \class pdg::Drawing
+ * \ingroup AnimationDrawing Graphics
+ * \brief Editable artwork shared by animation attachments and other drawing users.
+ */
+/** \class pdg::ElementRef
+ * \ingroup AnimationDrawing Graphics
+ * \brief Handle for editing an element in shared Drawing artwork.
+ */

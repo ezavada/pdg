@@ -353,30 +353,30 @@ function Check-And-Install-NASM {
 }
 
 # Function to check and install Python
-# Node.js build requires Python 3.9 or newer and does not support Python 3.14+
+# Node.js build requires Python 3.9 or newer and does not support Python 3.15+
 function Check-And-Install-Python {
     param([string]$LocalVarName = "PYTHON_PATH")
     
-    Write-Status "Checking for Python (3.9 to 3.13 required; 3.14+ not supported by Node.js)..." "Cyan"
+    Write-Status "Checking for Python (3.9 to 3.14 required; 3.15+ not supported by Node.js)..." "Cyan"
     
-    # Returns $true if version is Python 3.9 through 3.13 (rejects < 3.9 and >= 3.14)
+    # Returns $true if version is Python 3.9 through 3.14 (rejects < 3.9 and >= 3.15)
     function Test-PythonVersionSupported {
         param([string]$VersionOutput)
         if (-not $VersionOutput -or $VersionOutput -like "*Microsoft Store*") { return $false }
         if ($VersionOutput -match "Python\s+(\d+)\.(\d+)") {
             $major = [int]$Matches[1]
             $minor = [int]$Matches[2]
-            if ($major -lt 3) { return $false }
+            if ($major -ne 3) { return $false }
             if ($major -eq 3) {
                 if ($minor -lt 9) { return $false }   # 3.9 minimum
-                if ($minor -ge 14) { return $false }  # 3.14+ not supported
+                if ($minor -ge 15) { return $false }  # 3.15+ not supported
             }
             return $true
         }
         return $false
     }
     
-    # Function to validate Python executable (works and version is 3.9-3.13)
+    # Function to validate Python executable (works and version is 3.9-3.14)
     function Test-PythonExecutable {
         param([string]$Command)
         try {
@@ -397,7 +397,7 @@ function Check-And-Install-Python {
                     if ($minor -lt 9) {
                         Write-Status "Python $version is too old. Node.js requires Python 3.9 or newer." "Yellow"
                     } else {
-                        Write-Status "Python $version is not supported by Node.js. Please install Python 3.9-3.13." "Yellow"
+                        Write-Status "Python $version is not supported by Node.js. Please install Python 3.9-3.14." "Yellow"
                     }
                 }
                 return $false
@@ -422,18 +422,21 @@ function Check-And-Install-Python {
         }
     }
     
-    # Check common installation paths (3.9-3.13 supported)
+    # Check common installation paths (3.9-3.14 supported)
     $pythonPaths = @(
+        "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python314\python.exe",
         "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python313\python.exe",
         "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python312\python.exe",
         "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python311\python.exe",
         "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python310\python.exe",
         "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python39\python.exe",
+        "C:\Python314\python.exe",
         "C:\Python313\python.exe",
         "C:\Python312\python.exe",
         "C:\Python311\python.exe",
         "C:\Python310\python.exe",
         "C:\Python39\python.exe",
+        "C:\Program Files\Python314\python.exe",
         "C:\Program Files\Python313\python.exe",
         "C:\Program Files\Python312\python.exe",
         "C:\Program Files\Python311\python.exe",
@@ -458,21 +461,21 @@ function Check-And-Install-Python {
     }
     
     if ($SkipInstall) {
-        Show-ManualInstallInstructions -PackageName "Python 3.9-3.13 (Node.js requires 3.9+, does not support 3.14+)" -WingetCommand @("Python.Python.3.13", "Python.Python.3.12", "Python.Python.3.11") -ChocoCommand @("python") -DownloadUrl "https://www.python.org/downloads/" -AdditionalInstructions "Node.js requires Python 3.9 or newer and does not support Python 3.14+. If you have Python 3.14+ or an older Python (< 3.9), install Python 3.9-3.13 and ensure it appears first in PATH."
+        Show-ManualInstallInstructions -PackageName "Python 3.9-3.14 (Node.js requires 3.9+, does not support 3.15+)" -WingetCommand @("Python.Python.3.14", "Python.Python.3.13", "Python.Python.3.12", "Python.Python.3.11") -ChocoCommand @("python") -DownloadUrl "https://www.python.org/downloads/" -AdditionalInstructions "Node.js requires Python 3.9 or newer and does not support Python 3.15+. If you have Python 3.15+ or an older Python (< 3.9), install Python 3.9-3.14 and ensure it appears first in PATH."
         return $false
     }
     
     # Ask user if they want to install
-    Write-Status "Node.js build requires Python 3.9-3.13 (3.14+ not supported)." "Gray"
-    $install = Read-Host "Would you like to install Python 3.13 automatically using winget? (y/n)"
+    Write-Status "Node.js build requires Python 3.9-3.14 (3.15+ not supported)." "Gray"
+    $install = Read-Host "Would you like to install Python 3.14 automatically using winget? (y/n)"
     if ($install -eq "y" -or $install -eq "Y") {
-        if (Install-Dependency -PackageId "Python.Python.3.13" -PackageName "Python 3.13" -Command "python" -CommonPaths $pythonPaths) {
+        if (Install-Dependency -PackageId "Python.Python.3.14" -PackageName "Python 3.14" -Command "python" -CommonPaths $pythonPaths) {
             Set-Variable -Name $LocalVarName -Value "python" -Scope Script
             return $true
         }
     }
     
-    Show-ManualInstallInstructions -PackageName "Python 3.9-3.13 (Node.js requires 3.9+, does not support 3.14+)" -WingetCommand @("Python.Python.3.13", "Python.Python.3.12", "Python.Python.3.11") -ChocoCommand @("python") -DownloadUrl "https://www.python.org/downloads/" -AdditionalInstructions "Node.js requires Python 3.9 or newer and does not support Python 3.14+. If you have Python 3.14+ or an older Python (< 3.9), install Python 3.9-3.13 and ensure it appears first in PATH."
+    Show-ManualInstallInstructions -PackageName "Python 3.9-3.14 (Node.js requires 3.9+, does not support 3.15+)" -WingetCommand @("Python.Python.3.14", "Python.Python.3.13", "Python.Python.3.12", "Python.Python.3.11") -ChocoCommand @("python") -DownloadUrl "https://www.python.org/downloads/" -AdditionalInstructions "Node.js requires Python 3.9 or newer and does not support Python 3.15+. If you have Python 3.15+ or an older Python (< 3.9), install Python 3.9-3.14 and ensure it appears first in PATH."
     return $false
 }
 

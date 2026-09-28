@@ -1,0 +1,68 @@
+namespace pdg {
+/**
+\class PhysicsBody
+\ingroup Physics
+\brief Optional physical motion for a Sprite or Part, using seconds.
+
+Create through sprite.setupPhysicsBody(mass, momentOfInertia) or the matching
+Part method. Their physics property returns the body, or shared
+pdg.PhysicsBody.NoPhysics when absent. Queries do not allocate. NoPhysics safely ignores
+physical commands, with a diagnostic in debug builds. The physics property is
+read-only: callers can operate on the returned body but cannot replace it by
+assignment. Use setupPhysicsBody()/removePhysicsBody() to change the association.
+Use identity comparison with pdg.PhysicsBody.NoPhysics to test absence. The pdg.NoPhysics
+export refers to the same singleton. getSolver() returns a physicsSolver_ constant.
+Layers and Animated have no physics property or physical methods.
+
+\code{.js}
+const body = sprite.setupPhysicsBody(2, 4);
+body.applyImpulse(new pdg.Vector(4, 0)); // immediate momentum change
+body.applyForce(new pdg.Vector(8, 0), 0.25); // force for a quarter second
+body.applyAngularImpulse(2);
+body.applyTorque(8, 0.25);
+\endcode
+
+Linear impulse changes velocity by impulse/mass; angular impulse changes angular
+velocity by impulse/momentOfInertia. Force and torque integrate over a finite
+duration, in floating-point seconds. Zero duration contributes nothing. Continuous
+loads have explicit add/remove methods. Physical linear/angular damping is an
+exponential rate per second; contact friction and restitution are separate.
+
+State and vectors use owning-layer/world coordinates, radians and seconds.
+An optional application Point contributes angular response around the center of
+mass. Off-center force captures the lever arm at submission. In JavaScript the
+optional worldPoint follows durationSeconds and delaySeconds in applyForce().
+
+Sprite bodies use Chipmunk when its layer enables it, otherwise PDG's basic
+integrator. Unbound Part bodies also join the Chipmunk world on a physics-enabled
+layer; otherwise they use the basic solver. Optional Collider geometry supplies
+contacts for Sprite and Part bodies alike. The basic solver adds approximate
+linear/angular contact impulses, Coulomb friction, penetration correction and
+body-to-body constraints. Chipmunk uses its native shapes and constraints.
+Free motion and timed loads remain analytically integrated by the basic solver.
+Numerical trajectories can differ with timestep and solver settings.
+
+Owners advance their bodies automatically. removePhysicsBody() returns the
+owner to NoPhysics and detaches retained body references. A detached basic body
+can be advanced explicitly with step(seconds). Dynamic bodies reject programmed
+movement/spin on their owner; immediate transform setters teleport. Growth and
+stretching remain Animated operations. Set inertia explicitly when appropriate.
+
+\see Sprite
+\see Part
+\see Animated
+*/
+
+/**
+\var PhysicsBody::NoPhysics
+\brief Shared absence object returned by Sprite.physics and Part.physics until a body is created.
+
+Compare by identity to test for absence. Use removePhysicsBody() to restore
+the shared absence object. Valid mutating calls are ignored; they do not change the singleton or queue
+work for later body creation.
+
+\see Sprite
+\see Part
+\see Animated
+*/
+}

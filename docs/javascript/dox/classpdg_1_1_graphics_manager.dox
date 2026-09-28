@@ -3,7 +3,6 @@ namespace pdg { /**
 \class GraphicsManager
 \brief Used to create and track ports (*GUI Only*)
 
-\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
 
 Full Screen
 -----------

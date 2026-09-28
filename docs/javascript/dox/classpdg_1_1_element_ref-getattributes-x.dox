@@ -4,4 +4,6 @@ namespace pdg { /**
 
 \brief returns the attributes of the element
 
+Returns an independent snapshot of the current values, including a live source sample.
+\see setLiveAttributes(), setAttributes()
 **/ }

@@ -22,7 +22,7 @@ esac
 
 DURATION="${2:-}"
 if [ "$BUILD" = yes ]; then
-    (cd "$PDG_ROOT" && make pdg-js) || exit $?
+    (cd "$PDG_ROOT" && bash test/lib/build_web.sh release) || exit $?
 fi
 
 BROWSER="${PDG_BROWSER:-}"

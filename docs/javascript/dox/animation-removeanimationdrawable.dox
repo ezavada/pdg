@@ -1,0 +1,12 @@
+/**
+\fn pdg::Sprite::removeAnimationDrawable(uint id)
+\brief Remove a custom drawing registration.
+
+Releases the Drawing or callback and its diagnostic. An unknown valid ID is harmless. Changes requested while drawing are deferred until the current draw finishes.
+
+\param id Nonzero ID returned by addAnimationDrawable().
+
+\return No value.
+
+\see addAnimationDrawable(), clearAnimationDrawables()
+*/

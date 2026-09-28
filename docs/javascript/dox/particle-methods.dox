@@ -1,0 +1,539 @@
+/**
+\page ParticleEffects Particle effects
+
+Particles provide whole-object artwork, programmed animation and optional physics without Sprite parts, subsections, attachment points, Spriter frames, bones or rigs. Use Image or Drawing artwork and the inherited Animated movement, rotation, size, scale and scheduling methods. Seconds are simulation time; rotation is in radians, clockwise positive. Dynamic physics owns movement and rotation; opacity and size animation can continue.
+
+SpriteLayer owns active particles and standalone emitters. Its particle budget defaults to 10000 and also covers child emitters. Existing particles survive a reduced budget. Particles draw after the layer's Sprites, in creation order; use separate layers to order effects around other scene objects. Hiding a layer affects drawing only. Stopping layer animation pauses lifetime, programmed animation and emission; shared physics continues as for Sprites.
+
+Templates share Image/Drawing resources and capture current values plus remaining scheduled actions. Every emission starts at age zero and gets independent animation tracks, body, collider and child-emitter state. The emitter supplies initial position, facing and linear velocity. Relative moveBy/rotateBy schedules follow the spawn pose; absolute moveTo/rotateTo destinations retain their meaning. Helpers, event/contact callbacks, external constraints and external body associations are not copied. Prefer fresh detached particles as templates. Detached objects advance only when animate(seconds) is called explicitly. Calling animate() on a layer-owned particle or emitter throws. Particle.animate() returns whether the particle is alive; ParticleEmitter.animate() returns whether emission is armed, and detached emitters do not emit.
+
+Particles and emitters are transient and cannot be serialized individually. Layer snapshots omit them; restoring an initial layer snapshot clears live particles and emitters. Use retained effect configuration to recreate effects after loading.
+
+An owned emitter's location and rotation are local to its Particle. Emitted particles immediately become independent layer members. Expiry stops the owned emitter but leaves its previous emissions alive. New emissions start updating on the next tick, preventing recursive same-tick emission. Rates accumulate fractional particles across ticks; budget overflow is dropped, not queued. Spawn positions are sampled at emission time; no sub-frame trajectories are synthesized.
+
+\section particle_example An emitter with a fading trail
+
+\note Run in a GUI application with an active SpriteLayer named layer.
+
+\code{.js}
+const artwork = pdg.createDrawing();
+artwork.addEllipse(new pdg.Point(0, 0), 4, 4,
+    new pdg.Attributes().fillColor('#88bbff'));
+const smoke = new pdg.Particle().setDrawing(artwork)
+    .setLifetime(1).grow(2, 1).fadeTo(0, 1);
+const rocket = new pdg.Particle().setDrawing(artwork)
+    .setLifetime(3);
+rocket.setupParticleEmitter().setParticleTemplate(smoke)
+    .setEmissionRate(30).startEmitting();
+const launcher = layer.createParticleEmitter()
+    .setParticleTemplate(rocket).setLocation(200, 300)
+    .setRotation(-Math.PI / 2).setParticleSpeed(100, 150)
+    .setSpread(0.4).setEmissionRate(2).startEmitting();
+// Stops launching; existing rockets and their trails continue until expiry.
+// launcher.stopEmitting();
+\endcode
+
+\section particle_events Contacts and body thresholds
+
+Particle uses EventEmitter handlers. Enable Collider::setWantsContactEvents() to receive eventType_ColliderContact on the Particle. Set PhysicsBody::setBreakAngularSpeed() to receive eventType_ParticleBreak; its payload contains body, referenceBody (nullable), angularSpeed and breakAngularSpeed. Thresholds notify without clamping motion or disconnecting bodies.
+
+\section particle_ownership Ownership
+
+JavaScript handles retain their native objects. Particle.physics, Particle.collider and Particle.emitter are read-only; absence is PhysicsBody.NoPhysics, Collider.NoCollider and null respectively. Retained handles are never silently reused for another particle.
+*/
+
+/** \class pdg::Particle
+\ingroup Animation Physics
+\brief Lightweight whole-body artwork and optional physics.
+\see ParticleEffects
+*/
+
+/** \class pdg::ParticleEmitter
+\ingroup Animation Physics
+\brief A configurable point source of independent particles.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::setLifetime(number value)
+\brief Set the lifetime in simulation seconds.
+
+Default 1; zero disables automatic expiry. Changing lifetime preserves age. The next update expires a particle whose age has reached its lifetime.
+\param value Finite nonnegative seconds.
+\return This Particle.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::getLifetime()
+\brief Read the configured lifetime.
+
+
+\return Seconds; zero means unlimited.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::getAge()
+\brief Read elapsed simulation time.
+
+
+\return Age in seconds, clamped at expiry.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::isAlive()
+\brief Test whether the particle has expired.
+
+
+\return True until expire() or automatic expiry; detached particles may still be alive.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::getOpacity()
+\brief Read whole-particle opacity.
+
+
+\return Opacity from zero to one.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::hasContent()
+\brief Test whether artwork is assigned.
+
+
+\return True for an assigned Image or Drawing.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::getLayer()
+\brief Read the owning layer.
+
+
+\return The layer, or null when detached or expired.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::getParticleEmitter()
+\brief Read the optional owned emitter.
+
+
+\return The emitter, or null. Reading never allocates it.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::expire()
+\brief Expire immediately.
+
+Idempotent. Removes the particle from its layer, disconnects physics constraints, detaches its shared solver and stops its emitter. Retained particle/component references stay valid.
+\see ParticleEffects
+*/
+
+
+
+/**
+\fn pdg::Particle::setOpacity(number value)
+\brief Set whole-particle opacity.
+
+Cancels any pending opacity transition.
+\param value Finite value from zero to one.
+\return This Particle.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::fadeTo(number opacity, number seconds, int easing)
+\brief Schedule a whole-particle fade.
+
+Uses the same wait()/andThen() timeline as movement and size changes. Fading to zero does not expire the particle.
+\param opacity Target opacity from zero to one.
+\param seconds Finite nonnegative duration in seconds.
+\param easing Easing function (C++) or constant (JavaScript); default linearTween.
+\return This Particle.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::setImage(Image content)
+\brief Assign whole-particle Image artwork.
+
+Sets the logical size to the artwork bounds. Later setSize/grow/resizeTo operations map the complete artwork into that size. Artwork is shared; edits to a shared Drawing remain visible. No image subsection or Spriter playback is exposed.
+
+\note JavaScript artwork methods require a GUI build.
+\param content Artwork to retain; JavaScript parameter is named content.
+\return This Particle.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::setDrawing(Drawing content)
+\brief Assign whole-particle Drawing artwork.
+
+Sets the logical size to the artwork bounds. Later setSize/grow/resizeTo operations map the complete artwork into that size. Artwork is shared; edits to a shared Drawing remain visible. No image subsection or Spriter playback is exposed.
+
+\note JavaScript artwork methods require a GUI build.
+\param content Artwork to retain; JavaScript parameter is named content.
+\return This Particle.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::clearContent()
+\brief Remove the artwork.
+
+Preserves transform, size, lifetime, physics and emitter.
+\return This Particle.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::setupPhysicsBody(number mass, number momentOfInertia)
+\brief Set up the optional body.
+
+Applies mass and inertia on every call, defaulting both to 1. An existing body preserves identity, mode, velocity, forces and constraints. A newly created dynamic body stops programmed movement/spin. Immediate owner transform setters teleport the body. Read physics for ordinary edits.
+\param mass Finite positive mass; default 1.
+\param momentOfInertia Finite positive inertia; default 1.
+\return The Particle's PhysicsBody.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::removePhysicsBody()
+\brief Detach the optional body.
+
+Restores physics to NoPhysics. Retained bodies preserve state but lose their owner, constraints and shared solver.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::setupCollider()
+\brief Create or return the optional whole-body collider.
+
+Geometry uses particle-local distance units and follows its transform. No geometry is inferred from artwork. Enable layer collisions and configure shapes for contact detection.
+\return The Particle's Collider.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::removeCollider()
+\brief Detach the optional collider.
+
+Restores collider to NoCollider. Retained collider references remain valid.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::setupParticleEmitter()
+\brief Create or return the owned emitter.
+
+Repeated calls preserve configuration and identity. Its local origin and facing default to zero. Reading emitter/getParticleEmitter() never creates it.
+\return The Particle's emitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::Particle::removeParticleEmitter()
+\brief Stop and detach the owned emitter.
+
+Retained emitter references remain valid; its previous emissions continue living.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::setParticleTemplate(Particle particle)
+\brief Capture the configuration for future emissions.
+
+Copies settings and remaining scheduled actions immediately. Subsequent source-setting edits require another call. Shared artwork edits remain visible. Every emitted physical body is independent; constraints and external references are omitted. A relative angular-speed threshold is disabled in the captured template because its external reference is not copied.
+\param particle Source configuration; a fresh detached Particle is recommended.
+\return This ParticleEmitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::hasParticleTemplate()
+\brief Test for captured configuration.
+
+
+\return Whether a template has been supplied.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::getEmissionRate()
+\brief Read the continuous rate.
+
+
+\return Particles per second.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::getMinParticleSpeed()
+\brief Read the minimum initial speed.
+
+
+\return Distance units per second.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::getMaxParticleSpeed()
+\brief Read the maximum initial speed.
+
+
+\return Distance units per second.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::getSpread()
+\brief Read the full emission spread.
+
+
+\return Radians centered on the facing.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::getVelocityInheritance()
+\brief Read velocity inheritance.
+
+
+\return Nonnegative dimensionless multiplier.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::getSeed()
+\brief Read the configured seed.
+
+
+\return Unsigned 32-bit seed.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::isEmitting()
+\brief Read continuous emission state.
+
+
+\return Whether startEmitting() is active.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::getLayer()
+\brief Read the emission layer.
+
+
+\return Owning layer, or the owning Particle's layer; null when detached.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::getParticle()
+\brief Read the owning Particle.
+
+
+\return Particle, or null for a standalone/detached emitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::setEmissionRate(number value)
+\brief Set the continuous emission rate.
+
+Default 0. Fractional counts accumulate during active simulation steps.
+\param value Finite nonnegative particles per second. JavaScript parameter is named value.
+\return This ParticleEmitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::setSpread(number value)
+\brief Set the full angular emission spread.
+
+Default 0. Uniformly samples from facing minus half the spread to facing plus half the spread.
+\param value Finite radians from zero through a full turn (2*pi). JavaScript parameter is named value.
+\return This ParticleEmitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::setVelocityInheritance(number value)
+\brief Set initial velocity inheritance.
+
+Default 0. Adds this multiple of emitter velocity to the directed emission velocity. Continuous emission samples motion during the tick, including scheduled motion and parent movement; explicit bursts use current configured movement/body velocity.
+\param value Finite nonnegative multiplier; 1 inherits the entire velocity. JavaScript parameter is named value.
+\return This ParticleEmitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::setParticleSpeed(number minimum, number maximum)
+\brief Set initial particle speed.
+
+One argument fixes the speed; two uniformly sample the inclusive range. Default 0. Speed is in layer distance units per second, independent of artwork scale.
+\param minimum Finite nonnegative speed; JavaScript accepts minimum and optional maximum.
+\param maximum Optional finite maximum speed; defaults to minimum.
+\return This ParticleEmitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::setSeed(uint seed)
+\brief Reset emission randomness.
+
+Default seed 1. Resetting to the same seed repeats subsequent sampled speeds/angles. Each child emitter has independent state, reset to its captured seed.
+\param seed Unsigned 32-bit seed, including zero.
+\return This ParticleEmitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::startEmitting()
+\brief Enable continuous emission.
+
+Initially stopped. Detached emitters may be armed but do not emit until owned by a layer. A template is required to produce particles.
+\return This ParticleEmitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::stopEmitting()
+\brief Stop continuous emission.
+
+Clears the fractional emission remainder. Already-emitted particles remain alive; explicit emit() bursts remain available.
+\return This ParticleEmitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::ParticleEmitter::emit(uint count)
+\brief Emit an immediate burst.
+
+Requires a layer and template for nonzero count. Works while continuous emission is stopped. Excess particles are dropped at the layer budget; count zero is a no-op.
+\param count Unsigned particle count; default 1.
+\return Number actually created.
+\see ParticleEffects
+*/
+
+
+
+/**
+\fn pdg::SpriteLayer::createParticle()
+\brief Create a layer-owned particle.
+
+Age starts at zero. Native references are borrowed.
+\return Particle, or null when the budget is full.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::createParticleEmitter()
+\brief Create a layer-owned point emitter.
+
+Initially stopped, at local origin with facing zero. Native references are borrowed.
+\return The new emitter.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::getParticleCount()
+\brief Count live layer particles.
+
+
+\return Current count, excluding templates.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::getMaxParticles()
+\brief Read the layer particle budget.
+
+
+\return Maximum permitted count; default 10000.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::removeAllParticles()
+\brief Detach every particle.
+
+Retained particles remain valid; owned emitters stop. Standalone emitters remain configured.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::removeAllParticleEmitters()
+\brief Remove all standalone emitters.
+
+Previous emissions remain alive.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::addParticle(Particle value)
+\brief Add a live detached particle.
+
+Rejects expired particles, particles owned by another layer and a full budget. Adding a particle already in this layer is harmless.
+\param value Object to add/remove; JavaScript parameter is named value.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::removeParticle(Particle value)
+\brief Detach a particle from this layer.
+
+Stops its emitter and shared physics participation. Does not mark it expired. Removing an unrelated particle is harmless.
+\param value Object to add/remove; JavaScript parameter is named value.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::removeParticleEmitter(ParticleEmitter value)
+\brief Stop and remove a standalone emitter.
+
+Does not remove a Particle-owned emitter; use Particle::removeParticleEmitter(). Previous emissions remain alive.
+\param value Object to add/remove; JavaScript parameter is named value.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::getNthParticle(uint value)
+\brief Read a particle by creation order.
+
+Indices may change after removals; retain the particle rather than storing its index.
+\param value Zero-based index; JavaScript parameter is named value.
+\return Particle, or null when out of range.
+\see ParticleEffects
+*/
+
+/**
+\fn pdg::SpriteLayer::setMaxParticles(uint value)
+\brief Set the shared particle budget.
+
+Default 10000. Zero prevents creation/emission; lowering the budget does not remove existing particles. Applies to manual creation and nested emissions.
+\param value Unsigned maximum count; JavaScript parameter is named value.
+\return This SpriteLayer.
+\see ParticleEffects
+*/
+
+
+/**
+\var pdg::eventType_ParticleBreak
+\ingroup Events
+\brief A Particle body exceeded its angular-speed threshold.
+
+Sent to the owning Particle. The event contains emitter (the Particle), body
+(the PhysicsBody), referenceBody (PhysicsBody or null), angularSpeed (measured
+radians per second) and breakAngularSpeed (the configured threshold).
+It fires once per threshold crossing without clamping speed or disconnecting
+constraints. See PhysicsBody::setBreakAngularSpeed() and \ref ParticleEffects.
+*/

@@ -1,0 +1,79 @@
+/**
+\fn ISerializer& pdg::ISerializer::setResourceMode(int mode)
+\brief Choose whether saved image resources are embedded or externally referenced.
+\param mode `serialization_Complete` (the default) embeds pixels;
+`serialization_ExternalReferences` permits named file/resource references.
+\return This writer. An invalid constant throws without changing the policy.
+
+The policy belongs to this writer and does not change other writers. Set it before
+writing data. Serializer rejects a policy change after its first write. Each image
+record identifies its representation, so readers need no matching setting.
+Anonymous runtime images and images changed through setTransparentColor() or mutable
+getData() access are embedded in either mode. ImageStrip frame layout, opacity,
+edge clamping and subsection/frame views are preserved. Shared source images remain
+shared when written with serialize_obj(). Initial Sprite frame records use the same policy for artwork and collision masks.
+Resource policy does not change the
+serialization flags that select which object state to save.
+
+External identifiers use the original `file:` path or `res:` resource name. The
+reader resolves them through the filesystem or ResourceManager; missing sources
+and changed dimensions throw an error identifying the resource. Complete records
+load independently of their original files and resource cache.
+
+\note Runtime-created and modified images retain their pixels. Named images may
+reload pixels while saving a complete record; call Image::retainData() before
+drawing if the original resource will become unavailable before the save. A
+complete save fails explicitly if pixels cannot be recovered. It never substitutes
+an external reference. Discard a writer after a failed serialization operation.
+
+\code{.cpp}
+Serializer writer;
+writer.setResourceMode(serialization_Complete);
+writer.serialize_obj(image);  // an existing Image*; bytes belong to writer
+// For a smaller save that resolves named assets on load, select
+// serialization_ExternalReferences before writing to a new Serializer.
+\endcode
+\sa ISerializer::getResourceMode(), Image::serialize()
+*/
+
+/**
+\fn int pdg::ISerializer::getResourceMode() const
+\brief Return this writer's resource policy.
+\return `serialization_Complete` or `serialization_ExternalReferences`.
+*/
+
+/**
+\fn uint32 pdg::Image::getSerializedSize(ISerializer* serializer) const
+\brief Measure an image record under the writer's resource policy.
+\param serializer Writer that will receive the record; must not be null.
+\return Record size in bytes, excluding the stream header and enclosing object's tag/length.
+Sizing validates availability of embedded pixels and may reload a named image.
+Embedded records support RGB/RGBA pixels, dimensions up to 32768 on each axis,
+and at most 512 MiB of pixel data.
+\sa Image::serialize(), ISerializer::setResourceMode()
+*/
+
+/**
+\fn void pdg::Image::serialize(ISerializer* serializer) const
+\brief Write image pixels or a resolvable resource reference with image settings.
+\param serializer Destination writer; must not be null.
+The writer's resource mode selects the representation. Anonymous and modified
+images embed their pixels even when references are allowed. Frame/subsection
+images retain references to their source image within the saved graph.
+\note This writes a raw image record. Read it with Image::deserialize(). Use
+ISerializer::serialize_obj() and IDeserializer::deserialize_obj() when the stream
+should also construct the image and preserve object identity automatically.
+\sa ISerializer::setResourceMode(), Image::getSerializedSize()
+*/
+
+/**
+\fn void pdg::Image::deserialize(IDeserializer* deserializer)
+\brief Replace this image from an embedded or external-resource image record.
+\param deserializer Reader positioned at a raw image record; must not be null.
+The record supplies its own resource policy. Loading preserves strip frame layout,
+opacity, edge clamping and subsection selection; decoded pixels remain available.
+Malformed records, unavailable resources and changed resource dimensions throw.
+Validation completes before replacing this image's existing content. Referenced
+parent images are retained until this image is destroyed or replaced.
+\sa Image::serialize(), ISerializer::setResourceMode()
+*/

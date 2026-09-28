@@ -1,0 +1,85 @@
+/**
+\fn pdg::Port* pdg::GraphicsManager::createOffscreenPort(const Rect& rect)
+\brief Create a persistent transparent RGBA drawing surface without a window.
+
+\param rect Supplies positive integer pixel dimensions within the backend's texture
+limit. Its origin is ignored; Port coordinates start at (0, 0).
+\return A manager-owned Port, or nullptr for invalid dimensions or graphics allocation
+failure. Close it with closeGraphicsPort(); do not delete it directly or use it afterward.
+
+Use ordinary Port drawing methods, Attributes, fonts, Drawings, and clipping. The surface
+starts transparent and retains drawing. It receives no automatic PortDraw events and is
+not cleared by the frame loop. It never becomes the main port.
+
+\note Available in graphics-enabled builds. No existing main port or visible window is
+required. A port created with an existing main window shares its context and is closed
+when that window closes. Images already created from it remain valid.
+\note API stability: 2 — Evolving.
+\see Image::createImageFromOffscreenPort(), closeGraphicsPort()
+*/
+
+/**
+\fn pdg::Image* pdg::Image::createImageFromOffscreenPort(Port* port, bool copyPixels)
+\brief Create a snapshot or a live image of an offscreen surface.
+
+\param port An open offscreen Port.
+\param copyPixels Defaults to true for an independent copy. False retains the shared
+surface and reflects subsequent drawing without copying its pixels for rendering within
+the same graphics context.
+\return An Image owning one reference, or nullptr for null or onscreen ports. Call release()
+when finished. The image has the port's pixel dimensions and transparency.
+
+Both modes survive closure of the source port. A live image keeps its surface alive after
+the Port is closed; drawing through the closed Port is invalid. Destruction of the underlying
+graphics context preserves the surface's final pixels for surviving images. Pixel reads
+and serialization read the current contents; deserialization produces an independent
+snapshot. Rendering across independent graphics contexts or into the source surface uses
+a snapshot. setTransparentColor() detaches a live image before changing its pixels.
+
+\note Available in graphics-enabled builds. The current Port clip does not crop the
+result. Image opacity is independent of the shared surface.
+\note API stability: 2 — Evolving.
+
+\par Example
+\code{.cpp}
+auto& graphics = pdg::GraphicsManager::instance();
+auto* surface = graphics.createOffscreenPort(pdg::Rect(128, 128));
+if (surface) {
+    auto* live = pdg::Image::createImageFromOffscreenPort(surface, false);
+    surface->drawRect(pdg::Rect(16, 16, 112, 112),
+        pdg::Attributes().fillColor(pdg::Color(1.0f, 0.0f, 0.0f))
+            .lineStyle(pdg::lineStyle_None));
+    // live now displays the red rectangle; later surface drawing updates it.
+    graphics.closeGraphicsPort(surface);
+    if (live) live->release();
+}
+\endcode
+\see GraphicsManager::createOffscreenPort(), Port::drawImage(), getPixel()
+*/
+
+/**
+\fn void pdg::Port::clear(const Color& color)
+\brief Replace pixels inside the current clip with an exact color.
+\param color Defaults to transparent black. Alpha replaces the previous alpha;
+this differs from drawing a translucent rectangle, which blends with existing pixels.
+
+Works on graphics-enabled onscreen and offscreen ports. The current clip is unchanged.
+Live images made from an offscreen port reflect the clear on their next draw.
+\note API stability: 2 — Evolving.
+\see setClipRect(), resetClipRect(), GraphicsManager::createOffscreenPort()
+*/
+
+/**
+\fn void pdg::Port::setDrawingOrigin(const Point& origin)
+\brief Set the Port coordinate at the top left of an offscreen surface.
+\param origin Finite coordinates for the drawing area's top left. Initially (0, 0).
+
+Pixel dimensions and stored pixels do not change. getDrawingArea() reports the new
+origin and the clip resets to that area. Drawing and clipping now use those coordinates;
+Image pixel coordinates remain zero-based. This supports rendering a View into a reusable
+surface without changing its layout coordinates. Onscreen ports and nonfinite origins
+are rejected with an error.
+\note Requires a Port from GraphicsManager::createOffscreenPort().
+\note API stability: 2 — Evolving.
+\see clear(), getDrawingArea(), Image::createImageFromOffscreenPort()
+*/

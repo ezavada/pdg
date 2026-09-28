@@ -1,4 +1,4 @@
-.TH "Vector" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Vector" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -18,7 +18,7 @@ Inherits \fBOffset\fP\&.
 .RI "\fBVector\fP ()"
 .br
 .ti -1c
-.RI "\fBVector\fP (number \fBx\fP, number \fBy\fP)"
+.RI "\fBVector\fP (number x, number y)"
 .br
 .ti -1c
 .RI "\fBVector\fP (number[] xy)"
@@ -27,7 +27,7 @@ Inherits \fBOffset\fP\&.
 .RI "\fBVector\fP (object xy)"
 .br
 .ti -1c
-.RI "number \fBdotProduct\fP (\fBVector\fP \fBvector\fP)"
+.RI "number \fBdotProduct\fP (\fBVector\fP vector)"
 .br
 .RI "get dot product for this vector with a 2nd vector "
 .ti -1c
@@ -58,7 +58,7 @@ Public Member Functions inherited from \fBOffset\fP
 .RI "\fBOffset\fP ()"
 .br
 .ti -1c
-.RI "\fBOffset\fP (number \fBx\fP, number \fBy\fP)"
+.RI "\fBOffset\fP (number x, number y)"
 .br
 .ti -1c
 .RI "\fBOffset\fP (number[] xy)"
@@ -139,20 +139,27 @@ Public Attributes inherited from \fBOffset\fP
 .PP 
 vector (magnitude and direction) within a 2D coordinate system\&. 
 
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
+.RE
+.PP
 \fBPoint\fP provides support for dealing with vectors as x, y floating point values in 2 dimensional space\&. A vector is similar to an \fBOffset\fP but can be treated as a magnitude and direction where an \fBOffset\fP can't\&. The PDG coordinate space starts with the top left corner of the drawing port at Point(0,0) and the bottom left corner at Point( width, height ); 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBVector\fP ()"
+.SS "Vector ()"
 
 .PP
 Referenced by \fBdotProduct()\fP, \fBnormal()\fP, and \fBunit()\fP\&.
-.SS "\fBVector\fP (number x, number y)"
+.SS "Vector (number x, number y)"
 
 .PP
 References \fBx\fP, and \fBy\fP\&.
-.SS "\fBVector\fP (number[] xy)"
+.SS "Vector (number[] xy)"
 
-.SS "\fBVector\fP (object xy)"
+.SS "Vector (object xy)"
 
 .SH "Member Function Documentation"
 .PP 

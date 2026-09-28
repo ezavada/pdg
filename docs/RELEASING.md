@@ -81,12 +81,33 @@ Node and V8 outputs are isolated under `build/PLATFORM/ARCHITECTURE/node/out`.
 Emscripten follows the same convention at `build/wasm/wasm32`, leaving room
 for a future `wasm64` build without another directory migration.
 
-The Emscripten script performs a clean WebAssembly build in `build/wasm/wasm32`, runs
-the browser client and UI suites, and writes `pdg-vVERSION-emscripten-wasm32.zip` plus its
-SHA-256 file to `artifacts/release`. The package contains `libpdg.js`,
-`libpdg.wasm`, `libpdg.wasm.map`, and the applicable licenses. These build
-outputs are intentionally ignored by Git and are published only as release
-artifacts.
+For local builds, `make pdg-js` creates the debug/test flavor used by the
+browser suites, while `make pdg-js-release` creates the production flavor in
+`build/wasm/wasm32/release`. `bash test/lib/build_web.sh debug` creates the
+standalone Debug runtime in `build/wasm/wasm32/debug`.
+
+The Emscripten script first builds the test flavor in `build/wasm/wasm32` and
+runs the browser client, UI and demo suites. That flavor includes source maps, test
+specifications, and test data. It then performs a separate optimized build in
+`build/wasm/wasm32/release` with `-O3`, link-time optimization, and `NDEBUG`.
+The performance runner uses this same Release configuration. A separate Debug
+build in `build/wasm/wasm32/debug` uses `-O0`, `DEBUG`, assertions, stack-overflow
+checks, and a source map with embedded source text. Both standalone builds exclude
+test specifications and test data. `--skip-tests` skips the test flavor and browser
+suites, but still builds and packages both standalone runtimes.
+
+The script writes two ZIPs and their SHA-256 files to `artifacts/release`:
+
+- `pdg-vVERSION-emscripten-wasm32.zip` contains optimized `libpdg.js` and
+  `libpdg.wasm`.
+- `pdg-debug-vVERSION-emscripten-wasm32.zip` contains Debug `libpdg.js`,
+  `libpdg.wasm`, and `libpdg.wasm.map`. The map embeds its source text so
+  debugging does not depend on paths from the build machine.
+
+Each ZIP includes LICENSE, README.md, VERSION, and THIRD_PARTY_LICENSES.
+Serve the JavaScript, WASM and (for Debug) map together over HTTP. The existing
+GitHub release workflow uploads both ZIPs and checksums. These build outputs
+are ignored by Git and are published only as release artifacts.
 
 ## Publish on GitHub
 

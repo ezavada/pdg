@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
-PROJECT(PDG VERSION 1.0.0 LANGUAGES C CXX)
+PROJECT(PDG VERSION 1.1.0 LANGUAGES C CXX)
 
 INCLUDE(CTest)
 
@@ -25,6 +25,7 @@ OPTION(USE_CHIPMUNK "Build with Chipmunk Physics library" ON)
 OPTION(USE_GLFW_MAC "Build with GLFW library on Mac OS X" ON)
 OPTION(USE_SPRITER "Build with support for Spriter animations" ON)
 OPTION(CAN_BUILD_INTERFACES "Support rebuilding JavaScript Interfaces" OFF)
+OPTION(CAN_BUILD_JSC_INTERFACES "Support rebuilding JavaScriptCore Interfaces" OFF)
 OPTION(PDG_HEADLESS "Build without GUI/graphics support" OFF)
 
 STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" PDG_SYSTEM_PROCESSOR)
@@ -183,7 +184,6 @@ IF(BUILD_TESTING AND NOT PDG_HEADLESS)
             ${OPENGL_LIBRARIES}
         )
     ELSEIF(WIN32)
-        SET_PROPERTY(TARGET pdg-app-framework-tests PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
         TARGET_LINK_LIBRARIES(pdg-app-framework-tests PRIVATE
             imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
             ${OPENGL_LIBRARIES}

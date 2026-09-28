@@ -82,7 +82,7 @@ public:
     bool hasClickRoutine() const { return mHasClickRoutine; }
 
     void merge(const ControlAttributes& overrides);
-    void draw(Port& port, const Rect& area, ControlState state) const;
+    void draw(Port& port, const Rect& area, ControlState state, const Attributes* appearance = nullptr) const;
     void playClick() const;
 
 private:

@@ -60,7 +60,7 @@ void MessageView::drawSelf()
 	Rect textArea = Rect(BORDER_SPACER, BORDER_SPACER, mViewArea.width() - BORDER_SPACER, mViewArea.height() - BORDER_SPACER);
 	
 	// Draw string
-	app::drawMultilineText(mPort, mMessageString.c_str(), MESSAGE_TEXT_SIZE, MESSAGE_TEXT_COLOR, localToGlobal(textArea));
+	app::drawMultilineText(mPort, mMessageString.c_str(), MESSAGE_TEXT_SIZE, MESSAGE_TEXT_COLOR, localToGlobal(textArea), textStyle_Plain + textStyle_Centered, this);
 }
 
 } // namespace pdg

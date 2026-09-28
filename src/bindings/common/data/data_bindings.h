@@ -71,12 +71,12 @@ DECL_END
 
 
 BINDING_CLASS(Serializer)
-%#ifndef PDG_NO_64BIT
+  METHOD(Serializer, SetResourceMode)
+  METHOD(Serializer, GetResourceMode)
    METHOD(Serializer, Serialize_8)   // no 64 bit int in Javascript
    METHOD(Serializer, Serialize_8u)
    METHOD(Serializer, Sizeof_8)
    METHOD(Serializer, Sizeof_8u)
-%#endif
   METHOD(Serializer, Serialize_d)
   METHOD(Serializer, Serialize_f)
   METHOD(Serializer, Serialize_4)
@@ -127,10 +127,8 @@ BINDING_CLASS(Serializer)
 DECL_END
 
 BINDING_CLASS(Deserializer)
-%#ifndef PDG_NO_64BIT
    METHOD(Deserializer, Deserialize_8)
    METHOD(Deserializer, Deserialize_8u)
-%#endif
   METHOD(Deserializer, Deserialize_d)
   METHOD(Deserializer, Deserialize_f)
   METHOD(Deserializer, Deserialize_4)

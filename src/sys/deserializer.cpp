@@ -39,6 +39,12 @@
 #include <vector>
 #include <map>
 #include <cstdlib>
+#include "pdg/sys/sprite.h"
+#ifdef PDG_NO_GUI
+#include "image-impl.h"
+#else
+#include "image-opengl.h"
+#endif
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
   #include "pdg_script_bindings.h"
@@ -62,7 +68,6 @@ ObjectRegistryT gObjectRegistry;
   ScriptRegistryT gScriptRegistry;
 #endif // PDG_COMPILING_FOR_SCRIPT_BINDINGS
 
-#ifndef PDG_NO_64BIT
 //! Deserialize an 8 byte (64 bit) value
 uint64 Deserializer::deserialize_8u() {
 	DESERIALIZE_IN("8u  ", 8);
@@ -73,14 +78,14 @@ uint64 Deserializer::deserialize_8u() {
 	val |= ((uint64)*p++ << 48);
 	val |= ((uint64)*p++ << 40);
 	val |= ((uint64)*p++ << 32);
-	val |= (*p++ << 24);
+	// Widen before shifting: bit 31 must not sign-extend into the high word.
+	val |= ((uint64)*p++ << 24);
 	val |= (*p++ << 16);
 	val |= (*p++ << 8);
 	val |= *p++;
 	DESERIALIZE_OUT;
 	return val;
 }
-#endif
 
 //! Deserialize a 4 byte (32 bit) value
 uint32 Deserializer::deserialize_4u() {
@@ -234,13 +239,13 @@ Deserializer::deserialize_str(char* outStr, size_t strMaxLen) {
     }
 	uint32 strLen = deserialize_uint();
 	if (!strLen) return 0;  // nothing in buffer, nothing to copy
-	size_t copyLen = (strLen < (strMaxLen - 1)) ? strLen : strMaxLen - 1;  // strMaxLen includes NUL terminator space
-	STREAM_SAFETY_CHECK(p + copyLen <= mDataEnd, "OUT OF SYNC: insufficient data remaining in buffer", out_of_data, DESERIALIZE_OUT);
-	if (p + copyLen > mDataEnd) {  // copyLen always <= strLen
+	size_t copyLen = strMaxLen ? std::min<size_t>(strLen, strMaxLen - 1) : 0;  // strMaxLen includes NUL terminator space
+	STREAM_SAFETY_CHECK(strLen <= static_cast<uint32>(mDataEnd-p), "OUT OF SYNC: insufficient data remaining in buffer", out_of_data, DESERIALIZE_OUT);
+	if (strLen > static_cast<uint32>(mDataEnd-p)) {  // copyLen always <= strLen
 		p = mDataEnd;
 		copyLen = 0;
 	} else {
-		std::memcpy(outStr, p, copyLen);
+		if (copyLen) std::memcpy(outStr, p, copyLen);
 		p += strLen;  // always advance to end of entire string in buffer, not just by amount we copied
 	}
 	DESERIALIZE_OUT;
@@ -269,8 +274,8 @@ Deserializer::deserialize_mem(void* outMem, uint32 memMaxLen) {
 	uint32 memLen = deserialize_uint();
 	if (!memLen) return 0;  // nothing in buffer, nothing to copy
 	uint32 copyLen = (memLen < memMaxLen) ? memLen : memMaxLen;
-	STREAM_SAFETY_CHECK(p + copyLen <= mDataEnd, "OUT OF SYNC: insufficient data remaining in buffer", out_of_data, DESERIALIZE_OUT);
-	if (p + copyLen > mDataEnd) {  // copyLen always <= memLen
+	STREAM_SAFETY_CHECK(memLen <= static_cast<uint32>(mDataEnd-p), "OUT OF SYNC: insufficient data remaining in buffer", out_of_data, DESERIALIZE_OUT);
+	if (memLen > static_cast<uint32>(mDataEnd-p)) {  // copyLen always <= memLen
 		p = mDataEnd;
 		copyLen = 0;
 	} else {
@@ -304,6 +309,7 @@ Deserializer::deserialize_obj() {
 		DESERIALIZE_OUT;
 	} else if (serializationType == tag_objectRef) {
 		uint32 index = deserialize_uint();
+        STREAM_SAFETY_CHECK(index < mDeserializedInstances.size(), "Invalid Instance Ref index", sync_error, DESERIALIZE_OUT);
 		obj = mDeserializedInstances[index];
 		STREAM_SAFETY_CHECK(obj, "Invalid Instance Ref!! Obsolete stream?", sync_error, DESERIALIZE_OUT);
 		obj->addRef();
@@ -395,6 +401,14 @@ Deserializer::deserialize_obj() {
 				obj = create_func();
 			}
 		}
+        if (!obj && classTag == CLASSTAG_SPRITE) obj = Sprite::CreateInstance();
+        if (!obj && classTag == CLASSTAG_IMAGE) {
+#ifdef PDG_NO_GUI
+            obj = new ImageImpl();
+#else
+            obj = new ImageOpenGL();
+#endif
+        }
 		if (!obj) {
 		    // still couldn't instantiate our object
             // this is pretty important to know about, so we are going to write it to stderr
@@ -405,24 +419,24 @@ Deserializer::deserialize_obj() {
 		if (obj) {
 			obj->addRef();
 		}
-		mDeserializedInstances.push_back(obj);
-		uint32 objLen = 0;
-        if (mUsingTags) {
-    		uint16 numSerializedClasses = deserialize_2u();
-		    STREAM_SAFETY_CHECK(numSerializedClasses == mDeserializedInstances.size(), "Serialized Class Count Incorrect", sync_error, DESERIALIZE_OUT);
-    		objLen = deserialize_uint();
-            STREAM_SAFETY_CHECK(p + objLen <= mDataEnd, "OUT OF SYNC: insufficient data remaining in buffer", out_of_data, DESERIALIZE_OUT);
-            if (p + objLen > mDataEnd) {
-                DESERIALIZE_OUT;  // we stop here so that when the object deserializes we can see the bits of of it
-                return 0;
+        const auto firstNewInstance = mDeserializedInstances.size();
+        mDeserializedInstances.push_back(obj);
+        try {
+            if (mUsingTags) {
+                const auto count = deserialize_2u();
+                STREAM_SAFETY_CHECK(count == mDeserializedInstances.size(), "Serialized Class Count Incorrect", sync_error, DESERIALIZE_OUT);
             }
-	    }
-        DESERIALIZE_OUT;  // we stop here so that when the object deserializes we can see the bits of of it
-		if (obj) {
-			obj->deserialize(this);
-		} else if (mUsingTags) {
-			p += objLen; // skip the object we couldn't deserialize
-		}
+            // The length field is present with or without optional sync tags.
+            const uint32 objLen = deserialize_uint();
+            STREAM_SAFETY_CHECK(objLen <= static_cast<uint32>(mDataEnd-p), "OUT OF SYNC: insufficient object data", out_of_data, DESERIALIZE_OUT);
+            DESERIALIZE_OUT;
+            obj->deserialize(this);
+        } catch (...) {
+            mDeserializedInstances.resize(firstNewInstance);
+            obj->release();
+            throw;
+        }
+
 	} else {
 		STREAM_SAFETY_CHECK(false, "OUT OF SYNC: expected Object or Object Ref", bad_tag, );
 	}
@@ -442,6 +456,9 @@ void* Deserializer::deserialize_ptr() {
 }
 
 void Deserializer::setDataPtr(void* ptr, uint32 ptrSize) {
+    mUsingTags = false;
+    mLastBoolByte = 0;
+    mBoolBitOffset = 0;
 	mDataPtr = (uint8*)ptr; 
 	mDataSize = ptrSize;
 	mDataEnd = (uint8*)ptr + ptrSize; 
@@ -462,6 +479,7 @@ Deserializer::Deserializer()
 	mDataSize(0),
 	mLastBoolByte(0),
 	mBoolBitOffset(0),
+	mUsingTags(false),
 	mDeserializedInstances()
 {
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS

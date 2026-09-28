@@ -62,7 +62,6 @@ namespace pdg
     extern bool s_IEventHandler_InNewFromCpp;
     extern bool s_ISerializable_InNewFromCpp;
     extern bool s_IAnimationHelper_InNewFromCpp;
-    extern bool s_ISpriteCollideHelper_InNewFromCpp;
     extern bool s_ISpriteDrawHelper_InNewFromCpp;
 
     v8::Persistent<v8::Value> s_SavedError;
@@ -91,7 +90,11 @@ namespace pdg
 
     IEventHandlerWrap::IEventHandlerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_IEventHandler(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_IEventHandler(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_IEventHandler_InNewFromCpp)
         {
             {
@@ -294,7 +297,9 @@ namespace pdg
         {
             { args.GetReturnValue().SetNull(); return; };
         }
-        v8::Local<v8::Object> obj = SoundWrap::NewFromCpp(isolate, snd);
+        v8::Local<v8::Object> obj = snd->mSoundScriptObj.IsEmpty()
+            ? SoundWrap::NewFromCpp(isolate, snd)
+            : v8::Local<v8::Object>::New(isolate, snd->mSoundScriptObj);
 
         (void)obj->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "name").ToLocalChecked(), v8::String::NewFromUtf8(isolate, soundName).ToLocalChecked() );
         { args.GetReturnValue().Set( obj ); return; };
@@ -313,7 +318,11 @@ namespace pdg
 
     ISerializableWrap::ISerializableWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_ISerializable(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_ISerializable(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_ISerializable_InNewFromCpp)
         {
             {
@@ -368,6 +377,24 @@ namespace pdg
         }
     }
 
+    ISerializable* V8_GetSerializable(v8::Isolate* isolate, v8::Local<v8::Value> value)
+    {
+        auto* wrapper = v8script::safe_unwrap_object_wrap_or_prototype(isolate, value);
+
+        if (auto* image = dynamic_cast<ImageStripWrap*>(wrapper)) return image->getCppObject();
+        if (auto* image = dynamic_cast<ImageWrap*>(wrapper)) return image->getCppObject();
+        if (auto* sprite = dynamic_cast<SpriteWrap*>(wrapper)) return sprite->getCppObject();
+        if (auto* layer = dynamic_cast<TileLayerWrap*>(wrapper)) return static_cast<Serializable<SpriteLayer>*>(layer->getCppObject());
+        if (auto* layer = dynamic_cast<SpriteLayerWrap*>(wrapper)) return static_cast<Serializable<SpriteLayer>*>(layer->getCppObject());
+        if (auto* serializable = dynamic_cast<ISerializableWrap*>(wrapper))
+        {
+            auto* object = serializable->getCppObject();
+            object->mISerializableScriptObj.Reset(isolate, value.As<v8::Object>());
+            return object;
+        }
+        return nullptr;
+    }
+
     void SerializerWrap::Serialize_obj(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
@@ -380,44 +407,26 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        ISerializable* obj = 0;
-        if (args[1 -1]->IsObject())
-        {
-            v8::Local<v8::Object> obj_ = args[1 -1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-            ISerializableWrap* obj__ = static_cast<ISerializableWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-            if (!obj__)
-            {
-                v8::Local<v8::Value> protoVal_ = obj_->GetPrototypeV2();
-                if (protoVal_->IsObject())
-                {
-                    obj_ = protoVal_->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                    obj__ = static_cast<ISerializableWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                }
-            }
-            if (obj__)
-            {
-                obj = obj__->getCppObject();
-                obj->mISerializableScriptObj.Reset(isolate, args[1 -1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked());
-            }
-        }
-        if (!obj && !args[1 -1]->IsNull())
+        ISerializable* obj = V8_GetSerializable(isolate, args[0]);
+        if (!obj && !args[0]->IsNull())
         {
             std::ostringstream excpt_;
-            excpt_ << "argument ""1"" must be null or an object derived from ""ISerializable"" (""obj"")";
+            excpt_ << "Expected a serializable object or null";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
-        };
+            }
+            ())));
+        }
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
-            std::cerr << __func__<<":"<< 257 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            std::cerr << __func__<<":"<< 277 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
         }
         else if (!args[0]->IsObject())
         {
-            std::cerr << __func__<<":"<< 257 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 277 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -435,20 +444,32 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 257 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
+                    std::cout << __func__<<":"<< 277 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 257 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISerializable""\n";
+                    std::cout << __func__<<":"<< 277 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISerializable""\n";
                 }
             }
             else
             {
                 ISerializable* obj = dynamic_cast<ISerializable*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 257 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 277 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
             }
         } );
-        self->serialize_obj(obj);
+        try { self->serialize_obj(obj); }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
         args.GetReturnValue().SetUndefined();
     }
 
@@ -468,6 +489,11 @@ namespace pdg
             return;
         };
         uint32 dataSize = 0;
+        Offset offset;
+        Rect rect;
+        RotatedRect rotatedRect;
+        Quad quad;
+        Color color;
         if (args[0]->IsString())
         {
             v8::String::Utf8Value str_Str(isolate, args[0]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
@@ -484,35 +510,50 @@ namespace pdg
             uint32 val = args[0]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
             dataSize = self->sizeof_uint(val);
         }
-        else if (v8_ValueIsColor(isolate, args[0]))
+        else if (auto isColor = v8_ValueIsColor(isolate, args[0], color); !isColor.has_value())
         {
-            Color c = v8_ValueToColor(isolate, args[0]);
-            dataSize = self->sizeof_color(c);
+            { args.GetReturnValue().SetNull(); return; };
         }
-        else if (v8_ValueIsOffset(isolate, args[0]))
+        else if (*isColor)
         {
-            Offset o = v8_ValueToOffset(isolate, args[0]);
-            dataSize = self->sizeof_offset(o);
+            dataSize = self->sizeof_color(color);
         }
-        else if (v8_ValueIsRect(isolate, args[0]))
+        else if (auto isOffset = v8_ValueIsOffset(isolate, args[0], offset); !isOffset.has_value())
         {
-            Rect r = v8_ValueToRect(isolate, args[0]);
-            dataSize = self->sizeof_rect(r);
+            { args.GetReturnValue().SetNull(); return; };
         }
-        else if (v8_ValueIsRotatedRect(isolate, args[0]))
+        else if (*isOffset)
         {
-            RotatedRect rr = v8_ValueToRotatedRect(isolate, args[0]);
-            dataSize = self->sizeof_rotr(rr);
+            dataSize = self->sizeof_offset(offset);
         }
-        else if (v8_ValueIsQuad(isolate, args[0]))
+        else if (auto isRect = v8_ValueIsRect(isolate, args[0], rect); !isRect.has_value())
         {
-            Quad q = v8_ValueToQuad(isolate, args[0]);
-            dataSize = self->sizeof_quad(q);
+            { args.GetReturnValue().SetNull(); return; };
+        }
+        else if (*isRect)
+        {
+            dataSize = self->sizeof_rect(rect);
+        }
+        else if (auto isRotatedRect = v8_ValueIsRotatedRect(isolate, args[0], rotatedRect); !isRotatedRect.has_value())
+        {
+            { args.GetReturnValue().SetNull(); return; };
+        }
+        else if (*isRotatedRect)
+        {
+            dataSize = self->sizeof_rotr(rotatedRect);
+        }
+        else if (auto isQuad = v8_ValueIsQuad(isolate, args[0], quad); !isQuad.has_value())
+        {
+            { args.GetReturnValue().SetNull(); return; };
+        }
+        else if (*isQuad)
+        {
+            dataSize = self->sizeof_quad(quad);
         }
         else if (args[0]->IsObject())
         {
             v8::Local<v8::Object> obj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-            MemBlockWrap* memBlock__ = ObjectWrap::Unwrap<MemBlockWrap>(obj);
+            MemBlockWrap* memBlock__ = dynamic_cast<MemBlockWrap*>(v8script::safe_unwrap_object_wrap(obj));
             if (memBlock__)
             {
                 MemBlock* memBlock = memBlock__->getCppObject();
@@ -521,35 +562,16 @@ namespace pdg
             else
             {
 
-                ISerializable* serializable = 0;
-                if (args[1 -1]->IsObject())
-                {
-                    v8::Local<v8::Object> serializable_ = args[1 -1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                    ISerializableWrap* serializable__ = static_cast<ISerializableWrap*>(pdg::v8script::safe_unwrap_object_wrap(serializable_));
-                    if (!serializable__)
-                    {
-                        v8::Local<v8::Value> protoVal_ = serializable_->GetPrototypeV2();
-                        if (protoVal_->IsObject())
-                        {
-                            serializable_ = protoVal_->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                            serializable__ = static_cast<ISerializableWrap*>(pdg::v8script::safe_unwrap_object_wrap(serializable_));
-                        }
-                    }
-                    if (serializable__)
-                    {
-                        serializable = serializable__->getCppObject();
-                        serializable->mISerializableScriptObj.Reset(isolate, args[1 -1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked());
-                    }
-                };
+                ISerializable* serializable = V8_GetSerializable(isolate, args[0]);
                 if (serializable)
                 {
                     SCRIPT_DEBUG_ONLY( if (self->mSerializerScriptObj.IsEmpty())
                     {
-                        std::cerr << __func__<<":"<< 299 << " - NIL JS Object (" "self->mSerializerScriptObj" "|"<<*((void**)&(self->mSerializerScriptObj))<<")\n";
+                        std::cerr << __func__<<":"<< 330 << " - NIL JS Object (" "self->mSerializerScriptObj" "|"<<*((void**)&(self->mSerializerScriptObj))<<")\n";
                     }
                     else if (!self->mSerializerScriptObj->IsObject())
                     {
-                        std::cerr << __func__<<":"<< 299 << " - NOT JS Object (" "self->mSerializerScriptObj" "|"<<*((void**)&(self->mSerializerScriptObj))<<") : " << (self->mSerializerScriptObj.IsEmpty() ? "empty" : self->mSerializerScriptObj->IsArray() ? "array" : self->mSerializerScriptObj->IsFunction() ? "function" : self->mSerializerScriptObj->IsStringObject() ? "string (object)" : self->mSerializerScriptObj->IsString() ? "string" : self->mSerializerScriptObj->IsNull() ? "null" : self->mSerializerScriptObj->IsUndefined() ? "undefined" : self->mSerializerScriptObj->IsNumberObject() ? "number (object)" : self->mSerializerScriptObj->IsNumber() ? "number" : self->mSerializerScriptObj->IsBoolean() ? "boolean" : self->mSerializerScriptObj->IsDate() ? "date" : self->mSerializerScriptObj->IsRegExp() ? "regexp" : self->mSerializerScriptObj->IsNativeError() ? "error" : self->mSerializerScriptObj->IsObject() ? "object" : "unknown") << "\n";
+                        std::cerr << __func__<<":"<< 330 << " - NOT JS Object (" "self->mSerializerScriptObj" "|"<<*((void**)&(self->mSerializerScriptObj))<<") : " << (self->mSerializerScriptObj.IsEmpty() ? "empty" : self->mSerializerScriptObj->IsArray() ? "array" : self->mSerializerScriptObj->IsFunction() ? "function" : self->mSerializerScriptObj->IsStringObject() ? "string (object)" : self->mSerializerScriptObj->IsString() ? "string" : self->mSerializerScriptObj->IsNull() ? "null" : self->mSerializerScriptObj->IsUndefined() ? "undefined" : self->mSerializerScriptObj->IsNumberObject() ? "number (object)" : self->mSerializerScriptObj->IsNumber() ? "number" : self->mSerializerScriptObj->IsBoolean() ? "boolean" : self->mSerializerScriptObj->IsDate() ? "date" : self->mSerializerScriptObj->IsRegExp() ? "regexp" : self->mSerializerScriptObj->IsNativeError() ? "error" : self->mSerializerScriptObj->IsObject() ? "object" : "unknown") << "\n";
                     }
                     else
                     {
@@ -567,26 +589,26 @@ namespace pdg
                             }
                             if (obj__)
                             {
-                                std::cout << __func__<<":"<< 299 << " - JS Object (""self->mSerializerScriptObj""|"<<*((void**)&(self->mSerializerScriptObj))<<"): " << objName << " - is a subclass of C++ ""Serializer""\n";
+                                std::cout << __func__<<":"<< 330 << " - JS Object (""self->mSerializerScriptObj""|"<<*((void**)&(self->mSerializerScriptObj))<<"): " << objName << " - is a subclass of C++ ""Serializer""\n";
                             }
                             else
                             {
-                                std::cout << __func__<<":"<< 299 << " - JS Object (""self->mSerializerScriptObj""|"<<*((void**)&(self->mSerializerScriptObj))<<"): " << objName << " - does not wrap ""Serializer""\n";
+                                std::cout << __func__<<":"<< 330 << " - JS Object (""self->mSerializerScriptObj""|"<<*((void**)&(self->mSerializerScriptObj))<<"): " << objName << " - does not wrap ""Serializer""\n";
                             }
                         }
                         else
                         {
                             Serializer* obj = dynamic_cast<Serializer*>(obj__->getCppObject());
-                                std::cout << __func__<<":"<< 299 << " - JS Object (""self->mSerializerScriptObj""|" << *((void**)&(self->mSerializerScriptObj)) << "): " << objName<<" - wraps C++ ""Serializer"" ("<<(void*)obj<<")\n";
+                                std::cout << __func__<<":"<< 330 << " - JS Object (""self->mSerializerScriptObj""|" << *((void**)&(self->mSerializerScriptObj)) << "): " << objName<<" - wraps C++ ""Serializer"" ("<<(void*)obj<<")\n";
                         }
                     } )
                         SCRIPT_DEBUG_ONLY( if (serializable->mISerializableScriptObj.IsEmpty())
                     {
-                        std::cerr << __func__<<":"<< 300 << " - NIL JS Object (" "serializable->mISerializableScriptObj" "|"<<*((void**)&(serializable->mISerializableScriptObj))<<")\n";
+                        std::cerr << __func__<<":"<< 331 << " - NIL JS Object (" "serializable->mISerializableScriptObj" "|"<<*((void**)&(serializable->mISerializableScriptObj))<<")\n";
                     }
                     else if (!serializable->mISerializableScriptObj->IsObject())
                     {
-                        std::cerr << __func__<<":"<< 300 << " - NOT JS Object (" "serializable->mISerializableScriptObj" "|"<<*((void**)&(serializable->mISerializableScriptObj))<<") : " << (serializable->mISerializableScriptObj.IsEmpty() ? "empty" : serializable->mISerializableScriptObj->IsArray() ? "array" : serializable->mISerializableScriptObj->IsFunction() ? "function" : serializable->mISerializableScriptObj->IsStringObject() ? "string (object)" : serializable->mISerializableScriptObj->IsString() ? "string" : serializable->mISerializableScriptObj->IsNull() ? "null" : serializable->mISerializableScriptObj->IsUndefined() ? "undefined" : serializable->mISerializableScriptObj->IsNumberObject() ? "number (object)" : serializable->mISerializableScriptObj->IsNumber() ? "number" : serializable->mISerializableScriptObj->IsBoolean() ? "boolean" : serializable->mISerializableScriptObj->IsDate() ? "date" : serializable->mISerializableScriptObj->IsRegExp() ? "regexp" : serializable->mISerializableScriptObj->IsNativeError() ? "error" : serializable->mISerializableScriptObj->IsObject() ? "object" : "unknown") << "\n";
+                        std::cerr << __func__<<":"<< 331 << " - NOT JS Object (" "serializable->mISerializableScriptObj" "|"<<*((void**)&(serializable->mISerializableScriptObj))<<") : " << (serializable->mISerializableScriptObj.IsEmpty() ? "empty" : serializable->mISerializableScriptObj->IsArray() ? "array" : serializable->mISerializableScriptObj->IsFunction() ? "function" : serializable->mISerializableScriptObj->IsStringObject() ? "string (object)" : serializable->mISerializableScriptObj->IsString() ? "string" : serializable->mISerializableScriptObj->IsNull() ? "null" : serializable->mISerializableScriptObj->IsUndefined() ? "undefined" : serializable->mISerializableScriptObj->IsNumberObject() ? "number (object)" : serializable->mISerializableScriptObj->IsNumber() ? "number" : serializable->mISerializableScriptObj->IsBoolean() ? "boolean" : serializable->mISerializableScriptObj->IsDate() ? "date" : serializable->mISerializableScriptObj->IsRegExp() ? "regexp" : serializable->mISerializableScriptObj->IsNativeError() ? "error" : serializable->mISerializableScriptObj->IsObject() ? "object" : "unknown") << "\n";
                     }
                     else
                     {
@@ -604,17 +626,17 @@ namespace pdg
                             }
                             if (obj__)
                             {
-                                std::cout << __func__<<":"<< 300 << " - JS Object (""serializable->mISerializableScriptObj""|"<<*((void**)&(serializable->mISerializableScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
+                                std::cout << __func__<<":"<< 331 << " - JS Object (""serializable->mISerializableScriptObj""|"<<*((void**)&(serializable->mISerializableScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
                             }
                             else
                             {
-                                std::cout << __func__<<":"<< 300 << " - JS Object (""serializable->mISerializableScriptObj""|"<<*((void**)&(serializable->mISerializableScriptObj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
+                                std::cout << __func__<<":"<< 331 << " - JS Object (""serializable->mISerializableScriptObj""|"<<*((void**)&(serializable->mISerializableScriptObj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
                             }
                         }
                         else
                         {
                             ISerializable* obj = dynamic_cast<ISerializable*>(obj__->getCppObject());
-                                std::cout << __func__<<":"<< 300 << " - JS Object (""serializable->mISerializableScriptObj""|" << *((void**)&(serializable->mISerializableScriptObj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
+                                std::cout << __func__<<":"<< 331 << " - JS Object (""serializable->mISerializableScriptObj""|" << *((void**)&(serializable->mISerializableScriptObj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
                         }
                     } )
                         dataSize = self->sizeof_obj(serializable);
@@ -786,31 +808,10 @@ namespace pdg
         { args.GetReturnValue().Set( jsInstance ); return; };
     }
 
-    IAnimationHelperWrap::IAnimationHelperWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
-    {
-        cppPtr_ = New_IAnimationHelper(args);
-        if (!cppPtr_ && !s_IAnimationHelper_InNewFromCpp)
-        {
-            {
-                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-                isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "IAnimationHelper" " instance")));
-            };
-        }
-    }
-
-    IAnimationHelperWrap::~IAnimationHelperWrap()
-    {
-        if (cppPtr_)
-        {
-            delete cppPtr_;
-            cppPtr_ = NULL;
-        }
-    }
-
     IAnimationHelper* New_IAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         if (s_IAnimationHelper_InNewFromCpp) return nullptr;
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+
         if ((args.Length() == 1 && args[0]->IsNull()))
         {
             ScriptAnimationHelper* helper = new ScriptAnimationHelper();
@@ -834,57 +835,15 @@ namespace pdg
 
     static v8::Persistent<v8::Function> s_CustomScriptEasing[MAX_CUSTOM_EASINGS];
 
-    ISpriteCollideHelperWrap::ISpriteCollideHelperWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
-    {
-        cppPtr_ = New_ISpriteCollideHelper(args);
-        if (!cppPtr_ && !s_ISpriteCollideHelper_InNewFromCpp)
-        {
-            {
-                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-                isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "ISpriteCollideHelper" " instance")));
-            };
-        }
-    }
-
-    ISpriteCollideHelperWrap::~ISpriteCollideHelperWrap()
-    {
-        if (cppPtr_)
-        {
-            delete cppPtr_;
-            cppPtr_ = NULL;
-        }
-    }
-
-    ISpriteCollideHelper* New_ISpriteCollideHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
-    {
-        if (s_ISpriteCollideHelper_InNewFromCpp) return nullptr;
-        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        if ((args.Length() == 1 && args[0]->IsNull()))
-        {
-            ScriptSpriteCollideHelper* helper = new ScriptSpriteCollideHelper();
-            return helper;
-        }
-        else if (args.Length() != 1 || !args[0]->IsFunction())
-        {
-            s_HaveSavedError = true;
-            {
-                std::ostringstream excpt_;
-                excpt_ << "SpriteCollideHelper must be created with a function argument (allowCollisionFunc)";
-                [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
-                s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
-            };
-            return 0;
-        }
-        v8::Local<v8::Function> callback = v8::Local<v8::Function>::Cast(args[0]);
-        ScriptSpriteCollideHelper* helper = new ScriptSpriteCollideHelper(callback);
-        return helper;
-    }
-
 #ifndef PDG_NO_GUI
 
     ISpriteDrawHelperWrap::ISpriteDrawHelperWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_ISpriteDrawHelper(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_ISpriteDrawHelper(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_ISpriteDrawHelper_InNewFromCpp)
         {
             {
@@ -1213,10 +1172,12 @@ namespace pdg
         mScriptHandlerFunc.Reset(isolate, func);
     }
 
-    bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw()
+    bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept
     {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Local<v8::Object> jsEvent = v8::Object::New(isolate);
+        if (emitter->mEventEmitterScriptObj.IsEmpty())
+            if (auto* particle = dynamic_cast<Particle*>(emitter)) ParticleWrap::NewFromCpp(isolate, particle);
         v8::Local<v8::Object> emitter_ = v8::Local<v8::Object>::New(isolate, emitter->mEventEmitterScriptObj);
         v8::Local<v8::Object> obj1_;
         v8::Local<v8::Object> obj2_;
@@ -1305,10 +1266,15 @@ namespace pdg
 #endif
 #ifndef PDG_NO_SOUND
             case pdg::eventType_SoundEvent:
-                obj1_ = v8::Local<v8::Object>::New(isolate, static_cast<SoundEventInfo*>(inEventData)->sound->mSoundScriptObj);
+            {
+                auto* sound = static_cast<SoundEventInfo*>(inEventData)->sound;
+                obj1_ = sound->mSoundScriptObj.IsEmpty()
+                    ? SoundWrap::NewFromCpp(isolate, sound)
+                    : v8::Local<v8::Object>::New(isolate, sound->mSoundScriptObj);
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventCode").ToLocalChecked(), v8::Integer::New(isolate, static_cast<SoundEventInfo*>(inEventData)->eventCode)).ToChecked();
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "sound").ToLocalChecked(), obj1_).ToChecked();
                 break;
+            }
 #endif
 #ifndef PDG_NO_GUI
             case pdg::eventType_PortResized:
@@ -1325,6 +1291,30 @@ namespace pdg
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "frameNum").ToLocalChecked(), v8::Integer::New(isolate, static_cast<PortDrawInfo*>(inEventData)->frameNum)).ToChecked();
                 break;
 #endif
+            case pdg::eventType_ParticleBreak:
+            {
+                const auto* info=static_cast<PhysicsBodyBreakInfo*>(inEventData);
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "angularSpeed").ToLocalChecked(), v8::Number::New(isolate, info->angularSpeed)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "breakAngularSpeed").ToLocalChecked(), v8::Number::New(isolate, info->breakAngularSpeed)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "body").ToLocalChecked(), (info->body ? (info->body->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, info->body) : v8::Local<v8::Object>::New(isolate, info->body->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>())).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "referenceBody").ToLocalChecked(), (info->referenceBody ? (info->referenceBody->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, info->referenceBody) : v8::Local<v8::Object>::New(isolate, info->referenceBody->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>())).ToChecked();
+                break;
+            }
+            case pdg::eventType_ColliderContact:
+            {
+                auto* contact=static_cast<ColliderContact*>(inEventData);
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collider").ToLocalChecked(), (contact->collider->mColliderScriptObj.IsEmpty() ? ColliderWrap::NewFromCpp(isolate, contact->collider) : v8::Local<v8::Object>::New(isolate,contact->collider->mColliderScriptObj))).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "other").ToLocalChecked(), (contact->other->mColliderScriptObj.IsEmpty() ? ColliderWrap::NewFromCpp(isolate, contact->other) : v8::Local<v8::Object>::New(isolate,contact->other->mColliderScriptObj))).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "shape").ToLocalChecked(), v8::Number::New(isolate, contact->shape)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "otherShape").ToLocalChecked(), v8::Number::New(isolate, contact->otherShape)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "phase").ToLocalChecked(), v8::Number::New(isolate, contact->phase)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "penetration").ToLocalChecked(), v8::Number::New(isolate, contact->penetration)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "point").ToLocalChecked(), v8_MakeJavascriptPoint(isolate, contact->point)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "normal").ToLocalChecked(), v8_MakeJavascriptVector(isolate, contact->normal)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "impulse").ToLocalChecked(), v8_MakeJavascriptVector(isolate, contact->impulse)).ToChecked();
+                (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "sensor").ToLocalChecked(), v8::Boolean::New(isolate, contact->sensor)).ToChecked();
+                break;
+            }
             case pdg::eventType_SpriteCollide:
             case pdg::eventType_SpriteBreak:
                 if (inEventType == pdg::eventType_SpriteCollide)
@@ -1373,26 +1363,39 @@ namespace pdg
                 }
                 else
                 {
-#ifdef PDG_USE_CHIPMUNK_PHYSICS
-                    SpriteJointBreakInfo* sjb = static_cast<SpriteJointBreakInfo*>(inEventData);
-                    if (sjb->targetSprite)
-                    {
-                        SPRITE_EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteJointBreakInfo* sjb->targetSprite: %p", sjb->targetSprite));
-                        obj1_ = v8::Local<v8::Object>::New(isolate, sjb->targetSprite->mSpriteScriptObj);
-                        (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "targetSprite").ToLocalChecked(), obj1_).ToChecked();
-                    }
-                    else
-                    {
-                        SPRITE_EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteJointBreakInfo* sjb->targetSprite is null"));
-                        (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "targetSprite").ToLocalChecked(), v8::Null(isolate)).ToChecked();
-                    }
+                    auto* sjb = static_cast<SpriteJointBreakInfo*>(inEventData);
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "targetSprite").ToLocalChecked(), (sjb->targetSprite ? v8::Local<v8::Value>(v8::Local<v8::Object>::New(isolate, sjb->targetSprite->mSpriteScriptObj)) : v8::Local<v8::Value>(v8::Null(isolate)))).ToChecked();
                     (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "impulse").ToLocalChecked(), v8::Number::New(isolate, sjb->impulse)).ToChecked();
                     (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "force").ToLocalChecked(), v8::Number::New(isolate, sjb->force)).ToChecked();
                     (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "breakForce").ToLocalChecked(), v8::Number::New(isolate, sjb->breakForce)).ToChecked();
-                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "joint").ToLocalChecked(), cpConstraintWrap::NewFromCpp(isolate, sjb->joint)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "reason").ToLocalChecked(), v8::Number::New(isolate, sjb->reason)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "angularSpeed").ToLocalChecked(), v8::Number::New(isolate, sjb->angularSpeed)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "breakAngularSpeed").ToLocalChecked(), v8::Number::New(isolate, sjb->breakAngularSpeed)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "body").ToLocalChecked(), (sjb->body ? (sjb->body->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, sjb->body) : v8::Local<v8::Object>::New(isolate, sjb->body->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>())).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "referenceBody").ToLocalChecked(), (sjb->referenceBody ? (sjb->referenceBody->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, sjb->referenceBody) : v8::Local<v8::Object>::New(isolate, sjb->referenceBody->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>())).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "part").ToLocalChecked(), (sjb->part ? (sjb->part->mPartScriptObj.IsEmpty() ? PartWrap::NewFromCpp(isolate, sjb->part) : v8::Local<v8::Object>::New(isolate, sjb->part->mPartScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>())).ToChecked();
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "joint").ToLocalChecked(), (sjb->joint ? cpConstraintWrap::NewFromCpp(isolate, sjb->joint).As<v8::Value>() : v8::Null(isolate).As<v8::Value>())).ToChecked();
+#else
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "joint").ToLocalChecked(), v8::Null(isolate)).ToChecked();
 #endif
                 }
 
+#ifdef PDG_SPRITER_SUPPORT
+            case pdg::eventType_SpriteTriggerEvent:
+            {
+
+                if (inEventType == pdg::eventType_SpriteTriggerEvent)
+                {
+                    auto* trigger=static_cast<SpriteTriggerEventInfo*>(inEventData);
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "triggerName").ToLocalChecked(), v8::String::NewFromUtf8(isolate, trigger->triggerName).ToLocalChecked()).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "clipName").ToLocalChecked(), v8::String::NewFromUtf8(isolate, trigger->clipName).ToLocalChecked()).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "entityName").ToLocalChecked(), v8::String::NewFromUtf8(isolate, trigger->entityName).ToLocalChecked()).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "timeSeconds").ToLocalChecked(), v8::Number::New(isolate, trigger->timeSeconds)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "offsetSeconds").ToLocalChecked(), v8::Number::New(isolate, trigger->offsetSeconds)).ToChecked();
+                }
+            }
+#endif
             case pdg::eventType_SpriteAnimate:
                 SPRITE_EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteAnimateInfo* sai->id: %d", sai->id));
                 if (sai->actingSprite)
@@ -1418,6 +1421,18 @@ namespace pdg
                     (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "inLayer").ToLocalChecked(), v8::Null(isolate)).ToChecked();
                 }
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action").ToLocalChecked(), v8::Integer::New(isolate, sai->action)).ToChecked();
+
+                if (inEventType==pdg::eventType_SpriteAnimate && static_cast<SpriteAnimateInfo*>(inEventData)->action==Sprite::action_AnimationPhysicsRecoveryComplete)
+                {
+                    const auto* recovery=static_cast<SpriteAnimationPhysicsRecoveryInfo*>(inEventData);
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "id").ToLocalChecked(), v8::Number::New(isolate, recovery->id)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "bone").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, recovery->bone)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "wholeRig").ToLocalChecked(), v8::Boolean::New(isolate, recovery->wholeRig)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "includeDescendants").ToLocalChecked(), v8::Boolean::New(isolate, recovery->includeDescendants)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "mode").ToLocalChecked(), v8::Integer::New(isolate, recovery->mode)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "bodyCount").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, recovery->bodyCount)).ToChecked();
+                    (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "disabled").ToLocalChecked(), v8::Boolean::New(isolate, recovery->disabled)).ToChecked();
+                }
                 SPRITE_EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteAnimateInfo* done setting properties "));
                 break;
             case pdg::eventType_SpriteLayer:
@@ -1460,11 +1475,11 @@ namespace pdg
 
         SCRIPT_DEBUG_ONLY( if (this->mIEventHandlerScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 879 << " - NIL JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 954 << " - NIL JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<")\n";
         }
         else if (!this->mIEventHandlerScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 879 << " - NOT JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<") : " << (this->mIEventHandlerScriptObj.IsEmpty() ? "empty" : this->mIEventHandlerScriptObj->IsArray() ? "array" : this->mIEventHandlerScriptObj->IsFunction() ? "function" : this->mIEventHandlerScriptObj->IsStringObject() ? "string (object)" : this->mIEventHandlerScriptObj->IsString() ? "string" : this->mIEventHandlerScriptObj->IsNull() ? "null" : this->mIEventHandlerScriptObj->IsUndefined() ? "undefined" : this->mIEventHandlerScriptObj->IsNumberObject() ? "number (object)" : this->mIEventHandlerScriptObj->IsNumber() ? "number" : this->mIEventHandlerScriptObj->IsBoolean() ? "boolean" : this->mIEventHandlerScriptObj->IsDate() ? "date" : this->mIEventHandlerScriptObj->IsRegExp() ? "regexp" : this->mIEventHandlerScriptObj->IsNativeError() ? "error" : this->mIEventHandlerScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 954 << " - NOT JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<") : " << (this->mIEventHandlerScriptObj.IsEmpty() ? "empty" : this->mIEventHandlerScriptObj->IsArray() ? "array" : this->mIEventHandlerScriptObj->IsFunction() ? "function" : this->mIEventHandlerScriptObj->IsStringObject() ? "string (object)" : this->mIEventHandlerScriptObj->IsString() ? "string" : this->mIEventHandlerScriptObj->IsNull() ? "null" : this->mIEventHandlerScriptObj->IsUndefined() ? "undefined" : this->mIEventHandlerScriptObj->IsNumberObject() ? "number (object)" : this->mIEventHandlerScriptObj->IsNumber() ? "number" : this->mIEventHandlerScriptObj->IsBoolean() ? "boolean" : this->mIEventHandlerScriptObj->IsDate() ? "date" : this->mIEventHandlerScriptObj->IsRegExp() ? "regexp" : this->mIEventHandlerScriptObj->IsNativeError() ? "error" : this->mIEventHandlerScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -1482,17 +1497,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 879 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 954 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 879 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 954 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
                 }
             }
             else
             {
                 IEventHandler* obj = dynamic_cast<IEventHandler*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 879 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 954 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
 
@@ -1561,7 +1576,7 @@ namespace pdg
         mExpectedAction = expectedAction;
     }
 
-    bool ScriptAnimationEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw()
+    bool ScriptAnimationEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept
     {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
@@ -1592,6 +1607,17 @@ namespace pdg
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "emitter").ToLocalChecked(), v8::Local<v8::Object>::New(isolate, emitter->mEventEmitterScriptObj)).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType").ToLocalChecked(), v8::Integer::New(isolate, inEventType)).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action").ToLocalChecked(), v8::Integer::New(isolate, animateInfo->action)).ToChecked();
+        if(animateInfo->action==Sprite::action_AnimationPhysicsRecoveryComplete)
+        {
+            const auto* recovery=static_cast<SpriteAnimationPhysicsRecoveryInfo*>(inEventData);
+            (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "id").ToLocalChecked(), v8::Number::New(isolate, recovery->id)).ToChecked();
+            (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "bone").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, recovery->bone)).ToChecked();
+            (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "wholeRig").ToLocalChecked(), v8::Boolean::New(isolate, recovery->wholeRig)).ToChecked();
+            (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "includeDescendants").ToLocalChecked(), v8::Boolean::New(isolate, recovery->includeDescendants)).ToChecked();
+            (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "mode").ToLocalChecked(), v8::Integer::New(isolate, recovery->mode)).ToChecked();
+            (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "bodyCount").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, recovery->bodyCount)).ToChecked();
+            (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "disabled").ToLocalChecked(), v8::Boolean::New(isolate, recovery->disabled)).ToChecked();
+        }
 
         if (animateInfo->actingSprite->mSpriteScriptObj.IsEmpty())
         {
@@ -1618,11 +1644,11 @@ namespace pdg
 
         SCRIPT_DEBUG_ONLY( if (this->mIEventHandlerScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 983 << " - NIL JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 1069 << " - NIL JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<")\n";
         }
         else if (!this->mIEventHandlerScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 983 << " - NOT JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<") : " << (this->mIEventHandlerScriptObj.IsEmpty() ? "empty" : this->mIEventHandlerScriptObj->IsArray() ? "array" : this->mIEventHandlerScriptObj->IsFunction() ? "function" : this->mIEventHandlerScriptObj->IsStringObject() ? "string (object)" : this->mIEventHandlerScriptObj->IsString() ? "string" : this->mIEventHandlerScriptObj->IsNull() ? "null" : this->mIEventHandlerScriptObj->IsUndefined() ? "undefined" : this->mIEventHandlerScriptObj->IsNumberObject() ? "number (object)" : this->mIEventHandlerScriptObj->IsNumber() ? "number" : this->mIEventHandlerScriptObj->IsBoolean() ? "boolean" : this->mIEventHandlerScriptObj->IsDate() ? "date" : this->mIEventHandlerScriptObj->IsRegExp() ? "regexp" : this->mIEventHandlerScriptObj->IsNativeError() ? "error" : this->mIEventHandlerScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1069 << " - NOT JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<") : " << (this->mIEventHandlerScriptObj.IsEmpty() ? "empty" : this->mIEventHandlerScriptObj->IsArray() ? "array" : this->mIEventHandlerScriptObj->IsFunction() ? "function" : this->mIEventHandlerScriptObj->IsStringObject() ? "string (object)" : this->mIEventHandlerScriptObj->IsString() ? "string" : this->mIEventHandlerScriptObj->IsNull() ? "null" : this->mIEventHandlerScriptObj->IsUndefined() ? "undefined" : this->mIEventHandlerScriptObj->IsNumberObject() ? "number (object)" : this->mIEventHandlerScriptObj->IsNumber() ? "number" : this->mIEventHandlerScriptObj->IsBoolean() ? "boolean" : this->mIEventHandlerScriptObj->IsDate() ? "date" : this->mIEventHandlerScriptObj->IsRegExp() ? "regexp" : this->mIEventHandlerScriptObj->IsNativeError() ? "error" : this->mIEventHandlerScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -1640,17 +1666,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 983 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 1069 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 983 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 1069 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
                 }
             }
             else
             {
                 IEventHandler* obj = dynamic_cast<IEventHandler*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 983 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1069 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
 
@@ -1719,7 +1745,7 @@ namespace pdg
         mExpectedAction = expectedAction;
     }
 
-    bool ScriptTouchEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw()
+    bool ScriptTouchEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept
     {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
@@ -1753,11 +1779,11 @@ namespace pdg
 
         SCRIPT_DEBUG_ONLY( if (this->mIEventHandlerScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 1065 << " - NIL JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 1151 << " - NIL JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<")\n";
         }
         else if (!this->mIEventHandlerScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 1065 << " - NOT JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<") : " << (this->mIEventHandlerScriptObj.IsEmpty() ? "empty" : this->mIEventHandlerScriptObj->IsArray() ? "array" : this->mIEventHandlerScriptObj->IsFunction() ? "function" : this->mIEventHandlerScriptObj->IsStringObject() ? "string (object)" : this->mIEventHandlerScriptObj->IsString() ? "string" : this->mIEventHandlerScriptObj->IsNull() ? "null" : this->mIEventHandlerScriptObj->IsUndefined() ? "undefined" : this->mIEventHandlerScriptObj->IsNumberObject() ? "number (object)" : this->mIEventHandlerScriptObj->IsNumber() ? "number" : this->mIEventHandlerScriptObj->IsBoolean() ? "boolean" : this->mIEventHandlerScriptObj->IsDate() ? "date" : this->mIEventHandlerScriptObj->IsRegExp() ? "regexp" : this->mIEventHandlerScriptObj->IsNativeError() ? "error" : this->mIEventHandlerScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1151 << " - NOT JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<") : " << (this->mIEventHandlerScriptObj.IsEmpty() ? "empty" : this->mIEventHandlerScriptObj->IsArray() ? "array" : this->mIEventHandlerScriptObj->IsFunction() ? "function" : this->mIEventHandlerScriptObj->IsStringObject() ? "string (object)" : this->mIEventHandlerScriptObj->IsString() ? "string" : this->mIEventHandlerScriptObj->IsNull() ? "null" : this->mIEventHandlerScriptObj->IsUndefined() ? "undefined" : this->mIEventHandlerScriptObj->IsNumberObject() ? "number (object)" : this->mIEventHandlerScriptObj->IsNumber() ? "number" : this->mIEventHandlerScriptObj->IsBoolean() ? "boolean" : this->mIEventHandlerScriptObj->IsDate() ? "date" : this->mIEventHandlerScriptObj->IsRegExp() ? "regexp" : this->mIEventHandlerScriptObj->IsNativeError() ? "error" : this->mIEventHandlerScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -1775,17 +1801,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 1065 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 1151 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 1065 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 1151 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
                 }
             }
             else
             {
                 IEventHandler* obj = dynamic_cast<IEventHandler*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1065 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1151 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
 
@@ -1854,7 +1880,7 @@ namespace pdg
         mExpectedAction = expectedAction;
     }
 
-    bool ScriptLayerEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw()
+    bool ScriptLayerEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept
     {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
@@ -1887,11 +1913,11 @@ namespace pdg
 
         SCRIPT_DEBUG_ONLY( if (this->mIEventHandlerScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 1146 << " - NIL JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 1232 << " - NIL JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<")\n";
         }
         else if (!this->mIEventHandlerScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 1146 << " - NOT JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<") : " << (this->mIEventHandlerScriptObj.IsEmpty() ? "empty" : this->mIEventHandlerScriptObj->IsArray() ? "array" : this->mIEventHandlerScriptObj->IsFunction() ? "function" : this->mIEventHandlerScriptObj->IsStringObject() ? "string (object)" : this->mIEventHandlerScriptObj->IsString() ? "string" : this->mIEventHandlerScriptObj->IsNull() ? "null" : this->mIEventHandlerScriptObj->IsUndefined() ? "undefined" : this->mIEventHandlerScriptObj->IsNumberObject() ? "number (object)" : this->mIEventHandlerScriptObj->IsNumber() ? "number" : this->mIEventHandlerScriptObj->IsBoolean() ? "boolean" : this->mIEventHandlerScriptObj->IsDate() ? "date" : this->mIEventHandlerScriptObj->IsRegExp() ? "regexp" : this->mIEventHandlerScriptObj->IsNativeError() ? "error" : this->mIEventHandlerScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1232 << " - NOT JS Object (" "this->mIEventHandlerScriptObj" "|"<<*((void**)&(this->mIEventHandlerScriptObj))<<") : " << (this->mIEventHandlerScriptObj.IsEmpty() ? "empty" : this->mIEventHandlerScriptObj->IsArray() ? "array" : this->mIEventHandlerScriptObj->IsFunction() ? "function" : this->mIEventHandlerScriptObj->IsStringObject() ? "string (object)" : this->mIEventHandlerScriptObj->IsString() ? "string" : this->mIEventHandlerScriptObj->IsNull() ? "null" : this->mIEventHandlerScriptObj->IsUndefined() ? "undefined" : this->mIEventHandlerScriptObj->IsNumberObject() ? "number (object)" : this->mIEventHandlerScriptObj->IsNumber() ? "number" : this->mIEventHandlerScriptObj->IsBoolean() ? "boolean" : this->mIEventHandlerScriptObj->IsDate() ? "date" : this->mIEventHandlerScriptObj->IsRegExp() ? "regexp" : this->mIEventHandlerScriptObj->IsNativeError() ? "error" : this->mIEventHandlerScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -1909,17 +1935,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 1146 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 1232 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 1146 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 1232 << " - JS Object (""this->mIEventHandlerScriptObj""|"<<*((void**)&(this->mIEventHandlerScriptObj))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
                 }
             }
             else
             {
                 IEventHandler* obj = dynamic_cast<IEventHandler*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1146 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1232 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
 
@@ -1982,60 +2008,93 @@ namespace pdg
         mScriptAnimateFunc.Reset(isolate, func);
     }
 
-    bool ScriptAnimationHelper::animate(Animated* what, ms_delta msElapsed) throw()
+    ScriptAnimationHelper::~ScriptAnimationHelper() { mScriptAnimateFunc.Reset(); }
+
+    void ScriptAnimationHelper::initializeScriptObject()
+    {
+        if (mScriptAnimateFunc.IsEmpty()) return;
+        auto* isolate = v8::Isolate::GetCurrent();
+        const auto wrapper = v8::Local<v8::Object>::New(isolate, mIAnimationHelperScriptObj);
+        wrapper->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked(),
+            v8::Local<v8::Function>::New(isolate, mScriptAnimateFunc),
+            static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontEnum | v8::DontDelete)).Check();
+        mScriptAnimateFunc.Reset();
+    }
+    void ScriptAnimationHelper::retainForAnimation()
+    {
+        addRef();
+        if (mAnimationRetains++ == 0 && !mIAnimationHelperScriptObj.IsEmpty())
+            mIAnimationHelperScriptObj.ClearWeak();
+    }
+    void ScriptAnimationHelper::releaseForAnimation()
+    {
+        if (--mAnimationRetains == 0 && !mIAnimationHelperScriptObj.IsEmpty())
+            mIAnimationHelperScriptObj.SetWeak();
+        release();
+    }
+
+    bool ScriptAnimationHelper::animate(AnimatedBase* what, double deltaSeconds) noexcept
     {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
         v8::TryCatch try_catch(isolate);
 
         v8::Local<v8::Value> argv[2];
+        if (what->mAnimatedScriptObj.IsEmpty())
+        {
+            if (auto* particle = dynamic_cast<Particle*>(what)) ParticleWrap::NewFromCpp(isolate, particle);
+            else if (auto* emission = dynamic_cast<ParticleEmitter*>(what)) ParticleEmitterWrap::NewFromCpp(isolate, emission);
+            else if (auto* part = dynamic_cast<Part*>(what)) PartWrap::NewFromCpp(isolate, part);
+            else if (auto* sprite = dynamic_cast<Sprite*>(what)) SpriteWrap::NewFromCpp(isolate, sprite);
+            else AnimatedBaseWrap::NewFromCpp(isolate, what);
+        }
         argv[0] = v8::Local<v8::Object>::New(isolate, what->mAnimatedScriptObj);
-        argv[1] = v8::Local<v8::Value>::New(isolate, v8::Integer::NewFromUnsigned(isolate, msElapsed));
+        argv[1] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, deltaSeconds));
 
         SCRIPT_DEBUG_ONLY( if (what->mAnimatedScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 1200 << " - NIL JS Object (" "what->mAnimatedScriptObj" "|"<<*((void**)&(what->mAnimatedScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 1315 << " - NIL JS Object (" "what->mAnimatedScriptObj" "|"<<*((void**)&(what->mAnimatedScriptObj))<<")\n";
         }
         else if (!what->mAnimatedScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 1200 << " - NOT JS Object (" "what->mAnimatedScriptObj" "|"<<*((void**)&(what->mAnimatedScriptObj))<<") : " << (what->mAnimatedScriptObj.IsEmpty() ? "empty" : what->mAnimatedScriptObj->IsArray() ? "array" : what->mAnimatedScriptObj->IsFunction() ? "function" : what->mAnimatedScriptObj->IsStringObject() ? "string (object)" : what->mAnimatedScriptObj->IsString() ? "string" : what->mAnimatedScriptObj->IsNull() ? "null" : what->mAnimatedScriptObj->IsUndefined() ? "undefined" : what->mAnimatedScriptObj->IsNumberObject() ? "number (object)" : what->mAnimatedScriptObj->IsNumber() ? "number" : what->mAnimatedScriptObj->IsBoolean() ? "boolean" : what->mAnimatedScriptObj->IsDate() ? "date" : what->mAnimatedScriptObj->IsRegExp() ? "regexp" : what->mAnimatedScriptObj->IsNativeError() ? "error" : what->mAnimatedScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1315 << " - NOT JS Object (" "what->mAnimatedScriptObj" "|"<<*((void**)&(what->mAnimatedScriptObj))<<") : " << (what->mAnimatedScriptObj.IsEmpty() ? "empty" : what->mAnimatedScriptObj->IsArray() ? "array" : what->mAnimatedScriptObj->IsFunction() ? "function" : what->mAnimatedScriptObj->IsStringObject() ? "string (object)" : what->mAnimatedScriptObj->IsString() ? "string" : what->mAnimatedScriptObj->IsNull() ? "null" : what->mAnimatedScriptObj->IsUndefined() ? "undefined" : what->mAnimatedScriptObj->IsNumberObject() ? "number (object)" : what->mAnimatedScriptObj->IsNumber() ? "number" : what->mAnimatedScriptObj->IsBoolean() ? "boolean" : what->mAnimatedScriptObj->IsDate() ? "date" : what->mAnimatedScriptObj->IsRegExp() ? "regexp" : what->mAnimatedScriptObj->IsNativeError() ? "error" : what->mAnimatedScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
             v8::Local<v8::Object> obj_ = what->mAnimatedScriptObj->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
                 v8::String::Utf8Value objNameStr(isolate, obj_->ToString(isolate->GetCurrentContext()).ToLocalChecked());
                 char* objName = *objNameStr;
-                AnimatedWrap* obj__ = dynamic_cast<AnimatedWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
+                AnimatedBaseWrap* obj__ = dynamic_cast<AnimatedBaseWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
                 if (!obj__)
             {
                 v8::Local<v8::Value> protoVal_ = obj_->GetPrototypeV2();
                     if (!protoVal_.IsEmpty() && protoVal_->IsObject())
                 {
                     obj_ = protoVal_->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                        obj__ = dynamic_cast<AnimatedWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
+                        obj__ = dynamic_cast<AnimatedBaseWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 1200 << " - JS Object (""what->mAnimatedScriptObj""|"<<*((void**)&(what->mAnimatedScriptObj))<<"): " << objName << " - is a subclass of C++ ""Animated""\n";
+                    std::cout << __func__<<":"<< 1315 << " - JS Object (""what->mAnimatedScriptObj""|"<<*((void**)&(what->mAnimatedScriptObj))<<"): " << objName << " - is a subclass of C++ ""AnimatedBase""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 1200 << " - JS Object (""what->mAnimatedScriptObj""|"<<*((void**)&(what->mAnimatedScriptObj))<<"): " << objName << " - does not wrap ""Animated""\n";
+                    std::cout << __func__<<":"<< 1315 << " - JS Object (""what->mAnimatedScriptObj""|"<<*((void**)&(what->mAnimatedScriptObj))<<"): " << objName << " - does not wrap ""AnimatedBase""\n";
                 }
             }
             else
             {
-                Animated* obj = dynamic_cast<Animated*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1200 << " - JS Object (""what->mAnimatedScriptObj""|" << *((void**)&(what->mAnimatedScriptObj)) << "): " << objName<<" - wraps C++ ""Animated"" ("<<(void*)obj<<")\n";
+                AnimatedBase* obj = dynamic_cast<AnimatedBase*>(obj__->getCppObject());
+                    std::cout << __func__<<":"<< 1315 << " - JS Object (""what->mAnimatedScriptObj""|" << *((void**)&(what->mAnimatedScriptObj)) << "): " << objName<<" - wraps C++ ""AnimatedBase"" ("<<(void*)obj<<")\n";
             }
         } );
         SCRIPT_DEBUG_ONLY( if (this->mIAnimationHelperScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 1201 << " - NIL JS Object (" "this->mIAnimationHelperScriptObj" "|"<<*((void**)&(this->mIAnimationHelperScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 1316 << " - NIL JS Object (" "this->mIAnimationHelperScriptObj" "|"<<*((void**)&(this->mIAnimationHelperScriptObj))<<")\n";
         }
         else if (!this->mIAnimationHelperScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 1201 << " - NOT JS Object (" "this->mIAnimationHelperScriptObj" "|"<<*((void**)&(this->mIAnimationHelperScriptObj))<<") : " << (this->mIAnimationHelperScriptObj.IsEmpty() ? "empty" : this->mIAnimationHelperScriptObj->IsArray() ? "array" : this->mIAnimationHelperScriptObj->IsFunction() ? "function" : this->mIAnimationHelperScriptObj->IsStringObject() ? "string (object)" : this->mIAnimationHelperScriptObj->IsString() ? "string" : this->mIAnimationHelperScriptObj->IsNull() ? "null" : this->mIAnimationHelperScriptObj->IsUndefined() ? "undefined" : this->mIAnimationHelperScriptObj->IsNumberObject() ? "number (object)" : this->mIAnimationHelperScriptObj->IsNumber() ? "number" : this->mIAnimationHelperScriptObj->IsBoolean() ? "boolean" : this->mIAnimationHelperScriptObj->IsDate() ? "date" : this->mIAnimationHelperScriptObj->IsRegExp() ? "regexp" : this->mIAnimationHelperScriptObj->IsNativeError() ? "error" : this->mIAnimationHelperScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1316 << " - NOT JS Object (" "this->mIAnimationHelperScriptObj" "|"<<*((void**)&(this->mIAnimationHelperScriptObj))<<") : " << (this->mIAnimationHelperScriptObj.IsEmpty() ? "empty" : this->mIAnimationHelperScriptObj->IsArray() ? "array" : this->mIAnimationHelperScriptObj->IsFunction() ? "function" : this->mIAnimationHelperScriptObj->IsStringObject() ? "string (object)" : this->mIAnimationHelperScriptObj->IsString() ? "string" : this->mIAnimationHelperScriptObj->IsNull() ? "null" : this->mIAnimationHelperScriptObj->IsUndefined() ? "undefined" : this->mIAnimationHelperScriptObj->IsNumberObject() ? "number (object)" : this->mIAnimationHelperScriptObj->IsNumber() ? "number" : this->mIAnimationHelperScriptObj->IsBoolean() ? "boolean" : this->mIAnimationHelperScriptObj->IsDate() ? "date" : this->mIAnimationHelperScriptObj->IsRegExp() ? "regexp" : this->mIAnimationHelperScriptObj->IsNativeError() ? "error" : this->mIAnimationHelperScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -2053,26 +2112,26 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 1201 << " - JS Object (""this->mIAnimationHelperScriptObj""|"<<*((void**)&(this->mIAnimationHelperScriptObj))<<"): " << objName << " - is a subclass of C++ ""IAnimationHelper""\n";
+                    std::cout << __func__<<":"<< 1316 << " - JS Object (""this->mIAnimationHelperScriptObj""|"<<*((void**)&(this->mIAnimationHelperScriptObj))<<"): " << objName << " - is a subclass of C++ ""IAnimationHelper""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 1201 << " - JS Object (""this->mIAnimationHelperScriptObj""|"<<*((void**)&(this->mIAnimationHelperScriptObj))<<"): " << objName << " - does not wrap ""IAnimationHelper""\n";
+                    std::cout << __func__<<":"<< 1316 << " - JS Object (""this->mIAnimationHelperScriptObj""|"<<*((void**)&(this->mIAnimationHelperScriptObj))<<"): " << objName << " - does not wrap ""IAnimationHelper""\n";
                 }
             }
             else
             {
                 IAnimationHelper* obj = dynamic_cast<IAnimationHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1201 << " - JS Object (""this->mIAnimationHelperScriptObj""|" << *((void**)&(this->mIAnimationHelperScriptObj)) << "): " << objName<<" - wraps C++ ""IAnimationHelper"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1316 << " - JS Object (""this->mIAnimationHelperScriptObj""|" << *((void**)&(this->mIAnimationHelperScriptObj)) << "): " << objName<<" - wraps C++ ""IAnimationHelper"" ("<<(void*)obj<<")\n";
             }
         } );
 
         v8::Local<v8::Value> resVal;
         v8::Local<v8::Function> func;
         v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, this->mIAnimationHelperScriptObj);
-        if (!mScriptAnimateFunc.IsEmpty())
+        if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked()).ToChecked()))
         {
-            func = v8::Local<v8::Function>::New(isolate, mScriptAnimateFunc);
+            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked()).ToLocalChecked());
         }
         else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate").ToLocalChecked()).ToChecked()))
         {
@@ -2120,178 +2179,6 @@ namespace pdg
         return resVal->BooleanValue(isolate);
     }
 
-    ScriptSpriteCollideHelper::ScriptSpriteCollideHelper(v8::Local<v8::Function> func)
-    {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
-        mScriptAllowCollisionFunc.Reset(isolate, func);
-    }
-
-    bool ScriptSpriteCollideHelper::allowCollision(Sprite* sprite, Sprite* withSprite) throw()
-    {
-        v8::Isolate* isolate = v8::Isolate::GetCurrent();
-
-        v8::TryCatch try_catch(isolate);
-
-        v8::Local<v8::Value> argv[2];
-        argv[0] = v8::Local<v8::Object>::New(isolate, sprite->mSpriteScriptObj);
-        argv[1] = v8::Local<v8::Object>::New(isolate, withSprite->mSpriteScriptObj);
-
-        SCRIPT_DEBUG_ONLY( if (sprite->mSpriteScriptObj.IsEmpty())
-        {
-            std::cerr << __func__<<":"<< 1255 << " - NIL JS Object (" "sprite->mSpriteScriptObj" "|"<<*((void**)&(sprite->mSpriteScriptObj))<<")\n";
-        }
-        else if (!sprite->mSpriteScriptObj->IsObject())
-        {
-            std::cerr << __func__<<":"<< 1255 << " - NOT JS Object (" "sprite->mSpriteScriptObj" "|"<<*((void**)&(sprite->mSpriteScriptObj))<<") : " << (sprite->mSpriteScriptObj.IsEmpty() ? "empty" : sprite->mSpriteScriptObj->IsArray() ? "array" : sprite->mSpriteScriptObj->IsFunction() ? "function" : sprite->mSpriteScriptObj->IsStringObject() ? "string (object)" : sprite->mSpriteScriptObj->IsString() ? "string" : sprite->mSpriteScriptObj->IsNull() ? "null" : sprite->mSpriteScriptObj->IsUndefined() ? "undefined" : sprite->mSpriteScriptObj->IsNumberObject() ? "number (object)" : sprite->mSpriteScriptObj->IsNumber() ? "number" : sprite->mSpriteScriptObj->IsBoolean() ? "boolean" : sprite->mSpriteScriptObj->IsDate() ? "date" : sprite->mSpriteScriptObj->IsRegExp() ? "regexp" : sprite->mSpriteScriptObj->IsNativeError() ? "error" : sprite->mSpriteScriptObj->IsObject() ? "object" : "unknown") << "\n";
-        }
-        else
-        {
-            v8::Local<v8::Object> obj_ = sprite->mSpriteScriptObj->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                v8::String::Utf8Value objNameStr(isolate, obj_->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-                char* objName = *objNameStr;
-                SpriteWrap* obj__ = dynamic_cast<SpriteWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                if (!obj__)
-            {
-                v8::Local<v8::Value> protoVal_ = obj_->GetPrototypeV2();
-                    if (!protoVal_.IsEmpty() && protoVal_->IsObject())
-                {
-                    obj_ = protoVal_->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                        obj__ = dynamic_cast<SpriteWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                }
-                if (obj__)
-                {
-                    std::cout << __func__<<":"<< 1255 << " - JS Object (""sprite->mSpriteScriptObj""|"<<*((void**)&(sprite->mSpriteScriptObj))<<"): " << objName << " - is a subclass of C++ ""Sprite""\n";
-                }
-                else
-                {
-                    std::cout << __func__<<":"<< 1255 << " - JS Object (""sprite->mSpriteScriptObj""|"<<*((void**)&(sprite->mSpriteScriptObj))<<"): " << objName << " - does not wrap ""Sprite""\n";
-                }
-            }
-            else
-            {
-                Sprite* obj = dynamic_cast<Sprite*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1255 << " - JS Object (""sprite->mSpriteScriptObj""|" << *((void**)&(sprite->mSpriteScriptObj)) << "): " << objName<<" - wraps C++ ""Sprite"" ("<<(void*)obj<<")\n";
-            }
-        } );
-        SCRIPT_DEBUG_ONLY( if (withSprite->mSpriteScriptObj.IsEmpty())
-        {
-            std::cerr << __func__<<":"<< 1256 << " - NIL JS Object (" "withSprite->mSpriteScriptObj" "|"<<*((void**)&(withSprite->mSpriteScriptObj))<<")\n";
-        }
-        else if (!withSprite->mSpriteScriptObj->IsObject())
-        {
-            std::cerr << __func__<<":"<< 1256 << " - NOT JS Object (" "withSprite->mSpriteScriptObj" "|"<<*((void**)&(withSprite->mSpriteScriptObj))<<") : " << (withSprite->mSpriteScriptObj.IsEmpty() ? "empty" : withSprite->mSpriteScriptObj->IsArray() ? "array" : withSprite->mSpriteScriptObj->IsFunction() ? "function" : withSprite->mSpriteScriptObj->IsStringObject() ? "string (object)" : withSprite->mSpriteScriptObj->IsString() ? "string" : withSprite->mSpriteScriptObj->IsNull() ? "null" : withSprite->mSpriteScriptObj->IsUndefined() ? "undefined" : withSprite->mSpriteScriptObj->IsNumberObject() ? "number (object)" : withSprite->mSpriteScriptObj->IsNumber() ? "number" : withSprite->mSpriteScriptObj->IsBoolean() ? "boolean" : withSprite->mSpriteScriptObj->IsDate() ? "date" : withSprite->mSpriteScriptObj->IsRegExp() ? "regexp" : withSprite->mSpriteScriptObj->IsNativeError() ? "error" : withSprite->mSpriteScriptObj->IsObject() ? "object" : "unknown") << "\n";
-        }
-        else
-        {
-            v8::Local<v8::Object> obj_ = withSprite->mSpriteScriptObj->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                v8::String::Utf8Value objNameStr(isolate, obj_->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-                char* objName = *objNameStr;
-                SpriteWrap* obj__ = dynamic_cast<SpriteWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                if (!obj__)
-            {
-                v8::Local<v8::Value> protoVal_ = obj_->GetPrototypeV2();
-                    if (!protoVal_.IsEmpty() && protoVal_->IsObject())
-                {
-                    obj_ = protoVal_->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                        obj__ = dynamic_cast<SpriteWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                }
-                if (obj__)
-                {
-                    std::cout << __func__<<":"<< 1256 << " - JS Object (""withSprite->mSpriteScriptObj""|"<<*((void**)&(withSprite->mSpriteScriptObj))<<"): " << objName << " - is a subclass of C++ ""Sprite""\n";
-                }
-                else
-                {
-                    std::cout << __func__<<":"<< 1256 << " - JS Object (""withSprite->mSpriteScriptObj""|"<<*((void**)&(withSprite->mSpriteScriptObj))<<"): " << objName << " - does not wrap ""Sprite""\n";
-                }
-            }
-            else
-            {
-                Sprite* obj = dynamic_cast<Sprite*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1256 << " - JS Object (""withSprite->mSpriteScriptObj""|" << *((void**)&(withSprite->mSpriteScriptObj)) << "): " << objName<<" - wraps C++ ""Sprite"" ("<<(void*)obj<<")\n";
-            }
-        } );
-        SCRIPT_DEBUG_ONLY( if (this->mISpriteCollideHelperScriptObj.IsEmpty())
-        {
-            std::cerr << __func__<<":"<< 1257 << " - NIL JS Object (" "this->mISpriteCollideHelperScriptObj" "|"<<*((void**)&(this->mISpriteCollideHelperScriptObj))<<")\n";
-        }
-        else if (!this->mISpriteCollideHelperScriptObj->IsObject())
-        {
-            std::cerr << __func__<<":"<< 1257 << " - NOT JS Object (" "this->mISpriteCollideHelperScriptObj" "|"<<*((void**)&(this->mISpriteCollideHelperScriptObj))<<") : " << (this->mISpriteCollideHelperScriptObj.IsEmpty() ? "empty" : this->mISpriteCollideHelperScriptObj->IsArray() ? "array" : this->mISpriteCollideHelperScriptObj->IsFunction() ? "function" : this->mISpriteCollideHelperScriptObj->IsStringObject() ? "string (object)" : this->mISpriteCollideHelperScriptObj->IsString() ? "string" : this->mISpriteCollideHelperScriptObj->IsNull() ? "null" : this->mISpriteCollideHelperScriptObj->IsUndefined() ? "undefined" : this->mISpriteCollideHelperScriptObj->IsNumberObject() ? "number (object)" : this->mISpriteCollideHelperScriptObj->IsNumber() ? "number" : this->mISpriteCollideHelperScriptObj->IsBoolean() ? "boolean" : this->mISpriteCollideHelperScriptObj->IsDate() ? "date" : this->mISpriteCollideHelperScriptObj->IsRegExp() ? "regexp" : this->mISpriteCollideHelperScriptObj->IsNativeError() ? "error" : this->mISpriteCollideHelperScriptObj->IsObject() ? "object" : "unknown") << "\n";
-        }
-        else
-        {
-            v8::Local<v8::Object> obj_ = this->mISpriteCollideHelperScriptObj->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                v8::String::Utf8Value objNameStr(isolate, obj_->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-                char* objName = *objNameStr;
-                ISpriteCollideHelperWrap* obj__ = dynamic_cast<ISpriteCollideHelperWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                if (!obj__)
-            {
-                v8::Local<v8::Value> protoVal_ = obj_->GetPrototypeV2();
-                    if (!protoVal_.IsEmpty() && protoVal_->IsObject())
-                {
-                    obj_ = protoVal_->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-                        obj__ = dynamic_cast<ISpriteCollideHelperWrap*>(pdg::v8script::safe_unwrap_object_wrap(obj_));
-                }
-                if (obj__)
-                {
-                    std::cout << __func__<<":"<< 1257 << " - JS Object (""this->mISpriteCollideHelperScriptObj""|"<<*((void**)&(this->mISpriteCollideHelperScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISpriteCollideHelper""\n";
-                }
-                else
-                {
-                    std::cout << __func__<<":"<< 1257 << " - JS Object (""this->mISpriteCollideHelperScriptObj""|"<<*((void**)&(this->mISpriteCollideHelperScriptObj))<<"): " << objName << " - does not wrap ""ISpriteCollideHelper""\n";
-                }
-            }
-            else
-            {
-                ISpriteCollideHelper* obj = dynamic_cast<ISpriteCollideHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1257 << " - JS Object (""this->mISpriteCollideHelperScriptObj""|" << *((void**)&(this->mISpriteCollideHelperScriptObj)) << "): " << objName<<" - wraps C++ ""ISpriteCollideHelper"" ("<<(void*)obj<<")\n";
-            }
-        } );
-
-        v8::Local<v8::Value> resVal;
-        v8::Local<v8::Function> func;
-        v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, this->mISpriteCollideHelperScriptObj);
-        if (!mScriptAllowCollisionFunc.IsEmpty())
-        {
-            func = v8::Local<v8::Function>::New(isolate, mScriptAllowCollisionFunc);
-        }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "allowCollision").ToLocalChecked()).ToChecked()))
-        {
-            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "allowCollision").ToLocalChecked()).ToLocalChecked());
-        }
-        else
-        {
-            DEBUG_ONLY(
-                v8::String::Utf8Value objectNameStr(isolate, obj_->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-                std::cerr << "fatal: ISpriteCollideHelper object " << *objectNameStr << " missing allowCollision() Function!!";
-                exit(1);
-                )
-                return false;
-        }
-        resVal = ([&]() -> v8::Local<v8::Value>
-        {
-            if (func.IsEmpty())
-            {
-                return v8::Local<v8::Value>();
-            }
-            v8::MaybeLocal<v8::Value> maybe = func->Call(isolate->GetCurrentContext(), obj_, 2, argv);
-                if (maybe.IsEmpty())
-            {
-                return v8::Local<v8::Value>();
-            }
-            return maybe.ToLocalChecked();
-        }());
-
-        if (try_catch.HasCaught())
-        {
-            DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling Sprite Collide Helper!!" ); )
-                FatalException(try_catch);
-            return false;
-        }
-
-        return resVal->BooleanValue(isolate);
-    }
-
 #ifndef PDG_NO_GUI
 
     ScriptSpriteDrawHelper::ScriptSpriteDrawHelper(v8::Local<v8::Function> func)
@@ -2300,7 +2187,7 @@ namespace pdg
         mScriptDrawFunc.Reset(isolate, func);
     }
 
-    bool ScriptSpriteDrawHelper::draw(Sprite* sprite, Port* port) throw()
+    bool ScriptSpriteDrawHelper::draw(Sprite* sprite, Port* port) noexcept
     {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::TryCatch try_catch(isolate);
@@ -2311,11 +2198,11 @@ namespace pdg
 
         SCRIPT_DEBUG_ONLY( if (sprite->mSpriteScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 1312 << " - NIL JS Object (" "sprite->mSpriteScriptObj" "|"<<*((void**)&(sprite->mSpriteScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 1374 << " - NIL JS Object (" "sprite->mSpriteScriptObj" "|"<<*((void**)&(sprite->mSpriteScriptObj))<<")\n";
         }
         else if (!sprite->mSpriteScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 1312 << " - NOT JS Object (" "sprite->mSpriteScriptObj" "|"<<*((void**)&(sprite->mSpriteScriptObj))<<") : " << (sprite->mSpriteScriptObj.IsEmpty() ? "empty" : sprite->mSpriteScriptObj->IsArray() ? "array" : sprite->mSpriteScriptObj->IsFunction() ? "function" : sprite->mSpriteScriptObj->IsStringObject() ? "string (object)" : sprite->mSpriteScriptObj->IsString() ? "string" : sprite->mSpriteScriptObj->IsNull() ? "null" : sprite->mSpriteScriptObj->IsUndefined() ? "undefined" : sprite->mSpriteScriptObj->IsNumberObject() ? "number (object)" : sprite->mSpriteScriptObj->IsNumber() ? "number" : sprite->mSpriteScriptObj->IsBoolean() ? "boolean" : sprite->mSpriteScriptObj->IsDate() ? "date" : sprite->mSpriteScriptObj->IsRegExp() ? "regexp" : sprite->mSpriteScriptObj->IsNativeError() ? "error" : sprite->mSpriteScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1374 << " - NOT JS Object (" "sprite->mSpriteScriptObj" "|"<<*((void**)&(sprite->mSpriteScriptObj))<<") : " << (sprite->mSpriteScriptObj.IsEmpty() ? "empty" : sprite->mSpriteScriptObj->IsArray() ? "array" : sprite->mSpriteScriptObj->IsFunction() ? "function" : sprite->mSpriteScriptObj->IsStringObject() ? "string (object)" : sprite->mSpriteScriptObj->IsString() ? "string" : sprite->mSpriteScriptObj->IsNull() ? "null" : sprite->mSpriteScriptObj->IsUndefined() ? "undefined" : sprite->mSpriteScriptObj->IsNumberObject() ? "number (object)" : sprite->mSpriteScriptObj->IsNumber() ? "number" : sprite->mSpriteScriptObj->IsBoolean() ? "boolean" : sprite->mSpriteScriptObj->IsDate() ? "date" : sprite->mSpriteScriptObj->IsRegExp() ? "regexp" : sprite->mSpriteScriptObj->IsNativeError() ? "error" : sprite->mSpriteScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -2333,26 +2220,26 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 1312 << " - JS Object (""sprite->mSpriteScriptObj""|"<<*((void**)&(sprite->mSpriteScriptObj))<<"): " << objName << " - is a subclass of C++ ""Sprite""\n";
+                    std::cout << __func__<<":"<< 1374 << " - JS Object (""sprite->mSpriteScriptObj""|"<<*((void**)&(sprite->mSpriteScriptObj))<<"): " << objName << " - is a subclass of C++ ""Sprite""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 1312 << " - JS Object (""sprite->mSpriteScriptObj""|"<<*((void**)&(sprite->mSpriteScriptObj))<<"): " << objName << " - does not wrap ""Sprite""\n";
+                    std::cout << __func__<<":"<< 1374 << " - JS Object (""sprite->mSpriteScriptObj""|"<<*((void**)&(sprite->mSpriteScriptObj))<<"): " << objName << " - does not wrap ""Sprite""\n";
                 }
             }
             else
             {
                 Sprite* obj = dynamic_cast<Sprite*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1312 << " - JS Object (""sprite->mSpriteScriptObj""|" << *((void**)&(sprite->mSpriteScriptObj)) << "): " << objName<<" - wraps C++ ""Sprite"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1374 << " - JS Object (""sprite->mSpriteScriptObj""|" << *((void**)&(sprite->mSpriteScriptObj)) << "): " << objName<<" - wraps C++ ""Sprite"" ("<<(void*)obj<<")\n";
             }
         } );
         SCRIPT_DEBUG_ONLY( if (port->mPortScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 1313 << " - NIL JS Object (" "port->mPortScriptObj" "|"<<*((void**)&(port->mPortScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 1375 << " - NIL JS Object (" "port->mPortScriptObj" "|"<<*((void**)&(port->mPortScriptObj))<<")\n";
         }
         else if (!port->mPortScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 1313 << " - NOT JS Object (" "port->mPortScriptObj" "|"<<*((void**)&(port->mPortScriptObj))<<") : " << (port->mPortScriptObj.IsEmpty() ? "empty" : port->mPortScriptObj->IsArray() ? "array" : port->mPortScriptObj->IsFunction() ? "function" : port->mPortScriptObj->IsStringObject() ? "string (object)" : port->mPortScriptObj->IsString() ? "string" : port->mPortScriptObj->IsNull() ? "null" : port->mPortScriptObj->IsUndefined() ? "undefined" : port->mPortScriptObj->IsNumberObject() ? "number (object)" : port->mPortScriptObj->IsNumber() ? "number" : port->mPortScriptObj->IsBoolean() ? "boolean" : port->mPortScriptObj->IsDate() ? "date" : port->mPortScriptObj->IsRegExp() ? "regexp" : port->mPortScriptObj->IsNativeError() ? "error" : port->mPortScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1375 << " - NOT JS Object (" "port->mPortScriptObj" "|"<<*((void**)&(port->mPortScriptObj))<<") : " << (port->mPortScriptObj.IsEmpty() ? "empty" : port->mPortScriptObj->IsArray() ? "array" : port->mPortScriptObj->IsFunction() ? "function" : port->mPortScriptObj->IsStringObject() ? "string (object)" : port->mPortScriptObj->IsString() ? "string" : port->mPortScriptObj->IsNull() ? "null" : port->mPortScriptObj->IsUndefined() ? "undefined" : port->mPortScriptObj->IsNumberObject() ? "number (object)" : port->mPortScriptObj->IsNumber() ? "number" : port->mPortScriptObj->IsBoolean() ? "boolean" : port->mPortScriptObj->IsDate() ? "date" : port->mPortScriptObj->IsRegExp() ? "regexp" : port->mPortScriptObj->IsNativeError() ? "error" : port->mPortScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -2370,26 +2257,26 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 1313 << " - JS Object (""port->mPortScriptObj""|"<<*((void**)&(port->mPortScriptObj))<<"): " << objName << " - is a subclass of C++ ""Port""\n";
+                    std::cout << __func__<<":"<< 1375 << " - JS Object (""port->mPortScriptObj""|"<<*((void**)&(port->mPortScriptObj))<<"): " << objName << " - is a subclass of C++ ""Port""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 1313 << " - JS Object (""port->mPortScriptObj""|"<<*((void**)&(port->mPortScriptObj))<<"): " << objName << " - does not wrap ""Port""\n";
+                    std::cout << __func__<<":"<< 1375 << " - JS Object (""port->mPortScriptObj""|"<<*((void**)&(port->mPortScriptObj))<<"): " << objName << " - does not wrap ""Port""\n";
                 }
             }
             else
             {
                 Port* obj = dynamic_cast<Port*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1313 << " - JS Object (""port->mPortScriptObj""|" << *((void**)&(port->mPortScriptObj)) << "): " << objName<<" - wraps C++ ""Port"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1375 << " - JS Object (""port->mPortScriptObj""|" << *((void**)&(port->mPortScriptObj)) << "): " << objName<<" - wraps C++ ""Port"" ("<<(void*)obj<<")\n";
             }
         } );
         SCRIPT_DEBUG_ONLY( if (this->mISpriteDrawHelperScriptObj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 1314 << " - NIL JS Object (" "this->mISpriteDrawHelperScriptObj" "|"<<*((void**)&(this->mISpriteDrawHelperScriptObj))<<")\n";
+            std::cerr << __func__<<":"<< 1376 << " - NIL JS Object (" "this->mISpriteDrawHelperScriptObj" "|"<<*((void**)&(this->mISpriteDrawHelperScriptObj))<<")\n";
         }
         else if (!this->mISpriteDrawHelperScriptObj->IsObject())
         {
-            std::cerr << __func__<<":"<< 1314 << " - NOT JS Object (" "this->mISpriteDrawHelperScriptObj" "|"<<*((void**)&(this->mISpriteDrawHelperScriptObj))<<") : " << (this->mISpriteDrawHelperScriptObj.IsEmpty() ? "empty" : this->mISpriteDrawHelperScriptObj->IsArray() ? "array" : this->mISpriteDrawHelperScriptObj->IsFunction() ? "function" : this->mISpriteDrawHelperScriptObj->IsStringObject() ? "string (object)" : this->mISpriteDrawHelperScriptObj->IsString() ? "string" : this->mISpriteDrawHelperScriptObj->IsNull() ? "null" : this->mISpriteDrawHelperScriptObj->IsUndefined() ? "undefined" : this->mISpriteDrawHelperScriptObj->IsNumberObject() ? "number (object)" : this->mISpriteDrawHelperScriptObj->IsNumber() ? "number" : this->mISpriteDrawHelperScriptObj->IsBoolean() ? "boolean" : this->mISpriteDrawHelperScriptObj->IsDate() ? "date" : this->mISpriteDrawHelperScriptObj->IsRegExp() ? "regexp" : this->mISpriteDrawHelperScriptObj->IsNativeError() ? "error" : this->mISpriteDrawHelperScriptObj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1376 << " - NOT JS Object (" "this->mISpriteDrawHelperScriptObj" "|"<<*((void**)&(this->mISpriteDrawHelperScriptObj))<<") : " << (this->mISpriteDrawHelperScriptObj.IsEmpty() ? "empty" : this->mISpriteDrawHelperScriptObj->IsArray() ? "array" : this->mISpriteDrawHelperScriptObj->IsFunction() ? "function" : this->mISpriteDrawHelperScriptObj->IsStringObject() ? "string (object)" : this->mISpriteDrawHelperScriptObj->IsString() ? "string" : this->mISpriteDrawHelperScriptObj->IsNull() ? "null" : this->mISpriteDrawHelperScriptObj->IsUndefined() ? "undefined" : this->mISpriteDrawHelperScriptObj->IsNumberObject() ? "number (object)" : this->mISpriteDrawHelperScriptObj->IsNumber() ? "number" : this->mISpriteDrawHelperScriptObj->IsBoolean() ? "boolean" : this->mISpriteDrawHelperScriptObj->IsDate() ? "date" : this->mISpriteDrawHelperScriptObj->IsRegExp() ? "regexp" : this->mISpriteDrawHelperScriptObj->IsNativeError() ? "error" : this->mISpriteDrawHelperScriptObj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -2407,17 +2294,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 1314 << " - JS Object (""this->mISpriteDrawHelperScriptObj""|"<<*((void**)&(this->mISpriteDrawHelperScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 1376 << " - JS Object (""this->mISpriteDrawHelperScriptObj""|"<<*((void**)&(this->mISpriteDrawHelperScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 1314 << " - JS Object (""this->mISpriteDrawHelperScriptObj""|"<<*((void**)&(this->mISpriteDrawHelperScriptObj))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 1376 << " - JS Object (""this->mISpriteDrawHelperScriptObj""|"<<*((void**)&(this->mISpriteDrawHelperScriptObj))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
                 }
             }
             else
             {
                 ISpriteDrawHelper* obj = dynamic_cast<ISpriteDrawHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 1314 << " - JS Object (""this->mISpriteDrawHelperScriptObj""|" << *((void**)&(this->mISpriteDrawHelperScriptObj)) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1376 << " - JS Object (""this->mISpriteDrawHelperScriptObj""|" << *((void**)&(this->mISpriteDrawHelperScriptObj)) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
             }
         } );
 
@@ -2504,13 +2391,15 @@ namespace pdg
         return buf;
     }
 
-    float CallScriptEasingFunc(int which, ms_delta ut, float b, float c, ms_delta ud)
+    static int sNumScriptEasings = 0;
+
+    float CallScriptEasingFunc(int which, double ut, float b, float c, double ud)
     {
-        if (which > gNumCustomEasings)
+        if (which < 0 || which >= sNumScriptEasings)
         {
 #ifdef DEBUG
             std::cerr << "logic error: attempting to call an unregistered easing function #"
-                << which << "(only "<< gNumCustomEasings <<" custom easings have been"
+                << which << "(only "<< sNumScriptEasings <<" custom easings have been"
                 " registered via registerEasingFunction())\n";
             exit(1);
 #else
@@ -2521,10 +2410,10 @@ namespace pdg
         v8::TryCatch try_catch(isolate);
 
         v8::Local<v8::Value> argv[4];
-        argv[0] = v8::Local<v8::Value>::New(isolate, v8::Integer::NewFromUnsigned(isolate, ut));
+        argv[0] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, ut));
         argv[1] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, b));
         argv[2] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, c));
-        argv[3] = v8::Local<v8::Value>::New(isolate, v8::Integer::NewFromUnsigned(isolate, ud));
+        argv[3] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, ud));
         v8::Local<v8::Function> easingfunc_ = v8::Local<v8::Function>::New(isolate, s_CustomScriptEasing[which]);
 
         v8::Local<v8::Value> resVal = ([&]() -> v8::Local<v8::Value>
@@ -2567,7 +2456,7 @@ namespace pdg
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         if (args.Length() == 1 && args[0]->IsNull())
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(function easingFunc)" " - " "").ToLocalChecked() ); return; };
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number int]" " function" "(function easingFunc)" " - " "").ToLocalChecked() ); return; };
         };
         if (args.Length() != 1)
         {
@@ -2581,7 +2470,7 @@ namespace pdg
         }
         v8::Local<v8::Function> easingFunc = v8::Local<v8::Function>::Cast(args[1 -1]);;
         v8::Local<v8::Function> jsEasingFunc = v8::Local<v8::Function>::New(isolate, easingFunc);
-        if (gNumCustomEasings >= MAX_CUSTOM_EASINGS)
+        if (sNumScriptEasings >= MAX_CUSTOM_EASINGS)
         {
             std::ostringstream excpt_;
             excpt_ << "Can't register any more custom easing functions!!";
@@ -2594,15 +2483,16 @@ namespace pdg
         }
         else
         {
-            s_CustomScriptEasing[gNumCustomEasings].Reset(isolate, jsEasingFunc);
+            s_CustomScriptEasing[sNumScriptEasings].Reset(isolate, jsEasingFunc);
             v8::String::Utf8Value funcNameStr(isolate, easingFunc->GetName()->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-            int funcId = NUM_BUILTIN_EASINGS + gNumCustomEasings;
-            CallScriptEasingFunc(gNumCustomEasings, 0, 0.0f, 0.0f, 1);
-            gNumCustomEasings++;
+            int funcId = NUM_BUILTIN_EASINGS + sNumScriptEasings;
+            CallScriptEasingFunc(sNumScriptEasings++, 0, 0.0f, 0.0f, 1);
+
             v8::Local<v8::Object> bind_ = v8::Local<v8::Object>::New(isolate, s_BindingTarget);
             (void)bind_->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "*funcNameStr").ToLocalChecked(), v8::Integer::New(isolate, funcId)).ToChecked();
             DEBUG_ONLY( OS::_DOUT( "Registered custom easing Function %d as constant name %s [%d]",
-                gNumCustomEasings, *funcNameStr, funcId); )
+                sNumScriptEasings, *funcNameStr, funcId); )
+                { args.GetReturnValue().Set( v8::Integer::New(isolate, funcId) ); return; };
         }
         args.GetReturnValue().SetUndefined();
     }
@@ -2616,7 +2506,7 @@ namespace pdg
 
     SCRIPT_DEBUG_ONLY(
         static size_t sLastHeapUsed = 0;
-        static long sIdleLastHeapReport = OS::getMilliseconds();
+        static ms_time sIdleLastHeapReport = OS::getMilliseconds();
         )
 
         void initBindings(v8::Local<v8::Object> target);
@@ -2624,6 +2514,15 @@ namespace pdg
     void initBindings(v8::Local<v8::Object> target)
     {
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
+#if defined(NDEBUG) && !defined(DEBUG)
+        const char* buildConfiguration = "Release";
+#else
+        const char* buildConfiguration = "Debug";
+#endif
+        target->DefineOwnProperty(isolate->GetCurrentContext(),
+            v8::String::NewFromUtf8Literal(isolate, "_buildConfiguration"),
+            v8::String::NewFromUtf8(isolate, buildConfiguration).ToLocalChecked(),
+            static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).Check();
 
         easingFuncToId(customEasing0);
         easingFuncToId(customEasing1);
@@ -2651,7 +2550,13 @@ namespace pdg
         EventManagerWrap::Init(isolate, target);;
         TimerManagerWrap::Init(isolate, target);;
         IAnimationHelperWrap::Init(isolate, target);;
-        AnimatedWrap::Init(isolate, target);;
+        AnimatedBaseWrap::Init(isolate, target);;
+        PartWrap::Init(isolate, target);;
+        ParticleWrap::Init(isolate, target);;
+        ParticleEmitterWrap::Init(isolate, target);;
+        PhysicsBodyWrap::Init(isolate, target);;
+        ColliderWrap::Init(isolate, target);;
+        PhysicsConstraintWrap::Init(isolate, target);;
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
         cpArbiterWrap::Init(isolate, target);;
         cpConstraintWrap::Init(isolate, target);;
@@ -2660,7 +2565,6 @@ namespace pdg
 #ifndef PDG_NO_GUI
         ISpriteDrawHelperWrap::Init(isolate, target);;
 #endif
-        ISpriteCollideHelperWrap::Init(isolate, target);;
         SpriteWrap::Init(isolate, target);;
         SpriteLayerWrap::Init(isolate, target);;
         TileLayerWrap::Init(isolate, target);;
@@ -2669,6 +2573,7 @@ namespace pdg
         SplineWrap::Init(isolate, target);;
         PolygonWrap::Init(isolate, target);;
         AttributesWrap::Init(isolate, target);;
+        AnimatedAttributesBaseWrap::Init(isolate, target);;
         ElementRefWrap::Init(isolate, target);;
         DrawingWrap::Init(isolate, target);;
 #ifndef PDG_NO_GUI
@@ -2733,8 +2638,19 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_ScrollWheel").ToLocalChecked(), v8::Integer::New(isolate, eventType_ScrollWheel), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SpriteTouch").ToLocalChecked(), v8::Integer::New(isolate, eventType_SpriteTouch), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SpriteAnimate").ToLocalChecked(), v8::Integer::New(isolate, eventType_SpriteAnimate), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SpriteTriggerEvent").ToLocalChecked(), v8::Integer::New(isolate, eventType_SpriteTriggerEvent), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SpriteLayer").ToLocalChecked(), v8::Integer::New(isolate, eventType_SpriteLayer), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SpriteCollide").ToLocalChecked(), v8::Integer::New(isolate, eventType_SpriteCollide), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collisionShape_Polygon").ToLocalChecked(), v8::Integer::New(isolate, collisionShape_Polygon), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collisionShape_ImageMask").ToLocalChecked(), v8::Integer::New(isolate, collisionShape_ImageMask), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collisionShape_Capsule").ToLocalChecked(), v8::Integer::New(isolate, collisionShape_Capsule), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "colliderSource_Explicit").ToLocalChecked(), v8::Integer::New(isolate, colliderSource_Explicit), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "colliderSource_Frame").ToLocalChecked(), v8::Integer::New(isolate, colliderSource_Frame), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "colliderSource_Animation").ToLocalChecked(), v8::Integer::New(isolate, colliderSource_Animation), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "frameCollider_Bounds").ToLocalChecked(), v8::Integer::New(isolate, frameCollider_Bounds), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "frameCollider_AlphaMask").ToLocalChecked(), v8::Integer::New(isolate, frameCollider_AlphaMask), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_ColliderContact").ToLocalChecked(), v8::Integer::New(isolate, eventType_ColliderContact), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_ParticleBreak").ToLocalChecked(), v8::Integer::New(isolate, eventType_ParticleBreak), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SpriteBreak").ToLocalChecked(), v8::Integer::New(isolate, eventType_SpriteBreak), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SoundEvent").ToLocalChecked(), v8::Integer::New(isolate, eventType_SoundEvent), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_PortDraw").ToLocalChecked(), v8::Integer::New(isolate, eventType_PortDraw), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2799,7 +2715,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "screenPos_FaceUp").ToLocalChecked(), v8::Integer::New(isolate, screenPos_FaceUp), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "screenPos_FaceDown").ToLocalChecked(), v8::Integer::New(isolate, screenPos_FaceDown), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
 
-#ifndef PDG_NO_GUI
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_Plain").ToLocalChecked(), v8::Integer::New(isolate, textStyle_Plain), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_Bold").ToLocalChecked(), v8::Integer::New(isolate, textStyle_Bold), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_Italic").ToLocalChecked(), v8::Integer::New(isolate, textStyle_Italic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2807,7 +2722,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_Centered").ToLocalChecked(), v8::Integer::New(isolate, textStyle_Centered), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_LeftJustified").ToLocalChecked(), v8::Integer::New(isolate, textStyle_LeftJustified), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_RightJustified").ToLocalChecked(), v8::Integer::New(isolate, textStyle_RightJustified), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-#endif
 
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "lineStyle_Auto").ToLocalChecked(), v8::Integer::New(isolate, lineStyle_Auto), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "lineStyle_None").ToLocalChecked(), v8::Integer::New(isolate, lineStyle_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2856,8 +2770,42 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "init_StdOut").ToLocalChecked(), v8::Integer::New(isolate, LogManager::init_StdOut), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "init_StdErr").ToLocalChecked(), v8::Integer::New(isolate, LogManager::init_StdErr), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
 
-        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "duration_Constant").ToLocalChecked(), v8::Integer::New(isolate, duration_Constant), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "duration_Instantaneous").ToLocalChecked(), v8::Integer::New(isolate, duration_Instantaneous), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partId_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, partId_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "boneId_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, boneId_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsBody_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsBody_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsBody_Dynamic").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsBody_Dynamic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsBody_Kinematic").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsBody_Kinematic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsBody_Static").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsBody_Static), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsSolver_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsSolver_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsSolver_Basic").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsSolver_Basic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsSolver_Chipmunk").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsSolver_Chipmunk), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsForce_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsForce_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collisionShape_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, collisionShape_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collisionShape_Circle").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, collisionShape_Circle), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collisionShape_Convex").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, collisionShape_Convex), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collision_Begin").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, collision_Begin), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collision_Stay").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, collision_Stay), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collision_End").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, collision_End), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Pin").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Pin), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Slide").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Slide), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Pivot").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Pivot), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Groove").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Groove), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Spring").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Spring), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_RotarySpring").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_RotarySpring), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_RotaryLimit").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_RotaryLimit), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Ratchet").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Ratchet), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Gear").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Gear), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Motor").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Motor), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partSpace_Local").ToLocalChecked(), v8::Integer::New(isolate, partSpace_Local), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partSpace_Sprite").ToLocalChecked(), v8::Integer::New(isolate, partSpace_Sprite), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partSpace_World").ToLocalChecked(), v8::Integer::New(isolate, partSpace_World), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partPlacement_Snap").ToLocalChecked(), v8::Integer::New(isolate, partPlacement_Snap), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partPlacement_PreserveWorld").ToLocalChecked(), v8::Integer::New(isolate, partPlacement_PreserveWorld), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rotationDirection_AsSpecified").ToLocalChecked(), v8::Integer::New(isolate, rotationDirection_AsSpecified), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rotationDirection_Shortest").ToLocalChecked(), v8::Integer::New(isolate, rotationDirection_Shortest), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rotationDirection_Clockwise").ToLocalChecked(), v8::Integer::New(isolate, rotationDirection_Clockwise), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rotationDirection_CounterClockwise").ToLocalChecked(), v8::Integer::New(isolate, rotationDirection_CounterClockwise), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
 
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate_StartToEnd").ToLocalChecked(), v8::Integer::New(isolate, Sprite::animate_StartToEnd), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate_EndToStart").ToLocalChecked(), v8::Integer::New(isolate, Sprite::animate_EndToStart), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2882,8 +2830,17 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_FadeInComplete").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_FadeInComplete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_FadeOutComplete").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_FadeOutComplete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_JointBreak").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_JointBreak), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_SpriterTrigger").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_SpriterTrigger), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_BodyBreak").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_BodyBreak), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsBreak_Force").ToLocalChecked(), v8::Integer::New(isolate, physicsBreak_Force), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsBreak_AngularSpeed").ToLocalChecked(), v8::Integer::New(isolate, physicsBreak_AngularSpeed), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_AnimationBlendComplete").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_AnimationBlendComplete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_AnimationPhysicsRecoveryComplete").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_AnimationPhysicsRecoveryComplete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+#ifdef PDG_SPRITER_SUPPORT
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationPhysics_Kinematic").ToLocalChecked(), v8::Integer::New(isolate, animationPhysics_Kinematic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationPhysics_Dynamic").ToLocalChecked(), v8::Integer::New(isolate, animationPhysics_Dynamic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationPhysics_Driven").ToLocalChecked(), v8::Integer::New(isolate, animationPhysics_Driven), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationPhysics_Mixed").ToLocalChecked(), v8::Integer::New(isolate, animationPhysics_Mixed), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+#endif
 
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touch_MouseEnter").ToLocalChecked(), v8::Integer::New(isolate, Sprite::touch_MouseEnter), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touch_MouseLeave").ToLocalChecked(), v8::Integer::New(isolate, Sprite::touch_MouseLeave), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2898,6 +2855,42 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_AlphaChannel").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_AlphaChannel), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_SpriterCollisionBox").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_SpriterCollisionBox), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_Last").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_Last), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+
+#ifdef PDG_SPRITER_SUPPORT
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationSpace_Local").ToLocalChecked(), v8::Integer::New(isolate, animationSpace_Local), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationSpace_Rig").ToLocalChecked(), v8::Integer::New(isolate, animationSpace_Rig), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationSpace_World").ToLocalChecked(), v8::Integer::New(isolate, animationSpace_World), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDebug_None").ToLocalChecked(), v8::Integer::New(isolate, animationDebug_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDebug_Bones").ToLocalChecked(), v8::Integer::New(isolate, animationDebug_Bones), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDebug_Sockets").ToLocalChecked(), v8::Integer::New(isolate, animationDebug_Sockets), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDebug_Boxes").ToLocalChecked(), v8::Integer::New(isolate, animationDebug_Boxes), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDebug_All").ToLocalChecked(), v8::Integer::New(isolate, animationDebug_All), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationBinding_Image").ToLocalChecked(), v8::Integer::New(isolate, animationBinding_Image), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationBinding_Point").ToLocalChecked(), v8::Integer::New(isolate, animationBinding_Point), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationBinding_Box").ToLocalChecked(), v8::Integer::New(isolate, animationBinding_Box), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationVariable_Float").ToLocalChecked(), v8::Integer::New(isolate, animationVariable_Float), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationVariable_Int").ToLocalChecked(), v8::Integer::New(isolate, animationVariable_Int), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationVariable_String").ToLocalChecked(), v8::Integer::New(isolate, animationVariable_String), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationStage_PreConstraint").ToLocalChecked(), v8::Integer::New(isolate, animationStage_PreConstraint), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationStage_Constraint").ToLocalChecked(), v8::Integer::New(isolate, animationStage_Constraint), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationStage_PostConstraint").ToLocalChecked(), v8::Integer::New(isolate, animationStage_PostConstraint), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationSource_Clip").ToLocalChecked(), v8::Integer::New(isolate, animationSource_Clip), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationSource_Reference").ToLocalChecked(), v8::Integer::New(isolate, animationSource_Reference), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationSource_Procedural").ToLocalChecked(), v8::Integer::New(isolate, animationSource_Procedural), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationBody_Dynamic").ToLocalChecked(), v8::Integer::New(isolate, animationBody_Dynamic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationBody_Kinematic").ToLocalChecked(), v8::Integer::New(isolate, animationBody_Kinematic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationRoot_Fixed").ToLocalChecked(), v8::Integer::New(isolate, animationRoot_Fixed), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationRoot_Follow").ToLocalChecked(), v8::Integer::New(isolate, animationRoot_Follow), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDraw_BeforeAll").ToLocalChecked(), v8::Integer::New(isolate, animationDraw_BeforeAll), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDraw_AfterAll").ToLocalChecked(), v8::Integer::New(isolate, animationDraw_AfterAll), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDraw_BeforeSlot").ToLocalChecked(), v8::Integer::New(isolate, animationDraw_BeforeSlot), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDraw_AfterSlot").ToLocalChecked(), v8::Integer::New(isolate, animationDraw_AfterSlot), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationDraw_ReplaceSlot").ToLocalChecked(), v8::Integer::New(isolate, animationDraw_ReplaceSlot), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationStroke_PortPixels").ToLocalChecked(), v8::Integer::New(isolate, animationStroke_PortPixels), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationStroke_Local").ToLocalChecked(), v8::Integer::New(isolate, animationStroke_Local), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationIK_NoStretch").ToLocalChecked(), v8::Integer::New(isolate, animationIK_NoStretch), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationIK_Stretch").ToLocalChecked(), v8::Integer::New(isolate, animationIK_Stretch), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+#endif
 
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_ErasePort").ToLocalChecked(), v8::Integer::New(isolate, SpriteLayer::action_ErasePort), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_PreDrawLayer").ToLocalChecked(), v8::Integer::New(isolate, SpriteLayer::action_PreDrawLayer), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2971,6 +2964,8 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "ser_Micro").ToLocalChecked(), v8::Integer::New(isolate, ser_Micro), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "ser_Update").ToLocalChecked(), v8::Integer::New(isolate, ser_Update), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "ser_Full").ToLocalChecked(), v8::Integer::New(isolate, ser_Full), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "serialization_Complete").ToLocalChecked(), v8::Integer::New(isolate, serialization_Complete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "serialization_ExternalReferences").ToLocalChecked(), v8::Integer::New(isolate, serialization_ExternalReferences), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
 
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "spline_Hermite").ToLocalChecked(), v8::Integer::New(isolate, 1), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "spline_Cardinal").ToLocalChecked(), v8::Integer::New(isolate, 2), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();

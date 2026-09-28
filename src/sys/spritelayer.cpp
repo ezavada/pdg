@@ -29,18 +29,30 @@
 
 
 #include "pdg/sys/events.h"
+#include <numbers>
 #include "pdg_project.h"
+#include <format>
+#include "snapshot-codec.h"
+#include "pdg/sys/animationcontroller.h"
+#ifdef PDG_SPRITER_SUPPORT
+#include "spriter/pdg_spriter_pose.h"
+#endif
+#include <stdexcept>
 
 #include "pdg/sys/global_types.h"
 #include "pdg/sys/os.h"
 #include "pdg/sys/sprite.h"
 #include "pdg/sys/spritelayer.h"
+#include "pdg/sys/particle.h"
+#include "pdg/sys/particleemitter.h"
 #include "pdg/sys/iserializer.h"
 #include "pdg/sys/ideserializer.h"
 #include "pdg/sys/eventmanager.h"
 #include "pdg/sys/resource.h"
 
 #include "spritemanager.h"
+#include "layer-snapshot-scope.h"
+#include "physics-graph-snapshot.h"
 #include "internals.h"
 
 // define this here to get debug rendering of spriter elements
@@ -53,6 +65,8 @@
 #endif // PDG_SPRITER_SUPPORT
 
 #include <algorithm>
+#include <unordered_set>
+#include <limits>
 
 // define the following in your build environment, or uncomment it here to get
 // debug output for the core events and timers
@@ -77,15 +91,6 @@
   #define EVENTS_DEBUG_ONLY(_expression) _expression
 #endif
 
-#ifndef PI
-#define PI       3.141592        // the venerable pi
-#endif
-#ifndef M_PI
-#define M_PI PI
-#endif
-#ifndef TWO_PI
-#define TWO_PI    6.283184      // handy for dealing with circles
-#endif
 
 #ifdef PDG_DESERIALIZER_NO_THROW
 	// we can't throw, so we report errors but don't exit
@@ -102,7 +107,7 @@
 #define PDG_SPRITE_LAYER_MAGIC_NUMBER   0x31008971
 #define PDG_SPRITE_LAYER_STREAM_V_1		0
 // add new versions here
-#define PDG_SPRITE_LAYER_STREAM_VERSION	PDG_SPRITE_LAYER_STREAM_V_1
+#define PDG_SPRITE_LAYER_STREAM_VERSION	5
 
 #ifndef PDG_UNSAFE_SERIALIZATION
 #define PDG_TAG_SERIALIZED_DATA
@@ -163,7 +168,27 @@ void SpriteLayer::setSerializationFlags(uint32 flags) {
 	mSerFlags = flags;
 }
 
+void SpriteLayer::validateInitialSnapshot() const {
+    if (mControlledBy || !mLinkedLayers.empty() || !mCollideLayers.empty())
+        throw std::runtime_error("Layer snapshots do not yet support links to other layers");
+    if (!mHelpers.empty()) throw std::runtime_error("Layer snapshots cannot save callback helpers");
+    for (const auto& animation : mAnimations) {
+        if (std::find(gEasingFunctions, gEasingFunctions + NUM_BUILTIN_EASINGS, animation.easing)
+                == gEasingFunctions + NUM_BUILTIN_EASINGS)
+            throw std::runtime_error("Layer snapshots cannot save custom easing callbacks");
+    }
+    for (auto* sprite = mFirstSprite; sprite; sprite = sprite->mNextSprite)
+        sprite->validateInitialSnapshot(true);
+}
+
+#include "layer-mount-snapshot.inc"
+
 uint32 SpriteLayer::getSerializedSize(ISerializer* serializer) const {
+    PhysicsGraphSnapshot scene(*this);
+    PhysicsSnapshotScope physicsScope(serializer, scene.bodies());
+    if (mSerFlags & ser_InitialData) scene.validate();
+    LayerSnapshotScope graph(serializer, this);
+    if (mSerFlags & ser_InitialData) validateInitialSnapshot();
 	if ( (mSerFlags == ser_Micro) || (mSerFlags == ser_Positions) ) {
         serializer->setSendTags(false);  // we don't want to send any unnecessary data
     }
@@ -195,6 +220,17 @@ uint32 SpriteLayer::getSerializedSize(ISerializer* serializer) const {
 		if (mSerFlags & ser_InitialData) {
 			totalSize += serializer->sizeof_uint(iid);
 			totalSize += serializer->sizeof_uint(layerId);
+            for (auto deadline : {mDoneFadingInAt,mDoneFadingOutAt}) {
+                totalSize+=serializer->sizeof_bool(deadline!=0);
+                if(deadline)totalSize+=8;
+            }
+            SnapshotWriter out(serializer,false);
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+            out.floating(mGravity);
+#else
+            out.floating(0);
+#endif
+            totalSize+=out.size();
 		}
 		SIZE_FLOAT_LIST_START(2, 15);
 		if (mSerFlags & ser_Positions) {
@@ -225,9 +261,11 @@ uint32 SpriteLayer::getSerializedSize(ISerializer* serializer) const {
 			SIZE_NON_ZERO_F(mDeltaFacingPerMs, 14);
 		}
 		SIZE_FLOAT_LIST_END(totalSize);
+        if (mSerFlags & ser_Sizes) {
+            SnapshotWriter out(serializer,false);out.floating(mScaleX,1);out.floating(mScaleY,1);totalSize+=out.size();
+        }
 
-		if (mSerFlags & ser_Animations) {
-		}
+		if (mSerFlags & ser_Animations) totalSize += tweenSerializedSize(serializer);
 
 		if (mSerFlags & ser_Forces) {
 //			totalSize += 4;  // 1 float: mGravity
@@ -257,11 +295,17 @@ uint32 SpriteLayer::getSerializedSize(ISerializer* serializer) const {
 		totalSize += serializer->sizeof_uint(count); // for count
 
 	}
+    if (mSerFlags & ser_InitialData) { totalSize+=mountSnapshotSize(serializer);totalSize+=scene.size(serializer); }
 	return totalSize;
 }
 
 
 void SpriteLayer::serialize(ISerializer* serializer) const {
+    PhysicsGraphSnapshot scene(*this);
+    PhysicsSnapshotScope physicsScope(serializer, scene.bodies());
+    if (mSerFlags & ser_InitialData) scene.validate();
+    LayerSnapshotScope graph(serializer, this);
+    if (mSerFlags & ser_InitialData) validateInitialSnapshot();
 	if ( (mSerFlags == ser_Micro) || (mSerFlags == ser_Positions) ) {
         serializer->setSendTags(false);  // we don't want to send any unnecessary data
     }
@@ -308,7 +352,8 @@ void SpriteLayer::serialize(ISerializer* serializer) const {
 			(mUseChipmunkPhysics ? 	1 << 8 : 0) |
 			(mIsStaticLayer ? 		1 << 9 : 0) |
 	  #endif
-			0;
+            (1 << 10) | (mSchedulePaused ? 1 << 11 : 0) |
+            (mFlipX ? 1 << 12 : 0) | (mFlipY ? 1 << 13 : 0) | (1 << 14);
 	  #ifdef PDG_TAG_SERIALIZED_DATA
 		serializer->serialize_4(PDG_SPRITE_LAYER_MAGIC_NUMBER);
 	  #endif
@@ -316,6 +361,17 @@ void SpriteLayer::serialize(ISerializer* serializer) const {
 		if (mSerFlags & ser_InitialData) {
 			serializer->serialize_uint(iid);
 			serializer->serialize_uint(layerId);
+            const auto now = OS::getMilliseconds();
+            for (auto deadline : {mDoneFadingInAt, mDoneFadingOutAt}) {
+                serializer->serialize_bool(deadline!=0);
+                if(deadline)serializer->serialize_d(std::max(0.0, (deadline-now)/1000.0));
+            }
+            SnapshotWriter out(serializer,true);
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+            out.floating(mGravity);
+#else
+            out.floating(0);
+#endif
 		}
 		SERIALIZE_FLOAT_LIST_START(2, 15);
 		if (mSerFlags & ser_Positions) {
@@ -350,9 +406,9 @@ void SpriteLayer::serialize(ISerializer* serializer) const {
 			SERIALIZE_NON_ZERO_F(mDeltaFacingPerMs, 14);
 		}
 		SERIALIZE_FLOAT_LIST_END(2);
+        if (mSerFlags & ser_Sizes) { SnapshotWriter out(serializer,true);out.floating(mScaleX,1);out.floating(mScaleY,1); }
 		
-		if (mSerFlags & ser_Animations) {
-		}
+		if (mSerFlags & ser_Animations) serializeTweens(serializer);
 
 		if (mSerFlags & ser_Forces) {
 		  #ifdef PDG_USE_CHIPMUNK_PHYSICS
@@ -385,16 +441,78 @@ void SpriteLayer::serialize(ISerializer* serializer) const {
 		}
 
 	}
+    if (mSerFlags & ser_InitialData) { serializeMounts(serializer); scene.write(serializer); }
 }
 
 
 void SpriteLayer::deserialize(IDeserializer* deserializer) {
-	int streamVers = deserializer->deserialize_1u();
-	STREAM_SAFETY_CHECK(streamVers <= PDG_SPRITE_LAYER_STREAM_VERSION, "OUT OF SYNC: newer version of Sprite Layer Stream", sync_error);
-	uint32 serFlags = deserializer->deserialize_uint();
-	uint32 oldSerFlags = mSerFlags;
-	mSerFlags = serFlags;
-	SERIALIZATION_DEBUG_ONLY( DEBUG_PRINT("SpriteLayer [%p] reading vers [%d] flags [%p]", this, streamVers, serFlags); )
+    if (AnimationPipeline::isInsideCallback())
+        throw std::logic_error("Layer snapshots must load outside animation modifiers");
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    auto* space = SpriteManager::getSingletonInstance()->mSpace;
+    if (space && cpSpaceIsLocked(space)) throw std::logic_error("Layer snapshots must load outside the physical solve");
+#endif
+    const auto version = deserializer->deserialize_1u();
+    const auto flags = deserializer->deserialize_uint();
+    if (version != PDG_SPRITE_LAYER_STREAM_VERSION || (flags & ~uint32(0x7fff)))
+        throw std::runtime_error("Unsupported SpriteLayer record");
+    if (flags & ser_InitialData) {
+        if (version != PDG_SPRITE_LAYER_STREAM_VERSION)
+            throw std::runtime_error("Unsupported initial SpriteLayer record");
+        SpriteLayer staged;
+        PhysicsGraphReadScope graphScope(deserializer);
+        staged.readSerializedState(deserializer, flags);
+        adoptInitialSnapshot(staged);
+    } else readSerializedState(deserializer, flags);
+}
+
+void SpriteLayer::adoptInitialSnapshot(SpriteLayer& staged) {
+    // Rebase tween pointers before replacing live state. The staging layer has
+    // no bodies in the shared solver and no application callbacks.
+    const auto from = staged.tweenFields(), to = tweenFields();
+    if (from.size() != to.size()) throw std::runtime_error("Incompatible Layer tween fields");
+    auto animations = staged.mAnimations;
+    for (auto& animation : animations) {
+        const auto field = std::find(from.begin(), from.end(), animation.value);
+        if (field == from.end()) throw std::runtime_error("Invalid Layer tween target");
+        animation.value = const_cast<float*>(to[field - from.begin()]);
+    }
+    removeAllParticleEmitters();
+    removeAllParticles();
+    removeAllSprites();
+    for (size_t i = 0; i < from.size(); ++i)
+        if (from[i] && to[i]) *const_cast<float*>(to[i]) = *from[i];
+    mAnimations = std::move(animations);
+    mDelaySeconds = staged.mDelaySeconds; mSchedulePaused = staged.mSchedulePaused;
+    mAppendAnimation = staged.mAppendAnimation; mAnimationOperation = staged.mAnimationOperation; mWaitPending = staged.mWaitPending;
+    mFlipX = staged.mFlipX; mFlipY = staged.mFlipY;
+    mHidden = staged.mHidden; mAnimating = staged.mAnimating; mDoCollisions = staged.mDoCollisions;
+    mWantsMouseOver = staged.mWantsMouseOver; mWantsClicks = staged.mWantsClicks;
+    iid = staged.iid; layerId = staged.layerId;
+    mDoneFadingInAt = staged.mDoneFadingInAt; mDoneFadingOutAt = staged.mDoneFadingOutAt;
+    mFacingCos = std::cos(mFacing); mFacingSin = std::sin(mFacing);
+#ifndef PDG_NO_GUI
+    mOrigin = staged.mOrigin; mAutoCenter = staged.mAutoCenter; mFixedMoveAxis = staged.mFixedMoveAxis;
+#endif
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    mKeepGravityDownward = staged.mKeepGravityDownward; mGravity = staged.mGravity;
+    mUseChipmunkPhysics = staged.mUseChipmunkPhysics; mIsStaticLayer = staged.mIsStaticLayer;
+#endif
+    while (auto* sprite = staged.mFirstSprite) {
+        staged.unlinkSprite(sprite); sprite->mLayer = nullptr;
+        insertSprite(sprite, mLastSprite);
+        sprite->release(); // transfer the staging layer's owning reference
+    }
+}
+
+void SpriteLayer::readSerializedState(IDeserializer* deserializer, uint32 flags) {
+    struct RestoreFlags {
+        uint32& value;
+        uint32 saved;
+        ~RestoreFlags() { value = saved; }
+    } restore{mSerFlags, mSerFlags};
+    mSerFlags = flags;
+
 	Sprite* sprite = 0;
 	uint32 count = 0;
 	if ( (mSerFlags == ser_Micro) || (mSerFlags == ser_Positions) ) {
@@ -434,6 +552,9 @@ void SpriteLayer::deserialize(IDeserializer* deserializer) {
 	  #endif
 		uint32 layerFlags = deserializer->deserialize_2u();
 		mHidden = ((layerFlags & 1 << 0) != 0);
+        mSchedulePaused = (layerFlags & (1 << 11)) != 0;
+        mFlipX = (layerFlags & (1 << 12)) != 0;
+        mFlipY = (layerFlags & (1 << 13)) != 0;
 		mAnimating = ((layerFlags & 1 << 1) != 0);
 		mDoCollisions = ((layerFlags & 1 << 2) != 0);
 		mWantsMouseOver = ((layerFlags & 1 << 3) != 0);
@@ -447,6 +568,26 @@ void SpriteLayer::deserialize(IDeserializer* deserializer) {
 		mUseChipmunkPhysics = ((layerFlags & 1 << 8) != 0);
 		mIsStaticLayer = ((layerFlags & 1 << 9) != 0);
 	  #endif
+        if (mSerFlags & ser_InitialData) {
+            iid = deserializer->deserialize_uint();
+            layerId = deserializer->deserialize_uint();
+            if (iid == 0 || iid == UINT32_MAX) throw std::runtime_error("Invalid Layer identity");
+            sUniqueLayerId = std::max(sUniqueLayerId, iid + 1);
+            if (layerId < std::numeric_limits<long>::max()) gNextLayerId = std::max(gNextLayerId, layerId + 1);
+            const auto now = OS::getMilliseconds();
+            for (auto* deadline : {&mDoneFadingInAt, &mDoneFadingOutAt}) {
+                const double seconds = deserializer->deserialize_bool() ? deserializer->deserialize_d() : -1;
+                if (!std::isfinite(seconds) || (seconds < 0 && seconds != -1) ||
+                    seconds > (std::numeric_limits<ms_time>::max()-now)/1000.0)
+                    throw std::runtime_error("Invalid Layer fade completion delay");
+                *deadline = seconds == -1 ? 0 : now + static_cast<ms_time>(std::ceil(seconds*1000));
+            }
+            const float gravity = SnapshotReader(deserializer).floating();
+            if (!std::isfinite(gravity)) throw std::runtime_error("Invalid Layer gravity setting");
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+            mGravity = gravity;
+#endif
+        }
 		DESERIALIZE_FLOAT_LIST_START(2, 15);
 		if (mSerFlags & ser_Positions) {
 			mLocation.x = DESERIALIZE_NON_ZERO_F(0);
@@ -480,11 +621,48 @@ void SpriteLayer::deserialize(IDeserializer* deserializer) {
 			mDeltaFacingPerMs = DESERIALIZE_NON_ZERO_F(14);
 		}
 		DESERIALIZE_FLOAT_LIST_END(2);
+        if (mSerFlags & ser_Sizes) {
+            mScaleX = (layerFlags & (1 << 10)) ? SnapshotReader(deserializer).floating(1) : 1;
+            mScaleY = (layerFlags & (1 << 10)) ? SnapshotReader(deserializer).floating(1) : 1;
+        }
 
-// 		if (mSerFlags & ser_Animations) {
-// 		}
-// 
-		count = deserializer->deserialize_uint();
+        if (mSerFlags & ser_Animations) {
+            if (layerFlags & (1 << 14)) deserializeTweens(deserializer);
+            else { mAnimations.clear(); mDelaySeconds = 0; }
+        }
+
+        for (const auto* field : tweenFields())
+            if (field && !std::isfinite(*field)) throw std::runtime_error("Non-finite Layer transform or rate");
+        mFacingCos = std::cos(mFacing); mFacingSin = std::sin(mFacing);
+        count = deserializer->deserialize_uint();
+        if (mSerFlags & ser_InitialData) {
+            if (count > 1000000) throw std::runtime_error("Too many sprites in Layer snapshot");
+            std::unordered_set<uint32> identities;
+            while (count--) {
+                const auto expectedId = (mSerFlags & ser_ZOrder) ? deserializer->deserialize_uint() : 0;
+                auto* object = deserializer->deserialize_obj();
+                auto* incoming = dynamic_cast<Sprite*>(object);
+                if (!incoming || incoming->mLayer || !identities.insert(incoming->iid).second ||
+                    ((mSerFlags & ser_ZOrder) && incoming->iid != expectedId)) {
+                    if (object) object->release();
+                    throw std::runtime_error("Invalid or duplicate Sprite in initial Layer record");
+                }
+                // Stage ownership and order without joining the shared solver.
+                incoming->mLayer = this;
+                incoming->mPrevSprite = mLastSprite;
+                incoming->mNextSprite = nullptr;
+                if (mLastSprite) mLastSprite->mNextSprite = incoming;
+                else mFirstSprite = incoming;
+                mLastSprite = incoming;
+            }
+            deserializeMounts(deserializer);
+            PhysicsGraphSnapshot(*this).read(deserializer);
+#if defined(PDG_SPRITER_SUPPORT) && defined(PDG_USE_CHIPMUNK_PHYSICS)
+            if(!mUseChipmunkPhysics)for(auto* item=mFirstSprite;item;item=item->mNextSprite)
+                if(item->mAnimationPhysics)throw std::runtime_error("Physical rig snapshot requires a Chipmunk layer");
+#endif
+            return;
+        }
 
 		// now read the data for the sprites
 		SERIALIZATION_DEBUG_ONLY( int i = 0; DEBUG_PRINT("  sprite count: %d", count); )
@@ -506,12 +684,7 @@ void SpriteLayer::deserialize(IDeserializer* deserializer) {
 					}
 				}
 			}
-		  	if (mSerFlags & ser_InitialData) {
-		  		// FIXME, this won't work
-				sprite = dynamic_cast<Sprite*>(deserializer->deserialize_obj());
-			} else {
-				sprite->deserialize(deserializer);
-			}
+            sprite->deserialize(deserializer);
 			sprite = sprite->mNextSprite;
 			count--;
 		}
@@ -519,7 +692,6 @@ void SpriteLayer::deserialize(IDeserializer* deserializer) {
 		STREAM_SAFETY_CHECK(count == 0, "OUT OF SYNC: more sprites in stream than in targeted layer", sync_error);
 
 	}
-	mSerFlags = oldSerFlags;
 }
 
 // start and stop animating all sprites
@@ -547,20 +719,22 @@ bool	SpriteLayer::isHidden() {
 	return mHidden;
 }
 
-void	SpriteLayer::fadeIn(ms_delta msDuration, EasingFunc easing) {
-	mDoneFadingInAt = OS::getMilliseconds() + msDuration;
+void	SpriteLayer::fadeIn(double durationSeconds, EasingFunc easing) {
+	for (auto* particle : mParticles) particle->fadeTo(1, durationSeconds, easing);
+	mDoneFadingInAt = OS::getMilliseconds() + static_cast<ms_time>(std::ceil(durationSeconds * 1000.0));
 	Sprite* sprite = mFirstSprite;
 	while (sprite) {
-		sprite->fadeIn(msDuration, easing);
+		sprite->fadeIn(durationSeconds, easing);
 		sprite = sprite->mNextSprite;
 	}
 }
 
-void	SpriteLayer::fadeOut(ms_delta msDuration, EasingFunc easing) {
-	mDoneFadingOutAt = OS::getMilliseconds() + msDuration;
+void	SpriteLayer::fadeOut(double durationSeconds, EasingFunc easing) {
+	for (auto* particle : mParticles) particle->fadeTo(0, durationSeconds, easing);
+	mDoneFadingOutAt = OS::getMilliseconds() + static_cast<ms_time>(std::ceil(durationSeconds * 1000.0));
 	Sprite* sprite = mFirstSprite;
 	while (sprite) {
-		sprite->fadeOut(msDuration, easing);
+		sprite->fadeOut(durationSeconds, easing);
 		sprite = sprite->mNextSprite;
 	}
 }
@@ -718,32 +892,68 @@ bool SpriteLayer::hasSprite(Sprite* inSprite) {
 	return false;
 }
 	
-// add a sprite to the end of the doubly-linked list, which makes it draw last
-// in front of everything else
-void	SpriteLayer::addSprite(Sprite* newSprite) {
-	Sprite* sprite = newSprite;
-	if (!sprite) return;
-	if (sprite->mLayer) return; // don't add the sprite if it already belongs to a layer
-	sprite->mNextSprite = 0;  // we always add to the end
-	if (mFirstSprite == 0) {
-		mFirstSprite = sprite;
-		sprite->mPrevSprite = 0;
-	} else {
-		sprite->mPrevSprite = mLastSprite;
-		mLastSprite->mNextSprite = sprite;
-	}
-	mLastSprite = sprite;
-	sprite->mLayer = this;  // sprite now belongs to us
-	sprite->addRef();
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    if (mUseChipmunkPhysics) {
-		sprite->initCpBody();
-	}
-  #endif
-  #ifndef PDG_NO_GUI
-	sprite->setPort(mPort); // make sure it is drawing into our port
-  #endif // ! PDG_NO_GUI
-	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("Added Sprite [%p] to layer [%p]", sprite, this); )
+// Layer membership follows the rigid mounting tree. Retention during removal
+// is independent of draw order: an attached child may precede its host.
+std::vector<Sprite*> SpriteLayer::attachmentGroup(Sprite* root) {
+    std::vector<Sprite*> group{root};
+    for (size_t i = 0; i < group.size(); ++i) {
+        for (auto* part : group[i]->mParts) {
+            if (auto* child = part->getAttachedSprite()) group.push_back(child);
+        }
+    }
+    return group;
+}
+
+void SpriteLayer::insertSprite(Sprite* sprite, Sprite* after) {
+#if defined(PDG_SPRITER_SUPPORT) && defined(PDG_USE_CHIPMUNK_PHYSICS)
+    if(sprite->mAnimationPhysics && !mUseChipmunkPhysics)throw std::logic_error("Restored physical rigs require a Chipmunk layer");
+#endif
+    sprite->mPrevSprite = after;
+    sprite->mNextSprite = after ? after->mNextSprite : mFirstSprite;
+    if (sprite->mNextSprite) sprite->mNextSprite->mPrevSprite = sprite;
+    else mLastSprite = sprite;
+    if (after) after->mNextSprite = sprite;
+    else mFirstSprite = sprite;
+    sprite->mLayer = this;
+    sprite->addRef();
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if (mUseChipmunkPhysics && sprite->physics != PhysicsBody::NoPhysics) {
+        sprite->initCpBody();
+    }
+#ifdef PDG_SPRITER_SUPPORT
+    if(sprite->mAnimationPhysics) sprite->mAnimationPhysics->moveToSpace(getSpace());
+#endif
+    for (auto* part : sprite->mParts) part->syncPhysicsSolver();
+#endif
+#ifndef PDG_NO_GUI
+    sprite->setPort(mPort);
+#endif
+}
+
+void SpriteLayer::unlinkSprite(Sprite* sprite) {
+    if (sprite->mPrevSprite) sprite->mPrevSprite->mNextSprite = sprite->mNextSprite;
+    else mFirstSprite = sprite->mNextSprite;
+    if (sprite->mNextSprite) sprite->mNextSprite->mPrevSprite = sprite->mPrevSprite;
+    else mLastSprite = sprite->mPrevSprite;
+    sprite->mNextSprite = sprite->mPrevSprite = nullptr;
+}
+
+void SpriteLayer::reorderSprite(Sprite* sprite, Sprite* after) {
+    if (AnimationPipeline::isInsideCallback())
+        throw std::logic_error("Layer order cannot change inside an animation modifier");
+    if (!sprite || sprite->mLayer != this || (after && after->mLayer != this) || sprite == after) return;
+    if (sprite->mPrevSprite == after) return;
+    unlinkSprite(sprite);
+    sprite->mPrevSprite = after;
+    sprite->mNextSprite = after ? after->mNextSprite : mFirstSprite;
+    if (sprite->mNextSprite) sprite->mNextSprite->mPrevSprite = sprite;
+    else mLastSprite = sprite;
+    if (after) after->mNextSprite = sprite;
+    else mFirstSprite = sprite;
+}
+
+void SpriteLayer::addSprite(Sprite* sprite) {
+    addSpriteInFrontOf(sprite, mLastSprite);
 }
 
 // PROTECTED: swap z order of 2 sprites that are known to be in the same layer
@@ -776,82 +986,85 @@ void SpriteLayer::quickSwapSprites(Sprite* s1, Sprite* s2) {
 	}
 }
 
-// add a sprite right after targetSprite in the doubly-linked list, which makes it draw
-// just after that sprite and thus apparently in front of it.
-void	SpriteLayer::addSpriteInFrontOf(Sprite* newSprite, Sprite* targetSprite) {
-	Sprite* sprite = newSprite;
-	if (!sprite) return;
-	if (sprite->mLayer) return; // don't add the sprite if it already belongs to a layer
-	if (!targetSprite) {
-		// adding to the beginning of the list, in front of nothing
-		// set new sprite
-		sprite->mNextSprite = mFirstSprite;
-		sprite->mPrevSprite = 0;
-		// set first sprite
-		if (mFirstSprite) {
-			mFirstSprite->mPrevSprite = sprite;
-		}
-		mFirstSprite = sprite;
-	} else {
-		if (targetSprite->mLayer != this) return; // target must be in this layer
-		// set new sprite
-		sprite->mNextSprite = targetSprite->mNextSprite;
-		sprite->mPrevSprite = targetSprite;
-		if (targetSprite->mNextSprite) {
-			// set sprite after target sprite
-			targetSprite->mNextSprite->mPrevSprite = sprite;
-		} else {
-			// set last sprite
-			mLastSprite = sprite;
-		}
-		// set target sprite
-		targetSprite->mNextSprite = sprite;
-	}
-	sprite->mLayer = this;  // sprite now belongs to us
-	sprite->addRef();
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    if (mUseChipmunkPhysics) {
-		sprite->initCpBody();
-	}
-  #endif
-  #ifndef PDG_NO_GUI
-	sprite->setPort(mPort); // make sure it is drawing into our port
-  #endif // ! PDG_NO_GUI
-	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("Added Sprite [%p] to layer [%p]", sprite, this); )
+// A new group is inserted contiguously, host first. Reordering a member already
+// in this layer is separate and does not tear down bodies or relationships.
+void SpriteLayer::addSpriteInFrontOf(Sprite* sprite, Sprite* target) {
+    if (AnimationPipeline::isInsideCallback())
+        throw std::logic_error("Layer membership cannot change inside an animation modifier");
+    if (!sprite || sprite->mLayer == this || (target && target->mLayer != this)) return;
+    if (sprite->mAttachmentPart)
+        throw std::logic_error("Detach the mounted Sprite before moving it independently; move its host to transfer the group");
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if ((mUseChipmunkPhysics && cpSpaceIsLocked(getSpace())) ||
+        (sprite->mLayer && sprite->mLayer->mUseChipmunkPhysics && cpSpaceIsLocked(sprite->mLayer->getSpace())))
+        throw std::logic_error("Transfer sprites outside locked physics callbacks");
+#endif
+    const auto group = attachmentGroup(sprite);
+    std::vector<bool> prepared;
+    for (auto* member : group) prepared.push_back(member->mAnimationPrepared);
+    // Keep the root alive across removal even if the old layer owns its only ref.
+    sprite->addRef();
+    try {
+        if (sprite->mLayer) sprite->mLayer->removeSprite(sprite);
+        for (size_t i=0; i<group.size(); ++i) {
+            auto* member=group[i];
+            insertSprite(member, target);
+            member->mAnimationPrepared=prepared[i];
+            target = member;
+        }
+        sprite->updatePartAttachments();
+    } catch (...) { sprite->release(); throw; }
+    sprite->release();
 }
 
-
-
-void	SpriteLayer::removeSprite(Sprite* oldSprite) {
-	Sprite* sprite = oldSprite;
-	if (!sprite) return;
-	if (sprite->mLayer != this) return; // don't remove the sprite unless it belongs to this layer
-	// update our first and last layers
-	if (sprite == mFirstSprite) {
-		mFirstSprite = sprite->mNextSprite;
-	}
-	if (sprite == mLastSprite) {
-		mLastSprite = sprite->mPrevSprite;
-	}
-	// now update the prev and next sprites to point to one another
-	if (sprite->mPrevSprite) {
-		sprite->mPrevSprite->mNextSprite = sprite->mNextSprite;
-	}
-	if (sprite->mNextSprite) {
-		sprite->mNextSprite->mPrevSprite = sprite->mPrevSprite;
-	}
-	// finally, clear out prev and next sprites
-	sprite->mNextSprite = 0;
-	sprite->mPrevSprite = 0;
-	sprite->mLayer = 0; // we are no longer in a layer
-	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("Removed Sprite [%p] from layer [%p]", sprite, this); )
-	sprite->release();
+void SpriteLayer::removeSprite(Sprite* sprite) {
+    if (AnimationPipeline::isInsideCallback())
+        throw std::logic_error("Layer membership cannot change inside an animation modifier");
+    if (!sprite || sprite->mLayer != this) return;
+    if (sprite->mAttachmentPart)
+        throw std::logic_error("Detach the mounted Sprite before removing it independently; remove its host to remove the group");
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if (mUseChipmunkPhysics && cpSpaceIsLocked(getSpace())) {
+        if (cpSpaceAddPostStepCallback(getSpace(), [](cpSpace*, void* key, void*) {
+            auto* retained = static_cast<Sprite*>(key);
+            if (retained->mLayer) retained->mLayer->removeSprite(retained);
+            retained->release();
+        }, sprite, nullptr)) sprite->addRef();
+        return;
+    }
+#endif
+    const auto group = attachmentGroup(sprite);
+    for (auto* member : group) member->addRef();
+    for (auto* member : group) {
+        member->physics.disconnect();
+        for (auto* part : member->mParts) part->physics.disconnect();
+        member->collider->syncNative(nullptr);
+        for(auto* part:member->mParts)part->collider->syncNative(nullptr);
+#ifdef PDG_SPRITER_SUPPORT
+        member->releaseAnimationPhysics();
+#endif
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+        if (member->mBody) { member->disconnect(); member->freeCpBody(); }
+        for (auto* part : member->mParts)
+            if (part->physics != PhysicsBody::NoPhysics) part->physics->detachSolver();
+#endif
+        unlinkSprite(member);
+        member->mLayer = nullptr;
+        member->mAnimationPrepared = false;
+#ifndef PDG_NO_GUI
+        member->setPort(nullptr);
+#endif
+        member->release(); // layer's ownership; the group snapshot still retains it
+    }
+    for (auto* member : group) member->release();
 }
 
 void SpriteLayer::removeAllSprites() {
-	while (mFirstSprite) {
-		removeSprite(mFirstSprite);
-	}
+    std::vector<Sprite*> roots;
+    for (auto* sprite = mFirstSprite; sprite; sprite = sprite->mNextSprite) {
+        if (!sprite->mAttachmentPart) { sprite->addRef(); roots.push_back(sprite); }
+    }
+    for (auto* root : roots) { removeSprite(root); root->release(); }
 }
 
 #ifndef PDG_NO_GUI
@@ -881,17 +1094,20 @@ SpriteLayer::setZoom(float zoomLevel) {
 }
 
 void
-SpriteLayer::zoomTo(float zoomLevel, ms_delta msDuration, EasingFunc easing, 
+SpriteLayer::zoomTo(float zoomLevel, double durationSeconds, EasingFunc easing, 
 					Rect keepInRect, const Point* centerOn) 
 {
-    ms_delta saveDelay = mDelayMs;
+    validateAnimationDuration(durationSeconds);
+    if (!std::isfinite(zoomLevel) || !easing) throw std::invalid_argument("Invalid zoom target or easing");
+    double saveDelay = mDelaySeconds;
+    const bool append = mAppendAnimation, waiting = mWaitPending;
     if (centerOn != 0) {
-        moveTo(*centerOn, msDuration, (zoomLevel < mZoom) ? easeOutExpo : easeInOutQuad);
+        moveTo(*centerOn, durationSeconds, (zoomLevel < mZoom) ? easeOutExpo : easeInOutQuad);
     }
-    mDelayMs = saveDelay;
-	Animation a(&mZoom, zoomLevel, easing, mDelayMs, msDuration);
-	mAnimations.push_back(a);
-    mDelayMs = 0;
+    mDelaySeconds = saveDelay; mAppendAnimation = append; mWaitPending = waiting;
+    if (!centerOn) beginAnimationRequest();
+    scheduleAnimation(&mZoom, zoomLevel, durationSeconds, easing);
+    finishAnimationRequest();
 }
 
 
@@ -907,13 +1123,17 @@ SpriteLayer::layerToPort(const Point& p) const {
 Offset
 SpriteLayer::layerToPort(const Offset& o) const {
     // rotate about layer center (0,0)
-    Offset a(o.x*mFacingCos - o.y*mFacingSin, o.x*mFacingSin + o.y*mFacingCos);
+    const float x = o.x * mScaleX * (mFlipX ? -1 : 1);
+    const float y = o.y * mScaleY * (mFlipY ? -1 : 1);
+    Offset a(x*mFacingCos - y*mFacingSin, x*mFacingSin + y*mFacingCos);
     a *= mZoom;
     return a;
 }
 
 RotatedRect
 SpriteLayer::layerToPort(const Rect& r) const {
+    if (mScaleX != 1 || mScaleY != 1 || mFlipX || mFlipY)
+        return RotatedRect(layerToPort(Quad(r)).getBounds());
     RotatedRect rr(r);
     Point cp = layerToPort(r.centerPoint());
     rr.center(Point(0,0));
@@ -928,6 +1148,8 @@ SpriteLayer::layerToPort(const Rect& r) const {
 
 RotatedRect
 SpriteLayer::layerToPort(const RotatedRect& r) const {
+    if (mScaleX != 1 || mScaleY != 1 || mFlipX || mFlipY)
+        return RotatedRect(layerToPort(Quad(r)).getBounds());
     RotatedRect rr = layerToPort(static_cast<const Rect&>(r));
     rr.centerOffset = layerToPort(r.centerOffset);
     rr.radians = r.radians + mFacing;
@@ -936,7 +1158,6 @@ SpriteLayer::layerToPort(const RotatedRect& r) const {
 
 Quad
 SpriteLayer::layerToPort(const Quad& q) const {
-    return q;
     Quad nq;
     for (int i = 0; i<4; i++) {
         nq.points[i] = layerToPort(q.points[i]);
@@ -948,33 +1169,40 @@ SpriteLayer::layerToPort(const Quad& q) const {
 Point
 SpriteLayer::portToLayer(const Point& p) const {
     Point a = p - mOrigin;
-    a -= (mLocation + mCenterOffset)/mZoom;
+    a -= (mLocation + mCenterOffset)*mZoom;
     Point b = portToLayer(Offset(a)) + mCenterOffset;
     return b;
 }
 
 Offset
 SpriteLayer::portToLayer(const Offset& o) const {
+    if (mZoom == 0 || mScaleX == 0 || mScaleY == 0)
+        throw std::domain_error("Cannot invert a zero-scale layer transform");
     Offset a = o / mZoom;
     Point b(a.x*cos(-mFacing) - a.y*sin(-mFacing), a.x*sin(-mFacing) + a.y*cos(-mFacing));
-    return b;
+    return Offset(b.x / (mScaleX * (mFlipX ? -1 : 1)), b.y / (mScaleY * (mFlipY ? -1 : 1)));
 }
     
 RotatedRect
 SpriteLayer::portToLayer(const Rect& r) const {
+    if (mScaleX != 1 || mScaleY != 1 || mFlipX || mFlipY)
+        return RotatedRect(portToLayer(Quad(r)).getBounds());
     RotatedRect rr(r);
     Point cp = portToLayer(r.centerPoint());
-    rr.center(cp);
+    rr.center(Point(0,0));
     rr.top /= mZoom;
     rr.left /= mZoom;
     rr.right /= mZoom;
     rr.bottom /= mZoom;
+    rr.center(cp);
     rr.radians = -mFacing;
     return rr;
 }
 
 RotatedRect
 SpriteLayer::portToLayer(const RotatedRect& r) const {
+    if (mScaleX != 1 || mScaleY != 1 || mFlipX || mFlipY)
+        return RotatedRect(portToLayer(Quad(r)).getBounds());
     RotatedRect rr = portToLayer(static_cast<const Rect&>(r));
     rr.centerOffset = portToLayer(r.centerOffset);
     rr.radians = r.radians - mFacing;
@@ -1006,53 +1234,6 @@ void	SpriteLayer::disableCollisions() {
 }
 
 
-void    SpriteLayer::collide(ms_delta msElapsed, SpriteLayer* withLayer, bool deferEvents)  {
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-  if (!mUseChipmunkPhysics) { // if we are compiled with chipmunk support, make sure we want it for this layer
-  #endif
-    // if we are using chipmunk physics it handles detecting collisions and we just
-    // get callbacks to SpriteManager
-	Sprite* sprite = mFirstSprite;
-	while (sprite) {
-		Sprite* next = sprite->mNextSprite;
-	    sprite->addRef(); // make sure this won't be deleted by being removed from the layer while we are working with it
-		if (sprite->mDoCollisions) {
-			Sprite* otherSprite = withLayer->mFirstSprite;
-			while (otherSprite) {
-				Sprite* nextOther = otherSprite->mNextSprite;
-				if (otherSprite->mDoCollisions) {
-					if (sprite->collidesWith(otherSprite)) {
-                        Vector normal;
-                        Vector impulse;
-                        float kineticEnergy;
-                        sprite->impartCollisionImpulse(otherSprite, normal, impulse, kineticEnergy);
-                        float dt = ((float)msElapsed) / 1000.0f;
-                        float force = impulse.vectorLength() / dt;
-						EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::collide calling notifyCollisionAction sprite"));
-						notifyCollisionAction(Sprite::action_CollideSprite, sprite, normal, impulse, force, kineticEnergy, 
-									  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-										0, // need something for the cpArbiter param
-									  #endif // PDG_USE_CHIPMUNK_PHYSICS
-									  #ifdef PDG_SPRITER_SUPPORT
-										sprite->mLastCollisionName.c_str(),
-										otherSprite->mLastCollisionName.c_str(),
-										sprite->mIsFirstContact,
-									  #endif // PDG_SPRITER_SUPPORT
-										otherSprite, 
-										!deferEvents);
-					}
-				}
-				otherSprite = nextOther;
-			}
-		}
-		sprite->release();
-		sprite = next;
-	}
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-  }
-  #endif
-}
-	
 #ifndef PDG_NO_GUI
 void	SpriteLayer::drawLayer() {
 	if (!mPort) return;	// can't draw without a port
@@ -1063,12 +1244,13 @@ void	SpriteLayer::drawLayer() {
 		sprite = sprite->mNextSprite;
 	}
 
+    if (!mHidden) for (auto* particle : mParticles) particle->draw();
 #ifdef SPRITELAYER_INTERNAL_DEBUG
     if (!mHidden) {
         Rect r(30, 30);
         r.center(Point(0,0));
         RotatedRect rr = layerToPort(r);
-        rr.radians += PI/4;
+        rr.radians += std::numbers::pi/4;
         Quad q = rr.getQuad();
         mPort->drawLine(q.points[0], q.points[2], PDG_BLUE_COLOR);
         mPort->drawLine(q.points[1], q.points[3], PDG_BLUE_COLOR);
@@ -1078,7 +1260,7 @@ void	SpriteLayer::drawLayer() {
         q = rr.getQuad();
         mPort->drawLine(q.points[0], q.points[2], PDG_RED_COLOR);
         mPort->drawLine(q.points[1], q.points[3], PDG_RED_COLOR);
-        rr.radians += PI/4;
+        rr.radians += std::numbers::pi/4;
         q = rr.getQuad();
         mPort->drawLine(q.points[0], q.points[2], PDG_RED_COLOR);
         mPort->drawLine(q.points[1], q.points[3], PDG_RED_COLOR);
@@ -1087,16 +1269,155 @@ void	SpriteLayer::drawLayer() {
 }
 #endif // ! PDG_NO_GUI
 
+// Zoom keeps a stable channel ID even in headless readers.
+std::vector<const float*> SpriteLayer::tweenFields() const {
+    auto fields = AnimatedBase::tweenFields();
+#ifndef PDG_NO_GUI
+    fields.push_back(&mZoom);
+#else
+    fields.push_back(nullptr);
+#endif
+    return fields;
+}
+
+namespace {
+template<class T> struct ParticleFrame {
+    std::vector<T*> items;
+    explicit ParticleFrame(const std::vector<T*>& source) : items(source) { for (auto* p : items) p->addRef(); }
+    ~ParticleFrame() { for (auto* p : items) p->release(); }
+};
+}
+Particle* SpriteLayer::createParticle() {
+    if (getParticleCount() >= mMaxParticles) return nullptr;
+    auto particle = std::make_unique<Particle>(); addParticle(particle.get()); return particle.release();
+}
+void SpriteLayer::addParticle(Particle* particle) {
+    if (!particle) throw std::invalid_argument("Expected a Particle");
+    if (particle->mLayer == this) return;
+    if (particle->mLayer || !particle->isAlive()) throw std::logic_error("Add a live detached particle");
+    if (getParticleCount() >= mMaxParticles) throw std::length_error("Layer particle budget is full");
+    mParticles.push_back(particle); particle->mLayer = this;
+    try { particle->syncPhysicsSolver(); }
+    catch (...) { particle->mLayer = nullptr; mParticles.pop_back(); throw; }
+    particle->addRef();
+}
+Particle* SpriteLayer::getNthParticle(uint32 index) const {
+    return index < mParticles.size() ? mParticles[index] : nullptr;
+}
+void SpriteLayer::removeParticle(Particle* particle) {
+    if (!particle || particle->mLayer != this) return;
+    if (particle->physics.isPresent()) particle->physics.disconnect();
+    if (particle->collider.isPresent()) particle->collider->syncNative(nullptr);
+    particle->mLayer = nullptr; particle->syncPhysicsSolver();
+    if (particle->getParticleEmitter()) particle->getParticleEmitter()->stopEmitting();
+    mParticles.erase(std::find(mParticles.begin(), mParticles.end(), particle)); particle->release();
+}
+void SpriteLayer::removeAllParticles() { while (!mParticles.empty()) removeParticle(mParticles.back()); }
+ParticleEmitter* SpriteLayer::createParticleEmitter() {
+    auto emitter = std::make_unique<ParticleEmitter>(); mParticleEmitters.push_back(emitter.get());
+    emitter->mLayer = this; emitter->addRef(); return emitter.release();
+}
+void SpriteLayer::removeParticleEmitter(ParticleEmitter* emitter) {
+    if (!emitter || emitter->mLayer != this || emitter->mParticle) return;
+    mParticleEmitters.erase(std::find(mParticleEmitters.begin(), mParticleEmitters.end(), emitter));
+    emitter->mLayer = nullptr; emitter->stopEmitting(); emitter->release();
+}
+void SpriteLayer::removeAllParticleEmitters() { while (!mParticleEmitters.empty()) removeParticleEmitter(mParticleEmitters.back()); }
+void SpriteLayer::advanceParticles(double seconds) {
+    // Snapshot before any helper can create/remove particles. New emissions start next tick.
+    for (auto* p : mParticleStep) p->release();
+    mParticleStep = mParticles;
+    for (auto* p : mParticleStep) p->addRef();
+    mParticlesPrepared = true;
+    if (mAnimating) for (auto* p : mParticleStep) if (p->mLayer == this) p->advance(seconds);
+}
+void SpriteLayer::finishParticles(double seconds) {
+    ParticleFrame<Particle> particles(mParticleStep);
+    for (auto* p : mParticleStep) p->release();
+    mParticleStep.clear(); mParticlesPrepared = false;
+    ParticleFrame<ParticleEmitter> emitters(mParticleEmitters);
+    if (!mAnimating) return;
+    for (auto* p : particles.items) if (p->mLayer == this) p->finish();
+    for (auto* emitter : emitters.items) if (emitter->mLayer == this) emitter->advance(seconds);
+}
+
+bool SpriteLayer::allowsColliderWorld(const void* world) const {
+    auto* other=static_cast<const SpriteLayer*>(world);
+    if(!other)return false;
+    if(other==this)return mDoCollisions;
+    return std::find(mCollideLayers.begin(),mCollideLayers.end(),other)!=mCollideLayers.end() ||
+        std::find(other->mCollideLayers.begin(),other->mCollideLayers.end(),this)!=other->mCollideLayers.end();
+}
+void SpriteLayer::prepareColliders(void* space) {
+    bool enabled=mDoCollisions || !mCollideLayers.empty();
+    if(!enabled)for(auto* layer=SpriteManager::getSingletonInstance()->mFirstLayer;layer;layer=layer->mNextLayer)
+        if(allowsColliderWorld(layer)) { enabled=true; break; }
+    auto prepare=[&](Collider& collider) {
+        collider.setWorldFilter([this](const void* other){return allowsColliderWorld(other);});
+        collider.syncNative(enabled ? space : nullptr,this);
+    };
+    for(auto* sprite=mFirstSprite;sprite;sprite=sprite->mNextSprite) {
+#ifdef PDG_SPRITER_SUPPORT
+        if (sprite->isAnimationPhysicsEnabled()) sprite->collider->syncNative(nullptr);
+        else
+#endif
+        prepare(sprite->collider);
+        for(auto* part:sprite->mParts)prepare(part->collider);
+    }
+    for (auto* particle : mParticles) prepare(particle->collider);
+}
+void SpriteLayer::solveColliders(double seconds) {
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if(!mUseChipmunkPhysics)
+#endif
+        prepareColliders(nullptr);
+    std::vector<PhysicsBody*> bodies;
+    for(auto* sprite=mFirstSprite;sprite;sprite=sprite->mNextSprite) {
+        if(sprite->physics!=PhysicsBody::NoPhysics)bodies.push_back(sprite->physics.operator->());
+        for(auto* part:sprite->mParts)if(part->physics!=PhysicsBody::NoPhysics)bodies.push_back(part->physics.operator->());
+    }
+    for (auto* particle : mParticles)
+        if (particle->physics.isPresent()) bodies.push_back(particle->physics.operator->());
+    PhysicsBody::solveConstraints(bodies,seconds);
+    std::vector<Collider*> colliders;
+    auto collect=[&](SpriteLayer* layer) {
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+        if(!layer->mUseChipmunkPhysics)
+#endif
+            layer->prepareColliders(nullptr);
+        for(auto* sprite=layer->mFirstSprite;sprite;sprite=sprite->mNextSprite) {
+            if(sprite->collider!=Collider::NoCollider)colliders.push_back(sprite->collider.operator->());
+            for(auto* part:sprite->mParts)if(part->collider!=Collider::NoCollider)colliders.push_back(part->collider.operator->());
+        }
+        for (auto* particle : layer->mParticles)
+            if (particle->collider.isPresent()) colliders.push_back(particle->collider.operator->());
+    };
+    collect(this);
+    for(auto* other=SpriteManager::getSingletonInstance()->mFirstLayer;other;other=other->mNextLayer)
+        if(other!=this && iid<other->iid && allowsColliderWorld(other))collect(other);
+    if(colliders.empty()&&!mCollisionWorld)return;
+    if(!mCollisionWorld)mCollisionWorld=std::make_unique<CollisionWorld>();
+    mCollisionWorld->step(colliders,seconds,[this](const Collider& a,const Collider& b) {
+        return a.world()==this || b.world()==this;
+    });
+}
+
 void
 SpriteLayer::animateLayer(ms_delta msElapsed) {
-	Animated::animate(msElapsed);
+    // Contacts may request layer cleanup even when a native caller steps a layer directly.
+    struct Traversal {
+        SpriteManager* manager = SpriteManager::getSingletonInstance();
+        Traversal() { ++manager->mLayerUpdateDepth; }
+        ~Traversal() { manager->finishLayerTraversal(); }
+    } traversal;
+	AnimatedBase::animate(static_cast<double>(msElapsed) / 1000.0);
 
 	mFacingCos = cos(mFacing); // cache these frequently used values
 	mFacingSin = sin(mFacing);
 	
 	SpriteLayerInfo evntInfo;
 	ms_time currMs = OS::getMilliseconds();
-	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("Animating layer [%p] @ %ld", this, msElapsed); )
+	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("%s", std::format("Animating layer [{}] @ {}", static_cast<const void*>(this), msElapsed).c_str()); )
 
 	if (mDoneFadingInAt && (currMs > mDoneFadingInAt)) {
 		mDoneFadingInAt = 0;
@@ -1117,10 +1438,26 @@ SpriteLayer::animateLayer(ms_delta msElapsed) {
 		sprite->doAnimate(msElapsed, mDoCollisions);
 		sprite = sprite->mNextSprite;
 	}
-    // layer to layer collisions
-    for (std::vector<SpriteLayer*>::iterator itr = mCollideLayers.begin(); itr != mCollideLayers.end(); itr++) {
-        collide(msElapsed, *itr, true);
+    // Resolve rigid mounts after every Sprite has evaluated its independent clip.
+    for (auto* attached=mFirstSprite;attached;attached=attached->mNextSprite)
+        if (!attached->mAttachmentPart) attached->updatePartAttachments();
+    if (!mParticlesPrepared) advanceParticles(double(msElapsed)/1000.0);
+    solveColliders(double(msElapsed)/1000.0);
+    if (msElapsed > 0) {
+        std::vector<PhysicsBody*> monitored;
+        for (auto* owner=mFirstSprite; owner; owner=owner->mNextSprite) {
+            auto collect=[&](PhysicsBody& body) {
+                if (body.getBreakAngularSpeed() > 0 && body.getSolver()==physicsSolver_Basic) monitored.push_back(&body);
+            };
+            collect(owner->physics);
+            for (auto* part:owner->mParts) collect(part->physics);
+        }
+        for (auto* particle : mParticles)
+            if (particle->physics.getBreakAngularSpeed() > 0 && particle->physics.getSolver() == physicsSolver_Basic)
+                monitored.push_back(particle->physics.operator->());
+        PhysicsBody::checkBreakAngularSpeeds(monitored);
     }
+    finishParticles(double(msElapsed)/1000.0);
 }
 
 void
@@ -1148,7 +1485,7 @@ SpriteLayer::locationChanged(const Offset& delta) {
     if (mLinkedLayers.size() > 0) {
 		for (std::vector<LinkedLayerInfo>::iterator itr = mLinkedLayers.begin(); itr != mLinkedLayers.end(); itr++) {
 			Offset targetDelta = delta * itr->moveRatio;
-			itr->linkedLayer->move(targetDelta);
+			itr->linkedLayer->moveBy(targetDelta);
 		}
     }
 }
@@ -1234,10 +1571,6 @@ void SpriteLayer::notifyAnimationAction(int action, Sprite* actingSprite, bool s
 
 // some collision actions happen as callbacks from chipmunk during simulation, so we enqueue them
 // to be handled outside of the chipmunk simulation loop
-// there is also a deferEvents parameter on the SpriteLayer::collide() method that can be used to 
-// control whether the events are sent immediately during the collide() call, or deferred to until
-// the end of the event loop.
-// this and notifyAnimationAction are the only two methods that will enqueue events.
 void SpriteLayer::notifyCollisionAction(int action, Sprite* actingSprite, Vector normal, 
 										Vector impulse, float force, float kineticEnergy, 
                                     #ifdef PDG_USE_CHIPMUNK_PHYSICS
@@ -1303,6 +1636,9 @@ void SpriteLayer::notifyCollisionAction(int action, Sprite* actingSprite, Vector
 		}
 #endif // PDG_SPRITER_SUPPORT
 		
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+        si.arbiter=nullptr; // borrowed Chipmunk arbiters are valid only during the callback
+#endif
 		EventManager::getSingletonInstance()->enqueueEvent(eventType_SpriteCollide, 
 			UserData::makeUserDataViaCopy(&si, sizeof(SpriteCollideInfo), 
 			&SpriteCollideInfo_ReleaseSpritesAndFreeStrings),
@@ -1326,6 +1662,10 @@ SpriteLayer::disableCollisionsWithLayer(SpriteLayer* otherLayer) {
 
 // create sprites
 Sprite* SpriteLayer::createSprite() {
+    if (AnimationPipeline::isInsideCallback()) throw std::logic_error("Sprite creation must occur outside a modifier");
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if(mUseChipmunkPhysics && cpSpaceIsLocked(getSpace()))throw std::logic_error("Create sprites outside locked physics callbacks");
+#endif
 	Sprite* sprite = new Sprite();
 	addSprite(sprite);
 	return sprite;
@@ -1343,6 +1683,10 @@ Sprite* SpriteLayer::cloneSprite(const Sprite* originalSprite) {
 
 // create a sprite from a Spriter file, optionally specifying which entity if there are several
 Sprite* SpriteLayer::createSpriteFromSpriterFile(const char* inFileName, const char* inEntityName) {
+    if (AnimationPipeline::isInsideCallback()) throw std::logic_error("Sprite creation must occur outside a modifier");
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if(mUseChipmunkPhysics && cpSpaceIsLocked(getSpace()))throw std::logic_error("Create sprites outside locked physics callbacks");
+#endif
 
 // TODO: have a way to enable/disable debug drawing at runtime in debug builds
 #ifdef PDG_DEBUG_SPRITER
@@ -1384,10 +1728,10 @@ Sprite* SpriteLayer::createSpriteFromSpriterFile(const char* inFileName, const c
 	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("SpriteLayer::createSpriteFromSpriterFile [%s] [%s]", inFileName, fullPath.c_str()); )
 
 	bool needLoad = true;
-	SpriterEngine::SpriterModel* spriterModel = nullptr;
+	std::shared_ptr<SpriterEngine::SpriterModel> spriterModel;
 	// check if we already have this Spriter data cached
-	for (std::list<std::pair<std::string, SpriterEngine::SpriterModel*>>::iterator itr = mModels.begin(); itr != mModels.end(); itr++) {
-		std::pair<std::string, SpriterEngine::SpriterModel*> pair = *itr;
+	for (auto itr = mModels.begin(); itr != mModels.end(); ++itr) {
+		const auto& pair = *itr;
 		if (pair.first == fullPath) {
 			needLoad = false;
 			spriterModel = pair.second;
@@ -1398,9 +1742,9 @@ Sprite* SpriteLayer::createSpriteFromSpriterFile(const char* inFileName, const c
 	// load the Spriter file if we don't have it cached
 	if (needLoad) {
 		// Create new factories for this SpriterModel - each SpriterModel owns its factories
-		PDGFileFactory* fileFactory = new PDGFileFactory(this);
-		PDGObjectFactory* objectFactory = new PDGObjectFactory(this);
-		spriterModel = new SpriterEngine::SpriterModel(fullPath, fileFactory, objectFactory);
+		PDGFileFactory* fileFactory = new PDGFileFactory();
+		PDGObjectFactory* objectFactory = new PDGObjectFactory();
+		spriterModel = std::make_shared<SpriterEngine::SpriterModel>(fullPath, fileFactory, objectFactory);
 		mModels.push_back(std::make_pair(fullPath, spriterModel));
 	}
 	// create a sprite for the specified entity (or the first entity if no name given)
@@ -1423,9 +1767,13 @@ Sprite* SpriteLayer::createSpriteFromSpriterFile(const char* inFileName, const c
 // createSpriteLayerFromSpriterFile() and createSpriteFromSpriterFile() both
 // cache their data for later use by this call
 Sprite* SpriteLayer::createSpriteFromSpriterEntity(const char* inEntityName) {
+    if (AnimationPipeline::isInsideCallback()) throw std::logic_error("Sprite creation must occur outside a modifier");
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if(mUseChipmunkPhysics && cpSpaceIsLocked(getSpace()))throw std::logic_error("Create sprites outside locked physics callbacks");
+#endif
 	Sprite* result = nullptr;
-	for (std::list<std::pair<std::string, SpriterEngine::SpriterModel*>>::iterator itr = mModels.begin(); itr != mModels.end(); itr++) {
-		SpriterEngine::SpriterModel* spriterModel = itr->second;
+	for (auto itr = mModels.begin(); itr != mModels.end(); ++itr) {
+		const auto& spriterModel = itr->second;
 		SpriterEngine::EntityInstance* entityInstance = spriterModel->getNewEntityInstance(inEntityName);
 		if (entityInstance) {
 			result = new Sprite(entityInstance, spriterModel);
@@ -1509,10 +1857,12 @@ SpriteLayer::setDamping(float damping) {
 
 void	
 SpriteLayer::rotationChanged(float deltaRadians) {
+    mFacingCos = cos(mFacing);
+    mFacingSin = sin(mFacing);
     // rotate any layers we are controlling
     if (mLinkedLayers.size() > 0) {
 		for (std::vector<LinkedLayerInfo>::iterator itr = mLinkedLayers.begin(); itr != mLinkedLayers.end(); itr++) {
-			itr->linkedLayer->rotate(deltaRadians);
+			itr->linkedLayer->rotateBy(deltaRadians);
 		}
     }
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
@@ -1553,8 +1903,8 @@ SpriteLayer::SpriteLayer():
 	mPort(0), mOrigin(0,0), 
   #endif // ! PDG_NO_GUI
 	mHidden(false), mAnimating(true), mDoCollisions(false), 
-  #ifndef PDG_NO_GUI
 	mWantsMouseOver(false), mWantsClicks(false),
+  #ifndef PDG_NO_GUI
 	mZoom(1.0), // mTargetZoom(1.0), mDeltaZoomPerMs(0.0),
     mAutoCenter(false), mFixedMoveAxis(true), 
   #endif // ! PDG_NO_GUI
@@ -1574,6 +1924,9 @@ SpriteLayer::SpriteLayer():
 }
 
 SpriteLayer::~SpriteLayer() {
+    removeAllParticleEmitters();
+    removeAllParticles();
+    for (auto* particle : mParticleStep) particle->release();
 	SPRITELAYER_DEBUG_ONLY( OS::_DOUT("dt SpriteLayer %p", this); )
   #ifndef PDG_NO_EVENT_QUEUE
 	EventManager* eventMgr = EventManager::getSingletonInstance();
@@ -1599,7 +1952,7 @@ SpriteLayer::~SpriteLayer() {
 					return true;
 				}
 			}
-			if (entry.eventType == eventType_SpriteAnimate) {
+			if (entry.eventType == eventType_SpriteAnimate || entry.eventType == eventType_SpriteTriggerEvent) {
 				SpriteAnimateInfo* sli = static_cast<SpriteAnimateInfo*>(entry.userData->getData());
 				if (sli->inLayer == this) {
 					EVENTS_DEBUG_ONLY(OS::_DOUT("SpriteLayer::~SpriteLayer removing SpriteAnimateInfo event for layer %p id: %d", this, sli->id));
@@ -1610,20 +1963,16 @@ SpriteLayer::~SpriteLayer() {
 		});
 	}
   #endif // ! PDG_NO_EVENT_QUEUE
-	Sprite* sprite = mFirstSprite;
-	while (sprite) {
-		Sprite* next = sprite->mNextSprite;
-		sprite->release();
-		sprite = next;
-	}
-  #ifdef PDG_SPRITER_SUPPORT
-	// iterate through and delete all the cached SpriterPlusPlus wrappers
-	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("about to delete %d SpriterPlusPlus wrapper(s) from list", mModels.size()); )
-	for (std::list<std::pair<std::string, SpriterEngine::SpriterModel*>>::iterator itr = mModels.begin(); itr != mModels.end(); itr++) {
-		SpriterEngine::SpriterModel* model = itr->second;
-		delete model;
-	}
-  #endif // PDG_SPRITER_SUPPORT
+    // Sprites retain their imported model independently of this cache. Removed
+    // or transferred sprites keep playback, bindings, modifiers and artwork.
+    removeAllSprites();
+    for(auto* layer=SpriteManager::getSingletonInstance()->mFirstLayer;layer;layer=layer->mNextLayer) {
+        auto& links=layer->mCollideLayers;
+        std::erase(links, this);
+    }
+#ifdef PDG_SPRITER_SUPPORT
+    mModels.clear();
+#endif
 	SpriteManager::getSingletonInstance()->removeLayer(this);
   #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	CleanupSpriteLayerScriptObject(mSpriteLayerScriptObj);
@@ -1673,16 +2022,12 @@ SpriteLayer* createSpriteLayerFromSpriterFile(const char* layerSpriterFile, bool
 	}
 
 	// Create factories for this SpriterModel - the SpriterModel will take ownership
-	PDGFileFactory* fileFactory = new PDGFileFactory(layer);
-	PDGObjectFactory* objectFactory = new PDGObjectFactory(layer);
+	PDGFileFactory* fileFactory = new PDGFileFactory();
+	PDGObjectFactory* objectFactory = new PDGObjectFactory();
 	
 	// this can't possibly be cached already, we just created the sprite layer
-	SpriterEngine::SpriterModel* spriterModel = new SpriterEngine::SpriterModel(fullPath, fileFactory, objectFactory);
-	if (spriterModel) {
-		layer->mModels.push_back(std::make_pair(fullPath, spriterModel));
-	} else {
-		delete spriterModel;
-	}
+	auto spriterModel = std::make_shared<SpriterEngine::SpriterModel>(fullPath, fileFactory, objectFactory);
+    layer->mModels.push_back(std::make_pair(fullPath, spriterModel));
 	if (addSprites) {
 		// Loop through all the entities in the model and create a sprite for each one
 		// SpriterEngine::EntityInstance* entityInstance = spriterModel->getNewEntityInstance(0);
@@ -1697,7 +2042,6 @@ SpriteLayer* createSpriteLayerFromSpriterFile(const char* layerSpriterFile, bool
 void cleanupLayer(SpriteLayer* layer) {
 	SPRITELAYER_DEBUG_ONLY( OS::_DOUT("cleanupLayer %p", layer); )
 	if (layer) {
-		SpriteManager::getSingletonInstance()->removeLayer(layer);
 		SpriteManager::cleanupLayer(layer);
 	}
 }

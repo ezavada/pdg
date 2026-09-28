@@ -1,4 +1,4 @@
-.TH "Color" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Color" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -21,7 +21,7 @@ Color \- color in RGB space, with optional alpha
 .br
 .RI "create a color from a single 32 bit A-RGB color value "
 .ti -1c
-.RI "\fBColor\fP (number r, number g, number b, number \fBalpha\fP=1)"
+.RI "\fBColor\fP (number r, number g, number b, number alpha=1)"
 .br
 .RI "create a color with RGB values "
 .ti -1c
@@ -69,6 +69,13 @@ Color \- color in RGB space, with optional alpha
 .PP 
 color in RGB space, with optional alpha 
 
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
+.RE
+.PP
 \fBColor\fP is in the global namespace, so you don't need the pdg prefix, even though it will work if you use it
 
 .PP
@@ -104,13 +111,13 @@ The optional Alpha Channel is used to determine how translucent the color is, ie
 All color systems are standardized across PDG platforms (V8, JSC, JavaScript) for consistent behavior\&. 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBColor\fP ()"
+.SS "Color ()"
 
 .PP
 create a color Creates a color with all RGB values set to zero, and Alpha channel set to 1, ie: solid black\&. 
 .PP
 Referenced by \fBassign()\fP, \fBequals()\fP, and \fBnotEquals()\fP\&.
-.SS "\fBColor\fP (number c)"
+.SS "Color (number c)"
 
 .PP
 create a color from a single 32 bit A-RGB color value Creates a color from a single 32 bit RGB value with an Alpha channel\&. It's usually most convenient to express the number in hexadecimal, since it's easier to see the components:
@@ -142,7 +149,7 @@ A  R  G  B
 .RE
 .PP
 
-.SS "\fBColor\fP (string colorstr)"
+.SS "Color (string colorstr)"
 
 .PP
 create a color by CSS color string Creates a color from a CSS color value string (ie: #FFF or #FFFFFF); or from a color name\&. For example:
@@ -165,7 +172,7 @@ PDG supports all 147 standard CSS3 color names\&. Here are some examples:
 .PP
 Basic Colors:**
 .IP "\(bu" 2
-\fRblack\fP, \fRwhite\fP, \fRred\fP, \fRgreen\fP, \fRblue\fP, \fRyellow\fP, \fRcyan\fP, \fRmagenta\fP
+\fRblack\fP, \fRwhite\fP, \fR\fBred\fP\fP, \fR\fBgreen\fP\fP, \fR\fBblue\fP\fP, \fRyellow\fP, \fRcyan\fP, \fRmagenta\fP
 
 .PP
 Extended Colors:**
@@ -231,7 +238,7 @@ Note:** All color names are case-insensitive and follow the CSS3 specification\&
 .RE
 .PP
 
-.SS "\fBColor\fP (number r, number g, number b, number alpha = \fR1\fP)"
+.SS "Color (number r, number g, number b, number alpha = \fR1\fP)"
 
 .PP
 create a color with RGB values Create a color by giving the Red, Green and Blue values separately, with an optional alpha channel\&. Values can be given either in the range of 0\&.0 to 1\&.0\&. If no alpha value is given, 1\&.0 is used, making the color completely solid\&.

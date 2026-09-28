@@ -1,7 +1,12 @@
 namespace pdg { /**
-
 \fn pdg::Animated::flipY()
+\brief Toggle the y reflection flag immediately.
 
-\brief flips the object vertically, center offset is flipped too. Applied before other transformations.
+Applied before other transformations; logical dimensions are unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-**/ }
+
+\return This object, for chaining.
+
+\see isFlippedY(), setFlipY()
+*/
+ }

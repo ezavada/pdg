@@ -29,6 +29,8 @@
 
 
 #include "pdg_project.h"
+#include <bit>
+#include <cstdint>
 
 #import <Foundation/NSData.h>
 #import <Foundation/NSException.h>
@@ -42,13 +44,6 @@
 #endif
 #import "internals-macosx.h"
 
-int pow2(int n) {
-	int x = 1;
-	while(x < n) {
-		x <<= 1;
-	}
-	return x;
-}
 
 namespace pdg {
 
@@ -77,8 +72,12 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 		int pitch   = [bitmap bytesPerRow];
 		int bpp     = [bitmap bitsPerPixel];
 		
-		unsigned long glBufferWidth = pow2(width);
-		unsigned long glBufferHeight = pow2(height);
+        const auto bufferWidth = static_cast<std::int64_t>(width);
+        const auto bufferHeight = static_cast<std::int64_t>(height);
+        if (bufferWidth < 0 || bufferHeight < 0 || bufferWidth > (1LL << 30) || bufferHeight > (1LL << 30))
+            return;
+		unsigned long glBufferWidth = std::bit_ceil(static_cast<unsigned>(bufferWidth));
+		unsigned long glBufferHeight = std::bit_ceil(static_cast<unsigned>(bufferHeight));
 		unsigned long glBufferPitch = ((glBufferWidth * bpp/2) + 3) / 4;
 		
 		*outDataPtr = (unsigned char*) malloc(glBufferPitch * glBufferHeight);

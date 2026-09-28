@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['oldheight_0',['oldHeight',['../structpdg_1_1_port_resize_info.html#afed7f33c4734431b51d0da564f5ebfd3',1,'pdg::PortResizeInfo']]],
-  ['oldscreenpos_1',['oldScreenPos',['../structpdg_1_1_port_resize_info.html#a0efe45c201da140a1303d67eb01efb0f',1,'pdg::PortResizeInfo']]],
-  ['oldwidth_2',['oldWidth',['../structpdg_1_1_port_resize_info.html#acc6cdad9158eb1469044c69620e35dee',1,'pdg::PortResizeInfo']]],
-  ['osentitiesallocated_3',['osEntitiesAllocated',['../structpdg_1_1_mem_stats.html#a4b7929204cede3f26075867ddf4c1116',1,'pdg::MemStats']]],
-  ['osentitiesfreed_4',['osEntitiesFreed',['../structpdg_1_1_mem_stats.html#a24786b4e72542af8d3702d81cdc8451b',1,'pdg::MemStats']]]
+  ['name_0',['name',['../structpdg_1_1_animation_variable.html#a9b45b3e13bd9167aab02e17e08916231',1,'pdg::AnimationVariable::name'],['../structpdg_1_1_animation_bone.html#a9b45b3e13bd9167aab02e17e08916231',1,'pdg::AnimationBone::name'],['../structpdg_1_1_animation_binding.html#a9b45b3e13bd9167aab02e17e08916231',1,'pdg::AnimationBinding::name'],['../structpdg_1_1_animation_socket.html#a9b45b3e13bd9167aab02e17e08916231',1,'pdg::AnimationSocket::name'],['../structpdg_1_1_net_connect.html#a8f8f80d37794cde9472343e4487ba3eb',1,'pdg::NetConnect::name']]],
+  ['nocollider_1',['NoCollider',['../classpdg_1_1_collider.html#ad329488228d5b4bb166035b7fc467151',1,'pdg::Collider']]],
+  ['nodename_2',['nodeName',['../structpdg_1_1_find_data_t.html#abab2180ce9605dd5b9f46f0fdc1bab4d',1,'pdg::FindDataT']]],
+  ['nophysics_3',['NoPhysics',['../classpdg_1_1_physics_body.html#af38f9b87caef1eabaadd65c88f5f103d',1,'pdg::PhysicsBody']]],
+  ['normal_4',['normal',['../structpdg_1_1_collider_contact.html#a17b60d2ea978aaa649afa01787786110',1,'pdg::ColliderContact::normal'],['../structpdg_1_1_sprite_collide_info.html#a17b60d2ea978aaa649afa01787786110',1,'pdg::SpriteCollideInfo::normal']]],
+  ['nozoom_5',['noZoom',['../classpdg_1_1_sprite_layer.html#ad551bf02f23cb0a3f9fa6eb94274ce7d',1,'pdg::SpriteLayer']]]
 ];

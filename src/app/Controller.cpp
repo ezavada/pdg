@@ -35,10 +35,34 @@
 #include "pdg/sys/graphics.h"
 #include "pdg/app/Controller.h"
 #include "pdg/app/View.h"
+#include <algorithm>
+#include <memory>
 
 #define DBL_CLICK_TIME 250 // milliseconds allowed between clicks of a double-click
 
 namespace pdg {
+
+namespace {
+bool isViewWithin(const View* view, const View* ancestor) {
+    for (; view; view = view->getParentView()) if (view == ancestor) return true;
+    return false;
+}
+struct ReleaseView { void operator()(View* view) const { if (view) view->release(); } };
+using RetainedView = std::unique_ptr<View, ReleaseView>;
+}
+
+void Controller::cancelMousePress() {
+    mBackgroundMouseDown = false;
+    RetainedView press(mMousePress);
+    mMousePress = nullptr;
+    if (!press) return;
+    mLastClicked = nullptr;
+    mClickCount = 0;
+    mViewOnLastMouseMoved = nullptr;
+    press->doMouseLeave(&mPressInfo, mPressID, mPressPart);
+    press->doMouseUp(&mPressInfo, mPressID, -1);
+}
+
 
 Controller::Controller(Application* app, bool wantKeyUpDown, bool wantKeyPress, 
                         bool wantMouseEnterLeave, bool wantAll, bool drawInactive) 
@@ -53,6 +77,7 @@ Controller::Controller(Application* app, bool wantKeyUpDown, bool wantKeyPress,
     EventManager& emgr = mApp->getEventManager();
     emgr.addHandler(this, eventType_MouseUp);       // we always get clicks
     emgr.addHandler(this, eventType_MouseDown);
+    emgr.addHandler(this, eventType_ScrollWheel);
 	emgr.addHandler(this, eventType_MouseMove);
     emgr.addHandler(this, eventType_PortDraw);      // frame-based rendering
     if (wantKeyUpDown) {
@@ -97,6 +122,7 @@ Controller::~Controller() {
 //    emgr.removeHandler(this, eventType_MouseLeave);
     emgr.removeHandler(this, eventType_MouseUp);
     emgr.removeHandler(this, eventType_MouseDown);
+    emgr.removeHandler(this, eventType_ScrollWheel);
 	emgr.removeHandler(this, eventType_MouseMove);
     emgr.removeHandler(this, eventType_PortDraw);
     if (mWantsAllEvents) {
@@ -167,7 +193,11 @@ void Controller::removeView(const View* view) {
 	for(itr = mViews.begin(); itr != mViews.end(); itr++) {
 		idViewPair val = *itr;
 		if (val.first == view) {
+            val.first->setParentView(nullptr);
             mViews.erase(itr);
+            if (isViewWithin(mMousePress, view)) cancelMousePress();
+            if (isViewWithin(mLastClicked, view)) mLastClicked = nullptr;
+            if (isViewWithin(mViewOnLastMouseMoved, view)) mViewOnLastMouseMoved = nullptr;
             view->release();
             return;
 		}
@@ -176,14 +206,13 @@ void Controller::removeView(const View* view) {
 
 // remove absolutely all the views from the controller
 void Controller::removeAllViews() {
-    // release all the views
-	ViewList::iterator itr;
-	for(itr = mViews.begin(); itr != mViews.end(); itr++) {
-		idViewPair val = *itr;
-		View* view = val.first;
-        view->release();
-	}
-    mViews.clear();
+    cancelMousePress();
+    mLastClicked = mViewOnLastMouseMoved = nullptr;
+    // Composite destructors may unregister their children. Remove registrations
+    // first so those callbacks cannot invalidate the release traversal.
+    ViewList views;
+    views.swap(mViews);
+    for (const auto& entry : views) entry.first->release();
 }
 
 
@@ -374,6 +403,7 @@ Controller& Controller::getTopController() {
 
 // an inactive Controller doesn't get input events (mouse, keyboard). Controllers are active by default.
 void Controller::setActive(bool active) {
+    if (!active) cancelMousePress();
     mActive = active;
 }
 
@@ -415,7 +445,7 @@ void Controller::portWasResized(Port* resizedPort) {
 	
 }
     
-bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw() {
+bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept {
 
     // we handle port resized events even when we are inactive
     if (inEventType == eventType_PortResized) {
@@ -428,7 +458,17 @@ bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* in
     // handle PortDraw events for frame-based rendering
     if (inEventType == eventType_PortDraw) {
         PortDrawInfo* pdi = static_cast<PortDrawInfo*>(inEventData);
-        drawViews(pdi->port, pdi->frameNum);
+        if (!mParent && pdi->port == mPort &&
+            (!mHasAnimationTime || pdi->frameNum != mLastAnimationFrame)) {
+            const auto now = std::chrono::steady_clock::now();
+            const double seconds = mHasAnimationTime
+                ? std::chrono::duration<double>(now - mLastAnimationTime).count() : 0;
+            mLastAnimationTime = now;
+            mLastAnimationFrame = pdi->frameNum;
+            mHasAnimationTime = true;
+            animateViews(seconds);
+            drawViews(pdi->port, pdi->frameNum);
+        }
         return false;   // don't consume event - let it propagate to other controllers
     }
     
@@ -449,24 +489,22 @@ bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* in
     View* hitView = 0;
     int hitViewID = 0;
     int hitViewPart = 0;
-	ViewList::reverse_iterator itr;
-	for(itr = mViews.rbegin(); itr != mViews.rend(); itr++) { // most recently added are checked first
-		idViewPair val = *itr;
-		View* view = val.first;
-		if (view->isVisible()) {        // ignore invisible views
-			if (view->isEnabled() || (inEventType == eventType_MouseMove)) {// ignore disabled views,except mousemove,need it to show tooltips
-    			if (view->pointInViewVisibleArea(mpt)) {
-					hitViewPart = view->getPartClicked(mpt);
-					if (hitViewPart != View::CLICKED_PART_NONE) {   // a view must return a clicked part to get a click
-        				hitView = view;
-        				hitViewID = val.second;
-						break;
-    				}
-    			}
-			}
-		}
-	}
-	
+    for (auto it=mViews.rbegin(); it!=mViews.rend(); ++it) {
+        if (it->first->getParentView()) continue;
+        hitView=it->first->getHitView(mpt, inEventType == eventType_MouseMove ||
+            inEventType == eventType_MouseDown || inEventType == eventType_MouseUp);
+        if (!hitView) continue;
+        hitViewPart=hitView->getPartClicked(mpt);
+        for (const auto& entry : mViews) if (entry.first==hitView) { hitViewID=entry.second; break; }
+        break;
+    }
+
+    if (inEventType == eventType_ScrollWheel) {
+        for (View* view = hitView; view; view = view->getParentView()) {
+            if (view->isEnabled() && view->doScrollWheel(static_cast<ScrollWheelInfo*>(inEventData))) return true;
+        }
+        return false;
+    }
 	// handle whatever kind of an event it was
     if ( (inEventType == eventType_MouseUp) || (inEventType == eventType_MouseDown)
 		||(inEventType == eventType_MouseMove)){
@@ -475,49 +513,96 @@ bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* in
 		bool handled = false;
         
         if (inEventType == eventType_MouseDown) {
-        
-            // mouse down, check for click count
-            if ( (hitView == mLastClicked) && (mi->lastClickElapsed <= DBL_CLICK_TIME) ) {
+            if (mMousePress) return true;
+            if (hitView && !hitView->isEnabled()) return true;
+            if (hitView == mLastClicked && hitViewPart == mLastClickedPart && mi->rightButton == mRightClick && mi->lastClickElapsed <= DBL_CLICK_TIME)
                 ++mClickCount;
-            } else {
-                mClickCount = 1;
-                mLastClicked = hitView;
-                mRightClick = mi->rightButton;
+            else mClickCount = 1;
+            mRightClick = mi->rightButton;
+            if (hitView) {
+                if (mViewOnLastMouseMoved && mViewOnLastMouseMoved != hitView)
+                    doMouseLeave(mi, mViewOnLastMouseMoved, mLasthitViewID, mLasthitViewPart);
+                mViewOnLastMouseMoved = hitView;
+                mLasthitViewID = hitViewID;
+                mLasthitViewPart = hitViewPart;
+                mMousePress = hitView;
+                hitView->addRef();
+                mPressInfo = *mi;
+                mPressID = hitViewID;
+                mPressPart = hitViewPart;
+                mPressInside = true;
             }
+            mBackgroundMouseDown = !hitView;
             handled = doMouseDown(mi, hitView, hitViewID, hitViewPart);
+            if (handled || hitView) return true;
+            mBackgroundMouseDown = !mParent;
 
-		} else if (inEventType == eventType_MouseUp) {    // mouse up
-            if (hitView != mLastClicked) {
-                mClickCount = 0;    // do this here so click count will be correct for doMouseUp
-            }
-			handled = doMouseUp(mi, hitView, hitViewID, hitViewPart);
-            if (!handled) {
-                // after doMouseUp, do a click method if this was a complete click
-                if (hitView == mLastClicked) {
-                    if (mRightClick) {
-                        handled = doRightClick(mi, hitView, hitViewID, hitViewPart);
-                    } else if (mClickCount > 1) {
-                        handled = doDoubleClick(mi, hitView, hitViewID, hitViewPart, mClickCount);
-                    } else {
-                        handled = doLeftClick(mi, hitView, hitViewID, hitViewPart);
-                    }
+        } else if (inEventType == eventType_MouseUp) {
+            if (!mMousePress) {
+                if (mBackgroundMouseDown) {
+                    mBackgroundMouseDown = false;
+                    return doMouseUp(mi, nullptr, -1, -1);
                 }
+                // No release or click is delivered to an unrelated view.
+                return mParent ? mParent->handleEvent(inEmitter, inEventType, inEventData) : false;
             }
+            if (mi->rightButton != mPressInfo.rightButton) return true;
+            RetainedView press(mMousePress);
+            const int id = mPressID, part = mPressPart;
+            const bool complete = hitView == press.get() && hitViewPart == part &&
+                press->isEnabled() && press->isVisible();
+            mMousePress = nullptr;
+            if (!complete && mPressInside) doMouseLeave(mi, press.get(), id, part);
+            mLastClicked = complete ? press.get() : nullptr;
+            mLastClickedPart = complete ? part : -1;
+            if (!complete) mViewOnLastMouseMoved = nullptr;
+            if (!complete) mClickCount = 0;
+            // A handled callback may delete the controller: return immediately.
+            if (doMouseUp(mi, press.get(), id, complete ? part : -1)) return true;
+            bool registered = false;
+            for (const auto& entry : mViews)
+                if (isViewWithin(press.get(), entry.first)) { registered = true; break; }
+            if (complete && registered && mActive && press->isEnabled() && press->isVisible()) {
+                if (mRightClick) doRightClick(mi, press.get(), id, part);
+                else if (mClickCount > 1) doDoubleClick(mi, press.get(), id, part, mClickCount);
+                else doLeftClick(mi, press.get(), id, part);
+            }
+            return true;
         } else if (inEventType == eventType_MouseMove) { // check the mousemove event
+            if (mMousePress) {
+                mPressInfo.mousePos = mi->mousePos;
+                if (!mMousePress->isEnabled() || !mMousePress->isVisible()) {
+                    cancelMousePress();
+                    return false;
+                }
+                View* view = mMousePress;
+                view->addRef();
+                RetainedView keepAlive(view);
+                const int id = mPressID, part = mPressPart;
+                const bool inside = hitView == view && hitViewPart == part;
+                if (inside != mPressInside) {
+                    mPressInside = inside;
+                    mViewOnLastMouseMoved = inside ? view : nullptr;
+                    if (inside) doMouseEnter(mi, view, id, part);
+                    else doMouseLeave(mi, view, id, part);
+                }
+                if (mMousePress == view) doMouseMove(mi, view, id, inside ? part : -1);
+                return false;
+            }
 		    //suraj add
 			if ((mViewOnLastMouseMoved != hitView) || (hitViewID != mLasthitViewID) ||
 				(hitViewPart != mLasthitViewPart)) { // check if any part, ID, or view has changed
 				if (mViewOnLastMouseMoved) {         // if changed, call the mouseleave for left place
 					doMouseLeave(mi, mViewOnLastMouseMoved, mLasthitViewID, mLasthitViewPart);
 				}
-				if (hitView && (hitViewID > -1)) {    // if new view is valid than call mouse enter
+				if (hitView) {    // if new view is valid than call mouse enter
 					doMouseEnter(mi, hitView, hitViewID, hitViewPart);
 				}
 				mViewOnLastMouseMoved	=	hitView;	// update the new view for mouse
 				mLasthitViewID			=	hitViewID;	// update the new ID for mouse
 				mLasthitViewPart		=	hitViewPart;// update the new Part for mouse
 			} else {
-				if (hitView && (hitViewID > -1)) {      // if the mouse is moving , but no change in the place
+				if (hitView) {      // if the mouse is moving , but no change in the place
 					doMouseMove(mi, hitView, hitViewID, hitViewPart);   // than call mousemove
 				}
 			}
@@ -551,10 +636,35 @@ bool Controller::handleEvent(EventEmitter* inEmitter, long inEventType, void* in
     return false;  // we didn't handle this event
 }
 
+void Controller::animateViews(double deltaSeconds) {
+    if (!std::isfinite(deltaSeconds) || deltaSeconds < 0)
+        throw std::invalid_argument("View animation requires finite nonnegative seconds");
+    if (!mDrawInactive && !mActive) return;
+    // Helpers can remove views. Retain the initial set until the step finishes;
+    // removed views are skipped and newly added views start next frame.
+    std::vector<std::shared_ptr<View>> views;
+    for (const auto& entry : mViews) {
+        if (std::any_of(views.begin(), views.end(), [&](const std::shared_ptr<View>& view) {
+            return view.get() == entry.first;
+        })) continue;
+        entry.first->addRef();
+        views.emplace_back(entry.first, [](View* view) { view->release(); });
+    }
+    for (const auto& view : views) {
+        if (std::any_of(mViews.begin(), mViews.end(), [&](const idViewPair& p) {
+            return p.first == view.get();
+        })) view->animate(deltaSeconds);
+    }
+    const Children children = mChildren;
+    for (auto* child : children) {
+        if (std::find(mChildren.begin(), mChildren.end(), child) != mChildren.end())
+            child->animateViews(deltaSeconds);
+    }
+}
+
 void Controller::drawViews(Port* port, long frameNum) {
     if (!mDrawInactive && !mActive) return; // don't draw if we are inactive unless we draw while inactive
 
-    Rect portRect = port->getDrawingArea();
 
     // Draw all views
     // draw back to front, so most recently added overlays oldest
@@ -562,13 +672,7 @@ void Controller::drawViews(Port* port, long frameNum) {
 	for(itr = mViews.begin(); itr != mViews.end(); itr++) {
 		idViewPair val = *itr;
         View* view = val.first;
-		if (view->isVisible())
-		{
-		    Rect viewRect = view->getViewArea();
-		    if (portRect.overlaps(viewRect)) {
-     			view->draw();
-			}
-		}
+        if (view->isVisible() && !view->getParentView()) view->draw();
 	}
 
     // Draw all children

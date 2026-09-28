@@ -461,7 +461,11 @@ namespace pdg
 
     ConfigManagerWrap::ConfigManagerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_ConfigManager(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_ConfigManager(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_ConfigManager_InNewFromCpp)
         {
             {

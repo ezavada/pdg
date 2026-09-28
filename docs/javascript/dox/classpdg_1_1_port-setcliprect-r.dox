@@ -1,7 +1,13 @@
 namespace pdg { /**
+\fn pdg::Port::setClipRect(Rect inClipRect)
+\brief Replace the single clipping rectangle for all drawing operations.
 
-\fn pdg::Port::setClipRect(inClipRect)
+Coordinates are in Port pixels, independent of drawing transforms. The rectangle
+is intersected with getDrawingArea(). Empty or fully offscreen rectangles suppress
+all drawing. A later setClipRect() replaces this rectangle; there is no clip stack.
+Fractional boundaries select pixel centers within the half-open rectangle.
 
-\brief Set the clipping rectangle to limit drawing operations to a specific area
-
+\param inClipRect Axis-aligned drawing boundary, including an empty rectangle.
+\return This Port, for chaining.
+\see getClipRect(), resetClipRect(), Attributes::clipOverflow()
 **/ }

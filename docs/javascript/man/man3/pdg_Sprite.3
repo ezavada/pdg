@@ -1,4 +1,4 @@
-.TH "Sprite" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Sprite" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -19,6 +19,22 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "activates a sub-entity with the specified name and animation "
 .ti -1c
+.RI "uint \fBaddAnimationDrawable\fP (\fBDrawing\fP drawing, object options)"
+.br
+.RI "attach an editable \fBDrawing\fP to an animation bone "
+.ti -1c
+.RI "uint \fBaddAnimationDrawable\fP (function callback, object options)"
+.br
+.RI "choose or create artwork for an animation bone during drawing "
+.ti -1c
+.RI "uint \fBaddAnimationIK\fP (object config, int order=0)"
+.br
+.RI "Register a two-bone inverse-kinematics controller\&. "
+.ti -1c
+.RI "uint \fBaddAnimationModifier\fP (function callback, int stage=\fBanimationStage_PreConstraint\fP, int order=0)"
+.br
+.RI "Register a procedural pose modifier\&. "
+.ti -1c
 .RI "\fBaddFramesImage\fP (\fBImage\fP image, int startingFrame=\fBstart_FromFirstFrame\fP, int numFrames=\fBall_Frames\fP)"
 .br
 .RI "add one or more frames to the sprite from an \fBImage\fP or \fBImageStrip\fP "
@@ -30,6 +46,10 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .RI "boolean \fBareSpriterEventsEnabled\fP ()"
 .br
 .RI "returns true if spriter events are enabled for this sprite "
+.ti -1c
+.RI "\fBSprite\fP \fBattachAnimationPhysicsPart\fP (\fBPart\fP part, \fBPart\fP parent=null)"
+.br
+.RI "Register a physical \fBPart\fP in a physical rig's mass assembly\&. "
 .ti -1c
 .RI "\fBattachSprite\fP (\fBSprite\fP sprite, string attachPointName)"
 .br
@@ -47,49 +67,153 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "replace all references in the sprite to one image with another image "
 .ti -1c
+.RI "\fBclearAnimationBoneTransforms\fP ()"
+.br
+.RI "Remove every persistent bone override\&. "
+.ti -1c
+.RI "\fBclearAnimationDrawables\fP ()"
+.br
+.RI "Remove all custom drawing registrations\&. "
+.ti -1c
+.RI "\fBclearAnimationModifiers\fP ()"
+.br
+.RI "Remove all modifiers and IK controllers\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBclearAnimationPhysicsRoot\fP ()"
+.br
+.RI "Restore automatic physical root selection\&. "
+.ti -1c
+.RI "\fBclearParts\fP ()"
+.br
+.RI "Remove all owned Parts\&. "
+.ti -1c
+.RI "\fBPart\fP \fBcreatePart\fP (string name)"
+.br
+.RI "Create an independently animated \fBPart\fP\&. "
+.ti -1c
 .RI "\fBdeserialize\fP (\fBDeserializer\fP deserializer)"
 .br
-.RI "update this sprite from the data in stream "
+.RI "Restore selected state from a \fBSprite\fP record\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBdetachAnimationPhysicsPart\fP (\fBPart\fP part, boolean includeDescendants=true)"
+.br
+.RI "Release a \fBPart\fP or subtree from the physics assembly\&. "
 .ti -1c
 .RI "\fBdetachSprite\fP (\fBSprite\fP sprite)"
 .br
 .RI "detaches the specified sprite from this sprite "
 .ti -1c
-.RI "\fBSprite\fP \fBdisableCollisions\fP ()"
+.RI "\fBdisableAnimationPhysics\fP (number recoveryTime=0\&.5, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
-.RI "stop checking for collisions with this sprite "
+.RI "Recover animation control before removing the physical rig\&. "
 .ti -1c
-.RI "\fBdisconnect\fP (\fBSprite\fP otherSprite=ALL_SPRITES)"
+.RI "\fBdisableAnimationPose\fP ()"
 .br
-.RI "remove all connections (joints) to another sprite "
+.RI "Release the current pose rig\&. "
 .ti -1c
-.RI "\fBSprite\fP \fBenableCollisions\fP (int collisionType=\fBcollide_AlphaChannel\fP)"
+.RI "boolean \fBenableAnimationPose\fP (string referenceAnimation)"
 .br
-.RI "start checking for collisions with this sprite "
+.RI "Enable pose access using a reference clip\&. "
 .ti -1c
 .RI "\fBenableSpriterEvents\fP (boolean enable=true)"
 .br
-.RI "enables or disables spriter-specific events for this sprite "
+.RI "Enable or disable authored Spriter trigger notifications for this \fBSprite\fP\&. "
 .ti -1c
-.RI "\fBfadeIn\fP (int msDuration, int easing=\fBlinearTween\fP)"
+.RI "\fBfadeIn\fP (number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "fade in to full opacity over time "
 .ti -1c
-.RI "\fBfadeOut\fP (int msDuration, int easing=\fBlinearTween\fP)"
+.RI "\fBfadeOut\fP (number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "fade out full transparency over time "
 .ti -1c
-.RI "\fBfadeTo\fP (number targetOpacity, int msDuration, int easing=\fBlinearTween\fP)"
+.RI "\fBfadeTo\fP (number targetOpacity, number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "fade in to a specific opacity over time "
 .ti -1c
-.RI "\fBCpConstraint\fP \fBgear\fP (\fBSprite\fP otherSprite, number gearRatio, number initialAngle=0, number breakingForce=0)"
+.RI "\fBPart\fP \fBfindPart\fP (string name)"
 .br
-.RI "join two sprites as if they were geared together (\fIChipmunk Physics Only\fP) "
+.RI "Find an owned \fBPart\fP by name\&. "
+.ti -1c
+.RI "Array \fBgetAnimationBindingNames\fP ()"
+.br
+.RI "List current binding names\&. "
+.ti -1c
+.RI "object \fBgetAnimationBindingTransform\fP (string name, int space=\fBanimationSpace_Local\fP)"
+.br
+.RI "Copy an evaluated binding transform\&. "
+.ti -1c
+.RI "Array \fBgetAnimationBoneNames\fP ()"
+.br
+.RI "List current bone names\&. "
+.ti -1c
+.RI "object \fBgetAnimationBoneTransform\fP (string name, int space=\fBanimationSpace_Local\fP)"
+.br
+.RI "Copy an evaluated bone transform\&. "
+.ti -1c
+.RI "int \fBgetAnimationDebugDraw\fP ()"
+.br
+.RI "Read the selected debug overlays\&. "
+.ti -1c
+.RI "string \fBgetAnimationDrawableError\fP (uint id)"
+.br
+.RI "Read a drawing callback diagnostic\&. "
+.ti -1c
+.RI "object \fBgetAnimationDrawBounds\fP ()"
+.br
+.RI "Copy the evaluated animation drawing bounds\&. "
+.ti -1c
+.RI "object \fBgetAnimationIKResult\fP (uint id)"
+.br
+.RI "Copy the latest IK solve result\&. "
+.ti -1c
+.RI "string \fBgetAnimationModifierError\fP (uint id)"
+.br
+.RI "Read a modifier failure diagnostic\&. "
+.ti -1c
+.RI "object \fBgetAnimationPhysicsDriveSettings\fP (string bone)"
+.br
+.RI "Copy one physical bone's configured drive settings\&. "
+.ti -1c
+.RI "object \fBgetAnimationPhysicsDriveSettings\fP (uint bone)"
+.br
+.RI "Copy one physical bone's configured drive settings\&. "
+.ti -1c
+.RI "int \fBgetAnimationPhysicsMode\fP (string bone=undefined, boolean includeDescendants=false)"
+.br
+.RI "Query the actual control mode of a skeleton selection\&. "
+.ti -1c
+.RI "int \fBgetAnimationPhysicsMode\fP (uint bone=undefined, boolean includeDescendants=false)"
+.br
+.RI "Query the actual control mode of a skeleton selection\&. "
+.ti -1c
+.RI "uint \fBgetAnimationPhysicsRoot\fP ()"
+.br
+.RI "Read the selected physical root bone ID\&. "
+.ti -1c
+.RI "Array \fBgetAnimationPhysicsSetupWarnings\fP ()"
+.br
+.RI "Copy diagnostics from the last successful generated setup\&. "
+.ti -1c
+.RI "object \fBgetAnimationPose\fP ()"
+.br
+.RI "Copy the fully evaluated pose\&. "
 .ti -1c
 .RI "number \fBgetAnimationProgress\fP ()"
 .br
 .RI "returns the current progress of the animation (0\&.0 to 1\&.0) "
+.ti -1c
+.RI "string \fBgetAnimationRigError\fP ()"
+.br
+.RI "Read the latest rig diagnostic\&. "
+.ti -1c
+.RI "int \fBgetAnimationSource\fP ()"
+.br
+.RI "Read the selected pose source\&. "
+.ti -1c
+.RI "number \fBgetAnimationTransitionProgress\fP ()"
+.br
+.RI "Read pose transition progress\&. "
 .ti -1c
 .RI "Array \fBgetAppliedCharacterMaps\fP ()"
 .br
@@ -99,6 +223,10 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "returns the sprite attached at the specified attach point, or null if none "
 .ti -1c
+.RI "\fBPart\fP \fBgetAttachmentPart\fP ()"
+.br
+.RI "Find the mounting \fBPart\fP controlling this \fBSprite\fP\&. "
+.ti -1c
 .RI "\fBOffset\fP \fBgetAttachPoint\fP (string attachPointName)"
 .br
 .RI "returns the position of the specified attach point "
@@ -107,25 +235,9 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "returns the progress of the current animation blend (0\&.0 to 1\&.0) "
 .ti -1c
-.RI "number \fBgetCollideGroup\fP ()"
-.br
-.RI "see which collide group this sprite is part of (\fIChipmunk Physics Only\fP) "
-.ti -1c
-.RI "number \fBgetCollisionRadius\fP ()"
-.br
-.RI "get the collision radius for this sprite "
-.ti -1c
-.RI "number \fBgetCollisionType\fP ()"
-.br
-.RI "get the current collision type "
-.ti -1c
 .RI "number \fBgetCurrentFrame\fP ()"
 .br
 .RI "which frame of animation the sprite is currently showing "
-.ti -1c
-.RI "number \fBgetElasticity\fP ()"
-.br
-.RI "get the elasticity for this sprite's collisions "
 .ti -1c
 .RI "\fBOffset\fP \fBgetFrameCenterOffset\fP (\fBImage\fP image=null, int frameNum=0)"
 .br
@@ -138,10 +250,6 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .RI "\fBRotatedRect\fP \fBgetFrameRotatedBounds\fP (int frameNum=\-1)"
 .br
 .RI "get the bounds of the sprite, including rotation, for a given frame, in layer coordinates\&. If no frameNum is passed in, or the frame is not present, the bounds of the current frame are returned\&. "
-.ti -1c
-.RI "number \fBgetFriction\fP ()"
-.br
-.RI "get the friction used for movement calculations for this sprite (\fIChipmunk Physics Only\fP) "
 .ti -1c
 .RI "\fBSpriteLayer\fP \fBgetLayer\fP ()"
 .br
@@ -159,9 +267,21 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "get the level of opacity for this sprite "
 .ti -1c
+.RI "\fBPart\fP \fBgetPart\fP (uint id)"
+.br
+.RI "Find an owned \fBPart\fP by ID\&. "
+.ti -1c
+.RI "uint \fBgetPartCount\fP ()"
+.br
+.RI "Count owned Parts\&. "
+.ti -1c
+.RI "Array \fBgetPartNames\fP ()"
+.br
+.RI "List owned \fBPart\fP names\&. "
+.ti -1c
 .RI "uint \fBgetSerializedSize\fP (\fBSerializer\fP serializer)"
 .br
-.RI "get the bytes needed to serialize the layer "
+.RI "Measure the selected \fBSprite\fP record and its resource payloads\&. "
 .ti -1c
 .RI "\fBRotatedRect\fP \fBgetSpriterCollisionBox\fP (string boxName)"
 .br
@@ -203,10 +323,6 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "get the z-order of this sprite in the layer it belongs to "
 .ti -1c
-.RI "\fBCpConstraint\fP \fBgrooveJoint\fP (\fBOffset\fP grooveStart, \fBOffset\fP grooveEnd, \fBSprite\fP otherSprite, \fBOffset\fP otherAnchor, number breakingForce=0)"
-.br
-.RI "join groove on this sprite to an anchor point on another (\fIChipmunk Physics Only\fP) "
-.ti -1c
 .RI "boolean \fBhasAnimation\fP (int animationId)"
 .br
 .RI "check if a sprite has a particular SCML animation by ID "
@@ -219,13 +335,33 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "returns true if the sprite has the specified attach point "
 .ti -1c
+.RI "boolean \fBisAnimationDrawingSupported\fP ()"
+.br
+.RI "Test whether this build supports animation drawing\&. "
+.ti -1c
 .RI "boolean \fBisAnimationPaused\fP ()"
 .br
 .RI "returns true if the animation is currently paused "
 .ti -1c
+.RI "boolean \fBisAnimationPhysicsEnabled\fP ()"
+.br
+.RI "Test for an active physical animation rig\&. "
+.ti -1c
+.RI "boolean \fBisAnimationPhysicsPartAttached\fP (\fBPart\fP part)"
+.br
+.RI "Check whether a \fBPart\fP contributes to this \fBSprite\fP's physical assembly\&. "
+.ti -1c
 .RI "boolean \fBisAnimationPlaying\fP ()"
 .br
 .RI "returns true if an animation is currently playing "
+.ti -1c
+.RI "boolean \fBisAnimationPoseEnabled\fP ()"
+.br
+.RI "Test whether a pose rig is available\&. "
+.ti -1c
+.RI "boolean \fBisAnimationTransitioning\fP ()"
+.br
+.RI "Test for an active pose transition\&. "
 .ti -1c
 .RI "boolean \fBisBehind\fP (\fBSprite\fP sprite)"
 .br
@@ -238,22 +374,6 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .RI "boolean \fBisSpriterCollisionActive\fP (string boxName)"
 .br
 .RI "check if a Spriter collision box is active "
-.ti -1c
-.RI "\fBmakeJointBreakable\fP (\fBCpConstraint\fP joint, number breakingForce)"
-.br
-.RI "set or change force at which the joint between sprites will break (\fIChipmunk Physics Only\fP) "
-.ti -1c
-.RI "\fBmakeJointUnbreakable\fP (\fBCpConstraint\fP joint)"
-.br
-.RI "make the joint impossible to break (\fIChipmunk Physics Only\fP) "
-.ti -1c
-.RI "\fBSprite\fP \fBmakeStatic\fP ()"
-.br
-.RI "make this sprite unaffected by physics (\fIChipmunk Physics Only\fP) "
-.ti -1c
-.RI "\fBCpConstraint\fP \fBmotor\fP (\fBSprite\fP otherSprite, number spin, number maxTorque=INFINITY)"
-.br
-.RI "keep spin of another sprite at a constant rate compared to this one (\fIChipmunk Physics Only\fP) "
 .ti -1c
 .RI "\fBSprite\fP \fBmoveBehind\fP (\fBSprite\fP sprite)"
 .br
@@ -281,7 +401,7 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .ti -1c
 .RI "\fBIEventHandler\fP \fBonAnimationBlendComplete\fP (function func)"
 .br
-.RI "Register a callback function to be called when an animation blend completes\&. "
+.RI "Register a callback function to be called when an animation blend or transition completes\&. "
 .ti -1c
 .RI "\fBIEventHandler\fP \fBonAnimationEnd\fP (function func)"
 .br
@@ -291,9 +411,13 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "set event handler for sprite animation loop events "
 .ti -1c
+.RI "\fBIEventHandler\fP \fBonAnimationPhysicsRecoveryComplete\fP (function func)"
+.br
+.RI "Register a callback for completed physical recovery selections\&. "
+.ti -1c
 .RI "\fBIEventHandler\fP \fBonCollideSprite\fP (function func)"
 .br
-.RI "set event handler for sprite-to-sprite collision events "
+.RI "Register a \fBSprite\fP collision event handler for imported physical rigs\&. "
 .ti -1c
 .RI "\fBIEventHandler\fP \fBonCollideWall\fP (function func)"
 .br
@@ -347,73 +471,105 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "pauses the current animation playback "
 .ti -1c
-.RI "\fBCpConstraint\fP \fBpinJoint\fP (\fBOffset\fP anchor, \fBSprite\fP otherSprite, \fBOffset\fP otherAnchor, number breakingForce=0)"
-.br
-.RI "pin sprites together at a particular anchor point (offset from center) on each (\fIChipmunk Physics Only\fP) "
-.ti -1c
-.RI "\fBCpConstraint\fP \fBpivotJoint\fP (\fBSprite\fP otherSprite, \fBPoint\fP pivot, number breakingForce=0)"
-.br
-.RI "join sprites together at a particular location in layer coordinates (\fIChipmunk Physics Only\fP) "
-.ti -1c
-.RI "\fBCpConstraint\fP \fBratchet\fP (\fBSprite\fP otherSprite, number rachetInterval, number phase, number breakingForce=0)"
-.br
-.RI "join two sprites rotation with a ratchet mechanism (\fIChipmunk Physics Only\fP) "
-.ti -1c
 .RI "\fBremoveAllCharacterMaps\fP ()"
 .br
 .RI "removes all applied character maps from the sprite "
+.ti -1c
+.RI "\fBremoveAnimationDrawable\fP (uint id)"
+.br
+.RI "Remove a custom drawing registration\&. "
+.ti -1c
+.RI "\fBremoveAnimationModifier\fP (uint id)"
+.br
+.RI "Remove a modifier or IK controller\&. "
 .ti -1c
 .RI "\fBremoveCharacterMap\fP (string mapName)"
 .br
 .RI "removes a previously applied character map from the sprite "
 .ti -1c
-.RI "\fBremoveJoint\fP (\fBCpConstraint\fP joint)"
+.RI "\fBremoveCollider\fP ()"
 .br
-.RI "remove a joint between two sprites (\fIChipmunk Physics Only\fP) "
+.RI "Remove this owner’s collider\&. "
+.ti -1c
+.RI "boolean \fBremovePart\fP (uint id)"
+.br
+.RI "Remove an owned \fBPart\fP\&. "
+.ti -1c
+.RI "\fBremovePhysicsBody\fP ()"
+.br
+.RI "Detach the optional physics body\&. "
 .ti -1c
 .RI "\fBresumeAnimation\fP ()"
 .br
 .RI "resumes the paused animation playback "
 .ti -1c
-.RI "\fBCpConstraint\fP \fBrotaryLimit\fP (\fBSprite\fP otherSprite, number minAngle, number maxAngle, number breakingForce=0)"
+.RI "object \fBsampleAnimationPose\fP (string clip, number timeSeconds)"
 .br
-.RI "limit the angle another sprite can have relative to this one (\fIChipmunk Physics Only\fP) "
+.RI "Sample a clip without changing playback\&. "
 .ti -1c
-.RI "\fBCpConstraint\fP \fBrotarySpring\fP (\fBSprite\fP otherSprite, number restAngle, number stiffness, number damping, number breakingForce=0)"
+.RI "\fBseekAnimation\fP (string clip, number timeSeconds)"
 .br
-.RI "keep sprites at a particular angle relative to one another via a rotary spring (\fIChipmunk Physics Only\fP) "
+.RI "Select a clip and time immediately\&. "
 .ti -1c
 .RI "\fBserialize\fP (\fBSerializer\fP serializer)"
 .br
-.RI "serialize this sprite into a data stream "
+.RI "Write selected \fBSprite\fP state to a data stream\&. "
 .ti -1c
-.RI "\fBSprite\fP \fBsetCollideGroup\fP (int group)"
+.RI "\fBsetAnimationBoneTransform\fP (string name, object transform)"
 .br
-.RI "set the collide group this sprite is part of (\fIChipmunk Physics Only\fP) "
+.RI "Override a bone's parent-local transform\&. "
 .ti -1c
-.RI "\fBsetCollisionHelper\fP (\fBISpriteCollideHelper\fP helper)"
+.RI "\fBsetAnimationDebugDraw\fP (int flags)"
 .br
-.RI "set a helper to filter out some collisions for this sprite "
+.RI "Select pose debug overlays\&. "
 .ti -1c
-.RI "\fBSprite\fP \fBsetCollisionRadius\fP (number pixelRadius)"
+.RI "\fBsetAnimationDrawableEnabled\fP (uint id, boolean enabled)"
 .br
-.RI "set the radius of the collision boundary circle of the sprite "
+.RI "Enable or hide a registered drawing\&. "
+.ti -1c
+.RI "\fBsetAnimationIKTarget\fP (uint id, number x, number y, int space=\fBanimationSpace_Rig\fP)"
+.br
+.RI "Change an IK controller's target\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBsetAnimationPhysicsDriveSettings\fP (object settings, string bone=undefined, boolean includeDescendants=false)"
+.br
+.RI "Replace drive settings for a skeleton selection\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBsetAnimationPhysicsDriveSettings\fP (object settings, uint bone=undefined, boolean includeDescendants=false)"
+.br
+.RI "Replace drive settings for a skeleton selection\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBsetAnimationPhysicsMode\fP (int mode, string bone=undefined, boolean includeDescendants=false, number recoveryTime=0\&.5, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Select animation control for a physical rig or its bones\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBsetAnimationPhysicsMode\fP (int mode, uint bone=undefined, boolean includeDescendants=false, number recoveryTime=0\&.5, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Select animation control for a physical rig or its bones\&.    "
+.ti -1c
+.RI "\fBSprite\fP \fBsetAnimationPhysicsRoot\fP (number bone)"
+.br
+.RI "Select the bone receiving whole-Sprite impulses and root follow\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBsetAnimationPhysicsRoot\fP (string bone)"
+.br
+.RI "Select a physical root by its exact bone name\&. "
+.ti -1c
+.RI "\fBsetAnimationSource\fP (int source)"
+.br
+.RI "Select the starting pose for evaluation\&. "
 .ti -1c
 .RI "\fBsetDrawHelper\fP (\fBISpriteDrawHelper\fP helper)"
 .br
 .RI "set a pre-draw helper for custom sprite drawing "
 .ti -1c
-.RI "\fBSprite\fP \fBsetElasticity\fP (number elasticity)"
-.br
-.RI "sets the elasticity (bounce) factor for this sprite's physics body "
-.ti -1c
-.RI "\fBSprite\fP \fBsetEntityScale\fP (number xScale, number yScale)"
-.br
-.RI "sets the scale factors for the sprite's entity (x and y scaling) "
-.ti -1c
 .RI "\fBSprite\fP \fBsetFrame\fP (int frame)"
 .br
 .RI "sets the current frame of the sprite to the specified frame number "
+.ti -1c
+.RI "\fBSprite\fP \fBsetFrameCollisionMask\fP (\fBImage\fP frameImage, \fBImage\fP maskImage)"
+.br
+.RI "Assign a mask to frames using an image\&. "
 .ti -1c
 .RI "\fBSprite\fP \fBsetMouseDetectMode\fP (int collisionType=\fBcollide_BoundingBox\fP)"
 .br
@@ -426,6 +582,30 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .RI "\fBsetPostDrawHelper\fP (\fBISpriteDrawHelper\fP helper)"
 .br
 .RI "sets a helper that draws additional content after the sprite is rendered "
+.ti -1c
+.RI "\fBCollider\fP \fBsetupAnimationCollider\fP ()"
+.br
+.RI "Set up collision geometry that follows active authored animation boxes\&. "
+.ti -1c
+.RI "\fBsetupAnimationPhysics\fP (object definition)"
+.br
+.RI "Create a physical rig for the current pose\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetupCollider\fP ()"
+.br
+.RI "Set up the collision geometry association for this owner\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetupFrameCollider\fP (int mode=\fBframeCollider_AlphaMask\fP, int alphaThreshold=128)"
+.br
+.RI "Set up collision geometry that follows the current frame\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetupPhysicsBody\fP (number mass=1, number momentOfInertia=1)"
+.br
+.RI "Set up the optional physics body with the specified mass and inertia\&. "
+.ti -1c
+.RI "\fBSprite\fP \fBsetupPhysicsFromAnimationRig\fP (number totalMass, number unitsPerMeter=1)"
+.br
+.RI "Generate a dynamic physical rig from the reference skeleton\&. "
 .ti -1c
 .RI "\fBSprite\fP \fBsetWantsAnimEndEvents\fP (boolean wantsThem=true)"
 .br
@@ -451,14 +631,6 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "enables or disables offscreen event generation for this sprite "
 .ti -1c
-.RI "\fBCpConstraint\fP \fBslideJoint\fP (\fBOffset\fP anchor, \fBSprite\fP otherSprite, \fBOffset\fP otherAnchor, number minDist, number maxDist, number breakingForce=0)"
-.br
-.RI "join sprites together via a slider between anchor points that has a min/max distance (\fIChipmunk Physics Only\fP) "
-.ti -1c
-.RI "\fBCpConstraint\fP \fBspringJoint\fP (\fBOffset\fP anchor, \fBSprite\fP otherSprite, \fBOffset\fP otherAnchor, number restLength, number stiffness, number damping, number breakingForce=0)"
-.br
-.RI "join sprites together via a spring between anchor points (\fIChipmunk Physics Only\fP) "
-.ti -1c
 .RI "\fBstartAnimation\fP (int animationId)"
 .br
 .RI "Start playing an animation by its ID\&. "
@@ -479,265 +651,313 @@ Inherits \fBAnimated\fP, \fBEventEmitter\fP, and \fBISerializable\fP\&.
 .br
 .RI "stops all frame animation, keeping the current frame as the sprite's image "
 .ti -1c
-.RI "\fBuseCollisionMask\fP (\fBImage\fP frameImage, \fBImage\fP maskImage)"
+.RI "boolean \fBsupportsAnimationPhysics\fP ()"
 .br
-.RI "sets collision masks for precise collision detection using image data "
+.RI "Test this build's physical-animation support\&. "
+.ti -1c
+.RI "\fBPart\fP \fBtransferPart\fP (\fBPart\fP part, boolean includeDescendants=true)"
+.br
+.RI "Transfer an existing \fBPart\fP and optional subtree into this \fBSprite\fP\&. "
+.ti -1c
+.RI "\fBtransitionToAnimation\fP (string clip, number timeSeconds, number durationSeconds)"
+.br
+.RI "Blend the current pose into a selected clip\&. "
 .in -1c
 
 Public Member Functions inherited from \fBAnimated\fP
 .in +1c
 .ti -1c
-.RI "\fBaccelerate\fP (number deltaSpeed, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBlinearTween\fP)"
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
-.RI "change the object's speed over time "
+.RI "Register a callback after the object's normal animation step\&. "
 .ti -1c
-.RI "\fBaccelerateTo\fP (number speed, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBlinearTween\fP)"
+.RI "\fBAnimated\fP \fBandThen\fP ()"
 .br
-.RI "change the object's speed to a particular value over time "
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
 .ti -1c
-.RI "\fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
-.RI "setup a helper to handle custom animation "
+.RI "Advance programmed animation by elapsed seconds\&. "
 .ti -1c
-.RI "boolean \fBanimate\fP (int msElapsed)"
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
 .br
-.RI "animate based on the passage of time "
+.RI "Discard scheduled animations and pending sequencing\&. "
 .ti -1c
-.RI "\fBapplyForce\fP (\fBVector\fP force, int msDuration=\fBduration_Instantaneous\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "apply a force to the object over time "
+.RI "Animate the rotation-center offset by a delta\&. "
 .ti -1c
-.RI "\fBapplyTorque\fP (number forceSpin, int msDuration=\fBduration_Instantaneous\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "apply torque to the object over time "
+.RI "Animate the rotation-center offset by a delta\&. "
 .ti -1c
-.RI "\fBchangeCenter\fP (\fBOffset\fP offset, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "shift the center point of the object over time "
+.RI "Animate the rotation-center offset to a target\&. "
 .ti -1c
-.RI "\fBchangeCenterTo\fP (\fBOffset\fP offset, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "shift the center point of the object to a particular offset from true center over time "
+.RI "Animate the rotation-center offset to a target\&. "
 .ti -1c
-.RI "\fBclearAnimationHelpers\fP ()"
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
-.RI "remove all previously added animation helpers "
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBflipX\fP ()"
 .br
-.RI "flips the object horizontally, center offset is flipped too\&. Applied before other transformations\&. "
+.RI "Toggle the x reflection flag immediately\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBflipY\fP ()"
 .br
-.RI "flips the object vertically, center offset is flipped too\&. Applied before other transformations\&. "
+.RI "Toggle the y reflection flag immediately\&. "
 .ti -1c
 .RI "\fBRect\fP \fBgetBoundingBox\fP ()"
 .br
-.RI "get the rectangle that completely encloses the object "
+.RI "Read axis-aligned logical bounds\&. "
 .ti -1c
 .RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
 .br
-.RI "get the current offset of the center relative to the true center point "
+.RI "Read the rotation-center offset\&. "
 .ti -1c
 .RI "number \fBgetHeight\fP ()"
 .br
-.RI "get height of the object "
+.RI "Read logical height\&. "
 .ti -1c
 .RI "\fBPoint\fP \fBgetLocation\fP ()"
 .br
-.RI "get the position of the object "
+.RI "Read the location in the container coordinate system\&. "
 .ti -1c
-.RI "number \fBgetMass\fP ()"
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
 .br
-.RI "get the mass of the object "
-.ti -1c
-.RI "number \fBgetMoveFriction\fP ()"
-.br
-.RI "get the amount of friction for movement "
-.ti -1c
-.RI "number \fBgetMovementDirectionInRadians\fP ()"
-.br
-.RI "get the direction the object is moving "
+.RI "Read the programmed movement rate\&. "
 .ti -1c
 .RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
 .br
-.RI "get the bounds with rotation "
+.RI "Read rotated logical bounds\&. "
 .ti -1c
 .RI "number \fBgetRotation\fP ()"
 .br
-.RI "get how much the object is rotated "
+.RI "Read the current rotation in radians\&. "
 .ti -1c
-.RI "number \fBgetSizeFriction\fP ()"
+.RI "\fBOffset\fP \fBgetScale\fP ()"
 .br
-.RI "get the friction applied to size changes (growing or shrinking) "
+.RI "Read independent transform scale\&. "
 .ti -1c
-.RI "number \fBgetSpeed\fP ()"
+.RI "\fBOffset\fP \fBgetSize\fP ()"
 .br
-.RI "get how fast the object is moving in pixels/sec "
+.RI "Read logical width and height\&. "
 .ti -1c
 .RI "number \fBgetSpin\fP ()"
 .br
-.RI "get how fast the object is spinning in radians per second "
+.RI "Read the programmed angular rate\&. "
 .ti -1c
-.RI "number \fBgetSpinFriction\fP ()"
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
 .br
-.RI "get the friction applied toward spinning "
-.ti -1c
-.RI "\fBVector\fP \fBgetVelocity\fP ()"
-.br
-.RI "get the vector that expresses magnitude and direction of the object's movement in pixels/sec "
+.RI "Read logical width and height change rates\&. "
 .ti -1c
 .RI "number \fBgetWidth\fP ()"
 .br
-.RI "get the width of the object "
+.RI "Read logical width\&. "
 .ti -1c
-.RI "\fBgrow\fP (number factor, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "change size of the object by a factor over time "
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
 .ti -1c
 .RI "boolean \fBisFlippedX\fP ()"
 .br
-.RI "returns true if the object is flipped horizontally "
+.RI "Read the x reflection flag\&. "
 .ti -1c
 .RI "boolean \fBisFlippedY\fP ()"
 .br
-.RI "returns true if the object is flipped vertically "
+.RI "Read the y reflection flag\&. "
 .ti -1c
-.RI "\fBmove\fP (\fBOffset\fP delta, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "boolean \fBisSchedulePaused\fP ()"
 .br
-.RI "move the object by a certain amount over time "
+.RI "Test whether scheduled animation advancement is paused\&. "
 .ti -1c
-.RI "\fBmoveTo\fP (\fBPoint\fP where, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "move the object to a particular location over time "
+.RI "Move by an offset\&. "
 .ti -1c
-.RI "\fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "remove a specific animation helper "
+.RI "Move by an offset\&. "
 .ti -1c
-.RI "\fBresize\fP (number deltaWidth, number deltaHeight, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "change the size of an object by a given amount over time "
+.RI "Move to a location\&. "
 .ti -1c
-.RI "\fBresizeTo\fP (number width, number height, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "resize the object to a specific size over time "
+.RI "Move to a location\&. "
 .ti -1c
-.RI "\fBrotate\fP (number radians, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
 .br
-.RI "rotate the object by a specific amount over time "
+.RI "Pause scheduled animations and their delays\&. "
 .ti -1c
-.RI "\fBrotateTo\fP (number radiansRotation, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
-.RI "rotate the object to face a particular direction over time "
+.RI "Retire a specific animation helper\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP inCenterOffset)"
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "set the offset of the center point relative to the true center "
+.RI "Change logical size by additive deltas\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean inFlipX)"
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "sets whether the object is flipped horizontally "
+.RI "Animate logical size to a target\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean inFlipY)"
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
 .br
-.RI "sets whether the object is flipped vertically "
+.RI "Resume scheduled animations and their delays\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFriction\fP (number frictionCoefficient)"
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
-.RI "set friction for movement, rotation and resizing all at once "
+.RI "Rotate through a relative angle\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetHeight\fP (number inHeight)"
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
-.RI "set the object's height "
+.RI "Rotate to an absolute angle\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP inLocation)"
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
 .br
-.RI "place the object at a particular location "
+.RI "Set the rotation-center offset immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetMass\fP (number inMass)"
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
 .br
-.RI "set the object's mass, used when forces are applied "
+.RI "Set the x reflection flag immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetMoveFriction\fP (number inMoveFriction)"
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
 .br
-.RI "set the object's friction for movement "
+.RI "Set the y reflection flag immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetRotation\fP (number inRotation)"
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
 .br
-.RI "set the direction the object is facing in radians "
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
 .br
-.RI "set the size of the object "
+.RI "Set logical width and height immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSizeFriction\fP (number inSizeFriction)"
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
 .br
-.RI "set the friction applied for object resizing "
+.RI "Set logical width and height immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpeed\fP (number inSpeed)"
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
 .br
-.RI "set the speed the object is moving in its current direction of motion "
+.RI "Set a constant programmed angular rate immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpin\fP (number inSpin)"
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
 .br
-.RI "set the rate at which the object is spinning, in radians/sec "
+.RI "Set independent constant growth rates immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetSpinFriction\fP (number inSpinFriction)"
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
 .br
-.RI "set the friction the object faces for spinning "
+.RI "Set logical width immediately\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocity\fP (number deltaXPerSec, number deltaYPerSec)"
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to logical size\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocity\fP (\fBVector\fP deltaPerSec)"
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to position\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetVelocityInRadians\fP (number speed, number direction)"
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
 .br
-.RI "set the speed and direction the object is moving "
+.RI "Stop all programmed changes to rotation\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetWidth\fP (number inWidth)"
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
 .br
-.RI "set the width of the object "
+.RI "Stop all programmed changes to logical size\&. "
 .ti -1c
-.RI "\fBstartGrowing\fP (number amountPerSecond)"
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
-.RI "set the growth rate of the object in pixels/sec "
+.RI "Multiply logical width and height by independent factors\&. "
 .ti -1c
-.RI "\fBstartStretching\fP (number widthPerSecond, number heightPerSecond)"
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
 .br
-.RI "set the growth rate of the object in pixels/sec, with varied rates for width and height "
-.ti -1c
-.RI "\fBstopAllForces\fP ()"
-.br
-.RI "remove all forces that were acting on the object (except friction) "
-.ti -1c
-.RI "\fBstopGrowing\fP ()"
-.br
-.RI "stop any size change "
-.ti -1c
-.RI "\fBstopMoving\fP ()"
-.br
-.RI "stop any movement the object was doing (except spinning) "
-.ti -1c
-.RI "\fBstopSpinning\fP ()"
-.br
-.RI "stop any spinning the object was doing "
-.ti -1c
-.RI "\fBstopStretching\fP ()"
-.br
-.RI "stop any stretching the object was doing "
-.ti -1c
-.RI "\fBstretch\fP (number widthFactor, number heightFactor, int msDuration=\fBduration_Instantaneous\fP, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "change the dimensions of the object over time "
-.ti -1c
-.RI "\fBAnimated\fP \fBwait\fP (int msDuration)"
-.br
-.RI "wait before beginning the next animation call that operates over time "
+.RI "Delay the next timed animation request\&. "
 .in -1c
 
 Public Member Functions inherited from \fBEventEmitter\fP
@@ -763,6 +983,17 @@ Public Member Functions inherited from \fBEventEmitter\fP
 .br
 .RI "stop ignoring events of a particular type "
 .in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBCollider\fP \fBcollider\fP"
+.br
+.RI "Read-only \fBCollider\fP association, or shared \fBCollider::NoCollider\fP\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBphysics\fP"
+.br
+.in -1c
 .SS "Additional Inherited Members"
 
 
@@ -781,7 +1012,7 @@ animated, moving image that is automatically moved, animated, and drawn
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 .SS "Events"
@@ -793,8 +1024,10 @@ Things that happen to a sprite that might require intervention, such as collisio
 translating events to JavaScript and running them through numerous handlers is expensive\&. Try to put your handlers as early in the propagation chain as possible\&.
 .RE
 .PP
+.SS "Inverse kinematics"
+Use \fBaddAnimationIK()\fP to register a two-bone constraint on a supported animation rig\&. Update its target with \fBsetAnimationIKTarget()\fP and inspect the latest solve with \fBgetAnimationIKResult()\fP\&. The returned constraint ID is a pose modifier ID; use \fBremoveAnimationModifier()\fP to remove the constraint\&.
 .SS "Helpers"
-You can add helper functions or classes to do specialized animation behavior, prefilter collisions, and add visual effects during drawing\&.
+You can add helper functions or classes to do specialized animation behavior, and add visual effects during drawing\&.
 
 .PP
 \fBSee also\fP
@@ -806,9 +1039,6 @@ setAnimationHelper()
 
 .PP
 \fBsetPostDrawHelper()\fP 
-
-.PP
-\fBsetCollisionHelper()\fP 
 .RE
 .PP
 
@@ -860,6 +1090,375 @@ Sprite::isSubEntityActive()
 .RE
 .PP
 
+.SS "uint addAnimationDrawable (\fBDrawing\fP drawing, object options)"
+
+.PP
+attach an editable \fBDrawing\fP to an animation bone Use this overload to attach artwork, such as a weapon or a marker, that follows a bone as the sprite animates\&. Create the artwork with \fBpdg\&.createDrawing()\fP and the ordinary \fBDrawing\fP methods, such as \fBDrawing\&.addRect()\fP or \fBDrawing\&.addImage()\fP\&. The drawing uses coordinates relative to the selected bone; PDG positions, rotates, and scales it with the bone's final animation pose\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdrawing\fP The \fBDrawing\fP to attach\&. Its contents remain editable after registration, including through \fBElementRef\fP objects returned by its methods\&. 
+.br
+\fIoptions\fP An object selecting the bone, placement, and optional drawing settings\&. See \fBDrawing options\fP below\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero unsigned integer identifying the registration\&. Pass this ID to \fBsetAnimationDrawableEnabled()\fP, \fBremoveAnimationDrawable()\fP, or \fBgetAnimationDrawableError()\fP\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before registering artwork\&. The sprite's animations must have a fixed hierarchy: their active bones and bindings, and their parent relationships, must remain consistent across clips\&.
+.RE
+.PP
+\fBExample: attach a marker to a hand\fP
+.RS 4
+This example assumes \fRsprite\fP is a Spriter sprite in a visible layer, with a \fRreference\fP animation and a bone named \fRhand\fP\&. Use the clip and bone names from your own artwork\&.
+.RE
+.PP
+.PP
+.nf
+if (!sprite\&.enableAnimationPose('reference')) {
+    throw new Error(sprite\&.getAnimationRigError());
+}
+
+const artwork = pdg\&.createDrawing();
+const marker = artwork\&.addRect(
+    new pdg\&.Rect(\-3, \-3, 3, 3),
+    new pdg\&.Attributes()\&.fillColor('yellow')
+);
+
+const drawableId = sprite\&.addAnimationDrawable(artwork, {
+    bone: 'hand',
+    placement: pdg\&.animationDraw_AfterAll
+});
+
+// A later edit appears on the next draw; no new registration is needed\&.
+marker\&.setAttributes(new pdg\&.Attributes()\&.fillColor('cyan'));
+
+// When the marker is no longer needed:
+// sprite\&.removeAnimationDrawable(drawableId);
+.fi
+.PP
+
+.PP
+
+.PP
+\fBDrawing options (both overloads)\fP
+.RS 4
+Both overloads accept the following \fRoptions\fP fields\&. Only \fRbone\fP is always required\&. Use the numeric \fRpdg\fP constants for placement and stroke space; strings such as \fR"afterAll"\fP or \fR"local"\fP are not accepted\&.
+.RE
+.PP
+Field  Type  Default  Meaning  \fRbone\fP  string or integer  Required  Bone name or zero-based bone ID\&. See \fBgetAnimationBoneNames()\fP\&.  \fRplacement\fP  integer  \fR\fBpdg\&.animationDraw_AfterAll\fP\fP  Where to draw relative to the sprite's authored images; see the placement table below\&.  \fRslot\fP  string  Empty string  \fBImage\fP binding name\&. Required for slot placements; omit it for \fR\fBpdg\&.animationDraw_BeforeAll\fP\fP and \fR\fBpdg\&.animationDraw_AfterAll\fP\fP\&. See \fBgetAnimationBindingNames()\fP\&.  \fRorder\fP  integer  \fR0\fP  Lower values draw first within the same placement and slot\&. Equal values preserve registration order\&.  \fRstrokeSpace\fP  integer  \fR\fBpdg\&.animationStroke_PortPixels\fP\fP  How line thickness responds to scale; see Stroke thickness below\&.  \fRbounds\fP  object  Omitted  Rectangle with finite numeric \fRleft\fP, \fRtop\fP, \fRright\fP, and \fRbottom\fP fields in bone coordinates\&. Must include all artwork and stroke extents\&.  \fRuncullable\fP  boolean  \fRtrue\fP without bounds; \fRfalse\fP with bounds  When true, prevents the artwork from being skipped based on its declared bounds\&.  
+
+.PP
+\fBPlacement\fP
+.RS 4
+A slot is a named image binding in the authored animation\&. It is separate from the bone that positions your drawing\&. Slot placements require \fRoptions\&.slot\fP to identify an existing image binding\&.
+.RE
+.PP
+Constant  Value  Placement  \fR\fBpdg\&.animationDraw_BeforeAll\fP\fP  0  Before all authored images\&.  \fR\fBpdg\&.animationDraw_AfterAll\fP\fP  1  After all authored images\&. This is the default\&.  \fR\fBpdg\&.animationDraw_BeforeSlot\fP\fP  2  Immediately before the named image\&.  \fR\fBpdg\&.animationDraw_AfterSlot\fP\fP  3  Immediately after the named image\&.  \fR\fBpdg\&.animationDraw_ReplaceSlot\fP\fP  4  In place of the named image\&. Other images remain visible\&.  
+
+.PP
+\fBStroke thickness\fP
+.RS 4
+
+.IP "\(bu" 2
+\fR\fBpdg\&.animationStroke_PortPixels\fP\fP (0, default) keeps the \fBAttributes\fP line thickness in port pixels as the artwork scales\&.
+.IP "\(bu" 2
+\fR\fBpdg\&.animationStroke_Local\fP\fP (1) scales line thickness with the artwork, including element transforms, nested drawings, and layer zoom\&. For unequal horizontal and vertical scaling, the thickness multiplier is \fRsqrt\fP(abs(det(composedTransform))), the geometric mean of the scale factors\&. The stroke keeps a uniform thickness rather than stretching its outline differently along each axis\&.
+.PP
+.RE
+.PP
+\fBBounds and visibility\fP
+.RS 4
+Bounds allow PDG to skip drawing artwork that is outside the visible area\&. When supplied, they must satisfy \fRleft\fP <= \fRright\fP and \fRtop\fP <= \fRbottom\fP\&. Omit bounds, or set \fRuncullable\fP to \fRtrue\fP, when you cannot provide a rectangle that safely contains all possible artwork\&.
+.RE
+.PP
+\fBWarning\fP
+.RS 4
+\fBDrawing\&.getBounds()\fP reports geometry bounds, which do not include complete stroke extents\&. Editing a drawing does not update the registration's declared bounds\&. Include enough room for strokes and later edits, or leave the registration uncullable\&. Visual bounds do not create physics or hit-test shapes\&.
+.RE
+.PP
+
+.PP
+\fBEditing and coordinates\fP
+.RS 4
+PDG retains the drawing's shared contents\&. Changes made through the original \fBDrawing\fP or its \fBElementRef\fP objects appear on subsequent draws\&. This overload does not invoke a JavaScript callback each frame\&.
+.RE
+.PP
+Use \fBAttributes\fP to style drawing elements\&. Element transforms, the final bone and sprite transforms, and the layer's conversion to port coordinates are applied automatically\&. Opacity multiplies through the hierarchy\&. Do not transform the artwork to world or port coordinates yourself\&.
+
+.PP
+Nested drawings retain their child contents and map the child's bounds to the destination rectangle\&. \fBElementRef\fP objects also keep drawing contents alive\&. \fBDrawing\fP containment cycles are rejected\&.
+
+.PP
+\fBErrors and registration changes\fP
+.RS 4
+Registration throws if the pose is not enabled, the bone or slot is invalid, or an option has an invalid type or value\&. A slot is not allowed with \fR\fBpdg\&.animationDraw_BeforeAll\fP\fP or \fR\fBpdg\&.animationDraw_AfterAll\fP\fP\&.
+.RE
+.PP
+Adding, removing, or enabling registrations during drawing takes effect after the current frame\&. A rendering failure disables the failing registration; \fBgetAnimationDrawableError()\fP returns its diagnostic\&. Register the artwork again to retry\&. A failed replacement leaves the authored image visible; a successful replacement suppresses that image even when the \fBDrawing\fP is empty\&.
+
+.PP
+Returned drawings and their images remain alive until their rendering finishes\&. \fBImage\fP opacity is restored after drawing, including on failure\&. Edits to shared drawing contents and pixels already drawn are not rolled back by a later error\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Headless builds retain registrations but do not draw artwork or invoke drawing callbacks\&. Use \fBisAnimationDrawingSupported()\fP to check drawing capability\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite::addAnimationDrawable(function, object)\fP 
+
+.PP
+\fBSprite::enableAnimationPose()\fP 
+
+.PP
+\fBSprite::setAnimationDrawableEnabled()\fP 
+
+.PP
+\fBSprite::removeAnimationDrawable()\fP 
+
+.PP
+\fBSprite::getAnimationDrawableError()\fP 
+.RE
+.PP
+
+.SS "uint addAnimationDrawable (function callback, object options)"
+
+.PP
+choose or create artwork for an animation bone during drawing Use this overload when the artwork depends on the final animation pose or on application state at draw time\&. PDG calls your function synchronously during rendering\&. Return a \fBDrawing\fP to display it, or \fRnull\fP to draw nothing\&.
+
+.PP
+If you only need to edit an existing drawing, use the \fBDrawing\fP overload; those edits appear automatically without a JavaScript callback on each draw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIcallback\fP A synchronous function called as \fRcallback(context)\fP\&. It must return a \fBDrawing\fP or \fRnull\fP\&. See Callback context below\&. 
+.br
+\fIoptions\fP An object selecting the bone, placement, and optional drawing settings\&. Both overloads use the same \fBDrawing options\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero unsigned integer identifying the registration\&. Pass this ID to \fBsetAnimationDrawableEnabled()\fP, \fBremoveAnimationDrawable()\fP, or \fBgetAnimationDrawableError()\fP\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before registering the callback\&. The sprite's animations must have a fixed hierarchy, as described in the \fBDrawing\fP overload\&.
+.RE
+.PP
+\fBExample: show a hand highlight on demand\fP
+.RS 4
+This example assumes \fRsprite\fP already has an enabled animation pose and a bone named \fRhand\fP, as in the \fBDrawing\fP overload's example\&. Update \fRhighlightEnabled\fP from your application's input or update code\&.
+.RE
+.PP
+.PP
+.nf
+const highlight = pdg\&.createDrawing();
+highlight\&.addRect(
+    new pdg\&.Rect(\-5, \-5, 5, 5),
+    new pdg\&.Attributes()\&.fillColor('yellow')\&.fillOpacity(0\&.5)
+);
+
+let highlightEnabled = true;
+const highlightId = sprite\&.addAnimationDrawable(function(context) {
+    const hand = context\&.getTransform();
+    return highlightEnabled && hand\&.alpha > 0 ? highlight : null;
+}, {
+    bone: 'hand',
+    placement: pdg\&.animationDraw_AfterAll
+});
+.fi
+.PP
+
+.PP
+The returned \fBDrawing\fP still uses coordinates relative to the bone\&. PDG applies the bone's transform; the callback does not need to reposition the artwork\&.
+
+.PP
+\fBCallback context\fP
+.RS 4
+The \fRcontext\fP object exposes these two methods:
+.RE
+.PP
+Method  Result  \fRgetTransform(space)\fP  An owned transform object with \fRx\fP, \fRy\fP, \fRrotation\fP (radians), \fRscaleX\fP, \fRscaleY\fP, and \fRalpha\fP fields for the selected bone\&.  \fRcopyPose()\fP  An owned snapshot of the final animation pose\&.  
+
+.PP
+The optional \fRspace\fP argument uses one of these numeric constants:
+.IP "\(bu" 2
+\fR\fBpdg\&.animationSpace_Local\fP:\fP relative to the bone's parent\&.
+.IP "\(bu" 2
+\fR\fBpdg\&.animationSpace_Rig\fP:\fP relative to the animation rig's origin\&.
+.IP "\(bu" 2
+\fR\fBpdg\&.animationSpace_World\fP\fP (default): in the owning layer's coordinates\&.
+.PP
+
+.PP
+\fBWarning\fP
+.RS 4
+The context expires when the callback returns\&. Do not save it for later use\&. Transform objects and pose snapshots returned by its methods are independent copies and may be retained\&.
+.RE
+.PP
+\fBCallback timing\fP
+.RS 4
+Rendering may run zero or multiple times per animation update\&. The callback can inspect the pose and choose, create, or edit artwork, but must not advance animation or integrate simulation\&. Keep time-dependent state changes in your application's update code\&.
+.RE
+.PP
+\fBErrors and replacement images\fP
+.RS 4
+Registration uses the same validation rules as the \fBDrawing\fP overload\&. During drawing, a thrown exception or an invalid return value disables the registration and releases its callback\&. Returning \fRundefined\fP, an array, another kind of object, or a Promise is invalid\&. Use \fBgetAnimationDrawableError()\fP to read the diagnostic; register a new callback to retry\&.
+.RE
+.PP
+For \fR\fBpdg\&.animationDraw_ReplaceSlot\fP\fP, returning \fRnull\fP or an empty \fBDrawing\fP successfully hides the named authored image\&. A failed callback or rendering failure leaves that image visible\&. Other authored images are unaffected\&.
+
+.PP
+Adding, removing, or enabling registrations inside a callback takes effect after the current frame\&. Edits to shared drawing contents are ordinary application changes and are not rolled back if the callback later fails\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Headless builds retain callbacks without invoking them\&. Use \fBisAnimationDrawingSupported()\fP to check drawing capability\&. See the \fBDrawing\fP overload for bounds, stroke thickness, and rendering behavior shared by both forms\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite::addAnimationDrawable(Drawing, object)\fP 
+
+.PP
+\fBSprite::enableAnimationPose()\fP 
+
+.PP
+\fBSprite::setAnimationDrawableEnabled()\fP 
+
+.PP
+\fBSprite::removeAnimationDrawable()\fP 
+
+.PP
+\fBSprite::getAnimationDrawableError()\fP 
+.RE
+.PP
+
+.SS "uint addAnimationIK (object config, int order = \fR0\fP)"
+
+.PP
+Register a two-bone inverse-kinematics controller\&. Validates a trial solve before registration\&. The controller runs in animationStage_Constraint on each evaluation, using the freshly sampled joint offsets\&. Inspect its result to distinguish unreachable, limited, and stretched solutions\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIconfig\fP Configuration object described below\&. 
+.br
+\fIorder\fP Signed integer ordering within the constraint stage; default 0\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A modifier ID usable with \fBsetAnimationIKTarget()\fP, \fBgetAnimationIKResult()\fP, and \fBremoveAnimationModifier()\fP\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&. The example assumes the rig has a contiguous shoulder/forearm/hand chain\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const ikId = sprite\&.addAnimationIK({
+    root: 'shoulder', middle: 'forearm', tip: 'hand',
+    targetX: 12, targetY: 8, space: pdg\&.animationSpace_Rig
+});
+sprite\&.setAnimationIKTarget(ikId, 14, 6, pdg\&.animationSpace_Rig);
+
+.fi
+.PP
+.RE
+.PP
+
+.PP
+\fBTwo-bone IK configuration\fP
+.RS 4
+Field  Default  Meaning  \fRroot\fP, \fRmiddle\fP, \fRtip\fP  Required  Bone names or IDs forming a contiguous parent-child-child chain\&.  \fRtargetX\fP, \fRtargetY\fP  0  Finite target position in the selected space\&.  \fRspace\fP  animationSpace_Rig  Local uses the root bone's parent frame; World uses the owning layer\&.  \fRrootLength\fP, \fRmiddleLength\fP  0  Zero derives length from the rig or child offset\&. Explicit positive lengths must match the joint offsets\&. Display widths are ignored\&.  \fRinfluence\fP  1  Finite blend weight from 0 to 1\&.  \fRbendDirection\fP  1  Integer +1 or -1 selecting the elbow side\&.  \fR\fBstretch\fP\fP  animationIK_NoStretch  Use animationIK_Stretch to allow extending toward out-of-reach targets\&.  \fRmatchOrientation\fP  false  Whether to aim the tip rotation as well as its position\&.  \fRtargetRotation\fP  0  Finite clockwise target angle in radians\&.  \fRrootMin\fP, \fRmiddleMin\fP  -Math\&.PI  Minimum local joint angles in radians\&.  \fRrootMax\fP, \fRmiddleMax\fP  Math\&.PI  Maximum local joint angles in radians\&.  
+.RE
+.PP
+Nonuniform scales and reflections are supported when effective scales are nonsingular\&. Zero-length segments, incompatible offsets, invalid limits, and singular transforms are rejected atomically\&.
+
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationIKTarget()\fP, \fBgetAnimationIKResult()\fP, \fBremoveAnimationModifier()\fP 
+.RE
+.PP
+
+.SS "uint addAnimationModifier (function callback, int stage = \fR\fBanimationStage_PreConstraint\fP\fP, int order = \fR0\fP)"
+
+.PP
+Register a procedural pose modifier\&. Modifiers run after source sampling and persistent overrides\&. They run by stage, then ascending order, then registration order\&. Each sees earlier successful edits\&. Keep evolving controller state in your own objects and apply it to each fresh pose; do not accumulate the previous final pose\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIcallback\fP Synchronous function(view, context), described below\&. 
+.br
+\fIstage\fP \fBpdg\&.animationStage_PreConstraint\fP, \fBpdg\&.animationStage_Constraint\fP, or \fBpdg\&.animationStage_PostConstraint\fP\&. 
+.br
+\fIorder\fP Signed integer sort order within the stage; default 0\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A nonzero modifier ID for removal or diagnostics\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&. Inside callbacks, edit through the view\&. Perform playback, rig, physics, and layer changes outside the callback\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const modifierId = sprite\&.addAnimationModifier(function(view, context) {
+    view\&.rotateLocal('hand', 0\&.15);
+}, pdg\&.animationStage_PostConstraint);
+
+.fi
+.PP
+.RE
+.PP
+
+.PP
+\fBModifier callback arguments\fP
+.RS 4
+Argument / operation  Meaning  \fRview\&.copy()\fP  Return an owned pose snapshot (\fBanimation_pose_snapshot\fP)\&.  \fRview\&.getLocalTransform(bone)\fP  Copy a bone's parent-local transform\&. Bone arguments accept a name or numeric ID\&.  \fRview\&.getTransform(bone, space)\fP  Copy a Local, Rig, or World transform; Local is the default\&.  \fRview\&.setLocalTransform(bone, transform)\fP  Replace all six finite parent-local components; alpha must be from 0 to 1\&.  \fRview\&.rotateLocal(bone, radians)\fP  Add a finite clockwise rotation in radians\&.  \fRcontext\&.deltaSeconds\fP  Elapsed seconds; zero for explicit reevaluation\&.  \fRcontext\&.root\fP  \fBSprite\fP root transform in owning-layer coordinates\&.  \fRcontext\&.revision\fP  Pipeline revision as a decimal string\&.  
+.RE
+.PP
+The view expires when the synchronous callback returns\&. Keep copies, not the view\&. The context is read-only\&. Return values are ignored, but returning a Promise is an error\&. An exception or invalid edit rolls back that callback's changes, disables it, and records a diagnostic\&. Registration/removal/source changes requested during evaluation take effect afterward\&.
+
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBremoveAnimationModifier()\fP, \fBgetAnimationModifierError()\fP, \fBaddAnimationIK()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::animationStage_PreConstraint\fP\&.
 .SS "addFramesImage (\fBImage\fP image, int startingFrame = \fR\fBstart_FromFirstFrame\fP\fP, int numFrames = \fR\fBall_Frames\fP\fP)"
 
 .PP
@@ -874,6 +1473,62 @@ applies a character map to the sprite for visual customization
 
 .PP
 returns true if spriter events are enabled for this sprite 
+.SS "\fBSprite\fP attachAnimationPhysicsPart (\fBPart\fP part, \fBPart\fP parent = \fRnull\fP)"
+
+.PP
+Register a physical \fBPart\fP in a physical rig's mass assembly\&. Adds the \fBPart\fP's existing mass to physics\&.getMass()\&. No other body's mass or inertia changes\&. The \fBPart\fP must belong to this \fBSprite\fP and already have a body\&. An accessory must have no \fBPart\fP parent, bone/slot/socket binding, or mounted \fBSprite\fP\&. Its current control mode is retained\&. Skeletal Parts previously detached from this rig can be registered again; they start Dynamic\&.
+
+.PP
+The optional parent records assembly hierarchy for subtree detachment\&. It does not create a joint, move a body, bind artwork, or claim an animation drive\&. Create joints explicitly with \fBPhysicsBody\fP\&. For skeletal Parts, the nearest attached skeletal ancestor is automatic, and an explicit parent must match\&. For accessories, an omitted or null parent means an independent assembly member\&. Registering the same \fBPart\fP again is harmless; changing its parent requires detach\&.
+
+.PP
+Only registered bodies contribute to the total; arbitrary joint connectivity never adds mass\&. Whole-rig animation modes and recovery select attached skeletal bodies\&. An accessory keeps its own body control, responding through its joints\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIpart\fP Physical \fBPart\fP owned by this \fBSprite\fP\&. 
+.br
+\fIparent\fP Attached \fBPart\fP used for assembly hierarchy; optional, default null\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires an enabled rig from \fBsetupPhysicsFromAnimationRig()\fP or \fBsetupAnimationPhysics()\fP, and a Chipmunk layer\&. Use \fBtransferPart()\fP to move a foreign \fBPart\fP into this \fBSprite\fP before registering it\&. Call outside animation modifiers and locked physics callbacks\&. Finish or cancel active recovery first\&. Explicitly release manual/Part-IK drives before reattaching skeletal bodies\&. Invalid edits throw before changing membership\&. Membership edits cancel pending mode-completion notices\&. The example assumes a rig with a hand \fBPart\fP and layer coordinates measured in centimeters\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const hand = sprite\&.findPart('hand');
+const weight = sprite\&.createPart('weight');
+const body = weight\&.setupPhysicsBody(10, 400); // kg and kg*cm^2
+const grip = hand\&.physics\&.getState();
+body\&.teleport(new pdg\&.Point(grip\&.x, grip\&.y), grip\&.rotation);
+weight\&.setupCollider()\&.setBox(new pdg\&.Rect(\-10, \-5, 10, 5));
+sprite\&.attachAnimationPhysicsPart(weight, hand);
+hand\&.physics\&.createPivotJoint(body); // body\-local origins coincide
+hand\&.physics\&.createGear(body, 1, 0); // retain their relative angle
+// A 50 kg character now reports 60 kg\&.
+sprite\&.detachAnimationPhysicsPart(weight); // drops it; total returns to 50 kg
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBdetachAnimationPhysicsPart()\fP, \fBisAnimationPhysicsPartAttached()\fP, \fBsetupPhysicsFromAnimationRig()\fP 
+.RE
+.PP
+
 .SS "attachSprite (\fBSprite\fP sprite, string attachPointName)"
 
 .PP
@@ -894,29 +1549,14 @@ Smoothly blend from current Spriter animation to a new Spriter animation by ID o
 The blend operation interpolates between the current animation frame and the corresponding frame in the target animation\&. This creates a smooth transition that maintains the sprite's visual continuity\&.
 
 .PP
-During the blend, the sprite will emit animation events and can be monitored for blend completion\&. The blend time determines how quickly the transition occurs\&.
+The duration is a floating-point number of seconds\&. Progress is normalized from 0 to 1, and pausing freezes both playback and the visible blend\&. Starting a blend resumes paused playback\&. A completed blend emits one animation-blend-complete event on the normal update path\&. Starting another animation or blend cancels the pending completion of the old blend\&.
 
 .PP
-\fBWarning\fP
-.RS 4
-If the target animation ID is invalid, the blend will fail silently 
+Invalid targets and nonfinite durations leave playback unchanged\&. Zero or negative durations complete on the next animation update\&. This method returns no value\&.
 
 .PP
-This only works for blending between Spriter animations
-.RE
-.PP
-\fBNote\fP
-.RS 4
-The blend time must be positive (greater than 0) 
+This is a phase-aligned Spriter blend, not an independently timed crossfade\&.
 
-.PP
-If no animation is currently playing, the new animation will start immediately
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-true if the blend was successfully initiated, false otherwise
-.RE
 .PP
 \fBSee also\fP
 .RS 4
@@ -949,29 +1589,14 @@ Smoothly blend from current animation to a new animation by name over the specif
 The blend operation interpolates between the current animation frame and the corresponding frame in the target animation\&. This creates a smooth transition that maintains the sprite's visual continuity\&.
 
 .PP
-During the blend, the sprite will emit animation events and can be monitored for blend completion\&. The blend time determines how quickly the transition occurs\&.
+The duration is a floating-point number of seconds\&. Progress is normalized from 0 to 1, and pausing freezes both playback and the visible blend\&. Starting a blend resumes paused playback\&. A completed blend emits one animation-blend-complete event on the normal update path\&. Starting another animation or blend cancels the pending completion of the old blend\&.
 
 .PP
-\fBWarning\fP
-.RS 4
-If the target animation name is invalid, the blend will fail silently 
+Invalid targets and nonfinite durations leave playback unchanged\&. Zero or negative durations complete on the next animation update\&. This method returns no value\&.
 
 .PP
-This only works for blending between Spriter animations
-.RE
-.PP
-\fBNote\fP
-.RS 4
-The blend time must be positive (greater than 0) 
+This is a phase-aligned Spriter blend, not an independently timed crossfade\&.
 
-.PP
-If no animation is currently playing, the new animation will start immediately
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-true if the blend was successfully initiated, false otherwise
-.RE
 .PP
 \fBSee also\fP
 .RS 4
@@ -992,54 +1617,285 @@ true if the blend was successfully initiated, false otherwise
 
 .PP
 replace all references in the sprite to one image with another image 
+.SS "clearAnimationBoneTransforms ()"
+
+.PP
+Remove every persistent bone override\&. The next evaluation uses the selected source and modifiers without these overrides\&. Calling when pose access is disabled is harmless\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call outside animation callbacks\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationBoneTransform()\fP 
+.RE
+.PP
+
+.SS "clearAnimationDrawables ()"
+
+.PP
+Remove all custom drawing registrations\&. Releases retained Drawings and callbacks\&. During drawing, clearing takes effect after the current draw finishes\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationDrawable()\fP, \fBremoveAnimationDrawable()\fP 
+.RE
+.PP
+
+.SS "clearAnimationModifiers ()"
+
+.PP
+Remove all modifiers and IK controllers\&. Releases callbacks and diagnostics\&. A request made during evaluation is applied afterward\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBremoveAnimationModifier()\fP, \fBaddAnimationModifier()\fP 
+.RE
+.PP
+
+.SS "\fBSprite\fP clearAnimationPhysicsRoot ()"
+
+.PP
+Restore automatic physical root selection\&. Applies the same live-mapping validation as \fBsetAnimationPhysicsRoot()\fP\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsRoot()\fP 
+.RE
+.PP
+
+.SS "clearParts ()"
+
+.PP
+Remove all owned Parts\&. Detaches mounts, authored bindings, and physics bodies\&. Retained \fBPart\fP references remain usable with their local state, but no longer update with the \fBSprite\fP\&. If any \fBPart\fP belongs to the active physical rig, throws before removing anything; call \fBdisableAnimationPhysics()\fP first\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBremovePart()\fP, \fBPart::isAttached()\fP 
+.RE
+.PP
+
+.SS "\fBPart\fP createPart (string name)"
+
+.PP
+Create an independently animated \fBPart\fP\&. The \fBSprite\fP owns and advances the \fBPart\fP\&. Names must be nonempty and unique within this \fBSprite\fP; invalid names throw\&. Parts do not require Spriter artwork or physics\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Nonempty name unique within the owning \fBSprite\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The new \fBPart\fP\&. Its ID remains stable while owned by this \fBSprite\fP; \fBtransferPart()\fP assigns a new destination-local ID\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const hand = sprite\&.createPart('hand');
+hand\&.moveTo(new pdg\&.Point(12, 0), 0\&.25, pdg\&.easeInOutQuad);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBfindPart()\fP, \fBgetPart()\fP, \fBremovePart()\fP 
+.RE
+.PP
+
 .SS "deserialize (\fBDeserializer\fP deserializer)"
 
 .PP
-update this sprite from the data in stream 
+Restore selected state from a \fBSprite\fP record\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdeserializer\fP Reader positioned at a raw \fBSprite\fP record\&. An initial record supplies its state flags, frame artwork and playback cursor\&. It replaces existing frame images and collision masks, retaining shared resources\&. Independent and authored Parts restore their IDs/names, parent/binding links, artwork, animation tracks and bodies\&. Imported assets, clip/transition state, retained \fBDrawing\fP artwork and built-in rig IK are restored before their dependents\&. Previously retained Parts are detached when replaced; IDs removed before saving are not reused\&. Incremental updates use the destination layer's serialization flags\&. Resource resolution, validation or unsupported-format failures throw; discard the reader and destination after a failed load\&. This operation is not an atomic scene load\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite::serialize()\fP, \fBSerializer::setResourceMode()\fP 
+.RE
+.PP
+
+.SS "\fBSprite\fP detachAnimationPhysicsPart (\fBPart\fP part, boolean includeDescendants = \fRtrue\fP)"
+
+.PP
+Release a \fBPart\fP or subtree from the physics assembly\&. Removes the selected members' masses from the \fBSprite\fP total without redistributing any mass or inertia\&. Skeletal bodies become Dynamic and stop following animation; artwork continues following their physical bones\&. Body identity, pose, velocity, collider geometry and collision filters are retained\&. Joints within the selected set remain intact; every joint crossing its boundary is disconnected, including connections to external bodies\&. Retained disconnected constraint handles are safe to inspect but report inactive\&.
+
+.PP
+Descendants follow assembly hierarchy, including registered accessories\&. With includeDescendants false, surviving children are logically reparented to the nearest surviving ancestor; no replacement physical joints are created\&. Detached bodies are excluded from whole-rig control, recovery and aggregate mass edits\&. Address them directly through their \fBPart\fP's physics object\&.
+
+.PP
+If the selected root leaves, the remaining attached skeletal bone named root is preferred, otherwise the one with the most assembly descendants (ties use body definition order)\&. Whole-Sprite impulses and root follow use this replacement\&. At least one skeletal body must remain; \fBdisableAnimationPhysics()\fP tears down the whole rig\&. Detaching a nonmember is a no-op\&.
+
+.PP
+This releases assembly membership, not \fBSprite\fP ownership\&. Parts and bodies remain alive while this Sprite/rig does\&. Disabling the rig removes all originally mapped bodies, including detached ones\&. Ordinary accessory Parts retain their bodies but stop contributing to the aggregate\&. Removing an accessory \fBPart\fP or its body also removes its membership\&. Mapped \fBPart\fP removal still requires rig disable; \fBtransferPart()\fP can instead release mapped bodies into another \fBSprite\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIpart\fP \fBPart\fP owned by this \fBSprite\fP\&. 
+.br
+\fIincludeDescendants\fP Include the assembly subtree; optional, default true\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+The same rig, callback and recovery restrictions as \fBattachAnimationPhysicsPart()\fP apply\&. Release manual/Part-IK drives on selected skeletal bodies first\&. Reattachment does not restore disconnected joints or snap the piece into place; restore the desired pose/constraints explicitly\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBattachAnimationPhysicsPart()\fP, \fBisAnimationPhysicsPartAttached()\fP, \fBdisableAnimationPhysics()\fP 
+.RE
+.PP
+
 .SS "detachSprite (\fBSprite\fP sprite)"
 
 .PP
 detaches the specified sprite from this sprite 
-.SS "\fBSprite\fP disableCollisions ()"
+.SS "disableAnimationPhysics (number recoveryTime = \fR0\&.5\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
 
 .PP
-stop checking for collisions with this sprite 
-.SS "disconnect (\fBSprite\fP otherSprite = \fRALL_SPRITES\fP)"
+Recover animation control before removing the physical rig\&. Uses the same collision-aware recovery as \fBsetAnimationPhysicsMode()\fP, defaulting to 0\&.5 seconds\&. The rig and its colliders remain active until recovery actually completes; \fBisAnimationPhysicsEnabled()\fP remains true meanwhile\&. Blocked or force-limited recovery may take longer than the requested duration\&. A new mode command cancels pending disable\&. Zero removes the rig immediately\&.
 
 .PP
-remove all connections (joints) to another sprite If otherSprite is not passed in, it will remove all joints for this sprite, regardless of what sprite they are connected to\&. 
-.SS "\fBSprite\fP enableCollisions (int collisionType = \fR\fBcollide_AlphaChannel\fP\fP)"
+On completion, restores the \fBSprite\fP body's saved mode and collision filter and transfers the selected root body's linear/angular velocity\&. The explicit or generated rig's current total mass transfers to the single \fBSprite\fP body, keeping that body's previous single-body inertia\&. This is not a momentum-conserving merge\&. Mapped colliders and joints detach; retained mapped Parts remain body-free, and retained body handles stop contributing mass\&. Emits action_AnimationPhysicsRecoveryComplete with disabled true after teardown\&. Calling without an active rig is harmless\&.
 
 .PP
-start checking for collisions with this sprite Collision Types are:
-
-.PP
-.IP "\(bu" 2
-\fBcollide_None\fP -- actually calls \fBdisableCollisions()\fP
-.IP "\(bu" 2
-\fBcollide_Point\fP -- just collide with the centerpoint of the sprite\&. Very fast\&.
-.IP "\(bu" 2
-\fBcollide_BoundingBox\fP -- collide with the boundaries of the sprite (rotated if necessary)\&. Reasonably fast\&.
-.IP "\(bu" 2
-\fBcollide_CollisionRadius\fP -- collide with all points within a given radius of the sprite (best guess at radius based on sprite height and width is used unless \fBsetCollisionRadius()\fP is called\&. Very fast\&.
-.IP "\(bu" 2
-\fBcollide_AlphaChannel\fP -- per-pixel collision based on the alpha channel of the sprite's current frame\&. This is the most accurate, but also the slowest\&. Avoid it if another collision check gives acceptable results, especially with fast-moving items where the difference between a hit and near miss is not obviously visible to the player\&.
-.PP
-
-.PP
-\fBWarning\fP
+\fBParameters\fP
 .RS 4
-you must have called \fBImage\&.retainAlpha()\fP on the sprite's image(s) in order to use \fBcollide_AlphaChannel\fP 
+\fIrecoveryTime\fP Finite nonnegative seconds; default 0\&.5, zero for immediate teardown\&. 
+.br
+\fIdirection\fP Rotation route; default rotationDirection_AsSpecified\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call outside animation modifiers and locked physics callbacks\&. Release any manual or \fBPart\fP IK drives explicitly before disabling\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsMode()\fP, \fBisAnimationPhysicsEnabled()\fP 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&. 
 .RE
 .PP
 
 .PP
-References \fBpdg::collide_AlphaChannel\fP\&.
-.SS "enableSpriterEvents (boolean enable = \fRtrue\fP)"
+References \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "disableAnimationPose ()"
 
 .PP
-enables or disables spriter-specific events for this sprite 
-.SS "fadeIn (int msDuration, int easing = \fR\fBlinearTween\fP\fP)"
+Release the current pose rig\&. Disables animation physics and clears pose overrides, modifiers, IK, custom drawing registrations, and debug flags\&. Parts following the old rig become unbound\&. Ordinary \fBSprite\fP animation remains available\&. Calling when disabled is harmless\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call outside animation callbacks\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBenableAnimationPose()\fP, \fBisAnimationPoseEnabled()\fP 
+.RE
+.PP
+
+.SS "boolean enableAnimationPose (string referenceAnimation)"
+
+.PP
+Enable pose access using a reference clip\&. Builds a stable rig from the selected Spriter entity and reference clip\&. The rig requires compatible bone, image, point, and box tracks with a fixed hierarchy\&. Nested entities and changing hierarchies are unsupported\&. On success, clears previous bone overrides, modifiers, IK controllers, custom drawings, and debug flags\&. A failed attempt preserves the previous enabled pose and records a diagnostic\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIreferenceAnimation\fP Name of an existing reference clip in the current Spriter entity\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True on success; false if the rig cannot be enabled\&. Read \fBgetAnimationRigError()\fP after failure\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Load Spriter data and select its entity first\&. Call outside animation callbacks and disable animation physics before replacing the rig\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+if (!sprite\&.enableAnimationPose('reference')) {
+    throw new Error(sprite\&.getAnimationRigError());
+}
+const boneNames = sprite\&.getAnimationBoneNames();
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBdisableAnimationPose()\fP, \fBgetAnimationPose()\fP, \fBgetAnimationRigError()\fP 
+.RE
+.PP
+
+.SS "fadeIn (number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
 fade in to full opacity over time Generates an \fBeventType_SpriteAnimate\fP \fBaction_FadeInComplete\fP event when done\&.
@@ -1074,7 +1930,7 @@ myOtherSprite\&.wait(2000)\&.fadeIn(1000);  // wait 2 seconds, then fade in
 
 .PP
 References \fBpdg::linearTween\fP\&.
-.SS "fadeOut (int msDuration, int easing = \fR\fBlinearTween\fP\fP)"
+.SS "fadeOut (number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
 fade out full transparency over time Generates an \fBeventType_SpriteAnimate\fP \fBaction_FadeOutComplete\fP event when done\&.
@@ -1109,7 +1965,7 @@ myOtherSprite\&.wait(2000)\&.fadeOut(1000);  // wait 2 seconds, then fade out
 
 .PP
 References \fBpdg::linearTween\fP\&.
-.SS "fadeTo (number targetOpacity, int msDuration, int easing = \fR\fBlinearTween\fP\fP)"
+.SS "fadeTo (number targetOpacity, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
 fade in to a specific opacity over time Generates an \fBeventType_SpriteAnimate\fP \fBaction_FadeComplete\fP event when done\&.
@@ -1144,23 +2000,399 @@ myOtherSprite\&.wait(2000)\&.fadeTo(0\&.5, 1000);  // wait 2 seconds, then fade 
 
 .PP
 References \fBpdg::linearTween\fP\&.
-.SS "\fBCpConstraint\fP gear (\fBSprite\fP otherSprite, number gearRatio, number initialAngle = \fR0\fP, number breakingForce = \fR0\fP)"
+.SS "\fBPart\fP findPart (string name)"
 
 .PP
-join two sprites as if they were geared together (\fIChipmunk Physics Only\fP) Whenever this sprite spins, it will force the other to spin the same amount (adjusted by the gear ratio)\&.
-
+Find an owned \fBPart\fP by name\&. 
 .PP
-If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of rotational force (torque) is applied to the joint\&.
-
+\fBParameters\fP
+.RS 4
+\fIname\fP The exact name passed to \fBcreatePart()\fP\&.
+.RE
 .PP
 \fBReturns\fP
 .RS 4
-the cpConstraint for the Joint in case you want to do anything special with it
+The matching \fBPart\fP, or null if no \fBPart\fP has that name\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBcreatePart()\fP, \fBgetPart()\fP 
+.RE
+.PP
+
+.SS "Array getAnimationBindingNames ()"
+
+.PP
+List current binding names\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A new array of strings in binding-ID order, or an empty array when pose access is disabled\&. IDs belong to this rig and should not be reused after replacing it\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBenableAnimationPose()\fP, \fBgetAnimationBindingTransform()\fP 
+.RE
+.PP
+
+.SS "object getAnimationBindingTransform (string name, int space = \fR\fBanimationSpace_Local\fP\fP)"
+
+.PP
+Copy an evaluated binding transform\&. Evaluates the current pose, including overrides and controllers\&. Unknown names, unavailable poses, and invalid spaces throw\&. Returned values are independent of the live \fBSprite\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Exact binding name returned by \fBgetAnimationBindingNames()\fP\&. 
+.br
+\fIspace\fP Integer coordinate-space constant: \fR\fBpdg\&.animationSpace_Local\fP\fP (parent frame), \fR\fBpdg\&.animationSpace_Rig\fP\fP, or \fR\fBpdg\&.animationSpace_World\fP\fP (owning layer)\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An object with x, y, rotation, scaleX, scaleY, and alpha; see \fBanimation_pose_snapshot\fP\&.
 .RE
 .PP
 \fBNote\fP
 .RS 4
-this only affects rotation, it does not join them in any other way, so they are still free to move around independently otherwise\&. 
+Call \fBenableAnimationPose()\fP successfully before using this method\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationBindingNames()\fP, \fBgetAnimationPose()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::animationSpace_Local\fP\&.
+.SS "Array getAnimationBoneNames ()"
+
+.PP
+List current bone names\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A new array of strings in bone-ID order, or an empty array when pose access is disabled\&. IDs belong to this rig and should not be reused after replacing it\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBenableAnimationPose()\fP, \fBgetAnimationBoneTransform()\fP 
+.RE
+.PP
+
+.SS "object getAnimationBoneTransform (string name, int space = \fR\fBanimationSpace_Local\fP\fP)"
+
+.PP
+Copy an evaluated bone transform\&. Evaluates the current pose, including overrides and controllers\&. Unknown names, unavailable poses, and invalid spaces throw\&. Returned values are independent of the live \fBSprite\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Exact bone name returned by \fBgetAnimationBoneNames()\fP\&. 
+.br
+\fIspace\fP Integer coordinate-space constant: \fR\fBpdg\&.animationSpace_Local\fP\fP (parent frame), \fR\fBpdg\&.animationSpace_Rig\fP\fP, or \fR\fBpdg\&.animationSpace_World\fP\fP (owning layer)\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An object with x, y, rotation, scaleX, scaleY, and alpha; see \fBanimation_pose_snapshot\fP\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationBoneNames()\fP, \fBgetAnimationPose()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::animationSpace_Local\fP\&.
+.SS "int getAnimationDebugDraw ()"
+
+.PP
+Read the selected debug overlays\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current animationDebug bitmask; zero means no overlays\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationDebugDraw()\fP 
+.RE
+.PP
+
+.SS "string getAnimationDrawableError (uint id)"
+
+.PP
+Read a drawing callback diagnostic\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP Existing ID returned by \fBaddAnimationDrawable()\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An empty string when no error is recorded, otherwise the failure text\&. Throws for an unknown ID\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationDrawable()\fP, \fBremoveAnimationDrawable()\fP 
+.RE
+.PP
+
+.SS "object getAnimationDrawBounds ()"
+
+.PP
+Copy the evaluated animation drawing bounds\&. Includes authored images and enabled custom drawings\&. Custom bounds come from their declared bone-local rectangles\&. These are rendering/culling bounds and do not create collision shapes\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An object with left, top, right, bottom in owning-layer coordinates and an uncullable boolean\&. When uncullable is true, the rectangle cannot safely cull all content\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationDrawable()\fP, \fBgetAnimationPose()\fP 
+.RE
+.PP
+
+.SS "object getAnimationIKResult (uint id)"
+
+.PP
+Copy the latest IK solve result\&. Refreshes the pose first\&. Throws for an unknown IK ID or a controller whose last evaluation failed; \fBgetAnimationModifierError()\fP exposes the diagnostic\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP ID returned by \fBaddAnimationIK()\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An independent result object described below\&.
+.RE
+.PP
+
+.PP
+\fBIK result fields\fP
+.RS 4
+Field  Meaning  \fRreachError\fP  Remaining target distance in the owning-layer coordinates\&.  \fRreachable\fP  Whether the resulting tip reaches the target within tolerance\&.  \fRclamped\fP  Whether the target was clamped to available reach\&.  \fRlimited\fP  Whether joint-angle limits constrained the solve\&.  \fRstretched\fP  Whether allowed stretch extended a segment\&.  
+.RE
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationIKTarget()\fP, \fBgetAnimationModifierError()\fP 
+.RE
+.PP
+
+.SS "string getAnimationModifierError (uint id)"
+
+.PP
+Read a modifier failure diagnostic\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP An existing modifier or IK controller ID\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An empty string if no failure is recorded, otherwise the failure text\&. Throws for an unknown ID or a disabled pose pipeline\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationModifier()\fP, \fBremoveAnimationModifier()\fP 
+.RE
+.PP
+
+.SS "object getAnimationPhysicsDriveSettings (string bone)"
+
+.PP
+Copy one physical bone's configured drive settings\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbone\fP Required included bone name or ID; no subtree or whole-rig query\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Independent \fRsettings record\fP, or null when unconfigured\&. Stored settings remain available in every mode\&. Missing rigs or unmapped bones throw\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsDriveSettings()\fP 
+.RE
+.PP
+
+.SS "object getAnimationPhysicsDriveSettings (uint bone)"
+
+.PP
+Copy one physical bone's configured drive settings\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbone\fP Required included bone name or ID; no subtree or whole-rig query\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Independent \fRsettings record\fP, or null when unconfigured\&. Stored settings remain available in every mode\&. Missing rigs or unmapped bones throw\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsDriveSettings()\fP 
+.RE
+.PP
+
+.SS "int getAnimationPhysicsMode (string bone = \fRundefined\fP, boolean includeDescendants = \fRfalse\fP)"
+
+.PP
+Query the actual control mode of a skeleton selection\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbone\fP Bone name or ID; omit for the whole rig\&. 
+.br
+\fIincludeDescendants\fP Include descendants; default false\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Common AnimationPhysicsMode, or animationPhysics_Mixed\&. Recovery reports Driven until it completes\&. A manual drive remains Dynamic in this rig query\&. Missing rigs and empty selections throw\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsMode()\fP 
+.RE
+.PP
+
+.SS "int getAnimationPhysicsMode (uint bone = \fRundefined\fP, boolean includeDescendants = \fRfalse\fP)"
+
+.PP
+Query the actual control mode of a skeleton selection\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbone\fP Bone name or ID; omit for the whole rig\&. 
+.br
+\fIincludeDescendants\fP Include descendants; default false\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Common AnimationPhysicsMode, or animationPhysics_Mixed\&. Recovery reports Driven until it completes\&. A manual drive remains Dynamic in this rig query\&. Missing rigs and empty selections throw\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsMode()\fP 
+.RE
+.PP
+
+.SS "uint getAnimationPhysicsRoot ()"
+
+.PP
+Read the selected physical root bone ID\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Current rig bone ID, using automatic selection when no override exists\&. Requires an enabled pose; does not require a physical rig\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsRoot()\fP 
+.RE
+.PP
+
+.SS "Array getAnimationPhysicsSetupWarnings ()"
+
+.PP
+Copy diagnostics from the last successful generated setup\&. Reports reference-artwork inference, missing artwork, skipped segments and any 1 mm root fallback\&. Geometry remains inspectable through each \fBPart\fP's \fBCollider\fP\&. Failed setup preserves the previous diagnostics\&. Rig replacement clears them\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Independent array of diagnostic strings; empty before generated setup\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetupPhysicsFromAnimationRig()\fP 
+.RE
+.PP
+
+.SS "object getAnimationPose ()"
+
+.PP
+Copy the fully evaluated pose\&. Refreshes the current pose, including persistent overrides and controllers, and returns an owned snapshot\&. Editing or retaining it does not affect the \fBSprite\fP\&. A getter may reevaluate modifiers with deltaSeconds equal to zero\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An independent snapshot described below\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&. Inside a modifier, use view\&.copy() instead of querying the \fBSprite\fP\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const pose = sprite\&.getAnimationPose();
+const hand = pose\&.bones\&.find(bone => bone\&.name === 'hand');
+console\&.log(hand\&.rotation);
+
+.fi
+.PP
+.RE
+.PP
+
+.PP
+\fBPose snapshot fields\fP
+.RS 4
+Field  Contents  \fRrigRevision\fP  Rig identity as a decimal string; compare before reusing cached bone or binding IDs\&.  \fRbones\fP  Array in bone-ID order\&. Each entry has \fRname\fP, \fRparent\fP (index or null), and the six parent-local transform fields below\&.  \fRbindings\fP  Array in binding-ID order\&. Each entry has \fRname\fP, \fRparent\fP (bone index or null), \fRkind\fP (image 0, point 1, box 2), and the six parent-local transform fields\&.  \fRvariables\fP  Array of \fR{object, name, type, value}\fP records\&. An empty object name selects entity metadata\&. Types are float 0, integer 1, and string 2\&.  \fRtags\fP  Array of \fR{object, tags}\fP records, where tags is an array of strings\&. An empty object name selects entity tags\&.  
+.RE
+.PP
+Transform field  Units / meaning  \fRx\fP, \fRy\fP  Position in parent-local distance units\&.  \fRrotation\fP  Clockwise angle in radians\&.  \fRscaleX\fP, \fRscaleY\fP  Dimensionless axis scales; may include reflection\&.  \fRalpha\fP  Opacity from 0 to 1\&.  
+
+.PP
+Declared variable defaults are used when a clip has no matching track\&. Missing tag tracks produce empty sets\&. During a blend, string variables and tags switch at the halfway point\&. Undeclared variables are absent\&.
+
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBsampleAnimationPose()\fP, \fBgetAnimationBoneTransform()\fP 
 .RE
 .PP
 
@@ -1168,6 +2400,54 @@ this only affects rotation, it does not join them in any other way, so they are 
 
 .PP
 returns the current progress of the animation (0\&.0 to 1\&.0) 
+.SS "string getAnimationRigError ()"
+
+.PP
+Read the latest rig diagnostic\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A diagnostic string after a rig failure, or an empty string when no error is recorded\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBenableAnimationPose()\fP 
+.RE
+.PP
+
+.SS "int getAnimationSource ()"
+
+.PP
+Read the selected pose source\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The animationSource constant last selected, or \fBpdg\&.animationSource_Clip\fP when pose access is disabled\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationSource()\fP 
+.RE
+.PP
+
+.SS "number getAnimationTransitionProgress ()"
+
+.PP
+Read pose transition progress\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A fraction from 0 to 1\&. Completed transitions report 1; absent/canceled transitions and disabled pose access report 0\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBtransitionToAnimation()\fP, \fBisAnimationTransitioning()\fP 
+.RE
+.PP
+
 .SS "Array getAppliedCharacterMaps ()"
 
 .PP
@@ -1176,44 +2456,30 @@ returns an array of all currently applied character map names
 
 .PP
 returns the sprite attached at the specified attach point, or null if none 
+.SS "\fBPart\fP getAttachmentPart ()"
+
+.PP
+Find the mounting \fBPart\fP controlling this \fBSprite\fP\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The mounting \fBPart\fP, or null when this \fBSprite\fP is not attached through a \fBPart\fP\&. Animate the returned \fBPart\fP to change the attachment offset\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPart::attachSprite()\fP, \fBPart::detachSprite()\fP 
+.RE
+.PP
+
 .SS "\fBOffset\fP getAttachPoint (string attachPointName)"
 
 .PP
-returns the position of the specified attach point 
+returns the position of the specified attach point Returns the offset from the \fBSprite\fP root in \fBSpriteLayer\fP axes, after authored and root rotation/scale/reflection\&. Add sprite\&.getLocation() once for the position in the layer\&. Missing or inactive points return an offset with NaN components\&. 
 .SS "number getBlendProgress ()"
 
 .PP
-returns the progress of the current animation blend (0\&.0 to 1\&.0) 
-.SS "number getCollideGroup ()"
-
-.PP
-see which collide group this sprite is part of (\fIChipmunk Physics Only\fP) Items in the same collide group do not collide with one another\&. Sprites that are connected with joints are automatically assigned to the same collide group\&.
-
-.PP
-\fBSee also\fP
-.RS 4
-\fBsetCollideGroup()\fP 
-.RE
-.PP
-
-.SS "number getCollisionRadius ()"
-
-.PP
-get the collision radius for this sprite 
-.PP
-\fBSee also\fP
-.RS 4
-\fBsetCollisionRadius()\fP 
-
-.PP
-\fBenableCollisions()\fP 
-.RE
-.PP
-
-.SS "number getCollisionType ()"
-
-.PP
-get the current collision type 
+returns the progress of the current animation blend (0\&.0 to 1\&.0) The value is 0 before a blend, stays fixed while paused, and remains 1 after completion until another animation or blend is started\&. 
 .SS "number getCurrentFrame ()"
 
 .PP
@@ -1222,17 +2488,6 @@ which frame of animation the sprite is currently showing
 \fBReturns\fP
 .RS 4
 the frame index number (0 based) 
-.RE
-.PP
-
-.SS "number getElasticity ()"
-
-.PP
-get the elasticity for this sprite's collisions 
-.PP
-\fBSee also\fP
-.RS 4
-\fBsetElasticity()\fP 
 .RE
 .PP
 
@@ -1280,17 +2535,6 @@ use \fBSpriteLayer\&.layerToPortRect()\fP to convert to drawing coordinates\&.
 .RE
 .PP
 
-.SS "number getFriction ()"
-
-.PP
-get the friction used for movement calculations for this sprite (\fIChipmunk Physics Only\fP) 
-.PP
-\fBNote\fP
-.RS 4
-Chipmunk Physics uses a single friction value, so this replaces \fBAnimated\fP's getMove/Spin/SizeFriction() which all just return 0 for \fBSprite\fP's in builds that are compiled with Chipmunk physics\&.
-.RE
-.PP
-
 .SS "\fBSpriteLayer\fP getLayer ()"
 
 .PP
@@ -1335,15 +2579,77 @@ opacity, 1\&.0 being complete opaque and 0\&.0 being completely transparent
 .RE
 .PP
 
-.SS "uint getSerializedSize (\fBSerializer\fP serializer)"
+.SS "\fBPart\fP getPart (uint id)"
 
 .PP
-get the bytes needed to serialize the layer Takes into account the serialization mode of the layer it is in
-
+Find an owned \fBPart\fP by ID\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP ID returned by \fBPart\&.getId()\fP, scoped to this \fBSprite\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The matching \fBPart\fP, or null if the ID is absent\&.
+.RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBSpriteLayer\&.setSerializationFlags()\fP 
+\fBfindPart()\fP, \fBgetPartNames()\fP 
+.RE
+.PP
+
+.SS "uint getPartCount ()"
+
+.PP
+Count owned Parts\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The number of Parts currently owned by this \fBSprite\fP, including attachment mounts\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetPartNames()\fP, \fBclearParts()\fP 
+.RE
+.PP
+
+.SS "Array getPartNames ()"
+
+.PP
+List owned \fBPart\fP names\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A new array of strings in \fBPart\fP creation order\&. Editing it does not rename Parts\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBfindPart()\fP, \fBgetPartCount()\fP 
+.RE
+.PP
+
+.SS "uint getSerializedSize (\fBSerializer\fP serializer)"
+
+.PP
+Measure the selected \fBSprite\fP record and its resource payloads\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIserializer\fP Writer used to size shared resources and select their save policy\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Record size in bytes, excluding the stream header and enclosing object tag/length\&. Uses the owning layer's serialization flags, or \fR\fBpdg\&.ser_Full\fP\fP off-layer\&. Initial records validate supported state and image availability during sizing\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite::serialize()\fP, \fBSpriteLayer::setSerializationFlags()\fP 
 .RE
 .PP
 
@@ -1413,21 +2719,6 @@ get the z-order of this sprite in the layer it belongs to 0 means furthest back 
 .RE
 .PP
 
-.SS "\fBCpConstraint\fP grooveJoint (\fBOffset\fP grooveStart, \fBOffset\fP grooveEnd, \fBSprite\fP otherSprite, \fBOffset\fP otherAnchor, number breakingForce = \fR0\fP)"
-
-.PP
-join groove on this sprite to an anchor point on another (\fIChipmunk Physics Only\fP) optional breaking force at which the joint (and and any other connections to that sprite) are broken
-
-.PP
-If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of force is applied to the joint\&.
-
-.PP
-\fBReturns\fP
-.RS 4
-the cpConstraint for the Joint in case you want to do anything special with it 
-.RE
-.PP
-
 .SS "boolean hasAnimation (int animationId)"
 
 .PP
@@ -1440,14 +2731,99 @@ check if a sprite has a particular SCML animation by name
 
 .PP
 returns true if the sprite has the specified attach point 
+.SS "boolean isAnimationDrawingSupported ()"
+
+.PP
+Test whether this build supports animation drawing\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True in GUI-capable builds; false in headless builds\&. This does not test whether a \fBPort\fP is currently open\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationDrawable()\fP, \fBsetAnimationDebugDraw()\fP 
+.RE
+.PP
+
 .SS "boolean isAnimationPaused ()"
 
 .PP
 returns true if the animation is currently paused 
+.SS "boolean isAnimationPhysicsEnabled ()"
+
+.PP
+Test for an active physical animation rig\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True while a physical rig is attached to this \fBSprite\fP\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetupAnimationPhysics()\fP, \fBdisableAnimationPhysics()\fP 
+.RE
+.PP
+
+.SS "boolean isAnimationPhysicsPartAttached (\fBPart\fP part)"
+
+.PP
+Check whether a \fBPart\fP contributes to this \fBSprite\fP's physical assembly\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpart\fP \fBPart\fP to query\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True for a registered skeletal or accessory \fBPart\fP; false for a detached \fBPart\fP, another \fBSprite\fP's \fBPart\fP, or a disabled rig\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBattachAnimationPhysicsPart()\fP, \fBdetachAnimationPhysicsPart()\fP 
+.RE
+.PP
+
 .SS "boolean isAnimationPlaying ()"
 
 .PP
-returns true if an animation is currently playing 
+returns true if an animation is currently playing Returns false while paused or after natural completion of a nonlooping clip\&. Natural completion does not set \fBisAnimationPaused()\fP\&. 
+.SS "boolean isAnimationPoseEnabled ()"
+
+.PP
+Test whether a pose rig is available\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True after successful \fBenableAnimationPose()\fP and until it is disabled or its entity is replaced\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBenableAnimationPose()\fP, \fBgetAnimationRigError()\fP 
+.RE
+.PP
+
+.SS "boolean isAnimationTransitioning ()"
+
+.PP
+Test for an active pose transition\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True while a \fBtransitionToAnimation()\fP blend is running; false when complete or pose access is disabled\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBtransitionToAnimation()\fP, \fBgetAnimationTransitionProgress()\fP 
+.RE
+.PP
+
 .SS "boolean isBehind (\fBSprite\fP sprite)"
 
 .PP
@@ -1470,72 +2846,6 @@ returns true if the sprite is currently blending between animations
 
 .PP
 check if a Spriter collision box is active 
-.SS "makeJointBreakable (\fBCpConstraint\fP joint, number breakingForce)"
-
-.PP
-set or change force at which the joint between sprites will break (\fIChipmunk Physics Only\fP) 
-.PP
-\fBSee also\fP
-.RS 4
-\fBmakeJointUnbreakable()\fP 
-
-.PP
-\fBSpriteBreakEvent\fP 
-.RE
-.PP
-
-.SS "makeJointUnbreakable (\fBCpConstraint\fP joint)"
-
-.PP
-make the joint impossible to break (\fIChipmunk Physics Only\fP) 
-.PP
-\fBNote\fP
-.RS 4
-sufficient force can still incorrectly stretch a joint, adjust contraint's error bias to fix\&.
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBmakeJointBreakable()\fP 
-
-.PP
-\fBCpConstraint\&.setErrorBias()\fP 
-.RE
-.PP
-
-.SS "\fBSprite\fP makeStatic ()"
-
-.PP
-make this sprite unaffected by physics (\fIChipmunk Physics Only\fP) This sprite becomes a static body that isn't affected by physics, though non-static objects can collide with it\&. This would be used for walls or platforms\&.
-
-.PP
-\fBWarning\fP
-.RS 4
-This should be done before setting anything else about the sprite
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-itself so you can call it on creation
-.RE
-.PP
-.PP
-.nf
-var sprite = layer\&.createSprite()\&.makeStatic();
-.fi
-.PP
- 
-.SS "\fBCpConstraint\fP motor (\fBSprite\fP otherSprite, number spin, number maxTorque = \fRINFINITY\fP)"
-
-.PP
-keep spin of another sprite at a constant rate compared to this one (\fIChipmunk Physics Only\fP) 
-.PP
-\fBReturns\fP
-.RS 4
-the cpConstraint in case you want to do anything special with it 
-.RE
-.PP
-
 .SS "\fBSprite\fP moveBehind (\fBSprite\fP sprite)"
 
 .PP
@@ -1689,10 +2999,6 @@ set event handler for all different sprite events
 .RE
 .PP
 
-.SS "\fBIEventHandler\fP onAnimationBlendComplete (function func)"
-
-.PP
-Register a callback function to be called when an animation blend completes\&. 
 .SS "\fBIEventHandler\fP onAnimationEnd (function func)"
 
 .PP
@@ -1729,21 +3035,39 @@ set event handler for sprite animation loop events These happen when this sprite
 .RE
 .PP
 
+.SS "\fBIEventHandler\fP onAnimationPhysicsRecoveryComplete (function func)"
+
+.PP
+Register a callback for completed physical recovery selections\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfunc\fP Synchronous callback receiving the animation event with actingSprite, inLayer, id, bone, wholeRig, includeDescendants, mode, bodyCount and disabled\&. Return true to mark handled; false permits further propagation\&. Retain the returned handler to remove it with removeHandler(handler, eventType_SpriteAnimate)\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Registered \fBIEventHandler\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsMode()\fP, \fBdisableAnimationPhysics()\fP 
+.RE
+.PP
+
 .SS "\fBIEventHandler\fP onCollideSprite (function func)"
 
 .PP
-set event handler for sprite-to-sprite collision events The happens whenever this sprite collides with another sprite, but only if \fBenableCollisions()\fP or \fBsetCollisionRadius()\fP was called
+Register a \fBSprite\fP collision event handler for imported physical rigs\&. Imported physical bone contacts emit \fBSpriteCollideEvent\fP, including bone names and the solver arbiter\&. Ordinary \fBSprite\fP and \fBPart\fP colliders report \fBColliderContact\fP; use \fBCollider\&.setContactHandler()\fP for those contacts\&.
 
 .PP
 \fBSee also\fP
 .RS 4
-\fBenableCollisions()\fP 
-
-.PP
-\fBsetCollisionRadius()\fP 
-
-.PP
 \fBSpriteCollideEvent\fP 
+
+.PP
+\fBCollider::setContactHandler()\fP 
 
 .PP
 \fBIEventHandler\fP 
@@ -2005,190 +3329,647 @@ set event handler for sprite onscreen event This happens whenever this sprite mo
 
 .PP
 pauses the current animation playback 
-.SS "\fBCpConstraint\fP pinJoint (\fBOffset\fP anchor, \fBSprite\fP otherSprite, \fBOffset\fP otherAnchor, number breakingForce = \fR0\fP)"
-
-.PP
-pin sprites together at a particular anchor point (offset from center) on each (\fIChipmunk Physics Only\fP) If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of force is applied to the joint\&.
-
-.PP
-\fBReturns\fP
-.RS 4
-the cpConstraint for the Joint in case you want to do anything special with it 
-.RE
-.PP
-
-.SS "\fBCpConstraint\fP pivotJoint (\fBSprite\fP otherSprite, \fBPoint\fP pivot, number breakingForce = \fR0\fP)"
-
-.PP
-join sprites together at a particular location in layer coordinates (\fIChipmunk Physics Only\fP) If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of force is applied to the joint\&.
-
-.PP
-\fBReturns\fP
-.RS 4
-the cpConstraint for the Joint in case you want to do anything special with it 
-.RE
-.PP
-
-.SS "\fBCpConstraint\fP ratchet (\fBSprite\fP otherSprite, number rachetInterval, number phase, number breakingForce = \fR0\fP)"
-
-.PP
-join two sprites rotation with a ratchet mechanism (\fIChipmunk Physics Only\fP) like a socket wrench\&. ratchetInterval is the distance between “clicks”, phase is the initial angular offset to use when deciding where the ratchet angles are\&.
-
-.PP
-If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of rotational force (torque) is applied to the joint\&.
-
-.PP
-\fBReturns\fP
-.RS 4
-the cpConstraint for the Joint in case you want to do anything special with it 
-.RE
-.PP
-
 .SS "removeAllCharacterMaps ()"
 
 .PP
 removes all applied character maps from the sprite 
+.SS "removeAnimationDrawable (uint id)"
+
+.PP
+Remove a custom drawing registration\&. Releases the \fBDrawing\fP or callback and its diagnostic\&. An unknown valid ID is harmless\&. Changes requested while drawing are deferred until the current draw finishes\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP Nonzero ID returned by \fBaddAnimationDrawable()\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationDrawable()\fP, \fBclearAnimationDrawables()\fP 
+.RE
+.PP
+
+.SS "removeAnimationModifier (uint id)"
+
+.PP
+Remove a modifier or IK controller\&. Releases its callback and diagnostic\&. Unknown IDs are harmless\&. A removal requested during evaluation is applied after the current evaluation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP ID returned by \fBaddAnimationModifier()\fP or \fBaddAnimationIK()\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationModifier()\fP, \fBclearAnimationModifiers()\fP 
+.RE
+.PP
+
 .SS "removeCharacterMap (string mapName)"
 
 .PP
 removes a previously applied character map from the sprite 
-.SS "removeJoint (\fBCpConstraint\fP joint)"
+.SS "removeCollider ()"
 
 .PP
-remove a joint between two sprites (\fIChipmunk Physics Only\fP) 
-.SS "resumeAnimation ()"
+Remove this owner’s collider\&. Idempotent\&. Restores shared NoCollider, removes native shapes, clears contact callbacks and detaches retained handles\&. Detached geometric queries preserve the final transform\&. 
+.SS "boolean removePart (uint id)"
 
 .PP
-resumes the paused animation playback 
-.SS "\fBCpConstraint\fP rotaryLimit (\fBSprite\fP otherSprite, number minAngle, number maxAngle, number breakingForce = \fR0\fP)"
+Remove an owned \fBPart\fP\&. Detaches any mounted Sprites in this \fBPart\fP's descendant chain\&. Direct child Parts stay owned by the \fBSprite\fP and lose this explicit parent\&. Retained references to the removed \fBPart\fP remain valid, keep local state, and stop automatic updates; its bindings and physics body are detached\&. Removing a mapped physical-rig \fBPart\fP requires \fBdisableAnimationPhysics()\fP first; otherwise this operation throws without changing the graph\&.
 
 .PP
-limit the angle another sprite can have relative to this one (\fIChipmunk Physics Only\fP) If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of rotational force (torque) is applied to the joint\&.
-
+\fBParameters\fP
+.RS 4
+\fIid\fP The \fBPart\fP ID, scoped to this \fBSprite\fP\&.
+.RE
 .PP
 \fBReturns\fP
 .RS 4
-the cpConstraint for the Joint in case you want to do anything special with it 
+True if the \fBPart\fP existed and was removed; false for an absent ID\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBPart::isAttached()\fP, \fBclearParts()\fP 
 .RE
 .PP
 
-.SS "\fBCpConstraint\fP rotarySpring (\fBSprite\fP otherSprite, number restAngle, number stiffness, number damping, number breakingForce = \fR0\fP)"
+.SS "removePhysicsBody ()"
 
 .PP
-keep sprites at a particular angle relative to one another via a rotary spring (\fIChipmunk Physics Only\fP) If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of rotational force (torque) is applied to the joint\&.
+Detach the optional physics body\&. Restores the physics property to \fBPhysicsBody\&.NoPhysics\fP\&. A retained body keeps its state, loses its owner/solver, and can be advanced with \fBPhysicsBody\&.step()\fP\&. Calling when no body exists is harmless\&.
 
 .PP
 \fBReturns\fP
 .RS 4
-the cpConstraint for the Joint in case you want to do anything special with it 
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetupPhysicsBody()\fP, \fBPhysicsBody::step()\fP 
+.RE
+.PP
+
+.SS "resumeAnimation ()"
+
+.PP
+resumes the paused animation playback Continues a paused blend at the same progress\&. A naturally completed nonlooping clip resumes from its beginning\&. 
+.SS "object sampleAnimationPose (string clip, number timeSeconds)"
+
+.PP
+Sample a clip without changing playback\&. Samples the authored clip independently of the live clock, bone overrides, and controllers\&. Does not emit trigger events or change rendering\&. Unknown or incompatible clips and nonfinite times throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIclip\fP Name of a compatible clip in the current Spriter entity\&. 
+.br
+\fItimeSeconds\fP Finite sample time in seconds\&. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An owned snapshot with the fields in \fBanimation_pose_snapshot\fP\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const halfway = sprite\&.sampleAnimationPose('reference', 0\&.5);
+console\&.log(halfway\&.bones\&.map(bone => bone\&.name));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationPose()\fP, \fBseekAnimation()\fP 
+.RE
+.PP
+
+.SS "seekAnimation (string clip, number timeSeconds)"
+
+.PP
+Select a clip and time immediately\&. Cancels an active pose transition and legacy blend, while preserving the playback pause state\&. Validates the requested sample before changing the current selection\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIclip\fP Name of a compatible clip in the current Spriter entity\&. 
+.br
+\fItimeSeconds\fP Finite sample time in seconds\&. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&. Call outside animation callbacks\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.seekAnimation('reference', 0\&.25);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsampleAnimationPose()\fP, \fBtransitionToAnimation()\fP 
 .RE
 .PP
 
 .SS "serialize (\fBSerializer\fP serializer)"
 
 .PP
-serialize this sprite into a data stream 
-.PP
-\fBNote\fP
-.RS 4
-uses the \fBSpriteLayer\fP's serialization mode to determine exactly what is serialized
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBgetSerializedSize()\fP 
-
-.PP
-\fBSpriteLayer\&.setSerializationFlags()\fP 
-.RE
-.PP
-
-.SS "\fBSprite\fP setCollideGroup (int group)"
-
-.PP
-set the collide group this sprite is part of (\fIChipmunk Physics Only\fP) Items in the same collide group do not collide with one another\&. Sprites that are connected with joints are automatically assigned to the same collide group\&.
-
-.PP
-\fBSee also\fP
-.RS 4
-\fBgetCollideGroup()\fP 
-.RE
-.PP
-
-.SS "setCollisionHelper (\fBISpriteCollideHelper\fP helper)"
-
-.PP
-set a helper to filter out some collisions for this sprite Sets up a handler to do special case collision logic between two sprites\&. For example, you might want bullet sprites to collide with enemy sprites but not with one another\&. If a collide helper is installed, then on initial contact between two sprites the collide helper for the moving sprite will be called, and your helper can decide if the collision should happen or not\&.
-
+Write selected \fBSprite\fP state to a data stream\&. 
 .PP
 \fBParameters\fP
 .RS 4
-\fIhelper\fP an \fBISpriteCollideHelper\fP instance that will filter some collisions\&.
+\fIserializer\fP Destination writer\&. A \fBSprite\fP in a layer uses \fBSpriteLayer::setSerializationFlags()\fP; an off-layer \fBSprite\fP uses \fR\fBpdg\&.ser_Full\fP\fP\&. Initial frame records include images, collision masks, frame layout and the fractional playback cursor when the corresponding animation and image flags are selected\&. Shared images retain their identity within the record\&. \fBSerializer::setResourceMode()\fP chooses embedded pixels or external image references\&. Programmed transforms/tweens and \fBPhysicsBody\fP state, including active drives, are included by the matching state flags\&. Timing values use floating-point seconds\&.
 .RE
+.PP
+Updates with \fR\fBser_Animations\fP\fP (including \fR\fBser_Update\fP\fP) transfer sampled local \fBPart\fP transforms, reflection, constant movement and scheduled animations by \fBPart\fP ID\&. They preserve existing \fBPart\fP identities, parent links and artwork\&. This includes poses already solved by \fBPart\fP IK\&. The receiver can stop Layer animations and disable collisions to display only the received state\&. \fBPart\fP creation/removal, reparenting, artwork changes, IK controller configuration and \fBPart\fP body/constraint state require another initial snapshot; incremental \fBPart\fP records are not full physics checkpoints\&. A changed \fBPart\fP ID set is rejected\&.
+
+.PP
+Initial records also preserve independent Parts: IDs/names, parent links, local transforms, paused/active tweens, bodies and active drives\&. \fBPart\fP Image/Drawing content retains geometry, attributes, nested drawings and shared images\&. \fBDrawing\fP content is embedded in both modes; its images follow the selected resource policy\&.
+
+.PP
+\fBDrawing\fP colors and image transparency colors use eight-bit channels, with opaque alpha omitted\&. Floating-point colors can change by less than one channel step (1/255) when restored\&. \fBImage\fP pixel data is preserved exactly\&. \fBDrawing\fP geometry, pixel-space attributes (including thickness, text size, offsets and transform translation), and image subsections use the compact coordinate serializers\&. These can discard a fractional remainder smaller than 0\&.001 per encoded coordinate component\&. Rectangles encode their origin and size, so those small errors can accumulate at the opposite edge\&. Physics state, collision geometry, constraint anchors, IK inputs and Sprite/Part transforms retain their existing floating-point precision\&.
+
+.PP
+Packed boolean flags omit default values and absent payloads\&. Repeated images, \fBDrawing\fP storage and imported animation assets use shared object references within the same serializer stream\&. This preserves shared identity and avoids writing the same resource again; independently created objects remain distinct\&.
+
+.PP
+Imported SCML animations retain their shared model, selected entity/clip, floating-point playback time, pause/events, character maps, reference pose, bone overrides, blends and interrupted transitions\&. Bone-, artwork- and socket-bound Parts resolve against the restored rig\&. Built-in rig IK modifiers and retained \fBDrawing\fP registrations preserve their IDs, options and enabled state\&. Animation colliders continue following the restored pose\&.
+
+.PP
+Complete saves embed the imported document and its images and can load without the source files\&. Embedded XML is compressed losslessly with zlib when that makes it smaller; decompression is automatic\&. Documents are limited to 64 MiB before compression, and corrupt payloads or mismatched lengths cause a load error\&. External-reference saves omit the XML, resolve the original document path and verify that its contents have not changed; images use the selected resource policy\&. Missing or changed dependencies cause a load error\&.
+
+.PP
+Initial records preserve \fBCollider\fP shapes and shape IDs, frame/animation-source options, material overrides, collision filters, sensor/enabled state and contact-event opt-in\&. Compound-body associations, all \fBPhysicsConstraint\fP types, linked IK limits and active physical \fBPart\fP IK controllers resolve after all owners exist\&. Captured IK offsets and sampled drives survive; offsets are not recaptured from a deformed pose\&. Geometry is stored in both resource modes; frame images follow the resource policy\&. Restored colliders receive new process-wide IDs\&. Body angular-speed break thresholds, reference identities and notification latches also survive\&. Relative references must belong to the saved graph; a reported excursion does not repeat on restore\&. Native \fBPhysicsBody\fP break callbacks must be cleared before saving\&.
+
+.PP
+Initial records also preserve active physical rigs created from explicit configurations or generated skeletons\&. They save edited body/collider/constraint components, bone mappings, root selection, attached/detached membership, aggregate mass, desired poses, Kinematic/Dynamic/Driven modes, manual drive targets, rig drive settings and recovery progress\&. A pending recovery or disable resumes with its remaining duration and completion notification; a completed recovery is not reported again\&. Load into a Chipmunk-capable build and use a physics-enabled layer to continue simulation\&. A standalone restored \fBSprite\fP can be inspected before adding it to a layer\&. These records preserve engine state, not application callbacks; re-register application logic after loading\&. Save at an unlocked physics boundary\&. Layer initial restores validate the staged graph before replacing the live scene\&. Incremental motion updates are not rig checkpoints\&.
+
+.PP
+Callback collision filters/handlers are rejected; reinstall application handlers after loading\&. Solver contact caches and pending contact events are not saved, so loading rebuilds contacts and can produce new Begin events\&. A resumed simulation is not guaranteed to be bit-for-bit identical to an uninterrupted one\&.
+
 .PP
 \fBNote\fP
 .RS 4
-You should use other techniques wherever possible to eliminate unnecessary collision helper callbacks, since these callbacks are relatively expensive\&. You should turn off collisions for sprites that never collide with anything; put sets of sprites that collide only with each other in separate layers; and use collision groups to set up groups of sprites that collide with other things but not each other\&.
+Initial snapshots support frame-based and imported Sprites with independent or authored Parts\&. Standalone \fBSprite\fP saves reject attachments; save their owning \fBSpriteLayer\fP to retain mount relationships and cross-Sprite physical links\&. Older \fBattachSprite()\fP associations, modifier/drawing callbacks, callback helpers, custom easing, \fBFont\fP attributes and custom \fBDrawing\fP implementations are rejected\&. \fBDrawing\fP content requires a GUI-capable build\&. Layer collections can be restored with \fBSpriteLayer::deserialize()\fP\&. Discard the writer after a save error\&.
 .RE
 .PP
 .PP
 .nf
-var myHelper = new pdg\&.ISpriteCollideHelper(function(sprite, withSprite) {
-                console\&.log("in my sprite collide helper for " + sprite );
-                if (withSprite\&.id == 100) {
-                                return true;  // only collide with the player sprite (id 100)
-                }
-                return false;  // don't collide with anything else
-});
-mySprite\&.setCollisionHelper(myHelper);
+// sprite is an off\-layer Sprite with frame or imported artwork\&.
+const writer = new pdg\&.Serializer();
+writer\&.setResourceMode(pdg\&.serialization_Complete);
+writer\&.serialize_obj(sprite);
+const reader = new pdg\&.Deserializer();
+reader\&.setDataPtr(writer\&.getDataPtr());
+const restored = reader\&.deserialize_obj();  // a new pdg\&.Sprite
 .fi
 .PP
-
+ Raw \fBserialize()\fP/deserialize() calls instead replace state on an existing \fBSprite\fP\&. 
 .PP
 \fBSee also\fP
 .RS 4
-\fBISpriteCollideHelper\fP 
-
-.PP
-\fBsetCollisionHelper()\fP 
-
-.PP
-\fBenableCollisions()\fP 
-
-.PP
-\fBdisableCollisions()\fP 
-
-.PP
-\fBsetCollideGroup()\fP 
-
-.PP
-\fBSpriteLayer\&.enableCollisions()\fP 
-
-.PP
-\fBSpriteLayer\&.disableCollisions()\fP 
-
-.PP
-\fBSpriteLayer\&.enableCollisionsWithLayer()\fP 
-
-.PP
-\fBSpriteLayer\&.disableCollisionsWithLayer()\fP 
+\fBSprite::deserialize()\fP, \fBSprite::getSerializedSize()\fP, \fBSerializer::setResourceMode()\fP 
 .RE
 .PP
 
-.SS "\fBSprite\fP setCollisionRadius (number pixelRadius)"
+.SS "setAnimationBoneTransform (string name, object transform)"
 
 .PP
-set the radius of the collision boundary circle of the sprite The boundary circle is centered at the sprite's location\&.
+Override a bone's parent-local transform\&. Replaces all six transform components; this is an absolute local override, not an accumulated offset\&. It persists across updates and clip changes until cleared or the rig is replaced\&. Invalid names or nonfinite values throw\&.
 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Exact bone name in the current rig\&. 
+.br
+\fItransform\fP An object containing finite \fRx\fP, \fRy\fP, \fRrotation\fP (radians), \fRscaleX\fP, \fRscaleY\fP, and \fRalpha\fP (0 to 1) values\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
 .PP
 \fBNote\fP
 .RS 4
-Calling this enables collisions and sets the collision mode to collide_collisionRadius, so you don't need to call \fBenableCollisions()\fP\&.
+Call \fBenableAnimationPose()\fP successfully before using this method\&. Call outside modifiers; use their borrowed view to edit a pose during evaluation\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const hand = sprite\&.getAnimationBoneTransform('hand');
+hand\&.rotation += 0\&.2;
+sprite\&.setAnimationBoneTransform('hand', hand);
+
+.fi
+.PP
 .RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBenableCollisions()\fP 
+\fBclearAnimationBoneTransforms()\fP, \fBaddAnimationModifier()\fP 
+.RE
+.PP
+
+.SS "setAnimationDebugDraw (int flags)"
+
+.PP
+Select pose debug overlays\&. Flags are combined with bitwise OR\&. Disabling overlays with zero is safe without a pose or GUI\&. Nonzero flags require both\&. Disabling/replacing the pose clears the flags\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIflags\fP \fBpdg\&.animationDebug_None\fP (0), Bones (1), Sockets (2), Boxes (4), or All (7), using the animationDebug_ prefix for each constant\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.setAnimationDebugDraw(pdg\&.animationDebug_Bones | pdg\&.animationDebug_Sockets);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationDebugDraw()\fP, \fBisAnimationDrawingSupported()\fP 
+.RE
+.PP
+
+.SS "setAnimationDrawableEnabled (uint id, boolean enabled)"
+
+.PP
+Enable or hide a registered drawing\&. Does not remove the registration\&. Throws for an unknown ID\&. A callback disabled by a failure cannot be reenabled; remove it and register a corrected callback\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP Existing ID returned by \fBaddAnimationDrawable()\fP\&. 
+.br
+\fIenabled\fP True to include the drawing; false to skip it\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationDrawableError()\fP, \fBremoveAnimationDrawable()\fP 
+.RE
+.PP
+
+.SS "setAnimationIKTarget (uint id, number x, number y, int space = \fR\fBanimationSpace_Rig\fP\fP)"
+
+.PP
+Change an IK controller's target\&. Invalidates the pose so the next evaluation uses the new target\&. Unknown IDs, nonfinite coordinates, and invalid spaces throw\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP ID returned by \fBaddAnimationIK()\fP\&. 
+.br
+\fIx\fP Finite target x coordinate\&. 
+.br
+\fIy\fP Finite target y coordinate\&. 
+.br
+\fIspace\fP Integer coordinate-space constant: \fR\fBpdg\&.animationSpace_Local\fP\fP (parent frame), \fR\fBpdg\&.animationSpace_Rig\fP\fP, or \fR\fBpdg\&.animationSpace_World\fP\fP (owning layer)\&. Local uses the root bone's parent frame\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBaddAnimationIK()\fP, \fBgetAnimationIKResult()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::animationSpace_Rig\fP\&.
+.SS "\fBSprite\fP setAnimationPhysicsDriveSettings (object settings, string bone = \fRundefined\fP, boolean includeDescendants = \fRfalse\fP)"
+
+.PP
+Replace drive settings for a skeleton selection\&. 
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIsettings\fP Complete five-field drive configuration, with optional response defaults\&. 
+.br
+\fIbone\fP Bone name or current bone ID; omit or pass undefined for the whole rig\&. 
+.br
+\fIincludeDescendants\fP Include descendants; default false\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&. Invalid settings or selections throw without changes\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires an active rig\&. Call outside animation modifiers and locked solver callbacks\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationPhysicsDriveSettings()\fP, \fBsetAnimationPhysicsMode()\fP 
+.RE
+.PP
+
+.SS "\fBSprite\fP setAnimationPhysicsDriveSettings (object settings, uint bone = \fRundefined\fP, boolean includeDescendants = \fRfalse\fP)"
+
+.PP
+Replace drive settings for a skeleton selection\&. See the \fRdrive settings record\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIsettings\fP Complete five-field drive configuration, with optional response defaults\&. 
+.br
+\fIbone\fP Bone name or current bone ID; omit or pass undefined for the whole rig\&. 
+.br
+\fIincludeDescendants\fP Include descendants; default false\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&. Invalid settings or selections throw without changes\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires an active rig\&. Call outside animation modifiers and locked solver callbacks\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationPhysicsDriveSettings()\fP, \fBsetAnimationPhysicsMode()\fP 
+.RE
+.PP
+
+.SS "\fBSprite\fP setAnimationPhysicsMode (int mode, string bone = \fRundefined\fP, boolean includeDescendants = \fRfalse\fP, number recoveryTime = \fR0\&.5\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+Select animation control for a physical rig or its bones\&. Kinematic follows the desired animation/IK pose using swept bodies\&. Dynamic releases rig tracking and lets physics determine the pose\&. Driven keeps dynamic bodies and applies bounded tracking forces and torques\&. Mixed is query-only\&. Changing control preserves body, collider and joint identities, mass, velocities and independent scheduled loads\&. Kinematic-to-kinematic joints remain configured but dormant\&. A single selected body can still be restrained by its neighbors\&.
+
+.PP
+Selections use the skeleton hierarchy, including skipped bones\&. An included bone may be selected alone; a skipped bone may select included descendants\&. Missing bones or selections with no physical bodies throw\&. The entire selection is validated before any control changes\&. Driven requires configured drive settings on every selected body\&.
+
+.PP
+A body has one controller\&. Before rig tracking takes over, release a manual drive with \fBPhysicsBody::clearDrive()\fP, or release a physical \fBPart\fP IK chain with \fBPart::clearIKTarget()\fP\&. To release rig tracking, select Dynamic\&. Raw clearDrive() and manual setDriveTarget() cannot replace rig-owned control\&. Repeated manual setDriveTarget() calls are allowed after release: the last valid call wins\&. Direct mapped-body physics\&.setMode() uses the same coordinator: Dynamic releases rig tracking, Kinematic requests default recovery, and Static throws\&.
+
+.PP
+Driven limbs track their desired transform relative to the nearest included physical ancestor\&. Reaction forces and torques act on dynamic parents; free limbs are not independently pinned to world coordinates\&. Bodies without an included ancestor track an animation root target in world coordinates\&. Solver-followed \fBSprite\fP translation does not move that target\&. Rotations use physical body frames, including the reflected reference pose\&. Resolved angular routes persist across ticks; AsSpecified preserves unwrapped turns\&. Physical joint limits remain binding\&.
+
+.PP
+Positive recoveryTime blends the requested target from the current physical pose\&. During recovery, the affected bodies remain dynamic and \fBgetAnimationPhysicsMode()\fP reports Driven, including when the destination is Kinematic\&. The requested time is a minimum transition duration: completion waits until position error is within 0\&.1% of segment length (at least 0\&.000001 layer units) and angular error is within 0\&.001 radians\&. Contacts, joint limits or insufficient force may delay completion indefinitely\&. \fBPhysicsBody::getDriveState()\fP reports the target and actual error; normal collision events report contacts\&. There are no recovery-start or blocked events\&. Pausing animation does not pause physical recovery\&.
+
+.PP
+Recovery uses bounded integral correction to remove steady gravity/load error, within the same force and torque caps\&. Recovery uses stored drive settings if available\&. For an unconfigured transition to Kinematic only, a temporary 4 Hz, critically damped servo uses force capped at mass * max(segment length, 0\&.001) * (2*pi*4)^2 and torque capped at inertia * (2*pi*4)^2\&. This does not configure the persistent drive-settings record\&. Configure settings explicitly to tune those bounds\&. Zero recoveryTime takes control immediately; Kinematic moves to the requested pose, while Driven starts its bounded drive immediately\&. Dynamic release is always immediate\&.
+
+.PP
+Overlapping mode commands cancel the old selection's completion notification; unaffected bodies can finish their existing recovery\&. Any new mode command cancels a pending disable\&. A completed selection emits one Sprite::action_AnimationPhysicsRecoveryComplete event on eventType_SpriteAnimate, with SpriteAnimationPhysicsRecoveryInfo: actingSprite, inLayer, id, bone, wholeRig, includeDescendants, mode, bodyCount and disabled\&. wholeRig means bone is animation_NoBone\&. Immediate takeover completes at the next physics update; disableAnimationPhysics(0) completes synchronously after teardown\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImode\fP animationPhysics_Kinematic, animationPhysics_Dynamic or animationPhysics_Driven\&. 
+.br
+\fIbone\fP Bone name or current rig bone ID\&. Omit or pass undefined to select the whole rig; explicit null is invalid\&. 
+.br
+\fIincludeDescendants\fP Include skeletal descendants; default false\&. Whole-rig selection always includes all bodies\&. 
+.br
+\fIrecoveryTime\fP Finite nonnegative seconds; default 0\&.5\&. 
+.br
+\fIdirection\fP Rotation route for recovery; default rotationDirection_AsSpecified\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires an active physical rig\&. Call outside pose modifiers and locked solver callbacks\&. Initial Sprite/Layer snapshots preserve active control and recovery state\&. The example assumes a forearm bone\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.setAnimationPhysicsDriveSettings({maxForce: 120, maxTorque: 35}, 'forearm', true);
+sprite\&.setAnimationPhysicsMode(pdg\&.animationPhysics_Driven, 'forearm', true);
+// Release rig tracking before installing a manual world\-space target\&.
+sprite\&.setAnimationPhysicsMode(pdg\&.animationPhysics_Dynamic, 'forearm');
+sprite\&.findPart('forearm')\&.physics\&.setDriveTarget(new pdg\&.Point(20, 10), 0, 120, 35);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationPhysicsMode()\fP, \fBsetAnimationPhysicsDriveSettings()\fP, \fBdisableAnimationPhysics()\fP 
+.RE
+.PP
+
+.PP
+References \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBSprite\fP setAnimationPhysicsMode (int mode, uint bone = \fRundefined\fP, boolean includeDescendants = \fRfalse\fP, number recoveryTime = \fR0\&.5\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
+
+.PP
+Select animation control for a physical rig or its bones\&.    Kinematic follows the desired animation/IK pose using swept bodies\&. Dynamic releases rig tracking and lets physics determine the pose\&. Driven keeps dynamic bodies and applies bounded tracking forces and torques\&. Mixed is query-only\&. Changing control preserves body, collider and joint identities, mass, velocities and independent scheduled loads\&. Kinematic-to-kinematic joints remain configured but dormant\&. A single selected body can still be restrained by its neighbors\&.
+
+.PP
+Selections use the skeleton hierarchy, including skipped bones\&. An included bone may be selected alone; a skipped bone may select included descendants\&. Missing bones or selections with no physical bodies throw\&. The entire selection is validated before any control changes\&. Driven requires configured drive settings on every selected body\&.
+
+.PP
+A body has one controller\&. Before rig tracking takes over, release a manual drive with \fBPhysicsBody::clearDrive()\fP, or release a physical \fBPart\fP IK chain with \fBPart::clearIKTarget()\fP\&. To release rig tracking, select Dynamic\&. Raw clearDrive() and manual setDriveTarget() cannot replace rig-owned control\&. Repeated manual setDriveTarget() calls are allowed after release: the last valid call wins\&. Direct mapped-body physics\&.setMode() uses the same coordinator: Dynamic releases rig tracking, Kinematic requests default recovery, and Static throws\&.
+
+.PP
+Driven limbs track their desired transform relative to the nearest included physical ancestor\&. Reaction forces and torques act on dynamic parents; free limbs are not independently pinned to world coordinates\&. Bodies without an included ancestor track an animation root target in world coordinates\&. Solver-followed \fBSprite\fP translation does not move that target\&. Rotations use physical body frames, including the reflected reference pose\&. Resolved angular routes persist across ticks; AsSpecified preserves unwrapped turns\&. Physical joint limits remain binding\&.
+
+.PP
+Positive recoveryTime blends the requested target from the current physical pose\&. During recovery, the affected bodies remain dynamic and \fBgetAnimationPhysicsMode()\fP reports Driven, including when the destination is Kinematic\&. The requested time is a minimum transition duration: completion waits until position error is within 0\&.1% of segment length (at least 0\&.000001 layer units) and angular error is within 0\&.001 radians\&. Contacts, joint limits or insufficient force may delay completion indefinitely\&. \fBPhysicsBody::getDriveState()\fP reports the target and actual error; normal collision events report contacts\&. There are no recovery-start or blocked events\&. Pausing animation does not pause physical recovery\&.
+
+.PP
+Recovery uses bounded integral correction to remove steady gravity/load error, within the same force and torque caps\&. Recovery uses stored drive settings if available\&. For an unconfigured transition to Kinematic only, a temporary 4 Hz, critically damped servo uses force capped at mass * max(segment length, 0\&.001) * (2*pi*4)^2 and torque capped at inertia * (2*pi*4)^2\&. This does not configure the persistent drive-settings record\&. Configure settings explicitly to tune those bounds\&. Zero recoveryTime takes control immediately; Kinematic moves to the requested pose, while Driven starts its bounded drive immediately\&. Dynamic release is always immediate\&.
+
+.PP
+Overlapping mode commands cancel the old selection's completion notification; unaffected bodies can finish their existing recovery\&. Any new mode command cancels a pending disable\&. A completed selection emits one Sprite::action_AnimationPhysicsRecoveryComplete event on eventType_SpriteAnimate, with SpriteAnimationPhysicsRecoveryInfo: actingSprite, inLayer, id, bone, wholeRig, includeDescendants, mode, bodyCount and disabled\&. wholeRig means bone is animation_NoBone\&. Immediate takeover completes at the next physics update; disableAnimationPhysics(0) completes synchronously after teardown\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImode\fP animationPhysics_Kinematic, animationPhysics_Dynamic or animationPhysics_Driven\&. 
+.br
+\fIbone\fP Bone name or current rig bone ID\&. Omit or pass undefined to select the whole rig; explicit null is invalid\&. 
+.br
+\fIincludeDescendants\fP Include skeletal descendants; default false\&. Whole-rig selection always includes all bodies\&. 
+.br
+\fIrecoveryTime\fP Finite nonnegative seconds; default 0\&.5\&. 
+.br
+\fIdirection\fP Rotation route for recovery; default rotationDirection_AsSpecified\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires an active physical rig\&. Call outside pose modifiers and locked solver callbacks\&. Initial Sprite/Layer snapshots preserve active control and recovery state\&. The example assumes a forearm bone\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.setAnimationPhysicsDriveSettings({maxForce: 120, maxTorque: 35}, 'forearm', true);
+sprite\&.setAnimationPhysicsMode(pdg\&.animationPhysics_Driven, 'forearm', true);
+// Release rig tracking before installing a manual world\-space target\&.
+sprite\&.setAnimationPhysicsMode(pdg\&.animationPhysics_Dynamic, 'forearm');
+sprite\&.findPart('forearm')\&.physics\&.setDriveTarget(new pdg\&.Point(20, 10), 0, 120, 35);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationPhysicsMode()\fP, \fBsetAnimationPhysicsDriveSettings()\fP, \fBdisableAnimationPhysics()\fP    
+.RE
+.PP
+
+.PP
+References \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBSprite\fP setAnimationPhysicsRoot (number bone)"
+
+.PP
+Select the bone receiving whole-Sprite impulses and root follow\&. Selection normally prefers the exact name root, otherwise the bone with the most skeletal descendants; ties use the lowest bone ID\&. This call takes precedence\&. Before setup, selecting a zero-length bone gives it the 1 mm fallback on setup\&. For a live generated rig, the bone must have an attached component; disable and select the root before rebuilding if it was previously skipped\&. Live changes preserve component identities and mass\&. Explicitly authored rigs keep the root specified by their definition\&. Invalid selection throws without changing it\&. Root overrides are runtime configuration and are not yet included in snapshots\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIbone\fP Bone selector in the current enabled animation rig\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBclearAnimationPhysicsRoot()\fP, \fBgetAnimationPhysicsRoot()\fP 
+.RE
+.PP
+
+.SS "\fBSprite\fP setAnimationPhysicsRoot (string bone)"
+
+.PP
+Select a physical root by its exact bone name\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbone\fP Name in the current enabled animation rig\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetAnimationPhysicsRoot(number)\fP 
+.RE
+.PP
+
+.SS "setAnimationSource (int source)"
+
+.PP
+Select the starting pose for evaluation\&. Clip uses the sampled animation; Reference and Procedural start from the rig reference pose\&. Persistent overrides and modifiers run afterward in every mode\&. Source selection does not create a separate playback clock\&. A change requested inside a callback takes effect after evaluation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIsource\fP \fBpdg\&.animationSource_Clip\fP, \fBpdg\&.animationSource_Reference\fP, or \fBpdg\&.animationSource_Procedural\fP\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetAnimationSource()\fP, \fBaddAnimationModifier()\fP 
 .RE
 .PP
 
@@ -2229,18 +4010,29 @@ mySprite\&.setDrawHelper(myHelper);
 .RE
 .PP
 
-.SS "\fBSprite\fP setElasticity (number elasticity)"
-
-.PP
-sets the elasticity (bounce) factor for this sprite's physics body 
-.SS "\fBSprite\fP setEntityScale (number xScale, number yScale)"
-
-.PP
-sets the scale factors for the sprite's entity (x and y scaling) 
 .SS "\fBSprite\fP setFrame (int frame)"
 
 .PP
 sets the current frame of the sprite to the specified frame number 
+.SS "\fBSprite\fP setFrameCollisionMask (\fBImage\fP frameImage, \fBImage\fP maskImage)"
+
+.PP
+Assign a mask to frames using an image\&. Retains the mask for every \fBSprite\fP frame using frameImage\&. The alpha frame collider samples it instead of the visible artwork\&. Passing null removes the override\&. A multi-frame mask must contain each referenced frame; a single-frame mask is reused\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIframeImage\fP Artwork image identifying the frames to update\&. 
+.br
+\fImaskImage\fP Mask image, or null to restore artwork alpha\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP for chaining\&. 
+.RE
+.PP
+
 .SS "\fBSprite\fP setMouseDetectMode (int collisionType = \fR\fBcollide_BoundingBox\fP\fP)"
 
 .PP
@@ -2290,6 +4082,255 @@ Sprite::setPreDrawHelper()
 .RE
 .PP
 
+.SS "\fBCollider\fP setupAnimationCollider ()"
+
+.PP
+Set up collision geometry that follows active authored animation boxes\&. Reuses or creates \&.collider, preserving its configuration and replacing its geometry source\&. Active boxes follow playback and the final pose\&. Names identify stable shape IDs across disappearance and reappearance\&. Requires an imported animation \fBSprite\fP; unsupported owners/builds throw without changing the association\&. Explicit additions remain active alongside source geometry\&. See \fBcollider_geometry_sources\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The \fBSprite\fP's \fBCollider\fP, for chaining\&. 
+.RE
+.PP
+
+.SS "setupAnimationPhysics (object definition)"
+
+.PP
+Create a physical rig for the current pose\&. Validates the definition before creating bodies and joints\&. Creates an ordinary root \fBPhysicsBody\fP if needed, temporarily makes it kinematic, and suspends its collision filter\&. Clip/controller evaluation supplies the desired pose; physical bodies then supply the displayed result\&.
+
+.PP
+Each configured bone has a \fBPart\fP named exactly after the bone\&. Obtain it with \fBfindPart()\fP and operate on its \fBPhysicsBody\fP through the read-only \fR\&.\fBphysics\fP\fP property\&. The \fBPart\fP's local transform is the capsule offset from the bone; its world transform follows the solved body\&. Positions and application points use owning-layer coordinates, and velocities use distance units or radians per second\&.
+
+.PP
+A pre-existing \fBPart\fP with that name is reused only if it is bound directly to the same bone, has the same capsule offset and unit unreflected scale, has no parent \fBPart\fP, and has neither a \fBPhysicsBody\fP nor a \fBCollider\fP\&. Conflicts reject the configuration without replacing caller-owned Parts\&. While enabled, body mass, inertia, materials, velocities, impulses, forces, torque, damping and drive targets are available through \fR\&.\fBphysics\fP\fP\&. The definition fixes bone bindings and capsule offsets: disable the physical rig before changing those or removing a mapped Part/body\&. Disable keeps the Parts and their names/IDs but returns their \fR\&.\fBphysics\fP\fP properties to NoPhysics\&. Independently retained bodies keep their last state and detach to the basic solver\&.
+
+.PP
+Capsules and pivot/rotary-limit joints are shared \fBCollider\fP and \fBPhysicsConstraint\fP components, available through each \fBPart\fP's collider and physics properties\&. The \fBSprite\fP's physics\&.getMass() reports attached component mass; setMass() scales those components proportionally\&. \fBPart\fP mass edits and explicit attach/detach operations update the total without redistributing other masses\&. Whole-Sprite impulses target the selected physical root\&. Contact notifications use the shared \fBColliderContact\fP event; enable them with collider\&.setWantsContactEvents(true)\&. Initial Sprite/Layer snapshots preserve the active rig and its control state\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdefinition\fP Physical rig object described below\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&. The \fBSprite\fP must belong to a physics-enabled \fBSpriteLayer\fP, and \fBsupportsAnimationPhysics()\fP must be true\&. The example assumes a bone named shoulder\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.setupAnimationPhysics({
+    bodies: [{ bone: 'shoulder', mass: 1, length: 10, radius: 1 }],
+    rootMode: pdg\&.animationRoot_Fixed
+});
+const shoulder = sprite\&.findPart('shoulder');
+const body = shoulder\&.physics;
+const state = body\&.getState();
+body\&.applyImpulse(new pdg\&.Vector(2, 0), new pdg\&.Point(state\&.x, state\&.y));
+body\&.applyTorque(0\&.5, 0\&.25); // torque integrated over a quarter second
+
+.fi
+.PP
+.RE
+.PP
+
+.PP
+\fBPhysical animation definition\fP
+.RS 4
+Top-level field  Default  Meaning  \fRversion\fP  1  Definition format; only integer version 1 is supported\&.  \fRbodies\fP  Required  Nonempty array of body objects (at most 65,536), described below\&. Array indices identify bodies\&.  \fRjoints\fP  []  Array of joint objects (at most 65,536), described below\&.  \fRrootMode\fP  animationRoot_Fixed  Fixed keeps the \fBSprite\fP frame independent; Follow publishes the selected body's translation to the \fBSprite\fP\&. Both support mixed body modes\&.  \fRrootBody\fP  0  Body index used for root follow and release velocity\&.  \fRselfCollisions\fP  false  Whether physical animation bodies may collide with one another\&.  
+.RE
+.PP
+Body field  Default  Meaning  \fRbone\fP  Required  Bone name or ID in the current rig; one body per driven bone\&.  \fRmass\fP, \fRlength\fP, \fRradius\fP  Required  Finite mass > 0, capsule length >= 0, and radius > 0 in rig distance units\&.  \fRmode\fP  animationBody_Dynamic  Dynamic simulation or animationBody_Kinematic following the desired pose\&.  \fRoffsetX\fP, \fRoffsetY\fP, \fRoffsetRotation\fP  0  Bone-local placement; rotation is in radians\&.  \fRfriction\fP  0\&.7  Finite nonnegative contact friction\&.  \fRelasticity\fP  0  Finite bounce coefficient from 0 to 1\&.  \fRcategories\fP, \fRmask\fP  4294967295  Unsigned 32-bit collision category and mask bits\&.  
+
+.PP
+Joint field  Default  Meaning  \fRparent\fP, \fRchild\fP  Required  Body indices connected by the joint\&.  \fRparentX\fP, \fRparentY\fP, \fRchildX\fP, \fRchildY\fP  0  Joint anchor positions in the respective body frames\&.  \fRminAngle\fP, \fRmaxAngle\fP  -Math\&.PI, Math\&.PI  Finite relative angular limits in radians\&.  \fRmaxForce\fP  1000000  Finite positive joint force limit\&.  \fRcollide\fP  false  Whether the connected bodies may collide\&.  
+
+.PP
+Fixed-root mode keeps the \fBSprite\fP frame authoritative\&. Follow-root mode publishes the selected body's translation while preserving the \fBSprite\fP's rotation and scale\&. The selected body can be Kinematic, Dynamic or Driven\&. \fBSprite\fP movement and rotation edit the animation target frame: controlled root bodies sweep or drive toward it, and dynamic descendants react through their joints\&. Dynamic bodies are not teleported\&. Pose/Part queries between an edit and the next solve do not discard the target, and followed translation does not feed back into a drive target\&. Use scheduled movement/rotation or an animation helper for a continuous path\&.
+
+.PP
+The \fBSprite\fP and driven bones require unit effective scale magnitudes; reflection is supported\&. \fR\fBsetFlipX()\fP\fP/\fR\fBsetFlipY()\fP\fP also reflect an active rig about the \fBSprite\fP's local axes through its origin\&. Positions, linear/angular velocities, collider frames, internal anchors, rotary limits and rig recovery state follow the flip\&. Body, collider, shape and constraint identities and mass/inertia are preserved\&. Detached parts remain independent\&. Bone/Part queries, artwork and mounts use the same reflected frames\&. World-space manual drives, IK targets, forces and torques retain their world targets; gravity is unchanged\&.
+
+.PP
+External linear joints retain their outside anchors\&. Disconnect external angular joints before flipping; an unsupported boundary joint, a locked solver, or a pose callback rejects the flip without changing it\&. Arbitrary live scaling does not resize physical bodies\&. Create the rig outside callbacks and a locked physics step; existing \fBSprite\fP joints and a second enabled rig are rejected\&.
+
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBdisableAnimationPhysics()\fP, \fBfindPart()\fP, \fBPhysicsBody::getState()\fP, \fBsupportsAnimationPhysics()\fP 
+.RE
+.PP
+
+.SS "\fBCollider\fP setupCollider ()"
+
+.PP
+Set up the collision geometry association for this owner\&. An existing collider keeps its geometry and settings; use \&.collider to access it directly\&. A new collider starts enabled with no shapes, no sensor flag and owner-body association\&. Does not create a \fBPhysicsBody\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+The owned collider\&. Native callers may addRef()/release() to retain it after removal\&. 
+.RE
+.PP
+
+.SS "\fBCollider\fP setupFrameCollider (int mode = \fR\fBframeCollider_AlphaMask\fP\fP, int alphaThreshold = \fR128\fP)"
+
+.PP
+Set up collision geometry that follows the current frame\&. Creates the read-only \&.collider association only when absent; otherwise reuses it\&. Preserves enabled/sensor state, filters, material, handlers and body association\&. Every call replaces previous geometry with the selected source and applies the supplied mode and threshold, including their defaults\&. Bounds follow frame dimensions and pivots; alpha mode uses the assigned frame mask or the frame image\&. A \fBSprite\fP without image frames uses its logical bounds\&. Explicit add methods then add persistent geometry; see \fBcollider_geometry_sources\fP\&. Pixel edits to the same image require selecting the source again\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImode\fP frameCollider_AlphaMask (default) or frameCollider_Bounds\&. 
+.br
+\fIalphaThreshold\fP Integer from 1 through 255, default 128; applies to alpha masks\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The \fBSprite\fP's \fBCollider\fP, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Enable collisions on the owning \fBSpriteLayer\fP for contacts; geometry queries also work without a layer or physics body\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const layer = pdg\&.createSpriteLayer();
+layer\&.enableCollisions();
+const sprite = layer\&.createSprite();
+sprite\&.setSize(24, 40);
+const collider = sprite\&.setupFrameCollider(pdg\&.frameCollider_Bounds);
+const extra = collider\&.addPolygon([
+    new pdg\&.Point(12, \-4), new pdg\&.Point(24, 0), new pdg\&.Point(12, 4)
+]);
+sprite\&.setSize(30, 40); // The frame shape updates; extra remains\&.
+collider\&.removeShape(extra);
+
+.fi
+.PP
+ 
+.RE
+.PP
+
+.PP
+References \fBpdg::frameCollider_AlphaMask\fP\&.
+.SS "\fBPhysicsBody\fP setupPhysicsBody (number mass = \fR1\fP, number momentOfInertia = \fR1\fP)"
+
+.PP
+Set up the optional physics body with the specified mass and inertia\&. Every call applies both arguments, including their defaults: \fBsetupPhysicsBody()\fP sets mass and moment of inertia to 1, and setupPhysicsBody(5) sets mass to 5 and inertia to 1\&. An existing body keeps its identity, transform, velocity, mode, forces, constraints and other settings\&. Read \&.physics to access it without reconfiguration\&. Invalid mass or inertia throws before changing either value\&.
+
+.PP
+If absent, creates a dynamic body at the owner's current transform and stops programmed movement/spin\&. Removal detaches retained references; JavaScript keeps them alive automatically\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fImass\fP Finite positive mass; default 1\&. 
+.br
+\fImomentOfInertia\fP Finite positive moment of inertia; default 1\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The owner's \fBPhysicsBody\fP\&. The read-only physics property refers to this same object\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Dynamic bodies own movement and rotation\&. Programmed movement/spin requests on their owners throw; immediate setters teleport the body\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const body = sprite\&.setupPhysicsBody(2, 4);
+body\&.applyImpulse(new pdg\&.Vector(4, 0));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBremovePhysicsBody()\fP, \fBPhysicsBody\fP 
+.RE
+.PP
+
+.SS "\fBSprite\fP setupPhysicsFromAnimationRig (number totalMass, number unitsPerMeter = \fR1\fP)"
+
+.PP
+Generate a dynamic physical rig from the reference skeleton\&. Creates bone-named Parts with shared PhysicsBodies, capsule Colliders and pivot PhysicsConstraints\&. Bodies start dynamic; the \fBSprite\fP follows the selected root's translation\&. Its coordinating body stays kinematic and does not add simulated mass\&. The initial body pose and velocity come from the current \fBSprite\fP pose/motion\&.
+
+.PP
+Geometry uses the pose chosen by \fBenableAnimationPose()\fP\&. A branching bone spans its farthest child connection points; one child gives the span from the bone's own joint to that child\&. A leaf uses the longer axis of its image bounds' union in bone-local coordinates, including reference transforms and pivots\&. Bounds use authored SCML image dimensions\&. Missing artwork is diagnosed and skipped\&. Other zero-length segments are skipped, except the selected root: it receives a 1 mm physical segment converted with unitsPerMeter\&. The authored skeleton is unchanged\&. Lengths are measured after reference bone scaling\&. Capsule radius is 10% of that physical length\&. Generated Parts expose a rigid body frame in layer distance units, so nonuniform bone display scales do not deform the capsules\&. Local/Sprite transform queries convert that same rigid frame into the requested space\&. Included segment lengths determine mass fractions; the coordinating body and unrelated Parts are excluded\&.
+
+.PP
+Each included child connects to its nearest included ancestor at the child's current joint location\&. Distinct skeletal trees remain separate components\&. Pivots have unlimited strength, no break threshold and free rotation\&. Components share a nonzero collision group to suppress internal contacts; callers can edit their filters\&. There are no automatically inferred angular limits or drives\&.
+
+.PP
+Repeated setup requires the original membership (all generated Parts, no added accessories); edited membership must first be restored\&. It reapplies the original mass fractions, scaling inertia proportionally while keeping bodies, colliders, joints, edited geometry, velocity and independent loads\&. Changing unitsPerMeter or switching from an explicit definition requires \fBdisableAnimationPhysics()\fP first\&. Ordinary physics\&.setMass() preserves the current, possibly tuned, mass fractions instead\&. An existing bone-named \fBPart\fP must have the same binding/offset, no parent, unit unreflected local scale, and no body or collider\&. Conflicts throw before replacing caller-owned associations\&. Mapped offsets/bindings and \fBPart\fP removal remain fixed until disabled\&. Change body control with \fBsetAnimationPhysicsMode()\fP\&. Edit physical properties and geometry through the \fBPart\fP's physics/collider objects; changing geometry does not recalculate inertia\&.
+
+.PP
+The \fBSprite\fP's physics\&.getMass() reports component mass; physics\&.setMass() scales all component masses and inertia atomically\&. Individual mass edits change the total without redistributing\&. Whole-Sprite linear/angular impulses target the selected root, including the world-point lever arm\&. Velocities, continuous forces/torques and manual drives should be applied to the component bodies\&. Single-body setupPhysicsBody(mass, inertia) and aggregate setMomentOfInertia() reject while this rig is active\&. Inertia/angular-momentum queries on the \fBSprite\fP still describe its coordinating body, not a pose-dependent assembly sum\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItotalMass\fP Finite positive mass in application mass units\&. 
+.br
+\fIunitsPerMeter\fP Finite positive number of layer distance units per meter; default 1 means meter coordinates for the fallback conversion\&. For example, 1000 makes the 1 mm fallback one layer unit\&. Other authored dimensions are already in layer/rig units and are not converted by this argument\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBSprite\fP, for chaining\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires an enabled animation pose, Chipmunk support and a physics-enabled \fBSpriteLayer\fP\&. Configure the layer before adding Sprites\&. Bone scales must be nonsingular; nonuniform authored bone scales and reflected initial poses are supported\&. The \fBSprite\fP root needs uniform scale\&. Set \fBSprite\fP scale/flip before setup: dynamic physical bones keep their initial effective scales while enabled\&. Call outside pose modifiers and locked solver callbacks\&. Initial Sprite/Layer snapshots preserve active rigs, edited components, membership and control/recovery state\&. The example assumes a bone named forearm and successful pose setup\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.setupPhysicsFromAnimationRig(70);
+sprite\&.findPart('forearm')\&.physics\&.setMass(3); // changes the total
+sprite\&.physics\&.setMass(80); // scales the current distribution
+sprite\&.physics\&.applyImpulse(new pdg\&.Vector(20, 0));
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBfindPart()\fP, \fBsetAnimationPhysicsRoot()\fP, \fBgetAnimationPhysicsSetupWarnings()\fP, \fBdisableAnimationPhysics()\fP 
+.RE
+.PP
+
 .SS "\fBSprite\fP setWantsAnimEndEvents (boolean wantsThem = \fRtrue\fP)"
 
 .PP
@@ -2314,38 +4355,14 @@ enables or disables mouse over event generation for this sprite
 
 .PP
 enables or disables offscreen event generation for this sprite 
-.SS "\fBCpConstraint\fP slideJoint (\fBOffset\fP anchor, \fBSprite\fP otherSprite, \fBOffset\fP otherAnchor, number minDist, number maxDist, number breakingForce = \fR0\fP)"
-
-.PP
-join sprites together via a slider between anchor points that has a min/max distance (\fIChipmunk Physics Only\fP) If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of force is applied to the joint\&.
-
-.PP
-\fBReturns\fP
-.RS 4
-the cpConstraint for the Joint in case you want to do anything special with it 
-.RE
-.PP
-
-.SS "\fBCpConstraint\fP springJoint (\fBOffset\fP anchor, \fBSprite\fP otherSprite, \fBOffset\fP otherAnchor, number restLength, number stiffness, number damping, number breakingForce = \fR0\fP)"
-
-.PP
-join sprites together via a spring between anchor points (\fIChipmunk Physics Only\fP) If a breaking force is given, then the joint will break, generating a \fBSpriteBreakEvent\fP, if greater than that amount of force is applied to the joint\&.
-
-.PP
-\fBReturns\fP
-.RS 4
-the cpConstraint for the Joint in case you want to do anything special with it 
-.RE
-.PP
-
 .SS "startAnimation (int animationId)"
 
 .PP
-Start playing an animation by its ID\&. 
+Start playing an animation by its ID\&. Selects the clip and resumes playback at its retained clip time\&. This is not a seek to zero\&. Cancels any unfinished blend and clears paused state\&. Invalid names/IDs leave playback unchanged\&. 
 .SS "startAnimation (string animationName)"
 
 .PP
-Start playing an animation by its name\&. 
+Start playing an animation by its name\&. Selects the clip and resumes playback at its retained clip time\&. This is not a seek to zero\&. Cancels any unfinished blend and clears paused state\&. Invalid names/IDs leave playback unchanged\&. 
 .SS "startFrameAnimation (number fps, int startingFrame = \fR\fBstart_FromFirstFrame\fP\fP, int numFrames = \fR\fBall_Frames\fP\fP, int animateFlags = \fR\fBanimate_Looping\fP\fP)"
 
 .PP
@@ -2355,52 +4372,142 @@ References \fBpdg::all_Frames\fP, \fBpdg::animate_Looping\fP, and \fBpdg::start_
 .SS "stopAnimation ()"
 
 .PP
-stops the current animation and pauses playback 
+stops the current animation and pauses playback For compatibility, stopAnimation pauses at the current pose\&. It does not reset time or cancel an active blend; resumeAnimation continues playback\&. 
 .SS "stopFrameAnimation ()"
 
 .PP
 stops all frame animation, keeping the current frame as the sprite's image 
-.SS "useCollisionMask (\fBImage\fP frameImage, \fBImage\fP maskImage)"
+.SS "boolean supportsAnimationPhysics ()"
 
 .PP
-sets collision masks for precise collision detection using image data This function enables pixel-perfect collision detection for the sprite by using image data to define collision areas\&. This provides more accurate collision detection than simple rectangular bounds\&.
-
-.PP
-\fBParameters\fP
-.RS 4
-\fIframeImage\fP The image containing the frame data to use for collision detection 
-.br
-\fImaskImage\fP The image containing the collision mask (white pixels = collision, black pixels = no collision)
-.RE
-.PP
-The collision mask system uses the alpha channel or brightness of the maskImage to determine collision areas\&. White pixels (or pixels with alpha > 0) are considered solid collision areas, while black pixels (or pixels with alpha = 0) are considered empty space\&.
-
-.PP
-This allows for precise collision detection that matches the visual appearance of the sprite, rather than using simple rectangular bounds\&.
-
-.PP
-\fBWarning\fP
-.RS 4
-Collision mask detection is more computationally expensive than rectangular collision detection 
-.RE
+Test this build's physical-animation support\&. 
 .PP
 \fBNote\fP
 .RS 4
-The maskImage should be the same size as the frameImage 
-
+Animation physics requires Chipmunk\&. The Basic solver supports simple shared-body physics but is intentionally not a backend for animation rigs; expanding it to complex animation physics is not planned\&. Enable Chipmunk on the \fBSpriteLayer\fP before rig setup\&.
+.RE
 .PP
-Only the alpha channel or brightness of the maskImage is used for collision detection
+\fBReturns\fP
+.RS 4
+True when built with Chipmunk physics support\&. This does not test the \fBSprite\fP's current layer, rig, or scale\&.
 .RE
 .PP
 \fBSee also\fP
 .RS 4
-Sprite::setCollisionBounds() 
-
-.PP
-Sprite::getCollisionBounds() 
+\fBsetupAnimationPhysics()\fP, \fBisAnimationPhysicsEnabled()\fP 
 .RE
 .PP
 
+.SS "\fBPart\fP transferPart (\fBPart\fP part, boolean includeDescendants = \fRtrue\fP)"
+
+.PP
+Transfer an existing \fBPart\fP and optional subtree into this \fBSprite\fP\&. Moves the same \fBPart\fP objects; retained \fBPart\fP, \fBPhysicsBody\fP, \fBCollider\fP and internal \fBPhysicsConstraint\fP handles remain valid\&. Names and Part-owned Image/Drawing content are retained\&. The destination assigns fresh per-Sprite IDs and appends the moved Parts in their source order\&. Read getId() again after transfer\&. Transferring a \fBPart\fP already owned by this \fBSprite\fP is a no-op\&.
+
+.PP
+World transforms, body mass/inertia, velocities, loads, manual world-space drives and collision settings are preserved\&. The moved root loses its old \fBPart\fP parent; parents inside the transferred set are retained\&. With includeDescendants false, children left behind keep their world placement and nearest remaining \fBPart\fP ancestor\&. Movement, rotation and scale programming is canceled on Parts whose parent frame changes\&. Logical size animation and other local state remain\&.
+
+.PP
+Descendants include ordinary \fBPart\fP children, physical-rig bone descendants and registered assembly children\&. Joints within the selected set survive\&. Joints to any body outside it disconnect; retained handles report inactive\&. Source assembly mass decreases by the transferred member masses without redistributing the others\&. The destination does not automatically register the transferred bodies in its rig: use \fBattachAnimationPhysicsPart()\fP and create any new joints explicitly\&.
+
+.PP
+Mapped rig bodies are released from the source controller and become ordinary Dynamic \fBPart\fP bodies\&. At least one attached skeletal body must remain in the source rig; transferring its selected root chooses a remaining root using the usual rule\&. Source bone/artwork/socket bindings are cleared rather than rebound by name\&. The source skeleton, animation clips, imported artwork and animation-drawing registrations remain source-owned; use \fBPart\&.setDrawing()\fP/setImage() for artwork that moves with the \fBPart\fP\&. The source rig can subsequently be disabled or destroyed without removing the transferred bodies\&. Layer snapshots preserve the resulting ownership and joints\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIpart\fP \fBPart\fP currently owned by a \fBSprite\fP\&. 
+.br
+\fIincludeDescendants\fP Transfer descendants too; optional, default true\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The same \fBPart\fP, now owned by this \fBSprite\fP\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Both Sprites must share a layer, or both be off-layer\&. Names must be unique in the destination\&. Singular/sheared placements that cannot be represented by \fBPart\fP transforms and Sprite-mount cycles reject before transfer\&. Call outside animation modifiers, drawing callbacks and locked physics callbacks\&. Finish or cancel source rig recovery first\&. Clear any \fBPart\fP IK target involving a selected \fBPart\fP; re-establish it after transfer\&. Release manual drives before detaching attached skeletal bodies, following the existing explicit drive-handoff contract\&. Independent or already detached bodies retain their manual drives\&. Parent-relative IK limits are cleared when their frame changes\&. The example assumes a physical weight \fBPart\fP and a hand in the receiving \fBSprite\fP's active rig\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const weight = receiver\&.transferPart(donor\&.findPart('weight'));
+const hand = receiver\&.findPart('hand');
+receiver\&.attachAnimationPhysicsPart(weight, hand);
+hand\&.physics\&.createPivotJoint(weight\&.physics);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBcreatePart()\fP, \fBPart::getId()\fP, \fBattachAnimationPhysicsPart()\fP, \fBdetachAnimationPhysicsPart()\fP 
+.RE
+.PP
+
+.SS "transitionToAnimation (string clip, number timeSeconds, number durationSeconds)"
+
+.PP
+Blend the current pose into a selected clip\&. Starts the destination clip at the requested time while blending from the current base pose\&. Interrupting a transition captures its current blended pose\&. A zero duration switches immediately\&. Completion sends action_AnimationBlendComplete when the \fBSprite\fP belongs to a layer\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIclip\fP Name of a compatible clip in the current Spriter entity\&. 
+.br
+\fItimeSeconds\fP Finite sample time in seconds\&. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints\&. 
+.br
+\fIdurationSeconds\fP Finite nonnegative blend duration in seconds; zero switches immediately\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+No value\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Call \fBenableAnimationPose()\fP successfully before using this method\&. Call outside animation callbacks\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+sprite\&.transitionToAnimation('reference', 0, 0\&.3);
+
+.fi
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBseekAnimation()\fP, \fBisAnimationTransitioning()\fP, \fBgetAnimationTransitionProgress()\fP 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBCollider\fP collider"
+
+.PP
+Read-only \fBCollider\fP association, or shared \fBCollider::NoCollider\fP\&. Read-only property\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite::setupCollider()\fP, \fBSprite::removeCollider()\fP 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP physics"
+Read-only property\&. 
 
 .SH "Author"
 .PP 

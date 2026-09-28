@@ -39,6 +39,7 @@
 
 #include <limits.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <mach-o/dyld.h> // for _NSGetExecutablePath
 
 namespace pdg {
@@ -89,7 +90,7 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 		// now workingDir is the actual Application directory path
 		std::string tmpDir = workingDir;
 		tmpDir = workingDir + "../Documents/";
-		appDir = os_makeCanonicalPath(tmpDir.c_str());
+		appDir = OS::makeCanonicalPath(tmpDir.c_str());
 		appDataDir = workingDir;
 		resourceDir = appDataDir;
 #else
@@ -126,4 +127,3 @@ const char* ios_setupWorkingDirectory(int argc, const char* argv[]) {
 
 
 } // end namespace pdg
-

@@ -43,6 +43,7 @@
 #include "pdg/sys/coordinates.h"
 #include "pdg/sys/drawing.h"
 #include "memblock.h"
+#include <optional>
 
 /*
 #include <time.h>
@@ -79,13 +80,9 @@ v8::Local<v8::Object> v8_MakeJavascriptColor(v8::Isolate* isolate, pdg::Color& c
 v8::Local<v8::Object> v8_MakeJavascriptMemBlock(v8::Isolate* isolate, pdg::MemBlock& mb);
 v8::Local<v8::Object> v8_MakeJavascriptSpline(v8::Isolate* isolate, pdg::Spline& s);
 
-Offset  	v8_ValueToOffset(v8::Isolate* isolate, v8::Local<v8::Value> val);
-Point  		v8_ValueToPoint(v8::Isolate* isolate, v8::Local<v8::Value> val);
-Vector  	v8_ValueToVector(v8::Isolate* isolate, v8::Local<v8::Value> val);
 Rect  		v8_ValueToRect(v8::Isolate* isolate, v8::Local<v8::Value> val);
 RotatedRect v8_ValueToRotatedRect(v8::Isolate* isolate, v8::Local<v8::Value> val);
 Quad  		v8_ValueToQuad(v8::Isolate* isolate, v8::Local<v8::Value> val);
-Color  		v8_ValueToColor(v8::Isolate* isolate, v8::Local<v8::Value> val);
 Spline*     v8_ValueToSpline(v8::Isolate* isolate, v8::Local<v8::Value> val);
 
 v8::Local<v8::Object> v8_ObjectCreateEmpty(v8::Isolate* isolate, void* privateDataPtr = 0);
@@ -110,14 +107,15 @@ char* v8_CreateStringWithContentsOfFile(const char* fileName, const char* openMo
 
 */
 
-bool v8_ValueIsOffset(v8::Isolate* isolate, v8::Local<v8::Value> val);
-bool v8_ValueIsPoint(v8::Isolate* isolate, v8::Local<v8::Value> val);
-bool v8_ValueIsVector(v8::Isolate* isolate, v8::Local<v8::Value> val);
-bool v8_ValueIsRect(v8::Isolate* isolate, v8::Local<v8::Value> val, bool arrayCheck = true);
-bool v8_ValueIsRotatedRect(v8::Isolate* isolate, v8::Local<v8::Value> val);
-bool v8_ValueIsQuad(v8::Isolate* isolate, v8::Local<v8::Value> val);
+std::optional<bool> v8_ValueIsOffset(v8::Isolate* isolate, v8::Local<v8::Value> val, Offset& value);
+// true: converted, false: invalid shape, nullopt: pending JavaScript exception.
+std::optional<bool> v8_ValueIsPoint(v8::Isolate* isolate, v8::Local<v8::Value> val, Point& point);
+std::optional<bool> v8_ValueIsVector(v8::Isolate* isolate, v8::Local<v8::Value> val, Vector& value);
+std::optional<bool> v8_ValueIsRect(v8::Isolate* isolate, v8::Local<v8::Value> val, Rect& value);
+std::optional<bool> v8_ValueIsRotatedRect(v8::Isolate* isolate, v8::Local<v8::Value> val, RotatedRect& value);
+std::optional<bool> v8_ValueIsQuad(v8::Isolate* isolate, v8::Local<v8::Value> val, Quad& value);
 bool v8_ValueIsSpline(v8::Isolate* isolate, v8::Local<v8::Value> val);
-bool v8_ValueIsColor(v8::Isolate* isolate, v8::Local<v8::Value> val);
+std::optional<bool> v8_ValueIsColor(v8::Isolate* isolate, v8::Local<v8::Value> val, Color& value);
 
 namespace v8script {
 

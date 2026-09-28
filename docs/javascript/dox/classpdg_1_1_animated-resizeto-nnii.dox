@@ -1,9 +1,16 @@
 namespace pdg { /**
+\fn pdg::Animated::resizeTo(number width, number height, number durationSeconds, int easing)
+\brief Animate logical size to a target.
 
-\fn pdg::Animated::resizeTo
+Replaces constant growth and size animations; independent transform scale is unchanged. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
-\brief resize the object to a specific size over time
+\param width Logical size value.
+\param height Logical size value.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
 
-Honors delay given by wait()
+\return This object, for chaining.
 
-**/ }
+\see setSize(), resizeBy(), grow()
+*/
+ }

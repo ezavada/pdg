@@ -55,7 +55,7 @@ if [ -z "$1" ]; then
     echo "USAGE: gen-script-interface.sh binding_dir src_file [target_dir] [build_dir] [out_file_name]"
     echo ""
     echo "Parameters:"
-    echo "  binding_dir    - The binding directory to use for includes (javascript/v8)"
+    echo "  binding_dir    - The binding directory to use for includes (javascript/v8 or javascript/jsc)"
     echo "  src_file       - Source file to process (e.g., pdg_js_classes.cpp or pdg_script_interface.h)"
     echo "  target_dir     - Output directory for generated files (default: src/bindings/generated)"
     echo "  build_dir      - Build directory for temporary files (default: build)"
@@ -63,6 +63,7 @@ if [ -z "$1" ]; then
     echo ""
     echo "Examples:"
     echo "  ./gen-script-interface.sh javascript/v8 src/bindings/javascript/v8/pdg_js_classes.cpp"
+    echo "  ./gen-script-interface.sh javascript/jsc src/bindings/common/pdg_script_interface.h src/bindings/generated/jsc"
     echo "  ./gen-script-interface.sh javascript/v8 src/bindings/common/pdg_script_impl.cpp src/bindings/generated/v8 ./ pdg_script_impl.cpp"
     exit 1
 fi
@@ -98,25 +99,32 @@ if [[ "$PDG_TARGET_DIR" != /* ]]; then
 	PDG_TARGET_DIR="$PDG_ROOT/$PDG_TARGET_DIR"
 fi
 
-PDG_TARGET="$PDG_TARGET_DIR/$PDG_OUT_FILENAME"
-
-echo "// -----------------------------------------------" > $PDG_TARGET
-echo "// This file automatically generated from:" >> $PDG_TARGET
-echo "//" >> $PDG_TARGET
-echo "//    \$PDG_ROOT$PDG_REL_SRC" >> $PDG_TARGET
-echo "//    \$PDG_ROOT/src/bindings/$BINDING_DIR/pdg_script_macros.h" >> $PDG_TARGET
-echo "//" >> $PDG_TARGET
-
-
-cat "$PDG_ROOT/src/bindings/$BINDING_DIR/LICENSE" >> $PDG_TARGET
-echo "" >> $PDG_TARGET
-echo "" >> $PDG_TARGET
+set -e
+set -o pipefail
+mkdir -p "$PDG_BUILD_DIR" "$PDG_TARGET_DIR"
+PDG_GEN_TMP=$(mktemp -d "${PDG_BUILD_DIR%/}/pdg-binding.XXXXXX")
+trap 'rm -rf "$PDG_GEN_TMP"' EXIT
+PDG_FINAL_TARGET="$PDG_TARGET_DIR/$PDG_OUT_FILENAME"
+PDG_TARGET="$PDG_GEN_TMP/output"
 
 
-gcc -DPDG_BUILDING_INTERFACE_FILES -I$PDG_TARGET_DIR -I$PDG_ROOT/src/bindings/$BINDING_DIR -I$PDG_ROOT/src/bindings/javascript $PDG_SRC -E -o $PDG_BUILD_DIR/tmp.1.txt
-sed 'y/@/\n/' $PDG_BUILD_DIR/tmp.1.txt > $PDG_BUILD_DIR/tmp.2.txt
-sed 's/%#/#/g' $PDG_BUILD_DIR/tmp.2.txt > $PDG_BUILD_DIR/tmp.3.txt
-sed 's/# .*$//g' $PDG_BUILD_DIR/tmp.3.txt > $PDG_BUILD_DIR/tmp.4.txt
-sed 's/__line__/__LINE__/g' $PDG_BUILD_DIR/tmp.4.txt > $PDG_BUILD_DIR/tmp.5.txt
-bcpp $PDG_BUILD_DIR/tmp.5.txt 2>/dev/null >> $PDG_TARGET
-#rm -f $PDG_BUILD_DIR/tmp.*.txt
+echo "// -----------------------------------------------" > "$PDG_TARGET"
+echo "// This file automatically generated from:" >> "$PDG_TARGET"
+echo "//" >> "$PDG_TARGET"
+echo "//    \$PDG_ROOT$PDG_REL_SRC" >> "$PDG_TARGET"
+echo "//    \$PDG_ROOT/src/bindings/$BINDING_DIR/pdg_script_macros.h" >> "$PDG_TARGET"
+echo "//" >> "$PDG_TARGET"
+
+
+cat "$PDG_ROOT/src/bindings/$BINDING_DIR/LICENSE" >> "$PDG_TARGET"
+echo "" >> "$PDG_TARGET"
+echo "" >> "$PDG_TARGET"
+
+
+gcc -DPDG_BUILDING_INTERFACE_FILES -I"$PDG_TARGET_DIR" -I"$PDG_ROOT/src/bindings/$BINDING_DIR" -I"$PDG_ROOT/src/bindings/javascript" "$PDG_SRC" -E -o "$PDG_GEN_TMP/1.txt"
+sed 'y/@/\n/' "$PDG_GEN_TMP/1.txt" > "$PDG_GEN_TMP/2.txt"
+sed 's/%#/#/g' "$PDG_GEN_TMP/2.txt" > "$PDG_GEN_TMP/3.txt"
+sed 's/# .*$//g' "$PDG_GEN_TMP/3.txt" > "$PDG_GEN_TMP/4.txt"
+sed 's/__line__/__LINE__/g' "$PDG_GEN_TMP/4.txt" > "$PDG_GEN_TMP/5.txt"
+bcpp "$PDG_GEN_TMP/5.txt" 2>/dev/null >> "$PDG_TARGET"
+mv "$PDG_TARGET" "$PDG_FINAL_TARGET"

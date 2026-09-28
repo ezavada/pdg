@@ -1,11 +1,12 @@
-namespace pdg { /**
+/**
+\fn pdg::Animated::wait(number durationSeconds)
+\brief Delay the next timed animation request.
 
-\fn pdg::Animated::wait
+The next timed operation consumes this delay. Replaces pending sequencing. Immediate setters and operations cannot follow it until a timed request consumes it or cancelSchedule() clears it, even for wait(0).
 
-\brief wait before beginning the next animation call that operates over time
+\param durationSeconds Finite nonnegative delay in seconds.
 
-Only applies to the next call, and only applies to calls where a duration can be passed in
+\return This object, for chaining.
 
-Works with:  move(), moveTo(), accelerateTo(), resize(), stretch(), grow(), resizeTo(), rotate(), rotateTo(), changeCenter(), changeCenterTo(), applyForce(), applyTorque(),
-
-**/ }
+\see andThen(), cancelSchedule()
+*/

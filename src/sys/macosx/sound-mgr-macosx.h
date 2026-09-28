@@ -37,6 +37,7 @@
 #include "audio_cleanup_manager.h"
 
 #include <vector>
+#include <memory>
 
 namespace pdg {
 
@@ -68,10 +69,9 @@ public:
     void            soundStopped(Sound* sound); // the sound is no longer playing
 protected:
 
-    typedef std::vector<Sound*> SoundsList;
+    using SoundsList = std::vector<std::shared_ptr<Sound>>;
     
     SoundsList  mSounds;
-    bool        mSoundsItemDeleted;
 	uint32 mStartedFadeMs;
 	float mTargetVolume;
 	float mStartingVolume;
@@ -81,4 +81,3 @@ protected:
 } // end namespace pdg
 
 #endif // PDG_SOUNDMGR_H_INCLUDED
-

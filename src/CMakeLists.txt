@@ -2,7 +2,16 @@
 
 SET( PDG_SOURCES  
 	sys/animated.cpp
+	sys/particle.cpp
+	sys/physicsbody.cpp
+	sys/collider.cpp
+	sys/animationpose.cpp
+	sys/animationcontroller.cpp
+	sys/animationphysics.cpp
+	sys/animationtargets.cpp
+	sys/animationdrawing.cpp
 	sys/attributes.cpp
+	sys/animatedattributes.cpp
 	sys/ConvertUTF.c
 	sys/collisiondetection.cpp
 	sys/color.cpp
@@ -70,6 +79,9 @@ SET (PDG_JAVASCRIPT_BINDINGS_SOURCES
 	bindings/javascript/v8/pdg_v8_support.cpp
 	bindings/generated/v8/pdg_script_impl.cpp
 	bindings/generated/v8/pdg_interfaces.cpp
+	bindings/generated/v8/physics/cp_arbiter.cpp
+	bindings/generated/v8/physics/cp_constraint.cpp
+	bindings/generated/v8/physics/cp_space.cpp
 	bindings/generated/v8/core/config_manager.cpp
 	bindings/generated/v8/core/log_manager.cpp
 	bindings/generated/v8/core/event_manager.cpp
@@ -97,16 +109,6 @@ SET (PDG_JAVASCRIPT_BINDINGS_SOURCES
 	bindings/node/pdg_node.cpp
 )
 
-SET(PDG_JAVASCRIPT_PHYSICS_BINDINGS_SOURCES
-	bindings/generated/v8/physics/cp_arbiter.cpp
-	bindings/generated/v8/physics/cp_constraint.cpp
-	bindings/generated/v8/physics/cp_space.cpp
-)
-
-IF(USE_CHIPMUNK)
-	LIST(APPEND PDG_JAVASCRIPT_BINDINGS_SOURCES ${PDG_JAVASCRIPT_PHYSICS_BINDINGS_SOURCES})
-ENDIF()
-
 SET (PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES 
 	${PDG_SOURCE_DIR}/src/bindings/javascript
 	${PDG_SOURCE_DIR}/src/bindings/javascript/v8
@@ -121,6 +123,12 @@ SET (PDG_NODE_INCLUDE_DIRECTORIES
 	${PDG_SOURCE_DIR}/deps/node/deps/v8
 	${PDG_SOURCE_DIR}/deps/node/deps/v8/include
 )
+
+IF(CAN_BUILD_JSC_INTERFACES)
+	LIST(APPEND PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES
+		${PDG_SOURCE_DIR}/src/bindings/generated/jsc
+	)
+ENDIF()
 
 SET (PDG_JAVASCRIPT_BINDINGS_LINK_DIRECTORIES 
 )
@@ -182,6 +190,7 @@ IF( USE_SPRITER )
 	
 	SET( SPRITER_FILES 
 		${SPRITERPLUSPLUS_SOURCES}
+		sys/spriter/pdg_spriter_pose.cpp
 		sys/spriter/pdg_file_factory.cpp
 		sys/spriter/pdg_object_factory.cpp
 		sys/spriter/pdg_image_file.cpp
@@ -197,8 +206,11 @@ ENDIF( USE_SPRITER )
 
 IF( MACOSX )
 	IF(PDG_HEADLESS)
-		SET( PLATFORM_FILES 
+		SET( PLATFORM_FILES
 			sys/macosx/platform-events-macosx.cpp
+			sys/pdg-lib.cpp
+			sys/macosx/internals-macosx.mm
+			sys/macosx/platform-image-macosx.mm
 		)
 	ELSEIF( USE_GLFW_MAC ) 
 		SET(PDG_WITH_GLFW ON)
@@ -289,6 +301,13 @@ ENDIF( WIN32 )
 
 # Add JPEG support for Unix/Linux platforms
 IF( NOT MACOSX AND NOT WIN32 )
+	# The bundled PNG sources need their configuration even in a fresh, headless
+	# CMake checkout. Keep generated headers outside the vendored source tree.
+	CONFIGURE_FILE(${PDG_SOURCE_DIR}/deps/png/scripts/pnglibconf.h.prebuilt
+		${CMAKE_CURRENT_BINARY_DIR}/png-config/pnglibconf.h COPYONLY)
+	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/png-config)
+	# This source list uses the portable decoder, without arm/ NEON objects.
+	SET_SOURCE_FILES_PROPERTIES(${PNG_SOURCES} PROPERTIES COMPILE_DEFINITIONS PNG_ARM_NEON_OPT=0)
 	SET( PLATFORM_FILES
 		sys/pdg-lib.cpp
 		sys/unix/os-unix.cpp
@@ -356,8 +375,16 @@ FOREACH(node_zlib_lib ${PDG_NODE_STATIC_ZLIB_LIB_CANDIDATES})
 	ENDIF()
 ENDFOREACH()
 
+# Node's optimized inflate archive calls back into the main zlib archive.
+# ELF linkers must rescan the group when linking standalone C++ consumers.
+IF(NOT MACOSX AND NOT WIN32 AND PDG_NODE_STATIC_ZLIB_LIBS)
+	SET(PDG_NODE_STATIC_ZLIB_LIBS
+		"-Wl,--start-group" ${PDG_NODE_STATIC_ZLIB_LIBS} "-Wl,--end-group")
+ENDIF()
+
 SET(PDG_NODE_NONWIN_LIB_CANDIDATES
 	${PDG_NODE_RELEASE_DIR}/libnode.a
+	${PDG_NODE_RELEASE_DIR}/libnode_base.a
 	${PDG_NODE_RELEASE_DIR}/libuv.a
 	${PDG_NODE_RELEASE_DIR}/libuvwasi.a
 	${PDG_NODE_RELEASE_DIR}/libicui18n.a
@@ -373,17 +400,18 @@ SET(PDG_NODE_NONWIN_LIB_CANDIDATES
 	${PDG_NODE_RELEASE_DIR}/libbrotli.a
 	${PDG_NODE_RELEASE_DIR}/libzstd.a
 	${PDG_NODE_RELEASE_DIR}/libncrypto.a
+	${PDG_NODE_RELEASE_DIR}/libncrypto_engine.a
 	${PDG_NODE_RELEASE_DIR}/libsimdutf.a
 	${PDG_NODE_RELEASE_DIR}/libsimdjson.a
 	${PDG_NODE_RELEASE_DIR}/libabseil.a
 	${PDG_NODE_RELEASE_DIR}/libhighway.a
 	${PDG_NODE_RELEASE_DIR}/libada.a
+	${PDG_NODE_RELEASE_DIR}/libmerve.a
 	${PDG_NODE_RELEASE_DIR}/libcrdtp.a
 	${PDG_NODE_RELEASE_DIR}/libnbytes.a
 	${PDG_NODE_RELEASE_DIR}/libv8_zlib.a
 	${PDG_NODE_RELEASE_DIR}/libv8_base_without_compiler.a
 	${PDG_NODE_RELEASE_DIR}/libv8_compiler.a
-	${PDG_NODE_RELEASE_DIR}/libv8_init.a
 	${PDG_NODE_RELEASE_DIR}/libv8_initializers.a
 	${PDG_NODE_RELEASE_DIR}/libv8_initializers_slow.a
 	${PDG_NODE_RELEASE_DIR}/libv8_libbase.a
@@ -454,11 +482,9 @@ target_include_directories(minizip_static PRIVATE
 )
 
 IF( NOT MACOSX AND NOT WIN32 )
-	target_include_directories(minizip_static PRIVATE
-		${PDG_SOURCE_DIR}/deps/node/deps/openssl/config
-		${PDG_SOURCE_DIR}/deps/node/deps/openssl/config/archs/${PDG_NODE_OPENSSL_ARCH}/asm/include
-		${PDG_SOURCE_DIR}/deps/node/deps/openssl/openssl/include
-	)
+	FIND_PACKAGE(OpenSSL REQUIRED COMPONENTS Crypto)
+	FIND_PACKAGE(ZLIB REQUIRED)
+	TARGET_LINK_LIBRARIES(minizip_static PUBLIC OpenSSL::Crypto ZLIB::ZLIB)
 ENDIF()
 
 # Set compile definitions for minizip
@@ -508,7 +534,6 @@ ADD_EXECUTABLE(pdg WIN32 MACOSX_BUNDLE
 # V8 requires C++20; ensure MSVC gets /std:c++20 and updates __cplusplus (needed for v8config.h)
 SET_TARGET_PROPERTIES(pdg PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON)
 SET_TARGET_PROPERTIES(pdg PROPERTIES DEBUG_POSTFIX "-debug")
-SET_TARGET_PROPERTIES(pdg PROPERTIES RELWITHDEBINFO_POSTFIX "-debug")
 IF(MSVC)
 	TARGET_COMPILE_OPTIONS(pdg PRIVATE /std:c++20 /Zc:__cplusplus)
 ENDIF()
@@ -522,8 +547,7 @@ target_compile_definitions(pdg PRIVATE
 	PDG_INTERNAL_LIB=1
 	PDG_NO_NETWORK=1
 	$<$<CONFIG:Debug>:DEBUG=1>
-	$<$<CONFIG:RelWithDebInfo>:DEBUG=1>
-	$<$<NOT:$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>>:NDEBUG=1>
+	$<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
 )
 
 # Set include directories for the target (modern CMake approach)
@@ -885,11 +909,13 @@ IF( USE_CHIPMUNK )
 	ENDIF()
 ENDIF( USE_CHIPMUNK )
 
-# Link Node.js components (these are already included in libnode.a on non-Windows platforms)
+# Node 24.21 separates the core implementation (node_base) from libnode's snapshot.
+# Match upstream's whole-archive flags so builtin registrations survive linking.
 IF( WIN32 )
 	# Link Node.js library and its dependencies (built under out/Release/lib/)
 	TARGET_LINK_LIBRARIES ( pdg
 		${PDG_NODE_RELEASE_DIR}/lib/libnode.lib
+		${PDG_NODE_RELEASE_DIR}/lib/node_base.lib
 		${PDG_NODE_RELEASE_DIR}/lib/libuv.lib
 		${PDG_NODE_RELEASE_DIR}/lib/uvwasi.lib
 		${PDG_NODE_RELEASE_DIR}/lib/icui18n.lib
@@ -904,11 +930,13 @@ IF( WIN32 )
 		${PDG_NODE_RELEASE_DIR}/lib/sqlite.lib
 		${PDG_NODE_RELEASE_DIR}/lib/brotli.lib
 		${PDG_NODE_RELEASE_DIR}/lib/ncrypto.lib
+		${PDG_NODE_RELEASE_DIR}/lib/ncrypto_engine.lib
 		${PDG_NODE_RELEASE_DIR}/lib/simdutf.lib
 		${PDG_NODE_RELEASE_DIR}/lib/simdjson.lib
 		${PDG_NODE_RELEASE_DIR}/lib/abseil.lib
 		${PDG_NODE_RELEASE_DIR}/lib/highway.lib
 		${PDG_NODE_RELEASE_DIR}/lib/ada.lib
+		${PDG_NODE_RELEASE_DIR}/lib/merve.lib
 		${PDG_NODE_RELEASE_DIR}/lib/crdtp.lib
 		${PDG_NODE_RELEASE_DIR}/lib/nbytes.lib
 		${PDG_NODE_RELEASE_DIR}/lib/v8_zlib.lib
@@ -917,7 +945,6 @@ IF( WIN32 )
 		# V8 libraries
 		${PDG_NODE_RELEASE_DIR}/lib/v8_base_without_compiler.lib
 		${PDG_NODE_RELEASE_DIR}/lib/v8_compiler.lib
-		${PDG_NODE_RELEASE_DIR}/lib/v8_init.lib
 		${PDG_NODE_RELEASE_DIR}/lib/v8_initializers.lib
 		${PDG_NODE_RELEASE_DIR}/lib/v8_initializers_slow.lib
 		${PDG_NODE_RELEASE_DIR}/lib/v8_libbase.lib
@@ -928,9 +955,15 @@ IF( WIN32 )
 		libtess2_static
 		${PLATFORM_LIBS} ${OPENGL_LIBRARIES}
 	)
+	TARGET_LINK_OPTIONS(pdg PRIVATE
+		"/WHOLEARCHIVE:${PDG_NODE_RELEASE_DIR}/lib/node_base.lib"
+		"/WHOLEARCHIVE:${PDG_NODE_RELEASE_DIR}/lib/v8_base_without_compiler.lib")
 ELSE (WIN32)
     # non-windows platforms
 	IF( MACOSX )
+		TARGET_LINK_OPTIONS(pdg PRIVATE
+			"-Wl,-force_load,${PDG_NODE_RELEASE_DIR}/libnode_base.a"
+			"-Wl,-force_load,${PDG_NODE_RELEASE_DIR}/libv8_base_without_compiler.a")
 		TARGET_LINK_LIBRARIES ( pdg
 			${PDG_NODE_NONWIN_LIBS}
 			minizip_static
@@ -939,6 +972,10 @@ ELSE (WIN32)
 	ELSE()
 		TARGET_LINK_LIBRARIES ( pdg
 			"-Wl,--start-group"
+			"-Wl,--whole-archive"
+			${PDG_NODE_RELEASE_DIR}/libnode_base.a
+			${PDG_NODE_RELEASE_DIR}/libv8_base_without_compiler.a
+			"-Wl,--no-whole-archive"
 			${PDG_NODE_NONWIN_LIBS}
 			"-Wl,--end-group"
 			minizip_static
@@ -968,6 +1005,25 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/js/dump.js"
 	) 
 
+	SET( JS_JSC_IOS_FILES
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/pdg.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/linkedlist.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/assert.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/child_process.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/console.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/events.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/fs.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/module.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/os.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/path.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/../deps/node/lib/punycode.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/timers.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/../deps/node/lib/url.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/util.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/vm.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_main.js"
+	)
+
 	SET( JS_NODE_FILES
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/pdg.js"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/node/pdg_main_v24.js"
@@ -978,13 +1034,24 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/node/pdg_natives.h"
 	)
 
-	# custom command for building the pdg_natives.h file
+	IF(CAN_BUILD_JSC_INTERFACES)
+		LIST(APPEND JS_NATIVE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h")
+	ENDIF(CAN_BUILD_JSC_INTERFACES)
+
+	# custom command for building the pdg_natives.h file(s)
 	# should only need to run when the .js files in src/js/ change
+	# (Node and jsc-ios must be separate OUTPUT rules — each COMMAND only writes one file.)
 	ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/bindings/node/pdg_natives.h"
 		COMMAND ${PDG_PYTHON3} "${PDG_SOURCE_DIR}/tools/js2c.py" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/node/pdg_natives.h" ${JS_FILES} ${JS_NODE_FILES}
 		DEPENDS ${JS_FILES} ${JS_NODE_FILES}
 	)
 
+	IF(CAN_BUILD_JSC_INTERFACES)
+		ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h"
+			COMMAND ${PDG_PYTHON3} "${PDG_SOURCE_DIR}/tools/js2c.py" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h" ${JS_FILES} ${JS_JSC_IOS_FILES}
+			DEPENDS ${JS_FILES} ${JS_JSC_IOS_FILES}
+		)
+	ENDIF(CAN_BUILD_JSC_INTERFACES)
 	ADD_CUSTOM_TARGET(pdg_js2native ALL DEPENDS ${JS_NATIVE_FILES}) 
 
 	SET( COMMON_BINDING_SRC
@@ -1034,6 +1101,7 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/data/data_impl_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/data/data_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/graphics_impl_macros.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/attributes_impl_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/graphics_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_impl_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_macros.h"
@@ -1050,6 +1118,9 @@ IF(CAN_BUILD_INTERFACES)
 	SET( BINDING_SCRIPT_DIRS
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8"
 	)
+	IF(CAN_BUILD_JSC_INTERFACES)
+		LIST(APPEND BINDING_SCRIPT_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc")
+	ENDIF()
 	SET( BINDING_SCRIPT_SUBDIRS
 		"physics"
 		"core"
@@ -1089,6 +1160,13 @@ IF(CAN_BUILD_INTERFACES)
 			SET( macro_deps ${SCRIPT_IMPL_MACRO_DEPS} )
 		ELSEIF( "${filename}" STREQUAL "image.cpp" )
 			SET( macro_deps "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/graphics_impl_macros.h" )
+        ELSEIF( "${parentdir}" STREQUAL "graphics" )
+            SET( macro_deps
+                "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/graphics_macros.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/attributes_impl_macros.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_macros.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_impl_macros.h"
+            )
 		ELSEIF( "${parentdir}" STREQUAL "core" )
 			SET( macro_deps "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/core_impl_macros.h" )
 		ELSEIF( "${parentdir}" STREQUAL "data" )
@@ -1115,6 +1193,22 @@ IF(CAN_BUILD_INTERFACES)
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8/animation/.dir"
 				${macro_deps}
 		) 
+		IF(CAN_BUILD_JSC_INTERFACES)
+			# Generate for JSC
+			SET( outfile "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}/${filename}" )
+			LIST(APPEND interface_outfiles ${outfile})
+			ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
+				COMMAND ${GEN_SCRIPT_INTERFACE_CMD} "javascript/jsc" "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}" "./" "${filename}"
+				DEPENDS "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/physics/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/core/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/data/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/graphics/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/audio/.dir"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/animation/.dir"
+					${macro_deps}
+			)
+		ENDIF()
 	ENDFOREACH(srcfile)
 	ADD_CUSTOM_TARGET(pdg_common_interfaces ALL DEPENDS ${interface_outfiles})
 
@@ -1137,8 +1231,37 @@ IF(CAN_BUILD_INTERFACES)
 	)
 	ADD_CUSTOM_TARGET(pdg_v8_interfaces ALL DEPENDS ${V8_INTERFACES_SRC})
 
-	ADD_DEPENDENCIES(pdg pdg_common_interfaces pdg_js2native pdg_v8_interfaces)
+	IF(CAN_BUILD_JSC_INTERFACES)
+		SET( JSC_BINDING_SRC
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_js_classes.cpp"
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h"
+		)
+		SET( JSC_INTERFACES_SRC
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/pdg_interfaces.cpp"
+		)
+		# custom command for building the JavaScriptCore version of the pdg_interfaces.cpp file
+		# should only need to run when the pdg_js_classes.cpp file in src/bindings/javascript/jsc/ changes
+		ADD_CUSTOM_COMMAND(OUTPUT ${JSC_INTERFACES_SRC}
+			COMMAND ${GEN_SCRIPT_INTERFACE_CMD}
+				"javascript/jsc" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_js_classes.cpp"
+				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc" "./"
+				"pdg_interfaces.cpp"
+			DEPENDS ${JSC_BINDING_SRC}
+		)
+		ADD_CUSTOM_TARGET(pdg_jsc_interfaces ALL DEPENDS ${JSC_INTERFACES_SRC})
+		ADD_DEPENDENCIES(pdg pdg_jsc_interfaces)
+	ENDIF()
 
+	ADD_DEPENDENCIES(pdg pdg_common_interfaces pdg_js2native pdg_v8_interfaces)
+ENDIF(CAN_BUILD_INTERFACES)
+
+# Native libraries need physics linkage even when binding generation is disabled.
+IF(NOT MACOSX AND NOT WIN32)
+	FIND_PACKAGE(JPEG REQUIRED)
+	FIND_PACKAGE(ZLIB REQUIRED)
+	TARGET_LINK_LIBRARIES(pdg-lib PUBLIC JPEG::JPEG ZLIB::ZLIB)
+	TARGET_LINK_LIBRARIES(pdg-lib-debug PUBLIC JPEG::JPEG ZLIB::ZLIB)
+ENDIF()
 IF( USE_CHIPMUNK )
 	IF(WIN32)
 		TARGET_LINK_LIBRARIES (pdg-lib PUBLIC Chipmunk)
@@ -1148,16 +1271,19 @@ IF( USE_CHIPMUNK )
 		TARGET_LINK_LIBRARIES (pdg-lib-debug PUBLIC ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/chipmunk/src/libchipmunk.a)
 	ENDIF()
 ENDIF( USE_CHIPMUNK )
-ENDIF(CAN_BUILD_INTERFACES)
 
 IF(NOT PDG_HEADLESS)
+# Keep the older bundled JSON reader isolated from the C++20 engine headers.
+SET_SOURCE_FILES_PROPERTIES(../test/perf_tests/quick.cpp PROPERTIES
+    COMPILE_OPTIONS "$<IF:$<CXX_COMPILER_ID:MSVC>,/std:c++17,-std=c++17>")
 # ============================================================================
 # PDG Bunnymark Performance Test Executable
 # ============================================================================
 # A standalone C++ benchmark that doesn't require Node.js or V8 bindings
 
 ADD_EXECUTABLE(bunnymark WIN32 MACOSX_BUNDLE
-	../test/perf/cpp-bunnymark/bunnymark.cpp
+	../test/perf_tests/cpp-bunnymark/bunnymark.cpp
+	../test/perf_tests/quick.cpp
 	sys/unix/main-unix.cpp
 )
 
@@ -1257,7 +1383,8 @@ ENDIF( WIN32 )
 # A standalone C++ benchmark that tests multiple aspects of 2D rendering
 
 ADD_EXECUTABLE(pdgmark WIN32 MACOSX_BUNDLE
-	../test/perf/cpp-pdgmark/pdgmark.cpp
+	../test/perf_tests/cpp-pdgmark/pdgmark.cpp
+	../test/perf_tests/quick.cpp
 	sys/unix/main-unix.cpp
 )
 
@@ -1360,7 +1487,7 @@ ENDIF( WIN32 )
 IF(BUILD_TESTING)
 	ADD_EXECUTABLE(pdg-app-control-gallery WIN32 MACOSX_BUNDLE
 		../test/cxx/app-control-gallery.cpp
-		../test/data/yinyang.png
+		../test/data/wood-brass-button.png
 		sys/unix/main-unix.cpp
 		app/Application.cpp
 		app/ControlAttributes.cpp
@@ -1372,8 +1499,14 @@ IF(BUILD_TESTING)
 		app/Checkbox.cpp
 		app/RadioButton.cpp
 		app/Scrollbar.cpp
+		app/ScrollingView.cpp
+		app/ListBox.cpp
+		app/PopupMenu.cpp
+		app/EditText.cpp
+		app/MessageView.cpp
+		app/MessageDialog.cpp
 	)
-	SET_SOURCE_FILES_PROPERTIES(../test/data/yinyang.png PROPERTIES
+	SET_SOURCE_FILES_PROPERTIES(../test/data/wood-brass-button.png PROPERTIES
 		MACOSX_PACKAGE_LOCATION Resources
 	)
 
@@ -1432,4 +1565,301 @@ IF(BUILD_TESTING)
 			${OPENGL_LIBRARIES} dl pthread)
 	ENDIF()
 ENDIF()
+ENDIF()
+
+# Deterministic Spriter acceptance tests share this directory's feature flags
+# with the library, including GUI/headless and optional Chipmunk class layouts.
+IF(BUILD_TESTING AND USE_SPRITER)
+    ADD_EXECUTABLE(pdg-spriter-playback-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-spriter-playback.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-spriter-playback-tests PRIVATE
+        PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP)
+    TARGET_INCLUDE_DIRECTORIES(pdg-spriter-playback-tests PRIVATE
+        ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/deps
+        ${PDG_SOURCE_DIR}/deps/SpriterPlusPlus ${PDG_SOURCE_DIR}/deps/chipmunk/include)
+    TARGET_LINK_DIRECTORIES(pdg-spriter-playback-tests PRIVATE
+        ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
+    TARGET_LINK_LIBRARIES(pdg-spriter-playback-tests PRIVATE pdg-lib-debug)
+    IF(MACOSX)
+        TARGET_LINK_LIBRARIES(pdg-spriter-playback-tests PRIVATE
+            "-framework AppKit" "-framework CoreGraphics" "-framework AudioToolbox"
+            "-framework CoreFoundation" "-framework Security" "-framework IOKit")
+        IF(NOT PDG_HEADLESS)
+            TARGET_LINK_LIBRARIES(pdg-spriter-playback-tests PRIVATE
+                "-framework OpenGL" "-framework GLUT" ${OPENGL_LIBRARIES})
+        ENDIF()
+    ELSEIF(WIN32)
+        TARGET_LINK_LIBRARIES(pdg-spriter-playback-tests PRIVATE
+            imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
+            ${OPENGL_LIBRARIES})
+    ELSE()
+        TARGET_LINK_LIBRARIES(pdg-spriter-playback-tests PRIVATE ${OPENGL_LIBRARIES} dl pthread)
+    ENDIF()
+    ADD_TEST(NAME pdg-spriter-playback COMMAND pdg-spriter-playback-tests
+        ${PDG_SOURCE_DIR}/test/data/spriter-regression/playback.scml)
+ENDIF()
+
+# Owner lifecycle and serialized state must also run with USE_SPRITER=OFF.
+IF(BUILD_TESTING)
+    ADD_EXECUTABLE(pdg-physics-owners-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-physics-owners.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-physics-owners-tests PRIVATE
+        PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP)
+    TARGET_INCLUDE_DIRECTORIES(pdg-physics-owners-tests PRIVATE
+        ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/deps
+        ${PDG_SOURCE_DIR}/deps/SpriterPlusPlus ${PDG_SOURCE_DIR}/deps/chipmunk/include)
+    TARGET_LINK_DIRECTORIES(pdg-physics-owners-tests PRIVATE
+        ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
+    TARGET_LINK_LIBRARIES(pdg-physics-owners-tests PRIVATE pdg-lib-debug)
+    IF(MACOSX)
+        TARGET_LINK_LIBRARIES(pdg-physics-owners-tests PRIVATE
+            "-framework AppKit" "-framework CoreGraphics" "-framework AudioToolbox"
+            "-framework CoreFoundation" "-framework Security" "-framework IOKit")
+        IF(NOT PDG_HEADLESS)
+            TARGET_LINK_LIBRARIES(pdg-physics-owners-tests PRIVATE
+                "-framework OpenGL" "-framework GLUT" ${OPENGL_LIBRARIES})
+        ENDIF()
+    ELSEIF(WIN32)
+        TARGET_LINK_LIBRARIES(pdg-physics-owners-tests PRIVATE
+            imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
+            ${OPENGL_LIBRARIES})
+    ELSE()
+        TARGET_LINK_LIBRARIES(pdg-physics-owners-tests PRIVATE ${OPENGL_LIBRARIES} dl pthread)
+    ENDIF()
+    ADD_TEST(NAME pdg-physics-owners COMMAND pdg-physics-owners-tests)
+ENDIF()
+
+# Standard-library replacements retain engine and binary format behavior.
+IF(BUILD_TESTING)
+    ADD_EXECUTABLE(pdg-standard-library-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-standard-library.cpp
+        bindings/javascript/memblock.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-standard-library-tests PRIVATE
+        PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP)
+    TARGET_INCLUDE_DIRECTORIES(pdg-standard-library-tests PRIVATE
+        ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/src/bindings/javascript ${PDG_SOURCE_DIR}/deps
+        ${PDG_SOURCE_DIR}/deps/SpriterPlusPlus ${PDG_SOURCE_DIR}/deps/chipmunk/include)
+    TARGET_LINK_DIRECTORIES(pdg-standard-library-tests PRIVATE
+        ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
+    TARGET_LINK_LIBRARIES(pdg-standard-library-tests PRIVATE pdg-lib-debug)
+    IF(MACOSX)
+        TARGET_LINK_LIBRARIES(pdg-standard-library-tests PRIVATE
+            "-framework AppKit" "-framework CoreGraphics" "-framework AudioToolbox"
+            "-framework CoreFoundation" "-framework Security" "-framework IOKit")
+        IF(NOT PDG_HEADLESS)
+            TARGET_LINK_LIBRARIES(pdg-standard-library-tests PRIVATE
+                "-framework OpenGL" "-framework GLUT" ${OPENGL_LIBRARIES})
+        ENDIF()
+    ELSEIF(WIN32)
+        TARGET_LINK_LIBRARIES(pdg-standard-library-tests PRIVATE
+            imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
+            ${OPENGL_LIBRARIES})
+    ELSE()
+        TARGET_LINK_LIBRARIES(pdg-standard-library-tests PRIVATE ${OPENGL_LIBRARIES} dl pthread)
+    ENDIF()
+    ADD_TEST(NAME pdg-standard-library COMMAND pdg-standard-library-tests)
+    SET_TESTS_PROPERTIES(pdg-standard-library PROPERTIES TIMEOUT 30)
+ENDIF()
+
+# macOS/iOS sound completion must tolerate removal and replay during idle.
+IF(BUILD_TESTING AND MACOSX)
+    ADD_EXECUTABLE(pdg-sound-lifecycle-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-sound-lifecycle.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-sound-lifecycle-tests PRIVATE
+        PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP)
+    TARGET_INCLUDE_DIRECTORIES(pdg-sound-lifecycle-tests PRIVATE ${PDG_INCLUDE_DIRECTORIES})
+    TARGET_LINK_DIRECTORIES(pdg-sound-lifecycle-tests PRIVATE
+        ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
+    TARGET_LINK_LIBRARIES(pdg-sound-lifecycle-tests PRIVATE pdg-lib-debug
+        "-framework AppKit" "-framework CoreGraphics" "-framework AudioToolbox"
+        "-framework CoreFoundation" "-framework Security" "-framework IOKit")
+    IF(NOT PDG_HEADLESS)
+        TARGET_LINK_LIBRARIES(pdg-sound-lifecycle-tests PRIVATE
+            "-framework OpenGL" "-framework GLUT" ${OPENGL_LIBRARIES})
+    ENDIF()
+    ADD_TEST(NAME pdg-sound-lifecycle COMMAND pdg-sound-lifecycle-tests)
+    SET_TESTS_PROPERTIES(pdg-sound-lifecycle PROPERTIES TIMEOUT 30)
+ENDIF()
+
+# Non-rendering benchmark; links the optimized engine, including in Debug builds.
+IF(BUILD_TESTING)
+    SET(PDG_PHYSICS_BENCHMARKS collider)
+    IF(USE_SPRITER AND USE_CHIPMUNK)
+        LIST(APPEND PDG_PHYSICS_BENCHMARKS rig)
+    ENDIF()
+    FOREACH(benchmark ${PDG_PHYSICS_BENCHMARKS})
+        ADD_EXECUTABLE(pdg-${benchmark}-perf
+            ${PDG_SOURCE_DIR}/test/perf_tests/cpp-${benchmark}/${benchmark}.cpp)
+        TARGET_COMPILE_DEFINITIONS(pdg-${benchmark}-perf PRIVATE
+            PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP NDEBUG)
+        TARGET_INCLUDE_DIRECTORIES(pdg-${benchmark}-perf PRIVATE
+            ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/deps
+            ${PDG_SOURCE_DIR}/deps/SpriterPlusPlus ${PDG_SOURCE_DIR}/deps/chipmunk/include)
+        TARGET_LINK_DIRECTORIES(pdg-${benchmark}-perf PRIVATE
+            ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
+        TARGET_LINK_LIBRARIES(pdg-${benchmark}-perf PRIVATE pdg-lib)
+        IF(MACOSX)
+            TARGET_LINK_LIBRARIES(pdg-${benchmark}-perf PRIVATE
+                "-framework AppKit" "-framework CoreGraphics" "-framework AudioToolbox"
+                "-framework CoreFoundation" "-framework Security" "-framework IOKit")
+            IF(NOT PDG_HEADLESS)
+                TARGET_LINK_LIBRARIES(pdg-${benchmark}-perf PRIVATE
+                    "-framework OpenGL" "-framework GLUT" ${OPENGL_LIBRARIES})
+            ENDIF()
+        ELSEIF(WIN32)
+            TARGET_LINK_LIBRARIES(pdg-${benchmark}-perf PRIVATE
+                imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
+                ${OPENGL_LIBRARIES})
+        ELSE()
+            TARGET_LINK_LIBRARIES(pdg-${benchmark}-perf PRIVATE ${OPENGL_LIBRARIES} dl pthread)
+        ENDIF()
+
+        IF(MSVC)
+            TARGET_COMPILE_OPTIONS(pdg-${benchmark}-perf PRIVATE /O2)
+        ELSE()
+            TARGET_COMPILE_OPTIONS(pdg-${benchmark}-perf PRIVATE -O3 -g0)
+        ENDIF()
+    ENDFOREACH()
+ENDIF()
+
+# The coalescing wakeup event is independent of rendering and scripting.
+IF(BUILD_TESTING)
+    FIND_PACKAGE(Threads REQUIRED)
+    ADD_EXECUTABLE(pdg-semaphore-tests ${PDG_SOURCE_DIR}/test/cxx/test-semaphore.cpp)
+    TARGET_INCLUDE_DIRECTORIES(pdg-semaphore-tests PRIVATE ${PDG_SOURCE_DIR}/src/inc)
+    TARGET_LINK_LIBRARIES(pdg-semaphore-tests PRIVATE Threads::Threads)
+    ADD_TEST(NAME pdg-semaphore COMMAND pdg-semaphore-tests)
+    SET_TESTS_PROPERTIES(pdg-semaphore PROPERTIES TIMEOUT 30)
+ENDIF()
+
+# Pure pose math has no dependency on GUI, physics, scripting or Spriter.
+IF(BUILD_TESTING)
+    ADD_EXECUTABLE(pdg-animation-pose-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-animation-pose.cpp sys/animationpose.cpp sys/animationcontroller.cpp sys/animationtargets.cpp)
+    TARGET_INCLUDE_DIRECTORIES(pdg-animation-pose-tests PRIVATE ${PDG_SOURCE_DIR}/src/inc)
+    ADD_TEST(NAME pdg-animation-pose COMMAND pdg-animation-pose-tests)
+ENDIF()
+
+# Programmed transforms must work without rendering, Spriter or a physics engine.
+IF(BUILD_TESTING)
+    ADD_EXECUTABLE(pdg-animated-contract-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-animated-contract.cpp sys/animated.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-animated-contract-tests PRIVATE PDG_INTERNAL_LIB=1)
+    TARGET_INCLUDE_DIRECTORIES(pdg-animated-contract-tests PRIVATE ${PDG_SOURCE_DIR}/src/inc)
+    ADD_TEST(NAME pdg-animated-contract COMMAND pdg-animated-contract-tests)
+ENDIF()
+
+# The basic physical integrator must work without Spriter, Chipmunk or rendering.
+IF(BUILD_TESTING)
+    ADD_EXECUTABLE(pdg-physicsbody-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-physicsbody.cpp sys/physicsbody.cpp)
+    TARGET_INCLUDE_DIRECTORIES(pdg-physicsbody-tests PRIVATE ${PDG_SOURCE_DIR}/src/inc)
+    ADD_TEST(NAME pdg-physicsbody COMMAND pdg-physicsbody-tests)
+    # Exercise both null-object diagnostic policies in every build configuration.
+    FOREACH(mode debug release)
+        SET(target pdg-nophysics-${mode}-tests)
+        ADD_EXECUTABLE(${target}
+            ${PDG_SOURCE_DIR}/test/cxx/test-nophysics-diagnostics.cpp sys/physicsbody.cpp)
+        TARGET_INCLUDE_DIRECTORIES(${target} PRIVATE ${PDG_SOURCE_DIR}/src/inc)
+        IF(mode STREQUAL "debug")
+            IF(MSVC)
+                TARGET_COMPILE_OPTIONS(${target} PRIVATE /UNDEBUG)
+            ELSE()
+                TARGET_COMPILE_OPTIONS(${target} PRIVATE -UNDEBUG)
+            ENDIF()
+            SET(expect_debug ON)
+        ELSE()
+            TARGET_COMPILE_DEFINITIONS(${target} PRIVATE NDEBUG)
+            SET(expect_debug OFF)
+        ENDIF()
+        ADD_TEST(NAME pdg-nophysics-${mode} COMMAND ${CMAKE_COMMAND}
+            -DTEST_PROGRAM=$<TARGET_FILE:${target}> -DEXPECT_DEBUG=${expect_debug}
+            -P ${PDG_SOURCE_DIR}/test/cxx/check-nophysics-diagnostics.cmake)
+    ENDFOREACH()
+    # These standalone contracts deliberately do not link Chipmunk. Override
+    # the directory-wide feature define even when the engine enables it.
+    FOREACH(target pdg-physicsbody-tests pdg-nophysics-debug-tests pdg-nophysics-release-tests)
+        IF(MSVC)
+            TARGET_COMPILE_OPTIONS(${target} PRIVATE /UPDG_USE_CHIPMUNK_PHYSICS)
+        ELSE()
+            TARGET_COMPILE_OPTIONS(${target} PRIVATE -UPDG_USE_CHIPMUNK_PHYSICS)
+        ENDIF()
+    ENDFOREACH()
+ENDIF()
+
+IF(BUILD_TESTING)
+    # Exercise the portable decoder even on macOS, whose engine uses ImageIO.
+    FIND_PACKAGE(ZLIB REQUIRED)
+    CONFIGURE_FILE(${PDG_SOURCE_DIR}/deps/png/scripts/pnglibconf.h.prebuilt
+        ${CMAKE_CURRENT_BINARY_DIR}/png-config/pnglibconf.h COPYONLY)
+    ADD_EXECUTABLE(pdg-png-decoder-tests
+        ${PDG_SOURCE_DIR}/test/cxx/png_decoder_test.cpp sys/image-png.cpp ${PNG_SOURCES})
+    TARGET_COMPILE_DEFINITIONS(pdg-png-decoder-tests PRIVATE
+        PDG_INTERNAL_LIB=1 PDG_NO_GUI=1 PNG_ARM_NEON_OPT=0)
+    TARGET_INCLUDE_DIRECTORIES(pdg-png-decoder-tests PRIVATE
+        ${PDG_SOURCE_DIR}/src/inc ${PDG_SOURCE_DIR}/src/sys ${PDG_SOURCE_DIR}/deps
+        ${CMAKE_CURRENT_BINARY_DIR}/png-config)
+    TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE ZLIB::ZLIB)
+    IF(MSVC)
+        TARGET_COMPILE_OPTIONS(pdg-png-decoder-tests PRIVATE /UPDG_USE_LIBJPEG)
+        SET_PROPERTY(TARGET pdg-png-decoder-tests PROPERTY
+            MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    ELSE()
+        TARGET_COMPILE_OPTIONS(pdg-png-decoder-tests PRIVATE -UPDG_USE_LIBJPEG)
+    ENDIF()
+    ADD_TEST(NAME pdg-png-decoder COMMAND pdg-png-decoder-tests)
+ENDIF()
+
+IF(BUILD_TESTING AND NOT PDG_HEADLESS)
+    ADD_EXECUTABLE(pdg-polygon-tessellation-tests
+        ${PDG_SOURCE_DIR}/test/cxx/polygon_tessellation_test.cpp
+        sys/polygon.cpp sys/spline.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-polygon-tessellation-tests PRIVATE PDG_INTERNAL_LIB=1 PDG_POLYGON_TESTING=1)
+    TARGET_INCLUDE_DIRECTORIES(pdg-polygon-tessellation-tests PRIVATE
+        ${PDG_SOURCE_DIR}/src/inc ${PDG_SOURCE_DIR}/deps
+        ${PDG_SOURCE_DIR}/deps/libtess2/Include)
+    TARGET_LINK_LIBRARIES(pdg-polygon-tessellation-tests PRIVATE libtess2_static)
+    IF(MSVC)
+        SET_PROPERTY(TARGET pdg-polygon-tessellation-tests PROPERTY
+            MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    ENDIF()
+    ADD_TEST(NAME pdg-polygon-tessellation COMMAND pdg-polygon-tessellation-tests)
+
+    ADD_EXECUTABLE(pdg-view-animation-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-view-animation.cpp app/View.cpp app/ScrollingView.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-view-animation-tests PRIVATE
+        PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP)
+    TARGET_INCLUDE_DIRECTORIES(pdg-view-animation-tests PRIVATE
+        ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/deps
+        ${PDG_SOURCE_DIR}/deps/SpriterPlusPlus ${PDG_SOURCE_DIR}/deps/chipmunk/include)
+    TARGET_LINK_DIRECTORIES(pdg-view-animation-tests PRIVATE
+        ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
+    TARGET_LINK_LIBRARIES(pdg-view-animation-tests PRIVATE pdg-lib-debug)
+    IF(MACOSX)
+        TARGET_LINK_LIBRARIES(pdg-view-animation-tests PRIVATE
+            "-framework AppKit" "-framework CoreGraphics" "-framework AudioToolbox"
+            "-framework CoreFoundation" "-framework Security" "-framework IOKit")
+        IF(NOT PDG_HEADLESS)
+            TARGET_LINK_LIBRARIES(pdg-view-animation-tests PRIVATE
+                "-framework OpenGL" "-framework GLUT" ${OPENGL_LIBRARIES})
+        ENDIF()
+    ELSEIF(WIN32)
+        TARGET_LINK_LIBRARIES(pdg-view-animation-tests PRIVATE
+            imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
+            ${OPENGL_LIBRARIES})
+    ELSE()
+        TARGET_LINK_LIBRARIES(pdg-view-animation-tests PRIVATE ${OPENGL_LIBRARIES} dl pthread)
+    ENDIF()
+    ADD_TEST(NAME pdg-view-animation COMMAND pdg-view-animation-tests)
+ENDIF()
+
+# Attribute animation is independent of a graphics context or physics solver.
+IF(BUILD_TESTING)
+    ADD_EXECUTABLE(pdg-animated-attributes-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-animated-attributes.cpp
+        sys/animated.cpp sys/attributes.cpp sys/animatedattributes.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-animated-attributes-tests PRIVATE PDG_INTERNAL_LIB=1 PDG_NO_GUI=1)
+    TARGET_INCLUDE_DIRECTORIES(pdg-animated-attributes-tests PRIVATE
+        ${PDG_SOURCE_DIR}/src/inc ${PDG_SOURCE_DIR}/deps)
+    ADD_TEST(NAME pdg-animated-attributes COMMAND pdg-animated-attributes-tests)
 ENDIF()

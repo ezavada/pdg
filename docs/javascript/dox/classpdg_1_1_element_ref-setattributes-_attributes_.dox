@@ -4,4 +4,6 @@ namespace pdg { /**
 
 \brief sets the attributes of the element
 
+Copies the current values and clears any live association. Later source changes do not affect this element.
+\see setLiveAttributes(), clearLiveAttributes(), getAttributes()
 **/ }

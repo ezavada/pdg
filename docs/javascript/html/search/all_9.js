@@ -50,5 +50,5 @@ var searchData=
   ['keycode_5fshift_47',['keyCode_Shift',['../group___key_codes.html#gadabd6bcec3845ef3800c9a08588ce4ea',1,'pdg']]],
   ['keyevent_48',['KeyEvent',['../group___events.html#structpdg_1_1_key_event',1,'']]],
   ['keypressevent_49',['KeyPressEvent',['../group___events.html#structpdg_1_1_key_press_event',1,'']]],
-  ['kits_50',['Game Kits',['../index.html#autotoc_md35',1,'']]]
+  ['kinematics_50',['Inverse kinematics',['../classpdg_1_1_sprite.html#autotoc_md20',1,'']]]
 ];

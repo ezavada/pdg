@@ -1,0 +1,11 @@
+{
+  "stepSeconds": 0.01,
+  "rendering": false,
+  "contactListeners": true,
+  "results": [
+    {"solver": "basic", "scenario": "contacts", "owner": "sprite", "bodies": 2000, "colliders": 2000, "steps": 200, "warmup": 120, "setupMs": 4.364084, "meanMs": 0.88603441, "medianMs": 0.877458, "p95Ms": 1.0085, "maxMs": 1.09675, "bodyStepsPerSecond": 2257248.677, "contactNotifications": 46458, "checksum": -187904.0007, "broadphase": "sweep", "cellSize": 0, "hashCells": 0, "iterations": 0, "sleepAfterSeconds": 0, "staticBodies": 0, "staticColliders": 0, "constraints": 0, "releasedPairs": 959, "drivenPairs": 41},
+    {"solver": "basic", "scenario": "approach", "owner": "sprite", "bodies": 2000, "colliders": 2000, "steps": 200, "warmup": 120, "setupMs": 0.967416, "meanMs": 0.668185825, "medianMs": 0.647459, "p95Ms": 0.773041, "maxMs": 0.869041, "bodyStepsPerSecond": 2993179.33, "contactNotifications": 0, "checksum": -117440.0075, "broadphase": "sweep", "cellSize": 0, "hashCells": 0, "iterations": 0, "sleepAfterSeconds": 0, "staticBodies": 0, "staticColliders": 0, "constraints": 0, "collidedPairs": 166, "expectedHitPairs": 830, "missPairs": 170, "maxContactTimeErrorSeconds": 0.01},
+    {"solver": "chipmunk", "scenario": "contacts", "owner": "sprite", "bodies": 2000, "colliders": 2000, "steps": 200, "warmup": 120, "setupMs": 2.102333, "meanMs": 1.03885979, "medianMs": 1.034584, "p95Ms": 1.143, "maxMs": 1.21725, "bodyStepsPerSecond": 1925187.614, "contactNotifications": 132872, "checksum": -187904, "broadphase": "tree", "cellSize": 0, "hashCells": 0, "iterations": 10, "sleepAfterSeconds": 0, "staticBodies": 0, "staticColliders": 0, "constraints": 0, "releasedPairs": 1000, "drivenPairs": 0},
+    {"solver": "chipmunk", "scenario": "approach", "owner": "sprite", "bodies": 2000, "colliders": 2000, "steps": 200, "warmup": 120, "setupMs": 1.04325, "meanMs": 0.911032105, "medianMs": 0.896, "p95Ms": 1.042583, "maxMs": 1.101834, "bodyStepsPerSecond": 2195312.316, "contactNotifications": 0, "checksum": -117440, "broadphase": "tree", "cellSize": 0, "hashCells": 0, "iterations": 10, "sleepAfterSeconds": 0, "staticBodies": 0, "staticColliders": 0, "constraints": 0, "collidedPairs": 166, "expectedHitPairs": 830, "missPairs": 170, "maxContactTimeErrorSeconds": 0.01}
+  ]
+}

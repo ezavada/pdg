@@ -1,4 +1,4 @@
-.TH "Sound" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Sound" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -139,7 +139,7 @@ handles both short sounds and music (\fIGUI Only\fP)
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 .SS "Fire and Forget Playback"
@@ -169,7 +169,7 @@ Dynamic Playback Example:**
 .nf
 PDG terminal v0\&.9\&.4
 > pdg\&.run();  // must be running for sounds to play
-> var snd = new pdg\&.Sound("test/Peppy_The\-Firing\-Squad_YMXB\&.mp3");
+> var snd = new pdg\&.Sound("test/data/Peppy_The\-Firing\-Squad_YMXB\&.mp3");
 > snd\&.start();
 > snd\&.setVolume(0\&.3);
 > snd\&.skip(2000);

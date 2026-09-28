@@ -1,5 +1,9 @@
 <map id="ElementRef" name="ElementRef">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,102,96,128"/>
-<area shape="rect" id="Node000002" href="$classpdg_1_1_drawing.html" title=" " alt="" coords="16,5,85,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="53,46,53,101,48,101,48,46"/>
+<area shape="rect" id="Node000001" title="Handle for editing an element in shared Drawing artwork." alt="" coords="140,199,230,224"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,102,189,128"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,137,176,198,171,199,117,141"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users." alt="" coords="62,5,132,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="98,44,100,102,94,101,96,49"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="213,102,336,128"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="255,138,198,200,195,196,250,140"/>
 </map>

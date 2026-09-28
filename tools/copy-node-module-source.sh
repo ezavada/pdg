@@ -103,9 +103,20 @@ echo " * deps/minizip ==> $TARGET_DIR/deps/minizip"
 $RSYNC -r --delete --force deps/minizip $TARGET_DIR/deps/
 echo " * deps/png ==> $TARGET_DIR/deps/png"
 $RSYNC -r --delete --force deps/png $TARGET_DIR/deps/
+cp "$TARGET_DIR/deps/png/scripts/pnglibconf.h.prebuilt" "$TARGET_DIR/deps/png/pnglibconf.h" || exit 1
 touch "$TARGET_DIR/deps/png/.npmignore"
 echo " * docs/javascript/man/* ==> $TARGET_DIR/"
 $RSYNC -r --delete --force docs/javascript/man/* $TARGET_DIR/man/
 echo " * VERSION ==> $TARGET_DIR/"
-$RSYNC VERSION $TARGET_DIR/
+$RSYNC VERSION "$TARGET_DIR/" || exit 1
+# VERSION is authoritative even when the package template has not been updated.
+"${PDG_NODE:-node}" - "$TARGET_DIR" <<'NODE' || exit 1
+const fs = require('fs');
+const path = require('path');
+const targetDir = process.argv[2];
+const packagePath = path.join(targetDir, 'package.json');
+const manifest = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+manifest.version = fs.readFileSync(path.join(targetDir, 'VERSION'), 'utf8').trim();
+fs.writeFileSync(packagePath, JSON.stringify(manifest, null, 2) + '\n');
+NODE
 echo -e "${RESET} Copied all source files to $TARGET_DIR."

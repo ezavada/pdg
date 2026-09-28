@@ -193,7 +193,11 @@ namespace pdg
 
     SoundManagerWrap::SoundManagerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_SoundManager(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_SoundManager(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_SoundManager_InNewFromCpp)
         {
             {

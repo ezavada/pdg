@@ -46,7 +46,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 if ! curl -fsS "$BASE_URL" >/dev/null 2>&1; then
-    (cd "$PDG_ROOT" && python3 -m http.server "$PORT" --bind 127.0.0.1 >"$SERVER_LOG" 2>&1) &
+    (cd "$PDG_ROOT" && exec python3 -m http.server "$PORT" --bind 127.0.0.1 >"$SERVER_LOG" 2>&1) &
     SERVER_PID=$!
     READY=no
     for unused in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
@@ -59,21 +59,22 @@ if ! curl -fsS "$BASE_URL" >/dev/null 2>&1; then
     fi
 fi
 
-TESTS=(port font drawing shape-fill image animation spriter-sound mvc)
+TESTS=(port font drawing astra shape-fill image animation particles animation-physics wheel-chains spriter-sound mvc control-gallery layer-serialization)
 if [ -n "$SELECTED_TEST" ]; then TESTS=("$SELECTED_TEST"); fi
 
 FAILED=0
 for TEST_ID in "${TESTS[@]}"; do
     RESULT_HTML="$RESULT_DIR/$TEST_ID.html"
     TEST_URL="$BASE_URL?test=$TEST_ID&automated=1"
-    "$BROWSER" --headless=new --enable-unsafe-swiftshader --dump-dom \
-        --virtual-time-budget=120000 "$TEST_URL" >"$RESULT_HTML" 2>/dev/null
+    "${PDG_NODE:-node}" "$PDG_ROOT/test/emscripten/run_ui_browser.js" \
+        "$BROWSER" "$TEST_URL" "$RESULT_HTML" >"$RESULT_DIR/$TEST_ID.log" 2>&1
     BROWSER_EXIT=$?
     RESULT_JSON="$(sed -n 's/.*<pre id="pdg-ui-result-json">\([^<]*\)<\/pre>.*/\1/p' "$RESULT_HTML" | tail -1)"
     if [ -z "$RESULT_JSON" ]; then
         echo "FAIL: $TEST_ID (browser exit $BROWSER_EXIT; no result)"
+        cat "$RESULT_DIR/$TEST_ID.log"
         FAILED=1
-    elif echo "$RESULT_JSON" | grep -q '"status":"passed"'; then
+    elif [ "$BROWSER_EXIT" -eq 0 ] && echo "$RESULT_JSON" | grep -q '"status":"passed"'; then
         echo "PASS: $RESULT_JSON"
     else
         echo "FAIL: $RESULT_JSON"

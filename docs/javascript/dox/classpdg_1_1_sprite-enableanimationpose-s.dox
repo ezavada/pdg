@@ -1,0 +1,22 @@
+/**
+\fn pdg::Sprite::enableAnimationPose(string referenceAnimation)
+\brief Enable pose access using a reference clip.
+
+Builds a stable rig from the selected Spriter entity and reference clip. The rig requires compatible bone, image, point, and box tracks with a fixed hierarchy. Nested entities and changing hierarchies are unsupported. On success, clears previous bone overrides, modifiers, IK controllers, custom drawings, and debug flags. A failed attempt preserves the previous enabled pose and records a diagnostic.
+
+\param referenceAnimation Name of an existing reference clip in the current Spriter entity.
+
+\return True on success; false if the rig cannot be enabled. Read getAnimationRigError() after failure.
+
+\note Load Spriter data and select its entity first. Call outside animation callbacks and disable animation physics before replacing the rig.
+
+\par Example
+\code{.js}
+if (!sprite.enableAnimationPose('reference')) {
+    throw new Error(sprite.getAnimationRigError());
+}
+const boneNames = sprite.getAnimationBoneNames();
+\endcode
+
+\see disableAnimationPose(), getAnimationPose(), getAnimationRigError()
+*/

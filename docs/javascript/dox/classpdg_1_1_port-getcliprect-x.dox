@@ -1,7 +1,9 @@
 namespace pdg { /**
-
 \fn pdg::Port::getClipRect()
+\brief Return the current clipping rectangle in Port coordinates.
 
-\brief Get the current clipping rectangle for drawing operations
-
+Defaults to getDrawingArea(). An empty rectangle means all drawing is clipped.
+The returned value is a copy; use setClipRect() to change the clip.
+\return The current rectangle, intersected with the drawing area.
+\see setClipRect(), resetClipRect()
 **/ }

@@ -34,7 +34,7 @@
 
 namespace pdg {
 
-bool Application::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw() {
+bool Application::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept {
     if (inEventType == eventType_Startup) {
         StartupInfo* si = static_cast<StartupInfo*>(inEventData);
         // now initialize the app

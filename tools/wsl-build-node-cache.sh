@@ -24,7 +24,7 @@ else
     BUILD_JOBS="${PDG_NODE_BUILD_JOBS:-8}"
 fi
 
-NODE_CONFIGURE_ARGS=(--enable-static)
+NODE_CONFIGURE_ARGS=()
 if [ "$(uname -s)" = "Linux" ]; then
     NODE_CONFIGURE_ARGS+=(--without-node-snapshot)
 fi
@@ -47,6 +47,7 @@ find "$BUILD_ROOT/out/Release/obj.target" -name '*.a' -exec cp -f {} "$BUILD_ROO
 
 mkdir -p "$NODE_SRC/out/Release"
 cp -a "$BUILD_ROOT/out/Release/." "$NODE_SRC/out/Release/"
+cp "$BUILD_ROOT/src/node_version.h" "$NODE_SRC/out/Release/.pdg-node-version.h"
 
 echo "Copied Node build artifacts back to $NODE_SRC/out/Release"
 ls -lh "$NODE_SRC/out/Release/libnode.a"

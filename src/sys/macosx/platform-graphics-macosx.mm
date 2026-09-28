@@ -129,6 +129,10 @@ void platform_startDrawing(void* windRef) {
     PDGOpenGLView* myView = (PDGOpenGLView*)windRef;
     if (myView) {
     	[[myView openGLContext] makeCurrentContext];
+        if (main_isPerformanceUncapped()) {
+            GLint interval = 0;
+            [[myView openGLContext] setValues:&interval forParameter:NSOpenGLCPSwapInterval];
+        }
     }
 }
 
@@ -207,6 +211,13 @@ void platform_getMaxWindowSize(long* outWidth, long* outHeight, int screenNum) {
 	}
 }
 
+
+void* platform_createOffscreenContext() {
+    PDGOpenGLView* view = [[PDGOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)];
+    view->isFullscreen = FALSE;
+    [[view openGLContext] makeCurrentContext];
+    return view;
+}
 
 void* platform_createWindow(long width, long height, long x, long y, int bpp, const char* title) {
     if (bpp == 0) bpp = platform_getCurrentScreenDepth(pdg::screenNum_PrimaryScreen);
@@ -588,4 +599,3 @@ CGDisplayModeRef bestModeForParameters(CGDirectDisplayID dispId, int bpp, long w
     CFRelease(modeList);
     return highestRankedMode;
 }
-

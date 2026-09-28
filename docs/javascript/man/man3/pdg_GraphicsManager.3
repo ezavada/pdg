@@ -1,8 +1,8 @@
-.TH "GraphicsManager" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "GraphicsManager" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-GraphicsManager \- Used to create and track ports (\fIGUI Only\fP)  
+GraphicsManager \- Used to create and track ports (\fIGUI Only\fP)\&.  
 
 .SH SYNOPSIS
 .br
@@ -12,6 +12,9 @@ GraphicsManager \- Used to create and track ports (\fIGUI Only\fP)
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBcloseAllGraphicsPorts\fP ()"
+.br
 .ti -1c
 .RI "\fBcloseGraphicsPort\fP (\fBPort\fP port=MAIN_PORT)"
 .br
@@ -24,6 +27,10 @@ GraphicsManager \- Used to create and track ports (\fIGUI Only\fP)
 .RI "\fBPort\fP \fBcreateFullScreenPort\fP (\fBRect\fP rect, int screenNum=PRIMARY_SCREEN, boolean allowResChange=true, int bpp=0)"
 .br
 .RI "create full screen drawing port with given dimensions on given screen, optionally changing depth "
+.ti -1c
+.RI "\fBPort\fP \fBcreateOffscreenPort\fP (\fBRect\fP rect)"
+.br
+.RI "Create a transparent drawing surface without opening a window\&. "
 .ti -1c
 .RI "\fBPort\fP \fBcreateWindowPort\fP (\fBRect\fP rect, string windName='', int bpp=0)"
 .br
@@ -99,13 +106,13 @@ GraphicsManager \- Used to create and track ports (\fIGUI Only\fP)
 .in -1c
 .SH "Detailed Description"
 .PP 
-Used to create and track ports (\fIGUI Only\fP) 
+Used to create and track ports (\fIGUI Only\fP)\&. 
 
 
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 .SS "Full Screen"
@@ -125,6 +132,8 @@ Use \fBcreateWindowPort()\fP to create a window\&. The window will be movable an
 The Graphics system has the concept of a target display rate in frames per second, which is used to limit the frame rate, particularly important on mobile devices\&. This is independent of the animation and physics system\&. See \fBgetFPS()\fP, \fBgetTargetFPS()\fP and \fBsetTargetFPS()\fP\&. 
 .SH "Member Function Documentation"
 .PP 
+.SS "closeAllGraphicsPorts ()"
+
 .SS "closeGraphicsPort (\fBPort\fP port = \fRMAIN_PORT\fP)"
 
 .PP
@@ -217,6 +226,54 @@ the newly created \fBPort\fP
 
 .PP
 \fBswitchToWindowMode\fP 
+.RE
+.PP
+
+.SS "\fBPort\fP createOffscreenPort (\fBRect\fP rect)"
+
+.PP
+Create a transparent drawing surface without opening a window\&. The returned \fBPort\fP supports the usual drawing methods, fonts, \fBAttributes\fP, retained Drawings, and clipping\&. It starts with transparent black pixels\&. \fBDrawing\fP persists between calls; the frame loop does not clear the surface or send it PortDraw events\&. Draw directly whenever its contents need updating\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIrect\fP Its width and height must be positive whole numbers within the graphics backend's texture-size limit\&. Its position is ignored; the drawing area starts at (0, 0)\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A \fBPort\fP managed by \fBGraphicsManager\fP, or null if the size is invalid or the backend cannot allocate the surface\&. Release it with \fBcloseGraphicsPort()\fP\&. Do not use a \fBPort\fP after closing it\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Requires a graphics-enabled build, including web builds\&. A main port or visible window is not required\&. Offscreen ports do not become the main port\&. If a main port exists at creation, they share its graphics context; closing that window also closes its offscreen ports\&. Images already created from them remain valid\&. 
+
+.PP
+API stability: 2 — Evolving\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const surface = pdg\&.gfx\&.createOffscreenPort(new pdg\&.Rect(256, 128));
+if (!surface) throw new Error('Could not allocate drawing surface');
+surface\&.drawRect(new pdg\&.Rect(16, 16, 240, 112),
+    new pdg\&.Attributes()\&.fillColor('blue')\&.lineStyle(pdg\&.lineStyle_None));
+const image = new pdg\&.Image(surface, pdg\&.CopyPixels);
+pdg\&.gfx\&.closeGraphicsPort(surface);
+// image can now be used with Port\&.drawImage(), Attributes\&.texture(), or a Sprite\&.
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBImage::Image(Port, boolean)\fP, \fBcloseGraphicsPort()\fP 
 .RE
 .PP
 
@@ -557,6 +614,10 @@ get the singleton instance of the \fBGraphicsManager\fP used by the pdg framewor
 .RE
 .PP
 
+.PP
+References \fBgetGraphicsManager()\fP\&.
+.PP
+Referenced by \fBgetGraphicsManager()\fP\&.
 
 .SH "Author"
 .PP 

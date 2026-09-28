@@ -30,6 +30,7 @@
 
 
 #include "pdg_project.h"
+#include <format>
 
 #include "pdg/msvcfix.h" // fixes GCC too
 
@@ -38,7 +39,6 @@
 #include "audio_cleanup_manager.h"
 #include "pdg/sys/core.h"
 #include "pdg/sys/events.h"
-#include "pdg/sys/mutex.h"
 #include "pdg/sys/os.h"
 
 #ifndef PDG_NO_GUI
@@ -77,7 +77,6 @@ do {																	\
 namespace pdg {
 
 	// private from os module
-	std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks = true);  // assumes relative to application if relative path
 	
 	static const int kNumberSoundBuffers = 3;
 
@@ -96,9 +95,9 @@ namespace pdg {
 		OSStatus						mError;
 		bool							mNeedsStart;		// Flag for async start
 		ms_time							mStartTime;			// When start was requested
-//		pdg::Mutex						mSoundCallbackMutex;
 		snd_MacAudioData() {
 			mFileRef = 0;
+			mAudioFile = 0;
 			mQueue = 0;
 			mCurrentPacket = 0;
 			mNumPacketsToRead = 0;
@@ -123,7 +122,6 @@ namespace pdg {
 
 	static void snd_BufferCallback(void* inUserData, AudioQueueRef inAQ, AudioQueueBufferRef inCompleteAQBuffer) {
 		snd_MacAudioData * myInfo = (snd_MacAudioData*)inUserData;
-//		pdg::AutoMutex(&myInfo->mSoundCallbackMutex);
 		if (myInfo->mDone) return;
 		myInfo->mError = noErr;
 		
@@ -156,8 +154,7 @@ namespace pdg {
 	
 	static void snd_AudioQueueRunningListenerCallback(void* inUserData, AudioQueueRef inAQ, AudioQueuePropertyID inID) {
 		snd_MacAudioData * myInfo = (snd_MacAudioData*)inUserData;
-//		pdg::AutoMutex(&myInfo->mSoundCallbackMutex);
-		UInt32 isRunning;
+		UInt32 isRunning = 0;
 		UInt32 size = sizeof(isRunning);
 		OSStatus err = AudioQueueGetProperty(inAQ, kAudioQueueProperty_IsRunning, &isRunning, &size);
 		if (err) { 
@@ -166,10 +163,10 @@ namespace pdg {
 		}
 		SOUND_DEBUG_ONLY( OS::_DOUT("snd_AudioQueueRunningListenerCallback %ld", isRunning); )
 		SoundMac* theSound = myInfo->mSoundObj;
-		if (theSound && theSound->isPlaying() && !isRunning) {
-			// clear the playing flag so we know to do something with it at idle time
-			SOUND_DEBUG_ONLY( OS::_DOUT("snd_AudioQueueRunningListenerCallback: sound [%p] stopped running, clearing mPlaying flag", theSound); )
-			theSound->setPlaying(isRunning);
+		if (!err && theSound && theSound->isPlaying() && !isRunning && !myInfo->mNeedsStart) {
+			// Keep playback ownership until idle() handles completion and its event.
+			SOUND_DEBUG_ONLY( OS::_DOUT("snd_AudioQueueRunningListenerCallback: sound [%p] stopped running, scheduling completion", theSound); )
+			myInfo->mDone = true;
 		}
 	}
 	
@@ -257,7 +254,7 @@ namespace pdg {
 	SoundMac::~SoundMac()
 	{
 		gSoundStats.cxxObjsFreed++;
-		SOUND_DEBUG_ONLY( OS::_DOUT("SoundMac::dt [%p] @ %ld", this, OS::getMilliseconds()); )
+		SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("SoundMac::dt [{}] @ {}", static_cast<const void*>(this), OS::getMilliseconds()).c_str()); )
 		snd_MacAudioData* sndData = static_cast<snd_MacAudioData*>(mMacDataRef);
 		if (sndData) {
 			stop();
@@ -310,21 +307,21 @@ namespace pdg {
 	{
 		DEBUG_ONLY( 
 			ms_time start = OS::getMilliseconds();
-			SOUND_DEBUG_ONLY( OS::_DOUT("Sound::play [%p] @ %ld fromMs=%ld lenMs=%ld", this, start, fromMs, lenMs); )
+			SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("Sound::play [{}] @ {} fromMs={} lenMs={}", static_cast<const void*>(this), start, fromMs, lenMs).c_str()); )
 		)
 		SoundMac* snd = new SoundMac(this);
 		snd->setVolume(vol).setOffsetX(offsetX).setPitch(pitch).skipTo(fromMs);
 		ms_time dieTime = (lenMs > 0) ? OS::getMilliseconds() + lenMs : -1;
-		SOUND_DEBUG_ONLY( OS::_DOUT("Sound::play [%p] setting dieAt to %ld (now=%ld)", snd, dieTime, OS::getMilliseconds()); )
+		SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("Sound::play [{}] setting dieAt to {} (now={})", static_cast<const void*>(snd), dieTime, OS::getMilliseconds()).c_str()); )
 		snd->dieAt(dieTime);
 		snd->start();
 		DEBUG_ONLY( 
 			ms_time end = OS::getMilliseconds();
 			ms_delta duration = end - start;
 			if (duration > 10) {
-				OS::_DOUT("Sound::play() took %ld ms", duration);
+				OS::_DOUT("%s", std::format("Sound::play() took {} ms", duration).c_str());
 			} else {
-				SOUND_DEBUG_ONLY( OS::_DOUT("Sound::play() took %ld ms", duration); )
+				SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("Sound::play() took {} ms", duration).c_str()); )
 			}
 		)
 	}
@@ -338,15 +335,14 @@ namespace pdg {
 			mSndMgr->soundPlaying(this);  // make sure the sound manager knows we are active so it can idle us
 		} else if (sndData) {
 			SOUND_DEBUG_ONLY( OS::_DOUT("Sound::play [%p] already playing, not registering with Sound Mgr", this); )
-//			pdg::AutoMutex(&sndData->mSoundCallbackMutex);		
 			CheckError(AudioQueueStop(sndData->mQueue, false), "AudioQueueStop failed", {});
 		}
 		if (sndData) {
-//			pdg::AutoMutex(&sndData->mSoundCallbackMutex);		
 			ms_time start = OS::getMilliseconds();
 			mStartedPlayingAtMs = start - mSkipToMs;
 			
 			// prime the queue with some data before starting
+            sndData->mNeedsStart = true;
 			sndData->mDone = false;
 			if (mSkipToMs) {
 				sndData->mCurrentPacket = ((float)mSkipToMs/1000.0f) * (sndData->mDataFormat.mSampleRate / sndData->mDataFormat.mFramesPerPacket);
@@ -368,7 +364,7 @@ namespace pdg {
 			}
 			
 			ms_delta bufferTime = OS::getMilliseconds() - start;
-			SOUND_DEBUG_ONLY(OS::_DOUT("Sound buffer allocation took %ld ms", bufferTime));
+			SOUND_DEBUG_ONLY(OS::_DOUT("%s", std::format("Sound buffer allocation took {} ms", bufferTime).c_str()));
 			
 			// Set properties (this is also fast)
 		  #if ( __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000 ) || ( __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060 )
@@ -389,14 +385,12 @@ namespace pdg {
 	{
 		DEBUG_ONLY( 
 			ms_time start = OS::getMilliseconds();
-			SOUND_DEBUG_ONLY( OS::_DOUT("Sound::stop [%p] @ %ld mPlaying=%d mDone=%d", this, start, mPlaying, 
-				(mMacDataRef ? static_cast<snd_MacAudioData*>(mMacDataRef)->mDone : -1)); )
+			SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("Sound::stop [{}] @ {} mPlaying={} mDone={}", static_cast<const void*>(this), start, mPlaying, (mMacDataRef ? static_cast<snd_MacAudioData*>(mMacDataRef)->mDone : -1)).c_str()); )
 		)
 		snd_MacAudioData* sndData = static_cast<snd_MacAudioData*>(mMacDataRef);
 		if (mPlaying) {
 			mPlaying = false;
 			if (sndData) {
-//				pdg::AutoMutex(&sndData->mSoundCallbackMutex);
 				
 				// Check if we're shutting down - if so, do a clean flush+stop to prevent pops/clicks
 				// During normal runtime, use async stop to avoid hitches
@@ -416,9 +410,9 @@ namespace pdg {
 			ms_time end = OS::getMilliseconds();
 			ms_delta duration = end - start;
 			if (duration > 10) {
-				OS::_DOUT("Sound::stop() took %ld ms", duration);
+				OS::_DOUT("%s", std::format("Sound::stop() took {} ms", duration).c_str());
 			} else {
-				SOUND_DEBUG_ONLY( OS::_DOUT("Sound::stop() took %ld ms", duration); )
+				SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("Sound::stop() took {} ms", duration).c_str()); )
 			}
 		)
 	}
@@ -431,7 +425,6 @@ namespace pdg {
 			mPlaying = false;
 			mPaused = true;
 			if (sndData) {
-//				pdg::AutoMutex(&sndData->mSoundCallbackMutex);		
 				CheckError (AudioQueuePause(sndData->mQueue), "AudioQueuePause", sndData->mError = __err);
 			}
 		}
@@ -446,7 +439,6 @@ namespace pdg {
 			mPlaying = true;
 			mPaused = false;
 			if (sndData) {
-//				pdg::AutoMutex(&sndData->mSoundCallbackMutex);		
 				CheckError (AudioQueueStart(sndData->mQueue, NULL), "AudioQueueStart", sndData->mDone = true; sndData->mError = __err);
 			}
 		}
@@ -611,8 +603,8 @@ namespace pdg {
 				mTempFilename = 0;
 				return false;
 			}
-			DEBUG_ASSERT(soundData != 0, "Sound data is NULL!")
-			DEBUG_ASSERT(soundDataLen > 0, "Sound data length is 0!")
+			DEBUG_ASSERT(soundData != 0, "Sound data is NULL!");
+			DEBUG_ASSERT(soundDataLen > 0, "Sound data length is 0!");
 			fwrite(soundData, soundDataLen, 1, fp);
 			fclose(fp);
 			SOUND_DEBUG_ONLY( OS::_DOUT("SOUND: Successfully wrote file: [%s]", mTempFilename); )
@@ -625,7 +617,7 @@ namespace pdg {
 	{
 		SOUND_DEBUG_ONLY( OS::_DOUT("Sound::createFromFile [%p] file [%s]", this, filename); )
 
-		std::string realPath = os_makeCanonicalPath(filename);  // assumes relative to application if relative path
+		std::string realPath = OS::makeCanonicalPath(filename);  // assumes relative to application if relative path
 		mFilename = realPath;
 		CFURLRef fileRef = CFURLCreateFromFileSystemRepresentation (NULL, (const UInt8 *)realPath.c_str(), realPath.length(), false);
 		return createFromFileUrl(fileRef);
@@ -635,7 +627,7 @@ namespace pdg {
 	{
 		DEBUG_ONLY( 
 			ms_time start = OS::getMilliseconds();
-			SOUND_DEBUG_ONLY( OS::_DOUT("Sound::createFromFileUrl(CFURLRef) [%p] file [%s] @ %ld", this, mFilename.c_str(), start); )
+			SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("Sound::createFromFileUrl(CFURLRef) [{}] file [{}] @ {}", static_cast<const void*>(this), mFilename.c_str(), start).c_str()); )
 		)
 		snd_MacAudioData* sndData = new snd_MacAudioData();
 		mMacDataRef = sndData;
@@ -694,9 +686,9 @@ namespace pdg {
 			ms_time end = OS::getMilliseconds();
 			ms_delta duration = end - start;
 			if (duration > 10) {
-				OS::_DOUT("Sound::createFromFileUrl() took %ld ms", duration);
+				OS::_DOUT("%s", std::format("Sound::createFromFileUrl() took {} ms", duration).c_str());
 			} else {
-				SOUND_DEBUG_ONLY( OS::_DOUT("Sound::createFromFileUrl() took %ld ms", duration); )
+				SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("Sound::createFromFileUrl() took {} ms", duration).c_str()); )
 			}
 		)
 		return true;
@@ -736,13 +728,13 @@ namespace pdg {
 				}
 				
 				// Start the audio queue (this is the blocking operation moved to idle)
+                sndData->mNeedsStart = false;
 				OSStatus err = AudioQueueStart(sndData->mQueue, NULL);
 				if (err == noErr) {
-					sndData->mNeedsStart = false;
 					ms_delta duration = OS::getMilliseconds() - startTime;
-					SOUND_DEBUG_ONLY(OS::_DOUT("Sound::idle [%p] audio queue started in %ld ms", this, duration));
+					SOUND_DEBUG_ONLY(OS::_DOUT("%s", std::format("Sound::idle [{}] audio queue started in {} ms", static_cast<const void*>(this), duration).c_str()));
 				} else {
-					SOUND_DEBUG_ONLY(OS::_DOUT("Sound::idle [%p] AudioQueueStart failed with error %d", err));
+					SOUND_DEBUG_ONLY(OS::_DOUT("Sound::idle [%p] AudioQueueStart failed with error %d", this, err));
 					sndData->mError = err;
 					sndData->mDone = true;
 				}
@@ -751,8 +743,9 @@ namespace pdg {
 			// do volume fading if needed
 			ms_time t = OS::getMilliseconds();
 			if (mDieAt > 0 && t > mDieAt) {
-				SOUND_DEBUG_ONLY( OS::_DOUT("Sound::idle [%p] mDieAt triggered: now=%ld mDieAt=%ld", this, t, mDieAt); )
-				stop();  // this unregisters us from the Sound Manager and does a release which deletes this
+				SOUND_DEBUG_ONLY( OS::_DOUT("%s", std::format("Sound::idle [{}] mDieAt triggered: now={} mDieAt={}", static_cast<const void*>(this), t, mDieAt).c_str()); )
+				stop();
+                return;
 			}
 			if (mStartedFadeMs) {
 				ms_delta msElapsed = t - mStartedFadeMs;
@@ -773,34 +766,26 @@ namespace pdg {
 			// (mNeedsStart is false). This prevents a race condition where
 			// short sounds reach EOF during initial buffering before AudioQueueStart
 			// is called, causing them to stop before they ever play.
-			if (sndData && !sndData->mNeedsStart && sndData->mDone) {
-				if (sndData->mError != noErr) {
-					DEBUG_ONLY( OS::_DOUT("Sound::idle [%p] detected Core Audio error [%d], posting soundEvent_FailedToPlay", this, sndData->mError); )
-					stop();
-					SoundEventInfo soundInfo;
-					soundInfo.sound = this;
-					soundInfo.eventCode = soundEvent_FailedToPlay;
-					postEvent(eventType_SoundEvent, &soundInfo);
-				}
-				if (mDieAt == 0) {
-					// post a done (or looping) event
-					SoundEventInfo soundInfo;
-					soundInfo.sound = this;
-					if (!mLoopSound) {
-						SOUND_DEBUG_ONLY( OS::_DOUT("Sound::idle [%p] sound finished, posting soundEvent_DonePlaying", this); )
-						stop();
-						soundInfo.eventCode = soundEvent_DonePlaying;
-					} else {
-						SOUND_DEBUG_ONLY( OS::_DOUT("Sound::idle [%p] sound reached end and looping, posting soundEvent_Looping", this); )
-						addRef();  // so we won't get deleted when we stop
-						stop();
-						start();
-						release();
-						soundInfo.eventCode = soundEvent_Looping;
-					}
-					postEvent(eventType_SoundEvent, &soundInfo);
-				}
-			}
+            if (sndData && !sndData->mNeedsStart && sndData->mDone) {
+                SoundEventInfo soundInfo;
+                soundInfo.sound = this;
+                if (sndData->mError != noErr) {
+                    stop();
+                    soundInfo.eventCode = soundEvent_FailedToPlay;
+                } else if (mLoopSound && mDieAt == 0) {
+                    stop();
+                    start();
+                    soundInfo.eventCode = soundEvent_Looping;
+                } else {
+                    const bool notify = mDieAt == 0;
+                    stop();
+                    // Fire-and-forget play() copies also release their registration.
+                    if (!notify) return;
+                    soundInfo.eventCode = soundEvent_DonePlaying;
+                }
+                // SoundManagerMac's idle snapshot retains us through event delivery.
+                postEvent(eventType_SoundEvent, &soundInfo);
+            }
 		}
 	}
 		

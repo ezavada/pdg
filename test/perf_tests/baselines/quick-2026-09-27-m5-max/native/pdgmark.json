@@ -1,0 +1,131 @@
+{
+  "testName": "QuickPDGMark",
+  "benchmarkId": "pdgmark",
+  "language": "JavaScript",
+  "mode": "quick",
+  "synthetic": true,
+  "timestamp": "2026-09-27T21:29:38.089Z",
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "loadFactor": 1.5,
+  "framePacing": "uncapped",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "tests": {
+    "bitmap": {
+      "synthetic": true,
+      "fixedLoad": 4950,
+      "loadFactor": 1.5,
+      "referenceLoad": 3300,
+      "referenceScore": 3300,
+      "targetFPS": 60,
+      "estimatedCapacity": 4345.563661513803,
+      "score": 4346,
+      "averageFPS": 52.67349892744003,
+      "totalFrames": 159,
+      "durationSeconds": 3.0185957499999994,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 18.984878930817608,
+        "minMs": 17.777415999999903,
+        "maxMs": 24.136833999999908,
+        "percentile95Ms": 22.789624999999887,
+        "percentile99Ms": 23.536749999999756
+      },
+      "atOrAboveTarget": false
+    },
+    "drawing": {
+      "synthetic": true,
+      "fixedLoad": 3750,
+      "loadFactor": 1.5,
+      "referenceLoad": 2500,
+      "referenceScore": 3000,
+      "targetFPS": 60,
+      "estimatedCapacity": 2505.5645275012625,
+      "score": 3007,
+      "averageFPS": 40.0890324400202,
+      "totalFrames": 121,
+      "durationSeconds": 3.0182818750000004,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 24.94447830578513,
+        "minMs": 22.143750000000182,
+        "maxMs": 29.028333000000202,
+        "percentile95Ms": 28.203292000000147,
+        "percentile99Ms": 28.972124999999323
+      },
+      "atOrAboveTarget": false
+    },
+    "alpha": {
+      "synthetic": true,
+      "fixedLoad": 3000,
+      "loadFactor": 1.5,
+      "referenceLoad": 2000,
+      "referenceScore": 2600,
+      "targetFPS": 60,
+      "estimatedCapacity": 2530.9001891639773,
+      "score": 3290,
+      "averageFPS": 50.61800378327954,
+      "totalFrames": 152,
+      "durationSeconds": 3.0028841249999987,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 19.755816611842096,
+        "minMs": 18.424333999999362,
+        "maxMs": 29.63745800000106,
+        "percentile95Ms": 22.87379200000032,
+        "percentile99Ms": 24.75512499999968
+      },
+      "atOrAboveTarget": false
+    },
+    "polygon": {
+      "synthetic": true,
+      "fixedLoad": 3800,
+      "loadFactor": 4,
+      "referenceLoad": 950,
+      "referenceScore": 1425,
+      "targetFPS": 60,
+      "estimatedCapacity": 1424.7205557292343,
+      "score": 2137,
+      "averageFPS": 22.495587722040543,
+      "totalFrames": 68,
+      "durationSeconds": 3.0228150000000005,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 44.45316176470589,
+        "minMs": 42.91529199999968,
+        "maxMs": 47.721041999999215,
+        "percentile95Ms": 47.18487499999901,
+        "percentile99Ms": 47.721041999999215
+      },
+      "atOrAboveTarget": false
+    },
+    "text": {
+      "synthetic": true,
+      "fixedLoad": 450,
+      "loadFactor": 1.5,
+      "referenceLoad": 300,
+      "referenceScore": 420,
+      "targetFPS": 60,
+      "estimatedCapacity": 268.7056708479753,
+      "score": 376,
+      "averageFPS": 35.82742277973004,
+      "totalFrames": 108,
+      "durationSeconds": 3.0144507090000006,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 27.911580638888896,
+        "minMs": 26.859333000000333,
+        "maxMs": 31.328291999998328,
+        "percentile95Ms": 29.965165999998135,
+        "percentile99Ms": 30.571332999999868
+      },
+      "atOrAboveTarget": false
+    }
+  },
+  "compositeScore": 13156
+}

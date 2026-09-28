@@ -1,0 +1,17 @@
+/**
+\fn Attributes pdg::Attributes::withAppearance(Attributes overrides, boolean textOnly)
+\brief Copy this drawing style with explicitly assigned appearance overrides.
+
+\param overrides An Attributes or AnimatedAttributes sample. Only channels explicitly
+set or scheduled on that source override this base. Setting a default value is explicit;
+for example, roundedCorners(0) removes a base style's rounded corners.
+\param textOnly Defaults to false. True applies only text size, text style, font,
+fill opacity and blend mode, preserving the base foreground and other styling.
+\return An independent Attributes snapshot. Neither source changes, and this base's
+transform is preserved. Transform, location and size from overrides are not copied.
+
+Appearance animation owns its channel when scheduled and contributes its current value;
+this method does not advance either source. MVC uses this to compose View appearance
+with the selected ControlAttributes state. Custom draw routines can use the same method.
+\note API stability: 2 — Evolving.
+*/

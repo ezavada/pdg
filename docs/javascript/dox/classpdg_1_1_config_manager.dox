@@ -3,7 +3,6 @@ namespace pdg { /**
 \class ConfigManager
 \brief used for loading and saving application configuration info
 
-\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes.  Backwards-compatibility is guaranteed.
 
 Interface to Save and Load game config values.
 This class provides simple platform neutral configuration management.

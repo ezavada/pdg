@@ -1,0 +1,117 @@
+namespace pdg { /**
+\class AnimatedAttributes
+\ingroup Animation Graphics
+
+\brief Drawing attributes with programmed movement and appearance animation.
+
+AnimatedAttributes combines Animated and Attributes. Construct it without a Drawing
+or ElementRef; an optional Attributes argument seeds a snapshot of the initial values.
+Animation tracks are not copied. Call animate(deltaSeconds) once per update; MVC controllers already
+advance their Views. All durations, waits and update steps are floating-point seconds.
+It has no physics body and does not animate stored geometry.
+
+\section animated_attributes_channels Appearance channels
+
+The changeLineColor(), changeLineThickness(), changeLineOpacity(),
+changeFillColor(), changeFillOpacity(), changeFillGradient(),
+changeFillRadialGradient(), changeRoundedCorners(), changeTextSize(),
+changeSubsection(), changeSphereRotation(), changePolarOffset(),
+changeLightOffset() and changeAmbientLight() methods take their target values,
+an explicit duration in seconds and an optional easing constant (linearTween by default).
+Sphere rotation also accepts an integer rotationDirection constant after easing.
+
+blendMode, font, clipOverflow, lineStyle, textStyle, texture and fitType only have
+immediate setters. No texture crossfade or interpolation of enum values is implied.
+Gradient modes switch discretely when their delay expires; their numeric/color
+values interpolate. Choosing a solid, linear or radial fill interrupts all previous
+fill-color/gradient tracks, but leaves fill opacity and other channels alone.
+Line/fill methods resolve lineStyle_Auto when requested, as Attributes does.
+
+changeFrames(first, last, seconds, easing) visits an inclusive sequence of integer
+frames in either direction, with equal time per frame before easing. It holds the
+last frame at completion. A wait preserves the previous frame until the sequence
+starts. Direct frame() calls interrupt the sequence.
+
+Immediate setters interrupt their matching tracks. Independent channels continue.
+wait(seconds) delays the next timed request, which begins from the value at the
+end of the delay. Retargeting replaces a channel's pending request. Drawing and
+ElementRef copy Attributes by default; use ElementRef::setLiveAttributes() to follow subsequent samples.
+
+\section animated_attributes_transform Transform model
+
+The initial logical size is 1 by 1, independent of Drawing geometry. Separate
+x/y transform scale defaults to (1,1); scaling leaves logical size unchanged.
+Animated movement, rotation, size and scale share one affine transform with the
+appearance attributes. Its composition is translation, pivot, rotation,
+shear, logical size, independent scale, inverse-pivot. The inherited Attributes
+methods translation(), rotation(), scale(), skew() and transform() postmultiply
+the current matrix; setTransform() replaces it. Matrix edits and matrix tweens
+preserve logical width and height and update Animated position, rotation and
+independent scale. Shear and singular matrices are retained. For example,
+setScale(2) followed by scale(3) leaves getScale() at (6,6), without changing
+logical size. grow() and stretch() change logical size while preserving scale.
+
+Use the inherited Animated methods for position, rotation, size and scale:
+moveTo() sets an absolute location, rotateTo() sets an absolute angle with optional
+rotation direction, resizeTo() sets logical width/height, and changeScaleTo() sets
+independent x/y scale. moveBy(), rotateBy(), resizeBy(), grow() and stretch() make
+relative changes. Their timed overloads use easeInOutQuad by default; pass
+linearTween explicitly for constant interpolation. setLocation(), setRotation(),
+setSize() and setScale() apply immediate changes. Programmed movement, spin and
+growth update the same matrix on each animate() step. These changes are visible
+through getTransform() and in Attributes snapshots passed to Drawing.
+A component request interrupts a whole-matrix tween at its current sample.
+changeSkew() postmultiplies a shear onto the current matrix and interpolates to
+that result. changeTransform() replaces the matrix by interpolating its six
+affine coefficients. Such interpolation can pass through a singular matrix and
+does not select an angular route: use rotateBy()/rotateTo() for rotations.
+Matrices use column-major arrays of nine numbers in JavaScript and glm::mat3 in C++.
+
+The Attributes composition calls are immediate drawing-transform operations.
+translation() adds an offset along the current transformed axes; rotation() adds
+a rotation around the supplied local center; scale() multiplies the current
+transform around its supplied center. setLocation(), rotateTo() and changeScaleTo()
+instead target individual Animated components. Both APIs keep the same matrix
+and Animated state synchronized. Composition replaces transform tracks and stops
+programmed transform rates at the current sample. Like other immediate edits,
+translation(), rotation() and scale() reject a pending wait() or andThen().
+
+Translation and axis scaling preserve existing rotation, signed scale and shear;
+axis scaling multiplies the independent scale directly, even on collapsed axes.
+General affine edits decompose matrix column lengths into independent scale
+relative to the existing logical dimensions. A zero logical dimension can only
+represent a zero corresponding matrix column; an incompatible matrix request
+throws instead of changing that dimension. A queued matrix request is checked
+again when it starts, after any preceding resize.
+
+\section animated_attributes_types Language and Drawing integration
+
+In C++, this class publicly derives from both Animated and Attributes, so it can
+be passed as either base reference. In JavaScript it inherits from Animated and
+exposes the complete Attributes method surface. It is instanceof Animated and
+instanceof AnimatedAttributes, but not instanceof Attributes; native Attributes
+arguments in Port, Drawing and ElementRef accept it with the correct base-pointer
+conversion. Copies of Attributes contain values, without animation tracks.
+
+Views derive from AnimatedAttributes. Their size remains the layout rectangle's
+width and height, and their location is its center. Passing a View directly as
+Attributes therefore maps centered unit coordinates onto the view rectangle.
+Existing ControlAttributes themes remain separate; inheriting this class does
+not automatically replace every themed drawing primitive's attributes. General
+MVC clipping/hit-testing for rotation and reflection remains pending.
+
+\code{.js}
+const style = new pdg.AnimatedAttributes();
+style.fillColor(new pdg.Color(1, 0, 0));
+style.changeFillColor(new pdg.Color(0, 0, 1), 0.5, pdg.easeInOutQuad);
+style.changeFillOpacity(0.25, 0.5);
+style.animate(0.25);
+// This Drawing element captures the current sample; it is not a live association.
+const drawing = pdg.createDrawing();
+const element = drawing.addRect(new pdg.Rect(0, 0, 100, 40), style);
+// Explicitly applying a later sample remains possible:
+style.animate(0.25);
+element.setAttributes(style);
+\endcode
+
+**/ }

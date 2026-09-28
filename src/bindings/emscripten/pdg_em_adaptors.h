@@ -13,6 +13,18 @@
 
 namespace pdg {
 
+// Turn native validation failures into JavaScript Error objects, retaining what().
+template<auto Method> struct EmscriptenCheckedMethod;
+template<class Owner, class Result, class... Args, Result (Owner::*Method)(Args...)>
+struct EmscriptenCheckedMethod<Method> {
+    static Result call(Owner& owner, Args... args) {
+        try { return (owner.*Method)(args...); }
+        catch (const std::exception& error) {
+            emscripten::val::global("Error").new_(std::string(error.what())).throw_();
+        }
+    }
+};
+
 class FileManager;
 
 void emscriptenEventEmitterAddBridge(EventEmitter& emitter, long eventType,
@@ -71,10 +83,45 @@ TileLayer* emscriptenCreateTileLayerForPort(Port* port);
 std::string emscriptenFontGetName(Font& font);
 float emscriptenFontGetHeight(Font& font, int size, int style);
 float emscriptenFontGetLeading(Font& font, int size, int style);
+float emscriptenFontGetCapHeight(Font& font, int size, int style);
 float emscriptenFontGetAscent(Font& font, int size, int style);
 float emscriptenFontGetDescent(Font& font, int size, int style);
 void emscriptenDrawingDraw(Drawing& drawing, Port* port);
 #ifdef PDG_SPRITER_SUPPORT
+void emscriptenSpriteSeekAnimation(Sprite& sprite, const std::string& clip, double seconds);
+void emscriptenSpriteTransitionToAnimation(Sprite& sprite, const std::string& clip, double seconds, double duration);
+void emscriptenSpriteSetupAnimationPhysics(Sprite& sprite,emscripten::val values);
+void emscriptenSpriteDisableAnimationPhysics(Sprite& sprite,double seconds,int direction);
+void emscriptenSpriteSetAnimationPhysicsMode(Sprite&,int,double,bool,double,int);
+int emscriptenSpriteGetAnimationPhysicsMode(const Sprite&,double,bool);
+void emscriptenSpriteSetAnimationPhysicsDriveSettings(Sprite&,double,double,double,double,int,double,bool);
+emscripten::val emscriptenSpriteGetAnimationPhysicsDriveSettings(const Sprite&,uint32_t);
+void emscriptenSpriteSetupPhysicsFromAnimationRig(Sprite& sprite,double mass,double units);
+void emscriptenSpriteAttachAnimationPhysicsPart(Sprite& sprite,Part* part,Part* parent);
+void emscriptenSpriteDetachAnimationPhysicsPart(Sprite& sprite,Part* part,bool descendants);
+void emscriptenSpriteSetAnimationPhysicsRoot(Sprite& sprite,uint32_t bone);
+void emscriptenSpriteClearAnimationPhysicsRoot(Sprite& sprite);
+uint32_t emscriptenSpriteGetAnimationPhysicsRoot(const Sprite& sprite);
+emscripten::val emscriptenSpriteGetAnimationPhysicsSetupWarnings(const Sprite& sprite);
+uint32_t emscriptenSpriteAddAnimationDrawable(Sprite& sprite,emscripten::val callback,emscripten::val values,const std::string& slot);
+void emscriptenSpriteSetAnimationDrawableEnabled(Sprite& sprite,uint32_t id,bool enabled);
+std::string emscriptenSpriteGetAnimationDrawableError(const Sprite& sprite,uint32_t id);
+emscripten::val emscriptenSpriteGetAnimationDrawBounds(const Sprite& sprite);
+uint32_t emscriptenSpriteAddAnimationIK(Sprite& sprite, emscripten::val config, int order);
+void emscriptenSpriteSetAnimationIKTarget(Sprite& sprite, uint32_t id, double x, double y, int space);
+emscripten::val emscriptenSpriteGetAnimationIKResult(const Sprite& sprite, uint32_t id);
+uint32_t emscriptenSpriteAddAnimationModifier(Sprite& sprite, emscripten::val callback, int stage, int order);
+void emscriptenSpriteSetAnimationSource(Sprite& sprite, int source);
+std::string emscriptenSpriteGetAnimationModifierError(const Sprite& sprite, uint32_t id);
+void emscriptenSpriteSetAnimationDebugDraw(Sprite& sprite, int flags);
+bool emscriptenSpriteEnableAnimationPose(Sprite& sprite, const std::string& clip);
+emscripten::val emscriptenSpriteGetAnimationPose(const Sprite& sprite);
+emscripten::val emscriptenSpriteSampleAnimationPose(const Sprite& sprite, const std::string& clip, double seconds);
+emscripten::val emscriptenSpriteGetAnimationBoneNames(const Sprite& sprite);
+emscripten::val emscriptenSpriteGetAnimationBindingNames(const Sprite& sprite);
+emscripten::val emscriptenSpriteGetAnimationBoneTransform(const Sprite& sprite, const std::string& name, int space);
+emscripten::val emscriptenSpriteGetAnimationBindingTransform(const Sprite& sprite, const std::string& name, int space);
+void emscriptenSpriteSetAnimationBoneTransform(Sprite& sprite, const std::string& name, const emscripten::val& transform);
 bool emscriptenSpriteHasAnimation(Sprite& sprite, const emscripten::val& animation);
 void emscriptenSpriteStartAnimation(Sprite& sprite, const emscripten::val& animation);
 void emscriptenSpriteBlendToAnimation(Sprite& sprite, const emscripten::val& animation, float blendTime);
@@ -108,20 +155,32 @@ Sound* emscriptenResourceGetSound(ResourceManager& manager, const std::string& s
 Polygon* emscriptenPolygonIntersection(Polygon& polygon, const Polygon& other);
 Polygon* emscriptenPolygonUnion(Polygon& polygon, const Polygon& other);
 
-emscripten::val emscriptenAnimatedGetRotatedBounds(Animated& animated);
-void emscriptenAnimatedMoveTo(Animated& animated, const Point& point, ms_delta duration, int easing);
-void emscriptenAnimatedMove(Animated& animated, const Offset& offset, ms_delta duration, int easing);
-void emscriptenAnimatedGrow(Animated& animated, float factor, ms_delta duration, int easing);
-void emscriptenAnimatedStretch(Animated& animated, float widthFactor, float heightFactor, ms_delta duration, int easing);
-void emscriptenAnimatedResize(Animated& animated, float width, float height, ms_delta duration, int easing);
-void emscriptenAnimatedResizeTo(Animated& animated, float width, float height, ms_delta duration, int easing);
-void emscriptenAnimatedRotate(Animated& animated, float radians, ms_delta duration, int easing);
-void emscriptenAnimatedRotateTo(Animated& animated, float radians, ms_delta duration, int easing);
-void emscriptenAnimatedChangeCenter(Animated& animated, const Offset& offset, ms_delta duration, int easing);
-void emscriptenAnimatedChangeCenterTo(Animated& animated, const Offset& offset, ms_delta duration, int easing);
-bool emscriptenAnimatedAnimate(Animated& animated, ms_delta elapsed);
+emscripten::val emscriptenAnimatedGetRotatedBounds(AnimatedBase& animated);
+emscripten::val emscriptenSpriteGetFrameRotatedBounds(Sprite& sprite, int frame);
+void emscriptenAnimatedMoveTo(AnimatedBase& animated, const Point& value, double seconds, int easing);
+void emscriptenAnimatedMoveBy(AnimatedBase& animated, const Offset& value, double seconds, int easing);
+void emscriptenAnimatedChangeMovementTo(AnimatedBase& animated, const Vector& value, double seconds, int easing);
+void emscriptenAnimatedChangeMovementBy(AnimatedBase& animated, const Vector& value, double seconds, int easing);
+void emscriptenAnimatedChangeCenterOffsetTo(AnimatedBase& animated, const Offset& value, double seconds, int easing);
+void emscriptenAnimatedChangeCenterOffsetBy(AnimatedBase& animated, const Offset& value, double seconds, int easing);
+void emscriptenAnimatedGrow(AnimatedBase& animated, float value, double seconds, int easing);
+void emscriptenAnimatedRotateTo(AnimatedBase& animated, float value, double seconds, int easing, int direction);
+void emscriptenAnimatedRotateBy(AnimatedBase& animated, float value, double seconds, int easing, int direction);
+void emscriptenAnimatedChangeSpinTo(AnimatedBase& animated, float value, double seconds, int easing);
+void emscriptenAnimatedChangeSpinBy(AnimatedBase& animated, float value, double seconds, int easing);
+void emscriptenAnimatedChangeGrowingTo(AnimatedBase& animated, float value, double seconds, int easing);
+void emscriptenAnimatedChangeGrowingBy(AnimatedBase& animated, float value, double seconds, int easing);
+void emscriptenAnimatedStretch(AnimatedBase& animated, float x, float y, double seconds, int easing);
+void emscriptenAnimatedResizeTo(AnimatedBase& animated, float x, float y, double seconds, int easing);
+void emscriptenAnimatedResizeBy(AnimatedBase& animated, float x, float y, double seconds, int easing);
+void emscriptenAnimatedChangeScaleTo(AnimatedBase& animated, float x, float y, double seconds, int easing);
+void emscriptenAnimatedChangeScaleBy(AnimatedBase& animated, float x, float y, double seconds, int easing);
+void emscriptenAnimatedChangeStretchingTo(AnimatedBase& animated, float x, float y, double seconds, int easing);
+void emscriptenAnimatedChangeStretchingBy(AnimatedBase& animated, float x, float y, double seconds, int easing);
+bool emscriptenAnimatedAnimate(AnimatedBase& animated, double elapsed);
 
 Image* emscriptenCreateImage(const std::string& path);
+ImageStrip* emscriptenCreateSnapshotImage();
 ImageStrip* emscriptenCreateImageStrip(const std::string& path);
 Sound* emscriptenCreateSound(const std::string& path);
 Rect emscriptenImageGetBoundsAt(Image& image, const Point& point);
@@ -142,6 +201,26 @@ void emscriptenAttributesSetBlendMode(Attributes& attributes, int mode);
 void emscriptenAttributesRotate(Attributes& attributes, float radians, const Point& center);
 void emscriptenAttributesScale(Attributes& attributes, float xFactor, float yFactor, const Point& center);
 void emscriptenAttributesSkew(Attributes& attributes, float xSkew, float ySkew, const Point& center);
+void emscriptenAttributesSetTransform(Attributes& attributes, const emscripten::val& matrix);
+Attributes* emscriptenAnimatedAttributesBase(AnimatedAttributesBase& self);
+void emscriptenAnimatedAttributesChangeLineColor(AnimatedAttributesBase& self, const Color& target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeLineThickness(AnimatedAttributesBase& self, float target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeLineOpacity(AnimatedAttributesBase& self, float target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeFillColor(AnimatedAttributesBase& self, const Color& target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeFillOpacity(AnimatedAttributesBase& self, float target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeRoundedCorners(AnimatedAttributesBase& self, float target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeTextSize(AnimatedAttributesBase& self, float target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeSubsection(AnimatedAttributesBase& self, const Rect& target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangePolarOffset(AnimatedAttributesBase& self, const Offset& target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeLightOffset(AnimatedAttributesBase& self, const Offset& target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeAmbientLight(AnimatedAttributesBase& self, const Color& target, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeSkew(AnimatedAttributesBase& self, float x, float y, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeSphereRotation(AnimatedAttributesBase& self, float radians, double seconds, int easing, int direction);
+void emscriptenAnimatedAttributesChangeFrames(AnimatedAttributesBase& self, int first, int last, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeFillGradient(AnimatedAttributesBase& self, const Point& start, const Color& startColor, const Point& end, const Color& endColor, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeFillRadialGradient(AnimatedAttributesBase& self, const Point& center, const Color& centerColor, float radius, const Color& endColor, double seconds, int easing);
+void emscriptenAnimatedAttributesChangeTransform(AnimatedAttributesBase& self, const emscripten::val& matrix, double seconds, int easing);
+
 void emscriptenAttributesTransform(Attributes& attributes, const emscripten::val& matrix);
 emscripten::val emscriptenAttributesGetTransform(Attributes& attributes);
 int emscriptenAttributesGetLineStyle(Attributes& attributes);

@@ -1,4 +1,4 @@
-.TH "Events" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Events" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -12,6 +12,10 @@ Events \- Events
 .SS "Classes"
 
 .in +1c
+.ti -1c
+.RI "struct \fBColliderContact\fP"
+.br
+.RI "One shape contact delivered as eventType_ColliderContact\&. "
 .ti -1c
 .RI "class \fBEventEmitter\fP"
 .br
@@ -67,7 +71,7 @@ Events \- Events
 .ti -1c
 .RI "struct \fBSpriteBreakEvent\fP"
 .br
-.RI "a Sprite joint is breaking because it was overstressed (\fIChipmunk Physics Only\fP) "
+.RI "A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. "
 .ti -1c
 .RI "struct \fBSpriteCollideEvent\fP"
 .br
@@ -81,6 +85,10 @@ Events \- Events
 .br
 .RI "the user clicked on (or touched) a Sprite "
 .ti -1c
+.RI "struct \fBSpriteTriggerEvent\fP"
+.br
+.RI "Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. "
+.ti -1c
 .RI "struct \fBTimerEvent\fP"
 .br
 .RI "a timer fire event "
@@ -93,9 +101,17 @@ Events \- Events
 
 .in +1c
 .ti -1c
+.RI "const \fBaction_BodyBreak\fP = 16"
+.br
+.RI "\fBSpriteBreakEvent\fP action for body angular-speed notifications\&. "
+.ti -1c
 .RI "const \fBall_events\fP = 0"
 .br
 .RI "a special catch-all for events that weren't handled by specific event handlers "
+.ti -1c
+.RI "const \fBeventType_ColliderContact\fP = 26"
+.br
+.RI "\fBCollider\fP begin/stay/end notification carrying a \fBColliderContact\fP payload\&. "
 .ti -1c
 .RI "const \fBeventType_KeyDown\fP = 4"
 .br
@@ -129,6 +145,10 @@ Events \- Events
 .br
 .RI "the user release a mouse button "
 .ti -1c
+.RI "const \fBeventType_ParticleBreak\fP = 27"
+.br
+.RI "A \fBParticle\fP body exceeded its angular-speed threshold\&. "
+.ti -1c
 .RI "const \fBeventType_PortDraw\fP = 24"
 .br
 .RI "a port needs to be redrawn "
@@ -151,11 +171,11 @@ Events \- Events
 .ti -1c
 .RI "const \fBeventType_SpriteAnimate\fP = 17"
 .br
-.RI "a sprite finished an animation (\fIOptional\fP) "
+.RI "A \fBSprite\fP reports an animation, fade, or visibility action\&. "
 .ti -1c
 .RI "const \fBeventType_SpriteBreak\fP = 21"
 .br
-.RI "joined sprites broke apart (\fIChipmunk Physics only\fP) "
+.RI "A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. "
 .ti -1c
 .RI "const \fBeventType_SpriteCollide\fP = 20"
 .br
@@ -169,6 +189,10 @@ Events \- Events
 .br
 .RI "sprite touched event (\fIOptional\fP) "
 .ti -1c
+.RI "const \fBeventType_SpriteTriggerEvent\fP = 25"
+.br
+.RI "An enabled Spriter animation crosses an authored eventline key\&. "
+.ti -1c
 .RI "const \fBeventType_Timer\fP = 3"
 .br
 .RI "a timer fire event "
@@ -177,13 +201,51 @@ Events \- Events
 .PP 
 Things used to notify your code of user input or other significant events\&. 
 
+Authored Spriter triggers
+.PP
+Enable with pdg::Sprite::enableSpriterEvents(true), then subscribe to \fBpdg::eventType_SpriteTriggerEvent\fP through the existing EventEmitter/IEventHandler API\&. The payload is \fBpdg::SpriteTriggerEvent\fP\&. SCML eventline keys are delivered in chronological order for every crossing in (start, end], including multiple loops\&. Equal authored times retain track/key order\&. A time-zero key fires at loop wrap, not on initial selection or silent seek\&.
 
+.PP
+The payload contains triggerName, clipName, entityName, timeSeconds (relative to clip start), offsetSeconds (relative to the start of this update), actingSprite and inLayer\&. The native event ID is exposed by the browser bridge but not the V8/JavaScriptCore bridges\&. String payloads are owned copies\&. Animation timing fields are floating-point seconds\&. Native frameTime is an existing integer-millisecond compatibility exception; new script payloads omit it\&. Independent transitions deliver destination events only, existing phase-aligned blends retain source ownership, and independent samples, seeks, queries and drawing are silent\&.
+
+.PP
+The queue retains the acting Sprite until delivery or cancellation\&. Layer teardown purges matching events and releases owned strings and Sprite references\&. A clip change does not erase events for crossings already completed in a previous update\&. Sound events and general nested-entity trigger forwarding are separate capabilities\&. 
 .SH "Class Documentation"
 .PP 
+.SH "struct ColliderContact"
+.PP 
+One shape contact delivered as eventType_ColliderContact\&. 
+
+Enable Collider::setWantsContactEvents() on each collider whose owner should receive notifications\&. Both Sprite and Part colliders deliver through the owning Sprite\&. Each receiving collider sees itself as \fRcollider\fP; vectors reverse for the other endpoint\&. Delivery occurs synchronously after the solve\&.
+
+.PP
+
+.PP
+\fBContact fields\fP
+.RS 4
+
+.RE
+.PP
+Field  Meaning  emitter  Owning Sprite receiving this event  eventType  \fBpdg::eventType_ColliderContact\fP  collider, other  Shared Collider handles identifying both endpoints  shape, otherShape  Stable shape IDs within the corresponding colliders  phase  collision_Begin, collision_Stay or collision_End  point  Approximate contact Point in owning-layer/world coordinates  normal  Unit Vector directed from collider toward other  impulse  Actual impulse applied to other; zero for sensors, sleeping contacts and end contacts  penetration  Nonnegative overlap depth; zero for an end contact  sensor  Whether either collider is a sensor  
+
+.PP
+
+.PP
+Chipmunk contacts reuse its solved manifold: point is the mean of the contact midpoints and penetration is the greatest overlap depth\&. Sleeping pairs continue to report collision_Stay without a new impulse\&.
+
+.PP
+Geometry, filters and physical associations are evaluated for the solved frame\&. A callback can remove an endpoint before another notification is delivered; retained handles remain safe and isAttached() reports their current state\&. Contact identity is per shape pair, so compound geometry can generate several notifications for the same two owners\&. Native \fBColliderContact\fP pointers are borrowed only for the callback; JavaScript retains its Collider handles\&. 
 .SH "class pdg::IEventHandler"
 .PP 
 Interface for any class which handles events\&. 
 
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
+.RE
+.PP
 Specific Subclasses should be written to implement particular handlers\&. Typically you would call an onXXX() method of the \fBEventEmitter\fP object that is generating the event you want, and it will take care of creating the event handler for you, and adding a convenient cancel() method to the handler\&. For example:
 
 .PP
@@ -630,10 +692,10 @@ A Sprite will generate one of these events when it completes an animation includ
 For frame based animations -- that is, calls to \fBpdg\&.Sprite\&.startFrameAnimation()\fP -- if it reaches the last frame and is not set to loop, action will be \fBpdg\&.action_AnimationEnd\fP\&. For looping animations \fBpdg\&.action_AnimationLoop\fP will be received each time the animation completes and starts over with the first frame\&.
 
 .PP
-When a Spriter animation blend -- started by \fBpdg\&.Sprite\&.blendToAnimation()\fP -- completes, action will be \fBpdg\&.action_AnimationBlendComplete\fP
+When a Spriter animation blend started by \fBpdg::Sprite::blendToAnimation()\fP or \fBpdg::Sprite::transitionToAnimation()\fP completes, action is \fBpdg::action_AnimationBlendComplete\fP\&.
 
 .PP
-For Spriter triggers embedded in a Spriter animation, action will be \fBpdg\&.action_SpriterTrigger\fP
+Authored Spriter triggers are delivered as \fBpdg::eventType_SpriteTriggerEvent\fP with a \fBpdg::SpriteTriggerEvent\fP payload\&. Subscribe to that event type for triggers\&.
 
 .PP
 For fades, one of three action types are possible: \fBpdg\&.action_FadeComplete\fP for calls to \fBpdg\&.Sprite\&.fadeTo()\fP, \fBpdg\&.action_FadeInComplete\fP for calls to \fBpdg\&.Sprite\&.fadeIn()\fP, and \fBpdg\&.action_FadeOutComplete\fP for calls to \fBpdg\&.Sprite\&.fadeOut()\fP\&.
@@ -659,7 +721,7 @@ When a Sprite has setWantsCollideWallEvents(true), \fBpdg\&.action_ExitLayer\fP 
 .PP
 \fBNote\fP
 .RS 4
-At this time other kinds of animations such as calls to \fBpdg::Sprite\&.startAnimation()\fP do not generate any events\&.
+Spriter eventline notifications require pdg::Sprite::enableSpriterEvents(true)\&. See \fBAuthored Spriter triggers\fP for crossing, looping, seek, and transition rules\&.
 .RE
 .PP
 \fBSee also\fP
@@ -694,45 +756,32 @@ At this time other kinds of animations such as calls to \fBpdg::Sprite\&.startAn
 
 .SH "struct pdg::SpriteBreakEvent"
 .PP 
-a Sprite joint is breaking because it was overstressed (\fIChipmunk Physics Only\fP) 
+A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. 
 
-This event is generated by a Sprite whenever the forces acting on a joint with another Sprite are greater then the breaking force of the joint\&. To prevent the break from happening, return true from the handler that gets this event\&. If you return false then the joint will go ahead and break\&. 
-.PP
-.nf
-{
-    emitter: {},            // the emitter that generated this event
-    eventType: 21,          // the event type (eventType_SpriteBreak)
-    action: 13,             // what happened (action_JointBreak)
-    actingSprite: {},       // the Sprite to which the forces were applied
-    inLayer: {},            // the SpriteLayer that contains the Sprite
-    targetSprite: {},       // the Sprite that was previously joined
-    impulse: 29\&.35,         // the magnitude of the impulse that broke the joint
-    force: 384\&.0,           // the force of the collision
-    breakForce: 100\&.0,      // the maximum force the joint could stand before breaking
-    joint: {}               // the CpConstraint that defines the joint
-}
-
-.fi
-.PP
+Register an IEventHandler for eventType_SpriteBreak on the owning Sprite\&. Part body notifications use their owning Sprite's route\&. Inspect reason to distinguish the two event forms\&. Body notifications work with both basic and Chipmunk solvers\&.
 
 .PP
-\fBNote\fP
+ 
+.PP
+\fBBreak event fields\fP
 .RS 4
-Only joints that have a breaking force assigned will generate these events; without it joints between sprites are considered unbreakable\&.
+
 .RE
+.PP
+Field  Meaning  emitter, eventType  Standard event emitter and eventType_SpriteBreak\&.  actingSprite, inLayer  Owning Sprite and its layer (null outside a layer)\&.  reason  physicsBreak_AngularSpeed or physicsBreak_Force\&.  action  action_BodyBreak for speed; action_JointBreak for legacy force breaks\&.  body, part  Source PhysicsBody and optional Part for speed; null for legacy force breaks\&.  referenceBody  Optional angular-speed reference PhysicsBody, otherwise null\&.  angularSpeed  Measured speed magnitude in radians/second; zero for force breaks\&.  breakAngularSpeed  Configured speed threshold in radians/second; zero for force breaks\&.  targetSprite, joint  Legacy joint endpoint and CpConstraint; null for speed events\&.  impulse, force, breakForce  Legacy joint impulse, solved force and break threshold; zero for speed events\&.  
+
+.PP
+
+.PP
+Angular-speed notifications do not clamp speed, apply braking, disconnect joints or split artwork, regardless of the handler's return value\&. They fire once per sampled excursion above the limit; returning to or below the limit rearms them\&. See PhysicsBody\&.setBreakAngularSpeed() for sampling and reference lifetime rules\&.
+
+.PP
+Legacy Chipmunk joint-force events retain their existing behavior: returning true handles the notification; an unhandled event invokes the existing disconnect path\&. Shared PhysicsConstraint force breaking retains its existing behavior too; this body feature does not add force events to that separate constraint path\&.
+
 .PP
 \fBSee also\fP
 .RS 4
-\fBpdg\&.eventType_SpriteBreak\fP 
-
-.PP
-\fBpdg\&.Sprite\&.makeJointBreakable()\fP 
-
-.PP
-\fBpdg\&.Sprite\&.makeJointUnbreakable()\fP 
-
-.PP
-\fBPhysics\fP 
+PhysicsBody\&.setBreakAngularSpeed(), \fBpdg\&.eventType_SpriteBreak\fP 
 .RE
 .PP
 
@@ -740,7 +789,7 @@ Only joints that have a breaking force assigned will generate these events; with
 .PP 
 a Sprite collided with something (\fIOptional\fP) 
 
-This event is generated by a Sprite whenever it hits something\&. If it hits another Sprite action will be \fBpdg\&.action_CollideSprite\fP, if it hits a wall it will be \fBpdg\&.action_CollideWall\fP\&. 
+This event reports Sprite layer-wall notifications and imported physical-rig contacts\&. Shared Collider contacts use eventType_ColliderContact and Collider\&.setContactHandler(), with stable collider and shape identities\&. 
 .PP
 .nf
 {
@@ -774,7 +823,7 @@ This event is generated by a Sprite whenever it hits something\&. If it hits ano
 .PP
 \fBNote\fP
 .RS 4
-Collisions must be turned on for each Sprite using Sprite\&.enableCollisions() or Sprite\&.setCollisionRadius()
+Enable layer collisions with SpriteLayer\&.enableCollisions()\&. Use Collider\&.setContactHandler() for ordinary Sprite and Part contacts\&.
 .RE
 .PP
 \fBSee also\fP
@@ -788,10 +837,10 @@ Collisions must be turned on for each Sprite using Sprite\&.enableCollisions() o
 \fBpdg\&.action_CollideWall\fP 
 
 .PP
-\fBpdg\&.Sprite\&.enableCollisions()\fP 
+\fBpdg\&.Collider\&.setContactHandler()\fP 
 
 .PP
-\fBpdg\&.Sprite\&.setCollisionRadius()\fP 
+\fBpdg\&.Sprite\&.setupFrameCollider()\fP 
 .RE
 .PP
 
@@ -938,6 +987,31 @@ If no Sprite was hit by a mouse event, the original \fBpdg\&.eventType_MouseDown
 .RE
 .PP
 
+.SH "struct pdg::SpriteTriggerEvent"
+.PP 
+Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. 
+
+The common JavaScript payload contains:
+
+.PP
+Field  Meaning  \fRemitter\fP  Event emitter delivering the notification  \fReventType\fP  \fBpdg::eventType_SpriteTriggerEvent\fP  \fRactingSprite\fP  Sprite whose animation crossed the trigger  \fRinLayer\fP  SpriteLayer containing that Sprite  \fRtriggerName\fP  Authored eventline name  \fRclipName\fP  Clip containing the eventline key  \fRentityName\fP  Spriter entity containing the clip  \fRtimeSeconds\fP  Authored key position from clip start, in floating-point seconds  \fRoffsetSeconds\fP  Occurrence offset from the start of the update, in floating-point seconds  
+
+.PP
+Subscribe by event type and inspect \fRtriggerName\fP to distinguish authored triggers\&. An \fRaction\fP field is not a portable trigger discriminator\&. The native compatibility field \fRframeTime\fP uses integer milliseconds and is omitted from JavaScript\&. The native event ID is currently exposed by the browser bridge but not the V8/JavaScriptCore bridges\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg::Sprite::enableSpriterEvents\fP 
+
+.PP
+\fBpdg::eventType_SpriteTriggerEvent\fP 
+
+.PP
+\fBAuthored Spriter triggers\fP 
+.RE
+.PP
+
 .SH "struct pdg::TimerEvent"
 .PP 
 a timer fire event 
@@ -966,6 +1040,10 @@ Generated by the \fBpdg\&.TimerManager\fP when a timer fires
 
 .SH "Variable Documentation"
 .PP 
+.SS "const action_BodyBreak = 16"
+
+.PP
+\fBSpriteBreakEvent\fP action for body angular-speed notifications\&. 
 .SS "const all_events = 0"
 
 .PP
@@ -982,6 +1060,17 @@ a special catch-all for events that weren't handled by specific event handlers
 
 .PP
 Referenced by \fBEventEmitter::addHandler()\fP, and \fBEventEmitter::removeHandler()\fP\&.
+.SS "const eventType_ColliderContact = 26"
+
+.PP
+\fBCollider\fP begin/stay/end notification carrying a \fBColliderContact\fP payload\&. 
+.PP
+\fBSee also\fP
+.RS 4
+\fBCollider::setWantsContactEvents()\fP 
+.RE
+.PP
+
 .SS "const eventType_KeyDown = 4"
 
 .PP
@@ -1030,6 +1119,11 @@ For cross-platform key detection, use \fBeventType_KeyPress\fP instead\&. Howeve
 .PP
 the user pressed and released a key Also generated by repeat key events from the OS when a key is held down
 
+.PP
+\fBNote\fP
+.RS 4
+KeyPress events are never generated for modifier keys (shift, control, alt/option, meta/command)
+.RE
 .PP
 \fBSee also\fP
 .RS 4
@@ -1161,6 +1255,10 @@ the user release a mouse button Generated by the \fBEventManager\fP whenever the
 .RE
 .PP
 
+.SS "const eventType_ParticleBreak = 27"
+
+.PP
+A \fBParticle\fP body exceeded its angular-speed threshold\&. Sent to the owning \fBParticle\fP\&. The event contains emitter (the \fBParticle\fP), body (the \fBPhysicsBody\fP), referenceBody (\fBPhysicsBody\fP or null), angularSpeed (measured radians per second) and breakAngularSpeed (the configured threshold)\&. It fires once per threshold crossing without clamping speed or disconnecting constraints\&. See \fBPhysicsBody::setBreakAngularSpeed()\fP and \fBParticle effects\fP\&. 
 .SS "const eventType_PortDraw = 24"
 
 .PP
@@ -1224,7 +1322,7 @@ a sound finished or looped Generated by the \fBSoundManager\fP whenever a sound 
 .SS "const eventType_SpriteAnimate = 17"
 
 .PP
-a sprite finished an animation (\fIOptional\fP) Optionally generated by a \fBSprite\fP whenever it finishes an animation\&. Emitting this event must be turned on for each \fBSprite\fP individually\&.
+A \fBSprite\fP reports an animation, fade, or visibility action\&. Inspect \fRaction\fP to identify the notification\&. Frame-loop/end and visibility notifications have per-Sprite opt-in controls\&. Blend-completion notifications use \fBpdg::action_AnimationBlendComplete\fP\&. Authored Spriter triggers use \fBpdg::eventType_SpriteTriggerEvent\fP and a \fBpdg::SpriteTriggerEvent\fP payload\&.
 
 .PP
 \fBSee also\fP
@@ -1236,12 +1334,11 @@ a sprite finished an animation (\fIOptional\fP) Optionally generated by a \fBSpr
 .SS "const eventType_SpriteBreak = 21"
 
 .PP
-joined sprites broke apart (\fIChipmunk Physics only\fP) Generated by a \fBSprite\fP whenever forces acting on it exceed the break force set for a joint\&.
-
+A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. 
 .PP
 \fBSee also\fP
 .RS 4
-\fBSpriteBreakEvent\fP 
+\fBSpriteBreakEvent\fP, \fBPhysicsBody\&.setBreakAngularSpeed()\fP 
 .RE
 .PP
 
@@ -1278,6 +1375,21 @@ sprite touched event (\fIOptional\fP) Optionally generated by a \fBSprite\fP whe
 \fBSee also\fP
 .RS 4
 \fBSpriteTouchEvent\fP 
+.RE
+.PP
+
+.SS "const eventType_SpriteTriggerEvent = 25"
+
+.PP
+An enabled Spriter animation crosses an authored eventline key\&. Call pdg::Sprite::enableSpriterEvents(true) and register an \fBIEventHandler\fP for this event type\&. The payload is \fBpdg::SpriteTriggerEvent\fP\&. Authored clip time and the offset within the current update are floating-point seconds\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg::SpriteTriggerEvent\fP 
+
+.PP
+\fBAuthored Spriter triggers\fP 
 .RE
 .PP
 

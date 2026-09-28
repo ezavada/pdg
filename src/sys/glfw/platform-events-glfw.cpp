@@ -149,7 +149,7 @@ void handle_cursorenter_callback(GLFWwindow* window, int entered) {
 void handle_scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	// Convert scroll deltas to integers (GLFW uses floating point, PDG uses int)
 	int horizDelta = (int)xoffset;
-	int vertDelta = (int)yoffset;
+	int vertDelta = -(int)yoffset;
 	if (horizDelta != 0 || vertDelta != 0) {
 		main_handleScrollWheel(horizDelta, vertDelta, sShift, sControl, sAlt, sCmd);
 	}

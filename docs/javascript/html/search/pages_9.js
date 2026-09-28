@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kits_0',['Game Kits',['../index.html#autotoc_md35',1,'']]]
+  ['kinematics_0',['Inverse kinematics',['../classpdg_1_1_sprite.html#autotoc_md20',1,'']]]
 ];

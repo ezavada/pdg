@@ -36,6 +36,15 @@ EM_JS(double, pdg_em_measure_text, (const char* text, const char* family, int si
     return context.measureText(value).width;
 });
 
+EM_JS(double, pdg_em_cap_height, (const char* family, int size, int style), {
+    const canvas = typeof OffscreenCanvas !== 'undefined'
+        ? new OffscreenCanvas(1, 1) : document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = ((style & 2) ? "italic " : "") + ((style & 1) ? "bold " : "")
+        + size + "px " + (UTF8ToString(family) || "Arial");
+    return context.measureText("H").actualBoundingBoxAscent;
+});
+
 EM_JS(void, pdg_em_rasterize_text,
       (const char* text, const char* family, int size, int style, int width, int height,
        int ascent, unsigned char* pixels), {
@@ -82,6 +91,7 @@ public:
         const float scaledSize = size * mScalingFactor;
         metrics->size = size;
         metrics->style = style;
+        metrics->capHeight = pdg_em_cap_height(getFontName(), std::max(1, static_cast<int>(std::ceil(scaledSize))), style);
         metrics->ascent = std::ceil(scaledSize * 0.8f);
         metrics->descent = std::ceil(scaledSize * 0.2f);
         metrics->leading = std::ceil(scaledSize * 0.1f);

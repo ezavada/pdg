@@ -10,10 +10,9 @@
 
 #include <algorithm>
 #include <string>
+#include <string_view>
 
 namespace pdg::app {
-
-namespace detail {
 
 template <typename MeasureLine, typename DrawLine>
 int forEachWrappedLine(
@@ -27,15 +26,15 @@ int forEachWrappedLine(
     }
 
     int linesDrawn = 0;
-    std::string remaining(text);
+    std::string_view remaining(text);
 
     do {
         const std::size_t hardBreak = remaining.find('|');
-        std::string paragraph = remaining.substr(0, hardBreak);
-        if (hardBreak == std::string::npos) {
-            remaining.clear();
+        std::string_view paragraph = remaining.substr(0, hardBreak);
+        if (hardBreak == std::string_view::npos) {
+            remaining = {};
         } else {
-            remaining.erase(0, hardBreak + 1);
+            remaining.remove_prefix(hardBreak + 1);
         }
 
         do {
@@ -45,21 +44,19 @@ int forEachWrappedLine(
             }
             if (length < paragraph.size()) {
                 const std::size_t breakAt = paragraph.find_last_of(" -", length);
-                length = (breakAt != std::string::npos && breakAt > 0)
+                length = (breakAt != std::string_view::npos && breakAt > 0)
                     ? breakAt + 1
                     : std::max<std::size_t>(length, 1);
             }
 
             drawLine(paragraph.substr(0, length));
             ++linesDrawn;
-            paragraph.erase(0, length);
+            paragraph.remove_prefix(length);
         } while (!paragraph.empty());
     } while (!remaining.empty());
 
     return linesDrawn;
 }
-
-} // namespace detail
 
 inline Image* loadImage(
     Port* port,
@@ -156,29 +153,49 @@ inline int drawMultilineText(
     int size,
     const Color& color,
     const Rect& textArea,
-    int style = textStyle_Plain + textStyle_Centered)
+    int style = textStyle_Plain + textStyle_Centered,
+    const Attributes* appearance = nullptr)
 {
     if (!port || !text) {
         return 0;
     }
 
-    Font* font = port->getCurrentFont(style);
+    Attributes attrs=Attributes().textSize(size).textStyle(style).fillColor(color);
+    if (appearance) attrs=attrs.withAppearance(*appearance,true);
+    size=attrs.getTextSize(); style=attrs.getTextStyle();
+    Font* font = attrs.getFont() ? attrs.getFont() : port->getCurrentFont(style);
+    struct FontScope {
+        Port* port;
+        Font* saved;
+        int style;
+        FontScope(Port* port, Font* replacement, int style) : port(port), saved(nullptr), style(style) {
+            if (replacement) {
+                saved = port->getCurrentFont(style);
+                if (saved) saved->addRef();
+                port->setFontForStyle(replacement, style);
+            }
+        }
+        ~FontScope() {
+            if (saved) { port->setFontForStyle(saved, style); saved->release(); }
+        }
+    } fontScope(port, attrs.getFont(), style);
     const int lineOffset = font->getFontHeight(size, style) + font->getFontLeading(size, style);
     const int x = (style & textStyle_Centered)
         ? textArea.left + textArea.width() / 2
         : ((style & textStyle_RightJustified) ? textArea.right : textArea.left);
     int y = textArea.top + font->getFontAscent(size, style);
-    const int linesDrawn = detail::forEachWrappedLine(
+    const int linesDrawn = forEachWrappedLine(
         text,
         textArea.width(),
-        [port, size, style](const std::string& line, std::size_t length) {
-            return port->getTextWidth(line.c_str(), size, style, static_cast<int>(length));
+        [port, size, style](std::string_view line, std::size_t length) {
+            return port->getTextWidth(line.data(), size, style, static_cast<int>(length));
         },
-        [port, size, style, color, x, &y, lineOffset](const std::string& line) {
+        [port, attrs, x, &y, lineOffset](std::string_view line) {
+            const std::string terminated(line);
             port->drawText(
-                line.c_str(),
+                terminated.c_str(),
                 Point(x, y),
-                Attributes().textSize(size).textStyle(style).fillColor(color));
+                attrs);
             y += lineOffset;
         });
 

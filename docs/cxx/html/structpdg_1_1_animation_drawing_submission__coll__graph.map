@@ -1,0 +1,9 @@
+<map id="AnimationDrawingSubmission" name="AnimationDrawingSubmission">
+<area shape="rect" id="Node000001" title=" " alt="" coords="12,199,207,224"/>
+<area shape="rect" id="Node000002" href="$structpdg_1_1_animation_transform.html" title=" " alt="" coords="5,102,144,128"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,140,107,198,102,198,82,144"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="168,102,352,128"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="231,137,130,200,127,196,225,135"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users." alt="" coords="225,5,294,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="261,44,262,102,257,100,258,48"/>
+</map>

@@ -2,9 +2,10 @@ namespace pdg { /**
 
 
 \class Sprite
+\ingroup Graphics Sprites
+
 \brief animated, moving image that is automatically moved, animated, and drawn
 
-\note **API Stability: 2 - Unstable**. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable. Backwards-compatibility will be maintained if reasonable.
 
 Events
 ------
@@ -12,14 +13,20 @@ Things that happen to a sprite that might require intervention, such as collisio
 
 \warning translating events to JavaScript and running them through numerous handlers is expensive. Try to put your handlers as early in the propagation chain as possible. 
 
+Inverse kinematics
+------------------
+Use addAnimationIK() to register a two-bone constraint on a supported animation
+rig. Update its target with setAnimationIKTarget() and inspect the latest solve
+with getAnimationIKResult(). The returned constraint ID is a pose modifier ID;
+use removeAnimationModifier() to remove the constraint.
+
 Helpers
 ------
-You can add helper functions or classes to do specialized animation behavior, prefilter collisions, and add visual effects during drawing.
+You can add helper functions or classes to do specialized animation behavior, and add visual effects during drawing.
 
 \sa setAnimationHelper()
 \sa setDrawHelper()
 \sa setPostDrawHelper()
-\sa setCollisionHelper()
 
 
 \ingroup Animation

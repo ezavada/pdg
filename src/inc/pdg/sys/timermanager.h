@@ -66,7 +66,7 @@ class TimerException : public std::exception {
 public:
 	TimerException(std::exception& e, const char* loc, long id) : timerID(id) { describe(e.what(), loc, id); }
 	TimerException(const char* loc, long id) : timerID(id) { describe("", loc, id); }
-	virtual const char* what() const throw() { return description; }
+	virtual const char* what() const noexcept { return description; }
 	long getTimerId() { return timerID; }
 private:
     void describe(const char* whatStr, const char* locStr, long idVal) {
@@ -118,7 +118,7 @@ public:
     ms_delta msTillNextFire();
 
 // lifecycle
-/// @cond C++
+/// @cond CXX
     ~TimerManager();
 /// @endcond
 

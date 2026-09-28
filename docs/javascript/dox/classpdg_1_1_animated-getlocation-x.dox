@@ -1,7 +1,12 @@
 namespace pdg { /**
+\fn pdg::Animated::getLocation()
+\brief Read the location in the container coordinate system.
 
-\fn pdg::Animated::getLocation
 
-\brief get the position of the object
 
-**/ }
+
+\return The current value, returned as a new coordinate object.
+
+\see setLocation(), moveTo(), moveBy()
+*/
+ }

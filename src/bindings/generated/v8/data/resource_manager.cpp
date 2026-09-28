@@ -403,7 +403,11 @@ namespace pdg
 
     ResourceManagerWrap::ResourceManagerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_ResourceManager(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_ResourceManager(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_ResourceManager_InNewFromCpp)
         {
             {

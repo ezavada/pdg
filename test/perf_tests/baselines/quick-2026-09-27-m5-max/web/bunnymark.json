@@ -1,0 +1,42 @@
+{
+  "testName": "QuickBunnyMark",
+  "benchmarkId": "bunnymark",
+  "language": "JavaScript",
+  "mode": "quick",
+  "synthetic": true,
+  "timestamp": "2026-09-27T21:30:49.296Z",
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "loadFactor": 1.5,
+  "framePacing": "uncapped",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "tests": {
+    "bunnies": {
+      "synthetic": true,
+      "fixedLoad": 9600,
+      "loadFactor": 1.5,
+      "referenceLoad": 6400,
+      "referenceScore": 6400,
+      "targetFPS": 60,
+      "estimatedCapacity": 4037.3186360289565,
+      "score": 4037,
+      "averageFPS": 25.23324147518098,
+      "totalFrames": 76,
+      "durationSeconds": 3.0119000000357627,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 39.6302631583653,
+        "minMs": 36.80000001192093,
+        "maxMs": 44,
+        "percentile95Ms": 41.90000003576279,
+        "percentile99Ms": 44
+      },
+      "atOrAboveTarget": false
+    }
+  },
+  "compositeScore": 4037,
+  "bunnymarkScore": 4037,
+  "engine": "emscripten",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+}

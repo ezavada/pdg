@@ -1,4 +1,4 @@
-.TH "Polygon" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Polygon" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -109,7 +109,7 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 .br
 .RI "rotates the polygon by the specified angle in radians "
 .ti -1c
-.RI "\fBrotateAround\fP (number radians, \fBPoint\fP \fBcenterPoint\fP)"
+.RI "\fBrotateAround\fP (number radians, \fBPoint\fP centerPoint)"
 .br
 .RI "rotates the polygon around the specified center point "
 .ti -1c
@@ -117,7 +117,7 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 .br
 .RI "scales the polygon by the specified factor "
 .ti -1c
-.RI "\fBscaleAround\fP (number factor, \fBPoint\fP \fBcenterPoint\fP)"
+.RI "\fBscaleAround\fP (number factor, \fBPoint\fP centerPoint)"
 .br
 .RI "scales the polygon around the specified center point "
 .ti -1c
@@ -136,6 +136,15 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 .SH "Detailed Description"
 .PP 
 Geometric shape defined by a collection of points with support for transformations and boolean operations\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&. 
+.RE
+.PP
+
 .SH "Member Function Documentation"
 .PP 
 .SS "addPoint (\fBPoint\fP point)"

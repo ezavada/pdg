@@ -46,6 +46,9 @@
 #include "textcache-opengl.h"
 #include "imagecache-opengl.h"
 #include "image-opengl.h"
+#include <algorithm>
+#include <cmath>
+#include <limits>
 
 namespace pdg {
 
@@ -64,7 +67,7 @@ GraphicsManager::getMainPort() {
 
 void 
 GraphicsManager::setMainPort(Port* port) {
-	gMainPort = static_cast<PortImpl*>(port); 
+	if (!port || !static_cast<PortImpl*>(port)->mOffscreen) gMainPort = static_cast<PortImpl*>(port);
 }
 
 Point 
@@ -87,9 +90,7 @@ GraphicsManager::GraphicsManager() {
 }
 
 GraphicsManager::~GraphicsManager() {
-	if (gMainPort) {  // clean up our port
-		closeGraphicsPort(gMainPort);
-	}
+    closeAllGraphicsPorts();
 	gMainPort = 0;
 	// restore previous screen settings
 	for (int i = 0; i < kMaxScreens; i++) {
@@ -232,6 +233,34 @@ GraphicsManager::createWindowPort(const Rect& rect, const char* windName, int bp
     return port;
 }
 
+Port*
+GraphicsManager::createOffscreenPort(const Rect& rect) {
+    const double width = rect.width(), height = rect.height();
+    if (!std::isfinite(width) || !std::isfinite(height) || width <= 0 || height <= 0 ||
+        width != std::floor(width) || height != std::floor(height) ||
+        width * height > std::numeric_limits<uint32>::max() / 4.0) return nullptr;
+    PortImpl* context = gMainPort;
+    if (!context) {
+        if (!mOffscreenContextPort) {
+            auto* hidden = static_cast<PortImpl*>(graphics_newPort(this));
+            gMainPort = nullptr; // Internal contexts never become application ports.
+            hidden->mPlatformWindowRef = platform_createOffscreenContext();
+            if (!hidden->mPlatformWindowRef) { delete hidden; return nullptr; }
+            hidden->setPortRects(Rect(1, 1));
+            mOffscreenContextPort = hidden;
+        }
+        context = mOffscreenContextPort;
+    }
+    auto* port = static_cast<PortImpl*>(graphics_newPort(this));
+    if (gMainPort == port) gMainPort = nullptr;
+    if (!port->initOffscreen(static_cast<long>(width), static_cast<long>(height), context)) {
+        delete port;
+        return nullptr;
+    }
+    mOffscreenPorts.push_back(port);
+    return port;
+}
+
 Port*   
 GraphicsManager::createFullScreenPort(const Rect& rect, int screenNum, bool allowResChange, int bpp) {
     PortImpl* port = dynamic_cast<PortImpl*>(graphics_newPort(this));
@@ -299,6 +328,26 @@ void
 GraphicsManager::closeGraphicsPort(Port* port) {
     PortImpl* thePort = static_cast<PortImpl*>(port);
 	if (!thePort) thePort = gMainPort;
+    if (!thePort) return;
+    if (thePort->mOffscreen) {
+        auto found = std::find(mOffscreenPorts.begin(), mOffscreenPorts.end(), thePort);
+        if (found == mOffscreenPorts.end()) return;
+        mOffscreenPorts.erase(found);
+        // Delete cache textures in their owning context, which remains alive.
+        // Retain the surface until the scope has finished restoring GL state.
+        auto surface = thePort->mOffscreen;
+        {
+            ScopedOffscreenDrawing scope(*surface);
+            delete thePort;
+        }
+        return;
+    }
+    // Release dependent ports before their window's graphics context disappears.
+    const auto offscreenPorts = mOffscreenPorts;
+    for (auto* offscreen : offscreenPorts)
+        if (offscreen->mOffscreen->contextPort == thePort) closeGraphicsPort(offscreen);
+    releaseOffscreenSurfacesForContext(thePort);
+    platform_startDrawing(thePort->mPlatformWindowRef);
     if (thePort == gMainPort) {
         gMainPort = 0;  // clear the main port if we just closed it
     }
@@ -315,9 +364,14 @@ GraphicsManager::closeGraphicsPort(Port* port) {
 
 void
 GraphicsManager::closeAllGraphicsPorts() {
+    while (!mOffscreenPorts.empty()) closeGraphicsPort(mOffscreenPorts.back());
     std::vector<Port*> toClose = getAllActivePorts();
     for (size_t i = 0; i < toClose.size(); i++) {
         closeGraphicsPort(toClose[i]);
+    }
+    if (mOffscreenContextPort) {
+        closeGraphicsPort(mOffscreenContextPort);
+        mOffscreenContextPort = nullptr;
     }
 }
 
@@ -339,7 +393,7 @@ bool
 GraphicsManager::switchToFullScreenMode(bool allowResChange, Port* port) {
     PortImpl* thePort = static_cast<PortImpl*>(port);
 	if (!thePort) thePort = gMainPort;
-	if (!thePort) return false;
+	if (!thePort || thePort->mOffscreen) return false;
 	bool prevFS = platform_isFullScreen(thePort->mPlatformWindowRef);
 	if (prevFS) return true; // already in Full Screen Mode
 	long height = thePort->getDrawingArea().height();
@@ -392,7 +446,7 @@ bool
 GraphicsManager::switchToWindowMode(Port* port, const char* windName) {
     PortImpl* thePort = static_cast<PortImpl*>(port);
 	if (!thePort) port = gMainPort;
-	if (!thePort) return false;
+	if (!thePort || thePort->mOffscreen) return false;
     if (windName == 0) {
         // no window name given, leave it blank
         windName = "";

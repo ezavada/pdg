@@ -380,8 +380,8 @@ unichar remapKeyboardChar(unichar character, int modifierFlags, BOOL& shift, BOO
 	BOOL control = ((modifierFlags & NSControlKeyMask) != 0);
 	BOOL alt = ((modifierFlags & NSAlternateKeyMask) != 0);
 	BOOL cmd = ((modifierFlags & NSCommandKeyMask) != 0);
-	int horizDelta = (int)[theEvent deltaX];
-	int vertDelta = (int)[theEvent deltaY];
+	int horizDelta = -(int)[theEvent deltaX];
+	int vertDelta = -(int)[theEvent deltaY];
 	if (horizDelta != 0 || vertDelta != 0)
 	{
 		pdg::main_handleScrollWheel(horizDelta, vertDelta, shift, control, alt, cmd);

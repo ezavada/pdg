@@ -1,0 +1,347 @@
+{
+  "version": 1,
+  "method": "original ramp; median of last ten frame costs normalized by actual workload",
+  "runtime": "v24.3.0",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "references": [
+    {
+      "name": "asteroids-bitmaps",
+      "score": 1209,
+      "load": 3690,
+      "referenceFPS": 29.767821189183678,
+      "terminalSamples": [
+        {
+          "load": 3600,
+          "milliseconds": 33
+        },
+        {
+          "load": 3610,
+          "milliseconds": 34
+        },
+        {
+          "load": 3620,
+          "milliseconds": 38
+        },
+        {
+          "load": 3630,
+          "milliseconds": 31
+        },
+        {
+          "load": 3640,
+          "milliseconds": 31
+        },
+        {
+          "load": 3650,
+          "milliseconds": 33
+        },
+        {
+          "load": 3660,
+          "milliseconds": 34
+        },
+        {
+          "load": 3670,
+          "milliseconds": 33
+        },
+        {
+          "load": 3680,
+          "milliseconds": 33
+        },
+        {
+          "load": 3690,
+          "milliseconds": 38
+        }
+      ]
+    },
+    {
+      "name": "asteroids-vectors",
+      "score": 2262,
+      "load": 1720,
+      "referenceFPS": 29.197953824861347,
+      "terminalSamples": [
+        {
+          "load": 1675,
+          "milliseconds": 34
+        },
+        {
+          "load": 1680,
+          "milliseconds": 35
+        },
+        {
+          "load": 1685,
+          "milliseconds": 31
+        },
+        {
+          "load": 1690,
+          "milliseconds": 35
+        },
+        {
+          "load": 1695,
+          "milliseconds": 31
+        },
+        {
+          "load": 1700,
+          "milliseconds": 34
+        },
+        {
+          "load": 1705,
+          "milliseconds": 34
+        },
+        {
+          "load": 1710,
+          "milliseconds": 34
+        },
+        {
+          "load": 1715,
+          "milliseconds": 32
+        },
+        {
+          "load": 1720,
+          "milliseconds": 34
+        }
+      ]
+    },
+    {
+      "name": "asteroids-mixed",
+      "score": 2489,
+      "load": 888,
+      "referenceFPS": 31.076983612997488,
+      "terminalSamples": [
+        {
+          "load": 879,
+          "milliseconds": 28
+        },
+        {
+          "load": 880,
+          "milliseconds": 31
+        },
+        {
+          "load": 881,
+          "milliseconds": 28
+        },
+        {
+          "load": 882,
+          "milliseconds": 29
+        },
+        {
+          "load": 883,
+          "milliseconds": 29
+        },
+        {
+          "load": 884,
+          "milliseconds": 34
+        },
+        {
+          "load": 885,
+          "milliseconds": 33
+        },
+        {
+          "load": 886,
+          "milliseconds": 33
+        },
+        {
+          "load": 887,
+          "milliseconds": 34
+        },
+        {
+          "load": 888,
+          "milliseconds": 36
+        }
+      ]
+    },
+    {
+      "name": "asteroids-effects",
+      "score": 1615,
+      "load": 878,
+      "referenceFPS": 29.019087759766904,
+      "terminalSamples": [
+        {
+          "load": 824,
+          "milliseconds": 33
+        },
+        {
+          "load": 828,
+          "milliseconds": 33
+        },
+        {
+          "load": 835,
+          "milliseconds": 34
+        },
+        {
+          "load": 842,
+          "milliseconds": 39
+        },
+        {
+          "load": 848,
+          "milliseconds": 32
+        },
+        {
+          "load": 854,
+          "milliseconds": 33
+        },
+        {
+          "load": 860,
+          "milliseconds": 32
+        },
+        {
+          "load": 866,
+          "milliseconds": 33
+        },
+        {
+          "load": 872,
+          "milliseconds": 33
+        },
+        {
+          "load": 878,
+          "milliseconds": 38
+        }
+      ]
+    },
+    {
+      "name": "arena",
+      "score": 16152,
+      "load": 415,
+      "referenceFPS": 36.36363636363637,
+      "terminalSamples": [
+        {
+          "load": 415,
+          "milliseconds": 32
+        },
+        {
+          "load": 415,
+          "milliseconds": 27
+        },
+        {
+          "load": 415,
+          "milliseconds": 27
+        },
+        {
+          "load": 415,
+          "milliseconds": 28
+        },
+        {
+          "load": 415,
+          "milliseconds": 30
+        },
+        {
+          "load": 415,
+          "milliseconds": 27
+        },
+        {
+          "load": 415,
+          "milliseconds": 27
+        },
+        {
+          "load": 415,
+          "milliseconds": 27
+        },
+        {
+          "load": 415,
+          "milliseconds": 29
+        },
+        {
+          "load": 415,
+          "milliseconds": 34
+        }
+      ]
+    },
+    {
+      "name": "plasma",
+      "score": 377,
+      "load": 2116,
+      "referenceFPS": 25.11328688412088,
+      "terminalSamples": [
+        {
+          "load": 1764,
+          "milliseconds": 33
+        },
+        {
+          "load": 1849,
+          "milliseconds": 35
+        },
+        {
+          "load": 1849,
+          "milliseconds": 34
+        },
+        {
+          "load": 1849,
+          "milliseconds": 41
+        },
+        {
+          "load": 1936,
+          "milliseconds": 42
+        },
+        {
+          "load": 1936,
+          "milliseconds": 36
+        },
+        {
+          "load": 2025,
+          "milliseconds": 37
+        },
+        {
+          "load": 2025,
+          "milliseconds": 44
+        },
+        {
+          "load": 2025,
+          "milliseconds": 37
+        },
+        {
+          "load": 2116,
+          "milliseconds": 46
+        }
+      ]
+    },
+    {
+      "name": "3d",
+      "score": 4839,
+      "load": 494,
+      "referenceFPS": 30.241688136424976,
+      "terminalSamples": [
+        {
+          "load": 491,
+          "milliseconds": 28
+        },
+        {
+          "load": 491,
+          "milliseconds": 28
+        },
+        {
+          "load": 492,
+          "milliseconds": 33
+        },
+        {
+          "load": 492,
+          "milliseconds": 30
+        },
+        {
+          "load": 492,
+          "milliseconds": 31
+        },
+        {
+          "load": 493,
+          "milliseconds": 33
+        },
+        {
+          "load": 493,
+          "milliseconds": 33
+        },
+        {
+          "load": 493,
+          "milliseconds": 34
+        },
+        {
+          "load": 494,
+          "milliseconds": 37
+        },
+        {
+          "load": 494,
+          "milliseconds": 41
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-09-27T20:57:22.939Z",
+  "source": "Native original CanvasMark ramp on Apple M5 Max; convex tessellation and cube texture fixes; per-frame workloads recorded with --calibrate"
+}

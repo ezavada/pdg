@@ -4,4 +4,7 @@ namespace pdg { /**
 
 \brief stops the current animation and pauses playback
 
+For compatibility, stopAnimation pauses at the current pose. It does not reset
+time or cancel an active blend; resumeAnimation continues playback.
+
 **/ }

@@ -60,8 +60,7 @@ extern "C" {
 	// -----------------------------------------------------
 	// Functions defined in Objective C and called from C++
 	// -----------------------------------------------------
-	
-	int pow2(int n);
+
 	CGContextRef graphics_getCurrentCGContextRef(void);
 	bool macosx_getApplicationSupportDirectory(const char* appName, char* buffer, int size);
 	void macosx_getSystemVersion( int &major, int &minor, int &bugfix );

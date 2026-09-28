@@ -29,6 +29,7 @@ The repo reflects that split:
 - Prefer changing source-of-truth inputs over generated outputs.
 - Do not hand-edit generated documentation under `docs/cxx/html`, `docs/javascript/html`, or `docs/javascript/man` edit the source .dox files instead.
 - Do not hand-edit generated bindings under `src/bindings/generated`, edit the sources of those files as indication in the header comments instead.
+- There are git submodules for `deps/node` and `deps/SpriterPlusPlus`. They should not be changed.
 - Treat vendored or third-party material conservatively. That includes generated docs, bundled tools, and packaged dependencies.
 
 ## Source Of Truth Notes
@@ -42,7 +43,7 @@ The repo reflects that split:
 ## Verification
 
 - Pick the smallest relevant verification path for the area you change.
-- For engine or API work, prefer targeted specs in `test/spec`, `test/misc`, or `test/cxx`.
+- For engine or API work, prefer targeted specs in `test/spec`, `test/rig_tests`, or `test/cxx`.
 - For client/UI work, use the GUI-side test wrappers under `test`.
 - For headless or server-side behavior, use the Node-based spec path.
 - If you change docs generation or binding generation, verify the generating script still matches the committed layout and filenames.

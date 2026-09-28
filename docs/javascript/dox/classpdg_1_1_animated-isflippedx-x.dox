@@ -1,7 +1,12 @@
 namespace pdg { /**
-
 \fn pdg::Animated::isFlippedX()
+\brief Read the x reflection flag.
 
-\brief returns true if the object is flipped horizontally
 
-**/ }
+
+
+\return True if the reflection flag is set; otherwise false.
+
+\see setFlipX(), flipX()
+*/
+ }

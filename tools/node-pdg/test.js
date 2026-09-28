@@ -32,6 +32,9 @@ var assert = require('assert')
 
 // module
 assert(typeof(pdg) === 'object');
+var expectedVersion = require('fs').readFileSync(require('path').join(__dirname, 'VERSION'), 'utf8').trim();
+assert.strictEqual(require('./package.json').version, expectedVersion, 'npm package version must match VERSION');
+assert.strictEqual(process.versions.pdg, expectedVersion, 'native module version must match VERSION');
 
 // key singleton objects
 assert(typeof(pdg.cfg) === 'object');
@@ -55,7 +58,6 @@ assert(typeof(pdg.FileManager) === 'function');
 assert(typeof(pdg.IAnimationHelper) === 'function');
 assert(typeof(pdg.IEventHandler) === 'function');
 assert(typeof(pdg.ISerializable) === 'function');
-assert(typeof(pdg.ISpriteCollideHelper) === 'function');
 assert(typeof(pdg.Image) === 'function');
 assert(typeof(pdg.ImageStrip) === 'function');
 assert(typeof(pdg.LogManager) === 'function');

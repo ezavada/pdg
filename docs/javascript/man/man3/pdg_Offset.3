@@ -1,4 +1,4 @@
-.TH "Offset" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Offset" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -18,7 +18,7 @@ Inherited by \fBPoint\fP, and \fBVector\fP\&.
 .RI "\fBOffset\fP ()"
 .br
 .ti -1c
-.RI "\fBOffset\fP (number \fBx\fP, number \fBy\fP)"
+.RI "\fBOffset\fP (number x, number y)"
 .br
 .ti -1c
 .RI "\fBOffset\fP (number[] xy)"
@@ -89,20 +89,27 @@ Inherited by \fBPoint\fP, and \fBVector\fP\&.
 .PP 
 offset within a 2D coordinate system 
 
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
+.RE
+.PP
 \fBOffset\fP provides support for dealing with offsets as x, y floating point values in 2 dimensional space\&. The PDG coordinate space starts with the top left corner of the drawing port at Point(0,0) and the bottom left corner at Point( width, height ); 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBOffset\fP ()"
+.SS "Offset ()"
 
 .PP
 Referenced by \fBadd()\fP, \fBassign()\fP, \fBdiv()\fP, \fBdividedby()\fP, \fBequals()\fP, \fBminus()\fP, \fBmul()\fP, \fBnotEquals()\fP, \fBPoint::offset()\fP, \fBplus()\fP, \fBsub()\fP, and \fBtimes()\fP\&.
-.SS "\fBOffset\fP (number x, number y)"
+.SS "Offset (number x, number y)"
 
 .PP
 References \fBx\fP, and \fBy\fP\&.
-.SS "\fBOffset\fP (number[] xy)"
+.SS "Offset (number[] xy)"
 
-.SS "\fBOffset\fP (object xy)"
+.SS "Offset (object xy)"
 
 .SH "Member Function Documentation"
 .PP 

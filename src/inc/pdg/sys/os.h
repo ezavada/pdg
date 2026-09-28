@@ -47,13 +47,8 @@
 
 #include <cstring>
 #include <string>
-
-#ifdef _PREFIX_
-    // for use with Microsoft's PREfix static code analysis tool
-    #include <assert.h>
-#endif // _PREFIX_
-
-#define DEBUG_LINE_LEN 500
+#include <string_view>
+#include <source_location>
 
 #ifndef CHECK_NEW
     #define CHECK_NEW(ptr, classname)
@@ -148,7 +143,7 @@ public:
 	// Renames a file. Returns true for success, false for failure.
 	static bool renameFile(const char* inFileName, const char* inNewFileName);
 	
-	// Get a millisecond time stamp
+	// Monotonic milliseconds since the first call in this process; not wall-clock time.
     static ms_time  getMilliseconds();
 	
 	// Get the position of the mouse. 
@@ -186,25 +181,20 @@ public:
 	static void			  _DOUT(const char * fmt, ...);
 	static void           _DEBUGGER(const char* str=0);      // invoke the debugger
 	
- #ifdef _PREFIX_
-    // for use with Microsoft's PREfix static code analysis tool
-    #define DEBUG_ASSERT(cond, msg) assert(cond)
-	#define DEBUG_BREAK(msg) exit(1)
-	#define CHECK_PTR(ptr, block, block_size) assert( !( ((char*)(ptr)<(char*)(block))||((char*)(ptr)>=(char*)((char*)(block)+(block_size))) ) )
- #else
- 	// allow DEBUG_ASSERT to be overridden
+    static void debugFailure(std::string_view kind, std::string_view expression,
+        std::string_view message, std::source_location location = std::source_location::current());
+    static void checkPointer(const void* pointer, const void* block, size_t size,
+        std::source_location location = std::source_location::current());
+
     #ifndef DEBUG_ASSERT
-		#define DEBUG_ASSERT(cond, msg) if (!(cond)) { char str_[DEBUG_LINE_LEN]; std::snprintf(str_, DEBUG_LINE_LEN, "ASSERT FAILED: %s:%d (%s) %s", __FILE__, __LINE__, #cond, #msg); str_[DEBUG_LINE_LEN-1] = 0; ::pdg::OS::_DOUT(str_); ::pdg::OS::_DEBUGGER(str_); }
-	#endif
- 	// allow DEBUG_BREAK to be overridden
+        #define DEBUG_ASSERT(cond, msg) do { if (!(cond)) ::pdg::OS::debugFailure("ASSERT FAILED", #cond, #msg); } while (false)
+    #endif
     #ifndef DEBUG_BREAK
-		#define DEBUG_BREAK(msg) { char str_[DEBUG_LINE_LEN]; std::snprintf(str_, DEBUG_LINE_LEN, "BREAK: %s:%d %s", __FILE__, __LINE__, #msg); str_[DEBUG_LINE_LEN-1] = 0; ::pdg::OS::_DOUT(str_); ::pdg::OS::_DEBUGGER(str_); }
-	#endif
- 	// allow CHECK_PTR to be overridden
+        #define DEBUG_BREAK(msg) ::pdg::OS::debugFailure("BREAK", "", #msg)
+    #endif
     #ifndef CHECK_PTR
-		#define CHECK_PTR(ptr, block, block_size) if (((char*)(ptr)<(char*)(block))||((char*)(ptr)>=(char*)((char*)(block)+(block_size)))) { ::pdg::OS::_DOUT("PTR ERROR: %s:%d [%p] is outside block [%p] len [%p]", __FILE__, __LINE__, ptr, block, block_size); ::pdg::OS::_DEBUGGER(); }
-	#endif
- #endif // _PREFIX_
+        #define CHECK_PTR(ptr, block, block_size) ::pdg::OS::checkPointer(ptr, block, block_size)
+    #endif
     #define MAKE_STRING_BUFFER_SAFE(buffer, buffer_size) CHECK_PTR(&buffer[std::strlen(buffer)], buffer, buffer_size); buffer[(buffer_size) - 1] = 0;
 	#define DEBUG_PRINT pdg::OS::_DOUT
 	#define CHECK_PTR_WRITE(ptr, bytes, block, block_size) CHECK_PTR(ptr, block, block_size); CHECK_PTR(ptr+bytes-1, block, block_size)

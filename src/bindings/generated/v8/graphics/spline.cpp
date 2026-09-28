@@ -149,7 +149,11 @@ namespace pdg
 
     SplineWrap::SplineWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_Spline(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_Spline(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_Spline_InNewFromCpp)
         {
             {
@@ -255,30 +259,58 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 4);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point p1;
+        auto p1_isPoint = v8_ValueIsPoint(isolate, args[1 -1], p1);
+        if (!p1_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*p1_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
+        };
+        pdg::Point p2;
+        auto p2_isPoint = v8_ValueIsPoint(isolate, args[2 -1], p2);
+        if (!p2_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
         }
-        pdg::Point p1 = v8_ValueToPoint(isolate, args[1 -1]);
-        if (!v8_ValueIsPoint(isolate, args[2 -1]))
+        if (!*p2_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
             return;
+        };
+        pdg::Point p3;
+        auto p3_isPoint = v8_ValueIsPoint(isolate, args[3 -1], p3);
+        if (!p3_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
         }
-        pdg::Point p2 = v8_ValueToPoint(isolate, args[2 -1]);
-        if (!v8_ValueIsPoint(isolate, args[3 -1]))
+        if (!*p3_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 3, "Point", *args[3 -1]);
             return;
+        };
+        pdg::Point p4;
+        auto p4_isPoint = v8_ValueIsPoint(isolate, args[4 -1], p4);
+        if (!p4_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
         }
-        pdg::Point p3 = v8_ValueToPoint(isolate, args[3 -1]);
-        if (!v8_ValueIsPoint(isolate, args[4 -1]))
+        if (!*p4_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 4, "Point", *args[4 -1]);
             return;
-        }
-        pdg::Point p4 = v8_ValueToPoint(isolate, args[4 -1]);
+        };
         self->addSegment(p1, p2, p3, p4);
         args.GetReturnValue().SetUndefined();
     }
@@ -298,12 +330,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point point;
+        auto point_isPoint = v8_ValueIsPoint(isolate, args[1 -1], point);
+        if (!point_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*point_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
             return;
-        }
-        pdg::Point point = v8_ValueToPoint(isolate, args[1 -1]);
+        };
         self->addPoint(point);
         args.GetReturnValue().SetUndefined();
     }
@@ -354,12 +393,19 @@ namespace pdg
             return;
         }
         long pointIndex = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
-        if (!v8_ValueIsPoint(isolate, args[2 -1]))
+        pdg::Point point;
+        auto point_isPoint = v8_ValueIsPoint(isolate, args[2 -1], point);
+        if (!point_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*point_isPoint)
         {
             v8_ThrowArgTypeException(isolate, 2, "Point", *args[2 -1]);
             return;
-        }
-        pdg::Point point = v8_ValueToPoint(isolate, args[2 -1]);
+        };
         self->setPoint(pointIndex, point);
         args.GetReturnValue().SetUndefined();
     }

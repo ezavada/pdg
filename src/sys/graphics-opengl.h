@@ -46,10 +46,24 @@
 #include "opengl-state-cache.h"
 
 #include <string>
+#include <memory>
+#include <vector>
 
 typedef char* addr;
 
 namespace pdg {
+
+struct OffscreenSurface {
+    PortImpl* contextPort = nullptr;
+    GLuint framebuffer = 0, texture = 0, depth = 0;
+    long width = 0, height = 0;
+    uint64 revision = 1, pixelRevision = 0;
+    std::vector<uint8> pixels; // straight RGBA, populated only for explicit CPU access
+    ~OffscreenSurface();
+    void readPixels();
+    void releaseContext();
+};
+void releaseOffscreenSurfacesForContext(PortImpl* port);
 
 class PortImpl : public Port {
 public:
@@ -62,10 +76,10 @@ public:
     virtual bool        lockDrawingSurface();
     virtual void        unlockDrawingSurface();
     void        resizePort(long width, long height);
-	void		setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode = blendMode_Normal);
-	const pdg::Rect&  drawableRect() { return mClipRect.empty() ? mDrawingRect : mClipRect; }
+	void		setOpenGLModesForDrawing(bool useAlpha, BlendMode blendMode = blendMode_Normal, bool premultiplied = false);
+	const pdg::Rect&  drawableRect() { return mClipRect; }
 
-    void setPortRects(Rect portRect) { mDrawingRect = portRect; mClipRect = portRect; }
+    void setPortRects(Rect portRect) { mDrawingRect = portRect; mClipRect = portRect; mClipChanged = true; }
 
     // Image cache management (new key-based system)
     CacheKey getCacheKey(const char* sourceName, int width, int height, bool useEdgeClamp);
@@ -73,6 +87,7 @@ public:
     void setTexture(CacheKey key, GLuint texture);
     void releaseCachedEntry(CacheKey key);
     void beginFrame();
+    bool initOffscreen(long width, long height, PortImpl* contextPort);
     
     // Legacy image cache methods (deprecated)
     ImageCacheEntry* getImageFromCache(const char* sourceName, int width, int height, bool useEdgeClamp);
@@ -107,6 +122,27 @@ public: // public for sys framework implementation, nobody else
     void* 			mPlatformWindowRef;  // we don't know what this is, we just carry it around
     									// and pass it to platform_xxx calls
 
+    std::shared_ptr<OffscreenSurface> mOffscreen;
+};
+
+// Redirect an offscreen operation, restoring the caller's framebuffer and drawing state.
+class ScopedOffscreenDrawing {
+public:
+    explicit ScopedOffscreenDrawing(Port* port);
+    explicit ScopedOffscreenDrawing(OffscreenSurface& surface, PortImpl* port = nullptr);
+    ~ScopedOffscreenDrawing();
+    ScopedOffscreenDrawing(const ScopedOffscreenDrawing&) = delete;
+    ScopedOffscreenDrawing& operator=(const ScopedOffscreenDrawing&) = delete;
+private:
+    void begin(OffscreenSurface& surface, PortImpl* port);
+    PortImpl* target = nullptr;
+    PortImpl* previous = nullptr;
+    OffscreenSurface* surface = nullptr;
+    bool switchedContext = false, savedDirty = false;
+    GLint framebuffer = 0, texture = 0, renderbuffer = 0, matrixMode = 0, packAlignment = 4;
+    GLint viewport[4], scissor[4];
+    GLfloat modelview[16], projection[16], clearColor[4];
+    GLboolean scissorEnabled = false;
 };
 
 void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& quad, int size, uint32 style, Color rgba);
@@ -114,4 +150,3 @@ void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& qu
 } // end namespace pdg
 
 #endif // PDG_GRAPHICS_OPENGL_H_INCLUDED
-

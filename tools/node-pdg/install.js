@@ -52,6 +52,8 @@ const jobs = parseJobCount(process.env.PDG_NODE_GYP_JOBS) ||
     defaultJobCount();
 const nodeGyp = resolveNodeGypCommand();
 const args = nodeGyp.args.concat(['rebuild', '--jobs', String(jobs)]);
+if (process.env.PDG_NODE_BUILD_CONFIG === 'Release') args.push('--release');
+else if (process.env.PDG_NODE_BUILD_CONFIG === 'Debug') args.push('--debug');
 
 console.log(`[pdg] Building native module with node-gyp using ${jobs} parallel job(s)...`);
 console.log(`[pdg] Working directory: ${process.cwd()}`);

@@ -1,0 +1,8 @@
+/**
+\fn pdg::Sprite::isAnimationPhysicsEnabled()
+\brief Test for an active physical animation rig.
+
+\return True while a physical rig is attached to this Sprite.
+
+\see setupAnimationPhysics(), disableAnimationPhysics()
+*/

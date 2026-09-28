@@ -1,0 +1,24 @@
+/**
+\fn pdg::Sprite::disableAnimationPhysics(number recoveryTime, int direction)
+\brief Recover animation control before removing the physical rig.
+
+Uses the same collision-aware recovery as setAnimationPhysicsMode(), defaulting
+to 0.5 seconds. The rig and its colliders remain active until recovery actually
+completes; isAnimationPhysicsEnabled() remains true meanwhile. Blocked or
+force-limited recovery may take longer than the requested duration. A new mode
+command cancels pending disable. Zero removes the rig immediately.
+
+On completion, restores the Sprite body's saved mode and collision filter and
+transfers the selected root body's linear/angular velocity. The explicit or generated rig's
+current total mass transfers to the single Sprite body, keeping that body's
+previous single-body inertia. This is not a momentum-conserving merge. Mapped
+colliders and joints detach; retained mapped Parts remain body-free, and retained body
+handles stop contributing mass. Emits action_AnimationPhysicsRecoveryComplete
+with disabled true after teardown. Calling without an active rig is harmless.
+
+\param recoveryTime Finite nonnegative seconds; default 0.5, zero for immediate teardown.
+\param direction Rotation route; default rotationDirection_AsSpecified.
+\note Call outside animation modifiers and locked physics callbacks. Release any manual or Part IK drives explicitly before disabling.
+\see setAnimationPhysicsMode(), isAnimationPhysicsEnabled()
+\return No value.
+*/

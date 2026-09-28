@@ -6,6 +6,6 @@ namespace pdg { /**
 
 \param i the offset to the desired byte within the block
 
-\return the byte value stored at the offset (0..255)
+\return the byte value stored at the offset (0..255), or 0 if the offset is outside the block
 
 **/ }

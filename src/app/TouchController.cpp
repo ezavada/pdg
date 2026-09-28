@@ -100,7 +100,7 @@ bool TouchController::doMouseUp(const pdg::MouseInfo *mi, pdg::View* view, int i
 
 	//		getApplication().getEventManager().addHandler(this, pdg::eventType_Timer);   // we want timer events now
 		
-	} else {
+	} else if (part != -1) {
 		// user didn't move finger, must be a tap
 		handled = doTap(mi,view,id,part);
 	}
@@ -113,13 +113,13 @@ bool TouchController::doMouseUp(const pdg::MouseInfo *mi, pdg::View* view, int i
 	
 void TouchController::doMouseMove(const pdg::MouseInfo *mi, pdg::View* view, int id, int part) {
 	TODO("Implement calls to doPinchMove() and doSwipeMove()");
-	uint32 now = pdg::OS::getMilliseconds();
+	ms_time now = pdg::OS::getMilliseconds();
 	if ( mMouseDown ) {
 		if ( mLastMousePositionRecorded ) {
 			Point delta = mi->mousePos;
 			delta -= mLastMousePosition;
 			doTouchMove(delta, false, view, id, part);
-			uint32 timeSinceLastMouseMoved = now - mLastMovedMs;
+			ms_delta timeSinceLastMouseMoved = now - mLastMovedMs;
 			if (timeSinceLastMouseMoved < 1) timeSinceLastMouseMoved = 1;
 			mFlickVelocity.x = (float)delta.x / (float)timeSinceLastMouseMoved;  // pixels per millisecond
 			mFlickVelocity.y = (float)delta.y / (float)timeSinceLastMouseMoved;  // pixels per millisecond
@@ -136,12 +136,12 @@ void TouchController::stopFlick() {
 	mFlickView = 0; // we are no longer tracking this view
 }
 
-bool TouchController::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw() {
+bool TouchController::handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept {
 	if (mActive) {
 		if (inEventType == pdg::eventType_Timer) {
 			pdg::TimerInfo* ti = static_cast<pdg::TimerInfo*> (inEventData);
 			if (ti->id == PDG_FLICK_DECAY_TIMER) {
-				uint32 elapsedSinceLastFire = ti->millisec - mLastMovedMs;
+				ms_delta elapsedSinceLastFire = ti->millisec - mLastMovedMs;
 				float pixelDeltaX = mFlickVelocity.x * elapsedSinceLastFire;
 				float pixelDeltaY = mFlickVelocity.y * elapsedSinceLastFire;
 				if ( (std::abs(pixelDeltaX) > 1.0f) || (std::abs(pixelDeltaY) > 1.0f) ) {
@@ -157,8 +157,8 @@ bool TouchController::handleEvent(EventEmitter* inEmitter, long inEventType, voi
 				}
 				return true;
 			} else if (ti->id == PDG_DRAG_SNAPBACK_TIMER) {
-				uint32 elapsedSinceMouseUp = ti->millisec - mLastMouseUpMs;
-				uint32 elapsedSinceLastSnapback = ti->millisec - mLastSnapbackMs;
+				ms_delta elapsedSinceMouseUp = ti->millisec - mLastMouseUpMs;
+				ms_delta elapsedSinceLastSnapback = ti->millisec - mLastSnapbackMs;
 				mLastSnapbackMs = ti->millisec;
 				if (doSnapback(elapsedSinceLastSnapback, elapsedSinceMouseUp, mSnapbackView, mSnapbackID, mSnapbackPart)) {
 					// snapback is completed, end it
@@ -196,7 +196,7 @@ bool TouchController::doPinchMove( const pdg::Point& delta1, const pdg::Point& d
 	return false;
 }
 
-bool TouchController::doSnapback(uint32 msSinceLastSnapback, uint32 msSinceMouseUp, pdg::View* view, int id, int part) {
+bool TouchController::doSnapback(ms_delta msSinceLastSnapback, ms_delta msSinceMouseUp, pdg::View* view, int id, int part) {
 	// override to do snapback action, returning false while snapback is incomplete
 	// return true once snapback has been completed
 	return true;

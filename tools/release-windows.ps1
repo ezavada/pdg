@@ -44,6 +44,7 @@ try {
         "-B", $mainBuildDir,
         "-DBUILD_TESTING=ON",
         "-DCAN_BUILD_INTERFACES=OFF",
+        "-DCAN_BUILD_JSC_INTERFACES=OFF",
         "-DPDG_HEADLESS=OFF",
         "-DPDG_NODE_OUT_DIR=$nodeOutDir"
     )
@@ -73,33 +74,18 @@ try {
         & $nodeExe $npmCli install --no-save --package-lock=false jasmine-node@1.16.0
         if ($LASTEXITCODE -ne 0) { throw "JavaScript test dependency installation failed." }
     }
-    # The npm/native Node plugin is released separately by the pdg-node target.
+    & cmd /c ".\test\node.bat"
+    if ($LASTEXITCODE -ne 0) { throw "Headless JavaScript tests failed." }
     & cmd /c ".\test\client.bat"
     if ($LASTEXITCODE -ne 0) { throw "Client JavaScript tests failed." }
 
-    # The symbol/debug package uses RelWithDebInfo so it can reuse the Release-built
-    # third-party libraries, including Node. It still compiles PDG with DEBUG=1.
-    $releaseDependencyLibraries = @(
-        (Join-Path $platformBuildDir "glfw\src\Release\glfw3.lib"),
-        (Join-Path $platformBuildDir "glfw\src\glfw3.lib"),
-        (Join-Path $platformBuildDir "chipmunk\src\Release\chipmunk.lib"),
-        (Join-Path $platformBuildDir "chipmunk\src\chipmunk.lib"),
-        (Join-Path $platformBuildDir "libjpeg-turbo\Release\jpeg.lib"),
-        (Join-Path $platformBuildDir "libjpeg-turbo\jpeg.lib")
-    )
-    foreach ($library in $releaseDependencyLibraries) {
-        if (-not (Test-Path $library)) {
-            throw "Expected Windows release dependency library was not produced: $library"
-        }
-    }
-
-    # Build a distinct executable with DEBUG logging and PDB symbols.
-    & cmake --build $mainBuildDir --config RelWithDebInfo --target pdg --parallel
+    # Build a distinct Debug executable with DEBUG logging and full PDB symbols.
+    & cmake --build $mainBuildDir --config Debug --target pdg --parallel
     if ($LASTEXITCODE -ne 0) { throw "Windows debug build failed." }
 
     $sourceExe = Join-Path $mainBuildDir "src\Release\pdg.exe"
-    $sourceDebugExe = Join-Path $mainBuildDir "src\RelWithDebInfo\pdg-debug.exe"
-    $sourceDebugPdb = Join-Path $mainBuildDir "src\RelWithDebInfo\pdg-debug.pdb"
+    $sourceDebugExe = Join-Path $mainBuildDir "src\Debug\pdg-debug.exe"
+    $sourceDebugPdb = Join-Path $mainBuildDir "src\Debug\pdg-debug.pdb"
     foreach ($requiredFile in @($sourceExe, $sourceDebugExe, $sourceDebugPdb)) {
         if (-not (Test-Path $requiredFile)) {
             throw "Expected release file was not produced: $requiredFile"
@@ -146,9 +132,9 @@ try {
     }
 
     # Smoke-test both staged executables rather than their build-tree copies.
-    & (Join-Path $stageDirectory "pdg.exe") ".\test\misc\test_exit.js"
+    & (Join-Path $stageDirectory "pdg.exe") ".\test\lib\test_exit.js"
     if ($LASTEXITCODE -ne 0) { throw "Packaged release executable smoke test failed." }
-    & (Join-Path $debugStageDirectory "pdg-debug.exe") ".\test\misc\test_exit.js"
+    & (Join-Path $debugStageDirectory "pdg-debug.exe") ".\test\lib\test_exit.js"
     if ($LASTEXITCODE -ne 0) { throw "Packaged debug executable smoke test failed." }
 
     New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null

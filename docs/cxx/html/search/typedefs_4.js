@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['point_0',['Point',['../namespacepdg.html#a3ad09d2eca9e6b332034b77b71251024',1,'pdg']]]
+  ['gatekeeperfunc_0',['GatekeeperFunc',['../namespacepdg.html#ae4733317a2e8118c587135c5910a9e57',1,'pdg']]]
 ];

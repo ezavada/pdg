@@ -1,0 +1,46 @@
+/**
+\fn pdg::Sprite::addAnimationModifier(function callback, int stage, int order)
+\brief Register a procedural pose modifier.
+
+Modifiers run after source sampling and persistent overrides. They run by stage, then ascending order, then registration order. Each sees earlier successful edits. Keep evolving controller state in your own objects and apply it to each fresh pose; do not accumulate the previous final pose.
+
+\param callback Synchronous function(view, context), described below.
+\param stage pdg.animationStage_PreConstraint, pdg.animationStage_Constraint, or pdg.animationStage_PostConstraint.
+\param order Signed integer sort order within the stage; default 0.
+
+\return A nonzero modifier ID for removal or diagnostics.
+
+\note Call enableAnimationPose() successfully before using this method. Inside callbacks, edit through the view. Perform playback, rig, physics, and layer changes outside the callback.
+
+\par Example
+\code{.js}
+const modifierId = sprite.addAnimationModifier(function(view, context) {
+    view.rotateLocal('hand', 0.15);
+}, pdg.animationStage_PostConstraint);
+\endcode
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_modifier_callback
+\par Modifier callback arguments
+| Argument / operation | Meaning |
+| --- | --- |
+| `view.copy()` | Return an owned pose snapshot (\ref animation_pose_snapshot). |
+| `view.getLocalTransform(bone)` | Copy a bone's parent-local transform. Bone arguments accept a name or numeric ID. |
+| `view.getTransform(bone, space)` | Copy a Local, Rig, or World transform; Local is the default. |
+| `view.setLocalTransform(bone, transform)` | Replace all six finite parent-local components; alpha must be from 0 to 1. |
+| `view.rotateLocal(bone, radians)` | Add a finite clockwise rotation in radians. |
+| `context.deltaSeconds` | Elapsed seconds; zero for explicit reevaluation. |
+| `context.root` | Sprite root transform in owning-layer coordinates. |
+| `context.revision` | Pipeline revision as a decimal string. |
+
+The view expires when the synchronous callback returns. Keep copies, not the view. The context is read-only. Return values are ignored, but returning a Promise is an error. An exception or invalid edit rolls back that callback's changes, disables it, and records a diagnostic. Registration/removal/source changes requested during evaluation take effect afterward.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see removeAnimationModifier(), getAnimationModifierError(), addAnimationIK()
+*/

@@ -118,6 +118,7 @@ describe("NetServer", function() {
 	var myConnectHandler;
 	var connectCount;
 	var serverErrCount;
+	var listeningBeforeStart;
 
 	beforeEach(function() {
 		myErrorHandler = function(error) {
@@ -132,6 +133,9 @@ describe("NetServer", function() {
 			return true; // allow the connection
 		};
 		server = new pdg.NetServer({noDatagram: true});
+		// Jasmine may yield before the first runs() block, allowing the
+		// asynchronous listening event to arrive. Capture the initial state now.
+		listeningBeforeStart = server.listening;
 		server.onError(myErrorHandler);
 		server.listen(myConnectHandler);
 		connectCount = 0;
@@ -159,7 +163,7 @@ describe("NetServer", function() {
 		
 	  it("sets the listening flag", function() {
 		runs(function() {
-			expect(server.listening).toBeFalsy();
+			expect(listeningBeforeStart).toBeFalsy();
 			expect(server.allowDatagram).toBeFalsy();
 		});
 		waitsFor(function() {

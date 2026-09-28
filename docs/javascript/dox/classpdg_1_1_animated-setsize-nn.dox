@@ -1,7 +1,27 @@
 namespace pdg { /**
+\fn pdg::Animated::setSize(Offset value)
+\brief Set logical width and height immediately.
 
-\fn pdg::Animated::setSize
+Cancels scheduled size changes and preserves separately configured growth rates. Does not change transform scale. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief set the size of the object
+\param value Logical size value.
 
-**/ }
+\return This object, for chaining.
+
+\see getSize(), resizeTo(), setStretching()
+*/
+
+/**
+\fn pdg::Animated::setSize(number width, number height)
+\brief Set logical width and height immediately.
+
+Cancels scheduled size changes and preserves separately configured growth rates. Does not change transform scale. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param width Logical size value.
+\param height Logical size value.
+
+\return This object, for chaining.
+
+\see getSize(), resizeTo(), setStretching()
+*/
+ }

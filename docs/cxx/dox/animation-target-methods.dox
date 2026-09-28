@@ -1,0 +1,180 @@
+/**
+\fn pdg::AnimationSpringTarget::AnimationSpringTarget(double mass, double stiffness, double damping)
+\brief Create a damped spring target.
+
+Starts with zero position and velocity. The helper owns its state independently of Sprites and does not update automatically. All inputs must be finite.
+
+\param mass Positive mass; default 1.
+\param stiffness Nonnegative restoring spring coefficient; default 100.
+\param damping Nonnegative damping coefficient; default 20.
+
+\par Example
+\code{.cpp}
+pdg::AnimationSpringTarget recoil(1, 100, 20);
+recoil.applyImpulse(-2, 0);
+auto offset = recoil.update(0, 0, 1.0 / 60);
+\endcode
+
+\see update(), applyImpulse()
+*/
+
+/**
+\fn AnimationTargetState pdg::AnimationSpringTarget::getState() const
+\brief Copy spring position and velocity.
+
+Editing the returned object does not change the helper.
+
+\return An AnimationTargetState value described below.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_spring_state
+\par Spring state
+| Field | Meaning |
+| --- | --- |
+| `x`, `y` | Position in the application's chosen coordinate frame. |
+| `velocityX`, `velocityY` | Velocity in that frame's distance units per second. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see setState(), update()
+*/
+
+/**
+\fn void pdg::AnimationSpringTarget::setState(const AnimationTargetState & state)
+\brief Replace spring position and velocity.
+
+Validates all components before changing the state. Invalid or overflowing values leave it unchanged.
+
+\param state Finite AnimationTargetState with x, y, velocityX, and velocityY; see \ref animation_spring_state.
+
+\see getState(), applyImpulse()
+*/
+
+/**
+\fn void pdg::AnimationSpringTarget::applyImpulse(double x, double y)
+\brief Change spring velocity immediately.
+
+Each velocity component increases by impulse divided by mass. Position remains unchanged. Invalid or overflowing results leave state unchanged.
+
+\param x Finite horizontal impulse in mass times distance per second.
+\param y Finite vertical impulse in mass times distance per second.
+
+\see update(), getState()
+*/
+
+/**
+\fn AnimationTargetState pdg::AnimationSpringTarget::update(double targetX, double targetY, double deltaSeconds)
+\brief Advance the spring toward a fixed target.
+
+Uses analytic damped-spring integration, treating the target as constant throughout this step. Zero elapsed time preserves state. Invalid or overflowing results leave state unchanged.
+
+\param targetX Finite target x in the same frame as the spring state.
+\param targetY Finite target y in the same frame as the spring state.
+\param deltaSeconds Finite nonnegative elapsed time in seconds.
+
+\return The updated AnimationTargetState by value.
+
+\see getState(), applyImpulse()
+*/
+
+/**
+\fn void pdg::AnimationContactTarget::lockWorld(double x, double y)
+\brief Lock a contact to a fixed world point.
+
+Replaces any previous lock and resets influence to 1. The point remains fixed until release; it does not follow platform motion.
+
+\param x Finite contact x in owning-layer coordinates.
+\param y Finite contact y in owning-layer coordinates.
+
+\see lockPlatform(), release()
+*/
+
+/**
+\fn void pdg::AnimationContactTarget::lockPlatform(double x, double y, uint64_t support, const AnimationTransform & frame)
+\brief Lock a contact to a moving support.
+
+Converts the world point into the platform frame. Subsequent update() calls transform that local point using the same support's current frame. Replaces any previous lock and resets influence to 1. Singular frames throw.
+
+\param x Finite contact x in owning-layer coordinates.
+\param y Finite contact y in owning-layer coordinates.
+\param support Stable nonzero uint64_t support identity, not a retained body pointer.
+\param frame Valid AnimationTransform mapping the platform into the owning layer; both scales must be nonzero.
+
+\see update(), lockWorld()
+*/
+
+/**
+\fn void pdg::AnimationContactTarget::release(double fadeSeconds)
+\brief Release the lock with an optional fade.
+
+Sets locked false immediately and preserves the last position. Influence falls linearly to zero as update() advances time. An already released target is unchanged; release does not restart its fade.
+
+\param fadeSeconds Finite nonnegative fade duration in seconds; zero clears influence immediately.
+
+\see update(), lockWorld()
+*/
+
+/**
+\fn AnimationContactState pdg::AnimationContactTarget::update(double deltaSeconds, bool contactActive, bool withinReach, uint64_t support, const AnimationTransform & frame, double releaseSeconds)
+\brief Follow a support or advance the release fade.
+
+Inactive contact, an unreachable target, or a missing/replaced platform ID releases the lock. World locks do not require a support. Released targets never reacquire automatically; call a lock method on the next contact edge. A zero time step preserves fade progress but can still update a platform point or release a lock.
+
+\param deltaSeconds Finite nonnegative elapsed time in seconds.
+\param contactActive Whether the application's contact window remains active.
+\param withinReach Whether the application considers this contact reachable.
+\param support Current support identity, or zero when absent.
+\param frame Current platform transform; used only while a platform lock remains active. Both scales must be nonzero.
+\param releaseSeconds Finite nonnegative fade duration used if this update releases the lock.
+
+\return The updated AnimationContactState by value.
+
+\see lockWorld(), lockPlatform(), release()
+*/
+
+/**
+\fn AnimationContactState pdg::AnimationContactTarget::getState() const
+\brief Copy the current contact point and influence.
+
+Editing the returned object does not change the helper.
+
+\return An AnimationContactState value described below.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_contact_state
+\par Contact state
+| Field | Meaning |
+| --- | --- |
+| `x`, `y` | Locked or last-released point in owning-layer coordinates. |
+| `influence` | Weight from 0 to 1; fades after release. |
+| `locked` | True while tracking a world point or platform; false during and after release. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see update(), release()
+*/
+
+/**
+\fn bool pdg::animationHasTag(const AnimationPose & pose, const std::string & object, const std::string & tag)
+\brief Test sampled animation metadata for a tag.
+
+Reads sampled metadata without changing playback. Object and tag names are exact and case-sensitive. Missing objects or tags return false.
+
+\param pose Owned AnimationPose whose metadata is queried.
+\param object Authored object name, or an empty string for entity metadata.
+\param tag Tag name to find.
+
+\return True if the selected object's sampled tag set contains the name.
+
+\see Sprite::getAnimationPose(), AnimationContactTarget::update()
+*/

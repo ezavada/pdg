@@ -32,7 +32,6 @@ test/pdg
 test/pdg.exe
 test/client_test/pdg.exe
 test/debug.html
-test/ios
 node_modules/pdg
 pnglibconf.h
 /msvc
@@ -65,8 +64,8 @@ src/cmake_install.cmake
 src/CMakeFiles/generate.stamp
 src/CMakeFiles/generate.stamp.depend
 
-test/perf/cpp-pdgmark/pdgmark_results.json
+test/perf_tests/cpp-pdgmark/pdgmark_results.json
 
-test/perf/cpp-bunnymark/bunnymark
+test/perf_tests/cpp-bunnymark/bunnymark
 
-test/perf/cpp-pdgmark/pdgmark
+test/perf_tests/cpp-pdgmark/pdgmark

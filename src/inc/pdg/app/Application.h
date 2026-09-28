@@ -34,7 +34,7 @@
 namespace pdg {
 
 class no_manager : public std::exception {
-	virtual const char* what() const throw() { return "no_manager"; }
+	virtual const char* what() const noexcept { return "no_manager"; }
 };
 
 class Application : public RefCountedImpl< IEventHandler > {
@@ -61,7 +61,7 @@ public:
     
 protected:
     
-    virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw();  // return true if completely handled
+    virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept;  // return true if completely handled
     // the managers that we use for this app, we own the globals
 
     Application();

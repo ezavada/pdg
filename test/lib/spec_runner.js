@@ -42,10 +42,15 @@ function ensureTestEnvironment(processObj, fs) {
     var testDir = processObj.ios ? repoRoot : path.join(repoRoot, 'test');
     var specDir = processObj.ios ? path.join(repoRoot, 'spec') : path.join(testDir, 'spec');
 
-    ensureDir(fs, artifactsDir);
-    ensureDir(fs, logDir);
-    ensureDir(fs, reportDir);
-    ensureDir(fs, tempDir);
+    // Simulator results are captured by the host lane runner. The application
+    // bundle is read-only and the small JSC fs shim intentionally does not
+    // emulate Node's recursive mkdir API.
+    if (!processObj.ios) {
+        ensureDir(fs, artifactsDir);
+        ensureDir(fs, logDir);
+        ensureDir(fs, reportDir);
+        ensureDir(fs, tempDir);
+    }
 
     env.PDG_ROOT = repoRoot;
     env.PDG_TEST_MODE = mode;
@@ -89,7 +94,8 @@ function parseRunnerArgs(argv, specDir, fs) {
         debug: false,
         help: false,
         verbose: false,
-        requestedTarget: null
+        requestedTarget: null,
+        requestedTargets: []
     };
 
     for (var i = 1; i < argv.length; i++) {
@@ -104,6 +110,7 @@ function parseRunnerArgs(argv, specDir, fs) {
             var requestedTarget = resolveRequestedTarget(specDir, arg, fs);
             if (requestedTarget) {
                 runConfig.requestedTarget = requestedTarget;
+                runConfig.requestedTargets.push(requestedTarget);
             }
         }
     }
@@ -198,15 +205,20 @@ function createJasmineOptions(envInfo, runConfig, processObj) {
     };
 
     if (runConfig.requestedTarget) {
-        var baseName = runConfig.requestedTarget.replace(/\.spec\.js$/i, '');
-        options.regExpSpec = new RegExp('^' + baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\.spec\\.js$', 'i');
-        options.isVerbose = true;
+        var baseNames = (runConfig.requestedTargets || [runConfig.requestedTarget]).map(function(name) {
+            return path.basename(name).replace(/\.spec\.js$/i, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        });
+        options.regExpSpec = new RegExp('^(' + baseNames.join('|') + ')\\.spec\\.js$', 'i');
+        options.isVerbose = runConfig.verbose || baseNames.length === 1;
     }
 
     return options;
 }
 
 function runJasmineSpecs(envInfo, runConfig, processObj) {
+    if (processObj.ios && processObj.versions && processObj.versions.jsc) {
+        return require('./jsc_spec_runner').run(envInfo, runConfig, processObj);
+    }
     var jasmineNode = loadJasmineNode(envInfo.repoRoot);
     var options = createJasmineOptions(envInfo, runConfig, processObj);
 
@@ -222,6 +234,7 @@ function runJasmineSpecs(envInfo, runConfig, processObj) {
 module.exports = {
     ensureTestEnvironment: ensureTestEnvironment,
     parseRunnerArgs: parseRunnerArgs,
+    createJasmineOptions: createJasmineOptions,
     printClientHelp: printClientHelp,
     runJasmineSpecs: runJasmineSpecs
 };

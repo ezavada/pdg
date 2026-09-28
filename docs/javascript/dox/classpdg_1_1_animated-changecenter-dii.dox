@@ -1,9 +1,31 @@
 namespace pdg { /**
+\fn pdg::Animated::changeCenterOffsetBy(Offset value, number durationSeconds, int easing)
+\brief Animate the rotation-center offset by a delta.
 
-\fn pdg::Animated::changeCenter
+Adds to the pivot offset. With andThen(), the delta is applied to the offset when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
-\brief shift the center point of the object over time
+\param value Relative pivot delta in the owning object coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
 
-Honors delay given by wait()
+\return This object, for chaining.
 
-**/ }
+\see setCenterOffset(), changeCenterOffsetTo()
+*/
+
+/**
+\fn pdg::Animated::changeCenterOffsetBy(number x, number y, number durationSeconds, int easing)
+\brief Animate the rotation-center offset by a delta.
+
+Adds to the pivot offset. With andThen(), the delta is applied to the offset when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param x Relative pivot delta in the owning object coordinate system.
+\param y Relative pivot delta in the owning object coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setCenterOffset(), changeCenterOffsetTo()
+*/
+ }

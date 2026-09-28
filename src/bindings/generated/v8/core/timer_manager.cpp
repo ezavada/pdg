@@ -706,7 +706,11 @@ namespace pdg
 
     TimerManagerWrap::TimerManagerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_TimerManager(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_TimerManager(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_TimerManager_InNewFromCpp)
         {
             {

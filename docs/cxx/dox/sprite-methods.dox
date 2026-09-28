@@ -1,0 +1,805 @@
+/**
+\fn PhysicsBody & pdg::Sprite::setupPhysicsBody(double mass, double momentOfInertia)
+\brief Set up the optional physics body with the specified mass and inertia.
+
+Every call applies both arguments, including their defaults: setupPhysicsBody() sets mass and moment of inertia to 1, and setupPhysicsBody(5) sets mass to 5 and inertia to 1. An existing body keeps its identity, transform, velocity, mode, forces, constraints and other settings. Read .physics to access it without reconfiguration. Invalid mass or inertia throws before changing either value.
+
+If absent, creates a dynamic body at the owner's current transform and stops programmed movement/spin. Removal detaches retained references; native callers must addRef()/release() references kept after removal.
+
+\param mass Finite positive mass; default 1.
+\param momentOfInertia Finite positive moment of inertia; default 1.
+
+\return The owner's PhysicsBody reference. Use addRef()/release() if retaining it after removal or owner destruction.
+
+\note Dynamic bodies own movement and rotation. Programmed movement/spin requests on their owners throw; immediate setters teleport the body.
+
+\see removePhysicsBody(), PhysicsBody
+*/
+
+/**
+\fn void pdg::Sprite::removePhysicsBody()
+\brief Detach the optional physics body.
+
+Restores the physics property to PhysicsBody.NoPhysics. A retained body keeps its state, loses its owner/solver, and can be advanced with PhysicsBody.step(). Calling when no body exists is harmless.
+
+\see setupPhysicsBody(), PhysicsBody::step()
+*/
+
+/**
+\fn Part * pdg::Sprite::createPart(const std::string & name)
+\brief Create an independently animated Part.
+
+The Sprite owns and advances the Part. Names must be nonempty and unique within this Sprite; invalid names throw. Parts do not require Spriter artwork or physics.
+
+\param name Nonempty name unique within the owning Sprite.
+
+\return The new Part. Its ID remains stable while owned by this Sprite; transferPart() assigns a new destination-local ID. The owning Sprite retains the Part; use addRef()/release() if keeping it after removal.
+
+\see findPart(), getPart(), removePart()
+*/
+
+/**
+\fn Part * pdg::Sprite::getPart(PartId id) const
+\brief Find an owned Part by ID.
+
+\param id ID returned by Part.getId(), scoped to this Sprite.
+
+\return The matching Part, or nullptr if the ID is absent. The returned pointer is borrowed; retain it if keeping it beyond the owner/attachment lifetime.
+
+\see findPart(), getPartNames()
+*/
+
+/**
+\fn Part * pdg::Sprite::findPart(const std::string & name) const
+\brief Find an owned Part by name.
+
+\param name The exact name passed to createPart().
+
+\return The matching Part, or nullptr if no Part has that name. The returned pointer is borrowed; retain it if keeping it beyond the owner/attachment lifetime.
+
+\see createPart(), getPart()
+*/
+
+/**
+\fn Part * pdg::Sprite::getAttachmentPart() const
+\brief Find the mounting Part controlling this Sprite.
+
+\return The mounting Part, or nullptr when this Sprite is not attached through a Part. Animate the returned Part to change the attachment offset. The returned pointer is borrowed; retain it if keeping it beyond the owner/attachment lifetime.
+
+\see Part::attachSprite(), Part::detachSprite()
+*/
+
+/**
+\fn size_t pdg::Sprite::getPartCount() const
+\brief Count owned Parts.
+
+\return The number of Parts currently owned by this Sprite, including attachment mounts.
+
+\see getPartNames(), clearParts()
+*/
+
+/**
+\fn std::vector< std::string > pdg::Sprite::getPartNames() const
+\brief List owned Part names.
+
+\return A vector of strings in Part creation order. Editing it does not rename Parts.
+
+\see findPart(), getPartCount()
+*/
+
+/**
+\fn bool pdg::Sprite::removePart(PartId id)
+\brief Remove an owned Part.
+
+Detaches any mounted Sprites in this Part's descendant chain. Direct child Parts stay owned by the Sprite and lose this explicit parent. Retained references to the removed Part remain valid, keep local state, and stop automatic updates; its bindings and physics body are detached. Removing a mapped physical-rig Part requires disableAnimationPhysics() first; otherwise this operation throws without changing the graph.
+
+\param id The Part ID, scoped to this Sprite.
+
+\return True if the Part existed and was removed; false for an absent ID.
+
+\see Part::isAttached(), clearParts()
+*/
+
+/**
+\fn void pdg::Sprite::clearParts()
+\brief Remove all owned Parts.
+
+Detaches mounts, authored bindings, and physics bodies. Retained Part references remain usable with their local state, but no longer update with the Sprite. If any Part belongs to the active physical rig, throws before removing anything; call disableAnimationPhysics() first.
+
+\see removePart(), Part::isAttached()
+*/
+
+/**
+\fn void pdg::Sprite::seekAnimation(const char * clip, double timeSeconds)
+\brief Select a clip and time immediately.
+
+Cancels an active pose transition and legacy blend, while preserving the playback pause state. Validates the requested sample before changing the current selection.
+
+\param clip Name of a compatible clip in the current Spriter entity.
+\param timeSeconds Finite sample time in seconds. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints.
+
+\note Call enableAnimationPose() successfully before using this method. Call outside animation callbacks.
+
+\see sampleAnimationPose(), transitionToAnimation()
+*/
+
+/**
+\fn void pdg::Sprite::transitionToAnimation(const char * clip, double timeSeconds, double durationSeconds)
+\brief Blend the current pose into a selected clip.
+
+Starts the destination clip at the requested time while blending from the current base pose. Interrupting a transition captures its current blended pose. A zero duration switches immediately. Completion sends action_AnimationBlendComplete when the Sprite belongs to a layer.
+
+\param clip Name of a compatible clip in the current Spriter entity.
+\param timeSeconds Finite sample time in seconds. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints.
+\param durationSeconds Finite nonnegative blend duration in seconds; zero switches immediately.
+
+\note Call enableAnimationPose() successfully before using this method. Call outside animation callbacks.
+
+\see seekAnimation(), isAnimationTransitioning(), getAnimationTransitionProgress()
+*/
+
+/**
+\fn bool pdg::Sprite::isAnimationTransitioning() const
+\brief Test for an active pose transition.
+
+\return True while a transitionToAnimation() blend is running; false when complete or pose access is disabled.
+
+\see transitionToAnimation(), getAnimationTransitionProgress()
+*/
+
+/**
+\fn double pdg::Sprite::getAnimationTransitionProgress() const
+\brief Read pose transition progress.
+
+\return A fraction from 0 to 1. Completed transitions report 1; absent/canceled transitions and disabled pose access report 0.
+
+\see transitionToAnimation(), isAnimationTransitioning()
+*/
+
+/**
+\fn AnimationModifierId pdg::Sprite::addAnimationIK(const AnimationTwoBoneIK & config, int order)
+\brief Register a two-bone inverse-kinematics controller.
+
+Validates a trial solve before registration. The controller runs in animationStage_Constraint on each evaluation, using the freshly sampled joint offsets. Inspect its result to distinguish unreachable, limited, and stretched solutions.
+
+\param config AnimationTwoBoneIK configuration described below.
+\param order Signed integer ordering within the constraint stage; default 0.
+
+\return A modifier ID usable with setAnimationIKTarget(), getAnimationIKResult(), and removeAnimationModifier().
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_ik_options
+\par Two-bone IK configuration
+| Field | Default | Meaning |
+| --- | --- | --- |
+| `root`, `middle`, `tip` | Required | Bone IDs forming a contiguous parent-child-child chain. |
+| `targetX`, `targetY` | 0 | Finite target position in the selected space. |
+| `space` | animationSpace_Rig | Local uses the root bone's parent frame; World uses the owning layer. |
+| `rootLength`, `middleLength` | 0 | Zero derives length from the rig or child offset. Explicit positive lengths must match the joint offsets. Display widths are ignored. |
+| `influence` | 1 | Finite blend weight from 0 to 1. |
+| `bendDirection` | 1 | Integer +1 or -1 selecting the elbow side. |
+| `stretch` | animationIK_NoStretch | Use animationIK_Stretch to allow extending toward out-of-reach targets. |
+| `matchOrientation` | false | Whether to aim the tip rotation as well as its position. |
+| `targetRotation` | 0 | Finite clockwise target angle in radians. |
+| `rootMin`, `middleMin` | -pi | Minimum local joint angles in radians. |
+| `rootMax`, `middleMax` | pi | Maximum local joint angles in radians. |
+
+Nonuniform scales and reflections are supported when effective scales are nonsingular. Zero-length segments, incompatible offsets, invalid limits, and singular transforms are rejected atomically.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see setAnimationIKTarget(), getAnimationIKResult(), removeAnimationModifier()
+*/
+
+/**
+\fn void pdg::Sprite::setAnimationIKTarget(AnimationModifierId id, double x, double y, int space)
+\brief Change an IK controller's target.
+
+Invalidates the pose so the next evaluation uses the new target. Unknown IDs, nonfinite coordinates, and invalid spaces throw.
+
+\param id ID returned by addAnimationIK().
+\param x Finite target x coordinate.
+\param y Finite target y coordinate.
+\param space Integer coordinate-space constant: \c pdg::animationSpace_Local (parent frame), \c pdg::animationSpace_Rig, or \c pdg::animationSpace_World (owning layer). Local uses the root bone's parent frame.
+
+\see addAnimationIK(), getAnimationIKResult()
+*/
+
+/**
+\fn AnimationIKResult pdg::Sprite::getAnimationIKResult(AnimationModifierId id) const
+\brief Copy the latest IK solve result.
+
+Refreshes the pose first. Throws for an unknown IK ID or a controller whose last evaluation failed; getAnimationModifierError() exposes the diagnostic.
+
+\param id ID returned by addAnimationIK().
+
+\return An AnimationIKResult value described below.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_ik_result
+\par IK result fields
+| Field | Meaning |
+| --- | --- |
+| `reachError` | Remaining target distance in the owning-layer coordinates. |
+| `reachable` | Whether the resulting tip reaches the target within tolerance. |
+| `clamped` | Whether the target was clamped to available reach. |
+| `limited` | Whether joint-angle limits constrained the solve. |
+| `stretched` | Whether allowed stretch extended a segment. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see setAnimationIKTarget(), getAnimationModifierError()
+*/
+
+/**
+\fn AnimationModifierId pdg::Sprite::addAnimationModifier(AnimationPipeline::Modifier callback, int stage, int order)
+\brief Register a procedural pose modifier.
+
+Modifiers run after source sampling and persistent overrides. They run by stage, then ascending order, then registration order. Each sees earlier successful edits. Keep evolving controller state in your own objects and apply it to each fresh pose; do not accumulate the previous final pose.
+
+\param callback Synchronous AnimationPipeline::Modifier receiving an AnimationPoseView and const AnimationModifierContext reference.
+\param stage pdg::animationStage_PreConstraint, pdg::animationStage_Constraint, or pdg::animationStage_PostConstraint.
+\param order Signed integer sort order within the stage; default 0.
+
+\return A nonzero modifier ID for removal or diagnostics.
+
+\note Call enableAnimationPose() successfully before using this method. Inside callbacks, edit through the view. Perform playback, rig, physics, and layer changes outside the callback.
+
+\par Example
+\code{.cpp}
+auto id = sprite->addAnimationModifier(
+    [](pdg::AnimationPoseView view, const pdg::AnimationModifierContext&) {
+        auto hand = view.copy().getRig()->findBone("hand");
+        view.rotateLocal(hand, 0.15);
+    }, pdg::animationStage_PostConstraint);
+\endcode
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_modifier_callback
+\par Native modifier callback arguments
+| Argument | Meaning |
+| --- | --- |
+| `view` | Borrowed AnimationPoseView. Use copy() to retain an owned pose; access after callback return throws. |
+| `context.deltaSeconds` | Elapsed seconds, or zero for explicit reevaluation. |
+| `context.root` | Sprite root in owning-layer coordinates. |
+| `context.revision` | Unsigned pipeline revision. |
+
+The callback returns void. An exception or invalid edit rolls back its changes, disables and releases the callback, and records a diagnostic. Registration/removal/source changes requested while evaluating are applied afterward.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see removeAnimationModifier(), getAnimationModifierError(), addAnimationIK()
+*/
+
+/**
+\fn void pdg::Sprite::removeAnimationModifier(AnimationModifierId id)
+\brief Remove a modifier or IK controller.
+
+Releases its callback and diagnostic. Unknown IDs are harmless. A removal requested during evaluation is applied after the current evaluation.
+
+\param id ID returned by addAnimationModifier() or addAnimationIK().
+
+\see addAnimationModifier(), clearAnimationModifiers()
+*/
+
+/**
+\fn void pdg::Sprite::clearAnimationModifiers()
+\brief Remove all modifiers and IK controllers.
+
+Releases callbacks and diagnostics. A request made during evaluation is applied afterward.
+
+\see removeAnimationModifier(), addAnimationModifier()
+*/
+
+/**
+\fn std::string pdg::Sprite::getAnimationModifierError(AnimationModifierId id) const
+\brief Read a modifier failure diagnostic.
+
+\param id An existing modifier or IK controller ID.
+
+\return An empty string if no failure is recorded, otherwise the failure text. Throws for an unknown ID or a disabled pose pipeline.
+
+\see addAnimationModifier(), removeAnimationModifier()
+*/
+
+/**
+\fn void pdg::Sprite::setAnimationSource(int source)
+\brief Select the starting pose for evaluation.
+
+Clip uses the sampled animation; Reference and Procedural start from the rig reference pose. Persistent overrides and modifiers run afterward in every mode. Source selection does not create a separate playback clock. A change requested inside a callback takes effect after evaluation.
+
+\param source pdg::animationSource_Clip, pdg::animationSource_Reference, or pdg::animationSource_Procedural.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\see getAnimationSource(), addAnimationModifier()
+*/
+
+/**
+\fn int pdg::Sprite::getAnimationSource() const
+\brief Read the selected pose source.
+
+\return The animationSource constant last selected, or pdg::animationSource_Clip when pose access is disabled.
+
+\see setAnimationSource()
+*/
+
+/**
+\fn bool pdg::Sprite::isAnimationDrawingSupported() const
+\brief Test whether this build supports animation drawing.
+
+\return True in GUI-capable builds; false in headless builds. This does not test whether a Port is currently open.
+
+\see addAnimationDrawable(), setAnimationDebugDraw()
+*/
+
+/**
+\fn void pdg::Sprite::setAnimationDebugDraw(int flags)
+\brief Select pose debug overlays.
+
+Flags are combined with bitwise OR. Disabling overlays with zero is safe without a pose or GUI. Nonzero flags require both. Disabling/replacing the pose clears the flags.
+
+\param flags pdg::animationDebug_None (0), Bones (1), Sockets (2), Boxes (4), or All (7), using the animationDebug_ prefix for each constant.
+
+\see getAnimationDebugDraw(), isAnimationDrawingSupported()
+*/
+
+/**
+\fn int pdg::Sprite::getAnimationDebugDraw() const
+\brief Read the selected debug overlays.
+
+\return The current animationDebug bitmask; zero means no overlays.
+
+\see setAnimationDebugDraw()
+*/
+
+/**
+\fn AnimationDrawableId pdg::Sprite::addAnimationDrawable(const AnimationDrawableOptions & options, const Drawing & drawing)
+\brief Register bone-local artwork for animation rendering.
+
+The Drawing overload retains shared editable contents, so later ElementRef edits appear without registering again. The callback overload evaluates artwork dynamically and must return a shared_ptr<Drawing> or nullptr to skip this draw. A callback exception disables the registration and records a diagnostic. Registration changes made while drawing are deferred until the frame ends.
+
+\param options Shared placement and culling settings described below.
+\param drawing Drawing whose geometry is expressed in the selected bone's local frame.
+
+\return A nonzero AnimationDrawableId.
+
+\note Enable a compatible pose first. Rendering requires a GUI-capable build. The example assumes a reference clip and a hand bone.
+
+\par Example
+\code{.cpp}
+if (!sprite->enableAnimationPose("reference")) {
+    throw std::runtime_error(sprite->getAnimationRigError());
+}
+pdg::AnimationDrawableOptions options;
+options.bone = sprite->getAnimationRig()->findBone("hand");
+auto artwork = std::shared_ptr<pdg::Drawing>(pdg::Drawing::create());
+std::unique_ptr<pdg::ElementRef> marker(artwork->addRect(
+    pdg::Rect(0, -2, 12, 2), pdg::Attributes().fillColor(pdg::Color(1, 0, 0))));
+auto id = sprite->addAnimationDrawable(options,
+    [artwork](pdg::AnimationDrawingContext context) -> std::shared_ptr<pdg::Drawing> {
+        return context.getTransform().alpha > 0 ? artwork : nullptr;
+    });
+\endcode
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_drawable_options
+\par Drawing options (both overloads)
+| Field | Default / meaning |
+| --- | --- |
+| `bone` | Required bone ID in the enabled rig. Geometry remains in that bone's local coordinates. |
+| `placement` | animationDraw_AfterAll; alternatives BeforeAll, BeforeSlot, AfterSlot, ReplaceSlot use the animationDraw_ prefix. |
+| `order` | 0; ascending order, with registration order breaking ties. |
+| `slot` | Empty for whole-Sprite placement. Slot placements require the name of an image binding. |
+| `strokeSpace` | animationStroke_PortPixels keeps thickness in Port pixels; animationStroke_Local scales it by sqrt(abs(det(transform))). |
+| `bounds` | Bone-local finite ordered rectangle. Set bounds.uncullable=false only when it conservatively encloses every possible drawing. Default uncullable=true. |
+
+ReplaceSlot suppresses the authored image while an enabled replacement is registered, even if its callback returns nullptr. Bounds only affect culling; they do not clip geometry or create physics shapes.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see removeAnimationDrawable(), getAnimationDrawableError(), AnimationDrawingContext
+*/
+
+/**
+\fn AnimationDrawableId pdg::Sprite::addAnimationDrawable(const AnimationDrawableOptions & options, AnimationDrawings::Callback callback)
+\brief Register bone-local artwork for animation rendering.
+
+The Drawing overload retains shared editable contents, so later ElementRef edits appear without registering again. The callback overload evaluates artwork dynamically and must return a shared_ptr<Drawing> or nullptr to skip this draw. A callback exception disables the registration and records a diagnostic. Registration changes made while drawing are deferred until the frame ends.
+
+\param options Shared placement and culling settings described below.
+\param callback Synchronous AnimationDrawings::Callback. Its AnimationDrawingContext expires on return; retain only values from getTransform() or copyPose().
+
+\return A nonzero AnimationDrawableId.
+
+\note Enable a compatible pose first. Rendering requires a GUI-capable build. The example assumes a reference clip and a hand bone.
+
+\see removeAnimationDrawable(), getAnimationDrawableError(), AnimationDrawingContext
+*/
+
+/**
+\fn void pdg::Sprite::removeAnimationDrawable(AnimationDrawableId id)
+\brief Remove a custom drawing registration.
+
+Releases the Drawing or callback and its diagnostic. An unknown valid ID is harmless. Changes requested while drawing are deferred until the current draw finishes.
+
+\param id Nonzero ID returned by addAnimationDrawable().
+
+\see addAnimationDrawable(), clearAnimationDrawables()
+*/
+
+/**
+\fn void pdg::Sprite::clearAnimationDrawables()
+\brief Remove all custom drawing registrations.
+
+Releases retained Drawings and callbacks. During drawing, clearing takes effect after the current draw finishes.
+
+\see addAnimationDrawable(), removeAnimationDrawable()
+*/
+
+/**
+\fn void pdg::Sprite::setAnimationDrawableEnabled(AnimationDrawableId id, bool enabled)
+\brief Enable or hide a registered drawing.
+
+Does not remove the registration. Throws for an unknown ID. A callback disabled by a failure cannot be reenabled; remove it and register a corrected callback.
+
+\param id Existing ID returned by addAnimationDrawable().
+\param enabled True to include the drawing; false to skip it.
+
+\see getAnimationDrawableError(), removeAnimationDrawable()
+*/
+
+/**
+\fn std::string pdg::Sprite::getAnimationDrawableError(AnimationDrawableId id) const
+\brief Read a drawing callback diagnostic.
+
+\param id Existing ID returned by addAnimationDrawable().
+
+\return An empty string when no error is recorded, otherwise the failure text. Throws for an unknown ID.
+
+\see addAnimationDrawable(), removeAnimationDrawable()
+*/
+
+/**
+\fn AnimationDrawBounds pdg::Sprite::getAnimationDrawBounds() const
+\brief Copy the evaluated animation drawing bounds.
+
+Includes authored images and enabled custom drawings. Custom bounds come from their declared bone-local rectangles. These are rendering/culling bounds and do not create collision shapes.
+
+\return An AnimationDrawBounds value in owning-layer coordinates. When uncullable is true, its rectangle cannot safely cull all content.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\see addAnimationDrawable(), getAnimationPose()
+*/
+
+/**
+\fn void pdg::Sprite::setupAnimationPhysics(const AnimationPhysicsDefinition & definition)
+\brief Create a physical rig for the current pose.
+
+Validates the definition before creating bodies and joints. Creates an ordinary root PhysicsBody if needed, temporarily makes it kinematic, and suspends its collision filter. Clip/controller evaluation supplies the desired pose; physical bodies then supply the displayed result.
+
+Each configured bone has a Part named exactly after the bone. Obtain it with
+findPart() and operate on its PhysicsBody through the read-only `.physics`
+property. The Part's local transform is the capsule offset from the bone; its
+world transform follows the solved body. Positions and application points use
+owning-layer coordinates, and velocities use distance units or radians per second.
+
+A pre-existing Part with that name is reused only if it is bound directly to the
+same bone, has the same capsule offset and unit unreflected scale, has no parent
+Part, and has neither a PhysicsBody nor a Collider. Conflicts reject the configuration without replacing
+caller-owned Parts. While enabled, body mass, inertia, materials, velocities,
+impulses, forces, torque, damping and drive targets are available through `.physics`.
+The definition fixes bone bindings and capsule offsets: disable the
+physical rig before changing those or removing a mapped Part/body. Disable keeps
+the Parts and their names/IDs but returns their `.physics` properties to NoPhysics.
+Independently retained bodies keep their last state and detach to the basic solver.
+
+\param definition AnimationPhysicsDefinition described below.
+
+\note Enable pose access first. The Sprite must belong to a physics-enabled SpriteLayer, and supportsAnimationPhysics() must be true.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_physics_definition
+\par Physical animation definition (native defaults)
+| Top-level field | Default | Meaning |
+| --- | --- | --- |
+| `version` | 1 | Definition format; only integer version 1 is supported. |
+| `bodies` | Required | Nonempty vector of body definitions (at most 65,536), described below. Vector indices identify bodies. |
+| `joints` | [] | Vector of joint definitions (at most 65,536), described below. |
+| `rootMode` | animationRoot_Fixed | Fixed keeps the Sprite frame independent; Follow publishes the selected body's translation to the Sprite. Both support mixed body modes. |
+| `rootBody` | 0 | Body index used for root follow and release velocity. |
+| `selfCollisions` | false | Whether physical animation bodies may collide with one another. |
+
+| Body field | Default | Meaning |
+| --- | --- | --- |
+| `bone` | Required | Bone ID in the current rig; one body per driven bone. |
+| `mass`, `length`, `radius` | 1, 1, 0.5 | Finite mass > 0, capsule length >= 0, and radius > 0 in rig distance units. |
+| `mode` | animationBody_Dynamic | Dynamic simulation or animationBody_Kinematic following the desired pose. |
+| `offsetX`, `offsetY`, `offsetRotation` | 0 | Bone-local placement; rotation is in radians. |
+| `friction` | 0.7 | Finite nonnegative contact friction. |
+| `elasticity` | 0 | Finite bounce coefficient from 0 to 1. |
+| `categories`, `mask` | 4294967295 | Unsigned 32-bit collision category and mask bits. |
+
+| Joint field | Default | Meaning |
+| --- | --- | --- |
+| `parent`, `child` | 0, 0 | Body indices connected by the joint. |
+| `parentX`, `parentY`, `childX`, `childY` | 0 | Joint anchor positions in the respective body frames. |
+| `minAngle`, `maxAngle` | -pi, pi | Finite relative angular limits in radians. |
+| `maxForce` | 1000000 | Finite positive joint force limit. |
+| `collide` | false | Whether the connected bodies may collide. |
+
+Fixed-root mode keeps the Sprite frame authoritative. Follow-root mode publishes
+the selected body's translation while preserving the Sprite's rotation and scale.
+The selected body can be Kinematic, Dynamic or Driven. Sprite movement and rotation
+edit the animation target frame: controlled root bodies sweep or drive toward it,
+and dynamic descendants react through their joints. Dynamic bodies are not
+teleported. Pose/Part queries between an edit and the next solve do not discard
+the target, and followed translation does not feed back into a drive target.
+Use scheduled movement/rotation or an animation helper for a continuous path.
+
+The Sprite and driven bones require unit effective scale magnitudes; reflection is
+supported. `setFlipX()`/`setFlipY()` also reflect an active rig about the Sprite's
+local axes through its origin. Positions, linear/angular velocities, collider
+frames, internal anchors, rotary limits and rig recovery state follow the flip.
+Body, collider, shape and constraint identities and mass/inertia are preserved.
+Detached parts remain independent. Bone/Part queries, artwork and mounts use the
+same reflected frames. World-space manual drives, IK targets, forces and torques
+retain their world targets; gravity is unchanged.
+
+External linear joints retain their outside anchors. Disconnect external angular
+joints before flipping; an unsupported boundary joint, a locked solver, or a pose
+callback rejects the flip without changing it. Arbitrary live scaling does not
+resize physical bodies. Create the rig outside callbacks and a locked physics
+step; existing Sprite joints and a second enabled rig are rejected.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see disableAnimationPhysics(), findPart(), PhysicsBody::getState(), supportsAnimationPhysics()
+
+The rig uses shared Collider capsules (a circle for zero length) and shared
+pivot/rotary-limit PhysicsConstraints. Edit them through each Part's collider and
+physics properties. Sprite physics mass is the sum of attached components;
+whole-Sprite mass edits scale those components, while Part mass edits and
+attach/detach change the total. Whole-Sprite impulses target the selected root.
+Contact notifications use eventType_ColliderContact; opt in with
+Collider::setWantsContactEvents(). Initial Sprite/Layer snapshots preserve active
+rigs, membership, edited components, drive ownership and recovery state.
+*/
+
+/**
+\fn void pdg::Sprite::disableAnimationPhysics(double recoveryTime, int direction)
+\brief Recover animation control before removing the physical rig.
+
+Uses the same collision-aware recovery as setAnimationPhysicsMode(), defaulting
+to 0.5 seconds. The rig and its colliders remain active until recovery actually
+completes; isAnimationPhysicsEnabled() remains true meanwhile. Blocked or
+force-limited recovery may take longer than the requested duration. A new mode
+command cancels pending disable. Zero removes the rig immediately.
+
+On completion, restores the Sprite body's saved mode and collision filter and
+transfers the selected root body's linear/angular velocity. The explicit or generated rig's
+current total mass transfers to the single Sprite body, keeping that body's
+previous single-body inertia. This is not a momentum-conserving merge. Mapped
+colliders and joints detach; retained mapped Parts remain body-free, and retained body
+handles stop contributing mass. Emits action_AnimationPhysicsRecoveryComplete
+with disabled true after teardown. Calling without an active rig is harmless.
+
+\param recoveryTime Finite nonnegative seconds; default 0.5, zero for immediate teardown.
+\param direction Rotation route; default rotationDirection_AsSpecified.
+\note Call outside animation modifiers and locked physics callbacks. Release any manual or Part IK drives explicitly before disabling.
+\see setAnimationPhysicsMode(), isAnimationPhysicsEnabled()
+*/
+
+/**
+\fn bool pdg::Sprite::isAnimationPhysicsEnabled() const
+\brief Test for an active physical animation rig.
+
+\return True while a physical rig is attached to this Sprite.
+
+\see setupAnimationPhysics(), disableAnimationPhysics()
+*/
+
+/**
+\fn bool pdg::Sprite::enableAnimationPose(const char * referenceAnimation)
+\brief Enable pose access using a reference clip.
+
+Builds a stable rig from the selected Spriter entity and reference clip. The rig requires compatible bone, image, point, and box tracks with a fixed hierarchy. Nested entities and changing hierarchies are unsupported. On success, clears previous bone overrides, modifiers, IK controllers, custom drawings, and debug flags. A failed attempt preserves the previous enabled pose and records a diagnostic.
+
+\param referenceAnimation Name of an existing reference clip in the current Spriter entity.
+
+\return True on success; false if the rig cannot be enabled. Read getAnimationRigError() after failure.
+
+\note Load Spriter data and select its entity first. Call outside animation callbacks and disable animation physics before replacing the rig.
+
+\see disableAnimationPose(), getAnimationPose(), getAnimationRigError()
+*/
+
+/**
+\fn void pdg::Sprite::disableAnimationPose()
+\brief Release the current pose rig.
+
+Disables animation physics and clears pose overrides, modifiers, IK, custom drawing registrations, and debug flags. Parts following the old rig become unbound. Ordinary Sprite animation remains available. Calling when disabled is harmless.
+
+\note Call outside animation callbacks.
+
+\see enableAnimationPose(), isAnimationPoseEnabled()
+*/
+
+/**
+\fn bool pdg::Sprite::isAnimationPoseEnabled() const
+\brief Test whether a pose rig is available.
+
+\return True after successful enableAnimationPose() and until it is disabled or its entity is replaced.
+
+\see enableAnimationPose(), getAnimationRigError()
+*/
+
+/**
+\fn std::string pdg::Sprite::getAnimationRigError() const
+\brief Read the latest rig diagnostic.
+
+\return A diagnostic string after a rig failure, or an empty string when no error is recorded.
+
+\see enableAnimationPose()
+*/
+
+/**
+\fn std::shared_ptr< const AnimationRig > pdg::Sprite::getAnimationRig() const
+\brief Share the current immutable rig.
+
+Rig IDs belong to this instance and revision; refresh cached IDs after replacing the pose rig.
+
+\return Shared ownership of the AnimationRig, or an empty shared_ptr when pose access is disabled.
+
+\see enableAnimationPose(), AnimationRig::findBone()
+*/
+
+/**
+\fn AnimationPose pdg::Sprite::getAnimationPose() const
+\brief Copy the fully evaluated pose.
+
+Refreshes the current pose, including persistent overrides and controllers, and returns an owned snapshot. Editing or retaining it does not affect the Sprite. A getter may reevaluate modifiers with deltaSeconds equal to zero.
+
+\return An owned AnimationPose sharing immutable rig data; its mutable transforms and metadata are independent.
+
+\note Call enableAnimationPose() successfully before using this method. Inside a modifier, use view.copy() instead of querying the Sprite.
+
+\par Example
+\code{.cpp}
+auto pose = sprite->getAnimationPose();
+auto hand = pose.getRig()->findBone("hand");
+auto local = pose.getLocalTransform(hand);
+local.rotation += 0.2;
+pose.setLocalTransform(hand, local); // Changes this copy only.
+\endcode
+
+\see sampleAnimationPose(), getAnimationBoneTransform()
+*/
+
+/**
+\fn AnimationPose pdg::Sprite::sampleAnimationPose(const char * clip, double timeSeconds) const
+\brief Sample a clip without changing playback.
+
+Samples the authored clip independently of the live clock, bone overrides, and controllers. Does not emit trigger events or change rendering. Unknown or incompatible clips and nonfinite times throw.
+
+\param clip Name of a compatible clip in the current Spriter entity.
+\param timeSeconds Finite sample time in seconds. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints.
+
+\return An owned AnimationPose sampled from the clip.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\see getAnimationPose(), seekAnimation()
+*/
+
+/**
+\fn std::vector< std::string > pdg::Sprite::getAnimationBoneNames() const
+\brief List current bone names.
+
+\return A vector of strings in bone-ID order, or an empty array when pose access is disabled. IDs belong to this rig and should not be reused after replacing it.
+
+\see enableAnimationPose(), getAnimationBoneTransform()
+*/
+
+/**
+\fn std::vector< std::string > pdg::Sprite::getAnimationBindingNames() const
+\brief List current binding names.
+
+\return A vector of strings in binding-ID order, or an empty array when pose access is disabled. IDs belong to this rig and should not be reused after replacing it.
+
+\see enableAnimationPose(), getAnimationBindingTransform()
+*/
+
+/**
+\fn AnimationTransform pdg::Sprite::getAnimationBoneTransform(const char * name, int space) const
+\brief Copy an evaluated bone transform.
+
+Evaluates the current pose, including overrides and controllers. Unknown names, unavailable poses, and invalid spaces throw. Returned values are independent of the live Sprite.
+
+\param name Exact bone name returned by getAnimationBoneNames().
+\param space Integer coordinate-space constant: \c pdg::animationSpace_Local (parent frame), \c pdg::animationSpace_Rig, or \c pdg::animationSpace_World (owning layer).
+
+\return An AnimationTransform value in the selected space.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\see getAnimationBoneNames(), getAnimationPose()
+*/
+
+/**
+\fn AnimationTransform pdg::Sprite::getAnimationBindingTransform(const char * name, int space) const
+\brief Copy an evaluated binding transform.
+
+Evaluates the current pose, including overrides and controllers. Unknown names, unavailable poses, and invalid spaces throw. Returned values are independent of the live Sprite.
+
+\param name Exact binding name returned by getAnimationBindingNames().
+\param space Integer coordinate-space constant: \c pdg::animationSpace_Local (parent frame), \c pdg::animationSpace_Rig, or \c pdg::animationSpace_World (owning layer).
+
+\return An AnimationTransform value in the selected space.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\see getAnimationBindingNames(), getAnimationPose()
+*/
+
+/**
+\fn void pdg::Sprite::setAnimationBoneTransform(const char * name, const AnimationTransform & transform)
+\brief Override a bone's parent-local transform.
+
+Replaces all six transform components; this is an absolute local override, not an accumulated offset. It persists across updates and clip changes until cleared or the rig is replaced. Invalid names or nonfinite values throw.
+
+\param name Exact bone name in the current rig.
+\param transform Complete finite parent-local AnimationTransform; alpha must be from 0 to 1.
+
+\note Call enableAnimationPose() successfully before using this method. Call outside modifiers; use their borrowed view to edit a pose during evaluation.
+
+\see clearAnimationBoneTransforms(), addAnimationModifier()
+*/
+
+/**
+\fn void pdg::Sprite::clearAnimationBoneTransforms()
+\brief Remove every persistent bone override.
+
+The next evaluation uses the selected source and modifiers without these overrides. Calling when pose access is disabled is harmless.
+
+\note Call outside animation callbacks.
+
+\see setAnimationBoneTransform()
+*/
+
+/**
+\fn bool pdg::Sprite::supportsAnimationPhysics()
+\brief Test this build's physical-animation support.
+
+\return True when built with Chipmunk physics support. This does not test the Sprite's current layer, rig, or scale.
+
+\see setupAnimationPhysics(), isAnimationPhysicsEnabled()
+*/

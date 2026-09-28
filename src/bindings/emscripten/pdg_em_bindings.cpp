@@ -1,5 +1,9 @@
 #include "pdg/framework.h"
 #include "pdg_em_adaptors.h"
+#include <array>
+#include "pdg_em_parts.h"
+#include "pdg_em_particles.h"
+#include "pdg_em_animation_helpers.h"
 
 // remap some constants
 
@@ -73,7 +77,7 @@ namespace pdg {
 
 // a way for us to insert special stuff into the automatic bindings
 
-#define Animated_Extra .constructor<>()
+#define Animated_Extra .constructor<>() BrowserAnimationHelpers_Extra
 #define ConfigManager_Extra \
     .function("useConfig", &pdg::emscriptenConfigUseConfig) \
     .function("getConfigString", &pdg::emscriptenConfigGetString) \
@@ -98,6 +102,7 @@ namespace pdg {
     .function("getFontName", &pdg::emscriptenFontGetName) \
     .function("_getFontHeight", &pdg::emscriptenFontGetHeight) \
     .function("_getFontLeading", &pdg::emscriptenFontGetLeading) \
+    .function("_getFontCapHeight", &pdg::emscriptenFontGetCapHeight) \
     .function("_getFontAscent", &pdg::emscriptenFontGetAscent) \
     .function("_getFontDescent", &pdg::emscriptenFontGetDescent)
 #define GraphicsManager_Extra \
@@ -108,6 +113,7 @@ namespace pdg {
     .function("getNthSupportedScreenMode", &pdg::emscriptenGraphicsGetNthSupportedScreenMode) \
     .function("setScreenMode", &pdg::GraphicsManager::setScreenMode) \
     .function("_createWindowPort", &pdg::emscriptenGraphicsCreateWindowPort, emscripten::allow_raw_pointers()) \
+    .function("createOffscreenPort", &pdg::GraphicsManager::createOffscreenPort, emscripten::allow_raw_pointers()) \
     .function("closeGraphicsPort", &pdg::GraphicsManager::closeGraphicsPort, emscripten::allow_raw_pointers()) \
     .function("closeAllGraphicsPorts", &pdg::GraphicsManager::closeAllGraphicsPorts) \
     .function("_createFont", &pdg::emscriptenGraphicsCreateFont, emscripten::allow_raw_pointers()) \
@@ -121,7 +127,6 @@ namespace pdg {
 #define IAnimationHelper_Extra 
 #define IEventHandler_Extra .constructor<>()
 #define ISerializable_Extra 
-#define ISpriteCollideHelper_Extra 
 #define ISpriteDrawHelper_Extra 
 #define LogManager_Extra 
 #define MemBlock_Extra .constructor(&pdg::emscriptenCreateEmptyMemBlock, emscripten::allow_raw_pointers())
@@ -130,6 +135,9 @@ namespace pdg {
     .function("_getNativeIdentity", &pdg::emscriptenPortGetIdentity) \
     .function("getDrawingArea", &pdg::Port::getDrawingArea) \
     .function("getClipRect", &pdg::Port::getClipRect) \
+    .function("resetClipRect", &pdg::Port::resetClipRect) \
+    .function("_clear", &pdg::Port::clear) \
+    .function("_setDrawingOrigin", &pdg::Port::setDrawingOrigin) \
     .function("setClipRect", &pdg::Port::setClipRect) \
     .function("_getTextWidth", &pdg::emscriptenPortGetTextWidth) \
     .function("getCurrentFont", &pdg::Port::getCurrentFont, emscripten::allow_raw_pointers()) \
@@ -183,13 +191,66 @@ namespace pdg {
     .function("setVolume", &pdg::SoundManager::setVolume) \
     .function("setMute", &pdg::SoundManager::setMute) \
     .function("stopAllSounds", &pdg::SoundManager::stopAllSounds)
+#define SpriteIdentity_Extra SpriteParts_Extra \
+    .function("_getNativeIdentity", emscripten::optional_override([](const pdg::Sprite& sprite){return reinterpret_cast<uintptr_t>(&sprite);}))
+#define LayerIdentity_Extra \
+    .function("_getNativeIdentity", emscripten::optional_override([](const pdg::SpriteLayer& layer){return reinterpret_cast<uintptr_t>(&layer);}))
 #ifdef PDG_SPRITER_SUPPORT
-#define Sprite_Extra \
+#define Sprite_Extra SpriteIdentity_Extra \
     .function("_addNativeEventBridge", &pdg::emscriptenSpriteAddEventBridge) \
     .function("isSpriterSprite", &pdg::Sprite::isSpriterSprite) \
     .function("hasAnimation", &pdg::emscriptenSpriteHasAnimation) \
+    .function("seekAnimation", &pdg::emscriptenSpriteSeekAnimation) \
+    .function("transitionToAnimation", &pdg::emscriptenSpriteTransitionToAnimation) \
+    .function("isAnimationTransitioning", &pdg::Sprite::isAnimationTransitioning) \
+    .function("getAnimationTransitionProgress", &pdg::Sprite::getAnimationTransitionProgress) \
+    .function("supportsAnimationPhysics", emscripten::optional_override([](const pdg::Sprite&){return pdg::Sprite::supportsAnimationPhysics();})) \
+    .function("isAnimationPhysicsEnabled", &pdg::Sprite::isAnimationPhysicsEnabled) \
+    .function("setupAnimationPhysics", &pdg::emscriptenSpriteSetupAnimationPhysics) \
+    .function("setupPhysicsFromAnimationRig", &pdg::emscriptenSpriteSetupPhysicsFromAnimationRig) \
+    .function("attachAnimationPhysicsPart", &pdg::emscriptenSpriteAttachAnimationPhysicsPart, emscripten::allow_raw_pointers()) \
+    .function("detachAnimationPhysicsPart", &pdg::emscriptenSpriteDetachAnimationPhysicsPart, emscripten::allow_raw_pointers()) \
+    .function("isAnimationPhysicsPartAttached", &pdg::Sprite::isAnimationPhysicsPartAttached, emscripten::allow_raw_pointers()) \
+    .function("setAnimationPhysicsRoot", &pdg::emscriptenSpriteSetAnimationPhysicsRoot) \
+    .function("getAnimationPhysicsRoot", &pdg::emscriptenSpriteGetAnimationPhysicsRoot) \
+    .function("clearAnimationPhysicsRoot", &pdg::emscriptenSpriteClearAnimationPhysicsRoot) \
+    .function("getAnimationPhysicsSetupWarnings", &pdg::emscriptenSpriteGetAnimationPhysicsSetupWarnings) \
+    .function("setAnimationPhysicsMode", &pdg::emscriptenSpriteSetAnimationPhysicsMode) \
+    .function("getAnimationPhysicsMode", &pdg::emscriptenSpriteGetAnimationPhysicsMode) \
+    .function("setAnimationPhysicsDriveSettings", &pdg::emscriptenSpriteSetAnimationPhysicsDriveSettings) \
+    .function("getAnimationPhysicsDriveSettings", &pdg::emscriptenSpriteGetAnimationPhysicsDriveSettings) \
+    .function("disableAnimationPhysics", &pdg::emscriptenSpriteDisableAnimationPhysics) \
+    .function("addAnimationDrawable", &pdg::emscriptenSpriteAddAnimationDrawable) \
+    .function("removeAnimationDrawable", &pdg::Sprite::removeAnimationDrawable) \
+    .function("clearAnimationDrawables", &pdg::Sprite::clearAnimationDrawables) \
+    .function("setAnimationDrawableEnabled", &pdg::emscriptenSpriteSetAnimationDrawableEnabled) \
+    .function("getAnimationDrawableError", &pdg::emscriptenSpriteGetAnimationDrawableError) \
+    .function("getAnimationDrawBounds", &pdg::emscriptenSpriteGetAnimationDrawBounds) \
+    .function("addAnimationIK", &pdg::emscriptenSpriteAddAnimationIK) \
+    .function("setAnimationIKTarget", &pdg::emscriptenSpriteSetAnimationIKTarget) \
+    .function("getAnimationIKResult", &pdg::emscriptenSpriteGetAnimationIKResult) \
+    .function("addAnimationModifier", &pdg::emscriptenSpriteAddAnimationModifier) \
+    .function("removeAnimationModifier", &pdg::Sprite::removeAnimationModifier) \
+    .function("clearAnimationModifiers", &pdg::Sprite::clearAnimationModifiers) \
+    .function("getAnimationModifierError", &pdg::emscriptenSpriteGetAnimationModifierError) \
+    .function("setAnimationSource", &pdg::emscriptenSpriteSetAnimationSource) \
+    .function("getAnimationSource", &pdg::Sprite::getAnimationSource) \
+    .function("isAnimationDrawingSupported", &pdg::Sprite::isAnimationDrawingSupported) \
+    .function("_setAnimationDebugDraw", &pdg::emscriptenSpriteSetAnimationDebugDraw) \
+    .function("getAnimationDebugDraw", &pdg::Sprite::getAnimationDebugDraw) \
+    .function("enableAnimationPose", &pdg::emscriptenSpriteEnableAnimationPose) \
+    .function("disableAnimationPose", &pdg::Sprite::disableAnimationPose) \
+    .function("isAnimationPoseEnabled", &pdg::Sprite::isAnimationPoseEnabled) \
+    .function("getAnimationRigError", &pdg::Sprite::getAnimationRigError) \
+    .function("getAnimationPose", &pdg::emscriptenSpriteGetAnimationPose) \
+    .function("sampleAnimationPose", &pdg::emscriptenSpriteSampleAnimationPose) \
+    .function("getAnimationBoneNames", &pdg::emscriptenSpriteGetAnimationBoneNames) \
+    .function("getAnimationBindingNames", &pdg::emscriptenSpriteGetAnimationBindingNames) \
+    .function("_getAnimationBoneTransform", &pdg::emscriptenSpriteGetAnimationBoneTransform) \
+    .function("_getAnimationBindingTransform", &pdg::emscriptenSpriteGetAnimationBindingTransform) \
+    .function("setAnimationBoneTransform", &pdg::emscriptenSpriteSetAnimationBoneTransform) \
+    .function("clearAnimationBoneTransforms", &pdg::Sprite::clearAnimationBoneTransforms) \
     .function("startAnimation", &pdg::emscriptenSpriteStartAnimation) \
-    .function("setEntityScale", &pdg::Sprite::setEntityScale, emscripten::return_value_policy::reference()) \
     .function("applyCharacterMap", &pdg::emscriptenSpriteApplyCharacterMap) \
     .function("removeCharacterMap", &pdg::emscriptenSpriteRemoveCharacterMap) \
     .function("removeAllCharacterMaps", &pdg::Sprite::removeAllCharacterMaps) \
@@ -209,22 +270,30 @@ namespace pdg {
     .function("getAttachPoint", &pdg::emscriptenSpriteGetAttachPoint) \
     .function("attachSprite", &pdg::emscriptenSpriteAttachSprite, emscripten::allow_raw_pointers()) \
     .function("detachSprite", &pdg::Sprite::detachSprite, emscripten::allow_raw_pointers()) \
-    .function("getAttachedSprite", &pdg::emscriptenSpriteGetAttachedSprite, emscripten::allow_raw_pointers()) \
+    .function("getAttachedSprite", emscripten::optional_override([](const pdg::Sprite& sprite, const std::string& name) { return pdg::browserRetain(pdg::emscriptenSpriteGetAttachedSprite(sprite,name)); })) \
     .function("activateSubEntity", &pdg::emscriptenSpriteActivateSubEntity) \
     .function("getSpriterCollisionBox", &pdg::emscriptenSpriteGetCollisionBox) \
     .function("isSpriterCollisionActive", &pdg::emscriptenSpriteIsCollisionActive) \
     .function("getSpriterCollisionBoxCount", &pdg::Sprite::getSpriterCollisionBoxCount) \
     .function("getSpriterCollisionBoxName", &pdg::emscriptenSpriteGetCollisionBoxName)
-#define SpriteLayer_Extra \
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+#define AnimationLayerPhysics_Extra \
+    .function("_setGravity", &pdg::SpriteLayer::setGravity) \
+    .function("setDamping", &pdg::SpriteLayer::setDamping) \
+    .function("setKeepGravityDownward", &pdg::SpriteLayer::setKeepGravityDownward)
+#else
+#define AnimationLayerPhysics_Extra
+#endif
+#define SpriteLayer_Extra LayerIdentity_Extra ParticleLayer_Extra AnimationLayerPhysics_Extra \
     .function("_addNativeEventBridge", &pdg::emscriptenSpriteLayerAddEventBridge) \
-    .function("_createSpriteFromSpriterFile", &pdg::emscriptenLayerCreateSpriteFromFile, emscripten::allow_raw_pointers()) \
-    .function("createSpriteFromSpriterEntity", &pdg::emscriptenLayerCreateSpriteFromEntity, emscripten::allow_raw_pointers()) \
+    .function("_createSpriteFromSpriterFile", emscripten::optional_override([](pdg::SpriteLayer& layer, const std::string& path, const std::string& entity) { return pdg::browserRetain(pdg::emscriptenLayerCreateSpriteFromFile(layer,path,entity)); })) \
+    .function("createSpriteFromSpriterEntity", emscripten::optional_override([](pdg::SpriteLayer& layer, const std::string& entity) { return pdg::browserRetain(pdg::emscriptenLayerCreateSpriteFromEntity(layer,entity)); })) \
     .function("applyCharacterMapToAll", &pdg::emscriptenLayerApplyCharacterMap) \
     .function("removeCharacterMapFromAll", &pdg::emscriptenLayerRemoveCharacterMap) \
     .function("enableSpriterEvents", &pdg::SpriteLayer::enableSpriterEvents)
 #else
-#define Sprite_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteAddEventBridge)
-#define SpriteLayer_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteLayerAddEventBridge)
+#define Sprite_Extra SpriteIdentity_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteAddEventBridge)
+#define SpriteLayer_Extra LayerIdentity_Extra ParticleLayer_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteLayerAddEventBridge)
 #endif
 #define TileLayer_Extra 
 #define TimerManager_Extra 
@@ -232,3 +301,21 @@ namespace pdg {
 
 
 #include "pdg.embind"
+
+// Quad uses the ordinary JavaScript {points: [Point, Point, Point, Point]} shape.
+// Keep the hand-written value conversion alongside other embind adapters.
+namespace pdg {
+static std::array<Point,4> drawingQuadPoints(const Quad& quad) {
+    return {{quad.points[0],quad.points[1],quad.points[2],quad.points[3]}};
+}
+static void setDrawingQuadPoints(Quad& quad, const std::array<Point,4>& points) {
+    for (unsigned i=0;i<4;++i) quad.points[i]=points[i];
+}
+}
+EMSCRIPTEN_BINDINGS(pdg_quad_value) {
+    emscripten::value_array<std::array<pdg::Point,4>>("_QuadPointsValue")
+        .element(emscripten::index<0>()).element(emscripten::index<1>())
+        .element(emscripten::index<2>()).element(emscripten::index<3>());
+    emscripten::value_object<pdg::Quad>("_QuadValue")
+        .field("points", &pdg::drawingQuadPoints, &pdg::setDrawingQuadPoints);
+}

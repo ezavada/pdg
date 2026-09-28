@@ -8,9 +8,12 @@ A Sprite will generate one of these events when it completes an animation includ
 
 For frame based animations -- that is, calls to pdg.Sprite.startFrameAnimation() -- if it reaches the last frame and is not set to loop, action will be #pdg.action_AnimationEnd. For looping animations #pdg.action_AnimationLoop will be received each time the animation completes and starts over with the first frame. 
 
-When a Spriter animation blend -- started by pdg.Sprite.blendToAnimation() -- completes, action will be #pdg.action_AnimationBlendComplete
+When a Spriter animation blend started by pdg::Sprite::blendToAnimation() or
+pdg::Sprite::transitionToAnimation() completes, action is
+pdg::action_AnimationBlendComplete.
 
-For Spriter triggers embedded in a Spriter animation, action will be #pdg.action_SpriterTrigger
+Authored Spriter triggers are delivered as pdg::eventType_SpriteTriggerEvent
+with a pdg::SpriteTriggerEvent payload. Subscribe to that event type for triggers.
 
 For fades, one of three action types are possible: #pdg.action_FadeComplete for calls to pdg.Sprite.fadeTo(), #pdg.action_FadeInComplete for calls to pdg.Sprite.fadeIn(), and #pdg.action_FadeOutComplete for calls to pdg.Sprite.fadeOut().
 
@@ -26,7 +29,8 @@ When a Sprite has setWantsCollideWallEvents(true), #pdg.action_ExitLayer events 
         inLayer: {}        // the SpriteLayer that contains the Sprite
     }
 
-\note At this time other kinds of animations such as calls to pdg::Sprite.startAnimation() do not generate any events.
+\note Spriter eventline notifications require pdg::Sprite::enableSpriterEvents(true).
+See \ref animation_trigger_event for crossing, looping, seek, and transition rules.
 
 \see pdg.eventType_SpriteAnimate
 \see pdg.Sprite.startFrameAnimation()
@@ -40,5 +44,6 @@ When a Sprite has setWantsCollideWallEvents(true), #pdg.action_ExitLayer events 
 
 \ingroup Events
 \ingroup Animation
+\ingroup Sprites
 
 **/ }

@@ -39,6 +39,7 @@
 
 #include <cstdlib>
 #include <string>
+#include <span>
 
 namespace pdg {
 
@@ -50,10 +51,13 @@ struct MemBlock {
 	bool	owned;
     MemBlock(char* p, size_t n, bool own);
     MemBlock(size_t n);
-    std::string& getData();
+    std::string getData() const;
     size_t  getDataSize();
     unsigned char getByte(size_t i);
-    std::string& getBytes(size_t start, size_t len);
+    std::string getBytes(size_t start, size_t len) const;
+    std::span<const char> view() const { return {ptr, ptr ? bytes : 0}; }
+    MemBlock(const MemBlock&) = delete;
+    MemBlock& operator=(const MemBlock&) = delete;
     ~MemBlock();
   #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	SCRIPT_OBJECT_REF mMemBlockScriptObj;

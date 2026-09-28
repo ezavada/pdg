@@ -1,5 +1,20 @@
 var searchData=
 [
-  ['unknown_5fobject_0',['unknown_object',['../classpdg_1_1_i_deserializer.html#a66ab6873068af0dddffa2eb75fbc8467',1,'pdg::IDeserializer::unknown_object'],['../classpdg_1_1_i_deserializer.html#a2e789e573cf2d0d9c68a55955c868afa',1,'pdg::IDeserializer::unknown_object'],['../classpdg_1_1_i_deserializer.html#a98d09047f17c2afa4b8198f2bfbb1757',1,'pdg::IDeserializer::unknown_object']]],
-  ['userdata_1',['userData',['../structpdg_1_1_event_manager_1_1_event_queue_entry.html#a5f0582e72776bd48d89ee923e1201a2e',1,'pdg::EventManager::EventQueueEntry::userData'],['../structpdg_1_1_timer_info.html#a2e294dd14122c554baa0665072b4ca7a',1,'pdg::TimerInfo::userData'],['../classpdg_1_1_sprite.html#a5f0582e72776bd48d89ee923e1201a2e',1,'pdg::Sprite::userData']]]
+  ['tags_0',['tags',['../structpdg_1_1_animation_tag_set.html#a4b709da72927167a1ab690264eebe28c',1,'pdg::AnimationTagSet::tags'],['../structpdg_1_1_animation_metadata.html#a146f98a503496bd8a33cdf5503bc7bd4',1,'pdg::AnimationMetadata::tags']]],
+  ['targetrotation_1',['targetRotation',['../structpdg_1_1_animation_two_bone_i_k.html#a86f6b8ba4f99e52baa042b99310591aa',1,'pdg::AnimationTwoBoneIK']]],
+  ['targetsprite_2',['targetSprite',['../structpdg_1_1_sprite_collide_info.html#a5de132836f74f87d7759b661d58c9216',1,'pdg::SpriteCollideInfo::targetSprite'],['../structpdg_1_1_sprite_joint_break_info.html#a5de132836f74f87d7759b661d58c9216',1,'pdg::SpriteJointBreakInfo::targetSprite']]],
+  ['targetx_3',['targetX',['../structpdg_1_1_animation_two_bone_i_k.html#a06d96b72e06941780b4068a5103b5321',1,'pdg::AnimationTwoBoneIK']]],
+  ['targety_4',['targetY',['../structpdg_1_1_animation_two_bone_i_k.html#a006526828fab3ab4bc8ed361e1b09439',1,'pdg::AnimationTwoBoneIK']]],
+  ['timeseconds_5',['timeSeconds',['../structpdg_1_1_sprite_trigger_event_info.html#a3910cd18da6c4e32a52e1194478c745d',1,'pdg::SpriteTriggerEventInfo']]],
+  ['tip_6',['tip',['../structpdg_1_1_animation_two_bone_i_k.html#a8fcab81fd6008b83f39bd4c008704903',1,'pdg::AnimationTwoBoneIK']]],
+  ['top_7',['top',['../structpdg_1_1_animation_draw_bounds.html#a4467598fbba812fe1339ab4e83806573',1,'pdg::AnimationDrawBounds::top'],['../classpdg_1_1_rect_t.html#a840a6e82bf789f4846374af9e5578332',1,'pdg::RectT::top']]],
+  ['torque_8',['torque',['../structpdg_1_1_physics_drive_state.html#a42152a0ac0af68e8a1344e41bded6bb0',1,'pdg::PhysicsDriveState']]],
+  ['touchedsprite_9',['touchedSprite',['../structpdg_1_1_sprite_touch_info.html#ae0d9a8bb30221363cfbe6c64ca571b7a',1,'pdg::SpriteTouchInfo']]],
+  ['touchtype_10',['touchType',['../structpdg_1_1_sprite_touch_info.html#a387576fde71f979bf5303436b8e37378',1,'pdg::SpriteTouchInfo']]],
+  ['tracedepth_11',['traceDepth',['../classpdg_1_1_i_deserializer.html#ab78baae7c687410d451427c708d36621',1,'pdg::IDeserializer::traceDepth'],['../classpdg_1_1_i_serializer.html#ab78baae7c687410d451427c708d36621',1,'pdg::ISerializer::traceDepth']]],
+  ['trackingarea_12',['trackingArea',['../structpdg_1_1_mouse_tracking_info.html#a94387d6c9c2647fe42ace39fb3ab065e',1,'pdg::MouseTrackingInfo']]],
+  ['trackingref_13',['trackingRef',['../structpdg_1_1_mouse_tracking_info.html#a972461b685a5d3f209747b2b16d308d6',1,'pdg::MouseTrackingInfo']]],
+  ['triggername_14',['triggerName',['../structpdg_1_1_sprite_trigger_event_info.html#a40411d13b52bae4df089d02ff20452cf',1,'pdg::SpriteTriggerEventInfo']]],
+  ['tx_15',['tx',['../structpdg_1_1_spatial_transform.html#ab5058bdb429c88a34305bb8fda03fe04',1,'pdg::SpatialTransform']]],
+  ['ty_16',['ty',['../structpdg_1_1_spatial_transform.html#a7b0431ac1cbf4301da834aa1c3ba2f93',1,'pdg::SpatialTransform']]]
 ];

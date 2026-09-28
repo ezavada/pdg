@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "id": "quick-2026-09-28-m5-max",
+  "description": "September 28 native Release measurements after JavaScript binding and benchmark resource reuse improvements; browser references remain from September 27.",
+  "machine": {
+    "cpu": "Apple M5 Max",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "osRelease": "25.6.0"
+  },
+  "notes": [
+    "Individual benchmark reports are preserved verbatim. These are single-run reference measurements, not averaged regression thresholds.",
+    "Native and browser baselines are separate. No Node-plugin measurements have been pinned.",
+    "Scoring and fixed loads still use the historical ramp references; this baseline is only for result comparison."
+  ],
+  "targets": {
+    "native": {
+      "runtime": "v24.21.0",
+      "benchmarks": {
+        "bunnymark": {
+          "report": "quick-2026-09-28-m5-max/native/bunnymark.json",
+          "capturedAt": "2026-09-28T16:41:54.101Z",
+          "source": "artifacts/test-results/darwin/perf/reports/bunnymark.json",
+          "revision": "b16d9cbbb",
+          "changes": "Complete native Release run after the binding conversion fixes, BunnyMark reuse, and C++/JavaScript PDGMark resource reuse."
+        },
+        "pdgmark": {
+          "report": "quick-2026-09-28-m5-max/native/pdgmark.json",
+          "capturedAt": "2026-09-28T16:41:54.101Z",
+          "source": "artifacts/test-results/darwin/perf/reports/pdgmark.json",
+          "revision": "b16d9cbbb",
+          "changes": "Complete native Release run after the binding conversion fixes, BunnyMark reuse, and C++/JavaScript PDGMark resource reuse."
+        },
+        "canvasmark": {
+          "report": "quick-2026-09-28-m5-max/native/canvasmark.json",
+          "capturedAt": "2026-09-28T16:41:54.101Z",
+          "source": "artifacts/test-results/darwin/perf/reports/canvasmark.json",
+          "revision": "b16d9cbbb",
+          "changes": "Complete native Release run after the binding conversion fixes, BunnyMark reuse, and C++/JavaScript PDGMark resource reuse."
+        },
+        "cpp-bunnymark": {
+          "report": "quick-2026-09-28-m5-max/native/cpp-bunnymark.json",
+          "capturedAt": "2026-09-28T16:41:54.101Z",
+          "source": "artifacts/test-results/darwin/perf/reports/cpp-bunnymark.json",
+          "revision": "b16d9cbbb",
+          "changes": "Complete native Release run after the binding conversion fixes, BunnyMark reuse, and C++/JavaScript PDGMark resource reuse."
+        },
+        "cpp-pdgmark": {
+          "report": "quick-2026-09-28-m5-max/native/cpp-pdgmark.json",
+          "capturedAt": "2026-09-28T16:41:54.101Z",
+          "source": "artifacts/test-results/darwin/perf/reports/cpp-pdgmark.json",
+          "revision": "b16d9cbbb",
+          "changes": "Complete native Release run after the binding conversion fixes, BunnyMark reuse, and C++/JavaScript PDGMark resource reuse."
+        },
+        "animation-pipeline": {
+          "report": "quick-2026-09-28-m5-max/native/animation-pipeline.json",
+          "capturedAt": "2026-09-28T16:41:54.101Z",
+          "source": "artifacts/test-results/darwin/perf/reports/animation-pipeline.json",
+          "revision": "b16d9cbbb",
+          "changes": "Complete native Release run after the binding conversion fixes, BunnyMark reuse, and C++/JavaScript PDGMark resource reuse."
+        },
+        "cpp-collider": {
+          "report": "quick-2026-09-28-m5-max/native/cpp-collider.json",
+          "capturedAt": "2026-09-28T16:41:54.101Z",
+          "source": "artifacts/test-results/darwin/perf/reports/cpp-collider.json",
+          "revision": "b16d9cbbb",
+          "changes": "Complete native Release run after the binding conversion fixes, BunnyMark reuse, and C++/JavaScript PDGMark resource reuse."
+        },
+        "cpp-rig": {
+          "report": "quick-2026-09-28-m5-max/native/cpp-rig.json",
+          "capturedAt": "2026-09-28T16:41:54.101Z",
+          "source": "artifacts/test-results/darwin/perf/reports/cpp-rig.json",
+          "revision": "b16d9cbbb",
+          "changes": "Complete native Release run after the binding conversion fixes, BunnyMark reuse, and C++/JavaScript PDGMark resource reuse."
+        }
+      },
+      "build": {
+        "configuration": "Release",
+        "node": "24.21.0",
+        "hasGraphics": true,
+        "module": "pdg:embedded",
+        "executable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/pdg",
+        "resolvedExecutable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/pdg.app/Contents/MacOS/pdg",
+        "kind": "embedded",
+        "directory": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release"
+      }
+    },
+    "web": {
+      "runtime": "v24.3.0",
+      "benchmarks": {
+        "bunnymark": {
+          "report": "quick-2026-09-27-m5-max/web/bunnymark.json",
+          "capturedAt": "2026-09-27T21:30:44.482Z",
+          "source": "artifacts/test-results/darwin/perf-tessellation-cache/web/reports/bunnymark.json",
+          "revision": "096c00f6b",
+          "changes": "Lazy polygon tessellation caching, committed as 096c00f6b."
+        },
+        "pdgmark": {
+          "report": "quick-2026-09-27-m5-max/web/pdgmark.json",
+          "capturedAt": "2026-09-27T21:30:44.482Z",
+          "source": "artifacts/test-results/darwin/perf-tessellation-cache/web/reports/pdgmark.json",
+          "revision": "096c00f6b",
+          "changes": "Lazy polygon tessellation caching, committed as 096c00f6b."
+        },
+        "canvasmark": {
+          "report": "quick-2026-09-27-m5-max/web/canvasmark.json",
+          "capturedAt": "2026-09-27T21:40:32.305Z",
+          "source": "artifacts/test-results/darwin/canvasmark-ship/quick-web/reports/canvasmark.json",
+          "revision": "096c00f6b",
+          "changes": "096c00f6b plus the portable PNG decoder fix and removal of the browser retainData workaround (working tree)."
+        }
+      }
+    }
+  }
+}

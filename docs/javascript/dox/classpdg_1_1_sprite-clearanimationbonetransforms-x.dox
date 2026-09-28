@@ -1,0 +1,12 @@
+/**
+\fn pdg::Sprite::clearAnimationBoneTransforms()
+\brief Remove every persistent bone override.
+
+The next evaluation uses the selected source and modifiers without these overrides. Calling when pose access is disabled is harmless.
+
+\return No value.
+
+\note Call outside animation callbacks.
+
+\see setAnimationBoneTransform()
+*/

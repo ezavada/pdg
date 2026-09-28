@@ -26,12 +26,8 @@
 //   - Line mode cycling (2s per mode)
 //   - Line opacity cycling (2s cycle)
 //
-// KNOWN LIMITATIONS:
-//   - Scale/Skew: PDG's scale() and skew() transforms don't have center parameters,
-//     so they transform around global origin (0,0) instead of the object's center.
-//     rotation() works correctly because it accepts a center point parameter.
-//   - Blend Modes: The blendMode attribute exists but is not yet implemented in PDG's
-//     renderer. Blend mode row will show shapes without blending effects.
+// Yellow crosses mark fixed pivots on the rotation, scale, and skew rows.
+// The final page compares individual and combined transforms around a fixed pivot.
 
 console.log("=== SHAPE FILL & TRANSFORM TEST ===");
 
@@ -70,7 +66,7 @@ var CONFIG = {
 };
 
 // Check for command line parameters
-var waitForUser = false;
+var waitForUser = !!pdg.visualTestSession;
 var shapeToTest = null;
 
 for (var i = 0; i < process.argv.length; i++) {
@@ -82,7 +78,7 @@ for (var i = 0; i < process.argv.length; i++) {
 }
 
 if (waitForUser) {
-    console.log("Manual mode: Press SPACE to advance to next test, b to go back, ESC to quit");
+    console.log(pdg.visualTestSession ? pdg.visualTestSession.instructions : "Manual mode: Press SPACE to advance to next test, b to go back, ESC to quit");
 } else {
     console.log("Auto mode: Tests will advance automatically (30s each), press any key to advance early, ESC to quit");
 }
@@ -103,7 +99,8 @@ var SHAPES = [
     { name: "Complex Polygon", id: "complex" },
     { name: "Spiral Polygon", id: "spiral" },
     { name: "Hourglass", id: "hourglass" },
-    { name: "Self-Intersecting Hourglass", id: "selfintersect" }
+    { name: "Self-Intersecting Hourglass", id: "selfintersect" },
+    { name: "Transform Pivots", id: "transforms" }
 ];
 
 // Filter to specific shape if requested
@@ -123,16 +120,19 @@ if (shapeToTest) {
 // TEXTURES
 // =======================================================================================
 
-var rocksTexture = new pdg.Image("data/rocks.png");
-var yinYangTexture = new pdg.Image("data/test_image.png");
-var earthTexture = new pdg.Image("data/earthmap2.png");
-var canvasMarkTexture = new pdg.Image("perf/canvasmark2013/images/texture5.png");
-var bunnyMarkTexture = new pdg.Image("perf/bunnymark/wabbit.png");
-
-if (!rocksTexture || !yinYangTexture || !earthTexture) {
-    console.log("ERROR: Could not load test textures");
-    process.exit(1);
+function loadTexture(filename) {
+    var image = new pdg.Image(filename);
+    // A failed load can still return an Image object with empty dimensions.
+    if (!image || image.getWidth() <= 0 || image.getHeight() <= 0) {
+        throw new Error("Could not load shape-fill texture: " + filename);
+    }
+    return image;
 }
+var rocksTexture = loadTexture("data/rocks.png");
+var yinYangTexture = loadTexture("data/test_image.png");
+var earthTexture = loadTexture("data/earthmap2.png");
+var canvasMarkTexture = loadTexture("perf_tests/canvasmark2013/images/texture5.png");
+var bunnyMarkTexture = loadTexture("perf_tests/bunnymark/wabbit.png");
 
 // =======================================================================================
 // ANIMATION UTILITIES
@@ -626,6 +626,45 @@ function drawShapeAtCell(port, row, col, shapeId, time) {
             port.drawPolygon(selfIntersect, attrs);
             break;
     }
+    if (row >= 2 && row <= 4) drawPivot(port, cellCenterX, cellCenterY);
+}
+
+function drawPivot(port, x, y) {
+    var attrs = new pdg.Attributes().lineColor('yellow').lineStyle(pdg.lineStyle_Solid).lineThickness(2);
+    port.drawLine(new pdg.Point(x - 6, y), new pdg.Point(x + 6, y), attrs);
+    port.drawLine(new pdg.Point(x, y - 6), new pdg.Point(x, y + 6), attrs);
+}
+
+function drawTransformComparison(port, time) {
+    function label(value, x, y, size) {
+        port.drawText(value, new pdg.Point(x, y), new pdg.Attributes().fillColor('white')
+            .textSize(size || 18).textStyle(pdg.textStyle_Centered));
+    }
+    label('Fixed pivots and combined transforms', 600, 65, 28);
+    label('The yellow cross stays fixed. The gray outline is the original shape.', 600, 105);
+    var phase = time * Math.PI / 3000;
+    var sx = 1 + 0.3 * Math.sin(phase), sy = 1 - 0.2 * Math.sin(phase);
+    var skew = 0.3 * Math.sin(phase), angle = phase;
+    ['Scale', 'Skew', 'Scale + skew + rotation'].forEach(function(name, index) {
+        var x = 215 + index * 385, y = 420, center = new pdg.Point(x, y);
+        var rect = new pdg.Rect(x - 95, y - 60, x + 95, y + 60);
+        port.drawRect(rect, new pdg.Attributes().lineColor('#8195b2')
+            .lineStyle(pdg.lineStyle_Solid).lineThickness(2));
+        var attrs = new pdg.Attributes().fillColor(new pdg.Color(0.2, 0.75, 0.95, 0.55))
+            .lineColor('#58e6da').lineStyle(pdg.lineStyle_Solid).lineThickness(2);
+        if (index !== 1) attrs.scale(sx, sy, center);
+        if (index !== 0) attrs.skew(skew, -skew * 0.5, center);
+        if (index === 2) attrs.rotation(angle, center);
+        port.drawRect(rect, attrs);
+        // An off-center dot makes rotation and transform composition visible.
+        port.drawCircle(new pdg.Point(x + 65, y - 30), 8,
+            attrs.fillColor('white').lineStyle(pdg.lineStyle_None));
+        drawPivot(port, x, y);
+        label(name, x, 650, 20);
+    });
+    label('All transforms share the same pivot; the shape center must not drift.', 600, 745);
+    label(pdg.visualTestSession ? pdg.visualTestSession.instructions : 'Press any key to advance, ESC to quit',
+        600, 840, 15);
 }
 
 // Draw the complete grid for current shape
@@ -634,6 +673,10 @@ function drawShapeGrid(port, shapeInfo, time) {
     var portRect = port.getDrawingArea();
     var bgAttrs = new pdg.Attributes().fillColor(new pdg.Color(0.1, 0.1, 0.15, 1.0));
     port.drawRect(portRect, bgAttrs);
+    if (shapeInfo.id === 'transforms') {
+        drawTransformComparison(port, time);
+        return;
+    }
     
     // Draw main title (baseline position - text extends above this)
     var mainTitleY = 55;  // Moved down 20px
@@ -699,7 +742,7 @@ function drawShapeGrid(port, shapeInfo, time) {
     var blendNames = ["Normal", "Additive", "Multiply", "Screen", "Darken", "Lighten"];
     
     var infoText = "Color Hue: " + currentHue + "° | Blend Mode: " + blendNames[currentBlend] + 
-                   " | " + (waitForUser ? "Press SPACE to continue" : "Press any key to advance, ESC to quit");
+                   " | " + (pdg.visualTestSession ? pdg.visualTestSession.instructions : waitForUser ? "Press SPACE to continue" : "Press any key to advance, ESC to quit");
     port.drawText(infoText, new pdg.Point(CONFIG.windowWidth / 2, footerY), footerAttrs);
 }
 
@@ -708,7 +751,7 @@ function drawShapeGrid(port, shapeInfo, time) {
 // =======================================================================================
 
 var port = null;
-var currentTestIndex = 0;
+var currentTestIndex = pdg.visualTestSession ? pdg.visualTestSession.page : 0;
 var testStartTime = 0;
 var testTimeout = null;
 
@@ -731,7 +774,7 @@ function setupDrawHandler() {
     return pdg.on(pdg.eventType_PortDraw, function(evt) {
         if (evt.port !== port) return false;
         
-        var currentTime = Date.now();
+        var currentTime = (pdg.visualTestSession ? pdg.visualTestSession.now() : Date.now());
         var elapsedTime = currentTime - testStartTime;
         
         var shapeInfo = SHAPES[currentTestIndex];
@@ -742,6 +785,7 @@ function setupDrawHandler() {
 }
 
 function setupKeyHandler() {
+    if (pdg.visualTestSession) return null;
     return pdg.on(pdg.eventType_KeyPress, function(evt) {
         if (evt.unicode == pdg.key_Escape) {
             console.log("ESC pressed - quitting...");
@@ -781,7 +825,7 @@ function advanceToNextTest() {
 }
 
 function startCurrentTest() {
-    testStartTime = Date.now();
+    testStartTime = (pdg.visualTestSession ? pdg.visualTestSession.now() : Date.now());
     console.log("Starting test " + (currentTestIndex + 1) + "/" + SHAPES.length + ": " + SHAPES[currentTestIndex].name);
     
     if (!waitForUser) {

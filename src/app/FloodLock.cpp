@@ -1,3 +1,4 @@
+#include <format>
 // -----------------------------------------------
 // floodlock.cpp
 // 
@@ -101,8 +102,7 @@ FloodLock::floodCheck( uint32 evState )
 		}
 	}
 #ifdef FLOOD_DEBUG
-	OS::_DOUT( "+++ floodCheck: time[%ld] queue[%d] result[%d] locked[%d]", OS::getMilliseconds(),
-		numQueued(), result, locked );
+	OS::_DOUT("%s", std::format("+++ floodCheck: time[{}] queue[{}] result[{}] locked[{}]", OS::getMilliseconds(), numQueued(), result, locked).c_str());
 #endif
 
 	return result;
@@ -139,7 +139,7 @@ FloodLock::expireQueue()		// remove any items older than current_time - wSize;
 {
 	FloodLock::floodResult fR = FloodLock::SUCCESS;
 
-	uint32 cutOff = OS::getMilliseconds() - wSize;
+	ms_time cutOff = OS::getMilliseconds() - wSize;
 	if (last_addition >= cutOff) {		// Some of the entries are within the window
 		for (bool keepGoing=true; keepGoing && (mFldLst.size() > 0); ) {
 			FloodEvent& fEv = mFldLst.front();

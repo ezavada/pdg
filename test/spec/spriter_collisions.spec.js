@@ -3,7 +3,7 @@
 //
 // test suite for Spriter Collision Box functionality
 //
-// Tests the new collide_SpriterCollisionBox collision type and related features
+// Tests authored box queries and the shared animation collider source
 //
 // -----------------------------------------------
 
@@ -27,36 +27,6 @@ describe('Spriter Collision Boxes' + (hasSpriterSupport ? ' (Spriter Support Ena
     var spriterSprite2;
     var regularSprite;
 
-    function waitForCondition(conditionFn, description, maxWaitTime) {
-        maxWaitTime = maxWaitTime || 1000;
-        var startTime = pdg.tm.getMilliseconds();
-
-        waitsFor(function() {
-            var currentTime = pdg.tm.getMilliseconds();
-            if (currentTime - startTime > maxWaitTime) {
-                console.log("Timeout waiting for condition: " + description);
-                return true;
-            }
-            return conditionFn();
-        }, description, maxWaitTime + 100);
-    }
-
-    function getSpriterCollisionBoxNames(sprite) {
-        var names = [];
-        var count = sprite.getSpriterCollisionBoxCount();
-        for (var i = 0; i < count; i++) {
-            var name = sprite.getSpriterCollisionBoxName(i);
-            if (name) {
-                names.push(name);
-            }
-        }
-        return names;
-    }
-
-    function boxesAreReady(sprite) {
-        return sprite && sprite.getSpriterCollisionBoxCount() > 0;
-    }
-    
     beforeEach(function() {
         // These API tests do not require a dedicated graphics port.
         spriteLayer = pdg.createSpriteLayer();
@@ -92,27 +62,38 @@ describe('Spriter Collision Boxes' + (hasSpriterSupport ? ' (Spriter Support Ena
         regularSprite = null;
     });
     
-    describe('Collision Type Support', function() {
-        it('should support collide_SpriterCollisionBox collision type', function() {
-            expect(pdg.collide_SpriterCollisionBox).toBeDefined();
-            expect(pdg.collide_SpriterCollisionBox).toBe(5);
+    describe('Shared Collider artwork adapters', function() {
+        it('uses the same read-only collider association and preserves configuration', function() {
+            const c=spriterSprite1.setupCollider().setSensor(true).setGroup(17);
+            expect(spriterSprite1.setupAnimationCollider()).toBe(c);
+            expect(c.getGeometrySource()).toBe(pdg.colliderSource_Animation);
+            expect(c.isSensor()).toBe(true);expect(c.getGroup()).toBe(17);
         });
-        
-        it('should allow enabling Spriter collision boxes', function() {
-            if (spriterSprite1) {
-                spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-                expect(spriterSprite1.getCollisionType()).toBe(pdg.collide_SpriterCollisionBox);
-            }
+        it('rejects an animation source on a frame-only Sprite without creating a collider', function() {
+            expect(()=>regularSprite.setupAnimationCollider()).toThrow();
+            expect(regularSprite.collider).toBe(pdg.Collider.NoCollider);
         });
-        
-        it('should handle enabling Spriter collisions on non-Spriter sprites gracefully', function() {
-            // Should not crash when enabling on regular sprites
-            expect(function() {
-                regularSprite.enableCollisions(pdg.collide_SpriterCollisionBox);
-            }).not.toThrow();
+        it('retains additive geometry and source IDs as animation advances', function() {
+            const sprite=spriteLayer.createSpriteFromSpriterFile(process.cwd()+'/data/spriter-regression/arm.scml');
+            sprite.pauseAnimation();expect(sprite.enableAnimationPose('reference')).toBe(true);
+            const c=sprite.setupAnimationCollider();
+            expect(c.getShapeCount()).toBe(1);
+            const source=c.getShapeId(0), before=c.getBounds();
+            expect(c.getShapeName(source)).toBe('hitbox');
+            const id=c.addCircle(3,new pdg.Point(1000,0));
+            sprite.seekAnimation('reach',.25);
+            expect(c.getGeometrySource()).toBe(pdg.colliderSource_Animation);
+            expect(c.getCircleRadius(id)).toBe(3);
+            expect(c.getShapeCount()).toBe(2);expect(c.getShapeId(0)).toBe(source);
+            expect(()=>c.removeShape(source)).toThrow();
+            expect(c.removeShape(id)).toBe(true);
+            const after=c.getBounds();
+            expect(Math.abs(after.left-before.left)+Math.abs(after.top-before.top)).toBeGreaterThan(1);
+            const center=sprite.getSpriterCollisionBox('hitbox').getQuad().centerPoint();
+            expect(c.contains(center)).toBe(true);
         });
     });
-    
+
     describe('Spriter Collision Box API', function() {
         it('should have getSpriterCollisionBox method', function() {
             if (spriterSprite1) {
@@ -193,300 +174,16 @@ describe('Spriter Collision Boxes' + (hasSpriterSupport ? ' (Spriter Support Ena
         });
     });
     
-    describe('Event-Driven Collision Detection with pdg.run()', function() {
-        it('should detect collisions between Spriter sprites using event handlers', function() {
-            if (!spriterSprite1 || !spriterSprite2) {
-                expect(true).toBe(true);
-                return;
-            }
-            
-            var collisionEvent1 = null;
-            var collisionEvent2 = null;
-            
-            // Enable Spriter collision boxes
-            waitForCondition(function() {
-                return boxesAreReady(spriterSprite1) && boxesAreReady(spriterSprite2);
-            }, "Spriter collision boxes to become active", 500);
-
-            runs(function() {
-                spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-                spriterSprite2.enableCollisions(pdg.collide_SpriterCollisionBox);
-
-                spriterSprite1.onCollideSprite(function(event) {
-                    collisionEvent1 = event;
-                    return true;
-                });
-                
-                spriterSprite2.onCollideSprite(function(event) {
-                    collisionEvent2 = event;
-                    return true;
-                });
-
-                // Keep the sprites overlapping, but not perfectly co-located, so
-                // the collision normal stays well-defined across frames.
-                spriterSprite1.setLocation(new pdg.Point(100, 100));
-                spriterSprite2.setLocation(new pdg.Point(110, 100));
-                
-                var collisionType1 = spriterSprite1.getCollisionType();
-                var collisionType2 = spriterSprite2.getCollisionType();
-                expect(collisionType1).toBe(pdg.collide_SpriterCollisionBox);
-                expect(collisionType2).toBe(pdg.collide_SpriterCollisionBox);
-            });
-
-            waitForCondition(function() {
-                return !!collisionEvent1 && !!collisionEvent2;
-            }, "Spriter sprites to report collisions", 500);
-
-            runs(function() {
-                expect(collisionEvent1).toBeDefined();
-                expect(collisionEvent2).toBeDefined();
-
-                expect(collisionEvent1.action).toBe(pdg.action_CollideSprite);
-                expect(collisionEvent1.targetSprite).toBeDefined();
-                expect(typeof collisionEvent1.isFirstContact).toBe('boolean');
-                if (collisionEvent1.collisionName !== null) {
-                    expect(typeof collisionEvent1.collisionName).toBe('string');
-                }
-                if (collisionEvent1.withCollisionName !== null) {
-                    expect(typeof collisionEvent1.withCollisionName).toBe('string');
-                }
-
-                expect(collisionEvent2.action).toBe(pdg.action_CollideSprite);
-                expect(collisionEvent2.targetSprite).toBeDefined();
-                expect(typeof collisionEvent2.isFirstContact).toBe('boolean');
-                if (collisionEvent2.collisionName !== null) {
-                    expect(typeof collisionEvent2.collisionName).toBe('string');
-                }
-                if (collisionEvent2.withCollisionName !== null) {
-                    expect(typeof collisionEvent2.withCollisionName).toBe('string');
-                }
-            });
-        });
-        
-        it('should handle collision events with specific collision box names', function() {
-            if (!spriterSprite1 || !spriterSprite2) {
-                expect(true).toBe(true);
-                return;
-            }
-            
-            var collisionBoxNames1 = [];
-            var collisionBoxNames2 = [];
-            var collisionEvent = null;
-            
-            // Enable Spriter collision boxes
-            waitForCondition(function() {
-                return boxesAreReady(spriterSprite1) && boxesAreReady(spriterSprite2);
-            }, "Spriter collision boxes to become active", 500);
-
-            runs(function() {
-                collisionBoxNames1 = getSpriterCollisionBoxNames(spriterSprite1);
-                collisionBoxNames2 = getSpriterCollisionBoxNames(spriterSprite2);
-                expect(collisionBoxNames1.length).toBeGreaterThan(0);
-                expect(collisionBoxNames2.length).toBeGreaterThan(0);
-
-                spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-                spriterSprite2.enableCollisions(pdg.collide_SpriterCollisionBox);
-                spriterSprite1.onCollideSprite(function(event) {
-                    collisionEvent = event;
-                    return true;
-                });
-
-                spriterSprite1.setLocation(new pdg.Point(100, 100));
-                spriterSprite2.setLocation(new pdg.Point(110, 100));
-            });
-
-            waitForCondition(function() {
-                return !!collisionEvent && collisionEvent.collisionName !== null && collisionEvent.withCollisionName !== null;
-            }, "Spriter collision event to include box names", 500);
-
-            runs(function() {
-                expect(collisionEvent).toBeDefined();
-                expect(collisionEvent.action).toBe(pdg.action_CollideSprite);
-                expect(collisionEvent.collisionName).not.toBeNull();
-                expect(collisionEvent.withCollisionName).not.toBeNull();
-                expect(collisionBoxNames1.indexOf(collisionEvent.collisionName) >= 0).toBe(true);
-                expect(collisionBoxNames2.indexOf(collisionEvent.withCollisionName) >= 0).toBe(true);
-            });
-        });
-        
-        it('should detect first contact vs ongoing collisions', function() {
-            if (!spriterSprite1 || !spriterSprite2) {
-                expect(true).toBe(true);
-                return;
-            }
-            
-            var collisionCount = 0;
-            var firstContactCount = 0;
-            var ongoingCollisionCount = 0;
-            
-            // Enable Spriter collision boxes
-            waitForCondition(function() {
-                return boxesAreReady(spriterSprite1) && boxesAreReady(spriterSprite2);
-            }, "Spriter collision boxes to become active", 500);
-
-            runs(function() {
-                function trackCollision(event) {
-                    collisionCount++;
-                    
-                    if (event.isFirstContact) {
-                        firstContactCount++;
-                    } else {
-                        ongoingCollisionCount++;
-                    }
-                    return true;
-                }
-
-                spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-                spriterSprite2.enableCollisions(pdg.collide_SpriterCollisionBox);
-                
-                spriterSprite1.onCollideSprite(trackCollision);
-                spriterSprite2.onCollideSprite(trackCollision);
-
-                spriterSprite1.setLocation(new pdg.Point(100, 100));
-                spriterSprite2.setLocation(new pdg.Point(110, 100));
-            });
-
-            waitForCondition(function() {
-                return collisionCount >= 2 && firstContactCount > 0 && ongoingCollisionCount > 0;
-            }, "Spriter collision to report first and ongoing contact", 1000);
-
-            runs(function() {
-                expect(collisionCount).toBeGreaterThan(1);
-                expect(firstContactCount).toBeGreaterThan(0);
-                expect(ongoingCollisionCount).toBeGreaterThan(0);
-            });
-        });
-    });
-    
-    describe('Collision Detection', function() {
-        it('should detect collisions between Spriter sprites', function() {
-            spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-            spriterSprite2.enableCollisions(pdg.collide_SpriterCollisionBox);
-            
-            // Position sprites to overlap
-            spriterSprite1.setLocation(new pdg.Point(100, 100));
-            spriterSprite2.setLocation(new pdg.Point(100, 100));
-            
-            // Verify collision type is set correctly
-            var collisionType1 = spriterSprite1.getCollisionType();
-            var collisionType2 = spriterSprite2.getCollisionType();
-            expect(collisionType1).toBe(pdg.collide_SpriterCollisionBox);
-            expect(collisionType2).toBe(pdg.collide_SpriterCollisionBox);
-        });
-        
-        it('should detect point collisions with Spriter collision boxes', function() {
-            spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-            spriterSprite1.setLocation(new pdg.Point(100, 100));
-            
-            // Test that collision detection is available
-            var collisionCount = spriterSprite1.getSpriterCollisionBoxCount();
-            expect(collisionCount >= 0).toBe(true);
-        });
-    });
-    
-    describe('Collision Event Information', function() {
-        it('should include collision box names in collision events', function() {
-            // FIXME: This test is not implemented yet
-            spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-            spriterSprite2.enableCollisions(pdg.collide_SpriterCollisionBox);
-            
-            spriterSprite1.setLocation(new pdg.Point(100, 100));
-            spriterSprite2.setLocation(new pdg.Point(100, 100));
-            
-            // Test that collision events would include collision box names
-            // Note: Actual collision detection happens during animation
-            var collisionCount = spriterSprite1.getSpriterCollisionBoxCount();
-            expect(collisionCount >= 0).toBe(true);
-        });
-        
-        it('should distinguish between first contact and ongoing collisions', function() {
-            // FIXME: This test is not implemented yet
-            // Test that the API supports first contact detection
-            var collisionCount = spriterSprite1.getSpriterCollisionBoxCount();
-            expect(collisionCount >= 0).toBe(true);
-        });
-    });
-    
-    describe('Performance Optimization', function() {
-        it('should use bounds optimization for collision detection', function() {
-            if (spriterSprite1) {
-                // Test that bounds optimization is available
-                var collisionCount = spriterSprite1.getSpriterCollisionBoxCount();
-                expect(collisionCount >= 0).toBe(true);
-            } else {
-                expect(true).toBe(true);
-            }
-        });
-    });
-    
-    describe('Integration with Existing Collision System', function() {
-        it('should work alongside other collision types', function() {
-            // FIXME: This test is not implemented yet
-            // Test that we can switch between collision types
-            spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-            var collisionType1 = spriterSprite1.getCollisionType();
-            expect(collisionType1).toBe(pdg.collide_SpriterCollisionBox);
-            
-            spriterSprite1.enableCollisions(pdg.collide_BoundingBox);
-            var collisionType2 = spriterSprite1.getCollisionType();
-            expect(collisionType2).toBe(pdg.collide_BoundingBox);
-            
-            spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-            var collisionType3 = spriterSprite1.getCollisionType();
-            expect(collisionType3).toBe(pdg.collide_SpriterCollisionBox);
-        });
-        
-        it('should handle collisions with non-Spriter sprites', function() {
-            // FIXME: This test is not implemented yet
-            // Test that Spriter sprites can collide with regular sprites
-            spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-            var collisionType = spriterSprite1.getCollisionType();
-            expect(collisionType).toBe(pdg.collide_SpriterCollisionBox);
-        });
-    });
-    
-    describe('Error Handling', function() {
-        
-        it('should handle invalid indices gracefully', function() {
-            var count = spriterSprite1.getSpriterCollisionBoxCount();
-            
-            // Test negative index
-            var name = spriterSprite1.getSpriterCollisionBoxName(-1);
-            expect(name).toBeNull();
-            
-            // Test index beyond count
-            name = spriterSprite1.getSpriterCollisionBoxName(count + 1);
-            expect(name).toBeNull();
-        });
-    });
-    
-    describe('Mouse Event Integration', function() {
-        it('should detect mouse collisions with Spriter collision boxes', function() {
-            // FIXME: This test is not implemented yet
-            spriterSprite1.enableCollisions(pdg.collide_SpriterCollisionBox);
-            spriterSprite1.setLocation(new pdg.Point(100, 100));
-            
-            // Test that mouse collision detection is available
-            var collisionCount = spriterSprite1.getSpriterCollisionBoxCount();
-            expect(collisionCount >= 0).toBe(true);
-        });
-    });
-
-    describe('Box Name Collection', function() {
-        it('should collect actual box names from Spriter file', function() {
-            // FIXME: This test is not implemented yet
-            // This test assumes a SCML file with collision boxes
-            // For now, we'll just check if the sprite has collision boxes
-            // and if its methods are available.
-            // A more robust test would involve loading a specific SCML file.
-            expect(typeof spriterSprite1.getSpriterCollisionBoxCount).toBe('function');
-            expect(typeof spriterSprite1.getSpriterCollisionBoxName).toBe('function');
-            expect(typeof spriterSprite1.getSpriterCollisionBox).toBe('function');
-            expect(typeof spriterSprite1.isSpriterCollisionActive).toBe('function');
-
-            // Check if the sprite has at least one collision box
-            var collisionCount = spriterSprite1.getSpriterCollisionBoxCount();
-            expect(collisionCount >= 0).toBe(true);
-        });
+    it('queries authored box geometry and keeps manual additions through source changes in pose', function() {
+        const c=spriterSprite1.setupAnimationCollider();
+        const id=c.addBox(new pdg.Rect(2000,2000,2004,2004));
+        expect(c.getShapeType(id)).toBe(pdg.collisionShape_Convex);
+        spriterSprite1.setLocation(20,30);
+        expect(c.getGeometrySource()).toBe(pdg.colliderSource_Animation);
+        expect(c.removeShape(id)).toBe(true);
+        c.setCircle(2);
+        expect(c.getGeometrySource()).toBe(pdg.colliderSource_Explicit);
+        expect(c.getShapeCount()).toBe(1);
+        expect(c.contains(new pdg.Point(20,30))).toBe(true);
     });
 });

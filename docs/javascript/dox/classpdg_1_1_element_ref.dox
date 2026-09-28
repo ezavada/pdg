@@ -2,6 +2,8 @@ namespace pdg { /**
 
 \class pdg::ElementRef
 
+\ingroup Graphics Animation
+
 \brief Reference to a drawing element that allows modification of its properties and control points
 
 **/ }

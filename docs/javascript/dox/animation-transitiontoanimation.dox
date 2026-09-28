@@ -1,0 +1,21 @@
+/**
+\fn pdg::Sprite::transitionToAnimation(string clip, number timeSeconds, number durationSeconds)
+\brief Blend the current pose into a selected clip.
+
+Starts the destination clip at the requested time while blending from the current base pose. Interrupting a transition captures its current blended pose. A zero duration switches immediately. Completion sends action_AnimationBlendComplete when the Sprite belongs to a layer.
+
+\param clip Name of a compatible clip in the current Spriter entity.
+\param timeSeconds Finite sample time in seconds. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints.
+\param durationSeconds Finite nonnegative blend duration in seconds; zero switches immediately.
+
+\return No value.
+
+\note Call enableAnimationPose() successfully before using this method. Call outside animation callbacks.
+
+\par Example
+\code{.js}
+sprite.transitionToAnimation('reference', 0, 0.3);
+\endcode
+
+\see seekAnimation(), isAnimationTransitioning(), getAnimationTransitionProgress()
+*/

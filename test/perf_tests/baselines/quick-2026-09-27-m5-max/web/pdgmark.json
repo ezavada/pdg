@@ -1,0 +1,133 @@
+{
+  "testName": "QuickPDGMark",
+  "benchmarkId": "pdgmark",
+  "language": "JavaScript",
+  "mode": "quick",
+  "synthetic": true,
+  "timestamp": "2026-09-27T21:31:10.573Z",
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "loadFactor": 1.5,
+  "framePacing": "uncapped",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "tests": {
+    "bitmap": {
+      "synthetic": true,
+      "fixedLoad": 4950,
+      "loadFactor": 1.5,
+      "referenceLoad": 3300,
+      "referenceScore": 3300,
+      "targetFPS": 60,
+      "estimatedCapacity": 3248.998907912344,
+      "score": 3249,
+      "averageFPS": 39.38180494439205,
+      "totalFrames": 119,
+      "durationSeconds": 3.021699999988079,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 25.39243697468974,
+        "minMs": 23.5,
+        "maxMs": 31.19999998807907,
+        "percentile95Ms": 27.099999964237213,
+        "percentile99Ms": 27.599999964237213
+      },
+      "atOrAboveTarget": false
+    },
+    "drawing": {
+      "synthetic": true,
+      "fixedLoad": 3750,
+      "loadFactor": 1.5,
+      "referenceLoad": 2500,
+      "referenceScore": 3000,
+      "targetFPS": 60,
+      "estimatedCapacity": 1159.5163160510187,
+      "score": 1391,
+      "averageFPS": 18.5522610568163,
+      "totalFrames": 56,
+      "durationSeconds": 3.0185,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 53.901785714285715,
+        "minMs": 51.30000001192093,
+        "maxMs": 66.30000001192093,
+        "percentile95Ms": 56.5,
+        "percentile99Ms": 66.30000001192093
+      },
+      "atOrAboveTarget": false
+    },
+    "alpha": {
+      "synthetic": true,
+      "fixedLoad": 3000,
+      "loadFactor": 1.5,
+      "referenceLoad": 2000,
+      "referenceScore": 2600,
+      "targetFPS": 60,
+      "estimatedCapacity": 1861.392720624896,
+      "score": 2420,
+      "averageFPS": 37.22785441249792,
+      "totalFrames": 112,
+      "durationSeconds": 3.0085,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 26.861607142857142,
+        "minMs": 25.600000023841858,
+        "maxMs": 35.80000001192093,
+        "percentile95Ms": 28.599999964237213,
+        "percentile99Ms": 28.80000001192093
+      },
+      "atOrAboveTarget": false
+    },
+    "polygon": {
+      "synthetic": true,
+      "fixedLoad": 3800,
+      "loadFactor": 4,
+      "referenceLoad": 950,
+      "referenceScore": 1425,
+      "targetFPS": 60,
+      "estimatedCapacity": 843.0393788130893,
+      "score": 1265,
+      "averageFPS": 13.311148086522463,
+      "totalFrames": 40,
+      "durationSeconds": 3.005,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 75.125,
+        "minMs": 70.09999996423721,
+        "maxMs": 83.39999997615814,
+        "percentile95Ms": 77.90000003576279,
+        "percentile99Ms": 83.39999997615814
+      },
+      "atOrAboveTarget": false
+    },
+    "text": {
+      "synthetic": true,
+      "fixedLoad": 450,
+      "loadFactor": 1.5,
+      "referenceLoad": 300,
+      "referenceScore": 420,
+      "targetFPS": 60,
+      "estimatedCapacity": 26.75444285878912,
+      "score": 37,
+      "averageFPS": 3.567259047838549,
+      "totalFrames": 11,
+      "durationSeconds": 3.083600000023842,
+      "warmupSeconds": 1,
+      "requestedSampleSeconds": 3,
+      "frameTime": {
+        "meanMs": 280.32727272944015,
+        "minMs": 235,
+        "maxMs": 344.69999998807907,
+        "percentile95Ms": 344.69999998807907,
+        "percentile99Ms": 344.69999998807907
+      },
+      "atOrAboveTarget": false
+    }
+  },
+  "compositeScore": 8362,
+  "engine": "emscripten",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+}

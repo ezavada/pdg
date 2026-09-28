@@ -4,4 +4,7 @@ namespace pdg { /**
 
 \brief returns the progress of the current animation blend (0.0 to 1.0)
 
+The value is 0 before a blend, stays fixed while paused, and remains 1 after
+completion until another animation or blend is started.
+
 **/ }

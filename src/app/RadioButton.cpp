@@ -27,6 +27,8 @@
 //
 // -----------------------------------------------
 
+#include <algorithm>
+#include <cmath>
 #include "pdg/msvcfix.h"  // fix non-standard MSVC
 
 #include "pdg/app/RadioButton.h"
@@ -100,7 +102,11 @@ void RadioButton::drawSelf()
 	int buttonSpace = mViewArea.width() / mMaxStrings;
 	Point buttonPoint(0,0);
 	Point textPoint(0,0);
-	int fontHeight = mPort->getCurrentFont()->getFontHeight(RADIO_TEXT_SIZE);
+	const Attributes textAttrs = getDrawingAttributes(Attributes().textSize(RADIO_TEXT_SIZE), true);
+    Font* font = textAttrs.getFont() ? textAttrs.getFont() : mPort->getCurrentFont(textAttrs.getTextStyle());
+    const float capHeight = font->getFontCapHeight(textAttrs.getTextSize(), textAttrs.getTextStyle());
+    const int diameter = std::max(1, static_cast<int>(std::lround(textAttrs.getTextSize())));
+    const float baseline = std::round((mViewArea.height()+capHeight)/2);
 
 	for(int i=0; i < mMaxStrings; i++)
 	{
@@ -112,21 +118,20 @@ void RadioButton::drawSelf()
 		const ControlStateAttributes& visual = mAttributes.state(state);
 		const ControlStateAttributes& normal = mAttributes.state(ControlState::Normal);
 		Image* image = visual.hasImage ? visual.image : normal.image;
-		int imageWidth = image ? image->width : 0;
-		int imageHeight = image ? image->height : RADIO_TEXT_SIZE;
-		Point imagePoint(buttonPoint.x, (mViewArea.height() - imageHeight) / 2);
+		int imageWidth = image ? image->width : diameter;
+		int imageHeight = image ? image->height : diameter;
+		Point imagePoint(buttonPoint.x, image ? (mViewArea.height() - imageHeight) / 2 : baseline-(capHeight+diameter)/2);
 		Rect imageRect(imagePoint, imageWidth, imageHeight);
-		mAttributes.draw(*mPort, localToGlobal(imageRect), state);
+		mAttributes.draw(*mPort, localToGlobal(imageRect), state, this);
 		Color textColor = visual.hasForeground ? visual.foreground : normal.foreground;
-		if (!image) {
-			Point center = localToGlobal(Point(imagePoint.x + 7, imagePoint.y + 7));
-			mPort->drawCircle(center, 7, Attributes().fillColor(PDG_WHITE_COLOR).lineColor(textColor));
-			if (selected) mPort->drawCircle(center, 3, Attributes().fillColor(textColor));
-			imageWidth = 14;
+		if (!image && !visual.hasDrawing && !visual.hasDrawRoutine && !normal.hasDrawing && !normal.hasDrawRoutine) {
+			Point center = localToGlobal(Point(imagePoint.x + diameter/2.0f, imagePoint.y + diameter/2.0f));
+			mPort->drawCircle(center, (diameter-1)/2.0f, getDrawingAttributes(Attributes().fillColor(PDG_WHITE_COLOR).lineStyle(lineStyle_Solid).lineColor(textColor), true));
+			if (selected) mPort->drawCircle(center, diameter*.25f, getDrawingAttributes(Attributes().fillColor(textColor), true));
 		}
 		textPoint.x += imageWidth + 5;
-		textPoint.y += (mViewArea.height() - fontHeight) / 2 + fontHeight;
-		mPort->drawText(mStrings[i].c_str(), localToGlobal(textPoint), Attributes().textSize(RADIO_TEXT_SIZE).fillColor(textColor));
+		textPoint.y += baseline;
+		mPort->drawText(mStrings[i].c_str(), localToGlobal(textPoint), getDrawingAttributes(Attributes().textSize(RADIO_TEXT_SIZE).fillColor(textColor), true));
 		buttonPoint.x += buttonSpace;
 	}
 
@@ -145,7 +150,7 @@ bool RadioButton::doLeftClick(const MouseInfo* mi, int id, int part)
 
 void RadioButton::doClick(int part)
 {
-	if (part >= 0 && part < mMaxStrings)
+	if (mIsEnabled && part >= 0 && part < mMaxStrings)
 	{
 		mSelectedIndex = part;
 		mAttributes.playClick();

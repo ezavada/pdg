@@ -70,7 +70,6 @@
 
 namespace pdg {
 
-extern std::string os_makeCanonicalPath(const char* fromPath, bool resolveSimLinks = true);
 
 extern HWND gMainHWND;
 
@@ -95,7 +94,7 @@ SoundDirectX::SoundDirectX(SoundManager* sndMgr, const char* soundName, const ch
 {
 #ifndef NO_SOUND
     SOUND_DEBUG_ONLY( OS::_DOUT("Sound::__ct [%s]", mRealFilename.c_str()); )
-	DEBUG_ASSERT(mSndMgr != 0, "mSndMgr is NULL!")
+	DEBUG_ASSERT(mSndMgr != 0, "mSndMgr is NULL!");
 	setupDXStuff();
 #endif
 }
@@ -116,7 +115,7 @@ SoundDirectX::SoundDirectX(SoundDirectX* snd)
 {
 #ifndef NO_SOUND
     SOUND_DEBUG_ONLY( OS::_DOUT("Sound::__ct copy [%s]", mRealFilename.c_str()); )
-	DEBUG_ASSERT(mSndMgr != 0, "mSndMgr is NULL!")
+	DEBUG_ASSERT(mSndMgr != 0, "mSndMgr is NULL!");
 	setupDXStuff();
 	if (snd->mTempFilename) {
 		// the original was allocated from data and created a temporary file
@@ -394,8 +393,8 @@ bool SoundDirectX::createFromData(char* soundData, long soundDataLen)
 		DEBUG_ONLY( OS::_DOUT("SOUND Error: Could not write SOUND file: [%s]", mTempFilename); )
 		return false;
 	}
-	DEBUG_ASSERT(soundData != 0, "Sound data is NULL!")
-	DEBUG_ASSERT(soundDataLen > 0, "Sound data length is 0!")
+	DEBUG_ASSERT(soundData != 0, "Sound data is NULL!");
+	DEBUG_ASSERT(soundDataLen > 0, "Sound data length is 0!");
 	fwrite(soundData, soundDataLen, 1, fp);
 	fclose(fp);
 	SOUND_DEBUG_ONLY( OS::_DOUT("SOUND: Successfully wrote file: [%s]", mTempFilename); )
@@ -410,7 +409,7 @@ bool SoundDirectX::createFromFile(const char* filename)
     bool mLoadedOk = false;
 #ifndef NO_SOUND
 	SOUND_DEBUG_ONLY( OS::_DOUT("Sound::createFromFile [%p] file [%s]", this, filename); )
-	std::string realPath = os_makeCanonicalPath(filename);  // assumes relative to application if relative path
+	std::string realPath = OS::makeCanonicalPath(filename);  // assumes relative to application if relative path
 
 	if (mpGraphBuilder)
 	{
@@ -464,7 +463,7 @@ void SoundDirectX::idle()
 	if (mPlaying && !mPaused) {
 		// do volume fading if needed
 		if (mStartedFadeMs) {
-			uint32 msElapsed = OS::getMilliseconds() - mStartedFadeMs;
+			ms_delta msElapsed = OS::getMilliseconds() - mStartedFadeMs;
 			float newVolume = mStartingVolume + ((float)msElapsed * mDeltaVolumePerMs);
 			if ( ((mDeltaVolumePerMs < 0.0f) && (newVolume < mTargetVolume)) 
 				|| ((mDeltaVolumePerMs > 0.0f) && (newVolume > mTargetVolume)) ) {
@@ -555,29 +554,29 @@ void SoundDirectX::setupDXStuff() {
     CoCreateInstance(CLSID_FilterGraph, NULL,
         CLSCTX_INPROC, IID_IGraphBuilder,
         reinterpret_cast<void **>(&mpGraphBuilder));
-	DEBUG_ASSERT(mpGraphBuilder != 0, "mpGraphBuilder is NULL!")
+	DEBUG_ASSERT(mpGraphBuilder != 0, "mpGraphBuilder is NULL!");
 
     // Get the IMediaControl Interface
 	if(mpGraphBuilder)
 	{
 		mpGraphBuilder->QueryInterface(IID_IMediaControl,
 			reinterpret_cast<void **>(&mpMediaControl));
-		DEBUG_ASSERT(mpMediaControl != 0, "mpMediaControl is NULL!")
+		DEBUG_ASSERT(mpMediaControl != 0, "mpMediaControl is NULL!");
 
 		// Get the IMediaSeeking Interface
 		mpGraphBuilder->QueryInterface(IID_IMediaSeeking,
 			reinterpret_cast<void **>(&mpMediaSeeking));
-		DEBUG_ASSERT(mpMediaSeeking != 0, "mpMediaSeeking is NULL!")
+		DEBUG_ASSERT(mpMediaSeeking != 0, "mpMediaSeeking is NULL!");
 
 		// Get the IMediaEventEx Interface
 		mpGraphBuilder->QueryInterface(IID_IMediaEventEx,
 			reinterpret_cast<void **>(&mpMediaEvent));
-		DEBUG_ASSERT(mpMediaEvent != 0, "mpMediaEvent is NULL!")
+		DEBUG_ASSERT(mpMediaEvent != 0, "mpMediaEvent is NULL!");
 
 		// Get the IBasicAudio Interface
 		mpGraphBuilder->QueryInterface(IID_IBasicAudio,
 			reinterpret_cast<void **>(&mpBasicAudio));
-		DEBUG_ASSERT(mpBasicAudio != 0, "mpBasicAudio is NULL!")
+		DEBUG_ASSERT(mpBasicAudio != 0, "mpBasicAudio is NULL!");
 	}
 #endif
 }

@@ -5,6 +5,5 @@ var searchData=
   ['image_2',['Image',['../classpdg_1_1_image.html',1,'pdg']]],
   ['imagestrip_3',['ImageStrip',['../classpdg_1_1_image_strip.html',1,'pdg']]],
   ['iserializable_4',['ISerializable',['../classpdg_1_1_i_serializable.html',1,'pdg']]],
-  ['ispritecollidehelper_5',['ISpriteCollideHelper',['../group___physics.html#classpdg_1_1_i_sprite_collide_helper',1,'pdg']]],
-  ['ispritedrawhelper_6',['ISpriteDrawHelper',['../group___graphics.html#classpdg_1_1_i_sprite_draw_helper',1,'pdg']]]
+  ['ispritedrawhelper_5',['ISpriteDrawHelper',['../group___sprites.html#classpdg_1_1_i_sprite_draw_helper',1,'pdg']]]
 ];

@@ -1,0 +1,31 @@
+namespace pdg { /**
+
+\struct pdg::SpriteTriggerEvent
+\ingroup Events Animation Sprites
+\brief Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent.
+
+The common JavaScript payload contains:
+
+| Field | Meaning |
+| --- | --- |
+| `emitter` | Event emitter delivering the notification |
+| `eventType` | pdg::eventType_SpriteTriggerEvent |
+| `actingSprite` | Sprite whose animation crossed the trigger |
+| `inLayer` | SpriteLayer containing that Sprite |
+| `triggerName` | Authored eventline name |
+| `clipName` | Clip containing the eventline key |
+| `entityName` | Spriter entity containing the clip |
+| `timeSeconds` | Authored key position from clip start, in floating-point seconds |
+| `offsetSeconds` | Occurrence offset from the start of the update, in floating-point seconds |
+
+Subscribe by event type and inspect `triggerName` to distinguish authored triggers.
+An `action` field is not a portable trigger discriminator. The native compatibility
+field `frameTime` uses integer milliseconds and is omitted from JavaScript.
+The native event ID is currently exposed by the browser bridge but not the
+V8/JavaScriptCore bridges.
+
+\sa pdg::Sprite::enableSpriterEvents
+\sa pdg::eventType_SpriteTriggerEvent
+\sa \ref animation_trigger_event
+
+**/ }

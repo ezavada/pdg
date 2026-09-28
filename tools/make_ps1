@@ -37,7 +37,7 @@ function Show-Help {
     Write-Host "  -Help             Show this help message" -ForegroundColor White
     Write-Host ""
     Write-Host "Available Targets:" -ForegroundColor Yellow
-    Write-Host "  pdg               PDG app with embedded JavaScript support (default)" -ForegroundColor White
+    Write-Host "  pdg               PDG app with Node.js JavaScript support (default)" -ForegroundColor White
     Write-Host "  pdg-node          PDG engine as a Node.js plugin" -ForegroundColor White
     Write-Host "  release           Build, test, and package Windows release assets" -ForegroundColor White
     Write-Host "  pdg-tests         C++ performance test suite (Bunnymark & PDGMark)" -ForegroundColor White
@@ -341,8 +341,8 @@ function Invoke-Clean {
         "$PdgBuildRoot\chipmunk\src\Release",
         "$PdgBuildRoot\libjpeg-turbo\Debug",
         "$PdgBuildRoot\libjpeg-turbo\Release",
-        "test\perf\cpp-bunnymark\bunnymark.exe",
-        "test\perf\cpp-pdgmark\pdgmark.exe"
+        "test\perf_tests\cpp-bunnymark\bunnymark.exe",
+        "test\perf_tests\cpp-pdgmark\pdgmark.exe"
     )
     
     foreach ($path in $cleanPaths) {
@@ -369,14 +369,25 @@ function Build-Node {
         return 1
     }
     $nodeLibPath = "$PdgNodeOutDir\$Config\lib\libnode.lib"
+    $nodeBaseLibPath = "$PdgNodeOutDir\$Config\lib\node_base.lib"
     $nodeExePath = "$PdgNodeOutDir\$Config\node.exe"
+    $nodeVersionHeader = "deps\node\src\node_version.h"
+    $nodeVersionStamp = "$PdgNodeOutDir\$Config\.pdg-node-version.h"
+    $nodeVersionParts = [regex]::Matches((Get-Content $nodeVersionHeader -Raw),
+        '(?m)^#define NODE_(?:MAJOR|MINOR|PATCH)_VERSION (\d+)')
+    $nodeExpectedVersion = 'v' + (($nodeVersionParts | ForEach-Object { $_.Groups[1].Value }) -join '.')
 
-    # Check if both required files exist
-    $nodeLibExists = Test-Path $nodeLibPath
+    # Require the executable, both core libraries, and matching version metadata.
+    $nodeLibExists = (Test-Path $nodeLibPath) -and (Test-Path $nodeBaseLibPath)
     $nodeExeExists = Test-Path $nodeExePath
+    $nodeVersionMatches = (Test-Path $nodeVersionStamp) -and
+        ((Get-FileHash $nodeVersionHeader).Hash -eq (Get-FileHash $nodeVersionStamp).Hash)
+    $nodeVersionMatches = $nodeVersionMatches -and $nodeExeExists -and
+        ((& $nodeExePath --version) -eq $nodeExpectedVersion)
 
-    if (-not $nodeLibExists -or -not $nodeExeExists) {
+    if (-not $nodeLibExists -or -not $nodeExeExists -or -not $nodeVersionMatches) {
         Write-Status "Building Node.js as a library..." "Yellow"
+        Remove-Item $nodeVersionStamp -Force -ErrorAction SilentlyContinue
         
         Push-Location "deps\node"
         try {
@@ -421,22 +432,27 @@ function Build-Node {
         # Verify Node.js build actually succeeded by checking for required files
         $requiredFiles = @(
             "$PdgNodeOutDir\$Config\lib\libnode.lib",
+            "$PdgNodeOutDir\$Config\lib\node_base.lib",
             "$PdgNodeOutDir\$Config\node.exe"
         )
         
-        $buildActuallySucceeded = $true
+        $buildActuallySucceeded = $BUILD_STATUS -eq 0
         foreach ($file in $requiredFiles) {
             if (-not (Test-Path $file)) {
                 Write-Error-Status "Required Node.js file missing: $file"
                 $buildActuallySucceeded = $false
             }
         }
+        if ($buildActuallySucceeded -and ((& $nodeExePath --version) -ne $nodeExpectedVersion)) {
+            Write-Error-Status "Node.js build does not match source version $nodeExpectedVersion"
+            $buildActuallySucceeded = $false
+        }
         
         if ($buildActuallySucceeded) {
             Write-Success-Status "Node.js build verification passed - all required files present"
-            $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+            Copy-Item $nodeVersionHeader $nodeVersionStamp -Force
         } else {
-            Write-Error-Status "Node.js build failed - missing required files"
+            Write-Error-Status "Node.js build verification failed"
             $BUILD_STATUS = 1
         }
         
@@ -449,15 +465,13 @@ function Build-Node {
         Cleanup-BuildProcesses
     }
     else {
-        Write-Status "Skipping Node.js build because libnode.lib and node.exe already exist:" "Green"
+        Write-Status "Using cached Node.js build matching the source version:" "Green"
         Write-Status "   libnode.lib" "Gray"
         Write-Status "   node.exe" "Gray"
     }
 
-    # Copy node.exe to tools if needed
-    if (-not (Test-Path "tools\node.exe")) {
-        $null = Copy-File-If-Exists $nodeExePath "tools\node.exe"
-    }
+    # Refresh the tool after a version upgrade as well as on the first build.
+    $null = Copy-File-If-Exists $nodeExePath "tools\node.exe"
     
     return 0
 }
@@ -517,6 +531,11 @@ function Build-GLFW {
     Push-Location "$PdgBuildRoot\glfw"
     try {
         $BUILD_STATUS = Invoke-MSBuild -ProjectPath "GLFW.sln" -Target "Build" -Configuration $Config -MSBuildPath $MSBUILD_PATH -Verbose:$Verbose
+        
+        if ($BUILD_STATUS -eq 0) {
+            # Copy glfw3.lib to src directory
+            $null = Copy-File-If-Exists "src\$Config\glfw3.lib" "src\glfw3.lib"
+        }
     }
     finally {
         Pop-Location
@@ -533,9 +552,6 @@ function Build-GLFW {
         Write-Error-Status "GLFW build failed"
         return 1
     }
-
-    # Keep the unqualified link path fresh for older generated projects and tools.
-    $null = Copy-File-If-Exists $glfwLibPath "build\win32\glfw\src\glfw3.lib"
 
     # Clean up after GLFW build
     Cleanup-BuildProcesses
@@ -608,9 +624,6 @@ function Build-LibjpegTurbo {
         return 1
     }
 
-    # Keep the unqualified link path fresh for older generated projects and tools.
-    $null = Copy-File-If-Exists $jpegLibPath "build\win32\libjpeg-turbo\jpeg.lib"
-
     # Clean up after libjpeg-turbo build
     Cleanup-BuildProcesses
     return 0
@@ -622,7 +635,7 @@ function Build-PDG {
         [string]$Config,
         [string]$MSBUILD_PATH,
         [switch]$Verbose,
-        [string]$MSBuildTarget = "pdg"
+        [string]$MSBuildTarget = "Build"
     )
     
     $pdgExeName = if ($Config -eq "Debug") { "pdg-debug.exe" } else { "pdg.exe" }
@@ -732,8 +745,8 @@ function Build-PDG-Tests {
     Cleanup-BuildProcesses
     
     # Create symlinks/copies to test directory
-    Remove-Item "test\perf\cpp-bunnymark\bunnymark.exe" -Force -ErrorAction SilentlyContinue
-    Remove-Item "test\perf\cpp-pdgmark\pdgmark.exe" -Force -ErrorAction SilentlyContinue
+    Remove-Item "test\perf_tests\cpp-bunnymark\bunnymark.exe" -Force -ErrorAction SilentlyContinue
+    Remove-Item "test\perf_tests\cpp-pdgmark\pdgmark.exe" -Force -ErrorAction SilentlyContinue
 
     function Copy-ExeIfFound {
         param([string]$ExeName, [string]$DestPath)
@@ -749,8 +762,8 @@ function Build-PDG-Tests {
         }
         return $false
     }
-    $bunOk = Copy-ExeIfFound "bunnymark" "test\perf\cpp-bunnymark\bunnymark.exe"
-    $pdgOk = Copy-ExeIfFound "pdgmark" "test\perf\cpp-pdgmark\pdgmark.exe"
+    $bunOk = Copy-ExeIfFound "bunnymark" "test\perf_tests\cpp-bunnymark\bunnymark.exe"
+    $pdgOk = Copy-ExeIfFound "pdgmark" "test\perf_tests\cpp-pdgmark\pdgmark.exe"
     if (-not $bunOk) { Write-Warning "bunnymark.exe not found under $PdgMainBuildDir\" }
     if (-not $pdgOk) { Write-Warning "pdgmark.exe not found under $PdgMainBuildDir\" }
     
@@ -758,10 +771,10 @@ function Build-PDG-Tests {
     Write-Success-Status "C++ performance tests built successfully!"
     Write-Status "libpdg-lib.a created (pure C++ framework library)" "Green"
     Write-Host ""
-    Write-Host "Run C++ Bunnymark:      .\test\perf\cpp-bunnymark\bunnymark.exe" -ForegroundColor White
-    Write-Host "Run JS Bunnymark:       .\pdg test\perf\bunnymark\bunnymark.js" -ForegroundColor White
-    Write-Host "Run C++ PDGMark:        .\test\perf\cpp-pdgmark\pdgmark.exe" -ForegroundColor White
-    Write-Host "Run JS PDGMark:         .\pdg test\perf\pdgmark\pdgmark.js" -ForegroundColor White
+    Write-Host "Run C++ Bunnymark:      .\test\perf_tests\cpp-bunnymark\bunnymark.exe" -ForegroundColor White
+    Write-Host "Run JS Bunnymark:       .\pdg test\perf_tests\bunnymark\bunnymark.js" -ForegroundColor White
+    Write-Host "Run C++ PDGMark:        .\test\perf_tests\cpp-pdgmark\pdgmark.exe" -ForegroundColor White
+    Write-Host "Run JS PDGMark:         .\pdg test\perf_tests\pdgmark\pdgmark.js" -ForegroundColor White
     Write-Host ""
     
     return 0
@@ -882,6 +895,9 @@ switch ($Target.ToLower()) {
         $status = Build-PDG -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
         if ($status -ne 0) { exit 1 }
         
+        $status = Build-PDG-Node -Config $Config -MSBUILD_PATH $MSBUILD_PATH -Verbose:$Verbose
+        if ($status -ne 0) { exit 1 }
+        
         # Final cleanup to ensure all processes are terminated
         Cleanup-BuildProcesses
         
@@ -898,8 +914,7 @@ switch ($Target.ToLower()) {
             Write-Status "Headless build configured; GUI/client test runs are not available in this setup." "Green"
         }
         else {
-            Write-Status "You can now run client tests with: .\test\client" "Green"
-            Write-Status "Build the Node plugin with .\make.ps1 -Target pdg-node before running .\test\node." "Green"
+            Write-Status "You can now run tests with: .\test\client or .\test\node" "Green"
         }
     }
 

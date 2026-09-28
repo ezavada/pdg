@@ -1,4 +1,4 @@
-.TH "Point" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Point" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -19,7 +19,7 @@ Inherits \fBOffset\fP\&.
 .br
 .RI "create with x = 0, y = 0 "
 .ti -1c
-.RI "\fBPoint\fP (number \fBx\fP, number \fBy\fP)"
+.RI "\fBPoint\fP (number x, number y)"
 .br
 .RI "create and set x & y values "
 .ti -1c
@@ -46,7 +46,7 @@ Public Member Functions inherited from \fBOffset\fP
 .RI "\fBOffset\fP ()"
 .br
 .ti -1c
-.RI "\fBOffset\fP (number \fBx\fP, number \fBy\fP)"
+.RI "\fBOffset\fP (number x, number y)"
 .br
 .ti -1c
 .RI "\fBOffset\fP (number[] xy)"
@@ -127,19 +127,26 @@ Public Attributes inherited from \fBOffset\fP
 .PP 
 point for 2D coordinate system 
 
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
+.RE
+.PP
 \fBPoint\fP provides support for dealing with points as x, y floating point values in 2 dimensional space\&. The PDG coordinate space starts with the top left corner of the drawing port at Point(0,0) and the bottom left corner at Point( width, height );
 
 .PP
      
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "\fBPoint\fP ()"
+.SS "Point ()"
 
 .PP
 create with x = 0, y = 0 
 .PP
 Referenced by \fBdistance()\fP, and \fBoffset()\fP\&.
-.SS "\fBPoint\fP (number x, number y)"
+.SS "Point (number x, number y)"
 
 .PP
 create and set x & y values 
@@ -154,7 +161,7 @@ create and set x & y values
 
 .PP
 References \fBx\fP, and \fBy\fP\&.
-.SS "\fBPoint\fP (number[] xy)"
+.SS "Point (number[] xy)"
 
 .PP
 create and set x & y values 
@@ -165,7 +172,7 @@ create and set x & y values
 .RE
 .PP
 
-.SS "\fBPoint\fP (object xy)"
+.SS "Point (object xy)"
 
 .PP
 create and set x & y values 

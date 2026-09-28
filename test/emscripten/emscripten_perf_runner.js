@@ -5,22 +5,22 @@
     var benchmarks = {
         bunnymark: {
             name: "Bunnymark",
-            source: "perf/bunnymark/bunnymark.js",
-            virtualPath: "/test/perf/bunnymark/bunnymark.js",
+            source: "perf_tests/bunnymark/bunnymark.js",
+            virtualPath: "/test/perf_tests/bunnymark/bunnymark.js",
             canvasWidth: 800,
             canvasHeight: 600
         },
         pdgmark: {
             name: "PDGMark",
-            source: "perf/pdgmark/pdgmark.js",
-            virtualPath: "/test/perf/pdgmark/pdgmark.js",
+            source: "perf_tests/pdgmark/pdgmark.js",
+            virtualPath: "/test/perf_tests/pdgmark/pdgmark.js",
             canvasWidth: 1000,
             canvasHeight: 800
         },
         canvasmark: {
             name: "CanvasMark 2013",
-            source: "perf/canvasmark2013/canvasmark.js",
-            virtualPath: "/test/perf/canvasmark2013/canvasmark.js",
+            source: "perf_tests/canvasmark2013/canvasmark.js",
+            virtualPath: "/test/perf_tests/canvasmark2013/canvasmark.js",
             canvasWidth: 640,
             canvasHeight: 640
         }
@@ -47,6 +47,9 @@
         return;
     }
 
+    if (params.get('quick') === '1') {
+        benchmark.name = {bunnymark:'QuickBunnyMark', pdgmark:'QuickPDGMark', canvasmark:'QuickCanvasMark'}[benchmarkId];
+    }
     canvas.width = benchmark.canvasWidth;
     canvas.height = benchmark.canvasHeight;
     canvas.focus();
@@ -111,7 +114,20 @@
         }
     };
 
-    function browserRequire(request) {
+    var modules = {};
+    function browserRequire(request, parent) {
+        if (request.charAt(0) === '.') {
+            var filename = pathModule.join(parent || pathModule.dirname(benchmark.virtualPath), request);
+            if (!/\.(js|json)$/.test(filename)) filename += '.js';
+            if (modules[filename]) return modules[filename].exports;
+            var source = requestSource(filename), module = {exports:{}};
+            modules[filename] = module;
+            if (/\.json$/.test(filename)) module.exports = JSON.parse(source);
+            else new Function('require','module','exports','__filename','__dirname', source)(
+                function(id) { return browserRequire(id, pathModule.dirname(filename)); },
+                module, module.exports, filename, pathModule.dirname(filename));
+            return module.exports;
+        }
         if (request === "pdg") return window.pdg;
         if (request === "fs") return fsModule;
         if (request === "path") return pathModule;
@@ -125,19 +141,23 @@
         document.documentElement.setAttribute("data-status", "failed");
         setStatus("FAILED: " + benchmarkId + " — " + message);
         resultNode.textContent = message;
+        document.getElementById('pdg-perf-result-json').textContent = JSON.stringify({status:'failed', message:message});
         document.title = "PDG PERF: FAILED";
         console.error(message);
     }
 
     window.pdgPerfReport = function(results) {
         var result = {
-            status: "completed",
+            status: "passed",
             benchmark: benchmarkId,
             engine: "emscripten",
+            wasmHeapBytes: window.HEAPU8 && window.HEAPU8.length,
             userAgent: navigator.userAgent,
             results: results
         };
+        finished = true;
         var json = JSON.stringify(result, null, 2);
+        document.getElementById('pdg-perf-result-json').textContent = json;
         window.pdgPerfTestResult = result;
         document.documentElement.setAttribute("data-status", "completed");
         resultNode.textContent = json;
@@ -157,6 +177,12 @@
             args.push("--duration", String(duration));
         }
         if (params.get("auto") === "1") args.push("--auto");
+        if (params.get('quick') === '1') {
+            args.push('--quick');
+            ['sample-seconds','warmup-seconds','load-factor'].forEach(function(key) {
+                if (params.has(key)) args.push('--' + key, params.get(key));
+            });
+        }
 
         window.process.argv = args;
         window.process.exit = function(code) {
@@ -181,11 +207,39 @@
             pathModule.dirname(benchmark.virtualPath));
     }
 
+    // The release runtime deliberately contains no test assets. Load only the
+    // benchmark images into its filesystem before starting the timed workload.
+    async function loadBenchmarkImages() {
+        const images = [
+            "test/perf_tests/bunnymark/wabbit.png",
+            "test/data/test_image.png",
+            "test/perf_tests/canvasmark2013/images/asteroid1.png",
+            "test/perf_tests/canvasmark2013/images/asteroid2.png",
+            "test/perf_tests/canvasmark2013/images/asteroid3.png",
+            "test/perf_tests/canvasmark2013/images/asteroid4.png",
+            "test/perf_tests/canvasmark2013/images/bg3_1.jpg",
+            "test/perf_tests/canvasmark2013/images/canvasmark2013.jpg",
+            "test/perf_tests/canvasmark2013/images/enemyship1.png",
+            "test/perf_tests/canvasmark2013/images/fruit.jpg",
+            "test/perf_tests/canvasmark2013/images/player.png",
+            "test/perf_tests/canvasmark2013/images/texture5.png"
+        ];
+        await Promise.all(images.map(async function(filename) {
+            const response = await fetch('/' + filename);
+            if (!response.ok) throw Error('Cannot load benchmark image: ' + filename);
+            const bytes = new Uint8Array(await response.arrayBuffer());
+            ['/' + filename, '/' + filename.replace(/^test\//, '')].forEach(function(name) {
+                window.FS.mkdirTree(name.slice(0, name.lastIndexOf('/')));
+                window.FS.writeFile(name, bytes);
+            });
+        }));
+    }
+
     function waitForPdg(deadline) {
         if (window.pdg && window.pdg.pdgReady) {
-            try { runBenchmark(); } catch (error) {
+            loadBenchmarkImages().then(runBenchmark).catch(function(error) {
                 fail(error && error.stack ? error.stack : String(error));
-            }
+            });
         } else if (Date.now() > deadline) {
             fail("WebAssembly initialization timed out");
         } else {
@@ -202,7 +256,7 @@
 
     setStatus("Loading WebAssembly for " + benchmark.name + "...");
     var script = document.createElement("script");
-    script.src = "../build/wasm/wasm32/libpdg.js?_pdg_cache=" + cacheToken;
+    script.src = "../build/wasm/wasm32/release/libpdg.js?_pdg_cache=" + cacheToken;
     script.onerror = function() { fail("libpdg.js failed to load"); };
     document.head.appendChild(script);
     waitForPdg(Date.now() + 30000);

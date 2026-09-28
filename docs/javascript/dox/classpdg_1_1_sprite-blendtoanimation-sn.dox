@@ -14,16 +14,15 @@ interpolating between the two over the specified blend time. The blend creates a
 The blend operation interpolates between the current animation frame and the corresponding frame in the 
 target animation. This creates a smooth transition that maintains the sprite's visual continuity.
 
-During the blend, the sprite will emit animation events and can be monitored for blend completion. The 
-blend time determines how quickly the transition occurs.
+The duration is a floating-point number of seconds. Progress is normalized from 0 to 1, and pausing
+freezes both playback and the visible blend. Starting a blend resumes paused playback.
+A completed blend emits one animation-blend-complete event on the normal update path.
+Starting another animation or blend cancels the pending completion of the old blend.
 
-\warning If the target animation name is invalid, the blend will fail silently
-\warning This only works for blending between Spriter animations
+Invalid targets and nonfinite durations leave playback unchanged. Zero or negative
+durations complete on the next animation update. This method returns no value.
 
-\note The blend time must be positive (greater than 0)
-\note If no animation is currently playing, the new animation will start immediately
-
-\return true if the blend was successfully initiated, false otherwise
+This is a phase-aligned Spriter blend, not an independently timed crossfade.
 
 \sa Sprite::blendToAnimation(int, number)
 \sa Sprite::onAnimationBlendComplete()

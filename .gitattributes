@@ -5,6 +5,7 @@
 /test/node text eol=lf
 /test/ui text eol=lf
 /test/lanes text eol=lf
+/test/tools text eol=lf
 /deps/node/configure text eol=lf
 /tools/node-pdg/Makefile text eol=lf
 

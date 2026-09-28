@@ -51,7 +51,7 @@
 #include "pdg/sys/platform.h"
 #include "pdg/sys/global_types.h"
 #include "pdg/sys/semaphore.h"
-#include "pdg/sys/mutex.h"
+#include <mutex>
 
 #include <map>
 #include <queue>
@@ -160,25 +160,25 @@ struct PacketStats {
     uint32 bytesSent;
     uint32 bytesReceived;
     uint32 invalidPacketsReceived;
-    Mutex  mPacketStatsMutex;
+    std::mutex  mPacketStatsMutex;
     void reset() {  packetsCreated = 0; packetsFreed = 0; packetsSent = 0; packetsReceived = 0; 
                     bytesAllocated = 0; bytesFreed = 0; bytesSent = 0; bytesReceived = 0; 
                     invalidPacketsReceived = 0; }
     void recordPacketSent(NetPacket* inPacket)     { if (!inPacket) return; 
-                                                  AutoMutex mutex(&mPacketStatsMutex); 
+                                                  std::lock_guard lock(mPacketStatsMutex);
                                                   ++packetsSent; bytesSent += inPacket->packetLen; }
     void recordPacketReceived(NetPacket* inPacket) { if (!inPacket) return; 
-                                                  AutoMutex mutex(&mPacketStatsMutex); 
+                                                  std::lock_guard lock(mPacketStatsMutex);
                                                   ++packetsReceived; bytesReceived += inPacket->packetLen; }
     void recordPacketCreated(NetPacket* inPacket)  { if (!inPacket) return; 
-                                                  AutoMutex mutex(&mPacketStatsMutex); 
+                                                  std::lock_guard lock(mPacketStatsMutex);
                                                   ++packetsCreated; bytesAllocated += inPacket->packetLen; }
     void recordPacketFreed(NetPacket* inPacket)    { if (!inPacket) return; 
-                                                  AutoMutex mutex(&mPacketStatsMutex); 
+                                                  std::lock_guard lock(mPacketStatsMutex);
                                                   ++packetsFreed; bytesFreed += inPacket->packetLen; }
     void debugDumpStats() {
       #ifdef DEBUG
-        AutoMutex mutex(&mPacketStatsMutex); 
+        std::lock_guard lock(mPacketStatsMutex);
         OS::_DOUT("\nPacket Statistics Report");
         OS::_DOUT("=========================================================");
         OS::_DOUT("Packets: %d sent, %d received, %d created, %d freed", packetsSent, packetsReceived, packetsCreated, packetsFreed);
@@ -259,9 +259,9 @@ protected:
     uint32              mBytesRemainingForHeader;
     uint32              mOffsetInHeader;
     NetPacket           mPacketInfo;
-    Mutex               mOutgoingQueueMutex;
-    Mutex               mPacketMemMutex;
-    Mutex               mReceiveMutex;
+    std::mutex               mOutgoingQueueMutex;
+    std::mutex               mPacketMemMutex;
+    std::mutex               mReceiveMutex;
     bool                mListener;
     NetEndpointContext  mContext;
     uint8               mConnectFlags;
@@ -270,7 +270,7 @@ protected:
     bool                mReceivePending;
     // statistics for this endpoint
     PacketStats     mPacketStats;
-    Mutex           mDataPtrMapMutex;
+    std::mutex           mDataPtrMapMutex;
     PacketDataMap   mDataPtrMap;
 };
 
@@ -282,7 +282,7 @@ struct NetManagerData {
     EndpointRefMap  endpointRefs;   // a map that looks up NetEndpoints by OpenPlay Endpoint Ref
     EndpointIdMap   endpointIds;    // a map that looks up NetEndpoints by Network Manager Endpoint ID
     ListenerPortMap listenerPorts;  // a map that looks up Open Play Listener Endpoint Refs by port number
-    Mutex           dataMutex;      // lock for all these fields
+    std::mutex           dataMutex;      // lock for all these fields
     PacketStats     packetStats;
 };
 
@@ -333,7 +333,7 @@ protected:
     long            mConnectionCreator;
     std::string     mPublicName;
     bool            mNetworkWait;
-    unsigned long   mSetWaitCursorMs;   // when to set the network wait cursor
+    ms_time         mSetWaitCursorMs;   // when to set the network wait cursor
 };
 
 } // end namespace pdg

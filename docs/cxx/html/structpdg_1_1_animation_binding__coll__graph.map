@@ -1,0 +1,9 @@
+<map id="AnimationBinding" name="AnimationBinding">
+<area shape="rect" id="Node000001" title=" " alt="" coords="76,177,198,203"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="50,80,104,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="94,117,132,176,127,177,91,121"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,5,149,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="78,44,80,81,74,80,76,49"/>
+<area shape="rect" id="Node000004" href="$structpdg_1_1_animation_transform.html" title=" " alt="" coords="128,80,266,106"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="184,118,147,178,143,175,179,120"/>
+</map>

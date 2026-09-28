@@ -1,7 +1,12 @@
 namespace pdg { /**
-
 \fn pdg::Animated::isFlippedY()
+\brief Read the y reflection flag.
 
-\brief returns true if the object is flipped vertically
 
-**/ }
+
+
+\return True if the reflection flag is set; otherwise false.
+
+\see setFlipY(), flipY()
+*/
+ }

@@ -53,6 +53,17 @@ describe("Font", function() {
     expect(font).toBeDefined();
   });
 
+  it("measures capital height separately from accented ascent and scales with font size", function() {
+    for (const style of [pdg.textStyle_Plain, pdg.textStyle_Bold]) {
+      const small = font.getFontCapHeight(16,style);
+      const large = font.getFontCapHeight(32,style);
+      expect(small).toBeGreaterThan(0);
+      expect(small).toBeLessThan(font.getFontAscent(16,style));
+      expect(Math.abs(large-2*small)).toBeLessThan(2);
+    }
+    expect(font.getFontCapHeight(16)).toEqual(font.getFontCapHeight(16,pdg.textStyle_Plain));
+  });
+
   describe("Font Creation", function() {
     it("exists", function() {
       console.log('* Testing Font...');

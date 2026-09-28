@@ -4,7 +4,7 @@ namespace pdg { /**
 
 \brief get the current time in milliseconds
 
-Gets the current millisecond time, from an arbitrary base time prior to the application start. 
+Returns elapsed milliseconds from a monotonic clock, with zero established at the first call in this process. System wall-clock adjustments do not affect this value. Use it for elapsed times and timer deadlines, not calendar dates. The native timestamp uses a signed 64-bit integer.
 
 \note Many events and callbacks pass this value (or a ms delta since the last call), so you can often avoid repeated calls to getMilliseconds() by using the value or millisecond delta passed in.
 

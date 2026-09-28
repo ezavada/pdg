@@ -41,10 +41,8 @@ DECLARE_SYMBOL(constructor);
 BINDING_INITIALIZER_IMPL(Deserializer) 
     EXPORT_CLASS_SYMBOLS("Deserializer", Deserializer, , ,
     	// method section
-	  %#ifndef PDG_NO_64BIT CR
 		HAS_METHOD(Deserializer, "deserialize_8", Deserialize_8)
 		HAS_METHOD(Deserializer, "deserialize_8u", Deserialize_8u)
-	  %#endif CR
 		HAS_METHOD(Deserializer, "deserialize_d", Deserialize_d)
 		HAS_METHOD(Deserializer, "deserialize_f", Deserialize_f)
 		HAS_METHOD(Deserializer, "deserialize_4", Deserialize_4)
@@ -92,7 +90,6 @@ METHOD_IMPL(Deserializer, Deserialize_f)
     	THROW_ERR(e.what());
 	}
 	END
-%#ifndef PDG_NO_64BIT
 METHOD_IMPL(Deserializer, Deserialize_8)
 	METHOD_SIGNATURE("", number, 0, ());
     REQUIRE_ARG_COUNT(0);
@@ -113,7 +110,6 @@ METHOD_IMPL(Deserializer, Deserialize_8u)
     	THROW_ERR(e.what());
 	}
 	END
-%#endif
 METHOD_IMPL(Deserializer, Deserialize_4)
 	METHOD_SIGNATURE("", number, 0, ());
     REQUIRE_ARG_COUNT(0);
@@ -363,6 +359,18 @@ METHOD_IMPL(Deserializer, Deserialize_obj)
 			return JSValueMakeUndefined(ctx);
 		}
       %#endif
+        if (!obj) { RETURN_NULL; }
+        if (auto* sprite = dynamic_cast<Sprite*>(obj)) {
+          %#ifdef PDG_USING_V8
+            auto result = SpriteWrap::NewFromCpp(isolate, sprite);
+          %#else
+            auto result = Sprite_newFromCpp(ctx, sprite);
+          %#endif
+            sprite->release(); // the wrapper now owns the returned reference
+            RETURN_OBJECT(result);
+        }
+        // Headless ImageImpl also implements ImageStrip, including frame views.
+        if (auto* image = dynamic_cast<ImageStrip*>(obj)) { RETURN_CPP_OBJECT(image, ImageStrip); }
 		DEBUG_DUMP_SCRIPT_OBJECT(obj->mISerializableScriptObj, ISerializable)
 		RETURN_CPP_OBJECT(obj, ISerializable);
 	} catch(out_of_data& e) {
@@ -373,7 +381,7 @@ METHOD_IMPL(Deserializer, Deserialize_obj)
     	THROW_ERR(e.what());
 	} catch(unknown_object& e) {
     	THROW_ERR(e.what());
-	}
+	} catch (const std::exception& error) { THROW_ERR(error.what()); }
 	END
 METHOD_IMPL(Deserializer, Deserialize_ref)
 	METHOD_SIGNATURE("", object, 0, ());

@@ -43,6 +43,8 @@ namespace pdg {
             HAS_METHOD(GraphicsManager, "getNthSupportedScreenMode", GetNthSupportedScreenMode)
             HAS_METHOD(GraphicsManager, "setScreenMode", SetScreenMode)
             HAS_METHOD(GraphicsManager, "createWindowPort", CreateWindowPort)
+            HAS_METHOD(GraphicsManager, "createOffscreenPort", CreateOffscreenPort)
+            HAS_METHOD(GraphicsManager, "_createImageFromOffscreenPort", CreateImageFromOffscreenPort)
             HAS_METHOD(GraphicsManager, "createFullScreenPort", CreateFullScreenPort)
             HAS_METHOD(GraphicsManager, "closeGraphicsPort", CloseGraphicsPort)
             HAS_METHOD(GraphicsManager, "closeAllGraphicsPorts", CloseAllGraphicsPorts)
@@ -81,6 +83,23 @@ namespace pdg {
         OPTIONAL_STRING_ARG(2, windName, "");
         OPTIONAL_INT32_ARG(3, bpp, 0);
         Port* port = self->createWindowPort(rect, windName, bpp);
+        RETURN_CPP_OBJECT(port, Port);
+        END
+    METHOD_IMPL(GraphicsManager, CreateImageFromOffscreenPort)
+        METHOD_SIGNATURE("create a snapshot or live image of an offscreen port",
+            [object Image], 2, ([object Port] port, boolean copyPixels = true));
+        REQUIRE_ARG_MIN_COUNT(1);
+        REQUIRE_CPP_OBJECT_ARG(1, port, Port);
+        OPTIONAL_BOOL_ARG(2, copyPixels, true);
+        Image* image = Image::createImageFromOffscreenPort(port, copyPixels);
+        RETURN_CPP_OBJECT(image, Image);
+        END
+    METHOD_IMPL(GraphicsManager, CreateOffscreenPort)
+        METHOD_SIGNATURE("create a persistent transparent drawing surface without a window",
+            [object Port], 1, ([object Rect] rect));
+        REQUIRE_ARG_COUNT(1);
+        REQUIRE_RECT_ARG(1, rect);
+        Port* port = self->createOffscreenPort(rect);
         RETURN_CPP_OBJECT(port, Port);
         END
     METHOD_IMPL(GraphicsManager, CreateFullScreenPort)

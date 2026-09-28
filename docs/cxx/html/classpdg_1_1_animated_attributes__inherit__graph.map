@@ -1,0 +1,15 @@
+<map id="AnimatedAttributes&lt; T &gt;" name="AnimatedAttributes&lt; T &gt;">
+<area shape="rect" id="Node000001" title="Drawing attributes with programmed movement and appearance animation." alt="" coords="955,31,1119,56"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated.html" title=" " alt="" coords="670,8,907,79"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="923,41,957,43,952,44,923,46"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated_attributes_base.html" title=" " alt="" coords="459,31,622,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="637,41,672,43,667,44,637,46"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="305,5,411,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="427,25,462,32,456,32,427,30"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="165,5,257,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="272,16,307,18,302,19,273,21"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,5,117,31"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="132,16,167,17,162,19,133,21"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_attributes.html" title=" " alt="" coords="320,55,397,80"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="412,58,456,54,462,54,413,63"/>
+</map>

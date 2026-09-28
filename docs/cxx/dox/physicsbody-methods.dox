@@ -1,0 +1,733 @@
+/**
+\fn pdg::PhysicsBody::PhysicsBody(double mass, double momentOfInertia)
+\brief Create a detached basic physics body.
+
+Starts dynamic at the identity transform with zero velocity and no forces. Invalid mass or inertia throws. Sprite/Part users normally call setupPhysicsBody() so ownership and update scheduling are handled automatically.
+
+\param mass Finite positive mass, default 1.
+\param momentOfInertia Finite positive rotational inertia, default 1.
+
+\see Sprite::setupPhysicsBody(), step()
+*/
+
+/**
+\fn pdg::PhysicsBody::~PhysicsBody()
+\brief Release a detached body's resources.
+
+Owner-managed bodies must be detached before their final reference is released.
+
+\see release(), Sprite::removePhysicsBody()
+*/
+
+/**
+\fn void pdg::PhysicsBody::addRef() const
+\brief Retain a physics body.
+
+Use before keeping a body beyond removal from its owner. Balance with release(). NoPhysics ignores reference counting.
+
+\see release()
+*/
+
+/**
+\fn void pdg::PhysicsBody::release() const
+\brief Release a retained physics body.
+
+Deletes a real body when its final reference is released. Do not use the reference afterward unless another owner retains it. NoPhysics ignores reference counting.
+
+\see addRef()
+*/
+
+/**
+\fn bool pdg::PhysicsBody::operator==(const PhysicsBody & other) const
+\brief Compare physics body identity.
+
+\param other Body to compare.
+
+\return True if the references identify same bodies. This does not compare state values.
+*/
+
+/**
+\fn bool pdg::PhysicsBody::operator!=(const PhysicsBody & other) const
+\brief Compare physics body identity.
+
+\param other Body to compare.
+
+\return True if the references identify different bodies. This does not compare state values.
+*/
+
+/**
+\fn bool pdg::PhysicsBody::isPresent() const
+\brief Test whether this is a real physics body.
+
+\return False for the shared NoPhysics object; true for a body created explicitly.
+
+\see getMode(), isAttached()
+*/
+
+/**
+\fn int pdg::PhysicsBody::getSolver() const
+\brief Identify the active physics solver.
+
+\return \c pdg::physicsSolver_None for NoPhysics, \c pdg::physicsSolver_Basic for the analytic integrator, or \c pdg::physicsSolver_Chipmunk for a layer-owned solver.
+
+\see isPresent(), step()
+*/
+
+/**
+\fn int pdg::PhysicsBody::getMode() const
+\brief Read the body's simulation mode.
+
+\return The current simulation mode. Returns pdg::physicsBody_None for NoPhysics.
+
+\see setMode()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setMode(int mode)
+\brief Set the body's simulation mode.
+
+For ordinary bodies, switching out of dynamic mode clears forces. Static mode also clears linear and angular velocity. The absence value physicsBody_None cannot be assigned; remove the body from its owner instead. Invalid values throw on a present body. NoPhysics ignores the operation. Switching an owned body to dynamic mode cancels competing programmed movement/rotation tracks and rates while retaining size/appearance animation. A mounted Sprite body must remain kinematic until detached.
+
+Mapped animation bodies instead route through Sprite::setAnimationPhysicsMode():
+Dynamic releases rig tracking, Kinematic begins default 0.5-second recovery, and
+Static is rejected. Recovery reports a dynamic body until it reaches its target.
+This path preserves independent scheduled loads and rejects conflicting manual
+or Part IK drives until explicitly released.
+
+\param mode One of \c pdg::physicsBody_Dynamic, \c pdg::physicsBody_Kinematic, or \c pdg::physicsBody_Static.
+
+\return This object, for chaining.
+
+\see getMode()
+*/
+
+/**
+\fn PhysicsBodyState pdg::PhysicsBody::getState() const
+\brief Copy the current physical state.
+
+Reads the active solver when one is attached. Changing the returned object does not change the body.
+
+\return A PhysicsBodyState value with the fields below.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor physics_body_state
+\par Physics state
+| Field | Meaning |
+| --- | --- |
+| `x`, `y` | Center position in owning-layer distance units. |
+| `rotation` | Clockwise angle in radians. |
+| `velocityX`, `velocityY` | Linear velocity in distance units per second. |
+| `angularVelocity` | Clockwise angular velocity in radians per second. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see teleport(), setVelocity()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::teleport(const Point & position, double radians)
+\brief Move a body immediately.
+
+Changes position and rotation while preserving velocity. An attached owner receives the new transform immediately. NoPhysics ignores the call.
+
+A rigidly mounted Sprite's body rejects this operation; animate its mounting Part or detach it first.
+
+\param position Finite center position in owning-layer coordinates.
+\param radians Finite clockwise rotation in radians.
+
+\return This object, for chaining.
+
+\see getState()
+*/
+
+/**
+\fn Vector pdg::PhysicsBody::getVelocity() const
+\brief Read linear velocity.
+
+\return A new Vector in owning-layer distance units per second.
+
+\see setVelocity(), getSpeed()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setVelocity(const Vector & velocity)
+\brief Set linear velocity.
+
+Sets physical velocity immediately. Static bodies remain stationary; NoPhysics ignores the call.
+
+A rigidly mounted Sprite's body rejects this operation; animate its mounting Part or detach it first.
+
+\param velocity Velocity vector in owning-layer distance units per second.
+
+\return This object, for chaining.
+
+\see getVelocity(), applyImpulse()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getSpeed() const
+\brief Read the body's speed.
+
+\return The current speed. Returns zero for NoPhysics. Units are distance per second.
+
+\see setSpeed()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setSpeed(double speed)
+\brief Set the body's speed.
+
+Preserves the current movement direction. A stationary body uses direction zero (positive x). Static bodies retain zero velocity. Invalid values throw on a present body. NoPhysics ignores the operation.
+
+\param speed Finite nonnegative speed in distance units per second.
+
+\return This object, for chaining.
+
+\see getSpeed()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setVelocity(double x, double y)
+\brief Set linear velocity.
+
+Sets physical velocity immediately. Static bodies remain stationary; NoPhysics ignores the call.
+
+A rigidly mounted Sprite's body rejects this operation; animate its mounting Part or detach it first.
+
+\param x Finite horizontal velocity.
+\param y Finite vertical velocity.
+
+\return This object, for chaining.
+
+\see getVelocity(), applyImpulse()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setVelocityInRadians(double speed, double direction)
+\brief Set velocity from speed and direction.
+
+Static bodies remain stationary. Invalid values throw; NoPhysics ignores the call.
+
+\param speed Finite nonnegative speed in distance units per second.
+\param direction Finite clockwise direction in radians, measured from positive x.
+
+\return This object, for chaining.
+
+\see getMovementDirectionInRadians(), setVelocity()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getMovementDirectionInRadians() const
+\brief Read the direction of linear velocity.
+
+\return atan2(velocity.y, velocity.x), in radians. Zero points along positive x; positive angles turn clockwise.
+
+\see setVelocityInRadians(), getSpeed()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::stopMoving()
+\brief Clear linear velocity.
+
+Does not clear forces; an active force can accelerate the body again on the next step.
+
+\return This object, for chaining.
+
+\see stopAllForces(), setVelocity()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::stopSpinning()
+\brief Clear angular velocity.
+
+Does not clear torque; an active torque can accelerate rotation again on the next step.
+
+\return This object, for chaining.
+
+\see stopAllForces(), setAngularVelocity()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getAngularVelocity() const
+\brief Read the body's angular velocity.
+
+\return The current angular velocity. Returns zero for NoPhysics. Units are clockwise radians per second.
+
+\see setAngularVelocity()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setAngularVelocity(double radiansPerSecond)
+\brief Set the body's angular velocity.
+
+Static bodies retain zero angular velocity. Invalid values throw on a present body. NoPhysics ignores the operation.
+
+A rigidly mounted Sprite's body rejects this operation; animate its mounting Part or detach it first.
+
+\param radiansPerSecond Finite angular velocity in radians per second; positive is clockwise.
+
+\return This object, for chaining.
+
+\see getAngularVelocity()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getAngularMomentum() const
+\brief Read rotational momentum.
+
+For an active Sprite rig, sum component spin and orbital momentum about the
+assembly center of mass: `sum(I_i * omega_i + m_i * cross(r_i - COM, v_i - VCOM))`.
+This includes attached Kinematic bodies, excludes the coordinating body and
+unregistered/detached parts, and does not assume all parts rotate together.
+
+\return Signed clockwise angular momentum in mass times distance squared per
+second. For a single body, moment of inertia multiplied by angular velocity.
+
+\see getMomentOfInertia(), getAngularVelocity(), applyAngularImpulse()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getMass() const
+\brief Read the body's mass.
+
+For a Sprite with an active explicit or generated animation physics rig, this is
+the sum of registered component masses, including Kinematic components; unrelated
+and detached Parts are excluded.
+
+\return The current mass. Returns zero for NoPhysics.
+
+\see setMass()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setMass(double mass)
+\brief Set the body's mass.
+
+Scales inertia by newMass / oldMass, preserving a tuned inertia-to-mass ratio.
+Linear/angular velocity is unchanged, so momentum changes. Invalid or overflowing
+mass/inertia throws before changing state. NoPhysics ignores the operation.
+
+For a Sprite with an active explicit or generated animation physics rig, scales
+every registered component's mass/inertia while preserving their current
+proportions. A component edit changes only that body and consequently the total.
+The coordinating body adds no simulated mass.
+
+\param mass Finite positive mass in your application's mass units.
+
+\return This object, for chaining.
+
+\see getMass()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getMomentOfInertia() const
+\brief Read the body's moment of inertia.
+
+For an active Sprite rig, return the instantaneous inertia about its center of
+mass: `sum(I_i + m_i * distanceSquared(r_i, COM))`. This is the inertia the current
+pose would have if locked rigidly; it changes as articulated parts move. It counts
+exactly the same attached components as getMass(), including Kinematic bodies.
+The coordinating body's saved single-body inertia is not included.
+
+\return The current moment of inertia in mass times distance squared. Returns
+zero for NoPhysics.
+
+\see setMomentOfInertia()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setMomentOfInertia(double inertia)
+\brief Set the body's moment of inertia.
+
+Changes inertia without changing angular velocity. Visual resizing does not recalculate inertia. On an active rig, set inertia on each component; the coordinating Sprite body rejects this setter. Invalid values throw on a present body. NoPhysics ignores the operation.
+
+\param inertia Finite positive rotational inertia in mass times distance squared.
+
+\return This object, for chaining.
+
+\see getMomentOfInertia()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getLinearDamping() const
+\brief Read the body's linear damping.
+
+\return The current linear damping. Returns zero for NoPhysics. Units are inverse seconds.
+
+\see setLinearDamping()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setLinearDamping(double perSecond)
+\brief Set the body's linear damping.
+
+Damping slows velocity over time; it is separate from contact friction. Invalid values throw on a present body. NoPhysics ignores the operation.
+
+\param perSecond Finite nonnegative exponential damping rate per second. Zero disables damping.
+
+\return This object, for chaining.
+
+\see getLinearDamping()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getAngularDamping() const
+\brief Read the body's angular damping.
+
+\return The current angular damping. Returns zero for NoPhysics. Units are inverse seconds.
+
+\see setAngularDamping()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setAngularDamping(double perSecond)
+\brief Set the body's angular damping.
+
+Damping slows angular velocity over time; it is separate from contact friction. Invalid values throw on a present body. NoPhysics ignores the operation.
+
+\param perSecond Finite nonnegative exponential damping rate per second. Zero disables damping.
+
+\return This object, for chaining.
+
+\see getAngularDamping()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getFriction() const
+\brief Read the body's contact friction.
+
+\return The current contact friction. Returns zero for NoPhysics.
+
+\see setFriction()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setFriction(double coefficient)
+\brief Set the body's contact friction.
+
+Affects contacts, not free-motion damping. Sprite and Part collider shapes use this material unless they override it. Invalid values throw on a present body. NoPhysics ignores the operation.
+
+\param coefficient Finite nonnegative friction coefficient.
+
+\return This object, for chaining.
+
+\see getFriction()
+*/
+
+/**
+\fn double pdg::PhysicsBody::getRestitution() const
+\brief Read the body's restitution.
+
+\return The current restitution. Returns zero for NoPhysics.
+
+\see setRestitution()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setRestitution(double coefficient)
+\brief Set the body's restitution.
+
+Controls bounce during contacts. It is independent of damping. Invalid values throw on a present body. NoPhysics ignores the operation.
+
+\param coefficient Finite coefficient from 0 (inelastic) through 1 (fully elastic).
+
+\return This object, for chaining.
+
+\see getRestitution()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::applyImpulse(const Vector & impulse)
+\brief Change momentum immediately.
+
+On a Sprite using setupPhysicsFromAnimationRig(), routes the impulse to the
+selected root component and returns the coordinating body for chaining. A world
+application point keeps its lever arm relative to that root.
+
+Linear velocity changes by impulse divided by mass. The overload with a world point also changes angular velocity using its lever arm. Only dynamic bodies respond; static, kinematic, and absent bodies ignore impulses.
+
+\param impulse Finite momentum-change vector in owning-layer axes.
+
+\return This object, for chaining.
+
+\see applyForce(), applyAngularImpulse()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::applyImpulse(const Vector & impulse, const Point & worldPoint)
+\brief Change momentum immediately.
+
+On a Sprite using setupPhysicsFromAnimationRig(), routes the impulse to the
+selected root component and returns the coordinating body for chaining. A world
+application point keeps its lever arm relative to that root.
+
+Linear velocity changes by impulse divided by mass. The overload with a world point also changes angular velocity using its lever arm. Only dynamic bodies respond; static, kinematic, and absent bodies ignore impulses.
+
+\param impulse Finite momentum-change vector in owning-layer axes.
+\param worldPoint Finite application point in owning-layer coordinates. Omitting it applies at the center of mass.
+
+\return This object, for chaining.
+
+\see applyForce(), applyAngularImpulse()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::applyAngularImpulse(double impulse)
+\brief Change angular momentum immediately.
+
+On a Sprite using setupPhysicsFromAnimationRig(), routes the impulse to the
+selected root component and returns the coordinating body for chaining. A world
+application point keeps its lever arm relative to that root.
+
+Angular velocity changes by impulse divided by moment of inertia. Only dynamic bodies respond.
+
+\param impulse Finite clockwise angular impulse in mass times distance squared per second.
+
+\return This object, for chaining.
+
+\see applyTorque(), getAngularMomentum()
+*/
+
+/**
+\fn PhysicsForceId pdg::PhysicsBody::applyForce(const Vector & force, double durationSeconds, double delaySeconds)
+\brief Apply a force for a finite duration.
+
+Force integrates over time; it does not change velocity immediately. Use the point overload to add torque around the center of mass. The point overload takes worldPoint before durationSeconds.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\anchor physics_assembly_loads
+\par Loads on an active Sprite rig
+Finite and continuous forces/torques on `sprite.physics` act on the selected
+physical root. The coordinating Sprite stays Kinematic and adds no simulated mass.
+A new registration requires a Dynamic root; otherwise it returns zero. Driven
+roots count as Dynamic, and these loads coexist with their controller.
+
+The Sprite owns the returned IDs. Root reassignment or detachment routes existing
+loads to the replacement root; cancel them through the same `sprite.physics`.
+Component registrations use independent IDs and are not cancelled by clearing
+Sprite loads. Delays and durations advance once per physics step. While the selected
+root is Kinematic, existing loads age without exerting force and resume if it
+becomes Dynamic. Snapshots preserve IDs and remaining durations. Loads surviving
+rig disable continue on a Dynamic single body; a Kinematic/Static handoff clears them.
+
+An off-center force captures its lever arm relative to the selected root at
+submission. World force vectors and signed torques keep their world coordinates
+across a Sprite flip. They are not reflected with the rig's pose and velocity.
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\param force Finite force vector in owning-layer axes, in mass times distance per second squared.
+\param durationSeconds Finite nonnegative active duration in seconds; zero applies no force.
+\param delaySeconds Finite nonnegative delay before the force begins, in seconds.
+
+\return A nonzero force ID for removeForce(), or \c pdg::physicsForce_None (0) for zero duration or a non-Dynamic recipient/absent body. An assembly uses its selected root as recipient.
+
+\par Example
+\code{.cpp}
+auto& body = sprite->setupPhysicsBody(2, 4);
+auto id = body.applyForce(pdg::Vector(0, 8), pdg::Point(110, 50), 0.25, 0.1);
+\endcode
+
+\see applyImpulse(), removeForce()
+*/
+
+/**
+\fn PhysicsForceId pdg::PhysicsBody::applyForce(const Vector & force, const Point & worldPoint, double durationSeconds, double delaySeconds)
+\brief Apply a force for a finite duration.
+
+Force integrates over time; it does not change velocity immediately. Use the point overload to add torque around the center of mass. The point overload takes worldPoint before durationSeconds.
+
+For active Sprite rigs, see \ref physics_assembly_loads.
+
+\param force Finite force vector in owning-layer axes, in mass times distance per second squared.
+\param worldPoint Finite application point in owning-layer coordinates. The lever arm is captured when the force is submitted.
+\param durationSeconds Finite nonnegative active duration in seconds; zero applies no force.
+\param delaySeconds Finite nonnegative delay before the force begins, in seconds.
+
+\return A nonzero force ID for removeForce(), or \c pdg::physicsForce_None (0) for zero duration or a non-Dynamic recipient/absent body. An assembly uses its selected root as recipient.
+
+\see applyImpulse(), removeForce()
+*/
+
+/**
+\fn PhysicsForceId pdg::PhysicsBody::applyTorque(double torque, double durationSeconds, double delaySeconds)
+\brief Apply torque for a finite duration.
+
+Torque changes angular velocity according to moment of inertia. Only dynamic bodies respond.
+
+For active Sprite rigs, see \ref physics_assembly_loads.
+
+\param torque Finite clockwise torque in mass times distance squared per second squared.
+\param durationSeconds Finite nonnegative active duration in seconds; zero applies no force.
+\param delaySeconds Finite nonnegative delay before the force begins, in seconds.
+
+\return A nonzero force ID for removeForce(), or \c pdg::physicsForce_None (0) for zero duration or a non-Dynamic recipient/absent body. An assembly uses its selected root as recipient.
+
+\see applyAngularImpulse(), removeForce()
+*/
+
+/**
+\fn PhysicsForceId pdg::PhysicsBody::addContinuousForce(const Vector & force)
+\brief Apply continuous force.
+
+Begins immediately and continues until removed, cleared, or an ordinary body leaves dynamic mode. Assembly loads follow the separate rules below.
+
+For active Sprite rigs, see \ref physics_assembly_loads.
+
+\param force Finite force vector in owning-layer axes, in mass times distance per second squared.
+
+\return A nonzero force ID, or physicsForce_None (0) for a non-Dynamic recipient/absent body. An assembly uses its selected root as recipient.
+
+\see removeForce(), stopAllForces()
+*/
+
+/**
+\fn PhysicsForceId pdg::PhysicsBody::addContinuousTorque(double torque)
+\brief Apply continuous torque.
+
+Begins immediately and continues until removed, cleared, or an ordinary body leaves dynamic mode. Assembly loads follow the separate rules below.
+
+For active Sprite rigs, see \ref physics_assembly_loads.
+
+\param torque Finite clockwise torque in mass times distance squared per second squared.
+
+\return A nonzero force ID, or physicsForce_None (0) for a non-Dynamic recipient/absent body. An assembly uses its selected root as recipient.
+
+\see removeForce(), stopAllForces()
+*/
+
+/**
+\fn bool pdg::PhysicsBody::removeForce(PhysicsForceId id)
+\brief Cancel a force or torque registration.
+
+Works for pending, finite, and continuous loads. Removing an expired or unknown ID is harmless.
+
+For active Sprite rigs, see \ref physics_assembly_loads.
+
+\param id The ID returned when the force or torque was registered.
+
+\return True if a pending/active load was removed; false otherwise.
+
+\see applyForce(), applyTorque(), stopAllForces()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::stopAllForces()
+\brief Clear active and delayed forces, torques and the physical drive.
+
+Current linear and angular velocity are preserved. Use stopMoving() and stopSpinning() to clear those separately.
+
+For active Sprite rigs, see \ref physics_assembly_loads.
+
+\return This object, for chaining.
+
+\see removeForce(), stopMoving(), stopSpinning()
+*/
+
+/**
+\fn void pdg::PhysicsBody::step(double deltaSeconds)
+\brief Advance a detached body with the basic solver.
+
+Integrates motion and load lifetimes. Throws if a Chipmunk solver owns the body or the time is invalid.
+
+\param deltaSeconds Finite nonnegative elapsed time in seconds.
+
+\note Sprite and Part owners advance attached bodies automatically. Call step() yourself only after detaching a retained basic body.
+
+\see isAttached(), getSolver()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::setDriveTarget(const Point & position, double radians, double maxForce, double maxTorque, double frequency, double dampingRatio, int direction)
+\brief Drive a dynamic body toward a position and orientation using bounded force and torque.
+
+Installs or replaces an active spring/damper target. The operation preserves the
+current position and velocity. Each physics step adds a drive contribution to
+other applied loads; collisions and constraints still determine the solved pose.
+Repeated successful manual setDriveTarget() calls replace the same manual target; the last call wins. Invalid updates preserve the previous target. A blocked or force-limited body may never reach its target. The drive stays enabled
+until clearDrive(), stopAllForces(), or a change to kinematic/static mode.
+
+\param position Target in owning-layer coordinates; a detached body uses its world frame.
+\param radians Target orientation in radians, positive clockwise.
+\param maxForce Finite nonnegative limit on the magnitude of the linear drive force, in mass units times distance units per second squared. Zero disables translation actuation.
+\param maxTorque Finite nonnegative angular drive torque limit, in inertia units times radians per second squared. Zero disables angular actuation.
+\param frequency Finite positive response frequency in cycles per second; default 4. Larger values request faster correction, subject to the force limits.
+\param dampingRatio Finite nonnegative damping ratio; default 1 requests critical damping in the unconstrained linear model. Zero permits oscillation.
+\param direction Integer rotationDirection constant; default rotationDirection_Shortest. Clockwise/CounterClockwise select a signed route at assignment. AsSpecified retains the unwrapped target, including full turns.
+
+\return This PhysicsBody. NoPhysics returns the shared singleton without storing a target.
+
+\note Requires a dynamic body. Invalid numeric values, unsupported direction
+constants, or competing rigid-mount ownership throw before changing the target.
+Limits bound only the drive contribution; independent impulses, forces, gravity
+and constraint responses can produce additional motion. The basic solver uses
+bounded spring/damper integration, while Chipmunk applies the drive before its
+shared contact/constraint solve. Numerical trajectories need not match exactly.
+
+\code
+auto& body = sprite.setupPhysicsBody(2, 4);
+body.setDriveTarget(Point(120, 80), 0.5, 40, 12, 3, 1,
+                    rotationDirection_Shortest);
+// The Sprite/Part world advances its body; do not call body.step() here.
+\endcode
+
+\note Rig tracking and Part IK controllers reserve their participating drives. Release rig tracking with Sprite::setAnimationPhysicsMode(animationPhysics_Dynamic). Call Part::clearIKTarget() to release a Part IK chain
+before replacing or clearing such a drive, stopping all forces, or changing away
+from dynamic mode. Independent impulses and forces remain available.
+
+\see getDriveState(), clearDrive(), setMode()
+*/
+
+/**
+\fn PhysicsBody & pdg::PhysicsBody::clearDrive()
+\brief Remove the active physical drive.
+
+Preserves current position, linear/angular velocity and separately registered
+forces/torques. Calling when no drive exists is harmless.
+
+\return This PhysicsBody, including NoPhysics.
+\see setDriveTarget(), stopAllForces()
+*/
+
+/**
+\fn bool pdg::PhysicsBody::isDriveEnabled() const
+\brief Test whether a physical drive is enabled.
+
+\return True while a drive is installed, including when its target is blocked
+or already reached. False for NoPhysics.
+\see getDriveState(), clearDrive()
+*/
+
+/**
+\fn PhysicsDriveState pdg::PhysicsBody::getDriveState() const
+\brief Copy the drive target, last actuation and current target error.
+
+Returns an independent snapshot. When disabled, enabled is false and numeric
+fields are zero. Reading never creates a body or emits a NoPhysics warning.
+
+\htmlonly
+<div class="shared-api-options" id="physics-drive-state">
+<strong>Drive snapshot fields</strong>
+<table>
+<tr><th>Field</th><th>Meaning</th></tr>
+<tr><td>enabled</td><td>Whether a drive is installed.</td></tr>
+<tr><td>x, y, rotation</td><td>World/layer target position and resolved unwrapped angle in radians.</td></tr>
+<tr><td>maxForce, maxTorque</td><td>Limits for the drive contribution.</td></tr>
+<tr><td>frequency, dampingRatio</td><td>Response frequency in cycles/second and dimensionless damping ratio.</td></tr>
+<tr><td>forceX, forceY, torque</td><td>Most recent internal integration step's drive contribution, excluding independent loads. Zero before the first step after target assignment.</td></tr>
+<tr><td>positionError, rotationError</td><td>Current distance to the target and signed remaining unwrapped angle. These describe the actual body, including contact blocking.</td></tr>
+</table>
+</div>
+\endhtmlonly
+
+\return A PhysicsDriveState value.
+\see setDriveTarget(), isDriveEnabled()
+*/

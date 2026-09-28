@@ -1,0 +1,15 @@
+<map id="Part" name="Part">
+<area shape="rect" id="Node000001" title="Independently animated Sprite subsection, artwork holder, or mounting frame." alt="" coords="208,342,253,368"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated.html" title=" " alt="" coords="5,238,130,264"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,269,213,340,209,343,98,274"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="14,155,121,181"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="68,194,70,238,65,237,67,199"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="21,80,114,106"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="68,119,70,155,65,155,67,124"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="12,5,123,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="68,44,70,80,65,80,67,49"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_physics_body_ref.html" title=" " alt="" coords="154,230,306,271"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="232,285,232,343,228,340,228,288"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_collider_ref.html" title=" " alt="" coords="330,238,493,264"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="380,271,253,344,251,339,374,272"/>
+</map>

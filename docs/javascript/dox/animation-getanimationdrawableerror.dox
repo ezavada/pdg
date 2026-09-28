@@ -1,0 +1,10 @@
+/**
+\fn pdg::Sprite::getAnimationDrawableError(uint id)
+\brief Read a drawing callback diagnostic.
+
+\param id Existing ID returned by addAnimationDrawable().
+
+\return An empty string when no error is recorded, otherwise the failure text. Throws for an unknown ID.
+
+\see addAnimationDrawable(), removeAnimationDrawable()
+*/

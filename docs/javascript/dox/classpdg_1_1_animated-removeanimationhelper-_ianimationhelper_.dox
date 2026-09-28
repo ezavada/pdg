@@ -1,9 +1,12 @@
-namespace pdg { /**
+/**
+\fn pdg::Animated::removeAnimationHelper(IAnimationHelper helper)
+\brief Retire a specific animation helper.
 
-\fn pdg::Animated::removeAnimationHelper
+An absent helper is ignored. Other owners' registrations are unaffected. A retained helper may be registered again.
+Safe inside a callback: removed helpers do not run again on this step, and the
+currently executing callback remains alive until it returns.
 
-\brief remove a specific animation helper
-
-\sa addAnimationHelper
-
-**/ }
+\param helper Helper to remove from this owner.
+\return The original owner object, for chaining.
+\see addAnimationHelper()
+*/

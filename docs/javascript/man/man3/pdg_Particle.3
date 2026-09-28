@@ -1,0 +1,811 @@
+.TH "Particle" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Particle \- Lightweight whole-body artwork and optional physics\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.PP
+Inherits \fBAnimated\fP, and \fBEventEmitter\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBParticle\fP \fBclearContent\fP ()"
+.br
+.RI "Remove the artwork\&. "
+.ti -1c
+.RI "\fBexpire\fP ()"
+.br
+.RI "Expire immediately\&. "
+.ti -1c
+.RI "\fBParticle\fP \fBfadeTo\fP (number opacity, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Schedule a whole-particle fade\&. "
+.ti -1c
+.RI "number \fBgetAge\fP ()"
+.br
+.RI "Read elapsed simulation time\&. "
+.ti -1c
+.RI "\fBSpriteLayer\fP \fBgetLayer\fP ()"
+.br
+.RI "Read the owning layer\&. "
+.ti -1c
+.RI "number \fBgetLifetime\fP ()"
+.br
+.RI "Read the configured lifetime\&. "
+.ti -1c
+.RI "number \fBgetOpacity\fP ()"
+.br
+.RI "Read whole-particle opacity\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBgetParticleEmitter\fP ()"
+.br
+.RI "Read the optional owned emitter\&. "
+.ti -1c
+.RI "boolean \fBhasContent\fP ()"
+.br
+.RI "Test whether artwork is assigned\&. "
+.ti -1c
+.RI "boolean \fBisAlive\fP ()"
+.br
+.RI "Test whether the particle has expired\&. "
+.ti -1c
+.RI "\fBremoveCollider\fP ()"
+.br
+.RI "Detach the optional collider\&. "
+.ti -1c
+.RI "\fBremoveParticleEmitter\fP ()"
+.br
+.RI "Stop and detach the owned emitter\&. "
+.ti -1c
+.RI "\fBremovePhysicsBody\fP ()"
+.br
+.RI "Detach the optional body\&. "
+.ti -1c
+.RI "\fBParticle\fP \fBsetDrawing\fP (\fBDrawing\fP content)"
+.br
+.RI "Assign whole-particle \fBDrawing\fP artwork\&. "
+.ti -1c
+.RI "\fBParticle\fP \fBsetImage\fP (\fBImage\fP content)"
+.br
+.RI "Assign whole-particle \fBImage\fP artwork\&. "
+.ti -1c
+.RI "\fBParticle\fP \fBsetLifetime\fP (number value)"
+.br
+.RI "Set the lifetime in simulation seconds\&. "
+.ti -1c
+.RI "\fBParticle\fP \fBsetOpacity\fP (number value)"
+.br
+.RI "Set whole-particle opacity\&. "
+.ti -1c
+.RI "\fBCollider\fP \fBsetupCollider\fP ()"
+.br
+.RI "Create or return the optional whole-body collider\&. "
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBsetupParticleEmitter\fP ()"
+.br
+.RI "Create or return the owned emitter\&. "
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBsetupPhysicsBody\fP (number mass=1, number momentOfInertia=1)"
+.br
+.RI "Set up the optional body\&. "
+.in -1c
+
+Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandThen\fP ()"
+.br
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
+.ti -1c
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
+.br
+.RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
+.br
+.RI "Discard scheduled animations and pending sequencing\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipX\fP ()"
+.br
+.RI "Toggle the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipY\fP ()"
+.br
+.RI "Toggle the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
+.br
+.RI "Read axis-aligned logical bounds\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
+.br
+.RI "Read the rotation-center offset\&. "
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.RI "Read logical height\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.br
+.RI "Read the location in the container coordinate system\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.br
+.RI "Read the programmed movement rate\&. "
+.ti -1c
+.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
+.br
+.RI "Read rotated logical bounds\&. "
+.ti -1c
+.RI "number \fBgetRotation\fP ()"
+.br
+.RI "Read the current rotation in radians\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetScale\fP ()"
+.br
+.RI "Read independent transform scale\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetSize\fP ()"
+.br
+.RI "Read logical width and height\&. "
+.ti -1c
+.RI "number \fBgetSpin\fP ()"
+.br
+.RI "Read the programmed angular rate\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
+.br
+.RI "Read logical width and height change rates\&. "
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.RI "Read logical width\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
+.ti -1c
+.RI "boolean \fBisFlippedX\fP ()"
+.br
+.RI "Read the x reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisFlippedY\fP ()"
+.br
+.RI "Read the y reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisSchedulePaused\fP ()"
+.br
+.RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
+.br
+.RI "Pause scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Change logical size by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
+.br
+.RI "Resume scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate through a relative angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Set the rotation-center offset immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.br
+.RI "Set the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
+.br
+.RI "Set the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
+.br
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
+.br
+.RI "Set a constant programmed angular rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
+.br
+.RI "Set independent constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.br
+.RI "Set logical width immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
+.br
+.RI "Stop all programmed changes to position\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
+.br
+.RI "Stop all programmed changes to rotation\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by independent factors\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
+.br
+.RI "Delay the next timed animation request\&. "
+.in -1c
+
+Public Member Functions inherited from \fBEventEmitter\fP
+.in +1c
+.ti -1c
+.RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
+.br
+.RI "add a new handler for some event type, or for all events if no type specified\&. "
+.ti -1c
+.RI "\fBblockEvent\fP (int inEventType)"
+.br
+.RI "temporarily ignore all events of a particular type\&. "
+.ti -1c
+.RI "\fBclear\fP ()"
+.br
+.RI "remove all handlers "
+.ti -1c
+.RI "\fBremoveHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
+.br
+.RI "remove a handler for some event type, or for all events (see note) if no type specified\&. "
+.ti -1c
+.RI "\fBunblockEvent\fP (int inEventType)"
+.br
+.RI "stop ignoring events of a particular type "
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBCollider\fP \fBcollider\fP"
+.br
+.ti -1c
+.RI "\fBParticleEmitter\fP \fBemitter\fP"
+.br
+.ti -1c
+.RI "\fBPhysicsBody\fP \fBphysics\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Lightweight whole-body artwork and optional physics\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBParticle\fP clearContent ()"
+
+.PP
+Remove the artwork\&. Preserves transform, size, lifetime, physics and emitter\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticle\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "expire ()"
+
+.PP
+Expire immediately\&. Idempotent\&. Removes the particle from its layer, disconnects physics constraints, detaches its shared solver and stops its emitter\&. Retained particle/component references stay valid\&. 
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticle\fP fadeTo (number opacity, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Schedule a whole-particle fade\&. Uses the same \fBwait()\fP/andThen() timeline as movement and size changes\&. Fading to zero does not expire the particle\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIopacity\fP Target opacity from zero to one\&. 
+.br
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Easing function (C++) or constant (JavaScript); default linearTween\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticle\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.PP
+References \fBpdg::linearTween\fP\&.
+.SS "number getAge ()"
+
+.PP
+Read elapsed simulation time\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Age in seconds, clamped at expiry\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBSpriteLayer\fP getLayer ()"
+
+.PP
+Read the owning layer\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The layer, or null when detached or expired\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "number getLifetime ()"
+
+.PP
+Read the configured lifetime\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Seconds; zero means unlimited\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "number getOpacity ()"
+
+.PP
+Read whole-particle opacity\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Opacity from zero to one\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP getParticleEmitter ()"
+
+.PP
+Read the optional owned emitter\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The emitter, or null\&. Reading never allocates it\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "boolean hasContent ()"
+
+.PP
+Test whether artwork is assigned\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True for an assigned \fBImage\fP or \fBDrawing\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "boolean isAlive ()"
+
+.PP
+Test whether the particle has expired\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True until \fBexpire()\fP or automatic expiry; detached particles may still be alive\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "removeCollider ()"
+
+.PP
+Detach the optional collider\&. Restores collider to NoCollider\&. Retained collider references remain valid\&. 
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "removeParticleEmitter ()"
+
+.PP
+Stop and detach the owned emitter\&. Retained emitter references remain valid; its previous emissions continue living\&. 
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "removePhysicsBody ()"
+
+.PP
+Detach the optional body\&. Restores physics to NoPhysics\&. Retained bodies preserve state but lose their owner, constraints and shared solver\&. 
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticle\fP setDrawing (\fBDrawing\fP content)"
+
+.PP
+Assign whole-particle \fBDrawing\fP artwork\&. Sets the logical size to the artwork bounds\&. Later setSize/grow/resizeTo operations map the complete artwork into that size\&. Artwork is shared; edits to a shared \fBDrawing\fP remain visible\&. No image subsection or Spriter playback is exposed\&.
+
+.PP
+\fBNote\fP
+.RS 4
+JavaScript artwork methods require a GUI build\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIcontent\fP Artwork to retain; JavaScript parameter is named content\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticle\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticle\fP setImage (\fBImage\fP content)"
+
+.PP
+Assign whole-particle \fBImage\fP artwork\&. Sets the logical size to the artwork bounds\&. Later setSize/grow/resizeTo operations map the complete artwork into that size\&. Artwork is shared; edits to a shared \fBDrawing\fP remain visible\&. No image subsection or Spriter playback is exposed\&.
+
+.PP
+\fBNote\fP
+.RS 4
+JavaScript artwork methods require a GUI build\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIcontent\fP Artwork to retain; JavaScript parameter is named content\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticle\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticle\fP setLifetime (number value)"
+
+.PP
+Set the lifetime in simulation seconds\&. Default 1; zero disables automatic expiry\&. Changing lifetime preserves age\&. The next update expires a particle whose age has reached its lifetime\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite nonnegative seconds\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticle\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticle\fP setOpacity (number value)"
+
+.PP
+Set whole-particle opacity\&. Cancels any pending opacity transition\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Finite value from zero to one\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBParticle\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBCollider\fP setupCollider ()"
+
+.PP
+Create or return the optional whole-body collider\&. Geometry uses particle-local distance units and follows its transform\&. No geometry is inferred from artwork\&. Enable layer collisions and configure shapes for contact detection\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The \fBParticle\fP's \fBCollider\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBParticleEmitter\fP setupParticleEmitter ()"
+
+.PP
+Create or return the owned emitter\&. Repeated calls preserve configuration and identity\&. Its local origin and facing default to zero\&. Reading emitter/getParticleEmitter() never creates it\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The \fBParticle\fP's emitter\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SS "\fBPhysicsBody\fP setupPhysicsBody (number mass = \fR1\fP, number momentOfInertia = \fR1\fP)"
+
+.PP
+Set up the optional body\&. Applies mass and inertia on every call, defaulting both to 1\&. An existing body preserves identity, mode, velocity, forces and constraints\&. A newly created dynamic body stops programmed movement/spin\&. Immediate owner transform setters teleport the body\&. Read physics for ordinary edits\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImass\fP Finite positive mass; default 1\&. 
+.br
+\fImomentOfInertia\fP Finite positive inertia; default 1\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The \fBParticle\fP's \fBPhysicsBody\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+ParticleEffects 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBCollider\fP collider"
+Read-only property\&. 
+.SS "\fBParticleEmitter\fP emitter"
+Read-only property\&. 
+.SS "\fBPhysicsBody\fP physics"
+Read-only property\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

@@ -1,0 +1,14 @@
+/**
+\fn pdg::Sprite::setAnimationSource(int source)
+\brief Select the starting pose for evaluation.
+
+Clip uses the sampled animation; Reference and Procedural start from the rig reference pose. Persistent overrides and modifiers run afterward in every mode. Source selection does not create a separate playback clock. A change requested inside a callback takes effect after evaluation.
+
+\param source pdg.animationSource_Clip, pdg.animationSource_Reference, or pdg.animationSource_Procedural.
+
+\return No value.
+
+\note Call enableAnimationPose() successfully before using this method.
+
+\see getAnimationSource(), addAnimationModifier()
+*/

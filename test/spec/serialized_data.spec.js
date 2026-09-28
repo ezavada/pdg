@@ -125,21 +125,21 @@ describe("Serialized Data", function() {
     });
 
     it("verifies exact sizes for strings", function() {
-      // Empty string: 1 byte for length (0) + 0 bytes for content = 1 byte
-      expect(serializer.sizeof_str("")).toBe(1);
+      // Default tagged stream: 3-byte type tag + encoded length + content
+      expect(serializer.sizeof_str("")).toBe(4);
       
-      // Short string: 1 byte for length + string content
-      expect(serializer.sizeof_str("a")).toBe(2);
-      expect(serializer.sizeof_str("hello")).toBe(6);
-      expect(serializer.sizeof_str("test string")).toBe(12);
+      // Short strings: 3-byte tag + 1-byte length + content
+      expect(serializer.sizeof_str("a")).toBe(5);
+      expect(serializer.sizeof_str("hello")).toBe(9);
+      expect(serializer.sizeof_str("test string")).toBe(15);
       
       // Medium string: 3 bytes for length (254-65535 range) + string content
       var mediumStr = "x".repeat(1000);
-      expect(serializer.sizeof_str(mediumStr)).toBe(1003); // 3 + 1000
+      expect(serializer.sizeof_str(mediumStr)).toBe(1006); // tag + 3-byte length + 1000
       
       // Long string: 5 bytes for length (>65535) + string content
       var longStr = "x".repeat(100000);
-      expect(serializer.sizeof_str(longStr)).toBe(100005); // 5 + 100000
+      expect(serializer.sizeof_str(longStr)).toBe(100008); // tag + 5-byte length + 100000
     });
 
     it("verifies exact sizes for Color objects", function() {
@@ -240,19 +240,19 @@ describe("Serialized Data", function() {
     });
 
     it("verifies exact sizes for memory blocks", function() {
-      // Empty memory block
-      expect(serializer.sizeof_mem("")).toBe(1); // 1 byte for length (0)
+      // Memory records include the 3-byte type tag, length and content.
+      expect(serializer.sizeof_mem("")).toBe(4); // tag + 1-byte length (0)
       
       // Small memory block
-      expect(serializer.sizeof_mem("test")).toBe(5); // 1 byte for length (4) + 4 bytes content
+      expect(serializer.sizeof_mem("test")).toBe(8); // tag + 1-byte length + 4 bytes content
       
       // Medium memory block
       var mediumMem = "x".repeat(1000);
-      expect(serializer.sizeof_mem(mediumMem)).toBe(1003); // 3 bytes for length + 1000 bytes content
+      expect(serializer.sizeof_mem(mediumMem)).toBe(1006); // tag + 3-byte length + 1000 bytes content
       
       // Large memory block
       var largeMem = "x".repeat(100000);
-      expect(serializer.sizeof_mem(largeMem)).toBe(100005); // 5 bytes for length + 100000 bytes content
+      expect(serializer.sizeof_mem(largeMem)).toBe(100008); // tag + 5-byte length + 100000 bytes content
     });
 
     it("verifies exact sizes for null objects", function() {
@@ -331,8 +331,8 @@ describe("Serialized Data", function() {
         { type: 'uint', value: 42, expectedSize: 1 },
         { type: 'uint', value: 1000, expectedSize: 3 },
         { type: 'uint', value: 1000000, expectedSize: 5 },
-        { type: 'str', value: "hello", expectedSize: 6 },
-        { type: 'str', value: "", expectedSize: 1 },
+        { type: 'str', value: "hello", expectedSize: 9 },
+        { type: 'str', value: "", expectedSize: 4 },
         { type: 'bool', value: true, expectedSize: 1 },
         { type: 'bool', value: false, expectedSize: 0 }, // second in sequence
         { type: '1', value: 42, expectedSize: 1 },
@@ -380,8 +380,7 @@ describe("Serialized Data", function() {
         totalExpectedSize += actualSize;
       }
       
-      // Add string tags (3 bytes each for the 2 strings)
-      totalExpectedSize += 6; // 2 strings * 3 bytes each for tag_string
+      // sizeof_str already includes the tags selected for this writer.
       
       // Now actually serialize and verify total size
       for (var i = 0; i < testValues.length; i++) {
@@ -544,9 +543,6 @@ describe("Serialized Data", function() {
         
         if (test.type === 'f') {
           expect(deserializedValue).toBeCloseTo(test.value, 5);
-        } else if (test.type === 'd' && test.value === 2.71828182846) {
-          // FIXME: C++ bug - serialize_d/deserialize_d returns NaN
-          expect(isNaN(deserializedValue)).toBe(true);
         } else {
           expect(deserializedValue).toBe(test.value);
         }
@@ -630,7 +626,7 @@ describe("Serialized Data", function() {
             size = serializer.sizeof_uint(test.value);
             break;
           case 'str':
-            size = 3 + serializer.sizeof_str(test.value); // string tag + string size
+            size = serializer.sizeof_str(test.value); // includes the string tag
             break;
           case 'bool':
             size = serializer.sizeof_bool(test.value);
@@ -729,9 +725,6 @@ describe("Serialized Data", function() {
         
         if (test.type === 'f') {
           expect(deserializedValue).toBeCloseTo(test.value, 5);
-        } else if (test.type === 'd' && test.value === 2.71828182846) {
-          // FIXME: C++ bug - serialize_d/deserialize_d returns NaN
-          expect(isNaN(deserializedValue)).toBe(true);
         } else {
           expect(deserializedValue).toBe(test.value);
         }

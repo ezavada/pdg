@@ -1,7 +1,27 @@
 namespace pdg { /**
+\fn pdg::Animated::setLocation(Point value)
+\brief Set the location immediately.
 
-\fn pdg::Animated::setLocation
+Cancels scheduled position changes and preserves independently configured movement rates. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief place the object at a particular location
+\param value Location in the container coordinate system.
 
-**/ }
+\return This object, for chaining.
+
+\see getLocation(), moveTo(), setMovement()
+*/
+
+/**
+\fn pdg::Animated::setLocation(number x, number y)
+\brief Set the location immediately.
+
+Cancels scheduled position changes and preserves independently configured movement rates. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param x Location in the container coordinate system.
+\param y Location in the container coordinate system.
+
+\return This object, for chaining.
+
+\see getLocation(), moveTo(), setMovement()
+*/
+ }

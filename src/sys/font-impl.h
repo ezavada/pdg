@@ -57,6 +57,7 @@ namespace pdg {
 		uint32		style;
 		float		height;
 		float		ascent;
+		float		capHeight;
 		float		descent;
 		float		leading;
 	};
@@ -67,6 +68,7 @@ namespace pdg {
 		
 		virtual float    getFontHeight(int size, uint32 style = textStyle_Plain);
 		virtual float    getFontLeading(int size, uint32 style = textStyle_Plain);
+		virtual float    getFontCapHeight(int size, uint32 style = textStyle_Plain);
 		virtual float    getFontAscent(int size, uint32 style = textStyle_Plain);
 		virtual float    getFontDescent(int size, uint32 style = textStyle_Plain);
 		

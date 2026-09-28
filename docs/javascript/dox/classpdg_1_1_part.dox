@@ -1,0 +1,31 @@
+namespace pdg {
+/**
+\class Part
+\ingroup Animation
+\brief An independently animated part owned by a Sprite.
+
+Create a Part by calling \ref Sprite::createPart "createPart()" on a Sprite
+instance. Part cannot be constructed directly with \c new.
+
+\code{.js}
+const sprite = new pdg.Sprite();
+const part = sprite.createPart("hand");
+part.moveTo(new pdg.Point(12, 0), 0.25, pdg.easeInOutQuad);
+\endcode
+
+Part inherits Animated's programmed movement, rotation and size operations.
+All animation durations are floating-point seconds. The owning Sprite advances
+its attached Parts; do not also call animate() on an attached Part every frame.
+
+Bone binding is optional. getBoneId() is safe on an unbound Part and returns
+\c pdg.boneId_None. Binding and hierarchy belong to Part, not Animated.
+Part has an optional PhysicsBody through its physics property.
+setupPhysicsBody() creates it explicitly; otherwise physics returns pdg.PhysicsBody.NoPhysics.
+Only setupPhysicsBody()/removePhysicsBody() can change the property association.
+Compare physics with pdg.PhysicsBody.NoPhysics to test absence.
+Removing a Part detaches its body and stops automatic stepping.
+
+A retained Part remains valid after removal from its Sprite; isAttached()
+reports false and its independent local transform remains available.
+*/
+}

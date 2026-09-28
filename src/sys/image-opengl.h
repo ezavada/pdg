@@ -39,11 +39,14 @@
 #include "image-impl.h"
 
 #include "include-opengl.h"
+#include <memory>
 
 // Forward declare CacheKey from imagecache-opengl-v2.h
 namespace pdg { typedef uint32 CacheKey; }
 
 namespace pdg {
+
+    struct OffscreenSurface;
 
 	class ImageOpenGL : public ImageImpl {
 	public:
@@ -70,6 +73,19 @@ namespace pdg {
 		virtual void	prepareToRasterize();
 		
 		void	bindTexture(GLint mipMode = GL_LINEAR);
+        bool usesPremultipliedAlpha() const;
+        void setDrawColor() const;
+        void syncOffscreenPixels() const;
+        virtual Color getPixel(int32 x, int32 y) const;
+        virtual uint8 getAlphaValue(int32 x, int32 y) const;
+        virtual void* getData();
+        virtual uint32 getSerializedSize(ISerializer* serializer) const;
+        virtual void serialize(ISerializer* serializer) const;
+        virtual void deserialize(IDeserializer* deserializer);
+        virtual Image* createImageScaled(float xscale, float yscale, FilterType filterType);
+        virtual void setTransparentColor(Color rgb);
+        std::shared_ptr<OffscreenSurface> mOffscreen;
+        mutable uint64 mPixelRevision = 0;
 		
 		// Invalidate OpenGL texture when graphics context is destroyed
 		void	invalidateOpenGLTexture();

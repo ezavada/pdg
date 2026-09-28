@@ -1,4 +1,4 @@
-.TH "Port" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Port" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -12,6 +12,10 @@ Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBclear\fP (\fBColor\fP color=TRANSPARENT_COLOR)"
+.br
+.RI "Replace pixels inside the current clip with an exact color\&. "
 .ti -1c
 .RI "\fBdrawArc\fP (\fBPoint\fP center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, \fBAttributes\fP attrs)"
 .br
@@ -40,6 +44,9 @@ Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)
 .RI "\fBdrawImage\fP (\fBImage\fP img, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 .br
 .RI "Draws an image at the specified location with styling attributes\&. "
+.ti -1c
+.RI "\fBdrawImage\fP (\fBImage\fP img, \fBQuad\fP quad, \fBAttributes\fP attrs)"
+.br
 .ti -1c
 .RI "\fBdrawImage\fP (\fBImage\fP img, \fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
@@ -87,7 +94,7 @@ Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)
 .ti -1c
 .RI "\fBRect\fP \fBgetClipRect\fP ()"
 .br
-.RI "Get the current clipping rectangle for drawing operations\&. "
+.RI "Return the current clipping rectangle in \fBPort\fP coordinates\&. "
 .ti -1c
 .RI "\fBFont\fP \fBgetCurrentFont\fP (uint style=\fBtextStyle_Plain\fP)"
 .br
@@ -105,17 +112,25 @@ Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)
 .br
 .RI "returns the width of the specified text in pixels "
 .ti -1c
+.RI "\fBresetClipRect\fP ()"
+.br
+.RI "Restore the clipping rectangle to the full drawing area\&. "
+.ti -1c
 .RI "\fBresetCursor\fP ()"
 .br
 .RI "NOT IMPLEMENTED\&. "
 .ti -1c
 .RI "\fBPort\fP \fBsetClipRect\fP (\fBRect\fP inClipRect)"
 .br
-.RI "Set the clipping rectangle to limit drawing operations to a specific area\&. "
+.RI "Replace the single clipping rectangle for all drawing operations\&. "
 .ti -1c
 .RI "\fBsetCursor\fP (\fBImage\fP cursorImage, \fBPoint\fP hotSpot)"
 .br
 .RI "NOT IMPLEMENTED\&. "
+.ti -1c
+.RI "\fBsetDrawingOrigin\fP (\fBPoint\fP origin)"
+.br
+.RI "Set the \fBPort\fP coordinate at the top left of an offscreen surface\&. "
 .ti -1c
 .RI "\fBsetFont\fP (\fBFont\fP font=DEFAULT_FONT)"
 .br
@@ -123,7 +138,7 @@ Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)
 .ti -1c
 .RI "\fBsetFontForStyle\fP (uint style, \fBFont\fP font=DEFAULT_FONT)"
 .br
-.RI "Set a custom font for a specific text style (bold, italic, etc\&.) "
+.RI "Set a custom font for a specific text style (bold, italic, etc\&.)\&. "
 .ti -1c
 .RI "\fBsetFontScalingFactor\fP (number scaleBy)"
 .br
@@ -145,12 +160,35 @@ area in which drawing is done, a viewport (\fIGUI Only\fP)
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 2 - Unstable\fP\&. The API is in the process of settling, but has not yet had sufficient real-world testing to be considered stable\&. Backwards-compatibility will be maintained if reasonable\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 A \fBPort\fP can be a full screen drawing context or a window\&. 
 .SH "Member Function Documentation"
 .PP 
+.SS "clear (\fBColor\fP color = \fRTRANSPARENT_COLOR\fP)"
+
+.PP
+Replace pixels inside the current clip with an exact color\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcolor\fP Defaults to transparent black\&. Alpha replaces the previous alpha; this differs from drawing a translucent rectangle, which blends with existing pixels\&.
+.RE
+.PP
+Works on graphics-enabled onscreen and offscreen ports\&. The current clip is unchanged\&. Live images made from an offscreen port reflect the clear on their next draw\&. 
+.PP
+\fBNote\fP
+.RS 4
+API stability: 2 — Evolving\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetClipRect()\fP, \fBresetClipRect()\fP, \fBGraphicsManager::createOffscreenPort()\fP 
+.RE
+.PP
+
 .SS "drawArc (\fBPoint\fP center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, \fBAttributes\fP attrs)"
 
 .PP
@@ -227,6 +265,8 @@ Draw an ellipse at the specified center point with given x and y radii\&.
 
 .PP
 Draws an image at the specified location with styling attributes\&. 
+.SS "drawImage (\fBImage\fP img, \fBQuad\fP quad, \fBAttributes\fP attrs)"
+
 .SS "drawImage (\fBImage\fP img, \fBRect\fP rect, \fBAttributes\fP attrs)"
 
 .PP
@@ -335,7 +375,19 @@ Draw a vector (arrow) from origin to the specified endpoint\&.
 .SS "\fBRect\fP getClipRect ()"
 
 .PP
-Get the current clipping rectangle for drawing operations\&. 
+Return the current clipping rectangle in \fBPort\fP coordinates\&. Defaults to \fBgetDrawingArea()\fP\&. An empty rectangle means all drawing is clipped\&. The returned value is a copy; use \fBsetClipRect()\fP to change the clip\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The current rectangle, intersected with the drawing area\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetClipRect()\fP, \fBresetClipRect()\fP 
+.RE
+.PP
+
 .SS "\fBFont\fP getCurrentFont (uint style = \fR\fBtextStyle_Plain\fP\fP)"
 
 .PP
@@ -356,6 +408,22 @@ Get the total drawing area rectangle for this port\&.
 returns the width of the specified text in pixels 
 .PP
 References \fBpdg::textStyle_Plain\fP\&.
+.SS "resetClipRect ()"
+
+.PP
+Restore the clipping rectangle to the full drawing area\&. Use this to allow drawing throughout the \fBPort\fP\&. setClipRect(new Rect()) instead suppresses all drawing\&. Resizing the \fBPort\fP also resets its clip to the drawing area\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Nothing\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetClipRect()\fP, \fBsetClipRect()\fP 
+.RE
+.PP
+
 .SS "resetCursor ()"
 
 .PP
@@ -363,11 +431,55 @@ NOT IMPLEMENTED\&.
 .SS "\fBPort\fP setClipRect (\fBRect\fP inClipRect)"
 
 .PP
-Set the clipping rectangle to limit drawing operations to a specific area\&. 
+Replace the single clipping rectangle for all drawing operations\&. Coordinates are in \fBPort\fP pixels, independent of drawing transforms\&. The rectangle is intersected with \fBgetDrawingArea()\fP\&. Empty or fully offscreen rectangles suppress all drawing\&. A later \fBsetClipRect()\fP replaces this rectangle; there is no clip stack\&. Fractional boundaries select pixel centers within the half-open rectangle\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIinClipRect\fP Axis-aligned drawing boundary, including an empty rectangle\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPort\fP, for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetClipRect()\fP, \fBresetClipRect()\fP, \fBAttributes::clipOverflow()\fP 
+.RE
+.PP
+
 .SS "setCursor (\fBImage\fP cursorImage, \fBPoint\fP hotSpot)"
 
 .PP
 NOT IMPLEMENTED\&. 
+.SS "setDrawingOrigin (\fBPoint\fP origin)"
+
+.PP
+Set the \fBPort\fP coordinate at the top left of an offscreen surface\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIorigin\fP Finite coordinates for the drawing area's top left\&. Initially (0, 0)\&.
+.RE
+.PP
+Pixel dimensions and stored pixels do not change\&. \fBgetDrawingArea()\fP reports the new origin and the clip resets to that area\&. \fBDrawing\fP and clipping now use those coordinates; \fBImage\fP pixel coordinates remain zero-based\&. This supports rendering a View into a reusable surface without changing its layout coordinates\&. Onscreen ports and nonfinite origins are rejected with an error\&. 
+.PP
+\fBNote\fP
+.RS 4
+Requires a \fBPort\fP from \fBGraphicsManager::createOffscreenPort()\fP\&. 
+
+.PP
+API stability: 2 — Evolving\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBclear()\fP, \fBgetDrawingArea()\fP, \fBImage::Image(Port, boolean)\fP 
+.RE
+.PP
+
 .SS "setFont (\fBFont\fP font = \fRDEFAULT_FONT\fP)"
 
 .PP
@@ -375,7 +487,7 @@ sets the current font for text rendering
 .SS "setFontForStyle (uint style, \fBFont\fP font = \fRDEFAULT_FONT\fP)"
 
 .PP
-Set a custom font for a specific text style (bold, italic, etc\&.) 
+Set a custom font for a specific text style (bold, italic, etc\&.)\&. 
 .SS "setFontScalingFactor (number scaleBy)"
 
 .PP

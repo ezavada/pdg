@@ -1,0 +1,56 @@
+.TH "animation_target_adapters" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+animation_target_adapters \- Animation target adapters 
+.PP
+Use these helpers to keep controller state independently of the current pose\&. They work without rendering and use floating-point seconds\&.
+.SH "Smoothing and recoil"
+.PP
+AnimationSpringTarget analytically integrates a damped spring toward a target held constant for each update\&. Use applyImpulse() for recoil and update() to settle back toward a rest point\&. getState() returns an owned position/velocity sample; see \fBanimation_spring_state\fP for its fields\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Apply each sample to a freshly evaluated pose\&. Adding it repeatedly to the previous final pose would accumulate an unintended displacement\&.
+.RE
+.PP
+.PP
+.nf
+const recoil = new pdg\&.AnimationSpringTarget(1, 100, 20);
+recoil\&.applyImpulse(\-2, 0);
+const offset = recoil\&.update(0, 0, 1 / 60);
+// Apply offset\&.x/y to a freshly sampled pose\&.
+.fi
+.PP
+.SH "Holding and releasing contact"
+.PP
+AnimationContactTarget holds a point in owning-layer coordinates\&. lockWorld() keeps it fixed; lockPlatform() follows the same point in a moving support's frame\&. The application supplies support identity, current transform, contact-window policy, and reachability\&. update() releases an invalid contact and can fade its influence\&. A released lock never reacquires automatically\&.
+
+.PP
+Use animationHasTag() with Sprite::getAnimationPose() to read an authored contact window\&. Feed the resulting contact point into Sprite::setAnimationIKTarget() with animationSpace_World\&. See \fBanimation_contact_state\fP for the returned fields\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Use a stable support ID, not a body pointer\&. Cross-layer points require explicit conversion\&. These helpers are application-owned and are not included in Sprite serialization\&.
+.RE
+.PP
+.PP
+.nf
+const contact = new pdg\&.AnimationContactTarget();
+const frame = { x: 10, y: 0, rotation: 0, scaleX: 1, scaleY: 1, alpha: 1 };
+contact\&.lockPlatform(12, 0, 1, frame);
+frame\&.x = 11;
+const state = contact\&.update(1 / 60, true, true, 1, frame);
+// state\&.x is now 13\&.
+.fi
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+AnimationSpringTarget, AnimationContactTarget, Sprite::addAnimationModifier() 
+.RE
+.PP
+

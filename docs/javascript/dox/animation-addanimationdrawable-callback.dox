@@ -1,0 +1,99 @@
+namespace pdg { /**
+\fn pdg::Sprite::addAnimationDrawable(function callback, object options)
+
+\brief choose or create artwork for an animation bone during drawing
+
+Use this overload when the artwork depends on the final animation pose or on
+application state at draw time. PDG calls your function synchronously during
+rendering. Return a Drawing to display it, or \c null to draw nothing.
+
+If you only need to edit an existing drawing, use the Drawing overload; those
+edits appear automatically without a JavaScript callback on each draw.
+
+\param callback A synchronous function called as \c callback(context). It must
+return a Drawing or \c null. See Callback context below.
+\param options An object selecting the bone, placement, and optional drawing
+settings. Both overloads use the same \ref animation_drawable_options "Drawing options".
+
+\return A nonzero unsigned integer identifying the registration. Pass this ID to
+setAnimationDrawableEnabled(), removeAnimationDrawable(), or
+getAnimationDrawableError().
+
+\note Call enableAnimationPose() successfully before registering the callback.
+The sprite's animations must have a fixed hierarchy, as described in the
+Drawing overload.
+
+\par Example: show a hand highlight on demand
+This example assumes \c sprite already has an enabled animation pose and a
+bone named \c hand, as in the Drawing overload's example. Update
+\c highlightEnabled from your application's input or update code.
+
+\code{.js}
+const highlight = pdg.createDrawing();
+highlight.addRect(
+    new pdg.Rect(-5, -5, 5, 5),
+    new pdg.Attributes().fillColor('yellow').fillOpacity(0.5)
+);
+
+let highlightEnabled = true;
+const highlightId = sprite.addAnimationDrawable(function(context) {
+    const hand = context.getTransform();
+    return highlightEnabled && hand.alpha > 0 ? highlight : null;
+}, {
+    bone: 'hand',
+    placement: pdg.animationDraw_AfterAll
+});
+\endcode
+
+The returned Drawing still uses coordinates relative to the bone. PDG applies
+the bone's transform; the callback does not need to reposition the artwork.
+
+\par Callback context
+The \c context object exposes these two methods:
+
+| Method | Result |
+| ------ | ------ |
+| \c getTransform(space) | An owned transform object with \c x, \c y, \c rotation (radians), \c scaleX, \c scaleY, and \c alpha fields for the selected bone. |
+| \c copyPose() | An owned snapshot of the final animation pose. |
+
+The optional \c space argument uses one of these numeric constants:
+- \c pdg.animationSpace_Local: relative to the bone's parent.
+- \c pdg.animationSpace_Rig: relative to the animation rig's origin.
+- \c pdg.animationSpace_World (default): in the owning layer's coordinates.
+
+\warning The context expires when the callback returns. Do not save it for
+later use. Transform objects and pose snapshots returned by its methods are
+independent copies and may be retained.
+
+\par Callback timing
+Rendering may run zero or multiple times per animation update. The callback
+can inspect the pose and choose, create, or edit artwork, but must not advance
+animation or integrate simulation. Keep time-dependent state changes in your
+application's update code.
+
+\par Errors and replacement images
+Registration uses the same validation rules as the Drawing overload. During
+drawing, a thrown exception or an invalid return value disables the registration
+and releases its callback. Returning \c undefined, an array, another kind of
+object, or a Promise is invalid. Use getAnimationDrawableError() to read the
+diagnostic; register a new callback to retry.
+
+For \c pdg.animationDraw_ReplaceSlot, returning \c null or an empty Drawing
+successfully hides the named authored image. A failed callback or rendering
+failure leaves that image visible. Other authored images are unaffected.
+
+Adding, removing, or enabling registrations inside a callback takes effect after
+the current frame. Edits to shared drawing contents are ordinary application
+changes and are not rolled back if the callback later fails.
+
+\note Headless builds retain callbacks without invoking them. Use
+isAnimationDrawingSupported() to check drawing capability. See the Drawing
+overload for bounds, stroke thickness, and rendering behavior shared by both forms.
+
+\sa Sprite::addAnimationDrawable(Drawing, object)
+\sa Sprite::enableAnimationPose()
+\sa Sprite::setAnimationDrawableEnabled()
+\sa Sprite::removeAnimationDrawable()
+\sa Sprite::getAnimationDrawableError()
+
+**/ }

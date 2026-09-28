@@ -108,7 +108,7 @@ public:
 
     void add(SoundEmscripten* sound) { mSounds.push_back(sound); }
     void remove(SoundEmscripten* sound) {
-        mSounds.erase(std::remove(mSounds.begin(), mSounds.end(), sound), mSounds.end());
+        std::erase(mSounds, sound);
     }
     float outputVolume(float volume) const { return mMuted ? 0.0f : volume * mVolume; }
 

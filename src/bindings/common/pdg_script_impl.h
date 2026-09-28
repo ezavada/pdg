@@ -57,6 +57,14 @@ SAVED_ERROR_STORAGE;  // scripting language specific storage of a saved error
 VALUE EncodeBinary(const void *buf, size_t len);
 void* DecodeBinary(VALUE_REF val, size_t* outLen = 0);
 
+%#ifdef PDG_USING_V8
+ISerializable* V8_GetSerializable(v8::Isolate* isolate, v8::Local<v8::Value> value);
+%#endif
+
+%#ifdef PDG_USING_JAVASCRIPT_CORE
+ISerializable* JSC_GetSerializable(JSContextRef ctx, JSValueRef value);
+%#endif
+
 const bool kNoErrorOnFail = true;
 
 // ========================================================================================
@@ -79,16 +87,21 @@ class ScriptAnimationHelper : public pdg::IAnimationHelper {
 public:
 	ScriptAnimationHelper();
 	ScriptAnimationHelper(FUNCTION_REF javascriptAnimateFunc);
-    bool animate(Animated* what, ms_delta msElapsed) throw();
+    bool animate(AnimatedBase* what, double deltaSeconds) noexcept override;
+    ~ScriptAnimationHelper() override;
+    void initializeScriptObject();
+    void retainForAnimation() override;
+    void releaseForAnimation() override;
 protected:
-	SAVED_FUNCTION mScriptAnimateFunc;
+    unsigned mAnimationRetains = 0;
+    SAVED_FUNCTION mScriptAnimateFunc;
 };
 
 class ScriptEventHandler : public pdg::RefCountedImpl< pdg::IEventHandler > {
 public:
 	ScriptEventHandler();
 	ScriptEventHandler(FUNCTION_REF javascriptHandlerFunc);
-    bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw();
+    bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept;
 protected:
 	SAVED_FUNCTION mScriptHandlerFunc;
 };
@@ -97,7 +110,7 @@ class ScriptAnimationEventHandler : public pdg::RefCountedImpl< pdg::IEventHandl
 public:
 	ScriptAnimationEventHandler();
 	ScriptAnimationEventHandler(FUNCTION_REF javascriptHandlerFunc, long expectedAction);
-    bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw();
+    bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept;
 protected:
 	SAVED_FUNCTION mScriptHandlerFunc;
 	long mExpectedAction;
@@ -107,7 +120,7 @@ class ScriptTouchEventHandler : public pdg::RefCountedImpl< pdg::IEventHandler >
 public:
 	ScriptTouchEventHandler();
 	ScriptTouchEventHandler(FUNCTION_REF javascriptHandlerFunc, long expectedAction);
-    bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw();
+    bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept;
 protected:
 	SAVED_FUNCTION mScriptHandlerFunc;
 	long mExpectedAction;
@@ -117,7 +130,7 @@ class ScriptLayerEventHandler : public pdg::RefCountedImpl< pdg::IEventHandler >
 public:
 	ScriptLayerEventHandler();
 	ScriptLayerEventHandler(FUNCTION_REF javascriptHandlerFunc, long expectedAction);
-    bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) throw();
+    bool handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept;
 protected:
 	SAVED_FUNCTION mScriptHandlerFunc;
 	long mExpectedAction;
@@ -143,14 +156,7 @@ protected:
 	SAVED_FUNCTION mScriptGetMyClassTagFunc;
 };
 
-class ScriptSpriteCollideHelper : public pdg::ISpriteCollideHelper {
-public:
-	ScriptSpriteCollideHelper();
-	ScriptSpriteCollideHelper(FUNCTION_REF javascriptDrawFunc);
-    bool allowCollision(Sprite* sprite, Sprite* withSprite) throw();
-protected:
-	SAVED_FUNCTION mScriptAllowCollisionFunc;
-};
+
 
 %#ifndef PDG_NO_GUI
 
@@ -158,7 +164,7 @@ class ScriptSpriteDrawHelper : public pdg::ISpriteDrawHelper {
 public:
 	ScriptSpriteDrawHelper();
 	ScriptSpriteDrawHelper(FUNCTION_REF javascriptDrawFunc);
-    bool draw(Sprite* sprite, Port* port) throw();
+    bool draw(Sprite* sprite, Port* port) noexcept;
 protected:
 	SAVED_FUNCTION mScriptDrawFunc;
 };
@@ -169,10 +175,10 @@ protected:
 //MARK: Easing Functions
 // ========================================================================================
 
-float CallScriptEasingFunc(int which, ms_delta ut, float b, float c, ms_delta ud);
+float CallScriptEasingFunc(int which, double ut, float b, float c, double ud);
 
 #define DECL_CUSTOM_EASING(n) \
-  extern float customEasing##n(ms_delta ut, float b, float c, ms_delta ud);
+  extern float customEasing##n(double ut, float b, float c, double ud);
 
 DECL_CUSTOM_EASING(0)
 DECL_CUSTOM_EASING(1)

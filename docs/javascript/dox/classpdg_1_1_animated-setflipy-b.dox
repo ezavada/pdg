@@ -1,7 +1,13 @@
 namespace pdg { /**
+\fn pdg::Animated::setFlipY(boolean flip)
+\brief Set the y reflection flag immediately.
 
-\fn pdg::Animated::setFlipY(inFlipY)
+Applied before other transformations; logical dimensions are unchanged. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
-\brief sets whether the object is flipped vertically
+\param flip Whether to reflect this axis.
 
-**/ }
+\return This object, for chaining.
+
+\see isFlippedY(), flipY()
+*/
+ }

@@ -1,0 +1,9 @@
+<map id="AnimationDrawableOptions" name="AnimationDrawableOptions">
+<area shape="rect" id="Node000001" title=" " alt="" coords="51,177,231,203"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="50,80,104,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,117,135,176,130,177,92,121"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,5,149,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="78,44,80,81,74,80,76,49"/>
+<area shape="rect" id="Node000004" href="$structpdg_1_1_animation_draw_bounds.html" title=" " alt="" coords="128,80,282,106"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="191,118,151,178,147,174,186,120"/>
+</map>

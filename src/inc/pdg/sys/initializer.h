@@ -52,7 +52,7 @@ class ConfigManager;
 // consists completely of static methods that the application must implement
 // this class is needed because the application main() is inside the framework
 // -----------------------------------------------------------------------------------
-/// @cond C++
+/// @cond CXX
 
 class Initializer {
 public:
@@ -72,8 +72,8 @@ public:
 
 	// on platforms like iPad that support device orientation, return true
 	// or false to report which orientation(s) you support
-	static bool allowHorizontalOrientation() throw();
-	static bool allowVerticalOrientation() throw();
+	static bool allowHorizontalOrientation() noexcept;
+	static bool allowVerticalOrientation() noexcept;
 	
 	// this static method will called multiple times to help build window
     // and log file names, and anything else that expects to have the
@@ -81,12 +81,12 @@ public:
     // resource file then haveMainResourceFile will be true.
     // You MUST return a valid string. This will be used for log file
     // This is the first call your application will get from the framework
-    static const char* getAppName(bool haveMainResourceFile) throw();
+    static const char* getAppName(bool haveMainResourceFile) noexcept;
 
     // this static method will be called from the framework before the
     // resource manager opens the main resource file.
     // return NULL if you don't want a resource file opened automatically
-    static const char* getMainResourceFileName() throw();
+    static const char* getMainResourceFileName() noexcept;
 
     // this static method will be called from the framework just before the
     // eventType_Startup is sent to the inEventMgr, so that a handler
@@ -97,7 +97,7 @@ public:
     // return false if the handler setup failed so the app can exit
     // this will be called after getMainResourceFileName() is called, so
     // it is safe to use resources if necessary here
-    static bool installGlobalHandlers() throw();
+    static bool installGlobalHandlers() noexcept;
 
     // this static method will be called from the framework before the GUI is
     // started. The inputs will be the current screen resolution
@@ -106,7 +106,7 @@ public:
     // return true to switch screen to fullscreen resolution returned in ioHeight and ioWidth
     // return false to open a window centered on the screen with a content are of ioHeight and ioWidth
 	static bool getGraphicsEnvironmentDimensions(Rect maxWindowDim, Rect maxFullScreenDim,
-	                                             long& ioWidth, long& ioHeight, uint8& ioDepth) throw();
+	                                             long& ioWidth, long& ioHeight, uint8& ioDepth) noexcept;
 };
 /// @endcond
 

@@ -149,7 +149,7 @@ public:
     virtual void  setConfigBool(const char* configItemName, bool inBooleanValue) = 0;
     
 // lifecycle
- //! @cond C++
+ //! @cond CXX
     virtual ~ConfigManager() {}
  //! @endcond
 

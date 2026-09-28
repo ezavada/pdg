@@ -85,7 +85,7 @@ describe("Sprite", function() {
     
     waitsFor(function() {
       var currentTime = pdg.tm.getMilliseconds();
-      var currentVel = sprite.getVelocity();
+      var currentVel = sprite.physics.getVelocity();
       
       if (currentTime - startTime > maxWaitTime) {
         console.log("Timeout waiting for velocity change. Original: (" + originalVelocity.x + ", " + originalVelocity.y + "), Current: (" + currentVel.x + ", " + currentVel.y + ")");
@@ -153,18 +153,18 @@ describe("Sprite", function() {
     });
 
     it("by offsets", function() {
-      sprite.move(20, 20);
+      sprite.moveBy(20, 20);
       var loc = sprite.getLocation();
       expect(loc.x).toBe(20);
       expect(loc.y).toBe(20);		
-      sprite.move(20, -20);
+      sprite.moveBy(20, -20);
       loc = sprite.getLocation();
       expect(loc.x).toBe(40);
       expect(loc.y).toBe(0);
     });
 
     it("over time", function() {
-      sprite.move(200, 200, 100);
+      sprite.moveBy(200, 200, 0.1);
       var loc = sprite.getLocation();
       expect(loc.x).toBe(0);
       expect(loc.y).toBe(0);
@@ -201,7 +201,7 @@ describe("Sprite", function() {
       
       // init sprite 1
       sprite1 = layer.createSprite();
-      sprite1.onCollideSprite(function(evt) {
+      sprite1.setupCollider().setContactHandler(function(evt) {
         console.log("sprite1.onCollideSprite got collide event (1)");
         gotCollide = true;
         collide1 = true;
@@ -209,13 +209,13 @@ describe("Sprite", function() {
       });
       sprite1.setSize(20, 20);
       sprite1.moveTo(0, 100);
-      sprite1.setElasticity(0.8);
+      sprite1.setupPhysicsBody().setRestitution(0.8);
       expect(gotCollide).toBe(false);
       expect(collide1).toBe(false);
       
       // init sprite 2
       sprite2 = layer.createSprite();
-      sprite2.onCollideSprite(function(evt) {
+      sprite2.setupCollider().setContactHandler(function(evt) {
         console.log("sprite2.onCollideSprite got collide event (2)");
         gotCollide = true;
         collide2 = true;
@@ -223,12 +223,12 @@ describe("Sprite", function() {
       });
       sprite2.setSize(20, 20);
       sprite2.moveTo(0, -100);
-      sprite2.setElasticity(0.8);
+      sprite2.setupPhysicsBody().setRestitution(0.8);
       expect(gotCollide).toBe(false);
       expect(collide2).toBe(false);
       
-      sprite1.setVelocity(0, -200);  // sprite 1 moves up
-      sprite2.setVelocity(0, 200);   // sprite 2 moves down
+      sprite1.setupPhysicsBody().setVelocity(0, -200);  // sprite 1 moves up
+      sprite2.setupPhysicsBody().setVelocity(0, 200);   // sprite 2 moves down
     });
 
     afterEach(function() {
@@ -237,8 +237,8 @@ describe("Sprite", function() {
 
     it("by moving through one another without colliding", function() {
       console.log("**moving through");
-      var originalVel1 = sprite1.getVelocity();
-      var originalVel2 = sprite2.getVelocity();
+      var originalVel1 = sprite1.physics.getVelocity();
+      var originalVel2 = sprite2.physics.getVelocity();
       
       // Wait for sprites to move past each other
       waitForCondition(function() {
@@ -257,8 +257,8 @@ describe("Sprite", function() {
         expect(loc2.y).toBeGreaterThan(-50);
         
         // Check that velocity is unchanged (no collision occurred)
-        var vel1 = sprite1.getVelocity();
-        var vel2 = sprite2.getVelocity();
+        var vel1 = sprite1.physics.getVelocity();
+        var vel2 = sprite2.physics.getVelocity();
         expect(vel1.y).toBeCloseTo(originalVel1.y, 0);
         expect(vel2.y).toBeCloseTo(originalVel2.y, 0);
       });
@@ -266,11 +266,11 @@ describe("Sprite", function() {
 
     it("by colliding", function() {
       console.log("**colliding");
-      sprite1.enableCollisions(pdg.collide_BoundingBox);
-      sprite2.enableCollisions(pdg.collide_BoundingBox);
+      sprite1.setupFrameCollider(pdg.frameCollider_Bounds);
+      sprite2.setupFrameCollider(pdg.frameCollider_Bounds);
       
-      var originalVel1 = sprite1.getVelocity();
-      var originalVel2 = sprite2.getVelocity();
+      var originalVel1 = sprite1.physics.getVelocity();
+      var originalVel2 = sprite2.physics.getVelocity();
       
       // Wait for collision to occur and velocity to change
       waitForVelocityChange(sprite1, originalVel1, 1500);
@@ -284,8 +284,8 @@ describe("Sprite", function() {
         expect(loc2.y).toBeLessThan(100);     // Shouldn't have moved too far
         
         // Check that velocities changed due to collision
-        var vel1 = sprite1.getVelocity();
-        var vel2 = sprite2.getVelocity();
+        var vel1 = sprite1.physics.getVelocity();
+        var vel2 = sprite2.physics.getVelocity();
         
         // Velocities should have changed significantly (at least 25% of original)
         var vel1Changed = Math.abs(vel1.y - originalVel1.y) > Math.abs(originalVel1.y) * 0.25;
@@ -322,7 +322,7 @@ describe("Sprite", function() {
         return true;
       });
       sprite1.setSize(20, 20).moveTo(0, 0);
-      sprite1.setVelocity(-250, 0);  // move slowly enough to trigger wall and exit events on separate frames
+      sprite1.setupPhysicsBody().setVelocity(-250, 0);  // move slowly enough to trigger wall and exit events on separate frames
     });
 
     afterEach(function() {

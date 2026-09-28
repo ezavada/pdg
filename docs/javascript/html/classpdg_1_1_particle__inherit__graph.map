@@ -1,0 +1,7 @@
+<map id="Particle" name="Particle">
+<area shape="rect" id="Node000001" title="Lightweight whole&#45;body artwork and optional physics." alt="" coords="66,79,131,105"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="5,5,82,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="63,41,92,78,86,79,60,45"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="106,5,203,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="138,42,109,81,106,77,133,44"/>
+</map>

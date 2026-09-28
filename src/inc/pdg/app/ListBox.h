@@ -38,14 +38,18 @@ public:
 	void addToList(const char* text, const Color& fgcolor = PDG_BLACK_COLOR ); //, const Color& bgcolor
 	void clear(); // Clears all entries in list box
 	void calcClickableAreas();
-	virtual void drawSelf();
+	void drawSelf() override;
+    bool doScrollWheel(const ScrollWheelInfo* wheel) override;
 	int getSelectedIndex() { return mSelectedIndex; }
 	void doClick(int part);
 
-	virtual void notify(Subject* subject);
+	void notify(Subject* subject) override;
 	const char* getTextFromIndex(int index);
 	bool doKeyPress(const KeyPressInfo* ki, View* view, int id, int part);
 	
+protected:
+    void viewAreaChanged(const Rect& previous) override;
+
 private:
 	class ListBoxLine
 	{

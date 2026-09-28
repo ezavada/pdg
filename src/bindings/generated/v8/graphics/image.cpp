@@ -168,6 +168,22 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> GetPixel_Tpl =
             v8::FunctionTemplate::New(isolate, GetPixel, v8::Local<v8::Value>(), GetPixel_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getPixel").ToLocalChecked(), GetPixel_Tpl);
+        v8::Local<v8::Signature> GetMyClassTag_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetMyClassTag_Tpl =
+            v8::FunctionTemplate::New(isolate, GetMyClassTag, v8::Local<v8::Value>(), GetMyClassTag_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""MyClassTag").ToLocalChecked(), GetMyClassTag_Tpl);
+        v8::Local<v8::Signature> GetSerializedSize_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetSerializedSize_Tpl =
+            v8::FunctionTemplate::New(isolate, GetSerializedSize, v8::Local<v8::Value>(), GetSerializedSize_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""SerializedSize").ToLocalChecked(), GetSerializedSize_Tpl);
+        v8::Local<v8::Signature> Serialize_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Serialize_Tpl =
+            v8::FunctionTemplate::New(isolate, Serialize, v8::Local<v8::Value>(), Serialize_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "serialize").ToLocalChecked(), Serialize_Tpl);
+        v8::Local<v8::Signature> Deserialize_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Deserialize_Tpl =
+            v8::FunctionTemplate::New(isolate, Deserialize, v8::Local<v8::Value>(), Deserialize_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "deserialize").ToLocalChecked(), Deserialize_Tpl);
         v8::Local<v8::Function> func = t->GetFunction(isolate->GetCurrentContext()).ToLocalChecked();
         target->Set(isolate->GetCurrentContext(), name_str, func).ToChecked();
 
@@ -208,12 +224,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsColor(isolate, args[1 -1]))
+        pdg::Color theTransparentColor;
+        auto theTransparentColor_isColor = v8_ValueIsColor(isolate, args[1 -1], theTransparentColor);
+        if (!theTransparentColor_isColor.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*theTransparentColor_isColor)
         {
             v8_ThrowArgTypeException(isolate, 1, "Color", *args[1 -1]);
             return;
-        }
-        pdg::Color theTransparentColor = v8_ValueToColor(isolate, args[1 -1]);
+        };
 
         self->setTransparentColor(theTransparentColor);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -269,12 +292,26 @@ namespace pdg
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [object Rect]" " function" "([object Point] at)" " - " "get image boundary rect, optionally with top left at given point").ToLocalChecked() ); return; };
         };
-        if (args.Length() >= 1 && !v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point at;
+        if (args.Length() < 1)
         {
-            v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
-            return;
+            at = pdg::Point(0,0);
         }
-        pdg::Point at = (args.Length()<1) ? pdg::Point(0,0) : v8_ValueToPoint(isolate, args[1 -1]);
+        else
+        {
+            auto at_isPoint = v8_ValueIsPoint(isolate, args[1 -1], at);
+            if (!at_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*at_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
+                return;
+            }
+        };
         Rect r = self->getImageBounds(at);
         { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, r) ); return; };
     }
@@ -294,12 +331,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsQuad(isolate, args[1 -1]))
+        pdg::Quad quad;
+        auto quad_isQuad = v8_ValueIsQuad(isolate, args[1 -1], quad);
+        if (!quad_isQuad.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*quad_isQuad)
         {
             v8_ThrowArgTypeException(isolate, 1, "Quad", *args[1 -1]);
             return;
-        }
-        pdg::Quad quad = v8_ValueToQuad(isolate, args[1 -1]);
+        };
         Image* image = self->getSubsection(quad);
         if (!image) { args.GetReturnValue().SetNull(); return; };
         if (image->mImageScriptObj.IsEmpty())
@@ -484,12 +528,19 @@ namespace pdg
         }
         else
         {
-            if (!v8_ValueIsPoint(isolate, args[1 -1]))
+            pdg::Point p;
+            auto p_isPoint = v8_ValueIsPoint(isolate, args[1 -1], p);
+            if (!p_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*p_isPoint)
             {
                 v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
                 return;
-            }
-            pdg::Point p = v8_ValueToPoint(isolate, args[1 -1]);
+            };
             a = self->getAlphaValue(p.x, p.y);
         }
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, a) ); return; };
@@ -529,22 +580,198 @@ namespace pdg
         }
         else
         {
-            if (!v8_ValueIsPoint(isolate, args[1 -1]))
+            pdg::Point p;
+            auto p_isPoint = v8_ValueIsPoint(isolate, args[1 -1], p);
+            if (!p_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*p_isPoint)
             {
                 v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
                 return;
-            }
-            pdg::Point p = v8_ValueToPoint(isolate, args[1 -1]);
+            };
             c = self->getPixel(p.x, p.y);
         }
         { args.GetReturnValue().Set( v8_MakeJavascriptColor(isolate, c) ); return; };
+    }
+
+    void ImageWrap::GetMyClassTag(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
+        Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+
+        uint32 theMyClassTag = self->getMyClassTag();
+        { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, theMyClassTag) ); return; };
+    }
+
+    void ImageWrap::GetSerializedSize(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
+        Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [number uint]" " function" "([object Serializer] serializer)" " - " "get size of this object's data for the given stream").ToLocalChecked() ); return; };
+        };
+        if (args.Length() < 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+            return;
+        };
+        REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer);
+        try
+        {
+            uint32 dataSize = self->getSerializedSize(serializer);
+            { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, dataSize) ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void ImageWrap::Serialize(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
+        Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Serializer] serializer)" " - " "write this object's data into the given stream").ToLocalChecked() ); return; };
+        };
+        if (args.Length() < 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+            return;
+        };
+        REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer);
+        try { self->serialize(serializer); args.GetReturnValue().SetUndefined(); }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void ImageWrap::Deserialize(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
+        Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Deserializer] deserializer)" " - " "read this object's data from the given stream").ToLocalChecked() ); return; };
+        };
+        if (args.Length() < 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+            return;
+        };
+        REQUIRE_CPP_OBJECT_ARG(1, deserializer, Deserializer);
+        try
+        {
+            self->deserialize(deserializer);
+            args.GetReturnValue().SetUndefined();
+        }
+        catch(out_of_data& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
+        catch(bad_tag& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
+        catch(sync_error& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
+        catch(unknown_object& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void CleanupImageScriptObject(v8::UniquePersistent<v8::Object> &obj) { }
 
     ImageWrap::ImageWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_Image(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_Image(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_Image_InNewFromCpp)
         {
             {
@@ -736,6 +963,22 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> GetPixel_Tpl =
             v8::FunctionTemplate::New(isolate, GetPixel, v8::Local<v8::Value>(), GetPixel_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getPixel").ToLocalChecked(), GetPixel_Tpl);
+        v8::Local<v8::Signature> GetMyClassTag_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetMyClassTag_Tpl =
+            v8::FunctionTemplate::New(isolate, GetMyClassTag, v8::Local<v8::Value>(), GetMyClassTag_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""MyClassTag").ToLocalChecked(), GetMyClassTag_Tpl);
+        v8::Local<v8::Signature> GetSerializedSize_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetSerializedSize_Tpl =
+            v8::FunctionTemplate::New(isolate, GetSerializedSize, v8::Local<v8::Value>(), GetSerializedSize_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""SerializedSize").ToLocalChecked(), GetSerializedSize_Tpl);
+        v8::Local<v8::Signature> Serialize_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Serialize_Tpl =
+            v8::FunctionTemplate::New(isolate, Serialize, v8::Local<v8::Value>(), Serialize_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "serialize").ToLocalChecked(), Serialize_Tpl);
+        v8::Local<v8::Signature> Deserialize_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Deserialize_Tpl =
+            v8::FunctionTemplate::New(isolate, Deserialize, v8::Local<v8::Value>(), Deserialize_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "deserialize").ToLocalChecked(), Deserialize_Tpl);
         v8::Local<v8::Signature> GetFrame_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetFrame_Tpl =
             v8::FunctionTemplate::New(isolate, GetFrame, v8::Local<v8::Value>(), GetFrame_Sig);
@@ -796,12 +1039,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsColor(isolate, args[1 -1]))
+        pdg::Color theTransparentColor;
+        auto theTransparentColor_isColor = v8_ValueIsColor(isolate, args[1 -1], theTransparentColor);
+        if (!theTransparentColor_isColor.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*theTransparentColor_isColor)
         {
             v8_ThrowArgTypeException(isolate, 1, "Color", *args[1 -1]);
             return;
-        }
-        pdg::Color theTransparentColor = v8_ValueToColor(isolate, args[1 -1]);
+        };
 
         self->setTransparentColor(theTransparentColor);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -857,12 +1107,26 @@ namespace pdg
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [object Rect]" " function" "([object Point] at)" " - " "get image boundary rect, optionally with top left at given point").ToLocalChecked() ); return; };
         };
-        if (args.Length() >= 1 && !v8_ValueIsPoint(isolate, args[1 -1]))
+        pdg::Point at;
+        if (args.Length() < 1)
         {
-            v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
-            return;
+            at = pdg::Point(0,0);
         }
-        pdg::Point at = (args.Length()<1) ? pdg::Point(0,0) : v8_ValueToPoint(isolate, args[1 -1]);
+        else
+        {
+            auto at_isPoint = v8_ValueIsPoint(isolate, args[1 -1], at);
+            if (!at_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*at_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
+                return;
+            }
+        };
         Rect r = self->getImageBounds(at);
         { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, r) ); return; };
     }
@@ -882,12 +1146,19 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!v8_ValueIsQuad(isolate, args[1 -1]))
+        pdg::Quad quad;
+        auto quad_isQuad = v8_ValueIsQuad(isolate, args[1 -1], quad);
+        if (!quad_isQuad.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*quad_isQuad)
         {
             v8_ThrowArgTypeException(isolate, 1, "Quad", *args[1 -1]);
             return;
-        }
-        pdg::Quad quad = v8_ValueToQuad(isolate, args[1 -1]);
+        };
         Image* image = self->getSubsection(quad);
         if (!image) { args.GetReturnValue().SetNull(); return; };
         if (image->mImageScriptObj.IsEmpty())
@@ -1072,12 +1343,19 @@ namespace pdg
         }
         else
         {
-            if (!v8_ValueIsPoint(isolate, args[1 -1]))
+            pdg::Point p;
+            auto p_isPoint = v8_ValueIsPoint(isolate, args[1 -1], p);
+            if (!p_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*p_isPoint)
             {
                 v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
                 return;
-            }
-            pdg::Point p = v8_ValueToPoint(isolate, args[1 -1]);
+            };
             a = self->getAlphaValue(p.x, p.y);
         }
         { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, a) ); return; };
@@ -1117,15 +1395,187 @@ namespace pdg
         }
         else
         {
-            if (!v8_ValueIsPoint(isolate, args[1 -1]))
+            pdg::Point p;
+            auto p_isPoint = v8_ValueIsPoint(isolate, args[1 -1], p);
+            if (!p_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*p_isPoint)
             {
                 v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
                 return;
-            }
-            pdg::Point p = v8_ValueToPoint(isolate, args[1 -1]);
+            };
             c = self->getPixel(p.x, p.y);
         }
         { args.GetReturnValue().Set( v8_MakeJavascriptColor(isolate, c) ); return; };
+    }
+
+    void ImageStripWrap::GetMyClassTag(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
+        ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
+        };
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+
+        uint32 theMyClassTag = self->getMyClassTag();
+        { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, theMyClassTag) ); return; };
+    }
+
+    void ImageStripWrap::GetSerializedSize(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
+        ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [number uint]" " function" "([object Serializer] serializer)" " - " "get size of this object's data for the given stream").ToLocalChecked() ); return; };
+        };
+        if (args.Length() < 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+            return;
+        };
+        REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer);
+        try
+        {
+            uint32 dataSize = self->getSerializedSize(serializer);
+            { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, dataSize) ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void ImageStripWrap::Serialize(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
+        ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Serializer] serializer)" " - " "write this object's data into the given stream").ToLocalChecked() ); return; };
+        };
+        if (args.Length() < 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+            return;
+        };
+        REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer);
+        try { self->serialize(serializer); args.GetReturnValue().SetUndefined(); }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void ImageStripWrap::Deserialize(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
+        ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
+
+        if (args.Length() == 1 && args[0]->IsNull())
+        {
+            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Deserializer] deserializer)" " - " "read this object's data from the given stream").ToLocalChecked() ); return; };
+        };
+        if (args.Length() < 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+            return;
+        };
+        REQUIRE_CPP_OBJECT_ARG(1, deserializer, Deserializer);
+        try
+        {
+            self->deserialize(deserializer);
+            args.GetReturnValue().SetUndefined();
+        }
+        catch(out_of_data& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
+        catch(bad_tag& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
+        catch(sync_error& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
+        catch(unknown_object& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void ImageStripWrap::GetNumFrames(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1259,7 +1709,11 @@ namespace pdg
 
     ImageStripWrap::ImageStripWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_ImageStrip(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_ImageStrip(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_ImageStrip_InNewFromCpp)
         {
             {

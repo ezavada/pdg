@@ -46,9 +46,7 @@ INCLUDES := \
 	-I$(PDG_ROOT)/deps/SpriterPlusPlus/example \
 	-I$(PDG_ROOT)/deps/SpriterPlusPlus/nlohmann-json
 
-DEFINES := \
-	'-DDEBUG' \
-	'-DPDG_DEBUG_OUT_TO_LOG' \
+COMMON_DEFINES := \
 	'-DPDG_USE_CHIPMUNK_PHYSICS' \
 	'-DPDG_USE_GLFW' \
 	'-DPDG_USE_LIBJPEG' \
@@ -66,6 +64,10 @@ EMSCRIPTEN_INSTALL_DIR=$(filter-out ./,$(dir $(PATH_TO_CC)))
 WEBIDL_BIND=$(EMSCRIPTEN_INSTALL_DIR)/tools/webidl_binder.py
 
 
+# Nested Sprite/Part/Drawing snapshots exceed the 64 KiB toolchain default,
+# especially in unoptimized test builds. Keep the budget configurable.
+WASM_STACK_SIZE ?= 1048576
+
 LIBS = \
     -s USE_ZLIB=1 \
     -s USE_LIBPNG=1 \
@@ -74,16 +76,38 @@ LIBS = \
     -s LEGACY_GL_EMULATION=1 \
     -s ALLOW_MEMORY_GROWTH=1 \
     -s INITIAL_MEMORY=67108864 \
+    -s STACK_SIZE=$(WASM_STACK_SIZE) \
     -s DISABLE_EXCEPTION_CATCHING=0
 
 
-CFLAGS_ALL=-gsource-map -Wno-warn-absolute-paths -DMOZZCONF_H $(DEFINES) $(INCLUDES)
+WASM_ARCH?=wasm32
+WASM_BUILD?=test
+WASM_ARCH_OUT_DIR=$(PDG_ROOT)/build/wasm/$(WASM_ARCH)
+
+ifeq ($(WASM_BUILD),test)
+WASM_OUT_DIR=$(WASM_ARCH_OUT_DIR)
+DEFINES='-DDEBUG' '-DPDG_DEBUG_OUT_TO_LOG' $(COMMON_DEFINES)
+BUILD_FLAGS=-O0 -gsource-map
+LIBS += -s STACK_OVERFLOW_CHECK=2
+else ifeq ($(WASM_BUILD),debug)
+WASM_OUT_DIR=$(WASM_ARCH_OUT_DIR)/debug
+DEFINES='-DDEBUG' '-DPDG_DEBUG_OUT_TO_LOG' $(COMMON_DEFINES)
+# Embed source text so the packaged map works outside the build machine.
+BUILD_FLAGS=-O0 -gsource-map=inline
+LIBS += -s ASSERTIONS=2 -s STACK_OVERFLOW_CHECK=2
+else ifeq ($(WASM_BUILD),release)
+WASM_OUT_DIR=$(WASM_ARCH_OUT_DIR)/release
+DEFINES='-DNDEBUG' $(COMMON_DEFINES)
+BUILD_FLAGS=-O3 -flto -g0
+else
+$(error Unsupported WASM_BUILD '$(WASM_BUILD)'; expected 'test', 'debug' or 'release')
+endif
+
+CFLAGS_ALL=-MMD -MP $(BUILD_FLAGS) -Wno-warn-absolute-paths -DMOZZCONF_H $(DEFINES) $(INCLUDES)
 
 CFLAGS=$(CFLAGS_ALL)
-CXXFLAGS=-std=c++17 -fexceptions $(CFLAGS_ALL)
+CXXFLAGS=-std=c++20 -fexceptions $(CFLAGS_ALL)
 
-WASM_ARCH?=wasm32
-WASM_OUT_DIR=$(PDG_ROOT)/build/wasm/$(WASM_ARCH)
 OUT_DIR=$(WASM_OUT_DIR)/pdg
 SRC_SYS_DIR=$(PDG_ROOT)/src/sys
 SRC_CHIPMUNK_DIR=$(PDG_ROOT)/deps/chipmunk/src
@@ -98,29 +122,41 @@ SPRITER_ENGINE_SOURCES := $(shell find $(SRC_SPRITERPLUSPLUS_DIR)/spriterengine 
 SPRITER_ENGINE_OBJS := $(patsubst $(SRC_SPRITERPLUSPLUS_DIR)/spriterengine/%.cpp,$(OUT_DIR)/spriterengine/%.cpp.o,$(SPRITER_ENGINE_SOURCES))
 SPRITER_OVERRIDE_NAMES := tinyxmlspriterfiledocumentwrapper tinyxmlspriterfileelementwrapper tinyxmlspriterfileattributewrapper
 SPRITER_OVERRIDE_OBJS := $(addprefix $(OUT_DIR)/spriter-override/,$(addsuffix .cpp.o,$(SPRITER_OVERRIDE_NAMES)))
-PDG_SPRITER_NAMES := pdg_file_factory pdg_object_factory pdg_image_file pdg_point_instance_info pdg_bone_instance_info pdg_box_instance_info pdg_spriter_file_document_wrapper
+PDG_SPRITER_NAMES := pdg_file_factory pdg_object_factory pdg_image_file pdg_point_instance_info pdg_bone_instance_info pdg_box_instance_info pdg_spriter_file_document_wrapper pdg_spriter_pose
 PDG_SPRITER_OBJS := $(addprefix $(OUT_DIR)/pdg-spriter/,$(addsuffix .cpp.o,$(PDG_SPRITER_NAMES)))
 
 
-ADDITIONAL_JS_FILES= \
+RUNTIME_JS_FILES= \
     --embed-file $(SRC_JS_DIR)/dump.js@/js_modules/dump.js \
     --embed-file $(SRC_JS_DIR)/coordinates.js@/js_modules/coordinates.js \
     --embed-file $(SRC_JS_DIR)/color.js@/js_modules/color.js \
     --embed-file $(SRC_JS_DIR)/pdg-defs.js@/js_modules/pdg-defs.js \
     --embed-file $(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js@/js_modules/pdg-wrapper.js \
+
+# UI scripts run from /, while benchmark scripts use /test/perf_tests. Include the
+# two shared shape-fill textures at their UI-relative paths as well.
+TEST_JS_FILES= \
     --embed-file $(PDG_ROOT)/test/data@/data \
     --embed-file $(PDG_ROOT)/test/data@/test/data \
-    --embed-file $(PDG_ROOT)/test/perf/canvasmark2013/images@/test/perf/canvasmark2013/images \
-    --embed-file $(PDG_ROOT)/test/perf/bunnymark/wabbit.png@/test/perf/bunnymark/wabbit.png \
+    --embed-file $(PDG_ROOT)/test/perf_tests/canvasmark2013/images/texture5.png@/perf_tests/canvasmark2013/images/texture5.png \
+    --embed-file $(PDG_ROOT)/test/perf_tests/bunnymark/wabbit.png@/perf_tests/bunnymark/wabbit.png \
+    --embed-file $(PDG_ROOT)/test/perf_tests/canvasmark2013/images@/test/perf_tests/canvasmark2013/images \
+    --embed-file $(PDG_ROOT)/test/perf_tests/bunnymark/wabbit.png@/test/perf_tests/bunnymark/wabbit.png \
     --embed-file $(PDG_ROOT)/test/spec@/spec \
     --embed-file $(PDG_ROOT)/test/cxx@/cxx \
     --embed-file $(PDG_ROOT)/test/js@/js \
-    --embed-file $(PDG_ROOT)/test/misc/blend_mode_test.js@/misc/blend_mode_test.js \
-    --embed-file $(PDG_ROOT)/test/perf/bunnymark/README.md@/perf/bunnymark/README.md \
+    --embed-file $(PDG_ROOT)/test/perf_tests/bunnymark/README.md@/perf_tests/bunnymark/README.md
+
+POST_JS_FILES= \
     --post-js $(SRC_JS_DIR)/require.js \
     --post-js $(SRC_BINDINGS_DIR)/platform-emscripten.js \
     --post-js $(SRC_BINDINGS_DIR)/pdg_emscripten.js
 
+ifeq ($(WASM_BUILD),test)
+ADDITIONAL_JS_FILES=$(RUNTIME_JS_FILES) $(TEST_JS_FILES) $(POST_JS_FILES)
+else
+ADDITIONAL_JS_FILES=$(RUNTIME_JS_FILES) $(POST_JS_FILES)
+endif
 
 
 OBJS= \
@@ -128,7 +164,16 @@ OBJS= \
     $(OUT_DIR)/ConvertUTF.c.o \
 	$(OUT_DIR)/memblock.cpp.o \
 	$(OUT_DIR)/animated.cpp.o \
+	$(OUT_DIR)/physicsbody.cpp.o \
+	$(OUT_DIR)/particle.cpp.o \
+	$(OUT_DIR)/collider.cpp.o \
+	$(OUT_DIR)/animationpose.cpp.o \
+	$(OUT_DIR)/animationcontroller.cpp.o \
+	$(OUT_DIR)/animationphysics.cpp.o \
+	$(OUT_DIR)/animationtargets.cpp.o \
+	$(OUT_DIR)/animationdrawing.cpp.o \
 	$(OUT_DIR)/attributes.cpp.o \
+	$(OUT_DIR)/animatedattributes.cpp.o \
 	$(OUT_DIR)/collisiondetection.cpp.o \
     $(OUT_DIR)/color.cpp.o \
 	$(OUT_DIR)/deserializer.cpp.o \
@@ -233,6 +278,7 @@ $(OBJS): | $(OUT_DIR)
 libpdg: $(OBJS) \
 	$(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp \
 	$(SRC_BINDINGS_DIR)/pdg.embind \
+	$(SRC_BINDINGS_DIR)/pdg_em_particles.h \
 	$(SRC_BINDINGS_DIR)/platform-emscripten.js \
 	$(SRC_BINDINGS_DIR)/pdg_emscripten.js \
 	$(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js
@@ -269,10 +315,39 @@ $(OUT_DIR)/memblock.cpp.o: $(SRC_BINDINGS_JAVASCRIPT_DIR)/memblock.cpp
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/memblock.cpp.o -c $(SRC_BINDINGS_JAVASCRIPT_DIR)/memblock.cpp
 	
 
+$(OUT_DIR)/particle.cpp.o: $(SRC_SYS_DIR)/particle.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/physicsbody.cpp.o: $(SRC_SYS_DIR)/physicsbody.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/collider.cpp.o: $(SRC_SYS_DIR)/collider.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
 $(OUT_DIR)/animated.cpp.o: $(SRC_SYS_DIR)/animated.cpp
 	@echo  'Compiling animated.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/animated.cpp.o -c $(SRC_SYS_DIR)/animated.cpp
 	
+
+$(OUT_DIR)/animationcontroller.cpp.o: $(SRC_SYS_DIR)/animationcontroller.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/animationphysics.cpp.o: $(SRC_SYS_DIR)/animationphysics.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/animationtargets.cpp.o: $(SRC_SYS_DIR)/animationtargets.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/animationdrawing.cpp.o: $(SRC_SYS_DIR)/animationdrawing.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/animationpose.cpp.o: $(SRC_SYS_DIR)/animationpose.cpp
+	@echo  'Compiling animationpose.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/animationpose.cpp.o -c $(SRC_SYS_DIR)/animationpose.cpp
+
+
+$(OUT_DIR)/animatedattributes.cpp.o: $(SRC_SYS_DIR)/animatedattributes.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OUT_DIR)/attributes.cpp.o: $(SRC_SYS_DIR)/attributes.cpp
 	@echo  'Compiling attributes.cpp...'
@@ -673,5 +748,13 @@ $(OUT_DIR)/os-unix.cpp.o: $(SRC_UNIX_DIR)/os-unix.cpp
 .PHONY: clean
 clean:
 	@echo  'Removing all temporary binaries...'
-	@rm -f $(WASM_OUT_DIR)/libpdg.js $(WASM_OUT_DIR)/libpdg.wasm $(WASM_OUT_DIR)/libpdg.data $(WASM_OUT_DIR)/libpdg.wasm.map $(WASM_OUT_DIR)/libpdg.js.map $(WASM_OUT_DIR)/libpdg.html $(WASM_OUT_DIR)/libpdg.map parser.out WebIDLGrammar.pkl $(OUT_DIR)/*.o
+	@rm -f $(WASM_OUT_DIR)/libpdg.js $(WASM_OUT_DIR)/libpdg.wasm $(WASM_OUT_DIR)/libpdg.data $(WASM_OUT_DIR)/libpdg.wasm.map $(WASM_OUT_DIR)/libpdg.js.map $(WASM_OUT_DIR)/libpdg.html $(WASM_OUT_DIR)/libpdg.map parser.out WebIDLGrammar.pkl
+	@rm -rf $(OUT_DIR)
 	
+
+# Rebuild native objects when public API headers change.
+# Recompile when flags/defines or the source list change, including old caches
+# created before automatic header dependency files were emitted.
+$(OBJS): $(PDG_ROOT)/tools/pdg-js.mak
+
+-include $(OBJS:.o=.d)

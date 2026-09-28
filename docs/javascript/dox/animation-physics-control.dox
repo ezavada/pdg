@@ -1,0 +1,156 @@
+/**
+\fn pdg::Sprite::setAnimationPhysicsMode(int mode, string bone, boolean includeDescendants, number recoveryTime, int direction)
+\brief Select animation control for a physical rig or its bones.
+
+Kinematic follows the desired animation/IK pose using swept bodies. Dynamic
+releases rig tracking and lets physics determine the pose. Driven keeps dynamic
+bodies and applies bounded tracking forces and torques. Mixed is query-only.
+Changing control preserves body, collider and joint identities, mass, velocities
+and independent scheduled loads. Kinematic-to-kinematic joints remain configured
+but dormant. A single selected body can still be restrained by its neighbors.
+
+Selections use the skeleton hierarchy, including skipped bones. An included bone
+may be selected alone; a skipped bone may select included descendants. Missing
+bones or selections with no physical bodies throw. The entire selection is
+validated before any control changes. Driven requires configured drive settings
+on every selected body.
+
+A body has one controller. Before rig tracking takes over, release a manual drive
+with PhysicsBody::clearDrive(), or release a physical Part IK chain with
+Part::clearIKTarget(). To release rig tracking, select Dynamic. Raw clearDrive()
+and manual setDriveTarget() cannot replace rig-owned control. Repeated manual
+setDriveTarget() calls are allowed after release: the last valid call wins.
+Direct mapped-body physics.setMode() uses the same coordinator: Dynamic releases
+rig tracking, Kinematic requests default recovery, and Static throws.
+
+Driven limbs track their desired transform relative to the nearest included
+physical ancestor. Reaction forces and torques act on dynamic parents; free limbs
+are not independently pinned to world coordinates. Bodies without an included
+ancestor track an animation root target in world coordinates. Solver-followed
+Sprite translation does not move that target. Rotations use physical body frames,
+including the reflected reference pose. Resolved angular routes persist across
+ticks; AsSpecified preserves unwrapped turns. Physical joint limits remain
+binding.
+
+Positive recoveryTime blends the requested target from the current physical pose.
+During recovery, the affected bodies remain dynamic and getAnimationPhysicsMode()
+reports Driven, including when the destination is Kinematic. The requested time
+is a minimum transition duration: completion waits until position error is within
+0.1% of segment length (at least 0.000001 layer units) and angular error is within
+0.001 radians. Contacts, joint limits or insufficient force may delay completion
+indefinitely. PhysicsBody::getDriveState() reports the target and actual error;
+normal collision events report contacts. There are no recovery-start or blocked
+events. Pausing animation does not pause physical recovery.
+
+Recovery uses bounded integral correction to remove steady gravity/load error, within the same force and torque caps. Recovery uses stored drive settings if available. For an unconfigured transition
+to Kinematic only, a temporary 4 Hz, critically damped servo uses force capped at
+mass * max(segment length, 0.001) * (2*pi*4)^2 and torque capped at inertia *
+(2*pi*4)^2. This does not configure the persistent drive-settings record. Configure
+settings explicitly to tune those bounds. Zero recoveryTime takes control
+immediately; Kinematic moves to the requested pose, while Driven starts its
+bounded drive immediately. Dynamic release is always immediate.
+
+Overlapping mode commands cancel the old selection's completion notification;
+unaffected bodies can finish their existing recovery. Any new mode command
+cancels a pending disable. A completed selection emits one
+Sprite::action_AnimationPhysicsRecoveryComplete event on eventType_SpriteAnimate,
+with SpriteAnimationPhysicsRecoveryInfo: actingSprite, inLayer, id, bone,
+wholeRig, includeDescendants, mode, bodyCount and disabled. wholeRig means bone is
+animation_NoBone. Immediate takeover completes at the next physics update;
+disableAnimationPhysics(0) completes synchronously after teardown.
+
+\param mode animationPhysics_Kinematic, animationPhysics_Dynamic or animationPhysics_Driven.
+\param bone Bone name or current rig bone ID. Omit or pass undefined to select the whole rig; explicit null is invalid.
+\param includeDescendants Include skeletal descendants; default false. Whole-rig selection always includes all bodies.
+\param recoveryTime Finite nonnegative seconds; default 0.5.
+\param direction Rotation route for recovery; default rotationDirection_AsSpecified.
+\return This Sprite, for chaining.
+\note Requires an active physical rig. Call outside pose modifiers and locked solver callbacks. Initial Sprite/Layer snapshots preserve active control and recovery state. The example assumes a forearm bone.
+\par Example
+\code{.js}
+sprite.setAnimationPhysicsDriveSettings({maxForce: 120, maxTorque: 35}, 'forearm', true);
+sprite.setAnimationPhysicsMode(pdg.animationPhysics_Driven, 'forearm', true);
+// Release rig tracking before installing a manual world-space target.
+sprite.setAnimationPhysicsMode(pdg.animationPhysics_Dynamic, 'forearm');
+sprite.findPart('forearm').physics.setDriveTarget(new pdg.Point(20, 10), 0, 120, 35);
+\endcode
+\see getAnimationPhysicsMode(), setAnimationPhysicsDriveSettings(), disableAnimationPhysics()
+*/
+/** \fn pdg::Sprite::setAnimationPhysicsMode(int mode, uint bone, boolean includeDescendants, number recoveryTime, int direction)
+\copydoc pdg::Sprite::setAnimationPhysicsMode(int,string,boolean,number,int)
+*/
+/**
+\fn pdg::Sprite::getAnimationPhysicsMode(string bone, boolean includeDescendants)
+\brief Query the actual control mode of a skeleton selection.
+\param bone Bone name or ID; omit for the whole rig.
+\param includeDescendants Include descendants; default false.
+\return Common AnimationPhysicsMode, or animationPhysics_Mixed. Recovery reports Driven until it completes. A manual drive remains Dynamic in this rig query. Missing rigs and empty selections throw.
+\see setAnimationPhysicsMode()
+*/
+/**
+\fn pdg::Sprite::getAnimationPhysicsMode(uint bone, boolean includeDescendants)
+\brief Query the actual control mode of a skeleton selection.
+\param bone Bone name or ID; omit for the whole rig.
+\param includeDescendants Include descendants; default false.
+\return Common AnimationPhysicsMode, or animationPhysics_Mixed. Recovery reports Driven until it completes. A manual drive remains Dynamic in this rig query. Missing rigs and empty selections throw.
+\see setAnimationPhysicsMode()
+*/
+/**
+\fn pdg::Sprite::setAnimationPhysicsDriveSettings(object settings, string bone, boolean includeDescendants)
+\brief Replace drive settings for a skeleton selection.
+
+\htmlonly[block]
+<div class="shared-api-options" id="animation-physics-drive-settings">
+<h4>Animation physics drive settings</h4>
+<table>
+<tr><th>Field</th><th>Requirement and meaning</th></tr>
+<tr><td>maxForce</td><td>Finite nonnegative linear force cap per body, in mass times layer distance units per second squared. Required in JavaScript; zero disables this channel.</td></tr>
+<tr><td>maxTorque</td><td>Finite nonnegative torque cap per body, in inertia units times radians per second squared. Required in JavaScript; zero disables this channel.</td></tr>
+<tr><td>frequency</td><td>Finite positive spring response in Hz; default 4.</td></tr>
+<tr><td>dampingRatio</td><td>Finite nonnegative damping ratio; default 1 (critical damping in an unconstrained spring).</td></tr>
+<tr><td>direction</td><td>Existing rotationDirection constant; default rotationDirection_Shortest. Mode-call direction takes precedence for a requested recovery route.</td></tr>
+</table>
+<p>Caps bound only this drive's actuation, not contact forces, independent loads or speed. Each call replaces the full record and resolves omitted optional fields to defaults. Coefficients must be representable as finite doubles. Editing settings does not change the control mode, and applies on the next physical step to an active drive.</p>
+</div>
+\endhtmlonly
+
+\param settings Complete five-field drive configuration, with optional response defaults.
+\param bone Bone name or current bone ID; omit or pass undefined for the whole rig.
+\param includeDescendants Include descendants; default false.
+\return This Sprite, for chaining. Invalid settings or selections throw without changes.
+\note Requires an active rig. Call outside animation modifiers and locked solver callbacks.
+\see getAnimationPhysicsDriveSettings(), setAnimationPhysicsMode()
+*/
+/**
+\fn pdg::Sprite::setAnimationPhysicsDriveSettings(object settings, uint bone, boolean includeDescendants)
+\brief Replace drive settings for a skeleton selection.
+
+See the <a href="#animation-physics-drive-settings">drive settings record</a>.
+
+\param settings Complete five-field drive configuration, with optional response defaults.
+\param bone Bone name or current bone ID; omit or pass undefined for the whole rig.
+\param includeDescendants Include descendants; default false.
+\return This Sprite, for chaining. Invalid settings or selections throw without changes.
+\note Requires an active rig. Call outside animation modifiers and locked solver callbacks.
+\see getAnimationPhysicsDriveSettings(), setAnimationPhysicsMode()
+*/
+/**
+\fn pdg::Sprite::getAnimationPhysicsDriveSettings(string bone)
+\brief Copy one physical bone's configured drive settings.
+\param bone Required included bone name or ID; no subtree or whole-rig query.
+\return Independent <a href="#animation-physics-drive-settings">settings record</a>, or null when unconfigured. Stored settings remain available in every mode. Missing rigs or unmapped bones throw.
+\see setAnimationPhysicsDriveSettings()
+*/
+/**
+\fn pdg::Sprite::getAnimationPhysicsDriveSettings(uint bone)
+\brief Copy one physical bone's configured drive settings.
+\param bone Required included bone name or ID; no subtree or whole-rig query.
+\return Independent <a href="#animation-physics-drive-settings">settings record</a>, or null when unconfigured. Stored settings remain available in every mode. Missing rigs or unmapped bones throw.
+\see setAnimationPhysicsDriveSettings()
+*/
+/** \fn pdg::Sprite::onAnimationPhysicsRecoveryComplete(function func)
+\brief Register a callback for completed physical recovery selections.
+\param func Synchronous callback receiving the animation event with actingSprite, inLayer, id, bone, wholeRig, includeDescendants, mode, bodyCount and disabled. Return true to mark handled; false permits further propagation. Retain the returned handler to remove it with removeHandler(handler, eventType_SpriteAnimate).
+\return Registered IEventHandler.
+\see setAnimationPhysicsMode(), disableAnimationPhysics()
+*/

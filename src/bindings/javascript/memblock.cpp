@@ -38,19 +38,14 @@
 
 #include <cstdlib>
 #include <string>
+#include <algorithm>
+#include <new>
 
 namespace pdg {
 
 
-std::string&    
-MemBlock::getData() { 
-    static std::string _workstr;
-    _workstr.resize(bytes);
-    char* p = const_cast<char*>(_workstr.data());
-    for (size_t i = 0; i < bytes; i++) {
-        p[i] = ptr[i];
-    }
-    return _workstr;
+std::string MemBlock::getData() const {
+    return getBytes(0, bytes);
 }
 
 size_t  
@@ -60,7 +55,7 @@ MemBlock::getDataSize() {
 
 unsigned char 
 MemBlock::getByte(size_t i) { 
-    return (i<bytes) ? ptr[i] : 0; 
+    return (ptr && i < bytes) ? static_cast<unsigned char>(ptr[i]) : 0;
 }
 
 MemBlock::MemBlock(char* p, size_t n, bool own) 
@@ -77,7 +72,8 @@ MemBlock::MemBlock(size_t n)
   #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	INIT_SCRIPT_OBJECT(mMemBlockScriptObj);
   #endif
-	ptr = (char*)std::malloc(bytes);
+	ptr = static_cast<char*>(std::calloc(bytes, 1));
+    if (bytes && !ptr) throw std::bad_alloc();
 }
 
 MemBlock::~MemBlock() { 
@@ -90,16 +86,11 @@ MemBlock::~MemBlock() {
   #endif
 }
 
-// Not thread safe -- runs in a single threaded JavaScript environment
-std::string& 
-MemBlock::getBytes(size_t start, size_t len) {
-    static std::string _workstr;
-    _workstr.resize((start > bytes) ? 0 : (start + len > bytes) ? bytes - start : len);
-    char* p = const_cast<char*>(_workstr.data());
-    for (size_t i = 0; i < len; i++) {
-        p[i] = ptr[start+i];
-    } 
-    return _workstr;
+std::string MemBlock::getBytes(size_t start, size_t len) const {
+    const auto data = view();
+    if (start >= data.size()) return {};
+    const auto slice = data.subspan(start, std::min(len, data.size() - start));
+    return std::string(slice.begin(), slice.end());
 }
 
 

@@ -1,7 +1,12 @@
 namespace pdg { /**
+\fn pdg::Animated::getBoundingBox()
+\brief Read axis-aligned logical bounds.
 
-\fn pdg::Animated::getBoundingBox
+Includes logical size, transform scale and rotation; this is not a query of Drawing geometry.
 
-\brief get the rectangle that completely encloses the object
 
-**/ }
+\return The current value, returned as a new coordinate object.
+
+\see getRotatedBounds(), getSize(), getScale()
+*/
+ }

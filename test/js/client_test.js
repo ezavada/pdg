@@ -32,9 +32,7 @@ var specRunner = require('../lib/spec_runner');
 if( !process.env.NODE_ENV ) process.env.NODE_ENV = 'test';
 
 if( !process.env.PDG_ROOT && process.ios ) {
-    console.log('Defining PDG_ROOT for iOS');
     process.env.PDG_ROOT = process.cwd();
-    process.env.PDG_DEBUG = "VERBOSE";
 }
 
 var envInfo = specRunner.ensureTestEnvironment(process, fs);
@@ -58,9 +56,9 @@ if (runConfig.debug) {
 
 pdg.tm.onTimeout(function() {
 	try {
-		console.log('Running jasmine-node on:', envInfo.specDir);
+		console.log(process.ios ? 'Running Jasmine on:' : 'Running jasmine-node on:', envInfo.specDir);
 		if (runConfig.requestedTarget) {
-			console.log('Target spec:', runConfig.requestedTarget);
+            console.log('Target specs:', runConfig.requestedTargets.join(', '));
 		}
 		specRunner.runJasmineSpecs(envInfo, runConfig, process);
 	} catch(e) {

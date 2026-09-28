@@ -89,32 +89,33 @@ void Checkbox::drawSelf()
 	const ControlStateAttributes& visual = mAttributes.state(state);
 	const ControlStateAttributes& normal = mAttributes.state(ControlState::Normal);
 	Image* image = visual.hasImage ? visual.image : normal.image;
-	Font* font = mPort->getCurrentFont(checkboxTextStyle);
-	const float ascent = font->getFontAscent(mTextSize, checkboxTextStyle);
-	const float descent = font->getFontDescent(mTextSize, checkboxTextStyle);
+	const Attributes textAttrs = getDrawingAttributes(Attributes().textSize(mTextSize).textStyle(checkboxTextStyle), true);
+    Font* font = textAttrs.getFont() ? textAttrs.getFont() : mPort->getCurrentFont(textAttrs.getTextStyle());
+    const float ascent = font->getFontAscent(textAttrs.getTextSize(), textAttrs.getTextStyle());
+    const float descent = font->getFontDescent(textAttrs.getTextSize(), textAttrs.getTextStyle());
 	const float glyphHeight = ascent + descent;
 	const int baseline = static_cast<int>(std::lround(
 		(mViewArea.height() - glyphHeight) * 0.5f + ascent));
-	const int defaultBoxSize = std::max(1, static_cast<int>(std::lround(ascent)));
+	const float capHeight = font->getFontCapHeight(textAttrs.getTextSize(), textAttrs.getTextStyle());
+	const int defaultBoxSize = std::max(1, static_cast<int>(std::lround(std::max(ascent + 2, capHeight + 4))));
 	int boxWidth = image ? image->width : defaultBoxSize;
 	int boxHeight = image ? image->height : defaultBoxSize;
-	Point checkPt(0, image ? (mViewArea.height() - boxHeight) / 2 : baseline - boxHeight);
+	Point checkPt(0, image ? (mViewArea.height() - boxHeight) / 2 : baseline - (capHeight + boxHeight) / 2);
 	Rect checkRect(checkPt, boxWidth, boxHeight);
-	mAttributes.draw(*mPort, localToGlobal(checkRect), state);
+	mAttributes.draw(*mPort, localToGlobal(checkRect), state, this);
 	if (!image && !visual.hasDrawing && !visual.hasDrawRoutine) {
 		Color markColor = visual.hasForeground ? visual.foreground : normal.foreground;
 		Rect globalCheckRect = localToGlobal(checkRect);
-		mPort->drawRect(globalCheckRect, Attributes().fillColor(PDG_WHITE_COLOR)
-			.lineColor(markColor).lineThickness(1.0f));
+        globalCheckRect.shrink(0.5f);
+		mPort->drawRect(globalCheckRect, getDrawingAttributes(Attributes().fillColor(PDG_WHITE_COLOR)
+			.lineStyle(lineStyle_Solid).lineColor(markColor).lineThickness(1.0f)));
 		if (isChecked()) {
-			const Point left(globalCheckRect.left + boxWidth * 0.20f,
-				globalCheckRect.top + boxHeight * 0.52f);
-			const Point middle(globalCheckRect.left + boxWidth * 0.43f,
-				globalCheckRect.top + boxHeight * 0.76f);
-			const Point right(globalCheckRect.left + boxWidth * 0.82f,
-				globalCheckRect.top + boxHeight * 0.25f);
-			mPort->drawLine(left, middle, Attributes().lineColor(markColor).lineThickness(2.0f));
-			mPort->drawLine(middle, right, Attributes().lineColor(markColor).lineThickness(2.0f));
+            Polygon check;
+            const float vertices[][2] = {{.08f,.46f},{.26f,.29f},{.42f,.51f},{.77f,.08f},{.94f,.25f},{.43f,.92f}};
+            const Rect box = localToGlobal(checkRect);
+            for (const auto& p : vertices) check.insertPoint(check.getPointCount(),
+                Point(box.left+p[0]*boxWidth, box.top+p[1]*boxHeight));
+            mPort->drawPolygon(check, getDrawingAttributes(Attributes().fillColor(markColor), true));
 		}
 	}
 
@@ -125,14 +126,14 @@ void Checkbox::drawSelf()
 		textPt.x = boxWidth + SPACE_BETWEEN_BOX_AND_TEXT;
 		textPt.y = baseline;
 		Color textColor = visual.hasForeground ? visual.foreground : normal.foreground;
-		mPort->drawText(mString.c_str(), localToGlobal(textPt), Attributes().textSize(mTextSize).textStyle(checkboxTextStyle).fillColor(textColor));
+		mPort->drawText(mString.c_str(), localToGlobal(textPt), getDrawingAttributes(Attributes().textSize(mTextSize).textStyle(checkboxTextStyle).fillColor(textColor), true));
 	}
 	//this->drawClickableParts();
 }
 
 void Checkbox::doClick(int part)
 {
-	if (part == CLICK_ID_CHECKBOX)
+	if (mIsEnabled && part == CLICK_ID_CHECKBOX)
 	{
 		mIsChecked = !mIsChecked;
 		mAttributes.playClick();
@@ -153,17 +154,19 @@ bool Checkbox::doLeftClick(const MouseInfo* mi, int id, int part)
 void Checkbox::setString(const std::string& str) 
 { 
 	mString = str; 
-	int textWidth = mPort->getTextWidth(mString.c_str(), mTextSize, checkboxTextStyle);
+	int textWidth = getDrawingTextWidth(mString.c_str(), mTextSize, checkboxTextStyle);
 	Rect newClickArea(mViewArea);
 	Image* image = mAttributes.state(ControlState::Normal).image;
-	Font* font = mPort->getCurrentFont(checkboxTextStyle);
+	const Attributes textAttrs = getDrawingAttributes(Attributes().textSize(mTextSize).textStyle(checkboxTextStyle), true);
+    Font* font = textAttrs.getFont() ? textAttrs.getFont() : mPort->getCurrentFont(textAttrs.getTextStyle());
 	int defaultBoxSize = std::max(1, static_cast<int>(std::lround(
-		font->getFontAscent(mTextSize, checkboxTextStyle))));
+		std::max(font->getFontAscent(textAttrs.getTextSize(), textAttrs.getTextStyle()) + 2,
+		font->getFontCapHeight(textAttrs.getTextSize(), textAttrs.getTextStyle()) + 4))));
 	int boxWidth = image ? image->width : defaultBoxSize;
 	int boxHeight = image ? image->height : defaultBoxSize;
 	int fontHeight = static_cast<int>(std::ceil(
-		font->getFontAscent(mTextSize, checkboxTextStyle) +
-		font->getFontDescent(mTextSize, checkboxTextStyle)));
+		font->getFontAscent(textAttrs.getTextSize(), textAttrs.getTextStyle()) +
+		font->getFontDescent(textAttrs.getTextSize(), textAttrs.getTextStyle())));
 	newClickArea.bottom = newClickArea.top + std::max(boxHeight, fontHeight + SPACE_UP_FROM_BOTTOM);
 	newClickArea.right = newClickArea.left + boxWidth;
 	newClickArea.right += SPACE_BETWEEN_BOX_AND_TEXT + textWidth;

@@ -4,4 +4,8 @@ namespace pdg { /**
 
 \brief Start playing an animation by its name
 
+Selects the clip and resumes playback at its retained clip time. This is not a seek
+to zero. Cancels any unfinished blend and clears paused state. Invalid names/IDs
+leave playback unchanged.
+
 **/ }

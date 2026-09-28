@@ -1,7 +1,15 @@
-namespace pdg { /**
-
-\fn pdg::Sprite::deserialize
-
-\brief update this sprite from the data in stream
-
-**/ }
+/**
+\fn undefined Sprite::deserialize(Deserializer deserializer)
+\brief Restore selected state from a Sprite record.
+\param deserializer Reader positioned at a raw Sprite record.
+An initial record supplies its state flags, frame artwork and playback cursor.
+It replaces existing frame images and collision masks, retaining shared resources.
+Independent and authored Parts restore their IDs/names, parent/binding links,
+artwork, animation tracks and bodies. Imported assets, clip/transition state,
+retained Drawing artwork and built-in rig IK are restored before their dependents. Previously retained Parts are detached when replaced; IDs removed
+before saving are not reused.
+Incremental updates use the destination layer's serialization flags. Resource
+resolution, validation or unsupported-format failures throw; discard the reader
+and destination after a failed load. This operation is not an atomic scene load.
+\sa Sprite::serialize(), Serializer::setResourceMode()
+*/

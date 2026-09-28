@@ -75,11 +75,10 @@ initialize_install_workspace() {
 EOF
 }
 
-$PDG_ROOT/tools/copy-node-module-source.sh "$NODE_MODULE_BUILD_ROOT/package"
+"$PDG_ROOT/tools/copy-node-module-source.sh" "$NODE_MODULE_BUILD_ROOT/package" || exit 1
 
 # npm puts out too many warnings that have nothing to do with us
-LOGLEVEL=`$PDG_NPM config get loglevel`
-$PDG_NPM config set loglevel error
+export npm_config_loglevel=error
 export npm_config_nodedir="$PDG_ROOT/deps/node"
 export npm_config_build_from_source=true
 rm -rf "$CACHE_DIR"
@@ -91,10 +90,13 @@ if [ -n "$PYTHON_BIN" ]; then
 fi
 
 echo -e "${HEAD}Packing the module${RESET}"
-cd "$NODE_MODULE_BUILD_ROOT/package"
-$PDG_NPM pack
+cd "$NODE_MODULE_BUILD_ROOT/package" || exit 1
+"$PDG_NPM" pack || exit 1
+if [ ! -f "$TARGET" ]; then
+	echo "FATAL: expected package archive was not produced: $TARGET"
+	exit 1
+fi
 cd $PDG_ROOT
-rm -rf "$PDG_ROOT/node_modules/pdg"
 echo "Done packing the module"
 
 echo -e "${HEAD}Installing the pdg Node.js module (native build via node-gyp)${RESET}"
@@ -104,11 +106,9 @@ $PDG_NPM --foreground-scripts install --no-save --package-lock=false "$TARGET" |
 $PDG_NPM list pdg
 cd "$PDG_ROOT"
 mkdir -p "$PDG_ROOT/node_modules"
+rm -rf "$PDG_ROOT/node_modules/pdg"
 cp -a "$INSTALL_DIR/node_modules/pdg" "$PDG_ROOT/node_modules/" || exit 1
 echo "Done installing the module"
-
-# restore log level
-$PDG_NPM config set loglevel $LOGLEVEL
 
 echo -e "${HEAD}Testing the module${RESET}"
 cd $PDG_ROOT/tools/node-pdg

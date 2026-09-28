@@ -4,7 +4,6 @@ namespace pdg { /**
 
 \brief used for doing logging with variable debug levels 
 
-\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
 
 About Log Manager
 -----------------

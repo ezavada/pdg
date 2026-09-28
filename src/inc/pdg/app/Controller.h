@@ -12,6 +12,7 @@
 #define PDG_CONTROLLER_H_INCLUDED
 
 #include <vector>
+#include <chrono>
 
 #include "pdg/sys/platform.h"
 #include "pdg/sys/core.h"
@@ -54,6 +55,13 @@ public:
 	void removeView(int id) { removeView(getUntypedView(id)); }	
 	void removeAllViews();  // remove absolutely all the views from the controller
 	
+    /** Advance each current View and child controller once before rendering.
+     * Hidden Views continue; inactive controllers with drawInactive disabled pause.
+     * Removed Views are skipped and newly added Views start on the next step.
+     * @param deltaSeconds Finite nonnegative elapsed time in seconds.
+     * @note PortDraw calls this automatically. Do not also step managed Views.
+     */
+    void animateViews(double deltaSeconds);
     virtual void drawViews(Port* port, long frameNum); // also draws our children
 
 	View* getUntypedView(int id); // will only fetch views that were assigned non-zero id
@@ -116,7 +124,7 @@ public:
     virtual bool doKeyUp(const KeyInfo* ki, View* view, int id, int part); 
     virtual bool doKeyPress(const KeyPressInfo* ki, View* view, int id, int part);
 
-    virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) throw();  // return true if completely handled
+    virtual bool handleEvent(EventEmitter* inEmitter, long inEventType, void* inEventData) noexcept;  // return true if completely handled
 
     Controller(Application* theApp, bool wantKeyUpDown = true, bool wantKeyPress = true, bool wantMouseEnterLeave = true, bool wantAll = false, bool drawInactive = true);
     virtual ~Controller();
@@ -128,11 +136,21 @@ protected:
 	typedef std::vector< Controller* > Children;
 
     Application* mApp;
+    std::chrono::steady_clock::time_point mLastAnimationTime;
+    bool mHasAnimationTime = false;
+    uint32 mLastAnimationFrame = 0;
     ViewList    mViews;
     Children    mChildren;
     Controller* mParent;
     Port*       mPort;  // the primary port this controller controls. Subclasses could add additional ports if needed.
     View*       mLastClicked;
+    int         mLastClickedPart = -1;
+    bool        mBackgroundMouseDown = false;
+    View*       mMousePress = nullptr; // retained until release or cancellation
+    MouseInfo   mPressInfo{};
+    int         mPressID = -1;
+    int         mPressPart = -1;
+    bool        mPressInside = false;
     int         mClickCount;
     bool        mRightClick;
     bool        mActive;
@@ -144,6 +162,7 @@ protected:
 	Rect		mCachedPortDrawingArea;
     
 private:
+    void cancelMousePress();
     void    setParent(Controller* parent) { mParent = parent; } // only call from add/removeChild(), thus it is private
 };
 

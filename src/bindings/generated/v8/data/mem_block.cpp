@@ -191,7 +191,7 @@ namespace pdg
             return;
         }
         unsigned long i = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-        { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, self->ptr[i]) ); return; };
+        { args.GetReturnValue().Set( v8::Integer::NewFromUnsigned(isolate, self->getByte(i)) ); return; };
     }
 
     void MemBlockWrap::GetBytes(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -221,7 +221,8 @@ namespace pdg
             return;
         }
         unsigned long len = args[2 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-        v8::Local<v8::Value> resultVal = EncodeBinary(self->ptr + start, len);
+        const std::string bytes = self->getBytes(start, len);
+        v8::Local<v8::Value> resultVal = EncodeBinary(bytes.data(), bytes.size());
         { args.GetReturnValue().Set( resultVal ); return; };
     }
 
@@ -229,7 +230,11 @@ namespace pdg
 
     MemBlockWrap::MemBlockWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_MemBlock(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_MemBlock(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_MemBlock_InNewFromCpp)
         {
             {

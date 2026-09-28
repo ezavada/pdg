@@ -118,7 +118,6 @@ namespace pdg
         v8::Local<v8::String> name_str = v8::String::NewFromUtf8(isolate, "Deserializer").ToLocalChecked();
         t->SetClassName(name_str);
         constructorTpl_.Reset(isolate, t);
-#ifndef PDG_NO_64BIT
         v8::Local<v8::Signature> Deserialize_8_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> Deserialize_8_Tpl =
             v8::FunctionTemplate::New(isolate, Deserialize_8, v8::Local<v8::Value>(), Deserialize_8_Sig);
@@ -127,7 +126,6 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> Deserialize_8u_Tpl =
             v8::FunctionTemplate::New(isolate, Deserialize_8u, v8::Local<v8::Value>(), Deserialize_8u_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "deserialize_8u").ToLocalChecked(), Deserialize_8u_Tpl);
-#endif
         v8::Local<v8::Signature> Deserialize_d_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> Deserialize_d_Tpl =
             v8::FunctionTemplate::New(isolate, Deserialize_d, v8::Local<v8::Value>(), Deserialize_d_Sig);
@@ -294,7 +292,6 @@ namespace pdg
             }())));
         }
     }
-#ifndef PDG_NO_64BIT
 
     void DeserializerWrap::Deserialize_8(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
@@ -361,7 +358,6 @@ namespace pdg
             }())));
         }
     }
-#endif
 
     void DeserializerWrap::Deserialize_4(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
@@ -1173,13 +1169,46 @@ namespace pdg
                 return JSValueMakeUndefined(ctx);
             }
 #endif
+            if (!obj)
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (auto* sprite = dynamic_cast<Sprite*>(obj))
+            {
+#ifdef PDG_USING_V8
+                auto result = SpriteWrap::NewFromCpp(isolate, sprite);
+#else
+                auto result = Sprite_newFromCpp(ctx, sprite);
+#endif
+                sprite->release();
+                { args.GetReturnValue().Set( result ); return; };
+            }
+
+            if (auto* image = dynamic_cast<ImageStrip*>(obj))
+            {
+                if (!image)
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+                if (image->mImageStripScriptObj.IsEmpty())
+                {
+                    { args.GetReturnValue().Set( ImageStripWrap::NewFromCpp(isolate, image) ); return; };
+                }
+                else
+                {
+                    v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, image->mImageStripScriptObj );
+                    { args.GetReturnValue().Set( obj__ ); return; };
+                };
+            }
             SCRIPT_DEBUG_ONLY( if (obj->mISerializableScriptObj.IsEmpty())
             {
-                std::cerr << __func__<<":"<< 366 << " - NIL JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<")\n";
+                std::cerr << __func__<<":"<< 374 << " - NIL JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<")\n";
             }
             else if (!obj->mISerializableScriptObj->IsObject())
             {
-                std::cerr << __func__<<":"<< 366 << " - NOT JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<") : " << (obj->mISerializableScriptObj.IsEmpty() ? "empty" : obj->mISerializableScriptObj->IsArray() ? "array" : obj->mISerializableScriptObj->IsFunction() ? "function" : obj->mISerializableScriptObj->IsStringObject() ? "string (object)" : obj->mISerializableScriptObj->IsString() ? "string" : obj->mISerializableScriptObj->IsNull() ? "null" : obj->mISerializableScriptObj->IsUndefined() ? "undefined" : obj->mISerializableScriptObj->IsNumberObject() ? "number (object)" : obj->mISerializableScriptObj->IsNumber() ? "number" : obj->mISerializableScriptObj->IsBoolean() ? "boolean" : obj->mISerializableScriptObj->IsDate() ? "date" : obj->mISerializableScriptObj->IsRegExp() ? "regexp" : obj->mISerializableScriptObj->IsNativeError() ? "error" : obj->mISerializableScriptObj->IsObject() ? "object" : "unknown") << "\n";
+                std::cerr << __func__<<":"<< 374 << " - NOT JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<") : " << (obj->mISerializableScriptObj.IsEmpty() ? "empty" : obj->mISerializableScriptObj->IsArray() ? "array" : obj->mISerializableScriptObj->IsFunction() ? "function" : obj->mISerializableScriptObj->IsStringObject() ? "string (object)" : obj->mISerializableScriptObj->IsString() ? "string" : obj->mISerializableScriptObj->IsNull() ? "null" : obj->mISerializableScriptObj->IsUndefined() ? "undefined" : obj->mISerializableScriptObj->IsNumberObject() ? "number (object)" : obj->mISerializableScriptObj->IsNumber() ? "number" : obj->mISerializableScriptObj->IsBoolean() ? "boolean" : obj->mISerializableScriptObj->IsDate() ? "date" : obj->mISerializableScriptObj->IsRegExp() ? "regexp" : obj->mISerializableScriptObj->IsNativeError() ? "error" : obj->mISerializableScriptObj->IsObject() ? "object" : "unknown") << "\n";
             }
             else
             {
@@ -1197,17 +1226,17 @@ namespace pdg
                     }
                     if (obj__)
                     {
-                        std::cout << __func__<<":"<< 366 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
+                        std::cout << __func__<<":"<< 374 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
                     }
                     else
                     {
-                        std::cout << __func__<<":"<< 366 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
+                        std::cout << __func__<<":"<< 374 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
                     }
                 }
                 else
                 {
                     ISerializable* obj = dynamic_cast<ISerializable*>(obj__->getCppObject());
-                        std::cout << __func__<<":"<< 366 << " - JS Object (""obj->mISerializableScriptObj""|" << *((void**)&(obj->mISerializableScriptObj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
+                        std::cout << __func__<<":"<< 374 << " - JS Object (""obj->mISerializableScriptObj""|" << *((void**)&(obj->mISerializableScriptObj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
                 }
             } )
                 if (!obj) { args.GetReturnValue().SetNull(); return; };
@@ -1264,6 +1293,18 @@ namespace pdg
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }())));
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
         }
     }
 
@@ -1380,11 +1421,11 @@ namespace pdg
         }());
         SCRIPT_DEBUG_ONLY( if (obj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 400 << " - NIL JS Object (" "obj" "|"<<*((void**)&(obj))<<")\n";
+            std::cerr << __func__<<":"<< 408 << " - NIL JS Object (" "obj" "|"<<*((void**)&(obj))<<")\n";
         }
         else if (!obj->IsObject())
         {
-            std::cerr << __func__<<":"<< 400 << " - NOT JS Object (" "obj" "|"<<*((void**)&(obj))<<") : " << (obj.IsEmpty() ? "empty" : obj->IsArray() ? "array" : obj->IsFunction() ? "function" : obj->IsStringObject() ? "string (object)" : obj->IsString() ? "string" : obj->IsNull() ? "null" : obj->IsUndefined() ? "undefined" : obj->IsNumberObject() ? "number (object)" : obj->IsNumber() ? "number" : obj->IsBoolean() ? "boolean" : obj->IsDate() ? "date" : obj->IsRegExp() ? "regexp" : obj->IsNativeError() ? "error" : obj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 408 << " - NOT JS Object (" "obj" "|"<<*((void**)&(obj))<<") : " << (obj.IsEmpty() ? "empty" : obj->IsArray() ? "array" : obj->IsFunction() ? "function" : obj->IsStringObject() ? "string (object)" : obj->IsString() ? "string" : obj->IsNull() ? "null" : obj->IsUndefined() ? "undefined" : obj->IsNumberObject() ? "number (object)" : obj->IsNumber() ? "number" : obj->IsBoolean() ? "boolean" : obj->IsDate() ? "date" : obj->IsRegExp() ? "regexp" : obj->IsNativeError() ? "error" : obj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -1402,17 +1443,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 400 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
+                    std::cout << __func__<<":"<< 408 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 400 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
+                    std::cout << __func__<<":"<< 408 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
                 }
             }
             else
             {
                 ISerializable* obj = dynamic_cast<ISerializable*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 400 << " - JS Object (""obj""|" << *((void**)&(obj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 408 << " - JS Object (""obj""|" << *((void**)&(obj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
             }
         } );
         ISerializable* nativeSerializable = 0;
@@ -1491,7 +1532,11 @@ namespace pdg
 
     DeserializerWrap::DeserializerWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
     {
-        cppPtr_ = New_Deserializer(args);
+        {
+            v8::TryCatch caught(args.GetIsolate());
+            cppPtr_ = New_Deserializer(args);
+            if (caught.HasCaught()) { caught.ReThrow(); return; }
+        }
         if (!cppPtr_ && !s_Deserializer_InNewFromCpp)
         {
             {

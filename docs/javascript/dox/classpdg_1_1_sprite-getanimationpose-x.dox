@@ -1,0 +1,46 @@
+/**
+\fn pdg::Sprite::getAnimationPose()
+\brief Copy the fully evaluated pose.
+
+Refreshes the current pose, including persistent overrides and controllers, and returns an owned snapshot. Editing or retaining it does not affect the Sprite. A getter may reevaluate modifiers with deltaSeconds equal to zero.
+
+\return An independent snapshot described below.
+
+\note Call enableAnimationPose() successfully before using this method. Inside a modifier, use view.copy() instead of querying the Sprite.
+
+\par Example
+\code{.js}
+const pose = sprite.getAnimationPose();
+const hand = pose.bones.find(bone => bone.name === 'hand');
+console.log(hand.rotation);
+\endcode
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor animation_pose_snapshot
+\par Pose snapshot fields
+| Field | Contents |
+| --- | --- |
+| `rigRevision` | Rig identity as a decimal string; compare before reusing cached bone or binding IDs. |
+| `bones` | Array in bone-ID order. Each entry has `name`, `parent` (index or null), and the six parent-local transform fields below. |
+| `bindings` | Array in binding-ID order. Each entry has `name`, `parent` (bone index or null), `kind` (image 0, point 1, box 2), and the six parent-local transform fields. |
+| `variables` | Array of `{object, name, type, value}` records. An empty object name selects entity metadata. Types are float 0, integer 1, and string 2. |
+| `tags` | Array of `{object, tags}` records, where tags is an array of strings. An empty object name selects entity tags. |
+
+| Transform field | Units / meaning |
+| --- | --- |
+| `x`, `y` | Position in parent-local distance units. |
+| `rotation` | Clockwise angle in radians. |
+| `scaleX`, `scaleY` | Dimensionless axis scales; may include reflection. |
+| `alpha` | Opacity from 0 to 1. |
+
+Declared variable defaults are used when a clip has no matching track. Missing tag tracks produce empty sets. During a blend, string variables and tags switch at the halfway point. Undeclared variables are absent.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\see sampleAnimationPose(), getAnimationBoneTransform()
+*/

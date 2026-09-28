@@ -1,9 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Animated::applyTorque
-
-\brief apply torque to the object over time
-
-Honors delay given by wait()
-
-**/ }

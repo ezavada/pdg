@@ -4,4 +4,7 @@ namespace pdg { /**
 
 \brief resumes the paused animation playback
 
+Continues a paused blend at the same progress. A naturally completed nonlooping
+clip resumes from its beginning.
+
 **/ }

@@ -1,0 +1,154 @@
+// Topic assignments for public SDK types documented in the C++ headers.
+
+/** \class pdg::RefCountedObj
+ * \ingroup Core
+ */
+/** \class pdg::Singleton
+ * \ingroup Core
+ */
+/** \class pdg::PDGException
+ * \ingroup Core
+ */
+/** \class pdg::OS
+ * \ingroup System
+ */
+/** \struct pdg::FindDataT
+ * \ingroup System
+ */
+/** \struct pdg::MemStats
+ * \ingroup System
+ */
+/** \class pdg::Initializer
+ * \ingroup System
+ */
+/** \class pdg::log
+ * \ingroup System
+ */
+/** \struct pdg::log::category
+ * \ingroup System
+ */
+/** \struct pdg::log::level
+ * \ingroup System
+ */
+/** \class pdg::Semaphore
+ * \ingroup Threading
+ */
+/** \class pdg::ISerializable
+ * \ingroup Serialization
+ */
+/** \class pdg::Serializable
+ * \ingroup Serialization
+ */
+/** \class pdg::Serializer
+ * \ingroup Serialization
+ */
+/** \class pdg::bad_tag
+ * \ingroup Serialization
+ */
+/** \class pdg::out_of_data
+ * \ingroup Serialization
+ */
+/** \class pdg::sync_error
+ * \ingroup Serialization
+ */
+/** \class pdg::unknown_object
+ * \ingroup Serialization
+ */
+/** \class pdg::Attributes
+ * \ingroup Graphics
+ */
+/** \class pdg::Polygon
+ * \ingroup Graphics
+ */
+/** \class pdg::Spline
+ * \ingroup Graphics
+ */
+/** \class pdg::Renderer
+ * \ingroup Graphics
+ */
+/** \struct pdg::GraphicsManager::ScreenMode
+ * \ingroup Graphics
+ */
+/** \class pdg::OffsetT
+ * \ingroup Graphics Animation
+ */
+/** \class pdg::PointT
+ * \ingroup Graphics Animation
+ */
+/** \class pdg::VectorT
+ * \ingroup Graphics Animation
+ */
+/** \class pdg::RectT
+ * \ingroup Graphics Animation
+ */
+/** \class pdg::QuadT
+ * \ingroup Graphics Animation
+ */
+/** \class pdg::RotatedRectT
+ * \ingroup Graphics Animation
+ */
+/** \class pdg::Sprite
+ * \ingroup Sprites
+ */
+/** \class pdg::SpriteLayer
+ * \ingroup Sprites
+ */
+/** \class pdg::TileLayer
+ * \ingroup Sprites Animation Graphics
+ */
+/** \class pdg::ISpriteDrawHelper
+ * \ingroup Sprites Graphics
+ */
+/** \class pdg::IEventHandler
+ * \ingroup Events
+ */
+/** \struct pdg::EventManager::EventQueueEntry
+ * \ingroup Events
+ */
+/** \class pdg::UserData
+ * \ingroup Events
+ */
+/** \class pdg::TimerException
+ * \ingroup Events
+ */
+/** \class pdg::EventManager
+ * \ingroup Events Managers
+ */
+/** \class pdg::TimerManager
+ * \ingroup Events Managers
+ */
+/** \class pdg::GraphicsManager
+ * \ingroup Graphics Managers
+ */
+/** \class pdg::LogManager
+ * \ingroup Managers System
+ */
+/** \class pdg::Internet
+ * \ingroup Network
+ */
+/** \class pdg::NetworkManager
+ * \ingroup Network Managers
+ */
+/** \class pdg::RefCountedImpl
+ * \ingroup Core
+ */
+
+// The usual coordinate names are aliases of the templates listed above.
+/** \typedef pdg::Point
+ * \ingroup Graphics
+ */
+/** \typedef pdg::Offset
+ * \ingroup Graphics
+ */
+/** \typedef pdg::Vector
+ * \ingroup Graphics
+ */
+/** \typedef pdg::Rect
+ * \ingroup Graphics
+ */
+/** \typedef pdg::Quad
+ * \ingroup Graphics
+ */
+/** \typedef pdg::RotatedRect
+ * \ingroup Graphics
+ */

@@ -1,0 +1,941 @@
+/**
+\fn pdg::Collider::isPresent()
+\brief Test whether this is a real collider.
+
+\return False only for the shared NoCollider object.
+*/
+
+/**
+\fn pdg::Collider::isAttached()
+\brief Test whether this collider still has an owner.
+
+Removal detaches a retained collider; queries continue to use its last transform.
+
+\return Whether an owner still supplies its transform.
+*/
+
+/**
+\fn pdg::Collider::getId()
+\brief Read this collider’s process-local identity.
+
+IDs are independent of shape IDs and are not persistent save-game identifiers.
+
+\return A nonzero identity, or zero for NoCollider.
+*/
+
+/**
+\fn pdg::Collider::setEnabled(boolean value)
+\brief Enable or suspend participation in collision worlds.
+
+Disabling preserves geometry and explicit geometric queries. Existing contacts end on the next world update.
+
+\param value Whether this collider participates. Defaults to true on creation.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::isEnabled()
+\brief Read collision participation.
+
+\return False when disabled or absent.
+*/
+
+/**
+\fn pdg::Collider::setSensor(boolean value)
+\brief Choose overlap-only contact reporting.
+
+A sensor never applies a physical response. Enable owner events separately with setWantsContactEvents().
+
+\param value True for a sensor; false for a solid. Creation defaults to false.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::isSensor()
+\brief Read sensor mode.
+
+\return Whether contacts are overlap-only.
+*/
+
+/**
+\fn pdg::Collider::setFriction(number value)
+\brief Override this collider’s contact friction.
+
+The two colliders’ coefficients are multiplied. This overrides the associated body’s material without changing that body.
+
+\param value Finite nonnegative Coulomb coefficient.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::setRestitution(number value)
+\brief Override this collider’s restitution.
+
+The two colliders’ coefficients are multiplied. Zero is inelastic; one preserves normal rebound speed.
+
+\param value Finite coefficient from zero through one.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::getFriction()
+\brief Read the effective contact friction.
+
+Defaults to the associated body’s friction, or one for a bodyless surface.
+
+\return Effective coefficient; zero for NoCollider.
+*/
+
+/**
+\fn pdg::Collider::getRestitution()
+\brief Read the effective restitution.
+
+Defaults to the associated body’s restitution, or one for a bodyless surface.
+
+\return Effective coefficient; zero for NoCollider.
+*/
+
+/**
+\fn pdg::Collider::useBodyMaterial()
+\brief Clear both per-collider material overrides.
+
+Subsequent contacts follow the body’s material; bodyless surfaces use neutral coefficients of one.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::setCategory(uint value)
+\brief Set this collider’s category bits.
+
+A pair requires each collider’s category to intersect the other’s mask. Geometric queries ignore filters.
+
+\param value Unsigned 32-bit bitset. Default is 1.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::getCategory()
+\brief Read category bits.
+
+\return Unsigned 32-bit bitset.
+*/
+
+/**
+\fn pdg::Collider::setCollisionMask(uint value)
+\brief Set the categories this collider accepts.
+
+A zero mask suppresses contacts. Both endpoints’ masks must accept the other category.
+
+\param value Unsigned 32-bit bitset. Default accepts all categories.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::getCollisionMask()
+\brief Read accepted category bits.
+
+\return Unsigned 32-bit bitset.
+*/
+
+/**
+\fn pdg::Collider::setGroup(uint value)
+\brief Set an optional collision exclusion group.
+
+Two colliders in the same nonzero group do not collide, regardless of category/mask. Zero disables group exclusion.
+
+\param value Unsigned 32-bit group; default zero.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::getGroup()
+\brief Read the collision exclusion group.
+
+\return Unsigned group ID, or zero.
+*/
+
+/**
+\fn pdg::Collider::setCircle(number radius, Point center = Point(0,0))
+\brief Replace all geometry with one circle.
+
+Validation occurs before replacing the previous shapes. The new shape receives a fresh ID.
+
+\param radius Finite positive radius in owner-local units.
+\param center Finite local center; defaults to the origin.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::addCircle(number radius, Point center = Point(0,0))
+\brief Add a local circle.
+
+Existing shape IDs remain unchanged. Shapes follow the owner’s position, rotation, scale and parent transforms.
+
+\param radius Finite positive radius in owner-local units.
+\param center Finite local center; defaults to the origin.
+
+\return Stable nonzero shape ID, or collisionShape_None for NoCollider.
+*/
+
+/**
+\fn pdg::Collider::setBox(Rect bounds)
+\brief Replace all geometry with one rectangle.
+
+Validation occurs before replacing the previous shapes. The new shape receives a fresh ID.
+
+\param bounds Finite local bounds with positive width and height.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::addBox(Rect bounds)
+\brief Add a local rectangle.
+
+Existing shape IDs remain unchanged. Shapes follow the owner’s position, rotation, scale and parent transforms.
+
+\param bounds Finite local bounds with positive width and height.
+
+\return Stable nonzero shape ID, or collisionShape_None for NoCollider.
+*/
+
+/**
+\fn pdg::Collider::addPolygon(array vertices)
+\brief Add a simple local polygon, including concave outlines.
+
+Copies the outline and decomposes concave regions into convex solver pieces, retaining one public shape ID. Collinear edge points and a repeated closing point are accepted; crossings, touching edges, zero-area outlines and nonfinite points are rejected without changing existing geometry. Basic and Chipmunk use the same decomposition.
+
+\param vertices Three through 4096 finite Points in perimeter order, clockwise or counterclockwise.
+
+\return Stable nonzero shape ID, or collisionShape_None for NoCollider.
+*/
+
+/**
+\fn pdg::Collider::removeShape(uint id)
+\brief Remove one shape by its stable ID.
+
+IDs are never reassigned within a collider. Removing an added shape ends its contacts at the next update. Source-controlled frame/animation shapes cannot be removed individually; attempting that throws. Removing an addition leaves the source active.
+
+\param id ID returned by an add method or getShapeId().
+
+\return True if a shape was removed; false for an unknown ID or NoCollider.
+*/
+
+/**
+\fn pdg::Collider::clearShapes()
+\brief Remove every collision shape.
+
+The collider remains attached and keeps its filters, material and body association.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::getShapeCount()
+\brief Count the current shapes.
+
+\return Number of shapes; zero for NoCollider.
+*/
+
+/**
+\fn pdg::Collider::getShapeId(uint id)
+\brief Find the stable ID at a current list index.
+
+List indices shift when shapes are removed. An out-of-range index throws.
+
+\param id Zero-based shape index.
+
+\return Stable shape ID.
+*/
+
+/**
+\fn pdg::Collider::getBounds()
+\brief Compute the union of transformed shape bounds.
+
+Uses owning-layer/world coordinates. Disabled and detached colliders remain queryable.
+
+\return Axis-aligned Rect, or an empty Rect when there are no shapes.
+*/
+
+/**
+\fn pdg::Collider::contains(Point worldPoint)
+\brief Test a world point against the geometry.
+
+Ignores enabled/sensor flags and category/mask/group filters. Nonfinite coordinates throw.
+
+\param worldPoint Point in owning-layer/world coordinates.
+
+\return Whether any shape contains or touches the point.
+*/
+
+/**
+\fn pdg::Collider::overlaps(Collider other)
+\brief Test two colliders geometrically.
+
+Ignores layers, physical bodies, filters and enabled/sensor flags. Both geometries must be interpreted in the same coordinate system.
+
+\param other Other collider to query.
+
+\return Whether any pair of shapes overlaps or touches.
+*/
+
+/**
+\fn pdg::Collider::setPhysicsBody(PhysicsBody body)
+\brief Associate these shapes with an explicit compound body.
+
+Shapes continue to follow their own owner’s transform but transmit impulses to this body. Shapes on the same body do not collide with each other. The body is retained until reset/removal. At world synchronization, removal or transfer of that body resets the association to the owner.
+
+\param body Instantiated PhysicsBody in the same layer/world; NoPhysics is rejected.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::useOwnerPhysics()
+\brief Restore the owner’s current body association.
+
+This is the default. Later setupPhysicsBody()/removePhysicsBody() calls on the owner are followed automatically.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::getPhysicsBody()
+\brief Read the effective body association.
+
+Does not allocate or instantiate physics.
+
+\return The explicit compound body, owner’s current body, or shared PhysicsBody.NoPhysics.
+*/
+
+/**
+\fn pdg::Collider::setWantsContactEvents(boolean wanted)
+\brief Enable contact events on the owning Sprite.
+
+Both a Sprite collider and its Parts’ colliders deliver eventType_ColliderContact through that Sprite. Delivery is synchronous after the solve; contacts identify the exact collider and shape. Native contact listeners are independent.
+
+\param wanted True to opt in; default false.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::Collider::getWantsContactEvents()
+\brief Read owner-event delivery preference.
+
+\return Whether owner events are requested.
+*/
+
+/**
+\fn pdg::Collider::getContactError()
+\brief Read the last native contact-dispatch error.
+
+An exception reaching the native dispatcher is contained; a later successful dispatch clears the message.
+
+\return Diagnostic string, or empty when the last dispatch succeeded.
+*/
+
+/**
+\fn pdg::Sprite::setupCollider()
+\brief Set up the collision geometry association for this owner.
+
+An existing collider keeps its geometry and settings; use .collider to access it directly. A new collider starts enabled with no shapes, no sensor flag and owner-body association. Does not create a PhysicsBody.
+
+\return The owned collider. Native callers may addRef()/release() to retain it after removal.
+*/
+
+/**
+\fn pdg::Sprite::removeCollider()
+\brief Remove this owner’s collider.
+
+Idempotent. Restores shared NoCollider, removes native shapes, clears contact callbacks and detaches retained handles. Detached geometric queries preserve the final transform.
+*/
+
+/**
+\fn pdg::Part::setupCollider()
+\brief Set up the collision geometry association for this owner.
+
+An existing collider keeps its geometry and settings; use .collider to access it directly. A new collider starts enabled with no shapes, no sensor flag and owner-body association. Does not create a PhysicsBody.
+
+\return The owned collider. Native callers may addRef()/release() to retain it after removal.
+*/
+
+/**
+\fn pdg::Part::removeCollider()
+\brief Remove this owner’s collider.
+
+Idempotent. Restores shared NoCollider, removes native shapes, clears contact callbacks and detaches retained handles. Detached geometric queries preserve the final transform.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::getType()
+\brief Read the constraint family.
+
+\return An integer constraint_ constant.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::isActive()
+\brief Test whether the endpoints remain connected.
+
+A connected constraint can be dormant while its owners are outside a layer. This does not promise that a solver has advanced it.
+
+\return False after disconnect, endpoint removal/transfer, or breaking.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::isBroken()
+\brief Test whether the break threshold disconnected this handle.
+
+Manual disconnect does not mark a constraint broken.
+
+\return Whether it broke during a physical solve.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::getBodyA()
+\brief Read endpoint A.
+
+A is the factory receiver; B is the other body.
+
+\return The body, or shared PhysicsBody.NoPhysics after disconnection.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::getBodyB()
+\brief Read endpoint B.
+
+A is the factory receiver; B is the other body.
+
+\return The body, or shared PhysicsBody.NoPhysics after disconnection.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::setMaxForce(number value)
+\brief Set the maximum constraint force or torque.
+
+Linear constraints use force; angular constraints use torque. Takes effect on the next solve. Both solvers cap the impulse per step to this value times elapsed seconds.
+
+\param value Nonnegative maximum, including positive infinity. Default is infinity except motors.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::getMaxForce()
+\brief Read the force or torque cap.
+
+\return Nonnegative cap, possibly infinity.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::setBreakForce(number value)
+\brief Choose the force or torque that breaks this constraint.
+
+The threshold is checked after each solve against impulse divided by elapsed seconds. Breaking disconnects only this constraint, leaving the handle queryable.
+
+\param value Finite nonnegative threshold; zero disables breaking.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::getBreakForce()
+\brief Read the breaking threshold.
+
+\return Threshold, or zero when breaking is disabled.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::setCollideBodies(boolean value)
+\brief Allow contacts between connected endpoints.
+
+Defaults to false. Collision masks, groups and layers still apply when enabled. This does not create collision geometry.
+
+\param value Whether the two bodies may collide.
+
+\return This object, for chaining.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::getCollideBodies()
+\brief Read the connected-body collision preference.
+
+\return Whether this constraint allows its endpoints to collide.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::getImpulse()
+\brief Read the latest constraint impulse magnitude.
+
+Linear constraints report momentum impulse; angular constraints report angular impulse.
+
+\return Nonnegative magnitude from the most recent solve.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::getForce()
+\brief Read the latest average constraint force or torque.
+
+Computed from the latest impulse divided by elapsed seconds. Zero before a solve.
+
+\return Nonnegative force or torque magnitude.
+*/
+
+/**
+\fn pdg::PhysicsConstraint::disconnect()
+\brief Disconnect this constraint safely.
+
+Idempotent. Both endpoint lists drop it; a retained handle remains usable and reports NoPhysics endpoints. No implicit reconnection occurs.
+*/
+
+/**
+\fn pdg::PhysicsBody::createPinJoint(PhysicsBody other, Point anchor = Point(0,0), Point otherAnchor = Point(0,0))
+\brief Preserve the initial distance between two anchors.
+
+Captures distance at creation. Coincident anchors behave as a pivot. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param anchor Anchor in this body’s local distance coordinates; default origin where optional.
+\param otherAnchor Anchor in the other body’s local distance coordinates; default origin where optional.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createPivotJoint(PhysicsBody other, Point anchor = Point(0,0), Point otherAnchor = Point(0,0))
+\brief Keep two body-local anchors coincident.
+
+The two anchors need not initially coincide. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param anchor Anchor in this body’s local distance coordinates; default origin where optional.
+\param otherAnchor Anchor in the other body’s local distance coordinates; default origin where optional.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createSlideJoint(PhysicsBody other, Point anchor, Point otherAnchor, number minDistance, number maxDistance)
+\brief Limit the separation of two anchors.
+
+The anchors move freely between the limits. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param anchor Anchor in this body’s local distance coordinates; default origin where optional.
+\param otherAnchor Anchor in the other body’s local distance coordinates; default origin where optional.
+\param minDistance Finite nonnegative minimum distance.
+\param maxDistance Finite maximum distance, at least the minimum.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createGrooveJoint(PhysicsBody other, Point start, Point end, Point otherAnchor)
+\brief Slide an anchor along a segment on this body.
+
+Motion along the segment remains free; its endpoints limit travel. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param start Finite segment start in this body’s local coordinates.
+\param end Finite distinct segment end in this body’s local coordinates.
+\param otherAnchor Anchor in the other body’s local distance coordinates; default origin where optional.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createSpring(PhysicsBody other, Point anchor, Point otherAnchor, number restLength, number stiffness, number damping)
+\brief Join anchors with a damped linear spring.
+
+Pulls or pushes toward the rest length. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param anchor Anchor in this body’s local distance coordinates; default origin where optional.
+\param otherAnchor Anchor in the other body’s local distance coordinates; default origin where optional.
+\param restLength Finite nonnegative rest length.
+\param stiffness Finite nonnegative force per distance unit.
+\param damping Finite nonnegative force per unit relative speed.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createRotarySpring(PhysicsBody other, number restAngle, number stiffness, number damping)
+\brief Join rotations with a damped torsional spring.
+
+Rest angle is body B rotation minus body A rotation, clockwise positive. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param restAngle Finite rest angle in radians.
+\param stiffness Finite nonnegative torque per radian.
+\param damping Finite nonnegative torque per radian/second.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createRotaryLimit(PhysicsBody other, number minAngle, number maxAngle)
+\brief Limit the relative angle of two bodies.
+
+Limits apply to B rotation minus A rotation, in unwrapped radians. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param minAngle Finite minimum clockwise relative angle.
+\param maxAngle Finite maximum angle, at least the minimum.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createRatchet(PhysicsBody other, number interval, number phase = 0)
+\brief Permit rotation through discrete one-way teeth.
+
+Positive interval permits increasing B-minus-A rotation; negative interval reverses the direction. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param interval Finite nonzero signed tooth interval in radians.
+\param phase Finite angular tooth offset in radians; default zero.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createGear(PhysicsBody other, number ratio, number phase = 0)
+\brief Couple rotations at a fixed ratio.
+
+Maintains other.rotation * ratio - this.rotation = phase. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param ratio Finite nonzero signed ratio.
+\param phase Finite angular phase in radians; default zero.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::createMotor(PhysicsBody other, number radiansPerSecond, number maxTorque)
+\brief Drive a relative angular speed with a torque limit.
+
+Positive speed turns B clockwise relative to A. Requires two distinct instantiated bodies in the same world. Anchors are unscaled body-local coordinates, independent of artwork scaling. Basic and Chipmunk implement the same relationship with different numerical trajectories. Endpoints own the active handle; native callers must retain it explicitly to use it after disconnection.
+
+\param other Other instantiated PhysicsBody; may belong to a Sprite or Part.
+\param radiansPerSecond Finite target B-minus-A angular speed, in radians/second.
+\param maxTorque Finite nonnegative maximum torque.
+
+\return The new PhysicsConstraint handle.
+
+\see PhysicsConstraint
+*/
+
+/**
+\fn pdg::PhysicsBody::getConstraintCount()
+\brief Count connected constraints on this body.
+
+The same constraint appears on both endpoint bodies.
+
+\return Number of active connections; zero for NoPhysics.
+*/
+
+/**
+\fn pdg::PhysicsBody::getConstraint(uint index)
+\brief Read a connected constraint by list index.
+
+Indices shift after disconnection. Out-of-range indices throw.
+
+\param index Zero-based index into this body’s current connections.
+
+\return Borrowed native reference to the shared constraint; JavaScript retains the handle.
+*/
+
+/**
+\fn pdg::PhysicsBody::disconnect(PhysicsBody other = null)
+\brief Disconnect this body’s constraints.
+
+Retained constraint handles remain safe and report NoPhysics endpoints.
+
+\param other Optional other endpoint; omission or null disconnects all.
+
+\return This object, for chaining.
+*/
+
+/**
+\class pdg::Collider
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+
+\anchor collider_geometry_sources
+\par Geometry sources and explicit additions
+
+| Operation | Frame/animation source | Caller-added shapes |
+| --- | --- | --- |
+| Sprite.setupFrameCollider / setupAnimationCollider | Selects the source and follows subsequent artwork updates | Clears previous geometry when selecting the source |
+| addCircle / addCapsule / addBox / addPolygon / addImageMask | Continues updating | Adds a persistent shape in owner-local coordinates |
+| removeShape | Throws for a source-controlled ID | Removes that addition only |
+| setCircle / setCapsule / setBox / setPolygon / setImageMask | Stops following artwork | Replaces all geometry with the supplied shape |
+| clearShapes | Stops following artwork | Removes all geometry |
+
+Source updates preserve IDs by frame or authored box name. Source IDs may be
+inactive while an animation box is absent, and return when the box reappears.
+getShapeCount()/getShapeId() enumerate the currently present shapes. getShapeName()
+returns the authored box name, "frame" for a frame source, or an empty string for
+an explicit shape. Contacts aggregate convex pieces under each public shape ID.
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+
+/**
+\fn pdg::Collider::setPolygon(array vertices)
+\brief Replace all geometry with one polygon.
+
+Stops any frame/animation source after validation succeeds. Accepts the same outlines as addPolygon(). See \ref collider_geometry_sources.
+
+\param vertices Points in perimeter order, in owner-local coordinates.
+
+\return This Collider for chaining.
+*/
+
+/**
+\fn pdg::Collider::setPolygon(Polygon polygon)
+\brief Copy collision geometry from a Polygon.
+
+The Polygon is copied; later edits to it do not change the collider. Concave outlines preserve their gaps through convex decomposition. See \ref collider_geometry_sources.
+
+\param polygon A simple polygon in owner-local coordinates.
+
+\return This Collider for chaining.
+*/
+
+/**
+\fn pdg::Collider::addPolygon(Polygon polygon)
+\brief Copy collision geometry from a Polygon.
+
+The Polygon is copied; later edits to it do not change the collider. Concave outlines preserve their gaps through convex decomposition. See \ref collider_geometry_sources.
+
+\param polygon A simple polygon in owner-local coordinates.
+
+\return The stable ID of the added shape.
+*/
+
+/**
+\fn pdg::Collider::setImageMask(Image image, Rect localBounds, int alphaThreshold)
+\brief Copy opaque image pixels into collision geometry.
+
+Uses the entire supplied image, mapped to localBounds. Pixels with alpha at least alphaThreshold become merged convex rectangles; transparent holes and disconnected islands remain empty. Geometry is copied, so subsequent pixel edits require another call. An entirely transparent image has no contact area. Named images can reload discarded CPU pixels; unavailable pixels throw. At most 65536 convex pieces are supported. See \ref collider_geometry_sources.
+
+\param image Image to sample; use a frame image for a single strip frame.
+\param localBounds Finite rectangle with positive dimensions in owner-local coordinates.
+\param alphaThreshold Integer from 1 through 255; defaults to 128.
+
+\return This Collider for chaining.
+*/
+
+/**
+\fn pdg::Collider::addImageMask(Image image, Rect localBounds, int alphaThreshold)
+\brief Copy opaque image pixels into collision geometry.
+
+Uses the entire supplied image, mapped to localBounds. Pixels with alpha at least alphaThreshold become merged convex rectangles; transparent holes and disconnected islands remain empty. Geometry is copied, so subsequent pixel edits require another call. An entirely transparent image has no contact area. Named images can reload discarded CPU pixels; unavailable pixels throw. At most 65536 convex pieces are supported. See \ref collider_geometry_sources.
+
+\param image Image to sample; use a frame image for a single strip frame.
+\param localBounds Finite rectangle with positive dimensions in owner-local coordinates.
+\param alphaThreshold Integer from 1 through 255; defaults to 128.
+
+\return One stable shape ID for the complete mask.
+*/
+
+/**
+\fn pdg::Collider::getGeometrySource()
+\brief Inspect collider geometry.
+
+The read-only source kind identifies whether artwork is supplying geometry.
+
+
+\return colliderSource_Explicit, colliderSource_Frame or colliderSource_Animation.
+*/
+
+/**
+\fn pdg::Collider::isSourceShape(uint shapeId)
+\brief Inspect collider geometry.
+
+Unknown or currently inactive IDs throw.
+
+\param shapeId An active shape ID.
+
+\return True when the active shape is controlled by artwork.
+*/
+
+/**
+\fn pdg::Collider::getShapeName(uint shapeId)
+\brief Inspect collider geometry.
+
+Unknown or currently inactive IDs throw.
+
+\param shapeId An active shape ID.
+
+\return The source name, or an empty string for explicit geometry.
+*/
+
+/**
+\fn pdg::Collider::getShapeType(uint shapeId)
+\brief Inspect collider geometry.
+
+Unknown or currently inactive IDs throw.
+
+\param shapeId An active shape ID.
+
+\return collisionShape_Circle, collisionShape_Convex, collisionShape_Polygon, collisionShape_ImageMask or collisionShape_Capsule.
+*/
+
+/**
+\fn pdg::Collider::getCircleRadius(uint shapeId)
+\brief Inspect collider geometry.
+
+Unknown or currently inactive IDs throw.
+
+\param shapeId An active shape ID.
+
+\return The circle radius in owner-local units; throws for a non-circle shape.
+*/
+
+/**
+\fn pdg::Collider::setContactHandler(function callback)
+\brief Install a contact listener.
+
+The callback receives a contact with collider/other, shape/otherShape, phase, point, normal, impulse, penetration and sensor. It runs after solving and may remove owners. It is independent of owner event delivery through setWantsContactEvents(). Pass null to clear the callback. Owner detachment clears callbacks. See \ref collider_geometry_sources.
+
+\param callback Callback to install, or null to clear it.
+
+\return This Collider for chaining.
+*/
+
+/**
+\fn pdg::Collider::setCollisionFilter(function callback)
+\brief Filter contacts independently of owner type.
+
+The predicate receives this Collider and the other Collider and must return a boolean. Returning false suppresses response and contact notifications. It can run multiple times during a step; keep it a read-only decision. Geometric contains()/overlaps() queries ignore it. Exceptions reject the pair and are recorded by getContactError(). Pass null to clear the callback. Owner detachment clears callbacks. See \ref collider_geometry_sources.
+
+\param callback Callback to install, or null to clear it.
+
+\return This Collider for chaining.
+*/
+
+/**
+\fn pdg::Collider::setCapsule(Point start, Point end, number radius)
+\brief Replace all geometry with one capsule.
+
+\anchor collider_capsule_geometry
+The capsule consists of the line segment between start and end, expanded by
+radius in every direction. Endpoints are the centers of the rounded ends in
+owner-local coordinates. Total length is the distance between the endpoints
+plus twice the radius, and width is twice the radius. Coincident endpoints
+behave as a circle while retaining collisionShape_Capsule as the public type.
+
+Coordinates are copied. Validation finishes before existing shapes are replaced;
+the capsule receives a fresh shape ID. This stops any frame/animation geometry
+source, while preserving collider settings, owner/body association, mass and
+inertia. NoCollider ignores the operation.
+
+Queries and both solvers use exact capsule geometry under translation, rotation,
+reflection and uniform scale. Nonuniform scale or shear uses a convex outline
+with 16 straight segments per semicircle plus the two straight sides; coincident
+endpoints use the same 32-sided approximation as a deformed circle. All pieces
+remain one public shape ID. Capsule geometry and IDs survive scene snapshots;
+older readers without capsule support reject that shape kind.
+
+\param start Finite local center of the first cap.
+\param end Finite local center of the second cap; may equal start.
+\param radius Finite positive radius in owner-local distance units.
+\return This Collider, for chaining.
+
+\note Available in both GUI and headless builds; artwork is not required.
+
+\par Example
+\code{.js}
+const sprite = new pdg.Sprite();
+sprite.setupPhysicsBody(2, 30);
+sprite.setupCollider().setCapsule(new pdg.Point(-12, 0), new pdg.Point(12, 0), 3);
+const shape = sprite.collider.getShapeId(0);
+const start = sprite.collider.getCapsuleStart(shape);
+\endcode
+
+The example creates a capsule 30 units long and 6 units wide. Add the Sprite to
+an active collision-enabled layer to simulate contacts.
+
+\see addCapsule(), getCapsuleStart(), getCapsuleEnd(), getCapsuleRadius(), setCircle()
+*/
+
+/**
+\fn pdg::Collider::addCapsule(Point start, Point end, number radius)
+\brief Add a capsule while retaining existing shapes.
+
+Uses the geometry and transform rules in \ref collider_capsule_geometry.
+The new capsule has a stable ID. Existing shape IDs and any frame/animation
+geometry source remain intact; later source updates preserve this addition.
+Invalid input leaves the collider unchanged.
+
+\param start Finite local center of the first cap.
+\param end Finite local center of the second cap; may equal start.
+\param radius Finite positive radius in owner-local distance units.
+\return The new nonzero shape ID, or collisionShape_None for NoCollider.
+\see setCapsule(), removeShape(), getShapeType()
+*/
+
+/**
+\fn pdg::Collider::getCapsuleStart(uint shapeId)
+\brief Read the capsule's start.
+
+Throws for an unknown ID or a shape whose type is not collisionShape_Capsule.
+\param shapeId The capsule's stable shape ID.
+\return A copy of the first cap center in owner-local coordinates.
+\see setCapsule(), getShapeType()
+*/
+
+/**
+\fn pdg::Collider::getCapsuleEnd(uint shapeId)
+\brief Read the capsule's end.
+
+Throws for an unknown ID or a shape whose type is not collisionShape_Capsule.
+\param shapeId The capsule's stable shape ID.
+\return A copy of the second cap center in owner-local coordinates.
+\see setCapsule(), getShapeType()
+*/
+
+/**
+\fn pdg::Collider::getCapsuleRadius(uint shapeId)
+\brief Read the capsule's radius.
+
+Throws for an unknown ID or a shape whose type is not collisionShape_Capsule.
+\param shapeId The capsule's stable shape ID.
+\return The radius in owner-local distance units, before scaling.
+\see setCapsule(), getShapeType()
+*/

@@ -1,0 +1,55 @@
+{
+  "fixture": "arm.scml (3 bones, 5 bindings)",
+  "runtime": "v24.21.0",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "note": "API microbenchmark including bindings and allocations. No physics throughput, sustained transition stepping, or frame-budget claim.",
+  "results": [
+    {
+      "name": "owned final pose snapshot",
+      "iterations": 2000,
+      "totalSeconds": 0.020961333,
+      "secondsPerOperation": 0.0000104806665
+    },
+    {
+      "name": "silent authored sample (fresh evaluator)",
+      "iterations": 2000,
+      "totalSeconds": 0.036550959,
+      "secondsPerOperation": 0.000018275479500000002
+    },
+    {
+      "name": "atomic seek and publication",
+      "iterations": 2000,
+      "totalSeconds": 0.0245185,
+      "secondsPerOperation": 0.00001225925
+    },
+    {
+      "name": "seek and publication with script modifier",
+      "iterations": 2000,
+      "totalSeconds": 0.053409209,
+      "secondsPerOperation": 0.0000267046045
+    },
+    {
+      "name": "seek and publication with modifier and IK",
+      "iterations": 2000,
+      "totalSeconds": 0.057047,
+      "secondsPerOperation": 0.0000285235
+    },
+    {
+      "name": "independent transition selection/interruption",
+      "iterations": 2000,
+      "totalSeconds": 0.026605125,
+      "secondsPerOperation": 0.0000133025625
+    }
+  ],
+  "build": {
+    "configuration": "Release",
+    "node": "24.21.0",
+    "hasGraphics": true,
+    "module": "pdg:embedded",
+    "executable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/pdg",
+    "resolvedExecutable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/pdg.app/Contents/MacOS/pdg",
+    "kind": "embedded",
+    "directory": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release"
+  }
+}

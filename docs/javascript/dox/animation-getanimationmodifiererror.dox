@@ -1,0 +1,10 @@
+/**
+\fn pdg::Sprite::getAnimationModifierError(uint id)
+\brief Read a modifier failure diagnostic.
+
+\param id An existing modifier or IK controller ID.
+
+\return An empty string if no failure is recorded, otherwise the failure text. Throws for an unknown ID or a disabled pose pipeline.
+
+\see addAnimationModifier(), removeAnimationModifier()
+*/

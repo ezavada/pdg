@@ -40,7 +40,7 @@
 #include "pdg/sys/eventemitter.h"
 
 
-//! \defgroup Network
+//! \addtogroup Network
 //! Collection of classes, types and constants that are used for networking
 
 namespace pdg {
@@ -237,7 +237,7 @@ public:
 	
 	
 // lifecycle
-/// @cond C++
+/// @cond CXX
     virtual ~NetworkManager();
 /// @endcond
 

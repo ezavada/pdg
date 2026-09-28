@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['rgtbot_0',['rgtBot',['../namespacepdg.html#ac42701089277d1aab554af1fc3eafa9ba43e268d7feaea8eb7cfff7b1c00a2a3f',1,'pdg']]],
-  ['rgttop_1',['rgtTop',['../namespacepdg.html#ac42701089277d1aab554af1fc3eafa9ba905ea360156edbee24e2606f09ae4f0a',1,'pdg']]]
+  ['obj_5frefcountedrelease_0',['obj_RefCountedRelease',['../namespacepdg.html#a8f4137f9127425b4cb84765380a06d5ea7bf28ed237515748e2501c106bc0c56d',1,'pdg']]]
 ];

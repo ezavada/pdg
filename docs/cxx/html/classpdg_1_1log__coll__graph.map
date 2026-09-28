@@ -1,0 +1,11 @@
+<map id="log" name="log">
+<area shape="rect" id="Node000001" title=" " alt="" coords="150,218,188,243"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="68,80,121,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,119,97,157,102,176,110,192,129,209,152,223,147,223,126,214,106,195,97,177,92,158,91,124"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,5,149,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="84,43,94,80,89,80,83,49"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_log_manager.html" title=" " alt="" coords="208,80,300,106"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="253,119,244,158,224,195,208,211,190,223,188,218,205,207,220,192,239,156,249,123"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_singleton.html" title=" " alt="" coords="173,5,344,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="258,44,257,81,253,79,255,49"/>
+</map>

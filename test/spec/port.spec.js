@@ -188,6 +188,20 @@ describe("Port", function() {
         }
       });
 
+      it("replaces rather than nests clips and resets explicitly", function() {
+        var saved=port.getClipRect();
+        try {
+          port.setClipRect(new pdg.Rect(1.25,2.5,8.75,9.5));
+          expect(port.getClipRect().left).toBe(1.25);
+          port.setClipRect(new pdg.Rect(20,20,40,40));
+          expect(port.getClipRect().left).toBe(20);
+          port.setClipRect(new pdg.Rect(-100,-100,-20,-20));
+          expect(port.getClipRect().empty()).toBe(true);
+          port.resetClipRect();
+          expect(port.getClipRect().right).toBe(port.getDrawingArea().right);
+        } finally { port.setClipRect(saved); }
+      });
+
       it("can get clip rectangle", function() {
         var clipRect = port.getClipRect();
         expect(clipRect).toBeDefined();

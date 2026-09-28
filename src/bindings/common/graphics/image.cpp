@@ -10,6 +10,7 @@
 
 #include "pdg_script_macros.h"
 #include "graphics_impl_macros.h"
+#include "../data/data_impl_macros.h"
 
 %#include "pdg_project.h"
 
@@ -35,10 +36,12 @@ BINDING_INITIALIZER_IMPL(Image)
     EXPORT_CLASS_SYMBOLS("Image", Image, , ,
     	// method section
     	HAS_IMAGE_METHODS(Image)
+        HAS_SERIALIZABLE_METHODS(Image)
     );
 	END
 
 IMAGE_BASE_CLASS_IMPL(Image)
+SERIALIZABLE_BASE_CLASS_IMPL(Image)
 
 CLEANUP_IMPL(Image)
 
@@ -72,12 +75,14 @@ BINDING_INITIALIZER_IMPL(ImageStrip)
     EXPORT_CLASS_SYMBOLS("ImageStrip", ImageStrip, , ,
     	// method section
 		HAS_IMAGE_METHODS(ImageStrip)
+        HAS_SERIALIZABLE_METHODS(ImageStrip)
 		HAS_GETTER(ImageStrip, Frame)
 		HAS_PROPERTY(ImageStrip, FrameWidth)
 		HAS_PROPERTY(ImageStrip, NumFrames)
     );
 	END
 IMAGE_BASE_CLASS_IMPL(ImageStrip)
+SERIALIZABLE_BASE_CLASS_IMPL(ImageStrip)
 PROPERTY_IMPL(ImageStrip, NumFrames, INT32)
 PROPERTY_IMPL(ImageStrip, FrameWidth, INT32)
 METHOD_IMPL(ImageStrip, GetFrame)

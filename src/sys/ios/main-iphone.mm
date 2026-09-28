@@ -29,6 +29,9 @@
 
 
 #include "pdg_project.h"
+#include <bit>
+#include <cstdint>
+#include <numbers>
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
@@ -49,7 +52,6 @@
 
 #define kAccelerometerUpdateFrequency    60.0
 
-extern "C" size_t pow2(size_t n);
 
 float gLastOrientationAngle = 0.0f;
 int gLastScreenPosition = -1;
@@ -62,7 +64,7 @@ int main(int argc, char *argv[])
 	bool noExit = pdg::main_getNoExitFromArgs(argc, (const char**) argv);
 	do {
 		if (result == 0) {
-			result = UIApplicationMain(argc, argv, nil, nil);
+			result = UIApplicationMain(argc, argv, nil, NSStringFromClass([PDGAppDelegate class]));
 			if (noExit && result == 0) {
 				result = pdg::main_cleanup(&noExit); // cleanup without exit
 			}
@@ -72,13 +74,6 @@ int main(int argc, char *argv[])
 	return result;
 }
 
-extern "C" size_t pow2(size_t n) {
-	size_t x = 1;
-	while(x < n) {
-		x <<= 1;
-	}
-	return x;
-}
 
 namespace pdg {
     
@@ -98,7 +93,7 @@ void platform_setHardwareNormalCursor() {
 }
 
 void platform_startDrawing(void* windRef) {
-    [EAGLContext setCurrentContext:gCurrContext];
+    [EAGLContext setCurrentContext:windRef ? (EAGLContext*)windRef : gCurrContext];
 }
 
 void platform_finishDrawing(void* windRef) {
@@ -169,6 +164,13 @@ void platform_switchScreenResolution(int screenNum, long width, long height, int
     // meaningless on iPhone/iPad (except perhaps on TV out screen)
 }
 
+void* platform_createOffscreenContext() {
+    EAGLContext* context = gCurrContext ? [gCurrContext retain]
+        : [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+    [EAGLContext setCurrentContext:context];
+    return context;
+}
+
 void* platform_createWindow(long width, long height, long x, long y, int bpp, const char* title) {
     // meaningless on iPhone/iPad (except perhaps on TV out screen)
     return 0;
@@ -185,6 +187,11 @@ bool platform_isFullScreen(void* windRef) {
 }
 
 void platform_destroyWindow(void* windRef) {
+    if (windRef) {
+        EAGLContext* context = (EAGLContext*)windRef;
+        if ([EAGLContext currentContext] == context) [EAGLContext setCurrentContext:nil];
+        [context release];
+    }
 }
 
 void platform_resizeWindow(void* windRef, long width, long height, bool fullscreen) {
@@ -214,6 +221,12 @@ int platform_getPrimaryScreen() {
 int platform_getWindowScreen(void* windRef) {
 	// there is only one screen, the window must be in it
 	return 0;
+}
+
+void platform_getWindowContentSize(void* windRef, long* outWidth, long* outHeight) {
+	CGRect rect = [[UIScreen mainScreen] bounds];
+	*outWidth = rect.size.width;
+	*outHeight = rect.size.height;
 }
 
 bool platform_closestScreenMode(int screenNum, long* ioWidth, long* ioHeight, int* ioBpp) {
@@ -288,6 +301,14 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 		size_t pitch   = CGImageGetBytesPerRow(image.CGImage);
 		int bpp        = (int)CGImageGetBitsPerPixel(image.CGImage);
 		
+        const auto bufferWidth = static_cast<std::int64_t>(width);
+        const auto bufferHeight = static_cast<std::int64_t>(height);
+        if (bufferWidth < 0 || bufferHeight < 0 || bufferWidth > (1LL << 30) || bufferHeight > (1LL << 30)) {
+            CGColorSpaceRelease(colorSpace);
+            [image release];
+            return;
+        }
+
 		// see if we have an alpha channel
 //		CGImageAlphaInfo alphaInfo = CGImageGetAlphaInfo(image.CGImage);
 		bool hasAlpha = true; //((alphaInfo != kCGImageAlphaNone) && (alphaInfo != kCGImageAlphaNoneSkipLast) && (alphaInfo != kCGImageAlphaNoneSkipFirst));
@@ -305,8 +326,9 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 		CGContextTranslateCTM( context, 0, height - height );
 		CGContextDrawImage( context, CGRectMake( 0, 0, width, height ), image.CGImage );
 	
-		size_t glBufferWidth = pow2(width);
-		size_t glBufferHeight = pow2(height);
+
+		size_t glBufferWidth = std::bit_ceil(static_cast<unsigned>(bufferWidth));
+		size_t glBufferHeight = std::bit_ceil(static_cast<unsigned>(bufferHeight));
 		size_t glBufferPitch = ((glBufferWidth * bpp/2) + 3) / 4;
 		
 		*outDataPtr = (unsigned char*) malloc(glBufferPitch * glBufferHeight);
@@ -466,7 +488,7 @@ void platform_getDeviceOrientation(float* outRoll, float* outPitch, float* outYa
 
 /*	if (orientation == UIDeviceOrientationLandscapeLeft)
 	{
-		CGAffineTransform transform = CGAffineTransformRotate(window.transform, 3.14159/2);
+		CGAffineTransform transform = CGAffineTransformRotate(window.transform, std::numbers::pi/2);
 		[UIView beginAnimations:@"rotate" context:nil];
 		[UIView setAnimationDuration:0.3];
 		[UIView setAnimationDelegate:self];
@@ -478,4 +500,3 @@ void platform_getDeviceOrientation(float* outRoll, float* outPitch, float* outYa
 	} */
 }
 @end
-

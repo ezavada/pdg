@@ -2,6 +2,12 @@ namespace pdg { /**
 
 \class pdg::Drawing
 
+\ingroup Graphics Animation
+
 \brief Container for drawing elements (lines, shapes, images) that can be rendered to a Port
+
+Drawing contents are shared by nested drawings and animation attachments. ElementRef retains its drawing contents, so elements remain editable while those owners exist. Nested drawing cycles are rejected. Persistent animation artwork is registered with Sprite.addAnimationDrawable(drawing, options); dynamic callbacks return a Drawing or null.
+
+Port.drawDrawing(drawing, point, attributes) translates drawing coordinates by the point before applying the parent transform. Its rectangle overload maps the drawing's geometric bounds into that rectangle. Nested Drawing elements use the same bounds mapping. Native Quad/RotatedRect Drawing destinations require a finite affine parallelogram; degenerate source bounds retain unit scale on that axis. Inherited transforms and opacities do not mutate stored element Attributes.
 
 **/ }

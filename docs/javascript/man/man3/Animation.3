@@ -1,4 +1,4 @@
-.TH "Animation" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Animation" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -9,6 +9,14 @@ Animation \- Animation
 .SH SYNOPSIS
 .br
 .PP
+.SS "Topics"
+
+.in +1c
+.ti -1c
+.RI "\fBSprites and layers\fP"
+.br
+.RI "Sprite and tile layers, drawing helpers, and collision helpers\&. "
+.in -1c
 .SS "Classes"
 
 .in +1c
@@ -17,6 +25,26 @@ Animation \- Animation
 .br
 .RI "something that can be automatically moved, spun or resized over time\&. "
 .ti -1c
+.RI "class \fBAnimatedAttributes\fP"
+.br
+.RI "\fBDrawing\fP attributes with programmed movement and appearance animation\&. "
+.ti -1c
+.RI "class \fBAnimationContactTarget\fP"
+.br
+.RI "World and platform contact locks with timed release\&. "
+.ti -1c
+.RI "class \fBAnimationSpringTarget\fP"
+.br
+.RI "Spring target smoothing and recoil impulses\&. "
+.ti -1c
+.RI "class \fBDrawing\fP"
+.br
+.RI "Container for drawing elements (lines, shapes, images) that can be rendered to a \fBPort\fP\&. "
+.ti -1c
+.RI "class \fBElementRef\fP"
+.br
+.RI "Reference to a drawing element that allows modification of its properties and control points\&. "
+.ti -1c
 .RI "class \fBIAnimationHelper\fP"
 .br
 .RI "helper for add-on or complex motion during animation "
@@ -24,6 +52,18 @@ Animation \- Animation
 .RI "class \fBOffset\fP"
 .br
 .RI "offset within a 2D coordinate system "
+.ti -1c
+.RI "class \fBPart\fP"
+.br
+.RI "An independently animated part owned by a \fBSprite\fP\&. "
+.ti -1c
+.RI "class \fBParticle\fP"
+.br
+.RI "Lightweight whole-body artwork and optional physics\&. "
+.ti -1c
+.RI "class \fBParticleEmitter\fP"
+.br
+.RI "A configurable point source of independent particles\&. "
 .ti -1c
 .RI "class \fBPoint\fP"
 .br
@@ -53,9 +93,29 @@ Animation \- Animation
 .br
 .RI "creates and tracks collections of sprites "
 .ti -1c
+.RI "struct \fBSpriteTriggerEvent\fP"
+.br
+.RI "Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. "
+.ti -1c
+.RI "class \fBTileLayer\fP"
+.br
+.RI "efficiently handles large tile datasets, useful for backgrounds, terrains, etc\&.\&.\&. "
+.ti -1c
 .RI "class \fBVector\fP"
 .br
 .RI "vector (magnitude and direction) within a 2D coordinate system\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBenableSpriterEvents\fP (boolean enable=true)"
+.br
+.RI "Enable or disable authored Spriter trigger notifications for this \fBSprite\fP\&. "
+.ti -1c
+.RI "\fBIEventHandler\fP \fBonAnimationBlendComplete\fP (function func)"
+.br
+.RI "Register a callback function to be called when an animation blend or transition completes\&. "
 .in -1c
 .SS "Variables"
 
@@ -121,10 +181,6 @@ Animation \- Animation
 .br
 .RI "eventType_SpriteLayer action: about to start animations for a particular \fBSpriteLayer\fP "
 .ti -1c
-.RI "const \fBaction_SpriterTrigger\fP = 14"
-.br
-.RI "eventType_SpriteAnimate action: a Spriter animation trigger fired "
-.ti -1c
 .RI "const \fBaction_ZoomComplete\fP = 48"
 .br
 .RI "eventType_SpriteLayer action: zooming a particular sprite layer is complete "
@@ -133,7 +189,10 @@ Animation \- Animation
 .PP 
 Things related to animation\&. 
 
+See \fBParticle effects\fP for lightweight particles, point emitters and nested trails\&.
 
+.PP
+Authored eventline notifications are described in \fBAuthored Spriter triggers\fP and delivered with the \fBpdg::SpriteTriggerEvent\fP payload\&. 
 .SH "Class Documentation"
 .PP 
 .SH "class pdg::IAnimationHelper"
@@ -142,9 +201,9 @@ helper for add-on or complex motion during animation
 
 
 .PP
-\fBWarning\fP
+\fBNote\fP
 .RS 4
-\fBAPI Stability: 1 - Experimental\fP\&. This API was introduced recently and gotten little or no real use\&. It may change or be removed in future versions\&. It may not be completely implemented and may be missing important pieces of functionality\&. Please try it out and provide feedback\&.
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 Implement this interface to do extra animation stuff for a specific \fBAnimated\fP object then add by calling the object's addAnimationHelper() method\&. You can have multiple Animation Helpers attached to the same object\&. Your helper will then be called every time movement for the object is calculated\&.
@@ -155,8 +214,8 @@ To create a helper:
 .PP
 .PP
 .nf
-var myHelper = new pdg\&.IAnimationHelper(function(what, msElapsed) {
-                console\&.log("in my animation helper for " + what + " after " + msElapsed + "ms" );
+const myHelper = new pdg\&.IAnimationHelper(function(what, deltaSeconds) {
+                console\&.log("in my animation helper for " + what + " after " + deltaSeconds + " seconds" );
                 return true;  // not done, keep helping
 });
 myAnimatedObj\&.addAnimationHelper(myHelper);
@@ -164,18 +223,25 @@ myAnimatedObj\&.addAnimationHelper(myHelper);
 .PP
 
 .PP
-If you need something more complex, you can also use classify to create a new Javascript class that derives from \fBpdg\&.IAnimationHelper\fP, and it will call the animated() method of your class\&. For example:
+For a helper with its own methods or state, declare a JavaScript class that extends \fR\fBpdg\&.IAnimationHelper\fP\fP\&. The native interface takes a callback in its constructor; forward that callback to your \fRanimate()\fP method through \fRsuper()\fP:
 
 .PP
 .PP
 .nf
-classify(pdg\&.IAnimationHelper, 'MyAnimationHelperClass', function() {
-                def('animate', function(what, msElapsed) {
-                                console\&.log("MyAnimationHelper\&.animate(" + what + ", " + msElapsed + "ms)" );
-                                return false;  // all done, delete the helper
-                });
-});
-myAnimatedObj\&.addAnimationHelper( new MyAnimationHelperClass() );
+class MyAnimationHelperClass extends pdg\&.IAnimationHelper {
+    constructor() {
+        super(function(what, deltaSeconds) {
+            return this\&.animate(what, deltaSeconds);
+        });
+    }
+
+    animate(what, deltaSeconds) {
+        console\&.log("Animation step:", deltaSeconds, "seconds");
+        return false; // finished; remove this helper from the object
+    }
+}
+
+myAnimatedObj\&.addAnimationHelper(new MyAnimationHelperClass());
 .fi
 .PP
 .SS "Your Custom Function:"
@@ -185,7 +251,7 @@ As you can see from the examples above, your Animation Helper function (or anima
 .RS 4
 \fIwhat\fP the \fBAnimated\fP object that is being animated 
 .br
-\fImsElapsed\fP the number of milliseconds that have elapsed since the last time this object's movement was calculated 
+\fIdeltaSeconds\fP the elapsed time in floating-point seconds since the last time this object's movement was calculated 
 .RE
 .PP
 \fBReturns\fP
@@ -204,10 +270,10 @@ A Sprite will generate one of these events when it completes an animation includ
 For frame based animations -- that is, calls to \fBpdg\&.Sprite\&.startFrameAnimation()\fP -- if it reaches the last frame and is not set to loop, action will be \fBpdg\&.action_AnimationEnd\fP\&. For looping animations \fBpdg\&.action_AnimationLoop\fP will be received each time the animation completes and starts over with the first frame\&.
 
 .PP
-When a Spriter animation blend -- started by \fBpdg\&.Sprite\&.blendToAnimation()\fP -- completes, action will be \fBpdg\&.action_AnimationBlendComplete\fP
+When a Spriter animation blend started by \fBpdg::Sprite::blendToAnimation()\fP or \fBpdg::Sprite::transitionToAnimation()\fP completes, action is \fBpdg::action_AnimationBlendComplete\fP\&.
 
 .PP
-For Spriter triggers embedded in a Spriter animation, action will be \fBpdg\&.action_SpriterTrigger\fP
+Authored Spriter triggers are delivered as \fBpdg::eventType_SpriteTriggerEvent\fP with a \fBpdg::SpriteTriggerEvent\fP payload\&. Subscribe to that event type for triggers\&.
 
 .PP
 For fades, one of three action types are possible: \fBpdg\&.action_FadeComplete\fP for calls to \fBpdg\&.Sprite\&.fadeTo()\fP, \fBpdg\&.action_FadeInComplete\fP for calls to \fBpdg\&.Sprite\&.fadeIn()\fP, and \fBpdg\&.action_FadeOutComplete\fP for calls to \fBpdg\&.Sprite\&.fadeOut()\fP\&.
@@ -233,7 +299,7 @@ When a Sprite has setWantsCollideWallEvents(true), \fBpdg\&.action_ExitLayer\fP 
 .PP
 \fBNote\fP
 .RS 4
-At this time other kinds of animations such as calls to \fBpdg::Sprite\&.startAnimation()\fP do not generate any events\&.
+Spriter eventline notifications require pdg::Sprite::enableSpriterEvents(true)\&. See \fBAuthored Spriter triggers\fP for crossing, looping, seek, and transition rules\&.
 .RE
 .PP
 \fBSee also\fP
@@ -266,16 +332,57 @@ At this time other kinds of animations such as calls to \fBpdg::Sprite\&.startAn
 .RE
 .PP
 
+.SH "struct pdg::SpriteTriggerEvent"
+.PP 
+Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. 
+
+The common JavaScript payload contains:
+
+.PP
+Field  Meaning  \fRemitter\fP  Event emitter delivering the notification  \fReventType\fP  \fBpdg::eventType_SpriteTriggerEvent\fP  \fRactingSprite\fP  Sprite whose animation crossed the trigger  \fRinLayer\fP  SpriteLayer containing that Sprite  \fRtriggerName\fP  Authored eventline name  \fRclipName\fP  Clip containing the eventline key  \fRentityName\fP  Spriter entity containing the clip  \fRtimeSeconds\fP  Authored key position from clip start, in floating-point seconds  \fRoffsetSeconds\fP  Occurrence offset from the start of the update, in floating-point seconds  
+
+.PP
+Subscribe by event type and inspect \fRtriggerName\fP to distinguish authored triggers\&. An \fRaction\fP field is not a portable trigger discriminator\&. The native compatibility field \fRframeTime\fP uses integer milliseconds and is omitted from JavaScript\&. The native event ID is currently exposed by the browser bridge but not the V8/JavaScriptCore bridges\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg::Sprite::enableSpriterEvents\fP 
+
+.PP
+\fBpdg::eventType_SpriteTriggerEvent\fP 
+
+.PP
+\fBAuthored Spriter triggers\fP 
+.RE
+.PP
+
+.SH "Function Documentation"
+.PP 
+.SS "enableSpriterEvents (boolean enable = \fRtrue\fP)"
+
+.PP
+Enable or disable authored Spriter trigger notifications for this \fBSprite\fP\&. Register an \fBIEventHandler\fP for \fBpdg::eventType_SpriteTriggerEvent\fP to receive a \fBpdg::SpriteTriggerEvent\fP payload\&. This flag does not gate blend-completion notifications\&. See \fBAuthored Spriter triggers\fP for delivery and timing rules\&. 
+.SS "\fBIEventHandler\fP onAnimationBlendComplete (function func)"
+
+.PP
+Register a callback function to be called when an animation blend or transition completes\&. Filters \fBpdg::eventType_SpriteAnimate\fP for \fBpdg::action_AnimationBlendComplete\fP\&. The callback receives a \fBpdg::SpriteAnimateEvent\fP\&. Covers \fBpdg::Sprite::blendToAnimation()\fP and \fBpdg::Sprite::transitionToAnimation()\fP; enabling authored triggers is independent\&. 
 .SH "Variable Documentation"
 .PP 
 .SS "const action_AnimationBlendComplete = 15"
 
 .PP
-eventType_SpriteAnimate action: a Spriter animation blend completed\&. Emitted after \fBpdg\&.Sprite\&.blendToAnimation\fP is called and the blend has completed\&.
+eventType_SpriteAnimate action: a Spriter animation blend completed\&. Delivered as \fBpdg::eventType_SpriteAnimate\fP with a \fBpdg::SpriteAnimateEvent\fP payload when \fBpdg::Sprite::blendToAnimation()\fP or \fBpdg::Sprite::transitionToAnimation()\fP completes\&. Register with \fBpdg::Sprite::onAnimationBlendComplete()\fP to receive only this action\&. Authored-trigger enablement does not control blend-completion events\&.
 
 .PP
 \fBSee also\fP
 .RS 4
+\fBpdg::Sprite::transitionToAnimation\fP 
+
+.PP
+\fBpdg::Sprite::onAnimationBlendComplete\fP 
+
+.PP
 \fBpdg\&.Sprite\&.blendToAnimation\fP 
 
 .PP
@@ -546,21 +653,6 @@ eventType_SpriteLayer action: about to start animations for a particular \fBSpri
 
 .PP
 \fBeventType_SpriteLayer\fP 
-.RE
-.PP
-
-.SS "const action_SpriterTrigger = 14"
-
-.PP
-eventType_SpriteAnimate action: a Spriter animation trigger fired Emitted whenever a Spriter animation is playing and it encounter a trigger\&.
-
-.PP
-\fBSee also\fP
-.RS 4
-\fBpdg\&.Sprite\&.startAnimation()\fP 
-
-.PP
-pdg\&.eventType_SpriteAnimation 
 .RE
 .PP
 

@@ -1,13 +1,31 @@
 namespace pdg { /**
+\fn pdg::Animated::moveTo(Point value, number durationSeconds, int easing)
+\brief Move to a location.
 
-\fn pdg::Animated::moveTo
+The overload without duration applies immediately. The timed overload replaces programmed movement with a transition to the target location. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
-\brief move the object to a particular location over time
+\param value Location in the container coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
 
-Honors delay given by wait()
+\return This object, for chaining.
 
-    myAnimated.wait(10).moveTo(p); // waits 10 ms before move
+\see setLocation(), moveBy(), wait()
+*/
 
-    myAnimated.moveTo(p); // move immediately
+/**
+\fn pdg::Animated::moveTo(number x, number y, number durationSeconds, int easing)
+\brief Move to a location.
 
-**/ }
+The overload without duration applies immediately. The timed overload replaces programmed movement with a transition to the target location. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param x Location in the container coordinate system.
+\param y Location in the container coordinate system.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setLocation(), moveBy(), wait()
+*/
+ }

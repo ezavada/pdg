@@ -1,0 +1,171 @@
+/**
+\fn pdg::Animated::getSize()
+\brief Read logical width and height.
+
+Returns width in x and height in y; transform scale is independent.
+
+
+\return The current value, returned as a new coordinate object.
+
+\see setSize(), resizeTo(), getScale()
+*/
+
+/**
+\fn pdg::Animated::setMovement(Vector value)
+\brief Set a constant programmed movement rate immediately.
+
+Uses distance units per second. Replaces position animations and movement-rate transitions. The rate continues until changed or stopped. Dynamic PhysicsBody owners reject programmed movement. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param value Movement rate in distance units per second.
+
+\return This object, for chaining.
+
+\see getMovement(), changeMovementTo(), stopMovement()
+*/
+
+/**
+\fn pdg::Animated::setMovement(number xPerSecond, number yPerSecond)
+\brief Set a constant programmed movement rate immediately.
+
+Uses distance units per second. Replaces position animations and movement-rate transitions. The rate continues until changed or stopped. Dynamic PhysicsBody owners reject programmed movement. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param xPerSecond Movement rate in distance units per second.
+\param yPerSecond Movement rate in distance units per second.
+
+\return This object, for chaining.
+
+\see getMovement(), changeMovementTo(), stopMovement()
+*/
+
+/**
+\fn pdg::Animated::changeMovementBy(Vector value, number durationSeconds, int easing)
+\brief Animate the movement rate by an additive delta.
+
+Uses distance units per second. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Dynamic PhysicsBody owners reject this operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param value Change in movement rate in distance units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setMovement(), changeMovementTo()
+*/
+
+/**
+\fn pdg::Animated::changeMovementBy(number xPerSecond, number yPerSecond, number durationSeconds, int easing)
+\brief Animate the movement rate by an additive delta.
+
+Uses distance units per second. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Dynamic PhysicsBody owners reject this operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param xPerSecond Change in movement rate in distance units per second.
+\param yPerSecond Change in movement rate in distance units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setMovement(), changeMovementTo()
+*/
+
+/**
+\fn pdg::Animated::setSpin(number value)
+\brief Set a constant programmed angular rate immediately.
+
+Uses clockwise radians per second. Replaces rotation animations and spin-rate transitions. The rate continues until changed or stopped. Dynamic PhysicsBody owners reject programmed spin. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param value Angular rate in clockwise radians per second.
+
+\return This object, for chaining.
+
+\see getSpin(), changeSpinTo(), stopSpinning()
+*/
+
+/**
+\fn pdg::Animated::setGrowing(number value)
+\brief Set equal constant growth rates immediately.
+
+Adds the same logical units per second to width and height. Replaces size animations and growth-rate transitions. Growth continues until changed or stopped. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param value Growth rate in logical size units per second.
+
+\return This object, for chaining.
+
+\see setStretching(), changeGrowingTo(), stopGrowing()
+*/
+
+/**
+\fn pdg::Animated::setStretching(number widthPerSecond, number heightPerSecond)
+\brief Set independent constant growth rates immediately.
+
+Adds logical units per second to width and height. Replaces size animations and growth-rate transitions. Growth continues until changed or stopped. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+
+\param widthPerSecond Growth rate in logical size units per second.
+\param heightPerSecond Growth rate in logical size units per second.
+
+\return This object, for chaining.
+
+\see getStretching(), changeStretchingTo(), stopStretching()
+*/
+
+/**
+\fn pdg::Animated::changeSpinBy(number radiansPerSecond, number durationSeconds, int easing)
+\brief Animate the spin rate by an additive delta.
+
+Uses clockwise radians per second. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Dynamic PhysicsBody owners reject this operation. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param radiansPerSecond Change in angular rate in clockwise radians per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setSpin(), changeSpinTo()
+*/
+
+/**
+\fn pdg::Animated::changeGrowingBy(number amountPerSecond, number durationSeconds, int easing)
+\brief Animate the growing rate by an additive delta.
+
+Uses logical units per second equally on both axes. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Logical size changes independently of transform scale. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param amountPerSecond Change in growth rate in logical size units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setGrowing(), changeGrowingTo()
+*/
+
+/**
+\fn pdg::Animated::changeStretchingBy(number widthPerSecond, number heightPerSecond, number durationSeconds, int easing)
+\brief Animate the stretching rate by an additive delta.
+
+Uses logical units per second independently on each axis. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped. With andThen(), the delta is added to the rate when this operation starts. Logical size changes independently of transform scale. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param widthPerSecond Change in growth rate in logical size units per second.
+\param heightPerSecond Change in growth rate in logical size units per second.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setStretching(), changeStretchingTo()
+*/
+
+/**
+\fn pdg::Animated::changeScaleBy(number x, number y, number durationSeconds, int easing)
+\brief Animate independent scale by additive deltas.
+
+Does not change logical size. Adds to the scale components: starting at 2, adding 0.5 yields 2.5. Attributes::scale(0.5) instead multiplies and yields 1. With andThen(), deltas are applied to scale at the start of the operation. Negative scale reflects; zero collapses an axis and makes inverse transforms singular. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+
+\param x Additive dimensionless scale delta.
+\param y Additive dimensionless scale delta.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+
+\return This object, for chaining.
+
+\see setScale(), getScale(), changeScaleTo()
+*/

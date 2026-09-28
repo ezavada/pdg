@@ -411,11 +411,15 @@
       "steps": [
         {
           "name": "Browser client spec suite",
-          "command": "./test/client --emscripten --no-build"
+          "command": "./test/unit --web --no-build --automated"
         },
         {
           "name": "Rendered UI suite",
-          "command": "./test/ui --emscripten --no-build"
+          "command": "./test/ui --web --no-build --automated"
+        },
+        {
+          "name": "Rendered demo suite",
+          "command": "./test/demo --web --no-build --automated"
         }
       ]
     },

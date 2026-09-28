@@ -192,8 +192,8 @@ for package_dir in "$STAGE_DIR" "$DEBUG_STAGE_DIR"; do
 done
 
 if [[ $SKIP_TESTS -eq 0 ]]; then
-    xvfb-run -a "$STAGE_DIR/pdg" "$PDG_ROOT/test/misc/test_exit.js"
-    xvfb-run -a "$DEBUG_STAGE_DIR/pdg-debug" "$PDG_ROOT/test/misc/test_exit.js"
+    xvfb-run -a "$STAGE_DIR/pdg" "$PDG_ROOT/test/lib/test_exit.js"
+    xvfb-run -a "$DEBUG_STAGE_DIR/pdg-debug" "$PDG_ROOT/test/lib/test_exit.js"
 fi
 
 cmake -E make_directory "$OUTPUT_DIR"

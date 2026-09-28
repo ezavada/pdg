@@ -38,17 +38,18 @@ public:
     ScrollingView(Controller* controller, Port* port, const Rect& rect, int viewBinding = 0, BindType moveBinding = bind_Default);
 	virtual ~ScrollingView();
 
-	virtual void draw();
+	void draw() override;
+    Rect getVisibleFrame() const override { return mViewFrame; }
 	
 	void setViewFrame(const Rect& rect);   // in global/port coordinates
 	const Rect& getViewFrame() const { return mViewFrame; }  // in global/port coordinates
 	Rect& getModifiableViewFrameRect() { return mViewFrame; } // in global/port coordinates
 	
-	virtual bool pointInViewVisibleArea(const Point& screenPoint); // in global/port coordinates
+	bool pointInViewVisibleArea(const Point& screenPoint) override; // in global/port coordinates
 	
-	virtual void portResized(const Rect& oldDrawingArea, const Rect& newDrawingArea);
+	void portResized(const Rect& oldDrawingArea, const Rect& newDrawingArea) override;
 
-	bool pointInViewFrame(const Point& screenPoint) { return mViewFrame.contains( screenPoint ); } // in global/port coordinates
+	bool pointInViewFrame(const Point& screenPoint) { return pointInViewVisibleArea(screenPoint); } // in global/port coordinates
 
 	// set the automatic adjustments applied to the view after moving and/or scaling
 	void setAutoAdjust(BindType moveBinding) { mAutoAdjust = moveBinding; }

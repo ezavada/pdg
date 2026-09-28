@@ -1,0 +1,28 @@
+/**
+\fn double pdg::PhysicsConstraint::getMinAngle() const
+\brief Read the rotary limit's minimum relative angle.
+\return The lower bound for body B's rotation minus body A's, in radians, clockwise positive. Throws for other constraint types. A retained disconnected rotary limit remains queryable.
+\see setAngleLimits(), Part::setIKLimits()
+*/
+/**
+\fn double pdg::PhysicsConstraint::getMaxAngle() const
+\brief Read the rotary limit's maximum relative angle.
+\return The upper bound for body B's rotation minus body A's, in radians, clockwise positive. Throws for other constraint types. A retained disconnected rotary limit remains queryable.
+\see setAngleLimits(), Part::setIKLimits()
+*/
+/**
+\fn PhysicsConstraint& pdg::PhysicsConstraint::setAngleLimits(double minAngle, double maxAngle)
+\brief Change both bounds of a rotary-limit constraint.
+
+Both bounds must be finite and ordered; equal values lock the relative angle.
+Invalid input leaves both old bounds intact. Other constraint types throw.
+Getters and linked Part IK see the change immediately. Both physics solvers apply
+it on the next constraint step. This does not teleport either body or reconnect
+a disconnected constraint. The physical interval may span multiple turns;
+Part IK links accept at most one turn and report an error for a wider interval.
+
+\param minAngle Minimum body B rotation relative to A, in radians.
+\param maxAngle Maximum body B rotation relative to A, in radians.
+\return This constraint for chaining.
+\see getMinAngle(), getMaxAngle(), Part::setIKLimits()
+*/

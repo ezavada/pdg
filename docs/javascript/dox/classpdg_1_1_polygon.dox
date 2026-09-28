@@ -2,6 +2,8 @@ namespace pdg { /**
 
 \class pdg::Polygon
 
+\ingroup Graphics
+
 \brief Geometric shape defined by a collection of points with support for transformations and boolean operations
 
 **/ }

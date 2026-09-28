@@ -97,10 +97,10 @@ void Button::initializeButton(int resourceTextID, short substring) {
 
 void Button::finishInitButton() {
 	mAttributes
-		.stateAttributes(ControlState::Normal, Attributes().fillColor(BUTTON_COLOR).lineColor(PDG_BLACK_COLOR).roundedCorners(7.0f))
-		.stateAttributes(ControlState::Hovered, Attributes().fillColor(Color(255, 220, 120)).lineColor(PDG_BLACK_COLOR).roundedCorners(7.0f))
-		.stateAttributes(ControlState::Pressed, Attributes().fillColor(BUTTON_PRESSED_COLOR).lineColor(PDG_BLACK_COLOR).roundedCorners(7.0f))
-		.stateAttributes(ControlState::Disabled, Attributes().fillColor(PDG_GRAY_20_COLOR).lineColor(PDG_GRAY_40_COLOR).roundedCorners(7.0f))
+		.stateAttributes(ControlState::Normal, Attributes().fillColor(BUTTON_COLOR).lineStyle(lineStyle_Solid).lineColor(Color(77,82,89)).roundedCorners(7.0f))
+		.stateAttributes(ControlState::Hovered, Attributes().fillColor(Color(255, 220, 120)).lineStyle(lineStyle_Solid).lineColor(Color(77,82,89)).roundedCorners(7.0f))
+		.stateAttributes(ControlState::Pressed, Attributes().fillColor(BUTTON_PRESSED_COLOR).lineStyle(lineStyle_Solid).lineColor(Color(77,82,89)).roundedCorners(7.0f))
+		.stateAttributes(ControlState::Disabled, Attributes().fillColor(PDG_GRAY_20_COLOR).lineStyle(lineStyle_Solid).lineColor(PDG_GRAY_40_COLOR).roundedCorners(7.0f))
 		.stateForeground(ControlState::Normal, PDG_WHITE_COLOR)
 		.stateForeground(ControlState::Pressed, PDG_WHITE_COLOR)
 		.stateForeground(ControlState::Disabled, PDG_GRAY_30_COLOR);
@@ -180,7 +180,7 @@ void Button::drawSelf()
 		: (mIsButtonPressed ? ControlState::Pressed
 			: (mIsHovered ? ControlState::Hovered : ControlState::Normal));
 	Rect buttonRect(mViewArea.width(), mViewArea.height());
-	mAttributes.draw(*mPort, localToGlobal(buttonRect), state);
+	mAttributes.draw(*mPort, localToGlobal(buttonRect), state, this);
 
 	const ControlStateAttributes& stateAttributes = mAttributes.state(state);
 	const ControlStateAttributes& normalAttributes = mAttributes.state(ControlState::Normal);
@@ -207,7 +207,12 @@ void Button::drawSelf()
 			textBaselineCenterPoint.y = TEXT_V_OFFSET;
 		} */
 		// Draw text over button
-		mPort->drawText(mText.c_str(), localToGlobal(mTextBaselineCenterPoint), pdg::Attributes().textSize(mButtonTextSize).textStyle(buttonTextStyle).fillColor(buttonTextColor));
+        const auto attrs=getDrawingAttributes(Attributes().textSize(mButtonTextSize).textStyle(buttonTextStyle).fillColor(buttonTextColor),true);
+        Font* font=attrs.getFont() ? attrs.getFont() : mPort->getCurrentFont(attrs.getTextStyle());
+        const float ascent=font->getFontAscent(attrs.getTextSize(),attrs.getTextStyle());
+        const float descent=font->getFontDescent(attrs.getTextSize(),attrs.getTextStyle());
+        mTextBaselineCenterPoint.y=std::lround((mViewArea.height()-ascent-descent)*.5f+ascent)+1;
+        mPort->drawText(mText.c_str(),localToGlobal(mTextBaselineCenterPoint),attrs);
 	}
 
 	//this->drawClickableParts();
@@ -218,6 +223,7 @@ bool Button::doMouseDown(const MouseInfo* mi, int id, int part)
 	(void)mi;
 	(void)id;
 	if (part != mButtonID || !mIsEnabled) return false;
+    mMouseIsDown = true;
 	setClickState(true);
 	return false;
 }
@@ -227,6 +233,7 @@ bool Button::doMouseUp(const MouseInfo* mi, int id, int part)
 	(void)mi;
 	(void)id;
 	(void)part;
+	mMouseIsDown = false;
 	if (mIsButtonPressed) setClickState(false);
 	return false;
 }
@@ -268,7 +275,7 @@ void Button::drawStandardButtonBackground()
         c[6] = BUTTON_PRESSED_COLOR;
     }
     
-    mPort->drawRect(r, pdg::Attributes().fillColor(c[6]).roundedCorners(BUTTON_RADIUS));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().fillColor(c[6]).roundedCorners(BUTTON_RADIUS)));
     Rect clipSave = mPort->getClipRect();
     Rect newClip;
     
@@ -277,14 +284,14 @@ void Button::drawStandardButtonBackground()
     mPort->setClipRect(newClip);
     r.bottom += 4;
     
-    mPort->drawRect(r, pdg::Attributes().lineColor(PDG_GRAY_40_COLOR));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(PDG_GRAY_40_COLOR)));
     if (!mIsButtonPressed) {
         r.shrink(1);
-        mPort->drawRect(r, pdg::Attributes().lineColor(c[0]));
+        mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(c[0])));
         r.shrink(1);
-        mPort->drawRect(r, pdg::Attributes().lineColor(c[1]));
+        mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(c[1])));
         r.shrink(1);
-        mPort->drawRect(r, pdg::Attributes().lineColor(c[2]));
+        mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(c[2])));
         r.grow(3);
     }
     
@@ -295,15 +302,15 @@ void Button::drawStandardButtonBackground()
     r.top -= 5;
     r.left -= 5;
 
-    mPort->drawRect(r, pdg::Attributes().lineColor(PDG_GRAY_70_COLOR));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(PDG_GRAY_70_COLOR)));
     r.shrink(1);
-    mPort->drawRect(r, pdg::Attributes().lineColor(c[3]));
-    mPort->drawRect(r, pdg::Attributes().lineColor(c[3]));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(c[3])));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(c[3])));
     r.shrink(1);
-    mPort->drawRect(r, pdg::Attributes().lineColor(c[4]));
-    mPort->drawRect(r, pdg::Attributes().lineColor(c[4]));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(c[4])));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(c[4])));
     r.shrink(1);
-    mPort->drawRect(r, pdg::Attributes().lineColor(c[5]));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(c[5])));
     r.grow(3);
 
     r = mViewArea;
@@ -314,7 +321,7 @@ void Button::drawStandardButtonBackground()
     r.top = mViewArea.top;
     r.bottom -= 1;
     
-    mPort->drawRect(r, pdg::Attributes().lineColor(PDG_BLACK_COLOR));
+    mPort->drawRect(r, getDrawingAttributes(pdg::Attributes().lineColor(PDG_BLACK_COLOR)));
 
     // restore original clip rect
     mPort->setClipRect(clipSave);
@@ -323,8 +330,9 @@ void Button::drawStandardButtonBackground()
 // handler shows all the tooltips for button
 void Button::doMouseMove(const MouseInfo *mi,  int id, int part)
 {
-	if (!mIsHovered) {
-		mIsHovered = true;
+    if (mMouseIsDown) setClickState(part == mButtonID && mIsEnabled);
+	if (mIsHovered != (part == mButtonID)) {
+		mIsHovered = part == mButtonID;
 		draw();
 	}
 	if (!mIsToolTipEnabled)
@@ -348,6 +356,7 @@ void Button::doMouseMove(const MouseInfo *mi,  int id, int part)
 
 void Button::doMouseLeave(const MouseInfo *mi, int id, int part)
 {
+    if (mIsButtonPressed) setClickState(false);
 	if (mIsHovered) {
 		mIsHovered = false;
 		draw();
@@ -370,6 +379,12 @@ void Button::showToolTip(int nArea, Point pts,Rect & rToolRect)
 
 void Button::setToolTipText(std::string sText)
 {
+}
+
+void Button::viewAreaChanged(const Rect& previous) {
+    View::viewAreaChanged(previous);
+    if (previous.width() != mViewArea.width() || previous.height() != mViewArea.height())
+        updateLayout();
 }
 
 } // namespace pdg

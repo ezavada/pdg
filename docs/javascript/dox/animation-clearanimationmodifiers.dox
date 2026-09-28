@@ -1,0 +1,10 @@
+/**
+\fn pdg::Sprite::clearAnimationModifiers()
+\brief Remove all modifiers and IK controllers.
+
+Releases callbacks and diagnostics. A request made during evaluation is applied afterward.
+
+\return No value.
+
+\see removeAnimationModifier(), addAnimationModifier()
+*/

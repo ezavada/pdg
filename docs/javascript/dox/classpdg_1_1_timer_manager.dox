@@ -3,7 +3,6 @@ namespace pdg { /**
 \class TimerManager
 \brief manages timers that can fire at a particular time, or repeatedly at an interval
 
-\pre **API Stability: 3 - Stable**. The API has proven satisfactory, but cleanup in the underlying code may cause minor changes. Backwards-compatibility is guaranteed.
 
 The singleton instance of the TimerManager can be accessed at pdg.tm, for example:
 

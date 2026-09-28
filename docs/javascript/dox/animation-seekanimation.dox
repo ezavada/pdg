@@ -1,0 +1,20 @@
+/**
+\fn pdg::Sprite::seekAnimation(string clip, number timeSeconds)
+\brief Select a clip and time immediately.
+
+Cancels an active pose transition and legacy blend, while preserving the playback pause state. Validates the requested sample before changing the current selection.
+
+\param clip Name of a compatible clip in the current Spriter entity.
+\param timeSeconds Finite sample time in seconds. Looping clips wrap, including negative times; nonlooping clips clamp to their endpoints.
+
+\return No value.
+
+\note Call enableAnimationPose() successfully before using this method. Call outside animation callbacks.
+
+\par Example
+\code{.js}
+sprite.seekAnimation('reference', 0.25);
+\endcode
+
+\see sampleAnimationPose(), transitionToAnimation()
+*/

@@ -66,17 +66,23 @@ class Port;
  *      });
  *		mySprite.setDrawHelper(myHelper);
  *
- * If you need something more complex, you can also use modern ES6 classes to create a new
- * Javascript class that derives from pdg.ISpriteDrawHelper, and it will call the 
- * draw() method of your class. For example:
+ * Declare a JavaScript subclass for a helper with its own methods or state.
+ * The native constructor callback forwards to the subclass's draw() method:
  *
- *      class MyDrawHelperClass extends pdg.ISpriteDrawHelper {
- *			draw(sprite, port) {
- *            console.log("MyDrawHelperClass.draw(" + sprite + ")" );
- *            return true; // let sprite draw itself (ignored for post draw)
- *			}
- *		}
- *		mySprite.setDrawHelper( new MyDrawHelperClass() );
+ * class MyDrawHelperClass extends pdg.ISpriteDrawHelper {
+ *     constructor() {
+ *         super(function(sprite, port) {
+ *             return this.draw(sprite, port);
+ *         });
+ *     }
+ *
+ *     draw(sprite, port) {
+ *         console.log("Drawing sprite:", sprite);
+ *         return true; // allow normal sprite drawing
+ *     }
+ * }
+ *
+ * mySprite.setDrawHelper(new MyDrawHelperClass());
  */
 
 class ISpriteDrawHelper : public ISerializable {

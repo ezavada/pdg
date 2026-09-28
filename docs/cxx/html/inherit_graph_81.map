@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$structpdg_1_1_sprite_animate_info.html" title=" " alt="" coords="5,80,131,106"/>
+<area shape="rect" id="Node000001" href="$structpdg_1_1_sprite_animation_physics_recovery_info.html" title=" " alt="" coords="179,5,417,31"/>
+<area shape="poly" id="edge67_Node000000_Node000001" title=" " alt="" coords="106,70,178,40,220,30,215,33,180,45,108,75"/>
+<area shape="rect" id="Node000002" href="$structpdg_1_1_sprite_collide_info.html" title=" " alt="" coords="239,55,356,80"/>
+<area shape="poly" id="edge68_Node000000_Node000002" title=" " alt="" coords="145,82,241,72,237,75,146,87"/>
+<area shape="rect" id="Node000003" href="$structpdg_1_1_sprite_joint_break_info.html" title=" " alt="" coords="228,104,368,130"/>
+<area shape="poly" id="edge69_Node000000_Node000003" title=" " alt="" coords="146,98,230,108,225,111,146,104"/>
+<area shape="rect" id="Node000004" href="$structpdg_1_1_sprite_trigger_event_info.html" title=" " alt="" coords="222,153,374,179"/>
+<area shape="poly" id="edge70_Node000000_Node000004" title=" " alt="" coords="109,110,180,140,224,153,219,154,178,145,108,115"/>
+</map>

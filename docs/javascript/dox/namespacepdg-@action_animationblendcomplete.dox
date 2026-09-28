@@ -4,8 +4,13 @@ namespace pdg { /**
 
 \brief eventType_SpriteAnimate action: a Spriter animation blend completed. 
 
-Emitted after pdg.Sprite.blendToAnimation is called and the blend has completed.
+Delivered as pdg::eventType_SpriteAnimate with a pdg::SpriteAnimateEvent payload
+when pdg::Sprite::blendToAnimation() or pdg::Sprite::transitionToAnimation()
+completes. Register with pdg::Sprite::onAnimationBlendComplete() to receive only
+this action. Authored-trigger enablement does not control blend-completion events.
 
+\sa pdg::Sprite::transitionToAnimation
+\sa pdg::Sprite::onAnimationBlendComplete
 \sa pdg.Sprite.blendToAnimation
 \sa pdg.eventType_SpriteAnimate
 

@@ -32,7 +32,8 @@
 #include "pdg_project.h"
 
 #include <map>
-#include <cstdio>
+#include <format>
+#include <source_location>
 
 #ifndef PDG_NO_SERIALIZER_SANITY_CHECKS
 #define SERIALIZER_SANITY_CHECKS
@@ -60,17 +61,23 @@ namespace pdg {
     extern ObjectRegistryT gObjectRegistry;
 
 
+inline std::string streamError(std::string_view exception, std::string_view message,
+    std::ptrdiff_t offset, std::ptrdiff_t end,
+    std::source_location location = std::source_location::current()) {
+    return std::format("{}: {} at {} ({}:{})\nOffset: {} End: {}", exception, message,
+        location.function_name(), location.file_name(), location.line(), offset, end);
+}
+
 #ifdef PDG_DESERIALIZER_NO_THROW
-	// we can't throw, so we report errors but don't exit
-	#define STREAM_SAFETY_CHECK(_cond, _msg, _except, _cleanup) if (!(_cond)) { char buf[1024]; buf[0] = 0;\
-		std::snprintf(buf, sizeof(buf), "%s: %s at %s (%s:%d)\nOffset: %ld End: %ld", #_except, _msg, __FUNCTION__, __FILE__, __LINE__, (long)(p - mDataPtr), (long)(mDataEnd - mDataPtr)); \
-		DEBUG_PRINT(buf); } // don't do the cleanup since we aren't exiting
+    #define STREAM_SAFETY_CHECK(_cond, _msg, _except, _cleanup) if (!(_cond)) { \
+        const auto message = streamError(#_except, _msg, p - mDataPtr, mDataEnd - mDataPtr); \
+        DEBUG_PRINT("%s", message.c_str()); }
 #else
-	// we throw exceptions on errors
-	#define STREAM_SAFETY_CHECK(_cond, _msg, _except, _cleanup) if (!(_cond)) { char buf[1024]; buf[0] = 0;\
-		std::snprintf(buf, sizeof(buf), "%s: %s at %s (%s:%d)\nOffset: %ld End: %ld", #_except, _msg, __FUNCTION__, __FILE__, __LINE__, (long)(p - mDataPtr), (long)(mDataEnd - mDataPtr)); \
-		_cleanup; throw _except(buf); }
+    #define STREAM_SAFETY_CHECK(_cond, _msg, _except, _cleanup) if (!(_cond)) { \
+        const auto message = streamError(#_except, _msg, p - mDataPtr, mDataEnd - mDataPtr); \
+        _cleanup; throw _except(message.c_str()); }
 #endif
+
 
 
 	

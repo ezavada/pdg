@@ -83,6 +83,89 @@ public:
     int drawCount = 0;
 };
 
+void testCompositeRemoval() {
+    TestApplication app;
+    TestController controller(&app);
+    int destroyed = 0;
+    struct OwnedView : TestView {
+        OwnedView(pdg::Controller* c, int& count) : TestView(c, pdg::Rect(10,10)), count(count) {}
+        ~OwnedView() override {
+            if (child) { mController->removeView(child); child->release(); }
+            ++count;
+        }
+        int& count;
+        OwnedView* child = nullptr;
+    };
+    for (bool childFirst : {false, true}) {
+        auto* parent = new OwnedView(&controller, destroyed);
+        auto* child = new OwnedView(&controller, destroyed);
+        parent->child = child;child->addRef();child->setParentView(parent);
+        if (childFirst) {controller.addView(child);controller.addView(parent);}
+        else {controller.addView(parent);controller.addView(child);}
+        controller.removeAllViews();
+    }
+    expect(destroyed == 4, "composite removal releases both registration orders without stale child references");
+}
+
+void testPointerCapture() {
+    TestApplication app;
+    TestController controller(&app);
+    struct PointerView : TestView {
+        PointerView(pdg::Controller* c, const pdg::Rect& r) : TestView(c,r) {
+            addClickablePart(pdg::Rect(0,0,50,30), 1);
+            addClickablePart(pdg::Rect(50,0,100,30), 2);
+        }
+        bool doMouseDown(const pdg::MouseInfo*, int, int) override { pressed=true;return false; }
+        bool doMouseUp(const pdg::MouseInfo*, int, int part) override {
+            pressed=false;++ups;upPart=part;
+            if (removeOnUp) mController->removeView(this);
+            return false;
+        }
+        void doMouseLeave(const pdg::MouseInfo*, int, int) override { pressed=false;++leaves; }
+        void doMouseMove(const pdg::MouseInfo*, int, int) override { ++moves; }
+        bool doLeftClick(const pdg::MouseInfo*, int, int) override { ++clicks;return true; }
+        bool pressed=false, removeOnUp=false;
+        int ups=0, upPart=0, leaves=0, moves=0, clicks=0;
+    };
+    auto* a=new PointerView(&controller,pdg::Rect(10,10,110,40));
+    auto* b=new PointerView(&controller,pdg::Rect(150,10,250,40));
+    controller.addView(a);controller.addView(b,8); // ID-less views also capture.
+    a->addRef();b->addRef();
+    auto send=[&](long type, float x, bool right=false) {
+        pdg::MouseInfo mi{};mi.mousePos=pdg::Point(x,25);mi.rightButton=right;mi.lastClickElapsed=1000;
+        return controller.handleEvent(nullptr,type,&mi);
+    };
+    expect(send(pdg::eventType_MouseDown,30), "a View press consumes input even when its hook returns false");
+    expect(a->pressed,"press reaches the original view");
+    send(pdg::eventType_MouseMove,170);
+    expect(!a->pressed && a->leaves==1 && a->moves==1,"exit clears state and drag motion stays captured");
+    send(pdg::eventType_MouseUp,170);
+    expect(a->ups==1 && a->upPart==-1 && b->ups==0 && a->clicks==0 && b->clicks==0,
+        "outside release reaches only the original view and cannot click");
+    send(pdg::eventType_MouseUp,30);
+    expect(a->ups==1 && a->clicks==0,"unmatched release cannot revive a press");
+    send(pdg::eventType_MouseDown,30);send(pdg::eventType_MouseUp,80);
+    expect(a->clicks==0,"release over a different part of the same view cancels click");
+    send(pdg::eventType_MouseDown,30);send(pdg::eventType_MouseUp,30,true);
+    expect(a->pressed,"another mouse button cannot release capture");
+    send(pdg::eventType_MouseMove,300);send(pdg::eventType_MouseMove,30);send(pdg::eventType_MouseUp,30);
+    expect(a->clicks==1,"returning inside before release completes a click");
+    send(pdg::eventType_MouseDown,30);a->setEnabled(false);send(pdg::eventType_MouseUp,30);
+    expect(!a->pressed && a->clicks==1,"disabling during press cancels activation");a->setEnabled(true);
+    send(pdg::eventType_MouseDown,30);a->hide();send(pdg::eventType_MouseUp,30);
+    expect(!a->pressed && a->clicks==1,"hiding during press cancels activation");a->show();
+    send(pdg::eventType_MouseDown,30);controller.setActive(false);
+    expect(!a->pressed,"deactivation clears pressed state");controller.setActive(true);
+    send(pdg::eventType_MouseUp,30);expect(a->clicks==1,"reactivation cannot revive a canceled press");
+    send(pdg::eventType_MouseDown,30);controller.removeView(a);
+    expect(!a->pressed,"removal cancels capture");send(pdg::eventType_MouseUp,30);
+    expect(a->clicks==1,"removed view is never clicked");controller.addView(a);
+    a->removeOnUp=true;
+    send(pdg::eventType_MouseDown,30);send(pdg::eventType_MouseUp,30);
+    expect(a->clicks==1,"a view removed by its release callback is not clicked");
+    a->release();b->release();
+}
+
 void testObserverOrderingAndRemoval()
 {
     pdg::Subject subject;
@@ -179,6 +262,19 @@ void testStatefulControlsAndThemedClickBehavior()
     radio.doClick(2);
     expect(radio.getSelectedIndex() == 2 && radioClicks == 1,
         "radio group changes selection and runs themed click behavior");
+
+    radio.setEnabled(false); radio.doClick(1);
+    expect(radio.getSelectedIndex() == 2 && radioClicks == 1, "disabled radio ignores direct clicks");
+    checkbox.setEnabled(false); checkbox.doClick(pdg::Checkbox::CLICK_ID_CHECKBOX);
+    expect(checkbox.isChecked() && checkboxClicks == 1, "disabled checkbox ignores direct clicks");
+    pdg::Scrollbar vertical(&controller,pdg::Rect(0,0,16,200),pdg::Scrollbar::VERTICAL,20,10,100);
+    pdg::ScrollWheelInfo wheel = {}; wheel.vertDelta=3;
+    expect(vertical.doScrollWheel(&wheel) && vertical.getCurrentPosition()==23, "wheel scrolls downward");
+    wheel.vertDelta=-100;
+    expect(vertical.doScrollWheel(&wheel) && vertical.getCurrentPosition()==0, "wheel clamps to top");
+    expect(!vertical.doScrollWheel(&wheel), "wheel bubbles when at the limit");
+    vertical.setEnabled(false);wheel.vertDelta=5;
+    expect(!vertical.doScrollWheel(&wheel) && vertical.getCurrentPosition()==0, "disabled scrollbar ignores wheel");
 
     pdg::Scrollbar scrollbar(&controller, pdg::Rect(0, 0, 200, 20),
         pdg::Scrollbar::HORIZONTAL, 0, 10, 100);
@@ -314,6 +410,8 @@ int main()
     testApplicationManagerAccessors();
     testControllerHierarchyAndThemeHook();
     testViewAndControllerRegistration();
+    testCompositeRemoval();
+    testPointerCapture();
     testStatefulControlsAndThemedClickBehavior();
     testStateAccessAndFluentSetters();
     testPartialMergeAndForegroundPreservation();

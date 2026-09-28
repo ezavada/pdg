@@ -4,6 +4,7 @@
 
 #include "pdg/sys/os.h"
 #include "pdg/sys/graphics.h"
+#include "pdg_image_file.h"
 #include "spriterengine/global/settings.h"
 
 #include "pdg_point_instance_info.h"
@@ -33,47 +34,27 @@ PDGPointInstanceInfo::PDGPointInstanceInfo(Port* port)
 
 void PDGPointInstanceInfo::render()
 {
-    SPRITER_DEBUG_ONLY(OS::_DOUT("PDGPointInstanceInfo::render() called on %p", this));
-    
-    // Only render if debug points are enabled
-    if (!SpriterEngine::Settings::renderDebugPoints) {
-        SPRITER_DEBUG_ONLY(OS::_DOUT("PDGPointInstanceInfo: Debug points disabled, skipping render"));
-        return;
+    if (!SpriterEngine::Settings::renderDebugPoints) return;
+    auto* layer = PDGImageFile::currentDrawingLayer();
+    Port* port = layer ? layer->getSpritePort() : mPort;
+    if (!layer && !port) port = GraphicsManager::getSingletonInstance()->getMainPort();
+    if (!port) return;
+
+    // Position is already evaluated through the Sprite root. Scaling it again
+    // would move the socket away from its artwork and queried attachment point.
+    const auto position = getPosition();
+    const auto angle = getAngle();
+    Point center(position.x, position.y);
+    Point direction(position.x + std::cos(angle) * 10,
+                    position.y + std::sin(angle) * 10);
+    if (layer) {
+        center = layer->layerToPort(center);
+        direction = layer->layerToPort(direction);
     }
-
-    if (!mPort) {
-        mPort = GraphicsManager::getSingletonInstance()->getMainPort();
-        if (!mPort) {
-            SPRITER_DEBUG_ONLY(OS::_DOUT("PDGPointInstanceInfo: No port available for rendering"));
-            return;
-        }
-    }
-
-    // Get sprite element properties from SpriterPlusPlus (same as pdg_image_file.cpp)
-    SpriterEngine::point position = getPosition();
-    SpriterEngine::real angle = getAngle();
-    SpriterEngine::point scale = getScale();
-    
-    // Handle flipped scaling for points - apply scale transformation to position
-    float scaledX = position.x * scale.x;
-    float scaledY = position.y * scale.y;
-    
-    SPRITER_DEBUG_ONLY(OS::_DOUT("PDGPointInstanceInfo: About to render point at (%.2f, %.2f) angle %.2f scale (%.2f, %.2f)", 
-                                 scaledX, scaledY, angle, scale.x, scale.y));
-    
-    // Draw a small circle for the point with scaled position
-    mPort->drawCircle(Point(scaledX, scaledY), 5, Attributes()
-        .fillColor(Color(0, 0, 255, 128)) // translucent blue
-        .lineColor(Color(0, 0, 255, 255))); // Blue border
-
-    // draw a short line showing the angle with scaled position
-    mPort->drawLine(Point(scaledX, scaledY), Point(scaledX + cos(angle) * 10, scaledY + sin(angle) * 10), 
-        Attributes().lineColor(Color(0, 0, 255, 255)));
-    
-    SPRITER_DEBUG_ONLY(
-      OS::_DOUT("PDGPointInstanceInfo: Successfully rendered debug point at (%.2f, %.2f) angle %.2f", 
-            scaledX, scaledY, angle);
-    )
+    // Keep the origin marker readable in port pixels at any zoom level.
+    port->drawCircle(center, 5, Attributes().fillColor(Color(0, 0, 255, 128))
+        .lineColor(Color(0, 0, 255, 255)));
+    port->drawLine(center, direction, Attributes().lineColor(Color(0, 0, 255, 255)));
 }
 
 void PDGPointInstanceInfo::setObjectToLinear(SpriterEngine::UniversalObjectInterface *bObject, SpriterEngine::real t, SpriterEngine::UniversalObjectInterface *resultObject)

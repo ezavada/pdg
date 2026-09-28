@@ -64,6 +64,8 @@ bool main_isFullscreen();
 float  main_getCurrentFPS();
 float  main_getTargetFPS();
 void   main_setTargetFPS(float fps);
+// Internal, process-wide override enabled by the Quick performance harness.
+bool   main_isPerformanceUncapped();
 
 void main_handleKeyPress(utf16char keyChar, bool repeat, bool shift, bool control, bool alt, bool cmd);
 void main_handleKeyDown(int keyCode, utf16char keyChar);

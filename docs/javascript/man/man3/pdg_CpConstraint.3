@@ -1,4 +1,4 @@
-.TH "CpConstraint" 3 "Version v0.9.5" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "CpConstraint" 3 "Version v1.1.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -215,9 +215,9 @@ describes how two sprites are connected to one another (\fIChipmunk Physics Only
 
 
 .PP
-\fBWarning\fP
+\fBNote\fP
 .RS 4
-\fBAPI Stability: 1 - Experimental\fP\&. This API was introduced recently and has gotten little or no real use\&. It may change or be removed in future versions\&. It may not be completely implemented and may be missing important pieces of functionality\&. Please try it out and provide feedback\&.
+\fBAPI Stability: 1 — Experimental\fP\&. This API is exploratory\&. Its signatures, behavior, or availability may change without a compatibility period\&. See \fBAPI stability\fP\&.
 .RE
 .PP
 Setup of joints can be done directly through methods of the \fBSprite\fP object\&. The \fBCpConstraint\fP object exists to allow joints to be modified dynamically after they've been set up, such as by changing the range of motion on a damaged joint\&.
@@ -225,43 +225,43 @@ Setup of joints can be done directly through methods of the \fBSprite\fP object\
 .PP
 \fBSee also\fP
 .RS 4
-\fBSprite\&.gear()\fP 
+Sprite\&.gear() 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 
 .PP
-\fBSprite\&.motor()\fP 
+Sprite\&.motor() 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 
 .PP
-\fBSprite\&.pivotJoint()\fP 
+Sprite\&.pivotJoint() 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 
 .PP
-\fBSprite\&.rotaryLimit()\fP 
+Sprite\&.rotaryLimit() 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 
 .PP
-\fBSprite\&.makeJointBreakable()\fP 
+Sprite\&.makeJointBreakable() 
 
 .PP
-\fBSprite\&.makeJointUnbreakable()\fP 
+Sprite\&.makeJointUnbreakable() 
 
 .PP
-\fBSprite\&.removeJoint()\fP
+Sprite\&.removeJoint()
 
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
@@ -295,13 +295,13 @@ gets the anchor point for the joint on the primary sprite for pin, slide and spr
 \fBgetOtherAnchor\fP 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -337,7 +337,7 @@ This is referred to as "phase" in the Chipmunk docs and this call corresponds to
 \fBgetGearRatio\fP 
 
 .PP
-\fBSprite\&.gear()\fP 
+Sprite\&.gear() 
 
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
@@ -357,7 +357,7 @@ get the ratio of rotation between the two sprites joined with a gear joint
 \fBgetGearInitialAngle\fP 
 
 .PP
-\fBSprite\&.gear()\fP 
+Sprite\&.gear() 
 
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
@@ -377,7 +377,7 @@ get the position on the primary sprite of the end of the groove for a groove joi
 \fBgetGrooveStart\fP 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 .RE
 .PP
 
@@ -394,7 +394,7 @@ get the position on the primary sprite of the start of the groove for a groove j
 \fBgetGrooveEnd\fP 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 .RE
 .PP
 
@@ -422,7 +422,7 @@ get the maximum angle allowed by a RotaryLimit joint
 \fBgetMinAngle\fP 
 
 .PP
-\fBSprite\&.rotaryLimit()\fP 
+Sprite\&.rotaryLimit() 
 .RE
 .PP
 
@@ -461,7 +461,7 @@ get the minimum angle allowed by a RotaryLimit joint
 \fBgetMaxAngle\fP 
 
 .PP
-\fBSprite\&.rotaryLimit()\fP 
+Sprite\&.rotaryLimit() 
 .RE
 .PP
 
@@ -475,7 +475,7 @@ get how fast the sprites rotate relative to one another in a motor joint
 \fBsetMotorSpinRate()\fP 
 
 .PP
-\fBSprite\&.motor()\fP 
+Sprite\&.motor() 
 .RE
 .PP
 
@@ -489,16 +489,16 @@ gets the anchor point for the joint on the secondary sprite
 \fBsetOtherAnchor\fP 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -520,34 +520,34 @@ the secondary \fBSprite\fP for the joint
 .PP
 \fBSee also\fP
 .RS 4
-\fBSprite\&.gear()\fP 
+Sprite\&.gear() 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 
 .PP
-\fBSprite\&.motor()\fP 
+Sprite\&.motor() 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 
 .PP
-\fBSprite\&.pivotJoint()\fP 
+Sprite\&.pivotJoint() 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 
 .PP
-\fBSprite\&.rotaryLimit()\fP 
+Sprite\&.rotaryLimit() 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -561,7 +561,7 @@ get the distance between the anchors on a pin joint
 \fBsetPinDist\fP 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 .RE
 .PP
 
@@ -581,7 +581,7 @@ get the current angle of a ratchet joint
 \fBgetRatchetPhase\fP 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 .RE
 .PP
 
@@ -601,7 +601,7 @@ get the distance between backstops on a ratchet joint
 \fBgetRatchetPhase\fP 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 .RE
 .PP
 
@@ -621,7 +621,7 @@ get the initial offset for the ratchet backstops on a ratchet joint
 \fBgetRatchetInterval\fP 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 .RE
 .PP
 
@@ -635,7 +635,7 @@ get the angle between sprites at which a rotary spring is at rest on a rotary sp
 \fBsetRotarySpringRestAngle\fP 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 .RE
 .PP
 
@@ -652,7 +652,7 @@ get the maximum distance apart for the anchors of a slide joint
 \fBgetSlideMinDist\fP 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 .RE
 .PP
 
@@ -669,7 +669,7 @@ get the minimum distance apart for the anchors of a slide joint
 \fBgetSlideMaxDist\fP 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 .RE
 .PP
 
@@ -686,10 +686,10 @@ get the damping for a rotary spring or a spring joint
 \fBgetSpringStiffness\fP 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -703,7 +703,7 @@ get the distance between anchors at which the spring is at rest for a spring joi
 \fBsetSpringRestLength\fP 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -720,10 +720,10 @@ get the stiffness for a rotary spring or a spring joint
 \fBgetSpringDamping\fP 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -745,34 +745,34 @@ the primary \fBSprite\fP in the joint
 .PP
 \fBSee also\fP
 .RS 4
-\fBSprite\&.gear()\fP 
+Sprite\&.gear() 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 
 .PP
-\fBSprite\&.motor()\fP 
+Sprite\&.motor() 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 
 .PP
-\fBSprite\&.pivotJoint()\fP 
+Sprite\&.pivotJoint() 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 
 .PP
-\fBSprite\&.rotaryLimit()\fP 
+Sprite\&.rotaryLimit() 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -800,13 +800,13 @@ sets the anchor point for the joint on the primary sprite for pin, slide and spr
 \fBsetOtherAnchor\fP 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -842,7 +842,7 @@ This is referred to as "phase" in the Chipmunk docs and this call corresponds to
 \fBsetGearRatio\fP 
 
 .PP
-\fBSprite\&.gear()\fP 
+Sprite\&.gear() 
 
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
@@ -862,7 +862,7 @@ set the ratio of rotation between the two sprites joined with a gear joint
 \fBsetGearInitialAngle\fP 
 
 .PP
-\fBSprite\&.gear()\fP 
+Sprite\&.gear() 
 
 .PP
 http://files.slembcke.net/chipmunk/release/ChipmunkLatest-Docs/#cpConstraint 
@@ -882,7 +882,7 @@ set the position on the primary sprite of the end of the groove for a groove joi
 \fBsetGrooveStart\fP 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 .RE
 .PP
 
@@ -899,7 +899,7 @@ set the position on the primary sprite of the start of the groove for a groove j
 \fBsetGrooveEnd\fP 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 .RE
 .PP
 
@@ -916,7 +916,7 @@ set the maximum angle allowed by a RotaryLimit joint
 \fBsetMinAngle\fP 
 
 .PP
-\fBSprite\&.rotaryLimit()\fP 
+Sprite\&.rotaryLimit() 
 .RE
 .PP
 
@@ -955,7 +955,7 @@ set the minimum angle allowed by a RotaryLimit joint
 \fBsetMaxAngle\fP 
 
 .PP
-\fBSprite\&.rotaryLimit()\fP 
+Sprite\&.rotaryLimit() 
 .RE
 .PP
 
@@ -969,7 +969,7 @@ set how fast the sprites rotate relative to one another in a motor joint
 \fBgetMotorSpinRate()\fP 
 
 .PP
-\fBSprite\&.motor()\fP 
+Sprite\&.motor() 
 .RE
 .PP
 
@@ -983,16 +983,16 @@ sets the anchor point for the joint on the secondary sprite
 \fBgetOtherAnchor\fP 
 
 .PP
-\fBSprite\&.grooveJoint()\fP 
+Sprite\&.grooveJoint() 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -1006,7 +1006,7 @@ set the distance between the anchors on a pin joint
 \fBgetPinDist\fP 
 
 .PP
-\fBSprite\&.pinJoint()\fP 
+Sprite\&.pinJoint() 
 .RE
 .PP
 
@@ -1026,7 +1026,7 @@ set the current angle of a ratchet joint
 \fBsetRatchetPhase\fP 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 .RE
 .PP
 
@@ -1046,7 +1046,7 @@ set the distance between backstops on a ratchet joint
 \fBsetRatchetPhase\fP 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 .RE
 .PP
 
@@ -1066,7 +1066,7 @@ set the initial offset for the ratchet backstops on a ratchet joint
 \fBsetRatchetInterval\fP 
 
 .PP
-\fBSprite\&.ratchet()\fP 
+Sprite\&.ratchet() 
 .RE
 .PP
 
@@ -1080,7 +1080,7 @@ set the angle between sprites at which a rotary spring is at rest on a rotary sp
 \fBgetRotarySpringRestAngle\fP 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 .RE
 .PP
 
@@ -1097,7 +1097,7 @@ set the maximum disable apart for the anchors of a slide joint
 \fBsetSlideMinDist\fP 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 .RE
 .PP
 
@@ -1114,7 +1114,7 @@ set the minimum distance apart for the anchors of a slide joint
 \fBsetSlideMaxDist\fP 
 
 .PP
-\fBSprite\&.slideJoint()\fP 
+Sprite\&.slideJoint() 
 .RE
 .PP
 
@@ -1131,10 +1131,10 @@ set the damping for a rotary spring or a spring joint
 \fBsetSpringStiffness\fP 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -1148,7 +1148,7 @@ set the distance between anchors at which the spring is at rest for a spring joi
 \fBgetSpringRestLength\fP 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 
@@ -1165,10 +1165,10 @@ set the stiffness for a rotary spring or a spring joint
 \fBsetSpringDamping\fP 
 
 .PP
-\fBSprite\&.rotarySpring()\fP 
+Sprite\&.rotarySpring() 
 
 .PP
-\fBSprite\&.springJoint()\fP 
+Sprite\&.springJoint() 
 .RE
 .PP
 

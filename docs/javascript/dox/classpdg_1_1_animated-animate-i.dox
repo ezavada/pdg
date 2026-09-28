@@ -1,9 +1,13 @@
 namespace pdg { /**
+\fn pdg::Animated::animate(number deltaSeconds)
+\brief Advance programmed animation by elapsed seconds.
 
-\fn pdg::Animated::animate
+Advances constant rates, scheduled animations and helpers. MVC controllers advance their Views automatically. Standalone AnimatedAttributes instances must be advanced explicitly; Drawing copies Attributes samples.
 
-\brief animate based on the passage of time
+\param deltaSeconds Finite nonnegative elapsed seconds.
 
-\returns true if anything (position, size, movement, etc...) changed
+\return True if any animation value changed.
 
-**/ }
+\see pauseSchedule(), addAnimationHelper()
+*/
+ }

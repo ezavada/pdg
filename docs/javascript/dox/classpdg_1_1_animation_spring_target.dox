@@ -1,0 +1,16 @@
+namespace pdg { /**
+
+\class pdg::AnimationSpringTarget
+\ingroup Animation Physics
+\brief Spring target smoothing and recoil impulses.
+
+Keeps position and velocity independently of a Sprite. Call update() with a target
+and elapsed seconds to smooth motion, or applyImpulse() to produce recoil.
+getState() returns a copy; setState() replaces all position and velocity fields.
+
+The helper does not update automatically. Apply each sample to a freshly
+evaluated pose instead of adding it repeatedly to the previous final pose.
+
+\see AnimationSpringTarget(), update(), \ref animation_target_adapters
+
+**/ }

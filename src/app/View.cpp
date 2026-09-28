@@ -35,13 +35,17 @@
 #include "pdg/sys/attributes.h"
 #include "pdg/app/View.h"
 #include "pdg/app/Controller.h"
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <stdexcept>
 
 namespace pdg {
 
 View::View(Controller* controller, const Rect& rect, int binding)
  : mController(controller),
    mPort(controller->getApplication().getGraphicsManager().getMainPort()), // get port from Controller
-   mVisible(true), mIsEnabled(true),
+   mVisible(true), mIsEnabled(true), mIsDraggable(false), mWantsMouseOvers(false),
    mBinding(binding)
 {
 	setViewArea(rect);
@@ -52,7 +56,7 @@ View::View(Controller* controller, const Rect& rect, int binding)
 View::View(Controller* controller, Port* port, const Rect& rect, int binding)
  : mController(controller),
    mPort(port),
-   mVisible(true), mIsEnabled(true),
+   mVisible(true), mIsEnabled(true), mIsDraggable(false), mWantsMouseOvers(false),
    mBinding(binding)
 {
     setViewArea(rect);
@@ -60,31 +64,111 @@ View::View(Controller* controller, Port* port, const Rect& rect, int binding)
 	setMaxSize(0, 0);
 }
 
-View::~View()
-{
+View::~View() {
+    setParentView(nullptr);
+    for (View* child : mChildViews) child->mParentView = nullptr;
+    releaseRenderSurface();
+}
 
+void View::releaseRenderSurface() {
+    if (mRenderImage) { mRenderImage->release(); mRenderImage = nullptr; }
+    if (mRenderPort) { GraphicsManager::instance().closeGraphicsPort(mRenderPort); mRenderPort = nullptr; }
+}
+
+void View::setParentView(View* parent) {
+    if (parent && parent->mController != mController) throw std::invalid_argument("Parent and child must share a Controller");
+    for (View* ancestor = parent; ancestor; ancestor = ancestor->mParentView)
+        if (ancestor == this) throw std::invalid_argument("View parenting cannot contain cycles");
+    if (mParentView == parent) return;
+    if (mParentView) {
+        auto& siblings = mParentView->mChildViews;
+        std::erase(siblings, this);
+    }
+    mParentView = parent;
+    if (parent) parent->mChildViews.push_back(this);
+}
+
+View* View::getHitView(const Point& point, bool includeDisabled) {
+    if (!isVisible() || !pointInViewVisibleArea(point)) return nullptr;
+    for (auto it=mChildViews.rbegin(); it!=mChildViews.rend(); ++it)
+        if (View* child=(*it)->getHitView(point,includeDisabled)) return child;
+    return (includeDisabled || isEnabled()) && getPartClicked(point)!=CLICKED_PART_NONE ? this : nullptr;
+}
+
+glm::mat3 View::getLayoutTransform(bool includeParent) const {
+    glm::mat3 normalize(1);
+    if (mWidth == 0 || mHeight == 0) return glm::mat3(0);
+    normalize[0][0] = 1 / mWidth; normalize[1][1] = 1 / mHeight;
+    normalize[2][0] = -mViewArea.left / mWidth - 0.5f;
+    normalize[2][1] = -mViewArea.top / mHeight - 0.5f;
+    glm::mat3 matrix = AnimatedAttributesBase::getTransform() * normalize;
+    return includeParent && mParentView ? mParentView->getLayoutTransform() * matrix : matrix;
+}
+
+float View::getDrawingTextWidth(const char* text, int size, uint32 style, int length) const {
+    const Attributes attrs = getDrawingAttributes(Attributes().textSize(size).textStyle(style), true);
+    style = attrs.getTextStyle();
+    Font* saved = attrs.getFont() ? mPort->getCurrentFont(style) : nullptr;
+    if (saved) saved->addRef();
+    if (attrs.getFont()) mPort->setFontForStyle(attrs.getFont(), style);
+    try {
+        const float width = mPort->getTextWidth(text, attrs.getTextSize(), style, length);
+        if (saved) { mPort->setFontForStyle(saved, style); saved->release(); }
+        return width;
+    } catch (...) {
+        if (saved) { mPort->setFontForStyle(saved, style); saved->release(); }
+        throw;
+    }
 }
 
 void View::draw() {
-    if (mVisible) {
-		Rect clipSave = mPort->getClipRect();
-		Rect ourClip;
-	    if (!clipSave.empty()) {
-	       ourClip = mViewArea.intersection(clipSave);
-	    } else {
-	       ourClip = mViewArea;
-	    }
-		if (!ourClip.empty() ) {  
-			// don't draw if everything is clipped
-			mPort->setClipRect(ourClip);
-			drawSelf();
-//			mPort->frameRect(mViewArea, PDG_YELLOW_COLOR);
-			// No need to call viewRedrawn() - we're doing full-frame redraws
-			mPort->setClipRect(clipSave);
-		}
+    if (!isVisible() || !mPort) return;
+    const Rect frame = getVisibleFrame();
+    if (frame.empty() || mWidth == 0 || mHeight == 0) return;
+    const glm::mat3 matrix = getLayoutTransform(false);
+    Quad destination(frame);
+    for (Point& p : destination.points) {
+        auto v = matrix * glm::vec3(p.x, p.y, 1); p = Point(v.x, v.y);
+    }
+    Port* target = mPort;
+    const Rect savedClip = target->getClipRect();
+    if (savedClip.intersection(destination.getBounds()).empty()) return;
+    bool transformed = false;
+    for (int c=0; c<3; ++c) for (int r=0; r<3; ++r)
+        if (std::abs(matrix[c][r] - (c==r ? 1.0f : 0.0f)) > 0.00001f) transformed = true;
+    if (transformed) {
+        const int w = int(std::ceil(frame.width())), h = int(std::ceil(frame.height()));
+        if (mRenderPort && (mRenderImage->getWidth()!=w || mRenderImage->getHeight()!=h)) releaseRenderSurface();
+        if (!mRenderPort) {
+            mRenderPort = GraphicsManager::instance().createOffscreenPort(Rect(w,h));
+            if (!mRenderPort) throw std::runtime_error("Unable to create View rendering surface");
+            mRenderImage = Image::createImageFromOffscreenPort(mRenderPort, false);
+        }
+        mRenderPort->setDrawingOrigin(frame.leftTop());
+        mRenderPort->clear();
+        mRenderPort->setClipRect(frame);
+        for (int style=0; style<8; ++style) mRenderPort->setFontForStyle(target->getCurrentFont(style), style);
+        mPort = mRenderPort;
+    } else target->setClipRect(frame.intersection(savedClip));
+    mDrawingLayout = true; setDrawingLayout(true);
+    try {
+        drawSelf();
+        for (View* child : mChildViews) {
+            Port* previous = child->setPort(mPort);
+            try { child->draw(); } catch (...) { child->setPort(previous); throw; }
+            child->setPort(previous);
+        }
+    } catch (...) {
+        mDrawingLayout = false; setDrawingLayout(false); mPort = target; target->setClipRect(savedClip); throw;
+    }
+    mDrawingLayout = false; setDrawingLayout(false); mPort = target; target->setClipRect(savedClip);
+    if (transformed) {
+        // Crop fractional layout extents rather than stretching the rounded-up allocation.
+        target->drawImage(mRenderImage, destination,
+            Attributes().subsection(Rect(frame.width(), frame.height())));
     }
 }
-	
+
 void View::hide() {
     bool wasVisible = mVisible;
     mVisible = false;
@@ -132,14 +216,14 @@ bool View::doMouseDown(const MouseInfo *mi,  int id, int part)
 	return false;
 }
 
-// doMouseUp is called whenever the mouse button goes up within the view
+// Releases a press that began here, including outside release or cancellation.
 // Override to do something useful
 bool View::doMouseUp(const MouseInfo *mi, int id, int part)
 {
 	return false;
 }
 	
-	// doMouseMove is called whenever the mouse moves within the view, if the view wants mouseovers
+	// Receives hover motion and captured drag motion, including outside the view.
 	// Override to do something useful
 void View::doMouseMove(const MouseInfo *mi,  int id, int part)
 {
@@ -262,12 +346,51 @@ bool View::doDragComplete(const MouseInfo *mi, int id, int part)
 
 void View::setViewArea(const Rect& rect)
 {
-	mViewArea = rect;
+    // Take a copy: callers may pass mViewArea itself.
+    const Rect area = rect;
+    setSize(area.width(), area.height());
+    setLocation(area.centerPoint());
 }
 
-bool View::pointInViewVisibleArea(const Point& screenPoint)
-{
-	return mViewArea.contains( screenPoint );
+void View::syncViewArea() {
+    const Rect previous = mViewArea;
+    mViewArea = Rect(mWidth, mHeight);
+    mViewArea.center(mLocation);
+    if (mViewArea != previous) viewAreaChanged(previous);
+}
+
+void View::locationChanged(const Offset& delta) { AnimatedAttributesBase::locationChanged(delta); syncViewArea(); }
+void View::sizeChanged(float w, float h) { AnimatedAttributesBase::sizeChanged(w, h); syncViewArea(); }
+bool View::animate(double deltaSeconds) { return AnimatedAttributesBase::animate(deltaSeconds); }
+
+void View::viewAreaChanged(const Rect& previous) {
+    for (View* child : mChildViews) {
+        const Rect old = child->getViewArea();
+        const float sx = previous.width() ? mViewArea.width()/previous.width() : 1;
+        const float sy = previous.height() ? mViewArea.height()/previous.height() : 1;
+        child->setViewArea(Rect(mViewArea.left+(old.left-previous.left)*sx,
+            mViewArea.top+(old.top-previous.top)*sy, mViewArea.left+(old.right-previous.left)*sx,
+            mViewArea.top+(old.bottom-previous.top)*sy));
+    }
+
+    // Clickable geometry is local to the view; preserve its proportions on resize.
+    const float sx = previous.width() ? mViewArea.width() / previous.width() : 1;
+    const float sy = previous.height() ? mViewArea.height() / previous.height() : 1;
+    for (auto& part : mClickableParts) {
+        part.first.left *= sx; part.first.right *= sx;
+        part.first.top *= sy; part.first.bottom *= sy;
+    }
+}
+
+bool View::pointInViewArea(const Point& point) {
+    const Point local = globalToLocal(point);
+    return Rect(mViewArea.width(), mViewArea.height()).contains(local);
+}
+
+bool View::pointInViewVisibleArea(const Point& point) {
+    if (mParentView && !mParentView->pointInViewVisibleArea(point)) return false;
+    const Point layout = globalToLocal(point) + mViewArea.leftTop();
+    return getVisibleFrame().contains(layout);
 }
 
 // if a view returns View::CLICKED_PART_NONE, it is not willing
@@ -365,71 +488,71 @@ void View::portResized(const Rect& oldDrawingArea, const Rect& newDrawingArea) {
 		return; // short circuit
 	}
 	Rect newViewArea = mViewArea;
-	if (mBinding & bind_Left) {
+	if (mBinding & Bind::Left) {
 		// bound to left, always change left to keep distance from left boundry
 		newViewArea.left = newDrawingArea.left + (mViewArea.left - oldDrawingArea.left);
-		if (mBinding & bind_Right) {
+		if (mBinding & Bind::Right) {
 			// also bound to right, need to shrink or grow
 			newViewArea.right = newDrawingArea.right - (oldDrawingArea.right - mViewArea.right );		
 			// make sure we are within or min and max sizes
-			if (mMaxWidth && mViewArea.width() > mMaxWidth) {
+			if (mMaxWidth && newViewArea.width() > mMaxWidth) {
 				newViewArea.setWidth( mMaxWidth );
 			}
-			if (mViewArea.width() < mMinWidth) {
+			if (newViewArea.width() < mMinWidth) {
 				newViewArea.setWidth( mMinWidth );
 			}
 		} 
-	} else if (mBinding & bind_Right) {
+	} else if (mBinding & Bind::Right) {
 		// bound to right but not left, maintain width but move with right boundry
 		newViewArea.right = newDrawingArea.right - (oldDrawingArea.right - mViewArea.right );		
 		newViewArea.left = newViewArea.right - mViewArea.width();
 	}
-	if (mBinding & bind_Top) {
+	if (mBinding & Bind::Top) {
 		// bound to top, always change top to keep distance from top boundry
 		newViewArea.top = newDrawingArea.top + (mViewArea.top - oldDrawingArea.top);
-		if (mBinding & bind_Bottom) {
+		if (mBinding & Bind::Bottom) {
 			// also bound to bottom, need to shrink or grow
 			newViewArea.bottom = newDrawingArea.bottom - (oldDrawingArea.bottom - mViewArea.bottom );		
 			// make sure we are within or min and max sizes
-			if (mMaxHeight && mViewArea.height() > mMaxHeight) {
+			if (mMaxHeight && newViewArea.height() > mMaxHeight) {
 				newViewArea.setHeight( mMaxHeight );
 			}
-			if (mViewArea.height() < mMinHeight) {
+			if (newViewArea.height() < mMinHeight) {
 				newViewArea.setHeight( mMinHeight );
 			}
 		} 
-	} else if (mBinding & bind_Bottom) {
+	} else if (mBinding & Bind::Bottom) {
 		// bound to bottom but not top, maintain height but move with bottom boundry
 		newViewArea.bottom = newDrawingArea.bottom - (oldDrawingArea.bottom - mViewArea.bottom );		
 		newViewArea.top = newViewArea.bottom - mViewArea.height();
 	}
-	mViewArea = newViewArea;
+	setViewArea(newViewArea);
 }
 
 // coordinate transforms, local view coords --> global drawing coords
-Point   View::localToGlobal(Point inPt)
-{
-    return inPt + mViewArea.leftTop();
+Point View::localToGlobal(Point point) {
+    point += mViewArea.leftTop();
+    if (mDrawingLayout) return point;
+    const auto p = getLayoutTransform() * glm::vec3(point.x,point.y,1);
+    return Point(p.x,p.y);
 }
 
-Rect    View::localToGlobal(Rect inRect)
-{
-    return inRect + mViewArea.leftTop();
+static Rect mappedRect(View& view, Rect rect, bool inverse) {
+    Quad q(rect);
+    for (auto& point : q.points) point = inverse ? view.globalToLocal(point) : view.localToGlobal(point);
+    return q.getBounds();
 }
-
-// coordinate transforms, global drawing coords --> local view coords
-Point   View::globalToLocal(Point inPt)
-{
-    return inPt - mViewArea.leftTop();
+Rect View::localToGlobal(Rect rect) { return mappedRect(*this, rect, false); }
+Point View::globalToLocal(Point point) {
+    const auto matrix = getLayoutTransform();
+    if (std::abs(glm::determinant(matrix)) < 1e-10f)
+        return Point(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
+    auto p = glm::inverse(matrix) * glm::vec3(point.x, point.y, 1);
+    return Point(p.x-mViewArea.left,p.y-mViewArea.top);
 }
+Rect View::globalToLocal(Rect rect) { return mappedRect(*this, rect, true); }
 
-Rect    View::globalToLocal(Rect inRect)
-{
-    return inRect - mViewArea.leftTop();
-}
-	
-
-	// ============================================ BEGIN DEPRECATED =====================================
+    // ============================================ BEGIN DEPRECATED =====================================
 #ifdef PDG_ALLOW_DEPRECATED_CALLS
 
 	// returns pixel offset between top of rect passed in and top (not baseline) of next line that would be drawn with

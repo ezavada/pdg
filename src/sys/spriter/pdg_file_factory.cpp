@@ -1,10 +1,17 @@
+#include "../snapshot-codec.h"
 #include "pdg_file_factory.h"
 #include "pdg/sys/os.h"
 #include "pdg/sys/log.h"
 #include "pdg/sys/os.h"
 #include "pdg/sys/image.h"
 #include "pdg/sys/resource.h"
-#include "pdg/sys/spritelayer.h"
+#include "pdg/sys/iserializer.h"
+#include "pdg/sys/ideserializer.h"
+#include "pdg_object_factory.h"
+#include "spriterengine/model/spritermodel.h"
+#include <fstream>
+#include <zlib.h>
+#include <stdexcept>
 #include "spriterengine/override/spriterfiledocumentwrapper.h"
 
 #ifndef PDG_NO_GUI
@@ -28,17 +35,15 @@
 
 namespace pdg {
 
-PDGFileFactory::PDGFileFactory(SpriteLayer* layer) {
-    mLayer = layer;
-}
-
-PDGFileFactory::~PDGFileFactory() {
-    mLayer = nullptr;
-}
+#include "spriter-snapshot-asset.inc"
+PDGFileFactory::PDGFileFactory() : PDGFileFactory(SpriterSnapshotAsset::share(new SpriterSnapshotAsset())) {}
+PDGFileFactory::PDGFileFactory(std::shared_ptr<SpriterSnapshotAsset> asset)
+    : mRigCatalog(std::make_shared<SpriterRigCatalog>()),mAsset(std::move(asset)) {}
+PDGFileFactory::~PDGFileFactory() = default;
 
 SpriterEngine::SpriterFileDocumentWrapper* PDGFileFactory::newScmlDocumentWrapper() {
     // Use our custom PDG wrapper that supports ResourceManager loading
-    return new pdg::PDGSpriterFileDocumentWrapper();
+    return new pdg::PDGSpriterFileDocumentWrapper(mRigCatalog,mAsset);
 }
 
 SpriterEngine::SpriterFileDocumentWrapper* PDGFileFactory::newSconDocumentWrapper() {
@@ -47,10 +52,18 @@ SpriterEngine::SpriterFileDocumentWrapper* PDGFileFactory::newSconDocumentWrappe
     return nullptr;
 }
 
-#ifndef PDG_NO_GUI
 SpriterEngine::ImageFile* PDGFileFactory::newImageFile(const std::string& initialFilePath, 
                                                        SpriterEngine::point initialDefaultPivot, 
                                                        SpriterEngine::atlasdata atlasData) {   
+    if(mAsset->restored) {
+        const auto found=mAsset->images.find(initialFilePath);
+        if(found==mAsset->images.end()||!found->second)throw std::runtime_error("Missing saved Spriter image: "+initialFilePath);
+#ifndef PDG_NO_GUI
+        return new PDGImageFile(initialFilePath,initialDefaultPivot,found->second.get());
+#else
+        return new SpriterEngine::ImageFile(initialFilePath,initialDefaultPivot);
+#endif
+    }
     // Try to load the image using PDG's loading methods
     Image* pdgImage = nullptr;
     
@@ -90,15 +103,22 @@ SpriterEngine::ImageFile* PDGFileFactory::newImageFile(const std::string& initia
                   initialFilePath.c_str(), initialDefaultPivot.x, initialDefaultPivot.y);)
         
         // Create a proper PDGImageFile wrapper that wraps the PDG Image
-        Port* port = mLayer->getSpritePort();
-        return new pdg::PDGImageFile(initialFilePath, initialDefaultPivot, pdgImage, port);
+        auto image = std::unique_ptr<Image, void(*)(Image*)>(pdgImage, [](Image* p) { p->release(); });
+        pdgImage->addRef();mAsset->images[initialFilePath]=std::shared_ptr<Image>(pdgImage,[](Image* p){p->release();});
+#ifndef PDG_NO_GUI
+        return new pdg::PDGImageFile(initialFilePath, initialDefaultPivot, image.get());
+#else
+        return new SpriterEngine::ImageFile(initialFilePath,initialDefaultPivot);
+#endif
     } else {
         DEBUG_ONLY(OS::_DOUT("PDGFileFactory: Failed to load image: %s", initialFilePath.c_str()));
         // Return a basic wrapper even if loading failed, so SpriterPlusPlus can continue
+        mAsset->images[initialFilePath]=nullptr;
         return new SpriterEngine::ImageFile(initialFilePath, initialDefaultPivot);
     }
 }
 
+#ifndef PDG_NO_GUI
 SpriterEngine::SoundFile* PDGFileFactory::newSoundFile(const std::string& initialFilePath) {
     std::string resolvedPath = resolvePath(initialFilePath);
     
@@ -118,6 +138,7 @@ SpriterEngine::AtlasFile* PDGFileFactory::newAtlasFile(const std::string& initia
 
 std::string PDGFileFactory::resolvePath(const std::string& filePath) {
     // If it's already an absolute path, return as is
+    if (filePath.empty()) return filePath;
     if (filePath[0] == '/' || (filePath.length() > 2 && filePath[1] == ':' && (filePath[2] == '\\' || filePath[2] == '/'))) {
         return filePath;
     }

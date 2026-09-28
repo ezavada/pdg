@@ -57,78 +57,58 @@ ScrollingView::~ScrollingView()
 void ScrollingView::setViewFrame(const Rect& rect)
 {
 	mViewFrame = rect;
+    adjustViewAreaToFrame(mAutoAdjust);
 }
 
 
-void ScrollingView::draw() { 
-	
-	TODO("Figure out why this clipping here doesn't work, but it does work if done within drawSelf()");
-	
-    // set up the clip rect
-    Rect clipSave = mPort->getClipRect();
-	Rect ourClip;
-//	if (!clipSave.empty()) {
-//		ourClip = mViewFrame.intersection(clipSave);
-//	} else {
-		ourClip = mViewFrame;
-//	}
-	if (!ourClip.empty() ) {  
-		// don't draw if everything is clipped
-//		mPort->setClipRect(ourClip);
-		View::draw();
-//		mPort->setClipRect(clipSave);
-	}
-}
-
-bool ScrollingView::pointInViewVisibleArea(const Point& screenPoint)
-{
-	return mViewFrame.contains( screenPoint );
-}
+void ScrollingView::draw() { View::draw(); }
+bool ScrollingView::pointInViewVisibleArea(const Point& point) { return View::pointInViewVisibleArea(point); }
 
 void ScrollingView::portResized(const Rect& oldDrawingArea, const Rect& newDrawingArea) {
 	if (mBinding == 0) {
 		return; // short circuit
 	}
 	Rect newViewFrame = mViewFrame;
-	if (mBinding & bind_Left) {
+	if (mBinding & Bind::Left) {
 		// bound to left, always change left to keep distance from left boundry
 		newViewFrame.left = newDrawingArea.left + (mViewFrame.left - oldDrawingArea.left);
-		if (mBinding & bind_Right) {
+		if (mBinding & Bind::Right) {
 			// also bound to right, need to shrink or grow
 			newViewFrame.right = newDrawingArea.right - (oldDrawingArea.right - mViewFrame.right );		
 			// make sure we are within or min and max sizes
-			if (mMaxWidth && mViewFrame.width() > mMaxWidth) {
+			if (mMaxWidth && newViewFrame.width() > mMaxWidth) {
 				newViewFrame.setWidth( mMaxWidth );
 			}
-			if (mViewFrame.width() < mMinWidth) {
+			if (newViewFrame.width() < mMinWidth) {
 				newViewFrame.setWidth( mMinWidth );
 			}
 		} 
-	} else if (mBinding & bind_Right) {
+	} else if (mBinding & Bind::Right) {
 		// bound to right but not left, maintain width but move with right boundry
 		newViewFrame.right = newDrawingArea.right - (oldDrawingArea.right - mViewFrame.right );		
 		newViewFrame.left = newViewFrame.right - mViewFrame.width();
 	}
-	if (mBinding & bind_Top) {
+	if (mBinding & Bind::Top) {
 		// bound to top, always change top to keep distance from top boundry
 		newViewFrame.top = newDrawingArea.top + (mViewFrame.top - oldDrawingArea.top);
-		if (mBinding & bind_Bottom) {
+		if (mBinding & Bind::Bottom) {
 			// also bound to bottom, need to shrink or grow
 			newViewFrame.bottom = newDrawingArea.bottom - (oldDrawingArea.bottom - mViewFrame.bottom );		
 			// make sure we are within or min and max sizes
-			if (mMaxHeight && mViewFrame.height() > mMaxHeight) {
+			if (mMaxHeight && newViewFrame.height() > mMaxHeight) {
 				newViewFrame.setHeight( mMaxHeight );
 			}
-			if (mViewFrame.height() < mMinHeight) {
+			if (newViewFrame.height() < mMinHeight) {
 				newViewFrame.setHeight( mMinHeight );
 			}
 		} 
-	} else if (mBinding & bind_Bottom) {
+	} else if (mBinding & Bind::Bottom) {
 		// bound to bottom but not top, maintain height but move with bottom boundry
 		newViewFrame.bottom = newDrawingArea.bottom - (oldDrawingArea.bottom - mViewFrame.bottom );		
 		newViewFrame.top = newViewFrame.bottom - mViewFrame.height();
 	}
 	mViewFrame = newViewFrame;
+    adjustViewAreaToFrame(mAutoAdjust);
 }
 	
 	
@@ -184,15 +164,14 @@ bool ScrollingView::adjustViewAreaToFrame(BindType binding) {
 	if (r == mViewArea) {
 		return false; // no changes were made
 	} else {
-		mViewArea = r;
+		setViewArea(r);
 		return true;
 	}
 }
 
 
 void ScrollingView::moveView(long deltaX, long deltaY) {
-	mViewArea.moveRight(deltaX);
-	mViewArea.moveDown(deltaY);
+	moveBy(deltaX, deltaY);
 	if (mAutoAdjust != bind_None) {
 		adjustViewAreaToFrame(mAutoAdjust);
 	}

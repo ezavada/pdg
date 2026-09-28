@@ -44,14 +44,25 @@ namespace pdg
 
 #ifndef PDG_NO_SOUND
 
-    static bool s_Sound_InNewFromCpp = false;
+#ifdef PDG_USING_JAVASCRIPT_CORE
+    static void Sound_finalize(JSObjectRef object)
+    {
+        auto* sound = static_cast<Sound*>(JSObjectGetPrivate(object));
+        if (!sound) return;
+        sound->mSoundScriptObj = nullptr;
+        sound->mEventEmitterScriptObj = nullptr;
+        JSObjectSetPrivate(object, nullptr);
+        sound->release();
+    }
+#endif
+    bool s_Sound_InNewFromCpp = false;
 
     void SoundWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SoundWrap* objWrapper = new SoundWrap(args);
         objWrapper->Wrap(args.This());
-        ;
+        if (auto* cppObj = objWrapper->getCppObject()) { v8::Local<v8::Object> obj = args.This(); cppObj->mEventEmitterScriptObj.Reset(isolate, obj); cppObj->mEventEmitterScriptObj.SetWeak(); cppObj->mSoundScriptObj.Reset(isolate, obj); cppObj->mSoundScriptObj.SetWeak(); cppObj->addRef(); };
         if (s_HaveSavedError)
         {
             s_HaveSavedError = false;
@@ -79,14 +90,10 @@ namespace pdg
             return v8::Local<v8::Object>();
         }
         v8::Local<v8::Object> instance = maybeInstance.ToLocalChecked();
-        v8::Persistent<v8::Object> obj(isolate, instance);
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(instance);
-        {
-            [[maybe_unused]] v8::Local<v8::Object> obj = instance;
-            cppObj->mEventEmitterScriptObj.Reset(isolate, obj); cppObj->mSoundScriptObj.Reset(isolate, obj); cppObj->addRef();
-        }
+        { [[maybe_unused]] v8::Local<v8::Object> obj = instance; cppObj->mEventEmitterScriptObj.Reset(isolate, obj); cppObj->mEventEmitterScriptObj.SetWeak(); cppObj->mSoundScriptObj.Reset(isolate, obj); cppObj->mSoundScriptObj.SetWeak(); cppObj->addRef(); }
         DEBUG_ASSERT(objWrapper->cppPtr_ == 0, "NewFromCpp() already have C++ object!");
-        if (objWrapper->cppPtr_) delete objWrapper->cppPtr_;
+        if (objWrapper->cppPtr_) objWrapper->cppPtr_->release();
         objWrapper->cppPtr_ = cppObj;
         s_Sound_InNewFromCpp = false;
         return scope.Escape(instance);
@@ -208,6 +215,28 @@ namespace pdg
         target->Set(isolate->GetCurrentContext(), name_str, func).ToChecked();
 
     }
+#ifndef PDG_USING_JAVASCRIPT_CORE
+    SoundWrap::SoundWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(New_Sound(args))
+    {
+        if (!cppPtr_ && !s_Sound_InNewFromCpp)
+        {
+            [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+            {
+                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+                isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create Sound instance")));
+            };
+        }
+    }
+    SoundWrap::~SoundWrap()
+    {
+        if (cppPtr_)
+        {
+            cppPtr_->mSoundScriptObj.Reset();
+            cppPtr_->mEventEmitterScriptObj.Reset();
+            cppPtr_->release();
+        }
+    }
+#endif
 
     void SoundWrap::AddHandler(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
@@ -230,11 +259,11 @@ namespace pdg
         REQUIRE_CPP_OBJECT_OR_SUBCLASS_ARG(1, inHandler, IEventHandler);
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
-            std::cerr << __func__<<":"<< 62 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            std::cerr << __func__<<":"<< 88 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
         }
         else if (!args[0]->IsObject())
         {
-            std::cerr << __func__<<":"<< 62 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 88 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -252,17 +281,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 62 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 88 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 62 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 88 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
                 }
             }
             else
             {
                 IEventHandler* obj = dynamic_cast<IEventHandler*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 62 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 88 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
         if (args.Length() >= 2 && !args[2 -1]->IsNumber())
@@ -926,31 +955,12 @@ namespace pdg
 
     void CleanupSoundScriptObject(v8::UniquePersistent<v8::Object> &obj) { }
 
-    SoundWrap::SoundWrap(const v8::FunctionCallbackInfo<v8::Value>& args) : cppPtr_(NULL)
-    {
-        cppPtr_ = New_Sound(args);
-        if (!cppPtr_ && !s_Sound_InNewFromCpp)
-        {
-            {
-                [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-                isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8Literal(isolate, "Failed to create " "Sound" " instance")));
-            };
-        }
-    }
-
-    SoundWrap::~SoundWrap()
-    {
-        if (cppPtr_)
-        {
-            delete cppPtr_;
-            cppPtr_ = NULL;
-        }
-    }
-
     Sound* New_Sound(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
+#ifndef PDG_USING_JAVASCRIPT_CORE
         if (s_Sound_InNewFromCpp) return nullptr;
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+#endif
         ;
         if (args.Length() < 1)
         {

@@ -1,8 +1,19 @@
 var searchData=
 [
-  ['centeroffset_0',['centerOffset',['../classpdg_1_1_rotated_rect_t.html#a9063f2e880b7c8f6959c134b48f14f98',1,'pdg::RotatedRectT']]],
-  ['context_1',['context',['../structpdg_1_1_net_connect.html#ae376f130b17d169ee51be68077a89ed0',1,'pdg::NetConnect::context'],['../structpdg_1_1_net_disconnect.html#ae376f130b17d169ee51be68077a89ed0',1,'pdg::NetDisconnect::context'],['../structpdg_1_1_net_data.html#ae376f130b17d169ee51be68077a89ed0',1,'pdg::NetData::context'],['../structpdg_1_1_net_error.html#ae376f130b17d169ee51be68077a89ed0',1,'pdg::NetError::context']]],
-  ['ctrl_2',['ctrl',['../structpdg_1_1_modifier_key_info.html#ab058dce7480bbadcc31a6b203c69029d',1,'pdg::ModifierKeyInfo']]],
-  ['cxxobjsallocated_3',['cxxObjsAllocated',['../structpdg_1_1_mem_stats.html#ac8f476229609c3077f7c0240311037c7',1,'pdg::MemStats']]],
-  ['cxxobjsfreed_4',['cxxObjsFreed',['../structpdg_1_1_mem_stats.html#a0912c3803810b2c414df39bf6cc196ab',1,'pdg::MemStats']]]
+  ['c_0',['c',['../structpdg_1_1_spatial_transform.html#a2c09e929a6ea340fc9653cca414b11d3',1,'pdg::SpatialTransform']]],
+  ['categories_1',['categories',['../structpdg_1_1_animation_physics_body.html#a63609b64e756b271a9f6128485a450be',1,'pdg::AnimationPhysicsBody']]],
+  ['centeroffset_2',['centerOffset',['../classpdg_1_1_rotated_rect_t.html#a9063f2e880b7c8f6959c134b48f14f98',1,'pdg::RotatedRectT']]],
+  ['child_3',['child',['../structpdg_1_1_animation_physics_joint.html#a269cc96e127de536696db1a8c5f9303c',1,'pdg::AnimationPhysicsJoint']]],
+  ['childx_4',['childX',['../structpdg_1_1_animation_physics_joint.html#a8dc68119f2bf97cb08f5baebc5f974a7',1,'pdg::AnimationPhysicsJoint']]],
+  ['childy_5',['childY',['../structpdg_1_1_animation_physics_joint.html#a50639056effdfc2bb7283ac8ee489d0b',1,'pdg::AnimationPhysicsJoint']]],
+  ['clamped_6',['clamped',['../structpdg_1_1_animation_i_k_result.html#a75a1cb6f49d2de6a4a517ecc10cc04ed',1,'pdg::AnimationIKResult']]],
+  ['clipname_7',['clipName',['../structpdg_1_1_sprite_trigger_event_info.html#ab850260b95af279fb82278f93e1cdce9',1,'pdg::SpriteTriggerEventInfo']]],
+  ['collide_8',['collide',['../structpdg_1_1_animation_physics_joint.html#a22b28dfbc89b4b50b174f265abf39227',1,'pdg::AnimationPhysicsJoint']]],
+  ['collider_9',['collider',['../structpdg_1_1_collider_contact.html#a40f6f12bc83d792d40488e883f7db789',1,'pdg::ColliderContact::collider'],['../classpdg_1_1_part.html#a55d2a9cc0cc93e10419cfd631dde8aa3',1,'pdg::Part::collider'],['../classpdg_1_1_particle.html#a1df11f3aab5217365430380e483a6cc9',1,'pdg::Particle::collider'],['../classpdg_1_1_sprite.html#a4a5df84a55d4d79ca58f46dd98960aa2',1,'pdg::Sprite::collider']]],
+  ['collisionname_10',['collisionName',['../structpdg_1_1_sprite_collide_info.html#a4dc5ba92b8de5ef11359ee56dc196257',1,'pdg::SpriteCollideInfo']]],
+  ['collisionshape_5fnone_11',['collisionShape_None',['../namespacepdg.html#a0909e2cc720a098ca6b4514fa47e65ce',1,'pdg']]],
+  ['context_12',['context',['../structpdg_1_1_net_connect.html#ae376f130b17d169ee51be68077a89ed0',1,'pdg::NetConnect::context'],['../structpdg_1_1_net_disconnect.html#ae376f130b17d169ee51be68077a89ed0',1,'pdg::NetDisconnect::context'],['../structpdg_1_1_net_data.html#ae376f130b17d169ee51be68077a89ed0',1,'pdg::NetData::context'],['../structpdg_1_1_net_error.html#ae376f130b17d169ee51be68077a89ed0',1,'pdg::NetError::context']]],
+  ['ctrl_13',['ctrl',['../structpdg_1_1_modifier_key_info.html#ab058dce7480bbadcc31a6b203c69029d',1,'pdg::ModifierKeyInfo']]],
+  ['cxxobjsallocated_14',['cxxObjsAllocated',['../structpdg_1_1_mem_stats.html#ac8f476229609c3077f7c0240311037c7',1,'pdg::MemStats']]],
+  ['cxxobjsfreed_15',['cxxObjsFreed',['../structpdg_1_1_mem_stats.html#a0912c3803810b2c414df39bf6cc196ab',1,'pdg::MemStats']]]
 ];

@@ -47,7 +47,7 @@
 
 namespace pdg {
 
-//! \defgroup Graphics
+//! \addtogroup Graphics
 //! Collection of classes, types and constants that are used for drawing
 
 #ifndef PDG_NO_GUI
@@ -100,7 +100,7 @@ public:
 
 	virtual void	setEdgeClamping(bool inUseEdgeClamp) = 0;  // hack to approximate OpenGL edge clamping when needed
 
-	//! By default, data is released as soon as the image has been prepared for rasterization
+	//! Named, unmodified images may release pixels after rasterization; runtime-created or modified images retain them.
 	//! Calling retainData() will retain the data for use even after that has happened
 	virtual void	retainData() = 0;
 	
@@ -148,15 +148,22 @@ public:
     virtual Port*   setPort(Port* newPort);
 #endif
 
-    enum ImageSerializationMode {
-        ser_Nothing,        // ignore images entirely
-        ser_ByReference,     // only serialize references to the images
-    };
-    static int    registerImageForSerialization(Image* img); // returns reference number
-    static bool   setImageSerializationMode(ImageSerializationMode mode);
+    /** Size the current image record using this writer's resource policy. */
+    uint32 getSerializedSize(ISerializer* serializer) const override = 0;
+    /** Store pixels or an external resource reference, including image settings. */
+    void serialize(ISerializer* serializer) const override = 0;
+    /** Replace this image from an image record; retain the decoded pixels. */
+    void deserialize(IDeserializer* deserializer) override = 0;
 
     static Image* createImageFromFile(const char* imageFileName);
     static Image* createImageFromData(char* imageData, long imageDataLen);
+#ifndef PDG_NO_GUI
+    //! Create an RGBA image from an offscreen port, preserving transparency.
+    //! Returns null for null or non-offscreen ports. The caller owns one reference.
+    //! copyPixels=true takes an independent snapshot; false shares the surface and follows drawing.
+    //! Both images remain valid after closing the source port. The shared surface is retained.
+    static Image* createImageFromOffscreenPort(Port* port, bool copyPixels = true);
+#endif
 
     static Image* createImageFromResourceFile(const char* resourceName, const char* imageFileName);
     static Image* createImageFromResourceData(const char* resourceName, char* imageData, long imageDataLen);

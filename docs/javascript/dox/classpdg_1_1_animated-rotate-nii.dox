@@ -1,9 +1,15 @@
-namespace pdg { /**
+/**
+\fn pdg::Animated::rotateBy(number radians, number durationSeconds, int easing, int direction)
+\brief Rotate through a relative angle.
 
-\fn pdg::Animated::rotate
+The immediate overload preserves spin. The timed overload replaces spin and retains explicitly requested complete turns. Clockwise/counterclockwise direction selects the sign; AsSpecified and Shortest preserve the signed relative travel. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
-\brief rotate the object by a specific amount over time
+\param radians Angle in radians, clockwise positive.
+\param durationSeconds Finite nonnegative duration in seconds.
+\param easing Integer easing constant; elapsed time and duration use seconds.
+\param direction Integer rotationDirection_AsSpecified, rotationDirection_Shortest, rotationDirection_Clockwise or rotationDirection_CounterClockwise constant.
 
-Honors delay given by wait()
+\return This object, for chaining.
 
-**/ }
+\see rotateTo(), setRotation(), changeSpinBy()
+*/

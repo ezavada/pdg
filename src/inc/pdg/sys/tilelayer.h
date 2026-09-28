@@ -93,7 +93,7 @@ public:
 #ifndef PDG_INTERNAL_LIB
 protected:
 #endif
-/// @cond C++
+/// @cond CXX
 #ifndef PDG_NO_GUI
 	TileLayer(Port* port);
 #endif // ! PDG_NO_GUI

@@ -1,0 +1,47 @@
+{
+  "benchmarkId": "cpp-bunnymark",
+  "bunnymarkScore": 47219,
+  "compositeScore": 47219,
+  "framePacing": "uncapped",
+  "language": "C++",
+  "loadFactor": 1.5,
+  "measurement": "frame-start intervals; linear load/FPS extrapolation",
+  "mode": "quick",
+  "requestedEngineFPS": null,
+  "requestedSwapInterval": 0,
+  "synthetic": true,
+  "testName": "QuickBunnyMark",
+  "tests": {
+    "bunnies": {
+      "atOrAboveTarget": true,
+      "averageFPS": 59.9602130611383,
+      "durationSeconds": 3.00199066698551,
+      "estimatedCapacity": 47218.6677856464,
+      "fixedLoad": 47250,
+      "frameTime": {
+        "maxMs": 24.9493750333786,
+        "meanMs": 16.6777259276973,
+        "minMs": 14.9276250600815,
+        "percentile95Ms": 18.0926250219345,
+        "percentile99Ms": 18.8986250162125
+      },
+      "loadFactor": 1.5,
+      "referenceLoad": 31500,
+      "referenceScore": 31500,
+      "requestedSampleSeconds": 3,
+      "score": 47219,
+      "synthetic": true,
+      "targetFPS": 60,
+      "totalFrames": 180,
+      "warmupSeconds": 1
+    }
+  },
+  "timestamp": "2026-09-28T16:43:53Z",
+  "build": {
+    "configuration": "Release",
+    "kind": "native-cpp",
+    "executable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/bunnymark.app/Contents/MacOS/bunnymark",
+    "resolvedExecutable": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release/src/bunnymark.app/Contents/MacOS/bunnymark",
+    "directory": "/Users/edz/Documents/Personal/pdg-devel/build/darwin/arm64/pdg-perf-release"
+  }
+}
