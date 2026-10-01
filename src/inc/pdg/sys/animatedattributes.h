@@ -61,7 +61,7 @@ protected:
     void assignAttributes(const Attributes& attributes) override;
     void setTransformImpl(const glm::mat3& matrix) override;
     void cancelScheduleImpl() override;
-    AnimatedAttributesBase& composeTransform(const glm::mat3& matrix, TransformOperation operation) override;
+    Attributes& composeTransform(const glm::mat3& matrix, TransformOperation operation) override;
     void validateAttributeEdit() const override { validateImmediateOperation(); }
     void attributeChanging(AttributeChannel channel) override;
     void animationValuesChanged() override;

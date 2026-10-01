@@ -15,7 +15,7 @@ function run(command, args, opts) {
     return result.status === null ? 1 : result.status;
 }
 function nativeExecutable() {
-    const names = process.platform === 'win32' ? ['pdg.exe', 'test/pdg.exe'] : ['pdg', 'test/pdg'];
+    const names = process.platform === 'win32' ? ['test/pdg-run.exe', 'pdg.exe', 'test/pdg.exe'] : ['pdg', 'test/pdg'];
     const executable = process.env.PDG_EXECUTABLE ? path.resolve(process.env.PDG_EXECUTABLE)
         : names.map(n => path.join(root, n)).find(p => fs.existsSync(p));
     if (!executable) throw Error('No current PDG build. Run configure and make pdg, or choose --node, --web, or --ios.');
@@ -39,7 +39,7 @@ function currentCTest() {
     return {dir, ctest, names: JSON.parse(result.stdout).tests.map(t => t.name)};
 }
 function unitSuites(target) {
-    if (target === 'web' || target === 'ios') return require('./client_spec_catalog')[target];
+    if (target === 'web' || target === 'ios') return require('./unit_spec_catalog')[target];
     return fs.readdirSync(path.join(testDir, 'spec')).filter(n => /\.spec\.js$/.test(n)).map(n => n.slice(0, -8)).sort();
 }
 function envFor(options) {
@@ -100,7 +100,7 @@ async function web(options, env, suites, pages) {
     const base = 'http://127.0.0.1:' + server.address().port + '/test/';
     try {
         if (options.automated) {
-            const urls = options.kind === 'unit' ? [base + 'client.html?specs=' + encodeURIComponent(suites.join(','))]
+            const urls = options.kind === 'unit' ? [base + 'unit.html?specs=' + encodeURIComponent(suites.join(','))]
                 : suites.map(id => base + 'ui.html?test=' + encodeURIComponent(id) + '&automated=1');
             let failed = 0;
             for (let i = 0; i < urls.length; ++i) {
@@ -116,7 +116,7 @@ async function web(options, env, suites, pages) {
         }
         const query = options.kind === 'unit' ? new URLSearchParams({specs: suites.join(',')}) :
             new URLSearchParams({kind: options.kind, suites: suites.join(','), page: String(optionsAPI.pageIndex(pages, options.page) + 1), interactive: '1'});
-        const url = base + (options.kind === 'unit' ? 'client.html?' : 'ui.html?') + query;
+        const url = base + (options.kind === 'unit' ? 'unit.html?' : 'ui.html?') + query;
         console.log('Open ' + url + '\n' + (options.kind === 'unit' ? 'Results stay open for inspection. ' :
             'Left/Right: page. Space/background click: pause. ') + 'Ctrl+C stops the server.');
         if (process.platform === 'darwin') run('open', [url]);
@@ -162,7 +162,7 @@ async function main(args) {
     if (options.target === 'ios') {
         if (process.platform !== 'darwin') throw Error('--ios requires macOS with Xcode and an iOS Simulator.');
         if (options.kind !== 'unit' && !options.automated) return require('./ios_visual_runner').run(options, pages, env);
-        const iosArgs = options.kind === 'unit' ? ['--client'].concat(suites) : ['--ui'];
+        const iosArgs = options.kind === 'unit' ? ['--unit'].concat(suites) : ['--ui'];
         if (options.kind === 'unit' && options.verbose) iosArgs.push('--verbose');
         if (options.iphone) iosArgs.unshift('--iphone');
         if (options.ipad) iosArgs.unshift('--ipad');
@@ -200,7 +200,7 @@ async function main(args) {
         try {
             // Async spawn lets the echo server run while the runtime executes tests.
             failed = (await spawnAsync(options.target === 'node' ? process.execPath : nativeExecutable(),
-                [path.join(testDir, 'js', options.target === 'node' ? 'node_test.js' : 'client_test.js')]
+                [path.join(testDir, 'js', options.target === 'node' ? 'unit_node_test.js' : 'unit_test.js')]
                     .concat(jsNames, options.verbose ? ['--verbose'] : []), {cwd: testDir})) || failed;
         } finally { echo.kill(); }
     }

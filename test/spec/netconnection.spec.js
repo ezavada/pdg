@@ -165,7 +165,7 @@ describe("NetConnection", function() {
   });
 
   it("can send and receive Node.js Buffers", function() {
-  	var buf = new Buffer('A test of the Buffer sending');
+	var buf = Buffer.from('A test of the Buffer sending');
   	runs(function() {
   		netConnection.onClose(myCloseHandler);
   		netConnection.onMessage(myMessageHandler);

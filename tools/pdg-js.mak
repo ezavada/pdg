@@ -8,11 +8,11 @@
 # build target specs
 
 # first target entry is the target invoked when typing 'make'
-.PHONY: all client-tests
+.PHONY: all unit-tests
 all: libpdg
 
-client-tests: libpdg
-	@$(PDG_ROOT)/test/client --emscripten --no-build
+unit-tests: libpdg
+	@$(PDG_ROOT)/test/unit --web --no-build --automated
 
 
 EXPORTS='[ \

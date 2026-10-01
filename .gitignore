@@ -30,7 +30,6 @@ tools/repl
 /pdg.exe
 test/pdg
 test/pdg.exe
-test/client_test/pdg.exe
 test/debug.html
 node_modules/pdg
 pnglibconf.h

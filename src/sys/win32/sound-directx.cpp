@@ -80,6 +80,7 @@ extern HWND gMainHWND;
 
 SoundDirectX::SoundDirectX(SoundManager* sndMgr, const char* soundName, const char* extension)
   : mSndMgr(static_cast<SoundManagerDirectX*>(sndMgr)),
+	mpGraphBuilder(0),
     mpMediaControl(0),
 	mpMediaSeeking(0),
 	mpMediaEvent(0),
@@ -101,6 +102,7 @@ SoundDirectX::SoundDirectX(SoundManager* sndMgr, const char* soundName, const ch
 
 SoundDirectX::SoundDirectX(SoundDirectX* snd)
   : mSndMgr(snd->mSndMgr),
+	mpGraphBuilder(0),
     mpMediaControl(0),
 	mpMediaSeeking(0),
 	mpMediaEvent(0),
@@ -364,7 +366,7 @@ Sound& SoundDirectX::skipTo(ms_time timeMs) {
 	
 bool SoundDirectX::createFromData(char* soundData, long soundDataLen)
 {
-    bool mLoadedOk = false;
+	mLoadedOk = false;
 #ifndef NO_SOUND
 	FILE* fp;
     SOUND_DEBUG_ONLY( OS::_DOUT("Sound::createFromData [%s]", mRealFilename.c_str()); )
@@ -406,7 +408,7 @@ bool SoundDirectX::createFromData(char* soundData, long soundDataLen)
 
 bool SoundDirectX::createFromFile(const char* filename)
 {
-    bool mLoadedOk = false;
+	mLoadedOk = false;
 #ifndef NO_SOUND
 	SOUND_DEBUG_ONLY( OS::_DOUT("Sound::createFromFile [%p] file [%s]", this, filename); )
 	std::string realPath = OS::makeCanonicalPath(filename);  // assumes relative to application if relative path

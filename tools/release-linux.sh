@@ -140,8 +140,8 @@ if [[ $SKIP_TESTS -eq 0 ]]; then
     ln -sfn "$PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js" "$PDG_ROOT/tools/node-gyp"
     ln -sfn "$PDG_NODE" "$PDG_ROOT/tools/node"
     "$PDG_ROOT/tools/make-node-module.sh"
-    "$PDG_ROOT/test/node"
-    xvfb-run -a "$PDG_ROOT/test/client"
+    "$PDG_ROOT/test/unit" --node
+    xvfb-run -a "$PDG_ROOT/test/unit"
 fi
 
 cmake -S "$PDG_ROOT" -B "$DEBUG_BUILD_DIR" \

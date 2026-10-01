@@ -1,4 +1,4 @@
-// c++ -std=c++17 test/lib/perf_measurement.test.cpp -o /tmp/pdg-perf-measurement && /tmp/pdg-perf-measurement
+// c++ -std=c++20 test/lib/perf_measurement.test.cpp -o /tmp/pdg-perf-measurement && /tmp/pdg-perf-measurement
 #include "../perf_tests/quick.h"
 #include <cassert>
 #include <iostream>

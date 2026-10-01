@@ -334,7 +334,7 @@ Exit criterion: a browser-to-standalone echo test passes reliably on all support
 - Move Node TCP/UDP behavior into the native adapter.
 - Refactor `NetClient`, `NetServer`, and `NetConnection` around adapters without changing public behavior.
 - Add fake-adapter unit tests for partial frames, combined frames, errors, close races, backpressure, handshake timeouts, and datagram fallback.
-- Run the complete existing native client suite and lanes.
+- Run the complete existing native unit suite and lanes.
 
 Exit criterion: no observable native networking regression and no web code yet required at runtime.
 
@@ -406,7 +406,7 @@ Run message tests for strings, JSON objects, `MemBlock`, byte arrays/Buffers as 
 
 ### Browser automation
 
-- Extend `test/client` so the native harness starts a standalone secure test host and allocates ports. The Emscripten runner only receives the resulting client endpoint/certificate hash and drives outbound connections; it never starts or implements a server in the browser.
+- Extend `test/unit --web` so the native harness starts a standalone secure test host and allocates ports. The Emscripten runner only receives the resulting client endpoint/certificate hash and drives outbound connections; it never starts or implements a server in the browser.
 - Keep transport integration specs separate from pure unit specs so browser lanes can report whether a failure is build, browser initialization, TLS, listener startup, selection, handshake, reliable data, or datagrams.
 - Test at least the supported Chromium lane plus every browser lane where `WebTransport` is available. Browsers without WebTransport must still pass the WebSocket fallback suite.
 - Record browser name/version, `typeof WebTransport`, requested policy, attempted transports, chosen transport, attempt durations, endpoint, secure mode, datagram availability, and final error code in lane JSON.

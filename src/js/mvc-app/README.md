@@ -324,7 +324,7 @@ It verifies real PortDraw frames, a moving control, and a View whose color and
 opacity change in seconds before closing the drawing port. The same check runs
 on desktop with `./pdg test/js/app-control-gallery.js --ui-test`.
 Shared appearance and drawing specs can be run at
-<http://127.0.0.1:8123/test/client.html?specs=animatedattributes,drawing>.
+<http://127.0.0.1:8123/test/unit.html?specs=animatedattributes,drawing>.
 
 Browser AnimatedAttributes exposes both APIs and can be subclassed with
 `class MyView extends pdg.AnimatedAttributes`. Native drawing calls accept the

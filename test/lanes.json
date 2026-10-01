@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "lanes": [
     {
-      "id": "windows-headless-client",
-      "name": "Windows headless client suite",
+      "id": "windows-unit",
+      "name": "Windows native unit suite",
       "category": "test",
       "targetPlatform": "win32",
       "automation": "automated",
       "stopOnFailure": false,
       "notes": [
-        "Runs the pure native client checks that do not require any UI features.",
+        "Runs native unit checks that do not require any UI features.",
         "If the required runtime is missing, this lane will print the Windows build commands to run."
       ],
       "requiredBuilds": [
@@ -33,24 +33,24 @@
       ],
       "steps": [
         {
-          "name": "Client log spec",
-          "command": ".\\test\\client.bat log --verbose"
+          "name": "Native log spec",
+          "command": ".\\test\\unit.ps1 log --verbose"
         },
         {
-          "name": "Client color spec",
-          "command": ".\\test\\client.bat color"
+          "name": "Native color spec",
+          "command": ".\\test\\unit.ps1 color"
         }
       ]
     },
     {
-      "id": "windows-headless-node",
-      "name": "Windows headless node suite",
+      "id": "windows-unit-node",
+      "name": "Windows Node unit suite",
       "category": "test",
       "targetPlatform": "win32",
       "automation": "automated",
       "stopOnFailure": true,
       "notes": [
-        "Runs the headless Node-based spec suite on Windows.",
+        "Runs the unit spec suite through Node on Windows.",
         "If the required runtime or plugin is missing, this lane will print the Windows build commands to run."
       ],
       "requiredBuilds": [
@@ -94,8 +94,8 @@
       ],
       "steps": [
         {
-          "name": "Node spec suite",
-          "command": ".\\test\\node-pdg.bat"
+          "name": "Node unit suite",
+          "command": ".\\test\\unit.ps1 --node"
         }
       ]
     },
@@ -135,14 +135,14 @@
       ]
     },
     {
-      "id": "linux-headless-client",
-      "name": "Linux headless client suite",
+      "id": "linux-unit",
+      "name": "Linux native unit suite",
       "category": "test",
       "targetPlatform": "linux",
       "automation": "automated",
       "stopOnFailure": false,
       "notes": [
-        "Runs the pure native client checks that do not require any UI features.",
+        "Runs native unit checks that do not require any UI features.",
         "Linux is treated as a headless/server target with no graphics support.",
         "If the required runtime is missing, this lane will print the Linux build commands to run."
       ],
@@ -166,18 +166,18 @@
       ],
       "steps": [
         {
-          "name": "Client log spec",
-          "command": "./test/client log --verbose"
+          "name": "Native log spec",
+          "command": "./test/unit log --verbose"
         },
         {
-          "name": "Client color spec",
-          "command": "./test/client color"
+          "name": "Native color spec",
+          "command": "./test/unit color"
         }
       ]
     },
     {
-      "id": "linux-headless-node",
-      "name": "Linux headless node suite",
+      "id": "linux-unit-node",
+      "name": "Linux Node unit suite",
       "category": "test",
       "targetPlatform": "linux",
       "automation": "automated",
@@ -226,21 +226,21 @@
       ],
       "steps": [
         {
-          "name": "Node spec suite",
-          "command": "./test/node"
+          "name": "Node unit suite",
+          "command": "./test/unit --node"
         }
       ]
     },
     {
-      "id": "macos-headless-client",
-      "name": "macOS headless client suite",
+      "id": "macos-unit",
+      "name": "macOS native unit suite",
       "category": "test",
       "targetPlatform": "darwin",
       "automation": "automated",
       "stopOnFailure": false,
       "notes": [
-        "Runs the pure native client checks that do not require any UI features.",
-        "These are the SSH-safe headless client checks for macOS.",
+        "Runs native unit checks that do not require any UI features.",
+        "These are the SSH-safe native unit checks for macOS.",
         "If the required runtime is missing, this lane will print the macOS build commands to run."
       ],
       "requiredBuilds": [
@@ -264,24 +264,24 @@
       ],
       "steps": [
         {
-          "name": "Client log spec",
-          "command": "./test/client log --verbose"
+          "name": "Native log spec",
+          "command": "./test/unit log --verbose"
         },
         {
-          "name": "Client color spec",
-          "command": "./test/client color"
+          "name": "Native color spec",
+          "command": "./test/unit color"
         }
       ]
     },
     {
-      "id": "macos-headless-node",
-      "name": "macOS headless node suite",
+      "id": "macos-unit-node",
+      "name": "macOS Node unit suite",
       "category": "test",
       "targetPlatform": "darwin",
       "automation": "automated",
       "stopOnFailure": true,
       "notes": [
-        "Runs the headless Node-based suite over SSH.",
+        "Runs the Node unit suite over SSH.",
         "Use this lane before asking for local GUI verification.",
         "If the required runtime or plugin is missing, this lane will print the macOS build commands to run."
       ],
@@ -326,8 +326,8 @@
       ],
       "steps": [
         {
-          "name": "Node spec suite",
-          "command": "./test/node"
+          "name": "Node unit suite",
+          "command": "./test/unit --node"
         }
       ]
     },
@@ -378,7 +378,7 @@
       "stopOnFailure": true,
       "notes": [
         "Requires Emscripten and Chrome or Chromium on the macOS host.",
-        "Covers WebAssembly initialization, the complete browser client specs, and rendered UI behavior.",
+        "Covers WebAssembly initialization, the complete browser unit specs, and rendered UI behavior.",
         "If the browser module is missing, this lane will print the Emscripten build command to run."
       ],
       "requiredBuilds": [
@@ -398,7 +398,7 @@
             "test/perf",
             "test/spec",
             "test/ui_tests",
-            "test/client.html",
+            "test/unit.html",
             "test/ui.html",
             "test/perf.html",
             "tools/pdg-js.mak"
@@ -410,7 +410,7 @@
       ],
       "steps": [
         {
-          "name": "Browser client spec suite",
+          "name": "Browser unit spec suite",
           "command": "./test/unit --web --no-build --automated"
         },
         {

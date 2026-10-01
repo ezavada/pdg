@@ -17,7 +17,7 @@ function main(args) {
         console.log('Usage: test/tools [--list] [suite ...]\n' +
             'Runs tooling checks without a PDG build. No suites selects all six.\n' +
             'Node: PDG_NODE, tools/node, then node on PATH.\n' +
-            'C++17 compiler: CXX (executable path), otherwise c++ or Windows cl.exe.\n' +
+            'C++20 compiler: CXX (executable path), otherwise c++ or Windows cl.exe.\n' +
             'node-build and wasm-release require POSIX Bash and are skipped on Windows.\n' +
             'wasm-release also requires make, CMake and Python 3.');
         return 0;
@@ -64,8 +64,8 @@ function main(args) {
                 const binary = path.join(temporary, process.platform === 'win32' ? 'measurement.exe' : 'measurement');
                 const source = path.join(__dirname, entry.file);
                 const msvc = /^(cl|clang-cl)(\.exe)?$/i.test(path.basename(compiler));
-                run(compiler, msvc ? ['/nologo', '/std:c++17', '/EHsc', '/UNDEBUG', source, '/Fe:' + binary] :
-                    ['-std=c++17', '-UNDEBUG', source, '-o', binary], temporary);
+                run(compiler, msvc ? ['/nologo', '/std:c++20', '/EHsc', '/UNDEBUG', source, '/Fe:' + binary] :
+                    ['-std=c++20', '-UNDEBUG', source, '-o', binary], temporary);
                 run(binary, [], temporary);
             } else {
                 run(process.execPath, [path.join(__dirname, entry.file)]);

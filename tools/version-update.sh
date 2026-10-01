@@ -28,50 +28,46 @@
 #
 # -------------------------------------------
 
-# load pdgrc
-_SD=`pwd`;while [ "`pwd`" != '/' ];do { if [ -e ".pdgrc" ];then { source .pdgrc;break; } fi;cd ..; } done;cd $_SD
-if [ -z "$PDG_ROOT" ]; then
-	echo "FATAL: couldn't source .pdgrc in `pwd` or it's parent directories. Have you run configure yet?"
-	exit 1
+# Update source metadata; generated docs and binaries are refreshed by their builds.
+set -euo pipefail
+PDG_VERSION_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+if [ "$#" -ne 1 ]; then
+    echo "Usage: version-update.sh major.minor.patch" >&2
+    exit 1
 fi
 
-OLD_VERS=`cat $PDG_ROOT/VERSION`
-OLD_VERS_REGEX=`cat $PDG_ROOT/VERSION | sed 's/\./\\\./g'`
-NEW_VERS=$1
-if [ -z "$1" ]; then
-	echo "Usage: version-update.sh major.minor.bugfix"
-	exit 0
-fi
-echo "Changing $OLD_VERS to $NEW_VERS... (regex: $OLD_VERS_REGEX)"
+python3 - "$PDG_VERSION_ROOT" "$1" <<'PYTHON'
+from pathlib import Path
+import re
+import sys
 
-# tools/node-pdg/package.json
-sed s/$OLD_VERS_REGEX/$NEW_VERS/g $PDG_ROOT/tools/node-pdg/package.json > $PDG_ROOT/build/tmp
-mv -f $PDG_ROOT/build/tmp $PDG_ROOT/tools/node-pdg/package.json
-grep --with-filename --line-number $NEW_VERS $PDG_ROOT/tools/node-pdg/package.json
+root = Path(sys.argv[1])
+version = sys.argv[2]
+if not re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version):
+    raise SystemExit("Version must have the form major.minor.patch (for example, 1.1.1)")
 
-# src/inc/pdg/version.h
-sed s/$OLD_VERS_REGEX/$NEW_VERS/g $PDG_ROOT/src/inc/pdg/version.h > $PDG_ROOT/build/tmp
-mv -f $PDG_ROOT/build/tmp $PDG_ROOT/src/inc/pdg/version.h
-grep --with-filename --line-number $NEW_VERS $PDG_ROOT/src/inc/pdg/version.h
+updates = {"VERSION": version + "\n"}
 
-# docs/cxx/Doxyfile
-sed s/$OLD_VERS_REGEX/$NEW_VERS/g $PDG_ROOT/docs/cxx/Doxyfile > $PDG_ROOT/build/tmp
-mv -f $PDG_ROOT/build/tmp $PDG_ROOT/docs/cxx/Doxyfile
-grep --with-filename --line-number $NEW_VERS $PDG_ROOT/docs/cxx/Doxyfile
+def replace(name, pattern, value, count=1):
+    text = updates.get(name, (root / name).read_text())
+    text, found = re.subn(pattern, lambda match: match[1] + value + match[2], text,
+                          flags=re.MULTILINE)
+    if found != count:
+        raise SystemExit(f"Expected {count} version field(s) in {name}, found {found}")
+    updates[name] = text
 
-# docs/javascript/Doxyfile
-sed s/$OLD_VERS_REGEX/$NEW_VERS/g $PDG_ROOT/docs/javascript/Doxyfile > $PDG_ROOT/build/tmp
-mv -f $PDG_ROOT/build/tmp $PDG_ROOT/docs/javascript/Doxyfile
-grep --with-filename --line-number $NEW_VERS $PDG_ROOT/docs/javascript/Doxyfile
+replace("CMakeLists.txt", r"(PROJECT\(PDG VERSION )[^ ]+( LANGUAGES)", version)
+replace("src/inc/pdg/version.h", r'(#define PDG_VERSION ")[^"]+("$)', version)
+replace("tools/node-pdg/package.json", r'(  "version": ")[^"]+(",$)', version)
+for name in ("docs/cxx/Doxyfile", "docs/javascript/Doxyfile", "docs/javascript/Doxyfile-man"):
+    replace(name, r"(PROJECT_NUMBER[ \t]*=[ \t]*)[^\n]+($)", "v" + version)
+for key in ("CFBundleShortVersionString", "CFBundleVersion"):
+    replace("ios/pdg-Info.plist", r"(<key>" + key + r"</key>\s*<string>)[^<]+(</string>)", version)
 
-# docs/javascript/Doxyfile-man
-sed s/$OLD_VERS_REGEX/$NEW_VERS/g $PDG_ROOT/docs/javascript/Doxyfile-man > $PDG_ROOT/build/tmp
-mv -f $PDG_ROOT/build/tmp $PDG_ROOT/docs/javascript/Doxyfile-man
-grep --with-filename --line-number $NEW_VERS $PDG_ROOT/docs/javascript/Doxyfile-man
-
-# VERSION
-sed s/$OLD_VERS_REGEX/$NEW_VERS/g $PDG_ROOT/VERSION > $PDG_ROOT/build/tmp
-mv -f $PDG_ROOT/build/tmp $PDG_ROOT/VERSION
-grep --with-filename --line-number $NEW_VERS $PDG_ROOT/VERSION
-
-rm -rf $PDG_ROOT/build/tmp
+# Validate all inputs before writing any changes, including stale older versions.
+for name, text in updates.items():
+    destination = root / name
+    if destination.read_text() != text:
+        destination.write_text(text)
+    print(f"{name}: {version}")
+PYTHON

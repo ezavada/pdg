@@ -118,8 +118,8 @@ fi
 ln -sf "$PDG_NPM_CLI" "$PDG_ROOT/tools/npm"
 ln -sf "$PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js" "$PDG_ROOT/tools/node-gyp"
 "$PDG_ROOT/tools/make-node-module.sh"
-"$PDG_ROOT/test/node"
-"$PDG_ROOT/test/client"
+"$PDG_ROOT/test/unit" --node
+"$PDG_ROOT/test/unit"
 
 # Build a distinct unstripped Debug application with DEBUG logging enabled.
 cmake -S "$PDG_ROOT" -B "$DEBUG_BUILD_DIR" \

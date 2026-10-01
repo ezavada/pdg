@@ -101,7 +101,7 @@ double PhysicsBody::getMovementDirectionInRadians() const {
 PhysicsBody PhysicsBody::NoPhysics(AbsentTag{});
 bool PhysicsBody::ignores(const char* operation) const {
     if (isPresent()) return false;
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(PDG_TEST_FORCE_DEBUG_DIAGNOSTICS)
     // Diagnostics belong to the method, never to a shared mutable last owner.
     static std::mutex mutex;
     static std::set<std::string> reported;

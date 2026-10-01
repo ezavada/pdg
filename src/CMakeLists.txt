@@ -109,6 +109,16 @@ SET (PDG_JAVASCRIPT_BINDINGS_SOURCES
 	bindings/node/pdg_node.cpp
 )
 
+# These checked-in generated files intentionally discard V8 Maybe<bool>
+# setters; keep that legacy pattern isolated from project-owned sources.
+IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+	SET_SOURCE_FILES_PROPERTIES(
+		bindings/generated/v8/pdg_interfaces.cpp
+		bindings/generated/v8/graphics/attributes.cpp
+		PROPERTIES COMPILE_OPTIONS "-Wno-unused-result"
+	)
+ENDIF()
+
 SET (PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES 
 	${PDG_SOURCE_DIR}/src/bindings/javascript
 	${PDG_SOURCE_DIR}/src/bindings/javascript/v8
@@ -270,7 +280,7 @@ IF( WIN32 )
 			sys/image-jpeg.cpp
 			${PNG_SOURCES}
 		)
-		ADD_DEFINITIONS ( -DPDG_USE_LIBPNG -DPDG_USE_LIBJPEG )
+		ADD_DEFINITIONS ( -DPDG_USE_LIBPNG )
 	ELSE()
 		SET(PDG_WITH_GLFW ON)
 		SET( PLATFORM_FILES 
@@ -288,7 +298,7 @@ IF( WIN32 )
 			sys/image-jpeg.cpp
 			${PNG_SOURCES}
 		)
-		ADD_DEFINITIONS ( -DPDG_USE_GLFW -DPDG_USE_LIBPNG -DPDG_USE_LIBJPEG )
+		ADD_DEFINITIONS ( -DPDG_USE_GLFW -DPDG_USE_LIBPNG )
 	ENDIF()
 	ADD_DEFINITIONS ( /D "_ITERATOR_DEBUG_LEVEL=0" /D UNICODE /D _UNICODE /D _CRT_SECURE_NO_WARNINGS /wd4244)
 	# Suppress SpriterPlusPlus virtual function warnings (Clang-only; MSVC does not use -Wno-*)
@@ -319,16 +329,21 @@ IF( NOT MACOSX AND NOT WIN32 )
 	)
 	IF(PDG_HEADLESS)
 		LIST(APPEND PLATFORM_FILES sys/glfw/platform-events-glfw.cpp)
-		ADD_DEFINITIONS ( -DPDG_USE_LIBPNG -DPDG_USE_LIBJPEG )
+		ADD_DEFINITIONS ( -DPDG_USE_LIBPNG )
 	ELSE()
 		SET(PDG_WITH_GLFW ON)
 		LIST(APPEND PLATFORM_FILES
 			sys/glfw/platform-graphics-glfw.cpp
 			sys/glfw/platform-events-glfw.cpp
+			sys/unix/graphics-unix-opengl.cpp
 		)
-		ADD_DEFINITIONS ( -DPDG_USE_GLFW -DPDG_USE_LIBPNG -DPDG_USE_LIBJPEG )
+		ADD_DEFINITIONS ( -DPDG_USE_GLFW -DPDG_USE_LIBPNG -DPDG_NO_SOUND )
 	ENDIF()
 ENDIF( NOT MACOSX AND NOT WIN32 )
+
+IF(NOT MACOSX)
+	ADD_COMPILE_DEFINITIONS("$<$<NOT:$<BOOL:$<TARGET_PROPERTY:PDG_DISABLE_LIBJPEG>>>:PDG_USE_LIBJPEG>")
+ENDIF()
 
 # Store link directories for later use with target_link_directories
 SET( NODE_LINK_DIRS ${PDG_NODE_RELEASE_DIR} )
@@ -353,12 +368,16 @@ ENDIF()
 
 IF( USE_CHIPMUNK )
 	SET( CHIPMUNK_LINK_DIRS ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/chipmunk/src )
-	ADD_DEFINITIONS ( -DPDG_USE_CHIPMUNK_PHYSICS )
+	IF(WIN32)
+		SET(PDG_CHIPMUNK_LIBRARY "${CHIPMUNK_LINK_DIRS}/$<CONFIG>/chipmunk.lib")
+	ENDIF()
+	ADD_COMPILE_DEFINITIONS("$<$<NOT:$<BOOL:$<TARGET_PROPERTY:PDG_DISABLE_CHIPMUNK_PHYSICS>>>:PDG_USE_CHIPMUNK_PHYSICS>")
 ENDIF( USE_CHIPMUNK )
 
 # Add libjpeg-turbo link directories for Windows
 IF( WIN32 )
 	SET( LIBJPEG_LINK_DIRS ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/libjpeg-turbo )
+	SET(PDG_LIBJPEG_LIBRARY "${LIBJPEG_LINK_DIRS}/$<CONFIG>/jpeg-static.lib")
 ENDIF( WIN32 )
 
 SET(PDG_NODE_STATIC_ZLIB_LIB_CANDIDATES
@@ -534,6 +553,10 @@ ADD_EXECUTABLE(pdg WIN32 MACOSX_BUNDLE
 # V8 requires C++20; ensure MSVC gets /std:c++20 and updates __cplusplus (needed for v8config.h)
 SET_TARGET_PROPERTIES(pdg PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON)
 SET_TARGET_PROPERTIES(pdg PROPERTIES DEBUG_POSTFIX "-debug")
+SET_TARGET_PROPERTIES(pdg PROPERTIES
+	MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+	MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+)
 IF(MSVC)
 	TARGET_COMPILE_OPTIONS(pdg PRIVATE /std:c++20 /Zc:__cplusplus)
 ENDIF()
@@ -554,6 +577,7 @@ target_compile_definitions(pdg PRIVATE
 TARGET_INCLUDE_DIRECTORIES(pdg PRIVATE
 	${PDG_INCLUDE_DIRECTORIES}
 	${OPENGL_INCLUDE_DIR}
+	${PDG_PLATFORM_GLFW_INCLUDE_DIRS}
 	${PDG_JAVASCRIPT_BINDINGS_INCLUDE_DIRECTORIES}
 )
 TARGET_INCLUDE_DIRECTORIES(pdg SYSTEM PRIVATE
@@ -633,11 +657,10 @@ TARGET_COMPILE_DEFINITIONS(pdg-lib PRIVATE
 	NDEBUG  # No debug code for performance testing
 )
 
-# Force Release build optimizations for pdg-lib used by performance tests
-# Remove debug symbols and add full optimizations regardless of build type
+# Force Release build optimizations for pdg-lib used by performance tests.
 IF(MSVC)
 	# MSVC: Maximum optimization, inline expansion, favor speed
-	TARGET_COMPILE_OPTIONS(pdg-lib PRIVATE /O2 /Oi /Ot /GL /Zi- /DEBUG:NONE)
+	TARGET_COMPILE_OPTIONS(pdg-lib PRIVATE /O2 /Oi /Ot /GL)
 ELSE()
 	# Keep IEEE NaN/infinity semantics: PDG and Chipmunk use both intentionally.
 	TARGET_COMPILE_OPTIONS(pdg-lib PRIVATE -O3 -g0 -funroll-loops)
@@ -653,6 +676,7 @@ TARGET_INCLUDE_DIRECTORIES(pdg-lib PRIVATE
 	${PDG_SOURCE_DIR}/deps/minizip
 	${PDG_SOURCE_DIR}/deps
 	${OPENGL_INCLUDE_DIR}
+	${PDG_PLATFORM_GLFW_INCLUDE_DIRS}
 )
 
 # Add platform-specific include directories
@@ -726,6 +750,13 @@ IF( WIN32 )
 	ENDIF()
 ENDIF( WIN32 )
 
+IF( NOT MACOSX AND NOT WIN32 AND PDG_WITH_GLFW )
+	TARGET_LINK_LIBRARIES(pdg-lib PUBLIC
+		${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src/libglfw3.a
+		${OPENGL_LIBRARIES} ${PDG_GLU_LIBRARY}
+		Freetype::Freetype Fontconfig::Fontconfig dl pthread)
+ENDIF()
+
 # ============================================================================
 # PDG Library - Debug Version (libpdgd.a)
 # ============================================================================
@@ -751,9 +782,9 @@ TARGET_COMPILE_DEFINITIONS(pdg-lib-debug PRIVATE
 
 # Debug build flags: full debug symbols, no optimization
 IF(MSVC)
-	# MSVC: No optimization, full debug info
-	TARGET_COMPILE_OPTIONS(pdg-lib-debug PRIVATE /Od /Zi /DEBUG:FULL)
-	TARGET_LINK_OPTIONS(pdg-lib-debug PRIVATE /DEBUG:FULL)
+	# Embed debug information in each object so parallel compiles do not contend
+	# for a shared compiler PDB.
+	TARGET_COMPILE_OPTIONS(pdg-lib-debug PRIVATE /Od /Z7)
 ELSE()
 	# GCC/Clang: No optimization, full debug info
 	TARGET_COMPILE_OPTIONS(pdg-lib-debug PRIVATE -O0 -g3)
@@ -769,6 +800,7 @@ TARGET_INCLUDE_DIRECTORIES(pdg-lib-debug PRIVATE
 	${PDG_SOURCE_DIR}/deps/minizip
 	${PDG_SOURCE_DIR}/deps
 	${OPENGL_INCLUDE_DIR}
+	${PDG_PLATFORM_GLFW_INCLUDE_DIRS}
 )
 
 # Add platform-specific include directories
@@ -842,6 +874,13 @@ IF( WIN32 )
 	ENDIF()
 ENDIF( WIN32 )
 
+IF( NOT MACOSX AND NOT WIN32 AND PDG_WITH_GLFW )
+	TARGET_LINK_LIBRARIES(pdg-lib-debug PUBLIC
+		${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src/libglfw3.a
+		${OPENGL_LIBRARIES} ${PDG_GLU_LIBRARY}
+		Freetype::Freetype Fontconfig::Fontconfig dl pthread)
+ENDIF()
+
 # ============================================================================
 # PDG Libraries - Build Both Versions
 # ============================================================================
@@ -893,17 +932,28 @@ IF( WIN32 )
 	# Set runtime library to static for all configurations
 	SET_PROPERTY(TARGET pdg PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	IF(PDG_WITH_GLFW)
-		TARGET_LINK_LIBRARIES ( pdg glfw3 strmiids imm32 psapi iphlpapi winmm ws2_32 user32 jpeg bcrypt advapi32 crypt32 userenv msvcrt)
+		TARGET_LINK_LIBRARIES ( pdg glfw3 strmiids imm32 psapi iphlpapi winmm ws2_32 user32 ${PDG_LIBJPEG_LIBRARY} bcrypt advapi32 crypt32 userenv msvcrt)
 	ELSE()
-		TARGET_LINK_LIBRARIES ( pdg strmiids imm32 psapi iphlpapi winmm ws2_32 user32 jpeg bcrypt advapi32 crypt32 userenv msvcrt)
+		TARGET_LINK_LIBRARIES ( pdg strmiids imm32 psapi iphlpapi winmm ws2_32 user32 ${PDG_LIBJPEG_LIBRARY} bcrypt advapi32 crypt32 userenv msvcrt)
 	ENDIF()
 ENDIF( WIN32 )
+
+IF( NOT MACOSX AND NOT WIN32 )
+	IF(PDG_WITH_GLFW)
+		TARGET_LINK_LIBRARIES(pdg
+			${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src/libglfw3.a)
+	ENDIF()
+	IF(NOT PDG_HEADLESS)
+		TARGET_LINK_LIBRARIES(pdg ${OPENGL_LIBRARIES} ${PDG_GLU_LIBRARY}
+			Freetype::Freetype Fontconfig::Fontconfig dl pthread)
+	ENDIF()
+ENDIF()
 
 SET( APP_JS_OUT_DIR "${APP_OUT_DIR}/lib/" )
 
 IF( USE_CHIPMUNK )
 	IF(WIN32)
-		TARGET_LINK_LIBRARIES (pdg Chipmunk)
+		TARGET_LINK_LIBRARIES (pdg ${PDG_CHIPMUNK_LIBRARY})
 	ELSE()
 		TARGET_LINK_LIBRARIES (pdg ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/chipmunk/src/libchipmunk.a)
 	ENDIF()
@@ -1262,10 +1312,14 @@ IF(NOT MACOSX AND NOT WIN32)
 	TARGET_LINK_LIBRARIES(pdg-lib PUBLIC JPEG::JPEG ZLIB::ZLIB)
 	TARGET_LINK_LIBRARIES(pdg-lib-debug PUBLIC JPEG::JPEG ZLIB::ZLIB)
 ENDIF()
+IF(WIN32)
+	TARGET_LINK_LIBRARIES(pdg-lib PUBLIC ${PDG_LIBJPEG_LIBRARY})
+	TARGET_LINK_LIBRARIES(pdg-lib-debug PUBLIC ${PDG_LIBJPEG_LIBRARY})
+ENDIF()
 IF( USE_CHIPMUNK )
 	IF(WIN32)
-		TARGET_LINK_LIBRARIES (pdg-lib PUBLIC Chipmunk)
-		TARGET_LINK_LIBRARIES (pdg-lib-debug PUBLIC Chipmunk)
+		TARGET_LINK_LIBRARIES (pdg-lib PUBLIC ${PDG_CHIPMUNK_LIBRARY})
+		TARGET_LINK_LIBRARIES (pdg-lib-debug PUBLIC ${PDG_CHIPMUNK_LIBRARY})
 	ELSE()
 		TARGET_LINK_LIBRARIES (pdg-lib PUBLIC ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/chipmunk/src/libchipmunk.a)
 		TARGET_LINK_LIBRARIES (pdg-lib-debug PUBLIC ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/chipmunk/src/libchipmunk.a)
@@ -1274,8 +1328,13 @@ ENDIF( USE_CHIPMUNK )
 
 IF(NOT PDG_HEADLESS)
 # Keep the older bundled JSON reader isolated from the C++20 engine headers.
-SET_SOURCE_FILES_PROPERTIES(../test/perf_tests/quick.cpp PROPERTIES
-    COMPILE_OPTIONS "$<IF:$<CXX_COMPILER_ID:MSVC>,/std:c++17,-std=c++17>")
+IF(MSVC)
+	SET_SOURCE_FILES_PROPERTIES(../test/perf_tests/quick.cpp PROPERTIES
+		COMPILE_OPTIONS "/std:c++17")
+ELSE()
+	SET_SOURCE_FILES_PROPERTIES(../test/perf_tests/quick.cpp PROPERTIES
+		COMPILE_OPTIONS "-std=c++17")
+ENDIF()
 # ============================================================================
 # PDG Bunnymark Performance Test Executable
 # ============================================================================
@@ -1287,6 +1346,11 @@ ADD_EXECUTABLE(bunnymark WIN32 MACOSX_BUNDLE
 	sys/unix/main-unix.cpp
 )
 
+# The benchmark JSON reader is needed even when Spriter support is disabled.
+TARGET_INCLUDE_DIRECTORIES(bunnymark SYSTEM PRIVATE
+	${PDG_SOURCE_DIR}/deps/SpriterPlusPlus/nlohmann-json
+)
+
 # Bunnymark uses the pure C++ pdg-lib (no JavaScript bindings)
 TARGET_COMPILE_DEFINITIONS(bunnymark PRIVATE 
 	PDG_INTERNAL_LIB=1
@@ -1294,11 +1358,10 @@ TARGET_COMPILE_DEFINITIONS(bunnymark PRIVATE
 	NDEBUG  # Disable assertions for performance testing
 )
 
-# Force Release build optimizations for performance tests
-# Remove debug symbols and add full optimizations regardless of build type
+# Force Release build optimizations for performance tests.
 IF(MSVC)
 	# MSVC: Maximum optimization, inline expansion, favor speed
-	TARGET_COMPILE_OPTIONS(bunnymark PRIVATE /O2 /Oi /Ot /GL /Zi- /DEBUG:NONE)
+	TARGET_COMPILE_OPTIONS(bunnymark PRIVATE /O2 /Oi /Ot /GL)
 	TARGET_LINK_OPTIONS(bunnymark PRIVATE /LTCG /DEBUG:NONE)  # Link-time code generation
 ELSE()
 	# GCC/Clang: Maximum optimization, no debug symbols, aggressive optimizations
@@ -1377,6 +1440,10 @@ IF( WIN32 )
 	TARGET_LINK_LIBRARIES ( bunnymark pdg-lib imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt ${OPENGL_LIBRARIES})
 ENDIF( WIN32 )
 
+IF( NOT MACOSX AND NOT WIN32 )
+	TARGET_LINK_LIBRARIES(bunnymark pdg-lib)
+ENDIF()
+
 # ============================================================================
 # PDG PDGMark Performance Test Executable
 # ============================================================================
@@ -1388,6 +1455,10 @@ ADD_EXECUTABLE(pdgmark WIN32 MACOSX_BUNDLE
 	sys/unix/main-unix.cpp
 )
 
+TARGET_INCLUDE_DIRECTORIES(pdgmark SYSTEM PRIVATE
+	${PDG_SOURCE_DIR}/deps/SpriterPlusPlus/nlohmann-json
+)
+
 # PDGMark uses the pure C++ pdg-lib (no JavaScript bindings)
 TARGET_COMPILE_DEFINITIONS(pdgmark PRIVATE 
 	PDG_INTERNAL_LIB=1
@@ -1395,11 +1466,10 @@ TARGET_COMPILE_DEFINITIONS(pdgmark PRIVATE
 	NDEBUG  # Disable assertions for performance testing
 )
 
-# Force Release build optimizations for performance tests
-# Remove debug symbols and add full optimizations regardless of build type
+# Force Release build optimizations for performance tests.
 IF(MSVC)
 	# MSVC: Maximum optimization, inline expansion, favor speed
-	TARGET_COMPILE_OPTIONS(pdgmark PRIVATE /O2 /Oi /Ot /GL /Zi- /DEBUG:NONE)
+	TARGET_COMPILE_OPTIONS(pdgmark PRIVATE /O2 /Oi /Ot /GL)
 	TARGET_LINK_OPTIONS(pdgmark PRIVATE /LTCG /DEBUG:NONE)  # Link-time code generation
 ELSE()
 	# GCC/Clang: Maximum optimization, no debug symbols, aggressive optimizations
@@ -1477,6 +1547,10 @@ IF( WIN32 )
 	SET_PROPERTY(TARGET pdgmark PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	TARGET_LINK_LIBRARIES ( pdgmark pdg-lib imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt ${OPENGL_LIBRARIES})
 ENDIF( WIN32 ) 
+
+IF( NOT MACOSX AND NOT WIN32 )
+	TARGET_LINK_LIBRARIES(pdgmark pdg-lib)
+ENDIF()
 
 # ============================================================================
 # PDG C++ App Framework Control Gallery
@@ -1763,7 +1837,7 @@ IF(BUILD_TESTING)
         TARGET_INCLUDE_DIRECTORIES(${target} PRIVATE ${PDG_SOURCE_DIR}/src/inc)
         IF(mode STREQUAL "debug")
             IF(MSVC)
-                TARGET_COMPILE_OPTIONS(${target} PRIVATE /UNDEBUG)
+                TARGET_COMPILE_DEFINITIONS(${target} PRIVATE PDG_TEST_FORCE_DEBUG_DIAGNOSTICS)
             ELSE()
                 TARGET_COMPILE_OPTIONS(${target} PRIVATE -UNDEBUG)
             ENDIF()
@@ -1776,20 +1850,14 @@ IF(BUILD_TESTING)
             -DTEST_PROGRAM=$<TARGET_FILE:${target}> -DEXPECT_DEBUG=${expect_debug}
             -P ${PDG_SOURCE_DIR}/test/cxx/check-nophysics-diagnostics.cmake)
     ENDFOREACH()
-    # These standalone contracts deliberately do not link Chipmunk. Override
-    # the directory-wide feature define even when the engine enables it.
+    # These standalone contracts deliberately do not link Chipmunk.
     FOREACH(target pdg-physicsbody-tests pdg-nophysics-debug-tests pdg-nophysics-release-tests)
-        IF(MSVC)
-            TARGET_COMPILE_OPTIONS(${target} PRIVATE /UPDG_USE_CHIPMUNK_PHYSICS)
-        ELSE()
-            TARGET_COMPILE_OPTIONS(${target} PRIVATE -UPDG_USE_CHIPMUNK_PHYSICS)
-        ENDIF()
+        SET_PROPERTY(TARGET ${target} PROPERTY PDG_DISABLE_CHIPMUNK_PHYSICS ON)
     ENDFOREACH()
 ENDIF()
 
 IF(BUILD_TESTING)
     # Exercise the portable decoder even on macOS, whose engine uses ImageIO.
-    FIND_PACKAGE(ZLIB REQUIRED)
     CONFIGURE_FILE(${PDG_SOURCE_DIR}/deps/png/scripts/pnglibconf.h.prebuilt
         ${CMAKE_CURRENT_BINARY_DIR}/png-config/pnglibconf.h COPYONLY)
     ADD_EXECUTABLE(pdg-png-decoder-tests
@@ -1799,14 +1867,20 @@ IF(BUILD_TESTING)
     TARGET_INCLUDE_DIRECTORIES(pdg-png-decoder-tests PRIVATE
         ${PDG_SOURCE_DIR}/src/inc ${PDG_SOURCE_DIR}/src/sys ${PDG_SOURCE_DIR}/deps
         ${CMAKE_CURRENT_BINARY_DIR}/png-config)
-    TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE ZLIB::ZLIB)
     IF(MSVC)
-        TARGET_COMPILE_OPTIONS(pdg-png-decoder-tests PRIVATE /UPDG_USE_LIBJPEG)
+        TARGET_INCLUDE_DIRECTORIES(pdg-png-decoder-tests PRIVATE
+            ${PDG_SOURCE_DIR}/deps/node/deps/zlib)
+        TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE
+            ${PDG_NODE_RELEASE_DIR}/lib/zlib.lib
+            ${PDG_NODE_RELEASE_DIR}/lib/zlib_adler32_simd.lib
+            ${PDG_NODE_RELEASE_DIR}/lib/zlib_data_chunk_simd.lib)
         SET_PROPERTY(TARGET pdg-png-decoder-tests PROPERTY
             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     ELSE()
-        TARGET_COMPILE_OPTIONS(pdg-png-decoder-tests PRIVATE -UPDG_USE_LIBJPEG)
+        FIND_PACKAGE(ZLIB REQUIRED)
+        TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE ZLIB::ZLIB)
     ENDIF()
+    SET_PROPERTY(TARGET pdg-png-decoder-tests PROPERTY PDG_DISABLE_LIBJPEG ON)
     ADD_TEST(NAME pdg-png-decoder COMMAND pdg-png-decoder-tests)
 ENDIF()
 

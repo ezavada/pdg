@@ -64,6 +64,10 @@ if(NOT MSVC)
   if(FORCE_CLANG_BLOCKS)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fblocks")
   endif()
+  if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    # GCC 13 loses the positive count invariant in BBTree partition recursion.
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-alloc-size-larger-than")
+  endif()
   # Enable infinity support to avoid warnings about INFINITY macro
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-finite-math-only")
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math -fno-finite-math-only") # extend release-profile with fast-math

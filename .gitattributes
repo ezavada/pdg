@@ -1,10 +1,17 @@
 # Keep Unix entry-point scripts executable under WSL/macOS.
 *.sh text eol=lf
 /configure text eol=lf
-/test/client text eol=lf
-/test/node text eol=lf
+/test/debug text eol=lf
+/test/demo text eol=lf
+/test/emscripten/perf_emscripten text eol=lf
+/test/emscripten/ui_emscripten text eol=lf
+/test/ios text eol=lf
+/test/unit text eol=lf
 /test/ui text eol=lf
 /test/lanes text eol=lf
+/test/mvc text eol=lf
+/test/perf text eol=lf
+/test/rigs text eol=lf
 /test/tools text eol=lf
 /deps/node/configure text eol=lf
 /tools/node-pdg/Makefile text eol=lf

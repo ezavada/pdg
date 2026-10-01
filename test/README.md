@@ -10,7 +10,7 @@ wrapper, and a `.ps1` PowerShell launcher (`.bat` forwards to PowerShell).
 | `test/ui` | Visual regression pages; finite smoke checks with `--automated` | Graphics-capable native, browser, or iOS runtime |
 | `test/demo` | Interactive demos; finite smoke checks with `--automated` | Graphics-capable native, browser, or iOS runtime |
 | `test/rigs` | Real rig assets and controller integration | Matching Node runtime and built PDG addon with Spriter/Chipmunk |
-| `test/tools` | Harness, build-cache and performance-tooling checks | Node; a C++17 compiler for `perf-measurement`; no PDG build |
+| `test/tools` | Harness, build-cache and performance-tooling checks | Node; a C++20 compiler for `perf-measurement`; no PDG build |
 | `test/perf` | Rendering scores and fixed-work benchmarks | Selected native, Node, or browser build; graphics for rendering marks |
 
 Use `--list` to get the current selection names. Source and fixture locations:
@@ -109,7 +109,7 @@ builds and installs `pdg-js-test`. Choose `--iphone`, `--ipad`, or set
 without a keyboard. `--no-build` skips the web/iOS build when deliberately
 testing existing binaries. iOS still installs the existing app bundle.
 
-Browser and iOS supported spec lists live in `lib/client_spec_catalog.js` and
+Browser and iOS supported spec lists live in `lib/unit_spec_catalog.js` and
 are shared by execution and `--list`. C++ tests run on the native host, not in
 the Node plugin, browser, or iOS JavaScript harness.
 
@@ -139,7 +139,7 @@ and are explicitly skipped on native Windows. `wasm-release` requires GNU Make,
 CMake and Python 3; it verifies Release/Debug ZIPs and checksums without Emscripten.
 `perf-runner` also reports its Windows exclusions for fake-executable subprocess
 checks. The `perf-measurement` suite compiles a temporary
-C++17 executable using `CXX` (a single executable name/path), or `c++` on POSIX and
+C++20 executable using `CXX` (a single executable name/path), or `c++` on POSIX and
 `cl.exe` on Windows. For MSVC, run from a developer shell. A missing compiler or
 other required tool fails its suite; the remaining suites still run.
 
@@ -214,7 +214,7 @@ orchestrator, with a `.bat` entry point on Windows:
 
 ```sh
 ./test/lanes list
-./test/lanes run macos-headless-node
+./test/lanes run macos-unit-node
 ./test/lanes run emscripten-browser
 ```
 
