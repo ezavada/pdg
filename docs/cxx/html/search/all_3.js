@@ -64,7 +64,7 @@ var searchData=
   ['distance_61',['distance',['../classpdg_1_1_point_t.html#a677820093b88a1a9c1b4096a5a5246a4',1,'pdg::PointT']]],
   ['distancesquared_62',['distanceSquared',['../classpdg_1_1_point_t.html#ab7356d66097dda8cf4d59c2123434660',1,'pdg::PointT']]],
   ['donewaitingfornetwork_63',['doneWaitingForNetwork',['../classpdg_1_1_network_manager.html#a04ddcca4721466919cbdde6b3535fb0b',1,'pdg::NetworkManager']]],
-  ['dontaddsprites_64',['dontAddSprites',['../classpdg_1_1_sprite_layer.html#aad4c2bd5a5257ead7e31e51edc5cdc99adca714bda3a385885506609d1bcb3a70',1,'pdg::SpriteLayer']]],
+  ['dontaddsprites_64',['dontAddSprites',['../classpdg_1_1_sprite_layer.html#a822c1d39c2926925dff959370dd233bdadca714bda3a385885506609d1bcb3a70',1,'pdg::SpriteLayer']]],
   ['dotproduct_65',['dotProduct',['../classpdg_1_1_vector_t.html#a4bb795f55684b4f1bbe3724924ed21a9',1,'pdg::VectorT']]],
   ['draw_66',['draw',['../classpdg_1_1_drawing.html#a0985373f563be1b71c691c15ebe70ee3',1,'pdg::Drawing::draw(Port *port)=0'],['../classpdg_1_1_drawing.html#a433a1ef0e94194f67e72a31a1a1e14d3',1,'pdg::Drawing::draw(Port *port, const Rect &amp;rect)=0'],['../classpdg_1_1_drawing.html#af8e80dd225971c22c0aa9a82733bee2a',1,'pdg::Drawing::draw(Port *port, const Quad &amp;quad)=0'],['../classpdg_1_1_drawing.html#a95999d2e65bb71325a99072e7514e592',1,'pdg::Drawing::draw(Port *port, const RotatedRect &amp;rr)=0'],['../classpdg_1_1_i_sprite_draw_helper.html#a3e48d3295fa50997d7aafa96f773b88b',1,'pdg::ISpriteDrawHelper::draw()']]],
   ['drawable_67',['drawable',['../structpdg_1_1_animation_drawing_submission.html#a68d8deb33fcfe3d6f8e11b489171c82a',1,'pdg::AnimationDrawingSubmission']]],

@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.0</span>
+   &#160;<span id="projectnumber">v1.1.1</span>
    </div>
   </td>
  </tr>
@@ -457,7 +457,7 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a42dcd608f3d636c975afbfe6fcfa6dca" id="r_a42dcd608f3d636c975afbfe6fcfa6dca"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a42dcd608f3d636c975afbfe6fcfa6dca">assignAttributes</a> (const <a class="el" href="classpdg_1_1_attributes.html#a2ee6f3658c1eec6d46c09c2494ace6a2">Attributes</a> &amp;attributes) override</td></tr>
 <tr class="memitem:a24ce12427b6727860d474d44f245f625" id="r_a24ce12427b6727860d474d44f245f625"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a24ce12427b6727860d474d44f245f625">setTransformImpl</a> (const glm::mat3 &amp;matrix) override</td></tr>
 <tr class="memitem:a8fbff358048afab5ac6481cffb78938b" id="r_a8fbff358048afab5ac6481cffb78938b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a8fbff358048afab5ac6481cffb78938b">cancelScheduleImpl</a> () override</td></tr>
-<tr class="memitem:ab06245e161a0a3be77df0043020a37d8" id="r_ab06245e161a0a3be77df0043020a37d8"><td class="memItemLeft"><a class="el" href="#addce10af85dfd4e03aad36548764b7e4">AnimatedAttributesBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ab06245e161a0a3be77df0043020a37d8">composeTransform</a> (const glm::mat3 &amp;matrix, <a class="el" href="classpdg_1_1_attributes.html#acf1825327b410e41e177022019bece90">TransformOperation</a> operation) override</td></tr>
+<tr class="memitem:a004f492976ac42fc5fb29d2f8b2d0c0e" id="r_a004f492976ac42fc5fb29d2f8b2d0c0e"><td class="memItemLeft"><a class="el" href="classpdg_1_1_attributes.html#a2ee6f3658c1eec6d46c09c2494ace6a2">Attributes</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a004f492976ac42fc5fb29d2f8b2d0c0e">composeTransform</a> (const glm::mat3 &amp;matrix, <a class="el" href="classpdg_1_1_attributes.html#acf1825327b410e41e177022019bece90">TransformOperation</a> operation) override</td></tr>
 <tr class="memitem:a214fe035b1bc0976d648e82668bcac57" id="r_a214fe035b1bc0976d648e82668bcac57"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a214fe035b1bc0976d648e82668bcac57">validateAttributeEdit</a> () const override</td></tr>
 <tr class="memitem:a97ad13bdf05b79cae4d3c6ef841ab42e" id="r_a97ad13bdf05b79cae4d3c6ef841ab42e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a97ad13bdf05b79cae4d3c6ef841ab42e">attributeChanging</a> (<a class="el" href="classpdg_1_1_attributes.html#a985977d91599f30f74b99b53a6c009e9">AttributeChannel</a> channel) override</td></tr>
 <tr class="memitem:a915bf1b80a62efeba2bf1805c3d0f1b6" id="r_a915bf1b80a62efeba2bf1805c3d0f1b6"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a915bf1b80a62efeba2bf1805c3d0f1b6">animationValuesChanged</a> () override</td></tr>
@@ -555,7 +555,7 @@ Additional Inherited Members</h2></td></tr>
 <p>The default constructor starts with default <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> and a logical size of 1 by 1. The <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> overload seeds an immediate sample; no animation tracks are copied.</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a1faa0d18b0d1f276239eb0133ab7e047" title="Advance appearance and transform animation.">animate()</a>, <a class="el" href="#a779a4adae4e1e7164adfeb0294c8949e" title="Animate solid fill color.">changeFillColor()</a> </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="#ae3b591da62dcccdbf203bb806a009b28">AnimatedAttributesBase()</a>, <a class="el" href="#a80c500c61efda9b79a6e13ec485e7564">changeAmbientLight()</a>, <a class="el" href="#a779a4adae4e1e7164adfeb0294c8949e">changeFillColor()</a>, <a class="el" href="#a611f6fd213ccf2abe81ac5b0b190bebb">changeFillGradient()</a>, <a class="el" href="#a899c3901caa9939546af58a404baba59">changeFillOpacity()</a>, <a class="el" href="#ae936de068049920dddfe618b412aaa33">changeFillRadialGradient()</a>, <a class="el" href="#a3c9ea9d03c5d067ea609ae0cba0c0b63">changeFrames()</a>, <a class="el" href="#a1f832fec6e2318f721591e739d74a666">changeLightOffset()</a>, <a class="el" href="#a2b6ec1b81a295a5e25a9541bd670b98d">changeLineColor()</a>, <a class="el" href="#a608c3c7393d85695d2c93829465a9d6f">changeLineOpacity()</a>, <a class="el" href="#ace14f842748a34979eb4713571517381">changeLineThickness()</a>, <a class="el" href="#a513a6b38986330a7ab114a15c6e38d3e">changePolarOffset()</a>, <a class="el" href="#ae7e55d160ec86a2d975bd51ee8a73303">changeRoundedCorners()</a>, <a class="el" href="#a373cea56a2ef3c6951e852be222dbef8">changeSkew()</a>, <a class="el" href="#a14397cabe87c917ca1b3d6a7877a5836">changeSphereRotation()</a>, <a class="el" href="#a70dc04d02382f22a234d1d6452e0e294">changeSubsection()</a>, <a class="el" href="#ae493680034d4804ea937886ab2776845">changeTextSize()</a>, <a class="el" href="#a7df5f95c8a90f4336bf46e590d0ac980">changeTransform()</a>, <a class="el" href="#ab06245e161a0a3be77df0043020a37d8">composeTransform()</a>, and <a class="el" href="#a402e5be31bb92089c8088e6177624299">operator=()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#ae3b591da62dcccdbf203bb806a009b28">AnimatedAttributesBase()</a>, <a class="el" href="#a80c500c61efda9b79a6e13ec485e7564">changeAmbientLight()</a>, <a class="el" href="#a779a4adae4e1e7164adfeb0294c8949e">changeFillColor()</a>, <a class="el" href="#a611f6fd213ccf2abe81ac5b0b190bebb">changeFillGradient()</a>, <a class="el" href="#a899c3901caa9939546af58a404baba59">changeFillOpacity()</a>, <a class="el" href="#ae936de068049920dddfe618b412aaa33">changeFillRadialGradient()</a>, <a class="el" href="#a3c9ea9d03c5d067ea609ae0cba0c0b63">changeFrames()</a>, <a class="el" href="#a1f832fec6e2318f721591e739d74a666">changeLightOffset()</a>, <a class="el" href="#a2b6ec1b81a295a5e25a9541bd670b98d">changeLineColor()</a>, <a class="el" href="#a608c3c7393d85695d2c93829465a9d6f">changeLineOpacity()</a>, <a class="el" href="#ace14f842748a34979eb4713571517381">changeLineThickness()</a>, <a class="el" href="#a513a6b38986330a7ab114a15c6e38d3e">changePolarOffset()</a>, <a class="el" href="#ae7e55d160ec86a2d975bd51ee8a73303">changeRoundedCorners()</a>, <a class="el" href="#a373cea56a2ef3c6951e852be222dbef8">changeSkew()</a>, <a class="el" href="#a14397cabe87c917ca1b3d6a7877a5836">changeSphereRotation()</a>, <a class="el" href="#a70dc04d02382f22a234d1d6452e0e294">changeSubsection()</a>, <a class="el" href="#ae493680034d4804ea937886ab2776845">changeTextSize()</a>, <a class="el" href="#a7df5f95c8a90f4336bf46e590d0ac980">changeTransform()</a>, and <a class="el" href="#a402e5be31bb92089c8088e6177624299">operator=()</a>.</p>
 
 </div>
 </div>
@@ -1699,8 +1699,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ab06245e161a0a3be77df0043020a37d8" name="ab06245e161a0a3be77df0043020a37d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab06245e161a0a3be77df0043020a37d8">&#9670;&#160;</a></span>composeTransform()</h2>
+<a id="a004f492976ac42fc5fb29d2f8b2d0c0e" name="a004f492976ac42fc5fb29d2f8b2d0c0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a004f492976ac42fc5fb29d2f8b2d0c0e">&#9670;&#160;</a></span>composeTransform()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1709,7 +1709,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#addce10af85dfd4e03aad36548764b7e4">AnimatedAttributesBase</a> &amp; composeTransform </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_attributes.html#a2ee6f3658c1eec6d46c09c2494ace6a2">Attributes</a> &amp; composeTransform </td>
           <td>(</td>
           <td class="paramtype">const glm::mat3 &amp;</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
         </tr>
@@ -1728,7 +1728,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classpdg_1_1_attributes.html#adf7bc082de5abe8bb8e8466221d93a9d">Attributes</a>.</p>
 
-<p class="reference">References <a class="el" href="#addce10af85dfd4e03aad36548764b7e4">AnimatedAttributesBase()</a>.</p>
+<p class="reference">References <a class="el" href="classpdg_1_1_attributes.html#a2ee6f3658c1eec6d46c09c2494ace6a2">Attributes::Attributes()</a>.</p>
 
 </div>
 </div>

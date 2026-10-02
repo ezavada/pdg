@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.0</span>
+   &#160;<span id="projectnumber">v1.1.1</span>
    </div>
   </td>
  </tr>
@@ -242,9 +242,9 @@ Animation events</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Notification  </th><th class="markdownTableHeadNone">Event type and payload  </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Authored Spriter eventline crossing  </td><td class="markdownTableBodyNone"><a class="el" href="group___events.html#gga48e8fd7d649e3644c0d933153618b618acdf732508d77cbfa48c9c97673b64c2e" title="Authored Spriter trigger; payload: SpriteTriggerEventInfo (requires PDG_SPRITER_SUPPORT).">pdg::eventType_SpriteTriggerEvent</a> with <a class="el" href="structpdg_1_1_sprite_trigger_event_info.html">pdg::SpriteTriggerEventInfo</a>; enable with pdg::Sprite::enableSpriterEvents(true)  </td></tr>
+<td class="markdownTableBodyNone">Authored Spriter eventline crossing  </td><td class="markdownTableBodyNone"><a class="el" href="group___events.html#gga79e1146ce81fd3a020b67ce5f448e516acdf732508d77cbfa48c9c97673b64c2e" title="Authored Spriter trigger; payload: SpriteTriggerEventInfo (requires PDG_SPRITER_SUPPORT).">pdg::eventType_SpriteTriggerEvent</a> with <a class="el" href="structpdg_1_1_sprite_trigger_event_info.html">pdg::SpriteTriggerEventInfo</a>; enable with pdg::Sprite::enableSpriterEvents(true)  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Blend or independent transition completion  </td><td class="markdownTableBodyNone"><a class="el" href="group___events.html#gga48e8fd7d649e3644c0d933153618b618a16876c72ea552b2d455c5ebedf4d7b35">pdg::eventType_SpriteAnimate</a> with <a class="el" href="structpdg_1_1_sprite_animate_info.html">pdg::SpriteAnimateInfo</a> and action <a class="el" href="classpdg_1_1_sprite.html#ade1e3535c4ba29bc884736a2b1b48871a4377b990f31b3cc9c469e64fbf14d63d" title="blendToAnimation() or transitionToAnimation() completed; eventType_SpriteAnimate with SpriteAnimateIn...">pdg::Sprite::action_AnimationBlendComplete</a>  </td></tr>
+<td class="markdownTableBodyNone">Blend or independent transition completion  </td><td class="markdownTableBodyNone"><a class="el" href="group___events.html#gga79e1146ce81fd3a020b67ce5f448e516a16876c72ea552b2d455c5ebedf4d7b35">pdg::eventType_SpriteAnimate</a> with <a class="el" href="structpdg_1_1_sprite_animate_info.html">pdg::SpriteAnimateInfo</a> and action <a class="el" href="classpdg_1_1_sprite.html#a1ccc54142fd1dc16a4fe8430705ad559a4377b990f31b3cc9c469e64fbf14d63d" title="blendToAnimation() or transitionToAnimation() completed; eventType_SpriteAnimate with SpriteAnimateIn...">pdg::Sprite::action_AnimationBlendComplete</a>  </td></tr>
 </table>
 <p>The authored-trigger payload is listed under Events, Animation, and Sprites. Use <span class="tt">triggerName</span> to identify its authored track. <span class="tt">timeSeconds</span> is relative to clip start; <span class="tt">offsetSeconds</span> is relative to the current update. The inherited <span class="tt">action</span> field is not used to identify triggers. Subscribe to the trigger event type and inspect its authored name. Blend completion covers both <a class="el" href="classpdg_1_1_sprite.html#a20307998ac97511a1f69c8e914ca6124">pdg::Sprite::blendToAnimation()</a> and <a class="el" href="classpdg_1_1_sprite.html#abbcf1135d312a5bb01241eefc3ce15a6" title="Blend the current pose into a selected clip.">pdg::Sprite::transitionToAnimation()</a>, independently of authored-trigger enablement.</p>
 <h1 class="doxsection"><a class="anchor" id="animation_timing"></a>
