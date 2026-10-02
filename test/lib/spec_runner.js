@@ -120,20 +120,15 @@ function parseRunnerArgs(argv, specDir, fs) {
 
 function printClientHelp(platform) {
     if (platform === 'win32') {
-        console.log('Usage: test\\client [--debug] [--verbose] [testfile]\n');
+        console.log('Usage: test\\unit.ps1 [--verbose] [suite ...]\n');
     } else {
-        console.log('Usage: test/client [--debug] [--verbose] [testfile]\n');
+        console.log('Usage: test/unit [--verbose] [suite ...]\n');
     }
     console.log('Runs tests against the PDG client app\n');
     console.log('Options:');
     console.log('  -h, /?        this help message');
-    console.log('  --debug       launch the debugger');
     console.log('  --verbose     log test progress');
-    if (platform === 'win32') {
-        console.log('  [testfile]    must be spec\\{filename}.spec.js - single test to run');
-    } else {
-        console.log('  [testfile]    must be spec/{filename}.spec.js - single test to run');
-    }
+    console.log('  [suite ...]   one or more unit suite names');
 }
 
 function loadJasmineNode(repoRoot) {

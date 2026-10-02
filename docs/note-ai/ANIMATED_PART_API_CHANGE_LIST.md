@@ -230,7 +230,7 @@ references regenerate with the existing 65-warning Doxygen baseline.
   Visually inspect the browser rendering. These are local serialized-buffer
   handoffs, excluding socket/protocol overhead; update size varies with state.
 - [x] Pass native owners (29,901 assertions), headless owners (6,198), desktop
-  SpriteLayer (8 tests / 175 assertions), full browser client suite (1,276 tests /
+  SpriteLayer (8 tests / 175 assertions), full browser unit suite (1,276 tests /
   7,855 assertions), and the finite browser/native demo checks. Regenerated docs
   retain the existing 65 warnings and complete class/event Topics coverage.
 
@@ -277,9 +277,9 @@ Run instructions and scope: [Layer serialization demo](../../test/js/LAYER_SERIA
   all 1,276 browser tests (7,855 assertions). All five selected desktop CTests and
   both Spriter headless CTests pass. Four JavaScriptCore binding translation units
   pass syntax checks. Current builds introduce no compiler warnings.
-- [x] Complete the desktop GUI/client suite. The earlier null-GLFW-monitor abort
+- [x] Complete the desktop unit suite. The earlier null-GLFW-monitor abort
   is superseded by the recorded full desktop pass: 1,335 tests / 8,990 assertions.
-  See [final validation](PHYSICS_RIG_VALIDATION.md#headless-node-validation-fixes).
+  See [final validation](PHYSICS_RIG_VALIDATION.md#node-unit-validation-fixes).
 
 - [x] Regenerate C++/JavaScript HTML and JavaScript manuals with no new Doxygen
   warnings (65 existing), and verify complete class/event Topics coverage.
@@ -518,13 +518,13 @@ return retained PDG PhysicsConstraint handles, independent of Chipmunk pointers.
   recorded playback explicitly.
 
 Validation: native owner regressions; no-GUI/no-Spriter/no-Chipmunk owner/body
-contracts and benchmark; full desktop client suite; V8, browser and iOS/JSC
+contracts and benchmark; full desktop unit suite; V8, browser and iOS/JSC
 collider bindings. The benchmark also exposed redundant sibling refreshes during
 independent Part publication; leaf updates now avoid whole-host refreshes while
 parented physics and attachments retain their propagation.
 
 Contact-reuse follow-up validation: 4,154 native owner assertions; 1,302 desktop
-client tests/7,710 assertions; 25 browser specs/410 assertions; both disabled-physics
+native unit tests/7,710 assertions; 25 browser specs/410 assertions; both disabled-physics
 native suites and all five benchmark scenes. Final native/headless/browser builds
 have no compiler warnings. Doxygen retains its 65 existing warnings with none new;
 C++ and JavaScript Topics/Events coverage passes. The 2,000-body measurements keep

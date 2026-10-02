@@ -44,7 +44,7 @@ function native(options, targets = []) {
         const cacheFile = path.join(dir, 'CMakeCache.txt');
         const cache = fs.existsSync(cacheFile) ? fs.readFileSync(cacheFile, 'utf8') : '';
         const settings = {CMAKE_BUILD_TYPE:'Release', BUILD_TESTING:'ON',
-            CAN_BUILD_INTERFACES:'ON', CAN_BUILD_JSC_INTERFACES:'OFF'};
+            CAN_BUILD_INTERFACES:'OFF', CAN_BUILD_JSC_INTERFACES:'OFF'};
         // CMake's build command detects changed project inputs itself. Avoid
         // needlessly regenerating all bindings on every benchmark invocation.
         if (!Object.entries({...settings, CMAKE_HOME_DIRECTORY:root}).every(([key, value]) =>

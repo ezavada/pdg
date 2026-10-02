@@ -130,6 +130,7 @@ namespace pdg
     const fit_Width = 3;
     const fit_Inside = 4;
     const fit_Overflow = 5;
+    const fit_FillKeepProportions = 5;
     const fit_Clipped = 6;
     const fit_TileX = 7;
     const fit_TileY = 8;

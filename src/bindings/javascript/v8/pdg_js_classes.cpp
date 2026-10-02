@@ -1793,6 +1793,7 @@ void initBindings(v8::Local<v8::Object> target) {
     INIT_CONSTANT("fit_Width", fit_Width);
     INIT_CONSTANT("fit_Inside", fit_Inside);
     INIT_CONSTANT("fit_Overflow", fit_Overflow);
+    INIT_CONSTANT("fit_FillKeepProportions", fit_Overflow);
     INIT_CONSTANT("fit_Clipped", fit_Clipped);
     INIT_CONSTANT("fit_TileX", fit_TileX);
     INIT_CONSTANT("fit_TileY", fit_TileY);

@@ -5,9 +5,10 @@ void compressedAuthoredAssets() {
     const auto xml=SpriterSnapshotAsset::loadDocument(fixture.string());
     const std::string tiny="<spriter_data/>";
     auto read=[](Serializer& writer) {
+        expect(writer.getDataSize() <= std::numeric_limits<uint32>::max(), "snapshot fits in uint32");
         auto* bytes=std::malloc(writer.getDataSize());
         std::memcpy(bytes,writer.getDataPtr(),writer.getDataSize());
-        return std::make_unique<Deserializer>(bytes,writer.getDataSize());
+        return std::make_unique<Deserializer>(bytes,static_cast<uint32>(writer.getDataSize()));
     };
     for(bool tags:{false,true}) {
         auto asset=SpriterSnapshotAsset::share(new SpriterSnapshotAsset());asset->path=fixture.string();
@@ -96,6 +97,7 @@ void authoredSnapshots() {
         auto document=SpriterSnapshotAsset::loadDocument(fixture.string());
         auto offset=document.find("../earthmap2.png");document.replace(offset,std::strlen("../earthmap2.png"),"earthmap2.png");
         const auto path=directory/"arm.scml";
+        const auto pathString=path.string();
         {std::ofstream out(path);out<<document;}
 #ifdef PDG_NO_GUI
         auto* layer=createSpriteLayer(),*copy=createSpriteLayer();
@@ -105,7 +107,7 @@ void authoredSnapshots() {
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
         layer->setUseChipmunkPhysics(false);copy->setUseChipmunkPhysics(false);
 #endif
-        auto* a=layer->createSpriteFromSpriterFile(path.c_str(),"arm");auto* b=layer->createSpriteFromSpriterEntity("arm");
+        auto* a=layer->createSpriteFromSpriterFile(pathString.c_str(),"arm");auto* b=layer->createSpriteFromSpriterEntity("arm");
         expect(a&&b,"authored snapshot fixture loads two shared instances");
         expect(a->enableAnimationPose("reference")&&b->enableAnimationPose("reference"),"enable reference rigs before saving bindings");
         a->setLocation(20,30);a->setScale(2);a->seekAnimation("reach",.25);a->pauseAnimation();a->enableSpriterEvents(true);
@@ -150,8 +152,9 @@ void authoredSnapshots() {
         cleanupLayer(copy);
     }
 #ifndef PDG_NO_GUI
+    const auto fixtureString=fixture.string();
     for(int mode:{serialization_Complete,serialization_ExternalReferences})for(int transition:{0,1,2}) {
-        auto* layer=createSpriteLayer(nullptr);auto* source=layer->createSpriteFromSpriterFile(fixture.c_str(),"arm");
+        auto* layer=createSpriteLayer(nullptr);auto* source=layer->createSpriteFromSpriterFile(fixtureString.c_str(),"arm");
         expect(source->enableAnimationPose("reference"),"transition snapshot reference rig");
         if(transition==0){source->startAnimation("reference");source->blendToAnimation("reach",1);step(*source,250);}
         else {source->seekAnimation("reference",0);source->resumeAnimation();source->transitionToAnimation("reach",0,1);step(*source,250);

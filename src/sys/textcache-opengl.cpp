@@ -38,6 +38,7 @@
 #include "font-impl.h"
 
 #include <algorithm>
+#include <cstring>
 
 #define MAX_CACHED_STRING_TEXTURES 250
 

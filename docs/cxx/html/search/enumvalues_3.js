@@ -6,5 +6,5 @@ var searchData=
   ['data_5fdonothing_3',['data_DoNothing',['../namespacepdg.html#a8f4137f9127425b4cb84765380a06d5eabdcfe8206b65e44d7719ae10680d0a90',1,'pdg']]],
   ['data_5ffree_4',['data_Free',['../namespacepdg.html#a8f4137f9127425b4cb84765380a06d5eab0f59b0ec70d57532a92caee21375de1',1,'pdg']]],
   ['detail_5',['detail',['../classpdg_1_1log.html#a7362dd6fce60e092ae37b7496b83de0aa669206a26dbe6b747cfb217666013bba',1,'pdg::log']]],
-  ['dontaddsprites_6',['dontAddSprites',['../classpdg_1_1_sprite_layer.html#aad4c2bd5a5257ead7e31e51edc5cdc99adca714bda3a385885506609d1bcb3a70',1,'pdg::SpriteLayer']]]
+  ['dontaddsprites_6',['dontAddSprites',['../classpdg_1_1_sprite_layer.html#a822c1d39c2926925dff959370dd233bdadca714bda3a385885506609d1bcb3a70',1,'pdg::SpriteLayer']]]
 ];

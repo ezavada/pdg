@@ -2,8 +2,8 @@
 	"name": "pdg",
 	"type": "module",
 	"lang": "javascript",
-	"vers": "1.1.0",
-	"when": "2026-09-26",
+	"vers": "1.1.1",
+	"when": "2026-10-01",
 	"interface": [
 		{
 			"name": "all_events",
@@ -757,6 +757,12 @@
 		},
 		{
 			"name": "fit_Overflow",
+			"type": "number",
+			"readonly": true,
+			"value": 5
+		},
+		{
+			"name": "fit_FillKeepProportions",
 			"type": "number",
 			"readonly": true,
 			"value": 5

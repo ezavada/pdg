@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
-  <title>PDG CLIENT TESTS: RUNNING</title>
+  <title>PDG UNIT TESTS: RUNNING</title>
   <link rel="stylesheet" type="text/css" href="../tools/jasmine/jasmine.css">
   <style>
     #pdg-test-banner { padding: 12px 18px; background: #20252b; color: #f5f7fa; font: 16px sans-serif; }
@@ -18,11 +18,11 @@
   <ul id="pdg-load-errors"></ul>
   <pre id="pdg-result-json"></pre>
   <canvas id="pdg-canvas" width="1" height="1" hidden></canvas>
-  <script src="lib/client_spec_catalog.js"></script>
+  <script src="lib/unit_spec_catalog.js"></script>
   <script>window.Module = { canvas: document.getElementById("pdg-canvas") };</script>
   <script>
     var runner = document.createElement("script");
-    runner.src = "emscripten/emscripten_client_runner.js?_pdg_cache=" + Date.now();
+    runner.src = "emscripten/emscripten_unit_runner.js?_pdg_cache=" + Date.now();
     document.body.appendChild(runner);
   </script>
 </body>

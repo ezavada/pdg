@@ -42,15 +42,18 @@ compile-verbose:
 	node-gyp -verbose build
 
 check-dylib:
+    # Node supplies zlib for Spriter snapshot compression as well as Node/V8 APIs.
     ifeq ($(PLATFORM),Darwin)
 	    -@nm -mu $(PDG_ROOT)/node_modules/pdg/build/Release/pdg.node | grep "dynamically looked" | grep -v "__ZNK2v8" \
 		    | grep -v "__ZN4node" | grep -v "__ZN2v8" | grep -v "_ev_" | grep -v "_MOZ_Z_" | grep -v "_objc_msgSend" \
-		    | grep -v "_node_module_register"
+		    | grep -v "_node_module_register" \
+		    | awk '!/ external _(compress2|inflate|inflateEnd|inflateInit_) \(dynamically looked up\)$$/'
     else
 	    -@nm -u $(PDG_ROOT)/node_modules/pdg/build/Release/pdg.node | grep -v "@@" | grep -v "_ZNK2v8" \
 		    | grep -v "_ZN4node" | grep -v "_ZN2v8" | grep -v " ev_" | grep -v " EVP_" | grep -v " deflate" | grep -v " inflate" \
 			| grep -v "@GLIBC" | grep -v "@GCC" | grep -v "@CXXABI" \
-			| grep -v "^[ \t]*w " | grep -v "node_module_register"
+			| grep -v "^[ \t]*w " | grep -v "node_module_register" \
+			| awk '!/[[:space:]]compress2$$/'
     endif
 
 test: 

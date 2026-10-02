@@ -74,5 +74,5 @@
     // Individual specs gate capabilities unavailable in a particular runtime.
     var catalog = {web: shared, ios: shared.slice()};
     if (typeof module !== "undefined") module.exports = catalog;
-    else root.PDG_CLIENT_SPECS = catalog;
+    else root.PDG_UNIT_SPECS = catalog;
 }(typeof window !== "undefined" ? window : this));

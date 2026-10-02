@@ -31,6 +31,12 @@
 #include <optional>
 #include <string>
 
+#ifdef _WIN32
+#undef far
+#undef near
+#undef small
+#endif
+
 namespace {
 int assertions = 0;
 void expect(bool value, const std::string& message) {

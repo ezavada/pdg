@@ -1055,7 +1055,7 @@ void Sprite::deserialize(IDeserializer* deserializer) {
 				uint8 jti = deserializer->deserialize_1u();
 				[[maybe_unused]] uint32 siid = deserializer->deserialize_uint();
               #ifdef PDG_USE_CHIPMUNK_PHYSICS
-				Sprite* otherSprite;
+				Sprite* otherSprite = (mLayer) ? mLayer->findSpriteByInternalId(siid) : nullptr;
 				// get all the info about the existing constraint
 				cpConstraint* constraint = 0;
 				if (i < mNumBreakableJoints) {
@@ -1071,7 +1071,6 @@ void Sprite::deserialize(IDeserializer* deserializer) {
                 		// remove it and start over
                 		removeJoint(constraint);
                 	}
-                	otherSprite = (mLayer) ? mLayer->findSpriteByInternalId(siid) : 0;
 					if (serFlags & ser_InitialData) {
 						// FIXME: if the other sprite comes after this one in the streaming order
 						// and it doesn't exist yet, we are screwed -- we don't have any information
@@ -1417,7 +1416,8 @@ void Sprite::transitionToAnimation(const char* clip,double timeSeconds,double du
     for(AnimationBindingId id=0;id<candidate.getRig()->getBindingCount();++id)candidate.getWorldBindingTransform(id,spriterRootTransform());
     if(durationSeconds==0) {
         seekAnimation(clip,timeSeconds);mAnimationPoseAdapter->completeInstantTransition();
-        if(mLayer)mLayer->notifyAnimationAction(action_AnimationBlendComplete,this);return;
+		if(mLayer)mLayer->notifyAnimationAction(action_AnimationBlendComplete,this);
+		return;
     }
     getAnimationPose(); // Capture the current base, including an interrupted blend.
     mAnimationPoseAdapter->beginTransition(*mSpriterModel,mEntityInstance->currentAnimationName(),mEntityInstance->getCurrentTime()/1000.0,durationSeconds,mIsBlending);
@@ -1965,7 +1965,8 @@ void Sprite::disableAnimationPose() {
     mAnimationIK.clear();
     mAnimationDrawings.clear();
     mAnimationPoseAdapter.reset();
-    for (auto* part : mParts) part->unbindFromBone(); mAnimationRigSchema.reset(); mAnimationRigError.clear();
+	for (auto* part : mParts) part->unbindFromBone();
+	mAnimationRigSchema.reset(); mAnimationRigError.clear();
     mAnimationDebugDraw = animationDebug_None;
     invalidateSpriterPose(); refreshSpriterPose();
 }
@@ -4526,13 +4527,39 @@ Sprite::~Sprite() {
 }
 
 #ifdef PDG_SPRITER_SUPPORT
+namespace {
+using NamedSpriterBox = std::pair<std::string, SpriterEngine::UniversalObjectInterface*>;
+
+std::vector<NamedSpriterBox> activeSpriterBoxes(SpriterEngine::SpriterModel* model,
+        SpriterEngine::EntityInstance* entity) {
+	std::vector<NamedSpriterBox> result;
+	if (!model || !entity) return result;
+	auto* factory = dynamic_cast<PDGFileFactory*>(model->getFileFactory());
+	if (!factory) return result;
+	const auto catalog = factory->rigCatalog();
+	const auto schema = catalog->entities.find(entity->currentEntityName());
+	if (schema == catalog->entities.end()) return result;
+	auto* order = entity->getZOrder();
+	if (!order) return result;
+	for (auto* object : *order) {
+		if (!object) continue;
+		for (const auto& name : schema->second->boxNames) {
+			if (entity->getObjectInstance(name) == object) {
+				result.emplace_back(name, object);
+				break;
+			}
+		}
+	}
+	return result;
+}
+}
+
 void Sprite::calcColliderBounds() const {
 	refreshSpriterPose();
 	mColliderBounds = Rect();
 	bool haveBox = false;
-	auto* order = mEntityInstance ? mEntityInstance->getZOrder() : nullptr;
-	if (order) for (auto* obj : *order) {
-		if (!dynamic_cast<SpriterEngine::BoxInstanceInfo*>(obj)) continue;
+	for (const auto& box : activeSpriterBoxes(mSpriterModel, mEntityInstance)) {
+		auto* obj = box.second;
 		const Rect bounds = spriterBoxRect(*obj).getBounds();
 		if (!haveBox) { mColliderBounds = bounds; haveBox = true; }
 		else {
@@ -4548,20 +4575,18 @@ void Sprite::calcColliderBounds() const {
 RotatedRect Sprite::getSpriterCollisionBox(const char* boxName) const {
 	if (!mEntityInstance || !boxName) return RotatedRect();
 	refreshSpriterPose();
-	auto* obj = mEntityInstance->objectIfExistsOnCurrentFrame(boxName);
-	if (!obj && strncmp(boxName, "collision_box_", 14) == 0) {
+	const auto boxes = activeSpriterBoxes(mSpriterModel, mEntityInstance);
+	for (const auto& box : boxes) {
+		if (box.first == boxName) return spriterBoxRect(*box.second);
+	}
+	if (strncmp(boxName, "collision_box_", 14) == 0) {
 		char* end = nullptr;
 		const long index = strtol(boxName + 14, &end, 10);
-		if (end != boxName + 14 && *end == '\0' && index >= 0) {
-			auto* order = mEntityInstance->getZOrder();
-			long current = 0;
-			if (order) for (auto* item : *order) {
-				if (!dynamic_cast<SpriterEngine::BoxInstanceInfo*>(item)) continue;
-				if (current++ == index) { obj = item; break; }
-			}
-		}
+		if (end != boxName + 14 && *end == '\0' && index >= 0 &&
+				static_cast<size_t>(index) < boxes.size())
+			return spriterBoxRect(*boxes[static_cast<size_t>(index)].second);
 	}
-	return dynamic_cast<SpriterEngine::BoxInstanceInfo*>(obj) ? spriterBoxRect(*obj) : RotatedRect();
+	return RotatedRect();
 }
 
 bool Sprite::isSpriterCollisionActive(const char* boxName) const {
@@ -4571,77 +4596,18 @@ bool Sprite::isSpriterCollisionActive(const char* boxName) const {
 }
 
 int Sprite::getSpriterCollisionBoxCount() const {
-	if (!mEntityInstance) {
-		return 0;
-	}
-	
+	if (!mEntityInstance) return 0;
 	refreshSpriterPose();
-	// Get all active objects from the current frame
-	auto zOrder = mEntityInstance->getZOrder();
-	if (!zOrder) {
-		return 0;
-	}
-	
-	// Count collision boxes
-	int count = 0;
-	for (auto obj : *zOrder) {
-		if (obj && dynamic_cast<SpriterEngine::BoxInstanceInfo*>(obj)) {
-			count++;
-		}
-	}
-	
-	return count;
+	return static_cast<int>(activeSpriterBoxes(mSpriterModel, mEntityInstance).size());
 }
 
 const char* Sprite::getSpriterCollisionBoxName(int index) const {
-	if (!mEntityInstance || index < 0) {
-		return nullptr;
-	}
-	
+	if (!mEntityInstance || index < 0) return nullptr;
 	refreshSpriterPose();
-	// Get all active objects from the current frame
-	auto zOrder = mEntityInstance->getZOrder();
-	if (!zOrder) {
-		return nullptr;
-	}
-	
-	// Find collision box at the specified index
-	int currentIndex = 0;
-	for (auto obj : *zOrder) {
-		if (!obj) {
-			continue;
-		}
-		// Support box names in both GUI and non-GUI modes
-		auto boxObj = dynamic_cast<SpriterEngine::BoxInstanceInfo*>(obj);
-		if (!boxObj) {
-			continue;
-		}
-		if (currentIndex == index) {
-			// Try to return the authored box name first, but preserve a stable
-			// fallback identifier when the source file leaves the name blank.
-			auto pdgBoxObj = dynamic_cast<pdg::PDGBoxInstanceInfo*>(boxObj);
-			if (pdgBoxObj) {
-				const std::string& boxName = pdgBoxObj->getBoxName();
-				if (!boxName.empty()) {
-					return boxName.c_str();
-				}
-			}
-            if (auto* factory=mSpriterModel?dynamic_cast<PDGFileFactory*>(mSpriterModel->getFileFactory()):nullptr) {
-                const auto catalog=factory->rigCatalog();
-                const auto schema=catalog->entities.find(mEntityInstance->currentEntityName());
-                if (schema!=catalog->entities.end()) for (const auto& name:schema->second->boxNames) {
-                    if (mEntityInstance->getObjectInstance(name)!=obj) continue;
-                    if (pdgBoxObj) { pdgBoxObj->setBoxName(name);return pdgBoxObj->getBoxName().c_str(); }
-                    mFallbackCollisionBoxName=name;return mFallbackCollisionBoxName.c_str();
-                }
-            }
-			mFallbackCollisionBoxName = "collision_box_" + std::to_string(index);
-			return mFallbackCollisionBoxName.c_str();
-		}
-		currentIndex++;
-	}
-	
-	return nullptr;
+	const auto boxes = activeSpriterBoxes(mSpriterModel, mEntityInstance);
+	if (static_cast<size_t>(index) >= boxes.size()) return nullptr;
+	mFallbackCollisionBoxName = boxes[static_cast<size_t>(index)].first;
+	return mFallbackCollisionBoxName.c_str();
 }
 
 
@@ -4662,26 +4628,9 @@ bool Sprite::checkSpriterCollisionBoxPointCollision(const Point& p) {
 	}
 	
 	// Step 2: Detailed collision box check (only if point is within bounds)
-	auto zOrder = mEntityInstance->getZOrder();
-	if (!zOrder) {
-		return false;
-	}
-	
-	// Check if point is inside any collision box
-	for (auto obj : *zOrder) {
-		if (dynamic_cast<SpriterEngine::BoxInstanceInfo*>(obj)) {
-			// Check if this object has size and position (indicating it's a collision box)
-			SpriterEngine::point size = obj->getSize();
-			if (size.x > 0 && size.y > 0) {
-				
-				// Convert to PDG RotatedRect
-				RotatedRect rect = spriterBoxRect(*obj);
-				
-				if (rect.width() > 0 && rect.height() > 0 && rect.getQuad().contains(p)) {
-					return true;
-				}
-			}
-		}
+	for (const auto& box : activeSpriterBoxes(mSpriterModel, mEntityInstance)) {
+		const RotatedRect rect = spriterBoxRect(*box.second);
+		if (rect.width() > 0 && rect.height() > 0 && rect.getQuad().contains(p)) return true;
 	}
 	return false;
 }

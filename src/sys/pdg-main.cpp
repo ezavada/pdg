@@ -35,6 +35,10 @@
 
 #include "pdg/msvcfix.h" // fixes GCC too
 
+#ifdef PLATFORM_WIN32
+#include <windows.h>
+#endif
+
 #include "pdg/sys/core.h"
 #include "pdg/sys/config.h"
 #include "pdg/sys/events.h"
@@ -214,6 +218,9 @@ bool main_isPerformanceUncapped() {
         return !!(globalThis.process && globalThis.process.env &&
             globalThis.process.env.PDG_PERF_UNCAPPED === '1');
     });
+  #elif defined(PLATFORM_WIN32)
+    char value[2] = {};
+    return GetEnvironmentVariableA("PDG_PERF_UNCAPPED", value, sizeof(value)) == 1 && value[0] == '1';
   #else
     const char* value = std::getenv("PDG_PERF_UNCAPPED");
     return value && std::strcmp(value, "1") == 0;

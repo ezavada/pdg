@@ -1,5 +1,5 @@
 // -----------------------------------------------
-// node_test.js
+// js/unit_node_test.js
 //
 // Shared entry point for the headless Node-based spec suite.
 // -----------------------------------------------
@@ -13,19 +13,15 @@ if (!process.env.NODE_ENV) {
 
 function printNodeHelp(platform) {
     if (platform === 'win32') {
-        console.log('Usage: test\\node [--verbose] [testfile]\n');
+        console.log('Usage: test\\unit.ps1 --node [--verbose] [suite ...]\n');
     } else {
-        console.log('Usage: test/node [--verbose] [testfile]\n');
+        console.log('Usage: test/unit --node [--verbose] [suite ...]\n');
     }
     console.log('Runs the headless Node-based PDG spec suite.\n');
     console.log('Options:');
     console.log('  -h, /?        this help message');
     console.log('  --verbose     log test progress');
-    if (platform === 'win32') {
-        console.log('  [testfile]    must be spec\\{filename}.spec.js - single test to run');
-    } else {
-        console.log('  [testfile]    must be spec/{filename}.spec.js - single test to run');
-    }
+    console.log('  [suite ...]   one or more unit suite names');
 }
 
 var envInfo = specRunner.ensureTestEnvironment(process, fs);

@@ -158,9 +158,9 @@ void platform_initImageData(unsigned char* imageData, long imageDataLen, unsigne
 	const int channels = png_get_channels(png_ptr, info_ptr);
 	const png_size_t pitch = png_get_rowbytes(png_ptr, info_ptr);
 	if ((channels != 3 && channels != 4) || png_get_bit_depth(png_ptr, info_ptr) != 8 ||
-	    !pitch || pitch > size_t(std::numeric_limits<long>::max()) ||
-	    height > std::numeric_limits<size_t>::max() / pitch ||
-	    size_t(height) > std::numeric_limits<size_t>::max() / sizeof(png_bytep)) {
+	    !pitch || pitch > size_t((std::numeric_limits<long>::max)()) ||
+	    height > (std::numeric_limits<size_t>::max)() / pitch ||
+	    size_t(height) > (std::numeric_limits<size_t>::max)() / sizeof(png_bytep)) {
 		png_error(png_ptr, "Unsupported PNG pixel layout");
 	}
 	pixels = static_cast<unsigned char*>(std::malloc(pitch * height));

@@ -401,6 +401,10 @@ OS::exit(int errCode) {
 void 
 OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, int bytesPerLine, int hiliteStart, int hiliteCount) {
 // do a nicely formatted binary dump of buf to string
+	if (!outBuf || outBufSize <= 0) return;
+	outBuf[0] = '\0';
+	if (!inBuf || inBufSize <= 0 || bytesPerLine <= 0) return;
+
 	int hexBufLen = 3*bytesPerLine+3;  // allow 2 extra bytes for hilite
     char* hexbuf = (char*) std::malloc(hexBufLen);
     if (!hexbuf) return;
@@ -418,7 +422,6 @@ OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, i
 
     total = 0;
     p = (unsigned char *)inBuf;
-    outBuf[0] = 0;  // start with a clean buffer
 
 	const char truncMsg[22] = "<HEX DUMP TRUNCATED>";
 	int truncMsgLen = (int)std::strlen(truncMsg);
@@ -453,31 +456,36 @@ OS::binaryDump(char *outBuf, int outBufSize, const char *inBuf, int inBufSize, i
 		CHECK_PTR(ascbuf + n, ascbuf, ascBufLen);
         ascbuf[n] = '\0';
 
-		int lineLen = (int)(std::strlen(hexbuf) + std::strlen(ascbuf));
-		if (outPos + lineLen + 5 > outBufSize) {
-			if (outPos + truncMsgLen > outBufSize) {
-				offset = outBufSize - truncMsgLen - 1;
-			} else {
-				offset = outPos;
+		const bool isFinalLine = total == inBufSize;
+		if (isFinalLine && n < bytesPerLine) {
+			for (ch = n; ch < bytesPerLine; ch++) {
+				CHECK_PTR_WRITE(hexbuf + ex + ch*3, 4, hexbuf, hexBufLen); // 3 + NUL
+				std::strncpy(hexbuf + ex + ch*3, "   ", 4);
 			}
-			CHECK_PTR_WRITE(outBuf + offset, truncMsgLen + 1, outBuf, outBufSize);
-			std::strncpy(&outBuf[offset], truncMsg, outBufSize - offset - 1);
-			outBuf[outBufSize - 1] = '\0';
+		}
+
+		const size_t hexLen = std::strlen(hexbuf);
+		const size_t ascLen = std::strlen(ascbuf);
+		const size_t outputLen = hexLen + 3 + ascLen + (isFinalLine ? 0 : 1);
+		if (outputLen + 1 > static_cast<size_t>(outBufSize - outPos)) {
+			const int messageBytes = std::min(truncMsgLen, outBufSize - 1);
+			offset = std::min(outPos, outBufSize - messageBytes - 1);
+			std::memcpy(&outBuf[offset], truncMsg, messageBytes);
+			outBuf[offset + messageBytes] = '\0';
 			break; // jump out of the loop
 		}
-		if ( (n < bytesPerLine) || (total == inBufSize) ) {
-			for( ch = n; ch < bytesPerLine; ch++ ) {
-			    CHECK_PTR_WRITE(hexbuf + ex + ch*3, 4, hexbuf, hexBufLen); // 3 + NUL
-				std::strncpy( hexbuf + ex + ch*3, "   ", 4 );
-			}
-			CHECK_PTR_WRITE(&outBuf[outPos], lineLen + 4, outBuf, outBufSize); // " | " + NUL
-	        std::snprintf(&outBuf[outPos], outBufSize - outPos, "%s | %s", hexbuf, ascbuf);
-	        outPos += lineLen + 3;
-		} else {
-			CHECK_PTR_WRITE(&outBuf[outPos], lineLen + 5, outBuf, outBufSize); // " | " + "\n" + NUL
-			std::snprintf(&outBuf[outPos], outBufSize - outPos, "%s | %s\n", hexbuf, ascbuf);
-	        outPos += lineLen + 4;
-		}
+
+		CHECK_PTR_WRITE(&outBuf[outPos], outputLen + 1, outBuf, outBufSize);
+		char* output = &outBuf[outPos];
+		std::memcpy(output, hexbuf, hexLen);
+		output += hexLen;
+		std::memcpy(output, " | ", 3);
+		output += 3;
+		std::memcpy(output, ascbuf, ascLen);
+		output += ascLen;
+		if (!isFinalLine) *output++ = '\n';
+		*output = '\0';
+		outPos += static_cast<int>(outputLen);
 
     }
     std::free(hexbuf);

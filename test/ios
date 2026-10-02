@@ -14,18 +14,18 @@ LOG_FILE="$RESULT_DIR/latest.log"
 BUILD_LOG="$RESULT_DIR/build.log"
 
 usage() {
-    echo "Usage: test/ios [--iphone | --ipad] [--ui [ui-test] | --client | --headless | --non-gui | spec-name | runner-options]"
+    echo "Usage: test/ios [--iphone | --ipad] [--ui [ui-test] | --unit | --headless | --non-gui | spec-name | runner-options]"
     echo
     echo "  no arguments  build and run the interactive UI test suite"
     echo "  --iphone      use an available iPhone Simulator"
     echo "  --ipad        use an available iPad Simulator"
     echo "  --ui [name]   run all UI tests, or one UI test by catalog name"
-    echo "  --client      build and run the full client spec suite"
-    echo "  --headless    build and run the non-GUI client specs"
+    echo "  --unit        build and run the full unit spec suite"
+    echo "  --headless    build and run the non-GUI unit specs"
     echo "  --non-gui     alias for --headless"
     echo "  --no-build    install/run the existing simulator build"
     echo "  --prepare     build/install only (used by interactive page navigation)"
-    echo "  spec-name     build and run one client spec, for example: serialization"
+    echo "  spec-name     build and run one unit spec, for example: serialization"
     echo
     echo "Environment:"
     echo "  PDG_IOS_DEVICE_ID  exact simulator UDID (takes precedence over device family)"
@@ -65,7 +65,7 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
     exit 0
 fi
 
-MODE="client"
+MODE="unit"
 UI_TEST_FILTER=""
 APP_ARGS=()
 if [[ $# -eq 0 ]]; then
@@ -78,7 +78,7 @@ elif [[ "$1" == "--ui" ]]; then
         echo "Only one UI test name may follow --ui." >&2
         exit 2
     fi
-elif [[ "$1" == "--client" ]]; then
+elif [[ "$1" == "--unit" ]]; then
     shift
     APP_ARGS=("$@")
 elif [[ "$1" == "--headless" ]]; then
@@ -216,7 +216,7 @@ if [[ "$MODE" == "ui" ]]; then
     exit 0
 fi
 
-echo "Running iOS client tests..."
+echo "Running iOS unit tests..."
 set +e
 xcrun simctl launch --terminate-running-process --console-pty \
     "$DEVICE_ID" "$BUNDLE_ID" "${APP_ARGS[@]}" 2>&1 \

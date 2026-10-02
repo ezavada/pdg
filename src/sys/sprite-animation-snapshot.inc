@@ -220,7 +220,8 @@ class SpriteAnimationSnapshot {
 #endif
             }
         }
-        if(uint64_t(nested)+out.size()>UINT32_MAX)throw std::overflow_error("Imported animation record is too large");return uint32(nested+out.size());
+		if(uint64_t(nested)+out.size()>UINT32_MAX)throw std::overflow_error("Imported animation record is too large");
+		return uint32(nested+out.size());
     }
 #endif
 public:

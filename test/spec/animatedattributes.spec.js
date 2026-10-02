@@ -1,5 +1,9 @@
 require('./SpecHelper');
 describe('AnimatedAttributes', function() {
+    it('keeps the proportional fit alias mapped to overflow', function() {
+        expect(pdg.fit_FillKeepProportions).toBe(pdg.fit_Overflow);
+        expect(new pdg.Attributes().fitType(pdg.fit_FillKeepProportions).getFitType()).toBe(pdg.fit_Overflow);
+    });
     it('stores text styles without requiring a graphics backend', function() {
         const plain = new pdg.Attributes(), animated = new pdg.AnimatedAttributes();
         ['Plain', 'Bold', 'Italic', 'Underline', 'Centered', 'LeftJustified', 'RightJustified'].forEach(function(name) {

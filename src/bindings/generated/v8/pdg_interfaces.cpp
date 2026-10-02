@@ -117,7 +117,7 @@ namespace pdg
     {
         if (s_IEventHandler_InNewFromCpp) return nullptr;
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        if ((args.Length() == 1 && args[0]->IsNull()))
+        if ((args.Length() == 1 && args[0]->IsNull()) )
         {
             ScriptEventHandler* handler = new ScriptEventHandler();
             handler->addRef();
@@ -181,13 +181,13 @@ namespace pdg
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""absolute"")");
             return;
         }
-        bool absolute = (args.Length()<1) ? false : args[1 -1]->BooleanValue(isolate);;
+        bool absolute = (args.Length()<1) ? false : args[1 -1]->BooleanValue(isolate); ;
         float roll, pitch, yaw;
         OS::getDeviceOrientation(roll, pitch, yaw, absolute);
         v8::Local<v8::Object> jsOrientation = v8::Object::New(isolate);
-        (void)jsOrientation->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "roll").ToLocalChecked(), v8::Number::New(isolate, roll));
-        (void)jsOrientation->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "pitch").ToLocalChecked(), v8::Number::New(isolate, pitch));
-        (void)jsOrientation->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "yaw").ToLocalChecked(), v8::Number::New(isolate, yaw));
+        (void)jsOrientation->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "roll").ToLocalChecked() , v8::Number::New(isolate, roll) );
+        (void)jsOrientation->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "pitch").ToLocalChecked() , v8::Number::New(isolate, pitch) );
+        (void)jsOrientation->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "yaw").ToLocalChecked() , v8::Number::New(isolate, yaw) );
         { args.GetReturnValue().Set( jsOrientation ); return; };
     }
     void GetEventManager(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -224,7 +224,7 @@ namespace pdg
             return;
         }
         v8::String::Utf8Value imageName_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-        const char* imageName = *imageName_Str;;
+        const char* imageName = *imageName_Str; ;
         Image* img = self->getImage(imageName);
         if (img == NULL)
         {
@@ -232,7 +232,7 @@ namespace pdg
         }
         v8::Local<v8::Object> obj = ImageWrap::NewFromCpp(isolate, img);
 
-        (void)obj->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "name").ToLocalChecked(), v8::String::NewFromUtf8(isolate, imageName).ToLocalChecked());
+        (void)obj->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "name").ToLocalChecked() , v8::String::NewFromUtf8(isolate, imageName).ToLocalChecked() );
         { args.GetReturnValue().Set( obj ); return; };
     }
 
@@ -257,7 +257,7 @@ namespace pdg
             return;
         }
         v8::String::Utf8Value imageName_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-        const char* imageName = *imageName_Str;;
+        const char* imageName = *imageName_Str; ;
         ImageStrip* img = self->getImageStrip(imageName);
         if (img == NULL)
         {
@@ -265,7 +265,7 @@ namespace pdg
         }
         v8::Local<v8::Object> obj = ImageStripWrap::NewFromCpp(isolate, img);
 
-        (void)obj->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "name").ToLocalChecked(), v8::String::NewFromUtf8(isolate, imageName).ToLocalChecked());
+        (void)obj->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "name").ToLocalChecked() , v8::String::NewFromUtf8(isolate, imageName).ToLocalChecked() );
         { args.GetReturnValue().Set( obj ); return; };
     }
 #ifndef PDG_NO_SOUND
@@ -291,7 +291,7 @@ namespace pdg
             return;
         }
         v8::String::Utf8Value soundName_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-        const char* soundName = *soundName_Str;;
+        const char* soundName = *soundName_Str; ;
         Sound* snd = self->getSound(soundName);
         if (snd == NULL)
         {
@@ -301,7 +301,7 @@ namespace pdg
             ? SoundWrap::NewFromCpp(isolate, snd)
             : v8::Local<v8::Object>::New(isolate, snd->mSoundScriptObj);
 
-        (void)obj->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "name").ToLocalChecked(), v8::String::NewFromUtf8(isolate, soundName).ToLocalChecked() );
+        (void)obj->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "name").ToLocalChecked() , v8::String::NewFromUtf8(isolate, soundName).ToLocalChecked() );
         { args.GetReturnValue().Set( obj ); return; };
     }
 #endif
@@ -345,7 +345,7 @@ namespace pdg
     {
         if (s_ISerializable_InNewFromCpp) return nullptr;
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        if ((args.Length() == 1 && args[0]->IsNull()))
+        if ((args.Length() == 1 && args[0]->IsNull()) )
         {
             ScriptSerializable* serializable = new ScriptSerializable();
             serializable->addRef();
@@ -363,7 +363,6 @@ namespace pdg
                     [[maybe_unused]] v8::Isolate* isolate = v8::Isolate::GetCurrent();
                     s_SavedError.Reset(isolate, v8::Exception::SyntaxError( v8::String::NewFromUtf8(isolate, excpt_.str().c_str()).ToLocalChecked()));
                 };
-
             }
             v8::Local<v8::Function> getSerializedSizeFunc = v8::Local<v8::Function>::Cast(args[0]);
             v8::Local<v8::Function> serializeFunc = v8::Local<v8::Function>::Cast(args[1]);
@@ -407,8 +406,8 @@ namespace pdg
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        ISerializable* obj = V8_GetSerializable(isolate, args[0]);
-        if (!obj && !args[0]->IsNull())
+        ISerializable* obj = V8_GetSerializable(isolate, args [0]);
+        if (!obj && !args[0]->IsNull() )
         {
             std::ostringstream excpt_;
             excpt_ << "Expected a serializable object or null";
@@ -418,7 +417,7 @@ namespace pdg
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }
-            ())));
+            ()))) ;
         }
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
@@ -468,7 +467,7 @@ namespace pdg
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }
-            ())));
+            ()))) ;
         }
         args.GetReturnValue().SetUndefined();
     }
@@ -494,23 +493,23 @@ namespace pdg
         RotatedRect rotatedRect;
         Quad quad;
         Color color;
-        if (args[0]->IsString())
+        if (args[0]->IsString() )
         {
             v8::String::Utf8Value str_Str(isolate, args[0]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
-            const char* str = *str_Str;;
+            const char* str = *str_Str; ;
             dataSize = self->sizeof_str(str);
         }
-        else if (args[0]->IsBoolean())
+        else if (args[0]->IsBoolean() )
         {
             bool val = args[0]->BooleanValue(isolate);
             dataSize = self->sizeof_bool(val);
         }
-        else if (args[0]->IsNumber())
+        else if (args[0]->IsNumber() )
         {
             uint32 val = args[0]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
             dataSize = self->sizeof_uint(val);
         }
-        else if (auto isColor = v8_ValueIsColor(isolate, args[0], color); !isColor.has_value())
+        else if (auto isColor = v8_ValueIsColor(isolate, args[0], color) ; !isColor.has_value())
         {
             { args.GetReturnValue().SetNull(); return; };
         }
@@ -518,7 +517,7 @@ namespace pdg
         {
             dataSize = self->sizeof_color(color);
         }
-        else if (auto isOffset = v8_ValueIsOffset(isolate, args[0], offset); !isOffset.has_value())
+        else if (auto isOffset = v8_ValueIsOffset(isolate, args[0], offset) ; !isOffset.has_value())
         {
             { args.GetReturnValue().SetNull(); return; };
         }
@@ -526,7 +525,7 @@ namespace pdg
         {
             dataSize = self->sizeof_offset(offset);
         }
-        else if (auto isRect = v8_ValueIsRect(isolate, args[0], rect); !isRect.has_value())
+        else if (auto isRect = v8_ValueIsRect(isolate, args[0], rect) ; !isRect.has_value())
         {
             { args.GetReturnValue().SetNull(); return; };
         }
@@ -534,7 +533,7 @@ namespace pdg
         {
             dataSize = self->sizeof_rect(rect);
         }
-        else if (auto isRotatedRect = v8_ValueIsRotatedRect(isolate, args[0], rotatedRect); !isRotatedRect.has_value())
+        else if (auto isRotatedRect = v8_ValueIsRotatedRect(isolate, args[0], rotatedRect) ; !isRotatedRect.has_value())
         {
             { args.GetReturnValue().SetNull(); return; };
         }
@@ -542,7 +541,7 @@ namespace pdg
         {
             dataSize = self->sizeof_rotr(rotatedRect);
         }
-        else if (auto isQuad = v8_ValueIsQuad(isolate, args[0], quad); !isQuad.has_value())
+        else if (auto isQuad = v8_ValueIsQuad(isolate, args[0], quad) ; !isQuad.has_value())
         {
             { args.GetReturnValue().SetNull(); return; };
         }
@@ -562,7 +561,7 @@ namespace pdg
             else
             {
 
-                ISerializable* serializable = V8_GetSerializable(isolate, args[0]);
+                ISerializable* serializable = V8_GetSerializable(isolate, args [0]);
                 if (serializable)
                 {
                     SCRIPT_DEBUG_ONLY( if (self->mSerializerScriptObj.IsEmpty())
@@ -651,7 +650,6 @@ namespace pdg
                             return maybe.IsEmpty() ?
                             v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
                     }())));
-
                 }
             }
         }
@@ -681,13 +679,13 @@ namespace pdg
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
             }())));
         }
-        v8::Local<v8::Object> obj = args[1 -1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();; (void)obj;
+        v8::Local<v8::Object> obj = args[1 -1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(); ; (void)obj;
         if (!args[2 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 2, "a number (""uniqueId"")");
             return;
         }
-        unsigned long uniqueId = args[2 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked(); (void)uniqueId;
+        unsigned long uniqueId = args[2 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked() ; (void)uniqueId;
 
         args.GetReturnValue().SetUndefined();
     }
@@ -704,22 +702,21 @@ namespace pdg
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "([number int] screenNum = PRIMARY_SCREEN)" " - " "returns object with width, height, depth and maxWindowRect for specified screen").ToLocalChecked() ); return; };
         };
-
         if (args.Length() >= 1 && !args[1 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 1, "a number (""screenNum"")");
             return;
         }
-        long screenNum = (args.Length()<1) ? screenNum_PrimaryScreen : args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
+        long screenNum = (args.Length()<1) ? screenNum_PrimaryScreen : args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked(); ;
         pdg::Rect maxWindowRect;
         pdg::GraphicsManager::ScreenMode mode;
         mode = self->getCurrentScreenMode(screenNum, &maxWindowRect);
 
         v8::Local<v8::Object> jsScreenMode = v8::Object::New(isolate);
-        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "width").ToLocalChecked(),v8::Integer::New(isolate, mode.width));
-        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "height").ToLocalChecked(),v8::Integer::New(isolate, mode.height));
-        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "depth").ToLocalChecked(),v8::Integer::New(isolate, mode.bpp));
-        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "maxWindowRect").ToLocalChecked(), v8_MakeJavascriptRect(isolate, maxWindowRect));
+        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "width").ToLocalChecked() ,v8::Integer::New(isolate, mode.width) );
+        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "height").ToLocalChecked() ,v8::Integer::New(isolate, mode.height) );
+        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "depth").ToLocalChecked() ,v8::Integer::New(isolate, mode.bpp) );
+        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "maxWindowRect").ToLocalChecked() , v8_MakeJavascriptRect(isolate, maxWindowRect) );
         { args.GetReturnValue().Set( jsScreenMode ); return; };
     }
 
@@ -733,7 +730,6 @@ namespace pdg
         {
             { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "([number int] n, [number int] screenNum = PRIMARY_SCREEN)" " - " "returns object with width, height, depth and maxWindowRect for specified screen").ToLocalChecked() ); return; };
         };
-
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -750,14 +746,14 @@ namespace pdg
             v8_ThrowArgTypeException(isolate, 2, "a number (""screenNum"")");
             return;
         }
-        long screenNum = (args.Length()<2) ? screenNum_PrimaryScreen : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
+        long screenNum = (args.Length()<2) ? screenNum_PrimaryScreen : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked(); ;
         pdg::GraphicsManager::ScreenMode mode;
         mode = self->getNthSupportedScreenMode(n, screenNum);
 
         v8::Local<v8::Object> jsScreenMode = v8::Object::New(isolate);
-        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "width").ToLocalChecked(),v8::Integer::New(isolate, mode.width));
-        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "height").ToLocalChecked(),v8::Integer::New(isolate, mode.height));
-        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "depth").ToLocalChecked(),v8::Integer::New(isolate, mode.bpp));
+        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "width").ToLocalChecked() ,v8::Integer::New(isolate, mode.width) );
+        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "height").ToLocalChecked() ,v8::Integer::New(isolate, mode.height) );
+        (void)jsScreenMode->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "depth").ToLocalChecked() ,v8::Integer::New(isolate, mode.bpp) );
         { args.GetReturnValue().Set( jsScreenMode ); return; };
     }
 
@@ -808,11 +804,11 @@ namespace pdg
         { args.GetReturnValue().Set( jsInstance ); return; };
     }
 
-    IAnimationHelper* New_IAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args)
+    IAnimationHelper* New_IAnimationHelper(const v8::FunctionCallbackInfo<v8::Value>& args )
     {
         if (s_IAnimationHelper_InNewFromCpp) return nullptr;
 
-        if ((args.Length() == 1 && args[0]->IsNull()))
+        if ((args.Length() == 1 && args[0]->IsNull()) )
         {
             ScriptAnimationHelper* helper = new ScriptAnimationHelper();
             return helper;
@@ -866,7 +862,7 @@ namespace pdg
     {
         if (s_ISpriteDrawHelper_InNewFromCpp) return nullptr;
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        if ((args.Length() == 1 && args[0]->IsNull()))
+        if ((args.Length() == 1 && args[0]->IsNull()) )
         {
             ScriptSpriteDrawHelper* helper = new ScriptSpriteDrawHelper();
             return helper;
@@ -925,7 +921,7 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptGetSerializedSizeFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getSerializedSize").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getSerializedSize").ToLocalChecked()).ToChecked()) )
         {
             func = v8::Local<v8::Function>::Cast(([&]() -> v8::Local<v8::Value>
             {
@@ -935,7 +931,7 @@ namespace pdg
                     return v8::Local<v8::Object>();
                 }
                 return maybe.ToLocalChecked();
-            }()));
+            }()) );
         }
         else
         {
@@ -959,7 +955,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (resVal.IsEmpty())
         {
             return 0;
@@ -999,7 +994,7 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptSerializeFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "serialize").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "serialize").ToLocalChecked()).ToChecked()) )
         {
             func = v8::Local<v8::Function>::Cast(([&]() -> v8::Local<v8::Value>
             {
@@ -1009,7 +1004,7 @@ namespace pdg
                     return v8::Local<v8::Object>();
                 }
                 return maybe.ToLocalChecked();
-            }()));
+            }()) );
         }
         else
         {
@@ -1033,7 +1028,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (resVal.IsEmpty())
         {
             return;
@@ -1062,7 +1056,7 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptDeserializeFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "deserialize").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "deserialize").ToLocalChecked()).ToChecked()) )
         {
             func = v8::Local<v8::Function>::Cast(([&]() -> v8::Local<v8::Value>
             {
@@ -1072,7 +1066,7 @@ namespace pdg
                     return v8::Local<v8::Object>();
                 }
                 return maybe.ToLocalChecked();
-            }()));
+            }()) );
         }
         else
         {
@@ -1096,7 +1090,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (resVal.IsEmpty())
         {
             return;
@@ -1115,7 +1108,7 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptGetMyClassTagFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getMyClassTag").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getMyClassTag").ToLocalChecked()).ToChecked()) )
         {
             func = v8::Local<v8::Function>::Cast(([&]() -> v8::Local<v8::Value>
             {
@@ -1125,7 +1118,7 @@ namespace pdg
                     return v8::Local<v8::Object>();
                 }
                 return maybe.ToLocalChecked();
-            }()));
+            }()) );
         }
         else
         {
@@ -1149,7 +1142,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (resVal.IsEmpty())
         {
             return 0;
@@ -1189,7 +1181,6 @@ namespace pdg
         {
             case pdg::eventType_Startup:
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "startupReason").ToLocalChecked(), v8::Integer::New(isolate, static_cast<StartupInfo*>(inEventData)->startupReason)).ToChecked();
-
                 break;
             case pdg::eventType_Shutdown:
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "exitReason").ToLocalChecked(), v8::Integer::New(isolate, static_cast<ShutdownInfo*>(inEventData)->exitReason)).ToChecked();
@@ -1204,7 +1195,6 @@ namespace pdg
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "id").ToLocalChecked(), v8::Integer::New(isolate, static_cast<TimerInfo*>(inEventData)->id)).ToChecked();
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "millisec").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, static_cast<TimerInfo*>(inEventData)->millisec)).ToChecked();
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "msElapsed").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, static_cast<TimerInfo*>(inEventData)->msElapsed)).ToChecked();
-
                 break;
 #ifndef PDG_NO_GUI
             case pdg::eventType_KeyDown:
@@ -1225,7 +1215,6 @@ namespace pdg
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touchType").ToLocalChecked(), v8::Integer::New(isolate, static_cast<SpriteTouchInfo*>(inEventData)->touchType)).ToChecked();
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touchedSprite").ToLocalChecked(), obj1_).ToChecked();
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "inLayer").ToLocalChecked(), obj2_).ToChecked();
-
             case pdg::eventType_MouseDown:
             case pdg::eventType_MouseUp:
             case pdg::eventType_MouseMove:
@@ -1421,7 +1410,6 @@ namespace pdg
                     (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "inLayer").ToLocalChecked(), v8::Null(isolate)).ToChecked();
                 }
                 (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action").ToLocalChecked(), v8::Integer::New(isolate, sai->action)).ToChecked();
-
                 if (inEventType==pdg::eventType_SpriteAnimate && static_cast<SpriteAnimateInfo*>(inEventData)->action==Sprite::action_AnimationPhysicsRecoveryComplete)
                 {
                     const auto* recovery=static_cast<SpriteAnimationPhysicsRecoveryInfo*>(inEventData);
@@ -1510,7 +1498,6 @@ namespace pdg
                     std::cout << __func__<<":"<< 954 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
-
         v8::Local<v8::Value> resVal;
         v8::Local<v8::Function> func;
         v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, mIEventHandlerScriptObj);
@@ -1518,9 +1505,9 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptHandlerFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToChecked()) )
         {
-            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToLocalChecked());
+            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked() ).ToLocalChecked());
         }
         else
         {
@@ -1544,7 +1531,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (try_catch.HasCaught())
         {
             DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling event Handler!!" ); )
@@ -1638,7 +1624,6 @@ namespace pdg
         obj2_ = v8::Local<v8::Object>::New(isolate, animateInfo->inLayer->mSpriteLayerScriptObj);
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "actingSprite").ToLocalChecked(), obj1_).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "inLayer").ToLocalChecked(), obj2_).ToChecked();
-
         v8::Local<v8::Value> argv[1];
         argv[0] = v8::Local<v8::Value>::New(isolate, jsEvent);
 
@@ -1679,7 +1664,6 @@ namespace pdg
                     std::cout << __func__<<":"<< 1069 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
-
         v8::Local<v8::Value> resVal;
         v8::Local<v8::Function> func;
         v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, mIEventHandlerScriptObj);
@@ -1687,9 +1671,9 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptHandlerFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToChecked()) )
         {
-            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToLocalChecked());
+            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked() ).ToLocalChecked());
         }
         else
         {
@@ -1713,7 +1697,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (try_catch.HasCaught())
         {
             DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling event Handler!!" ); )
@@ -1768,12 +1751,10 @@ namespace pdg
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "emitter").ToLocalChecked(), v8::Local<v8::Object>::New(isolate, emitter->mEventEmitterScriptObj)).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType").ToLocalChecked(), v8::Integer::New(isolate, inEventType)).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touchType").ToLocalChecked(), v8::Integer::New(isolate, touchInfo->touchType)).ToChecked();
-
         obj1_ = v8::Local<v8::Object>::New(isolate, touchInfo->touchedSprite->mSpriteScriptObj);
         obj2_ = v8::Local<v8::Object>::New(isolate, touchInfo->inLayer->mSpriteLayerScriptObj);
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touchedSprite").ToLocalChecked(), obj1_).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "inLayer").ToLocalChecked(), obj2_).ToChecked();
-
         v8::Local<v8::Value> argv[1];
         argv[0] = v8::Local<v8::Value>::New(isolate, jsEvent);
 
@@ -1814,7 +1795,6 @@ namespace pdg
                     std::cout << __func__<<":"<< 1151 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
-
         v8::Local<v8::Value> resVal;
         v8::Local<v8::Function> func;
         v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, mIEventHandlerScriptObj);
@@ -1822,9 +1802,9 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptHandlerFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToChecked()) )
         {
-            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToLocalChecked());
+            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked() ).ToLocalChecked());
         }
         else
         {
@@ -1848,7 +1828,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (try_catch.HasCaught())
         {
             DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling event Handler!!" ); )
@@ -1903,11 +1882,9 @@ namespace pdg
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "emitter").ToLocalChecked(), v8::Local<v8::Object>::New(isolate, emitter->mEventEmitterScriptObj)).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType").ToLocalChecked(), v8::Integer::New(isolate, inEventType)).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action").ToLocalChecked(), v8::Integer::New(isolate, layerInfo->action)).ToChecked();
-
         obj1_ = v8::Local<v8::Object>::New(isolate, layerInfo->actingLayer->mSpriteLayerScriptObj);
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "actingLayer").ToLocalChecked(), obj1_).ToChecked();
         (void)jsEvent->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "millisec").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, layerInfo->millisec)).ToChecked();
-
         v8::Local<v8::Value> argv[1];
         argv[0] = v8::Local<v8::Value>::New(isolate, jsEvent);
 
@@ -1948,7 +1925,6 @@ namespace pdg
                     std::cout << __func__<<":"<< 1232 << " - JS Object (""this->mIEventHandlerScriptObj""|" << *((void**)&(this->mIEventHandlerScriptObj)) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
-
         v8::Local<v8::Value> resVal;
         v8::Local<v8::Function> func;
         v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, mIEventHandlerScriptObj);
@@ -1956,9 +1932,9 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptHandlerFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToChecked()) )
         {
-            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked()).ToLocalChecked());
+            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "handleEvent").ToLocalChecked() ).ToLocalChecked());
         }
         else
         {
@@ -1982,7 +1958,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (try_catch.HasCaught())
         {
             DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling event Handler!!" ); )
@@ -2015,7 +1990,7 @@ namespace pdg
         if (mScriptAnimateFunc.IsEmpty()) return;
         auto* isolate = v8::Isolate::GetCurrent();
         const auto wrapper = v8::Local<v8::Object>::New(isolate, mIAnimationHelperScriptObj);
-        wrapper->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked(),
+        wrapper->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked() ,
             v8::Local<v8::Function>::New(isolate, mScriptAnimateFunc),
             static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontEnum | v8::DontDelete)).Check();
         mScriptAnimateFunc.Reset();
@@ -2049,7 +2024,7 @@ namespace pdg
             else AnimatedBaseWrap::NewFromCpp(isolate, what);
         }
         argv[0] = v8::Local<v8::Object>::New(isolate, what->mAnimatedScriptObj);
-        argv[1] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, deltaSeconds));
+        argv[1] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, deltaSeconds) );
 
         SCRIPT_DEBUG_ONLY( if (what->mAnimatedScriptObj.IsEmpty())
         {
@@ -2125,17 +2100,16 @@ namespace pdg
                     std::cout << __func__<<":"<< 1316 << " - JS Object (""this->mIAnimationHelperScriptObj""|" << *((void**)&(this->mIAnimationHelperScriptObj)) << "): " << objName<<" - wraps C++ ""IAnimationHelper"" ("<<(void*)obj<<")\n";
             }
         } );
-
         v8::Local<v8::Value> resVal;
         v8::Local<v8::Function> func;
         v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, this->mIAnimationHelperScriptObj);
-        if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked()).ToChecked()))
+        if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked()).ToChecked()) )
         {
-            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked()).ToLocalChecked());
+            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_pdgAnimationCallback").ToLocalChecked() ).ToLocalChecked());
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate").ToLocalChecked()).ToChecked()) )
         {
-            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate").ToLocalChecked()).ToLocalChecked());
+            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate").ToLocalChecked() ).ToLocalChecked());
         }
         else
         {
@@ -2159,7 +2133,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (try_catch.HasCaught())
         {
             DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling Animation Helper!!" ); )
@@ -2307,7 +2280,6 @@ namespace pdg
                     std::cout << __func__<<":"<< 1376 << " - JS Object (""this->mISpriteDrawHelperScriptObj""|" << *((void**)&(this->mISpriteDrawHelperScriptObj)) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
             }
         } );
-
         v8::Local<v8::Value> resVal;
         v8::Local<v8::Function> func;
         v8::Local<v8::Object> obj_ = v8::Local<v8::Object>::New(isolate, this->mISpriteDrawHelperScriptObj);
@@ -2315,9 +2287,9 @@ namespace pdg
         {
             func = v8::Local<v8::Function>::New(isolate, mScriptDrawFunc);
         }
-        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "draw").ToLocalChecked()).ToChecked()))
+        else if ((!obj_->IsNull() && obj_->Has(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "draw").ToLocalChecked()).ToChecked()) )
         {
-            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "draw").ToLocalChecked()).ToLocalChecked());
+            func = v8::Local<v8::Function>::Cast(obj_->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "draw").ToLocalChecked() ).ToLocalChecked());
         }
         else
         {
@@ -2341,7 +2313,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (try_catch.HasCaught())
         {
             DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling Sprite Draw Helper!!" ); )
@@ -2410,10 +2381,10 @@ namespace pdg
         v8::TryCatch try_catch(isolate);
 
         v8::Local<v8::Value> argv[4];
-        argv[0] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, ut));
-        argv[1] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, b));
-        argv[2] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, c));
-        argv[3] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, ud));
+        argv[0] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, ut) );
+        argv[1] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, b) );
+        argv[2] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, c) );
+        argv[3] = v8::Local<v8::Value>::New(isolate, v8::Number::New(isolate, ud) );
         v8::Local<v8::Function> easingfunc_ = v8::Local<v8::Function>::New(isolate, s_CustomScriptEasing[which]);
 
         v8::Local<v8::Value> resVal = ([&]() -> v8::Local<v8::Value>
@@ -2429,7 +2400,6 @@ namespace pdg
             }
             return maybe.ToLocalChecked();
         }());
-
         if (try_catch.HasCaught())
         {
             DEBUG_ONLY( OS::_DOUT( "Script Fatal Exception calling Easing Function!!" ); )
@@ -2468,7 +2438,7 @@ namespace pdg
             v8_ThrowArgTypeException(isolate, 1, "a function (""easingFunc"")");
             return;
         }
-        v8::Local<v8::Function> easingFunc = v8::Local<v8::Function>::Cast(args[1 -1]);;
+        v8::Local<v8::Function> easingFunc = v8::Local<v8::Function>::Cast(args[1 -1]); ;
         v8::Local<v8::Function> jsEasingFunc = v8::Local<v8::Function>::New(isolate, easingFunc);
         if (sNumScriptEasings >= MAX_CUSTOM_EASINGS)
         {
@@ -2537,93 +2507,92 @@ namespace pdg
 
         s_BindingTarget.Reset(isolate, target);
 
-        MemBlockWrap::Init(isolate, target);;
-        FileManagerWrap::Init(isolate, target);;
-        LogManagerWrap::Init(isolate, target);;
-        ConfigManagerWrap::Init(isolate, target);;
-        ResourceManagerWrap::Init(isolate, target);;
-        SerializerWrap::Init(isolate, target);;
-        DeserializerWrap::Init(isolate, target);;
-        ISerializableWrap::Init(isolate, target);;
-        IEventHandlerWrap::Init(isolate, target);;
-        EventEmitterWrap::Init(isolate, target);;
-        EventManagerWrap::Init(isolate, target);;
-        TimerManagerWrap::Init(isolate, target);;
-        IAnimationHelperWrap::Init(isolate, target);;
-        AnimatedBaseWrap::Init(isolate, target);;
-        PartWrap::Init(isolate, target);;
-        ParticleWrap::Init(isolate, target);;
-        ParticleEmitterWrap::Init(isolate, target);;
-        PhysicsBodyWrap::Init(isolate, target);;
-        ColliderWrap::Init(isolate, target);;
-        PhysicsConstraintWrap::Init(isolate, target);;
+        MemBlockWrap::Init(isolate, target); ;
+        FileManagerWrap::Init(isolate, target); ;
+        LogManagerWrap::Init(isolate, target); ;
+        ConfigManagerWrap::Init(isolate, target); ;
+        ResourceManagerWrap::Init(isolate, target); ;
+        SerializerWrap::Init(isolate, target); ;
+        DeserializerWrap::Init(isolate, target); ;
+        ISerializableWrap::Init(isolate, target); ;
+        IEventHandlerWrap::Init(isolate, target); ;
+        EventEmitterWrap::Init(isolate, target); ;
+        EventManagerWrap::Init(isolate, target); ;
+        TimerManagerWrap::Init(isolate, target); ;
+        IAnimationHelperWrap::Init(isolate, target); ;
+        AnimatedBaseWrap::Init(isolate, target); ;
+        PartWrap::Init(isolate, target); ;
+        ParticleWrap::Init(isolate, target); ;
+        ParticleEmitterWrap::Init(isolate, target); ;
+        PhysicsBodyWrap::Init(isolate, target); ;
+        ColliderWrap::Init(isolate, target); ;
+        PhysicsConstraintWrap::Init(isolate, target); ;
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-        cpArbiterWrap::Init(isolate, target);;
-        cpConstraintWrap::Init(isolate, target);;
-        cpSpaceWrap::Init(isolate, target);;
+        cpArbiterWrap::Init(isolate, target); ;
+        cpConstraintWrap::Init(isolate, target); ;
+        cpSpaceWrap::Init(isolate, target); ;
 #endif
 #ifndef PDG_NO_GUI
-        ISpriteDrawHelperWrap::Init(isolate, target);;
+        ISpriteDrawHelperWrap::Init(isolate, target); ;
 #endif
-        SpriteWrap::Init(isolate, target);;
-        SpriteLayerWrap::Init(isolate, target);;
-        TileLayerWrap::Init(isolate, target);;
-        ImageWrap::Init(isolate, target);;
-        ImageStripWrap::Init(isolate, target);;
-        SplineWrap::Init(isolate, target);;
-        PolygonWrap::Init(isolate, target);;
-        AttributesWrap::Init(isolate, target);;
-        AnimatedAttributesBaseWrap::Init(isolate, target);;
-        ElementRefWrap::Init(isolate, target);;
-        DrawingWrap::Init(isolate, target);;
+        SpriteWrap::Init(isolate, target); ;
+        SpriteLayerWrap::Init(isolate, target); ;
+        TileLayerWrap::Init(isolate, target); ;
+        ImageWrap::Init(isolate, target); ;
+        ImageStripWrap::Init(isolate, target); ;
+        SplineWrap::Init(isolate, target); ;
+        PolygonWrap::Init(isolate, target); ;
+        AttributesWrap::Init(isolate, target); ;
+        AnimatedAttributesBaseWrap::Init(isolate, target); ;
+        ElementRefWrap::Init(isolate, target); ;
+        DrawingWrap::Init(isolate, target); ;
 #ifndef PDG_NO_GUI
-        FontWrap::Init(isolate, target);;
-        PortWrap::Init(isolate, target);;
-        GraphicsManagerWrap::Init(isolate, target);;
+        FontWrap::Init(isolate, target); ;
+        PortWrap::Init(isolate, target); ;
+        GraphicsManagerWrap::Init(isolate, target); ;
 #endif
 #ifndef PDG_NO_SOUND
-        SoundWrap::Init(isolate, target);;
-        SoundManagerWrap::Init(isolate, target);;
+        SoundWrap::Init(isolate, target); ;
+        SoundManagerWrap::Init(isolate, target); ;
 #endif
 
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_idle").ToLocalChecked(), v8::FunctionTemplate::New(isolate, Idle)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_run").ToLocalChecked(), v8::FunctionTemplate::New(isolate, Run)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_quit").ToLocalChecked(), v8::FunctionTemplate::New(isolate, Quit)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_isQuitting").ToLocalChecked(), v8::FunctionTemplate::New(isolate, IsQuitting)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_finishedScriptSetup").ToLocalChecked(), v8::FunctionTemplate::New(isolate, FinishedScriptSetup)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_idle").ToLocalChecked(), v8::FunctionTemplate::New(isolate, Idle)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_run").ToLocalChecked(), v8::FunctionTemplate::New(isolate, Run)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_quit").ToLocalChecked(), v8::FunctionTemplate::New(isolate, Quit)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_isQuitting").ToLocalChecked(), v8::FunctionTemplate::New(isolate, IsQuitting)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "_finishedScriptSetup").ToLocalChecked(), v8::FunctionTemplate::New(isolate, FinishedScriptSetup)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rand").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GameCriticalRandom)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "srand").ToLocalChecked(), v8::FunctionTemplate::New(isolate, Srand)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rand").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GameCriticalRandom)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "srand").ToLocalChecked(), v8::FunctionTemplate::New(isolate, Srand)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "setSerializationDebugMode").ToLocalChecked(), v8::FunctionTemplate::New(isolate, SetSerializationDebugMode)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "setSerializationDebugMode").ToLocalChecked(), v8::FunctionTemplate::New(isolate, SetSerializationDebugMode)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "registerEasingFunction").ToLocalChecked(), v8::FunctionTemplate::New(isolate, RegisterEasingFunction)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "registerEasingFunction").ToLocalChecked(), v8::FunctionTemplate::New(isolate, RegisterEasingFunction)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getFileManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetFileManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getLogManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetLogManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getConfigManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetConfigManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getResourceManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetResourceManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getEventManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetEventManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getTimerManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetTimerManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "registerSerializableClass").ToLocalChecked(), v8::FunctionTemplate::New(isolate, RegisterSerializableClass)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getFileManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetFileManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getLogManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetLogManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getConfigManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetConfigManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getResourceManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetResourceManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getEventManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetEventManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getTimerManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetTimerManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "registerSerializableClass").ToLocalChecked(), v8::FunctionTemplate::New(isolate, RegisterSerializableClass)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 
 #ifndef PDG_NO_GUI
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getGraphicsManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetGraphicsManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getGraphicsManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetGraphicsManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 #endif
 #ifndef PDG_NO_SOUND
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getSoundManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetSoundManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "getSoundManager").ToLocalChecked(), v8::FunctionTemplate::New(isolate, GetSoundManager)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 #endif
 
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "createSpriteLayer").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CreateSpriteLayer)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "createSpriteLayer").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CreateSpriteLayer)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 #ifdef PDG_SPRITER_SUPPORT
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "createSpriteLayerFromSpriterFile").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CreateSpriteLayerFromSpriterFile)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "createSpriteLayerFromSpriterFile").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CreateSpriteLayerFromSpriterFile)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 #endif
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "cleanupLayer").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CleanupLayer)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "createTileLayer").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CreateTileLayer)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
-        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "createDrawing").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CreateDrawing)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked();;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "cleanupLayer").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CleanupLayer)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "createTileLayer").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CreateTileLayer)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
+        target->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "createDrawing").ToLocalChecked(), v8::FunctionTemplate::New(isolate, CreateDrawing)->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()).ToChecked(); ;
 
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "all_events").ToLocalChecked(), v8::Integer::New(isolate, all_events), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_Shutdown").ToLocalChecked(), v8::Integer::New(isolate, eventType_Shutdown), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_Timer").ToLocalChecked(), v8::Integer::New(isolate, eventType_Timer), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_KeyDown").ToLocalChecked(), v8::Integer::New(isolate, eventType_KeyDown), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2654,11 +2623,9 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SpriteBreak").ToLocalChecked(), v8::Integer::New(isolate, eventType_SpriteBreak), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_SoundEvent").ToLocalChecked(), v8::Integer::New(isolate, eventType_SoundEvent), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "eventType_PortDraw").ToLocalChecked(), v8::Integer::New(isolate, eventType_PortDraw), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "soundEvent_DonePlaying").ToLocalChecked(), v8::Integer::New(isolate, soundEvent_DonePlaying), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "soundEvent_Looping").ToLocalChecked(), v8::Integer::New(isolate, soundEvent_Looping), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "soundEvent_FailedToPlay").ToLocalChecked(), v8::Integer::New(isolate, soundEvent_FailedToPlay), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "key_Break").ToLocalChecked(), v8::Integer::New(isolate, key_Break), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "key_Home").ToLocalChecked(), v8::Integer::New(isolate, key_Home), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "key_End").ToLocalChecked(), v8::Integer::New(isolate, key_End), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2694,7 +2661,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "key_UpArrow").ToLocalChecked(), v8::Integer::New(isolate, key_UpArrow), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "key_DownArrow").ToLocalChecked(), v8::Integer::New(isolate, key_DownArrow), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "key_FirstPrintable").ToLocalChecked(), v8::Integer::New(isolate, key_FirstPrintable), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "keyCode_LeftShift").ToLocalChecked(), v8::Integer::New(isolate, keyCode_LeftShift), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "keyCode_RightShift").ToLocalChecked(), v8::Integer::New(isolate, keyCode_RightShift), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "keyCode_LeftControl").ToLocalChecked(), v8::Integer::New(isolate, keyCode_LeftControl), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2707,14 +2673,12 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "keyCode_Control").ToLocalChecked(), v8::Integer::New(isolate, keyCode_Control), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "keyCode_Alt").ToLocalChecked(), v8::Integer::New(isolate, keyCode_Alt), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "keyCode_Meta").ToLocalChecked(), v8::Integer::New(isolate, keyCode_Meta), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "screenPos_Normal").ToLocalChecked(), v8::Integer::New(isolate, screenPos_Normal), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "screenPos_Rotated180").ToLocalChecked(), v8::Integer::New(isolate, screenPos_Rotated180), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "screenPos_Rotated90Clockwise").ToLocalChecked(), v8::Integer::New(isolate, screenPos_Rotated90Clockwise), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "screenPos_Rotated90CounterClockwise").ToLocalChecked(), v8::Integer::New(isolate, screenPos_Rotated90CounterClockwise), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "screenPos_FaceUp").ToLocalChecked(), v8::Integer::New(isolate, screenPos_FaceUp), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "screenPos_FaceDown").ToLocalChecked(), v8::Integer::New(isolate, screenPos_FaceDown), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_Plain").ToLocalChecked(), v8::Integer::New(isolate, textStyle_Plain), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_Bold").ToLocalChecked(), v8::Integer::New(isolate, textStyle_Bold), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_Italic").ToLocalChecked(), v8::Integer::New(isolate, textStyle_Italic), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2722,7 +2686,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_Centered").ToLocalChecked(), v8::Integer::New(isolate, textStyle_Centered), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_LeftJustified").ToLocalChecked(), v8::Integer::New(isolate, textStyle_LeftJustified), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "textStyle_RightJustified").ToLocalChecked(), v8::Integer::New(isolate, textStyle_RightJustified), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "lineStyle_Auto").ToLocalChecked(), v8::Integer::New(isolate, lineStyle_Auto), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "lineStyle_None").ToLocalChecked(), v8::Integer::New(isolate, lineStyle_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "lineStyle_Solid").ToLocalChecked(), v8::Integer::New(isolate, lineStyle_Solid), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2730,14 +2693,12 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "lineStyle_Dotted").ToLocalChecked(), v8::Integer::New(isolate, lineStyle_Dotted), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "lineStyle_DashDot").ToLocalChecked(), v8::Integer::New(isolate, lineStyle_DashDot), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "lineStyle_DashDotDot").ToLocalChecked(), v8::Integer::New(isolate, lineStyle_DashDotDot), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "blendMode_Normal").ToLocalChecked(), v8::Integer::New(isolate, blendMode_Normal), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "blendMode_Additive").ToLocalChecked(), v8::Integer::New(isolate, blendMode_Additive), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "blendMode_Multiply").ToLocalChecked(), v8::Integer::New(isolate, blendMode_Multiply), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "blendMode_Screen").ToLocalChecked(), v8::Integer::New(isolate, blendMode_Screen), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "blendMode_Darken").ToLocalChecked(), v8::Integer::New(isolate, blendMode_Darken), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "blendMode_Lighten").ToLocalChecked(), v8::Integer::New(isolate, blendMode_Lighten), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "type_Line").ToLocalChecked(), v8::Integer::New(isolate, type_Line), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "type_Spline").ToLocalChecked(), v8::Integer::New(isolate, type_Spline), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "type_Arc").ToLocalChecked(), v8::Integer::New(isolate, type_Arc), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2748,28 +2709,25 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "type_Image").ToLocalChecked(), v8::Integer::New(isolate, type_Image), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "type_ImageStrip").ToLocalChecked(), v8::Integer::New(isolate, type_ImageStrip), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "type_Drawing").ToLocalChecked(), v8::Integer::New(isolate, type_Drawing), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "gradientType_None").ToLocalChecked(), v8::Integer::New(isolate, gradientType_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "gradientType_Linear").ToLocalChecked(), v8::Integer::New(isolate, gradientType_Linear), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "gradientType_Radial").ToLocalChecked(), v8::Integer::New(isolate, gradientType_Radial), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_None").ToLocalChecked(), v8::Integer::New(isolate, fit_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_Fill").ToLocalChecked(), v8::Integer::New(isolate, fit_Fill), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_Height").ToLocalChecked(), v8::Integer::New(isolate, fit_Height), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_Width").ToLocalChecked(), v8::Integer::New(isolate, fit_Width), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_Inside").ToLocalChecked(), v8::Integer::New(isolate, fit_Inside), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_Overflow").ToLocalChecked(), v8::Integer::New(isolate, fit_Overflow), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
+        target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_FillKeepProportions").ToLocalChecked(), v8::Integer::New(isolate, fit_Overflow), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_Clipped").ToLocalChecked(), v8::Integer::New(isolate, fit_Clipped), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_TileX").ToLocalChecked(), v8::Integer::New(isolate, fit_TileX), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_TileY").ToLocalChecked(), v8::Integer::New(isolate, fit_TileY), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "fit_Tile").ToLocalChecked(), v8::Integer::New(isolate, fit_Tile), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "init_CreateUniqueNewFile").ToLocalChecked(), v8::Integer::New(isolate, LogManager::init_CreateUniqueNewFile), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "init_OverwriteExisting").ToLocalChecked(), v8::Integer::New(isolate, LogManager::init_OverwriteExisting), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "init_AppendToExisting").ToLocalChecked(), v8::Integer::New(isolate, LogManager::init_AppendToExisting), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "init_StdOut").ToLocalChecked(), v8::Integer::New(isolate, LogManager::init_StdOut), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "init_StdErr").ToLocalChecked(), v8::Integer::New(isolate, LogManager::init_StdErr), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partId_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, partId_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "boneId_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, boneId_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "physicsBody_None").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, physicsBody_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2796,7 +2754,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Ratchet").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Ratchet), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Gear").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Gear), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "constraint_Motor").ToLocalChecked(), v8::Integer::NewFromUnsigned(isolate, constraint_Motor), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partSpace_Local").ToLocalChecked(), v8::Integer::New(isolate, partSpace_Local), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partSpace_Sprite").ToLocalChecked(), v8::Integer::New(isolate, partSpace_Sprite), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "partSpace_World").ToLocalChecked(), v8::Integer::New(isolate, partSpace_World), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2806,19 +2763,15 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rotationDirection_Shortest").ToLocalChecked(), v8::Integer::New(isolate, rotationDirection_Shortest), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rotationDirection_Clockwise").ToLocalChecked(), v8::Integer::New(isolate, rotationDirection_Clockwise), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "rotationDirection_CounterClockwise").ToLocalChecked(), v8::Integer::New(isolate, rotationDirection_CounterClockwise), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate_StartToEnd").ToLocalChecked(), v8::Integer::New(isolate, Sprite::animate_StartToEnd), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate_EndToStart").ToLocalChecked(), v8::Integer::New(isolate, Sprite::animate_EndToStart), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate_Unidirectional").ToLocalChecked(), v8::Integer::New(isolate, Sprite::animate_Unidirectional), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate_Bidirectional").ToLocalChecked(), v8::Integer::New(isolate, Sprite::animate_Bidirectional), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate_NoLooping").ToLocalChecked(), v8::Integer::New(isolate, Sprite::animate_NoLooping), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animate_Looping").ToLocalChecked(), v8::Integer::New(isolate, Sprite::animate_Looping), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "start_FromFirstFrame").ToLocalChecked(), v8::Integer::New(isolate, Sprite::start_FromFirstFrame), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "start_FromLastFrame").ToLocalChecked(), v8::Integer::New(isolate, Sprite::start_FromLastFrame), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "all_Frames").ToLocalChecked(), v8::Integer::New(isolate, Sprite::all_Frames), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_CollideSprite").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_CollideSprite), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_CollideWall").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_CollideWall), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_Offscreen").ToLocalChecked(), v8::Integer::New(isolate, Sprite::action_Offscreen), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2847,7 +2800,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touch_MouseDown").ToLocalChecked(), v8::Integer::New(isolate, Sprite::touch_MouseDown), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touch_MouseUp").ToLocalChecked(), v8::Integer::New(isolate, Sprite::touch_MouseUp), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "touch_MouseClick").ToLocalChecked(), v8::Integer::New(isolate, Sprite::touch_MouseClick), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_None").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_None), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_Point").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_Point), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_BoundingBox").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_BoundingBox), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2855,7 +2807,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_AlphaChannel").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_AlphaChannel), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_SpriterCollisionBox").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_SpriterCollisionBox), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "collide_Last").ToLocalChecked(), v8::Integer::New(isolate, Sprite::collide_Last), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
 #ifdef PDG_SPRITER_SUPPORT
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationSpace_Local").ToLocalChecked(), v8::Integer::New(isolate, animationSpace_Local), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "animationSpace_Rig").ToLocalChecked(), v8::Integer::New(isolate, animationSpace_Rig), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2903,7 +2854,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_ZoomComplete").ToLocalChecked(), v8::Integer::New(isolate, SpriteLayer::action_ZoomComplete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_LayerFadeInComplete").ToLocalChecked(), v8::Integer::New(isolate, SpriteLayer::action_FadeInComplete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "action_LayerFadeOutComplete").ToLocalChecked(), v8::Integer::New(isolate, SpriteLayer::action_FadeOutComplete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "facing_North").ToLocalChecked(), v8::Integer::New(isolate, TileLayer::facing_North), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "facing_East").ToLocalChecked(), v8::Integer::New(isolate, TileLayer::facing_East), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "facing_South").ToLocalChecked(), v8::Integer::New(isolate, TileLayer::facing_South), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2914,11 +2864,9 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "flipped_Vertical").ToLocalChecked(), v8::Integer::New(isolate, TileLayer::flipped_Vertical), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "flipped_Both").ToLocalChecked(), v8::Integer::New(isolate, TileLayer::flipped_Both), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "flipped_Ignore").ToLocalChecked(), v8::Integer::New(isolate, TileLayer::flipped_Ignore), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "timer_OneShot").ToLocalChecked(), v8::Boolean::New(isolate, timer_OneShot), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "timer_Repeating").ToLocalChecked(), v8::Boolean::New(isolate, timer_Repeating), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "timer_Never").ToLocalChecked(), v8::Integer::New(isolate, timer_Never), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "linearTween").ToLocalChecked(), v8::Integer::New(isolate, EasingFuncRef::linearTween), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "easeInQuad").ToLocalChecked(), v8::Integer::New(isolate, EasingFuncRef::easeInQuad), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "easeOutQuad").ToLocalChecked(), v8::Integer::New(isolate, EasingFuncRef::easeOutQuad), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2947,7 +2895,6 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "easeInBack").ToLocalChecked(), v8::Integer::New(isolate, EasingFuncRef::easeInBack), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "easeOutBack").ToLocalChecked(), v8::Integer::New(isolate, EasingFuncRef::easeOutBack), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "easeInOutBack").ToLocalChecked(), v8::Integer::New(isolate, EasingFuncRef::easeInOutBack), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "ser_Positions").ToLocalChecked(), v8::Integer::New(isolate, ser_Positions), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "ser_ZOrder").ToLocalChecked(), v8::Integer::New(isolate, ser_ZOrder), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "ser_Sizes").ToLocalChecked(), v8::Integer::New(isolate, ser_Sizes), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
@@ -2966,18 +2913,16 @@ namespace pdg
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "ser_Full").ToLocalChecked(), v8::Integer::New(isolate, ser_Full), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "serialization_Complete").ToLocalChecked(), v8::Integer::New(isolate, serialization_Complete), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "serialization_ExternalReferences").ToLocalChecked(), v8::Integer::New(isolate, serialization_ExternalReferences), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "spline_Hermite").ToLocalChecked(), v8::Integer::New(isolate, 1), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "spline_Cardinal").ToLocalChecked(), v8::Integer::New(isolate, 2), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "spline_UniformB").ToLocalChecked(), v8::Integer::New(isolate, 3), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "spline_CubicBezier").ToLocalChecked(), v8::Integer::New(isolate, 4), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "spline_TCB").ToLocalChecked(), v8::Integer::New(isolate, 5), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
         target->DefineOwnProperty(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "spline_NaturalCubic").ToLocalChecked(), v8::Integer::New(isolate, 6), static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete)).ToChecked();
-
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-        cpArbiterWrap::Init(isolate, target);;
-        cpConstraintWrap::Init(isolate, target);;
-        cpSpaceWrap::Init(isolate, target);;
+        cpArbiterWrap::Init(isolate, target); ;
+        cpConstraintWrap::Init(isolate, target); ;
+        cpSpaceWrap::Init(isolate, target); ;
 #endif
     }
 

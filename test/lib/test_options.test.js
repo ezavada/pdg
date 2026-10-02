@@ -22,9 +22,9 @@ assert.deepStrictEqual(visualPages(parse('ui', ['compositing'])).map(p => p.id),
 assert.strictEqual(visualPages(parse('demo', [])).length, 7);
 assert.strictEqual(visualPages(parse('ui', [])).length, 38);
 const allSpecs = fs.readdirSync(path.resolve(__dirname, '../spec')).filter(n => /\.spec\.js$/.test(n)).map(n => n.slice(0, -8)).sort();
-const clients = require('./client_spec_catalog');
-assert.deepStrictEqual(clients.web.slice().sort(), allSpecs, 'Browser suite catalog is stale');
-assert.deepStrictEqual(clients.ios.slice().sort(), allSpecs, 'iOS suite catalog is stale');
+const units = require('./unit_spec_catalog');
+assert.deepStrictEqual(units.web.slice().sort(), allSpecs, 'Browser suite catalog is stale');
+assert.deepStrictEqual(units.ios.slice().sort(), allSpecs, 'iOS suite catalog is stale');
 catalog.forEach(entry => assert(fs.existsSync(path.resolve(__dirname, entry.workingDir === 'repo' ? '../..' : '..', entry.scriptPath)), entry.id));
 const specRunner = require('./spec_runner');
 const config = specRunner.parseRunnerArgs(['pdg','color','point'], path.resolve(__dirname,'../spec'), fs);

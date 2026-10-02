@@ -94,7 +94,7 @@ AnimationRig::AnimationRig(std::vector<AnimationBone> bones, std::vector<Animati
     // Stable breadth-first topological order: input IDs need not be parent-first.
     for (size_t index = 0; index < mEvaluationOrder.size(); ++index) {
         const auto& next = children[mEvaluationOrder[index]];
-        mEvaluationOrder.insert(mEvaluationOrder.end(), next.begin(), next.end());
+        for (AnimationBoneId child : next) mEvaluationOrder.push_back(child);
     }
     if (mEvaluationOrder.size() != mBones.size()) throw std::invalid_argument("Animation rig contains a parent cycle");
     for (AnimationBindingId id = 0; id < mBindings.size(); ++id) {

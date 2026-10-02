@@ -763,11 +763,11 @@ TileLayer::~TileLayer()
 {
 	if (mTileData) {
 		std::free(mTileData);
-		mTileData = (uint8*)0xDEADBEEF;
+		mTileData = nullptr;
 	}
 	if (mTiles) {
 		mTiles->release();
-		mTiles = (Image*)0xDEADBEEF;
+		mTiles = nullptr;
 	}
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	CleanupTileLayerScriptObject(mTileLayerScriptObj);

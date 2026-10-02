@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 #include <type_traits>
 #include <filesystem>
@@ -27,6 +28,12 @@
 #include <chrono>
 #include <new>
 #include "image-impl.h"
+
+#ifdef _WIN32
+#undef far
+#undef near
+#undef small
+#endif
 
 namespace {
 static_assert(std::is_same_v<decltype(std::declval<pdg::Sprite&>().setLocation(1, 2).moveBy(1, 2, .5).andThen()), pdg::Sprite&>);
@@ -54,8 +61,9 @@ void step(pdg::Sprite& sprite, unsigned milliseconds) {
 uint32 snapshotBits(float value) { uint32 bits;std::memcpy(&bits,&value,sizeof(bits));return bits; }
 uint64 snapshotBits(double value) { uint64 bits;std::memcpy(&bits,&value,sizeof(bits));return bits; }
 std::unique_ptr<pdg::Deserializer> snapshotReader(pdg::Serializer& writer) {
+    if (writer.getDataSize() > std::numeric_limits<uint32>::max()) throw std::length_error("snapshot exceeds Deserializer limit");
     auto* bytes=std::malloc(writer.getDataSize());std::memcpy(bytes,writer.getDataPtr(),writer.getDataSize());
-    return std::make_unique<pdg::Deserializer>(bytes,writer.getDataSize());
+    return std::make_unique<pdg::Deserializer>(bytes,static_cast<uint32>(writer.getDataSize()));
 }
 struct SnapshotTestWriter : pdg::Serializer {
     std::function<void(uint8&)> onByte;
