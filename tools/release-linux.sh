@@ -107,8 +107,8 @@ cmake -S "$PDG_ROOT" -B "$BUILD_DIR" \
 
 cmake --build "$PLATFORM_BUILD_DIR/glfw" --config Release --parallel
 cmake --build "$PLATFORM_BUILD_DIR/chipmunk" --config Release --parallel
-cmake --build "$BUILD_DIR" --config Release \
-    --target pdg pdg-app-view-utils-tests pdg-app-framework-tests --parallel
+# Build every configured test executable before running the full CTest suite.
+cmake --build "$BUILD_DIR" --config Release --parallel
 
 PDG_EXE="$BUILD_DIR/src/pdg"
 if [[ ! -x "$PDG_EXE" ]]; then

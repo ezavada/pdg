@@ -1877,6 +1877,9 @@ IF(BUILD_TESTING)
             ${PDG_NODE_RELEASE_DIR}/lib/zlib_data_chunk_simd.lib)
         SET_PROPERTY(TARGET pdg-png-decoder-tests PROPERTY
             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    ELSEIF(NOT MACOSX AND PDG_NODE_STATIC_ZLIB_LIBS)
+        # Node splits zlib across archives, including ARM64 SIMD implementations.
+        TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE ${PDG_NODE_STATIC_ZLIB_LIBS})
     ELSE()
         FIND_PACKAGE(ZLIB REQUIRED)
         TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE ZLIB::ZLIB)
