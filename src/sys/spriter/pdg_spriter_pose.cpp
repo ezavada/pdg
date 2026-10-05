@@ -353,7 +353,8 @@ double SpriterPoseAdapter::normalizedTime(SpriterEngine::EntityInstance& entity,
     auto* clip=animation(entity,schema.entityIndex,clipName);const double duration=clip->length()/1000.0;
     require(std::isfinite(duration) && duration>0,"Animation duration must be positive");
     double value=clip->looping()?std::fmod(seconds,duration):std::clamp(seconds,0.0,duration);
-    if(value<0)value+=duration;return value;
+    if(value<0)value+=duration;
+    return value;
 }
 
 AnimationPose SpriterPoseAdapter::sample(SpriterEngine::SpriterModel& model, const SpriterRigSchema& schema,

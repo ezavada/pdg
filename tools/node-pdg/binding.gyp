@@ -254,7 +254,11 @@
           'cflags': [ '-Wno-cast-function-type-mismatch' ],
         }],
         [ 'OS!="win" and clang==0', {
-          'cflags': [ '-Wno-cast-function-type' ],
+          'cflags': [
+            '-Wno-cast-function-type',
+            '-Wno-type-limits',
+            '-Wno-alloc-size-larger-than',
+          ],
         }],
         [ 'OS=="linux"', {
           'sources!': [ 'deps/chipmunk/src/cpHastySpace.c' ],
@@ -424,7 +428,22 @@
       },
       'conditions': [
          [ 'OS=="linux"', {
+             'defines': [ '_POSIX_C_SOURCE=200809L' ],
              'sources': ['<@(png_files)', '<@(linux_files)'],
+           }
+         ],
+         [ 'OS=="linux" and clang==0', {
+             # Generated V8 bindings and bundled portability sources retain
+             # legacy patterns that GCC diagnoses more aggressively than the
+             # main CMake build. Keep those suppressions local to this addon.
+             'cflags': [
+               '-Wno-comment',
+               '-Wno-implicit-fallthrough',
+               '-Wno-maybe-uninitialized',
+               '-Wno-stringop-truncation',
+               '-Wno-unused-result',
+             ],
+             'cflags_cc': [ '-Wno-overloaded-virtual' ],
            }
          ],
          [ 'OS=="mac"', {

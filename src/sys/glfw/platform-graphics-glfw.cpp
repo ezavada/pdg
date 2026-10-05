@@ -75,6 +75,7 @@ extern HWND gMainHWND;
 HDC graphics_getPortDC(Port* port) {
 	if (!port) return NULL;
 	PortImpl* portimpl = dynamic_cast<PortImpl*>(port);
+	if (portimpl && portimpl->mOffscreen) portimpl = portimpl->mOffscreen->contextPort;
 	if (!portimpl || !portimpl->mPlatformWindowRef) return NULL;
 	GLFWwindow* window = static_cast<GLFWwindow*>(portimpl->mPlatformWindowRef);
 	HWND hwnd = glfwGetWin32Window(window);

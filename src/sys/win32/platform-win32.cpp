@@ -173,7 +173,9 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 
 #ifdef PDG_NODE_MODULE
 
-  	// node modules just use the working directory for data and resources
+	// Node modules resolve application-relative files from the launch directory,
+	// matching the other platforms and Node's process.cwd().
+    pdg::os_setApplicationDirectory(stdWorkingDir);
     pdg::os_setApplicationDataDirectory(stdWorkingDir);
     pdg::os_setApplicationResourceDirectory(stdWorkingDir);    // hold this in a global so it can be accessed by OS statics
 

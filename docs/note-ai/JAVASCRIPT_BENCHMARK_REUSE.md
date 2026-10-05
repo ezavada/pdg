@@ -170,7 +170,7 @@ only 2.6%, too small for a strong speedup claim from one run. An intermediate
 implementation that reset a matrix before composing rotation measured 41.259 ms
 in the browser; using the absolute-angle API avoids that conversion overhead.
 
-Validation: 1,436 client tests, 1,288 Node tests, 1,372 browser tests, all 16 CTest
+Validation: 1,436 native unit tests, 1,288 Node unit tests, 1,372 browser tests, all 16 CTest
 suites, the performance tooling checks and all three affected PDGMark runs passed.
 [Fresh baseline](../../artifacts/test-results/darwin/pdgmark-reuse/before/) and
 [polygon validation](../../artifacts/test-results/darwin/pdgmark-reuse/01-polygons-animated/)

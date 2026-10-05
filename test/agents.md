@@ -5,9 +5,9 @@ This file applies to `test`.
 ## Test Layout
 
 - `test/spec` contains the main Jasmine-based behavioral spec suite.
-- `test/lib/spec_runner.js` is the shared runner helper used by both client and headless entry points.
-- `test/js/client_test.js` is the GUI/client-oriented spec entry.
-- `test/js/node_test.js` is the headless Node-oriented spec entry.
+- `test/lib/spec_runner.js` is the shared runner helper used by the native and Node unit entry points.
+- `test/js/unit_test.js` is the native unit-spec entry.
+- `test/js/unit_node_test.js` is the Node unit-spec entry.
 - `test/cxx` contains native C++ tests.
 - `test/rig_tests` contains asset/controller integration checks, run with `test/rigs`.
 - `test/lib` contains shared harnesses, tooling checks (`test/tools`), and build-support payloads.
@@ -19,7 +19,7 @@ This file applies to `test`.
 ## Editing Guidance
 
 - Prefer adding or updating the narrowest test that proves the changed behavior.
-- If you change a public API or runtime contract, update both GUI/client and headless coverage when the behavior exists in both modes.
+- If you change a public API or runtime contract, update both native and Node coverage when the behavior exists in both modes.
 - Keep shared runner behavior centralized in `test/lib/spec_runner.js` rather than duplicating path or environment logic.
 - Treat `test/perf_tests` baselines as performance artifacts, not routine correctness fixtures.
 - Treat large asset trees and licensed sample packs conservatively. Do not rename, reformat, or churn them unless the task truly requires it.
@@ -27,12 +27,12 @@ This file applies to `test`.
 ## Runtime Expectations
 
 - The test runners create artifacts under `artifacts/test-results/...` via `PDG_TEST_*` environment variables.
-- GUI-side tests may rely on `PortDraw` events and an actual PDG client runtime.
-- Headless Node tests should stay usable without GUI dependencies.
+- GUI-side tests may rely on `PortDraw` events and a graphics-capable PDG runtime.
+- Node unit tests should stay usable without GUI dependencies.
 
 ## Verification
 
-- For GUI/client specs, use the client entry path under `test`.
+- For native specs, use `test/unit` or the equivalent platform wrapper.
 - For headless behavior, use `test/unit --node` or the equivalent platform wrapper.
 - For native changes, update or run the relevant files in `test/cxx`.
 - When fixing regressions, add coverage to `test/spec`, `test/cxx`, or the relevant `test/rig_tests` suite.

@@ -1,9 +1,9 @@
-// Jasmine client-spec adapter for the standalone JavaScriptCore iOS runtime.
+// Jasmine unit-spec adapter for the standalone JavaScriptCore iOS runtime.
 // This intentionally uses only bundled JavaScript and does not depend on Node.
 
 var path = require('path');
 
-var clientSpecs = require('./client_spec_catalog').ios;
+var unitSpecs = require('./unit_spec_catalog').ios;
 
 var nonGuiSpecs = [
     'color', 'configmanager', 'eventemitter', 'eventmanager', 'filemanager',
@@ -28,7 +28,7 @@ function installJasmineGlobals(repoRoot) {
 function selectSpecs(runConfig, processObj) {
     if (runConfig.requestedTarget) {
         return {
-            name: 'client',
+            name: 'unit',
             specs: (runConfig.requestedTargets || [runConfig.requestedTarget]).map(function(name) { return name.replace(/\.spec\.js$/i, ''); })
         };
     }
@@ -37,7 +37,7 @@ function selectSpecs(runConfig, processObj) {
             return { name: 'non-gui', specs: nonGuiSpecs.slice() };
         }
     }
-    return { name: 'client', specs: clientSpecs.slice() };
+    return { name: 'unit', specs: unitSpecs.slice() };
 }
 
 function failureText(item, includeStack) {

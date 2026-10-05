@@ -36,17 +36,11 @@ if [ -z "$PDG_ROOT" ]; then
 	exit 1
 fi
 
-NODE_VERS=0.10.28
 NODE_GYP_VERS=11.3.0
-NPM_VERS=1.4.10
 JASMINE_NODE_VER=1.16.0
 NET_REPL_VERS=0.1.2
-
-OK=1
-NEED_NPM=0
-NEED_NODE_GYP=0
-NEED_JASMINE_NODE=0
-NEED_NET_REPL=0
+TOOL_WORKSPACE="$PDG_ROOT/build/$PDG_BUILD_SUBDIR/node-tools"
+TOOL_MODULES="$TOOL_WORKSPACE/node_modules"
 
 if [ -n "$PDG_NODE_PYTHON" ]; then
 	PYTHON_BIN="$PDG_NODE_PYTHON"
@@ -63,97 +57,50 @@ fi
 package_version() {
 	local package_json="$1"
 	if [ -f "$package_json" ]; then
-		node -p "require(process.argv[1]).version" "$package_json" 2>/dev/null | tr -d '\r\n'
+		"$PDG_NODE" -p "require(process.argv[1]).version" "$package_json" 2>/dev/null | tr -d '\r\n'
 	fi
 }
 
-if [ ! -d "$PDG_ROOT/node_modules" ]; then
-	OK=0
+if ! command -v "$PDG_NPM" >/dev/null 2>&1; then
+	echo "FATAL: npm executable '$PDG_NPM' was not found" >&2
+	exit 1
 fi
-LINK=`type -t $PDG_NPM`
-if [ "$LINK" != "file" ]; then
-	if [ -e "$PDG_ROOT/node_modules/npm/bin/npm-cli.js" ]; then
-		ln -sf $PDG_ROOT/node_modules/npm/bin/npm-cli.js $PDG_ROOT/tools/npm
-	else
-		echo "$PDG_NPM not found"
-		OK=0
-		NEED_NPM=1
-	fi
-fi
-LOCAL_NODE_GYP_VERS="$(package_version "$PDG_ROOT/node_modules/node-gyp/package.json")"
-if [ "$LOCAL_NODE_GYP_VERS" != "$NODE_GYP_VERS" ]; then
-	if [ -n "$LOCAL_NODE_GYP_VERS" ]; then
-		echo "node-gyp $LOCAL_NODE_GYP_VERS is installed but $NODE_GYP_VERS is required"
-	else
-		echo "$PDG_NODE_GYP not found"
-	fi
-	OK=0
-	NEED_NODE_GYP=1
-elif [ -e "$PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js" ]; then
-	ln -sf $PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js $PDG_ROOT/tools/node-gyp
+if [ ! -x "$PDG_NODE" ]; then
+	echo "FATAL: Node.js executable '$PDG_NODE' was not found" >&2
+	exit 1
 fi
 
-LINK=`type -t $PDG_JASMINE_NODE`
-if [ "$LINK" != "file" ]; then
-	if [ -e "$PDG_ROOT/node_modules/jasmine-node/bin/jasmine-node" ]; then
-		ln -sf $PDG_ROOT/node_modules/jasmine-node/bin/jasmine-node $PDG_ROOT/tools/jasmine-node
-	else
-		echo "$PDG_JASMINE_NODE not found"
-		OK=0
-		NEED_JASMINE_NODE=1
-	fi
-fi
-LINK=`type -t $PDG_REPL`
-if [ "$LINK" != "file" ]; then
-	if [ -e "$PDG_ROOT/node_modules/net-repl/bin/repl.js" ]; then
-		ln -sf $PDG_ROOT/node_modules/net-repl/bin/repl.js $PDG_ROOT/tools/repl
-	else
-		echo "$PDG_REPL not found"
-		OK=0
-		NEED_NET_REPL=1
-	fi
-fi
-if [ "$OK" == "1" ]; then
-	echo "$PDG_ROOT/node_modules already installed"
-	exit 0
-fi
-if [ "$NEED_NPM" == "1" ]; then
-	echo -e "${HEAD}Installing Node Package Manager -> $PDG_ROOT/node_modules...${RESET}"
-	mkdir -p $PDG_ROOT/node_modules
-	rm -rf $PDG_ROOT/node_modules/npm
-	mkdir -p $PDG_ROOT/share/man
-	mkdir -p $PDG_ROOT/bin
-	mkdir -p $PDG_ROOT/lib/node
-	export clean=yes
-	curl -L https://npmjs.com/install.sh | sh
-#	$PDG_ROOT/deps/node/deps/npm/scripts/install.sh > /dev/null
-	mv $PDG_ROOT/lib/node_modules/npm $PDG_ROOT/node_modules
-	rm -rf share/ bin/ lib/
-	ln -sf $PDG_ROOT/node_modules/npm/bin/npm-cli.js $PDG_ROOT/tools/npm
-fi
-LOGLEVEL=`$PDG_NPM config get loglevel`
-$PDG_NPM config set loglevel error
 if [ -n "$PYTHON_BIN" ]; then
 	export PYTHON="$PYTHON_BIN"
 	export npm_config_python="$PYTHON_BIN"
 fi
-if [ "$NEED_NODE_GYP" == "1" ]; then
-	echo -e "${HEAD}Installing node-gyp tool $NODE_GYP_VERS -> $PDG_ROOT/node_modules...${RESET}"
-	rm -rf "$PDG_ROOT/node_modules/node-gyp" "$PDG_ROOT/node_modules/.bin/node-gyp" "$PDG_ROOT/tools/node-gyp"
-	$PDG_NPM install --no-save --package-lock=false node-gyp@$NODE_GYP_VERS
-	ln -sf $PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js $PDG_ROOT/tools/node-gyp
-fi
-if [ "$NEED_JASMINE_NODE" == "1" ]; then
-	echo -e "${HEAD}Installing jasmine-node $JASMINE_NODE_VER -> $PDG_ROOT/node_modules...${RESET}"
-	$PDG_NPM install jasmine-node@$JASMINE_NODE_VER
-	ln -sf $PDG_ROOT/node_modules/jasmine-node/bin/jasmine-node $PDG_ROOT/tools/jasmine-node
+export npm_config_loglevel=error
+
+if [ "$(package_version "$TOOL_MODULES/node-gyp/package.json")" != "$NODE_GYP_VERS" ] ||
+   [ "$(package_version "$TOOL_MODULES/jasmine-node/package.json")" != "$JASMINE_NODE_VER" ] ||
+   [ "$(package_version "$TOOL_MODULES/net-repl/package.json")" != "$NET_REPL_VERS" ]; then
+	echo -e "${HEAD}Installing Node.js build and test tools -> $TOOL_WORKSPACE...${RESET}"
+	rm -rf "$TOOL_WORKSPACE"
+	mkdir -p "$TOOL_WORKSPACE"
+	cat > "$TOOL_WORKSPACE/package.json" <<'EOF'
+{
+  "name": "pdg-node-tools",
+  "private": true
+}
+EOF
+	(
+		cd "$TOOL_WORKSPACE" || exit 1
+		"$PDG_NPM" install --no-save --package-lock=false --no-audit --no-fund \
+			node-gyp@$NODE_GYP_VERS jasmine-node@$JASMINE_NODE_VER net-repl@$NET_REPL_VERS
+	) || exit 1
 fi
 
-if [ "$NEED_NET_REPL" == "1" ]; then
-	echo -e "${HEAD}Installing net-repl $NET_REPL_VERS -> $PDG_ROOT/node_modules...${RESET}"
-	$PDG_NPM install net-repl@$NET_REPL_VERS
-	ln -sf $PDG_ROOT/node_modules/net-repl/bin/repl.js $PDG_ROOT/tools/repl
-fi
-# restore npm warning level
-$PDG_NPM config set loglevel $LOGLEVEL
+mkdir -p "$PDG_ROOT/node_modules"
+for package in node-gyp jasmine-node net-repl; do
+	rm -rf "$PDG_ROOT/node_modules/$package"
+	ln -s "$TOOL_MODULES/$package" "$PDG_ROOT/node_modules/$package"
+done
+ln -sfn "$PDG_ROOT/node_modules/node-gyp/bin/node-gyp.js" "$PDG_ROOT/tools/node-gyp"
+ln -sfn "$PDG_ROOT/node_modules/jasmine-node/bin/jasmine-node" "$PDG_ROOT/tools/jasmine-node"
+ln -sfn "$PDG_ROOT/node_modules/net-repl/bin/repl.js" "$PDG_ROOT/tools/repl"
 echo "Done."

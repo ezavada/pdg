@@ -85,6 +85,17 @@ function Write-Warning-Status {
     Write-Host "WARNING: $Message" -ForegroundColor Yellow
 }
 
+function Remove-DirectoryJunction {
+    param([string]$Path)
+    $item = Get-Item -LiteralPath $Path -Force
+    if ($item.PSIsContainer) {
+        [System.IO.Directory]::Delete($item.FullName)
+    }
+    else {
+        Remove-Item -LiteralPath $item.FullName -Force
+    }
+}
+
 # Function to check if a command exists
 function Test-Command {
     param([string]$Command)
@@ -95,6 +106,82 @@ function Test-Command {
     catch {
         return $false
     }
+}
+
+function Find-NodePython {
+    function Test-PythonVersionSupported {
+        param([string]$VersionOutput)
+        if (-not $VersionOutput -or $VersionOutput -like "*Microsoft Store*") { return $false }
+        if ($VersionOutput -match "Python\s+(\d+)\.(\d+)") {
+            $major = [int]$Matches[1]
+            $minor = [int]$Matches[2]
+            return ($major -eq 3 -and $minor -ge 9 -and $minor -lt 15)
+        }
+        return $false
+    }
+
+    $candidates = @(
+        "python",
+        "python3",
+        "py",
+        "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python314\python.exe",
+        "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python313\python.exe",
+        "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python312\python.exe",
+        "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python311\python.exe",
+        "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python310\python.exe",
+        "C:\Users\$env:USERNAME\AppData\Local\Programs\Python\Python39\python.exe"
+    )
+
+    foreach ($candidate in $candidates) {
+        try {
+            $command = Get-Command $candidate -ErrorAction Stop
+            if ($command.Source -like "*WindowsApps*") {
+                continue
+            }
+            $version = & $command.Source --version 2>$null | Select-Object -First 1
+            if (Test-PythonVersionSupported -VersionOutput $version) {
+                return $command.Source
+            }
+        }
+        catch {
+            if (Test-Path $candidate) {
+                $version = & $candidate --version 2>$null | Select-Object -First 1
+                if (Test-PythonVersionSupported -VersionOutput $version) {
+                    return $candidate
+                }
+            }
+        }
+    }
+
+    return $null
+}
+
+function Add-NodePythonPath {
+    param([string]$PythonPath)
+
+    if (-not $PythonPath -or $PythonPath -eq "python" -or $PythonPath -eq "python3" -or $PythonPath -eq "py") {
+        return
+    }
+
+    $pythonDir = Split-Path $PythonPath -Parent
+    $nodePythonPath = $pythonDir
+    $pythonPathLink = Join-Path $PSScriptRoot "$pdgBuildRoot\python-path"
+    if (Test-Path $pythonPathLink) {
+        $pythonPathItem = Get-Item $pythonPathLink -Force
+        if (($pythonPathItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+            Remove-DirectoryJunction -Path $pythonPathLink
+        }
+        else {
+            Write-Warning-Status "Cannot replace non-junction Python path helper at $pythonPathLink"
+        }
+    }
+    if (-not (Test-Path $pythonPathLink)) {
+        New-Item -ItemType Junction -Path $pythonPathLink -Target $pythonDir | Out-Null
+        $nodePythonPath = $pythonPathLink
+    }
+    $env:PATH = "$nodePythonPath;$pythonDir;$env:PATH"
+    $env:PYTHON = $PythonPath
+    Write-Status "Added Python directory to PATH: $nodePythonPath" "Cyan"
 }
 
 function Test-PDGHeadlessConfigured {
@@ -108,8 +195,9 @@ function Test-PDGHeadlessConfigured {
 
 function Update-PDGCMakeConfiguration {
     Write-Status "Refreshing PDG CMake configuration for architecture-scoped Node libraries..." "Cyan"
-    & cmake -S . -B $PdgMainBuildDir "-DPDG_NODE_OUT_DIR=$((Resolve-Path $PdgNodeOutDir).Path)"
-    if ($LASTEXITCODE -ne 0) {
+    & cmake -S . -B $PdgMainBuildDir "-DPDG_NODE_OUT_DIR=$((Resolve-Path $PdgNodeOutDir).Path)" | Out-Host
+    $cmakeStatus = $LASTEXITCODE
+    if ($cmakeStatus -ne 0) {
         Write-Error-Status "PDG CMake refresh failed"
         return 1
     }
@@ -209,11 +297,14 @@ function Invoke-MSBuild {
     try {
         $process = Start-Process -FilePath $MSBuildPath -ArgumentList $args -PassThru -NoNewWindow
         $timeout = $TimeoutMinutes * 60 * 1000  # Convert to milliseconds
+        # Open the process handle before a timed wait so ExitCode remains available
+        # in Windows PowerShell after the process exits.
+        $null = $process.Handle
         
-    if ($process.WaitForExit($timeout)) {
-        # Clean up after successful build
-        Cleanup-BuildProcesses
-        return $process.ExitCode
+        if ($process.WaitForExit($timeout)) {
+            # Clean up after successful build
+            Cleanup-BuildProcesses
+            return $process.ExitCode
         } else {
             Write-Error-Status "MSBuild timed out after $TimeoutMinutes minutes. Terminating process..."
             $process.Kill()
@@ -235,20 +326,28 @@ function Invoke-MSBuild {
 # Function to kill stuck MSBuild processes
 function Stop-StuckMSBuildProcesses {
     Write-Status "Checking for stuck MSBuild processes..." "Yellow"
-    $msbuildProcesses = Get-Process | Where-Object {$_.ProcessName -eq "MSBuild"}
+    $msbuildProcesses = @(Get-Process -Name "MSBuild" -ErrorAction SilentlyContinue)
     
     if ($msbuildProcesses.Count -gt 0) {
         Write-Warning-Status "Found $($msbuildProcesses.Count) MSBuild processes running"
         foreach ($proc in $msbuildProcesses) {
-            $runningTime = (Get-Date) - $proc.StartTime
-            Write-Status "MSBuild PID $($proc.Id) running for $($runningTime.ToString('hh\:mm\:ss'))" "Gray"
+            try {
+                $runningTime = (Get-Date) - $proc.StartTime
+                Write-Status "MSBuild PID $($proc.Id) running for $($runningTime.ToString('hh\:mm\:ss'))" "Gray"
+            }
+            catch {
+                Write-Status "MSBuild PID $($proc.Id) exited before it could be inspected" "Gray"
+                continue
+            }
             
             #if ($runningTime.TotalMinutes -gt 2) {
                 Write-Warning-Status "Terminating stuck MSBuild process PID $($proc.Id)"
                 try {
-                    Stop-Process -Id $proc.Id -Force
+                    Stop-Process -Id $proc.Id -Force -ErrorAction Stop
                 } catch {
-                    Write-Error-Status "Failed to terminate process $($proc.Id): $($_)"
+                    if (Get-Process -Id $proc.Id -ErrorAction SilentlyContinue) {
+                        Write-Error-Status "Failed to terminate process $($proc.Id): $($_)"
+                    }
                 }
             #}
         } 
@@ -388,6 +487,13 @@ function Build-Node {
     if (-not $nodeLibExists -or -not $nodeExeExists -or -not $nodeVersionMatches) {
         Write-Status "Building Node.js as a library..." "Yellow"
         Remove-Item $nodeVersionStamp -Force -ErrorAction SilentlyContinue
+        $pythonPath = Find-NodePython
+        if ($pythonPath) {
+            Add-NodePythonPath -PythonPath $pythonPath
+        }
+        else {
+            Write-Warning-Status "Could not find Python 3.9-3.14 before running Node.js vcbuild.bat"
+        }
         
         Push-Location "deps\node"
         try {
@@ -398,6 +504,9 @@ function Build-Node {
             $env:NUMBER_OF_PROCESSORS = "1"
             $process = Start-Process -FilePath "cmd" -ArgumentList @("/c", "vcbuild.bat", "nosign") -PassThru -NoNewWindow
             $timeout = 60 * 60 * 1000  # 60 minutes timeout for single-threaded Node.js build
+            # Open the process handle before a timed wait so ExitCode remains available
+            # in Windows PowerShell after the process exits.
+            $null = $process.Handle
             
             if ($process.WaitForExit($timeout)) {
                 $BUILD_STATUS = $process.ExitCode
@@ -452,7 +561,7 @@ function Build-Node {
             Write-Success-Status "Node.js build verification passed - all required files present"
             Copy-Item $nodeVersionHeader $nodeVersionStamp -Force
         } else {
-            Write-Error-Status "Node.js build verification failed"
+            Write-Error-Status "Node.js build verification failed (vcbuild exit code: $BUILD_STATUS)"
             $BUILD_STATUS = 1
         }
         
@@ -497,7 +606,11 @@ function Build-PDG-Node {
     }
 
     try {
-        & $moduleScript -Config $Config
+        & $moduleScript -Config $Config | Out-Host
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error-Status "PDG Node.js module build failed with exit code $LASTEXITCODE"
+            return 1
+        }
     }
     catch {
         Write-Error-Status "PDG Node.js module build failed: $($_.Exception.Message)"
@@ -543,9 +656,11 @@ function Build-GLFW {
 
     # Verify GLFW build actually succeeded by checking for the library file
     $glfwLibPath = "$PdgBuildRoot\glfw\src\$Config\glfw3.lib"
-    if (Test-Path $glfwLibPath) {
+    if ($BUILD_STATUS -eq 0 -and (Test-Path $glfwLibPath)) {
         Write-Success-Status "GLFW build verification passed - glfw3.lib exists"
-        $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+    } elseif ($BUILD_STATUS -eq 0) {
+        Write-Error-Status "GLFW build verification failed - glfw3.lib not found"
+        $BUILD_STATUS = 1
     }
 
     if ($BUILD_STATUS -ne 0) {
@@ -577,9 +692,11 @@ function Build-Chipmunk {
 
     # Verify Chipmunk build actually succeeded by checking for the library file
     $chipmunkLibPath = "$PdgBuildRoot\chipmunk\src\$Config\chipmunk.lib"
-    if (Test-Path $chipmunkLibPath) {
+    if ($BUILD_STATUS -eq 0 -and (Test-Path $chipmunkLibPath)) {
         Write-Success-Status "Chipmunk build verification passed - chipmunk.lib exists"
-        $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+    } elseif ($BUILD_STATUS -eq 0) {
+        Write-Error-Status "Chipmunk build verification failed - chipmunk.lib not found"
+        $BUILD_STATUS = 1
     }
 
     if ($BUILD_STATUS -ne 0) {
@@ -614,9 +731,11 @@ function Build-LibjpegTurbo {
 
     # Verify libjpeg-turbo build actually succeeded by checking for the library file
     $jpegLibPath = "$PdgBuildRoot\libjpeg-turbo\$Config\jpeg.lib"
-    if (Test-Path $jpegLibPath) {
+    if ($BUILD_STATUS -eq 0 -and (Test-Path $jpegLibPath)) {
         Write-Success-Status "libjpeg-turbo build verification passed - jpeg.lib exists"
-        $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
+    } elseif ($BUILD_STATUS -eq 0) {
+        Write-Error-Status "libjpeg-turbo build verification failed - jpeg.lib not found"
+        $BUILD_STATUS = 1
     }
 
     if ($BUILD_STATUS -ne 0) {
@@ -653,10 +772,9 @@ function Build-PDG {
 
     # Verify PDG build actually succeeded by checking for the executable file
     $pdgExePath = "$PdgMainBuildDir\src\$Config\$pdgExeName"
-    if (Test-Path $pdgExePath) {
+    if ($BUILD_STATUS -eq 0 -and (Test-Path $pdgExePath)) {
         Write-Success-Status "PDG build verification passed - $pdgExeName exists"
-        $BUILD_STATUS = 0  # Override the exit code since build actually succeeded
-    } else {
+    } elseif ($BUILD_STATUS -eq 0) {
         Write-Error-Status "PDG build verification failed - $pdgExeName not found"
         $BUILD_STATUS = 1
     }
@@ -906,15 +1024,17 @@ switch ($Target.ToLower()) {
         Write-Host ""
         Write-Status "Build Summary:" "Cyan"
         Write-Host "- Main executable: pdg.exe" -ForegroundColor White
-        Write-Host "- Test executable: test\pdg-run.exe" -ForegroundColor White
         Write-Host "- Configuration: $Config" -ForegroundColor White
         Write-Host "- Target: $Target" -ForegroundColor White
         Write-Host ""
         if ($script:PDG_HEADLESS_BUILD) {
-            Write-Status "Headless build configured; GUI/client test runs are not available in this setup." "Green"
+            Write-Status "Headless build configured; GUI unit-test runs are not available in this setup." "Green"
+            Write-Status "Run unit tests with: .\test\unit.ps1" "Green"
+            Write-Status "Run Node unit tests with: .\test\unit.ps1 --node" "Green"
         }
         else {
-            Write-Status "You can now run tests with: .\test\client or .\test\node" "Green"
+            Write-Status "Test runners: .\test\unit.ps1, .\test\ui.ps1, .\test\perf.ps1, .\test\demo.ps1" "Green"
+            Write-Status "Node unit tests: .\test\unit.ps1 --node" "Green"
         }
     }
 
@@ -982,3 +1102,5 @@ switch ($Target.ToLower()) {
         exit 1
     }
 }
+
+exit 0

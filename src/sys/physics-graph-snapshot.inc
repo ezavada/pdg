@@ -203,7 +203,8 @@ void PhysicsGraphSnapshot::read(IDeserializer* reader) {
             else if(reserved.count(shape.id))fail();
             if(shape.type==collisionShape_Circle){shape.center=point();shape.radius=number();}
             else if(shape.type==collisionShape_Capsule) {
-                if(remainingPoints<2)fail();remainingPoints-=2;
+				if(remainingPoints<2)fail();
+				remainingPoints-=2;
                 shape.vertices={point(),point()};shape.radius=number();
             }
             else if(shape.type==collisionShape_Convex)shape.vertices=points();
@@ -214,7 +215,8 @@ void PhysicsGraphSnapshot::read(IDeserializer* reader) {
             // accepted for masks, whose individual pieces must be convex.
             Collider checked;
             if(shape.type==collisionShape_Circle) {
-                if(!shape.vertices.empty()||!shape.pieces.empty())fail();checked.addCircle(shape.radius,shape.center);
+				if(!shape.vertices.empty()||!shape.pieces.empty())fail();
+				checked.addCircle(shape.radius,shape.center);
             } else if(shape.type==collisionShape_Capsule) {
                 checked.addCapsule(shape.vertices[0],shape.vertices[1],shape.radius);
             } else if(shape.type==collisionShape_Convex) {

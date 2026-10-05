@@ -80,6 +80,17 @@ function Write-Warning-Status {
     Write-Host "WARNING: $Message" -ForegroundColor Yellow
 }
 
+function Remove-DirectoryJunction {
+    param([string]$Path)
+    $item = Get-Item -LiteralPath $Path -Force
+    if ($item.PSIsContainer) {
+        [System.IO.Directory]::Delete($item.FullName)
+    }
+    else {
+        Remove-Item -LiteralPath $item.FullName -Force
+    }
+}
+
 # Function to check if a command exists
 function Test-Command {
     param([string]$Command)
@@ -460,7 +471,7 @@ function Check-And-Install-Python {
         }
     }
     
-    if ($SkipInstall) {
+    if ($SkipInstall -or $ConfigureOnly) {
         Show-ManualInstallInstructions -PackageName "Python 3.9-3.14 (Node.js requires 3.9+, does not support 3.15+)" -WingetCommand @("Python.Python.3.14", "Python.Python.3.13", "Python.Python.3.12", "Python.Python.3.11") -ChocoCommand @("python") -DownloadUrl "https://www.python.org/downloads/" -AdditionalInstructions "Node.js requires Python 3.9 or newer and does not support Python 3.15+. If you have Python 3.15+ or an older Python (< 3.9), install Python 3.9-3.14 and ensure it appears first in PATH."
         return $false
     }
@@ -832,8 +843,11 @@ function Invoke-CMakeConfigure {
         
         Write-Status "Running: $CMAKE_PATH $($cmakeArgs -join ' ')" "Gray"
         
-        # Execute CMake
-        $process = Start-Process -FilePath $CMAKE_PATH -ArgumentList $cmakeArgs -Wait -PassThru -NoNewWindow
+        # Wait for CMake itself, not long-lived helper processes spawned by the
+        # Visual Studio toolchain.
+        $process = Start-Process -FilePath $CMAKE_PATH -ArgumentList $cmakeArgs -PassThru -NoNewWindow
+        $null = $process.Handle
+        $process.WaitForExit()
         
         if ($process.ExitCode -ne 0) {
             # If it failed due to generator mismatch, try cleaning and retrying
@@ -843,7 +857,9 @@ function Invoke-CMakeConfigure {
                 Remove-Item "CMakeFiles" -Recurse -Force -ErrorAction SilentlyContinue
                 
                 # Retry the configuration
-                $process = Start-Process -FilePath $CMAKE_PATH -ArgumentList $cmakeArgs -Wait -PassThru -NoNewWindow
+                $process = Start-Process -FilePath $CMAKE_PATH -ArgumentList $cmakeArgs -PassThru -NoNewWindow
+                $null = $process.Handle
+                $process.WaitForExit()
                 
                 if ($process.ExitCode -ne 0) {
                     throw "CMake configuration failed with exit code $($process.ExitCode) after retry"
@@ -1022,6 +1038,10 @@ if (-not $ConfigureOnly) {
         }
     }
 }
+elseif (-not (Check-And-Install-Python)) {
+    Write-Error-Status "Cannot configure Node.js without Python. Exiting."
+    exit 1
+}
 
 Write-Host ""
 Write-Status "Configuring PDG Project and Dependencies" "Cyan"
@@ -1036,6 +1056,23 @@ if (-not (Ensure-RepoSubmodule -RepoRoot $PSScriptRoot -SubmodulePath "deps/node
     Write-Error-Status "Node.js source checkout is required. Exiting."
     exit 1
 }
+
+$nodeOutLink = Join-Path $PSScriptRoot "deps\node\out"
+New-Item -ItemType Directory -Path $pdgNodeOutDir -Force | Out-Null
+if (Test-Path $nodeOutLink) {
+    $nodeOutItem = Get-Item $nodeOutLink -Force
+    if (($nodeOutItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+        Remove-DirectoryJunction -Path $nodeOutLink
+    }
+    else {
+        $legacyNodeOut = Join-Path $PSScriptRoot ("$pdgBuildRoot\node-legacy-out-" + (Get-Date -Format "yyyyMMddHHmmss"))
+        Write-Warning-Status "Preserving unscoped Node output at $legacyNodeOut"
+        New-Item -ItemType Directory -Path (Split-Path $legacyNodeOut -Parent) -Force | Out-Null
+        Move-Item $nodeOutLink $legacyNodeOut
+    }
+}
+New-Item -ItemType Junction -Path $nodeOutLink -Target $pdgNodeOutDir | Out-Null
+Write-Status "Node/V8 output: $pdgNodeOutDir" "Cyan"
 
 $shouldBuildInterfaceTools = $EnableInterfaceTools -and (-not $SkipInterfaceTools)
 if ($EnableInterfaceTools -and $SkipInterfaceTools) {
@@ -1098,7 +1135,7 @@ else {
     Write-Status "Configuring GLFW Library..." "Yellow"
     try {
             $vsGen = "Visual Studio 17 2022"
-        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\glfw") -BuildPath "$pdgBuildRoot\glfw" -Generator $vsGen -Arguments @("-DGLFW_BUILD_EXAMPLES=OFF", "-DGLFW_BUILD_TESTS=OFF")
+        Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\glfw") -BuildPath "$pdgBuildRoot\glfw" -Generator $vsGen -Arguments @("-DGLFW_BUILD_EXAMPLES=OFF", "-DGLFW_BUILD_TESTS=OFF", "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=OFF")
     }
     catch {
         Write-Error-Status "GLFW configuration failed: $($_)"
@@ -1133,7 +1170,11 @@ if (-not $jpegConfigCopied) {
 
 try {
         $vsGen = "Visual Studio 17 2022"
-    Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\libjpeg-turbo") -BuildPath "$pdgBuildRoot\libjpeg-turbo" -Generator $vsGen -Arguments @("-DWITH_SIMD=ON")
+    $jpegArguments = @("-DWITH_SIMD=ON")
+    if ($NASM_PATH) {
+        $jpegArguments += "-DCMAKE_ASM_NASM_COMPILER=$NASM_PATH"
+    }
+    Invoke-CMakeConfigure -SourcePath (Join-Path $PSScriptRoot "deps\libjpeg-turbo") -BuildPath "$pdgBuildRoot\libjpeg-turbo" -Generator $vsGen -Arguments $jpegArguments
 }
 catch {
     Write-Error-Status "libjpeg-turbo configuration failed: $($_)"
@@ -1142,22 +1183,6 @@ catch {
 
 # Configure Node.js
 Write-Status "Configuring Node.js Library..." "Yellow"
-$nodeOutLink = Join-Path $PSScriptRoot "deps\node\out"
-New-Item -ItemType Directory -Path $pdgNodeOutDir -Force | Out-Null
-if (Test-Path $nodeOutLink) {
-    $nodeOutItem = Get-Item $nodeOutLink -Force
-    if (($nodeOutItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
-        Remove-Item $nodeOutLink -Force
-    }
-    else {
-        $legacyNodeOut = Join-Path $PSScriptRoot ("$pdgBuildRoot\node-legacy-out-" + (Get-Date -Format "yyyyMMddHHmmss"))
-        Write-Warning-Status "Preserving unscoped Node output at $legacyNodeOut"
-        New-Item -ItemType Directory -Path (Split-Path $legacyNodeOut -Parent) -Force | Out-Null
-        Move-Item $nodeOutLink $legacyNodeOut
-    }
-}
-New-Item -ItemType Junction -Path $nodeOutLink -Target $pdgNodeOutDir | Out-Null
-Write-Status "Node/V8 output: $pdgNodeOutDir" "Cyan"
 if (Test-Path "deps\node\vcbuild.bat") {
     try {
         Push-Location "deps\node"
@@ -1166,8 +1191,24 @@ if (Test-Path "deps\node\vcbuild.bat") {
         if ($PYTHON_PATH -and $PYTHON_PATH -ne "python" -and $PYTHON_PATH -ne "python3" -and $PYTHON_PATH -ne "py") {
             # Add Python directory to PATH for this process
             $pythonDir = Split-Path $PYTHON_PATH -Parent
-            $env:PATH = "$pythonDir;$env:PATH"
-            Write-Status "Added Python directory to PATH: $pythonDir" "Cyan"
+            $nodePythonPath = $pythonDir
+            $pythonPathLink = Join-Path $PSScriptRoot "$pdgBuildRoot\python-path"
+            if (Test-Path $pythonPathLink) {
+                $pythonPathItem = Get-Item $pythonPathLink -Force
+                if (($pythonPathItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+                    Remove-DirectoryJunction -Path $pythonPathLink
+                }
+                else {
+                    Write-Warning-Status "Cannot replace non-junction Python path helper at $pythonPathLink"
+                }
+            }
+            if (-not (Test-Path $pythonPathLink)) {
+                New-Item -ItemType Junction -Path $pythonPathLink -Target $pythonDir | Out-Null
+                $nodePythonPath = $pythonPathLink
+            }
+            $env:PATH = "$nodePythonPath;$pythonDir;$env:PATH"
+            $env:PYTHON = $PYTHON_PATH
+            Write-Status "Added Python directory to PATH: $nodePythonPath" "Cyan"
         }
         
         # Create output directories
@@ -1219,12 +1260,15 @@ else {
     exit 1
 }
 
-# Copy make.bat if it exists
+# Install the generated Windows build entry points.
 if (Test-Path "tools\make_ps1") {
     Copy-Item "tools\make_ps1" "make.ps1" -Force
+    if (Test-Path "tools\make_bat") {
+        Copy-Item "tools\make_bat" "make.bat" -Force
+    }
     Write-Host ""
     Write-Success-Status "Configuration completed successfully!"
-    Write-Host "Type '.\make.ps1' to build the project." -ForegroundColor Yellow
+    Write-Host "Type '.\make' to build the project." -ForegroundColor Yellow
 }
 else {
     Write-Host ""

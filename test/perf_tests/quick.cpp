@@ -1,6 +1,6 @@
 // Isolated C++17 translation unit: Spriter's JSON header predates C++20.
 #include "quick.h"
-#include "../../deps/SpriterPlusPlus/nlohmann-json/json.hpp"
+#include <json.hpp>
 #include <fstream>
 #include <iostream>
 #include <ctime>

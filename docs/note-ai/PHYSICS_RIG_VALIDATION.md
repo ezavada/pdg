@@ -107,7 +107,7 @@ Follow-up validation results:
 Native window capture was unavailable; automated rendering/playback results are
 not a screenshot-based visual review.
 
-## Headless Node validation fixes
+## Node unit validation fixes
 
 The four failures in the initial full Node run are resolved. Text-style constants
 and Image/ImageStrip object serialization were incorrectly guarded by
@@ -125,6 +125,6 @@ frame-view object snapshots with both resource policies.
 | Check | Result |
 | --- | --- |
 | Fresh `make pdg-node` | Build and package smoke test pass; no compiler warnings |
-| Complete headless Node suite | 1,225 tests, 8,408 assertions, no failures |
+| Complete Node unit suite | 1,225 tests, 8,408 assertions, no failures |
 | Complete desktop V8 suite, including Part/Particle artwork | 1,335 tests, 8,990 assertions, no failures |
 | iOS/JSC serialization suite | 29 tests, 396 assertions, no failures |

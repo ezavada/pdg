@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['lftbot_0',['lftBot',['../namespacepdg.html#a2dacfb23cd76e7e1491fb81f0f8f0d48a5dc1c5bf60143fbd5604c1725c507212',1,'pdg']]],
-  ['lfttop_1',['lftTop',['../namespacepdg.html#a2dacfb23cd76e7e1491fb81f0f8f0d48ac1eb2b8f98584dc831cd81b88b68d40f',1,'pdg']]],
+  ['lftbot_0',['lftBot',['../namespacepdg.html#aff9c191733ca25f33e2793ad04826508a5dc1c5bf60143fbd5604c1725c507212',1,'pdg']]],
+  ['lfttop_1',['lftTop',['../namespacepdg.html#aff9c191733ca25f33e2793ad04826508ac1eb2b8f98584dc831cd81b88b68d40f',1,'pdg']]],
   ['lightoffset_2',['LightOffset',['../classpdg_1_1_attributes.html#a985977d91599f30f74b99b53a6c009e9a6f16310661b63d4363e6c0f22d08501d',1,'pdg::Attributes']]],
   ['linecolor_3',['LineColor',['../classpdg_1_1_attributes.html#a985977d91599f30f74b99b53a6c009e9a472bc7e221f74403214336983fb1fd38',1,'pdg::Attributes']]],
   ['lineopacity_4',['LineOpacity',['../classpdg_1_1_attributes.html#a985977d91599f30f74b99b53a6c009e9a2d8e7c0a427f279920c3cc397b77d177',1,'pdg::Attributes']]],

@@ -68,7 +68,7 @@ ConfigManagerWin32::~ConfigManagerWin32()
 
 bool ConfigManagerWin32::useConfig(const char* inConfigName)
 {
-	char buffer[1024];
+	char buffer[1024] = {};
 	LoadStringA(mAppInstance,mResourceID,buffer,1024);
 	std::string resString = buffer;
 	if(resString.empty()) // If we can't load the key we can't create the key
@@ -317,7 +317,7 @@ int ConfigManagerWin32::GetDataSize(const char* strValueName)
 
 bool ConfigManagerWin32::createKey(const char* strKey)
 {
-	char buffer[1024];
+	char buffer[1024] = {};
 	LoadStringA(mAppInstance,mResourceID,buffer,1024);
 	std::string resString = buffer;
 	if(resString.empty()) // If we can't load the key we can't create the key
@@ -346,14 +346,16 @@ bool ConfigManagerWin32::createKey(const char* strKey)
 
 	DWORD dwDisposition = 0;
 
-	if (RegCreateKeyExA(mHKEY, Key.c_str(), 0, NULL,
+	const LONG createResult = RegCreateKeyExA(mHKEY, Key.c_str(), 0, NULL,
 		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey,
-			&dwDisposition)	!= ERROR_SUCCESS) {
+			&dwDisposition);
+	if (createResult != ERROR_SUCCESS) {
 			CONFIG_MANAGER_DEBUG_ONLY( OS::_DOUT("Create key failed [%s]", Key.c_str()); )
 			return FALSE;
 	}
 	
 	RegCloseKey(hKey);
+	mKeyPath = Key + '\\';
 	return TRUE;
 }
 

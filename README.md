@@ -39,15 +39,20 @@ library support when building the iOS project.
 
 The `deps/node` submodule pins Node.js **v24.21.0**. After updating the checkout,
 run `git submodule update --init deps/node`, `./configure`, and `make pdg pdg-node`
-(Windows: `configure.ps1` followed by `make.ps1 -Target pdg` and
-`make.ps1 -Target pdg-node`). Node builds record their source version so a version
+(Windows: `configure.ps1` followed by `make pdg` and
+`make pdg-node`). Node builds record their source version so a version
 change triggers a rebuild of the cached runtime and libraries. Node builds
 accept Python 3.9 through 3.14.
+
+`make pdg-node` builds and installs the local addon. For a release version update,
+run `tools/version-update.sh MAJOR.MINOR.PATCH` (requires Python 3), then regenerate
+documentation and rebuild the release artifacts.
 
 Documentation
 -------------
 
-Read the [v1.1 release notes](docs/RELEASE_NOTES_1.1.md) for features, detailed
+Read the [v1.1.1 release notes](docs/RELEASE_NOTES_1.1.1.md) for fixes since
+v1.1.0. The [v1.1.0 release notes](docs/RELEASE_NOTES_1.1.md) cover features,
 changes from v1.0, and API migration guidance.
 
 For unit tests, rig regressions, tooling checks, visual pages, and interactive
@@ -170,7 +175,7 @@ PowerShell session:
 git clone --recurse-submodules git@github.com:ezavada/pdg.git pdg
 cd pdg
 .\configure.ps1
-.\make.ps1 -Target pdg
+.\make pdg
 .\test\unit.ps1
 .\test\ui.ps1
 .\test\demo.ps1
@@ -193,6 +198,6 @@ make pdg
 
 For an existing checkout, initialize dependencies with
 `git submodule update --init --recursive`. Build the Node addon with `make pdg-node`
-(Windows: `.\make.ps1 -Target pdg-node`) before running `test/unit --node` or
+(Windows: `.\make pdg-node`) before running `test/unit --node` or
 `test/rigs`. See the [testing guide](test/README.md) for browser, iOS, headless,
 performance, and tooling checks.

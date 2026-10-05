@@ -43,12 +43,14 @@ namespace pdg {
 
 const char* platform_setupDirectories(int argc, const char* argv[]) {
 		// make sure our working directory is the directory the app was launched from
-    char* buf = (char*) std::malloc(1024);
-    getcwd(buf, 1024);
-    MAKE_STRING_BUFFER_SAFE(buf, 1024);
-	std::string workingDir;
-	workingDir = OS::makeCanonicalPath(buf, true);  // get our current working directory
-	std::free(buf);	
+	static std::string workingDir;
+	char* cwd = getcwd(nullptr, 0);
+	if (cwd) {
+		workingDir = OS::makeCanonicalPath(cwd, true);
+		std::free(cwd);
+	} else {
+		workingDir = OS::makeCanonicalPath(".", true);
+	}
 	std::string appDir;
 	std::string appDataDir;
 	std::string resourceDir;
@@ -67,7 +69,7 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 		std::cerr << "Using Resource directory [" << OS::getApplicationResourceDirectory() << "]" << std::endl;
 	)
 	
-	return buf;
+	return workingDir.c_str();
 }
 
 } // end namespace pdg

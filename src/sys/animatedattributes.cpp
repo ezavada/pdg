@@ -327,7 +327,7 @@ void AnimatedAttributesBase::cancelTransformAnimation() {
     cancelMatrixAnimation(); stopMovement(); stopSpinning(); stopGrowing(); stopStretching();
     for (float* field : {&mLocation.x,&mLocation.y,&mWidth,&mHeight,&mScaleX,&mScaleY,&mFacing,&mCenterOffset.x,&mCenterOffset.y}) cancelAnimation(field);
 }
-AnimatedAttributesBase& AnimatedAttributesBase::composeTransform(const glm::mat3& matrix, TransformOperation operation) {
+Attributes& AnimatedAttributesBase::composeTransform(const glm::mat3& matrix, TransformOperation operation) {
     validateImmediateOperation();
     validateMatrix(matrix);
     const glm::mat3 result = getTransform() * matrix;

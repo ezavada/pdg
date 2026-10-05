@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.0</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
    </div>
 </div>
 <!-- end header part -->
@@ -1784,7 +1784,7 @@ Static Public Attributes</h2></td></tr>
 <div class="line">                    <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.rotationDirection_Shortest);</div>
 <div class="line"><span class="comment">// The Sprite/Part world advances its body. Query whether the goal is still blocked:</span></div>
 <div class="line"><span class="keyword">const</span> remaining = body.getDriveState().positionError;</div>
-<div class="ttc" id="aclasspdg_1_1_point_html"><div class="ttname"><a href="classpdg_1_1_point.html">pdg::Point</a></div><div class="ttdoc">point for 2D coordinate system</div><div class="ttdef"><b>Definition</b> pdg-js.h:1868</div></div>
+<div class="ttc" id="aclasspdg_1_1_point_html"><div class="ttname"><a href="classpdg_1_1_point.html">pdg::Point</a></div><div class="ttdoc">point for 2D coordinate system</div><div class="ttdef"><b>Definition</b> pdg-js.h:1869</div></div>
 <div class="ttc" id="anamespacepdg_html"><div class="ttname"><a href="namespacepdg.html">pdg</a></div><div class="ttdef"><b>Definition</b> pdg-js.h:5</div></div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Rig tracking and <a class="el" href="classpdg_1_1_part.html" title="An independently animated part owned by a Sprite.">Part</a> IK controllers reserve their participating drives. Release rig tracking with Sprite::setAnimationPhysicsMode(animationPhysics_Dynamic). Call <a class="el" href="classpdg_1_1_part.html#aa0a1944e982e46bafa190542d78df8e7" title="Stop this root’s scheduled IK controller.">Part::clearIKTarget()</a> to release a <a class="el" href="classpdg_1_1_part.html" title="An independently animated part owned by a Sprite.">Part</a> IK chain before replacing or clearing such a drive, stopping all forces, or changing away from dynamic mode. Independent impulses and forces remain available.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a04f8431ecd3c2f44c6cc94fe1f10491d" title="Copy the drive target, last actuation and current target error.">getDriveState()</a>, <a class="el" href="#aa7d905877824838b25add9b285b9766d" title="Remove the active physical drive.">clearDrive()</a>, <a class="el" href="#ad6d6817f123c499bed6ed4f9bdc020a8" title="Set the body&#39;s simulation mode.">setMode()</a> </dd></dl>

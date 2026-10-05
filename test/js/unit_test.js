@@ -1,5 +1,5 @@
 // -----------------------------------------------
-// js/client_test.js
+// js/unit_test.js
 //
 // Written by Ed Zavada, 2013
 // Copyright (c) 2013, Dream Rock Studios, LLC

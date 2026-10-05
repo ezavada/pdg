@@ -1256,20 +1256,20 @@ void addProcessVersionsAddon() {
         v8::Local<v8::Object> process = process_val->ToObject(context).ToLocalChecked();
         v8::Local<v8::Object> versions = process->Get(context, versions_symbol).ToLocalChecked()->ToObject(context).ToLocalChecked();
 
-        (void)versions->Set(context, pdg_symbol, v8::String::NewFromUtf8(isolate, PDG_VERSION).ToLocalChecked());
+        versions->Set(context, pdg_symbol, v8::String::NewFromUtf8(isolate, PDG_VERSION).ToLocalChecked()).Check();
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-        (void)versions->Set(context, chipmunk_symbol, v8::String::NewFromUtf8(isolate, cpVersionString).ToLocalChecked());
+        versions->Set(context, chipmunk_symbol, v8::String::NewFromUtf8(isolate, cpVersionString).ToLocalChecked()).Check();
 #endif
 #ifdef PDG_USE_GLFW
         char glfw_vers_str[256];
         std::snprintf(glfw_vers_str, sizeof(glfw_vers_str), "%d.%d.%d", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR, GLFW_VERSION_REVISION);
-        (void)versions->Set(context, glfw_symbol, v8::String::NewFromUtf8(isolate, glfw_vers_str).ToLocalChecked());
+        versions->Set(context, glfw_symbol, v8::String::NewFromUtf8(isolate, glfw_vers_str).ToLocalChecked()).Check();
 #endif
 #ifdef PDG_USE_LIBPNG
 #ifdef PNG_LIBPNG_VER_STRING
-        (void)versions->Set(context, libpng_symbol, v8::String::NewFromUtf8(isolate, PNG_LIBPNG_VER_STRING).ToLocalChecked());
+        versions->Set(context, libpng_symbol, v8::String::NewFromUtf8(isolate, PNG_LIBPNG_VER_STRING).ToLocalChecked()).Check();
 #else
-        (void)versions->Set(context, libpng_symbol, v8::String::NewFromUtf8(isolate, "Unknown").ToLocalChecked());
+        versions->Set(context, libpng_symbol, v8::String::NewFromUtf8(isolate, "Unknown").ToLocalChecked()).Check();
 #endif
 #endif
     }

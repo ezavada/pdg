@@ -1,4 +1,4 @@
-// Dispatch either one interactive UI script or the shared Jasmine client
+// Dispatch either one interactive UI script or the shared Jasmine unit
 // entry point. Simulator launch arguments select the mode without rebuilding.
 var pdg = require('pdg');
 
@@ -61,7 +61,7 @@ try {
     } else if (uiTestId) {
         runUiTest(uiTestId);
     } else {
-        require('./js/client_test.js');
+        require('./js/unit_test.js');
     }
 } catch (error) {
     console.error('[PDG IOS BOOTSTRAP FAIL] ' + (error.stack || error));

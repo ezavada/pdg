@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
-PROJECT(PDG VERSION 1.1.0 LANGUAGES C CXX)
+PROJECT(PDG VERSION 1.1.1 LANGUAGES C CXX)
 
 INCLUDE(CTest)
 
@@ -13,12 +13,16 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 # MSVC: explicitly set /std:c++20 (CMAKE_CXX_STANDARD is not always applied by VS generator)
 IF(MSVC)
 	ADD_COMPILE_OPTIONS($<$<COMPILE_LANGUAGE:CXX>:/std:c++20>)
+	# Node and the Windows PDG libraries use the static runtime. Apply the
+	# policy here so targets declared after ADD_SUBDIRECTORY(src) match too.
+	SET(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 ENDIF()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Set default build type if not specified
-IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE DEBUG)
+# Set the single-config generator default and expose it through CMakeCache.txt.
+IF(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    SET(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+    SET_PROPERTY(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release RelWithDebInfo MinSizeRel)
 ENDIF()
 
 OPTION(USE_CHIPMUNK "Build with Chipmunk Physics library" ON)
@@ -51,6 +55,11 @@ IF(PDG_HEADLESS)
 	MESSAGE(STATUS "PDG headless mode enabled: GUI/OpenGL/GLFW code will be excluded.")
 ELSE()
 	FIND_PACKAGE(OpenGL REQUIRED)
+	IF(UNIX AND NOT APPLE)
+		FIND_LIBRARY(PDG_GLU_LIBRARY NAMES GLU REQUIRED)
+		FIND_PACKAGE(Freetype REQUIRED)
+		FIND_PACKAGE(Fontconfig REQUIRED)
+	ENDIF()
 ENDIF()
 
 # Only find Python if we need to build interfaces

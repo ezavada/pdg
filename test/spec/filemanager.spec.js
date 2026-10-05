@@ -457,7 +457,7 @@ describe("FileManager", function() {
       expect(Array.isArray(files)).toBe(true);
       expect(files.length > 0).toBe(true);
       // Should find a known test entry point in its support directory
-      expect(jsFiles.some(f => f === 'client_test.js')).toBe(true);
+      expect(jsFiles.some(f => f === 'unit_test.js')).toBe(true);
     });
 
     it("can handle complex wildcard patterns efficiently", function() {
@@ -599,7 +599,7 @@ describe("FileManager", function() {
       expect(nestedFiles.length > 0).toBe(true);
       expect(nestedDirs.length > 0).toBe(true);
       
-      expect(nestedFiles.some(f => f === 'client_test.js')).toBe(true);
+      expect(nestedFiles.some(f => f === 'unit_test.js')).toBe(true);
       expect(nestedDirs.some(d => d === 'spec')).toBe(true);
       expect(nestedDirs.some(d => d === 'data')).toBe(true);
     });

@@ -317,7 +317,7 @@ See the [Animated reference](cxx/dox/animated-api.dox),
 
 Recorded branch validation includes macOS native/embedded Node, the headless
 Node addon, browser WebAssembly and the iOS simulator. The Node upgrade checkpoint
-passed 16 native CTest suites and 1,388 embedded JavaScript tests, 1,251 Node tests,
+passed 16 native CTest suites and 1,388 embedded JavaScript unit tests, 1,251 Node unit tests,
 1,368 browser tests and 1,366 simulator tests. Later targeted checks cover the
 test migrations and all nine rig checks. These counts describe recorded runs,
 not a promise that every build exposes the same tests.

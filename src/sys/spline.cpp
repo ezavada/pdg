@@ -244,7 +244,7 @@ namespace pdg {
 		// Update indices to point to correct segment
 		const_cast<Spline*>(this)->updateSegmentIndices(segmentNum);
 		
-		float X,Y;
+		float X = 0, Y = 0;
 		float s, u2, u3, t, t2, t3;
 		float tension, continuity, bias, a, b, c, d;
 		float h1, h2, m1, m2;
@@ -403,7 +403,7 @@ namespace pdg {
 		// Update indices to point to correct segment
 		const_cast<Spline*>(this)->updateSegmentIndices(segmentNum);
 		
-		float X,Y;
+		float X = 0, Y = 0;
 		float s;
 		float tension, continuity, bias, a, b, c, d;
 		float h1, h2, m1, m2;

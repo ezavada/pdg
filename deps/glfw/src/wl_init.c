@@ -853,7 +853,9 @@ int _glfwInitWayland(void)
         }
     }
 
-    if (wl_seat_get_version(_glfw.wl.seat) >= WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
+    // A compositor may initialize without advertising an input seat.
+    if (_glfw.wl.seat &&
+        wl_seat_get_version(_glfw.wl.seat) >= WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
     {
         _glfw.wl.keyRepeatTimerfd =
             timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC | TFD_NONBLOCK);

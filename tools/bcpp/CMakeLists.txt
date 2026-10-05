@@ -12,8 +12,23 @@ if(NOT BCPP_SOURCES)
 	message(FATAL_ERROR "No .cpp sources under ${BCPP_SOURCE_DIR}")
 endif()
 
+# Patch a build-local copy so re-extracting the bundled archive keeps the fix.
+# Both brace-merging paths allocate newLen bytes for the code and state buffers.
+set(BCPP_MAIN_SOURCE "${BCPP_SOURCE_DIR}/bcpp.cpp")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${BCPP_MAIN_SOURCE}")
+file(READ "${BCPP_MAIN_SOURCE}" BCPP_MAIN_CONTENT)
+foreach(buffer pNewCode pNewState)
+	string(REPLACE "sprintf (${buffer}," "snprintf (${buffer}, newLen,"
+		BCPP_MAIN_CONTENT "${BCPP_MAIN_CONTENT}")
+endforeach()
+set(BCPP_PATCHED_SOURCE "${CMAKE_CURRENT_BINARY_DIR}/bcpp.cpp")
+file(GENERATE OUTPUT "${BCPP_PATCHED_SOURCE}" CONTENT "${BCPP_MAIN_CONTENT}")
+list(REMOVE_ITEM BCPP_SOURCES "${BCPP_MAIN_SOURCE}")
+list(APPEND BCPP_SOURCES "${BCPP_PATCHED_SOURCE}")
+
 add_executable(bcpp ${BCPP_SOURCES})
-set_property(TARGET bcpp PROPERTY CXX_STANDARD 17)
+target_include_directories(bcpp PRIVATE "${BCPP_SOURCE_DIR}")
+set_property(TARGET bcpp PROPERTY CXX_STANDARD 20)
 set_property(TARGET bcpp PROPERTY CXX_STANDARD_REQUIRED ON)
 
 if(MSVC)

@@ -74,9 +74,9 @@ try {
         & $nodeExe $npmCli install --no-save --package-lock=false jasmine-node@1.16.0
         if ($LASTEXITCODE -ne 0) { throw "JavaScript test dependency installation failed." }
     }
-    & cmd /c ".\test\node.bat"
+    & ".\test\unit.ps1" --node
     if ($LASTEXITCODE -ne 0) { throw "Headless JavaScript tests failed." }
-    & cmd /c ".\test\client.bat"
+    & ".\test\unit.ps1"
     if ($LASTEXITCODE -ne 0) { throw "Client JavaScript tests failed." }
 
     # Build a distinct Debug executable with DEBUG logging and full PDB symbols.

@@ -1,14 +1,14 @@
-// Browser harness for the Emscripten client specs.
+// Browser harness for the Emscripten unit specs.
 (function() {
     "use strict";
 
-    var specs = window.PDG_CLIENT_SPECS.web.slice();
+    var specs = window.PDG_UNIT_SPECS.web.slice();
     // Select focused shared specs without loading unrelated platform suites.
     var selectedSpecs = new URLSearchParams(window.location.search).get("specs");
     if (selectedSpecs) {
         var requested = selectedSpecs.split(",");
         if (requested.some(function(name) { return specs.indexOf(name) === -1; }))
-            throw new Error("Unknown client spec selection: " + selectedSpecs);
+            throw new Error("Unknown unit spec selection: " + selectedSpecs);
         specs = requested;
     }
     var moduleCache = {};
@@ -126,7 +126,7 @@
         document.documentElement.setAttribute("data-status", result.status);
         document.getElementById("pdg-result-json").textContent = JSON.stringify(result);
         setStatus(result.status.toUpperCase() + ": " + result.specs + " specs, " + failed + " failures");
-        document.title = "PDG CLIENT TESTS: " + result.status.toUpperCase();
+        document.title = "PDG UNIT TESTS: " + result.status.toUpperCase();
         if (window.pdg && typeof window.pdg.quit === "function") window.pdg.quit();
     }
 
@@ -187,7 +187,7 @@
         });
         jasmineEnv.addReporter({ reportRunnerResults: finish });
         jasmineEnv.specFilter = function(spec) { return htmlReporter.specFilter(spec); };
-        setStatus("Running client specs...");
+        setStatus("Running unit specs...");
         jasmineEnv.execute();
     }
 
@@ -198,7 +198,7 @@
         document.documentElement.setAttribute("data-status", "failed");
         document.getElementById("pdg-result-json").textContent = JSON.stringify(result);
         setStatus("FAIL: " + message);
-        document.title = "PDG CLIENT TESTS: FAILED";
+        document.title = "PDG UNIT TESTS: FAILED";
     }
 
     function waitForPdg(deadline) {

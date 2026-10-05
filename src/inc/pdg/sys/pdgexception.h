@@ -58,7 +58,8 @@ public:
 private:
 	enum { maxStrBuf = 256 };
 	void describe( const char* whatStr ) {
-		std::strncpy( description, whatStr, maxStrBuf );
+		std::strncpy(description, whatStr ? whatStr : "", maxStrBuf - 1);
+		description[maxStrBuf - 1] = '\0';
 	}
 	char description[maxStrBuf];
 };

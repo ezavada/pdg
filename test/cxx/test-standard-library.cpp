@@ -31,10 +31,11 @@ void expect(bool ok, const char* message) {
 }
 
 std::unique_ptr<pdg::Deserializer> reader(pdg::Serializer& writer) {
+    expect(writer.getDataSize() <= std::numeric_limits<uint32>::max(), "serialized data fits in uint32");
     auto* copy = std::malloc(writer.getDataSize());
     if (!copy) throw std::bad_alloc();
     std::memcpy(copy, writer.getDataPtr(), writer.getDataSize());
-    return std::make_unique<pdg::Deserializer>(copy, writer.getDataSize());
+    return std::make_unique<pdg::Deserializer>(copy, static_cast<uint32>(writer.getDataSize()));
 }
 
 void cssColors() {
@@ -166,7 +167,7 @@ void filesystem() {
     std::ofstream(files.root / "two.txt") << "two";
     expect(OS::makeCanonicalPath("folder/../one.txt") == (files.root / "one.txt").string(),
         "relative paths use the application directory");
-    expect(OS::makeCanonicalPath("folder/../missing/file", false) == (files.root / "missing/file").string(),
+    expect(OS::makeCanonicalPath("folder/../missing/file", false) == (files.root / "missing" / "file").string(),
         "lexical normalization works for nonexistent paths");
     pdg::FindDataT found{};
     std::set<std::string> names;
@@ -190,9 +191,9 @@ void filesystem() {
     std::error_code error;
     std::filesystem::create_directory_symlink("folder", files.root / "link", error);
     if (!error) {
-        expect(OS::makeCanonicalPath("link/missing") == (files.root / "folder/missing").string(),
+        expect(OS::makeCanonicalPath("link/missing") == (files.root / "folder" / "missing").string(),
             "relative symlinks resolve before a nonexistent tail");
-        expect(OS::makeCanonicalPath("link/missing", false) == (files.root / "link/missing").string(),
+        expect(OS::makeCanonicalPath("link/missing", false) == (files.root / "link" / "missing").string(),
             "symlink resolution can be disabled");
     }
 }
