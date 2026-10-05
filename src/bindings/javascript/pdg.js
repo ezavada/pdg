@@ -1053,10 +1053,32 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
             layerSprites.delete(layer);
         };
         var layerProto = bindings.SpriteLayer.prototype;
+        layerProto.zoomTo = function(zoom, seconds, easing, keepInRect, centerOn) {
+            this._zoomTo(zoom, seconds, easing === undefined ? bindings.easeInOutQuad : easing,
+                keepInRect === undefined ? {left: 0, top: 0, right: 0, bottom: 0} : keepInRect,
+                centerOn === undefined ? null : centerOn);
+            return this;
+        };
+        layerProto.zoom = function(factor, seconds, easing, keepInRect, centerOn) {
+            return this.zoomTo(this.getZoom() * factor, seconds, easing, keepInRect, centerOn);
+        };
         layerProto.getOrigin = function() {
             var p = this._getOrigin();
             return new bindings.Point(p.x, p.y);
         };
+        ['layerToPort', 'portToLayer'].forEach(function(direction) {
+            ['Point', 'Offset', 'Vector'].forEach(function(kind) {
+                layerProto[direction + kind] = function(value) {
+                    return new bindings[kind](this['_' + direction + kind](value));
+                };
+            });
+            layerProto[direction + 'Rect'] = function(rect) {
+                var value = this['_' + direction + 'Rect'](rect,
+                    rect.radians === undefined ? 0 : rect.radians,
+                    rect.centerOffset || {x: 0, y: 0});
+                return new bindings.RotatedRect(value, value.radians, value.centerOffset);
+            };
+        });
         var spriteProto = bindings.Sprite.prototype;
         spriteProto.addFramesImage = function(image, first, count) {
             this._addFramesImage(image, first === undefined ? -1 : first, count === undefined ? 0 : count);

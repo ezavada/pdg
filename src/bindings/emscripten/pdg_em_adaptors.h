@@ -78,6 +78,8 @@ void emscriptenPortDrawCircle(Port& port, const Point& center, float radius,
                               const Attributes& attributes);
 void emscriptenPortDrawQuad(Port& port, const emscripten::val& quad,
                             const Attributes& attributes);
+emscripten::val emscriptenLayerToPortRect(const SpriteLayer& layer, const Rect& rect, float radians, const Offset& center);
+emscripten::val emscriptenPortToLayerRect(const SpriteLayer& layer, const Rect& rect, float radians, const Offset& center);
 SpriteLayer* emscriptenCreateSpriteLayerForPort(Port* port);
 TileLayer* emscriptenCreateTileLayerForPort(Port* port);
 std::string emscriptenFontGetName(Font& font);

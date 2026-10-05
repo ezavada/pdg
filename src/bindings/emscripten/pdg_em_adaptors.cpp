@@ -773,6 +773,17 @@ static emscripten::val rotatedBoundsValue(const RotatedRect& bounds) {
     return result;
 }
 
+#ifndef PDG_NO_GUI
+emscripten::val emscriptenLayerToPortRect(const SpriteLayer& layer, const Rect& rect, float radians, const Offset& center) {
+    RotatedRect value(rect, radians); value.centerOffset = center;
+    return rotatedBoundsValue(layer.layerToPort(value));
+}
+emscripten::val emscriptenPortToLayerRect(const SpriteLayer& layer, const Rect& rect, float radians, const Offset& center) {
+    RotatedRect value(rect, radians); value.centerOffset = center;
+    return rotatedBoundsValue(layer.portToLayer(value));
+}
+#endif
+
 emscripten::val emscriptenAnimatedGetRotatedBounds(AnimatedBase& animated) {
     return rotatedBoundsValue(animated.getRotatedBounds());
 }

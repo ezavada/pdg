@@ -77,6 +77,28 @@ namespace pdg {
 
 // a way for us to insert special stuff into the automatic bindings
 
+#ifndef PDG_NO_GUI
+#define BrowserLayerView_Extra \
+    .function("_layerToPortPoint", emscripten::optional_override([](const pdg::SpriteLayer& layer, const pdg::Point& value) { return layer.layerToPort(value); })) \
+    .function("_layerToPortOffset", emscripten::optional_override([](const pdg::SpriteLayer& layer, const pdg::Offset& value) { return layer.layerToPort(value); })) \
+    .function("_layerToPortVector", emscripten::optional_override([](const pdg::SpriteLayer& layer, const pdg::Vector& value) { return layer.layerToPort(value); })) \
+    .function("_layerToPortRect", &pdg::emscriptenLayerToPortRect) \
+    .function("_portToLayerPoint", emscripten::optional_override([](const pdg::SpriteLayer& layer, const pdg::Point& value) { return layer.portToLayer(value); })) \
+    .function("_portToLayerOffset", emscripten::optional_override([](const pdg::SpriteLayer& layer, const pdg::Offset& value) { return layer.portToLayer(value); })) \
+    .function("_portToLayerVector", emscripten::optional_override([](const pdg::SpriteLayer& layer, const pdg::Vector& value) { return layer.portToLayer(value); })) \
+    .function("_portToLayerRect", &pdg::emscriptenPortToLayerRect) \
+    .function("setZoom", &pdg::SpriteLayer::setZoom) \
+    .function("getZoom", &pdg::SpriteLayer::getZoom) \
+    .function("_zoomTo", emscripten::optional_override([](pdg::SpriteLayer& layer, float zoom, double seconds, int easing, const pdg::Rect& bounds, emscripten::val center) { pdg::browserPartCall([&] { \
+        if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !pdg::gEasingFunctions[easing]) throw std::invalid_argument("Unknown easing"); \
+        pdg::Point point; const pdg::Point* anchor = nullptr; \
+        if (!center.isNull() && !center.isUndefined()) { point = pdg::Point(center["x"].as<float>(), center["y"].as<float>()); anchor = &point; } \
+        layer.zoomTo(zoom, seconds, pdg::gEasingFunctions[easing], bounds, anchor); \
+    }); }))
+#else
+#define BrowserLayerView_Extra
+#endif
+
 #define Animated_Extra .constructor<>() BrowserAnimationHelpers_Extra
 #define ConfigManager_Extra \
     .function("useConfig", &pdg::emscriptenConfigUseConfig) \
@@ -284,7 +306,7 @@ namespace pdg {
 #else
 #define AnimationLayerPhysics_Extra
 #endif
-#define SpriteLayer_Extra LayerIdentity_Extra ParticleLayer_Extra AnimationLayerPhysics_Extra \
+#define SpriteLayer_Extra BrowserLayerView_Extra LayerIdentity_Extra ParticleLayer_Extra AnimationLayerPhysics_Extra \
     .function("_addNativeEventBridge", &pdg::emscriptenSpriteLayerAddEventBridge) \
     .function("_createSpriteFromSpriterFile", emscripten::optional_override([](pdg::SpriteLayer& layer, const std::string& path, const std::string& entity) { return pdg::browserRetain(pdg::emscriptenLayerCreateSpriteFromFile(layer,path,entity)); })) \
     .function("createSpriteFromSpriterEntity", emscripten::optional_override([](pdg::SpriteLayer& layer, const std::string& entity) { return pdg::browserRetain(pdg::emscriptenLayerCreateSpriteFromEntity(layer,entity)); })) \
@@ -293,7 +315,7 @@ namespace pdg {
     .function("enableSpriterEvents", &pdg::SpriteLayer::enableSpriterEvents)
 #else
 #define Sprite_Extra SpriteIdentity_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteAddEventBridge)
-#define SpriteLayer_Extra LayerIdentity_Extra ParticleLayer_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteLayerAddEventBridge)
+#define SpriteLayer_Extra BrowserLayerView_Extra LayerIdentity_Extra ParticleLayer_Extra .function("_addNativeEventBridge", &pdg::emscriptenSpriteLayerAddEventBridge)
 #endif
 #define TileLayer_Extra 
 #define TimerManager_Extra 

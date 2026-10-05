@@ -142,6 +142,11 @@ function main()
     pdg.on(pdg.eventType_PortDraw, function() {
         if (automatedDemo && !demoFinished && ++demoFrames >= 180) {
             if (!gWonkyAim || !gGreyGuyAim) throw new Error('Character demos did not initialize');
+            if (Math.abs(gSpriteLayer.getZoom() - kFinalLayerZoom) > 0.00001 ||
+                !Number.isFinite(gWonkyAim.cycleStartSeconds) ||
+                !gGreyGuyIK || !Number.isFinite(gGreyGuyIK.riseStartSeconds)) {
+                throw new Error('Introductory layer zoom did not complete and start the character demos');
+            }
             demoFinished = true;
             console.log('PASS: rendered Grey Guy and Wonky Skeleton');
             pdg.quit();
@@ -304,7 +309,7 @@ var BoundsHelper = new pdg.IAnimationHelper( function(what, deltaSeconds) {
 
 function BallCollideFunc(sprite, contact) {
     if (contact.phase !== pdg.collision_Begin) return;
-    const xloc = sprite.getLayer().layerToPortPoint(sprite.getLocation()).x;
+    const xloc = gSpriteLayer.layerToPortPoint(sprite.getLocation()).x;
     const xoffset = xloc - gPort.getDrawingArea().width() / 2;
     ++gCollisionCount;
     // Use impulse strength directly for this demo's sound-volume response.
@@ -392,26 +397,12 @@ function AddSprites() {
         const inertia = mass * (size.x * size.x + size.y * size.y) / 12;
         spinner.setupPhysicsBody(mass, inertia);
 	
-		var myHelper = new pdg.ISpriteDrawHelper(function(sprite, port) {
-			var bounds = sprite.getRotatedBounds(); // this gets a rotated rect: unrotated size plus centerpoint and rotation
-			var r = sprite.getLayer().layerToPortRect(bounds);
-			var center = sprite.getLayer().layerToPortPoint(bounds.centerPoint());
-			var frameAttrs = new pdg.Attributes().lineColor("white").lineThickness(1.0).rotation(bounds.radians, center);
-			port.drawRect(r, frameAttrs.fillColor("black"));
-			
-			// Debug: Draw the actual collision bounds
-			if (false && sprite.collider !== pdg.Collider.NoCollider) {
-				var collisionBounds = sprite.getRotatedBounds();
-				var collisionRect = sprite.getLayer().layerToPortRect(collisionBounds);
-				var collisionFrameAttrs = new pdg.Attributes().lineColor("red").lineThickness(1.0);
-				port.drawRect(collisionRect, collisionFrameAttrs);
-			}
-			
-			return false; // don't let sprite draw itself (ignored for post draw)
-		});
+        const frame = pdg.createDrawing();
+        frame.addRect(new pdg.Rect(-size.x / 2, -size.y / 2, size.x / 2, size.y / 2),
+            new pdg.Attributes().lineColor("white").lineThickness(1.0).fillColor("black"));
+        spinner.createPart('frame').setDrawing(frame);
 		spinner.physics.setVelocity(10, 10);
         spinner.physics.setAngularVelocity(1.5); // radians/second, changed naturally by contacts
-		spinner.setDrawHelper(myHelper);
 	}
 
 	if (drawWalkingHero) {

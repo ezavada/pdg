@@ -29,6 +29,42 @@
 
 describe("SpriteLayer", function() {
 
+  if (pdg.hasGraphics) {
+    it("zooms and converts layer coordinates through the public view API", function() {
+      var layer = pdg.createSpriteLayer();
+      try {
+        layer.setZoom(2);
+        expect(layer.getZoom()).toBe(2);
+        ['Point', 'Offset', 'Vector'].forEach(function(kind) {
+          var projected = layer['layerToPort' + kind](new pdg[kind](3, 5));
+          expect(projected instanceof pdg[kind]).toBe(true);
+          expect(projected.x).toBeCloseTo(6, 5);
+          expect(projected.y).toBeCloseTo(10, 5);
+          var restored = layer['portToLayer' + kind](projected);
+          expect(restored.x).toBeCloseTo(3, 5);
+          expect(restored.y).toBeCloseTo(5, 5);
+        });
+        var rect = new pdg.RotatedRect(new pdg.Rect(1, 2, 3, 4), .2, new pdg.Offset(.5, .75));
+        var restored = layer.portToLayerRect(layer.layerToPortRect(rect));
+        expect(restored instanceof pdg.RotatedRect).toBe(true);
+        ['left', 'top', 'right', 'bottom', 'radians'].forEach(function(key) {
+          expect(restored[key]).toBeCloseTo(rect[key], 5);
+        });
+        expect(restored.centerOffset.x).toBeCloseTo(.5, 5);
+        expect(restored.centerOffset.y).toBeCloseTo(.75, 5);
+        expect(layer.zoomTo(4, .1, pdg.linearTween, new pdg.Rect(0, 0), new pdg.Point(0, 0))).toBe(layer);
+        layer.animate(.1);
+        expect(layer.getZoom()).toBeCloseTo(4, 5);
+        expect(layer.zoom(.5, .1)).toBe(layer);
+        layer.animate(.1);
+        expect(layer.getZoom()).toBeCloseTo(2, 5);
+      } finally {
+        pdg.cleanupLayer(layer);
+      }
+    });
+  }
+
+
   it("exists", function() {
 	console.log('* Testing SpriteLayer...');
 	expect(pdg.SpriteLayer).toBeDefined();
