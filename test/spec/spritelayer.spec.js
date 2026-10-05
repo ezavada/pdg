@@ -30,7 +30,32 @@
 describe("SpriteLayer", function() {
 
   if (pdg.hasGraphics) {
-    it("zooms and converts layer coordinates through the public view API", function() {
+    describe("zoom animation", function() {
+      var layer, listener;
+      afterEach(function() {
+        if (listener && listener.cancel) listener.cancel();
+        if (layer) pdg.cleanupLayer(layer);
+        layer = listener = null;
+      });
+      it("completes absolute and relative zooms through the engine animation loop", function() {
+        var completions = 0;
+        runs(function() {
+          layer = pdg.createSpriteLayer();
+          layer.setZoom(2);
+          listener = layer.onZoomComplete(function() { ++completions; return false; });
+          expect(layer.zoomTo(4, .1, pdg.linearTween, new pdg.Rect(0, 0), new pdg.Point(0, 0))).toBe(layer);
+        });
+        waitsFor(function() { return completions >= 1; }, "absolute zoom completion", 2000);
+        runs(function() {
+          expect(layer.getZoom()).toBeCloseTo(4, 5);
+          expect(layer.zoom(.5, .1)).toBe(layer);
+        });
+        waitsFor(function() { return completions >= 2; }, "relative zoom completion", 2000);
+        runs(function() { expect(layer.getZoom()).toBeCloseTo(2, 5); });
+      });
+    });
+
+    it("converts layer coordinates through the public view API", function() {
       var layer = pdg.createSpriteLayer();
       try {
         layer.setZoom(2);
@@ -52,12 +77,6 @@ describe("SpriteLayer", function() {
         });
         expect(restored.centerOffset.x).toBeCloseTo(.5, 5);
         expect(restored.centerOffset.y).toBeCloseTo(.75, 5);
-        expect(layer.zoomTo(4, .1, pdg.linearTween, new pdg.Rect(0, 0), new pdg.Point(0, 0))).toBe(layer);
-        layer.animate(.1);
-        expect(layer.getZoom()).toBeCloseTo(4, 5);
-        expect(layer.zoom(.5, .1)).toBe(layer);
-        layer.animate(.1);
-        expect(layer.getZoom()).toBeCloseTo(2, 5);
       } finally {
         pdg.cleanupLayer(layer);
       }
