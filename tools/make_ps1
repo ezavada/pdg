@@ -64,6 +64,18 @@ if (-not (Test-Path $submoduleHelperPath)) {
 }
 . $submoduleHelperPath
 
+function Get-PDGSha256([string]$Path) {
+    $stream = [System.IO.File]::OpenRead((Resolve-Path -LiteralPath $Path).Path)
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        return ([System.BitConverter]::ToString($sha256.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        $sha256.Dispose()
+        $stream.Dispose()
+    }
+}
+
 # Function to write colored output
 function Write-Status {
     param([string]$Message, [string]$Color = "White")
@@ -480,7 +492,7 @@ function Build-Node {
     $nodeLibExists = (Test-Path $nodeLibPath) -and (Test-Path $nodeBaseLibPath)
     $nodeExeExists = Test-Path $nodeExePath
     $nodeVersionMatches = (Test-Path $nodeVersionStamp) -and
-        ((Get-FileHash $nodeVersionHeader).Hash -eq (Get-FileHash $nodeVersionStamp).Hash)
+        ((Get-PDGSha256 $nodeVersionHeader) -eq (Get-PDGSha256 $nodeVersionStamp))
     $nodeVersionMatches = $nodeVersionMatches -and $nodeExeExists -and
         ((& $nodeExePath --version) -eq $nodeExpectedVersion)
 

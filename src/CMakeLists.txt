@@ -526,7 +526,7 @@ target_compile_definitions(minizip_static PRIVATE
 
 # Set runtime library to static for minizip_static on Windows
 IF( WIN32 )
-	SET_PROPERTY(TARGET minizip_static PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	SET_PROPERTY(TARGET minizip_static PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
 ENDIF( WIN32 )
 
 # Create libtess2 static library
@@ -540,7 +540,7 @@ target_include_directories(libtess2_static PUBLIC
 
 # Set runtime library to static for libtess2_static on Windows
 IF( WIN32 )
-	SET_PROPERTY(TARGET libtess2_static PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	SET_PROPERTY(TARGET libtess2_static PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
 ENDIF( WIN32 )
 
 ADD_EXECUTABLE(pdg WIN32 MACOSX_BUNDLE 
@@ -928,13 +928,14 @@ IF( WIN32 )
 	SET_TARGET_PROPERTIES(pdg PROPERTIES  COMPILE_DEFINITIONS_DEBUG _CONSOLE)
 	SET_TARGET_PROPERTIES(pdg PROPERTIES  COMPILE_DEFINITIONS_RELEASE _CONSOLE) 
 	SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:CONSOLE /NODEFAULTLIB:MSVCRT /LTCG /ignore:4049 /ignore:4217 /ignore:4218 /ignore:4219")
-	SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /SUBSYSTEM:CONSOLE /NODEFAULTLIB:MSVCRT /LTCG /ignore:4049 /ignore:4217 /ignore:4218 /ignore:4219")
-	# Set runtime library to static for all configurations
-	SET_PROPERTY(TARGET pdg PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /SUBSYSTEM:CONSOLE /NODEFAULTLIB:MSVCRT /ignore:4049 /ignore:4217 /ignore:4218 /ignore:4219")
+	# Node is linked from its Release build in every configuration. Its static
+	# runtime must also be used by the Debug executable and its in-tree archives.
+	SET_PROPERTY(TARGET pdg PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded")
 	IF(PDG_WITH_GLFW)
-		TARGET_LINK_LIBRARIES ( pdg glfw3 strmiids imm32 psapi iphlpapi winmm ws2_32 user32 ${PDG_LIBJPEG_LIBRARY} bcrypt advapi32 crypt32 userenv msvcrt)
+		TARGET_LINK_LIBRARIES ( pdg ${GLFW_LINK_DIRS}/Release/glfw3.lib strmiids imm32 psapi iphlpapi winmm ws2_32 user32 ${LIBJPEG_LINK_DIRS}/Release/jpeg-static.lib bcrypt advapi32 crypt32 userenv)
 	ELSE()
-		TARGET_LINK_LIBRARIES ( pdg strmiids imm32 psapi iphlpapi winmm ws2_32 user32 ${PDG_LIBJPEG_LIBRARY} bcrypt advapi32 crypt32 userenv msvcrt)
+		TARGET_LINK_LIBRARIES ( pdg strmiids imm32 psapi iphlpapi winmm ws2_32 user32 ${LIBJPEG_LINK_DIRS}/Release/jpeg-static.lib bcrypt advapi32 crypt32 userenv)
 	ENDIF()
 ENDIF( WIN32 )
 
@@ -953,7 +954,7 @@ SET( APP_JS_OUT_DIR "${APP_OUT_DIR}/lib/" )
 
 IF( USE_CHIPMUNK )
 	IF(WIN32)
-		TARGET_LINK_LIBRARIES (pdg ${PDG_CHIPMUNK_LIBRARY})
+		TARGET_LINK_LIBRARIES (pdg ${CHIPMUNK_LINK_DIRS}/Release/chipmunk.lib)
 	ELSE()
 		TARGET_LINK_LIBRARIES (pdg ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/chipmunk/src/libchipmunk.a)
 	ENDIF()
