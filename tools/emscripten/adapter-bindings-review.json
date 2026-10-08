@@ -1,0 +1,888 @@
+{
+  "version": 1,
+  "inventory": "src/bindings/emscripten/coverage.json",
+  "scope": "All remaining own public members classified as adapter. One primary blocker per mapping; source inspection, not a runtime parity claim. Support bindings, properties and JS-only helpers are outside this inventory.",
+  "count": 127,
+  "reviewed_base_commit": "beea4af5b",
+  "groups": [
+    {
+      "id": "c-strings",
+      "title": "C string conversion and lookup",
+      "reason": "Adapters translate std::string to/from C strings, sometimes mapping empty strings to null. Object pointer qualifiers do not describe string storage or null/empty behavior.",
+      "next_step": "Add shared call-scoped string storage and explicit nullable/empty-string policies, preserving lookup errors.",
+      "members": [
+        {
+          "name": "ConfigManager.setConfigBool",
+          "adapter": "ConfigManager.setConfigBool",
+          "symbol": "pdg::emscriptenConfigSetBool",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ConfigManager.setConfigFloat",
+          "adapter": "ConfigManager.setConfigFloat",
+          "symbol": "pdg::emscriptenConfigSetFloat",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ConfigManager.setConfigLong",
+          "adapter": "ConfigManager.setConfigLong",
+          "symbol": "pdg::emscriptenConfigSetLong",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ConfigManager.setConfigString",
+          "adapter": "ConfigManager.setConfigString",
+          "symbol": "pdg::emscriptenConfigSetString",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ConfigManager.useConfig",
+          "adapter": "ConfigManager.useConfig",
+          "symbol": "pdg::emscriptenConfigUseConfig",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Drawing.addText",
+          "adapter": "Drawing.addText",
+          "symbol": "pdg::emscriptenDrawingAddText",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ElementRef.getText",
+          "adapter": "ElementRef.getText",
+          "symbol": "pdg::emscriptenElementGetText",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ElementRef.setText",
+          "adapter": "ElementRef.setText",
+          "symbol": "pdg::emscriptenElementSetText",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Font.getFontName",
+          "adapter": "browser.emscriptenFontGetName",
+          "symbol": "pdg::emscriptenFontGetName",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "GraphicsManager.createFont",
+          "adapter": "browser.emscriptenGraphicsCreateFont",
+          "symbol": "pdg::emscriptenGraphicsCreateFont",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "GraphicsManager.createWindowPort",
+          "adapter": "browser.emscriptenGraphicsCreateWindowPort",
+          "symbol": "pdg::emscriptenGraphicsCreateWindowPort",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "LogManager.initialize",
+          "adapter": "LogManager.initialize",
+          "symbol": "pdg::emscriptenLogInitialize",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "LogManager.writeLogEntry",
+          "adapter": "LogManager.writeLogEntry",
+          "symbol": "pdg::emscriptenLogWrite",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Port.getTextWidth",
+          "adapter": "browser.emscriptenPortGetTextWidth",
+          "symbol": "pdg::emscriptenPortGetTextWidth",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.getImage",
+          "adapter": "ResourceManager.getImage",
+          "symbol": "pdg::emscriptenResourceGetImage",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.getImageStrip",
+          "adapter": "ResourceManager.getImageStrip",
+          "symbol": "pdg::emscriptenResourceGetImageStrip",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.getLanguage",
+          "adapter": "ResourceManager.getLanguage",
+          "symbol": "pdg::emscriptenResourceGetLanguage",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.getResourceSize",
+          "adapter": "ResourceManager.getResourceSize",
+          "symbol": "pdg::emscriptenResourceGetSize",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.getSound",
+          "adapter": "browser.emscriptenResourceGetSound",
+          "symbol": "pdg::emscriptenResourceGetSound",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.openResourceFile",
+          "adapter": "ResourceManager.openResourceFile",
+          "symbol": "pdg::emscriptenResourceOpenFile",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.setLanguage",
+          "adapter": "ResourceManager.setLanguage",
+          "symbol": "pdg::emscriptenResourceSetLanguage",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Serializer.serialize_str",
+          "adapter": "Serializer.serialize_str",
+          "symbol": "pdg::emscriptenSerializerSerializeString",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Serializer.sizeof_str",
+          "adapter": "Serializer.sizeof_str",
+          "symbol": "pdg::emscriptenSerializerSizeofString",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.activateSubEntity",
+          "adapter": "browser.emscriptenSpriteActivateSubEntity",
+          "symbol": "pdg::emscriptenSpriteActivateSubEntity",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.applyCharacterMap",
+          "adapter": "browser.emscriptenSpriteApplyCharacterMap",
+          "symbol": "pdg::emscriptenSpriteApplyCharacterMap",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.attachSprite",
+          "adapter": "browser.emscriptenSpriteAttachSprite",
+          "symbol": "pdg::emscriptenSpriteAttachSprite",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.enableAnimationPose",
+          "adapter": "browser.emscriptenSpriteEnableAnimationPose",
+          "symbol": "pdg::emscriptenSpriteEnableAnimationPose",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAttachPoint",
+          "adapter": "browser.emscriptenSpriteGetAttachPoint",
+          "symbol": "pdg::emscriptenSpriteGetAttachPoint",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getSpriterCollisionBox",
+          "adapter": "browser.emscriptenSpriteGetCollisionBox",
+          "symbol": "pdg::emscriptenSpriteGetCollisionBox",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getSpriterCollisionBoxName",
+          "adapter": "browser.emscriptenSpriteGetCollisionBoxName",
+          "symbol": "pdg::emscriptenSpriteGetCollisionBoxName",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.hasAttachPoint",
+          "adapter": "browser.emscriptenSpriteHasAttachPoint",
+          "symbol": "pdg::emscriptenSpriteHasAttachPoint",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.isSpriterCollisionActive",
+          "adapter": "browser.emscriptenSpriteIsCollisionActive",
+          "symbol": "pdg::emscriptenSpriteIsCollisionActive",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.removeCharacterMap",
+          "adapter": "browser.emscriptenSpriteRemoveCharacterMap",
+          "symbol": "pdg::emscriptenSpriteRemoveCharacterMap",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.seekAnimation",
+          "adapter": "browser.emscriptenSpriteSeekAnimation",
+          "symbol": "pdg::emscriptenSpriteSeekAnimation",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.transitionToAnimation",
+          "adapter": "browser.emscriptenSpriteTransitionToAnimation",
+          "symbol": "pdg::emscriptenSpriteTransitionToAnimation",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "SpriteLayer.applyCharacterMapToAll",
+          "adapter": "browser.emscriptenLayerApplyCharacterMap",
+          "symbol": "pdg::emscriptenLayerApplyCharacterMap",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "SpriteLayer.removeCharacterMapFromAll",
+          "adapter": "browser.emscriptenLayerRemoveCharacterMap",
+          "symbol": "pdg::emscriptenLayerRemoveCharacterMap",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 37
+    },
+    {
+      "id": "records",
+      "title": "Structured records, arrays and matrices",
+      "reason": "Public shapes require constructing native structs/vectors/matrices or copying their fields into script values; several animation adapters also convert names and dispatch whole-rig versus per-bone settings.",
+      "next_step": "Map schema fields to native record fields and collection element conversions; preserve matrix ordering, optional results and snapshot semantics.",
+      "members": [
+        {
+          "name": "AnimatedAttributes.changeTransform",
+          "adapter": "AnimatedAttributes.changeTransform",
+          "symbol": "pdg::emscriptenAnimatedAttributesChangeTransform",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.getTransform",
+          "adapter": "Attributes.getTransform",
+          "symbol": "pdg::emscriptenAttributesGetTransform",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.setTransform",
+          "adapter": "Attributes.setTransform",
+          "symbol": "pdg::emscriptenAttributesSetTransform",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.transform",
+          "adapter": "Attributes.transform",
+          "symbol": "pdg::emscriptenAttributesTransform",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ElementRef.getControlPoints",
+          "adapter": "ElementRef.getControlPoints",
+          "symbol": "pdg::emscriptenElementGetControlPoints",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.addAnimationIK",
+          "adapter": "browser.emscriptenSpriteAddAnimationIK",
+          "symbol": "pdg::emscriptenSpriteAddAnimationIK",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationBindingNames",
+          "adapter": "browser.emscriptenSpriteGetAnimationBindingNames",
+          "symbol": "pdg::emscriptenSpriteGetAnimationBindingNames",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationBindingTransform",
+          "adapter": "browser.emscriptenSpriteGetAnimationBindingTransform",
+          "symbol": "pdg::emscriptenSpriteGetAnimationBindingTransform",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationBoneNames",
+          "adapter": "browser.emscriptenSpriteGetAnimationBoneNames",
+          "symbol": "pdg::emscriptenSpriteGetAnimationBoneNames",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationBoneTransform",
+          "adapter": "browser.emscriptenSpriteGetAnimationBoneTransform",
+          "symbol": "pdg::emscriptenSpriteGetAnimationBoneTransform",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationDrawBounds",
+          "adapter": "browser.emscriptenSpriteGetAnimationDrawBounds",
+          "symbol": "pdg::emscriptenSpriteGetAnimationDrawBounds",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationIKResult",
+          "adapter": "browser.emscriptenSpriteGetAnimationIKResult",
+          "symbol": "pdg::emscriptenSpriteGetAnimationIKResult",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationPhysicsDriveSettings",
+          "adapter": "browser.emscriptenSpriteGetAnimationPhysicsDriveSettings",
+          "symbol": "pdg::emscriptenSpriteGetAnimationPhysicsDriveSettings",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationPhysicsSetupWarnings",
+          "adapter": "browser.emscriptenSpriteGetAnimationPhysicsSetupWarnings",
+          "symbol": "pdg::emscriptenSpriteGetAnimationPhysicsSetupWarnings",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationPose",
+          "adapter": "browser.emscriptenSpriteGetAnimationPose",
+          "symbol": "pdg::emscriptenSpriteGetAnimationPose",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAppliedCharacterMaps",
+          "adapter": "browser.emscriptenSpriteGetAppliedCharacterMaps",
+          "symbol": "pdg::emscriptenSpriteGetAppliedCharacterMaps",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.sampleAnimationPose",
+          "adapter": "browser.emscriptenSpriteSampleAnimationPose",
+          "symbol": "pdg::emscriptenSpriteSampleAnimationPose",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.setAnimationBoneTransform",
+          "adapter": "browser.emscriptenSpriteSetAnimationBoneTransform",
+          "symbol": "pdg::emscriptenSpriteSetAnimationBoneTransform",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.setAnimationPhysicsDriveSettings",
+          "adapter": "browser.emscriptenSpriteSetAnimationPhysicsDriveSettings",
+          "symbol": "pdg::emscriptenSpriteSetAnimationPhysicsDriveSettings",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.setupAnimationPhysics",
+          "adapter": "browser.emscriptenSpriteSetupAnimationPhysics",
+          "symbol": "pdg::emscriptenSpriteSetupAnimationPhysics",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 20
+    },
+    {
+      "id": "out-parameters",
+      "title": "Output parameters and result assembly",
+      "reason": "The native call fills output arguments or caller-allocated storage; its return value alone is not the public result.",
+      "next_step": "Describe output argument mappings and failure results; keep allocated/copy results distinct from borrowed references.",
+      "members": [
+        {
+          "name": "ConfigManager.getConfigBool",
+          "adapter": "ConfigManager.getConfigBool",
+          "symbol": "pdg::emscriptenConfigGetBool",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ConfigManager.getConfigFloat",
+          "adapter": "ConfigManager.getConfigFloat",
+          "symbol": "pdg::emscriptenConfigGetFloat",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ConfigManager.getConfigLong",
+          "adapter": "ConfigManager.getConfigLong",
+          "symbol": "pdg::emscriptenConfigGetLong",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ConfigManager.getConfigString",
+          "adapter": "config.get-string",
+          "symbol": "pdg::emscriptenConfigGetString",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Deserializer.deserialize_str",
+          "adapter": "Deserializer.deserialize_str",
+          "symbol": "pdg::emscriptenDeserializerDeserializeString",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ElementRef.getAttributes",
+          "adapter": "ElementRef.getAttributes",
+          "symbol": "pdg::emscriptenElementGetAttributes",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "GraphicsManager.getCurrentScreenMode",
+          "adapter": "browser.emscriptenGraphicsGetCurrentScreenMode",
+          "symbol": "pdg::emscriptenGraphicsGetCurrentScreenMode",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "GraphicsManager.getNthSupportedScreenMode",
+          "adapter": "browser.emscriptenGraphicsGetNthSupportedScreenMode",
+          "symbol": "pdg::emscriptenGraphicsGetNthSupportedScreenMode",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.getString",
+          "adapter": "ResourceManager.getString",
+          "symbol": "pdg::emscriptenResourceGetString",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "TileLayer.getTileTypeAndFacingAt",
+          "adapter": "TileLayer.getTileTypeAndFacingAt",
+          "symbol": "pdg::emscriptenTileGetTypeAndFacing",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 10
+    },
+    {
+      "id": "dispatch",
+      "title": "Overload, shape and omitted argument dispatch",
+      "reason": "Adapters select overloads using value shape or sentinel values, convert Rect to Quad, or supply native-only trailing arguments.",
+      "next_step": "Derive dispatch from explicit variant/conversion contracts and native-only defaults without changing the public call shape.",
+      "members": [
+        {
+          "name": "Image.getSubsection",
+          "adapter": "Image.getSubsection",
+          "symbol": "pdg::emscriptenImageGetSubsection",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Port.drawDrawing",
+          "adapter": "browser.emscriptenPortDrawDrawing",
+          "symbol": "pdg::emscriptenPortDrawDrawing",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Port.drawImage",
+          "adapter": "browser.emscriptenPortDrawImage",
+          "symbol": "pdg::emscriptenPortDrawImage",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Port.drawText",
+          "adapter": "browser.emscriptenPortDrawText",
+          "symbol": "pdg::emscriptenPortDrawText",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Port.startTrackingMouse",
+          "adapter": "browser.emscriptenPortStartTrackingMouse",
+          "symbol": "pdg::emscriptenPortStartTrackingMouse",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.blendToAnimation",
+          "adapter": "browser.emscriptenSpriteBlendToAnimation",
+          "symbol": "pdg::emscriptenSpriteBlendToAnimation",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getAnimationPhysicsMode",
+          "adapter": "browser.emscriptenSpriteGetAnimationPhysicsMode",
+          "symbol": "pdg::emscriptenSpriteGetAnimationPhysicsMode",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.hasAnimation",
+          "adapter": "browser.emscriptenSpriteHasAnimation",
+          "symbol": "pdg::emscriptenSpriteHasAnimation",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.setAnimationPhysicsMode",
+          "adapter": "browser.emscriptenSpriteSetAnimationPhysicsMode",
+          "symbol": "pdg::emscriptenSpriteSetAnimationPhysicsMode",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.startAnimation",
+          "adapter": "browser.emscriptenSpriteStartAnimation",
+          "symbol": "pdg::emscriptenSpriteStartAnimation",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "TileLayer.getTileTypeAt",
+          "adapter": "TileLayer.getTileTypeAt",
+          "symbol": "pdg::emscriptenTileGetType",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.getBone",
+          "adapter": "Sprite.getBone",
+          "symbol": "pdg::browserSpriteGetBone",
+          "source": "src/bindings/emscripten/pdg_em_bone.h"
+        },
+        {
+          "name": "Bone.setIKLimits",
+          "adapter": "Bone.setIKLimits",
+          "symbol": "pdg::browserBoneSetIKLimits",
+          "source": "src/bindings/emscripten/pdg_em_bone.h"
+        }
+      ],
+      "count": 13
+    },
+    {
+      "id": "bytes",
+      "title": "Binary spans and backing storage",
+      "reason": "Byte arrays/MemBlock need pointer-plus-length conversion, bounds checks and explicit copy/borrow storage lifetime; allocation and reference qualifiers alone are insufficient.",
+      "next_step": "Use shared byte-span argument/result contracts including owner retention and copy policy.",
+      "members": [
+        {
+          "name": "Deserializer.deserialize_mem",
+          "adapter": "Deserializer.deserialize_mem",
+          "symbol": "pdg::emscriptenDeserializerDeserializeMem",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Deserializer.setDataPtr",
+          "adapter": "Deserializer.setDataPtr",
+          "symbol": "pdg::emscriptenDeserializerSetData",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ResourceManager.getResource",
+          "adapter": "ResourceManager.getResource",
+          "symbol": "pdg::emscriptenResourceGet",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Serializer.getDataPtr",
+          "adapter": "Serializer.getDataPtr",
+          "symbol": "pdg::emscriptenSerializerGetData",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Serializer.serialize_mem",
+          "adapter": "Serializer.serialize_mem",
+          "symbol": "pdg::emscriptenSerializerSerializeMem",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Serializer.sizeof_mem",
+          "adapter": "Serializer.sizeof_mem",
+          "symbol": "pdg::emscriptenSerializerSizeofMem",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "TileLayer.loadMapData",
+          "adapter": "TileLayer.loadMapData",
+          "symbol": "pdg::emscriptenTileLoadMapData",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 7
+    },
+    {
+      "id": "numeric",
+      "title": "Enums and 64-bit numeric representation",
+      "reason": "Adapters cast unregistered enums to/from numbers, expose 64-bit values through JavaScript Number, or preserve signed Font style inputs before casting to uint32. Direct unsigned Embind input rejects -1, unlike the existing Font API.",
+      "next_step": "Define enum wire/domain policies and separate exact integer versus lossy Number conversion policies.",
+      "members": [
+        {
+          "name": "Attributes.blendMode",
+          "adapter": "Attributes.blendMode",
+          "symbol": "pdg::emscriptenAttributesSetBlendMode",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.fitType",
+          "adapter": "Attributes.fitType",
+          "symbol": "pdg::emscriptenAttributesSetFitType",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.getBlendMode",
+          "adapter": "Attributes.getBlendMode",
+          "symbol": "pdg::emscriptenAttributesGetBlendMode",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.getFitType",
+          "adapter": "Attributes.getFitType",
+          "symbol": "pdg::emscriptenAttributesGetFitType",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.getGradientType",
+          "adapter": "Attributes.getGradientType",
+          "symbol": "pdg::emscriptenAttributesGetGradientType",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.getLineStyle",
+          "adapter": "Attributes.getLineStyle",
+          "symbol": "pdg::emscriptenAttributesGetLineStyle",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Attributes.lineStyle",
+          "adapter": "Attributes.lineStyle",
+          "symbol": "pdg::emscriptenAttributesSetLineStyle",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Deserializer.deserialize_8",
+          "adapter": "Deserializer.deserialize_8",
+          "symbol": "pdg::emscriptenDeserializerDeserialize8",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Deserializer.deserialize_8u",
+          "adapter": "Deserializer.deserialize_8",
+          "symbol": "pdg::emscriptenDeserializerDeserialize8",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "ElementRef.type",
+          "adapter": "ElementRef.type",
+          "symbol": "pdg::emscriptenElementGetType",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Font.getFontAscent",
+          "adapter": "browser.emscriptenFontGetAscent",
+          "symbol": "pdg::emscriptenFontGetAscent",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Font.getFontCapHeight",
+          "adapter": "browser.emscriptenFontGetCapHeight",
+          "symbol": "pdg::emscriptenFontGetCapHeight",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Font.getFontDescent",
+          "adapter": "browser.emscriptenFontGetDescent",
+          "symbol": "pdg::emscriptenFontGetDescent",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Font.getFontHeight",
+          "adapter": "browser.emscriptenFontGetHeight",
+          "symbol": "pdg::emscriptenFontGetHeight",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Font.getFontLeading",
+          "adapter": "browser.emscriptenFontGetLeading",
+          "symbol": "pdg::emscriptenFontGetLeading",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Serializer.serialize_8",
+          "adapter": "Serializer.serialize_8",
+          "symbol": "pdg::emscriptenSerializerSerialize8",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "TileLayer.setTileTypeAt",
+          "adapter": "TileLayer.setTileTypeAt",
+          "symbol": "pdg::emscriptenTileSetType",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 17
+    },
+    {
+      "id": "interfaces",
+      "title": "Serialization interface upcasts",
+      "reason": "Concrete script Serializer/Deserializer handles are passed to native ISerializer/IDeserializer interfaces, which are not separately registered script classes.",
+      "next_step": "Add reusable registered-concrete to native-interface argument conversion; preserve lifetime and script serialization callbacks.",
+      "members": [
+        {
+          "name": "SpriteLayer.deserialize",
+          "adapter": "SpriteLayer.deserialize",
+          "symbol": "pdg::emscriptenSpriteLayerDeserialize",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "SpriteLayer.getSerializedSize",
+          "adapter": "SpriteLayer.getSerializedSize",
+          "symbol": "pdg::emscriptenSpriteLayerGetSerializedSize",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "SpriteLayer.serialize",
+          "adapter": "SpriteLayer.serialize",
+          "symbol": "pdg::emscriptenSpriteLayerSerialize",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "id": "callbacks",
+      "title": "Animation callback contexts and lifetime",
+      "reason": "Adapters construct pose/context snapshots, apply returned edits, translate callback errors, and retain returned drawing content.",
+      "next_step": "Share callback/context conversion contracts with validation and lifetime behavior before generating registrations.",
+      "members": [
+        {
+          "name": "Sprite.addAnimationDrawable",
+          "adapter": "browser.emscriptenSpriteAddAnimationDrawable",
+          "symbol": "pdg::emscriptenSpriteAddAnimationDrawable",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sprite.addAnimationModifier",
+          "adapter": "browser.emscriptenSpriteAddAnimationModifier",
+          "symbol": "pdg::emscriptenSpriteAddAnimationModifier",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "id": "file-handles",
+      "title": "File search handle lifecycle",
+      "reason": "Search results contain an opaque native iterator with explicit findNext/findClose lifetime and mutation rules.",
+      "next_step": "Model owned iterator handles, result records and disposal rather than inferring ownership from a pointer.",
+      "members": [
+        {
+          "name": "FileManager.findClose",
+          "adapter": "FileManager.findClose",
+          "symbol": "pdg::emscriptenFileFindClose",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "FileManager.findFirst",
+          "adapter": "FileManager.findFirst",
+          "symbol": "pdg::emscriptenFileFindFirst",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "FileManager.findNext",
+          "adapter": "file.find-next",
+          "symbol": "pdg::emscriptenFileFindNext",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "id": "factories-platform",
+      "title": "Factories and platform integration",
+      "reason": "These adapters perform empty MemBlock allocation, select GUI/headless layer factories, or integrate the browser event/exit loop.",
+      "next_step": "Express factory construction and platform dispatch separately from ordinary member signatures.",
+      "members": [
+        {
+          "name": "MemBlock.MemBlock",
+          "adapter": "MemBlock.MemBlock",
+          "symbol": "pdg::emscriptenCreateEmptyMemBlock",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "pdg.createSpriteLayer",
+          "adapter": "pdg.createSpriteLayer",
+          "symbol": "pdg::emscriptenCreateSpriteLayer",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "pdg.createTileLayer",
+          "adapter": "pdg.createTileLayer",
+          "symbol": "pdg::emscriptenCreateTileLayer",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "pdg.idle",
+          "adapter": "pdg.idle",
+          "symbol": "pdg::emscriptenIdle",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "pdg.quit",
+          "adapter": "pdg.quit",
+          "symbol": "pdg::emscriptenQuit",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "id": "sound-arity",
+      "title": "Legacy sound argument shape",
+      "reason": "Browser adapters omit native easing arguments and rely on C++ defaults; simply exposing the native member changes the wire arity expected by existing wrappers.",
+      "next_step": "Coordinate wrapper/default generation with the existing shared easing conversion, preserving timing units and argument validation.",
+      "members": [
+        {
+          "name": "Sound.changeOffsetX",
+          "adapter": "browser.emscriptenSoundChangeOffset",
+          "symbol": "pdg::emscriptenSoundChangeOffset",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sound.changePitch",
+          "adapter": "browser.emscriptenSoundChangePitch",
+          "symbol": "pdg::emscriptenSoundChangePitch",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sound.changeVolume",
+          "adapter": "browser.emscriptenSoundChangeVolume",
+          "symbol": "pdg::emscriptenSoundChangeVolume",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sound.fadeIn",
+          "adapter": "browser.emscriptenSoundFadeIn",
+          "symbol": "pdg::emscriptenSoundFadeIn",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        },
+        {
+          "name": "Sound.fadeOut",
+          "adapter": "browser.emscriptenSoundFadeOut",
+          "symbol": "pdg::emscriptenSoundFadeOut",
+          "source": "src/bindings/emscripten/pdg_em_adaptors.h"
+        }
+      ],
+      "count": 5
+    },
+    {
+      "id": "collision-query-results",
+      "title": "Collision query references and predicates",
+      "reason": "Queries retain hit colliders and translate a synchronous JavaScript predicate into the shared native selection contract.",
+      "next_step": "Preserve retained collider identity and predicate exception handling when consolidating binding adapters.",
+      "members": [
+        {
+          "name": "CollisionQueryBuffer.getCollider",
+          "adapter": "CollisionQueryBuffer.getCollider",
+          "symbol": "pdg::browserQueryCollider",
+          "source": "src/bindings/emscripten/pdg_em_parts.h"
+        },
+        {
+          "name": "CollisionQueryBuffer.setPredicate",
+          "adapter": "CollisionQueryBuffer.setPredicate",
+          "symbol": "pdg::browserQueryPredicate",
+          "source": "src/bindings/emscripten/pdg_em_parts.h"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "id": "scene-lifecycle",
+      "title": "Scene layer factories and timer values",
+      "reason": "Scene adapters preserve layer ownership, default timer arguments and numeric tick conversion.",
+      "next_step": "Preserve scene ownership and logical timer semantics when consolidating adapters.",
+      "members": [
+        {
+          "name": "Scene.createSpriteLayer",
+          "adapter": "Scene.createSpriteLayer",
+          "symbol": "pdg::browserSceneCreateSpriteLayer",
+          "source": "src/bindings/emscripten/pdg_em_parts.h"
+        },
+        {
+          "name": "Scene.startTimer",
+          "adapter": "Scene.startTimer",
+          "symbol": "pdg::browserSceneStartTimer",
+          "source": "src/bindings/emscripten/pdg_em_parts.h"
+        },
+        {
+          "name": "Scene.getTick",
+          "adapter": "Scene.getTick",
+          "symbol": "pdg::browserSceneTick",
+          "source": "src/bindings/emscripten/pdg_em_parts.h"
+        }
+      ],
+      "count": 3
+    }
+  ]
+}

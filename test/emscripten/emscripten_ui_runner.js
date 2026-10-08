@@ -358,7 +358,7 @@
         var nativeSetTimeout = window.setTimeout;
         window.setTimeout = function(callback, delay) {
             var args = Array.prototype.slice.call(arguments, 2);
-            var effectiveDelay = automated && delay >= 1000
+            var effectiveDelay = automated && testId !== "camera" && testId !== "particles" && delay >= 1000
                 ? Math.max(50, delay * 0.02)
                 : delay;
             return nativeSetTimeout.apply(window, [callback, effectiveDelay].concat(args));
@@ -397,7 +397,7 @@
         window.process.argv = ["pdg", tests[testId]];
         if (interactive || ((testId === "animation-physics" || testId === "wheel-chains") && !automated && params.get("suite") !== "1"))
             window.process.argv.push("--wait");
-        if (!interactive && (testId === "mvc" || testId === "layer-serialization" || testId === "astra" || testId === "spriter") && (automated || params.get("suite") === "1"))
+        if (!interactive && (testId === "mvc" || testId === "layer-serialization" || testId === "astra" || testId === "spriter" || testId === "bone-controls" || testId === "jiggle" || testId === "fabrik") && (automated || params.get("suite") === "1"))
             window.process.argv.push("--ui-test");
         window.process.exit = function(code) {
             var details = testId === "mvc" && window.pdgControlGalleryTest

@@ -200,10 +200,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "(number u)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -225,10 +222,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "(number u)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -250,10 +244,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] p1, [object Point] p2, [object Point] p3, [object Point] p4)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 4)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 4);
@@ -321,10 +312,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] point)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -353,10 +341,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "(number pointIndex)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -378,10 +363,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number pointIndex, [object Point] point)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -416,10 +398,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -435,10 +414,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -454,10 +430,7 @@ namespace pdg
         SplineWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SplineWrap>(args.This());
         Spline* self = dynamic_cast<Spline*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);

@@ -233,10 +233,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -266,10 +263,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -299,10 +293,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -332,10 +323,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -365,10 +353,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -398,10 +383,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -431,10 +413,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -464,10 +443,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -497,10 +473,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -530,10 +503,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -563,10 +533,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -596,10 +563,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -629,10 +593,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -662,10 +623,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Color]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -695,10 +653,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -728,10 +683,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -761,10 +713,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Vector]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -794,10 +743,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -827,10 +773,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object RotatedRect]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -860,10 +803,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Quad]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -893,10 +833,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -938,10 +875,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -982,10 +916,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object MemBlock]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1066,10 +997,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1110,36 +1038,100 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "({[string Binary]|[object MemBlock]} data)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
         };
-        if (!args[0]->IsString() && !args[0]->IsObject())
+        if (!IsUint8Array(args[0]) && !MemBlockWrap::GetTemplate(isolate)->HasInstance(args[0]))
         {
             std::ostringstream excpt_;
-            excpt_ << "argument 1 (mem) must be either a binary string or an object of type MemBlock";
+            excpt_ << "argument 1 (mem) must be either a Uint8Array or an object of type MemBlock";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }())));
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
         }
-        if (args[0]->IsString())
+        try
         {
-            size_t bytes = 0;
-            uint8* ptr = (uint8*) DecodeBinary(args[0], &bytes);
-            self->setDataPtr(ptr, bytes);
+            if (IsUint8Array(args[0]))
+            {
+                size_t bytes = 0;
+                const uint8* ptr = nullptr;
+                if (!GetUint8ArrayData(args[0], ptr, bytes))
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "expected an attached, non-shared Uint8Array";
+                    isolate->ThrowException( v8::Exception::TypeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                if (bytes > UINT32_MAX)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "byte array exceeds the supported size";
+                    isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                self->setDataCopy(ptr, static_cast<uint32>(bytes));
+            }
+            else
+            {
+                if (!MemBlockWrap::GetTemplate(isolate)->HasInstance(args[0]))
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "expected Uint8Array or MemBlock";
+                    isolate->ThrowException( v8::Exception::TypeError( ([&]()
+                    {
+                        v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                            return maybe.IsEmpty() ?
+                            v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                    }
+                    ())));
+                    {
+                        args.GetReturnValue().SetNull(); return;
+                    };
+                }
+                REQUIRE_CPP_OBJECT_ARG(1, memBlock, MemBlock);
+                self->setDataPtr(memBlock->ptr, memBlock->bytes);
+            }
         }
-        else
+        catch (const std::exception& error)
         {
-            REQUIRE_CPP_OBJECT_ARG(1, memBlock, MemBlock);
-            self->setDataPtr(memBlock->ptr, memBlock->bytes);
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
         }
         args.GetReturnValue().SetUndefined();
     }
@@ -1151,10 +1143,7 @@ namespace pdg
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
         self->mDeserializerScriptObj.Reset(isolate, args.This());
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object ISerializable]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1175,6 +1164,15 @@ namespace pdg
                     args.GetReturnValue().SetNull(); return;
                 };
             }
+            if (auto* camera = dynamic_cast<Camera*>(obj))
+            {
+#ifdef PDG_USING_V8
+                auto result = camera->mCameraScriptObj.IsEmpty() ? CameraWrap::NewFromCpp(isolate,camera) : v8::Local<v8::Object>::New(isolate,camera->mCameraScriptObj);
+#else
+                auto result = camera->mCameraScriptObj ? camera->mCameraScriptObj : Camera_newFromCpp(ctx,camera);
+#endif
+                camera->release(); { args.GetReturnValue().Set( result ); return; };
+            }
             if (auto* sprite = dynamic_cast<Sprite*>(obj))
             {
 #ifdef PDG_USING_V8
@@ -1184,6 +1182,24 @@ namespace pdg
 #endif
                 sprite->release();
                 { args.GetReturnValue().Set( result ); return; };
+            }
+            if (auto* troupe = dynamic_cast<Troupe*>(obj))
+            {
+#ifdef PDG_USING_V8
+                auto result = troupe->mAnimatedScriptObj.IsEmpty() ? TroupeWrap::NewFromCpp(isolate,troupe) : v8::Local<v8::Object>::New(isolate,troupe->mAnimatedScriptObj);
+#else
+                auto result = troupe->mAnimatedScriptObj ? troupe->mAnimatedScriptObj : Troupe_newFromCpp(ctx,troupe);
+#endif
+                troupe->release(); { args.GetReturnValue().Set( result ); return; };
+            }
+            if (auto* animated = dynamic_cast<AnimatedBase*>(obj))
+            {
+#ifdef PDG_USING_V8
+                auto result = animated->mAnimatedScriptObj.IsEmpty() ? AnimatedBaseWrap::NewFromCpp(isolate,animated) : v8::Local<v8::Object>::New(isolate,animated->mAnimatedScriptObj);
+#else
+                auto result = animated->mAnimatedScriptObj ? animated->mAnimatedScriptObj : AnimatedBase_newFromCpp(ctx,animated);
+#endif
+                animated->release(); { args.GetReturnValue().Set( result ); return; };
             }
 
             if (auto* image = dynamic_cast<ImageStrip*>(obj))
@@ -1204,11 +1220,11 @@ namespace pdg
             }
             SCRIPT_DEBUG_ONLY( if (obj->mISerializableScriptObj.IsEmpty())
             {
-                std::cerr << __func__<<":"<< 374 << " - NIL JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<")\n";
+                std::cerr << __func__<<":"<< 405 << " - NIL JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<")\n";
             }
             else if (!obj->mISerializableScriptObj->IsObject())
             {
-                std::cerr << __func__<<":"<< 374 << " - NOT JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<") : " << (obj->mISerializableScriptObj.IsEmpty() ? "empty" : obj->mISerializableScriptObj->IsArray() ? "array" : obj->mISerializableScriptObj->IsFunction() ? "function" : obj->mISerializableScriptObj->IsStringObject() ? "string (object)" : obj->mISerializableScriptObj->IsString() ? "string" : obj->mISerializableScriptObj->IsNull() ? "null" : obj->mISerializableScriptObj->IsUndefined() ? "undefined" : obj->mISerializableScriptObj->IsNumberObject() ? "number (object)" : obj->mISerializableScriptObj->IsNumber() ? "number" : obj->mISerializableScriptObj->IsBoolean() ? "boolean" : obj->mISerializableScriptObj->IsDate() ? "date" : obj->mISerializableScriptObj->IsRegExp() ? "regexp" : obj->mISerializableScriptObj->IsNativeError() ? "error" : obj->mISerializableScriptObj->IsObject() ? "object" : "unknown") << "\n";
+                std::cerr << __func__<<":"<< 405 << " - NOT JS Object (" "obj->mISerializableScriptObj" "|"<<*((void**)&(obj->mISerializableScriptObj))<<") : " << (obj->mISerializableScriptObj.IsEmpty() ? "empty" : obj->mISerializableScriptObj->IsArray() ? "array" : obj->mISerializableScriptObj->IsFunction() ? "function" : obj->mISerializableScriptObj->IsStringObject() ? "string (object)" : obj->mISerializableScriptObj->IsString() ? "string" : obj->mISerializableScriptObj->IsNull() ? "null" : obj->mISerializableScriptObj->IsUndefined() ? "undefined" : obj->mISerializableScriptObj->IsNumberObject() ? "number (object)" : obj->mISerializableScriptObj->IsNumber() ? "number" : obj->mISerializableScriptObj->IsBoolean() ? "boolean" : obj->mISerializableScriptObj->IsDate() ? "date" : obj->mISerializableScriptObj->IsRegExp() ? "regexp" : obj->mISerializableScriptObj->IsNativeError() ? "error" : obj->mISerializableScriptObj->IsObject() ? "object" : "unknown") << "\n";
             }
             else
             {
@@ -1226,17 +1242,17 @@ namespace pdg
                     }
                     if (obj__)
                     {
-                        std::cout << __func__<<":"<< 374 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
+                        std::cout << __func__<<":"<< 405 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
                     }
                     else
                     {
-                        std::cout << __func__<<":"<< 374 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
+                        std::cout << __func__<<":"<< 405 << " - JS Object (""obj->mISerializableScriptObj""|"<<*((void**)&(obj->mISerializableScriptObj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
                     }
                 }
                 else
                 {
                     ISerializable* obj = dynamic_cast<ISerializable*>(obj__->getCppObject());
-                        std::cout << __func__<<":"<< 374 << " - JS Object (""obj->mISerializableScriptObj""|" << *((void**)&(obj->mISerializableScriptObj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
+                        std::cout << __func__<<":"<< 405 << " - JS Object (""obj->mISerializableScriptObj""|" << *((void**)&(obj->mISerializableScriptObj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
                 }
             } )
                 if (!obj) { args.GetReturnValue().SetNull(); return; };
@@ -1314,10 +1330,7 @@ namespace pdg
         DeserializerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<DeserializerWrap>(args.This());
         Deserializer* self = dynamic_cast<Deserializer*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1366,10 +1379,7 @@ namespace pdg
     void RegisterSerializableClass(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(function klass)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1421,11 +1431,11 @@ namespace pdg
         }());
         SCRIPT_DEBUG_ONLY( if (obj.IsEmpty())
         {
-            std::cerr << __func__<<":"<< 408 << " - NIL JS Object (" "obj" "|"<<*((void**)&(obj))<<")\n";
+            std::cerr << __func__<<":"<< 439 << " - NIL JS Object (" "obj" "|"<<*((void**)&(obj))<<")\n";
         }
         else if (!obj->IsObject())
         {
-            std::cerr << __func__<<":"<< 408 << " - NOT JS Object (" "obj" "|"<<*((void**)&(obj))<<") : " << (obj.IsEmpty() ? "empty" : obj->IsArray() ? "array" : obj->IsFunction() ? "function" : obj->IsStringObject() ? "string (object)" : obj->IsString() ? "string" : obj->IsNull() ? "null" : obj->IsUndefined() ? "undefined" : obj->IsNumberObject() ? "number (object)" : obj->IsNumber() ? "number" : obj->IsBoolean() ? "boolean" : obj->IsDate() ? "date" : obj->IsRegExp() ? "regexp" : obj->IsNativeError() ? "error" : obj->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 439 << " - NOT JS Object (" "obj" "|"<<*((void**)&(obj))<<") : " << (obj.IsEmpty() ? "empty" : obj->IsArray() ? "array" : obj->IsFunction() ? "function" : obj->IsStringObject() ? "string (object)" : obj->IsString() ? "string" : obj->IsNull() ? "null" : obj->IsUndefined() ? "undefined" : obj->IsNumberObject() ? "number (object)" : obj->IsNumber() ? "number" : obj->IsBoolean() ? "boolean" : obj->IsDate() ? "date" : obj->IsRegExp() ? "regexp" : obj->IsNativeError() ? "error" : obj->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -1443,17 +1453,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 408 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
+                    std::cout << __func__<<":"<< 439 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - is a subclass of C++ ""ISerializable""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 408 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
+                    std::cout << __func__<<":"<< 439 << " - JS Object (""obj""|"<<*((void**)&(obj))<<"): " << objName << " - does not wrap ""ISerializable""\n";
                 }
             }
             else
             {
                 ISerializable* obj = dynamic_cast<ISerializable*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 408 << " - JS Object (""obj""|" << *((void**)&(obj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 439 << " - JS Object (""obj""|" << *((void**)&(obj)) << "): " << objName<<" - wraps C++ ""ISerializable"" ("<<(void*)obj<<")\n";
             }
         } );
         ISerializable* nativeSerializable = 0;

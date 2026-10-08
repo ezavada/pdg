@@ -2,6 +2,6 @@ namespace pdg { /**
 
 \fn pdg::NetConnection::hasDgram
 
-\brief true if the connection supports UDP/Datagram communications
+\brief True when an established connection supports native UDP or WebTransport datagrams.
 
 **/ }

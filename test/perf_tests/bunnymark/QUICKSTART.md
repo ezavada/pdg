@@ -31,7 +31,7 @@ node test/perf_tests/bunnymark/compare_results.js        # Compare
 
 ## Expected Improvements
 
-Based on the optimization plan in `docs/note-ai/opengl-optimization-analysis.md`:
+These are optimization targets, rather than measured results:
 
 | Optimization Level | Expected Score | Improvement |
 |-------------------|----------------|-------------|
@@ -66,6 +66,5 @@ Results are git-ignored by default (except baseline).
 ## Learn More
 
 - Full documentation: `test/perf_tests/bunnymark/README.md`
-- Optimization plan: `docs/note-ai/opengl-optimization-analysis.md`
-- Standard benchmarks analysis: See the web research in the optimization doc
+- Shared performance guide: [Performance tests](../README.md)
 

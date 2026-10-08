@@ -108,6 +108,7 @@
 #define REQUIRE_OBJECT_ARG(n, paramName)   \
        if (!args[n-1]->IsObject()) {                                          CR \
                THROW_TYPE_ERR("argument "#n" must be an object ("#paramName")");  CR \
+               return;                                                        CR \
        }                                                                      CR \
        v8::Local<v8::Object> paramName = args[n-1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
 

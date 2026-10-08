@@ -1,4 +1,4 @@
-.TH "Sprites" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Sprites" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -31,7 +31,7 @@ Sprites \- Sprites and layers
 .ti -1c
 .RI "struct \fBSpriteTriggerEvent\fP"
 .br
-.RI "Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. "
+.RI "\fBSpriteTriggerEvent\fP\&. "
 .ti -1c
 .RI "class \fBTileLayer\fP"
 .br
@@ -44,80 +44,6 @@ Sprite and tile layers, drawing helpers, and collision helpers\&.
 See \fBAuthored Spriter triggers\fP for authored Spriter notifications and their \fBpdg::SpriteTriggerEvent\fP payload\&. 
 .SH "Class Documentation"
 .PP 
-.SH "class pdg::ISpriteDrawHelper"
-.PP 
-helper for drawing sprite overlays and add-on effects 
-
-
-.PP
-\fBNote\fP
-.RS 4
-\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
-.RE
-.PP
-Implement this interface to do extra drawing stuff for a specific \fBSprite\fP then start using it by calling the sprite's setDrawHelper() method\&. You can only have one \fBSprite\fP Draw Helper attached to a particular sprite for normal drawing (before the sprite would normally draw) and one for post draw (after the sprite has been drawn)
-
-.PP
-For those coding in Javascript, there is an implementation of \fBISpriteDrawHelper\fP that maps a function definition to the draw call\&. So to create a helper:
-
-.PP
-.PP
-.nf
-const myHelper = new pdg\&.ISpriteDrawHelper(function(sprite, port) {
-                console\&.log("in my sprite draw helper for " + sprite );
-                const r = sprite\&.getLayer()\&.layerToPortRect(sprite\&.getBoundingBox());
-                port\&.drawRect(r, new pdg\&.Attributes()
-                                \&.fillColor(new pdg\&.Color("black"))
-                                \&.lineColor(new pdg\&.Color("white")));
-                return false;  // don't let sprite draw itself (ignored for post draw)
-});
-mySprite\&.setDrawHelper(myHelper);
-.fi
-.PP
-
-.PP
-For a helper with its own methods or state, declare a JavaScript class that extends \fR\fBpdg\&.ISpriteDrawHelper\fP\fP\&. The native interface takes a callback in its constructor; forward that callback to your \fRdraw()\fP method through \fRsuper()\fP:
-
-.PP
-.PP
-.nf
-class MyDrawHelperClass extends pdg\&.ISpriteDrawHelper {
-    constructor() {
-        super(function(sprite, port) {
-            return this\&.draw(sprite, port);
-        });
-    }
-
-    draw(sprite, port) {
-        console\&.log("Drawing sprite:", sprite);
-        return true; // allow normal sprite drawing
-    }
-}
-
-mySprite\&.setDrawHelper(new MyDrawHelperClass());
-.fi
-.PP
-.SS "Your Custom Function:"
-As you can see from the examples above, your \fBSprite\fP Draw Helper function (or draw() method) will be called with two parameters, and return a boolean: 
-.PP
-\fBParameters\fP
-.RS 4
-\fIsprite\fP the \fBSprite\fP that is being drawn 
-.br
-\fIport\fP the \fBPort\fP where the sprite should be drawn 
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-\fBtrue\fP if the normal \fBSprite\fP drawing should happen; or \fBfalse\fP if the normal \fBSprite\fP drawing should be skipped\&. This return result only applies when called for pre-draw\&. If the helper is installed as a post-draw helper using setPostDrawHelper(), then the return result is ignored\&.
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBSprite\&.setDrawHelper()\fP 
-.RE
-.PP
-
 .SH "struct pdg::SpriteAnimateEvent"
 .PP 
 a Sprite did some animation (\fIOptional\fP) 
@@ -192,15 +118,30 @@ Spriter eventline notifications require pdg::Sprite::enableSpriterEvents(true)\&
 
 .SH "struct pdg::SpriteTriggerEvent"
 .PP 
-Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. 
+\fBSpriteTriggerEvent\fP\&. 
 
+Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  clipName  \fRstring\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  entityName  \fRstring\fP  Required  eventType  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  offsetSeconds  \fRnumber\fP  Required  timeSeconds  \fRnumber\fP  Required  triggerName  \fRstring\fP  Required  
+.RE
+.PP
 The common JavaScript payload contains:
 
 .PP
-Field  Meaning  \fRemitter\fP  Event emitter delivering the notification  \fReventType\fP  \fBpdg::eventType_SpriteTriggerEvent\fP  \fRactingSprite\fP  Sprite whose animation crossed the trigger  \fRinLayer\fP  SpriteLayer containing that Sprite  \fRtriggerName\fP  Authored eventline name  \fRclipName\fP  Clip containing the eventline key  \fRentityName\fP  Spriter entity containing the clip  \fRtimeSeconds\fP  Authored key position from clip start, in floating-point seconds  \fRoffsetSeconds\fP  Occurrence offset from the start of the update, in floating-point seconds  
+Field  Meaning  \fR\fBemitter\fP\fP  \fBEvent\fP emitter delivering the notification  \fR\fBeventType\fP\fP  \fBpdg::eventType_SpriteTriggerEvent\fP  \fR\fBactingSprite\fP\fP  \fBSprite\fP whose animation crossed the trigger  \fR\fBinLayer\fP\fP  \fBSpriteLayer\fP containing that \fBSprite\fP  \fR\fBtriggerName\fP\fP  Authored eventline name  \fR\fBclipName\fP\fP  Clip containing the eventline key  \fR\fBentityName\fP\fP  Spriter entity containing the clip  \fR\fBtimeSeconds\fP\fP  Authored key position from clip start, in floating-point seconds  \fR\fBoffsetSeconds\fP\fP  Occurrence offset from the start of the update, in floating-point seconds  
 
 .PP
-Subscribe by event type and inspect \fRtriggerName\fP to distinguish authored triggers\&. An \fRaction\fP field is not a portable trigger discriminator\&. The native compatibility field \fRframeTime\fP uses integer milliseconds and is omitted from JavaScript\&. The native event ID is currently exposed by the browser bridge but not the V8/JavaScriptCore bridges\&.
+Subscribe by event type and inspect \fR\fBtriggerName\fP\fP to distinguish authored triggers\&. An \fR\fBaction\fP\fP field is not a portable trigger discriminator\&. The native compatibility field \fRframeTime\fP uses integer milliseconds and is omitted from JavaScript\&. The native event ID is currently exposed by the browser bridge but not the V8/JavaScriptCore bridges\&.
 
 .PP
 \fBSee also\fP
@@ -215,6 +156,41 @@ Subscribe by event type and inspect \fRtriggerName\fP to distinguish authored tr
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fIclipName\fP clipName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+string \fIentityName\fP entityName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIoffsetSeconds\fP offsetSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fItimeSeconds\fP timeSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fItriggerName\fP triggerName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

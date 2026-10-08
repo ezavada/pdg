@@ -265,8 +265,8 @@ layer.onPostDrawLayer(()=> {
     if (finished) return false;
     try {
         stats.frames++;
-        membership.draw(port);
-        if(showCapsules)capsuleOverlay.draw(port);
+        port.drawDrawing(membership, new pdg.Point(), new pdg.Attributes());
+        if(showCapsules)port.drawDrawing(capsuleOverlay, new pdg.Point(), new pdg.Attributes());
         if(showBones && ground.enabled && ragdoll.mode!=='ragdoll')for(const leg of ground.legs) {
             const x=origin.x+leg.target.x*scale,y=origin.y+leg.target.y*scale;
             port.drawLine(P(x-5,y),P(x+5,y),stroke('#db8a26'));

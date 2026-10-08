@@ -1,4 +1,4 @@
-.TH "ResourceManager" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ResourceManager" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -29,9 +29,9 @@ ResourceManager \- used for loading resources
 .br
 .RI "return the current active language "
 .ti -1c
-.RI "BinaryString \fBgetResource\fP (string resourceName)"
+.RI "Uint8Array \fBgetResource\fP (string resourceName, int maxSize=\-1)"
 .br
-.RI "get an untyped resource by name "
+.RI "Load a resource as a Uint8Array, or return false if loading fails\&. "
 .ti -1c
 .RI "string \fBgetResourcePaths\fP ()"
 .br
@@ -181,10 +181,10 @@ the currently active language
 .RE
 .PP
 
-.SS "BinaryString getResource (string resourceName)"
+.SS "Uint8Array getResource (string resourceName, int maxSize = \fR\-1\fP)"
 
 .PP
-get an untyped resource by name Get a resource by name\&. The resource is returned as a block of data in a \fBMemBlock\fP object\&. If the resource doesn't exits, false is returned, so you can check for the resource loading with:
+Load a resource as a Uint8Array, or return false if loading fails\&. Get a resource by name\&. The resource is returned as a Uint8Array\&. If loading fails, false is returned, so you can check for the resource loading with:
 
 .PP
 .PP
@@ -201,12 +201,14 @@ if (res === false) {
 .PP
 \fBParameters\fP
 .RS 4
-\fIresourceName\fP the name of the resource
+\fIresourceName\fP the name of the resource 
+.br
+\fImaxSize\fP The requested buffer size in bytes\&. Omit it or pass a negative value to use the resource's full size\&.
 .RE
 .PP
 \fBReturns\fP
 .RS 4
-a \fBMemBlock\fP with the resource data, or \fBfalse\fP if not found
+a Uint8Array with the resource data, or \fBfalse\fP if loading fails
 .RE
 .PP
 \fBNote\fP

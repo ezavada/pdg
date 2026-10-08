@@ -1,0 +1,6009 @@
+{
+  "version": 1,
+  "scope": "Own native methods and constructors; inherited methods use their base implementation. Counts are generation coverage, not runtime availability.",
+  "manualStatus": "Preserved legacy native bindings and JavaScript implementations. Per-member browser availability and ABI mapping still require review; this is not a claim of complete browser support. Fingerprints require explicit review when an API changes.",
+  "manualSources": [
+    "src/bindings/emscripten/pdg_em_custom.inc",
+    "src/bindings/emscripten/pdg_em_bindings.cpp",
+    "src/bindings/emscripten/pdg_em_parts.h",
+    "src/bindings/emscripten/pdg_em_camera.h",
+    "src/bindings/emscripten/pdg_em_particles.h",
+    "src/bindings/emscripten/pdg_em_animation_scripts.h",
+    "src/bindings/emscripten/pdg_em_animation_helpers.h",
+    "src/bindings/javascript/pdg.js"
+  ],
+  "counts": {
+    "manual-unverified": 72,
+    "generated": 998,
+    "adapter": 127
+  },
+  "registrations": {
+    "classes": 46,
+    "valueObjects": 5,
+    "constants": 58,
+    "functions": 18,
+    "methods": 1061,
+    "constructors": 21,
+    "supportBindings": 20
+  },
+  "eventHelpers": 44,
+  "wrappers": 231,
+  "returnWrappers": 415,
+  "receiverWrappers": 343,
+  "validationWrappers": 92,
+  "members": [
+    {
+      "name": "Animated.addAnimationHelper",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Animated.andAlso",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.andThen",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.animate",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "deltaSeconds",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Animated.batch",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.cancelSchedule",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeCenterOffsetBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeCenterOffsetTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeGrowingBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeGrowingTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeMovementBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeMovementTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeScaleBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeScaleTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeSpinBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeSpinTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeStretchingBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.changeStretchingTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.clearAnimationHelpers",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.diminish",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.endBatch",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.endOtherwise",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.endSeries",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.endWhen",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.flipX",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.flipY",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getBoundingBox",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getCenterOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getHeight",
+      "status": "generated"
+    },
+    {
+      "name": "Animated.getLocation",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getMovement",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getRotatedBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getRotation",
+      "status": "generated"
+    },
+    {
+      "name": "Animated.getScale",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getSize",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getSpin",
+      "status": "generated"
+    },
+    {
+      "name": "Animated.getStretching",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.getWidth",
+      "status": "generated"
+    },
+    {
+      "name": "Animated.grow",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.hasScheduledAnimations",
+      "status": "generated"
+    },
+    {
+      "name": "Animated.increase",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.isFlippedX",
+      "status": "generated"
+    },
+    {
+      "name": "Animated.isFlippedY",
+      "status": "generated"
+    },
+    {
+      "name": "Animated.isSchedulePaused",
+      "status": "generated"
+    },
+    {
+      "name": "Animated.jumpToMark",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.mark",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.moveBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.moveTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.on",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.onFinished",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.onMark",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.onRepeat",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.onScriptFinished",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.onStarted",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.onUntilFired",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.onYoyo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.otherwise",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.pauseIt",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.pauseSchedule",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.playScript",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.removeAnimationHelper",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Animated.repeat",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.resizeBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.resizeTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.restartIt",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.resumeIt",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.resumeSchedule",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.rotateBy",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.rotateTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.series",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setCenterOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setFlipX",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setFlipY",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setGrowing",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setHeight",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setLocation",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setMovement",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setRotation",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setScale",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setSize",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setSpin",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setStretching",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.setWidth",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.slowDown",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.speedUp",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.stagger",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.stopGrowing",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.stopIt",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.stopMovement",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.stopSpinning",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.stopStretching",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.stretch",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.triggerEvent",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.until",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.wait",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.when",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Animated.yoyo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.animate",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "deltaSeconds",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AnimatedAttributes.changeAmbientLight",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeFillColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeFillGradient",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeFillOpacity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeFillRadialGradient",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeFrames",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeLightOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeLineColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeLineOpacity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeLineThickness",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changePolarOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeRoundedCorners",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeSkew",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeSphereRotation",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeSubsection",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeTextSize",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "AnimatedAttributes.changeTransform",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "AnimationScript.endScript",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.ambientLight",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.blendMode",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.clipOverflow",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.fillColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.fillGradient",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.fillOpacity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.fillRadialGradient",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.fitType",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.font",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.frame",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getAmbientLight",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getBlendMode",
+      "status": "adapter"
+    },
+    {
+      "name": "Attributes.getClipOverflow",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getFillColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getFillOpacity",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getFitType",
+      "status": "adapter"
+    },
+    {
+      "name": "Attributes.getFont",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getFrame",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getGradientEnd",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getGradientEndColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getGradientStart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getGradientStartColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getGradientType",
+      "status": "adapter"
+    },
+    {
+      "name": "Attributes.getLightOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getLineColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getLineOpacity",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getLineStyle",
+      "status": "adapter"
+    },
+    {
+      "name": "Attributes.getLineThickness",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getPolarOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getRadialGradientCenter",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getRadialGradientCenterColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getRadialGradientEndColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getRadialGradientRadius",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getRoundedCornerRadius",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getSphereRotation",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getSubsection",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.getTextSize",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getTextStyle",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getTexture",
+      "status": "generated"
+    },
+    {
+      "name": "Attributes.getTransform",
+      "status": "adapter"
+    },
+    {
+      "name": "Attributes.lightOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.lineColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.lineOpacity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.lineStyle",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.lineThickness",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.polarOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.rotation",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.roundedCorners",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.scale",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.setTransform",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.skew",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.sphereRotation",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.subsection",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.textSize",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.textStyle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.texture",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.transform",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.translation",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Attributes.withAppearance",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Bone.animate",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "seconds",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bone.clearIKLimits",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Bone.diminish",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Bone.getId",
+      "status": "generated"
+    },
+    {
+      "name": "Bone.getIKMaxAngle",
+      "status": "generated"
+    },
+    {
+      "name": "Bone.getIKMinAngle",
+      "status": "generated"
+    },
+    {
+      "name": "Bone.getInfluence",
+      "status": "generated"
+    },
+    {
+      "name": "Bone.getName",
+      "status": "generated"
+    },
+    {
+      "name": "Bone.getSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Bone.hasIKLimits",
+      "status": "generated"
+    },
+    {
+      "name": "Bone.isAttached",
+      "status": "generated"
+    },
+    {
+      "name": "Bone.setIKLimits",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.animate",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.Camera",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.clearViewBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.cutTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.fadeIn",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.fadeOut",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.fadeTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.flash",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.follow",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.getDeadzone",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.getEffects",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.getFlashOpacity",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.getFollowOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.getLookAhead",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.getOpacity",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.getPixelSnapping",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.getSmoothing",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.getViewBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.getViewport",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.getZoom",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.hasViewBounds",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.hide",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.isFollowing",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.isHidden",
+      "status": "generated"
+    },
+    {
+      "name": "Camera.lumaFadeTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.matchCutTo",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Camera.matchFadeTo",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Camera.setDeadzone",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.setFollowOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.setLookAhead",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.setOpacity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.setPixelSnapping",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.setSmoothing",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.setViewBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.setViewport",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.setZoom",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.show",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.stopFollowing",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.transitionTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.viewToWorld",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.whipPanTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.worldToView",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.zoom",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Camera.zoomTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.addBox",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.addCapsule",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.addCircle",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.addImageMask",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.addPolygon",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.clearShapes",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.contains",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.getCapsuleEnd",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.getCapsuleRadius",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.getCapsuleStart",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.getCategory",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getCircleRadius",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.getCollisionMask",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getContactError",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getFriction",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getGeometrySource",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getGroup",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getId",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.getPhysicsBody",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.getRestitution",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getShapeCount",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.getShapeId",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.getShapeName",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.getShapeType",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.getWantsContactEvents",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.isAttached",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.isEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.isPresent",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.isSensor",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.isSourceShape",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.overlaps",
+      "status": "generated"
+    },
+    {
+      "name": "Collider.removeShape",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.setBox",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setCapsule",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setCategory",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setCircle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setCollisionFilter",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.setCollisionMask",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setContactHandler",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.setEnabled",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setFriction",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setGroup",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setImageMask",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.setPhysicsBody",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setPolygon",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Collider.setRestitution",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setSensor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.setWantsContactEvents",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.useBodyMaterial",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Collider.useOwnerPhysics",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CollisionQueryBuffer.addLayer",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.clear",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.CollisionQueryBuffer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CollisionQueryBuffer.configure",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.excludeBody",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.excludeCollider",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getCapacity",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getCollider",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "CollisionQueryBuffer.getCount",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getDistance",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getFraction",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getInitialOverlap",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getNormal",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CollisionQueryBuffer.getNormalX",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getNormalY",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CollisionQueryBuffer.getPointX",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getPointY",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.getShapeId",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.isOverflowed",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.selectLayers",
+      "status": "generated"
+    },
+    {
+      "name": "CollisionQueryBuffer.setPredicate",
+      "status": "adapter"
+    },
+    {
+      "name": "ConfigManager.getConfigBool",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "ConfigManager.getConfigFloat",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "ConfigManager.getConfigLong",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "ConfigManager.getConfigString",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "ConfigManager.setConfigBool",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "ConfigManager.setConfigFloat",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "ConfigManager.setConfigLong",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "ConfigManager.setConfigString",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "ConfigManager.useConfig",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "CpArbiter.getCount",
+      "status": "generated"
+    },
+    {
+      "name": "CpArbiter.getDepth",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 2147483647,
+            "min": -2147483648,
+            "name": "i",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CpArbiter.getNormal",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpArbiter.getPointA",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpArbiter.getPointB",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpArbiter.isFirstContact",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.activateBodies",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getAnchor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.getErrorBias",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getGearInitialAngle",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getGearRatio",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getGrooveEnd",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.getGrooveStart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.getImpulse",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getMaxAngle",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getMaxBias",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getMaxForce",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getMinAngle",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getMotorSpinRate",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getOtherAnchor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.getOtherSprite",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "CpConstraint.getPinDist",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getRatchetAngle",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getRatchetInterval",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getRatchetPhase",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getRotarySpringRestAngle",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getSlideMaxDist",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getSlideMinDist",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getSpringDamping",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getSpringRestLength",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getSpringStiffness",
+      "status": "generated"
+    },
+    {
+      "name": "CpConstraint.getSprite",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "CpConstraint.getType",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "CpConstraint.setAnchor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setErrorBias",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setGearInitialAngle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setGearRatio",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setGrooveEnd",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setGrooveStart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setMaxAngle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setMaxBias",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setMaxForce",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setMinAngle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setMotorSpinRate",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setOtherAnchor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setPinDist",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setRatchetAngle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setRatchetInterval",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setRatchetPhase",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setRotarySpringRestAngle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setSlideMaxDist",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setSlideMinDist",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setSpringDamping",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setSpringRestLength",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpConstraint.setSpringStiffness",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpSpace.getCollisionBias",
+      "status": "generated"
+    },
+    {
+      "name": "CpSpace.getCollisionPersistence",
+      "status": "generated"
+    },
+    {
+      "name": "CpSpace.getCollisionSlop",
+      "status": "generated"
+    },
+    {
+      "name": "CpSpace.getIdleSpeedThreshold",
+      "status": "generated"
+    },
+    {
+      "name": "CpSpace.getSleepTimeThreshold",
+      "status": "generated"
+    },
+    {
+      "name": "CpSpace.reindexStatic",
+      "status": "generated"
+    },
+    {
+      "name": "CpSpace.setCollisionBias",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpSpace.setCollisionPersistence",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpSpace.setCollisionSlop",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpSpace.setIdleSpeedThreshold",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpSpace.setSleepTimeThreshold",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "CpSpace.step",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "dt",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CpSpace.useSpatialHash",
+      "status": "generated",
+      "wrapper": {
+        "arity": 2,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "dim",
+            "type": "number"
+          },
+          {
+            "conversion": "int32",
+            "index": 1,
+            "name": "count",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Deserializer.deserialize_1",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_1u",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_2",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_2u",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_3u",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_4",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_4u",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_8",
+      "status": "adapter"
+    },
+    {
+      "name": "Deserializer.deserialize_8u",
+      "status": "adapter"
+    },
+    {
+      "name": "Deserializer.deserialize_bool",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_color",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Deserializer.deserialize_d",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_f",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_mem",
+      "status": "adapter"
+    },
+    {
+      "name": "Deserializer.deserialize_memGetLen",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_obj",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_offset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Deserializer.deserialize_point",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Deserializer.deserialize_quad",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Deserializer.deserialize_rect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Deserializer.deserialize_ref",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Deserializer.deserialize_rotr",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Deserializer.deserialize_str",
+      "status": "adapter"
+    },
+    {
+      "name": "Deserializer.deserialize_uint",
+      "status": "generated"
+    },
+    {
+      "name": "Deserializer.deserialize_vector",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Deserializer.setDataPtr",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addArc",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addDrawing",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addEllipse",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addImage",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addImageStrip",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addLine",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addPolygon",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addQuad",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addRect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addSpline",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.addText",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.centerPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.empty",
+      "status": "generated"
+    },
+    {
+      "name": "Drawing.getBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Drawing.getElement",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "uint32",
+            "index": 0,
+            "name": "index",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Drawing.getElementCount",
+      "status": "generated"
+    },
+    {
+      "name": "Drawing.getElementHitBy",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.changeControlPoint",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.clearLiveAttributes",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.getAttributes",
+      "status": "adapter"
+    },
+    {
+      "name": "ElementRef.getControlPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ElementRef.getControlPoints",
+      "status": "adapter"
+    },
+    {
+      "name": "ElementRef.getText",
+      "status": "adapter"
+    },
+    {
+      "name": "ElementRef.hasLiveAttributes",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.moveBackward",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.moveForward",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.moveToBack",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.moveToFront",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.remove",
+      "status": "generated"
+    },
+    {
+      "name": "ElementRef.setAttributes",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ElementRef.setLiveAttributes",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ElementRef.setText",
+      "status": "adapter"
+    },
+    {
+      "name": "ElementRef.type",
+      "status": "adapter"
+    },
+    {
+      "name": "EventEmitter.addHandler",
+      "status": "generated"
+    },
+    {
+      "name": "EventEmitter.blockEvent",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "inEventType",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventEmitter.clear",
+      "status": "generated"
+    },
+    {
+      "name": "EventEmitter.removeHandler",
+      "status": "generated"
+    },
+    {
+      "name": "EventEmitter.unblockEvent",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "inEventType",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventManager.getDeviceOrientation",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "EventManager.isButtonDown",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "EventManager.isKeyDown",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "EventManager.isRawKeyDown",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "FileManager.findClose",
+      "status": "adapter"
+    },
+    {
+      "name": "FileManager.findFirst",
+      "status": "adapter"
+    },
+    {
+      "name": "FileManager.findNext",
+      "status": "adapter"
+    },
+    {
+      "name": "FileManager.getApplicationDataDirectory",
+      "status": "generated"
+    },
+    {
+      "name": "FileManager.getApplicationDirectory",
+      "status": "generated"
+    },
+    {
+      "name": "FileManager.getApplicationResourceDirectory",
+      "status": "generated"
+    },
+    {
+      "name": "Font.getFontAscent",
+      "status": "adapter"
+    },
+    {
+      "name": "Font.getFontCapHeight",
+      "status": "adapter"
+    },
+    {
+      "name": "Font.getFontDescent",
+      "status": "adapter"
+    },
+    {
+      "name": "Font.getFontHeight",
+      "status": "adapter"
+    },
+    {
+      "name": "Font.getFontLeading",
+      "status": "adapter"
+    },
+    {
+      "name": "Font.getFontName",
+      "status": "adapter"
+    },
+    {
+      "name": "GraphicsManager.closeAllGraphicsPorts",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.closeGraphicsPort",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.createFont",
+      "status": "adapter"
+    },
+    {
+      "name": "GraphicsManager.createFullScreenPort",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "GraphicsManager.createOffscreenPort",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.createWindowPort",
+      "status": "adapter"
+    },
+    {
+      "name": "GraphicsManager.getCurrentScreenMode",
+      "status": "adapter"
+    },
+    {
+      "name": "GraphicsManager.getFPS",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.getMainPort",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.getMouse",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "GraphicsManager.getNthSupportedScreenMode",
+      "status": "adapter"
+    },
+    {
+      "name": "GraphicsManager.getNumScreens",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.getNumSupportedScreenModes",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.getScreenBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "GraphicsManager.getTargetFPS",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.inFullScreenMode",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.setScreenMode",
+      "status": "generated"
+    },
+    {
+      "name": "GraphicsManager.setTargetFPS",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "GraphicsManager.switchToFullScreenMode",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "GraphicsManager.switchToWindowMode",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Image.deserialize",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Image.getAlphaValue",
+      "status": "generated"
+    },
+    {
+      "name": "Image.getHeight",
+      "status": "generated"
+    },
+    {
+      "name": "Image.getImageBounds",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Image.getMyClassTag",
+      "status": "generated"
+    },
+    {
+      "name": "Image.getOpacity",
+      "status": "generated"
+    },
+    {
+      "name": "Image.getPixel",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Image.getSerializedSize",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Image.getSubsection",
+      "status": "adapter"
+    },
+    {
+      "name": "Image.getTransparentColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Image.getWidth",
+      "status": "generated"
+    },
+    {
+      "name": "Image.Image",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Image.prepareToRasterize",
+      "status": "generated"
+    },
+    {
+      "name": "Image.retainAlpha",
+      "status": "generated"
+    },
+    {
+      "name": "Image.retainData",
+      "status": "generated"
+    },
+    {
+      "name": "Image.serialize",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Image.setEdgeClamping",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Image.setOpacity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Image.setTransparentColor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ImageStrip.getFrame",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "frameNum",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ImageStrip.getFrameWidth",
+      "status": "generated"
+    },
+    {
+      "name": "ImageStrip.getNumFrames",
+      "status": "generated"
+    },
+    {
+      "name": "ImageStrip.setFrameWidth",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ImageStrip.setNumFrames",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "LogManager.binaryDump",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "LogManager.getLogLevel",
+      "status": "generated"
+    },
+    {
+      "name": "LogManager.initialize",
+      "status": "adapter"
+    },
+    {
+      "name": "LogManager.setLogLevel",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "LogManager.writeLogEntry",
+      "status": "adapter"
+    },
+    {
+      "name": "MemBlock.getByte",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "uint32",
+            "index": 0,
+            "name": "i",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MemBlock.getBytes",
+      "status": "generated",
+      "wrapper": {
+        "arity": 2,
+        "parameters": [
+          {
+            "conversion": "uint32",
+            "index": 0,
+            "name": "start",
+            "type": "number"
+          },
+          {
+            "conversion": "uint32",
+            "index": 1,
+            "name": "len",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MemBlock.getData",
+      "status": "generated"
+    },
+    {
+      "name": "MemBlock.getDataSize",
+      "status": "generated"
+    },
+    {
+      "name": "MemBlock.MemBlock",
+      "status": "adapter"
+    },
+    {
+      "name": "Part.animate",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "deltaSeconds",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Part.attachSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.bindToAnimationBinding",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.bindToAnimationSocket",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.bindToBone",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.clearContent",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.clearIKLimits",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.clearIKTarget",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.detachSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.getAnimationBindingName",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getAnimationSocketName",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getAttachedSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.getAttachmentError",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getBoneId",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getContentBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.getId",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getIKError",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getIKMaxAngle",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getIKMinAngle",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getJiggleError",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getName",
+      "status": "generated"
+    },
+    {
+      "name": "Part.getParentPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.getSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.getTransform",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Part.hasContent",
+      "status": "generated"
+    },
+    {
+      "name": "Part.hasIKLimits",
+      "status": "generated"
+    },
+    {
+      "name": "Part.hasIKTarget",
+      "status": "generated"
+    },
+    {
+      "name": "Part.isAttached",
+      "status": "generated"
+    },
+    {
+      "name": "Part.isBoundToBone",
+      "status": "generated"
+    },
+    {
+      "name": "Part.isIKDriven",
+      "status": "generated"
+    },
+    {
+      "name": "Part.isIKTargetReached",
+      "status": "generated"
+    },
+    {
+      "name": "Part.removeCollider",
+      "status": "generated"
+    },
+    {
+      "name": "Part.removePhysicsBody",
+      "status": "generated"
+    },
+    {
+      "name": "Part.setDrawing",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.setIKDriveTarget",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.setIKLimits",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Part.setIKTarget",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.setImage",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.setParentPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.setupAnimationCollider",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.setupCollider",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.setupFrameCollider",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.setupPhysicsBody",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Part.solveIK",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Part.unbindFromBone",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.animate",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.breakTrail",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.clearContent",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.clearTrail",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.expire",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.fadeTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.getAge",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.getLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.getLifetime",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.getOpacity",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.getParticleEmitter",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.getTrailPointCount",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.hasContent",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.hasTrail",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.isAlive",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.removeCollider",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.removeParticleEmitter",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.removePhysicsBody",
+      "status": "generated"
+    },
+    {
+      "name": "Particle.setDrawing",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.setImage",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.setLifetime",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.setOpacity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.setTrail",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.setupCollider",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.setupParticleEmitter",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Particle.setupPhysicsBody",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.animate",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.emit",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "ParticleEmitter.getEmissionRate",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.getLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.getMaxParticleSpeed",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.getMinParticleSpeed",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.getParticle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.getSeed",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.getSpread",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.getVelocityInheritance",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.hasParticleTemplate",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.isEmitting",
+      "status": "generated"
+    },
+    {
+      "name": "ParticleEmitter.setEmissionRate",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.setParticleSpeed",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "ParticleEmitter.setParticleTemplate",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.setSeed",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.setSpread",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.setVelocityInheritance",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.startEmitting",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ParticleEmitter.stopEmitting",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "pdg.cleanupLayer",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.createDrawing",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.createSpriteLayer",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "pdg.createSpriteLayerFromSpriterFile",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "pdg.createTileLayer",
+      "status": "adapter"
+    },
+    {
+      "name": "pdg.getConfigManager",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.getEventManager",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.getFileManager",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.getGraphicsManager",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.getLogManager",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.getResourceManager",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.getSoundManager",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.getTimerManager",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.idle",
+      "status": "adapter"
+    },
+    {
+      "name": "pdg.quit",
+      "status": "adapter"
+    },
+    {
+      "name": "pdg.rand",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.registerEasingFunction",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "pdg.registerSerializableClass",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "pdg.setSerializationDebugMode",
+      "status": "generated"
+    },
+    {
+      "name": "pdg.srand",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "uint32",
+            "index": 0,
+            "name": "seed",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PhysicsBody.addContinuousForce",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.addContinuousTorque",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.applyAngularImpulse",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.applyForce",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "PhysicsBody.applyImpulse",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "PhysicsBody.applyTorque",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "PhysicsBody.clearDrive",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createGear",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createGrooveJoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createMotor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createPinJoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createPivotJoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createRatchet",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createRotaryLimit",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createRotarySpring",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createSlideJoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.createSpring",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.disconnect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.getAngularDamping",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getAngularMomentum",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getAngularVelocity",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getBreakAngularSpeed",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getBreakAngularSpeedReference",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.getConstraint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.getConstraintCount",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getDriveState",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "PhysicsBody.getFriction",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getLinearDamping",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getMass",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getMode",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getMomentOfInertia",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getMovementDirectionInRadians",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getRestitution",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getSolver",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getSpeed",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.getState",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "PhysicsBody.getVelocity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.isAttached",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.isDriveEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.isPresent",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsBody.removeForce",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "PhysicsBody.setAngularDamping",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setAngularVelocity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setBreakAngularSpeed",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setDriveTarget",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setFriction",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setLinearDamping",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setMass",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setMode",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setMomentOfInertia",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setRestitution",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setSpeed",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.setVelocity",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "PhysicsBody.setVelocityInRadians",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.step",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "PhysicsBody.stopAllForces",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.stopMoving",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.stopSpinning",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsBody.teleport",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.disconnect",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.getAnchorA",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.getAnchorB",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.getBodyA",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.getBodyB",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.getBreakForce",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.getCollideBodies",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.getForce",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.getGrooveEnd",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.getGrooveStart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.getImpulse",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.getMaxAngle",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.getMaxForce",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.getMinAngle",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.getType",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.isActive",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.isBroken",
+      "status": "generated"
+    },
+    {
+      "name": "PhysicsConstraint.setAnchorA",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.setAnchorB",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.setAnchors",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.setAngleLimits",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.setBreakForce",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.setCollideBodies",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.setGroove",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "PhysicsConstraint.setMaxForce",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.addPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.addSpline",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.center",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.centerPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.clearPoints",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.contains",
+      "status": "generated"
+    },
+    {
+      "name": "Polygon.empty",
+      "status": "generated"
+    },
+    {
+      "name": "Polygon.equals",
+      "status": "generated"
+    },
+    {
+      "name": "Polygon.getBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.getPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.getPointCount",
+      "status": "generated"
+    },
+    {
+      "name": "Polygon.horzScale",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.insertPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.intersection",
+      "status": "generated"
+    },
+    {
+      "name": "Polygon.move",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.moveDown",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.moveLeft",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.moveRight",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.moveTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.moveUp",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.moveXTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.moveYTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.removePoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.rotate",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.rotateAround",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.scale",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.scaleAround",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.setPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Polygon.unionWith",
+      "status": "generated"
+    },
+    {
+      "name": "Polygon.vertScale",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.clear",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawArc",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawBezier",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawCircle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawDrawing",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawEllipse",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawImage",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawLine",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawPolygon",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawQuad",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawRect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawRoundedRect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawSphere",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawSpline",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawText",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Port.drawVector",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.getCamera",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.getCameraAnchor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.getCameraDrawingEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Port.getClipRect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.getCurrentFont",
+      "status": "generated"
+    },
+    {
+      "name": "Port.getCursor",
+      "status": "generated"
+    },
+    {
+      "name": "Port.getDrawingArea",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.getTextWidth",
+      "status": "adapter"
+    },
+    {
+      "name": "Port.portToWorld",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.resetClipRect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.resetCursor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.setCameraAnchor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.setCameraDrawingEnabled",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.setClipRect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.setCursor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.setDrawingOrigin",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.setFont",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.setFontForStyle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.setFontScalingFactor",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.startTrackingMouse",
+      "status": "adapter"
+    },
+    {
+      "name": "Port.stopTrackingMouse",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Port.worldToPort",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "ResourceManager.closeResourceFile",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "refNum",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ResourceManager.getImage",
+      "status": "adapter"
+    },
+    {
+      "name": "ResourceManager.getImageStrip",
+      "status": "adapter"
+    },
+    {
+      "name": "ResourceManager.getLanguage",
+      "status": "adapter"
+    },
+    {
+      "name": "ResourceManager.getResource",
+      "status": "adapter"
+    },
+    {
+      "name": "ResourceManager.getResourcePaths",
+      "status": "generated"
+    },
+    {
+      "name": "ResourceManager.getResourceSize",
+      "status": "adapter"
+    },
+    {
+      "name": "ResourceManager.getSound",
+      "status": "adapter"
+    },
+    {
+      "name": "ResourceManager.getString",
+      "status": "adapter"
+    },
+    {
+      "name": "ResourceManager.openResourceFile",
+      "status": "adapter"
+    },
+    {
+      "name": "ResourceManager.setLanguage",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Scene._nearestPoint",
+      "status": "generated"
+    },
+    {
+      "name": "Scene._overlapBox",
+      "status": "generated"
+    },
+    {
+      "name": "Scene._overlapCapsule",
+      "status": "generated"
+    },
+    {
+      "name": "Scene._overlapCircle",
+      "status": "generated"
+    },
+    {
+      "name": "Scene._overlapPoint",
+      "status": "generated"
+    },
+    {
+      "name": "Scene._raycast",
+      "status": "generated"
+    },
+    {
+      "name": "Scene._sweepCircle",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.addLayer",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.advance",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.cancelAllTimers",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.cancelTimer",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.createSpriteLayer",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Scene.delayTimer",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.dispose",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.disposeLayer",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.getCamera",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Scene.getDroppedTime",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.getFixedStep",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.getInterpolationAlpha",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.getLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Scene.getLayerCount",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.getSimulationTime",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.getTick",
+      "status": "adapter"
+    },
+    {
+      "name": "Scene.getTimeScale",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.getWhenTimerFiresNext",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.isDisposed",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.isInputEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.isInterpolationEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.isManual",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.isPaused",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.isTimerPaused",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.pause",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.pauseTimer",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.removeLayer",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.resume",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.Scene",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Scene.setCamera",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.setFixedStep",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.setInputEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.setInterpolation",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.setManual",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.setTimeScale",
+      "status": "generated"
+    },
+    {
+      "name": "Scene.startTimer",
+      "status": "adapter"
+    },
+    {
+      "name": "Scene.unpauseTimer",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.getDataPtr",
+      "status": "adapter"
+    },
+    {
+      "name": "Serializer.getDataSize",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.getResourceMode",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_1",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "integer": true,
+            "max": 127,
+            "min": -128,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_1u",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 255,
+            "min": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_2",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "integer": true,
+            "max": 32767,
+            "min": -32768,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_2u",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 65535,
+            "min": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_3u",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 16777215,
+            "min": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_4",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 2147483647,
+            "min": -2147483648,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_4u",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 4294967295,
+            "min": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_8",
+      "status": "adapter",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_8u",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Serializer.serialize_bool",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_color",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_d",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_f",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_mem",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Serializer.serialize_obj",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_offset",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_point",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_quad",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_rect",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_ref",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Serializer.serialize_rotr",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.serialize_str",
+      "status": "adapter"
+    },
+    {
+      "name": "Serializer.serialize_uint",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "uint32",
+            "index": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.serialize_vector",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.setResourceMode",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Serializer.sizeof_1",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "integer": true,
+            "max": 127,
+            "min": -128,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_1u",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 255,
+            "min": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_2",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "integer": true,
+            "max": 32767,
+            "min": -32768,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_2u",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 65535,
+            "min": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_3u",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 16777215,
+            "min": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_4",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 2147483647,
+            "min": -2147483648,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_4u",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "integer": true,
+            "max": 4294967295,
+            "min": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_8",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Serializer.sizeof_8u",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Serializer.sizeof_bool",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.sizeof_color",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.sizeof_d",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_f",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_mem",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Serializer.sizeof_obj",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.sizeof_offset",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.sizeof_point",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.sizeof_quad",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.sizeof_rect",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.sizeof_ref",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Serializer.sizeof_rotr",
+      "status": "generated"
+    },
+    {
+      "name": "Serializer.sizeof_str",
+      "status": "adapter"
+    },
+    {
+      "name": "Serializer.sizeof_uint",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "uint32",
+            "index": 0,
+            "name": "val",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Serializer.sizeof_vector",
+      "status": "generated"
+    },
+    {
+      "name": "Sound.changeOffsetX",
+      "status": "adapter"
+    },
+    {
+      "name": "Sound.changePitch",
+      "status": "adapter"
+    },
+    {
+      "name": "Sound.changeVolume",
+      "status": "adapter"
+    },
+    {
+      "name": "Sound.fadeIn",
+      "status": "adapter"
+    },
+    {
+      "name": "Sound.fadeOut",
+      "status": "adapter"
+    },
+    {
+      "name": "Sound.getVolume",
+      "status": "generated"
+    },
+    {
+      "name": "Sound.isLooping",
+      "status": "generated"
+    },
+    {
+      "name": "Sound.isPaused",
+      "status": "generated"
+    },
+    {
+      "name": "Sound.pause",
+      "status": "generated"
+    },
+    {
+      "name": "Sound.play",
+      "status": "generated"
+    },
+    {
+      "name": "Sound.resume",
+      "status": "generated"
+    },
+    {
+      "name": "Sound.setLooping",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sound.setOffsetX",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sound.setPitch",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sound.setVolume",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sound.skip",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sound.skipTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sound.start",
+      "status": "generated"
+    },
+    {
+      "name": "Sound.stop",
+      "status": "generated"
+    },
+    {
+      "name": "SoundManager.setMute",
+      "status": "generated"
+    },
+    {
+      "name": "SoundManager.setVolume",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "level",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Spline.addPoint",
+      "status": "generated"
+    },
+    {
+      "name": "Spline.addSegment",
+      "status": "generated"
+    },
+    {
+      "name": "Spline.getBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Spline.getFirstOrder",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Spline.getMaxU",
+      "status": "generated"
+    },
+    {
+      "name": "Spline.getPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Spline.getPointCount",
+      "status": "generated"
+    },
+    {
+      "name": "Spline.getSecondOrder",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Spline.setPoint",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.activateSubEntity",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.addAnimationDrawable",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.addAnimationIK",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.addAnimationModifier",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.addFramesImage",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.applyCharacterMap",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.areSpriterEventsEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.attachAnimationPhysicsPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.attachSprite",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.blendToAnimation",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.changeFramesImage",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.clearAnimationBoneTransforms",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.clearAnimationDrawables",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.clearAnimationModifiers",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.clearAnimationPhysicsRoot",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.clearParts",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.createPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.deserialize",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Sprite.detachAnimationPhysicsPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.detachSprite",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.disableAnimationPhysics",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.disableAnimationPose",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.enableAnimationPose",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.enableSpriterEvents",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.fadeIn",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.fadeOut",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.fadeTo",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.findPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getAnimationBindingNames",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationBindingTransform",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationBoneNames",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationBoneTransform",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationDebugDraw",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getAnimationDrawableError",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.getAnimationDrawBounds",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationIKResult",
+      "status": "adapter",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.getAnimationModifierError",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.getAnimationPhysicsDriveSettings",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationPhysicsMode",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationPhysicsRoot",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getAnimationPhysicsSetupWarnings",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationPose",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAnimationProgress",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getAnimationRigError",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getAnimationSource",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getAnimationTransitionProgress",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getAppliedCharacterMaps",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.getAttachedSprite",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Sprite.getAttachmentPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getAttachPoint",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getBlendProgress",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getBone",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getCurrentFrame",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getFrameCenterOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getFrameCount",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getFrameRotatedBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getMouseDetectMode",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getMyClassTag",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getOpacity",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getPartCount",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getPartNames",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Sprite.getSerializedSize",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Sprite.getSpriterCollisionBox",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.getSpriterCollisionBoxCount",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getSpriterCollisionBoxName",
+      "status": "adapter",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "index",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.getWantsAnimEndEvents",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getWantsAnimLoopEvents",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getWantsClickEvents",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getWantsCollideWallEvents",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getWantsMouseOverEvents",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getWantsOffscreenEvents",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.getZOrder",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.hasAnimation",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.hasAttachPoint",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.isAnimationDrawingSupported",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isAnimationPaused",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isAnimationPhysicsEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isAnimationPhysicsPartAttached",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isAnimationPlaying",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isAnimationPoseEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isAnimationTransitioning",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isBehind",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isBlending",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.isSpriterCollisionActive",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.moveBehind",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.moveInFrontOf",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.moveToBack",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.moveToFront",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.offsetFrameCenters",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.on",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onAnimationBlendComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onAnimationEnd",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onAnimationLoop",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onAnimationPhysicsRecoveryComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onCollideSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onCollideWall",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onExitLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onFadeComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onFadeInComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onFadeOutComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onMouseClick",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onMouseDown",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onMouseEnter",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onMouseLeave",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onMouseUp",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onOffscreen",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.onOnscreen",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.pauseAnimation",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.removeAllCharacterMaps",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.removeAnimationDrawable",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.removeAnimationModifier",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.removeCharacterMap",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.removeCollider",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.removePart",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.removePhysicsBody",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.resumeAnimation",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.sampleAnimationPose",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.seekAnimation",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.serialize",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Sprite.setAnimationBoneTransform",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.setAnimationDebugDraw",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "flags",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.setAnimationDrawableEnabled",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.setAnimationIKTarget",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.setAnimationPhysicsDriveSettings",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setAnimationPhysicsMode",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setAnimationPhysicsRoot",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setAnimationSource",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "source",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sprite.setDrawHelper",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Sprite.setFrame",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setFrameCollisionMask",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setMouseDetectMode",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setOpacity",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setPostDrawHelper",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Sprite.setupAnimationCollider",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setupAnimationPhysics",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.setupCollider",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setupFrameCollider",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setupPhysicsBody",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setupPhysicsFromAnimationRig",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setWantsAnimEndEvents",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setWantsAnimLoopEvents",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setWantsClickEvents",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setWantsCollideWallEvents",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setWantsMouseOverEvents",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.setWantsOffscreenEvents",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.startAnimation",
+      "status": "adapter"
+    },
+    {
+      "name": "Sprite.startFrameAnimation",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.stopAnimation",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.stopFrameAnimation",
+      "status": "generated"
+    },
+    {
+      "name": "Sprite.supportsAnimationPhysics",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "Sprite.transferPart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Sprite.transitionToAnimation",
+      "status": "adapter"
+    },
+    {
+      "name": "SpriteLayer.addParticle",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.addSprite",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.applyCharacterMapToAll",
+      "status": "adapter"
+    },
+    {
+      "name": "SpriteLayer.createParticle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.createParticleEmitter",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.createSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.createSpriteFromSpriterEntity",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "SpriteLayer.createSpriteFromSpriterFile",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "SpriteLayer.deserialize",
+      "status": "adapter"
+    },
+    {
+      "name": "SpriteLayer.disableCollisions",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.disableCollisionsWithLayer",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.enableCollisions",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.enableCollisionsWithLayer",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.enableSpriterEvents",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.fadeIn",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.fadeOut",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.findSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.getCamera",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.getEffectiveCamera",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.getMaxParticles",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.getMyClassTag",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.getNthParticle",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.getNthSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.getParticleCount",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.getParticleTrailCount",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.getQueryBits",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.getSerializedSize",
+      "status": "adapter"
+    },
+    {
+      "name": "SpriteLayer.getSpace",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.getSpritePort",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.getSpriteZOrder",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.getWorldBounds",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.getZOrder",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.hasSprite",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.hide",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.isHidden",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.isSpriteBehind",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.layerToPortOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.layerToPortPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.layerToPortQuad",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.layerToPortRect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.layerToPortVector",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.moveBehind",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.moveInFrontOf",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.moveToBack",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.moveToFront",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.on",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onAnimationComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onAnimationEnd",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onAnimationLoop",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onAnimationStart",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onCollideSprite",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onCollideWall",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onDrawPortComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onErasePort",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onExitLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onFadeComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onFadeInComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onFadeOutComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onLayerFadeInComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onLayerFadeOutComplete",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onMouseClick",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onMouseDown",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onMouseEnter",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onMouseLeave",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onMouseUp",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onOffscreen",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onOnscreen",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onPostAnimateLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onPostDrawLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onPreAnimateLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.onPreDrawLayer",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.portToLayerOffset",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.portToLayerPoint",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.portToLayerQuad",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.portToLayerRect",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.portToLayerVector",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.removeAllParticleEmitters",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.removeAllParticles",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.removeAllSprites",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.removeCharacterMapFromAll",
+      "status": "adapter"
+    },
+    {
+      "name": "SpriteLayer.removeParticle",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.removeParticleEmitter",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.removeSprite",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.serialize",
+      "status": "adapter"
+    },
+    {
+      "name": "SpriteLayer.setCamera",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.setCameraParallax",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.setDamping",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "damping",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SpriteLayer.setGravity",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.setMaxParticles",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.setQueryBits",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.setSerializationFlags",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "SpriteLayer.setSpritePort",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.setStaticLayer",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.setUseChipmunkPhysics",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.setWorldBounds",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.show",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.startAnimations",
+      "status": "generated"
+    },
+    {
+      "name": "SpriteLayer.stopAnimations",
+      "status": "generated"
+    },
+    {
+      "name": "TileLayer.checkCollision",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "TileLayer.defineTileSet",
+      "status": "generated"
+    },
+    {
+      "name": "TileLayer.getMapData",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "TileLayer.getTileSetImage",
+      "status": "generated"
+    },
+    {
+      "name": "TileLayer.getTileSize",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "TileLayer.getTileTypeAndFacingAt",
+      "status": "adapter"
+    },
+    {
+      "name": "TileLayer.getTileTypeAt",
+      "status": "adapter"
+    },
+    {
+      "name": "TileLayer.getWorldSize",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "TileLayer.loadMapData",
+      "status": "adapter",
+      "wrapper": true
+    },
+    {
+      "name": "TileLayer.setTileTypeAt",
+      "status": "adapter"
+    },
+    {
+      "name": "TileLayer.setWorldSize",
+      "status": "generated"
+    },
+    {
+      "name": "TimerManager.cancelAllTimers",
+      "status": "generated"
+    },
+    {
+      "name": "TimerManager.cancelTimer",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TimerManager.delayTimer",
+      "status": "generated",
+      "wrapper": {
+        "arity": 2,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "conversion": "uint32",
+            "index": 1,
+            "name": "delay",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TimerManager.delayTimerUntil",
+      "status": "generated"
+    },
+    {
+      "name": "TimerManager.getMilliseconds",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "TimerManager.getWhenTimerFiresNext",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TimerManager.isPaused",
+      "status": "generated"
+    },
+    {
+      "name": "TimerManager.isTimerPaused",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TimerManager.pause",
+      "status": "generated"
+    },
+    {
+      "name": "TimerManager.pauseTimer",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TimerManager.startTimer",
+      "status": "manual-unverified"
+    },
+    {
+      "name": "TimerManager.unpause",
+      "status": "generated"
+    },
+    {
+      "name": "TimerManager.unpauseTimer",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "conversion": "int32",
+            "index": 0,
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Troupe.add",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Troupe.animate",
+      "status": "generated",
+      "wrapper": {
+        "arity": 1,
+        "parameters": [
+          {
+            "index": 0,
+            "name": "deltaSeconds",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Troupe.clear",
+      "status": "generated",
+      "wrapper": true
+    },
+    {
+      "name": "Troupe.contains",
+      "status": "generated"
+    },
+    {
+      "name": "Troupe.getMemberCount",
+      "status": "generated"
+    },
+    {
+      "name": "Troupe.remove",
+      "status": "generated",
+      "wrapper": true
+    }
+  ]
+}

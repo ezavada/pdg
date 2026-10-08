@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['memblock_0',['MemBlock',['../classpdg_1_1_mem_block.html',1,'pdg']]],
-  ['mouseevent_1',['MouseEvent',['../group___events.html#structpdg_1_1_mouse_event',1,'']]],
-  ['mousetrackingevent_2',['MouseTrackingEvent',['../group___events.html#structpdg_1_1_mouse_tracking_event',1,'']]]
+  ['keyevent_0',['KeyEvent',['../group___structured_data_types.html#structpdg_1_1_key_event',1,'pdg']]],
+  ['keyeventcallback_1',['KeyEventCallback',['../namespacepdg.html#structpdg_1_1_key_event_callback',1,'pdg']]],
+  ['keypressevent_2',['KeyPressEvent',['../group___structured_data_types.html#structpdg_1_1_key_press_event',1,'pdg']]],
+  ['keypresseventcallback_3',['KeyPressEventCallback',['../namespacepdg.html#structpdg_1_1_key_press_event_callback',1,'pdg']]]
 ];

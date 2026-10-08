@@ -14,6 +14,7 @@ AnimatedAttributesBase::AnimatedAttributesBase(const Attributes& attributes) : A
     assignAttributes(attributes);
 }
 void AnimatedAttributesBase::assignAttributes(const Attributes& attributes) {
+    validateUnrecordedOperation("AnimatedAttributes appearance command");
     validateImmediateOperation();
     if (static_cast<const Attributes*>(this) == &attributes) return;
     validateMatrix(attributes.getTransform());
@@ -24,6 +25,7 @@ void AnimatedAttributesBase::assignAttributes(const Attributes& attributes) {
 }
 
 void AnimatedAttributesBase::tween(std::initializer_list<Value> values, double seconds, EasingFunc easing, bool replacesFill) {
+    validateUnrecordedOperation("AnimatedAttributes appearance command");
     // Validate the complete request before interrupting any existing channels.
     validateAnimationDuration(seconds);
     for (const Value& v : values) Animation(v.field, v.target, easing, mDelaySeconds, seconds);
@@ -61,24 +63,28 @@ void AnimatedAttributesBase::switchFill(GradientType mode, double delay, bool ch
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeLineColor(const Color& target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeLineColor", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mLineColor.red, target.red}, {&mLineColor.green, target.green}, {&mLineColor.blue, target.blue}, {&mLineColor.alpha, target.alpha}}, seconds, easing);
     if (mLineStyle == lineStyle_Auto) mLineStyle = lineStyle_Solid;
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeLineThickness(float target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeLineThickness", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mLineThickness, target}}, seconds, easing);
     if (mLineStyle == lineStyle_Auto) mLineStyle = lineStyle_Solid;
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeLineOpacity(float target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeLineOpacity", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mLineOpacity, target}}, seconds, easing);
     if (mLineStyle == lineStyle_Auto) mLineStyle = lineStyle_Solid;
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeFillColor(const Color& target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeFillColor", captureAnimationArguments(target, seconds, easing))) return *this;
     const double delay = mDelaySeconds; const bool chained = mAppendAnimation;
     tween({{&mFillColor.red, target.red}, {&mFillColor.green, target.green}, {&mFillColor.blue, target.blue}, {&mFillColor.alpha, target.alpha}}, seconds, easing, true);
     switchFill(gradientType_None, delay, chained);
@@ -86,42 +92,50 @@ AnimatedAttributesBase& AnimatedAttributesBase::changeFillColor(const Color& tar
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeFillOpacity(float target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeFillOpacity", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mFillOpacity, target}}, seconds, easing);
     if (mLineStyle == lineStyle_Auto) mLineStyle = lineStyle_None;
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeRoundedCorners(float target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeRoundedCorners", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mRoundedCornerRadius, target}}, seconds, easing);
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeTextSize(float target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeTextSize", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mTextSize, target}}, seconds, easing);
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeSubsection(const Rect& target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeSubsection", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mSubsection.left, target.left}, {&mSubsection.top, target.top}, {&mSubsection.right, target.right}, {&mSubsection.bottom, target.bottom}}, seconds, easing);
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changePolarOffset(const Offset& target, double seconds, EasingFunc easing) {
+    if(recordOperation("changePolarOffset", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mPolarOffset.x, target.x}, {&mPolarOffset.y, target.y}}, seconds, easing);
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeLightOffset(const Offset& target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeLightOffset", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mLightOffset.x, target.x}, {&mLightOffset.y, target.y}}, seconds, easing);
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeAmbientLight(const Color& target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeAmbientLight", captureAnimationArguments(target, seconds, easing))) return *this;
     tween({{&mAmbientLight.red, target.red}, {&mAmbientLight.green, target.green}, {&mAmbientLight.blue, target.blue}, {&mAmbientLight.alpha, target.alpha}}, seconds, easing);
     return *this;
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeFillGradient(const Point& start, const Color& startColor, const Point& end, const Color& endColor, double seconds, EasingFunc easing) {
+    if(recordOperation("changeFillGradient", captureAnimationArguments(start, startColor, end, endColor, seconds, easing))) return *this;
     const double delay = mDelaySeconds; const bool chained = mAppendAnimation;
     tween({{&mGradientStart.x, start.x}, {&mGradientStart.y, start.y}, {&mGradientStartColor.red, startColor.red}, {&mGradientStartColor.green, startColor.green}, {&mGradientStartColor.blue, startColor.blue}, {&mGradientStartColor.alpha, startColor.alpha}, {&mGradientEnd.x, end.x}, {&mGradientEnd.y, end.y}, {&mGradientEndColor.red, endColor.red}, {&mGradientEndColor.green, endColor.green}, {&mGradientEndColor.blue, endColor.blue}, {&mGradientEndColor.alpha, endColor.alpha}}, seconds, easing, true);
     switchFill(gradientType_Linear, delay, chained);
@@ -129,6 +143,7 @@ AnimatedAttributesBase& AnimatedAttributesBase::changeFillGradient(const Point& 
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeFillRadialGradient(const Point& center, const Color& centerColor, float radius, const Color& endColor, double seconds, EasingFunc easing) {
+    if(recordOperation("changeFillRadialGradient", captureAnimationArguments(center, centerColor, radius, endColor, seconds, easing))) return *this;
     const double delay = mDelaySeconds; const bool chained = mAppendAnimation;
     tween({{&mRadialGradientCenter.x, center.x}, {&mRadialGradientCenter.y, center.y}, {&mRadialGradientCenterColor.red, centerColor.red}, {&mRadialGradientCenterColor.green, centerColor.green}, {&mRadialGradientCenterColor.blue, centerColor.blue}, {&mRadialGradientCenterColor.alpha, centerColor.alpha}, {&mRadialGradientRadius, radius}, {&mRadialGradientEndColor.red, endColor.red}, {&mRadialGradientEndColor.green, endColor.green}, {&mRadialGradientEndColor.blue, endColor.blue}, {&mRadialGradientEndColor.alpha, endColor.alpha}}, seconds, easing, true);
     switchFill(gradientType_Radial, delay, chained);
@@ -136,6 +151,8 @@ AnimatedAttributesBase& AnimatedAttributesBase::changeFillRadialGradient(const P
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeSphereRotation(float radians, double seconds, EasingFunc easing, int direction) {
+    if(recordOperation("changeSphereRotation", captureAnimationArguments(radians, seconds, easing, direction))) return *this;
+    validateUnrecordedOperation("AnimatedAttributes appearance command");
     validateAnimationDuration(seconds);
     rotationTarget(mSphereRotation, radians, direction, false); // validate direction before mutation
     Animation a(&mSphereRotation, radians, easing, mDelaySeconds, seconds);
@@ -149,6 +166,8 @@ AnimatedAttributesBase& AnimatedAttributesBase::changeSphereRotation(float radia
     finishAnimationRequest(); return *this;
 }
 AnimatedAttributesBase& AnimatedAttributesBase::changeFrames(int first, int last, double seconds, EasingFunc easing) {
+    if(recordOperation("changeFrames", captureAnimationArguments(first, last, seconds, easing))) return *this;
+    validateUnrecordedOperation("AnimatedAttributes appearance command");
     validateAnimationDuration(seconds);
     Animation a(&mFrameProgress, 1, easing, mDelaySeconds, seconds);
     markAppearance(Frame);
@@ -163,6 +182,7 @@ AnimatedAttributesBase& AnimatedAttributesBase::changeFrames(int first, int last
 }
 
 AnimatedAttributesBase& AnimatedAttributesBase::changeSkew(float x, float y, double seconds, EasingFunc easing) {
+    if(recordOperation("changeSkew", captureAnimationArguments(x, y, seconds, easing))) return *this;
     glm::mat3 shear(1); shear[0][1] = x; shear[1][0] = y;
     const bool chained = mAppendAnimation;
     changeTransform(getTransform() * shear, seconds, easing);
@@ -179,6 +199,8 @@ void AnimatedAttributesBase::validateMatrix(const glm::mat3& matrix) {
         throw std::invalid_argument("AnimatedAttributes requires an affine 2D transform");
 }
 AnimatedAttributesBase& AnimatedAttributesBase::changeTransform(const glm::mat3& target, double seconds, EasingFunc easing) {
+    if(recordOperation("changeTransform", captureAnimationArguments(target, seconds, easing))) return *this;
+    validateUnrecordedOperation("AnimatedAttributes appearance command");
     validateMatrix(target); validateAnimationDuration(seconds);
     if (!mAppendAnimation) validateTransformSize(target);
     if (!easing) throw std::invalid_argument("Easing is required");
@@ -353,6 +375,7 @@ Attributes& AnimatedAttributesBase::composeTransform(const glm::mat3& matrix, Tr
     return *this;
 }
 void AnimatedAttributesBase::setTransformImpl(const glm::mat3& matrix) {
+    validateUnrecordedOperation("AnimatedAttributes appearance command");
     validateImmediateOperation();
     validateMatrix(matrix); validateTransformSize(matrix);
     const glm::mat3 copy = matrix;
@@ -370,7 +393,7 @@ void AnimatedAttributesBase::flipChanged(bool,bool) { if (!mAnimating) cancelMat
 void AnimatedAttributesBase::animationValuesChanged() {
     if (mMatrixActive) {
         adoptTransform(mMatrixSample);
-        mMatrixActive = std::any_of(mAnimations.begin(),mAnimations.end(),[this](const Animation& a) {
+        mMatrixActive = animationChannelScheduled(&mMatrixSample[0][0]) || std::any_of(mAnimations.begin(),mAnimations.end(),[this](const Animation& a) {
             for(int c=0;c<3;++c) for(int r=0;r<2;++r) if(a.value==&mMatrixSample[c][r] && !a.chained) return true;
             return false;
         });
@@ -399,6 +422,7 @@ bool AnimatedAttributesBase::animate(double seconds) {
     catch (...) { mAnimating = false; throw; }
 }
 void AnimatedAttributesBase::attributeChanging(AttributeChannel channel) {
+    validateUnrecordedOperation("AnimatedAttributes appearance command");
     Attributes::attributeChanging(channel);
     switch (channel) {
     case StrokeStyle: case Texture: case Fit: case Clip: case Blend: case TextStyle: case Typeface: break;
@@ -433,3 +457,16 @@ void AnimatedAttributesBase::attributeChanging(AttributeChannel channel) {
     }
 }
 } // namespace pdg
+
+namespace pdg {
+#include "animation-operations-animatedattributesbase.inc"
+}
+
+namespace pdg {
+std::vector<const float*> AnimatedAttributesBase::tweenFields() const {
+    auto fields=AnimatedBase::tweenFields();
+    for(auto* field : {&mLineColor.red, &mLineColor.green, &mLineColor.blue, &mLineColor.alpha, &mLineThickness, &mLineOpacity, &mFillColor.red, &mFillColor.green, &mFillColor.blue, &mFillColor.alpha, &mFillOpacity, &mGradientStart.x, &mGradientStart.y, &mGradientEnd.x, &mGradientEnd.y, &mGradientStartColor.red, &mGradientStartColor.green, &mGradientStartColor.blue, &mGradientStartColor.alpha, &mGradientEndColor.red, &mGradientEndColor.green, &mGradientEndColor.blue, &mGradientEndColor.alpha, &mRadialGradientCenter.x, &mRadialGradientCenter.y, &mRadialGradientRadius, &mRadialGradientCenterColor.red, &mRadialGradientCenterColor.green, &mRadialGradientCenterColor.blue, &mRadialGradientCenterColor.alpha, &mRadialGradientEndColor.red, &mRadialGradientEndColor.green, &mRadialGradientEndColor.blue, &mRadialGradientEndColor.alpha, &mRoundedCornerRadius, &mTextSize, &mSubsection.left, &mSubsection.top, &mSubsection.right, &mSubsection.bottom, &mSphereRotation, &mPolarOffset.x, &mPolarOffset.y, &mLightOffset.x, &mLightOffset.y, &mAmbientLight.red, &mAmbientLight.green, &mAmbientLight.blue, &mAmbientLight.alpha, &mFillSwitch, &mFrameProgress, &mShear, &mYAxis}) fields.push_back(field);
+    for(int c=0;c<3;++c) for(int r=0;r<2;++r) fields.push_back(&mMatrixSample[c][r]);
+    return fields;
+}
+}

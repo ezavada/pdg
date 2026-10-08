@@ -4,7 +4,7 @@ namespace pdg { /**
 
 \brief platform-specific keycode for the left Shift key
 
-This constant contains the correct keycode value for the left Shift key on the current platform. Use this when checking #KeyEvent.keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect left Shift key presses in a cross-platform way.
+This constant contains the correct keycode value for the left Shift key on the current platform. Use this when checking \ref pdg::KeyEvent::keyCode in #eventType_KeyDown or #eventType_KeyUp event handlers to detect left Shift key presses in a cross-platform way.
 
 **Platform values:**
 - Mac OS X: 56 (0x38 - NSEvent hardware keycode)

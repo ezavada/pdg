@@ -1,4 +1,4 @@
-.TH "EventEmitter" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "EventEmitter" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,10 +10,13 @@ EventEmitter \- Distributes events to event handlers\&.
 .PP
 \fR#include <pdg\-js\&.h>\fP
 .PP
-Inherited by \fBEventManager\fP, \fBParticle\fP, \fBSound\fP, \fBSprite\fP, \fBSpriteLayer\fP, and \fBTimerManager\fP\&.
+Inherited by \fBCamera\fP, \fBEventManager\fP, \fBParticle\fP, \fBScene\fP, \fBSound\fP, \fBSprite\fP, \fBSpriteLayer\fP, and \fBTimerManager\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBEventEmitter\fP ()"
+.br
 .ti -1c
 .RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
 .br
@@ -57,6 +60,12 @@ The \fBEventEmitter\fP expects the game developer to implement \fBIEventHandler\
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "EventEmitter ()"
+
+.PP
+Referenced by \fBScene::subscribe()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "addHandler (\fBIEventHandler\fP inHandler, int inEventType = \fR\fBall_events\fP\fP)"

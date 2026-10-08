@@ -1,3 +1,11 @@
+namespace {
+void validateProceduralFade(const SpriteJiggleState& j){
+    for(double x:{j.fadeStart,j.fadeTarget,j.fadeElapsed,j.fadeDuration})if(!std::isfinite(x))throw std::runtime_error("Nonfinite jiggle fade");
+    if(j.fadeStart<0||j.fadeStart>1||j.fadeTarget<0||j.fadeTarget>1||j.fadeElapsed<0||j.fadeDuration<0||(j.fadeDuration>0&&j.fadeElapsed>j.fadeDuration))throw std::runtime_error("Invalid jiggle fade");
+}
+uint32 proceduralSnapshotValues(ISerializer* writer,bool emit,const std::vector<double>& values) {SnapshotWriter out(writer,emit);out.integer(values.size());for(double v:values)out.real(v);return out.size();}
+std::vector<double> readProceduralSnapshotValues(IDeserializer* reader){SnapshotReader in(reader);auto n=reader->deserialize_uint();if(n>50000)throw std::runtime_error("Procedural snapshot too large");std::vector<double> v;while(n--){double x=in.real();if(!std::isfinite(x))throw std::runtime_error("Nonfinite procedural state");v.push_back(x);}return v;}
+}
 // Included inside namespace pdg. Part records belong to their Sprite; the
 // inherited Animated record is only one component of a complete Part snapshot.
 void Part::validateSnapshot(bool layerGraph) const {
@@ -20,11 +28,14 @@ uint32 Sprite::partSnapshotSize(ISerializer* writer) const {
         size += writer->sizeof_uint(part->mParent ? part->mParent->mId : partId_None);
         size += part->Animated::getSerializedSize(writer);
         size += SpriteAnimationSnapshot::bindingSize(*part,writer) + 1;
+        if(part->mProceduralOwner)size+=8;
         if (part->mHasIKLimits && !part->mIKConstraint) size += 16;
         if (const auto* ik = part->isIKDriven()?nullptr:part->mIKTarget.get()) {
             size += writer->sizeof_uint(ik->middle) + writer->sizeof_uint(ik->tip) + 8 + 1;
             SnapshotWriter out(writer,false);out.flag(ik->bend==1);out.real(ik->influence,1);out.text(part->mIKError);size+=out.size();
         }
+        if(part->mJiggle){size+=proceduralSnapshotValues(writer,false,encodeJiggle(part->mJiggle->config));size+=proceduralSnapshotValues(writer,false,encodeJiggleState(part->mJiggle->state));std::vector<double> ids(part->mJiggleChain.begin(),part->mJiggleChain.end());size+=proceduralSnapshotValues(writer,false,ids);SnapshotWriter out(writer,false);for(double x:{part->mJiggle->fadeStart,part->mJiggle->fadeTarget,part->mJiggle->fadeElapsed,part->mJiggle->fadeDuration})out.real(x);size+=out.size();}
+        if(part->mFABRIK){auto c=part->mFABRIK->config;c.chain=part->mFABRIK->chain;size+=proceduralSnapshotValues(writer,false,encodeFABRIK(c));}
         size += writer->sizeof_bool(part->mDrawing != nullptr);
 #ifndef PDG_NO_GUI
         if (part->mDrawing) size += drawingSerializedSize(part->mDrawing.get(), writer);
@@ -41,7 +52,8 @@ void Sprite::serializeParts(ISerializer* writer) const {
         part->Animated::serialize(writer);
         SpriteAnimationSnapshot::writeBinding(*part,writer);
         const auto* ik = part->isIKDriven()?nullptr:part->mIKTarget.get();
-        writer->serialize_1u((ik ? (ik->reached ? 3 : 1) : 0) | ((part->mHasIKLimits && !part->mIKConstraint) ? 4 : 0) | (part->mAnimationPhysicsBody ? 8 : 0));
+        writer->serialize_1u((ik ? (ik->reached ? 3 : 1) : 0) | ((part->mHasIKLimits && !part->mIKConstraint) ? 4 : 0) | (part->mAnimationPhysicsBody ? 8 : 0) | (part->mJiggle?16:0) | (part->mFABRIK?32:0) | (part->mProceduralOwner?64:0));
+        if(part->mProceduralOwner)writer->serialize_d(part->mProceduralBase);
         if (part->mHasIKLimits && !part->mIKConstraint) { writer->serialize_d(part->mIKMinAngle); writer->serialize_d(part->mIKMaxAngle); }
         if (ik) {
             writer->serialize_uint(ik->middle); writer->serialize_uint(ik->tip);
@@ -49,6 +61,8 @@ void Sprite::serializeParts(ISerializer* writer) const {
             writer->serialize_1u(ik->space);
             SnapshotWriter out(writer,true);out.flag(ik->bend==1);out.real(ik->influence,1);out.text(part->mIKError);
         }
+        if(part->mJiggle){proceduralSnapshotValues(writer,true,encodeJiggle(part->mJiggle->config));proceduralSnapshotValues(writer,true,encodeJiggleState(part->mJiggle->state));std::vector<double> ids(part->mJiggleChain.begin(),part->mJiggleChain.end());proceduralSnapshotValues(writer,true,ids);SnapshotWriter out(writer,true);for(double x:{part->mJiggle->fadeStart,part->mJiggle->fadeTarget,part->mJiggle->fadeElapsed,part->mJiggle->fadeDuration})out.real(x);}
+        if(part->mFABRIK){auto c=part->mFABRIK->config;c.chain=part->mFABRIK->chain;proceduralSnapshotValues(writer,true,encodeFABRIK(c));}
         writer->serialize_bool(part->mDrawing != nullptr);
 #ifndef PDG_NO_GUI
         if (part->mDrawing) serializeDrawing(part->mDrawing.get(), writer);
@@ -66,6 +80,7 @@ void Sprite::deserializeParts(IDeserializer* reader) {
     staged.mFlipX = mFlipX; staged.mFlipY = mFlipY;
     SpriteAnimationSnapshot::clone(*this,staged);
     std::vector<PartId> parents;
+    std::vector<std::optional<double>> bases;
     std::vector<std::unique_ptr<Part::IKTarget>> controllers;
     std::vector<std::string> controllerErrors;
     std::set<PartId> ids; std::set<std::string> names;
@@ -83,7 +98,9 @@ void Sprite::deserializeParts(IDeserializer* reader) {
         SpriteAnimationSnapshot::readBinding(*part,reader);
         if (part->hasCurrentRig() && parents.back()!=partId_None) throw std::runtime_error("Authored Part cannot also have a Part parent");
         const auto controller = reader->deserialize_1u();
-        if ((controller & ~15) || ((controller & 2) && !(controller & 1))) throw std::runtime_error("Invalid Part IK flags");
+        if ((controller & ~127) || ((controller & 2) && !(controller & 1))) throw std::runtime_error("Invalid Part IK flags");
+        bases.push_back((controller&64)?std::optional<double>(reader->deserialize_d()):std::nullopt);
+        if(bases.back()&&!std::isfinite(*bases.back()))throw std::runtime_error("Invalid procedural base rotation");
         const bool rigBody=controller & 8;
         if(rigBody && (controller & 7))throw std::runtime_error("Mapped rig body has independent Part IK");
         if (controller & 4) {
@@ -104,6 +121,8 @@ void Sprite::deserializeParts(IDeserializer* reader) {
             error=in.text();
         }
         controllers.push_back(std::move(ik)); controllerErrors.push_back(std::move(error));
+        if(controller&16){auto configValues=readProceduralSnapshotValues(reader);ProceduralValues cv(configValues);auto config=decodeJiggle(cv);cv.end();auto stateValues=readProceduralSnapshotValues(reader);ProceduralValues sv(stateValues);auto state=decodeJiggleState(sv);sv.end();auto ids=readProceduralSnapshotValues(reader);part->mJiggle=std::make_shared<SpriteJiggleState>();part->mJiggle->config=config;part->mJiggle->state=state;for(double id:ids){if(id<0||id>=partId_None||id!=std::floor(id))throw std::runtime_error("Invalid saved jiggle Part ID");part->mJiggleChain.push_back(PartId(id));}SnapshotReader in(reader);part->mJiggle->fadeStart=in.real();part->mJiggle->fadeTarget=in.real();part->mJiggle->fadeElapsed=in.real();part->mJiggle->fadeDuration=in.real();validateProceduralFade(*part->mJiggle);}
+        if(controller&32){auto values=readProceduralSnapshotValues(reader);ProceduralValues v(values);auto c=decodeFABRIK(v);v.end();part->mFABRIK=std::make_unique<Part::PartFABRIKState>();part->mFABRIK->chain=c.chain;part->mFABRIK->config=c;}
         const bool artwork = reader->deserialize_bool();
         if (artwork) {
 #ifndef PDG_NO_GUI
@@ -144,6 +163,13 @@ void Sprite::deserializeParts(IDeserializer* reader) {
         part->setIKTarget(staged.getPart(ik.middle), staged.getPart(ik.tip), ik.target, ik.space, ik.bend, ik.influence);
         part->mIKTarget->reached = ik.reached; part->mIKError = std::move(controllerErrors[i]);
     }
+    for(auto* part:staged.mParts) {
+        if(part->mFABRIK){auto saved=*part->mFABRIK;auto parts=part->proceduralParts(saved.chain);std::vector<Part*> rest(parts.begin()+1,parts.end());part->setFABRIKTarget(rest,Point(saved.config.targetX,saved.config.targetY),saved.config);}
+        if(part->mJiggle){auto saved=*part->mJiggle;auto ids=part->mJiggleChain;auto parts=part->proceduralParts(ids);if(parts.empty()||parts.front()!=part)throw std::runtime_error("Invalid saved jiggle chain");std::vector<Part*> rest(parts.begin()+1,parts.end());part->setJiggle(saved.config,rest);part->setJiggleState(saved.state);*part->mJiggle=saved;}
+    }
+    for(size_t i=0;i<staged.mParts.size();++i){auto* part=staged.mParts[i];
+        if(bool(part->mProceduralOwner)!=bool(bases[i]))throw std::runtime_error("Saved procedural ownership mismatch");
+        if(bases[i])part->mProceduralBase=*bases[i];}
     clearParts();
     mParts.swap(staged.mParts); mNextPartId = nextId;
     for (auto* part : mParts) part->mSprite = this;
@@ -156,21 +182,32 @@ void Sprite::deserializeParts(IDeserializer* reader) {
 uint32 Sprite::partMotionSize(ISerializer* writer) const {
     uint32 size=writer->sizeof_bool(!mParts.empty());
     if(mParts.empty())return size;
-    size+=writer->sizeof_uint(mParts.size());
+    bool procedural=std::any_of(mParts.begin(),mParts.end(),[](auto* p){return p->mJiggle||p->mFABRIK;});
+    size+=writer->sizeof_uint(uint32(mParts.size())|(procedural?0x80000000u:0));
     for(auto* part:mParts) {
         part->validateSnapshot(true);
         size+=writer->sizeof_uint(part->mId);
         size+=part->Animated::getSerializedSize(writer);
+        if(procedural){size+=1;if(part->mProceduralOwner)size+=8;
+            if(part->mJiggle){size+=proceduralSnapshotValues(writer,false,encodeJiggle(part->mJiggle->config));size+=proceduralSnapshotValues(writer,false,encodeJiggleState(part->mJiggle->state));SnapshotWriter out(writer,false);for(double x:{part->mJiggle->fadeStart,part->mJiggle->fadeTarget,part->mJiggle->fadeElapsed,part->mJiggle->fadeDuration})out.real(x);size+=out.size();}
+            if(part->mFABRIK){auto c=part->mFABRIK->config;c.chain=part->mFABRIK->chain;size+=proceduralSnapshotValues(writer,false,encodeFABRIK(c));}}
+
     }
     return size;
 }
 void Sprite::serializePartMotion(ISerializer* writer) const {
     writer->serialize_bool(!mParts.empty());
     if(mParts.empty())return;
-    writer->serialize_uint(mParts.size());
+    bool procedural=std::any_of(mParts.begin(),mParts.end(),[](auto* p){return p->mJiggle||p->mFABRIK;});
+    writer->serialize_uint(uint32(mParts.size())|(procedural?0x80000000u:0));
     for(auto* part:mParts) {
         part->validateSnapshot(true);
         writer->serialize_uint(part->mId);part->Animated::serialize(writer);
+        if(procedural){writer->serialize_1u((part->mProceduralOwner?1:0)|(part->mJiggle?2:0)|(part->mFABRIK?4:0));
+            if(part->mProceduralOwner)writer->serialize_d(part->mProceduralBase);
+            if(part->mJiggle){proceduralSnapshotValues(writer,true,encodeJiggle(part->mJiggle->config));proceduralSnapshotValues(writer,true,encodeJiggleState(part->mJiggle->state));SnapshotWriter out(writer,true);for(double x:{part->mJiggle->fadeStart,part->mJiggle->fadeTarget,part->mJiggle->fadeElapsed,part->mJiggle->fadeDuration})out.real(x);}
+            if(part->mFABRIK){auto c=part->mFABRIK->config;c.chain=part->mFABRIK->chain;proceduralSnapshotValues(writer,true,encodeFABRIK(c));}}
+
     }
 }
 void Part::adoptMotionSnapshot(const Part& saved) {
@@ -186,7 +223,9 @@ void Part::adoptMotionSnapshot(const Part& saved) {
     mSchedulePaused=saved.mSchedulePaused;mFlipX=saved.mFlipX;mFlipY=saved.mFlipY;
 }
 void Sprite::deserializePartMotion(IDeserializer* reader) {
-    const auto count=reader->deserialize_bool() ? reader->deserialize_uint() : 0;
+    const auto encodedCount=reader->deserialize_bool() ? reader->deserialize_uint() : 0;
+    const bool procedural=encodedCount&0x80000000u;const auto count=encodedCount&0x7fffffffu;
+    if(!procedural&&std::any_of(mParts.begin(),mParts.end(),[](auto* p){return p->mJiggle||p->mFABRIK;}))throw std::runtime_error("Procedural topology changed; load an initial snapshot");
     if(count!=mParts.size())throw std::runtime_error("Part update topology changed; load a new initial Layer snapshot");
     using StagedPart=std::unique_ptr<Part,void(*)(Part*)>;
     std::vector<std::pair<Part*,StagedPart>> staged;std::set<PartId> seen;
@@ -195,9 +234,23 @@ void Sprite::deserializePartMotion(IDeserializer* reader) {
         if(!part || !seen.insert(id).second)throw std::runtime_error("Unknown or duplicate Part in animation update");
         StagedPart saved(new Part(nullptr,id,part->mName),[](Part* p){delete p;});
         saved->Animated::deserialize(reader);
+        if(procedural){auto flags=reader->deserialize_1u();
+            if(flags!=((part->mProceduralOwner?1:0)|(part->mJiggle?2:0)|(part->mFABRIK?4:0)))throw std::runtime_error("Procedural topology changed; load an initial snapshot");
+            if(flags&1){double base=reader->deserialize_d();if(!std::isfinite(base))throw std::runtime_error("Nonfinite procedural base");saved->mProceduralBase=base;}
+            if(flags&2){auto values=readProceduralSnapshotValues(reader);ProceduralValues v(values);auto config=decodeJiggle(v);v.end();validateAnimationJiggle(config);
+                if(config.mode!=part->mJiggle->config.mode||config.chain!=part->mJiggle->config.chain||config.ik!=part->mJiggle->config.ik)throw std::runtime_error("Jiggle topology changed");
+                values=readProceduralSnapshotValues(reader);ProceduralValues sv(values);auto state=decodeJiggleState(sv);sv.end();if(state.initialized&&state.joints.size()!=(config.mode==jiggleMode_Chain?config.chain.size():0))throw std::runtime_error("Jiggle state topology changed");
+                saved->mJiggle=std::make_shared<SpriteJiggleState>(*part->mJiggle);saved->mJiggle->config=config;saved->mJiggle->state=state;
+                SnapshotReader in(reader);saved->mJiggle->fadeStart=in.real();saved->mJiggle->fadeTarget=in.real();saved->mJiggle->fadeElapsed=in.real();saved->mJiggle->fadeDuration=in.real();validateProceduralFade(*saved->mJiggle);}
+            if(flags&4){auto values=readProceduralSnapshotValues(reader);ProceduralValues v(values);auto c=decodeFABRIK(v);v.end();if(c.chain!=part->mFABRIK->chain)throw std::runtime_error("FABRIK topology changed");
+                AnimationTransform root;auto pose=part->proceduralPose(part->proceduralParts(c.chain),root);auto local=c;local.chain.clear();for(size_t i=0;i<c.chain.size();++i)local.chain.push_back(i);solveAnimationFABRIK(pose,local,root);
+                saved->mFABRIK=std::make_unique<Part::PartFABRIKState>(*part->mFABRIK);saved->mFABRIK->config=c;}}
         staged.emplace_back(part,std::move(saved));
     }
-    for(auto& item:staged)item.first->adoptMotionSnapshot(*item.second);
+    for(auto& item:staged){item.first->adoptMotionSnapshot(*item.second);
+        if(procedural){if(item.first->mProceduralOwner)item.first->mProceduralBase=item.second->mProceduralBase;
+            if(item.second->mJiggle)*item.first->mJiggle=*item.second->mJiggle;
+            if(item.second->mFABRIK)*item.first->mFABRIK=*item.second->mFABRIK;}}
     for(auto& item:staged)item.first->syncPhysicsTransform();
     updatePartAttachments();
 }

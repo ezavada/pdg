@@ -1,18 +1,9 @@
 namespace pdg { /**
+\fn pdg::Serializer::serialize_mem(Uint8Array mem)
+\brief Serialize bytes from a Uint8Array.
 
-\fn pdg::Serializer::serialize_mem(BinaryString mem)
-
-\brief serialize a binary string
-
-Binary strings are a Node.js way of handling blocks of arbitrary binary data. This serializes that data into the stream. 
-
-\deprecated Node.js maintainers have deprecated BinaryString, so it may not be around in future versions
-
-
-\note data size: varies, call serializedSize(MemBlock) to determine. Because binary strings used 2 bytes for each actual byte stored, the serialized data takes less memory than the original string.
-
-\sa serialize_mem(MemBlock)
-\sa serializedSize(MemBlock)
-\sa Deserializer.deserialize_mem
-
+Node Buffer is also accepted. Only the view's bytes are serialized, respecting byteOffset and byteLength. The bytes are copied into serializer storage during this call; later source changes do not affect the stream. Strings and other typed-array element types are rejected.
+\param mem The Uint8Array to serialize.
+\see serialize_mem(MemBlock)
+\see sizeof_mem(Uint8Array)
 **/ }

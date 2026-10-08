@@ -2,9 +2,9 @@ namespace pdg { /**
 
 \fn pdg::SpriteLayer::layerToPortQuad
 
-\brief translate the Quad to account for layer transformations
+\brief translate the Quad to account for the effective camera
 
-Adjusts for layer rotation, zoom and scrolling (origin) to get drawing coordinates.
+Adjusts for the effective camera view and port anchor to get drawing coordinates.
 
 \param q Quad in layer coordinates
 

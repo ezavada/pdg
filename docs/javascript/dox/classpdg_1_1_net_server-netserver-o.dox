@@ -1,26 +1,68 @@
 namespace pdg { /**
+\fn pdg::NetServer::NetServer(NetServerOptions opts = null)
+\brief Configure native and optional WebSocket/WebTransport listeners for a standalone server.
 
-\fn pdg::NetServer::NetServer(object opts)
+NetServer is available when pdg.hasNetworkServer is true. Browser and iOS builds expose
+NetClient and NetConnection and report hasNetworkServer as false.
 
-\brief constructor for a NetServer, sets server options
+\param opts Optional settings described below. Construction does not bind ports.
 
-Construct a new NetServer with particular options or using default values if no options are specified.
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\anchor websocket_server_options
+\par Server options
 
-Available options are:
+| Field | Default | Meaning |
+| --- | --- | --- |
+| native | true | Enable the existing TCP/UDP listener. |
+| serverAddr, serverPort | "0.0.0.0", 5000 | Native bind address and port. port is an alias for serverPort. Port 0 allocates an available port, reported by ready(). |
+| fixedPort | false | Allow native TCP to retry sequential ports after EADDRINUSE when false. |
+| noDatagram | false | Disable native UDP and WebTransport datagram use. WebSocket always uses reliable delivery. |
+| reservationRequired | false | Require an expectClient() reservation and its key. |
+| handshakeTimeout | 5000 | Milliseconds permitted for an incoming PDG handshake. 0 disables the server handshake timer. |
+| webSocket | false | true enables a web listener with shared settings. An object overrides port, host, path, secure, tls, allowedOrigins and limits. |
+| webTransport | false | true or an object enables an HTTP/3 WebTransport listener. The object overrides host, port, path, tls, allowedOrigins and limits. |
+| webPort, webPath | 5443, "/pdg" | Shared web listener port and path. WebSocket uses TCP and WebTransport uses UDP, so they may share a numeric port. Native TCP and WebSocket require separate nonzero TCP ports. |
+| tls | Required for secure WebSocket | certFile and keyFile paths, or cert and key values. WebTransport requires certFile and keyFile paths. Certificate changes require restarting the listener. |
+| allowedOrigins | [] | Exact allowed page origins. Empty rejects all upgrades. Include a native WebSocket client's configured Origin as needed; include "" for native WebTransport clients without an Origin. "*" is development-only. |
+| allowPartialListen | false | Permit successfully bound listeners to serve when another listener fails. Otherwise startup closes all listeners and ready() rejects. |
 
- 1. serverAddr - a string with the IP address (or hostname), defaults to 0.0.0.0 (all interfaces)
- 2. serverPort - a string with the port to use (defaults to 5000)
- 3. fixedPort - if false, indicate if we should try sequential ports if the one we asked for is already in use (defaults to false)
- 4. noDatagram - flag to indicate that we should not try to establish UDP communication with the client (defaults to false)
- 5. reservationRequired - flag indicating whether clients must be authenticated or not (defaults to false)
- 6. handshakeTimeout - number of milliseconds to wait for handshake to complete. Connection is killed if handshake not complete by that time. Default is 5000 (5 seconds). Shorter times offer better protection against Denial of Service attacks.
+WebSocket object limits: maxFrameSize (1048576 bytes), maxPendingBytes (4194304
+bytes), maxConnections (1024), maxConnectionsPerIP (32),
+maxConnectionsPerOrigin (1024), maxConnectionsPerMinute (120 per IP), maxIncompleteHandshakes (128), and
+idleTimeout (30000 milliseconds between ping checks). Clients that miss a pong
+are disconnected on the next check. Text messages are rejected.
 
-\param opts a Javascript object with the options above
+\htmlonly[block]
+</div>
+\endhtmlonly
 
-\code
+\note WebSocket uses TLS by default. secure:false explicitly enables ws:// for
+local development. The certificate's private key belongs only on the server.
+WebTransport always uses TLS. Its object accepts the same limits as WebSocket,
+with idleTimeout as the QUIC idle deadline and maxPendingBytes from 1024 to
+67108864. Admission limits range from 1 to 4096. maxIncompleteHandshakes also
+limits pending PDG handshakes. listeners reports native, websocket and
+webtransport addresses separately after ready(). A WebTransport connection
+reports secure:true and transport:"webtransport". Its confirmed datagram limit
+is used by sendDgram(); larger payloads use the reliable stream.
 
-    var myServer = new pdg.NetServer( { serverPort: 6160, noDatagram = true } );
+\par Example
+\code{.js}
+const server = new pdg.NetServer({
+    serverPort: 5000,
+    webSocket: true,
+    webTransport: true,
+    allowedOrigins: ["https://game.example.com"],
+    tls: {certFile: "certs/server.crt", keyFile: "certs/server.key"}
+});
+server.onError(error => console.error(error.transport, error.code));
+server.listen(connection => {
+    connection.onMessage(message => connection.send(message));
+    return true; // Accept the authenticated connection.
+});
+server.ready().then(addresses => console.log(addresses)).catch(console.error);
 \endcode
-
-
+\see listen(), ready(), shutdown()
 **/ }

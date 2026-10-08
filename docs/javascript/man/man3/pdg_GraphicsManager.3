@@ -1,4 +1,4 @@
-.TH "GraphicsManager" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "GraphicsManager" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -36,7 +36,7 @@ GraphicsManager \- Used to create and track ports (\fIGUI Only\fP)\&.
 .br
 .RI "create windowed drawing port with given dimensions, title and depth "
 .ti -1c
-.RI "object \fBgetCurrentScreenMode\fP (int screenNum=PRIMARY_SCREEN)"
+.RI "\fBCurrentScreenMode\fP \fBgetCurrentScreenMode\fP (int screenNum=PRIMARY_SCREEN)"
 .br
 .RI "get width, height, depth and maxWindowRect for specified screen "
 .ti -1c
@@ -52,7 +52,7 @@ GraphicsManager \- Used to create and track ports (\fIGUI Only\fP)\&.
 .br
 .RI "get mouse position "
 .ti -1c
-.RI "object \fBgetNthSupportedScreenMode\fP (int n, int screenNum=PRIMARY_SCREEN)"
+.RI "\fBScreenMode\fP \fBgetNthSupportedScreenMode\fP (int n, int screenNum=PRIMARY_SCREEN)"
 .br
 .RI "get the details of the Nth screen mode from the supported ones for a screen "
 .ti -1c
@@ -306,7 +306,7 @@ the newly created \fBPort\fP
 .RE
 .PP
 
-.SS "object getCurrentScreenMode (int screenNum = \fRPRIMARY_SCREEN\fP)"
+.SS "\fBCurrentScreenMode\fP getCurrentScreenMode (int screenNum = \fRPRIMARY_SCREEN\fP)"
 
 .PP
 get width, height, depth and maxWindowRect for specified screen 
@@ -394,7 +394,7 @@ this relies on events from the OS, so you must be calling \fBpdg\&.idle()\fP or 
 .RE
 .PP
 
-.SS "object getNthSupportedScreenMode (int n, int screenNum = \fRPRIMARY_SCREEN\fP)"
+.SS "\fBScreenMode\fP getNthSupportedScreenMode (int n, int screenNum = \fRPRIMARY_SCREEN\fP)"
 
 .PP
 get the details of the Nth screen mode from the supported ones for a screen 

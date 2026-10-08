@@ -4,55 +4,216 @@
 namespace pdg
 {
 
+    const action_AnimationBlendComplete = 15;
+    const action_AnimationComplete = 47;
+    const action_AnimationEnd = 9;
+    const action_AnimationLoop = 8;
+    const action_AnimationPhysicsRecoveryComplete = 17;
+    const action_AnimationStart = 44;
+    const action_BodyBreak = 16;
+    const action_CollideSprite = 0;
+    const action_CollideWall = 1;
+    const action_DrawPortComplete = 43;
+    const action_ErasePort = 40;
+    const action_ExitLayer = 4;
+    const action_FadeComplete = 10;
+    const action_FadeInComplete = 11;
+    const action_FadeOutComplete = 12;
+    const action_JointBreak = 13;
+    const action_LayerFadeInComplete = 49;
+    const action_LayerFadeOutComplete = 50;
+    const action_Offscreen = 2;
+    const action_Onscreen = 3;
+    const action_PostAnimateLayer = 46;
+    const action_PostDrawLayer = 42;
+    const action_PreAnimateLayer = 45;
+    const action_PreDrawLayer = 41;
     const all_events = 0;
-    const eventType_Shutdown = 2;
-    const eventType_Timer = 3;
-    const eventType_KeyDown = 4;
-    const eventType_KeyUp = 5;
-    const eventType_KeyPress = 6;
-    const eventType_MouseDown = 7;
-    const eventType_MouseUp = 8;
-    const eventType_MouseMove = 9;
-    const eventType_MouseEnter = 22;
-    const eventType_MouseLeave = 23;
-    const eventType_PortResized = 15;
-    const eventType_ScrollWheel = 16;
-    const eventType_SpriteTouch = 19;
-    const eventType_SpriteAnimate = 17;
-    const eventType_SpriteTriggerEvent = 25;
-    const eventType_SpriteLayer = 18;
-    const eventType_SpriteCollide = 20;
-    const collisionShape_Polygon = 3;
-    const collisionShape_ImageMask = 4;
-    const collisionShape_Capsule = 5;
+    const all_Frames = 0;
+    const animate_Bidirectional = 2;
+    const animate_EndToStart = 1;
+    const animate_Looping = 4;
+    const animate_NoLooping = 0;
+    const animate_StartToEnd = 0;
+    const animate_Unidirectional = 0;
+    const animationBinding_Box = 2;
+    const animationBinding_Image = 0;
+    const animationBinding_Point = 1;
+    const animationBody_Dynamic = 0;
+    const animationBody_Kinematic = 1;
+    const animationDebug_All = 7;
+    const animationDebug_Bones = 1;
+    const animationDebug_Boxes = 4;
+    const animationDebug_None = 0;
+    const animationDebug_Sockets = 2;
+    const animationDraw_AfterAll = 1;
+    const animationDraw_AfterSlot = 3;
+    const animationDraw_BeforeAll = 0;
+    const animationDraw_BeforeSlot = 2;
+    const animationDraw_ReplaceSlot = 4;
+    const animationIK_NoStretch = 0;
+    const animationIK_Stretch = 1;
+    const animationPhysics_Driven = 2;
+    const animationPhysics_Dynamic = 1;
+    const animationPhysics_Kinematic = 0;
+    const animationPhysics_Mixed = 3;
+    const animationRoot_Fixed = 0;
+    const animationRoot_Follow = 1;
+    const animationSource_Clip = 0;
+    const animationSource_Procedural = 2;
+    const animationSource_Reference = 1;
+    const animationSpace_Local = 0;
+    const animationSpace_Rig = 1;
+    const animationSpace_World = 2;
+    const animationStage_Constraint = 1;
+    const animationStage_PostConstraint = 2;
+    const animationStage_PreConstraint = 0;
+    const animationStroke_Local = 1;
+    const animationStroke_PortPixels = 0;
+    const animationVariable_Float = 0;
+    const animationVariable_Int = 1;
+    const animationVariable_String = 2;
+    const blendMode_Additive = 1;
+    const blendMode_Darken = 4;
+    const blendMode_Lighten = 5;
+    const blendMode_Multiply = 2;
+    const blendMode_Normal = 0;
+    const blendMode_Screen = 3;
+    const boneId_None = 4294967295;
+    const camera_Crossfade = 0;
+    const camera_LumaFade = 5;
+    const camera_WhipDown = 9;
+    const camera_WhipLeft = 6;
+    const camera_WhipRight = 7;
+    const camera_WhipUp = 8;
+    const camera_WipeDown = 4;
+    const camera_WipeLeft = 1;
+    const camera_WipeRight = 2;
+    const camera_WipeUp = 3;
+    const collide_AlphaChannel = 4;
+    const collide_BoundingBox = 2;
+    const collide_CollisionRadius = 3;
+    const collide_Last = 5;
+    const collide_None = 0;
+    const collide_Point = 1;
+    const collide_SpriterCollisionBox = 5;
+    const colliderSource_Animation = 2;
     const colliderSource_Explicit = 0;
     const colliderSource_Frame = 1;
-    const colliderSource_Animation = 2;
-    const frameCollider_Bounds = 0;
-    const frameCollider_AlphaMask = 1;
+    const collision_Begin = 0;
+    const collision_End = 2;
+    const collision_Stay = 1;
+    const collisionShape_Capsule = 5;
+    const collisionShape_Circle = 1;
+    const collisionShape_Convex = 2;
+    const collisionShape_ImageMask = 4;
+    const collisionShape_None = 0;
+    const collisionShape_Polygon = 3;
+    const constraint_Gear = 9;
+    const constraint_Groove = 4;
+    const constraint_Motor = 10;
+    const constraint_Pin = 1;
+    const constraint_Pivot = 3;
+    const constraint_Ratchet = 8;
+    const constraint_RotaryLimit = 7;
+    const constraint_RotarySpring = 6;
+    const constraint_Slide = 2;
+    const constraint_Spring = 5;
+    const CopyPixels = true;
+    const easeInBack = 25;
+    const easeInBounce = 22;
+    const easeInCirc = 19;
+    const easeInCubic = 4;
+    const easeInExpo = 16;
+    const easeInOutBack = 27;
+    const easeInOutBounce = 24;
+    const easeInOutCirc = 21;
+    const easeInOutCubic = 6;
+    const easeInOutExpo = 18;
+    const easeInOutQuad = 3;
+    const easeInOutQuint = 12;
+    const easeInOutSine = 15;
+    const easeInQuad = 1;
+    const easeInQuart = 7;
+    const easeInQuint = 10;
+    const easeInSine = 13;
+    const easeOutBack = 26;
+    const easeOutBounce = 23;
+    const easeOutCirc = 20;
+    const easeOutCubic = 5;
+    const easeOutExpo = 17;
+    const easeOutQuad = 2;
+    const easeOutQuart = 8;
+    const easeOutQuint = 11;
+    const easeOutSine = 14;
     const eventType_ColliderContact = 26;
+    const eventType_KeyDown = 4;
+    const eventType_KeyPress = 6;
+    const eventType_KeyUp = 5;
+    const eventType_MouseDown = 7;
+    const eventType_MouseEnter = 22;
+    const eventType_MouseLeave = 23;
+    const eventType_MouseMove = 9;
+    const eventType_MouseUp = 8;
     const eventType_ParticleBreak = 27;
-    const eventType_SpriteBreak = 21;
-    const eventType_SoundEvent = 14;
     const eventType_PortDraw = 24;
-    const soundEvent_DonePlaying = 0;
-    const soundEvent_Looping = 1;
-    const soundEvent_FailedToPlay = 2;
-    const key_Break = 1;
-    const key_Home = 2;
-    const key_End = 3;
-    const key_Clear = 4;
-    const key_Help = 5;
-    const key_Pause = 6;
-    const key_Mute = 7;
+    const eventType_PortResized = 15;
+    const eventType_ScrollWheel = 16;
+    const eventType_Shutdown = 2;
+    const eventType_SoundEvent = 14;
+    const eventType_SpriteAnimate = 17;
+    const eventType_SpriteBreak = 21;
+    const eventType_SpriteCollide = 20;
+    const eventType_SpriteLayer = 18;
+    const eventType_SpriteTouch = 19;
+    const eventType_SpriteTriggerEvent = 25;
+    const eventType_Timer = 3;
+    const eventType_ZoomComplete = 28;
+    const facing_East = 64;
+    const facing_Ignore = 256;
+    const facing_North = 0;
+    const facing_South = 128;
+    const facing_West = 192;
+    const fit_Clipped = 6;
+    const fit_Fill = 1;
+    const fit_FillKeepProportions = 5;
+    const fit_Height = 2;
+    const fit_Inside = 4;
+    const fit_None = 0;
+    const fit_Overflow = 5;
+    const fit_Tile = 9;
+    const fit_TileX = 7;
+    const fit_TileY = 8;
+    const fit_Width = 3;
+    const flipped_Both = 192;
+    const flipped_Horizontal = 64;
+    const flipped_Ignore = 256;
+    const flipped_None = 0;
+    const flipped_Vertical = 128;
+    const frameCollider_AlphaMask = 1;
+    const frameCollider_Bounds = 0;
+    const gradientType_Linear = 1;
+    const gradientType_None = 0;
+    const gradientType_Radial = 2;
+    const init_AppendToExisting = 2;
+    const init_CreateUniqueNewFile = 0;
+    const init_OverwriteExisting = 1;
+    const init_StdErr = 4;
+    const init_StdOut = 3;
+    const jiggleMode_Chain = 0;
+    const jiggleMode_IKTarget = 1;
     const key_Backspace = 8;
+    const key_Break = 1;
+    const key_Clear = 4;
     const key_Delete = 127;
-    const key_Tab = 9;
-    const key_PageUp = 11;
-    const key_PageDown = 12;
-    const key_Return = 13;
+    const key_DownArrow = 31;
+    const key_End = 3;
     const key_Enter = 13;
+    const key_Escape = 27;
     const key_F1 = 14;
+    const key_F10 = 23;
+    const key_F11 = 24;
+    const key_F12 = 25;
     const key_F2 = 15;
     const key_F3 = 16;
     const key_F4 = 17;
@@ -61,1347 +222,1571 @@ namespace pdg
     const key_F7 = 20;
     const key_F8 = 21;
     const key_F9 = 22;
-    const key_F10 = 23;
-    const key_F11 = 24;
-    const key_F12 = 25;
     const key_FirstF = 14;
-    const key_LastF = 25;
-    const key_Insert = 26;
-    const key_Escape = 27;
-    const key_LeftArrow = 28;
-    const key_RightArrow = 29;
-    const key_UpArrow = 30;
-    const key_DownArrow = 31;
     const key_FirstPrintable = 32;
-    const keyCode_LeftShift = 56;
-    const keyCode_RightShift = 60;
-    const keyCode_LeftControl = 59;
-    const keyCode_RightControl = 62;
-    const keyCode_LeftAlt = 58;
-    const keyCode_RightAlt = 61;
-    const keyCode_LeftMeta = 55;
-    const keyCode_RightMeta = 54;
-    const keyCode_Shift = 56;
-    const keyCode_Control = 59;
+    const key_Help = 5;
+    const key_Home = 2;
+    const key_Insert = 26;
+    const key_LastF = 25;
+    const key_LeftArrow = 28;
+    const key_Mute = 7;
+    const key_PageDown = 12;
+    const key_PageUp = 11;
+    const key_Pause = 6;
+    const key_Return = 13;
+    const key_RightArrow = 29;
+    const key_Tab = 9;
+    const key_UpArrow = 30;
     const keyCode_Alt = 58;
+    const keyCode_Control = 59;
+    const keyCode_LeftAlt = 58;
+    const keyCode_LeftControl = 59;
+    const keyCode_LeftMeta = 55;
+    const keyCode_LeftShift = 56;
     const keyCode_Meta = 55;
+    const keyCode_RightAlt = 61;
+    const keyCode_RightControl = 62;
+    const keyCode_RightMeta = 54;
+    const keyCode_RightShift = 60;
+    const keyCode_Shift = 56;
+    const lftBot = 3;
+    const lftTop = 0;
+    const linearTween = 0;
+    const lineStyle_Auto = 0;
+    const lineStyle_DashDot = 5;
+    const lineStyle_DashDotDot = 6;
+    const lineStyle_Dashed = 3;
+    const lineStyle_Dotted = 4;
+    const lineStyle_None = 1;
+    const lineStyle_Solid = 2;
+    const matchSource = 0;
+    const matchSourceAndSize = 1;
+    const matchTarget = 2;
+    const matchTargetAndSize = 3;
+    const partId_None = 4294967295;
+    const partPlacement_PreserveWorld = 1;
+    const partPlacement_Snap = 0;
+    const partSpace_Local = 0;
+    const partSpace_Sprite = 1;
+    const partSpace_World = 2;
+    const physicsBody_Dynamic = 1;
+    const physicsBody_Kinematic = 2;
+    const physicsBody_None = 0;
+    const physicsBody_Static = 3;
+    const physicsBreak_AngularSpeed = 1;
+    const physicsBreak_Force = 0;
+    const physicsForce_None = 0;
+    const physicsSolver_Basic = 1;
+    const physicsSolver_Chipmunk = 2;
+    const physicsSolver_None = 0;
+    const rgtBot = 2;
+    const rgtTop = 1;
+    const rotationDirection_AsSpecified = 0;
+    const rotationDirection_Clockwise = 2;
+    const rotationDirection_CounterClockwise = 3;
+    const rotationDirection_Shortest = 1;
+    const screenPos_FaceDown = 5;
+    const screenPos_FaceUp = 4;
     const screenPos_Normal = 0;
     const screenPos_Rotated180 = 1;
     const screenPos_Rotated90Clockwise = 2;
     const screenPos_Rotated90CounterClockwise = 3;
-    const screenPos_FaceUp = 4;
-    const screenPos_FaceDown = 5;
-    const textStyle_Plain = 0;
+    const ser_Animations = 8;
+    const ser_Forces = 32;
+    const ser_Full = 18431;
+    const ser_HelperObjs = 8192;
+    const ser_HelperRefs = 1024;
+    const ser_ImageRefs = 256;
+    const ser_InitialData = 16384;
+    const ser_LayerDraw = 128;
+    const ser_Micro = 3;
+    const ser_Motion = 16;
+    const ser_Physics = 64;
+    const ser_Positions = 1;
+    const ser_SCMLRefs = 512;
+    const ser_Sizes = 4;
+    const ser_Update = 127;
+    const ser_ZOrder = 2;
+    const serialization_Complete = 0;
+    const serialization_ExternalReferences = 1;
+    const SharedSurface = false;
+    const soundEvent_DonePlaying = 0;
+    const soundEvent_FailedToPlay = 2;
+    const soundEvent_Looping = 1;
+    const spline_Cardinal = 2;
+    const spline_CubicBezier = 4;
+    const spline_Hermite = 1;
+    const spline_NaturalCubic = 6;
+    const spline_TCB = 5;
+    const spline_UniformB = 3;
+    const start_FromFirstFrame = -1;
+    const start_FromLastFrame = -2;
     const textStyle_Bold = 1;
-    const textStyle_Italic = 2;
-    const textStyle_Underline = 4;
     const textStyle_Centered = 16;
+    const textStyle_Italic = 2;
     const textStyle_LeftJustified = 0;
+    const textStyle_Plain = 0;
     const textStyle_RightJustified = 32;
-    const lineStyle_Auto = 0;
-    const lineStyle_None = 1;
-    const lineStyle_Solid = 2;
-    const lineStyle_Dashed = 3;
-    const lineStyle_Dotted = 4;
-    const lineStyle_DashDot = 5;
-    const lineStyle_DashDotDot = 6;
-    const blendMode_Normal = 0;
-    const blendMode_Additive = 1;
-    const blendMode_Multiply = 2;
-    const blendMode_Screen = 3;
-    const blendMode_Darken = 4;
-    const blendMode_Lighten = 5;
-    const type_Line = 1;
-    const type_Spline = 2;
+    const textStyle_Underline = 4;
+    const timer_Never = -1;
+    const timer_OneShot = true;
+    const timer_Repeating = false;
+    const touch_MouseClick = 24;
+    const touch_MouseDown = 22;
+    const touch_MouseEnter = 20;
+    const touch_MouseLeave = 21;
+    const touch_MouseUp = 23;
     const type_Arc = 3;
-    const type_Rect = 4;
-    const type_Quad = 5;
-    const type_Polygon = 6;
+    const type_Drawing = 10;
     const type_Ellipse = 7;
     const type_Image = 8;
     const type_ImageStrip = 9;
-    const type_Drawing = 10;
-    const gradientType_None = 0;
-    const gradientType_Linear = 1;
-    const gradientType_Radial = 2;
-    const fit_None = 0;
-    const fit_Fill = 1;
-    const fit_Height = 2;
-    const fit_Width = 3;
-    const fit_Inside = 4;
-    const fit_Overflow = 5;
-    const fit_FillKeepProportions = 5;
-    const fit_Clipped = 6;
-    const fit_TileX = 7;
-    const fit_TileY = 8;
-    const fit_Tile = 9;
-    const init_CreateUniqueNewFile = 0;
-    const init_OverwriteExisting = 1;
-    const init_AppendToExisting = 2;
-    const init_StdOut = 3;
-    const init_StdErr = 4;
-    const partId_None = 4294967295;
-    const boneId_None = 4294967295;
-    const physicsBody_None = 0;
-    const physicsBody_Dynamic = 1;
-    const physicsBody_Kinematic = 2;
-    const physicsBody_Static = 3;
-    const physicsSolver_None = 0;
-    const physicsSolver_Basic = 1;
-    const physicsSolver_Chipmunk = 2;
-    const physicsForce_None = 0;
-    const collisionShape_None = 0;
-    const collisionShape_Circle = 1;
-    const collisionShape_Convex = 2;
-    const collision_Begin = 0;
-    const collision_Stay = 1;
-    const collision_End = 2;
-    const constraint_Pin = 1;
-    const constraint_Slide = 2;
-    const constraint_Pivot = 3;
-    const constraint_Groove = 4;
-    const constraint_Spring = 5;
-    const constraint_RotarySpring = 6;
-    const constraint_RotaryLimit = 7;
-    const constraint_Ratchet = 8;
-    const constraint_Gear = 9;
-    const constraint_Motor = 10;
-    const partSpace_Local = 0;
-    const partSpace_Sprite = 1;
-    const partSpace_World = 2;
-    const partPlacement_Snap = 0;
-    const partPlacement_PreserveWorld = 1;
-    const rotationDirection_AsSpecified = 0;
-    const rotationDirection_Shortest = 1;
-    const rotationDirection_Clockwise = 2;
-    const rotationDirection_CounterClockwise = 3;
-    const animate_StartToEnd = 0;
-    const animate_EndToStart = 1;
-    const animate_Unidirectional = 0;
-    const animate_Bidirectional = 2;
-    const animate_NoLooping = 0;
-    const animate_Looping = 4;
-    const start_FromFirstFrame = -1;
-    const start_FromLastFrame = -2;
-    const all_Frames = 0;
-    const action_CollideSprite = 0;
-    const action_CollideWall = 1;
-    const action_Offscreen = 2;
-    const action_Onscreen = 3;
-    const action_ExitLayer = 4;
-    const action_AnimationLoop = 8;
-    const action_AnimationEnd = 9;
-    const action_FadeComplete = 10;
-    const action_FadeInComplete = 11;
-    const action_FadeOutComplete = 12;
-    const action_JointBreak = 13;
-    const action_BodyBreak = 16;
-    const physicsBreak_Force = 0;
-    const physicsBreak_AngularSpeed = 1;
-    const action_AnimationBlendComplete = 15;
-    const action_AnimationPhysicsRecoveryComplete = 17;
-    const animationPhysics_Kinematic = 0;
-    const animationPhysics_Dynamic = 1;
-    const animationPhysics_Driven = 2;
-    const animationPhysics_Mixed = 3;
-    const touch_MouseEnter = 20;
-    const touch_MouseLeave = 21;
-    const touch_MouseDown = 22;
-    const touch_MouseUp = 23;
-    const touch_MouseClick = 24;
-    const collide_None = 0;
-    const collide_Point = 1;
-    const collide_BoundingBox = 2;
-    const collide_CollisionRadius = 3;
-    const collide_AlphaChannel = 4;
-    const collide_SpriterCollisionBox = 5;
-    const collide_Last = 5;
-    const animationSpace_Local = 0;
-    const animationSpace_Rig = 1;
-    const animationSpace_World = 2;
-    const animationDebug_None = 0;
-    const animationDebug_Bones = 1;
-    const animationDebug_Sockets = 2;
-    const animationDebug_Boxes = 4;
-    const animationDebug_All = 7;
-    const animationBinding_Image = 0;
-    const animationBinding_Point = 1;
-    const animationBinding_Box = 2;
-    const animationVariable_Float = 0;
-    const animationVariable_Int = 1;
-    const animationVariable_String = 2;
-    const animationStage_PreConstraint = 0;
-    const animationStage_Constraint = 1;
-    const animationStage_PostConstraint = 2;
-    const animationSource_Clip = 0;
-    const animationSource_Reference = 1;
-    const animationSource_Procedural = 2;
-    const animationBody_Dynamic = 0;
-    const animationBody_Kinematic = 1;
-    const animationRoot_Fixed = 0;
-    const animationRoot_Follow = 1;
-    const animationDraw_BeforeAll = 0;
-    const animationDraw_AfterAll = 1;
-    const animationDraw_BeforeSlot = 2;
-    const animationDraw_AfterSlot = 3;
-    const animationDraw_ReplaceSlot = 4;
-    const animationStroke_PortPixels = 0;
-    const animationStroke_Local = 1;
-    const animationIK_NoStretch = 0;
-    const animationIK_Stretch = 1;
-    const action_ErasePort = 40;
-    const action_PreDrawLayer = 41;
-    const action_PostDrawLayer = 42;
-    const action_DrawPortComplete = 43;
-    const action_AnimationStart = 44;
-    const action_PreAnimateLayer = 45;
-    const action_PostAnimateLayer = 46;
-    const action_AnimationComplete = 47;
-    const action_ZoomComplete = 48;
-    const action_LayerFadeInComplete = 49;
-    const action_LayerFadeOutComplete = 50;
-    const facing_North = 0;
-    const facing_East = 64;
-    const facing_South = 128;
-    const facing_West = 192;
-    const facing_Ignore = 256;
-    const flipped_None = 0;
-    const flipped_Horizontal = 64;
-    const flipped_Vertical = 128;
-    const flipped_Both = 192;
-    const flipped_Ignore = 256;
-    const timer_OneShot = true;
-    const timer_Repeating = false;
-    const timer_Never = -1;
-    const linearTween = 0;
-    const easeInQuad = 1;
-    const easeOutQuad = 2;
-    const easeInOutQuad = 3;
-    const easeInCubic = 4;
-    const easeOutCubic = 5;
-    const easeInOutCubic = 6;
-    const easeInQuart = 7;
-    const easeOutQuart = 8;
-    const easeInQuint = 10;
-    const easeOutQuint = 11;
-    const easeInOutQuint = 12;
-    const easeInSine = 13;
-    const easeOutSine = 14;
-    const easeInOutSine = 15;
-    const easeInExpo = 16;
-    const easeOutExpo = 17;
-    const easeInOutExpo = 18;
-    const easeInCirc = 19;
-    const easeOutCirc = 20;
-    const easeInOutCirc = 21;
-    const easeInBounce = 22;
-    const easeOutBounce = 23;
-    const easeInOutBounce = 24;
-    const easeInBack = 25;
-    const easeOutBack = 26;
-    const easeInOutBack = 27;
-    const ser_Positions = 1;
-    const ser_ZOrder = 2;
-    const ser_Sizes = 4;
-    const ser_Animations = 8;
-    const ser_Motion = 16;
-    const ser_Forces = 32;
-    const ser_Physics = 64;
-    const ser_LayerDraw = 128;
-    const ser_ImageRefs = 256;
-    const ser_SCMLRefs = 512;
-    const ser_HelperRefs = 1024;
-    const ser_HelperObjs = 8192;
-    const ser_InitialData = 16384;
-    const ser_Micro = 3;
-    const ser_Update = 127;
-    const ser_Full = 18431;
-    const serialization_Complete = 0;
-    const serialization_ExternalReferences = 1;
-    const spline_Hermite = 1;
-    const spline_Cardinal = 2;
-    const spline_UniformB = 3;
-    const spline_CubicBezier = 4;
-    const spline_TCB = 5;
-    const spline_NaturalCubic = 6;
-    boolean running;
-    boolean quitting;
-    const lftTop = 0;
-    const rgtTop = 1;
-    const rgtBot = 2;
-    const lftBot = 3;
-    boolean hasNetwork;
-    FileManager fs;
-    EventManager evt;
-    TimerManager tm;
-    ResourceManager res;
+    const type_Line = 1;
+    const type_Polygon = 6;
+    const type_Quad = 5;
+    const type_Rect = 4;
+    const type_Spline = 2;
+    const type_Text = 11;
+    string[] argv;
     ConfigManager cfg;
-    LogManager lm;
-    const CopyPixels = true;
-    const SharedSurface = false;
+    EventManager evt;
+    FileManager fs;
     GraphicsManager gfx;
     boolean hasGraphics;
-    SoundManager snd;
+    boolean hasNetwork;
+    boolean hasNetworkClient;
+    boolean hasNetworkServer;
     boolean hasSound;
-    string[] argv;
-    number rand ();
-    srand (uint seed);
-    setSerializationDebugMode (bool debugMode);
-    int registerEasingFunction (function easingFunc);
-    FileManager getFileManager ();
-    LogManager getLogManager ();
-    ConfigManager getConfigManager ();
-    ResourceManager getResourceManager ();
-    EventManager getEventManager ();
-    TimerManager getTimerManager ();
-    registerSerializableClass (function klass);
-    GraphicsManager getGraphicsManager ();
-    SoundManager getSoundManager ();
+    LogManager lm;
+    boolean quitting;
+    ResourceManager res;
+    boolean running;
+    SoundManager snd;
+    TimerManager tm;
+    boolean animationHasTag (AnimationPose pose, string object, string tag);
+    captureConsole ();
+    cleanupLayer (SpriteLayer layer);
+    Drawing createDrawing ();
+    ISerializable createSerializableObject (SerializableImplementation obj, uint classTag);
     SpriteLayer createSpriteLayer (Port port = null);
     SpriteLayer createSpriteLayerFromSpriterFile (string layerSpriterFilename, boolean addSprites = true, Port port = null);
-    cleanupLayer (SpriteLayer layer);
     TileLayer createTileLayer (Port port = null);
-    Drawing createDrawing ();
-    quit ();
-    run ();
-    idle ();
-    openDebugger ();
-    openConsole ();
-    openCommandPort (int port = 5757);
-    log (string msg);
-    info (string msg);
-    warn (string msg);
-    fatal (string msg);
-    error (string msg);
     debug (string msg);
+    string describeInterface (string interfaceName = undefined, string memberName = undefined);
+    error (string msg);
+    fatal (string msg);
+    ConfigManager getConfigManager ();
+    EventManager getEventManager ();
+    FileManager getFileManager ();
+    GraphicsManager getGraphicsManager ();
+    InterfaceMetadata getInterfaceMetadata (string interfaceName = undefined, string memberName = undefined);
+    LogManager getLogManager ();
+    ResourceManager getResourceManager ();
+    SoundManager getSoundManager ();
+    TimerManager getTimerManager ();
+    idle ();
+    info (string msg);
+    log (string msg);
+/**
+\note Parameter \c func: \ref pdg::EventCallback.
+*/
+    IEventHandler on (int eventType, function func); // returns EventSubscription
+/**
+\note Parameter \c func: \ref pdg::KeyEventCallback.
+*/
+    IEventHandler onKeyDown (function func); // returns EventSubscription
+/**
+\note Parameter \c func: \ref pdg::KeyPressEventCallback.
+*/
+    IEventHandler onKeyPress (function func); // returns EventSubscription
+/**
+\note Parameter \c func: \ref pdg::KeyEventCallback.
+*/
+    IEventHandler onKeyUp (function func); // returns EventSubscription
+/**
+\note Parameter \c func: \ref pdg::MouseEventCallback.
+*/
+    IEventHandler onMouseDown (function func); // returns EventSubscription
+/**
+\note Parameter \c func: \ref pdg::MouseEventCallback.
+*/
+    IEventHandler onMouseMove (function func); // returns EventSubscription
+/**
+\note Parameter \c func: \ref pdg::MouseEventCallback.
+*/
+    IEventHandler onMouseUp (function func); // returns EventSubscription
+/**
+\note Parameter \c func: \ref pdg::ShutdownEventCallback.
+*/
+    IEventHandler onShutdown (function func); // returns EventSubscription
+/**
+\note Parameter \c func: \ref pdg::TimerEventCallback.
+*/
+    IEventHandler onTimer (function func); // returns EventSubscription
+    openCommandPort (int port = 5757);
+    openConsole ();
+    openDebugger ();
+    quit ();
+    number rand ();
+/**
+\note Parameter \c easingFunc: \ref pdg::EasingCallback.
+*/
+    int registerEasingFunction (function easingFunc);
+/**
+\note Parameter \c klass: \ref pdg::SerializableFactory.
+*/
+    registerSerializableClass (function klass);
+    run ();
+    setSerializationDebugMode (boolean debugMode);
+    srand (uint seed);
     trace (string msg);
-    captureConsole ();
-    ISerializable createSerializableObject (object obj, uint classTag);
-    IEventHandler on (int eventType, function func);
-    IEventHandler onShutdown (function func);
-    IEventHandler onTimer (function func);
-    IEventHandler onKeyDown (function func);
-    IEventHandler onKeyUp (function func);
-    IEventHandler onKeyPress (function func);
-    IEventHandler onMouseDown (function func);
-    IEventHandler onMouseUp (function func);
-    IEventHandler onMouseMove (function func);
-    boolean animationHasTag (object pose, string object, string tag);
+    warn (string msg);
 
-    class MemBlock
+    class Animated
     {
         public:
-            BinaryString getData ();
-            number getDataSize ();
-            number getByte (uint i);
-            BinaryString getBytes (uint start, uint len);
-            Buffer toBuffer ();
+            Animated ();
+
+            Animated addAnimationHelper (IAnimationHelper helper);
+            Animated andAlso ();
+            Animated andThen ();
+            boolean animate (number deltaSeconds);
+            Animated batch ();
+            Animated cancelSchedule ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeCenterOffsetBy (Offset value, number durationSeconds, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeCenterOffsetTo (Offset value, number durationSeconds, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeMovementBy (Vector value, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeMovementTo (Vector value, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeScaleBy (number x, number y, number durationSeconds, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeScaleTo (number x, number y, number durationSeconds, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = linearTween);
+            Animated clearAnimationHelpers ();
+            static AnimationScript defineScript (string name);
+            static boolean deleteScript (string name);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated diminish (number factor, number seconds, int easing = linearTween);
+            Animated endBatch ();
+            Animated endOtherwise ();
+            Animated endSeries ();
+            Animated endWhen ();
+            Animated flipX ();
+            Animated flipY ();
+            Rect getBoundingBox ();
+            Offset getCenterOffset ();
+            number getHeight ();
+            Point getLocation ();
+            Offset getMovement ();
+            RotatedRect getRotatedBounds ();
+            number getRotation ();
+            Offset getScale ();
+            Offset getSize ();
+            number getSpin ();
+            Offset getStretching ();
+            number getWidth ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated grow (number factor, number durationSeconds = 0, int easing = easeInOutQuad);
+            boolean hasScheduledAnimations ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated increase (number factor, number seconds, int easing = linearTween);
+            boolean isFlippedX ();
+            boolean isFlippedY ();
+            boolean isSchedulePaused ();
+            Animated jumpToMark (string name, boolean restoreState = true);
+            Animated mark (string name, boolean saveState = true);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated moveBy (Offset value, number durationSeconds = 0, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated moveBy (number x, number y, number durationSeconds = 0, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated moveTo (Point value, number durationSeconds = 0, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated moveTo (number x, number y, number durationSeconds = 0, int easing = easeInOutQuad);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Animated on (string event, function handler);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Animated onFinished (function handler);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Animated onMark (function handler);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Animated onRepeat (function handler);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Animated onScriptFinished (function handler);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Animated onStarted (function handler);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Animated onUntilFired (function handler);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Animated onYoyo (function handler);
+            Animated otherwise ();
+            Animated pauseIt ();
+            Animated pauseSchedule ();
+            Animated playScript (string name);
+            Animated removeAnimationHelper (IAnimationHelper helper);
+            Animated repeat ();
+            Animated repeat (int additionalExecutions);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = 0, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated resizeTo (number width, number height, number durationSeconds, int easing = easeInOutQuad);
+            Animated restartIt ();
+            Animated resumeIt ();
+            Animated resumeSchedule ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated rotateBy (number radians, number durationSeconds = 0, int easing = easeInOutQuad, int direction = rotationDirection_AsSpecified);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated rotateTo (number radians, number durationSeconds = 0, int easing = easeInOutQuad, int direction = rotationDirection_AsSpecified);
+            Animated series ();
+            Animated setCenterOffset (Offset offset);
+            Animated setFlipX (boolean flip);
+            Animated setFlipY (boolean flip);
+            Animated setGrowing (number value);
+            Animated setHeight (number value);
+            Animated setLocation (Point value);
+            Animated setLocation (number x, number y);
+            Animated setMovement (Vector value);
+            Animated setMovement (number xPerSecond, number yPerSecond);
+            Animated setRotation (number value);
+            Animated setScale (number x, number y = x);
+            Animated setSize (Offset value);
+            Animated setSize (number width, number height);
+            Animated setSpin (number value);
+            Animated setStretching (number widthPerSecond, number heightPerSecond);
+            Animated setWidth (number value);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated slowDown (number factor, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated speedUp (number factor, number seconds, int easing = linearTween);
+            Animated stagger (number intervalSeconds);
+            Animated stopGrowing ();
+            Animated stopIt ();
+            Animated stopMovement ();
+            Animated stopSpinning ();
+            Animated stopStretching ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Animated stretch (number widthFactor, number heightFactor, number durationSeconds = 0, int easing = easeInOutQuad);
+            Animated triggerEvent (string name);
+/**
+\note Parameter \c evaluator: \ref pdg::AnimationEvaluator.
+*/
+            Animated until (function evaluator);
+            Animated wait (number durationSeconds);
+/**
+\note Parameter \c evaluator: \ref pdg::AnimationEvaluator.
+*/
+            Animated when (function evaluator);
+            Animated yoyo ();
     };
 
-    class FileManager
+    class AnimatedAttributes : public Animated, public Attributes
     {
         public:
-            object findFirst (string inFindName);
-            object findNext (object inFindData);
-            findClose (object inFindData);
-            string getApplicationDataDirectory ();
-            string getApplicationDirectory ();
-            string getApplicationResourceDirectory ();
-            string[] findFiles (string name);
-            string[] findDirs (string name);
+
+/**
+\note Parameter \c initial: \c Attributes or \c null.
+*/
+            AnimatedAttributes (Attributes initial = undefined);
+
+            boolean animate (number deltaSeconds);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeAmbientLight (Color target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeAmbientLight (string targetColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeAmbientLight (number targetRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillColor (Color target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillColor (string targetColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillColor (number targetRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, Color startColor, Point end, Color endColor, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, Color startColor, Point end, string endColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, Color startColor, Point end, number endRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, string startColorName, Point end, Color endColor, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, string startColorName, Point end, string endColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, string startColorName, Point end, number endRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, number startRGBA, Point end, Color endColor, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, number startRGBA, Point end, string endColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillGradient (Point start, number startRGBA, Point end, number endRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillOpacity (number target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, Color centerColor, number radius, Color endColor, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, Color centerColor, number radius, string endColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, Color centerColor, number radius, number endRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, string centerColorName, number radius, Color endColor, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, string centerColorName, number radius, string endColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, string centerColorName, number radius, number endRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, number centerRGBA, number radius, Color endColor, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, number centerRGBA, number radius, string endColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFillRadialGradient (Point center, number centerRGBA, number radius, number endRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeFrames (int first, int last, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeLightOffset (Offset target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeLineColor (Color target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeLineColor (string targetColorName, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeLineColor (number targetRGBA, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeLineOpacity (number target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeLineThickness (number target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changePolarOffset (Offset target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeRoundedCorners (number target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeSkew (number x, number y, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeSphereRotation (number radians, number seconds, int easing = linearTween, int direction = rotationDirection_AsSpecified);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeSubsection (Rect target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeTextSize (number target, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimatedAttributes changeTransform (array number matrix, number seconds, int easing = linearTween);
     };
 
-    class LogManager
+    class AnimationContactTarget
     {
         public:
-            const init_CreateUniqueNewFile = 0;
-            const init_OverwriteExisting = 1;
-            const init_AppendToExisting = 2;
-            const init_StdOut = 3;
-            const init_StdErr = 4;
-            number getLogLevel ();
-            LogManager setLogLevel (int inLogLevel);
-            initialize (string inLogNameBase, int initMode = LogManager.init_StdOut);
-            writeLogEntry (int level, string category, string message);
-            string binaryDump (BinaryString inData, int length = 0, int bytesPerLine = 20);
-            string binaryDump (MemBlock inData, int length = 0, int bytesPerLine = 20);
+
+            AnimationContactTarget ();
+
+            AnimationContactState getState ();
+            lockPlatform (number x, number y, number support, AnimationTransform frame);
+            lockWorld (number x, number y);
+            release (number fadeSeconds = 0);
+/**
+\note Parameter \c frame: Required and validated only while a platform lock remains active; otherwise ignored.
+*/
+            AnimationContactState update (number deltaSeconds, boolean contactActive, boolean withinReach, number support = 0, AnimationTransform frame = undefined, number releaseSeconds = 0);
+    };
+
+    class AnimationScript : public Animated
+    {
+        public:
+            AnimationScript ambientLight (Color color);
+            AnimationScript ambientLight (string colorName);
+            AnimationScript ambientLight (number colorRGBA);
+/**
+\note Parameter \c part: \c Part or \c null.
+\note Parameter \c parent: \c Part or \c null.
+*/
+            AnimationScript attachAnimationPhysicsPart (Part part, Part parent = undefined);
+            AnimationScript bindToAnimationBinding (string name);
+            AnimationScript bindToAnimationSocket (string name);
+            AnimationScript bindToBone (number bone);
+            AnimationScript blendMode (number mode);
+            AnimationScript breakTrail ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeAmbientLight (Color target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeAmbientLight (string targetName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeAmbientLight (number targetRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillColor (Color target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillColor (string targetName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillColor (number targetRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, Color startColor, Point end, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, Color startColor, Point end, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, Color startColor, Point end, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, string startColorName, Point end, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, string startColorName, Point end, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, string startColorName, Point end, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, number startColorRGBA, Point end, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, number startColorRGBA, Point end, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillGradient (Point start, number startColorRGBA, Point end, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillOpacity (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, Color centerColor, number radius, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, Color centerColor, number radius, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, Color centerColor, number radius, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, string centerColorName, number radius, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, string centerColorName, number radius, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, string centerColorName, number radius, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, number centerColorRGBA, number radius, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, number centerColorRGBA, number radius, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFillRadialGradient (Point center, number centerColorRGBA, number radius, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeFrames (number first, number last, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeLightOffset (Offset target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeLineColor (Color target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeLineColor (string targetName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeLineColor (number targetRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeLineOpacity (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeLineThickness (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changePolarOffset (Offset target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeRoundedCorners (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeSkew (number x, number y, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeSphereRotation (number radians, number seconds, number easing = undefined, number direction = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeSubsection (Rect target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeTextSize (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript changeTransform (AffineTransform target, number seconds, number easing = undefined);
+            AnimationScript clearAnimationPhysicsRoot ();
+            AnimationScript clearContent ();
+            AnimationScript clearIKLimits ();
+            AnimationScript clearIKTarget ();
+            AnimationScript clearTrail ();
+            AnimationScript clearViewBounds ();
+            AnimationScript clipOverflow (boolean clip);
+            AnimationScript cutTo (Camera destination);
+/**
+\note Parameter \c part: \c Part or \c null.
+*/
+            AnimationScript detachAnimationPhysicsPart (Part part, boolean includeDescendants = undefined);
+            AnimationScript detachSprite ();
+            AnimationScript endScript ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript fadeIn (number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript fadeIn (number durationSeconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript fadeOut (number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript fadeOut (number durationSeconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript fadeTo (number opacity, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript fadeTo (number targetOpacity, number durationSeconds, number easing = undefined);
+            AnimationScript fillColor (Color color);
+            AnimationScript fillColor (string colorName);
+            AnimationScript fillColor (number colorRGBA);
+            AnimationScript fillGradient (Point start, Color startColor, Point end, Color endColor);
+            AnimationScript fillGradient (Point start, Color startColor, Point end, string endColorName);
+            AnimationScript fillGradient (Point start, Color startColor, Point end, number endColorRGBA);
+            AnimationScript fillGradient (Point start, string startColorName, Point end, Color endColor);
+            AnimationScript fillGradient (Point start, string startColorName, Point end, string endColorName);
+            AnimationScript fillGradient (Point start, string startColorName, Point end, number endColorRGBA);
+            AnimationScript fillGradient (Point start, number startColorRGBA, Point end, Color endColor);
+            AnimationScript fillGradient (Point start, number startColorRGBA, Point end, string endColorName);
+            AnimationScript fillGradient (Point start, number startColorRGBA, Point end, number endColorRGBA);
+            AnimationScript fillOpacity (number opacity);
+            AnimationScript fillRadialGradient (Point center, Color centerColor, number radius, Color endColor);
+            AnimationScript fillRadialGradient (Point center, Color centerColor, number radius, string endColorName);
+            AnimationScript fillRadialGradient (Point center, Color centerColor, number radius, number endColorRGBA);
+            AnimationScript fillRadialGradient (Point center, string centerColorName, number radius, Color endColor);
+            AnimationScript fillRadialGradient (Point center, string centerColorName, number radius, string endColorName);
+            AnimationScript fillRadialGradient (Point center, string centerColorName, number radius, number endColorRGBA);
+            AnimationScript fillRadialGradient (Point center, number centerColorRGBA, number radius, Color endColor);
+            AnimationScript fillRadialGradient (Point center, number centerColorRGBA, number radius, string endColorName);
+            AnimationScript fillRadialGradient (Point center, number centerColorRGBA, number radius, number endColorRGBA);
+            AnimationScript fitType (number fit);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript flash (number opacity, number seconds, number easing = undefined);
+            AnimationScript follow (Animated target);
+/**
+\note Parameter \c font: \c Font or \c null.
+*/
+            AnimationScript font (Font font);
+            AnimationScript frame (number frame);
+            AnimationScript hide ();
+            AnimationScript lightOffset (Offset offset);
+            AnimationScript lineColor (Color color);
+            AnimationScript lineColor (string colorName);
+            AnimationScript lineColor (number colorRGBA);
+            AnimationScript lineOpacity (number opacity);
+            AnimationScript lineStyle (number style);
+            AnimationScript lineThickness (number thickness);
+/**
+\note Parameter \c mask: \c Image or \c null.
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript lumaFadeTo (Camera destination, number seconds, Image mask = undefined, number softness = undefined, boolean darkFirst = undefined, number easing = undefined);
+            AnimationScript matchCutTo (Camera destination, CameraMatchCutOptions options);
+            AnimationScript matchFadeTo (Camera destination, CameraMatchFadeOptions options);
+/**
+\note Parameter \c sprite: \c Sprite or \c null.
+*/
+            AnimationScript moveBehind (Sprite sprite);
+/**
+\note Parameter \c sprite: \c Sprite or \c null.
+*/
+            AnimationScript moveInFrontOf (Sprite sprite);
+            AnimationScript moveToBack ();
+            AnimationScript moveToFront ();
+            AnimationScript polarOffset (Offset offset);
+            AnimationScript roundedCorners (number radius);
+            AnimationScript setAnimationPhysicsDriveSettings (AnimationPhysicsDriveSettings settings);
+            AnimationScript setAnimationPhysicsDriveSettings (AnimationPhysicsDriveSettings settings, number bone, boolean includeDescendants = undefined);
+            AnimationScript setAnimationPhysicsDriveSettings (AnimationPhysicsDriveSettings settings, string bone, boolean includeDescendants = undefined);
+            AnimationScript setAnimationPhysicsMode (number mode, number recoveryTime = undefined, number direction = undefined);
+            AnimationScript setAnimationPhysicsMode (number mode, number bone, boolean includeDescendants = undefined, number recoveryTime = undefined, number direction = undefined);
+            AnimationScript setAnimationPhysicsMode (number mode, string bone, boolean includeDescendants = undefined, number recoveryTime = undefined, number direction = undefined);
+            AnimationScript setAnimationPhysicsRoot (number bone);
+            AnimationScript setAnimationPhysicsRoot (string bone);
+            AnimationScript setDeadzone (Rect bounds);
+            AnimationScript setDrawing (Drawing drawing);
+            AnimationScript setEmissionRate (number particlesPerSecond);
+            AnimationScript setFollowOffset (Offset offset);
+            AnimationScript setFrame (number frame);
+/**
+\note Parameter \c frameImage: \c Image or \c null.
+\note Parameter \c maskImage: \c Image or \c null.
+*/
+            AnimationScript setFrameCollisionMask (Image frameImage, Image maskImage);
+/**
+\note Parameter \c middle: \c Part or \c null.
+\note Parameter \c tip: \c Part or \c null.
+*/
+            AnimationScript setIKDriveTarget (Part middle, Part tip, Point target, number maxForce, number maxTorque, number space = undefined, number bendDirection = undefined, number influence = undefined, number frequency = undefined, number dampingRatio = undefined);
+            AnimationScript setIKLimits (number minimum, number maximum);
+            AnimationScript setIKLimits (PhysicsConstraint constraint);
+            AnimationScript setIKLimits (number minAngle, number maxAngle);
+/**
+\note Parameter \c middle: \c Part or \c null.
+\note Parameter \c tip: \c Part or \c null.
+*/
+            AnimationScript setIKTarget (Part middle, Part tip, Point target, number space = undefined, number bendDirection = undefined, number influence = undefined);
+            AnimationScript setImage (Image image, Rect localBounds);
+            AnimationScript setImage (Image image);
+            AnimationScript setLifetime (number seconds);
+            AnimationScript setLookAhead (number seconds);
+            AnimationScript setMouseDetectMode (number collisionType = undefined);
+            AnimationScript setOpacity (number opacity);
+/**
+\note Parameter \c parent: \c Part or \c null.
+*/
+            AnimationScript setParentPart (Part parent);
+            AnimationScript setParticleSpeed (number speed);
+            AnimationScript setParticleSpeed (number minimum, number maximum);
+            AnimationScript setParticleTemplate (Particle particle);
+            AnimationScript setPixelSnapping (boolean snap = undefined);
+            AnimationScript setSeed (number seed);
+            AnimationScript setSmoothing (number seconds);
+            AnimationScript setSpread (number radians);
+            AnimationScript setTrail (ParticleTrailOptions options);
+            AnimationScript setTransform (AffineTransform matrix);
+            AnimationScript setupPhysicsFromAnimationRig (number totalMass, number unitsPerMeter = undefined);
+            AnimationScript setVelocityInheritance (number fraction);
+            AnimationScript setViewBounds (Rect bounds);
+            AnimationScript setViewport (Rect viewport);
+            AnimationScript setWantsAnimEndEvents (boolean wantsThem = undefined);
+            AnimationScript setWantsAnimLoopEvents (boolean wantsThem = undefined);
+            AnimationScript setWantsClickEvents (boolean wantsThem = undefined);
+            AnimationScript setWantsCollideWallEvents (boolean wantsThem = undefined);
+            AnimationScript setWantsMouseOverEvents (boolean wantsThem = undefined);
+            AnimationScript setWantsOffscreenEvents (boolean wantsThem = undefined);
+            AnimationScript setZoom (number zoom);
+            AnimationScript show ();
+            AnimationScript sphereRotation (number rotation);
+            AnimationScript startEmitting ();
+            AnimationScript stopEmitting ();
+            AnimationScript stopFollowing ();
+            AnimationScript subsection (Rect section);
+            AnimationScript textSize (number size);
+            AnimationScript textStyle (number style);
+/**
+\note Parameter \c texture: \c Image or \c null.
+*/
+            AnimationScript texture (Image texture);
+            AnimationScript transform (AffineTransform matrix);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript transitionTo (Camera destination, number seconds, number style = undefined, number easing = undefined);
+            AnimationScript translation (Offset offset);
+            AnimationScript unbindFromBone ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript whipPanTo (Camera destination, number seconds, number style = undefined, number blur = undefined, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript zoom (number factor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            AnimationScript zoomTo (number zoom, number seconds, number easing = undefined);
+    };
+
+    class AnimationSpringTarget
+    {
+        public:
+
+            AnimationSpringTarget (number mass = 1, number stiffness = 100, number damping = 20);
+
+            applyImpulse (number x, number y);
+            AnimationSpringState getState ();
+            setState (AnimationSpringState state);
+            AnimationSpringState update (number targetX, number targetY, number deltaSeconds);
+    };
+
+    class Attributes
+    {
+        public:
+
+            Attributes ();
+
+            Attributes ambientLight (Color color);
+            Attributes ambientLight (string colorName);
+            Attributes ambientLight (number rgba);
+            Attributes blendMode (int blendMode);
+            Attributes clipOverflow (boolean clip);
+            Attributes fillColor (Color color);
+            Attributes fillColor (string colorName);
+            Attributes fillColor (number rgba);
+            Attributes fillGradient (Point start, Color startColor, Point end, Color endColor);
+            Attributes fillGradient (Point start, Color startColor, Point end, string endColorName);
+            Attributes fillGradient (Point start, Color startColor, Point end, number endRGBA);
+            Attributes fillGradient (Point start, string startColorName, Point end, Color endColor);
+            Attributes fillGradient (Point start, string startColorName, Point end, string endColorName);
+            Attributes fillGradient (Point start, string startColorName, Point end, number endRGBA);
+            Attributes fillGradient (Point start, number startRGBA, Point end, Color endColor);
+            Attributes fillGradient (Point start, number startRGBA, Point end, string endColorName);
+            Attributes fillGradient (Point start, number startRGBA, Point end, number endRGBA);
+            Attributes fillOpacity (number float opacity);
+            Attributes fillRadialGradient (Point center, Color centerColor, number float radius, Color endColor);
+            Attributes fillRadialGradient (Point center, Color centerColor, number float radius, string endColorName);
+            Attributes fillRadialGradient (Point center, Color centerColor, number float radius, number endRGBA);
+            Attributes fillRadialGradient (Point center, string centerColorName, number float radius, Color endColor);
+            Attributes fillRadialGradient (Point center, string centerColorName, number float radius, string endColorName);
+            Attributes fillRadialGradient (Point center, string centerColorName, number float radius, number endRGBA);
+            Attributes fillRadialGradient (Point center, number centerRGBA, number float radius, Color endColor);
+            Attributes fillRadialGradient (Point center, number centerRGBA, number float radius, string endColorName);
+            Attributes fillRadialGradient (Point center, number centerRGBA, number float radius, number endRGBA);
+            Attributes fitType (int fit);
+            Attributes font (Font font = null);
+            Attributes frame (int frame);
+            Color getAmbientLight ();
+            int getBlendMode ();
+            boolean getClipOverflow ();
+            Color getFillColor ();
+            number float getFillOpacity ();
+            int getFitType ();
+            Font getFont ();
+            int getFrame ();
+            Point getGradientEnd ();
+            Color getGradientEndColor ();
+            Point getGradientStart ();
+            Color getGradientStartColor ();
+            int getGradientType ();
+            Offset getLightOffset ();
+            Color getLineColor ();
+            number float getLineOpacity ();
+            uint getLineStyle ();
+            number float getLineThickness ();
+            Offset getPolarOffset ();
+            Point getRadialGradientCenter ();
+            Color getRadialGradientCenterColor ();
+            Color getRadialGradientEndColor ();
+            number float getRadialGradientRadius ();
+            number float getRoundedCornerRadius ();
+            number float getSphereRotation ();
+            Rect getSubsection ();
+            number float getTextSize ();
+            int getTextStyle ();
+            Image getTexture ();
+            array number getTransform ();
+            Attributes lightOffset (Offset offset);
+            Attributes lineColor (Color color);
+            Attributes lineColor (string colorName);
+            Attributes lineColor (number rgba);
+            Attributes lineOpacity (number float opacity);
+            Attributes lineStyle (int lineStyle);
+            Attributes lineThickness (number float thickness);
+            Attributes polarOffset (Offset offset);
+            Attributes rotation (number float radians, Point center = Point(0,0));
+            Attributes roundedCorners (number float radius);
+            Attributes scale (number float xFactor, number float yFactor = xFactor, Point center = Point(0,0));
+            Attributes setTransform (array number matrix);
+            Attributes skew (number float xSkew, number float ySkew, Point center = Point(0,0));
+            Attributes sphereRotation (number float rotation);
+            Attributes subsection (Rect section);
+            Attributes textSize (number float size);
+            Attributes textStyle (int style);
+            Attributes texture (Image texture);
+            Attributes transform (array number matrix);
+            Attributes translation (Offset offset);
+            Attributes withAppearance (Attributes overrides, boolean textOnly = false);
+    };
+
+    class Bone : public Animated
+    {
+        public:
+            boolean animate (number seconds);
+            Bone clearIKLimits ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Bone diminish (number influence, number seconds, int easing = linearTween);
+            uint getId ();
+            number getIKMaxAngle ();
+            number getIKMinAngle ();
+            number getInfluence ();
+            string getName ();
+            Sprite getSprite ();
+            boolean hasIKLimits ();
+            boolean isAttached ();
+            Bone setIKLimits (number minAngle, number maxAngle);
+            Bone setIKLimits (PhysicsConstraint constraint);
+    };
+
+    class Camera : public Animated, public EventEmitter
+    {
+        public:
+
+            Camera ();
+
+            boolean animate (number seconds);
+            Camera clearViewBounds ();
+            Camera cutTo (Camera destination);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera fadeIn (number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera fadeOut (number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera fadeTo (number opacity, number seconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera flash (number opacity, number seconds, int easing = easeOutQuad);
+            Camera follow (Animated target);
+            Rect getDeadzone ();
+            Camera getEffects ();
+            number getFlashOpacity ();
+            Offset getFollowOffset ();
+            number getLookAhead ();
+            number getOpacity ();
+            boolean getPixelSnapping ();
+            number getSmoothing ();
+            Rect getViewBounds ();
+            Rect getViewport ();
+            number getZoom ();
+            boolean hasViewBounds ();
+            Camera hide ();
+            boolean isFollowing ();
+            boolean isHidden ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera lumaFadeTo (Camera destination, number seconds, Image mask = null, number softness = 0.1, boolean darkFirst = false, int easing = easeInOutQuad);
+            Camera matchCutTo (Camera destination, CameraMatchCutOptions options);
+            Camera matchFadeTo (Camera destination, CameraMatchFadeOptions options);
+/**
+\note Parameter \c callback: \ref pdg::CameraZoomEventCallback.
+*/
+            IEventHandler onZoomComplete (function callback); // returns EventSubscription
+            Camera setDeadzone (Rect bounds);
+            Camera setFollowOffset (Offset offset);
+            Camera setLookAhead (number seconds);
+            Camera setOpacity (number opacity);
+            Camera setPixelSnapping (boolean snap = true);
+            Camera setSmoothing (number seconds);
+            Camera setViewBounds (Rect bounds);
+            Camera setViewport (Rect viewport);
+            Camera setZoom (number zoom);
+            Camera show ();
+            Camera stopFollowing ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera transitionTo (Camera destination, number seconds, int style = camera_Crossfade, int easing = easeInOutQuad);
+            Point viewToWorld (Point point);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera whipPanTo (Camera destination, number seconds, int style = camera_WhipLeft, number blur = 0, int easing = easeInOutQuad);
+            Point worldToView (Point point);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera zoom (number factor, number seconds, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Camera zoomTo (number zoom, number seconds, int easing = easeInOutQuad);
+    };
+
+    class Collider
+    {
+        public:
+
+            static const Collider NoCollider;
+
+            uint addBox (Rect bounds);
+            uint addCapsule (Point start, Point end, number radius);
+            uint addCircle (number radius, Point center = Point(0,0));
+            uint addImageMask (Image image, Rect localBounds, int alphaThreshold = 128);
+/**
+\note Parameter \c vertices: Array of \c Point.
+*/
+            uint addPolygon (array vertices);
+            uint addPolygon (Polygon polygon);
+            Collider clearShapes ();
+            boolean contains (Point worldPoint);
+            Rect getBounds ();
+            Point getCapsuleEnd (uint shapeId);
+            number getCapsuleRadius (uint shapeId);
+            Point getCapsuleStart (uint shapeId);
+            number getCategory ();
+            number getCircleRadius (uint shapeId);
+            number getCollisionMask ();
+            string getContactError ();
+            number getFriction ();
+            number getGeometrySource ();
+            number getGroup ();
+            number getId ();
+            PhysicsBody getPhysicsBody ();
+            number getRestitution ();
+            number getShapeCount ();
+            uint getShapeId (uint id);
+            string getShapeName (uint shapeId);
+            number getShapeType (uint shapeId);
+            boolean getWantsContactEvents ();
+            boolean isAttached ();
+            boolean isEnabled ();
+            boolean isPresent ();
+            boolean isSensor ();
+            boolean isSourceShape (uint shapeId);
+            boolean overlaps (Collider other);
+            boolean removeShape (uint id);
+            Collider setBox (Rect bounds);
+            Collider setCapsule (Point start, Point end, number radius);
+            Collider setCategory (uint value);
+            Collider setCircle (number radius, Point center = Point(0,0));
+/**
+\note Parameter \c callback: \ref pdg::ColliderFilterCallback or \c null.
+*/
+            Collider setCollisionFilter (function callback);
+            Collider setCollisionMask (uint value);
+/**
+\note Parameter \c callback: \ref pdg::ColliderContactCallback or \c null.
+*/
+            Collider setContactHandler (function callback);
+            Collider setEnabled (boolean value);
+            Collider setFriction (number value);
+            Collider setGroup (uint value);
+            Collider setImageMask (Image image, Rect localBounds, int alphaThreshold = 128);
+            Collider setPhysicsBody (PhysicsBody body);
+/**
+\note Parameter \c vertices: Array of \c Point.
+*/
+            Collider setPolygon (array vertices);
+            Collider setPolygon (Polygon polygon);
+            Collider setRestitution (number value);
+            Collider setSensor (boolean value);
+            Collider setWantsContactEvents (boolean wanted);
+            Collider useBodyMaterial ();
+            Collider useOwnerPhysics ();
+    };
+
+    class Color
+    {
+        public:
+
+            number alpha;
+            number blue;
+            number green;
+            number red;
+
+            Color ();
+            Color (number c);
+            Color (string colorstr);
+            Color (number r, number g, number b, number alpha = 1);
+
+            Color assign (Color color);
+            convertToGrayscale ();
+            boolean equals (Color color);
+            boolean notEquals (Color color);
     };
 
     class ConfigManager
     {
         public:
-            boolean useConfig (string inConfigName);
-            string getConfigString (string inConfigItemName);
-            number getConfigLong (string inConfigItemName);
-            number getConfigFloat (string inConfigItemName);
-            boolean getConfigBool (string inConfigItemName);
-            setConfigString (string inConfigItemName, string inValue);
-            setConfigLong (string inConfigItemName, int inValue);
-            setConfigFloat (string inConfigItemName, number inValue);
+            boolean getConfigBool (string inConfigItemName); // can return undefined
+            number getConfigFloat (string inConfigItemName); // can return undefined
+            number getConfigLong (string inConfigItemName); // can return undefined
+            string getConfigString (string inConfigItemName); // can return undefined
             setConfigBool (string inConfigItemName, boolean inValue);
+            setConfigFloat (string inConfigItemName, number inValue);
+            setConfigLong (string inConfigItemName, int inValue);
+            setConfigString (string inConfigItemName, string inValue);
+            boolean useConfig (string inConfigName);
     };
 
-    class ResourceManager
+    class CpArbiter
     {
         public:
-            string getLanguage ();
-            ResourceManager setLanguage (string inLanguage);
-            number openResourceFile (string filename);
-            closeResourceFile (int refNum);
-            Image getImage (string imageName);
-            ImageStrip getImageStrip (string imageName);
-            Sound getSound (string soundName);
-            string getString (int id, int substring = -1);
-            number getResourceSize (string resourceName);
-            BinaryString getResource (string resourceName);
-            string getResourcePaths ();
+            number getCount ();
+            number getDepth (int i);
+            Vector getNormal ();
+            Point getPointA (int i);
+            Point getPointB (int i);
+            boolean isFirstContact ();
     };
 
-    class Serializer
+    class CpConstraint
     {
         public:
-            Serializer setResourceMode (int mode);
-            int getResourceMode ();
-            serialize_8 (number val);
-            serialize_8u (number val);
-            uint sizeof_8 (int val);
-            uint sizeof_8u (uint val);
-            serialize_d (number val);
-            serialize_f (number val);
-            serialize_4 (int val);
-            serialize_4u (uint val);
-            serialize_3u (uint val);
-            serialize_2 (int val);
-            serialize_2u (uint val);
-            serialize_1 (int val);
-            serialize_1u (uint val);
-            serialize_bool (boolean val);
-            serialize_uint (uint val);
-            serialize_color (Color val);
-            serialize_offset (Offset val);
-            serialize_point (Point val);
-            serialize_vector (Vector val);
-            serialize_rect (Rect val);
-            serialize_rotr (RotatedRect val);
-            serialize_quad (Quad val);
-            serialize_str (string str);
-            serialize_mem (BinaryString mem);
-            serialize_mem (MemBlock mem);
-            serialize_obj (ISerializable obj);
-            serialize_ref (object obj);
-            uint sizeof_d (number val);
-            uint sizeof_f (number val);
-            uint sizeof_4 (int val);
-            uint sizeof_4u (uint val);
-            uint sizeof_3u (uint val);
-            uint sizeof_2 (int val);
-            uint sizeof_2u (uint val);
-            uint sizeof_1 (int val);
-            uint sizeof_1u (uint val);
-            uint sizeof_bool (boolean val);
-            uint sizeof_uint (uint val);
-            uint sizeof_color (Color val);
-            uint sizeof_offset (Offset val);
-            uint sizeof_point (Point val);
-            uint sizeof_vector (Vector val);
-            uint sizeof_rect (Rect val);
-            uint sizeof_rotr (RotatedRect val);
-            uint sizeof_quad (Quad val);
-            uint sizeof_str (string val);
-            uint sizeof_mem (BinaryString mem);
-            uint sizeof_mem (MemBlock mem);
-            uint sizeof_obj (ISerializable obj);
-            uint sizeof_ref (object val);
-            number getDataSize ();
-            MemBlock getDataPtr ();
+            activateBodies ();
+            Offset getAnchor (); // can return undefined
+            number getErrorBias ();
+            number getGearInitialAngle (); // can return undefined
+            number getGearRatio (); // can return undefined
+            Offset getGrooveEnd (); // can return undefined
+            Offset getGrooveStart (); // can return undefined
+            number getImpulse ();
+            number getMaxAngle (); // can return undefined
+            number getMaxBias ();
+            number getMaxForce ();
+            number getMinAngle (); // can return undefined
+            number getMotorSpinRate (); // can return undefined
+            Offset getOtherAnchor (); // can return undefined
+            Sprite getOtherSprite ();
+            number getPinDist (); // can return undefined
+            number getRatchetAngle (); // can return undefined
+            number getRatchetInterval (); // can return undefined
+            number getRatchetPhase (); // can return undefined
+            number getRotarySpringRestAngle (); // can return undefined
+            number getSlideMaxDist (); // can return undefined
+            number getSlideMinDist (); // can return undefined
+            number getSpringDamping (); // can return undefined
+            number getSpringRestLength (); // can return undefined
+            number getSpringStiffness (); // can return undefined
+            Sprite getSprite ();
+            string getType ();
+            CpConstraint setAnchor (Offset inAnchor);
+            CpConstraint setErrorBias (number inErrorBias);
+            CpConstraint setGearInitialAngle (number inGearInitialAngle);
+            CpConstraint setGearRatio (number inGearRatio);
+            CpConstraint setGrooveEnd (Offset inGrooveEnd);
+            CpConstraint setGrooveStart (Offset inGrooveStart);
+            CpConstraint setMaxAngle (number inMaxAngle);
+            CpConstraint setMaxBias (number inMaxBias);
+            CpConstraint setMaxForce (number inMaxForce);
+            CpConstraint setMinAngle (number inMinAngle);
+            CpConstraint setMotorSpinRate (number inMotorSpinRate);
+            CpConstraint setOtherAnchor (Offset inOtherAnchor);
+            CpConstraint setPinDist (number inPinDist);
+            CpConstraint setRatchetAngle (number inRatchetAngle);
+            CpConstraint setRatchetInterval (number inRatchetInterval);
+            CpConstraint setRatchetPhase (number inRatchetPhase);
+            CpConstraint setRotarySpringRestAngle (number inRotarySpringRestAngle);
+            CpConstraint setSlideMaxDist (number inSlideMaxDist);
+            CpConstraint setSlideMinDist (number inSlideMinDist);
+            CpConstraint setSpringDamping (number inSpringDamping);
+            CpConstraint setSpringRestLength (number inSpringRestLength);
+            CpConstraint setSpringStiffness (number inSpringStiffness);
+    };
+
+    class CpSpace
+    {
+        public:
+            number getCollisionBias ();
+            number getCollisionPersistence ();
+            number getCollisionSlop ();
+            number getIdleSpeedThreshold ();
+            number getSleepTimeThreshold ();
+            reindexStatic ();
+            CpSpace setCollisionBias (number inCollisionBias);
+            CpSpace setCollisionPersistence (number inCollisionPersistence);
+            CpSpace setCollisionSlop (number inCollisionSlop);
+            CpSpace setIdleSpeedThreshold (number inIdleSpeedThreshold);
+            CpSpace setSleepTimeThreshold (number inSleepTimeThreshold);
+            step (number dt);
+            useSpatialHash (number dim, int count);
     };
 
     class Deserializer
     {
         public:
-            number deserialize_8 ();
-            number deserialize_8u ();
-            number deserialize_d ();
-            number deserialize_f ();
-            number deserialize_4 ();
-            number deserialize_4u ();
-            number deserialize_3u ();
-            number deserialize_2 ();
-            number deserialize_2u ();
+
+            Deserializer ();
+
             number deserialize_1 ();
             number deserialize_1u ();
+            number deserialize_2 ();
+            number deserialize_2u ();
+            number deserialize_3u ();
+            number deserialize_4 ();
+            number deserialize_4u ();
+            number deserialize_8 ();
+            number deserialize_8u ();
             boolean deserialize_bool ();
-            number deserialize_uint ();
             Color deserialize_color ();
-            Offset deserialize_offset ();
-            Point deserialize_point ();
-            Vector deserialize_vector ();
-            Rect deserialize_rect ();
-            RotatedRect deserialize_rotr ();
-            Quad deserialize_quad ();
-            string deserialize_str ();
+            number deserialize_d ();
+            number deserialize_f ();
             MemBlock deserialize_mem ();
             number deserialize_memGetLen ();
             ISerializable deserialize_obj ();
+            Offset deserialize_offset ();
+            Point deserialize_point ();
+            Quad deserialize_quad ();
+            Rect deserialize_rect ();
             object deserialize_ref ();
-            setDataPtr (BinaryString data);
+            RotatedRect deserialize_rotr ();
+            string deserialize_str ();
+            number deserialize_uint ();
+            Vector deserialize_vector ();
+            setDataPtr (Uint8Array data);
             setDataPtr (MemBlock data);
     };
 
-    class ISerializable
+    class Drawing
     {
         public:
+            ElementRef addArc (Point center, number xRadius, number yRadius, number startAngle, number endAngle, Attributes attrs);
+            ElementRef addDrawing (Rect rect, Drawing drawing, Attributes attrs);
+            ElementRef addEllipse (Point center, number xRadius, number yRadius, Attributes attrs);
+            ElementRef addImage (Rect rect, Image image, Attributes attrs);
+            ElementRef addImageStrip (Rect rect, ImageStrip imageStrip, Attributes attrs);
+            ElementRef addLine (Point from, Point to, Attributes attrs);
+            ElementRef addPolygon (Polygon polygon, Attributes attrs);
+            ElementRef addQuad (Quad quad, Attributes attrs);
+            ElementRef addRect (Rect rect, Attributes attrs);
+            ElementRef addSpline (Spline spline, Attributes attrs);
+            ElementRef addText (string text, Rect rect, Attributes attrs);
+            Point centerPoint ();
+            boolean empty ();
+            Rect getBounds ();
+            ElementRef getElement (uint index);
+            uint getElementCount ();
+            ElementRef getElementHitBy (Point point);
     };
 
-    class IEventHandler
+    class ElementRef
     {
         public:
+            changeControlPoint (uint controlPointIndex, Point controlPoint);
+            clearLiveAttributes ();
+            Attributes getAttributes ();
+            Point getControlPoint (uint controlPointIndex);
+            array getControlPoints (); // returns Array of Point
+            string getText ();
+            boolean hasLiveAttributes ();
+            moveBackward ();
+            moveForward ();
+            moveToBack ();
+            moveToFront ();
+            remove ();
+            setAttributes (Attributes attrs);
+            setLiveAttributes (Attributes attrs);
+            setText (string text);
+            uint type ();
     };
 
     class EventEmitter
     {
         public:
+
+            EventEmitter ();
+
             addHandler (IEventHandler inHandler, int inEventType = all_events);
-            removeHandler (IEventHandler inHandler, int inEventType = all_events);
-            clear ();
             blockEvent (int inEventType);
+            clear ();
+            removeHandler (IEventHandler inHandler, int inEventType = all_events);
             unblockEvent (int inEventType);
     };
 
     class EventManager : public EventEmitter
     {
         public:
+            DeviceOrientation getDeviceOrientation (boolean absolute = false);
+            boolean isButtonDown (int buttonNumber = 0);
             boolean isKeyDown (string unicodeChar);
             boolean isKeyDown (uint utf16CharCode);
             boolean isRawKeyDown (int keyCode);
-            boolean isButtonDown (int buttonNumber = 0);
-            object getDeviceOrientation (boolean absolute = false);
     };
 
-    class TimerManager : public EventEmitter
+    class FileManager
     {
         public:
-            startTimer (int id, uint delay, boolean oneShot = true);
-            cancelTimer (int id);
-            cancelAllTimers ();
-            delayTimer (int id, uint delay);
-            delayTimerUntil (int id, int msTime);
-            pause ();
-            unpause ();
-            boolean isPaused ();
-            pauseTimer (int id);
-            unpauseTimer (int id);
-            boolean isTimerPaused (int id);
-            number getWhenTimerFiresNext (int id);
-            number getMilliseconds ();
-            IEventHandler onTimeout (function func, int delay);
-            IEventHandler onInterval (function func, int interval);
+            findClose (FileFindData inFindData);
+            string[] findDirs (string name);
+            string[] findFiles (string name);
+            FileFindData findFirst (string inFindName);
+            boolean findNext (FileFindData ioFindData);
+            string getApplicationDataDirectory ();
+            string getApplicationDirectory ();
+            string getApplicationResourceDirectory ();
+    };
+
+    class Font
+    {
+        public:
+            number getFontAscent (number size, int style = textStyle_Plain);
+            number getFontCapHeight (number size, int style = textStyle_Plain);
+            number getFontDescent (number size, int style = textStyle_Plain);
+            number getFontHeight (number size, int style = textStyle_Plain);
+            number getFontLeading (number size, int style = textStyle_Plain);
+            string getFontName ();
+    };
+
+    class GraphicsManager
+    {
+        public:
+            closeAllGraphicsPorts ();
+            closeGraphicsPort (Port port = MAIN_PORT);
+            Font createFont (string fontName, number scalingFactor = 1.0);
+            Port createFullScreenPort (Rect rect, int screenNum = PRIMARY_SCREEN, boolean allowResChange = true, int bpp = 0);
+            Port createOffscreenPort (Rect rect);
+            Port createWindowPort (Rect rect, string windName = "", int bpp = 0);
+            CurrentScreenMode getCurrentScreenMode (int screenNum = PRIMARY_SCREEN);
+            number getFPS ();
+            Port getMainPort ();
+            Point getMouse (int mouseNumber = 0);
+            ScreenMode getNthSupportedScreenMode (int n, int screenNum = PRIMARY_SCREEN);
+            number getNumScreens ();
+            number getNumSupportedScreenModes (int screen = PRIMARY_SCREEN);
+            Rect getScreenBounds (int screenNum = PRIMARY_SCREEN);
+            number getTargetFPS ();
+            boolean inFullScreenMode ();
+            setScreenMode (int width, int height, int screenNum = PRIMARY_SCREEN, int bpp = 0);
+            GraphicsManager setTargetFPS (number inTargetFPS);
+            boolean switchToFullScreenMode (boolean allowResChange = false, Port port = MAIN_PORT);
+            boolean switchToWindowMode (Port port = MAIN_PORT, string windName = "");
     };
 
     class IAnimationHelper
     {
         public:
+
+/**
+\note Parameter \c callback: \ref pdg::AnimationHelperCallback.
+*/
+            IAnimationHelper (function callback);
     };
 
-    class Animated
+    class IEventHandler
     {
         public:
-            Rect getBoundingBox ();
-            RotatedRect getRotatedBounds ();
-            Point getLocation ();
-            Offset getMovement ();
-            Offset getSize ();
-            number getWidth ();
-            number getHeight ();
-            Offset getScale ();
-            Offset getStretching ();
-            number getRotation ();
-            Offset getCenterOffset ();
-            number getSpin ();
-            Animated setLocation (Point value);
-            Animated setLocation (number x, number y);
-            Animated moveTo (Point value, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveTo (number x, number y, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveBy (Offset value, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveBy (number x, number y, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated setMovement (Vector value);
-            Animated setMovement (number xPerSecond, number yPerSecond);
-            Animated changeMovementTo (Vector value, number durationSeconds, int easing = linearTween);
-            Animated changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeMovementBy (Vector value, number durationSeconds, int easing = linearTween);
-            Animated changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = linearTween);
-            Animated setSize (Offset value);
-            Animated setSize (number width, number height);
-            Animated changeCenterOffsetTo (Offset value, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetBy (Offset value, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated setWidth (number value);
-            Animated setHeight (number value);
-            Animated setRotation (number value);
-            Animated setSpin (number value);
-            Animated setGrowing (number value);
-            Animated setStretching (number widthPerSecond, number heightPerSecond);
-            Animated setScale (number x, number y = x);
-            Animated changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeScaleTo (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeScaleBy (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated grow (number factor, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated stretch (number widthFactor, number heightFactor, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated resizeTo (number width, number height, number durationSeconds, int easing = easeInOutQuad);
-            Animated rotateBy (number radians, number durationSeconds = 0, int easing = easeInOutQuad, int direction = rotationDirection_AsSpecified);
-            Animated rotateTo (number radians, number durationSeconds = 0, int easing = easeInOutQuad, int direction = rotationDirection_AsSpecified);
-            Animated setCenterOffset (Offset offset);
-            Animated setFlipX (boolean flip);
-            Animated setFlipY (boolean flip);
-            Animated stopMovement ();
-            Animated stopSpinning ();
-            Animated stopGrowing ();
-            Animated stopStretching ();
-            Animated pauseSchedule ();
-            Animated resumeSchedule ();
-            Animated cancelSchedule ();
-            Animated flipX ();
-            Animated flipY ();
-            Animated andThen ();
-            boolean isFlippedX ();
-            boolean isFlippedY ();
-            boolean isSchedulePaused ();
-            boolean hasScheduledAnimations ();
-            Animated wait (number durationSeconds);
-            Animated addAnimationHelper (IAnimationHelper helper);
-            Animated removeAnimationHelper (IAnimationHelper helper);
-            Animated clearAnimationHelpers ();
-            boolean animate (number deltaSeconds);
-    };
-
-    class Part : public Animated
-    {
-        public:
-            /** Read-only property. */
-            Collider collider;
-            /** Read-only property. */
-            PhysicsBody physics;
-            Rect getBoundingBox ();
-            RotatedRect getRotatedBounds ();
-            Point getLocation ();
-            Offset getMovement ();
-            Offset getSize ();
-            number getWidth ();
-            number getHeight ();
-            Offset getScale ();
-            Offset getStretching ();
-            number getRotation ();
-            Offset getCenterOffset ();
-            number getSpin ();
-            Animated setLocation (Point value);
-            Animated setLocation (number x, number y);
-            Animated moveTo (Point value, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveTo (number x, number y, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveBy (Offset value, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveBy (number x, number y, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated setMovement (Vector value);
-            Animated setMovement (number xPerSecond, number yPerSecond);
-            Animated changeMovementTo (Vector value, number durationSeconds, int easing = linearTween);
-            Animated changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeMovementBy (Vector value, number durationSeconds, int easing = linearTween);
-            Animated changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = linearTween);
-            Animated setSize (Offset value);
-            Animated setSize (number width, number height);
-            Animated changeCenterOffsetTo (Offset value, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetBy (Offset value, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated setWidth (number value);
-            Animated setHeight (number value);
-            Animated setRotation (number value);
-            Animated setSpin (number value);
-            Animated setGrowing (number value);
-            Animated setStretching (number widthPerSecond, number heightPerSecond);
-            Animated setScale (number x, number y = x);
-            Animated changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeScaleTo (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeScaleBy (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated grow (number factor, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated stretch (number widthFactor, number heightFactor, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated resizeTo (number width, number height, number durationSeconds, int easing = easeInOutQuad);
-            Animated rotateBy (number radians, number durationSeconds = 0, int easing = easeInOutQuad, int direction = rotationDirection_AsSpecified);
-            Animated rotateTo (number radians, number durationSeconds = 0, int easing = easeInOutQuad, int direction = rotationDirection_AsSpecified);
-            Animated setCenterOffset (Offset offset);
-            Animated setFlipX (boolean flip);
-            Animated setFlipY (boolean flip);
-            Animated stopMovement ();
-            Animated stopSpinning ();
-            Animated stopGrowing ();
-            Animated stopStretching ();
-            Animated pauseSchedule ();
-            Animated resumeSchedule ();
-            Animated cancelSchedule ();
-            Animated flipX ();
-            Animated flipY ();
-            Animated andThen ();
-            boolean isFlippedX ();
-            boolean isFlippedY ();
-            boolean isSchedulePaused ();
-            boolean hasScheduledAnimations ();
-            Animated wait (number durationSeconds);
-            Animated addAnimationHelper (IAnimationHelper helper);
-            Animated removeAnimationHelper (IAnimationHelper helper);
-            Animated clearAnimationHelpers ();
-            Collider setupCollider ();
-            Collider setupFrameCollider (int mode = frameCollider_AlphaMask, int alphaThreshold = 128);
-            Collider setupAnimationCollider (string boxName);
-            removeCollider ();
-            PhysicsBody setupPhysicsBody (number mass = 1, number momentOfInertia = 1);
-            removePhysicsBody ();
-            boolean animate (number deltaSeconds);
-            uint getId ();
-            string getName ();
-            Sprite getSprite ();
-            boolean isAttached ();
-            uint getBoneId ();
-            boolean isBoundToBone ();
-            Part bindToBone (uint boneId);
-            Part unbindFromBone ();
-            Part getParentPart ();
-            Part setParentPart ();
-            Part setParentPart (Part parent);
-            boolean solveIK (Part middle, Part tip, Point target, int space = partSpace_World, int bendDirection = 1, number influence = 1);
-            Part setIKTarget (Part middle, Part tip, Point target, int space = partSpace_World, int bendDirection = 1, number influence = 1);
-            Part clearIKTarget ();
-            boolean hasIKTarget ();
-            boolean isIKTargetReached ();
-            string getIKError ();
-            Part setIKLimits (number minAngle, number maxAngle);
-            Part setIKLimits (PhysicsConstraint constraint);
-            Part clearIKLimits ();
-            boolean hasIKLimits ();
-            number getIKMinAngle ();
-            number getIKMaxAngle ();
-            Part setIKDriveTarget (Part middle, Part tip, Point target, number maxForce, number maxTorque, int space = partSpace_World, int bendDirection = 1, number influence = 1, number frequency = 4, number dampingRatio = 1);
-            boolean isIKDriven ();
-            Part attachSprite (Sprite child, int placement = partPlacement_Snap);
-            Part attachSprite (Sprite child, int placement, Part childMount);
-            Sprite getAttachedSprite ();
-            Part detachSprite ();
-            string getAttachmentError ();
-            object getTransform (int space = partSpace_Local);
-            Part bindToAnimationBinding (string name);
-            Part bindToAnimationSocket (string name);
-            string getAnimationBindingName ();
-            string getAnimationSocketName ();
-            Part clearContent ();
-            boolean hasContent ();
-            Rect getContentBounds (int space = partSpace_Local);
-            Part setDrawing (Drawing drawing);
-            Part setImage (Image image, Rect localBounds);
-    };
-
-    class Particle : public Animated, public EventEmitter
-    {
-        public:
-            /** Read-only property. */
-            ParticleEmitter emitter;
-            /** Read-only property. */
-            Collider collider;
-            /** Read-only property. */
-            PhysicsBody physics;
-            PhysicsBody setupPhysicsBody (number mass = 1, number momentOfInertia = 1);
-            removePhysicsBody ();
-            Collider setupCollider ();
-            removeCollider ();
-            ParticleEmitter setupParticleEmitter ();
-            ParticleEmitter getParticleEmitter ();
-            removeParticleEmitter ();
-            Particle clearContent ();
-            boolean hasContent ();
-            Particle setOpacity (number value);
-            number getOpacity ();
-            Particle fadeTo (number opacity, number seconds, int easing = linearTween);
-            Particle setLifetime (number value);
-            number getLifetime ();
-            number getAge ();
-            boolean isAlive ();
-            expire ();
-            SpriteLayer getLayer ();
-            Particle setImage (Image content);
-            Particle setDrawing (Drawing content);
-    };
-
-    class ParticleEmitter : public Animated
-    {
-        public:
-            ParticleEmitter setParticleTemplate (Particle particle);
-            boolean hasParticleTemplate ();
-            ParticleEmitter setEmissionRate (number value);
-            number getEmissionRate ();
-            ParticleEmitter setParticleSpeed (number minimum, number maximum = minimum);
-            number getMinParticleSpeed ();
-            number getMaxParticleSpeed ();
-            ParticleEmitter setSpread (number value);
-            number getSpread ();
-            ParticleEmitter setVelocityInheritance (number value);
-            number getVelocityInheritance ();
-            ParticleEmitter setSeed (uint seed);
-            number getSeed ();
-            ParticleEmitter startEmitting ();
-            ParticleEmitter stopEmitting ();
-            boolean isEmitting ();
-            number emit (uint count = 1);
-            SpriteLayer getLayer ();
-            Particle getParticle ();
-    };
-
-    class PhysicsBody
-    {
-        public:
-            static const PhysicsBody NoPhysics;
-            number getConstraintCount ();
-            PhysicsConstraint createPinJoint (PhysicsBody other, Point anchor = Point(0,0), Point otherAnchor = Point(0,0));
-            PhysicsConstraint createPivotJoint (PhysicsBody other, Point anchor = Point(0,0), Point otherAnchor = Point(0,0));
-            PhysicsConstraint createSlideJoint (PhysicsBody other, Point anchor, Point otherAnchor, number minDistance, number maxDistance);
-            PhysicsConstraint createGrooveJoint (PhysicsBody other, Point start, Point end, Point otherAnchor);
-            PhysicsConstraint createSpring (PhysicsBody other, Point anchor, Point otherAnchor, number restLength, number stiffness, number damping);
-            PhysicsConstraint createRotarySpring (PhysicsBody other, number restAngle, number stiffness, number damping);
-            PhysicsConstraint createRotaryLimit (PhysicsBody other, number minAngle, number maxAngle);
-            PhysicsConstraint createRatchet (PhysicsBody other, number interval, number phase = 0);
-            PhysicsConstraint createGear (PhysicsBody other, number ratio, number phase = 0);
-            PhysicsConstraint createMotor (PhysicsBody other, number radiansPerSecond, number maxTorque);
-            PhysicsConstraint getConstraint (uint index);
-            PhysicsBody disconnect (PhysicsBody other = null);
-            PhysicsBody setDriveTarget (Point position, number radians, number maxForce, number maxTorque, number frequency = 4, number dampingRatio = 1, int direction = rotationDirection_Shortest);
-            PhysicsBody clearDrive ();
-            boolean isDriveEnabled ();
-            object getDriveState ();
-            number getMode ();
-            PhysicsBody setMode (number value);
-            number getMass ();
-            PhysicsBody setMass (number value);
-            number getMomentOfInertia ();
-            PhysicsBody setMomentOfInertia (number value);
-            number getLinearDamping ();
-            PhysicsBody setLinearDamping (number value);
-            number getAngularDamping ();
-            PhysicsBody setAngularDamping (number value);
-            number getFriction ();
-            PhysicsBody setFriction (number value);
-            number getRestitution ();
-            PhysicsBody setRestitution (number value);
-            PhysicsBody setBreakAngularSpeed (number radiansPerSecond);
-            PhysicsBody setBreakAngularSpeed (number radiansPerSecond, PhysicsBody referenceBody);
-            number getBreakAngularSpeed ();
-            PhysicsBody getBreakAngularSpeedReference ();
-            number getAngularVelocity ();
-            PhysicsBody setAngularVelocity (number value);
-            number getSpeed ();
-            PhysicsBody setSpeed (number value);
-            number getSolver ();
-            number getAngularMomentum ();
-            number getMovementDirectionInRadians ();
-            boolean isPresent ();
-            boolean isAttached ();
-            object getState ();
-            Vector getVelocity ();
-            PhysicsBody setVelocity (Vector velocity);
-            PhysicsBody setVelocity (number xPerSecond, number yPerSecond);
-            PhysicsBody setVelocityInRadians (number speed, number direction);
-            PhysicsBody teleport (Point position, number radians);
-            PhysicsBody applyImpulse (Vector impulse);
-            PhysicsBody applyImpulse (Vector impulse, Point worldPoint);
-            PhysicsBody applyAngularImpulse (number impulse);
-            uint applyForce (Vector force, number durationSeconds, number delaySeconds = 0);
-            uint applyForce (Vector force, number durationSeconds, number delaySeconds, Point worldPoint);
-            uint applyTorque (number torque, number durationSeconds, number delaySeconds = 0);
-            uint addContinuousForce (Vector force);
-            uint addContinuousTorque (number torque);
-            boolean removeForce (uint id);
-            PhysicsBody stopAllForces ();
-            PhysicsBody stopMoving ();
-            PhysicsBody stopSpinning ();
-            step (number deltaSeconds);
-    };
-
-    class Collider
-    {
-        public:
-            static const Collider NoCollider;
-            Collider setWantsContactEvents (boolean wanted);
-            boolean getWantsContactEvents ();
-            Collider setFriction (number value);
-            Collider setRestitution (number value);
-            number getFriction ();
-            number getRestitution ();
-            Collider useBodyMaterial ();
-            boolean isPresent ();
-            boolean isAttached ();
-            boolean isEnabled ();
-            boolean isSensor ();
-            number getId ();
-            number getCategory ();
-            number getCollisionMask ();
-            number getGroup ();
-            number getShapeCount ();
-            Collider setEnabled (boolean value);
-            Collider setSensor (boolean value);
-            Collider setCategory (uint value);
-            Collider setCollisionMask (uint value);
-            Collider setGroup (uint value);
-            PhysicsBody getPhysicsBody ();
-            Collider setCircle (number radius, Point center = Point(0,0));
-            uint addCircle (number radius, Point center = Point(0,0));
-            Collider setCapsule (Point start, Point end, number radius);
-            uint addCapsule (Point start, Point end, number radius);
-            Point getCapsuleStart (uint shapeId);
-            Point getCapsuleEnd (uint shapeId);
-            number getCapsuleRadius (uint shapeId);
-            Collider setBox (Rect bounds);
-            uint addBox (Rect bounds);
-            Collider clearShapes ();
-            Collider useOwnerPhysics ();
-            Collider setPhysicsBody (PhysicsBody body);
-            Rect getBounds ();
-            boolean contains (Point worldPoint);
-            boolean overlaps (Collider other);
-            boolean removeShape (uint id);
-            uint getShapeId (uint id);
-            string getContactError ();
-            uint addPolygon (array vertices);
-            uint addPolygon (Polygon polygon);
-            Collider setPolygon (array vertices);
-            Collider setPolygon (Polygon polygon);
-            Collider setImageMask (Image image, Rect localBounds, int alphaThreshold = 128);
-            uint addImageMask (Image image, Rect localBounds, int alphaThreshold = 128);
-            number getGeometrySource ();
-            boolean isSourceShape (uint shapeId);
-            string getShapeName (uint shapeId);
-            number getShapeType (uint shapeId);
-            number getCircleRadius (uint shapeId);
-            Collider setContactHandler (function callback);
-            Collider setCollisionFilter (function callback);
-    };
-
-    class PhysicsConstraint
-    {
-        public:
-            boolean isActive ();
-            boolean isBroken ();
-            boolean getCollideBodies ();
-            number getType ();
-            number getMaxForce ();
-            number getBreakForce ();
-            number getImpulse ();
-            number getForce ();
-            PhysicsConstraint setCollideBodies (boolean value);
-            PhysicsConstraint setMaxForce (number value);
-            PhysicsConstraint setBreakForce (number value);
-            PhysicsBody getBodyA ();
-            PhysicsBody getBodyB ();
-            Point getAnchorA ();
-            Point getAnchorB ();
-            PhysicsConstraint setAnchorA (Point anchor);
-            PhysicsConstraint setAnchorB (Point anchor);
-            PhysicsConstraint setAnchors (Point anchorA, Point anchorB);
-            Point getGrooveStart ();
-            Point getGrooveEnd ();
-            PhysicsConstraint setGroove (Point start, Point end);
-            number getMinAngle ();
-            number getMaxAngle ();
-            PhysicsConstraint setAngleLimits (number minAngle, number maxAngle);
-            disconnect ();
-    };
-
-    class CpArbiter
-    {
-        public:
-            boolean isFirstContact ();
-            number getCount ();
-            Vector getNormal ();
-            Point getPointA (int i);
-            Point getPointB (int i);
-            number getDepth (int i);
-    };
-
-    class CpConstraint
-    {
-        public:
-            string getType ();
-            activateBodies ();
-            number getImpulse ();
-            number getMaxForce ();
-            CpConstraint setMaxForce (number inMaxForce);
-            number getErrorBias ();
-            CpConstraint setErrorBias (number inErrorBias);
-            number getMaxBias ();
-            CpConstraint setMaxBias (number inMaxBias);
-            Sprite getSprite ();
-            Sprite getOtherSprite ();
-            Offset getAnchor ();
-            CpConstraint setAnchor (Offset inAnchor);
-            Offset getOtherAnchor ();
-            CpConstraint setOtherAnchor (Offset inOtherAnchor);
-            number getPinDist ();
-            CpConstraint setPinDist (number inPinDist);
-            number getSpringStiffness ();
-            CpConstraint setSpringStiffness (number inSpringStiffness);
-            number getSpringDamping ();
-            CpConstraint setSpringDamping (number inSpringDamping);
-            number getSlideMinDist ();
-            CpConstraint setSlideMinDist (number inSlideMinDist);
-            number getSlideMaxDist ();
-            CpConstraint setSlideMaxDist (number inSlideMaxDist);
-            Offset getGrooveStart ();
-            CpConstraint setGrooveStart (Offset inGrooveStart);
-            Offset getGrooveEnd ();
-            CpConstraint setGrooveEnd (Offset inGrooveEnd);
-            number getSpringRestLength ();
-            CpConstraint setSpringRestLength (number inSpringRestLength);
-            number getRotarySpringRestAngle ();
-            CpConstraint setRotarySpringRestAngle (number inRotarySpringRestAngle);
-            number getMinAngle ();
-            CpConstraint setMinAngle (number inMinAngle);
-            number getMaxAngle ();
-            CpConstraint setMaxAngle (number inMaxAngle);
-            number getRatchetAngle ();
-            CpConstraint setRatchetAngle (number inRatchetAngle);
-            number getRatchetPhase ();
-            CpConstraint setRatchetPhase (number inRatchetPhase);
-            number getRatchetInterval ();
-            CpConstraint setRatchetInterval (number inRatchetInterval);
-            number getGearRatio ();
-            CpConstraint setGearRatio (number inGearRatio);
-            number getGearInitialAngle ();
-            CpConstraint setGearInitialAngle (number inGearInitialAngle);
-            number getMotorSpinRate ();
-            CpConstraint setMotorSpinRate (number inMotorSpinRate);
-    };
-
-    class CpSpace
-    {
-        public:
-            useSpatialHash (number dim, int count);
-            reindexStatic ();
-            step (number dt);
-            number getIdleSpeedThreshold ();
-            CpSpace setIdleSpeedThreshold (number inIdleSpeedThreshold);
-            number getSleepTimeThreshold ();
-            CpSpace setSleepTimeThreshold (number inSleepTimeThreshold);
-            number getCollisionSlop ();
-            CpSpace setCollisionSlop (number inCollisionSlop);
-            number getCollisionBias ();
-            CpSpace setCollisionBias (number inCollisionBias);
-            number getCollisionPersistence ();
-            CpSpace setCollisionPersistence (number inCollisionPersistence);
-    };
-
-    class ISpriteDrawHelper
-    {
-        public:
-    };
-
-    class Sprite : public Animated, public EventEmitter, public ISerializable
-    {
-        public:
-            /** Read-only property. */
-            Collider collider;
-            /** Read-only property. */
-            PhysicsBody physics;
-            Part getAttachmentPart ();
-            Part createPart (string name);
-            Part transferPart (Part part, boolean includeDescendants = true);
-            Collider setupFrameCollider (int mode = frameCollider_AlphaMask, int alphaThreshold = 128);
-            Collider setupAnimationCollider ();
-            Sprite setFrameCollisionMask (Image frameImage, Image maskImage);
-            Part getPart (uint id);
-            Part findPart (string name);
-            uint getPartCount ();
-            Array getPartNames ();
-            boolean removePart (uint id);
-            clearParts ();
-            Collider setupCollider ();
-            removeCollider ();
-            PhysicsBody setupPhysicsBody (number mass = 1, number momentOfInertia = 1);
-            removePhysicsBody ();
-            number getMyClassTag ();
-            uint getSerializedSize (Serializer serializer);
-            serialize (Serializer serializer);
-            deserialize (Deserializer deserializer);
-            RotatedRect getFrameRotatedBounds (int frameNum = -1);
-            Sprite setFrame (int frame);
-            number getCurrentFrame ();
-            number getFrameCount ();
-            startFrameAnimation (number fps, int startingFrame = start_FromFirstFrame, int numFrames = all_Frames, int animateFlags = animate_Looping);
-            stopFrameAnimation ();
-            boolean getWantsAnimLoopEvents ();
-            Sprite setWantsAnimLoopEvents (boolean wantsThem = true);
-            boolean getWantsAnimEndEvents ();
-            Sprite setWantsAnimEndEvents (boolean wantsThem = true);
-            boolean getWantsCollideWallEvents ();
-            Sprite setWantsCollideWallEvents (boolean wantsThem = true);
-            addFramesImage (Image image, int startingFrame = start_FromFirstFrame, int numFrames = all_Frames);
-            seekAnimation (string clip, number timeSeconds);
-            transitionToAnimation (string clip, number timeSeconds, number durationSeconds);
-            boolean isAnimationTransitioning ();
-            number getAnimationTransitionProgress ();
-            boolean supportsAnimationPhysics ();
-            setupAnimationPhysics (object definition);
-            Sprite setupPhysicsFromAnimationRig (number totalMass, number unitsPerMeter = 1);
-            Sprite attachAnimationPhysicsPart (Part part, Part parent = null);
-            Sprite detachAnimationPhysicsPart (Part part, boolean includeDescendants = true);
-            boolean isAnimationPhysicsPartAttached (Part part);
-            Sprite setAnimationPhysicsRoot (number bone);
-            Sprite setAnimationPhysicsRoot (string bone);
-            uint getAnimationPhysicsRoot ();
-            Sprite clearAnimationPhysicsRoot ();
-            Array getAnimationPhysicsSetupWarnings ();
-            Sprite setAnimationPhysicsMode (int mode, string bone = undefined, boolean includeDescendants = false, number recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
-            Sprite setAnimationPhysicsMode (int mode, uint bone = undefined, boolean includeDescendants = false, number recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
-            int getAnimationPhysicsMode (string bone = undefined, boolean includeDescendants = false);
-            int getAnimationPhysicsMode (uint bone = undefined, boolean includeDescendants = false);
-            Sprite setAnimationPhysicsDriveSettings (object settings, string bone = undefined, boolean includeDescendants = false);
-            Sprite setAnimationPhysicsDriveSettings (object settings, uint bone = undefined, boolean includeDescendants = false);
-            object getAnimationPhysicsDriveSettings (string bone);
-            object getAnimationPhysicsDriveSettings (uint bone);
-            disableAnimationPhysics (number recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
-            boolean isAnimationPhysicsEnabled ();
-            uint addAnimationDrawable (Drawing drawing, object options);
-            uint addAnimationDrawable (function callback, object options);
-            removeAnimationDrawable (uint id);
-            clearAnimationDrawables ();
-            setAnimationDrawableEnabled (uint id, boolean enabled);
-            string getAnimationDrawableError (uint id);
-            object getAnimationDrawBounds ();
-            uint addAnimationIK (object config, int order = 0);
-            setAnimationIKTarget (uint id, number x, number y, int space = animationSpace_Rig);
-            object getAnimationIKResult (uint id);
-            uint addAnimationModifier (function callback, int stage = animationStage_PreConstraint, int order = 0);
-            removeAnimationModifier (uint id);
-            clearAnimationModifiers ();
-            string getAnimationModifierError (uint id);
-            setAnimationSource (int source);
-            int getAnimationSource ();
-            boolean isAnimationDrawingSupported ();
-            setAnimationDebugDraw (int flags);
-            int getAnimationDebugDraw ();
-            boolean enableAnimationPose (string referenceAnimation);
-            disableAnimationPose ();
-            boolean isAnimationPoseEnabled ();
-            string getAnimationRigError ();
-            Array getAnimationBoneNames ();
-            Array getAnimationBindingNames ();
-            object getAnimationBoneTransform (string name, int space = animationSpace_Local);
-            object getAnimationBindingTransform (string name, int space = animationSpace_Local);
-            setAnimationBoneTransform (string name, object transform);
-            clearAnimationBoneTransforms ();
-            object getAnimationPose ();
-            object sampleAnimationPose (string clip, number timeSeconds);
-            boolean hasAnimation (int animationId);
-            boolean hasAnimation (string animationName);
-            startAnimation (int animationId);
-            startAnimation (string animationName);
-            applyCharacterMap (string mapName);
-            removeCharacterMap (string mapName);
-            removeAllCharacterMaps ();
-            Array getAppliedCharacterMaps ();
-            enableSpriterEvents (boolean enable = true);
-            boolean areSpriterEventsEnabled ();
-            blendToAnimation (int animationId, number blendTime);
-            blendToAnimation (string animationName, number blendTime);
-            boolean isBlending ();
-            number getBlendProgress ();
-            pauseAnimation ();
-            resumeAnimation ();
-            stopAnimation ();
-            boolean isAnimationPlaying ();
-            boolean isAnimationPaused ();
-            number getAnimationProgress ();
-            boolean hasAttachPoint (string attachPointName);
-            Offset getAttachPoint (string attachPointName);
-            attachSprite (Sprite sprite, string attachPointName);
-            activateSubEntity (string entityName, string animationName = "idle");
-            detachSprite (Sprite sprite);
-            Sprite getAttachedSprite (string attachPointName);
-            RotatedRect getSpriterCollisionBox (string boxName);
-            boolean isSpriterCollisionActive (string boxName);
-            number getSpriterCollisionBoxCount ();
-            string getSpriterCollisionBoxName (number index);
-            changeFramesImage (Image oldImage, Image newImage);
-            offsetFrameCenters (int offsetX, int offsetY, Image image = null, int startingFrame = start_FromFirstFrame, int numFrames = all_Frames);
-            Offset getFrameCenterOffset (Image image = null, int frameNum = 0);
-            number getOpacity ();
-            Sprite setOpacity (number opacity);
-            fadeTo (number targetOpacity, number durationSeconds, int easing = linearTween);
-            fadeIn (number durationSeconds, int easing = linearTween);
-            fadeOut (number durationSeconds, int easing = linearTween);
-            boolean isBehind (Sprite sprite);
-            int getZOrder ();
-            Sprite moveBehind (Sprite sprite);
-            Sprite moveInFrontOf (Sprite sprite);
-            Sprite moveToFront ();
-            Sprite moveToBack ();
-            SpriteLayer getLayer ();
-            setDrawHelper (ISpriteDrawHelper helper);
-            setPostDrawHelper (ISpriteDrawHelper helper);
-            boolean getWantsMouseOverEvents ();
-            Sprite setWantsMouseOverEvents (boolean wantsThem = true);
-            boolean getWantsClickEvents ();
-            Sprite setWantsClickEvents (boolean wantsThem = true);
-            number getMouseDetectMode ();
-            Sprite setMouseDetectMode (int collisionType = collide_BoundingBox);
-            boolean getWantsOffscreenEvents ();
-            Sprite setWantsOffscreenEvents (boolean wantsThem = true);
-            IEventHandler on (int eventCode, function func);
-            IEventHandler onCollideSprite (function func);
-            IEventHandler onCollideWall (function func);
-            IEventHandler onOffscreen (function func);
-            IEventHandler onOnscreen (function func);
-            IEventHandler onExitLayer (function func);
-            IEventHandler onAnimationLoop (function func);
-            IEventHandler onAnimationEnd (function func);
-            IEventHandler onAnimationPhysicsRecoveryComplete (function func);
-            IEventHandler onAnimationBlendComplete (function func);
-            IEventHandler onFadeComplete (function func);
-            IEventHandler onFadeInComplete (function func);
-            IEventHandler onFadeOutComplete (function func);
-            IEventHandler onMouseEnter (function func);
-            IEventHandler onMouseLeave (function func);
-            IEventHandler onMouseDown (function func);
-            IEventHandler onMouseUp (function func);
-            IEventHandler onMouseClick (function func);
-    };
-
-    class SpriteLayer : public Animated, public EventEmitter, public ISerializable
-    {
-        public:
-            number getMyClassTag ();
-            uint getSerializedSize (Serializer serializer);
-            serialize (Serializer serializer);
-            deserialize (Deserializer deserializer);
-            Particle createParticle ();
-            addParticle (Particle value);
-            removeParticle (Particle value);
-            removeAllParticles ();
-            uint getParticleCount ();
-            Particle getNthParticle (uint value);
-            SpriteLayer setMaxParticles (uint value);
-            uint getMaxParticles ();
-            ParticleEmitter createParticleEmitter ();
-            removeParticleEmitter (ParticleEmitter value);
-            removeAllParticleEmitters ();
-            SpriteLayer setSerializationFlags (uint flags);
-            startAnimations ();
-            stopAnimations ();
-            hide ();
-            show ();
-            boolean isHidden ();
-            fadeIn (number durationSeconds, int easing = linearTween);
-            fadeOut (number durationSeconds, int easing = linearTween);
-            moveBehind (SpriteLayer layer);
-            moveInFrontOf (SpriteLayer layer);
-            moveToFront ();
-            moveToBack ();
-            int getZOrder ();
-            moveWith (SpriteLayer layer, number moveRatio = 1.0, number zoomRatio = 1.0);
-            Sprite findSprite (int id);
-            Sprite getNthSprite (int index);
-            int getSpriteZOrder (Sprite sprite);
-            boolean isSpriteBehind (Sprite sprite, Sprite otherSprite);
-            boolean hasSprite (Sprite sprite);
-            addSprite (Sprite newSprite);
-            removeSprite (Sprite oldSprite);
-            removeAllSprites ();
-            enableCollisions ();
-            disableCollisions ();
-            enableCollisionsWithLayer (SpriteLayer otherLayer);
-            disableCollisionsWithLayer (SpriteLayer otherLayer);
-            Sprite createSprite ();
-            Port getSpritePort ();
-            setSpritePort (Port port);
-            setOrigin (Point origin);
-            Point getOrigin ();
-            setAutoCenter (boolean autoCenter = true);
-            setFixedMoveAxis (boolean fixedAxis = true);
-            setZoom (number zoomLevel);
-            number getZoom ();
-            zoomTo (number zoomLevel, number durationSeconds, int easing = easeInOutQuad, Rect keepInRect = Rect(0,0), Point centerOn = Point(0,0));
-            zoom (number deltaZoomLevel, number durationSeconds, int easing = easeInOutQuad, Rect keepInRect = Rect(0,0), Point centerOn = Point(0,0));
-            Point layerToPortPoint (Point p);
-            Offset layerToPortOffset (Offset o);
-            Vector layerToPortVector (Vector v);
-            RotatedRect layerToPortRect (Rect r);
-            Quad layerToPortQuad (Quad q);
-            Point portToLayerPoint (Point p);
-            Offset portToLayerOffset (Offset o);
-            Vector portToLayerVector (Vector v);
-            RotatedRect portToLayerRect (Rect r);
-            Quad portToLayerQuad (Quad q);
-            setGravity (number gravity, boolean keepItDownward = true);
-            setUseChipmunkPhysics (boolean useIt = true);
-            setStaticLayer (boolean isStatic = true);
-            setKeepGravityDownward (boolean keepItDownward = true);
-            setDamping (number damping);
-            CpSpace getSpace ();
-            Sprite createSpriteFromSpriterFile (string inFileName, string inEntityName = null);
-            Sprite createSpriteFromSpriterEntity (string inEntityName);
-            applyCharacterMapToAll (string mapName);
-            removeCharacterMapFromAll (string mapName);
-            enableSpriterEvents (boolean enable = true);
-            IEventHandler on (int eventCode, function func);
-            IEventHandler onCollideSprite (function func);
-            IEventHandler onCollideWall (function func);
-            IEventHandler onOffscreen (function func);
-            IEventHandler onOnscreen (function func);
-            IEventHandler onExitLayer (function func);
-            IEventHandler onAnimationLoop (function func);
-            IEventHandler onAnimationEnd (function func);
-            IEventHandler onFadeComplete (function func);
-            IEventHandler onFadeInComplete (function func);
-            IEventHandler onFadeOutComplete (function func);
-            IEventHandler onMouseEnter (function func);
-            IEventHandler onMouseLeave (function func);
-            IEventHandler onMouseDown (function func);
-            IEventHandler onMouseUp (function func);
-            IEventHandler onMouseClick (function func);
-            IEventHandler onErasePort (function func);
-            IEventHandler onPreDrawLayer (function func);
-            IEventHandler onPostDrawLayer (function func);
-            IEventHandler onDrawPortComplete (function func);
-            IEventHandler onAnimationStart (function func);
-            IEventHandler onPreAnimateLayer (function func);
-            IEventHandler onPostAnimateLayer (function func);
-            IEventHandler onAnimationComplete (function func);
-            IEventHandler onZoomComplete (function func);
-            IEventHandler onLayerFadeInComplete (function func);
-            IEventHandler onLayerFadeOutComplete (function func);
-    };
-
-    class TileLayer : public SpriteLayer
-    {
-        public:
-            setWorldSize (int width, int height, boolean repeatingX = false, boolean repeatingY = false);
-            Rect getWorldSize ();
-            Rect getWorldBounds ();
-            defineTileSet (int tileWidth, int tileHeight, Image tiles, boolean hasTransparency = true, boolean flipTiles = false);
-            loadMapData (BinaryString data, int mapWidth = 0, int mapHeight = 0, int dstX, int dstY);
-            loadMapData (MemBlock data, int mapWidth = 0, int mapHeight = 0, int dstX, int dstY);
-            MemBlock getMapData (int mapWidth = 0, int mapHeight = 0, int srcX, int srcY);
-            Image getTileSetImage ();
-            Point getTileSize ();
-            number getTileTypeAt (int x, int y);
-            object getTileTypeAndFacingAt (int x, int y);
-            setTileTypeAt (int x, int y, uint t, uint facing = facing_Ignore);
-            number checkCollision (Sprite movingSprite, uint alphaThreshold = 128, boolean shortCircuit = true);
+/**
+\note Parameter \c callback: \ref pdg::NativeEventCallback.
+*/
+            IEventHandler (function callback);
     };
 
     class Image
@@ -1409,713 +1794,7497 @@ namespace pdg
         public:
             Image (string filename);
             Image (Port port, boolean copyPixels = CopyPixels);
-            number getWidth ();
-            number getHeight ();
-            Rect getImageBounds (Point at);
-            Image getSubsection (Quad quad);
-            Image getSubsection (Rect quad);
-            Image setTransparentColor (Color inTransparentColor);
-            number getOpacity ();
-            setOpacity (number opacity);
-            setEdgeClamping (boolean inUseEdgeClamp);
-            Color getTransparentColor ();
-            retainData ();
-            retainAlpha ();
-            number prepareToRasterize ();
+
+            deserialize (Deserializer deserializer);
             number getAlphaValue (Point p);
             number getAlphaValue (int x, int y);
+            number getHeight ();
+            Rect getImageBounds (Point at = Point(0,0));
+            number getMyClassTag ();
+            number getOpacity ();
             Color getPixel (Point p);
             Color getPixel (int x, int y);
-            number getMyClassTag ();
             uint getSerializedSize (Serializer serializer);
+            Image getSubsection (Quad quad);
+            Image getSubsection (Rect quad);
+            Color getTransparentColor ();
+            number getWidth ();
+            prepareToRasterize ();
+            retainAlpha ();
+            retainData ();
             serialize (Serializer serializer);
-            deserialize (Deserializer deserializer);
+            Image setEdgeClamping (boolean inUseEdgeClamp);
+            Image setOpacity (number opacity);
+            Image setTransparentColor (Color inTransparentColor);
     };
 
     class ImageStrip : public Image
     {
         public:
+
+            ImageStrip (string filename);
+
             Image getFrame (int frameNum);
             number getFrameWidth ();
-            ImageStrip setFrameWidth (int inFrameWidth);
             number getNumFrames ();
+            ImageStrip setFrameWidth (int inFrameWidth);
             ImageStrip setNumFrames (int inNumFrames);
     };
 
-    class Spline
+    class ISerializable
     {
         public:
-            Point getFirstOrder (number u);
-            Point getSecondOrder (number u);
-            addSegment (Point p1, Point p2, Point p3, Point p4);
-            addPoint (Point point);
-            Point getPoint (number pointIndex);
-            setPoint (number pointIndex, Point point);
-            number getPointCount ();
-            number getMaxU ();
-            Rect getBounds ();
+
+/**
+\note Parameter \c getSerializedSize: \ref pdg::SerializedSizeCallback.
+\note Parameter \c serialize: \ref pdg::SerializeCallback.
+\note Parameter \c deserialize: \ref pdg::DeserializeCallback.
+\note Parameter \c getMyClassTag: \ref pdg::ClassTagCallback.
+*/
+            ISerializable (function getSerializedSize, function serialize, function deserialize, function getMyClassTag);
     };
 
-    class Polygon
+    class ISpriteDrawHelper
     {
         public:
-            addPoint (Point point);
-            addSpline (Spline spline);
-            insertPoint (uint index, Point point);
-            removePoint (uint index);
-            uint getPointCount ();
-            Point getPoint (uint index);
-            setPoint (uint index, Point point);
-            clearPoints ();
-            Rect getBounds ();
-            Point centerPoint ();
-            boolean contains (Point point);
-            boolean empty ();
-            boolean equals (Polygon other);
-            Polygon move (Offset offset);
-            moveLeft (number delta);
-            Polygon moveRight (number delta);
-            Polygon moveUp (number delta);
-            Polygon moveDown (number delta);
-            moveXTo (number x);
-            moveYTo (number y);
-            moveTo (number x, number y);
-            center (Point point);
-            scale (number factor);
-            horzScale (number factor);
-            vertScale (number factor);
-            scaleAround (number factor, Point centerPoint);
-            rotate (number radians);
-            rotateAround (number radians, Point centerPoint);
-            Polygon intersection (Polygon other);
-            Polygon unionWith (Polygon other);
+/**
+\note Parameter \c callback: \ref pdg::SpriteDrawCallback.
+*/
+            ISpriteDrawHelper (function callback);
     };
 
-    class Attributes
+    class LogManager
     {
         public:
-            Attributes withAppearance (Attributes overrides, boolean textOnly = false);
-            lineColor (Color color);
-            lineThickness (number float thickness);
-            lineOpacity (number float opacity);
-            lineStyle (int lineStyle);
-            fillColor (Color color);
-            fillOpacity (number float opacity);
-            fillGradient (Point start, Color startColor, Point end, Color endColor);
-            fillRadialGradient (Point center, Color centerColor, number float radius, Color endColor);
-            roundedCorners (number float radius);
-            translation (Offset offset);
-            rotation (number float radians, Point center = Point(0,0));
-            scale (number float xFactor, number float yFactor = xFactor, Point center = Point(0,0));
-            skew (number float xSkew, number float ySkew, Point center = Point(0,0));
-            transform (array number matrix);
-            Attributes setTransform (array number matrix);
-            blendMode (int blendMode);
-            textSize (number float size);
-            textStyle (int style);
-            font (Font font);
-            frame (int frame);
-            fitType (int fit);
-            Attributes clipOverflow (boolean clip);
-            subsection (Rect section);
-            sphereRotation (number float rotation);
-            polarOffset (Offset offset);
-            lightOffset (Offset offset);
-            ambientLight (Color color);
-            texture (Image texture);
-            Color getLineColor ();
-            number float getLineThickness ();
-            number float getLineOpacity ();
-            uint getLineStyle ();
-            Color getFillColor ();
-            number float getFillOpacity ();
-            number float getRoundedCornerRadius ();
-            int getGradientType ();
-            Point getGradientStart ();
-            Point getGradientEnd ();
-            Color getGradientStartColor ();
-            Color getGradientEndColor ();
-            Point getRadialGradientCenter ();
-            number float getRadialGradientRadius ();
-            Color getRadialGradientCenterColor ();
-            Color getRadialGradientEndColor ();
-            array number getTransform ();
-            int getBlendMode ();
-            number float getTextSize ();
-            int getTextStyle ();
-            Font getFont ();
-            int getFrame ();
-            int getFitType ();
-            boolean getClipOverflow ();
-            Rect getSubsection ();
-            number float getSphereRotation ();
-            Offset getPolarOffset ();
-            Offset getLightOffset ();
-            Color getAmbientLight ();
-            Image getTexture ();
+
+            const init_AppendToExisting = 2;
+            const init_CreateUniqueNewFile = 0;
+            const init_OverwriteExisting = 1;
+            const init_StdErr = 4;
+            const init_StdOut = 3;
+
+            string binaryDump (Uint8Array inData, int length = 0, int bytesPerLine = 20);
+            string binaryDump (MemBlock inData, int length = 0, int bytesPerLine = 20);
+            number getLogLevel ();
+            initialize (string inLogNameBase, int initMode = LogManager.init_StdOut);
+            LogManager setLogLevel (int inLogLevel);
+            writeLogEntry (int level, string category, string message);
     };
 
-    class AnimatedAttributes : public Animated
+    class MemBlock
     {
         public:
-            Rect getBoundingBox ();
-            RotatedRect getRotatedBounds ();
-            Point getLocation ();
-            Offset getMovement ();
-            Offset getSize ();
-            number getWidth ();
-            number getHeight ();
-            Offset getScale ();
-            Offset getStretching ();
-            number getRotation ();
-            Offset getCenterOffset ();
-            number getSpin ();
-            Animated setLocation (Point value);
-            Animated setLocation (number x, number y);
-            Animated moveTo (Point value, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveTo (number x, number y, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveBy (Offset value, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated moveBy (number x, number y, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated setMovement (Vector value);
-            Animated setMovement (number xPerSecond, number yPerSecond);
-            Animated changeMovementTo (Vector value, number durationSeconds, int easing = linearTween);
-            Animated changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeMovementBy (Vector value, number durationSeconds, int easing = linearTween);
-            Animated changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = linearTween);
-            Animated setSize (Offset value);
-            Animated setSize (number width, number height);
-            Animated changeCenterOffsetTo (Offset value, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetBy (Offset value, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated setWidth (number value);
-            Animated setHeight (number value);
-            Animated setRotation (number value);
-            Animated setSpin (number value);
-            Animated setGrowing (number value);
-            Animated setStretching (number widthPerSecond, number heightPerSecond);
-            Animated setScale (number x, number y = x);
-            Animated changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = linearTween);
-            Animated changeScaleTo (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated changeScaleBy (number x, number y, number durationSeconds, int easing = easeInOutQuad);
-            Animated grow (number factor, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated stretch (number widthFactor, number heightFactor, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = 0, int easing = easeInOutQuad);
-            Animated resizeTo (number width, number height, number durationSeconds, int easing = easeInOutQuad);
-            Animated rotateBy (number radians, number durationSeconds = 0, int easing = easeInOutQuad, int direction = rotationDirection_AsSpecified);
-            Animated rotateTo (number radians, number durationSeconds = 0, int easing = easeInOutQuad, int direction = rotationDirection_AsSpecified);
-            Animated setCenterOffset (Offset offset);
-            Animated setFlipX (boolean flip);
-            Animated setFlipY (boolean flip);
-            Animated stopMovement ();
-            Animated stopSpinning ();
-            Animated stopGrowing ();
-            Animated stopStretching ();
-            Animated pauseSchedule ();
-            Animated resumeSchedule ();
-            Animated cancelSchedule ();
-            Animated flipX ();
-            Animated flipY ();
-            Animated andThen ();
-            boolean isFlippedX ();
-            boolean isFlippedY ();
-            boolean isSchedulePaused ();
-            boolean hasScheduledAnimations ();
-            Animated wait (number durationSeconds);
-            Animated addAnimationHelper (IAnimationHelper helper);
-            Animated removeAnimationHelper (IAnimationHelper helper);
-            Animated clearAnimationHelpers ();
-            Attributes withAppearance (Attributes overrides, boolean textOnly = false);
-            lineColor (Color color);
-            lineThickness (number float thickness);
-            lineOpacity (number float opacity);
-            lineStyle (int lineStyle);
-            fillColor (Color color);
-            fillOpacity (number float opacity);
-            fillGradient (Point start, Color startColor, Point end, Color endColor);
-            fillRadialGradient (Point center, Color centerColor, number float radius, Color endColor);
-            roundedCorners (number float radius);
-            translation (Offset offset);
-            rotation (number float radians, Point center = Point(0,0));
-            scale (number float xFactor, number float yFactor = xFactor, Point center = Point(0,0));
-            skew (number float xSkew, number float ySkew, Point center = Point(0,0));
-            transform (array number matrix);
-            AnimatedAttributes setTransform (array number matrix);
-            blendMode (int blendMode);
-            textSize (number float size);
-            textStyle (int style);
-            font (Font font);
-            frame (int frame);
-            fitType (int fit);
-            AnimatedAttributes clipOverflow (boolean clip);
-            subsection (Rect section);
-            sphereRotation (number float rotation);
-            polarOffset (Offset offset);
-            lightOffset (Offset offset);
-            ambientLight (Color color);
-            texture (Image texture);
-            Color getLineColor ();
-            number float getLineThickness ();
-            number float getLineOpacity ();
-            uint getLineStyle ();
-            Color getFillColor ();
-            number float getFillOpacity ();
-            number float getRoundedCornerRadius ();
-            int getGradientType ();
-            Point getGradientStart ();
-            Point getGradientEnd ();
-            Color getGradientStartColor ();
-            Color getGradientEndColor ();
-            Point getRadialGradientCenter ();
-            number float getRadialGradientRadius ();
-            Color getRadialGradientCenterColor ();
-            Color getRadialGradientEndColor ();
-            array number getTransform ();
-            int getBlendMode ();
-            number float getTextSize ();
-            int getTextStyle ();
-            Font getFont ();
-            int getFrame ();
-            int getFitType ();
-            boolean getClipOverflow ();
-            Rect getSubsection ();
-            number float getSphereRotation ();
-            Offset getPolarOffset ();
-            Offset getLightOffset ();
-            Color getAmbientLight ();
-            Image getTexture ();
-            boolean animate (number deltaSeconds);
-            AnimatedAttributes changeLineColor (Color target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeLineThickness (number target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeLineOpacity (number target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeFillColor (Color target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeFillOpacity (number target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeRoundedCorners (number target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeTextSize (number target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeSubsection (Rect target, number seconds, int easing = linearTween);
-            AnimatedAttributes changePolarOffset (Offset target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeLightOffset (Offset target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeAmbientLight (Color target, number seconds, int easing = linearTween);
-            AnimatedAttributes changeFillGradient (Point start, Color startColor, Point end, Color endColor, number seconds, int easing = linearTween);
-            AnimatedAttributes changeFillRadialGradient (Point center, Color centerColor, number radius, Color endColor, number seconds, int easing = linearTween);
-            AnimatedAttributes changeSphereRotation (number radians, number seconds, int easing = linearTween, int direction = rotationDirection_AsSpecified);
-            AnimatedAttributes changeFrames (int first, int last, number seconds, int easing = linearTween);
-            AnimatedAttributes changeSkew (number x, number y, number seconds, int easing = linearTween);
-            AnimatedAttributes changeTransform (array number matrix, number seconds, int easing = linearTween);
+
+            MemBlock ();
+
+            number getByte (uint i);
+            Uint8Array getBytes (uint start, uint len);
+            Uint8Array getData ();
+            number getDataSize ();
     };
 
-    class ElementRef
+    class NetClient
     {
         public:
-            uint type ();
-            array getControlPoints ();
-            Point getControlPoint (uint controlPointIndex);
-            changeControlPoint (uint controlPointIndex, Point controlPoint);
-            Attributes getAttributes ();
-            setAttributes (Attributes attrs);
-            setLiveAttributes (Attributes attrs);
-            clearLiveAttributes ();
-            boolean hasLiveAttributes ();
-            moveForward ();
-            moveBackward ();
-            moveToFront ();
-            moveToBack ();
-            remove ();
+
+/**
+\par JavaScript value
+\c NetConnection or \c false.
+*/
+            object connection;
+
+            NetClient (NetClientOptions opt = null);
+
+/**
+\note Parameter \c callback: \ref pdg::NetConnectCallback.
+*/
+            NetClient connect (NetServerAddress serverInfo, function callback, string clientKey = "");
+/**
+\note Parameter \c callback: \ref pdg::NetClientErrorCallback.
+*/
+            NetClient onError (function callback);
     };
 
-    class Drawing
+    class NetConnection
     {
         public:
-            ElementRef addLine (Point from, Point to, Attributes attrs);
-            ElementRef addSpline (Spline spline, Attributes attrs);
-            ElementRef addRect (Rect rect, Attributes attrs);
-            ElementRef addArc (Point center, number xRadius, number yRadius, number startAngle, number endAngle, Attributes attrs);
-            ElementRef addQuad (Quad quad, Attributes attrs);
-            ElementRef addPolygon (Polygon polygon, Attributes attrs);
-            ElementRef addEllipse (Point center, number xRadius, number yRadius, Attributes attrs);
-            ElementRef addImage (Rect rect, Image image, Attributes attrs);
-            ElementRef addImageStrip (Rect rect, ImageStrip imageStrip, Attributes attrs);
-            ElementRef addDrawing (Rect rect, Drawing drawing, Attributes attrs);
-            uint getElementCount ();
-            ElementRef getElement (uint index);
-            ElementRef getElementHitBy (Point point);
-            Rect getBounds ();
-            Point centerPoint ();
-            boolean empty ();
-            draw (Port port);
+
+            boolean hasDgram;
+            string localAddr;
+            number localPort;
+            string remoteAddr;
+            number remotePort;
+            boolean secure;
+            string transport;
+
+            NetConnection (NetworkSocket socket);
+
+            close (boolean kill);
+/**
+\note Parameter \c callback: \ref pdg::NetCloseCallback.
+*/
+            NetConnection onClose (function callback);
+/**
+\note Parameter \c callback: \ref pdg::NetMessageCallback.
+*/
+            NetConnection onMessage (function callback);
+            NetConnection send (string message);
+            NetConnection send (MemBlock message);
+            NetConnection send (ISerializable message);
+            NetConnection send (NetworkData message);
+            NetConnection sendDgram (string message);
+            NetConnection sendDgram (MemBlock message);
+            NetConnection sendDgram (ISerializable message);
+            NetConnection sendDgram (NetworkData message);
     };
 
-    class Font
+    class NetServer
     {
         public:
-            string getFontName ();
-            number getFontHeight (number size, int style = textStyle_Plain);
-            number getFontLeading (number size, int style = textStyle_Plain);
-            number getFontCapHeight (number size, int style = textStyle_Plain);
-            number getFontAscent (number size, int style = textStyle_Plain);
-            number getFontDescent (number size, int style = textStyle_Plain);
-    };
 
-    class Port
-    {
-        public:
-            Rect getClipRect ();
-            Port setClipRect (Rect inClipRect);
-            resetClipRect ();
-            clear (Color color = TRANSPARENT_COLOR);
-            setDrawingOrigin (Point origin);
-            Image getCursor ();
-            setCursor (Image cursorImage, Point hotSpot);
-            Rect getDrawingArea ();
-            drawLine (Point from, Point to, Attributes attrs);
-            drawSpline (Spline spline, Attributes attrs);
-            drawText (string text, Point loc, Attributes attrs);
-            drawText (string text, Rect rect, Attributes attrs);
-            drawImage (Image img, Point loc, Attributes attrs);
-            drawImage (Image img, Rect rect, Attributes attrs);
-            drawImage (Image img, Quad quad, Attributes attrs);
-            number getTextWidth (string text, int size, uint style = textStyle_Plain, int len = -1);
-            Font getCurrentFont (uint style = textStyle_Plain);
-            setFont (Font font = DEFAULT_FONT);
-            setFontForStyle (uint style, Font font = DEFAULT_FONT);
-            setFontScalingFactor (number scaleBy);
-            number startTrackingMouse (Rect rect);
-            stopTrackingMouse (int trackingRef);
-            resetCursor ();
-            drawRect (Rect rect, Attributes attrs);
-            drawQuad (Quad quad, Attributes attrs);
-            drawPolygon (Polygon polygon, Attributes attrs);
-            drawEllipse (Point center, number float xRadius, number float yRadius, Attributes attrs);
-            drawArc (Point center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, Attributes attrs);
-            drawBezier (Point from, Point control1, Point control2, Point to, Attributes attrs);
-            drawCircle (Point center, number float radius, Attributes attrs);
-            drawVector (Vector vector, Attributes attrs);
-            drawRoundedRect (Rect rect, number float radius, Attributes attrs);
-            drawDrawing (Drawing drawing, Point loc, Attributes attrs);
-            drawDrawing (Drawing drawing, Rect rect, Attributes attrs);
-            drawSphere (Point center, number float radius, Attributes attrs);
-    };
+            boolean allowDatagram;
+            NetConnection[] connections;
+            number handshakeTimeout;
+            object listeners;
+            boolean listening;
+            boolean reservationRequired;
+            string serverAddr;
+/**
+\par JavaScript value
+\ref pdg::NetServerOptions or \c null or \c undefined.
+*/
+            object serverInfo;
+            number serverPort;
 
-    class GraphicsManager
-    {
-        public:
-            number getNumScreens ();
-            number getFPS ();
-            number getTargetFPS ();
-            GraphicsManager setTargetFPS (number inTargetFPS);
-            Point getMouse (int mouseNumber = 0);
-            object getCurrentScreenMode (int screenNum = PRIMARY_SCREEN);
-            Rect getScreenBounds (int screenNum = PRIMARY_SCREEN);
-            number getNumSupportedScreenModes (int screen = PRIMARY_SCREEN);
-            object getNthSupportedScreenMode (int n, int screenNum = PRIMARY_SCREEN);
-            setScreenMode (int width, int height, int screenNum = PRIMARY_SCREEN, int bpp = 0);
-            Port createWindowPort (Rect rect, string windName = "", int bpp = 0);
-            Port createOffscreenPort (Rect rect);
-            Port createFullScreenPort (Rect rect, int screenNum = PRIMARY_SCREEN, boolean allowResChange = true, int bpp = 0);
-            closeGraphicsPort (Port port = MAIN_PORT);
-            closeAllGraphicsPorts ();
-            Font createFont (string fontName, number scalingFactor = 1.0);
-            Port getMainPort ();
-            boolean switchToFullScreenMode (boolean allowResChange = false, Port port = MAIN_PORT);
-            boolean switchToWindowMode (Port port = MAIN_PORT, string windName = "");
-            boolean inFullScreenMode ();
-    };
+            NetServer (NetServerOptions opts = null);
 
-    class Sound : public EventEmitter
-    {
-        public:
-            number getVolume ();
-            Sound setVolume (number inVolume);
-            play (number vol = 1.0, int offsetX = 0, number pitch = 0, uint fromMs = 0, int lenMs = ENTIRE_LENGTH);
-            start ();
-            stop ();
-            pause ();
-            resume ();
-            boolean isPaused ();
-            Sound setLooping (boolean loopingOn);
-            boolean isLooping ();
-            Sound setPitch (number pitchOffset);
-            changePitch (number targetOffset, int msDuration, int easing = easeInOutQuad);
-            Sound setOffsetX (int offsetX);
-            changeOffsetX (int targetOffset, int msDuration, int easing = linearTween);
-            fadeOut (uint fadeMs, int easing = linearTween);
-            fadeIn (uint fadeMs, int easing = linearTween);
-            changeVolume (number level, uint fadeMs, int easing = linearTween);
-            Sound skip (int skipMilliseconds);
-            Sound skipTo (uint timeMs);
-            IEventHandler on (int eventCode, function func);
-            IEventHandler onDonePlaying (function func);
-            IEventHandler onLooping (function func);
-            IEventHandler onFailedToPlay (function func);
-    };
-
-    class SoundManager
-    {
-        public:
-            setVolume (number level);
-            setMute (boolean muted);
-            IEventHandler on (int eventCode, function func);
-            IEventHandler onDonePlaying (function func);
-            IEventHandler onLooping (function func);
-            IEventHandler onFailedToPlay (function func);
-    };
-
-    class Point : public Offset
-    {
-        public:
-            number x;
-            number y;
-            Point ();
-            Point (number x, number y);
-            Point (number[] xy);
-            Point (object xy);
-            number distance (Point point);
-            Offset offset (Point point);
+/**
+\note Parameter \c filter: \ref pdg::NetAcceptCallback or \c null.
+*/
+            number broadcast (NetworkSendable message, function filter = null);
+            NetServer expectClient (string clientKey, string clientIpAddr = '*', int reservationTTL = FOREVER, boolean singleUse = false);
+/**
+\note Parameter \c callback: \ref pdg::NetAcceptCallback.
+*/
+            NetServer listen (function callback);
+/**
+\note Parameter \c callback: \ref pdg::NetServerErrorCallback.
+*/
+            NetServer onError (function callback);
+            object ready ();
+            shutdown (boolean closeExisting = true, boolean kill = false);
     };
 
     class Offset
     {
         public:
+
             number x;
             number y;
+
             Offset ();
             Offset (number x, number y);
+/**
+\note Parameter \c xy: \ref pdg::XY.
+*/
             Offset (number[] xy);
-            Offset (object xy);
-            boolean equals (Offset offset);
-            boolean notEquals (Offset offset);
-            Offset assign (Offset offset);
+            Offset (XY xy);
+
             Offset add (Offset offset);
-            Offset sub (Offset offset);
-            Offset mul (Offset offset);
+            Offset assign (Offset offset);
             Offset div (Offset offset);
-            Offset plus (Offset offset);
-            Offset minus (Offset offset);
-            Offset times (Offset offset);
             Offset dividedby (Offset offset);
+            boolean equals (Offset offset);
+            Offset minus (Offset offset);
+            Offset mul (Offset offset);
+            boolean notEquals (Offset offset);
+            Offset plus (Offset offset);
+            Offset sub (Offset offset);
+            Offset times (Offset offset);
             Vector vector ();
     };
 
-    class Vector : public Offset
+    class Part : public Animated
     {
         public:
-            number x;
-            number y;
-            Vector ();
-            Vector (number x, number y);
-            Vector (number[] xy);
-            Vector (object xy);
-            Vector unit ();
-            Vector normal ();
-            number dotProduct (Vector vector);
-            number vectorLength ();
-            number vectorAngle ();
-            Point projection (Point point);
+
+            /** Read-only property. */
+            Collider collider;
+            /** Read-only property. */
+            PhysicsBody physics;
+
+            boolean animate (number deltaSeconds);
+            Part attachSprite (Sprite child, int placement = partPlacement_Snap);
+            Part attachSprite (Sprite child, int placement, Part childMount);
+            Part bindToAnimationBinding (string name);
+            Part bindToAnimationSocket (string name);
+            Part bindToBone (uint boneId);
+            Part clearContent ();
+            Part clearIKLimits ();
+            Part clearIKTarget ();
+            Part clearJiggle ();
+            Part detachSprite ();
+            string getAnimationBindingName ();
+            string getAnimationSocketName ();
+            Sprite getAttachedSprite ();
+            string getAttachmentError ();
+            uint getBoneId ();
+            Rect getContentBounds (int space = partSpace_Local);
+            FABRIKResult getFABRIKResult ();
+            uint getId ();
+            string getIKError ();
+            number getIKMaxAngle ();
+            number getIKMinAngle ();
+            string getJiggleError ();
+            PartJiggleOptions getJiggleOptions ();
+            JiggleResult getJiggleResult ();
+            JiggleState getJiggleState ();
+            string getName ();
+            Part getParentPart ();
+            Sprite getSprite ();
+            AffineTransform getTransform (int space = partSpace_Local); // returns a new copy
+            boolean hasContent ();
+            boolean hasIKLimits ();
+            boolean hasIKTarget ();
+            boolean hasJiggle ();
+            boolean isAttached ();
+            boolean isBoundToBone ();
+            boolean isIKDriven ();
+            boolean isIKTargetReached ();
+            boolean isJiggleEnabled ();
+            Part kickJiggle (PartJiggleKick kick);
+            removeCollider ();
+            removePhysicsBody ();
+            Part resetJiggle ();
+            Part setDrawing (Drawing drawing);
+/**
+\note Parameter \c chain: Array of \c Part.
+*/
+            Part setFABRIKTarget (Part[] chain, Point target, PartFABRIKOptions options = undefined);
+            Part setIKDriveTarget (Part middle, Part tip, Point target, number maxForce, number maxTorque, int space = partSpace_World, int bendDirection = 1, number influence = 1, number frequency = 4, number dampingRatio = 1);
+            Part setIKLimits (number minAngle, number maxAngle);
+            Part setIKLimits (PhysicsConstraint constraint);
+            Part setIKTarget (Part middle, Part tip, Point target, int space = partSpace_World, int bendDirection = 1, number influence = 1);
+            Part setImage (Image image, Rect localBounds);
+            Part setJiggle (PartJiggleOptions options);
+            Part setJiggleEnabled (boolean enabled);
+            Part setJiggleInfluence (number influence, number seconds = undefined);
+            Part setJiggleSettings (PartJiggleSettings settings);
+            Part setJiggleState (JiggleState state);
+            Part setParentPart ();
+            Part setParentPart (Part parent);
+            Collider setupAnimationCollider (string boxName);
+            Collider setupCollider ();
+            Collider setupFrameCollider (int mode = frameCollider_AlphaMask, int alphaThreshold = 128);
+            PhysicsBody setupPhysicsBody (number mass = 1, number momentOfInertia = 1);
+/**
+\note Parameter \c chain: Array of \c Part.
+*/
+            FABRIKResult solveFABRIK (Part[] chain, Point target, PartFABRIKOptions options = undefined);
+            boolean solveIK (Part middle, Part tip, Point target, int space = partSpace_World, int bendDirection = 1, number influence = 1);
+            Part unbindFromBone ();
     };
 
-    class Rect
+    class Particle : public Animated, public EventEmitter
     {
         public:
-            number left;
-            number top;
-            number right;
-            number bottom;
-            Rect ();
-            Rect (number w, number h);
-            Rect (Point topLeft, number w, number h);
-            Rect (Point leftTop, Point rightBottom);
-            Rect (number left, number top, number right, number bottom);
-            boolean empty ();
-            boolean contains (Rect r);
-            boolean contains (Point p);
-            boolean overlaps (Rect r);
-            Point leftTop ();
-            Point rightTop ();
-            Point leftBottom ();
-            Point rightBottom ();
+
+            /** Read-only property. */
+            Collider collider;
+            /** Read-only property. */
+            ParticleEmitter emitter;
+            /** Read-only property. */
+            PhysicsBody physics;
+
+            Particle ();
+
+            boolean animate (number seconds);
+            Particle breakTrail ();
+            Particle clearContent ();
+            Particle clearTrail ();
+            expire ();
+            Particle fadeTo (number opacity, number seconds, int easing = linearTween);
+            number getAge ();
+            SpriteLayer getLayer ();
+            number getLifetime ();
+            number getOpacity ();
+            ParticleEmitter getParticleEmitter ();
+            number getTrailPointCount ();
+            boolean hasContent ();
+            boolean hasTrail ();
+            boolean isAlive ();
+            removeCollider ();
+            removeParticleEmitter ();
+            removePhysicsBody ();
+            Particle setDrawing (Drawing content);
+            Particle setImage (Image content);
+            Particle setLifetime (number value);
+            Particle setOpacity (number value);
+            Particle setTrail (ParticleTrailOptions options);
+            Collider setupCollider ();
+            ParticleEmitter setupParticleEmitter ();
+            PhysicsBody setupPhysicsBody (number mass = 1, number momentOfInertia = 1);
+    };
+
+    class ParticleEmitter : public Animated
+    {
+        public:
+
+            ParticleEmitter ();
+
+            boolean animate (number seconds);
+            number emit (uint count = 1);
+            number getEmissionRate ();
+            SpriteLayer getLayer ();
+            number getMaxParticleSpeed ();
+            number getMinParticleSpeed ();
+            Particle getParticle ();
+            number getSeed ();
+            number getSpread ();
+            number getVelocityInheritance ();
+            boolean hasParticleTemplate ();
+            boolean isEmitting ();
+            ParticleEmitter setEmissionRate (number value);
+            ParticleEmitter setParticleSpeed (number minimum, number maximum = minimum);
+            ParticleEmitter setParticleTemplate (Particle particle);
+            ParticleEmitter setSeed (uint seed);
+            ParticleEmitter setSpread (number value);
+            ParticleEmitter setVelocityInheritance (number value);
+            ParticleEmitter startEmitting ();
+            ParticleEmitter stopEmitting ();
+    };
+
+    class PhysicsBody
+    {
+        public:
+
+            static const PhysicsBody NoPhysics;
+
+            uint addContinuousForce (Vector force);
+            uint addContinuousTorque (number torque);
+            PhysicsBody applyAngularImpulse (number impulse);
+            uint applyForce (Vector force, number durationSeconds, number delaySeconds = 0);
+            uint applyForce (Vector force, number durationSeconds, number delaySeconds, Point worldPoint);
+            PhysicsBody applyImpulse (Vector impulse);
+            PhysicsBody applyImpulse (Vector impulse, Point worldPoint);
+            uint applyTorque (number torque, number durationSeconds, number delaySeconds = 0);
+            PhysicsBody clearDrive ();
+            PhysicsConstraint createGear (PhysicsBody other, number ratio, number phase = 0);
+            PhysicsConstraint createGrooveJoint (PhysicsBody other, Point start, Point end, Point otherAnchor);
+            PhysicsConstraint createMotor (PhysicsBody other, number radiansPerSecond, number maxTorque);
+            PhysicsConstraint createPinJoint (PhysicsBody other, Point anchor = Point(0,0), Point otherAnchor = Point(0,0));
+            PhysicsConstraint createPivotJoint (PhysicsBody other, Point anchor = Point(0,0), Point otherAnchor = Point(0,0));
+            PhysicsConstraint createRatchet (PhysicsBody other, number interval, number phase = 0);
+            PhysicsConstraint createRotaryLimit (PhysicsBody other, number minAngle, number maxAngle);
+            PhysicsConstraint createRotarySpring (PhysicsBody other, number restAngle, number stiffness, number damping);
+            PhysicsConstraint createSlideJoint (PhysicsBody other, Point anchor, Point otherAnchor, number minDistance, number maxDistance);
+            PhysicsConstraint createSpring (PhysicsBody other, Point anchor, Point otherAnchor, number restLength, number stiffness, number damping);
+            PhysicsBody disconnect (PhysicsBody other = null);
+            number getAngularDamping ();
+            number getAngularMomentum ();
+            number getAngularVelocity ();
+            number getBreakAngularSpeed ();
+            PhysicsBody getBreakAngularSpeedReference ();
+            PhysicsConstraint getConstraint (uint index);
+            number getConstraintCount ();
+            PhysicsDriveState getDriveState ();
+            number getFriction ();
+            number getLinearDamping ();
+            number getMass ();
+            number getMode ();
+            number getMomentOfInertia ();
+            number getMovementDirectionInRadians ();
+            number getRestitution ();
+            number getSolver ();
+            number getSpeed ();
+            PhysicsBodyState getState ();
+            Vector getVelocity ();
+            boolean isAttached ();
+            boolean isDriveEnabled ();
+            boolean isPresent ();
+            boolean removeForce (uint id);
+            PhysicsBody setAngularDamping (number value);
+            PhysicsBody setAngularVelocity (number value);
+            PhysicsBody setBreakAngularSpeed (number radiansPerSecond);
+            PhysicsBody setBreakAngularSpeed (number radiansPerSecond, PhysicsBody referenceBody);
+            PhysicsBody setDriveTarget (Point position, number radians, number maxForce, number maxTorque, number frequency = 4, number dampingRatio = 1, int direction = rotationDirection_Shortest);
+            PhysicsBody setFriction (number value);
+            PhysicsBody setLinearDamping (number value);
+            PhysicsBody setMass (number value);
+            PhysicsBody setMode (number value);
+            PhysicsBody setMomentOfInertia (number value);
+            PhysicsBody setRestitution (number value);
+            PhysicsBody setSpeed (number value);
+            PhysicsBody setVelocity (Vector velocity);
+            PhysicsBody setVelocity (number xPerSecond, number yPerSecond);
+            PhysicsBody setVelocityInRadians (number speed, number direction);
+            step (number deltaSeconds);
+            PhysicsBody stopAllForces ();
+            PhysicsBody stopMoving ();
+            PhysicsBody stopSpinning ();
+            PhysicsBody teleport (Point position, number radians);
+    };
+
+    class PhysicsConstraint
+    {
+        public:
+            disconnect ();
+            Point getAnchorA ();
+            Point getAnchorB ();
+            PhysicsBody getBodyA ();
+            PhysicsBody getBodyB ();
+            number getBreakForce ();
+            boolean getCollideBodies ();
+            number getForce ();
+            Point getGrooveEnd ();
+            Point getGrooveStart ();
+            number getImpulse ();
+            number getMaxAngle ();
+            number getMaxForce ();
+            number getMinAngle ();
+            number getType ();
+            boolean isActive ();
+            boolean isBroken ();
+            PhysicsConstraint setAnchorA (Point anchor);
+            PhysicsConstraint setAnchorB (Point anchor);
+            PhysicsConstraint setAnchors (Point anchorA, Point anchorB);
+            PhysicsConstraint setAngleLimits (number minAngle, number maxAngle);
+            PhysicsConstraint setBreakForce (number value);
+            PhysicsConstraint setCollideBodies (boolean value);
+            PhysicsConstraint setGroove (Point start, Point end);
+            PhysicsConstraint setMaxForce (number value);
+    };
+
+    class Point : public Offset
+    {
+        public:
+
+            number x;
+            number y;
+
+            Point ();
+            Point (number x, number y);
+/**
+\note Parameter \c xy: \ref pdg::XY.
+*/
+            Point (number[] xy);
+            Point (XY xy);
+
+            number distance (Point point);
+            Offset offset (Point point);
+    };
+
+    class Polygon
+    {
+        public:
+
+            Polygon ();
+/**
+\note Parameter \c points: Array of \c Point or \c null.
+*/
+            Polygon (array object Point points);
+            Polygon (array object Point points);
+
+            Polygon addPoint (Point point);
+            Polygon addSpline (Spline spline, number uStep = 0.01);
+            Polygon center (Point point);
             Point centerPoint ();
-            number x1 ();
-            number y1 ();
-            number x2 ();
-            number y2 ();
-            number width ();
-            number height ();
-            Rect intersection (Rect r);
-            Rect unionWith (Rect r);
-            moveLeft (number delta);
-            moveRight (number delta);
-            moveUp (number delta);
-            moveDown (number delta);
-            moveXTo (number x);
-            moveYTo (number y);
-            moveTo (number x, number y);
-            moveTo (Point p);
-            center (Rect r);
-            center (Point p);
-            setSize (number n);
-            setWidth (number w);
-            setHeight (number h);
-            horzShrink (number delta);
-            vertShrink (number delta);
-            horzGrow (number delta);
-            vertGrow (number delta);
-            shrink (number delta);
-            grow (number delta);
-            horzScale (number f);
-            vertScale (number f);
-            scale (number f);
-            round ();
-            Quad toQuad ();
-            boolean equals (Rect r2);
-            boolean notEquals (Rect r2);
-            Rect assign (Rect r2);
-            Rect add (Rect r2);
-            Rect add (Point p);
-            Rect sub (Rect r2);
-            Rect sub (Point p);
-            Rect mul (Rect r2);
-            Rect mul (Point p);
-            Rect div (Rect r2);
-            Rect div (Point p);
-            Rect plus (Rect r2);
-            Rect plus (Point p);
-            Rect minus (Rect r2);
-            Rect minus (Point p);
-            Rect times (Rect r2);
-            Rect times (Point p);
-            Rect dividedby (Rect r2);
-            Rect dividedby (Point p);
+            Polygon clearPoints ();
+            boolean contains (Point point);
+            boolean empty ();
+            boolean equals (Polygon other);
+            Rect getBounds ();
+            Point getPoint (uint index);
+            uint getPointCount ();
+            Polygon horzScale (number factor);
+            Polygon insertPoint (uint index, Point point);
+            Polygon intersection (Polygon other);
+            Polygon move (Offset offset);
+            Polygon moveDown (number delta);
+            Polygon moveLeft (number delta);
+            Polygon moveRight (number delta);
+            Polygon moveTo (Point point);
+            Polygon moveTo (number x, number y);
+            Polygon moveUp (number delta);
+            Polygon moveXTo (number x);
+            Polygon moveYTo (number y);
+            Polygon removePoint (uint index);
+            Polygon rotate (number radians);
+            Polygon rotateAround (number radians, Point centerPoint);
+            Polygon scale (number factor);
+            Polygon scaleAround (number factor, Point centerPoint);
+            Polygon setPoint (uint index, Point point);
+            Polygon unionWith (Polygon other);
+            Polygon vertScale (number factor);
+    };
+
+    class Port
+    {
+        public:
+            Port clear (Color color = Color(0, 0, 0, 0));
+            Port clear (string colorName);
+            Port clear (number rgba);
+            Port drawArc (Point center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, Attributes attrs);
+            Port drawBezier (Point from, Point control1, Point control2, Point to, Attributes attrs);
+            Port drawCircle (Point center, number float radius, Attributes attrs);
+            Port drawDrawing (Drawing drawing, Point loc, Attributes attrs);
+            Port drawDrawing (Drawing drawing, Rect rect, Attributes attrs);
+            Port drawEllipse (Point center, number float xRadius, number float yRadius, Attributes attrs);
+            Port drawImage (Image img, Point loc, Attributes attrs);
+            Port drawImage (Image img, Rect rect, Attributes attrs);
+            Port drawImage (Image img, Quad quad, Attributes attrs);
+            Port drawLine (Point from, Point to, Attributes attrs);
+            Port drawPolygon (Polygon polygon, Attributes attrs);
+            Port drawQuad (Quad quad, Attributes attrs);
+            Port drawRect (Rect rect, Attributes attrs);
+            Port drawRoundedRect (Rect rect, number float radius, Attributes attrs);
+            Port drawSphere (Point center, number float radius, Attributes attrs);
+            Port drawSpline (Spline spline, Attributes attrs);
+            Port drawText (string text, Point loc, Attributes attrs);
+            Port drawText (string text, Rect rect, Attributes attrs);
+            Port drawVector (Vector vector, Attributes attrs);
+            Camera getCamera ();
+            Point getCameraAnchor ();
+            boolean getCameraDrawingEnabled ();
+            Rect getClipRect ();
+            Font getCurrentFont (uint style = textStyle_Plain);
+            Image getCursor ();
+            Rect getDrawingArea ();
+            number getTextWidth (string text, int size, uint style = textStyle_Plain, int len = -1);
+            Point portToWorld (Point point);
+            Port resetClipRect ();
+            Port resetCursor ();
+            Port setCameraAnchor (Point inCameraAnchor);
+            Port setCameraDrawingEnabled (boolean inCameraDrawingEnabled);
+            Port setClipRect (Rect inClipRect);
+            Port setCursor (Image cursorImage, Point hotSpot);
+            Port setDrawingOrigin (Point origin);
+            Port setFont (Font font = DEFAULT_FONT);
+            Port setFontForStyle (uint style, Font font = DEFAULT_FONT);
+            Port setFontScalingFactor (number scaleBy);
+            number startTrackingMouse (Rect rect);
+            Port stopTrackingMouse (int trackingRef);
+            Point worldToPort (Point point);
     };
 
     class Quad
     {
         public:
+
             Point[] points;
+
             Quad ();
             Quad (Quad q);
             Quad (Rect r);
             Quad (RotatedRect r);
             Quad (Point p1, Point p2, Point p3, Point p4);
             Quad (Point[] p);
-            Rect getBounds ();
+
             Point centerPoint ();
-            boolean equals (Quad q2);
-            boolean notEquals (Quad q2);
             boolean contains (Point p);
-            moveLeft (number delta);
-            moveRight (number delta);
-            moveUp (number delta);
-            moveDown (number delta);
-            rotate (number rotationRadians, Offset centerPtOffset = Point(0,0));
+            boolean equals (Quad q2);
+            Rect getBounds ();
+            Quad moveDown (number delta);
+            Quad moveLeft (number delta);
+            Quad moveRight (number delta);
+            Quad moveUp (number delta);
+            boolean notEquals (Quad q2);
+            Quad rotate (number rotationRadians, Offset centerPtOffset = Point(0,0));
+    };
+
+    class Rect
+    {
+        public:
+
+            number bottom;
+            number left;
+            number right;
+            number top;
+
+            Rect ();
+            Rect (number w, number h);
+            Rect (Point topLeft, number w, number h);
+            Rect (Point leftTop, Point rightBottom);
+            Rect (number left, number top, number right, number bottom);
+            Rect (Rect source);
+
+            Rect add (Rect r2);
+            Rect add (Point p);
+            Rect assign (Rect r2);
+            Rect center (Rect r);
+            Rect center (Point p);
+            Point centerPoint ();
+            boolean contains (Rect r);
+            boolean contains (Point p);
+            Rect div (Rect r2);
+            Rect div (Point p);
+            Rect dividedby (Rect r2);
+            Rect dividedby (Point p);
+            boolean empty ();
+            boolean equals (Rect r2);
+            Rect grow (number delta);
+            number height ();
+            Rect horzGrow (number delta);
+            Rect horzScale (number f);
+            Rect horzShrink (number delta);
+            Rect intersection (Rect r);
+            Point leftBottom ();
+            Point leftTop ();
+            Rect minus (Rect r2);
+            Rect minus (Point p);
+            Rect moveDown (number delta);
+            Rect moveLeft (number delta);
+            Rect moveRight (number delta);
+            Rect moveTo (number x, number y);
+            Rect moveTo (Point p);
+            Rect moveUp (number delta);
+            Rect moveXTo (number x);
+            Rect moveYTo (number y);
+            Rect mul (Rect r2);
+            Rect mul (Point p);
+            boolean notEquals (Rect r2);
+            boolean overlaps (Rect r);
+            Rect plus (Rect r2);
+            Rect plus (Point p);
+            Point rightBottom ();
+            Point rightTop ();
+            Rect round ();
+            Rect scale (number f);
+            Rect setHeight (number h);
+            Rect setSize (number n);
+            Rect setWidth (number w);
+            Rect shrink (number delta);
+            Rect sub (Rect r2);
+            Rect sub (Point p);
+            Rect times (Rect r2);
+            Rect times (Point p);
+            Quad toQuad ();
+            Rect unionWith (Rect r);
+            Rect vertGrow (number delta);
+            Rect vertScale (number f);
+            Rect vertShrink (number delta);
+            number width ();
+            number x1 ();
+            number x2 ();
+            number y1 ();
+            number y2 ();
+    };
+
+    class ResourceManager
+    {
+        public:
+            closeResourceFile (int refNum);
+            Image getImage (string imageName);
+            ImageStrip getImageStrip (string imageName);
+            string getLanguage ();
+            Uint8Array getResource (string resourceName, int maxSize = -1); // can return false
+            string getResourcePaths ();
+            number getResourceSize (string resourceName);
+            Sound getSound (string soundName);
+            string getString (int id, int substring = -1);
+            number openResourceFile (string filename);
+            ResourceManager setLanguage (string inLanguage);
     };
 
     class RotatedRect : public Rect
     {
         public:
-            number left;
-            number top;
-            number right;
+
             number bottom;
-            number radians;
             Point centerOffset;
+            number left;
+            number radians;
+            number right;
+            number top;
+
             RotatedRect (Rect rect = Rect(0,0), number rotationRadians = 0.0, Offset cpOffset = null);
-            setCenterOffset (Offset cpOffset);
-            setRotation (number rotationRadians, Offset cpOffset = null);
-            rotate (number rotateRadians);
+
             Quad getQuad ();
+            RotatedRect rotate (number rotateRadians);
+            RotatedRect setCenterOffset (Offset cpOffset);
+            RotatedRect setRotation (number rotationRadians, Offset cpOffset = null);
     };
 
-    class Color
+    class Scene : public EventEmitter
     {
         public:
-            number alpha;
-            number red;
-            number green;
-            number blue;
-            Color ();
-            Color (number c);
-            Color (string colorstr);
-            Color (number r, number g, number b, number alpha = 1);
-            boolean equals (Color color);
-            boolean notEquals (Color color);
-            Color assign (Color color);
-            convertToGrayscale ();
+
+            Scene ();
+
+            addLayer (SpriteLayer layer);
+            advance (number seconds);
+            cancelAllTimers ();
+            cancelTimer (int id);
+            SpriteLayer createSpriteLayer ();
+            delayTimer (int id, number delayMs);
+            dispose ();
+            disposeLayer (SpriteLayer layer);
+            Camera getCamera ();
+            number getDroppedTime ();
+            number getFixedStep ();
+            number getInterpolationAlpha ();
+            SpriteLayer getLayer (int index);
+            int getLayerCount ();
+            number getSimulationTime ();
+            number getTick ();
+            number getTimeScale ();
+            number getWhenTimerFiresNext (int id);
+            boolean isDisposed ();
+            boolean isInputEnabled ();
+            boolean isInterpolationEnabled ();
+            boolean isManual ();
+            boolean isPaused ();
+            boolean isTimerPaused (int id);
+            CollisionQueryHit nearestPoint (Point point, number maxDistance, CollisionQueryOptions options = undefined); // can return null
+/**
+\note Parameter \c callback: \ref pdg::EventCallback.
+*/
+            IEventHandler on (int eventType, function callback); // returns EventSubscription
+/**
+\note Parameter \c callback: \ref pdg::TimerNotification.
+*/
+            IEventHandler onInterval (function callback, number intervalMs); // returns TimerSubscription
+/**
+\note Parameter \c callback: \ref pdg::TimerNotification.
+*/
+            IEventHandler onTimeout (function callback, number delayMs); // returns TimerSubscription
+            CollisionQueryHit[] overlapBox (RotatedRect box, CollisionQueryOptions options = undefined);
+            CollisionQueryHit[] overlapCapsule (Point start, Point end, number radius, CollisionQueryOptions options = undefined);
+            CollisionQueryHit[] overlapCircle (Point center, number radius, CollisionQueryOptions options = undefined);
+            CollisionQueryHit[] overlapPoint (Point point, CollisionQueryOptions options = undefined);
+            pause ();
+            pauseTimer (int id);
+            CollisionQueryHit raycast (Point start, Point end, CollisionQueryOptions options = undefined); // can return null
+            CollisionQueryHit[] raycast (Point start, Point end, uint maxHits, CollisionQueryOptions options = undefined);
+            removeLayer (SpriteLayer layer);
+            resume ();
+            setCamera (Camera camera);
+            setFixedStep (number seconds);
+            setInputEnabled (boolean enabled);
+            setInterpolation (boolean enabled);
+            setManual (boolean enabled);
+            setTimeScale (number scale);
+            startTimer (int id, number delayMs, boolean oneShot = true);
+/**
+\note Parameter \c callback: \ref pdg::EventCallback.
+*/
+            IEventHandler subscribe (EventEmitter emitter, int eventType, function callback); // returns EventSubscription
+            CollisionQueryHit sweepCircle (Point center, number radius, Vector delta, CollisionQueryOptions options = undefined); // can return null
+            CollisionQueryHit[] sweepCircle (Point center, number radius, Vector delta, uint maxHits, CollisionQueryOptions options = undefined);
+            unpauseTimer (int id);
     };
 
-    class NetConnection
+    class Serializer
     {
         public:
-            string localAddr;
-            number localPort;
-            string remoteAddr;
-            number remotePort;
-            boolean hasDgram;
-            NetConnection (object socket);
-            close (boolean kill);
-            NetConnection onClose (function callback);
-            NetConnection onMessage (function callback);
-            send (string message);
-            send (MemBlock message);
-            send (ISerializable message);
-            send (object message);
-            sendDgram (string message);
-            sendDgram (MemBlock message);
-            sendDgram (ISerializable message);
-            sendDgram (object message);
+
+            Serializer ();
+
+            MemBlock getDataPtr ();
+            number getDataSize ();
+            int getResourceMode ();
+            serialize_1 (int val);
+            serialize_1u (uint val);
+            serialize_2 (int val);
+            serialize_2u (uint val);
+            serialize_3u (uint val);
+            serialize_4 (int val);
+            serialize_4u (uint val);
+            serialize_8 (number val);
+            serialize_8u (number val);
+            serialize_bool (boolean val);
+            serialize_color (Color val);
+            serialize_color (string colorName);
+            serialize_color (number rgba);
+            serialize_d (number val);
+            serialize_f (number val);
+            serialize_mem (Uint8Array mem);
+            serialize_mem (MemBlock mem);
+            serialize_obj (ISerializable obj);
+            serialize_offset (Offset val);
+            serialize_point (Point val);
+            serialize_quad (Quad val);
+            serialize_rect (Rect val);
+            serialize_ref (object obj);
+            serialize_rotr (RotatedRect val);
+            serialize_str (string str);
+            serialize_uint (uint val);
+            serialize_vector (Vector val);
+            Serializer setResourceMode (int mode);
+            uint sizeof_1 (int val);
+            uint sizeof_1u (uint val);
+            uint sizeof_2 (int val);
+            uint sizeof_2u (uint val);
+            uint sizeof_3u (uint val);
+            uint sizeof_4 (int val);
+            uint sizeof_4u (uint val);
+            uint sizeof_8 (int val);
+            uint sizeof_8u (uint val);
+            uint sizeof_bool (boolean val);
+            uint sizeof_color (Color val);
+            uint sizeof_color (string colorName);
+            uint sizeof_color (number rgba);
+            uint sizeof_d (number val);
+            uint sizeof_f (number val);
+            uint sizeof_mem (Uint8Array mem);
+            uint sizeof_mem (MemBlock mem);
+            uint sizeof_obj (ISerializable obj);
+            uint sizeof_offset (Offset val);
+            uint sizeof_point (Point val);
+            uint sizeof_quad (Quad val);
+            uint sizeof_rect (Rect val);
+            uint sizeof_ref (object val);
+            uint sizeof_rotr (RotatedRect val);
+            uint sizeof_str (string val);
+            uint sizeof_uint (uint val);
+            uint sizeof_vector (Vector val);
     };
 
-    class NetClient
+    class Sound : public EventEmitter
     {
         public:
-            boolean connection;
-            NetClient (object opts = null);
-            NetClient connect (object serverInfo, function callback, string clientKey = "");
-            NetClient onError (function callback);
+
+            Sound (string filename);
+
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            changeOffsetX (int targetOffset, int msDuration, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            changePitch (number targetOffset, int msDuration, int easing = easeInOutQuad);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            changeVolume (number level, uint fadeMs, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            fadeIn (uint fadeMs, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            fadeOut (uint fadeMs, int easing = linearTween);
+            number getVolume ();
+            boolean isLooping ();
+            boolean isPaused ();
+/**
+\note Parameter \c func: \ref pdg::SoundEventCallback.
+*/
+            IEventHandler on (int eventCode, function func);
+/**
+\note Parameter \c func: \ref pdg::SoundEventCallback.
+*/
+            IEventHandler onDonePlaying (function func);
+/**
+\note Parameter \c func: \ref pdg::SoundEventCallback.
+*/
+            IEventHandler onFailedToPlay (function func);
+/**
+\note Parameter \c func: \ref pdg::SoundEventCallback.
+*/
+            IEventHandler onLooping (function func);
+            pause ();
+            play (number vol = 1.0, int offsetX = 0, number pitch = 0, uint fromMs = 0, int lenMs = ENTIRE_LENGTH);
+            resume ();
+            Sound setLooping (boolean loopingOn);
+            Sound setOffsetX (int offsetX);
+            Sound setPitch (number pitchOffset);
+            Sound setVolume (number inVolume);
+            Sound skip (int skipMilliseconds);
+            Sound skipTo (uint timeMs);
+            start ();
+            stop ();
     };
 
-    class NetServer
+    class SoundManager
     {
         public:
-            object serverInfo;
-            number serverPort;
-            string serverAddr;
-            number handshakeTimeout;
-            boolean reservationRequired;
-            boolean allowDatagram;
-            boolean listening;
-            NetConnection[] connections;
-            NetServer (object opts = null);
-            NetServer listen (function callback);
-            number broadcast (object message, function filter = null);
-            NetServer expectClient (string clientKey, string clientIpAddr = '*', int reservationTTL = FOREVER, boolean singleUse = false);
-            NetServer onError (function callback);
-            shutdown (boolean closeExisting = true, boolean kill = false);
+/**
+\note Parameter \c func: \ref pdg::SoundEventCallback.
+*/
+            IEventHandler on (int eventCode, function func);
+/**
+\note Parameter \c func: \ref pdg::SoundEventCallback.
+*/
+            IEventHandler onDonePlaying (function func);
+/**
+\note Parameter \c func: \ref pdg::SoundEventCallback.
+*/
+            IEventHandler onFailedToPlay (function func);
+/**
+\note Parameter \c func: \ref pdg::SoundEventCallback.
+*/
+            IEventHandler onLooping (function func);
+            setMute (boolean muted);
+            setVolume (number level);
     };
 
-    class AnimationSpringTarget
+    class Spline
     {
         public:
-            AnimationSpringTarget (number mass = 1, number stiffness = 100, number damping = 20);
-            object getState ();
-            setState (object state);
-            applyImpulse (number x, number y);
-            object update (number targetX, number targetY, number deltaSeconds);
+
+            Spline (number splineType = SPLINE_CUBIC_BEZIER);
+
+            addPoint (Point point);
+            addSegment (Point p1, Point p2, Point p3, Point p4);
+            Rect getBounds ();
+            Point getFirstOrder (number u);
+            number getMaxU ();
+            Point getPoint (number pointIndex);
+            number getPointCount ();
+            Point getSecondOrder (number u);
+            setPoint (number pointIndex, Point point);
     };
 
-    class AnimationContactTarget
+    class Sprite : public Animated, public EventEmitter, public ISerializable
     {
         public:
-            AnimationContactTarget ();
-            object getState ();
-            lockWorld (number x, number y);
-            lockPlatform (number x, number y, number support, object frame);
-            release (number fadeSeconds = 0);
-            object update (number deltaSeconds, boolean contactActive, boolean withinReach, number support = 0, object frame = undefined, number releaseSeconds = 0);
+
+            /** Read-only property. */
+            Collider collider;
+            /** Read-only property. */
+            PhysicsBody physics;
+
+            Sprite ();
+
+            activateSubEntity (string entityName, string animationName = "idle");
+            uint addAnimationDrawable (Drawing drawing, AnimationDrawableOptions options);
+/**
+\note Parameter \c callback: \ref pdg::AnimationDrawableCallback.
+*/
+            uint addAnimationDrawable (function callback, AnimationDrawableOptions options);
+            uint addAnimationFABRIK (AnimationFABRIKOptions options, number order = undefined);
+            uint addAnimationIK (AnimationIKOptions config, int order = 0);
+            uint addAnimationJiggle (AnimationJiggleOptions options, number order = undefined);
+/**
+\note Parameter \c callback: \ref pdg::AnimationModifierCallback.
+*/
+            uint addAnimationModifier (function callback, int stage = animationStage_PreConstraint, int order = 0);
+            addFramesImage (Image image, int startingFrame = start_FromFirstFrame, int numFrames = all_Frames);
+            applyCharacterMap (string mapName);
+            boolean areSpriterEventsEnabled ();
+            Sprite attachAnimationPhysicsPart (Part part, Part parent = null);
+            attachSprite (Sprite sprite, string attachPointName);
+            blendToAnimation (int animationId, number blendTime);
+            blendToAnimation (string animationName, number blendTime);
+            changeFramesImage (Image oldImage, Image newImage);
+            clearAnimationBoneTransforms ();
+            clearAnimationDrawables ();
+            clearAnimationModifiers ();
+            Sprite clearAnimationPhysicsRoot ();
+            clearParts ();
+            Part createPart (string name);
+            deserialize (Deserializer deserializer);
+            Sprite detachAnimationPhysicsPart (Part part, boolean includeDescendants = true);
+            detachSprite (Sprite sprite);
+            disableAnimationPhysics (number recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
+            disableAnimationPose ();
+            boolean enableAnimationPose (string referenceAnimation);
+            enableSpriterEvents (boolean enable = true);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Sprite fadeIn (number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Sprite fadeOut (number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Sprite fadeTo (number targetOpacity, number durationSeconds, int easing = linearTween);
+            Part findPart (string name); // can return null
+            Array getAnimationBindingNames (); // returns Array of string
+            AnimationTransform getAnimationBindingTransform (string name, int space = animationSpace_Local);
+            Array getAnimationBoneNames (); // returns Array of string
+            AnimationTransform getAnimationBoneTransform (string name, int space = animationSpace_Local);
+            int getAnimationDebugDraw ();
+            string getAnimationDrawableError (uint id);
+            AnimationDrawBounds getAnimationDrawBounds ();
+            FABRIKResult getAnimationFABRIKResult (uint id);
+            AnimationIKResult getAnimationIKResult (uint id);
+            AnimationJiggleOptions getAnimationJiggleOptions (uint id);
+            JiggleResult getAnimationJiggleResult (uint id);
+            JiggleState getAnimationJiggleState (uint id);
+            string getAnimationModifierError (uint id);
+            AnimationPhysicsDriveSettings getAnimationPhysicsDriveSettings (string bone); // can return null
+            AnimationPhysicsDriveSettings getAnimationPhysicsDriveSettings (uint bone); // can return null
+            int getAnimationPhysicsMode (string bone = undefined, boolean includeDescendants = false);
+            int getAnimationPhysicsMode (uint bone = undefined, boolean includeDescendants = false);
+            uint getAnimationPhysicsRoot ();
+            Array getAnimationPhysicsSetupWarnings (); // returns Array of string
+            AnimationPose getAnimationPose ();
+            number getAnimationProgress ();
+            string getAnimationRigError ();
+            int getAnimationSource ();
+            number getAnimationTransitionProgress ();
+            Array getAppliedCharacterMaps (); // returns Array of string
+            Sprite getAttachedSprite (string attachPointName);
+            Part getAttachmentPart ();
+            Offset getAttachPoint (string attachPointName);
+            number getBlendProgress ();
+            Bone getBone (string name);
+            Bone getBone (uint id);
+            number getCurrentFrame ();
+            Offset getFrameCenterOffset (Image image = null, int frameNum = 0);
+            number getFrameCount ();
+            RotatedRect getFrameRotatedBounds (int frameNum = -1);
+            SpriteLayer getLayer ();
+            number getMouseDetectMode ();
+            number getMyClassTag ();
+            number getOpacity ();
+            Part getPart (uint id);
+            uint getPartCount ();
+            Array getPartNames (); // returns Array of string
+            uint getSerializedSize (Serializer serializer);
+            RotatedRect getSpriterCollisionBox (string boxName);
+            number getSpriterCollisionBoxCount ();
+            string getSpriterCollisionBoxName (number index);
+            boolean getWantsAnimEndEvents ();
+            boolean getWantsAnimLoopEvents ();
+            boolean getWantsClickEvents ();
+            boolean getWantsCollideWallEvents ();
+            boolean getWantsMouseOverEvents ();
+            boolean getWantsOffscreenEvents ();
+            int getZOrder ();
+            boolean hasAnimation (int animationId);
+            boolean hasAnimation (string animationName);
+            boolean hasAttachPoint (string attachPointName);
+            boolean isAnimationDrawingSupported ();
+            boolean isAnimationJiggleEnabled (uint id);
+            boolean isAnimationPaused ();
+            boolean isAnimationPhysicsEnabled ();
+            boolean isAnimationPhysicsPartAttached (Part part);
+            boolean isAnimationPlaying ();
+            boolean isAnimationPoseEnabled ();
+            boolean isAnimationTransitioning ();
+            boolean isBehind (Sprite sprite);
+            boolean isBlending ();
+            boolean isSpriterCollisionActive (string boxName);
+            void kickAnimationJiggle (uint id, AnimationJiggleKick kick);
+            Sprite moveBehind (Sprite sprite);
+            Sprite moveInFrontOf (Sprite sprite);
+            Sprite moveToBack ();
+            Sprite moveToFront ();
+            offsetFrameCenters (int offsetX, int offsetY, Image image = null, int startingFrame = start_FromFirstFrame, int numFrames = all_Frames);
+/**
+\note Parameter \c func: \ref pdg::EventCallback.
+*/
+            IEventHandler on (int eventCode, function func);
+/**
+\note Parameter \c handler: \ref pdg::AnimationEventHandler.
+*/
+            Sprite on (string event, function handler);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onAnimationBlendComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onAnimationEnd (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onAnimationLoop (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteRecoveryEventCallback.
+*/
+            IEventHandler onAnimationPhysicsRecoveryComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteCollisionEventCallback.
+*/
+            IEventHandler onCollideSprite (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteCollisionEventCallback.
+*/
+            IEventHandler onCollideWall (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onExitLayer (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onFadeComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onFadeInComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onFadeOutComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseClick (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseDown (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseEnter (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseLeave (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseUp (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onOffscreen (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onOnscreen (function func);
+            pauseAnimation ();
+            removeAllCharacterMaps ();
+            removeAnimationDrawable (uint id);
+            void removeAnimationJiggle (uint id);
+            removeAnimationModifier (uint id);
+            removeCharacterMap (string mapName);
+            removeCollider ();
+            boolean removePart (uint id);
+            removePhysicsBody ();
+            void resetAnimationJiggle (uint id);
+            resumeAnimation ();
+            AnimationPose sampleAnimationPose (string clip, number timeSeconds);
+            seekAnimation (string clip, number timeSeconds);
+            serialize (Serializer serializer);
+            setAnimationBoneTransform (string name, AnimationTransform transform);
+            setAnimationDebugDraw (int flags);
+            setAnimationDrawableEnabled (uint id, boolean enabled);
+            setAnimationIKTarget (uint id, number x, number y, int space = animationSpace_Rig);
+            void setAnimationJiggleEnabled (uint id, boolean enabled);
+            void setAnimationJiggleInfluence (uint id, number influence, number seconds = undefined);
+            void setAnimationJiggleSettings (uint id, AnimationJiggleSettings settings);
+            void setAnimationJiggleState (uint id, JiggleState state);
+            Sprite setAnimationPhysicsDriveSettings (AnimationPhysicsDriveOptions settings, string bone = undefined, boolean includeDescendants = false);
+            Sprite setAnimationPhysicsDriveSettings (AnimationPhysicsDriveOptions settings, uint bone = undefined, boolean includeDescendants = false);
+            Sprite setAnimationPhysicsMode (int mode, string bone = undefined, boolean includeDescendants = false, number recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
+            Sprite setAnimationPhysicsMode (int mode, uint bone = undefined, boolean includeDescendants = false, number recoveryTime = 0.5, int direction = rotationDirection_AsSpecified);
+            Sprite setAnimationPhysicsRoot (number bone);
+            Sprite setAnimationPhysicsRoot (string bone);
+            setAnimationSource (int source);
+            setDrawHelper (ISpriteDrawHelper helper);
+            Sprite setFrame (int frame);
+            Sprite setFrameCollisionMask (Image frameImage, Image maskImage);
+            Sprite setMouseDetectMode (int collisionType = collide_BoundingBox);
+            Sprite setOpacity (number opacity);
+            setPostDrawHelper (ISpriteDrawHelper helper);
+            Collider setupAnimationCollider ();
+            setupAnimationPhysics (AnimationPhysicsDefinition definition);
+            Collider setupCollider ();
+            Collider setupFrameCollider (int mode = frameCollider_AlphaMask, int alphaThreshold = 128);
+            PhysicsBody setupPhysicsBody (number mass = 1, number momentOfInertia = 1);
+            Sprite setupPhysicsFromAnimationRig (number totalMass, number unitsPerMeter = 1);
+            Sprite setWantsAnimEndEvents (boolean wantsThem = true);
+            Sprite setWantsAnimLoopEvents (boolean wantsThem = true);
+            Sprite setWantsClickEvents (boolean wantsThem = true);
+            Sprite setWantsCollideWallEvents (boolean wantsThem = true);
+            Sprite setWantsMouseOverEvents (boolean wantsThem = true);
+            Sprite setWantsOffscreenEvents (boolean wantsThem = true);
+            startAnimation (int animationId);
+            startAnimation (string animationName);
+            startFrameAnimation (number fps, int startingFrame = start_FromFirstFrame, int numFrames = all_Frames, int animateFlags = animate_Looping);
+            stopAnimation ();
+            stopFrameAnimation ();
+            boolean supportsAnimationPhysics ();
+            Part transferPart (Part part, boolean includeDescendants = true);
+            transitionToAnimation (string clip, number timeSeconds, number durationSeconds);
     };
 
+    class SpriteLayer : public EventEmitter, public ISerializable
+    {
+        public:
+            addParticle (Particle value);
+            addSprite (Sprite newSprite);
+            applyCharacterMapToAll (string mapName);
+            Particle createParticle ();
+            ParticleEmitter createParticleEmitter ();
+            Sprite createSprite ();
+            Sprite createSpriteFromSpriterEntity (string inEntityName);
+            Sprite createSpriteFromSpriterFile (string inFileName, string inEntityName = null);
+            deserialize (Deserializer deserializer);
+            disableCollisions ();
+            disableCollisionsWithLayer (SpriteLayer otherLayer);
+            enableCollisions ();
+            enableCollisionsWithLayer (SpriteLayer otherLayer);
+            enableSpriterEvents (boolean enable = true);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            SpriteLayer fadeIn (number durationSeconds, int easing = linearTween);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            SpriteLayer fadeOut (number durationSeconds, int easing = linearTween);
+            Sprite findSprite (int id);
+            Camera getCamera ();
+            Camera getEffectiveCamera ();
+            uint getMaxParticles ();
+            number getMyClassTag ();
+            Particle getNthParticle (uint value);
+            Sprite getNthSprite (int index);
+            uint getParticleCount ();
+            number getParticleTrailCount ();
+            uint getQueryBits ();
+            uint getSerializedSize (Serializer serializer);
+            CpSpace getSpace ();
+            Port getSpritePort ();
+            int getSpriteZOrder (Sprite sprite);
+            Rect getWorldBounds ();
+            int getZOrder ();
+            boolean hasSprite (Sprite sprite);
+            hide ();
+            boolean isHidden ();
+            boolean isSpriteBehind (Sprite sprite, Sprite otherSprite);
+            Offset layerToPortOffset (Offset o);
+            Point layerToPortPoint (Point p);
+            Quad layerToPortQuad (Quad q);
+            RotatedRect layerToPortRect (Rect r);
+            Vector layerToPortVector (Vector v);
+            moveBehind (SpriteLayer layer);
+            moveInFrontOf (SpriteLayer layer);
+            moveToBack ();
+            moveToFront ();
+/**
+\note Parameter \c func: \ref pdg::EventCallback.
+*/
+            IEventHandler on (int eventCode, function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onAnimationComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onAnimationEnd (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onAnimationLoop (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onAnimationStart (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteCollisionEventCallback.
+*/
+            IEventHandler onCollideSprite (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteCollisionEventCallback.
+*/
+            IEventHandler onCollideWall (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onDrawPortComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onErasePort (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onExitLayer (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onFadeComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onFadeInComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onFadeOutComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onLayerFadeInComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onLayerFadeOutComplete (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseClick (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseDown (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseEnter (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseLeave (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteTouchNotificationCallback.
+*/
+            IEventHandler onMouseUp (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onOffscreen (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteAnimationEventCallback.
+*/
+            IEventHandler onOnscreen (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onPostAnimateLayer (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onPostDrawLayer (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onPreAnimateLayer (function func);
+/**
+\note Parameter \c func: \ref pdg::SpriteLayerEventCallback.
+*/
+            IEventHandler onPreDrawLayer (function func);
+            Offset portToLayerOffset (Offset o);
+            Point portToLayerPoint (Point p);
+            Quad portToLayerQuad (Quad q);
+            RotatedRect portToLayerRect (Rect r);
+            Vector portToLayerVector (Vector v);
+            removeAllParticleEmitters ();
+            removeAllParticles ();
+            removeAllSprites ();
+            removeCharacterMapFromAll (string mapName);
+            removeParticle (Particle value);
+            removeParticleEmitter (ParticleEmitter value);
+            removeSprite (Sprite oldSprite);
+            serialize (Serializer serializer);
+            setCamera (Camera camera = null);
+            setCameraParallax (number movementRatio = 1, number zoomRatio = 1);
+            setDamping (number damping);
+            setGravity (number gravity);
+            SpriteLayer setMaxParticles (uint value);
+            setQueryBits (uint bits);
+            SpriteLayer setSerializationFlags (uint flags);
+            setSpritePort (Port port);
+            setStaticLayer (boolean isStatic = true);
+            setUseChipmunkPhysics (boolean useIt = true);
+            setWorldBounds (Rect bounds);
+            show ();
+            startAnimations ();
+            stopAnimations ();
+    };
+
+    class TileLayer : public SpriteLayer
+    {
+        public:
+            number checkCollision (Sprite movingSprite, uint alphaThreshold = 128, boolean shortCircuit = true);
+            defineTileSet (int tileWidth, int tileHeight, Image tiles, boolean hasTransparency = true, boolean flipTiles = false);
+            MemBlock getMapData (int mapWidth = worldWidth, int mapHeight = worldHeight, int srcX = 0, int srcY = 0);
+            Image getTileSetImage ();
+            Point getTileSize ();
+            TileInfo getTileTypeAndFacingAt (int x, int y);
+            number getTileTypeAt (int x, int y);
+            Rect getWorldSize ();
+            loadMapData (Uint8Array data, int mapWidth = 0, int mapHeight = 0, int dstX = 0, int dstY = 0);
+            loadMapData (MemBlock data, int mapWidth = 0, int mapHeight = 0, int dstX = 0, int dstY = 0);
+            setTileTypeAt (int x, int y, uint t, uint facing = facing_Ignore);
+            setWorldSize (int width, int height, boolean repeatingX = false, boolean repeatingY = false);
+    };
+
+    class TimerManager : public EventEmitter
+    {
+        public:
+            cancelAllTimers ();
+            cancelTimer (int id);
+            delayTimer (int id, uint delay);
+            delayTimerUntil (int id, int msTime);
+            number getMilliseconds ();
+            number getWhenTimerFiresNext (int id);
+            boolean isPaused ();
+            boolean isTimerPaused (int id);
+/**
+\note Parameter \c func: \ref pdg::TimerNotification.
+*/
+            IEventHandler onInterval (function func, int interval); // returns TimerSubscription
+/**
+\note Parameter \c func: \ref pdg::TimerNotification.
+*/
+            IEventHandler onTimeout (function func, int delay); // returns TimerSubscription
+            pause ();
+            pauseTimer (int id);
+            startTimer (int id, uint delay, boolean oneShot = true);
+            unpause ();
+            unpauseTimer (int id);
+    };
+
+    class Troupe : public Animated
+    {
+        public:
+
+            Troupe ();
+
+            Troupe add (Animated member);
+            Troupe ambientLight (Color color);
+            Troupe ambientLight (string colorName);
+            Troupe ambientLight (number colorRGBA);
+            boolean animate (number deltaSeconds);
+/**
+\note Parameter \c part: \c Part or \c null.
+\note Parameter \c parent: \c Part or \c null.
+*/
+            Troupe attachAnimationPhysicsPart (Part part, Part parent = undefined);
+            Troupe bindToAnimationBinding (string name);
+            Troupe bindToAnimationSocket (string name);
+            Troupe bindToBone (number bone);
+            Troupe blendMode (number mode);
+            Troupe breakTrail ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeAmbientLight (Color target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeAmbientLight (string targetName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeAmbientLight (number targetRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillColor (Color target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillColor (string targetName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillColor (number targetRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, Color startColor, Point end, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, Color startColor, Point end, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, Color startColor, Point end, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, string startColorName, Point end, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, string startColorName, Point end, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, string startColorName, Point end, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, number startColorRGBA, Point end, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, number startColorRGBA, Point end, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillGradient (Point start, number startColorRGBA, Point end, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillOpacity (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, Color centerColor, number radius, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, Color centerColor, number radius, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, Color centerColor, number radius, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, string centerColorName, number radius, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, string centerColorName, number radius, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, string centerColorName, number radius, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, number centerColorRGBA, number radius, Color endColor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, number centerColorRGBA, number radius, string endColorName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFillRadialGradient (Point center, number centerColorRGBA, number radius, number endColorRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeFrames (number first, number last, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeLightOffset (Offset target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeLineColor (Color target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeLineColor (string targetName, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeLineColor (number targetRGBA, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeLineOpacity (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeLineThickness (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changePolarOffset (Offset target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeRoundedCorners (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeSkew (number x, number y, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeSphereRotation (number radians, number seconds, number easing = undefined, number direction = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeSubsection (Rect target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeTextSize (number target, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe changeTransform (AffineTransform target, number seconds, number easing = undefined);
+            Troupe clear ();
+            Troupe clearAnimationPhysicsRoot ();
+            Troupe clearContent ();
+            Troupe clearIKLimits ();
+            Troupe clearIKTarget ();
+            Troupe clearTrail ();
+            Troupe clearViewBounds ();
+            Troupe clipOverflow (boolean clip);
+            boolean contains (Animated member);
+            Troupe cutTo (Camera destination);
+/**
+\note Parameter \c part: \c Part or \c null.
+*/
+            Troupe detachAnimationPhysicsPart (Part part, boolean includeDescendants = undefined);
+            Troupe detachSprite ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe fadeIn (number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe fadeIn (number durationSeconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe fadeOut (number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe fadeOut (number durationSeconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe fadeTo (number opacity, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe fadeTo (number targetOpacity, number durationSeconds, number easing = undefined);
+            Troupe fillColor (Color color);
+            Troupe fillColor (string colorName);
+            Troupe fillColor (number colorRGBA);
+            Troupe fillGradient (Point start, Color startColor, Point end, Color endColor);
+            Troupe fillGradient (Point start, Color startColor, Point end, string endColorName);
+            Troupe fillGradient (Point start, Color startColor, Point end, number endColorRGBA);
+            Troupe fillGradient (Point start, string startColorName, Point end, Color endColor);
+            Troupe fillGradient (Point start, string startColorName, Point end, string endColorName);
+            Troupe fillGradient (Point start, string startColorName, Point end, number endColorRGBA);
+            Troupe fillGradient (Point start, number startColorRGBA, Point end, Color endColor);
+            Troupe fillGradient (Point start, number startColorRGBA, Point end, string endColorName);
+            Troupe fillGradient (Point start, number startColorRGBA, Point end, number endColorRGBA);
+            Troupe fillOpacity (number opacity);
+            Troupe fillRadialGradient (Point center, Color centerColor, number radius, Color endColor);
+            Troupe fillRadialGradient (Point center, Color centerColor, number radius, string endColorName);
+            Troupe fillRadialGradient (Point center, Color centerColor, number radius, number endColorRGBA);
+            Troupe fillRadialGradient (Point center, string centerColorName, number radius, Color endColor);
+            Troupe fillRadialGradient (Point center, string centerColorName, number radius, string endColorName);
+            Troupe fillRadialGradient (Point center, string centerColorName, number radius, number endColorRGBA);
+            Troupe fillRadialGradient (Point center, number centerColorRGBA, number radius, Color endColor);
+            Troupe fillRadialGradient (Point center, number centerColorRGBA, number radius, string endColorName);
+            Troupe fillRadialGradient (Point center, number centerColorRGBA, number radius, number endColorRGBA);
+            Troupe fitType (number fit);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe flash (number opacity, number seconds, number easing = undefined);
+            Troupe follow (Animated target);
+/**
+\note Parameter \c font: \c Font or \c null.
+*/
+            Troupe font (Font font);
+            Troupe frame (number frame);
+            int getMemberCount ();
+            Troupe hide ();
+            Troupe lightOffset (Offset offset);
+            Troupe lineColor (Color color);
+            Troupe lineColor (string colorName);
+            Troupe lineColor (number colorRGBA);
+            Troupe lineOpacity (number opacity);
+            Troupe lineStyle (number style);
+            Troupe lineThickness (number thickness);
+/**
+\note Parameter \c mask: \c Image or \c null.
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe lumaFadeTo (Camera destination, number seconds, Image mask = undefined, number softness = undefined, boolean darkFirst = undefined, number easing = undefined);
+            Troupe matchCutTo (Camera destination, CameraMatchCutOptions options);
+            Troupe matchFadeTo (Camera destination, CameraMatchFadeOptions options);
+/**
+\note Parameter \c sprite: \c Sprite or \c null.
+*/
+            Troupe moveBehind (Sprite sprite);
+/**
+\note Parameter \c sprite: \c Sprite or \c null.
+*/
+            Troupe moveInFrontOf (Sprite sprite);
+            Troupe moveToBack ();
+            Troupe moveToFront ();
+            Troupe polarOffset (Offset offset);
+            Troupe remove (Animated member);
+            Troupe roundedCorners (number radius);
+            Troupe setAnimationPhysicsDriveSettings (AnimationPhysicsDriveSettings settings);
+            Troupe setAnimationPhysicsDriveSettings (AnimationPhysicsDriveSettings settings, number bone, boolean includeDescendants = undefined);
+            Troupe setAnimationPhysicsDriveSettings (AnimationPhysicsDriveSettings settings, string bone, boolean includeDescendants = undefined);
+            Troupe setAnimationPhysicsMode (number mode, number recoveryTime = undefined, number direction = undefined);
+            Troupe setAnimationPhysicsMode (number mode, number bone, boolean includeDescendants = undefined, number recoveryTime = undefined, number direction = undefined);
+            Troupe setAnimationPhysicsMode (number mode, string bone, boolean includeDescendants = undefined, number recoveryTime = undefined, number direction = undefined);
+            Troupe setAnimationPhysicsRoot (number bone);
+            Troupe setAnimationPhysicsRoot (string bone);
+            Troupe setDeadzone (Rect bounds);
+            Troupe setDrawing (Drawing drawing);
+            Troupe setEmissionRate (number particlesPerSecond);
+            Troupe setFollowOffset (Offset offset);
+            Troupe setFrame (number frame);
+/**
+\note Parameter \c frameImage: \c Image or \c null.
+\note Parameter \c maskImage: \c Image or \c null.
+*/
+            Troupe setFrameCollisionMask (Image frameImage, Image maskImage);
+/**
+\note Parameter \c middle: \c Part or \c null.
+\note Parameter \c tip: \c Part or \c null.
+*/
+            Troupe setIKDriveTarget (Part middle, Part tip, Point target, number maxForce, number maxTorque, number space = undefined, number bendDirection = undefined, number influence = undefined, number frequency = undefined, number dampingRatio = undefined);
+            Troupe setIKLimits (number minimum, number maximum);
+            Troupe setIKLimits (PhysicsConstraint constraint);
+            Troupe setIKLimits (number minAngle, number maxAngle);
+/**
+\note Parameter \c middle: \c Part or \c null.
+\note Parameter \c tip: \c Part or \c null.
+*/
+            Troupe setIKTarget (Part middle, Part tip, Point target, number space = undefined, number bendDirection = undefined, number influence = undefined);
+            Troupe setImage (Image image, Rect localBounds);
+            Troupe setImage (Image image);
+            Troupe setLifetime (number seconds);
+            Troupe setLookAhead (number seconds);
+            Troupe setMouseDetectMode (number collisionType = undefined);
+            Troupe setOpacity (number opacity);
+/**
+\note Parameter \c parent: \c Part or \c null.
+*/
+            Troupe setParentPart (Part parent);
+            Troupe setParticleSpeed (number speed);
+            Troupe setParticleSpeed (number minimum, number maximum);
+            Troupe setParticleTemplate (Particle particle);
+            Troupe setPixelSnapping (boolean snap = undefined);
+            Troupe setSeed (number seed);
+            Troupe setSmoothing (number seconds);
+            Troupe setSpread (number radians);
+            Troupe setTrail (ParticleTrailOptions options);
+            Troupe setTransform (AffineTransform matrix);
+            Troupe setupPhysicsFromAnimationRig (number totalMass, number unitsPerMeter = undefined);
+            Troupe setVelocityInheritance (number fraction);
+            Troupe setViewBounds (Rect bounds);
+            Troupe setViewport (Rect viewport);
+            Troupe setWantsAnimEndEvents (boolean wantsThem = undefined);
+            Troupe setWantsAnimLoopEvents (boolean wantsThem = undefined);
+            Troupe setWantsClickEvents (boolean wantsThem = undefined);
+            Troupe setWantsCollideWallEvents (boolean wantsThem = undefined);
+            Troupe setWantsMouseOverEvents (boolean wantsThem = undefined);
+            Troupe setWantsOffscreenEvents (boolean wantsThem = undefined);
+            Troupe setZoom (number zoom);
+            Troupe show ();
+            Troupe sphereRotation (number rotation);
+            Troupe startEmitting ();
+            Troupe stopEmitting ();
+            Troupe stopFollowing ();
+            Troupe subsection (Rect section);
+            Troupe textSize (number size);
+            Troupe textStyle (number style);
+/**
+\note Parameter \c texture: \c Image or \c null.
+*/
+            Troupe texture (Image texture);
+            Troupe transform (AffineTransform matrix);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe transitionTo (Camera destination, number seconds, number style = undefined, number easing = undefined);
+            Troupe translation (Offset offset);
+            Troupe unbindFromBone ();
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe whipPanTo (Camera destination, number seconds, number style = undefined, number blur = undefined, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe zoom (number factor, number seconds, number easing = undefined);
+/**
+\note Parameter \c easing: \ref pdg::EasingFunction.
+*/
+            Troupe zoomTo (number zoom, number seconds, number easing = undefined);
+    };
+
+    class Vector : public Offset
+    {
+        public:
+
+            number x;
+            number y;
+
+            Vector ();
+            Vector (number x, number y);
+/**
+\note Parameter \c xy: \ref pdg::XY.
+*/
+            Vector (number[] xy);
+            Vector (XY xy);
+
+            number dotProduct (Vector vector);
+            Vector normal ();
+            Point projection (Point point);
+            Vector unit ();
+            number vectorAngle ();
+            number vectorLength ();
+    };
+
+
+/**
+\brief AffineTransform
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| a | \c number | Required |  |
+| b | \c number | Required |  |
+| c | \c number | Required |  |
+| d | \c number | Required |  |
+| tx | \c number | Required |  |
+| ty | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AffineTransform {
+/** \brief a
+Type: \c number.
+Required.
+*/
+number a;
+/** \brief b
+Type: \c number.
+Required.
+*/
+number b;
+/** \brief c
+Type: \c number.
+Required.
+*/
+number c;
+/** \brief d
+Type: \c number.
+Required.
+*/
+number d;
+/** \brief tx
+Type: \c number.
+Required.
+*/
+number tx;
+/** \brief ty
+Type: \c number.
+Required.
+*/
+number ty;
+};
+/**
+\brief AnimationBindingPose
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Extends: \ref pdg::AnimationTransform.
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| kind | \c number | Required |  |
+| name | \c string | Required |  |
+| parent | \c number or \c null | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationBindingPose {
+/** \brief kind
+Type: \c number.
+Required.
+*/
+number kind;
+/** \brief name
+Type: \c string.
+Required.
+*/
+string name;
+/** \brief parent
+Type: \c number or \c null.
+Required.
+*/
+number parent;
+};
+/**
+\brief AnimationBonePose
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Extends: \ref pdg::AnimationTransform.
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| name | \c string | Required |  |
+| parent | \c number or \c null | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationBonePose {
+/** \brief name
+Type: \c string.
+Required.
+*/
+string name;
+/** \brief parent
+Type: \c number or \c null.
+Required.
+*/
+number parent;
+};
+/**
+\brief An independent contact position and influence sample.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| influence | \c number | Required | Remaining influence, from zero to one. |
+| locked | \c boolean | Required | Whether the target currently holds a contact lock. |
+| x | \c number | Required | Horizontal position in owning-layer coordinates. |
+| y | \c number | Required | Vertical position in owning-layer coordinates. |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationContactState {
+/** \brief Remaining influence, from zero to one.
+Type: \c number.
+Required.
+*/
+number influence;
+/** \brief Whether the target currently holds a contact lock.
+Type: \c boolean.
+Required.
+*/
+boolean locked;
+/** \brief Horizontal position in owning-layer coordinates.
+Type: \c number.
+Required.
+*/
+number x;
+/** \brief Vertical position in owning-layer coordinates.
+Type: \c number.
+Required.
+*/
+number y;
+};
+/**
+\brief Choose artwork during rendering. Return Drawing or null; undefined and Promises are invalid.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(context)
+\par Result
+\c Drawing or \c null.
+\note Must return synchronously.
+Parameter context: \ref pdg::AnimationDrawableContext.
+*/
+struct AnimationDrawableCallback {
+};
+/**
+\brief Borrowed drawing context; expires when the synchronous callback returns.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Lifetime: callback.
+\par Methods
+| Method | Result | Behavior |
+| --- | --- | --- |
+| copyPose() | \ref pdg::AnimationPose | Copy the final animation pose. See Sprite.getAnimationPose for the snapshot format. |
+| getTransform(space = animationSpace_World) | \ref pdg::AnimationTransform | Copy the selected bone transform in local, rig, or owning-layer coordinates. |
+*/
+struct AnimationDrawableContext {
+};
+/**
+\brief Options shared by both Sprite.addAnimationDrawable overloads.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bone | \c string or \c number int | Required | Existing bone name or zero-based bone ID. |
+| bounds | \ref pdg::AnimationDrawingBounds | Optional | Omit if safe bounds are unknown. |
+| order | \c number int | 0 | Lower values draw first within the same placement and slot; ties preserve registration order. |
+| placement | \c number int | animationDraw_AfterAll | Use an animationDraw placement constant. |
+| slot | \c string | "" | Required for slot placements; omit for BeforeAll and AfterAll. |
+| strokeSpace | \c number int | animationStroke_PortPixels | Use an animationStroke constant. |
+| uncullable | \c boolean | Optional | Defaults to true without bounds and false with bounds. |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationDrawableOptions {
+/** \brief Existing bone name or zero-based bone ID.
+Type: \c string or \c number int.
+Required.
+*/
+object bone;
+/** \brief Omit if safe bounds are unknown.
+Type: \ref pdg::AnimationDrawingBounds.
+Optional.
+*/
+AnimationDrawingBounds bounds;
+/** \brief Lower values draw first within the same placement and slot; ties preserve registration order.
+Type: \c number int.
+Optional. Default: \c 0.
+*/
+int order;
+/** \brief Use an animationDraw placement constant.
+Type: \c number int.
+Optional. Default: \c animationDraw_AfterAll.
+*/
+int placement;
+/** \brief Required for slot placements; omit for BeforeAll and AfterAll.
+Type: \c string.
+Optional. Default: \c "".
+*/
+string slot;
+/** \brief Use an animationStroke constant.
+Type: \c number int.
+Optional. Default: \c animationStroke_PortPixels.
+*/
+int strokeSpace;
+/** \brief Defaults to true without bounds and false with bounds.
+Type: \c boolean.
+Optional.
+*/
+boolean uncullable;
+};
+/**
+\brief AnimationDrawBounds
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bottom | \c number | Required |  |
+| left | \c number | Required |  |
+| right | \c number | Required |  |
+| top | \c number | Required |  |
+| uncullable | \c boolean | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationDrawBounds {
+/** \brief bottom
+Type: \c number.
+Required.
+*/
+number bottom;
+/** \brief left
+Type: \c number.
+Required.
+*/
+number left;
+/** \brief right
+Type: \c number.
+Required.
+*/
+number right;
+/** \brief top
+Type: \c number.
+Required.
+*/
+number top;
+/** \brief uncullable
+Type: \c boolean.
+Required.
+*/
+boolean uncullable;
+};
+/**
+\brief Finite bone-local artwork bounds, including stroke extents.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bottom | \c number | Required | Maximum vertical coordinate; must be at least top. |
+| left | \c number | Required | Minimum horizontal coordinate. |
+| right | \c number | Required | Maximum horizontal coordinate; must be at least left. |
+| top | \c number | Required | Minimum vertical coordinate. |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationDrawingBounds {
+/** \brief Maximum vertical coordinate; must be at least top.
+Type: \c number.
+Required.
+*/
+number bottom;
+/** \brief Minimum horizontal coordinate.
+Type: \c number.
+Required.
+*/
+number left;
+/** \brief Maximum horizontal coordinate; must be at least left.
+Type: \c number.
+Required.
+*/
+number right;
+/** \brief Minimum vertical coordinate.
+Type: \c number.
+Required.
+*/
+number top;
+};
+/**
+\brief Borrowed synchronous evaluator context. Do not retain it after the call.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| elapsedSeconds | \c number | Required | Elapsed local time of the conditional or until wrapper. |
+| target | \c Animated | Required | Current playback target; observe its state without editing the executing graph. |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationEvaluationContext {
+/** \brief Elapsed local time of the conditional or until wrapper.
+Type: \c number.
+Required.
+*/
+number elapsedSeconds;
+/** \brief Current playback target; observe its state without editing the executing graph.
+Type: \c Animated.
+Required.
+*/
+Animated target;
+};
+/**
+\brief Observe the playback target and return a boolean. Promises and nonboolean results are invalid.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(context)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter context: \ref pdg::AnimationEvaluationContext.
+*/
+struct AnimationEvaluator {
+};
+/**
+\brief AnimationEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| elapsedSeconds | \c number | Required |  |
+| iteration | \c number | Required |  |
+| markName | \c string | Required |  |
+| operationName | \c string | Required |  |
+| reverse | \c boolean | Required |  |
+| scriptName | \c string | Required |  |
+| target | \c Animated | Required |  |
+| type | \c string | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationEvent {
+/** \brief elapsedSeconds
+Type: \c number.
+Required.
+*/
+number elapsedSeconds;
+/** \brief iteration
+Type: \c number.
+Required.
+*/
+number iteration;
+/** \brief markName
+Type: \c string.
+Required.
+*/
+string markName;
+/** \brief operationName
+Type: \c string.
+Required.
+*/
+string operationName;
+/** \brief reverse
+Type: \c boolean.
+Required.
+*/
+boolean reverse;
+/** \brief scriptName
+Type: \c string.
+Required.
+*/
+string scriptName;
+/** \brief target
+Type: \c Animated.
+Required.
+*/
+Animated target;
+/** \brief type
+Type: \c string.
+Required.
+*/
+string type;
+};
+/**
+\brief Receives a lifecycle notification after the scheduler publishes its state. Return value is ignored.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c void.
+\note Must return synchronously.
+Parameter event: \ref pdg::AnimationEvent.
+*/
+struct AnimationEventHandler {
+};
+/**
+\brief AnimationFABRIKOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bendDirection | \c number | Optional |  |
+| chain | Array of \c string or \c number uint | Required |  |
+| influence | \c number | Optional |  |
+| maximum | Array of \c number | Optional |  |
+| maxIterations | \c number | Optional |  |
+| minimum | Array of \c number | Optional |  |
+| space | \c number | Optional |  |
+| targetX | \c number | Optional |  |
+| targetY | \c number | Optional |  |
+| tolerance | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationFABRIKOptions {
+/** \brief bendDirection
+Type: \c number.
+Optional.
+*/
+number bendDirection;
+/** \brief chain
+Type: Array of \c string or \c number uint.
+Required.
+*/
+object chain;
+/** \brief influence
+Type: \c number.
+Optional.
+*/
+number influence;
+/** \brief maximum
+Type: Array of \c number.
+Optional.
+*/
+object maximum;
+/** \brief maxIterations
+Type: \c number.
+Optional.
+*/
+number maxIterations;
+/** \brief minimum
+Type: Array of \c number.
+Optional.
+*/
+object minimum;
+/** \brief space
+Type: \c number.
+Optional.
+*/
+number space;
+/** \brief targetX
+Type: \c number.
+Optional.
+*/
+number targetX;
+/** \brief targetY
+Type: \c number.
+Optional.
+*/
+number targetY;
+/** \brief tolerance
+Type: \c number.
+Optional.
+*/
+number tolerance;
+};
+/**
+\brief AnimationHelperCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(animated,deltaSeconds)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter animated: \c Animated.
+Parameter deltaSeconds: \c number.
+*/
+struct AnimationHelperCallback {
+};
+/**
+\brief AnimationIKOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bendDirection | \c number | Optional |  |
+| influence | \c number | Optional |  |
+| matchOrientation | \c boolean | Optional |  |
+| middle | \c string or \c number | Required |  |
+| middleLength | \c number | Optional |  |
+| middleMax | \c number | Optional |  |
+| middleMin | \c number | Optional |  |
+| root | \c string or \c number | Required |  |
+| rootLength | \c number | Optional |  |
+| rootMax | \c number | Optional |  |
+| rootMin | \c number | Optional |  |
+| space | \c number | Optional |  |
+| stretch | \c number | Optional |  |
+| targetRotation | \c number | Optional |  |
+| targetX | \c number | Optional |  |
+| targetY | \c number | Optional |  |
+| tip | \c string or \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationIKOptions {
+/** \brief bendDirection
+Type: \c number.
+Optional.
+*/
+number bendDirection;
+/** \brief influence
+Type: \c number.
+Optional.
+*/
+number influence;
+/** \brief matchOrientation
+Type: \c boolean.
+Optional.
+*/
+boolean matchOrientation;
+/** \brief middle
+Type: \c string or \c number.
+Required.
+*/
+object middle;
+/** \brief middleLength
+Type: \c number.
+Optional.
+*/
+number middleLength;
+/** \brief middleMax
+Type: \c number.
+Optional.
+*/
+number middleMax;
+/** \brief middleMin
+Type: \c number.
+Optional.
+*/
+number middleMin;
+/** \brief root
+Type: \c string or \c number.
+Required.
+*/
+object root;
+/** \brief rootLength
+Type: \c number.
+Optional.
+*/
+number rootLength;
+/** \brief rootMax
+Type: \c number.
+Optional.
+*/
+number rootMax;
+/** \brief rootMin
+Type: \c number.
+Optional.
+*/
+number rootMin;
+/** \brief space
+Type: \c number.
+Optional.
+*/
+number space;
+/** \brief stretch
+Type: \c number.
+Optional.
+*/
+number stretch;
+/** \brief targetRotation
+Type: \c number.
+Optional.
+*/
+number targetRotation;
+/** \brief targetX
+Type: \c number.
+Optional.
+*/
+number targetX;
+/** \brief targetY
+Type: \c number.
+Optional.
+*/
+number targetY;
+/** \brief tip
+Type: \c string or \c number.
+Required.
+*/
+object tip;
+};
+/**
+\brief AnimationIKResult
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| clamped | \c boolean | Required |  |
+| limited | \c boolean | Required |  |
+| reachable | \c boolean | Required |  |
+| reachError | \c number | Required |  |
+| stretched | \c boolean | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationIKResult {
+/** \brief clamped
+Type: \c boolean.
+Required.
+*/
+boolean clamped;
+/** \brief limited
+Type: \c boolean.
+Required.
+*/
+boolean limited;
+/** \brief reachable
+Type: \c boolean.
+Required.
+*/
+boolean reachable;
+/** \brief reachError
+Type: \c number.
+Required.
+*/
+number reachError;
+/** \brief stretched
+Type: \c boolean.
+Required.
+*/
+boolean stretched;
+};
+/**
+\brief AnimationJiggleJointOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bone | \c string or \c number uint | Optional |  |
+| dampingRatio | \c number | Optional |  |
+| frequency | \c number | Optional |  |
+| gravityX | \c number | Optional |  |
+| gravityY | \c number | Optional |  |
+| inertia | \c number | Optional |  |
+| length | \c number | Optional |  |
+| maxAngle | \c number | Optional |  |
+| maxAngularSpeed | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationJiggleJointOptions {
+/** \brief bone
+Type: \c string or \c number uint.
+Optional.
+*/
+object bone;
+/** \brief dampingRatio
+Type: \c number.
+Optional.
+*/
+number dampingRatio;
+/** \brief frequency
+Type: \c number.
+Optional.
+*/
+number frequency;
+/** \brief gravityX
+Type: \c number.
+Optional.
+*/
+number gravityX;
+/** \brief gravityY
+Type: \c number.
+Optional.
+*/
+number gravityY;
+/** \brief inertia
+Type: \c number.
+Optional.
+*/
+number inertia;
+/** \brief length
+Type: \c number.
+Optional.
+*/
+number length;
+/** \brief maxAngle
+Type: \c number.
+Optional.
+*/
+number maxAngle;
+/** \brief maxAngularSpeed
+Type: \c number.
+Optional.
+*/
+number maxAngularSpeed;
+};
+/**
+\brief AnimationJiggleKick
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| angularVelocity | \c number | Optional |  |
+| joint | \c string or \c number uint | Optional |  |
+| velocityX | \c number | Optional |  |
+| velocityY | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationJiggleKick {
+/** \brief angularVelocity
+Type: \c number.
+Optional.
+*/
+number angularVelocity;
+/** \brief joint
+Type: \c string or \c number uint.
+Optional.
+*/
+object joint;
+/** \brief velocityX
+Type: \c number.
+Optional.
+*/
+number velocityX;
+/** \brief velocityY
+Type: \c number.
+Optional.
+*/
+number velocityY;
+};
+/**
+\brief AnimationJiggleOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| chain | Array of \c string or \c number uint | Optional |  |
+| dampingRatio | \c number | Optional |  |
+| enabled | \c boolean | Optional |  |
+| frequency | \c number | Optional |  |
+| gravityX | \c number | Optional |  |
+| gravityY | \c number | Optional |  |
+| ik | \c number uint | Optional |  |
+| inertia | \c number | Optional |  |
+| influence | \c number | Optional |  |
+| joints | Array of \ref pdg::AnimationJiggleJointOptions | Optional |  |
+| length | \c number | Optional |  |
+| maxAngle | \c number | Optional |  |
+| maxAngularSpeed | \c number | Optional |  |
+| maxDistance | \c number | Optional |  |
+| maxSpeed | \c number | Optional |  |
+| maxStepSeconds | \c number | Optional |  |
+| maxSubsteps | \c number | Optional |  |
+| mode | \c number uint | Required |  |
+| resetOnSeek | \c boolean | Optional |  |
+| resetOnTeleport | \c boolean | Optional |  |
+| teleportAngle | \c number | Optional |  |
+| teleportDistance | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationJiggleOptions {
+/** \brief chain
+Type: Array of \c string or \c number uint.
+Optional.
+*/
+object chain;
+/** \brief dampingRatio
+Type: \c number.
+Optional.
+*/
+number dampingRatio;
+/** \brief enabled
+Type: \c boolean.
+Optional.
+*/
+boolean enabled;
+/** \brief frequency
+Type: \c number.
+Optional.
+*/
+number frequency;
+/** \brief gravityX
+Type: \c number.
+Optional.
+*/
+number gravityX;
+/** \brief gravityY
+Type: \c number.
+Optional.
+*/
+number gravityY;
+/** \brief ik
+Type: \c number uint.
+Optional.
+*/
+number uint ik;
+/** \brief inertia
+Type: \c number.
+Optional.
+*/
+number inertia;
+/** \brief influence
+Type: \c number.
+Optional.
+*/
+number influence;
+/** \brief joints
+Type: Array of \ref pdg::AnimationJiggleJointOptions.
+Optional.
+*/
+object joints;
+/** \brief length
+Type: \c number.
+Optional.
+*/
+number length;
+/** \brief maxAngle
+Type: \c number.
+Optional.
+*/
+number maxAngle;
+/** \brief maxAngularSpeed
+Type: \c number.
+Optional.
+*/
+number maxAngularSpeed;
+/** \brief maxDistance
+Type: \c number.
+Optional.
+*/
+number maxDistance;
+/** \brief maxSpeed
+Type: \c number.
+Optional.
+*/
+number maxSpeed;
+/** \brief maxStepSeconds
+Type: \c number.
+Optional.
+*/
+number maxStepSeconds;
+/** \brief maxSubsteps
+Type: \c number.
+Optional.
+*/
+number maxSubsteps;
+/** \brief mode
+Type: \c number uint.
+Required.
+*/
+number uint mode;
+/** \brief resetOnSeek
+Type: \c boolean.
+Optional.
+*/
+boolean resetOnSeek;
+/** \brief resetOnTeleport
+Type: \c boolean.
+Optional.
+*/
+boolean resetOnTeleport;
+/** \brief teleportAngle
+Type: \c number.
+Optional.
+*/
+number teleportAngle;
+/** \brief teleportDistance
+Type: \c number.
+Optional.
+*/
+number teleportDistance;
+};
+/**
+\brief AnimationJiggleSettings
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| dampingRatio | \c number | Optional |  |
+| enabled | \c boolean | Optional |  |
+| frequency | \c number | Optional |  |
+| gravityX | \c number | Optional |  |
+| gravityY | \c number | Optional |  |
+| inertia | \c number | Optional |  |
+| influence | \c number | Optional |  |
+| joints | Array of \ref pdg::AnimationJiggleJointOptions | Optional |  |
+| length | \c number | Optional |  |
+| maxAngle | \c number | Optional |  |
+| maxAngularSpeed | \c number | Optional |  |
+| maxDistance | \c number | Optional |  |
+| maxSpeed | \c number | Optional |  |
+| maxStepSeconds | \c number | Optional |  |
+| maxSubsteps | \c number | Optional |  |
+| resetOnSeek | \c boolean | Optional |  |
+| resetOnTeleport | \c boolean | Optional |  |
+| teleportAngle | \c number | Optional |  |
+| teleportDistance | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationJiggleSettings {
+/** \brief dampingRatio
+Type: \c number.
+Optional.
+*/
+number dampingRatio;
+/** \brief enabled
+Type: \c boolean.
+Optional.
+*/
+boolean enabled;
+/** \brief frequency
+Type: \c number.
+Optional.
+*/
+number frequency;
+/** \brief gravityX
+Type: \c number.
+Optional.
+*/
+number gravityX;
+/** \brief gravityY
+Type: \c number.
+Optional.
+*/
+number gravityY;
+/** \brief inertia
+Type: \c number.
+Optional.
+*/
+number inertia;
+/** \brief influence
+Type: \c number.
+Optional.
+*/
+number influence;
+/** \brief joints
+Type: Array of \ref pdg::AnimationJiggleJointOptions.
+Optional.
+*/
+object joints;
+/** \brief length
+Type: \c number.
+Optional.
+*/
+number length;
+/** \brief maxAngle
+Type: \c number.
+Optional.
+*/
+number maxAngle;
+/** \brief maxAngularSpeed
+Type: \c number.
+Optional.
+*/
+number maxAngularSpeed;
+/** \brief maxDistance
+Type: \c number.
+Optional.
+*/
+number maxDistance;
+/** \brief maxSpeed
+Type: \c number.
+Optional.
+*/
+number maxSpeed;
+/** \brief maxStepSeconds
+Type: \c number.
+Optional.
+*/
+number maxStepSeconds;
+/** \brief maxSubsteps
+Type: \c number.
+Optional.
+*/
+number maxSubsteps;
+/** \brief resetOnSeek
+Type: \c boolean.
+Optional.
+*/
+boolean resetOnSeek;
+/** \brief resetOnTeleport
+Type: \c boolean.
+Optional.
+*/
+boolean resetOnTeleport;
+/** \brief teleportAngle
+Type: \c number.
+Optional.
+*/
+number teleportAngle;
+/** \brief teleportDistance
+Type: \c number.
+Optional.
+*/
+number teleportDistance;
+};
+/**
+\brief AnimationModifierCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(pose,context)
+\par Result
+\c undefined.
+\note Must return synchronously.
+Parameter pose: \ref pdg::AnimationPoseView.
+Parameter context: \ref pdg::AnimationModifierContext.
+*/
+struct AnimationModifierCallback {
+};
+/**
+\brief AnimationModifierContext
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Lifetime: Borrowed and frozen for the duration of the synchronous callback..
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| deltaSeconds | \c number | Required |  |
+| revision | \c string | Required |  |
+| root | \ref pdg::AnimationTransform | Required |  |
+| simulationDeltaSeconds | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationModifierContext {
+/** \brief deltaSeconds
+Type: \c number.
+Required.
+*/
+number deltaSeconds;
+/** \brief revision
+Type: \c string.
+Required.
+*/
+string revision;
+/** \brief root
+Type: \ref pdg::AnimationTransform.
+Required.
+*/
+AnimationTransform root;
+/** \brief simulationDeltaSeconds
+Type: \c number.
+Required.
+*/
+number simulationDeltaSeconds;
+};
+/**
+\brief AnimationPhysicsBodyDefinition
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bone | \c string or \c number | Required |  |
+| categories | \c number | Optional |  |
+| elasticity | \c number | Optional |  |
+| friction | \c number | Optional |  |
+| length | \c number | Required |  |
+| mask | \c number | Optional |  |
+| mass | \c number | Required |  |
+| mode | \c number | Optional |  |
+| offsetRotation | \c number | Optional |  |
+| offsetX | \c number | Optional |  |
+| offsetY | \c number | Optional |  |
+| radius | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationPhysicsBodyDefinition {
+/** \brief bone
+Type: \c string or \c number.
+Required.
+*/
+object bone;
+/** \brief categories
+Type: \c number.
+Optional.
+*/
+number categories;
+/** \brief elasticity
+Type: \c number.
+Optional.
+*/
+number elasticity;
+/** \brief friction
+Type: \c number.
+Optional.
+*/
+number friction;
+/** \brief length
+Type: \c number.
+Required.
+*/
+number length;
+/** \brief mask
+Type: \c number.
+Optional.
+*/
+number mask;
+/** \brief mass
+Type: \c number.
+Required.
+*/
+number mass;
+/** \brief mode
+Type: \c number.
+Optional.
+*/
+number mode;
+/** \brief offsetRotation
+Type: \c number.
+Optional.
+*/
+number offsetRotation;
+/** \brief offsetX
+Type: \c number.
+Optional.
+*/
+number offsetX;
+/** \brief offsetY
+Type: \c number.
+Optional.
+*/
+number offsetY;
+/** \brief radius
+Type: \c number.
+Required.
+*/
+number radius;
+};
+/**
+\brief AnimationPhysicsDefinition
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bodies | Array of \ref pdg::AnimationPhysicsBodyDefinition | Required |  |
+| joints | Array of \ref pdg::AnimationPhysicsJointDefinition | Optional |  |
+| rootBody | \c number | Optional |  |
+| rootMode | \c number | Optional |  |
+| selfCollisions | \c boolean | Optional |  |
+| version | \c 1 | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationPhysicsDefinition {
+/** \brief bodies
+Type: Array of \ref pdg::AnimationPhysicsBodyDefinition.
+Required.
+*/
+object bodies;
+/** \brief joints
+Type: Array of \ref pdg::AnimationPhysicsJointDefinition.
+Optional.
+*/
+object joints;
+/** \brief rootBody
+Type: \c number.
+Optional.
+*/
+number rootBody;
+/** \brief rootMode
+Type: \c number.
+Optional.
+*/
+number rootMode;
+/** \brief selfCollisions
+Type: \c boolean.
+Optional.
+*/
+boolean selfCollisions;
+/** \brief version
+Type: \c 1.
+Optional.
+*/
+object version;
+};
+/**
+\brief AnimationPhysicsDriveOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| dampingRatio | \c number | Optional |  |
+| direction | \c number | Optional |  |
+| frequency | \c number | Optional |  |
+| maxForce | \c number | Required |  |
+| maxTorque | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationPhysicsDriveOptions {
+/** \brief dampingRatio
+Type: \c number.
+Optional.
+*/
+number dampingRatio;
+/** \brief direction
+Type: \c number.
+Optional.
+*/
+number direction;
+/** \brief frequency
+Type: \c number.
+Optional.
+*/
+number frequency;
+/** \brief maxForce
+Type: \c number.
+Required.
+*/
+number maxForce;
+/** \brief maxTorque
+Type: \c number.
+Required.
+*/
+number maxTorque;
+};
+/**
+\brief AnimationPhysicsDriveSettings
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| dampingRatio | \c number | Required |  |
+| direction | \c number | Required |  |
+| frequency | \c number | Required |  |
+| maxForce | \c number | Required |  |
+| maxTorque | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationPhysicsDriveSettings {
+/** \brief dampingRatio
+Type: \c number.
+Required.
+*/
+number dampingRatio;
+/** \brief direction
+Type: \c number.
+Required.
+*/
+number direction;
+/** \brief frequency
+Type: \c number.
+Required.
+*/
+number frequency;
+/** \brief maxForce
+Type: \c number.
+Required.
+*/
+number maxForce;
+/** \brief maxTorque
+Type: \c number.
+Required.
+*/
+number maxTorque;
+};
+/**
+\brief AnimationPhysicsJointDefinition
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| child | \c number | Required |  |
+| childX | \c number | Optional |  |
+| childY | \c number | Optional |  |
+| collide | \c boolean | Optional |  |
+| maxAngle | \c number | Optional |  |
+| maxForce | \c number | Optional |  |
+| minAngle | \c number | Optional |  |
+| parent | \c number | Required |  |
+| parentX | \c number | Optional |  |
+| parentY | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationPhysicsJointDefinition {
+/** \brief child
+Type: \c number.
+Required.
+*/
+number child;
+/** \brief childX
+Type: \c number.
+Optional.
+*/
+number childX;
+/** \brief childY
+Type: \c number.
+Optional.
+*/
+number childY;
+/** \brief collide
+Type: \c boolean.
+Optional.
+*/
+boolean collide;
+/** \brief maxAngle
+Type: \c number.
+Optional.
+*/
+number maxAngle;
+/** \brief maxForce
+Type: \c number.
+Optional.
+*/
+number maxForce;
+/** \brief minAngle
+Type: \c number.
+Optional.
+*/
+number minAngle;
+/** \brief parent
+Type: \c number.
+Required.
+*/
+number parent;
+/** \brief parentX
+Type: \c number.
+Optional.
+*/
+number parentX;
+/** \brief parentY
+Type: \c number.
+Optional.
+*/
+number parentY;
+};
+/**
+\brief Independent pose snapshot; bone and binding transforms are local to their parent.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bindings | Array of \ref pdg::AnimationBindingPose | Required |  |
+| bones | Array of \ref pdg::AnimationBonePose | Required |  |
+| rigRevision | \c string | Required |  |
+| tags | Array of \ref pdg::AnimationTags | Required |  |
+| variables | Array of \ref pdg::AnimationVariable | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationPose {
+/** \brief bindings
+Type: Array of \ref pdg::AnimationBindingPose.
+Required.
+*/
+object bindings;
+/** \brief bones
+Type: Array of \ref pdg::AnimationBonePose.
+Required.
+*/
+object bones;
+/** \brief rigRevision
+Type: \c string.
+Required.
+*/
+string rigRevision;
+/** \brief tags
+Type: Array of \ref pdg::AnimationTags.
+Required.
+*/
+object tags;
+/** \brief variables
+Type: Array of \ref pdg::AnimationVariable.
+Required.
+*/
+object variables;
+};
+/**
+\brief AnimationPoseView
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Lifetime: Valid only during the modifier callback. Retain copy() instead..
+\par Methods
+| Method | Result | Behavior |
+| --- | --- | --- |
+| copy() | \ref pdg::AnimationPose |  |
+| getLocalTransform(id) | \ref pdg::AnimationTransform |  |
+| getTransform(id, space = undefined) | \ref pdg::AnimationTransform |  |
+| rotateLocal(id, angle) | \c void |  |
+| setLocalTransform(id, transform) | \c void |  |
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationPoseView {
+};
+/**
+\brief An independent spring position and velocity sample. All fields must be finite numbers.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| velocityX | \c number | Required | Horizontal distance units per second. |
+| velocityY | \c number | Required | Vertical distance units per second. |
+| x | \c number | Required | Horizontal position in the application coordinate frame. |
+| y | \c number | Required | Vertical position in the application coordinate frame. |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationSpringState {
+/** \brief Horizontal distance units per second.
+Type: \c number.
+Required.
+*/
+number velocityX;
+/** \brief Vertical distance units per second.
+Type: \c number.
+Required.
+*/
+number velocityY;
+/** \brief Horizontal position in the application coordinate frame.
+Type: \c number.
+Required.
+*/
+number x;
+/** \brief Vertical position in the application coordinate frame.
+Type: \c number.
+Required.
+*/
+number y;
+};
+/**
+\brief AnimationTags
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| object | \c string | Required |  |
+| tags | Array of \c string | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationTags {
+/** \brief object
+Type: \c string.
+Required.
+*/
+string object;
+/** \brief tags
+Type: Array of \c string.
+Required.
+*/
+object tags;
+};
+/**
+\brief A plain transform record. All six fields must be finite numbers.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| alpha | \c number | Required | Opacity from zero to one. |
+| rotation | \c number | Required | Clockwise radians. |
+| scaleX | \c number | Required | Horizontal scale; platform frames require a nonzero value. |
+| scaleY | \c number | Required | Vertical scale; platform frames require a nonzero value. |
+| x | \c number | Required | Horizontal translation in the selected coordinate space. |
+| y | \c number | Required | Vertical translation in the selected coordinate space. |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationTransform {
+/** \brief Opacity from zero to one.
+Type: \c number.
+Required.
+*/
+number alpha;
+/** \brief Clockwise radians.
+Type: \c number.
+Required.
+*/
+number rotation;
+/** \brief Horizontal scale; platform frames require a nonzero value.
+Type: \c number.
+Required.
+*/
+number scaleX;
+/** \brief Vertical scale; platform frames require a nonzero value.
+Type: \c number.
+Required.
+*/
+number scaleY;
+/** \brief Horizontal translation in the selected coordinate space.
+Type: \c number.
+Required.
+*/
+number x;
+/** \brief Vertical translation in the selected coordinate space.
+Type: \c number.
+Required.
+*/
+number y;
+};
+/**
+\brief AnimationVariable
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| name | \c string | Required |  |
+| object | \c string | Required |  |
+| type | \c number | Required |  |
+| value | \c string or \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct AnimationVariable {
+/** \brief name
+Type: \c string.
+Required.
+*/
+string name;
+/** \brief object
+Type: \c string.
+Required.
+*/
+string object;
+/** \brief type
+Type: \c number.
+Required.
+*/
+number type;
+/** \brief value
+Type: \c string or \c number.
+Required.
+*/
+object value;
+};
+/**
+\brief ByteArray
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\par Type
+\c Uint8Array.
+*/
+struct ByteArray {
+};
+/**
+\brief CameraMatchCutOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| approachEasing | \c number | Optional |  |
+| approachSeconds | \c number | Optional |  |
+| matchSource | \c Sprite | Required |  |
+| matchTarget | \c Sprite | Required |  |
+| mode | \c number | Optional |  |
+| settleEasing | \c number | Optional |  |
+| settleReturnsCamera | \c boolean | Optional |  |
+| settleSeconds | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct CameraMatchCutOptions {
+/** \brief approachEasing
+Type: \c number.
+Optional.
+*/
+number approachEasing;
+/** \brief approachSeconds
+Type: \c number.
+Optional.
+*/
+number approachSeconds;
+/** \brief matchSource
+Type: \c Sprite.
+Required.
+*/
+Sprite matchSource;
+/** \brief matchTarget
+Type: \c Sprite.
+Required.
+*/
+Sprite matchTarget;
+/** \brief mode
+Type: \c number.
+Optional.
+*/
+number mode;
+/** \brief settleEasing
+Type: \c number.
+Optional.
+*/
+number settleEasing;
+/** \brief settleReturnsCamera
+Type: \c boolean.
+Optional.
+*/
+boolean settleReturnsCamera;
+/** \brief settleSeconds
+Type: \c number.
+Optional.
+*/
+number settleSeconds;
+};
+/**
+\brief CameraMatchFadeOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Extends: \ref pdg::CameraMatchCutOptions.
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| fadeEasing | \c number | Optional |  |
+| fadeSeconds | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct CameraMatchFadeOptions {
+/** \brief fadeEasing
+Type: \c number.
+Optional.
+*/
+number fadeEasing;
+/** \brief fadeSeconds
+Type: \c number.
+Optional.
+*/
+number fadeSeconds;
+};
+/**
+\brief CameraZoomEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| camera | \c Camera | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| zoom | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct CameraZoomEvent {
+/** \brief camera
+Type: \c Camera.
+Required.
+*/
+Camera camera;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief zoom
+Type: \c number.
+Required.
+*/
+number zoom;
+};
+/**
+\brief CameraZoomEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::CameraZoomEvent.
+*/
+struct CameraZoomEventCallback {
+};
+/**
+\brief ClassTagCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback()
+\par Result
+\c number.
+\note Must return synchronously.
+*/
+struct ClassTagCallback {
+};
+/**
+\brief ColliderContact
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| collider | \c Collider | Required |  |
+| impulse | \c Vector | Required |  |
+| normal | \c Vector | Required |  |
+| other | \c Collider | Required |  |
+| otherShape | \c number | Required |  |
+| penetration | \c number | Required |  |
+| phase | \c number | Required |  |
+| point | \c Point | Required |  |
+| sensor | \c boolean | Required |  |
+| shape | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct ColliderContact {
+/** \brief collider
+Type: \c Collider.
+Required.
+*/
+Collider collider;
+/** \brief impulse
+Type: \c Vector.
+Required.
+*/
+Vector impulse;
+/** \brief normal
+Type: \c Vector.
+Required.
+*/
+Vector normal;
+/** \brief other
+Type: \c Collider.
+Required.
+*/
+Collider other;
+/** \brief otherShape
+Type: \c number.
+Required.
+*/
+number otherShape;
+/** \brief penetration
+Type: \c number.
+Required.
+*/
+number penetration;
+/** \brief phase
+Type: \c number.
+Required.
+*/
+number phase;
+/** \brief point
+Type: \c Point.
+Required.
+*/
+Point point;
+/** \brief sensor
+Type: \c boolean.
+Required.
+*/
+boolean sensor;
+/** \brief shape
+Type: \c number.
+Required.
+*/
+number shape;
+};
+/**
+\brief ColliderContactCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(contact)
+\par Result
+\c void.
+Parameter contact: \ref pdg::ColliderContact.
+*/
+struct ColliderContactCallback {
+};
+/**
+\brief ColliderContactEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| collider | \c Collider | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| impulse | \c Vector | Required |  |
+| normal | \c Vector | Required |  |
+| other | \c Collider | Required |  |
+| otherShape | \c number | Required |  |
+| penetration | \c number | Required |  |
+| phase | \c number | Required |  |
+| point | \c Point | Required |  |
+| sensor | \c boolean | Required |  |
+| shape | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct ColliderContactEvent {
+/** \brief collider
+Type: \c Collider.
+Required.
+*/
+Collider collider;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief impulse
+Type: \c Vector.
+Required.
+*/
+Vector impulse;
+/** \brief normal
+Type: \c Vector.
+Required.
+*/
+Vector normal;
+/** \brief other
+Type: \c Collider.
+Required.
+*/
+Collider other;
+/** \brief otherShape
+Type: \c number.
+Required.
+*/
+number otherShape;
+/** \brief penetration
+Type: \c number.
+Required.
+*/
+number penetration;
+/** \brief phase
+Type: \c number.
+Required.
+*/
+number phase;
+/** \brief point
+Type: \c Point.
+Required.
+*/
+Point point;
+/** \brief sensor
+Type: \c boolean.
+Required.
+*/
+boolean sensor;
+/** \brief shape
+Type: \c number.
+Required.
+*/
+number shape;
+};
+/**
+\brief ColliderContactEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::ColliderContactEvent.
+*/
+struct ColliderContactEventCallback {
+};
+/**
+\brief ColliderFilterCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(collider,other)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter collider: \c Collider.
+Parameter other: \c Collider.
+*/
+struct ColliderFilterCallback {
+};
+/**
+\brief CollisionQueryHit
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| collider | \c Collider | Required |  |
+| distance | \c number | Required |  |
+| fraction | \c number | Required |  |
+| initialOverlap | \c boolean | Required |  |
+| normal | \c Vector | Required |  |
+| point | \c Point | Required |  |
+| shapeId | \c number uint | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct CollisionQueryHit {
+/** \brief collider
+Type: \c Collider.
+Required.
+*/
+Collider collider;
+/** \brief distance
+Type: \c number.
+Required.
+*/
+number distance;
+/** \brief fraction
+Type: \c number.
+Required.
+*/
+number fraction;
+/** \brief initialOverlap
+Type: \c boolean.
+Required.
+*/
+boolean initialOverlap;
+/** \brief normal
+Type: \c Vector.
+Required.
+*/
+Vector normal;
+/** \brief point
+Type: \c Point.
+Required.
+*/
+Point point;
+/** \brief shapeId
+Type: \c number uint.
+Required.
+*/
+number uint shapeId;
+};
+/**
+\brief CollisionQueryOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| categoryMask | \c number uint | Optional |  |
+| excludedBodies | Array of \c PhysicsBody | Optional |  |
+| excludedColliders | Array of \c Collider | Optional |  |
+| includeSensors | \c boolean | Optional |  |
+| layerMask | \c number uint | Optional |  |
+| layers | Array of \c SpriteLayer | Optional |  |
+| maxHits | \c number uint | 16 |  |
+| predicate | \ref pdg::CollisionQueryPredicate | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct CollisionQueryOptions {
+/** \brief categoryMask
+Type: \c number uint.
+Optional.
+*/
+number uint categoryMask;
+/** \brief excludedBodies
+Type: Array of \c PhysicsBody.
+Optional.
+*/
+object excludedBodies;
+/** \brief excludedColliders
+Type: Array of \c Collider.
+Optional.
+*/
+object excludedColliders;
+/** \brief includeSensors
+Type: \c boolean.
+Optional.
+*/
+boolean includeSensors;
+/** \brief layerMask
+Type: \c number uint.
+Optional.
+*/
+number uint layerMask;
+/** \brief layers
+Type: Array of \c SpriteLayer.
+Optional.
+*/
+object layers;
+/** \brief maxHits
+Type: \c number uint.
+Optional. Default: \c 16.
+*/
+number uint maxHits;
+/** \brief predicate
+Type: \ref pdg::CollisionQueryPredicate.
+Optional.
+*/
+CollisionQueryPredicate predicate;
+};
+/**
+\brief CollisionQueryPredicate
+\note Documentation-only JavaScript shape, not a runtime constructor.
+Lifetime: Synchronous; do not mutate geometry or scene membership, advance scenes, or recursively query..
+\par Call signature
+\c callback(collider)
+\par Result
+\c boolean.
+Parameter collider: \c Collider.
+*/
+struct CollisionQueryPredicate {
+};
+/**
+\brief CurrentScreenMode
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Extends: \ref pdg::ScreenMode.
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| maxWindowRect | \c Rect | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct CurrentScreenMode {
+/** \brief maxWindowRect
+Type: \c Rect.
+Required.
+*/
+Rect maxWindowRect;
+};
+/**
+\brief DeserializeCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(deserializer)
+\par Result
+\c void.
+Parameter deserializer: \c Deserializer.
+*/
+struct DeserializeCallback {
+};
+/**
+\brief DeviceOrientation
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| pitch | \c number | Required |  |
+| roll | \c number | Required |  |
+| yaw | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct DeviceOrientation {
+/** \brief pitch
+Type: \c number.
+Required.
+*/
+number pitch;
+/** \brief roll
+Type: \c number.
+Required.
+*/
+number roll;
+/** \brief yaw
+Type: \c number.
+Required.
+*/
+number yaw;
+};
+/**
+\brief EasingCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(elapsed,begin,change,duration)
+\par Result
+\c number.
+\note Must return synchronously.
+Parameter elapsed: \c number.
+Parameter begin: \c number.
+Parameter change: \c number.
+Parameter duration: \c number.
+*/
+struct EasingCallback {
+};
+/**
+\brief A PDG easing constant identifying a built-in easing function.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\par Type
+\c number int.
+*/
+struct EasingFunction {
+};
+/**
+\brief Event
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct Event {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+};
+/**
+\brief EventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::Event.
+*/
+struct EventCallback {
+};
+/**
+\brief EventMap
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\par Event payloads
+| Event constant | Payload |
+| --- | --- |
+| eventType_ColliderContact | \ref pdg::ColliderContactEvent |
+| eventType_KeyDown | \ref pdg::KeyEvent |
+| eventType_KeyPress | \ref pdg::KeyPressEvent |
+| eventType_KeyUp | \ref pdg::KeyEvent |
+| eventType_MouseDown | \ref pdg::MouseEvent |
+| eventType_MouseMove | \ref pdg::MouseEvent |
+| eventType_MouseUp | \ref pdg::MouseEvent |
+| eventType_ParticleBreak | \ref pdg::ParticleBreakEvent |
+| eventType_PortDraw | \ref pdg::PortDrawEvent |
+| eventType_PortResized | \ref pdg::PortResizeEvent |
+| eventType_ScrollWheel | \ref pdg::ScrollWheelEvent |
+| eventType_Shutdown | \ref pdg::ShutdownEvent |
+| eventType_SoundEvent | \ref pdg::SoundEvent |
+| eventType_SpriteAnimate | \ref pdg::SpriteAnimationEvent |
+| eventType_SpriteBreak | \ref pdg::SpriteBreakEvent |
+| eventType_SpriteCollide | \ref pdg::SpriteCollisionEvent |
+| eventType_SpriteLayer | \ref pdg::SpriteLayerEvent |
+| eventType_SpriteTouch | \ref pdg::SpriteTouchEvent |
+| eventType_SpriteTriggerEvent | \ref pdg::SpriteTriggerEvent |
+| eventType_Timer | \ref pdg::TimerEvent |
+| eventType_ZoomComplete | \ref pdg::CameraZoomEvent |
+*/
+struct EventMap {
+};
+/**
+\brief EventSubscription
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Extends: \c IEventHandler.
+\par Methods
+| Method | Result | Behavior |
+| --- | --- | --- |
+| cancel() | \c void | Unregister this handler. |
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct EventSubscription {
+};
+/**
+\brief FABRIKResult
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| converged | \c boolean | Required |  |
+| iterations | \c number | Required |  |
+| limited | \c boolean | Required |  |
+| reached | \c boolean | Required |  |
+| reachError | \c number | Required |  |
+| solveError | \c number | Required |  |
+| withinGeometricReach | \c boolean | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct FABRIKResult {
+/** \brief converged
+Type: \c boolean.
+Required.
+*/
+boolean converged;
+/** \brief iterations
+Type: \c number.
+Required.
+*/
+number iterations;
+/** \brief limited
+Type: \c boolean.
+Required.
+*/
+boolean limited;
+/** \brief reached
+Type: \c boolean.
+Required.
+*/
+boolean reached;
+/** \brief reachError
+Type: \c number.
+Required.
+*/
+number reachError;
+/** \brief solveError
+Type: \c number.
+Required.
+*/
+number solveError;
+/** \brief withinGeometricReach
+Type: \c boolean.
+Required.
+*/
+boolean withinGeometricReach;
+};
+/**
+\brief Native search handle. Obtain from findFirst and release using findClose.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| found | \c boolean | Required |  |
+| isDirectory | \c boolean | Required |  |
+| nodeName | \c string | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct FileFindData {
+/** \brief found
+Type: \c boolean.
+Required.
+*/
+boolean found;
+/** \brief isDirectory
+Type: \c boolean.
+Required.
+*/
+boolean isDirectory;
+/** \brief nodeName
+Type: \c string.
+Required.
+*/
+string nodeName;
+};
+/**
+\brief An independent metadata module, class or member record. Extension fields contain JSON metadata.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| brief | \c string | Optional |  |
+| implements | Array of \c string | Optional |  |
+| interface | Array of \ref pdg::InterfaceMetadata | Optional |  |
+| name | \c string | Required |  |
+| params | Array of \ref pdg::ParameterMetadata or Array of Array of \ref pdg::ParameterMetadata | Optional |  |
+| returns | \c string | Optional |  |
+| runtime_profile | \ref pdg::RuntimeProfile | Optional |  |
+| schemas | Dictionary of \ref pdg::JSONValue | Optional |  |
+| type | \c string | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct InterfaceMetadata {
+/** \brief brief
+Type: \c string.
+Optional.
+*/
+string brief;
+/** \brief implements
+Type: Array of \c string.
+Optional.
+*/
+object implements;
+/** \brief interface
+Type: Array of \ref pdg::InterfaceMetadata.
+Optional.
+*/
+object interface;
+/** \brief name
+Type: \c string.
+Required.
+*/
+string name;
+/** \brief params
+Type: Array of \ref pdg::ParameterMetadata or Array of Array of \ref pdg::ParameterMetadata.
+Optional.
+*/
+object params;
+/** \brief returns
+Type: \c string.
+Optional.
+*/
+string returns;
+/** \brief runtime_profile
+Type: \ref pdg::RuntimeProfile.
+Optional.
+*/
+RuntimeProfile runtime_profile;
+/** \brief schemas
+Type: Dictionary of \ref pdg::JSONValue.
+Optional.
+*/
+object schemas;
+/** \brief type
+Type: \c string.
+Required.
+*/
+string type;
+};
+/**
+\brief JiggleJointState
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| angle | \c number | Required |  |
+| desired | \c number | Required |  |
+| pivotVelocityX | \c number | Required |  |
+| pivotVelocityY | \c number | Required |  |
+| pivotX | \c number | Required |  |
+| pivotY | \c number | Required |  |
+| velocity | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct JiggleJointState {
+/** \brief angle
+Type: \c number.
+Required.
+*/
+number angle;
+/** \brief desired
+Type: \c number.
+Required.
+*/
+number desired;
+/** \brief pivotVelocityX
+Type: \c number.
+Required.
+*/
+number pivotVelocityX;
+/** \brief pivotVelocityY
+Type: \c number.
+Required.
+*/
+number pivotVelocityY;
+/** \brief pivotX
+Type: \c number.
+Required.
+*/
+number pivotX;
+/** \brief pivotY
+Type: \c number.
+Required.
+*/
+number pivotY;
+/** \brief velocity
+Type: \c number.
+Required.
+*/
+number velocity;
+};
+/**
+\brief JiggleResult
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| desiredTarget | \ref pdg::JiggleTarget | Required |  |
+| effectiveTarget | \ref pdg::JiggleTarget | Required |  |
+| filteredTarget | \ref pdg::JiggleTarget | Required |  |
+| influence | \c number | Required |  |
+| lagDistance | \c number | Required |  |
+| limited | \c boolean | Required |  |
+| reset | \c boolean | Required |  |
+| simulatedSeconds | \c number | Required |  |
+| substeps | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct JiggleResult {
+/** \brief desiredTarget
+Type: \ref pdg::JiggleTarget.
+Required.
+*/
+JiggleTarget desiredTarget;
+/** \brief effectiveTarget
+Type: \ref pdg::JiggleTarget.
+Required.
+*/
+JiggleTarget effectiveTarget;
+/** \brief filteredTarget
+Type: \ref pdg::JiggleTarget.
+Required.
+*/
+JiggleTarget filteredTarget;
+/** \brief influence
+Type: \c number.
+Required.
+*/
+number influence;
+/** \brief lagDistance
+Type: \c number.
+Required.
+*/
+number lagDistance;
+/** \brief limited
+Type: \c boolean.
+Required.
+*/
+boolean limited;
+/** \brief reset
+Type: \c boolean.
+Required.
+*/
+boolean reset;
+/** \brief simulatedSeconds
+Type: \c number.
+Required.
+*/
+number simulatedSeconds;
+/** \brief substeps
+Type: \c number.
+Required.
+*/
+number substeps;
+};
+/**
+\brief JiggleState
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| chain | Array of \c number uint | Required |  |
+| ik | \c number uint | Required |  |
+| initialized | \c boolean | Required |  |
+| joints | Array of \ref pdg::JiggleJointState | Required |  |
+| mode | \c number uint | Required |  |
+| rigRevision | \c string | Required |  |
+| velocityX | \c number | Required |  |
+| velocityY | \c number | Required |  |
+| version | \c 1 | Required |  |
+| x | \c number | Required |  |
+| y | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct JiggleState {
+/** \brief chain
+Type: Array of \c number uint.
+Required.
+*/
+object chain;
+/** \brief ik
+Type: \c number uint.
+Required.
+*/
+number uint ik;
+/** \brief initialized
+Type: \c boolean.
+Required.
+*/
+boolean initialized;
+/** \brief joints
+Type: Array of \ref pdg::JiggleJointState.
+Required.
+*/
+object joints;
+/** \brief mode
+Type: \c number uint.
+Required.
+*/
+number uint mode;
+/** \brief rigRevision
+Type: \c string.
+Required.
+*/
+string rigRevision;
+/** \brief velocityX
+Type: \c number.
+Required.
+*/
+number velocityX;
+/** \brief velocityY
+Type: \c number.
+Required.
+*/
+number velocityY;
+/** \brief version
+Type: \c 1.
+Required.
+*/
+object version;
+/** \brief x
+Type: \c number.
+Required.
+*/
+number x;
+/** \brief y
+Type: \c number.
+Required.
+*/
+number y;
+};
+/**
+\brief JiggleTarget
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| x | \c number | Required |  |
+| y | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct JiggleTarget {
+/** \brief x
+Type: \c number.
+Required.
+*/
+number x;
+/** \brief y
+Type: \c number.
+Required.
+*/
+number y;
+};
+/**
+\brief JSONValue
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\par Type
+\c string or \c number or \c boolean or \c null or Array of \ref pdg::JSONValue or Dictionary of \ref pdg::JSONValue.
+*/
+struct JSONValue {
+};
+/**
+\brief KeyEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| keyCode | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct KeyEvent {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief keyCode
+Type: \c number.
+Required.
+*/
+number keyCode;
+};
+/**
+\brief KeyEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::KeyEvent.
+*/
+struct KeyEventCallback {
+};
+/**
+\brief KeyPressEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| alt | \c boolean | Required |  |
+| ctrl | \c boolean | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| isRepeating | \c boolean | Required |  |
+| meta | \c boolean | Required |  |
+| shift | \c boolean | Required |  |
+| unicode | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct KeyPressEvent {
+/** \brief alt
+Type: \c boolean.
+Required.
+*/
+boolean alt;
+/** \brief ctrl
+Type: \c boolean.
+Required.
+*/
+boolean ctrl;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief isRepeating
+Type: \c boolean.
+Required.
+*/
+boolean isRepeating;
+/** \brief meta
+Type: \c boolean.
+Required.
+*/
+boolean meta;
+/** \brief shift
+Type: \c boolean.
+Required.
+*/
+boolean shift;
+/** \brief unicode
+Type: \c number.
+Required.
+*/
+number unicode;
+};
+/**
+\brief KeyPressEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::KeyPressEvent.
+*/
+struct KeyPressEventCallback {
+};
+/**
+\brief MouseEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| alt | \c boolean | Required |  |
+| buttonNumber | \c number | Required |  |
+| ctrl | \c boolean | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| lastClickElapsed | \c number | Required |  |
+| lastClickPos | \c Point | Required |  |
+| leftButton | \c boolean | Required |  |
+| meta | \c boolean | Required |  |
+| mousePos | \c Point | Required |  |
+| rightButton | \c boolean | Required |  |
+| shift | \c boolean | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct MouseEvent {
+/** \brief alt
+Type: \c boolean.
+Required.
+*/
+boolean alt;
+/** \brief buttonNumber
+Type: \c number.
+Required.
+*/
+number buttonNumber;
+/** \brief ctrl
+Type: \c boolean.
+Required.
+*/
+boolean ctrl;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief lastClickElapsed
+Type: \c number.
+Required.
+*/
+number lastClickElapsed;
+/** \brief lastClickPos
+Type: \c Point.
+Required.
+*/
+Point lastClickPos;
+/** \brief leftButton
+Type: \c boolean.
+Required.
+*/
+boolean leftButton;
+/** \brief meta
+Type: \c boolean.
+Required.
+*/
+boolean meta;
+/** \brief mousePos
+Type: \c Point.
+Required.
+*/
+Point mousePos;
+/** \brief rightButton
+Type: \c boolean.
+Required.
+*/
+boolean rightButton;
+/** \brief shift
+Type: \c boolean.
+Required.
+*/
+boolean shift;
+};
+/**
+\brief MouseEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::MouseEvent.
+*/
+struct MouseEventCallback {
+};
+/**
+\brief Browser mouse tracking payload; the native V8 converter does not deliver these events.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| alt | \c boolean | Required |  |
+| buttonNumber | \c number | Required |  |
+| ctrl | \c boolean | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| lastClickElapsed | \c number | Required |  |
+| lastClickPos | \c Point | Required |  |
+| leftButton | \c boolean | Required |  |
+| meta | \c boolean | Required |  |
+| mousePos | \c Point | Required |  |
+| rightButton | \c boolean | Required |  |
+| shift | \c boolean | Required |  |
+| trackingRef | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct MouseTrackingEvent {
+/** \brief alt
+Type: \c boolean.
+Required.
+*/
+boolean alt;
+/** \brief buttonNumber
+Type: \c number.
+Required.
+*/
+number buttonNumber;
+/** \brief ctrl
+Type: \c boolean.
+Required.
+*/
+boolean ctrl;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief lastClickElapsed
+Type: \c number.
+Required.
+*/
+number lastClickElapsed;
+/** \brief lastClickPos
+Type: \c Point.
+Required.
+*/
+Point lastClickPos;
+/** \brief leftButton
+Type: \c boolean.
+Required.
+*/
+boolean leftButton;
+/** \brief meta
+Type: \c boolean.
+Required.
+*/
+boolean meta;
+/** \brief mousePos
+Type: \c Point.
+Required.
+*/
+Point mousePos;
+/** \brief rightButton
+Type: \c boolean.
+Required.
+*/
+boolean rightButton;
+/** \brief shift
+Type: \c boolean.
+Required.
+*/
+boolean shift;
+/** \brief trackingRef
+Type: \c number.
+Required.
+*/
+number trackingRef;
+};
+/**
+\brief MouseTrackingEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::MouseTrackingEvent.
+*/
+struct MouseTrackingEventCallback {
+};
+/**
+\brief NativeEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::Event.
+*/
+struct NativeEventCallback {
+};
+/**
+\brief NativeWebTransportTLSOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| caFile | \c string | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct NativeWebTransportTLSOptions {
+/** \brief caFile
+Type: \c string.
+Optional.
+*/
+string caFile;
+};
+/**
+\brief NetAcceptCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(connection)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter connection: \c NetConnection.
+*/
+struct NetAcceptCallback {
+};
+/**
+\brief NetCertificateHash
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| algorithm | \c "sha-256" | Required |  |
+| value | \c Uint8Array or \c ArrayBuffer | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct NetCertificateHash {
+/** \brief algorithm
+Type: \c "sha-256".
+Required.
+*/
+object algorithm;
+/** \brief value
+Type: \c Uint8Array or \c ArrayBuffer.
+Required.
+*/
+object value;
+};
+/**
+\brief NetClientErrorCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(error,endpoint)
+\par Result
+\c void.
+Parameter error: \ref pdg::NetworkError.
+Parameter endpoint: \c NetClient.
+*/
+struct NetClientErrorCallback {
+};
+/**
+\brief NetClientOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| noDatagram | \c boolean | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct NetClientOptions {
+/** \brief noDatagram
+Type: \c boolean.
+Optional.
+*/
+boolean noDatagram;
+};
+/**
+\brief NetCloseCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(connection)
+\par Result
+\c void.
+Parameter connection: \c NetConnection.
+*/
+struct NetCloseCallback {
+};
+/**
+\brief NetConnectCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(connection)
+\par Result
+\c void.
+Parameter connection: \c NetConnection.
+*/
+struct NetConnectCallback {
+};
+/**
+\brief NetMessageCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(message,connection,transport)
+\par Result
+\c void.
+Parameter message: \ref pdg::NetworkMessage.
+Parameter connection: \c NetConnection.
+Parameter transport: \c "tcp" or \c "udp".
+*/
+struct NetMessageCallback {
+};
+/**
+\brief NetServerAddress
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| capabilityCacheTimeout | \c number | Optional |  |
+| handshakeTimeout | \c number | Optional |  |
+| host | \c string | Optional |  |
+| maxFrameSize | \c number | Optional |  |
+| maxPendingBytes | \c number | Optional |  |
+| port | \c number | Optional |  |
+| secure | \c boolean | Optional |  |
+| serverCertificateHashes | Array of \ref pdg::NetCertificateHash | Optional |  |
+| timeout | \c number | Optional |  |
+| tls | \ref pdg::NodeTLSConnectionOptions or \ref pdg::NativeWebTransportTLSOptions | Optional |  |
+| transportPolicy | \c string | Optional |  |
+| webPath | \c string | Optional |  |
+| webPort | \c number | Optional |  |
+| webSocketUrl | \c string | Optional |  |
+| webTransportTimeout | \c number | Optional |  |
+| webTransportUrl | \c string | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct NetServerAddress {
+/** \brief capabilityCacheTimeout
+Type: \c number.
+Optional.
+*/
+number capabilityCacheTimeout;
+/** \brief handshakeTimeout
+Type: \c number.
+Optional.
+*/
+number handshakeTimeout;
+/** \brief host
+Type: \c string.
+Optional.
+*/
+string host;
+/** \brief maxFrameSize
+Type: \c number.
+Optional.
+*/
+number maxFrameSize;
+/** \brief maxPendingBytes
+Type: \c number.
+Optional.
+*/
+number maxPendingBytes;
+/** \brief port
+Type: \c number.
+Optional.
+*/
+number port;
+/** \brief secure
+Type: \c boolean.
+Optional.
+*/
+boolean secure;
+/** \brief serverCertificateHashes
+Type: Array of \ref pdg::NetCertificateHash.
+Optional.
+*/
+object serverCertificateHashes;
+/** \brief timeout
+Type: \c number.
+Optional.
+*/
+number timeout;
+/** \brief tls
+Type: \ref pdg::NodeTLSConnectionOptions or \ref pdg::NativeWebTransportTLSOptions.
+Optional.
+*/
+object tls;
+/** \brief transportPolicy
+Type: \c string.
+Optional.
+*/
+string transportPolicy;
+/** \brief webPath
+Type: \c string.
+Optional.
+*/
+string webPath;
+/** \brief webPort
+Type: \c number.
+Optional.
+*/
+number webPort;
+/** \brief webSocketUrl
+Type: \c string.
+Optional.
+*/
+string webSocketUrl;
+/** \brief webTransportTimeout
+Type: \c number.
+Optional.
+*/
+number webTransportTimeout;
+/** \brief webTransportUrl
+Type: \c string.
+Optional.
+*/
+string webTransportUrl;
+};
+/**
+\brief NetServerErrorCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(error,endpoint)
+\par Result
+\c void.
+Parameter error: \ref pdg::NetworkError.
+Parameter endpoint: \c NetServer.
+*/
+struct NetServerErrorCallback {
+};
+/**
+\brief NetServerOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| allowedOrigins | Array of \c string | Optional |  |
+| allowPartialListen | \c boolean | Optional |  |
+| fixedPort | \c boolean | Optional |  |
+| handshakeTimeout | \c number | Optional |  |
+| native | \c boolean | Optional |  |
+| noDatagram | \c boolean | Optional |  |
+| port | \c number | Optional |  |
+| reservationRequired | \c boolean | Optional |  |
+| serverAddr | \c string | Optional |  |
+| serverPort | \c number | Optional |  |
+| tls | \c object | Optional |  |
+| webPath | \c string | Optional |  |
+| webPort | \c number | Optional |  |
+| webSocket | \c boolean or \c object | Optional |  |
+| webTransport | \c boolean or \c object | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct NetServerOptions {
+/** \brief allowedOrigins
+Type: Array of \c string.
+Optional.
+*/
+object allowedOrigins;
+/** \brief allowPartialListen
+Type: \c boolean.
+Optional.
+*/
+boolean allowPartialListen;
+/** \brief fixedPort
+Type: \c boolean.
+Optional.
+*/
+boolean fixedPort;
+/** \brief handshakeTimeout
+Type: \c number.
+Optional.
+*/
+number handshakeTimeout;
+/** \brief native
+Type: \c boolean.
+Optional.
+*/
+boolean native;
+/** \brief noDatagram
+Type: \c boolean.
+Optional.
+*/
+boolean noDatagram;
+/** \brief port
+Type: \c number.
+Optional.
+*/
+number port;
+/** \brief reservationRequired
+Type: \c boolean.
+Optional.
+*/
+boolean reservationRequired;
+/** \brief serverAddr
+Type: \c string.
+Optional.
+*/
+string serverAddr;
+/** \brief serverPort
+Type: \c number.
+Optional.
+*/
+number serverPort;
+/** \brief tls
+Type: \c object.
+Optional.
+*/
+object tls;
+/** \brief webPath
+Type: \c string.
+Optional.
+*/
+string webPath;
+/** \brief webPort
+Type: \c number.
+Optional.
+*/
+number webPort;
+/** \brief webSocket
+Type: \c boolean or \c object.
+Optional.
+*/
+object webSocket;
+/** \brief webTransport
+Type: \c boolean or \c object.
+Optional.
+*/
+object webTransport;
+};
+/**
+\brief NetworkData
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\par Type
+\c null or Array of \ref pdg::JSONValue or Dictionary of \ref pdg::JSONValue or \ref pdg::ByteArray.
+*/
+struct NetworkData {
+};
+/**
+\brief NetworkError
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| code | \c string | Optional |  |
+| host | \c string | Optional |  |
+| message | \c string | Required |  |
+| port | \c number | Optional |  |
+| transport | \c string | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct NetworkError {
+/** \brief code
+Type: \c string.
+Optional.
+*/
+string code;
+/** \brief host
+Type: \c string.
+Optional.
+*/
+string host;
+/** \brief message
+Type: \c string.
+Required.
+*/
+string message;
+/** \brief port
+Type: \c number.
+Optional.
+*/
+number port;
+/** \brief transport
+Type: \c string.
+Optional.
+*/
+string transport;
+};
+/**
+\brief NetworkMessage
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\par Type
+\ref pdg::JSONValue or \c MemBlock or \c ISerializable or \ref pdg::ByteArray.
+*/
+struct NetworkMessage {
+};
+/**
+\brief NetworkSendable
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\par Type
+\c string or \ref pdg::NetworkData or \c MemBlock or \c ISerializable.
+*/
+struct NetworkSendable {
+};
+/**
+\brief NetworkSocket
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par External type
+\c Socket from \c node:net.
+*/
+struct NetworkSocket {
+};
+/**
+\brief NodeTLSConnectionOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par External type
+\c ConnectionOptions from \c node:tls.
+*/
+struct NodeTLSConnectionOptions {
+};
+/**
+\brief ParameterMetadata
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| default_value | \c string | Optional |  |
+| name | \c string | Required |  |
+| optional | \c boolean | Optional |  |
+| type | \c string | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct ParameterMetadata {
+/** \brief default_value
+Type: \c string.
+Optional.
+*/
+string default_value;
+/** \brief name
+Type: \c string.
+Required.
+*/
+string name;
+/** \brief optional
+Type: \c boolean.
+Optional.
+*/
+boolean optional;
+/** \brief type
+Type: \c string.
+Required.
+*/
+string type;
+};
+/**
+\brief PartFABRIKOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bendDirection | \c number | Optional |  |
+| influence | \c number | Optional |  |
+| maxIterations | \c number | Optional |  |
+| space | \c number | Optional |  |
+| tolerance | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PartFABRIKOptions {
+/** \brief bendDirection
+Type: \c number.
+Optional.
+*/
+number bendDirection;
+/** \brief influence
+Type: \c number.
+Optional.
+*/
+number influence;
+/** \brief maxIterations
+Type: \c number.
+Optional.
+*/
+number maxIterations;
+/** \brief space
+Type: \c number.
+Optional.
+*/
+number space;
+/** \brief tolerance
+Type: \c number.
+Optional.
+*/
+number tolerance;
+};
+/**
+\brief ParticleBreakEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| angularSpeed | \c number | Required |  |
+| body | \c PhysicsBody or \c null | Required |  |
+| breakAngularSpeed | \c number | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| referenceBody | \c PhysicsBody or \c null | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct ParticleBreakEvent {
+/** \brief angularSpeed
+Type: \c number.
+Required.
+*/
+number angularSpeed;
+/** \brief body
+Type: \c PhysicsBody or \c null.
+Required.
+*/
+PhysicsBody body;
+/** \brief breakAngularSpeed
+Type: \c number.
+Required.
+*/
+number breakAngularSpeed;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief referenceBody
+Type: \c PhysicsBody or \c null.
+Required.
+*/
+PhysicsBody referenceBody;
+};
+/**
+\brief ParticleBreakEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::ParticleBreakEvent.
+*/
+struct ParticleBreakEventCallback {
+};
+/**
+\brief ParticleTrailOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| breakDistance | \c number | Optional | Per-step displacement that resets history; 0 disables (default 256). |
+| color | \c Color or \c string or \c number | Optional | Trail color, CSS color name or packed RGBA (default orange). |
+| endOpacity | \c number | Optional | Opacity multiplier at the oldest end, 0..1 (default 0). |
+| endWidth | \c number | Optional | Width at the oldest end (default 0). |
+| lifetime | \c number | Optional | History lifetime in simulation seconds (default 0.4). |
+| maxPoints | \c number | Optional | History capacity, integer 2..4096 (default 32). |
+| minDistance | \c number | Optional | Minimum distance between stored samples (default 2). |
+| sampleInterval | \c number | Optional | Sampling interval in simulation seconds, at least 0.0001 (default 1/60). |
+| width | \c number | Optional | Width at the head in layer units (default 6). |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct ParticleTrailOptions {
+/** \brief Per-step displacement that resets history; 0 disables (default 256).
+Type: \c number.
+Optional.
+*/
+number breakDistance;
+/** \brief Trail color, CSS color name or packed RGBA (default orange).
+Type: \c Color or \c string or \c number.
+Optional.
+*/
+object color;
+/** \brief Opacity multiplier at the oldest end, 0..1 (default 0).
+Type: \c number.
+Optional.
+*/
+number endOpacity;
+/** \brief Width at the oldest end (default 0).
+Type: \c number.
+Optional.
+*/
+number endWidth;
+/** \brief History lifetime in simulation seconds (default 0.4).
+Type: \c number.
+Optional.
+*/
+number lifetime;
+/** \brief History capacity, integer 2..4096 (default 32).
+Type: \c number.
+Optional.
+*/
+number maxPoints;
+/** \brief Minimum distance between stored samples (default 2).
+Type: \c number.
+Optional.
+*/
+number minDistance;
+/** \brief Sampling interval in simulation seconds, at least 0.0001 (default 1/60).
+Type: \c number.
+Optional.
+*/
+number sampleInterval;
+/** \brief Width at the head in layer units (default 6).
+Type: \c number.
+Optional.
+*/
+number width;
+};
+/**
+\brief PartJiggleJointOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| bone | \c number uint | Optional |  |
+| dampingRatio | \c number | Optional |  |
+| frequency | \c number | Optional |  |
+| gravityX | \c number | Optional |  |
+| gravityY | \c number | Optional |  |
+| inertia | \c number | Optional |  |
+| length | \c number | Optional |  |
+| maxAngle | \c number | Optional |  |
+| maxAngularSpeed | \c number | Optional |  |
+| part | \c Part | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PartJiggleJointOptions {
+/** \brief bone
+Type: \c number uint.
+Optional.
+*/
+number uint bone;
+/** \brief dampingRatio
+Type: \c number.
+Optional.
+*/
+number dampingRatio;
+/** \brief frequency
+Type: \c number.
+Optional.
+*/
+number frequency;
+/** \brief gravityX
+Type: \c number.
+Optional.
+*/
+number gravityX;
+/** \brief gravityY
+Type: \c number.
+Optional.
+*/
+number gravityY;
+/** \brief inertia
+Type: \c number.
+Optional.
+*/
+number inertia;
+/** \brief length
+Type: \c number.
+Optional.
+*/
+number length;
+/** \brief maxAngle
+Type: \c number.
+Optional.
+*/
+number maxAngle;
+/** \brief maxAngularSpeed
+Type: \c number.
+Optional.
+*/
+number maxAngularSpeed;
+/** \brief part
+Type: \c Part.
+Optional.
+*/
+Part part;
+};
+/**
+\brief PartJiggleKick
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| angularVelocity | \c number | Optional |  |
+| joint | \c Part | Optional |  |
+| velocityX | \c number | Optional |  |
+| velocityY | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PartJiggleKick {
+/** \brief angularVelocity
+Type: \c number.
+Optional.
+*/
+number angularVelocity;
+/** \brief joint
+Type: \c Part.
+Optional.
+*/
+Part joint;
+/** \brief velocityX
+Type: \c number.
+Optional.
+*/
+number velocityX;
+/** \brief velocityY
+Type: \c number.
+Optional.
+*/
+number velocityY;
+};
+/**
+\brief PartJiggleOptions
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| chain | Array of \c Part | Optional |  |
+| dampingRatio | \c number | Optional |  |
+| enabled | \c boolean | Optional |  |
+| frequency | \c number | Optional |  |
+| gravityX | \c number | Optional |  |
+| gravityY | \c number | Optional |  |
+| inertia | \c number | Optional |  |
+| influence | \c number | Optional |  |
+| joints | Array of \ref pdg::PartJiggleJointOptions | Optional |  |
+| length | \c number | Optional |  |
+| maxAngle | \c number | Optional |  |
+| maxAngularSpeed | \c number | Optional |  |
+| maxDistance | \c number | Optional |  |
+| maxSpeed | \c number | Optional |  |
+| maxStepSeconds | \c number | Optional |  |
+| maxSubsteps | \c number | Optional |  |
+| mode | \c number uint | Required |  |
+| resetOnSeek | \c boolean | Optional |  |
+| resetOnTeleport | \c boolean | Optional |  |
+| teleportAngle | \c number | Optional |  |
+| teleportDistance | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PartJiggleOptions {
+/** \brief chain
+Type: Array of \c Part.
+Optional.
+*/
+object chain;
+/** \brief dampingRatio
+Type: \c number.
+Optional.
+*/
+number dampingRatio;
+/** \brief enabled
+Type: \c boolean.
+Optional.
+*/
+boolean enabled;
+/** \brief frequency
+Type: \c number.
+Optional.
+*/
+number frequency;
+/** \brief gravityX
+Type: \c number.
+Optional.
+*/
+number gravityX;
+/** \brief gravityY
+Type: \c number.
+Optional.
+*/
+number gravityY;
+/** \brief inertia
+Type: \c number.
+Optional.
+*/
+number inertia;
+/** \brief influence
+Type: \c number.
+Optional.
+*/
+number influence;
+/** \brief joints
+Type: Array of \ref pdg::PartJiggleJointOptions.
+Optional.
+*/
+object joints;
+/** \brief length
+Type: \c number.
+Optional.
+*/
+number length;
+/** \brief maxAngle
+Type: \c number.
+Optional.
+*/
+number maxAngle;
+/** \brief maxAngularSpeed
+Type: \c number.
+Optional.
+*/
+number maxAngularSpeed;
+/** \brief maxDistance
+Type: \c number.
+Optional.
+*/
+number maxDistance;
+/** \brief maxSpeed
+Type: \c number.
+Optional.
+*/
+number maxSpeed;
+/** \brief maxStepSeconds
+Type: \c number.
+Optional.
+*/
+number maxStepSeconds;
+/** \brief maxSubsteps
+Type: \c number.
+Optional.
+*/
+number maxSubsteps;
+/** \brief mode
+Type: \c number uint.
+Required.
+*/
+number uint mode;
+/** \brief resetOnSeek
+Type: \c boolean.
+Optional.
+*/
+boolean resetOnSeek;
+/** \brief resetOnTeleport
+Type: \c boolean.
+Optional.
+*/
+boolean resetOnTeleport;
+/** \brief teleportAngle
+Type: \c number.
+Optional.
+*/
+number teleportAngle;
+/** \brief teleportDistance
+Type: \c number.
+Optional.
+*/
+number teleportDistance;
+};
+/**
+\brief PartJiggleSettings
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| dampingRatio | \c number | Optional |  |
+| enabled | \c boolean | Optional |  |
+| frequency | \c number | Optional |  |
+| gravityX | \c number | Optional |  |
+| gravityY | \c number | Optional |  |
+| inertia | \c number | Optional |  |
+| influence | \c number | Optional |  |
+| joints | Array of \ref pdg::PartJiggleJointOptions | Optional |  |
+| length | \c number | Optional |  |
+| maxAngle | \c number | Optional |  |
+| maxAngularSpeed | \c number | Optional |  |
+| maxDistance | \c number | Optional |  |
+| maxSpeed | \c number | Optional |  |
+| maxStepSeconds | \c number | Optional |  |
+| maxSubsteps | \c number | Optional |  |
+| resetOnSeek | \c boolean | Optional |  |
+| resetOnTeleport | \c boolean | Optional |  |
+| teleportAngle | \c number | Optional |  |
+| teleportDistance | \c number | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PartJiggleSettings {
+/** \brief dampingRatio
+Type: \c number.
+Optional.
+*/
+number dampingRatio;
+/** \brief enabled
+Type: \c boolean.
+Optional.
+*/
+boolean enabled;
+/** \brief frequency
+Type: \c number.
+Optional.
+*/
+number frequency;
+/** \brief gravityX
+Type: \c number.
+Optional.
+*/
+number gravityX;
+/** \brief gravityY
+Type: \c number.
+Optional.
+*/
+number gravityY;
+/** \brief inertia
+Type: \c number.
+Optional.
+*/
+number inertia;
+/** \brief influence
+Type: \c number.
+Optional.
+*/
+number influence;
+/** \brief joints
+Type: Array of \ref pdg::PartJiggleJointOptions.
+Optional.
+*/
+object joints;
+/** \brief length
+Type: \c number.
+Optional.
+*/
+number length;
+/** \brief maxAngle
+Type: \c number.
+Optional.
+*/
+number maxAngle;
+/** \brief maxAngularSpeed
+Type: \c number.
+Optional.
+*/
+number maxAngularSpeed;
+/** \brief maxDistance
+Type: \c number.
+Optional.
+*/
+number maxDistance;
+/** \brief maxSpeed
+Type: \c number.
+Optional.
+*/
+number maxSpeed;
+/** \brief maxStepSeconds
+Type: \c number.
+Optional.
+*/
+number maxStepSeconds;
+/** \brief maxSubsteps
+Type: \c number.
+Optional.
+*/
+number maxSubsteps;
+/** \brief resetOnSeek
+Type: \c boolean.
+Optional.
+*/
+boolean resetOnSeek;
+/** \brief resetOnTeleport
+Type: \c boolean.
+Optional.
+*/
+boolean resetOnTeleport;
+/** \brief teleportAngle
+Type: \c number.
+Optional.
+*/
+number teleportAngle;
+/** \brief teleportDistance
+Type: \c number.
+Optional.
+*/
+number teleportDistance;
+};
+/**
+\brief PhysicsBodyState
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| angularVelocity | \c number | Required |  |
+| rotation | \c number | Required |  |
+| velocityX | \c number | Required |  |
+| velocityY | \c number | Required |  |
+| x | \c number | Required |  |
+| y | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PhysicsBodyState {
+/** \brief angularVelocity
+Type: \c number.
+Required.
+*/
+number angularVelocity;
+/** \brief rotation
+Type: \c number.
+Required.
+*/
+number rotation;
+/** \brief velocityX
+Type: \c number.
+Required.
+*/
+number velocityX;
+/** \brief velocityY
+Type: \c number.
+Required.
+*/
+number velocityY;
+/** \brief x
+Type: \c number.
+Required.
+*/
+number x;
+/** \brief y
+Type: \c number.
+Required.
+*/
+number y;
+};
+/**
+\brief PhysicsDriveState
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| dampingRatio | \c number | Required |  |
+| enabled | \c boolean | Required |  |
+| forceX | \c number | Required |  |
+| forceY | \c number | Required |  |
+| frequency | \c number | Required |  |
+| maxForce | \c number | Required |  |
+| maxTorque | \c number | Required |  |
+| positionError | \c number | Required |  |
+| rotation | \c number | Required |  |
+| rotationError | \c number | Required |  |
+| torque | \c number | Required |  |
+| x | \c number | Required |  |
+| y | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PhysicsDriveState {
+/** \brief dampingRatio
+Type: \c number.
+Required.
+*/
+number dampingRatio;
+/** \brief enabled
+Type: \c boolean.
+Required.
+*/
+boolean enabled;
+/** \brief forceX
+Type: \c number.
+Required.
+*/
+number forceX;
+/** \brief forceY
+Type: \c number.
+Required.
+*/
+number forceY;
+/** \brief frequency
+Type: \c number.
+Required.
+*/
+number frequency;
+/** \brief maxForce
+Type: \c number.
+Required.
+*/
+number maxForce;
+/** \brief maxTorque
+Type: \c number.
+Required.
+*/
+number maxTorque;
+/** \brief positionError
+Type: \c number.
+Required.
+*/
+number positionError;
+/** \brief rotation
+Type: \c number.
+Required.
+*/
+number rotation;
+/** \brief rotationError
+Type: \c number.
+Required.
+*/
+number rotationError;
+/** \brief torque
+Type: \c number.
+Required.
+*/
+number torque;
+/** \brief x
+Type: \c number.
+Required.
+*/
+number x;
+/** \brief y
+Type: \c number.
+Required.
+*/
+number y;
+};
+/**
+\brief PortDrawEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| frameNum | \c number | Required |  |
+| port | \c Port | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PortDrawEvent {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief frameNum
+Type: \c number.
+Required.
+*/
+number frameNum;
+/** \brief port
+Type: \c Port.
+Required.
+*/
+Port port;
+};
+/**
+\brief PortDrawEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::PortDrawEvent.
+*/
+struct PortDrawEventCallback {
+};
+/**
+\brief PortResizeEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| oldHeight | \c number | Required |  |
+| oldScreenPos | \c number | Required |  |
+| oldWidth | \c number | Required |  |
+| port | \c Port | Required |  |
+| screenPos | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct PortResizeEvent {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief oldHeight
+Type: \c number.
+Required.
+*/
+number oldHeight;
+/** \brief oldScreenPos
+Type: \c number.
+Required.
+*/
+number oldScreenPos;
+/** \brief oldWidth
+Type: \c number.
+Required.
+*/
+number oldWidth;
+/** \brief port
+Type: \c Port.
+Required.
+*/
+Port port;
+/** \brief screenPos
+Type: \c number.
+Required.
+*/
+number screenPos;
+};
+/**
+\brief PortResizeEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::PortResizeEvent.
+*/
+struct PortResizeEventCallback {
+};
+/**
+\brief RuntimeProfile
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| capabilities | Dictionary of \c boolean | Required |  |
+| runtime | \c string | Required |  |
+| scope | \c string | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct RuntimeProfile {
+/** \brief capabilities
+Type: Dictionary of \c boolean.
+Required.
+*/
+object capabilities;
+/** \brief runtime
+Type: \c string.
+Required.
+*/
+string runtime;
+/** \brief scope
+Type: \c string.
+Required.
+*/
+string scope;
+};
+/**
+\brief ScreenMode
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| depth | \c number | Required |  |
+| height | \c number | Required |  |
+| width | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct ScreenMode {
+/** \brief depth
+Type: \c number.
+Required.
+*/
+number depth;
+/** \brief height
+Type: \c number.
+Required.
+*/
+number height;
+/** \brief width
+Type: \c number.
+Required.
+*/
+number width;
+};
+/**
+\brief ScrollWheelEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| alt | \c boolean | Required |  |
+| ctrl | \c boolean | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| horizDelta | \c number | Required |  |
+| meta | \c boolean | Required |  |
+| shift | \c boolean | Required |  |
+| vertDelta | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct ScrollWheelEvent {
+/** \brief alt
+Type: \c boolean.
+Required.
+*/
+boolean alt;
+/** \brief ctrl
+Type: \c boolean.
+Required.
+*/
+boolean ctrl;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief horizDelta
+Type: \c number.
+Required.
+*/
+number horizDelta;
+/** \brief meta
+Type: \c boolean.
+Required.
+*/
+boolean meta;
+/** \brief shift
+Type: \c boolean.
+Required.
+*/
+boolean shift;
+/** \brief vertDelta
+Type: \c number.
+Required.
+*/
+number vertDelta;
+};
+/**
+\brief ScrollWheelEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::ScrollWheelEvent.
+*/
+struct ScrollWheelEventCallback {
+};
+/**
+\brief A no-argument constructor returning an ISerializable instance.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c new callback()
+\par Result
+\c ISerializable.
+*/
+struct SerializableFactory {
+};
+/**
+\brief SerializableImplementation
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\par Methods
+| Method | Result | Behavior |
+| --- | --- | --- |
+| deserialize(deserializer) | \c void |  |
+| getSerializedSize(serializer) | \c number |  |
+| serialize(serializer) | \c void |  |
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SerializableImplementation {
+};
+/**
+\brief SerializeCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(serializer)
+\par Result
+\c void.
+Parameter serializer: \c Serializer.
+*/
+struct SerializeCallback {
+};
+/**
+\brief SerializedSizeCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(serializer)
+\par Result
+\c number.
+\note Must return synchronously.
+Parameter serializer: \c Serializer.
+*/
+struct SerializedSizeCallback {
+};
+/**
+\brief ShutdownEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| exitCode | \c number | Required |  |
+| exitReason | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct ShutdownEvent {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief exitCode
+Type: \c number.
+Required.
+*/
+number exitCode;
+/** \brief exitReason
+Type: \c number.
+Required.
+*/
+number exitReason;
+};
+/**
+\brief ShutdownEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::ShutdownEvent.
+*/
+struct ShutdownEventCallback {
+};
+/**
+\brief SoundEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventCode | \c number | Required |  |
+| eventType | \c number | Required |  |
+| sound | \c Sound | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SoundEvent {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventCode
+Type: \c number.
+Required.
+*/
+number eventCode;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief sound
+Type: \c Sound.
+Required.
+*/
+Sound sound;
+};
+/**
+\brief SoundEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SoundEvent.
+*/
+struct SoundEventCallback {
+};
+/**
+\brief SpriteAnimationEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| actingSprite | \c Sprite or \c null | Required |  |
+| action | \c number | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| inLayer | \c SpriteLayer or \c null | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SpriteAnimationEvent {
+/** \brief actingSprite
+Type: \c Sprite or \c null.
+Required.
+*/
+Sprite actingSprite;
+/** \brief action
+Type: \c number.
+Required.
+*/
+number action;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief inLayer
+Type: \c SpriteLayer or \c null.
+Required.
+*/
+SpriteLayer inLayer;
+};
+/**
+\brief SpriteAnimationEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SpriteAnimationEvent.
+*/
+struct SpriteAnimationEventCallback {
+};
+/**
+\brief SpriteBreakEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| actingSprite | \c Sprite or \c null | Required |  |
+| action | \c number | Required |  |
+| angularSpeed | \c number | Required |  |
+| body | \c PhysicsBody or \c null | Required |  |
+| breakAngularSpeed | \c number | Required |  |
+| breakForce | \c number | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| force | \c number | Required |  |
+| impulse | \c number | Required |  |
+| inLayer | \c SpriteLayer or \c null | Required |  |
+| joint | \c CpConstraint or \c null | Required |  |
+| part | \c Part or \c null | Required |  |
+| reason | \c number | Required |  |
+| referenceBody | \c PhysicsBody or \c null | Required |  |
+| targetSprite | \c Sprite or \c null | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SpriteBreakEvent {
+/** \brief actingSprite
+Type: \c Sprite or \c null.
+Required.
+*/
+Sprite actingSprite;
+/** \brief action
+Type: \c number.
+Required.
+*/
+number action;
+/** \brief angularSpeed
+Type: \c number.
+Required.
+*/
+number angularSpeed;
+/** \brief body
+Type: \c PhysicsBody or \c null.
+Required.
+*/
+PhysicsBody body;
+/** \brief breakAngularSpeed
+Type: \c number.
+Required.
+*/
+number breakAngularSpeed;
+/** \brief breakForce
+Type: \c number.
+Required.
+*/
+number breakForce;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief force
+Type: \c number.
+Required.
+*/
+number force;
+/** \brief impulse
+Type: \c number.
+Required.
+*/
+number impulse;
+/** \brief inLayer
+Type: \c SpriteLayer or \c null.
+Required.
+*/
+SpriteLayer inLayer;
+/** \brief joint
+Type: \c CpConstraint or \c null.
+Required.
+*/
+CpConstraint joint;
+/** \brief part
+Type: \c Part or \c null.
+Required.
+*/
+Part part;
+/** \brief reason
+Type: \c number.
+Required.
+*/
+number reason;
+/** \brief referenceBody
+Type: \c PhysicsBody or \c null.
+Required.
+*/
+PhysicsBody referenceBody;
+/** \brief targetSprite
+Type: \c Sprite or \c null.
+Required.
+*/
+Sprite targetSprite;
+};
+/**
+\brief SpriteBreakEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SpriteBreakEvent.
+*/
+struct SpriteBreakEventCallback {
+};
+/**
+\brief SpriteCollisionEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| actingSprite | \c Sprite or \c null | Required |  |
+| action | \c number | Required |  |
+| arbiter | \c CpArbiter | Optional |  |
+| collisionName | \c string or \c null | Optional |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| force | \c number | Required |  |
+| impulse | \c Vector | Required |  |
+| inLayer | \c SpriteLayer or \c null | Required |  |
+| isFirstContact | \c boolean | Optional |  |
+| kineticEnergy | \c number | Required |  |
+| normal | \c Vector | Required |  |
+| targetSprite | \c Sprite | Optional |  |
+| withCollisionName | \c string or \c null | Optional |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SpriteCollisionEvent {
+/** \brief actingSprite
+Type: \c Sprite or \c null.
+Required.
+*/
+Sprite actingSprite;
+/** \brief action
+Type: \c number.
+Required.
+*/
+number action;
+/** \brief arbiter
+Type: \c CpArbiter.
+Optional.
+*/
+CpArbiter arbiter;
+/** \brief collisionName
+Type: \c string or \c null.
+Optional.
+*/
+string collisionName;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief force
+Type: \c number.
+Required.
+*/
+number force;
+/** \brief impulse
+Type: \c Vector.
+Required.
+*/
+Vector impulse;
+/** \brief inLayer
+Type: \c SpriteLayer or \c null.
+Required.
+*/
+SpriteLayer inLayer;
+/** \brief isFirstContact
+Type: \c boolean.
+Optional.
+*/
+boolean isFirstContact;
+/** \brief kineticEnergy
+Type: \c number.
+Required.
+*/
+number kineticEnergy;
+/** \brief normal
+Type: \c Vector.
+Required.
+*/
+Vector normal;
+/** \brief targetSprite
+Type: \c Sprite.
+Optional.
+*/
+Sprite targetSprite;
+/** \brief withCollisionName
+Type: \c string or \c null.
+Optional.
+*/
+string withCollisionName;
+};
+/**
+\brief SpriteCollisionEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SpriteCollisionEvent.
+*/
+struct SpriteCollisionEventCallback {
+};
+/**
+\brief SpriteDrawCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(sprite,port)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter sprite: \c Sprite.
+Parameter port: \c Port.
+*/
+struct SpriteDrawCallback {
+};
+/**
+\brief SpriteLayerEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| actingLayer | \c SpriteLayer or \c null | Required |  |
+| action | \c number | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| millisec | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SpriteLayerEvent {
+/** \brief actingLayer
+Type: \c SpriteLayer or \c null.
+Required.
+*/
+SpriteLayer actingLayer;
+/** \brief action
+Type: \c number.
+Required.
+*/
+number action;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief millisec
+Type: \c number.
+Required.
+*/
+number millisec;
+};
+/**
+\brief SpriteLayerEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SpriteLayerEvent.
+*/
+struct SpriteLayerEventCallback {
+};
+/**
+\brief SpriteRecoveryEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| actingSprite | \c Sprite or \c null | Required |  |
+| action | \c number | Required |  |
+| bodyCount | \c number | Required |  |
+| bone | \c number | Required |  |
+| disabled | \c boolean | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| id | \c number | Required |  |
+| includeDescendants | \c boolean | Required |  |
+| inLayer | \c SpriteLayer or \c null | Required |  |
+| mode | \c number | Required |  |
+| wholeRig | \c boolean | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SpriteRecoveryEvent {
+/** \brief actingSprite
+Type: \c Sprite or \c null.
+Required.
+*/
+Sprite actingSprite;
+/** \brief action
+Type: \c number.
+Required.
+*/
+number action;
+/** \brief bodyCount
+Type: \c number.
+Required.
+*/
+number bodyCount;
+/** \brief bone
+Type: \c number.
+Required.
+*/
+number bone;
+/** \brief disabled
+Type: \c boolean.
+Required.
+*/
+boolean disabled;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief id
+Type: \c number.
+Required.
+*/
+number id;
+/** \brief includeDescendants
+Type: \c boolean.
+Required.
+*/
+boolean includeDescendants;
+/** \brief inLayer
+Type: \c SpriteLayer or \c null.
+Required.
+*/
+SpriteLayer inLayer;
+/** \brief mode
+Type: \c number.
+Required.
+*/
+number mode;
+/** \brief wholeRig
+Type: \c boolean.
+Required.
+*/
+boolean wholeRig;
+};
+/**
+\brief SpriteRecoveryEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SpriteRecoveryEvent.
+*/
+struct SpriteRecoveryEventCallback {
+};
+/**
+\brief SpriteTouchEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| alt | \c boolean | Required |  |
+| buttonNumber | \c number | Required |  |
+| ctrl | \c boolean | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| inLayer | \c SpriteLayer | Required |  |
+| lastClickElapsed | \c number | Required |  |
+| lastClickPos | \c Point | Required |  |
+| leftButton | \c boolean | Required |  |
+| meta | \c boolean | Required |  |
+| mousePos | \c Point | Required |  |
+| rightButton | \c boolean | Required |  |
+| shift | \c boolean | Required |  |
+| touchedSprite | \c Sprite | Required |  |
+| touchType | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SpriteTouchEvent {
+/** \brief alt
+Type: \c boolean.
+Required.
+*/
+boolean alt;
+/** \brief buttonNumber
+Type: \c number.
+Required.
+*/
+number buttonNumber;
+/** \brief ctrl
+Type: \c boolean.
+Required.
+*/
+boolean ctrl;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief inLayer
+Type: \c SpriteLayer.
+Required.
+*/
+SpriteLayer inLayer;
+/** \brief lastClickElapsed
+Type: \c number.
+Required.
+*/
+number lastClickElapsed;
+/** \brief lastClickPos
+Type: \c Point.
+Required.
+*/
+Point lastClickPos;
+/** \brief leftButton
+Type: \c boolean.
+Required.
+*/
+boolean leftButton;
+/** \brief meta
+Type: \c boolean.
+Required.
+*/
+boolean meta;
+/** \brief mousePos
+Type: \c Point.
+Required.
+*/
+Point mousePos;
+/** \brief rightButton
+Type: \c boolean.
+Required.
+*/
+boolean rightButton;
+/** \brief shift
+Type: \c boolean.
+Required.
+*/
+boolean shift;
+/** \brief touchedSprite
+Type: \c Sprite.
+Required.
+*/
+Sprite touchedSprite;
+/** \brief touchType
+Type: \c number.
+Required.
+*/
+number touchType;
+};
+/**
+\brief SpriteTouchEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SpriteTouchEvent.
+*/
+struct SpriteTouchEventCallback {
+};
+/**
+\brief Touch convenience handlers expose the touched sprite, layer and touch type.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| inLayer | \c SpriteLayer | Required |  |
+| touchedSprite | \c Sprite | Required |  |
+| touchType | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SpriteTouchNotification {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief inLayer
+Type: \c SpriteLayer.
+Required.
+*/
+SpriteLayer inLayer;
+/** \brief touchedSprite
+Type: \c Sprite.
+Required.
+*/
+Sprite touchedSprite;
+/** \brief touchType
+Type: \c number.
+Required.
+*/
+number touchType;
+};
+/**
+\brief SpriteTouchNotificationCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SpriteTouchNotification.
+*/
+struct SpriteTouchNotificationCallback {
+};
+/**
+\brief SpriteTriggerEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| actingSprite | \c Sprite or \c null | Required |  |
+| action | \c number | Required |  |
+| clipName | \c string | Required |  |
+| emitter | \c EventEmitter | Required |  |
+| entityName | \c string | Required |  |
+| eventType | \c number | Required |  |
+| inLayer | \c SpriteLayer or \c null | Required |  |
+| offsetSeconds | \c number | Required |  |
+| timeSeconds | \c number | Required |  |
+| triggerName | \c string | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct SpriteTriggerEvent {
+/** \brief actingSprite
+Type: \c Sprite or \c null.
+Required.
+*/
+Sprite actingSprite;
+/** \brief action
+Type: \c number.
+Required.
+*/
+number action;
+/** \brief clipName
+Type: \c string.
+Required.
+*/
+string clipName;
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief entityName
+Type: \c string.
+Required.
+*/
+string entityName;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief inLayer
+Type: \c SpriteLayer or \c null.
+Required.
+*/
+SpriteLayer inLayer;
+/** \brief offsetSeconds
+Type: \c number.
+Required.
+*/
+number offsetSeconds;
+/** \brief timeSeconds
+Type: \c number.
+Required.
+*/
+number timeSeconds;
+/** \brief triggerName
+Type: \c string.
+Required.
+*/
+string triggerName;
+};
+/**
+\brief SpriteTriggerEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::SpriteTriggerEvent.
+*/
+struct SpriteTriggerEventCallback {
+};
+/**
+\brief StartupEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| startupReason | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct StartupEvent {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief startupReason
+Type: \c number.
+Required.
+*/
+number startupReason;
+};
+/**
+\brief StartupEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::StartupEvent.
+*/
+struct StartupEventCallback {
+};
+/**
+\brief TileInfo
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| facing | \c number | Required |  |
+| tileType | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct TileInfo {
+/** \brief facing
+Type: \c number.
+Required.
+*/
+number facing;
+/** \brief tileType
+Type: \c number.
+Required.
+*/
+number tileType;
+};
+/**
+\brief TimerEvent
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| emitter | \c EventEmitter | Required |  |
+| eventType | \c number | Required |  |
+| id | \c number | Required |  |
+| millisec | \c number | Required |  |
+| msElapsed | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct TimerEvent {
+/** \brief emitter
+Type: \c EventEmitter.
+Required.
+*/
+EventEmitter emitter;
+/** \brief eventType
+Type: \c number.
+Required.
+*/
+number eventType;
+/** \brief id
+Type: \c number.
+Required.
+*/
+number id;
+/** \brief millisec
+Type: \c number.
+Required.
+*/
+number millisec;
+/** \brief msElapsed
+Type: \c number.
+Required.
+*/
+number msElapsed;
+};
+/**
+\brief TimerEventCallback
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c boolean.
+\note Must return synchronously.
+Parameter event: \ref pdg::TimerEvent.
+*/
+struct TimerEventCallback {
+};
+/**
+\brief TimerNotification
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\par Call signature
+\c callback(event)
+\par Result
+\c void.
+Parameter event: \ref pdg::TimerEvent.
+*/
+struct TimerNotification {
+};
+/**
+\brief TimerSubscription
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+Extends: \ref pdg::EventSubscription.
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| timer | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct TimerSubscription {
+/** \brief timer
+Type: \c number.
+Required.
+*/
+number timer;
+};
+/**
+\brief A plain pair of coordinates accepted by geometry constructors.
+\note Documentation-only JavaScript shape, not a runtime constructor.
+\ingroup StructuredDataTypes
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\par Fields
+| Field | Type | Required/default | Meaning |
+| --- | --- | --- | --- |
+| x | \c number | Required |  |
+| y | \c number | Required |  |
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+struct XY {
+/** \brief x
+Type: \c number.
+Required.
+*/
+number x;
+/** \brief y
+Type: \c number.
+Required.
+*/
+number y;
+};
 }

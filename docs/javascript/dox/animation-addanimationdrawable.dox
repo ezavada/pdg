@@ -1,5 +1,5 @@
 namespace pdg { /**
-\fn pdg::Sprite::addAnimationDrawable(Drawing drawing, object options)
+\fn pdg::Sprite::addAnimationDrawable(Drawing drawing, AnimationDrawableOptions options)
 
 \brief attach an editable Drawing to an animation bone
 
@@ -62,15 +62,9 @@ Both overloads accept the following \c options fields. Only \c bone is always
 required. Use the numeric \c pdg constants for placement and stroke space;
 strings such as \c "afterAll" or \c "local" are not accepted.
 
-| Field | Type | Default | Meaning |
-| ----- | ---- | ------- | ------- |
-| \c bone | string or integer | Required | Bone name or zero-based bone ID. See getAnimationBoneNames(). |
-| \c placement | integer | \c pdg.animationDraw_AfterAll | Where to draw relative to the sprite's authored images; see the placement table below. |
-| \c slot | string | Empty string | Image binding name. Required for slot placements; omit it for \c pdg.animationDraw_BeforeAll and \c pdg.animationDraw_AfterAll. See getAnimationBindingNames(). |
-| \c order | integer | \c 0 | Lower values draw first within the same placement and slot. Equal values preserve registration order. |
-| \c strokeSpace | integer | \c pdg.animationStroke_PortPixels | How line thickness responds to scale; see Stroke thickness below. |
-| \c bounds | object | Omitted | Rectangle with finite numeric \c left, \c top, \c right, and \c bottom fields in bone coordinates. Must include all artwork and stroke extents. |
-| \c uncullable | boolean | \c true without bounds; \c false with bounds | When true, prevents the artwork from being skipped based on its declared bounds. |
+See \ref pdg::AnimationDrawableOptions for the generated field types,
+required fields, and defaults, and \ref pdg::AnimationDrawingBounds
+for the bounds record. The following sections describe how those settings interact.
 
 \par Placement
 A slot is a named image binding in the authored animation. It is separate from
@@ -142,7 +136,7 @@ drawing contents and pixels already drawn are not rolled back by a later error.
 \note Headless builds retain registrations but do not draw artwork or invoke
 drawing callbacks. Use isAnimationDrawingSupported() to check drawing capability.
 
-\sa Sprite::addAnimationDrawable(function, object)
+\sa Sprite::addAnimationDrawable(function, AnimationDrawableOptions)
 \sa Sprite::enableAnimationPose()
 \sa Sprite::setAnimationDrawableEnabled()
 \sa Sprite::removeAnimationDrawable()

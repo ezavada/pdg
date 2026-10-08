@@ -143,10 +143,7 @@ namespace pdg
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -163,10 +160,7 @@ namespace pdg
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(number size, [number int] style = textStyle_Plain)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -195,10 +189,7 @@ namespace pdg
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(number size, [number int] style = textStyle_Plain)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -227,10 +218,7 @@ namespace pdg
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(number size, [number int] style = textStyle_Plain)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -259,10 +247,7 @@ namespace pdg
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(number size, [number int] style = textStyle_Plain)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -291,10 +276,7 @@ namespace pdg
         FontWrap* objWrapper = jswrap::ObjectWrap::Unwrap<FontWrap>(args.This());
         Font* self = dynamic_cast<Font*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(number size, [number int] style = textStyle_Plain)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);

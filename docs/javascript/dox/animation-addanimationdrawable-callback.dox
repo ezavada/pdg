@@ -1,5 +1,5 @@
 namespace pdg { /**
-\fn pdg::Sprite::addAnimationDrawable(function callback, object options)
+\fn pdg::Sprite::addAnimationDrawable(function callback, AnimationDrawableOptions options)
 
 \brief choose or create artwork for an animation bone during drawing
 
@@ -90,7 +90,7 @@ changes and are not rolled back if the callback later fails.
 isAnimationDrawingSupported() to check drawing capability. See the Drawing
 overload for bounds, stroke thickness, and rendering behavior shared by both forms.
 
-\sa Sprite::addAnimationDrawable(Drawing, object)
+\sa Sprite::addAnimationDrawable(Drawing, AnimationDrawableOptions)
 \sa Sprite::enableAnimationPose()
 \sa Sprite::setAnimationDrawableEnabled()
 \sa Sprite::removeAnimationDrawable()

@@ -1,0 +1,129 @@
+.TH "IEventHandler" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IEventHandler \- Interface for any class which handles events\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBIEventHandler\fP (function callback)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Interface for any class which handles events\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Specific Subclasses should be written to implement particular handlers\&. Typically you would call an onXXX() method of the \fBEventEmitter\fP object that is generating the event you want, and it will take care of creating the event handler for you, and adding a convenient cancel() method to the handler\&. For example:
+
+.PP
+.PP
+.nf
+var mySpriteCollisionHandler = mySprite\&.onCollideSprite(function(event) {
+   // do something about the collision
+});
+\&.\&.\&.
+mySpriteCollisionHandler\&.cancel();   // stop handling collision events with this handler
+.fi
+.PP
+
+.PP
+This cancel() method will only work for a single emitter\&. So if you may want to create a handler that is used with multiple emitters, you should create it once and then explicitly add it to and remove it from each emitter\&. Here's how:
+
+.PP
+.PP
+.nf
+var mySpriteHandler = new pdg\&.IEventHandler(function(event) {
+                console\&.log("in my event handler with "+event);
+});
+mySprite\&.addHandler(mySpriteHandler, pdg\&.eventType_SpriteCollide);
+\&.\&.\&.
+mySprite\&.removeHandler(mySpriteHandler, pdg\&.eventType_SpriteCollide);
+.fi
+.PP
+.SS "Your Custom Function:"
+As you can see from the examples above, your \fBEvent\fP Handler function will be called with a single parameter, and return a boolean: 
+.PP
+\fBParameters\fP
+.RS 4
+\fIevent\fP the event that occurred (from the See Also list below) 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+\fBtrue\fP if the event has been completely handled and should not propagate any further; or \fBfalse\fP it should be allowed to continue to propagate through the handler chain\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBKeyEvent\fP 
+
+.PP
+\fBKeyPressEvent\fP 
+
+.PP
+\fBMouseEvent\fP 
+
+.PP
+\fBMouseTrackingEvent\fP 
+
+.PP
+\fBPortDrawEvent\fP 
+
+.PP
+\fBPortResizedEvent\fP 
+
+.PP
+\fBScrollWheelEvent\fP 
+
+.PP
+\fBShutdownEvent\fP 
+
+.PP
+\fBSoundEvent\fP 
+
+.PP
+\fBSpriteAnimateEvent\fP 
+
+.PP
+\fBSpriteBreakEvent\fP 
+
+.PP
+\fBSpriteCollideEvent\fP 
+
+.PP
+\fBSpriteLayerEvent\fP 
+
+.PP
+\fBSpriteTouchEvent\fP 
+.RE
+.PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "IEventHandler (function callback)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBNativeEventCallback\fP\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

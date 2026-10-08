@@ -1,0 +1,5786 @@
+{
+	"contract_version": 1,
+	"coverage": "Exports and own prototype/static members only. Unresolved signatures and instance fields require explicit contracts.",
+	"interface": [
+		{
+			"name": "CLIP_TEXT",
+			"type": "string",
+			"value": "..."
+		},
+		{
+			"name": "DESCRIPTION",
+			"type": "string",
+			"value": "JavaScript port of PDG Application Framework"
+		},
+		{
+			"name": "FLICK_DECAY_FACTOR",
+			"type": "number",
+			"value": 3
+		},
+		{
+			"name": "FLICK_FRAME_RATE",
+			"type": "number",
+			"value": 16
+		},
+		{
+			"name": "FLICK_MAX_MOUSE_UNMOVED_MS",
+			"type": "number",
+			"value": 200
+		},
+		{
+			"name": "HIGHLIGHT_AREA_MARGIN",
+			"type": "number",
+			"value": 2
+		},
+		{
+			"name": "HOT_ITEM_NONE",
+			"type": "number",
+			"value": -1
+		},
+		{
+			"name": "IMAGE_HEIGHT_OFFSET",
+			"type": "number",
+			"value": 4
+		},
+		{
+			"name": "ITEM_DOWN_ARROW",
+			"type": "number",
+			"value": 2
+		},
+		{
+			"name": "ITEM_SIZE_OFFSET",
+			"type": "number",
+			"value": 8
+		},
+		{
+			"name": "ITEM_UP_ARROW",
+			"type": "number",
+			"value": 1
+		},
+		{
+			"name": "LEFT_MARGIN",
+			"type": "number",
+			"value": 3
+		},
+		{
+			"name": "MAX_ARROW_IMAGES",
+			"type": "number",
+			"value": 2
+		},
+		{
+			"name": "MAX_BUTTON_IMAGES",
+			"type": "number",
+			"value": 3
+		},
+		{
+			"name": "MAX_MENU_WIDTH",
+			"type": "number",
+			"value": 200
+		},
+		{
+			"name": "MAX_RADIO_IMAGES",
+			"type": "number",
+			"value": 2
+		},
+		{
+			"name": "RES_MENU_IMAGES",
+			"type": "number",
+			"value": 143
+		},
+		{
+			"name": "RES_PULL_ARROW",
+			"type": "number",
+			"value": 4
+		},
+		{
+			"name": "RIGHT_MARGIN",
+			"type": "number",
+			"value": 3
+		},
+		{
+			"name": "START_INDEX_NONE",
+			"type": "number",
+			"value": -1
+		},
+		{
+			"name": "TEXT_HEIGHT_OFFSET",
+			"type": "number",
+			"value": 4
+		},
+		{
+			"name": "TEXT_LEFT_MARGIN",
+			"type": "number",
+			"value": 2
+		},
+		{
+			"name": "TEXT_RESOURCE_ID_NONE",
+			"type": "number",
+			"value": -1
+		},
+		{
+			"name": "TEXT_WIDTH_OFFSET",
+			"type": "number",
+			"value": 10
+		},
+		{
+			"name": "VERSION",
+			"type": "string",
+			"value": "1.0.0"
+		},
+		{
+			"name": "VIEW_HEIGHT_OFFSET",
+			"type": "number",
+			"value": 20
+		},
+		{
+			"name": "VIEW_HSHIFT_OFFSET",
+			"type": "number",
+			"value": 3
+		},
+		{
+			"name": "VIEW_WIDTH_OFFSET",
+			"type": "number",
+			"value": 12
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "state_Cleanup",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "state_FirstUserState",
+							"type": "number",
+							"value": 3
+						},
+						{
+							"name": "state_Initializing",
+							"type": "number",
+							"value": 0
+						},
+						{
+							"name": "state_Running",
+							"type": "number",
+							"value": 2
+						}
+					],
+					"name": "AppStates",
+					"type": "object"
+				},
+				{
+					"constructor_name": "Application",
+					"implements": [],
+					"interface": [
+						{
+							"name": "cleanup",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "enterState",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getConfigManager",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getEventManager",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getGraphicsManager",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getLogManager",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getNetworkManager",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getResourceManager",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getSoundManager",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getState",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTimerManager",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "initialize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "leaveState",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onShutdown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "preloadResources",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setState",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setupControllers",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setupGraphics",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "Application",
+					"signature_status": "unresolved",
+					"type": "class"
+				},
+				{
+					"constructor_name": "NoManagerError",
+					"implements": [
+						"Error"
+					],
+					"interface": [],
+					"name": "NoManagerError",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "Application",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "state_Cleanup",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "state_FirstUserState",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"name": "state_Initializing",
+					"type": "number",
+					"value": 0
+				},
+				{
+					"name": "state_Running",
+					"type": "number",
+					"value": 2
+				}
+			],
+			"name": "AppStates",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "MAX_BUTTON_IMAGES",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"interface": [
+						{
+							"name": "0",
+							"type": "string",
+							"value": "button_default.png"
+						},
+						{
+							"name": "1",
+							"type": "string",
+							"value": "button_pressed.png"
+						},
+						{
+							"name": "2",
+							"type": "string",
+							"value": "button_disabled.png"
+						},
+						{
+							"name": "length",
+							"type": "number",
+							"value": 3
+						}
+					],
+					"name": "RES_DEFAULT_BUTTON_IMAGE_NAMES",
+					"type": "object"
+				},
+				{
+					"constructor_name": "Button",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doLeftClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseEnter",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseLeave",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawStandardButtonBackground",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawWithImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "finishInitButton",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getButtonID",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "initializeButton",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isMouseInToolArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isPressed",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setClickSound",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setClickState",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextFromResource",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setToolTipText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "showToolTip",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "updateLayout",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "viewAreaChanged",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "Button",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "Button",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "CLOSED",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "NUM_CHECKBOX_IMAGES",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "OPEN",
+					"type": "number",
+					"value": 0
+				}
+			],
+			"name": "CBImages",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "CLOSED",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "NUM_CHECKBOX_IMAGES",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "OPEN",
+							"type": "number",
+							"value": 0
+						}
+					],
+					"name": "CBImages",
+					"type": "object"
+				},
+				{
+					"interface": [
+						{
+							"name": "CLICK_ID_CHECKBOX",
+							"type": "number",
+							"value": 1
+						}
+					],
+					"name": "CheckboxClickIDs",
+					"type": "object"
+				},
+				{
+					"constructor_name": "Checkbox",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "calcClickableAreas",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "createPlaceholderImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doLeftClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawCheckmark",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawStandardCheckbox",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawWithImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getClickSound",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextMetrics",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isChecked",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setChecked",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setClickSound",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setEnabled",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "toggle",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "Checkbox",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "Checkbox",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "CLICK_ID_CHECKBOX",
+					"type": "number",
+					"value": 1
+				}
+			],
+			"name": "CheckboxClickIDs",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "CLICKED_PART_NONE",
+					"type": "number",
+					"value": -1
+				}
+			],
+			"name": "ClickablePartsIDs",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "Count",
+							"type": "number",
+							"value": 11
+						},
+						{
+							"name": "Decrement",
+							"type": "number",
+							"value": 6
+						},
+						{
+							"name": "DecrementPressed",
+							"type": "number",
+							"value": 7
+						},
+						{
+							"name": "Disabled",
+							"type": "number",
+							"value": 3
+						},
+						{
+							"name": "Hovered",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "Increment",
+							"type": "number",
+							"value": 8
+						},
+						{
+							"name": "IncrementPressed",
+							"type": "number",
+							"value": 9
+						},
+						{
+							"name": "Normal",
+							"type": "number",
+							"value": 0
+						},
+						{
+							"name": "Pressed",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "Selected",
+							"type": "number",
+							"value": 4
+						},
+						{
+							"name": "SelectedDisabled",
+							"type": "number",
+							"value": 5
+						},
+						{
+							"name": "Thumb",
+							"type": "number",
+							"value": 10
+						}
+					],
+					"name": "ControlState",
+					"type": "object"
+				},
+				{
+					"interface": [
+						{
+							"name": "Button",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "Checkbox",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "Dialog",
+							"type": "number",
+							"value": 0
+						},
+						{
+							"name": "Other",
+							"type": "number",
+							"value": 5
+						},
+						{
+							"name": "RadioButton",
+							"type": "number",
+							"value": 3
+						},
+						{
+							"name": "Scrollbar",
+							"type": "number",
+							"value": 4
+						}
+					],
+					"name": "ControlType",
+					"type": "object"
+				},
+				{
+					"constructor_name": "ControlAttributes",
+					"implements": [],
+					"interface": [
+						{
+							"name": "clickRoutine",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "clickSound",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "draw",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getClickSound",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getClickVolume",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hasClickRoutine",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hasClickSound",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "merge",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "playClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "state",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "stateAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "stateDrawRoutine",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "stateForeground",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "stateImage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "ControlAttributes",
+					"signature_status": "unresolved",
+					"type": "class"
+				},
+				{
+					"constructor_name": "ControlStateAttributes",
+					"implements": [],
+					"interface": [
+						{
+							"name": "backgroundImage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "customDraw",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "foregroundColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "merge",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "ControlStateAttributes",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "ControlAttributes",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "kDontDrawWhileInactive",
+							"type": "boolean",
+							"value": false
+						},
+						{
+							"name": "kDontWantAllEvents",
+							"type": "boolean",
+							"value": false
+						},
+						{
+							"name": "kDontWantKeyPressEvents",
+							"type": "boolean",
+							"value": false
+						},
+						{
+							"name": "kDontWantKeyUpDownEvents",
+							"type": "boolean",
+							"value": false
+						},
+						{
+							"name": "kDontWantMouseEnterLeaveEvents",
+							"type": "boolean",
+							"value": false
+						},
+						{
+							"name": "kDrawWhileInactive",
+							"type": "boolean",
+							"value": true
+						},
+						{
+							"name": "kWantAllEvents",
+							"type": "boolean",
+							"value": true
+						},
+						{
+							"name": "kWantKeyPressEvents",
+							"type": "boolean",
+							"value": true
+						},
+						{
+							"name": "kWantKeyUpDownEvents",
+							"type": "boolean",
+							"value": true
+						},
+						{
+							"name": "kWantMouseEnterLeaveEvents",
+							"type": "boolean",
+							"value": true
+						}
+					],
+					"name": "ControllerPreferences",
+					"type": "object"
+				},
+				{
+					"constructor_name": "Controller",
+					"implements": [],
+					"interface": [
+						{
+							"name": "addChild",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "addView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "addViewBehind",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "animateViews",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "attemptChildClose",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "cancelMousePress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "childActivated",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDoubleClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDragComplete",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDragIn",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDragMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDragOut",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyPress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doLeftClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseEnter",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseLeave",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doRightClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawViews",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getApplication",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getControlAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getHitView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTopController",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getUntypedView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleEvent",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isActive",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isViewWithin",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onKeyDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onKeyPress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onKeyUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onMouseEnter",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onMouseLeave",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onMouseMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onPortDraw",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onPortResized",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onScrollWheel",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "portWasResized",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeAllViews",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeChild",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeViewById",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setActive",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setParent",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setPort",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setupViews",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "startBeingDragTarget",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "stopBeingDragTarget",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "Controller",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "Controller",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "kDontDrawWhileInactive",
+					"type": "boolean",
+					"value": false
+				},
+				{
+					"name": "kDontWantAllEvents",
+					"type": "boolean",
+					"value": false
+				},
+				{
+					"name": "kDontWantKeyPressEvents",
+					"type": "boolean",
+					"value": false
+				},
+				{
+					"name": "kDontWantKeyUpDownEvents",
+					"type": "boolean",
+					"value": false
+				},
+				{
+					"name": "kDontWantMouseEnterLeaveEvents",
+					"type": "boolean",
+					"value": false
+				},
+				{
+					"name": "kDrawWhileInactive",
+					"type": "boolean",
+					"value": true
+				},
+				{
+					"name": "kWantAllEvents",
+					"type": "boolean",
+					"value": true
+				},
+				{
+					"name": "kWantKeyPressEvents",
+					"type": "boolean",
+					"value": true
+				},
+				{
+					"name": "kWantKeyUpDownEvents",
+					"type": "boolean",
+					"value": true
+				},
+				{
+					"name": "kWantMouseEnterLeaveEvents",
+					"type": "boolean",
+					"value": true
+				}
+			],
+			"name": "ControllerPreferences",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "Count",
+					"type": "number",
+					"value": 11
+				},
+				{
+					"name": "Decrement",
+					"type": "number",
+					"value": 6
+				},
+				{
+					"name": "DecrementPressed",
+					"type": "number",
+					"value": 7
+				},
+				{
+					"name": "Disabled",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"name": "Hovered",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "Increment",
+					"type": "number",
+					"value": 8
+				},
+				{
+					"name": "IncrementPressed",
+					"type": "number",
+					"value": 9
+				},
+				{
+					"name": "Normal",
+					"type": "number",
+					"value": 0
+				},
+				{
+					"name": "Pressed",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "Selected",
+					"type": "number",
+					"value": 4
+				},
+				{
+					"name": "SelectedDisabled",
+					"type": "number",
+					"value": 5
+				},
+				{
+					"name": "Thumb",
+					"type": "number",
+					"value": 10
+				}
+			],
+			"name": "ControlState",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "Button",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "Checkbox",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "Dialog",
+					"type": "number",
+					"value": 0
+				},
+				{
+					"name": "Other",
+					"type": "number",
+					"value": 5
+				},
+				{
+					"name": "RadioButton",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"name": "Scrollbar",
+					"type": "number",
+					"value": 4
+				}
+			],
+			"name": "ControlType",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "DIALOG_BACKGROUND_VIEW_ID",
+					"type": "number",
+					"value": -100
+				},
+				{
+					"interface": [
+						{
+							"name": "dialog_Centered",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "dialog_CreateBackground",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "dialog_NonModal",
+							"type": "number",
+							"value": 8
+						},
+						{
+							"name": "dialog_ReservedFlag",
+							"type": "number",
+							"value": 4
+						},
+						{
+							"name": "dialog_Standard",
+							"type": "number",
+							"value": 3
+						}
+					],
+					"name": "DialogFlags",
+					"type": "object"
+				},
+				{
+					"interface": [
+						{
+							"name": "kAccepted",
+							"type": "boolean",
+							"value": false
+						},
+						{
+							"name": "kCancelled",
+							"type": "boolean",
+							"value": true
+						}
+					],
+					"name": "DialogResult",
+					"type": "object"
+				},
+				{
+					"constructor_name": "Dialog",
+					"implements": [
+						"Controller"
+					],
+					"interface": [
+						{
+							"name": "childActivated",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doClose",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyPress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doLeftClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getCancelButtonId",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getDialogRect",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getFlags",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getOkButtonId",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hideDialog",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isCentered",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isVisible",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "portWasResized",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setDialogRect",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "showDialog",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "Dialog",
+					"signature_status": "unresolved",
+					"type": "class"
+				},
+				{
+					"constructor_name": "DialogBackgroundView",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "DialogBackgroundView",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "Dialog",
+			"type": "object"
+		},
+		{
+			"name": "DialogBorderView",
+			"signature_status": "unresolved",
+			"type": "undefined"
+		},
+		{
+			"interface": [
+				{
+					"name": "dialog_Centered",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "dialog_CreateBackground",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "dialog_NonModal",
+					"type": "number",
+					"value": 8
+				},
+				{
+					"name": "dialog_ReservedFlag",
+					"type": "number",
+					"value": 4
+				},
+				{
+					"name": "dialog_Standard",
+					"type": "number",
+					"value": 3
+				}
+			],
+			"name": "DialogFlags",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "kAccepted",
+					"type": "boolean",
+					"value": false
+				},
+				{
+					"name": "kCancelled",
+					"type": "boolean",
+					"value": true
+				}
+			],
+			"name": "DialogResult",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "LEFT_MARGIN",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"name": "RIGHT_MARGIN",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"name": "TEXT_HEIGHT_OFFSET",
+					"type": "number",
+					"value": 4
+				},
+				{
+					"interface": [
+						{
+							"name": "CLICK_ID_EDITBOXVIEW",
+							"type": "number",
+							"value": 1002
+						}
+					],
+					"name": "EditTextClickIDs",
+					"type": "object"
+				},
+				{
+					"constructor_name": "EditText",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "calcClickableAreas",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "canFitInDisplayArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "clearSelection",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "deleteSelection",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDoubleClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyPress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawBorder",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawCaret",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelection",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getBufMax",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getCaretPositionFromPoint",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getSelectedText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextWidth",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleBackspace",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleDelete",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleEvent",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleLeftArrow",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handlePrintableChar",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleRightArrow",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hasFocus",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hasSelection",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isCharAllowed",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isPrintableChar",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "replaceSelection",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "selectAll",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setBackgroundColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setBufMax",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setFilter",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setFocus",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setFontSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "EditText",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "EditText",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "CLICK_ID_EDITBOXVIEW",
+					"type": "number",
+					"value": 1002
+				}
+			],
+			"name": "EditTextClickIDs",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "VIEW_ID_LIST_BOX_SCROLLBAR",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "VIEW_ID_SELECTION_START",
+							"type": "number",
+							"value": 2
+						}
+					],
+					"name": "ListBoxClickIDs",
+					"type": "object"
+				},
+				{
+					"interface": [
+						{
+							"name": "NO_SELECTION",
+							"type": "number",
+							"value": -1
+						}
+					],
+					"name": "ListBoxSelectionIDs",
+					"type": "object"
+				},
+				{
+					"constructor_name": "ListBox",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "addToList",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "calcClickableAreas",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "clear",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "clearSelection",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "createScrollbar",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDoubleClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyPress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doScrollWheel",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawListItems",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "ensureItemVisible",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "findItem",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getItem",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getItemCount",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getLineIndexFromPoint",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getSelectedIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getSelectedText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextFromIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "moveSelection",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "needsScrollbar",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "notify",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "onItemDoubleClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeItem",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setBackgroundColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setHighlightColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setItemColors",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setItemText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setSelectedIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "viewAreaChanged",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "ListBox",
+					"signature_status": "unresolved",
+					"type": "class"
+				},
+				{
+					"constructor_name": "ListBoxLine",
+					"implements": [],
+					"interface": [],
+					"name": "ListBoxLine",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "ListBox",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "VIEW_ID_LIST_BOX_SCROLLBAR",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "VIEW_ID_SELECTION_START",
+					"type": "number",
+					"value": 2
+				}
+			],
+			"name": "ListBoxClickIDs",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "NO_SELECTION",
+					"type": "number",
+					"value": -1
+				}
+			],
+			"name": "ListBoxSelectionIDs",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "CANCEL",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "LOAD",
+							"type": "number",
+							"value": 6
+						},
+						{
+							"name": "NO",
+							"type": "number",
+							"value": 4
+						},
+						{
+							"name": "NONE",
+							"type": "number",
+							"value": 0
+						},
+						{
+							"name": "OK",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "SAVE",
+							"type": "number",
+							"value": 5
+						},
+						{
+							"name": "YES",
+							"type": "number",
+							"value": 3
+						}
+					],
+					"name": "MessageDialogButtonText",
+					"type": "object"
+				},
+				{
+					"interface": [
+						{
+							"name": "VIEW_FIRST_BUTTON_ID",
+							"type": "number",
+							"value": 100
+						},
+						{
+							"name": "VIEW_ID_BORDER",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "VIEW_ID_BUTTON_1",
+							"type": "number",
+							"value": 101
+						},
+						{
+							"name": "VIEW_ID_BUTTON_2",
+							"type": "number",
+							"value": 102
+						},
+						{
+							"name": "VIEW_ID_MESSAGE_VIEW",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "VIEW_LAST_BUTTON_ID",
+							"type": "number",
+							"value": 199
+						}
+					],
+					"name": "MessageDialogViewIDs",
+					"type": "object"
+				},
+				{
+					"constructor_name": "MessageDialog",
+					"implements": [
+						"Dialog"
+					],
+					"interface": [
+						{
+							"name": "createOKCancelDialog",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "createOKDialog",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "createSaveCancelDialog",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "createYesNoDialog",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "doClose",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doLeftClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getButtonClickedId",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getMessageCode",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextForButton",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "setMessageCode",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setupDialog",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "showModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "showOKCancelDialog",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "showOKDialog",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "showSaveCancelDialog",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "showYesNoDialog",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						},
+						{
+							"name": "withCustomButtons",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						}
+					],
+					"name": "MessageDialog",
+					"signature_status": "unresolved",
+					"type": "class"
+				},
+				{
+					"constructor_name": "MessageDialogBorderView",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setBorderColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setBorderWidth",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "MessageDialogBorderView",
+					"signature_status": "unresolved",
+					"type": "class"
+				},
+				{
+					"constructor_name": "MessageDialogView",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setMessage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "MessageDialogView",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "MessageDialog",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "CANCEL",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "LOAD",
+					"type": "number",
+					"value": 6
+				},
+				{
+					"name": "NO",
+					"type": "number",
+					"value": 4
+				},
+				{
+					"name": "NONE",
+					"type": "number",
+					"value": 0
+				},
+				{
+					"name": "OK",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "SAVE",
+					"type": "number",
+					"value": 5
+				},
+				{
+					"name": "YES",
+					"type": "number",
+					"value": 3
+				}
+			],
+			"name": "MessageDialogButtonText",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "VIEW_FIRST_BUTTON_ID",
+					"type": "number",
+					"value": 100
+				},
+				{
+					"name": "VIEW_ID_BORDER",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "VIEW_ID_BUTTON_1",
+					"type": "number",
+					"value": 101
+				},
+				{
+					"name": "VIEW_ID_BUTTON_2",
+					"type": "number",
+					"value": 102
+				},
+				{
+					"name": "VIEW_ID_MESSAGE_VIEW",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "VIEW_LAST_BUTTON_ID",
+					"type": "number",
+					"value": 199
+				}
+			],
+			"name": "MessageDialogViewIDs",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"constructor_name": "MessageView",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "append",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "clear",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyPress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseWheel",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawMessageText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getBackgroundColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getCharAt",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getLength",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getLine",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getLineCount",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getLineSpacing",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getMargins",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getMaxLines",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getMessage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getScrollOffset",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getScrollPercentage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextAlignment",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextStyle",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextX",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getWordWrap",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getWrappedLines",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "insert",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isEmpty",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isNotEmpty",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isScrollingNeeded",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "prepend",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "remove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "replace",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setBackgroundColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setLineSpacing",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setMargins",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setMaxLines",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setMessage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setScrollOffset",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setScrollPercentage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextAlignment",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextColor",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextStyle",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setWordWrap",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "updateScrollLimits",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "wrapText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "MessageView",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "MessageView",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"constructor_name": "ModalController",
+					"implements": [
+						"Controller"
+					],
+					"interface": [
+						{
+							"name": "activateModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "addChild",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "attemptChildClose",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "closeModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "deactivateModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyPress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getModalStack",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleClickOutside",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleEscapeKey",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleEvent",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleModalEvents",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hideModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isModalActive",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isPointInModalArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isTopModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeChild",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "showModal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "ModalController",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "ModalController",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"constructor_name": "IObserver",
+					"implements": [],
+					"interface": [
+						{
+							"name": "notify",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "IObserver",
+					"signature_status": "unresolved",
+					"type": "class"
+				},
+				{
+					"constructor_name": "Subject",
+					"implements": [],
+					"interface": [
+						{
+							"name": "addObserver",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "clearObservers",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getObserverCount",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hasObserver",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "notifyObservers",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeObserver",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "Subject",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "Observer",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "CLIP_TEXT",
+					"type": "string",
+					"value": "..."
+				},
+				{
+					"name": "HIGHLIGHT_AREA_MARGIN",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "HOT_ITEM_NONE",
+					"type": "number",
+					"value": -1
+				},
+				{
+					"name": "IMAGE_HEIGHT_OFFSET",
+					"type": "number",
+					"value": 4
+				},
+				{
+					"name": "ITEM_DOWN_ARROW",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "ITEM_SIZE_OFFSET",
+					"type": "number",
+					"value": 8
+				},
+				{
+					"name": "ITEM_UP_ARROW",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "MAX_ARROW_IMAGES",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "MAX_MENU_WIDTH",
+					"type": "number",
+					"value": 200
+				},
+				{
+					"name": "RES_MENU_IMAGES",
+					"type": "number",
+					"value": 143
+				},
+				{
+					"name": "RES_PULL_ARROW",
+					"type": "number",
+					"value": 4
+				},
+				{
+					"name": "START_INDEX_NONE",
+					"type": "number",
+					"value": -1
+				},
+				{
+					"name": "TEXT_LEFT_MARGIN",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "TEXT_RESOURCE_ID_NONE",
+					"type": "number",
+					"value": -1
+				},
+				{
+					"name": "TEXT_WIDTH_OFFSET",
+					"type": "number",
+					"value": 10
+				},
+				{
+					"name": "VIEW_HEIGHT_OFFSET",
+					"type": "number",
+					"value": 20
+				},
+				{
+					"name": "VIEW_HSHIFT_OFFSET",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"name": "VIEW_WIDTH_OFFSET",
+					"type": "number",
+					"value": 12
+				},
+				{
+					"constructor_name": "ItemInfo",
+					"implements": [],
+					"interface": [
+						{
+							"name": "equals",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "ItemInfo",
+					"signature_status": "unresolved",
+					"type": "class"
+				},
+				{
+					"constructor_name": "PopupMenu",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "addDrawableItemPart",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "addMenuItem",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "calcClickableAreas",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "deleteAllMenuItems",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "deleteMenuItemByIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "deleteMenuItemByItemID",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseEnter",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseLeave",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawArrow",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawMenuItems",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawScrollArrows",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getHotItem",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getIndexByText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getItemCount",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getItemStringByIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getItemStringByItemID",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getPartClicked",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hide",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "sanitiseViewArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollMenu",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setHotItem",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setLongestText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setStringByIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setStringByItemID",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "showSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "viewAreaChanged",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "PopupMenu",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "PopupMenu",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "MAX_RADIO_IMAGES",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"constructor_name": "RadioButton",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "addString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "calcClickableAreas",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "clearStrings",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doKeyPress",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doLeftClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawRadioCircle",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawRadioOptions",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "findString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getAllStrings",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getOptionCount",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getSelectedIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getSelectedText",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isOptionSelected",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadStrings",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "moveSelection",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "selectFirst",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "selectLast",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "selectNext",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "selectPrevious",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setAllStrings",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setClickSound",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setSelectedIndex",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setString",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setTextSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "RadioButton",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "RadioButton",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "0",
+					"type": "string",
+					"value": "button_default.png"
+				},
+				{
+					"name": "1",
+					"type": "string",
+					"value": "button_pressed.png"
+				},
+				{
+					"name": "2",
+					"type": "string",
+					"value": "button_disabled.png"
+				},
+				{
+					"name": "length",
+					"type": "number",
+					"value": 3
+				}
+			],
+			"name": "RES_DEFAULT_BUTTON_IMAGE_NAMES",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "CLICK_ID_SCROLL_DOWN",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "CLICK_ID_SCROLL_UP",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "CLICK_ID_SLIDER_AREA",
+							"type": "number",
+							"value": 3
+						}
+					],
+					"name": "ScrollbarClickIDs",
+					"type": "object"
+				},
+				{
+					"interface": [
+						{
+							"name": "MAX_SCROLL_BAR_IMAGES",
+							"type": "number",
+							"value": 5
+						},
+						{
+							"name": "SCROLL_DOWN",
+							"type": "number",
+							"value": 0
+						},
+						{
+							"name": "SCROLL_DOWN_CLICKED",
+							"type": "number",
+							"value": 3
+						},
+						{
+							"name": "SCROLL_SLIDER",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "SCROLL_UP",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "SCROLL_UP_CLICKED",
+							"type": "number",
+							"value": 4
+						}
+					],
+					"name": "ScrollbarImages",
+					"type": "object"
+				},
+				{
+					"interface": [
+						{
+							"name": "HORIZONTAL",
+							"type": "number",
+							"value": 0
+						},
+						{
+							"name": "VERTICAL",
+							"type": "number",
+							"value": 1
+						},
+						{
+							"name": "VERTICAL_UP_IS_BIGGER",
+							"type": "number",
+							"value": 2
+						}
+					],
+					"name": "ScrollbarOrientation",
+					"type": "object"
+				},
+				{
+					"constructor_name": "Scrollbar",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "addObserver",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "calcClickableAreas",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "createPlaceholderImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "decrementExtent",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseLeave",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doScrollWheel",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawArrow",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawButton",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawScrollBar",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSlider",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getCurrentPosition",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getDownButtonRect",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getOrientation",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getScrollRange",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getSliderRect",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getUpButtonRect",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleEvent",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "incrementExtent",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isButtonPressed",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "loadImages",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "notifyObservers",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeObserver",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollDownFullWindow",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollDownPressed",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollDownReleased",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollSliderAreaPressed",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollSliderAreaReleased",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollUpFullWindow",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollUpPressed",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollUpReleased",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setCurrentPosition",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setMaxRange",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setMinRange",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setPageSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setStepSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setVisibleAmount",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "thumbDimensions",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "trackScrollSlider",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "updateSliderPosition",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "viewAreaChanged",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "Scrollbar",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "Scrollbar",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "CLICK_ID_SCROLL_DOWN",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "CLICK_ID_SCROLL_UP",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "CLICK_ID_SLIDER_AREA",
+					"type": "number",
+					"value": 3
+				}
+			],
+			"name": "ScrollbarClickIDs",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "MAX_SCROLL_BAR_IMAGES",
+					"type": "number",
+					"value": 5
+				},
+				{
+					"name": "SCROLL_DOWN",
+					"type": "number",
+					"value": 0
+				},
+				{
+					"name": "SCROLL_DOWN_CLICKED",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"name": "SCROLL_SLIDER",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "SCROLL_UP",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "SCROLL_UP_CLICKED",
+					"type": "number",
+					"value": 4
+				}
+			],
+			"name": "ScrollbarImages",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "HORIZONTAL",
+					"type": "number",
+					"value": 0
+				},
+				{
+					"name": "VERTICAL",
+					"type": "number",
+					"value": 1
+				},
+				{
+					"name": "VERTICAL_UP_IS_BIGGER",
+					"type": "number",
+					"value": 2
+				}
+			],
+			"name": "ScrollbarOrientation",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "bind_Bottom",
+							"type": "number",
+							"value": 16
+						},
+						{
+							"name": "bind_Centers",
+							"type": "number",
+							"value": 120
+						},
+						{
+							"name": "bind_CenterX",
+							"type": "number",
+							"value": 96
+						},
+						{
+							"name": "bind_CenterY",
+							"type": "number",
+							"value": 24
+						},
+						{
+							"name": "bind_Default",
+							"type": "number",
+							"value": 6
+						},
+						{
+							"name": "bind_Left",
+							"type": "number",
+							"value": 32
+						},
+						{
+							"name": "bind_LimitX",
+							"type": "number",
+							"value": 2
+						},
+						{
+							"name": "bind_LimitXY",
+							"type": "number",
+							"value": 6
+						},
+						{
+							"name": "bind_LimitY",
+							"type": "number",
+							"value": 4
+						},
+						{
+							"name": "bind_None",
+							"type": "number",
+							"value": 0
+						},
+						{
+							"name": "bind_Right",
+							"type": "number",
+							"value": 64
+						},
+						{
+							"name": "bind_Top",
+							"type": "number",
+							"value": 8
+						}
+					],
+					"name": "ScrollingViewBindType",
+					"type": "object"
+				},
+				{
+					"constructor_name": "ScrollingView",
+					"implements": [
+						"View"
+					],
+					"interface": [
+						{
+							"name": "adjustViewAreaToFrame",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "applyAutoAdjust",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "draw",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getAutoAdjust",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getMaxScrollOffset",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getMinScrollOffset",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getModifiableViewFrameRect",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getScrollOffset",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getScrollPercentage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getViewFrame",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getVisibleArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getVisibleFrame",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isAtBottom",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isAtLeft",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isAtRight",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isAtTop",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isScrollingNeeded",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isViewWithinFrame",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "moveView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "pointInViewFrame",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "pointInViewVisibleArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "portResized",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollBy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollTo",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollToBottom",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollToLeft",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollToRight",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "scrollToTop",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setAutoAdjust",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setScrollOffset",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setScrollPercentage",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setViewFrame",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "withPort",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						}
+					],
+					"name": "ScrollingView",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "ScrollingView",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "bind_Bottom",
+					"type": "number",
+					"value": 16
+				},
+				{
+					"name": "bind_Centers",
+					"type": "number",
+					"value": 120
+				},
+				{
+					"name": "bind_CenterX",
+					"type": "number",
+					"value": 96
+				},
+				{
+					"name": "bind_CenterY",
+					"type": "number",
+					"value": 24
+				},
+				{
+					"name": "bind_Default",
+					"type": "number",
+					"value": 6
+				},
+				{
+					"name": "bind_Left",
+					"type": "number",
+					"value": 32
+				},
+				{
+					"name": "bind_LimitX",
+					"type": "number",
+					"value": 2
+				},
+				{
+					"name": "bind_LimitXY",
+					"type": "number",
+					"value": 6
+				},
+				{
+					"name": "bind_LimitY",
+					"type": "number",
+					"value": 4
+				},
+				{
+					"name": "bind_None",
+					"type": "number",
+					"value": 0
+				},
+				{
+					"name": "bind_Right",
+					"type": "number",
+					"value": 64
+				},
+				{
+					"name": "bind_Top",
+					"type": "number",
+					"value": 8
+				}
+			],
+			"name": "ScrollingViewBindType",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "FLICK_DECAY_FACTOR",
+					"type": "number",
+					"value": 3
+				},
+				{
+					"name": "FLICK_FRAME_RATE",
+					"type": "number",
+					"value": 16
+				},
+				{
+					"name": "FLICK_MAX_MOUSE_UNMOVED_MS",
+					"type": "number",
+					"value": 200
+				},
+				{
+					"constructor_name": "TouchController",
+					"implements": [
+						"ModalController"
+					],
+					"interface": [
+						{
+							"name": "calculateDistance",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "calculateFlickVelocity",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doPinchMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doSnapback",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doSwipeMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doTap",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doTouch",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doTouchMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getFlickVelocity",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTouchDuration",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTouchMovePoints",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getTouchStartPoint",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleEvent",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleTap",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "handleTouchMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isFlickGesture",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isTouchActive",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setFlickVelocity",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "startFlick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "stopFlick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "updateFlick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						}
+					],
+					"name": "TouchController",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "TouchController",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"interface": [
+						{
+							"name": "CLICKED_PART_NONE",
+							"type": "number",
+							"value": -1
+						}
+					],
+					"name": "ClickablePartsIDs",
+					"type": "object"
+				},
+				{
+					"interface": [
+						{
+							"name": "bind_Bottom",
+							"type": "number",
+							"value": 16
+						},
+						{
+							"name": "bind_Left",
+							"type": "number",
+							"value": 32
+						},
+						{
+							"name": "bind_Right",
+							"type": "number",
+							"value": 64
+						},
+						{
+							"name": "bind_Top",
+							"type": "number",
+							"value": 8
+						},
+						{
+							"name": "grow",
+							"type": "number",
+							"value": 120
+						},
+						{
+							"name": "grow_Horz",
+							"type": "number",
+							"value": 96
+						},
+						{
+							"name": "grow_Vert",
+							"type": "number",
+							"value": 24
+						}
+					],
+					"name": "ViewBinding",
+					"type": "object"
+				},
+				{
+					"constructor_name": "View",
+					"implements": [
+						"AnimatedAttributes"
+					],
+					"interface": [
+						{
+							"name": "viewArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "accessor"
+						},
+						{
+							"name": "addClickablePart",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "animate",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "destroy",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDoubleClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDragComplete",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDragIn",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDragMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doDragOut",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doLeftClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseDown",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseEnter",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseLeave",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doMouseUp",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doPinchMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doRightClick",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doScrollWheel",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doSwipeMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doTap",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "doTouchMove",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "draw",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawClickableParts",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "drawSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getClickableRectFromID",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getController",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getDrawingAttributes",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getHitView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getID",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getLayoutTransform",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getParentView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getPartClicked",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getPort",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getViewArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "getVisibleFrame",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "globalToLocal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "globalToLocalRect",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hide",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "hideSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isDraggable",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isEnabled",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "isVisible",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "localToGlobal",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "localToGlobalRect",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "pointInViewArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "pointInViewVisibleArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "portResized",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "removeClickablePart",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setDraggable",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setEnabled",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setID",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setMaxSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setMinSize",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setParentView",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setPort",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setViewArea",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "setWantsMouseOvers",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "show",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "showSelf",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "startBeingDragTarget",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "stopBeingDragTarget",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "viewAreaChanged",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "wantsMouseOvers",
+							"signature_status": "unresolved",
+							"static": false,
+							"type": "function"
+						},
+						{
+							"name": "withPort",
+							"signature_status": "unresolved",
+							"static": true,
+							"type": "function"
+						}
+					],
+					"name": "View",
+					"signature_status": "unresolved",
+					"type": "class"
+				}
+			],
+			"name": "View",
+			"type": "object"
+		},
+		{
+			"interface": [
+				{
+					"name": "bind_Bottom",
+					"type": "number",
+					"value": 16
+				},
+				{
+					"name": "bind_Left",
+					"type": "number",
+					"value": 32
+				},
+				{
+					"name": "bind_Right",
+					"type": "number",
+					"value": 64
+				},
+				{
+					"name": "bind_Top",
+					"type": "number",
+					"value": 8
+				},
+				{
+					"name": "grow",
+					"type": "number",
+					"value": 120
+				},
+				{
+					"name": "grow_Horz",
+					"type": "number",
+					"value": 96
+				},
+				{
+					"name": "grow_Vert",
+					"type": "number",
+					"value": 24
+				}
+			],
+			"name": "ViewBinding",
+			"type": "object"
+		},
+		{
+			"constructor_name": "ControlStateAttributes",
+			"implements": [],
+			"interface": [
+				{
+					"name": "backgroundImage",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "customDraw",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "drawAttributes",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "foregroundColor",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "merge",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				}
+			],
+			"name": "ControlStateAttributes",
+			"signature_status": "unresolved",
+			"type": "class"
+		},
+		{
+			"constructor_name": "IObserver",
+			"implements": [],
+			"interface": [
+				{
+					"name": "notify",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				}
+			],
+			"name": "IObserver",
+			"signature_status": "unresolved",
+			"type": "class"
+		},
+		{
+			"constructor_name": "ItemInfo",
+			"implements": [],
+			"interface": [
+				{
+					"name": "equals",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				}
+			],
+			"name": "ItemInfo",
+			"signature_status": "unresolved",
+			"type": "class"
+		},
+		{
+			"constructor_name": "ListBoxLine",
+			"implements": [],
+			"interface": [],
+			"name": "ListBoxLine",
+			"signature_status": "unresolved",
+			"type": "class"
+		},
+		{
+			"constructor_name": "MessageView",
+			"implements": [
+				"View"
+			],
+			"interface": [
+				{
+					"name": "append",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "clear",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "destroy",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "doKeyPress",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "doMouseWheel",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "drawMessageText",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "drawSelf",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getBackgroundColor",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getCharAt",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getLength",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getLine",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getLineCount",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getLineSpacing",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getMargins",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getMaxLines",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getMessage",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getScrollOffset",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getScrollPercentage",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getTextAlignment",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getTextColor",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getTextSize",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getTextStyle",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getTextX",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getWordWrap",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getWrappedLines",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "insert",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "isEmpty",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "isNotEmpty",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "isScrollingNeeded",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "prepend",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "remove",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "replace",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "scrollDown",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "scrollUp",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setBackgroundColor",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setLineSpacing",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setMargins",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setMaxLines",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setMessage",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setScrollOffset",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setScrollPercentage",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setTextAlignment",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setTextColor",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setTextSize",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setTextStyle",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "setWordWrap",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "updateScrollLimits",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "wrapText",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				}
+			],
+			"name": "MessageViewStandalone",
+			"signature_status": "unresolved",
+			"type": "class"
+		},
+		{
+			"constructor_name": "NoManagerError",
+			"implements": [
+				"Error"
+			],
+			"interface": [],
+			"name": "NoManagerError",
+			"signature_status": "unresolved",
+			"type": "class"
+		},
+		{
+			"constructor_name": "Subject",
+			"implements": [],
+			"interface": [
+				{
+					"name": "addObserver",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "clearObservers",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "getObserverCount",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "hasObserver",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "notifyObservers",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				},
+				{
+					"name": "removeObserver",
+					"signature_status": "unresolved",
+					"static": false,
+					"type": "function"
+				}
+			],
+			"name": "Subject",
+			"signature_status": "unresolved",
+			"type": "class"
+		}
+	],
+	"lang": "javascript",
+	"name": "mvc-app",
+	"source": "src/js/mvc-app/index.js",
+	"stability": "Evolving",
+	"type": "module",
+	"vers": "1.2.0",
+	"when": "2026-10-07"
+}

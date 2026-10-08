@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a43e0ec855f3a7ebf9f98fbee5321edcf" id="r_a43e0ec855f3a7ebf9f98fbee5321edcf"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a43e0ec855f3a7ebf9f98fbee5321edcf">Deserializer</a> ()</td></tr>
 <tr class="memitem:a96c4e37d2b55bd947297613ac046ac68" id="r_a96c4e37d2b55bd947297613ac046ac68"><td class="memItemLeft">number&#160;</td><td class="memItemRight"><a class="el" href="#a96c4e37d2b55bd947297613ac046ac68">deserialize_1</a> ()</td></tr>
 <tr class="memdesc:a96c4e37d2b55bd947297613ac046ac68"><td class="mdescLeft">&#160;</td><td class="mdescRight">deserialize 1 signed byte  <br /></td></tr>
 <tr class="memitem:a6b3ff555df9bdda8a80d7dff6f32c543" id="r_a6b3ff555df9bdda8a80d7dff6f32c543"><td class="memItemLeft">number&#160;</td><td class="memItemRight"><a class="el" href="#a6b3ff555df9bdda8a80d7dff6f32c543">deserialize_1u</a> ()</td></tr>
@@ -163,10 +164,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a490effa284405dc1b18bf20b3cd44140"><td class="mdescLeft">&#160;</td><td class="mdescRight">deserialize an unsigned number  <br /></td></tr>
 <tr class="memitem:a1f9a3d34e9973a71caa0495204577668" id="r_a1f9a3d34e9973a71caa0495204577668"><td class="memItemLeft"><a class="el" href="classpdg_1_1_vector.html">Vector</a>&#160;</td><td class="memItemRight"><a class="el" href="#a1f9a3d34e9973a71caa0495204577668">deserialize_vector</a> ()</td></tr>
 <tr class="memdesc:a1f9a3d34e9973a71caa0495204577668"><td class="mdescLeft">&#160;</td><td class="mdescRight">deserialize a <a class="el" href="classpdg_1_1_vector.html" title="vector (magnitude and direction) within a 2D coordinate system.">Vector</a>  <br /></td></tr>
-<tr class="memitem:a7941b02085277052ffd76c80746fe8e2" id="r_a7941b02085277052ffd76c80746fe8e2"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a7941b02085277052ffd76c80746fe8e2">setDataPtr</a> (BinaryString data)</td></tr>
-<tr class="memdesc:a7941b02085277052ffd76c80746fe8e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the serialized data  <br /></td></tr>
 <tr class="memitem:adf0b2fc3b2851a3b38247bebdabeb7c5" id="r_adf0b2fc3b2851a3b38247bebdabeb7c5"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#adf0b2fc3b2851a3b38247bebdabeb7c5">setDataPtr</a> (<a class="el" href="classpdg_1_1_mem_block.html">MemBlock</a> data)</td></tr>
 <tr class="memdesc:adf0b2fc3b2851a3b38247bebdabeb7c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the serialized data  <br /></td></tr>
+<tr class="memitem:a00191b16b625e6455e665a3066d79d8a" id="r_a00191b16b625e6455e665a3066d79d8a"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a00191b16b625e6455e665a3066d79d8a">setDataPtr</a> (Uint8Array data)</td></tr>
+<tr class="memdesc:a00191b16b625e6455e665a3066d79d8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a reader from an owned copy of Uint8Array bytes.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>deserialize data from a serialized data stream </p>
@@ -206,7 +207,25 @@ Method Groups</h2>
 <a class="el" href="classpdg_1_1_i_serializable.html" title="Interface for an object which can be serialized.">ISerializable</a> </dd>
 <dd>
 <a class="el" href="namespacepdg.html#a438e049366918636b7e1a67479994756">pdg.registerSerializableClass</a> </dd></dl>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+</div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a43e0ec855f3a7ebf9f98fbee5321edcf" name="a43e0ec855f3a7ebf9f98fbee5321edcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43e0ec855f3a7ebf9f98fbee5321edcf">&#9670;&#160;</a></span>Deserializer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Deserializer </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a96c4e37d2b55bd947297613ac046ac68" name="a96c4e37d2b55bd947297613ac046ac68"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a96c4e37d2b55bd947297613ac046ac68">&#9670;&#160;</a></span>deserialize_1()</h2>
 
@@ -509,10 +528,10 @@ Method Groups</h2>
 </div><div class="memdoc">
 
 <p>deserialize arbitrary binary data </p>
-<p>Read a chunk of arbitrary binary data from the stream into a <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a>. The amount of data that will be read can be discovered by calling <a class="el" href="#a87a7b0e07641c23df715886645ab2cce" title="get size of mem block that is next in the stream">deserialize_memGetLen()</a> <em>before</em> you call <a class="el" href="#ad59c73898203d9731e2d00e9977e7d81" title="deserialize arbitrary binary data">deserialize_mem()</a>. If you want to get the size afterwards, you must call <a class="el" href="classpdg_1_1_mem_block.html#ad30d5c216cfc25975e040c7d3754958e" title="get the number of bytes in the block">MemBlock.getDataSize()</a> on the data returned</p>
+<p>Read a chunk of arbitrary binary data from the stream into a <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a>. The amount of data that will be read can be discovered by calling <a class="el" href="#a87a7b0e07641c23df715886645ab2cce" title="get size of mem block that is next in the stream">deserialize_memGetLen()</a> <em>before</em> you call <a class="el" href="#ad59c73898203d9731e2d00e9977e7d81" title="deserialize arbitrary binary data">deserialize_mem()</a>. If you want to get the size afterwards, you must call <a class="el" href="classpdg_1_1_mem_block.html#ad30d5c216cfc25975e040c7d3754958e" title="get the number of bytes in the block">MemBlock.getDataSize()</a> on the data returned</p>
 <dl class="section remark"><dt>Remarks</dt><dd>there is no way to read only part of the binary data</dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>an arbitrary block of binary data as a <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a></dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_serializer.html#a509ce07ab52c6325475eb3a010c5afda" title="serialize a binary string">Serializer.serialize_mem</a> </dd>
+<dl class="section return"><dt>Returns</dt><dd>an arbitrary block of binary data as a <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_serializer.html#a07d5f0ddc6baac9bec14985fc3d8efec" title="Serialize bytes from a Uint8Array.">Serializer.serialize_mem</a> </dd>
 <dd>
 <a class="el" href="#a87a7b0e07641c23df715886645ab2cce" title="get size of mem block that is next in the stream">deserialize_memGetLen</a> </dd>
 <dd>
@@ -536,8 +555,8 @@ Method Groups</h2>
 </div><div class="memdoc">
 
 <p>get size of mem block that is next in the stream </p>
-<p>Reports the size of the <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> that will be created by an immediate call to <a class="el" href="#ad59c73898203d9731e2d00e9977e7d81" title="deserialize arbitrary binary data">deserialize_mem()</a>. If you want to get the size after you've made the <a class="el" href="#ad59c73898203d9731e2d00e9977e7d81" title="deserialize arbitrary binary data">deserialize_mem()</a> call, use <a class="el" href="classpdg_1_1_mem_block.html#ad30d5c216cfc25975e040c7d3754958e" title="get the number of bytes in the block">MemBlock.getDataSize()</a></p>
-<dl class="section return"><dt>Returns</dt><dd>the size in bytes of the <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> that will be created</dd></dl>
+<p>Reports the size of the <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a> that will be created by an immediate call to <a class="el" href="#ad59c73898203d9731e2d00e9977e7d81" title="deserialize arbitrary binary data">deserialize_mem()</a>. If you want to get the size after you've made the <a class="el" href="#ad59c73898203d9731e2d00e9977e7d81" title="deserialize arbitrary binary data">deserialize_mem()</a> call, use <a class="el" href="classpdg_1_1_mem_block.html#ad30d5c216cfc25975e040c7d3754958e" title="get the number of bytes in the block">MemBlock.getDataSize()</a></p>
+<dl class="section return"><dt>Returns</dt><dd>the size in bytes of the <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a> that will be created</dd></dl>
 <dl class="section see"><dt>See also</dt><dd>derserialize_mem </dd>
 <dd>
 <a class="el" href="classpdg_1_1_mem_block.html#ad30d5c216cfc25975e040c7d3754958e" title="get the number of bytes in the block">MemBlock.getDataSize</a> </dd></dl>
@@ -763,38 +782,8 @@ Method Groups</h2>
 
 </div>
 </div>
-<a id="a7941b02085277052ffd76c80746fe8e2" name="a7941b02085277052ffd76c80746fe8e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7941b02085277052ffd76c80746fe8e2">&#9670;&#160;</a></span>setDataPtr() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">setDataPtr </td>
-          <td>(</td>
-          <td class="paramtype">BinaryString</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>set the serialized data </p>
-<p>Set the data block that should be deserialized. It should have been created at some point by a <a class="el" href="classpdg_1_1_serializer.html" title="serialize data into memory">pdg.Serializer</a>.</p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated</a></b></dt><dd>Node.js maintainers have deprecated BinaryString, so it may not be around in future versions</dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">data</td><td>the BinaryString object with the serialized data</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#adf0b2fc3b2851a3b38247bebdabeb7c5" title="set the serialized data">setDataPtr(MemBlock)</a> </dd>
-<dd>
-<a class="el" href="classpdg_1_1_serializer.html#a29eca37a87cd79295ec15ced3fe6d9ed" title="get the serialized data">Serializer.getDataPtr</a> </dd></dl>
-
-</div>
-</div>
 <a id="adf0b2fc3b2851a3b38247bebdabeb7c5" name="adf0b2fc3b2851a3b38247bebdabeb7c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf0b2fc3b2851a3b38247bebdabeb7c5">&#9670;&#160;</a></span>setDataPtr() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#adf0b2fc3b2851a3b38247bebdabeb7c5">&#9670;&#160;</a></span>setDataPtr() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -812,13 +801,39 @@ Method Groups</h2>
 <p>Set the data block that should be deserialized. It should have been created at some point by a <a class="el" href="classpdg_1_1_serializer.html" title="serialize data into memory">pdg.Serializer</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">data</td><td>the <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> object with the serialized data</td></tr>
+    <tr><td class="paramname">data</td><td>the <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a> object with the serialized data</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7941b02085277052ffd76c80746fe8e2" title="set the serialized data">setDataPtr(BinaryString)</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a00191b16b625e6455e665a3066d79d8a" title="Initialize a reader from an owned copy of Uint8Array bytes.">setDataPtr(Uint8Array)</a> </dd>
 <dd>
 <a class="el" href="classpdg_1_1_serializer.html#a29eca37a87cd79295ec15ced3fe6d9ed" title="get the serialized data">Serializer.getDataPtr</a> </dd></dl>
+
+</div>
+</div>
+<a id="a00191b16b625e6455e665a3066d79d8a" name="a00191b16b625e6455e665a3066d79d8a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00191b16b625e6455e665a3066d79d8a">&#9670;&#160;</a></span>setDataPtr() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">setDataPtr </td>
+          <td>(</td>
+          <td class="paramtype">Uint8Array</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a reader from an owned copy of Uint8Array bytes. </p>
+<p>Copies only the supplied view's bytes, including when the view is a Node Buffer. The deserializer retains the copy until its input is replaced or the reader is destroyed. Mutating, detaching or collecting the source after this call cannot change the reader. Strings are rejected. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>A Uint8Array containing a serialized stream. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#adf0b2fc3b2851a3b38247bebdabeb7c5" title="set the serialized data">setDataPtr(MemBlock)</a> </dd></dl>
 
 </div>
 </div>

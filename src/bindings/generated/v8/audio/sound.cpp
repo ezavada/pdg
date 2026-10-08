@@ -147,10 +147,7 @@ namespace pdg
         SoundManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundManagerWrap>(args.This());
         SoundManager* self = dynamic_cast<SoundManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number level)" " - " "0.0 - silent to 1.0 - full volume").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -172,10 +169,7 @@ namespace pdg
         SoundManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundManagerWrap>(args.This());
         SoundManager* self = dynamic_cast<SoundManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(boolean muted)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);

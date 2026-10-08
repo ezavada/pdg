@@ -1,0 +1,7 @@
+<map id="AnimationFABRIK" name="AnimationFABRIK">
+<area shape="rect" id="Node000001" title="A contiguous root&#45;to&#45;endpoint chain. The endpoint&#39;s rotation is preserved." alt="" coords="118,122,246,148"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,185,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,41,175,121,170,122,112,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="209,5,328,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="253,43,192,124,189,120,248,44"/>
+</map>

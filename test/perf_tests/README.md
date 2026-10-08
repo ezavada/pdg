@@ -99,13 +99,6 @@ with their provenance. The historical ramp references and CanvasMark
 calibration below still define workloads and score scaling; this Quick baseline
 only provides a stable comparison point.
 
-The [release runtime comparison](../../docs/note-ai/PERF_RELEASE_UPDATE.md)
-records the rerun after the release-build, script-loading and binding fixes.
-The [JavaScript resource reuse review](../../docs/note-ai/JAVASCRIPT_BENCHMARK_REUSE.md)
-records the BunnyMark allocation/getter improvements and related PDGMark findings.
-The [browser compiler comparison](../../docs/note-ai/WASM_O3_COMPARISON.md)
-measures separate Release `-Oz` and `-O3` builds, including size and unit-test results.
-
 ## Quick scores
 
 Each sample measures elapsed time between frame starts, including presentation
@@ -216,5 +209,3 @@ Run the performance tooling checks with
 `./test/tools perf-runner perf-comparison perf-measurement`, or use `./test/tools`
 for all tooling checks. These validate sampling and reporting without running PDG
 benchmarks; the native measurement check needs a C++17 compiler.
-See the [September 2026 investigation](../../docs/note-ai/PERFORMANCE_INVESTIGATION_2026-09.md)
-for renderer, synchronization and calibration findings.

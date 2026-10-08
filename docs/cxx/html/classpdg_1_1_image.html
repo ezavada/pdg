@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -115,13 +115,16 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 
+<p>Appearance setters return this image by reference for chaining.  
+ <a href="#details">More...</a></p>
+
 <p><code>#include &lt;image.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Image:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpdg_1_1_image__inherit__graph.png" border="0" usemap="#a_image_inherit__map" loading="lazy" alt="Inheritance graph"/></div>
 <map name="a_image_inherit__map" id="a_image_inherit__map">
-<area shape="rect" title=" " alt="" coords="32,153,90,178"/>
+<area shape="rect" title="Appearance setters return this image by reference for chaining." alt="" coords="32,153,90,178"/>
 <area shape="rect" href="classpdg_1_1_image_strip.html" title=" " alt="" coords="19,226,103,252"/>
 <area shape="poly" title=" " alt="" coords="63,192,64,227,58,225,59,196"/>
 <area shape="rect" href="classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="15,79,107,105"/>
@@ -135,7 +138,7 @@ Collaboration diagram for Image:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpdg_1_1_image__coll__graph.png" border="0" usemap="#a_image_coll__map" loading="lazy" alt="Collaboration graph"/></div>
 <map name="a_image_coll__map" id="a_image_coll__map">
-<area shape="rect" title=" " alt="" coords="32,153,90,178"/>
+<area shape="rect" title="Appearance setters return this image by reference for chaining." alt="" coords="32,153,90,178"/>
 <area shape="rect" href="classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="15,79,107,105"/>
 <area shape="poly" title=" " alt="" coords="63,118,64,153,58,151,59,122"/>
 <area shape="rect" href="classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,5,117,31"/>
@@ -170,11 +173,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5a89f0f8421c6a77a90a88c6651ec9c9" id="r_a5a89f0f8421c6a77a90a88c6651ec9c9"><td class="memItemLeft">virtual <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a>&#160;</td><td class="memItemRight"><a class="el" href="#a5a89f0f8421c6a77a90a88c6651ec9c9">getImageBounds</a> (<a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;at)</td></tr>
 <tr class="memitem:aab163aef23bea4595a39f70fd13d8127" id="r_aab163aef23bea4595a39f70fd13d8127"><td class="memItemLeft">virtual long&#160;</td><td class="memItemRight"><a class="el" href="#aab163aef23bea4595a39f70fd13d8127">getHeight</a> ()</td></tr>
 <tr class="memitem:ac43cd887a212c0e7693a88ea85fe3844" id="r_ac43cd887a212c0e7693a88ea85fe3844"><td class="memItemLeft">virtual long&#160;</td><td class="memItemRight"><a class="el" href="#ac43cd887a212c0e7693a88ea85fe3844">getWidth</a> ()</td></tr>
-<tr class="memitem:a2b79fee66e358d949598f8db48308bde" id="r_a2b79fee66e358d949598f8db48308bde"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a2b79fee66e358d949598f8db48308bde">setTransparentColor</a> (<a class="el" href="structpdg_1_1_color.html">Color</a> rgb)=0</td></tr>
+<tr class="memitem:ae314bc132ffc9ffe1e204b02181bde3e" id="r_ae314bc132ffc9ffe1e204b02181bde3e"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_image.html">Image</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ae314bc132ffc9ffe1e204b02181bde3e">setTransparentColor</a> (<a class="el" href="structpdg_1_1_color.html">Color</a> rgb)=0</td></tr>
 <tr class="memitem:a06815c0cff5b2f420f756618a62c51da" id="r_a06815c0cff5b2f420f756618a62c51da"><td class="memItemLeft">virtual <a class="el" href="structpdg_1_1_color.html">Color</a>&#160;</td><td class="memItemRight"><a class="el" href="#a06815c0cff5b2f420f756618a62c51da">getTransparentColor</a> ()=0</td></tr>
-<tr class="memitem:aa4c5742df6abc301f5de87613a35d203" id="r_aa4c5742df6abc301f5de87613a35d203"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#aa4c5742df6abc301f5de87613a35d203">setOpacity</a> (uint8 opacity)=0</td></tr>
+<tr class="memitem:ad4b26d0eefc817b394fec679cd2b3093" id="r_ad4b26d0eefc817b394fec679cd2b3093"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_image.html">Image</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ad4b26d0eefc817b394fec679cd2b3093">setOpacity</a> (uint8 opacity)=0</td></tr>
 <tr class="memitem:ab34ae62beb90df402b602c9f7c60fcdc" id="r_ab34ae62beb90df402b602c9f7c60fcdc"><td class="memItemLeft">virtual uint8&#160;</td><td class="memItemRight"><a class="el" href="#ab34ae62beb90df402b602c9f7c60fcdc">getOpacity</a> () const =0</td></tr>
-<tr class="memitem:acbe41629ff9452cfaf73e5a0c6533ac6" id="r_acbe41629ff9452cfaf73e5a0c6533ac6"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#acbe41629ff9452cfaf73e5a0c6533ac6">setEdgeClamping</a> (bool inUseEdgeClamp)=0</td></tr>
+<tr class="memitem:adaba36d5df2bc3f2e3213483073a7ade" id="r_adaba36d5df2bc3f2e3213483073a7ade"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_image.html">Image</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#adaba36d5df2bc3f2e3213483073a7ade">setEdgeClamping</a> (bool inUseEdgeClamp)=0</td></tr>
 <tr class="memitem:ae1ec8661312f2ee7400e7282570623ae" id="r_ae1ec8661312f2ee7400e7282570623ae"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ae1ec8661312f2ee7400e7282570623ae">retainData</a> ()=0</td></tr>
 <tr class="memitem:ad4f4dff7305eb73eb49e07ae374d563d" id="r_ad4f4dff7305eb73eb49e07ae374d563d"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ad4f4dff7305eb73eb49e07ae374d563d">retainAlpha</a> ()=0</td></tr>
 <tr class="memdesc:ad4f4dff7305eb73eb49e07ae374d563d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retain the alpha channel even after the image has been prepared for rasterization.  <br /></td></tr>
@@ -226,7 +229,8 @@ Friends</h2></td></tr>
 <tr class="memitem:a3292175d54d93d126ba2829249316344" id="r_a3292175d54d93d126ba2829249316344"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#a3292175d54d93d126ba2829249316344">Sprite</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classpdg_1_1_image.html">Image</a> A bit image that can be blitted onto the screen You cannot create images directly, they must be loaded by the Graphics Manager</p>
+<div class="textblock"><p>Appearance setters return this image by reference for chaining. </p>
+<p><a class="el" href="classpdg_1_1_image.html" title="Appearance setters return this image by reference for chaining.">Image</a> A bit image that can be blitted onto the screen You cannot create images directly, they must be loaded by the Graphics Manager</p>
 <dl class="section note"><dt>Note</dt><dd><b>API Stability: 2 — Evolving</b>. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See <a class="el" href="index.html#api_stability" title="API stability">API stability</a>. </dd></dl>
 </div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Member Enumeration Documentation</h2>
 <a id="a7ef0ab496f57e183b484e62e2053c94f" name="a7ef0ab496f57e183b484e62e2053c94f"></a>
@@ -339,14 +343,14 @@ Friends</h2></td></tr>
 <p>Create an RGBA image from an offscreen port, preserving transparency. Returns null for null or non-offscreen ports. The caller owns one reference. copyPixels=true takes an independent snapshot; false shares the surface and follows drawing. Both images remain valid after closing the source port. The shared surface is retained.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">port</td><td>An open offscreen <a class="el" href="classpdg_1_1_port.html">Port</a>. </td></tr>
+    <tr><td class="paramname">port</td><td>An open offscreen <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a>. </td></tr>
     <tr><td class="paramname">copyPixels</td><td>Defaults to true for an independent copy. False retains the shared surface and reflects subsequent drawing without copying its pixels for rendering within the same graphics context. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An <a class="el" href="classpdg_1_1_image.html">Image</a> owning one reference, or nullptr for null or onscreen ports. Call <a class="el" href="classpdg_1_1_ref_counted_obj.html#aec02da492d389fe6251a6a45850d2c51">release()</a> when finished. The image has the port's pixel dimensions and transparency.</dd></dl>
-<p>Both modes survive closure of the source port. A live image keeps its surface alive after the <a class="el" href="classpdg_1_1_port.html">Port</a> is closed; drawing through the closed <a class="el" href="classpdg_1_1_port.html">Port</a> is invalid. Destruction of the underlying graphics context preserves the surface's final pixels for surviving images. Pixel reads and serialization read the current contents; deserialization produces an independent snapshot. Rendering across independent graphics contexts or into the source surface uses a snapshot. <a class="el" href="#a2b79fee66e358d949598f8db48308bde">setTransparentColor()</a> detaches a live image before changing its pixels.</p>
-<dl class="section note"><dt>Note</dt><dd>Available in graphics-enabled builds. The current <a class="el" href="classpdg_1_1_port.html">Port</a> clip does not crop the result. <a class="el" href="classpdg_1_1_image.html">Image</a> opacity is independent of the shared surface. </dd>
+<dl class="section return"><dt>Returns</dt><dd>An <a class="el" href="classpdg_1_1_image.html" title="Appearance setters return this image by reference for chaining.">Image</a> owning one reference, or nullptr for null or onscreen ports. Call <a class="el" href="classpdg_1_1_ref_counted_obj.html#aec02da492d389fe6251a6a45850d2c51">release()</a> when finished. The image has the port's pixel dimensions and transparency.</dd></dl>
+<p>Both modes survive closure of the source port. A live image keeps its surface alive after the <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> is closed; drawing through the closed <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> is invalid. Destruction of the underlying graphics context preserves the surface's final pixels for surviving images. Pixel reads and serialization read the current contents; deserialization produces an independent snapshot. Rendering across independent graphics contexts or into the source surface uses a snapshot. <a class="el" href="#ae314bc132ffc9ffe1e204b02181bde3e">setTransparentColor()</a> detaches a live image before changing its pixels.</p>
+<dl class="section note"><dt>Note</dt><dd>Available in graphics-enabled builds. The current <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> clip does not crop the result. <a class="el" href="classpdg_1_1_image.html" title="Appearance setters return this image by reference for chaining.">Image</a> opacity is independent of the shared surface. </dd>
 <dd>
 API stability: 2 — Evolving.</dd></dl>
 <dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line"><span class="keyword">auto</span>&amp; graphics = <a class="code hl_function" href="classpdg_1_1_singleton.html#ac022bf2a79fb0e412bc66b954a930991">pdg::GraphicsManager::instance</a>();</div>
@@ -367,7 +371,7 @@ API stability: 2 — Evolving.</dd></dl>
 <div class="ttc" id="anamespacepdg_html_a86e0f5648542856159bb40775c854aa7af217bc03e0a9d17cee850c4a8cebd590"><div class="ttname"><a href="namespacepdg.html#a86e0f5648542856159bb40775c854aa7af217bc03e0a9d17cee850c4a8cebd590">pdg::lineStyle_None</a></div><div class="ttdeci">@ lineStyle_None</div><div class="ttdef"><b>Definition</b> attributes.h:60</div></div>
 <div class="ttc" id="astructpdg_1_1_color_html"><div class="ttname"><a href="structpdg_1_1_color.html">pdg::Color</a></div><div class="ttdef"><b>Definition</b> color.h:103</div></div>
 </div><!-- fragment --> </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_graphics_manager.html#a29fd2e05e0e78837c54611ed574f3605" title="Create a persistent transparent RGBA drawing surface without a window.">GraphicsManager::createOffscreenPort()</a>, <a class="el" href="classpdg_1_1_port.html#a4dc2d3312ef65347a106b93397113139">Port::drawImage()</a>, <a class="el" href="#a0dd7b2d332f18c03f43ae367c99cf14e" title="return the full color info, including alpha channel, for the pixel at the given location">getPixel()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_graphics_manager.html#a29fd2e05e0e78837c54611ed574f3605" title="Create a persistent transparent RGBA drawing surface without a window.">GraphicsManager::createOffscreenPort()</a>, <a class="el" href="classpdg_1_1_port.html#aabf8b267355f9657e67466709204f613">Port::drawImage()</a>, <a class="el" href="#a0dd7b2d332f18c03f43ae367c99cf14e" title="return the full color info, including alpha channel, for the pixel at the given location">getPixel()</a> </dd></dl>
 
 <p class="reference">References <a class="el" href="#aa502b594a737a49ef3dfcd93538c9a49">Port</a>.</p>
 
@@ -655,7 +659,7 @@ API stability: 2 — Evolving.</dd></dl>
 </div><div class="memdoc">
 <p>convenient shortcuts to get the bounds of the image as a rectangle, offset by a point if desired if the image has multiple frames, it returns the bounds as the frame width, not the total width </p>
 
-<p>Reimplemented in <a class="el" href="classpdg_1_1_image_strip.html#acc6677084224c69f2171bfcebaee0890">ImageStrip</a>.</p>
+<p>Reimplemented in <a class="el" href="classpdg_1_1_image_strip.html#a972ed6880cb0695cfb729f5bc3417e4d">ImageStrip</a>.</p>
 
 </div>
 </div>
@@ -682,7 +686,7 @@ API stability: 2 — Evolving.</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classpdg_1_1_image_strip.html#adc9e3e558cac9f8e9556409141669234">ImageStrip</a>.</p>
+<p>Reimplemented in <a class="el" href="classpdg_1_1_image_strip.html#af3f3745785d8928728580e736c4d0dc5">ImageStrip</a>.</p>
 
 </div>
 </div>
@@ -901,7 +905,7 @@ API stability: 2 — Evolving.</dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p>Reimplemented in <a class="el" href="classpdg_1_1_image_strip.html#ad7e62f808c88a823d9a2dcc37b2a633c">ImageStrip</a>.</p>
+<p>Reimplemented in <a class="el" href="classpdg_1_1_image_strip.html#aa3f5938b144933ab68ed963dc14380dd">ImageStrip</a>.</p>
 
 </div>
 </div>
@@ -1022,8 +1026,8 @@ API stability: 2 — Evolving.</dd></dl>
 
 </div>
 </div>
-<a id="acbe41629ff9452cfaf73e5a0c6533ac6" name="acbe41629ff9452cfaf73e5a0c6533ac6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbe41629ff9452cfaf73e5a0c6533ac6">&#9670;&#160;</a></span>setEdgeClamping()</h2>
+<a id="adaba36d5df2bc3f2e3213483073a7ade" name="adaba36d5df2bc3f2e3213483073a7ade"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaba36d5df2bc3f2e3213483073a7ade">&#9670;&#160;</a></span>setEdgeClamping()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1032,7 +1036,7 @@ API stability: 2 — Evolving.</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void setEdgeClamping </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_image.html">Image</a> &amp; setEdgeClamping </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>inUseEdgeClamp</em></span></td><td>)</td>
           <td></td>
@@ -1045,10 +1049,12 @@ API stability: 2 — Evolving.</dd></dl>
 </table>
 </div><div class="memdoc">
 
+<p>Implemented in <a class="el" href="classpdg_1_1_image_strip.html#a34ac53cf693917016540b51df7cb9e0e">ImageStrip</a>.</p>
+
 </div>
 </div>
-<a id="aa4c5742df6abc301f5de87613a35d203" name="aa4c5742df6abc301f5de87613a35d203"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4c5742df6abc301f5de87613a35d203">&#9670;&#160;</a></span>setOpacity()</h2>
+<a id="ad4b26d0eefc817b394fec679cd2b3093" name="ad4b26d0eefc817b394fec679cd2b3093"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4b26d0eefc817b394fec679cd2b3093">&#9670;&#160;</a></span>setOpacity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1057,7 +1063,7 @@ API stability: 2 — Evolving.</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void setOpacity </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_image.html">Image</a> &amp; setOpacity </td>
           <td>(</td>
           <td class="paramtype">uint8</td>          <td class="paramname"><span class="paramname"><em>opacity</em></span></td><td>)</td>
           <td></td>
@@ -1069,6 +1075,8 @@ API stability: 2 — Evolving.</dd></dl>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classpdg_1_1_image_strip.html#a2f261e537ed4b170e1436d0368ef90d9">ImageStrip</a>.</p>
 
 </div>
 </div>
@@ -1101,8 +1109,8 @@ API stability: 2 — Evolving.</dd></dl>
 
 </div>
 </div>
-<a id="a2b79fee66e358d949598f8db48308bde" name="a2b79fee66e358d949598f8db48308bde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b79fee66e358d949598f8db48308bde">&#9670;&#160;</a></span>setTransparentColor()</h2>
+<a id="ae314bc132ffc9ffe1e204b02181bde3e" name="ae314bc132ffc9ffe1e204b02181bde3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae314bc132ffc9ffe1e204b02181bde3e">&#9670;&#160;</a></span>setTransparentColor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1111,7 +1119,7 @@ API stability: 2 — Evolving.</dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void setTransparentColor </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_image.html">Image</a> &amp; setTransparentColor </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structpdg_1_1_color.html">Color</a></td>          <td class="paramname"><span class="paramname"><em>rgb</em></span></td><td>)</td>
           <td></td>
@@ -1123,6 +1131,8 @@ API stability: 2 — Evolving.</dd></dl>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classpdg_1_1_image_strip.html#aec7a86a8c5a7e0ebc8644158be9bf367">ImageStrip</a>.</p>
 
 </div>
 </div>

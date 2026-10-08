@@ -2,6 +2,30 @@
 // All content is embedded; referenced Image resources follow the writer policy.
 struct DrawingSnapshot {
     using Storage = DrawingImpl::Storage;
+#ifdef PDG_NO_GUI
+    // Keep portable face descriptors when snapshots pass through a server.
+    struct SavedFont : Font {
+        std::string name; float scale;
+        SavedFont(std::string value,float factor):name(std::move(value)),scale(factor) {}
+        const char* getFontName() const override {return name.c_str();}
+        float getFontHeight(int,uint32) override {return 0;}
+        float getFontLeading(int,uint32) override {return 0;}
+        float getFontCapHeight(int,uint32) override {return 0;}
+        float getFontAscent(int,uint32) override {return 0;}
+        float getFontDescent(int,uint32) override {return 0;}
+    };
+#endif
+    static float fontScale(Font* font) {
+#ifdef PDG_NO_GUI
+        auto* saved=dynamic_cast<SavedFont*>(font);return saved?saved->scale:1;
+#else
+        auto* impl=dynamic_cast<FontImpl*>(font);return impl?impl->mScalingFactor:1;
+#endif
+    }
+    static std::string string(IDeserializer* reader) {
+        if(reader->deserialize_strGetLen()>1048577) throw std::runtime_error("Drawing string exceeds 1 MiB");
+        std::string result;reader->deserialize_string(result);return result;
+    }
     static void registerStorage() {
         static const bool registered = [] { IDeserializer::registerClass<Storage>(); return true; }();
         (void)registered;
@@ -59,8 +83,7 @@ struct DrawingSnapshot {
         return a.red!=b.red || a.green!=b.green || a.blue!=b.blue || a.alpha!=b.alpha;
     }
     static uint32 encodeAttributes(const Attributes& a, ISerializer* writer, bool emit) {
-        if (a.mFont) throw std::runtime_error("Drawing snapshots do not yet embed Font resources");
-        bool changed=a.mClipOverflow || a.mTexture;
+        bool changed=a.mClipOverflow || a.mTexture || a.mFont;
         colors(a, [&](const Color& c, const Color& d) { validColor(c); changed |= differentColor(c,d); });
         coordinates(a, [&](float x,float y,float dx,float dy) { finite(x);finite(y);changed |= x!=dx || y!=dy; });
         floats(a, [&](float v,float d) { finite(v);changed |= SnapshotWriter::different(v,d); });
@@ -78,6 +101,13 @@ struct DrawingSnapshot {
         floats(a, [&](float v,float d) { out.floating(v,d); });
         integers(a, [&](int v,int d) { out.signedInteger(v,d); });
         out.flag(a.mClipOverflow); out.object(a.mTexture);
+        if(out.flag(a.mFont!=nullptr)) {
+            const auto* name=a.mFont->getFontName();const float scale=fontScale(a.mFont);
+            if(!name || !*name || std::strlen(name)>1048576 || !std::isfinite(scale) || scale<=0)
+                throw std::runtime_error("Invalid Drawing font descriptor");
+            if(emit) {writer->serialize_str(name);writer->serialize_f(scale);}
+            else size+=writer->sizeof_str(name)+4;
+        }
         return size+out.size();
     }
     static uint32 attributesSize(const Attributes& a, ISerializer* writer) { return encodeAttributes(a,writer,false); }
@@ -88,7 +118,7 @@ struct DrawingSnapshot {
         if (object && !image) { object->release(); throw std::runtime_error("Expected Drawing image resource"); }
         return std::shared_ptr<Image>(image, [](Image* value) { if(value)value->release(); });
     }
-    static std::shared_ptr<Image> readAttributes(Attributes& a, IDeserializer* reader) {
+    static std::shared_ptr<Image> readAttributes(Attributes& a, IDeserializer* reader, uint8 version) {
         a=Attributes(); SnapshotReader in(reader);
         if (!in.flag()) return {};
         colors(a, [&](Color& c,const Color& d) { c=in.flag() ? reader->deserialize_color() : d; });
@@ -103,7 +133,19 @@ struct DrawingSnapshot {
             throw std::runtime_error("Invalid Drawing attribute mode");
         a.mClipOverflow=in.flag();
         auto texture=in.flag() ? readImage(reader) : std::shared_ptr<Image>();
-        a.texture(texture.get()); return texture;
+        a.texture(texture.get());
+        if(version>=5 && in.flag()) {
+            auto name=string(reader);const float scale=reader->deserialize_f();
+            if(name.empty() || !std::isfinite(scale) || scale<=0) throw std::runtime_error("Invalid Drawing font descriptor");
+#ifndef PDG_NO_GUI
+            auto* font=GraphicsManager::instance().createFont(name.c_str(),scale);
+#else
+            auto* font=new SavedFont(std::move(name),scale);font->addRef();
+#endif
+            if(!font) throw std::runtime_error("Unable to restore Drawing font");
+            a.font(font);font->release();
+        }
+        return texture;
     }
     static void validatePoints(const std::vector<Point>& points) {
         if (points.size() > 1000000) throw std::runtime_error("Too many Drawing control points");
@@ -165,6 +207,8 @@ uint32 DrawingImpl::Storage::getSerializedSize(ISerializer* writer) const {
         }
         case type_Image: case type_ImageStrip:
             size += 8 + writer->sizeof_obj(static_cast<const ImageElement*>(element)->image); break;
+        case type_Text:
+            size += writer->sizeof_str(static_cast<const TextElement*>(element)->text.c_str());break;
         case type_Drawing:
             size += drawingSerializedSize(static_cast<const DrawingElement*>(element)->drawing.get(), writer); break;
         default: throw std::runtime_error("Unsupported Drawing element type");
@@ -173,7 +217,7 @@ uint32 DrawingImpl::Storage::getSerializedSize(ISerializer* writer) const {
     return size;
 }
 void DrawingImpl::Storage::serialize(ISerializer* writer) const {
-    writer->serialize_1u(4); writer->serialize_uint(elements.size());
+    writer->serialize_1u(5); writer->serialize_uint(elements.size());
     for (const auto& item : elements) {
         const auto type = item.first; const auto* element = item.second;
         writer->serialize_1u(type);
@@ -199,6 +243,8 @@ void DrawingImpl::Storage::serialize(ISerializer* writer) const {
             writer->serialize_4(image->numFrames); writer->serialize_4(image->frameNumber);
             writer->serialize_obj(image->image); break;
         }
+        case type_Text:
+            writer->serialize_str(static_cast<const TextElement*>(element)->text.c_str());break;
         case type_Drawing:
             serializeDrawing(static_cast<const DrawingElement*>(element)->drawing.get(), writer); break;
         default: throw std::runtime_error("Unsupported Drawing element type");
@@ -206,7 +252,8 @@ void DrawingImpl::Storage::serialize(ISerializer* writer) const {
     }
 }
 void DrawingImpl::Storage::deserialize(IDeserializer* reader) {
-    if (reader->deserialize_1u() != 4) throw std::runtime_error("Unsupported Drawing record");
+    const uint8 version=reader->deserialize_1u();
+    if (version!=4 && version!=5) throw std::runtime_error("Unsupported Drawing record");
     const auto count = reader->deserialize_uint();
     if (count > 1000000) throw std::runtime_error("Too many Drawing elements");
     struct Loading {
@@ -218,7 +265,7 @@ void DrawingImpl::Storage::deserialize(IDeserializer* reader) {
     for (uint32 i = 0; i < count; ++i) {
         const auto type = static_cast<ElementType>(reader->deserialize_1u());
         Attributes attrs;
-        auto texture = DrawingSnapshot::readAttributes(attrs, reader); // retain until Element takes its reference
+        auto texture = DrawingSnapshot::readAttributes(attrs, reader, version); // retain until Element takes its reference
         const auto points = DrawingSnapshot::readPoints(reader);
         auto require = [&](size_t count) { if (points.size() != count) throw std::runtime_error("Invalid Drawing geometry"); };
         auto number = [&] { float value = reader->deserialize_f(); DrawingSnapshot::finite(value); return value; };
@@ -253,6 +300,11 @@ void DrawingImpl::Storage::deserialize(IDeserializer* reader) {
             if (!image || frames < 1) throw std::runtime_error("Invalid Drawing image");
             auto* part = new ImageElement(Rect(points[0], points[2]), *image, frame, attrs);
             part->numFrames = frames; element.reset(part); break;
+        }
+        case type_Text: {
+            if(version<5) throw std::runtime_error("Text requires Drawing record version 5");
+            require(4);const auto text=DrawingSnapshot::string(reader);
+            element.reset(new TextElement(text.c_str(),Rect(points[0],points[2]),attrs));break;
         }
         case type_Drawing: {
             require(4); auto drawing = deserializeDrawing(reader);

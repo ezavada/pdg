@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['events_0',['Events',['../group___events.html',1,'']]]
+  ['data_20types_0',['Structured Data Types',['../group___structured_data_types.html',1,'']]]
 ];

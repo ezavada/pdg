@@ -315,10 +315,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -335,10 +332,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -355,10 +349,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -375,10 +366,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inMaxForce)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -401,10 +389,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -421,10 +406,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inErrorBias)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -447,10 +429,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -467,10 +446,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inMaxBias)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -493,10 +469,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
         ;
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -512,10 +485,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
         ;
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -541,10 +511,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
         ;
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -570,10 +537,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -581,19 +545,19 @@ namespace pdg
         };
 
         cpVect anchor;
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
+        if (cpConstraintIsPinJoint(self))
         {
             anchor = cpPinJointGetAnchorA(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") == 0)
+        else if (cpConstraintIsSlideJoint(self))
         {
             anchor = cpSlideJointGetAnchorA(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "PivotJoint") == 0)
+        else if (cpConstraintIsPivotJoint(self))
         {
             anchor = cpPivotJointGetAnchorA(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        else if (cpConstraintIsDampedSpring(self))
         {
             anchor = cpDampedSpringGetAnchorA(self);
         }
@@ -611,10 +575,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "([object Offset] inAnchor)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -635,19 +596,19 @@ namespace pdg
         };
 
         cpVect anchor = cpv(theAnchor.x, theAnchor.y);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
+        if (cpConstraintIsPinJoint(self))
         {
             cpPinJointSetAnchorA(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") == 0)
+        else if (cpConstraintIsSlideJoint(self))
         {
             cpSlideJointSetAnchorA(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "PivotJoint") == 0)
+        else if (cpConstraintIsPivotJoint(self))
         {
             cpPivotJointSetAnchorA(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        else if (cpConstraintIsDampedSpring(self))
         {
             cpDampedSpringSetAnchorA(self, anchor);
         }
@@ -655,7 +616,7 @@ namespace pdg
         {
             std::ostringstream msg;
             msg << "cpConstraint.setAnchor() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
+                << "unsupported joint";
             std::ostringstream excpt_;
             excpt_ << msg.str().c_str();
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
@@ -674,10 +635,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -685,23 +643,23 @@ namespace pdg
         };
 
         cpVect anchor;
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
+        if (cpConstraintIsPinJoint(self))
         {
             anchor = cpPinJointGetAnchorB(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") == 0)
+        else if (cpConstraintIsSlideJoint(self))
         {
             anchor = cpSlideJointGetAnchorB(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "PivotJoint") == 0)
+        else if (cpConstraintIsPivotJoint(self))
         {
             anchor = cpPivotJointGetAnchorB(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") == 0)
+        else if (cpConstraintIsGrooveJoint(self))
         {
             anchor = cpGrooveJointGetAnchorB(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        else if (cpConstraintIsDampedSpring(self))
         {
             anchor = cpDampedSpringGetAnchorB(self);
         }
@@ -719,10 +677,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "([object Offset] inOtherAnchor)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -743,23 +698,23 @@ namespace pdg
         };
 
         cpVect anchor = cpv(theOtherAnchor.x, theOtherAnchor.y);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
+        if (cpConstraintIsPinJoint(self))
         {
             cpPinJointSetAnchorB(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") == 0)
+        else if (cpConstraintIsSlideJoint(self))
         {
             cpSlideJointSetAnchorB(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "PivotJoint") == 0)
+        else if (cpConstraintIsPivotJoint(self))
         {
             cpPivotJointSetAnchorB(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") == 0)
+        else if (cpConstraintIsGrooveJoint(self))
         {
             cpGrooveJointSetAnchorB(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        else if (cpConstraintIsDampedSpring(self))
         {
             cpDampedSpringSetAnchorB(self, anchor);
         }
@@ -767,7 +722,7 @@ namespace pdg
         {
             std::ostringstream msg;
             msg << "cpConstraint.setOtherAnchor() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
+                << "unsupported joint";
             std::ostringstream excpt_;
             excpt_ << msg.str().c_str();
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
@@ -786,17 +741,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") != 0)
+        if (!cpConstraintIsPinJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -810,10 +762,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inPinDist)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -826,19 +775,17 @@ namespace pdg
         }
         double thePinDist = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") != 0)
+        if (!cpConstraintIsPinJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "PinDist" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "PinDist" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpPinJointSetDist(self, thePinDist);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -850,17 +797,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") != 0)
+        if (!cpConstraintIsSlideJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -874,10 +818,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inSlideMinDist)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -890,19 +831,17 @@ namespace pdg
         }
         double theSlideMinDist = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") != 0)
+        if (!cpConstraintIsSlideJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "SlideMinDist" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "SlideMinDist" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpSlideJointSetMin(self, theSlideMinDist);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -914,17 +853,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") != 0)
+        if (!cpConstraintIsSlideJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -938,10 +874,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inSlideMaxDist)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -954,19 +887,17 @@ namespace pdg
         }
         double theSlideMaxDist = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") != 0)
+        if (!cpConstraintIsSlideJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "SlideMaxDist" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "SlideMaxDist" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpSlideJointSetMax(self, theSlideMaxDist);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -978,17 +909,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
+        if (!cpConstraintIsGrooveJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1003,10 +931,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "([object Offset] inGrooveStart)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1026,19 +951,17 @@ namespace pdg
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
+        if (!cpConstraintIsGrooveJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "GrooveStart" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "GrooveStart" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpGrooveJointSetGrooveA(self, cpv(theGrooveStart.x, theGrooveStart.y));
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1050,17 +973,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
+        if (!cpConstraintIsGrooveJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1075,10 +995,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "([object Offset] inGrooveEnd)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1098,19 +1015,17 @@ namespace pdg
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
+        if (!cpConstraintIsGrooveJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "GrooveEnd" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "GrooveEnd" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpGrooveJointSetGrooveB(self, cpv(theGrooveEnd.x, theGrooveEnd.y));
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1122,17 +1037,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") != 0)
+        if (!cpConstraintIsDampedSpring(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1146,10 +1058,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inSpringRestLength)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1162,19 +1071,17 @@ namespace pdg
         }
         double theSpringRestLength = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") != 0)
+        if (!cpConstraintIsDampedSpring(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "SpringRestLength" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "SpringRestLength" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpDampedSpringSetRestLength(self, theSpringRestLength);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1186,17 +1093,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") != 0)
+        if (!cpConstraintIsDampedRotarySpring(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1210,10 +1114,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inRotarySpringRestAngle)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1226,19 +1127,17 @@ namespace pdg
         }
         double theRotarySpringRestAngle = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") != 0)
+        if (!cpConstraintIsDampedRotarySpring(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "RotarySpringRestAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "RotarySpringRestAngle" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpDampedRotarySpringSetRestAngle(self, theRotarySpringRestAngle);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1250,17 +1149,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotaryLimit") != 0)
+        if (!cpConstraintIsRotaryLimitJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1274,10 +1170,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inMinAngle)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1290,19 +1183,17 @@ namespace pdg
         }
         double theMinAngle = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotaryLimit") != 0)
+        if (!cpConstraintIsRotaryLimitJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "MinAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "MinAngle" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpRotaryLimitJointSetMin(self, theMinAngle);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1314,17 +1205,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotaryLimit") != 0)
+        if (!cpConstraintIsRotaryLimitJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1338,10 +1226,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inMaxAngle)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1354,19 +1239,17 @@ namespace pdg
         }
         double theMaxAngle = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotaryLimit") != 0)
+        if (!cpConstraintIsRotaryLimitJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "MaxAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "MaxAngle" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpRotaryLimitJointSetMax(self, theMaxAngle);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1378,17 +1261,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1402,10 +1282,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inRatchetAngle)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1418,19 +1295,17 @@ namespace pdg
         }
         double theRatchetAngle = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "RatchetAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "RatchetAngle" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpRatchetJointSetAngle(self, theRatchetAngle);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1442,17 +1317,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1466,10 +1338,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inRatchetPhase)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1482,19 +1351,17 @@ namespace pdg
         }
         double theRatchetPhase = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "RatchetPhase" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "RatchetPhase" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpRatchetJointSetPhase(self, theRatchetPhase);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1506,17 +1373,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1530,10 +1394,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inRatchetInterval)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1546,19 +1407,17 @@ namespace pdg
         }
         double theRatchetInterval = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "RatchetInterval" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "RatchetInterval" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpRatchetJointSetRatchet(self, theRatchetInterval);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1570,17 +1429,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Gear") != 0)
+        if (!cpConstraintIsGearJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1594,10 +1450,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inGearRatio)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1610,19 +1463,17 @@ namespace pdg
         }
         double theGearRatio = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Gear") != 0)
+        if (!cpConstraintIsGearJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "GearRatio" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "GearRatio" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpGearJointSetRatio(self, theGearRatio);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1634,17 +1485,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Gear") != 0)
+        if (!cpConstraintIsGearJoint(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1658,10 +1506,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inGearInitialAngle)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1674,19 +1519,17 @@ namespace pdg
         }
         double theGearInitialAngle = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Gear") != 0)
+        if (!cpConstraintIsGearJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "GearInitialAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "GearInitialAngle" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpGearJointSetPhase(self, theGearInitialAngle);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1698,17 +1541,14 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Motor") != 0)
+        if (!cpConstraintIsSimpleMotor(self))
         {
             args.GetReturnValue().SetUndefined();
         };
@@ -1722,10 +1562,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inMotorSpinRate)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1738,19 +1575,17 @@ namespace pdg
         }
         double theMotorSpinRate = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Motor") != 0)
+        if (!cpConstraintIsSimpleMotor(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "MotorSpinRate" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << msg.str().c_str();
+            excpt_ << "cpConstraint.set" "MotorSpinRate" "() not valid for this constraint type";
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
             {
                 v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
                     return maybe.IsEmpty() ?
                     v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
-            }()))) ;
+            }())));
+            args.GetReturnValue().SetUndefined();
         };
         cpSimpleMotorSetRate(self, theMotorSpinRate);
         { args.GetReturnValue().Set( args.This() ); return; };
@@ -1762,10 +1597,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1773,11 +1605,11 @@ namespace pdg
         };
 
         cpFloat theSpringStiffness;
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        if (cpConstraintIsDampedSpring(self))
         {
             theSpringStiffness = cpDampedSpringGetStiffness(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") == 0)
+        else if (cpConstraintIsDampedRotarySpring(self))
         {
             theSpringStiffness = cpDampedRotarySpringGetStiffness(self);
         }
@@ -1797,10 +1629,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inSpringStiffness)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1813,11 +1642,11 @@ namespace pdg
         }
         double theSpringStiffness = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        if (cpConstraintIsDampedSpring(self))
         {
             cpDampedSpringSetStiffness(self, theSpringStiffness);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") == 0)
+        else if (cpConstraintIsDampedRotarySpring(self))
         {
             cpDampedRotarySpringSetStiffness(self, theSpringStiffness);
         }
@@ -1825,7 +1654,7 @@ namespace pdg
         {
             std::ostringstream msg;
             msg << "cpConstraint.setSpringStiffness() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
+                << "unsupported joint";
             std::ostringstream excpt_;
             excpt_ << msg.str().c_str();
             isolate->ThrowException( v8::Exception::TypeError( ([&]()
@@ -1844,10 +1673,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1855,11 +1681,11 @@ namespace pdg
         };
 
         cpFloat theSpringDamping;
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        if (cpConstraintIsDampedSpring(self))
         {
             theSpringDamping = cpDampedSpringGetDamping(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") == 0)
+        else if (cpConstraintIsDampedRotarySpring(self))
         {
             theSpringDamping = cpDampedRotarySpringGetDamping(self);
         }
@@ -1879,10 +1705,7 @@ namespace pdg
         cpConstraintWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpConstraintWrap>(args.This());
         cpConstraint* self = dynamic_cast<cpConstraint*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpConstraint]" " function" "(number inSpringDamping)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1895,11 +1718,11 @@ namespace pdg
         }
         double theSpringDamping = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
 
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        if (cpConstraintIsDampedSpring(self))
         {
             cpDampedSpringSetDamping(self, theSpringDamping);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") == 0)
+        else if (cpConstraintIsDampedRotarySpring(self))
         {
             cpDampedRotarySpringSetDamping(self, theSpringDamping);
         }
@@ -1907,7 +1730,7 @@ namespace pdg
         {
             std::ostringstream msg;
             msg << "cpConstraint.setSpringDamping() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
+                << "unsupported joint";
             std::ostringstream excpt_;
             excpt_ << msg.str().c_str();
             isolate->ThrowException( v8::Exception::TypeError( ([&]()

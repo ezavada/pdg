@@ -47,7 +47,7 @@ public:
     SpriterPoseAdapter(SpriterEngine::EntityInstance& entity, std::shared_ptr<SpriterRigSchema> schema,
         std::shared_ptr<const AnimationRig> rig);
     const AnimationPose& pose() const { return mFinal; }
-    void evaluate(const std::string& blendTarget, double blendRatio, const AnimationTransform& root, AnimationPipeline* pipeline = nullptr, double deltaSeconds = 0);
+    void evaluate(const std::string& blendTarget, double blendRatio, const AnimationTransform& root, AnimationPipeline* pipeline = nullptr, double deltaSeconds = 0, const std::function<void(AnimationPose&,bool)>& controls = {}, double simulationDeltaSeconds = -1);
     void setBoneOverride(AnimationBoneId id, const AnimationTransform& transform, const AnimationTransform& root);
     void clearBoneOverrides();
     void publish(AnimationPose final, const AnimationTransform& root);

@@ -1,0 +1,7 @@
+<map id="AnimationJiggle" name="AnimationJiggle">
+<area shape="rect" id="Node000001" title=" " alt="" coords="142,117,256,143"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,13,185,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,47,189,116,184,117,117,52"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="209,5,400,46"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="276,56,213,119,210,114,271,58"/>
+</map>

@@ -1,0 +1,1426 @@
+.TH "javascript_mvc_inventory" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+javascript_mvc_inventory \- JavaScript MVC module inventory 
+.PP
+These exports belong to the separate MVC module, not to the pdg root object\&. See \fBJavaScript application framework\fP for imports, lifecycle, and a View example\&. 
+.PP
+\fBNote\fP
+.RS 4
+API stability: Evolving\&. Exports and own prototype/static members only\&. Unresolved signatures and instance fields require explicit contracts\&. Export  Kind  Base classes  CLIP_TEXT  string  DESCRIPTION  string  FLICK_DECAY_FACTOR  number  FLICK_FRAME_RATE  number  FLICK_MAX_MOUSE_UNMOVED_MS  number  HIGHLIGHT_AREA_MARGIN  number  HOT_ITEM_NONE  number  IMAGE_HEIGHT_OFFSET  number  ITEM_DOWN_ARROW  number  ITEM_SIZE_OFFSET  number  ITEM_UP_ARROW  number  LEFT_MARGIN  number  MAX_ARROW_IMAGES  number  MAX_BUTTON_IMAGES  number  MAX_MENU_WIDTH  number  MAX_RADIO_IMAGES  number  RES_MENU_IMAGES  number  RES_PULL_ARROW  number  RIGHT_MARGIN  number  START_INDEX_NONE  number  TEXT_HEIGHT_OFFSET  number  TEXT_LEFT_MARGIN  number  TEXT_RESOURCE_ID_NONE  number  TEXT_WIDTH_OFFSET  number  VERSION  string  VIEW_HEIGHT_OFFSET  number  VIEW_HSHIFT_OFFSET  number  VIEW_WIDTH_OFFSET  number  Application  object  Application\&.AppStates  object  Application\&.AppStates\&.state_Cleanup  number  Application\&.AppStates\&.state_FirstUserState  number  Application\&.AppStates\&.state_Initializing  number  Application\&.AppStates\&.state_Running  number  Application\&.Application  class  Application\&.NoManagerError  class  Error  AppStates  object  AppStates\&.state_Cleanup  number  AppStates\&.state_FirstUserState  number  AppStates\&.state_Initializing  number  AppStates\&.state_Running  number  Button  object  Button\&.MAX_BUTTON_IMAGES  number  Button\&.RES_DEFAULT_BUTTON_IMAGE_NAMES  object  Button\&.RES_DEFAULT_BUTTON_IMAGE_NAMES\&.0  string  Button\&.RES_DEFAULT_BUTTON_IMAGE_NAMES\&.1  string  Button\&.RES_DEFAULT_BUTTON_IMAGE_NAMES\&.2  string  Button\&.RES_DEFAULT_BUTTON_IMAGE_NAMES\&.length  number  Button\&.Button  class  View  CBImages  object  CBImages\&.CLOSED  number  CBImages\&.NUM_CHECKBOX_IMAGES  number  CBImages\&.OPEN  number  Checkbox  object  Checkbox\&.CBImages  object  Checkbox\&.CBImages\&.CLOSED  number  Checkbox\&.CBImages\&.NUM_CHECKBOX_IMAGES  number  Checkbox\&.CBImages\&.OPEN  number  Checkbox\&.CheckboxClickIDs  object  Checkbox\&.CheckboxClickIDs\&.CLICK_ID_CHECKBOX  number  Checkbox\&.Checkbox  class  View  CheckboxClickIDs  object  CheckboxClickIDs\&.CLICK_ID_CHECKBOX  number  ClickablePartsIDs  object  ClickablePartsIDs\&.CLICKED_PART_NONE  number  ControlAttributes  object  ControlAttributes\&.ControlState  object  ControlAttributes\&.ControlState\&.Count  number  ControlAttributes\&.ControlState\&.Decrement  number  ControlAttributes\&.ControlState\&.DecrementPressed  number  ControlAttributes\&.ControlState\&.Disabled  number  ControlAttributes\&.ControlState\&.Hovered  number  ControlAttributes\&.ControlState\&.Increment  number  ControlAttributes\&.ControlState\&.IncrementPressed  number  ControlAttributes\&.ControlState\&.Normal  number  ControlAttributes\&.ControlState\&.Pressed  number  ControlAttributes\&.ControlState\&.Selected  number  ControlAttributes\&.ControlState\&.SelectedDisabled  number  ControlAttributes\&.ControlState\&.Thumb  number  ControlAttributes\&.ControlType  object  ControlAttributes\&.ControlType\&.Button  number  ControlAttributes\&.ControlType\&.Checkbox  number  ControlAttributes\&.ControlType\&.Dialog  number  ControlAttributes\&.ControlType\&.Other  number  ControlAttributes\&.ControlType\&.RadioButton  number  ControlAttributes\&.ControlType\&.Scrollbar  number  ControlAttributes\&.ControlAttributes  class  ControlAttributes\&.ControlStateAttributes  class  Controller  object  Controller\&.ControllerPreferences  object  Controller\&.ControllerPreferences\&.kDontDrawWhileInactive  boolean  Controller\&.ControllerPreferences\&.kDontWantAllEvents  boolean  Controller\&.ControllerPreferences\&.kDontWantKeyPressEvents  boolean  Controller\&.ControllerPreferences\&.kDontWantKeyUpDownEvents  boolean  Controller\&.ControllerPreferences\&.kDontWantMouseEnterLeaveEvents  boolean  Controller\&.ControllerPreferences\&.kDrawWhileInactive  boolean  Controller\&.ControllerPreferences\&.kWantAllEvents  boolean  Controller\&.ControllerPreferences\&.kWantKeyPressEvents  boolean  Controller\&.ControllerPreferences\&.kWantKeyUpDownEvents  boolean  Controller\&.ControllerPreferences\&.kWantMouseEnterLeaveEvents  boolean  Controller\&.Controller  class  ControllerPreferences  object  ControllerPreferences\&.kDontDrawWhileInactive  boolean  ControllerPreferences\&.kDontWantAllEvents  boolean  ControllerPreferences\&.kDontWantKeyPressEvents  boolean  ControllerPreferences\&.kDontWantKeyUpDownEvents  boolean  ControllerPreferences\&.kDontWantMouseEnterLeaveEvents  boolean  ControllerPreferences\&.kDrawWhileInactive  boolean  ControllerPreferences\&.kWantAllEvents  boolean  ControllerPreferences\&.kWantKeyPressEvents  boolean  ControllerPreferences\&.kWantKeyUpDownEvents  boolean  ControllerPreferences\&.kWantMouseEnterLeaveEvents  boolean  ControlState  object  ControlState\&.Count  number  ControlState\&.Decrement  number  ControlState\&.DecrementPressed  number  ControlState\&.Disabled  number  ControlState\&.Hovered  number  ControlState\&.Increment  number  ControlState\&.IncrementPressed  number  ControlState\&.Normal  number  ControlState\&.Pressed  number  ControlState\&.Selected  number  ControlState\&.SelectedDisabled  number  ControlState\&.Thumb  number  ControlType  object  ControlType\&.Button  number  ControlType\&.Checkbox  number  ControlType\&.Dialog  number  ControlType\&.Other  number  ControlType\&.RadioButton  number  ControlType\&.Scrollbar  number  Dialog  object  Dialog\&.DIALOG_BACKGROUND_VIEW_ID  number  Dialog\&.DialogFlags  object  Dialog\&.DialogFlags\&.dialog_Centered  number  Dialog\&.DialogFlags\&.dialog_CreateBackground  number  Dialog\&.DialogFlags\&.dialog_NonModal  number  Dialog\&.DialogFlags\&.dialog_ReservedFlag  number  Dialog\&.DialogFlags\&.dialog_Standard  number  Dialog\&.DialogResult  object  Dialog\&.DialogResult\&.kAccepted  boolean  Dialog\&.DialogResult\&.kCancelled  boolean  Dialog\&.Dialog  class  Controller  Dialog\&.DialogBackgroundView  class  View  DialogBorderView  undefined  DialogFlags  object  DialogFlags\&.dialog_Centered  number  DialogFlags\&.dialog_CreateBackground  number  DialogFlags\&.dialog_NonModal  number  DialogFlags\&.dialog_ReservedFlag  number  DialogFlags\&.dialog_Standard  number  DialogResult  object  DialogResult\&.kAccepted  boolean  DialogResult\&.kCancelled  boolean  EditText  object  EditText\&.LEFT_MARGIN  number  EditText\&.RIGHT_MARGIN  number  EditText\&.TEXT_HEIGHT_OFFSET  number  EditText\&.EditTextClickIDs  object  EditText\&.EditTextClickIDs\&.CLICK_ID_EDITBOXVIEW  number  EditText\&.EditText  class  View  EditTextClickIDs  object  EditTextClickIDs\&.CLICK_ID_EDITBOXVIEW  number  ListBox  object  ListBox\&.ListBoxClickIDs  object  ListBox\&.ListBoxClickIDs\&.VIEW_ID_LIST_BOX_SCROLLBAR  number  ListBox\&.ListBoxClickIDs\&.VIEW_ID_SELECTION_START  number  ListBox\&.ListBoxSelectionIDs  object  ListBox\&.ListBoxSelectionIDs\&.NO_SELECTION  number  ListBox\&.ListBox  class  View  ListBox\&.ListBoxLine  class  ListBoxClickIDs  object  ListBoxClickIDs\&.VIEW_ID_LIST_BOX_SCROLLBAR  number  ListBoxClickIDs\&.VIEW_ID_SELECTION_START  number  ListBoxSelectionIDs  object  ListBoxSelectionIDs\&.NO_SELECTION  number  MessageDialog  object  MessageDialog\&.MessageDialogButtonText  object  MessageDialog\&.MessageDialogButtonText\&.CANCEL  number  MessageDialog\&.MessageDialogButtonText\&.LOAD  number  MessageDialog\&.MessageDialogButtonText\&.NO  number  MessageDialog\&.MessageDialogButtonText\&.NONE  number  MessageDialog\&.MessageDialogButtonText\&.OK  number  MessageDialog\&.MessageDialogButtonText\&.SAVE  number  MessageDialog\&.MessageDialogButtonText\&.YES  number  MessageDialog\&.MessageDialogViewIDs  object  MessageDialog\&.MessageDialogViewIDs\&.VIEW_FIRST_BUTTON_ID  number  MessageDialog\&.MessageDialogViewIDs\&.VIEW_ID_BORDER  number  MessageDialog\&.MessageDialogViewIDs\&.VIEW_ID_BUTTON_1  number  MessageDialog\&.MessageDialogViewIDs\&.VIEW_ID_BUTTON_2  number  MessageDialog\&.MessageDialogViewIDs\&.VIEW_ID_MESSAGE_VIEW  number  MessageDialog\&.MessageDialogViewIDs\&.VIEW_LAST_BUTTON_ID  number  MessageDialog\&.MessageDialog  class  Dialog  MessageDialog\&.MessageDialogBorderView  class  View  MessageDialog\&.MessageDialogView  class  View  MessageDialogButtonText  object  MessageDialogButtonText\&.CANCEL  number  MessageDialogButtonText\&.LOAD  number  MessageDialogButtonText\&.NO  number  MessageDialogButtonText\&.NONE  number  MessageDialogButtonText\&.OK  number  MessageDialogButtonText\&.SAVE  number  MessageDialogButtonText\&.YES  number  MessageDialogViewIDs  object  MessageDialogViewIDs\&.VIEW_FIRST_BUTTON_ID  number  MessageDialogViewIDs\&.VIEW_ID_BORDER  number  MessageDialogViewIDs\&.VIEW_ID_BUTTON_1  number  MessageDialogViewIDs\&.VIEW_ID_BUTTON_2  number  MessageDialogViewIDs\&.VIEW_ID_MESSAGE_VIEW  number  MessageDialogViewIDs\&.VIEW_LAST_BUTTON_ID  number  MessageView  object  MessageView\&.MessageView  class  View  ModalController  object  ModalController\&.ModalController  class  Controller  Observer  object  Observer\&.IObserver  class  Observer\&.Subject  class  PopupMenu  object  PopupMenu\&.CLIP_TEXT  string  PopupMenu\&.HIGHLIGHT_AREA_MARGIN  number  PopupMenu\&.HOT_ITEM_NONE  number  PopupMenu\&.IMAGE_HEIGHT_OFFSET  number  PopupMenu\&.ITEM_DOWN_ARROW  number  PopupMenu\&.ITEM_SIZE_OFFSET  number  PopupMenu\&.ITEM_UP_ARROW  number  PopupMenu\&.MAX_ARROW_IMAGES  number  PopupMenu\&.MAX_MENU_WIDTH  number  PopupMenu\&.RES_MENU_IMAGES  number  PopupMenu\&.RES_PULL_ARROW  number  PopupMenu\&.START_INDEX_NONE  number  PopupMenu\&.TEXT_LEFT_MARGIN  number  PopupMenu\&.TEXT_RESOURCE_ID_NONE  number  PopupMenu\&.TEXT_WIDTH_OFFSET  number  PopupMenu\&.VIEW_HEIGHT_OFFSET  number  PopupMenu\&.VIEW_HSHIFT_OFFSET  number  PopupMenu\&.VIEW_WIDTH_OFFSET  number  PopupMenu\&.ItemInfo  class  PopupMenu\&.PopupMenu  class  View  RadioButton  object  RadioButton\&.MAX_RADIO_IMAGES  number  RadioButton\&.RadioButton  class  View  RES_DEFAULT_BUTTON_IMAGE_NAMES  object  RES_DEFAULT_BUTTON_IMAGE_NAMES\&.0  string  RES_DEFAULT_BUTTON_IMAGE_NAMES\&.1  string  RES_DEFAULT_BUTTON_IMAGE_NAMES\&.2  string  RES_DEFAULT_BUTTON_IMAGE_NAMES\&.length  number  Scrollbar  object  Scrollbar\&.ScrollbarClickIDs  object  Scrollbar\&.ScrollbarClickIDs\&.CLICK_ID_SCROLL_DOWN  number  Scrollbar\&.ScrollbarClickIDs\&.CLICK_ID_SCROLL_UP  number  Scrollbar\&.ScrollbarClickIDs\&.CLICK_ID_SLIDER_AREA  number  Scrollbar\&.ScrollbarImages  object  Scrollbar\&.ScrollbarImages\&.MAX_SCROLL_BAR_IMAGES  number  Scrollbar\&.ScrollbarImages\&.SCROLL_DOWN  number  Scrollbar\&.ScrollbarImages\&.SCROLL_DOWN_CLICKED  number  Scrollbar\&.ScrollbarImages\&.SCROLL_SLIDER  number  Scrollbar\&.ScrollbarImages\&.SCROLL_UP  number  Scrollbar\&.ScrollbarImages\&.SCROLL_UP_CLICKED  number  Scrollbar\&.ScrollbarOrientation  object  Scrollbar\&.ScrollbarOrientation\&.HORIZONTAL  number  Scrollbar\&.ScrollbarOrientation\&.VERTICAL  number  Scrollbar\&.ScrollbarOrientation\&.VERTICAL_UP_IS_BIGGER  number  Scrollbar\&.Scrollbar  class  View  ScrollbarClickIDs  object  ScrollbarClickIDs\&.CLICK_ID_SCROLL_DOWN  number  ScrollbarClickIDs\&.CLICK_ID_SCROLL_UP  number  ScrollbarClickIDs\&.CLICK_ID_SLIDER_AREA  number  ScrollbarImages  object  ScrollbarImages\&.MAX_SCROLL_BAR_IMAGES  number  ScrollbarImages\&.SCROLL_DOWN  number  ScrollbarImages\&.SCROLL_DOWN_CLICKED  number  ScrollbarImages\&.SCROLL_SLIDER  number  ScrollbarImages\&.SCROLL_UP  number  ScrollbarImages\&.SCROLL_UP_CLICKED  number  ScrollbarOrientation  object  ScrollbarOrientation\&.HORIZONTAL  number  ScrollbarOrientation\&.VERTICAL  number  ScrollbarOrientation\&.VERTICAL_UP_IS_BIGGER  number  ScrollingView  object  ScrollingView\&.ScrollingViewBindType  object  ScrollingView\&.ScrollingViewBindType\&.bind_Bottom  number  ScrollingView\&.ScrollingViewBindType\&.bind_Centers  number  ScrollingView\&.ScrollingViewBindType\&.bind_CenterX  number  ScrollingView\&.ScrollingViewBindType\&.bind_CenterY  number  ScrollingView\&.ScrollingViewBindType\&.bind_Default  number  ScrollingView\&.ScrollingViewBindType\&.bind_Left  number  ScrollingView\&.ScrollingViewBindType\&.bind_LimitX  number  ScrollingView\&.ScrollingViewBindType\&.bind_LimitXY  number  ScrollingView\&.ScrollingViewBindType\&.bind_LimitY  number  ScrollingView\&.ScrollingViewBindType\&.bind_None  number  ScrollingView\&.ScrollingViewBindType\&.bind_Right  number  ScrollingView\&.ScrollingViewBindType\&.bind_Top  number  ScrollingView\&.ScrollingView  class  View  ScrollingViewBindType  object  ScrollingViewBindType\&.bind_Bottom  number  ScrollingViewBindType\&.bind_Centers  number  ScrollingViewBindType\&.bind_CenterX  number  ScrollingViewBindType\&.bind_CenterY  number  ScrollingViewBindType\&.bind_Default  number  ScrollingViewBindType\&.bind_Left  number  ScrollingViewBindType\&.bind_LimitX  number  ScrollingViewBindType\&.bind_LimitXY  number  ScrollingViewBindType\&.bind_LimitY  number  ScrollingViewBindType\&.bind_None  number  ScrollingViewBindType\&.bind_Right  number  ScrollingViewBindType\&.bind_Top  number  TouchController  object  TouchController\&.FLICK_DECAY_FACTOR  number  TouchController\&.FLICK_FRAME_RATE  number  TouchController\&.FLICK_MAX_MOUSE_UNMOVED_MS  number  TouchController\&.TouchController  class  ModalController  View  object  View\&.ClickablePartsIDs  object  View\&.ClickablePartsIDs\&.CLICKED_PART_NONE  number  View\&.ViewBinding  object  View\&.ViewBinding\&.bind_Bottom  number  View\&.ViewBinding\&.bind_Left  number  View\&.ViewBinding\&.bind_Right  number  View\&.ViewBinding\&.bind_Top  number  View\&.ViewBinding\&.grow  number  View\&.ViewBinding\&.grow_Horz  number  View\&.ViewBinding\&.grow_Vert  number  View\&.View  class  AnimatedAttributes  ViewBinding  object  ViewBinding\&.bind_Bottom  number  ViewBinding\&.bind_Left  number  ViewBinding\&.bind_Right  number  ViewBinding\&.bind_Top  number  ViewBinding\&.grow  number  ViewBinding\&.grow_Horz  number  ViewBinding\&.grow_Vert  number  ControlStateAttributes  class  IObserver  class  ItemInfo  class  ListBoxLine  class  MessageViewStandalone  class  View  NoManagerError  class  Error  Subject  class  
+.RE
+.PP
+.SH "Application\&.Application"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRcleanup\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRenterState\fP (function)\&.
+.IP "\(bu" 2
+\fRgetConfigManager\fP (function)\&.
+.IP "\(bu" 2
+\fRgetEventManager\fP (function)\&.
+.IP "\(bu" 2
+\fRgetGraphicsManager\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLogManager\fP (function)\&.
+.IP "\(bu" 2
+\fRgetNetworkManager\fP (function)\&.
+.IP "\(bu" 2
+\fRgetResourceManager\fP (function)\&.
+.IP "\(bu" 2
+\fRgetSoundManager\fP (function)\&.
+.IP "\(bu" 2
+\fRgetState\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTimerManager\fP (function)\&.
+.IP "\(bu" 2
+\fRinitialize\fP (function)\&.
+.IP "\(bu" 2
+\fRleaveState\fP (function)\&.
+.IP "\(bu" 2
+\fRonShutdown\fP (function)\&.
+.IP "\(bu" 2
+\fRpreloadResources\fP (function)\&.
+.IP "\(bu" 2
+\fRsetState\fP (function)\&.
+.IP "\(bu" 2
+\fRsetupControllers\fP (function)\&.
+.IP "\(bu" 2
+\fRsetupGraphics\fP (function)\&. 
+.PP
+.SH "Application\&.NoManagerError"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&. 
+.SH "Button\&.Button"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoLeftClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseEnter\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseLeave\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawStandardButtonBackground\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawText\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawWithImages\fP (function)\&.
+.IP "\(bu" 2
+\fRfinishInitButton\fP (function)\&.
+.IP "\(bu" 2
+\fRgetAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRgetButtonID\fP (function)\&.
+.IP "\(bu" 2
+\fRgetText\fP (function)\&.
+.IP "\(bu" 2
+\fRinitializeButton\fP (function)\&.
+.IP "\(bu" 2
+\fRisMouseInToolArea\fP (function)\&.
+.IP "\(bu" 2
+\fRisPressed\fP (function)\&.
+.IP "\(bu" 2
+\fRloadImages\fP (function)\&.
+.IP "\(bu" 2
+\fRsetAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRsetClickSound\fP (function)\&.
+.IP "\(bu" 2
+\fRsetClickState\fP (function)\&.
+.IP "\(bu" 2
+\fRsetText\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextFromResource\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRsetToolTipText\fP (function)\&.
+.IP "\(bu" 2
+\fRshowToolTip\fP (function)\&.
+.IP "\(bu" 2
+\fRupdateLayout\fP (function)\&.
+.IP "\(bu" 2
+\fRviewAreaChanged\fP (function)\&. 
+.PP
+.SH "Checkbox\&.Checkbox"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRcalcClickableAreas\fP (function)\&.
+.IP "\(bu" 2
+\fRcreatePlaceholderImages\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoLeftClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawCheckmark\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawStandardCheckbox\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawText\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawWithImages\fP (function)\&.
+.IP "\(bu" 2
+\fRgetAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRgetClickSound\fP (function)\&.
+.IP "\(bu" 2
+\fRgetString\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextMetrics\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRisChecked\fP (function)\&.
+.IP "\(bu" 2
+\fRloadImages\fP (function)\&.
+.IP "\(bu" 2
+\fRsetAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRsetChecked\fP (function)\&.
+.IP "\(bu" 2
+\fRsetClickSound\fP (function)\&.
+.IP "\(bu" 2
+\fRsetEnabled\fP (function)\&.
+.IP "\(bu" 2
+\fRsetString\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRtoggle\fP (function)\&. 
+.PP
+.SH "ControlAttributes\&.ControlAttributes"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRclickRoutine\fP (function)\&.
+.IP "\(bu" 2
+\fRclickSound\fP (function)\&.
+.IP "\(bu" 2
+\fRdraw\fP (function)\&.
+.IP "\(bu" 2
+\fRgetClickSound\fP (function)\&.
+.IP "\(bu" 2
+\fRgetClickVolume\fP (function)\&.
+.IP "\(bu" 2
+\fRhasClickRoutine\fP (function)\&.
+.IP "\(bu" 2
+\fRhasClickSound\fP (function)\&.
+.IP "\(bu" 2
+\fRmerge\fP (function)\&.
+.IP "\(bu" 2
+\fRplayClick\fP (function)\&.
+.IP "\(bu" 2
+\fRstate\fP (function)\&.
+.IP "\(bu" 2
+\fRstateAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRstateDrawRoutine\fP (function)\&.
+.IP "\(bu" 2
+\fRstateForeground\fP (function)\&.
+.IP "\(bu" 2
+\fRstateImage\fP (function)\&. 
+.PP
+.SH "ControlAttributes\&.ControlStateAttributes"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRbackgroundImage\fP (function)\&.
+.IP "\(bu" 2
+\fRcustomDraw\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRforegroundColor\fP (function)\&.
+.IP "\(bu" 2
+\fRmerge\fP (function)\&. 
+.PP
+.SH "Controller\&.Controller"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRaddChild\fP (function)\&.
+.IP "\(bu" 2
+\fRaddView\fP (function)\&.
+.IP "\(bu" 2
+\fRaddViewBehind\fP (function)\&.
+.IP "\(bu" 2
+\fRanimateViews\fP (function)\&.
+.IP "\(bu" 2
+\fRattemptChildClose\fP (function)\&.
+.IP "\(bu" 2
+\fRcancelMousePress\fP (function)\&.
+.IP "\(bu" 2
+\fRchildActivated\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDoubleClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDragComplete\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDragIn\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDragMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDragOut\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyUp\fP (function)\&.
+.IP "\(bu" 2
+\fRdoLeftClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseEnter\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseLeave\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRdoRightClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawViews\fP (function)\&.
+.IP "\(bu" 2
+\fRgetApplication\fP (function)\&.
+.IP "\(bu" 2
+\fRgetControlAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRgetHitView\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTopController\fP (function)\&.
+.IP "\(bu" 2
+\fRgetUntypedView\fP (function)\&.
+.IP "\(bu" 2
+\fRgetView\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleEvent\fP (function)\&.
+.IP "\(bu" 2
+\fRisActive\fP (function)\&.
+.IP "\(bu" 2
+\fRisViewWithin\fP (function)\&.
+.IP "\(bu" 2
+\fRonKeyDown\fP (function)\&.
+.IP "\(bu" 2
+\fRonKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRonKeyUp\fP (function)\&.
+.IP "\(bu" 2
+\fRonMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRonMouseEnter\fP (function)\&.
+.IP "\(bu" 2
+\fRonMouseLeave\fP (function)\&.
+.IP "\(bu" 2
+\fRonMouseMove\fP (function)\&.
+.IP "\(bu" 2
+\fRonMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRonPortDraw\fP (function)\&.
+.IP "\(bu" 2
+\fRonPortResized\fP (function)\&.
+.IP "\(bu" 2
+\fRonScrollWheel\fP (function)\&.
+.IP "\(bu" 2
+\fRportWasResized\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveAllViews\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveChild\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveView\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveViewById\fP (function)\&.
+.IP "\(bu" 2
+\fRsetActive\fP (function)\&.
+.IP "\(bu" 2
+\fRsetParent\fP (function)\&.
+.IP "\(bu" 2
+\fRsetPort\fP (function)\&.
+.IP "\(bu" 2
+\fRsetupViews\fP (function)\&.
+.IP "\(bu" 2
+\fRstartBeingDragTarget\fP (function)\&.
+.IP "\(bu" 2
+\fRstopBeingDragTarget\fP (function)\&. 
+.PP
+.SH "Dialog\&.Dialog"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRchildActivated\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoClose\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRdoLeftClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRgetCancelButtonId\fP (function)\&.
+.IP "\(bu" 2
+\fRgetDialogRect\fP (function)\&.
+.IP "\(bu" 2
+\fRgetFlags\fP (function)\&.
+.IP "\(bu" 2
+\fRgetOkButtonId\fP (function)\&.
+.IP "\(bu" 2
+\fRhideDialog\fP (function)\&.
+.IP "\(bu" 2
+\fRisCentered\fP (function)\&.
+.IP "\(bu" 2
+\fRisModal\fP (function)\&.
+.IP "\(bu" 2
+\fRisVisible\fP (function)\&.
+.IP "\(bu" 2
+\fRportWasResized\fP (function)\&.
+.IP "\(bu" 2
+\fRsetDialogRect\fP (function)\&.
+.IP "\(bu" 2
+\fRshowDialog\fP (function)\&. 
+.PP
+.SH "Dialog\&.DialogBackgroundView"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&. 
+.PP
+.SH "EditText\&.EditText"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRcalcClickableAreas\fP (function)\&.
+.IP "\(bu" 2
+\fRcanFitInDisplayArea\fP (function)\&.
+.IP "\(bu" 2
+\fRclearSelection\fP (function)\&.
+.IP "\(bu" 2
+\fRdeleteSelection\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDoubleClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawBorder\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawCaret\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelection\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawText\fP (function)\&.
+.IP "\(bu" 2
+\fRgetBufMax\fP (function)\&.
+.IP "\(bu" 2
+\fRgetCaretPositionFromPoint\fP (function)\&.
+.IP "\(bu" 2
+\fRgetSelectedText\fP (function)\&.
+.IP "\(bu" 2
+\fRgetText\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextWidth\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleBackspace\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleDelete\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleEvent\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleLeftArrow\fP (function)\&.
+.IP "\(bu" 2
+\fRhandlePrintableChar\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleRightArrow\fP (function)\&.
+.IP "\(bu" 2
+\fRhasFocus\fP (function)\&.
+.IP "\(bu" 2
+\fRhasSelection\fP (function)\&.
+.IP "\(bu" 2
+\fRisCharAllowed\fP (function)\&.
+.IP "\(bu" 2
+\fRisPrintableChar\fP (function)\&.
+.IP "\(bu" 2
+\fRloadString\fP (function)\&.
+.IP "\(bu" 2
+\fRreplaceSelection\fP (function)\&.
+.IP "\(bu" 2
+\fRselectAll\fP (function)\&.
+.IP "\(bu" 2
+\fRsetBackgroundColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetBufMax\fP (function)\&.
+.IP "\(bu" 2
+\fRsetFilter\fP (function)\&.
+.IP "\(bu" 2
+\fRsetFocus\fP (function)\&.
+.IP "\(bu" 2
+\fRsetFontSize\fP (function)\&.
+.IP "\(bu" 2
+\fRsetText\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextColor\fP (function)\&. 
+.PP
+.SH "ListBox\&.ListBox"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRaddToList\fP (function)\&.
+.IP "\(bu" 2
+\fRcalcClickableAreas\fP (function)\&.
+.IP "\(bu" 2
+\fRclear\fP (function)\&.
+.IP "\(bu" 2
+\fRclearSelection\fP (function)\&.
+.IP "\(bu" 2
+\fRcreateScrollbar\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDoubleClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoScrollWheel\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawListItems\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRensureItemVisible\fP (function)\&.
+.IP "\(bu" 2
+\fRfindItem\fP (function)\&.
+.IP "\(bu" 2
+\fRgetItem\fP (function)\&.
+.IP "\(bu" 2
+\fRgetItemCount\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLineIndexFromPoint\fP (function)\&.
+.IP "\(bu" 2
+\fRgetSelectedIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRgetSelectedText\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextFromIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRloadImages\fP (function)\&.
+.IP "\(bu" 2
+\fRmoveSelection\fP (function)\&.
+.IP "\(bu" 2
+\fRneedsScrollbar\fP (function)\&.
+.IP "\(bu" 2
+\fRnotify\fP (function)\&.
+.IP "\(bu" 2
+\fRonItemDoubleClick\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveItem\fP (function)\&.
+.IP "\(bu" 2
+\fRsetBackgroundColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetHighlightColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetItemColors\fP (function)\&.
+.IP "\(bu" 2
+\fRsetItemText\fP (function)\&.
+.IP "\(bu" 2
+\fRsetSelectedIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRviewAreaChanged\fP (function)\&. 
+.PP
+.SH "ListBox\&.ListBoxLine"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&. 
+.SH "MessageDialog\&.MessageDialog"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+Static \fRcreateOKCancelDialog\fP (function)\&.
+.IP "\(bu" 2
+Static \fRcreateOKDialog\fP (function)\&.
+.IP "\(bu" 2
+Static \fRcreateSaveCancelDialog\fP (function)\&.
+.IP "\(bu" 2
+Static \fRcreateYesNoDialog\fP (function)\&.
+.IP "\(bu" 2
+\fRdoClose\fP (function)\&.
+.IP "\(bu" 2
+\fRdoLeftClick\fP (function)\&.
+.IP "\(bu" 2
+\fRgetButtonClickedId\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMessageCode\fP (function)\&.
+.IP "\(bu" 2
+Static \fRgetTextForButton\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMessageCode\fP (function)\&.
+.IP "\(bu" 2
+\fRsetupDialog\fP (function)\&.
+.IP "\(bu" 2
+\fRshowModal\fP (function)\&.
+.IP "\(bu" 2
+Static \fRshowOKCancelDialog\fP (function)\&.
+.IP "\(bu" 2
+Static \fRshowOKDialog\fP (function)\&.
+.IP "\(bu" 2
+Static \fRshowSaveCancelDialog\fP (function)\&.
+.IP "\(bu" 2
+Static \fRshowYesNoDialog\fP (function)\&.
+.IP "\(bu" 2
+Static \fRwithCustomButtons\fP (function)\&. 
+.PP
+.SH "MessageDialog\&.MessageDialogBorderView"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRsetBorderColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetBorderWidth\fP (function)\&. 
+.PP
+.SH "MessageDialog\&.MessageDialogView"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMessage\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextSize\fP (function)\&. 
+.PP
+.SH "MessageView\&.MessageView"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRappend\fP (function)\&.
+.IP "\(bu" 2
+\fRclear\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseWheel\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawMessageText\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRgetBackgroundColor\fP (function)\&.
+.IP "\(bu" 2
+\fRgetCharAt\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLength\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLine\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLineCount\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLineSpacing\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMargins\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMaxLines\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMessage\fP (function)\&.
+.IP "\(bu" 2
+\fRgetScrollOffset\fP (function)\&.
+.IP "\(bu" 2
+\fRgetScrollPercentage\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextAlignment\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextColor\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextStyle\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextX\fP (function)\&.
+.IP "\(bu" 2
+\fRgetWordWrap\fP (function)\&.
+.IP "\(bu" 2
+\fRgetWrappedLines\fP (function)\&.
+.IP "\(bu" 2
+\fRinsert\fP (function)\&.
+.IP "\(bu" 2
+\fRisEmpty\fP (function)\&.
+.IP "\(bu" 2
+\fRisNotEmpty\fP (function)\&.
+.IP "\(bu" 2
+\fRisScrollingNeeded\fP (function)\&.
+.IP "\(bu" 2
+\fRprepend\fP (function)\&.
+.IP "\(bu" 2
+\fRremove\fP (function)\&.
+.IP "\(bu" 2
+\fRreplace\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollDown\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollUp\fP (function)\&.
+.IP "\(bu" 2
+\fRsetBackgroundColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetLineSpacing\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMargins\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMaxLines\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMessage\fP (function)\&.
+.IP "\(bu" 2
+\fRsetScrollOffset\fP (function)\&.
+.IP "\(bu" 2
+\fRsetScrollPercentage\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextAlignment\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextStyle\fP (function)\&.
+.IP "\(bu" 2
+\fRsetWordWrap\fP (function)\&.
+.IP "\(bu" 2
+\fRupdateScrollLimits\fP (function)\&.
+.IP "\(bu" 2
+\fRwrapText\fP (function)\&. 
+.PP
+.SH "ModalController\&.ModalController"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRactivateModal\fP (function)\&.
+.IP "\(bu" 2
+\fRaddChild\fP (function)\&.
+.IP "\(bu" 2
+\fRattemptChildClose\fP (function)\&.
+.IP "\(bu" 2
+\fRcloseModal\fP (function)\&.
+.IP "\(bu" 2
+\fRdeactivateModal\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyUp\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRgetModalStack\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleClickOutside\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleEscapeKey\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleEvent\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleModalEvents\fP (function)\&.
+.IP "\(bu" 2
+\fRhideModal\fP (function)\&.
+.IP "\(bu" 2
+\fRisModal\fP (function)\&.
+.IP "\(bu" 2
+\fRisModalActive\fP (function)\&.
+.IP "\(bu" 2
+\fRisPointInModalArea\fP (function)\&.
+.IP "\(bu" 2
+\fRisTopModal\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveChild\fP (function)\&.
+.IP "\(bu" 2
+\fRsetModal\fP (function)\&.
+.IP "\(bu" 2
+\fRshowModal\fP (function)\&. 
+.PP
+.SH "Observer\&.IObserver"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRnotify\fP (function)\&. 
+.PP
+.SH "Observer\&.Subject"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRaddObserver\fP (function)\&.
+.IP "\(bu" 2
+\fRclearObservers\fP (function)\&.
+.IP "\(bu" 2
+\fRgetObserverCount\fP (function)\&.
+.IP "\(bu" 2
+\fRhasObserver\fP (function)\&.
+.IP "\(bu" 2
+\fRnotifyObservers\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveObserver\fP (function)\&. 
+.PP
+.SH "PopupMenu\&.ItemInfo"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRequals\fP (function)\&. 
+.PP
+.SH "PopupMenu\&.PopupMenu"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRaddDrawableItemPart\fP (function)\&.
+.IP "\(bu" 2
+\fRaddMenuItem\fP (function)\&.
+.IP "\(bu" 2
+\fRcalcClickableAreas\fP (function)\&.
+.IP "\(bu" 2
+\fRdeleteAllMenuItems\fP (function)\&.
+.IP "\(bu" 2
+\fRdeleteMenuItemByIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRdeleteMenuItemByItemID\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseEnter\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseLeave\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawArrow\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawMenuItems\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawScrollArrows\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRgetHotItem\fP (function)\&.
+.IP "\(bu" 2
+\fRgetIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRgetIndexByText\fP (function)\&.
+.IP "\(bu" 2
+\fRgetItemCount\fP (function)\&.
+.IP "\(bu" 2
+\fRgetItemStringByIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRgetItemStringByItemID\fP (function)\&.
+.IP "\(bu" 2
+\fRgetPartClicked\fP (function)\&.
+.IP "\(bu" 2
+\fRhide\fP (function)\&.
+.IP "\(bu" 2
+\fRloadImages\fP (function)\&.
+.IP "\(bu" 2
+\fRloadString\fP (function)\&.
+.IP "\(bu" 2
+\fRsanitiseViewArea\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollMenu\fP (function)\&.
+.IP "\(bu" 2
+\fRsetHotItem\fP (function)\&.
+.IP "\(bu" 2
+\fRsetLongestText\fP (function)\&.
+.IP "\(bu" 2
+\fRsetStringByIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRsetStringByItemID\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRshowSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRviewAreaChanged\fP (function)\&. 
+.PP
+.SH "RadioButton\&.RadioButton"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRaddString\fP (function)\&.
+.IP "\(bu" 2
+\fRcalcClickableAreas\fP (function)\&.
+.IP "\(bu" 2
+\fRclearStrings\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRdoLeftClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawRadioCircle\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawRadioOptions\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRfindString\fP (function)\&.
+.IP "\(bu" 2
+\fRgetAllStrings\fP (function)\&.
+.IP "\(bu" 2
+\fRgetAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRgetOptionCount\fP (function)\&.
+.IP "\(bu" 2
+\fRgetSelectedIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRgetSelectedText\fP (function)\&.
+.IP "\(bu" 2
+\fRgetString\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRisOptionSelected\fP (function)\&.
+.IP "\(bu" 2
+\fRloadImages\fP (function)\&.
+.IP "\(bu" 2
+\fRloadStrings\fP (function)\&.
+.IP "\(bu" 2
+\fRmoveSelection\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveString\fP (function)\&.
+.IP "\(bu" 2
+\fRselectFirst\fP (function)\&.
+.IP "\(bu" 2
+\fRselectLast\fP (function)\&.
+.IP "\(bu" 2
+\fRselectNext\fP (function)\&.
+.IP "\(bu" 2
+\fRselectPrevious\fP (function)\&.
+.IP "\(bu" 2
+\fRsetAllStrings\fP (function)\&.
+.IP "\(bu" 2
+\fRsetAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRsetClickSound\fP (function)\&.
+.IP "\(bu" 2
+\fRsetSelectedIndex\fP (function)\&.
+.IP "\(bu" 2
+\fRsetString\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextSize\fP (function)\&. 
+.PP
+.SH "Scrollbar\&.Scrollbar"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRaddObserver\fP (function)\&.
+.IP "\(bu" 2
+\fRcalcClickableAreas\fP (function)\&.
+.IP "\(bu" 2
+\fRcreatePlaceholderImages\fP (function)\&.
+.IP "\(bu" 2
+\fRdecrementExtent\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseLeave\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRdoScrollWheel\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawArrow\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawButton\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawScrollBar\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSlider\fP (function)\&.
+.IP "\(bu" 2
+\fRgetAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRgetCurrentPosition\fP (function)\&.
+.IP "\(bu" 2
+\fRgetDownButtonRect\fP (function)\&.
+.IP "\(bu" 2
+\fRgetOrientation\fP (function)\&.
+.IP "\(bu" 2
+\fRgetScrollRange\fP (function)\&.
+.IP "\(bu" 2
+\fRgetSliderRect\fP (function)\&.
+.IP "\(bu" 2
+\fRgetUpButtonRect\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleEvent\fP (function)\&.
+.IP "\(bu" 2
+\fRincrementExtent\fP (function)\&.
+.IP "\(bu" 2
+\fRisButtonPressed\fP (function)\&.
+.IP "\(bu" 2
+\fRloadImages\fP (function)\&.
+.IP "\(bu" 2
+\fRnotifyObservers\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveObserver\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollDown\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollDownFullWindow\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollDownPressed\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollDownReleased\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollSliderAreaPressed\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollSliderAreaReleased\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollUp\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollUpFullWindow\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollUpPressed\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollUpReleased\fP (function)\&.
+.IP "\(bu" 2
+\fRsetAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRsetCurrentPosition\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMaxRange\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMinRange\fP (function)\&.
+.IP "\(bu" 2
+\fRsetPageSize\fP (function)\&.
+.IP "\(bu" 2
+\fRsetStepSize\fP (function)\&.
+.IP "\(bu" 2
+\fRsetVisibleAmount\fP (function)\&.
+.IP "\(bu" 2
+\fRthumbDimensions\fP (function)\&.
+.IP "\(bu" 2
+\fRtrackScrollSlider\fP (function)\&.
+.IP "\(bu" 2
+\fRupdateSliderPosition\fP (function)\&.
+.IP "\(bu" 2
+\fRviewAreaChanged\fP (function)\&. 
+.PP
+.SH "ScrollingView\&.ScrollingView"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRadjustViewAreaToFrame\fP (function)\&.
+.IP "\(bu" 2
+\fRapplyAutoAdjust\fP (function)\&.
+.IP "\(bu" 2
+\fRdraw\fP (function)\&.
+.IP "\(bu" 2
+\fRgetAutoAdjust\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMaxScrollOffset\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMinScrollOffset\fP (function)\&.
+.IP "\(bu" 2
+\fRgetModifiableViewFrameRect\fP (function)\&.
+.IP "\(bu" 2
+\fRgetScrollOffset\fP (function)\&.
+.IP "\(bu" 2
+\fRgetScrollPercentage\fP (function)\&.
+.IP "\(bu" 2
+\fRgetViewFrame\fP (function)\&.
+.IP "\(bu" 2
+\fRgetVisibleArea\fP (function)\&.
+.IP "\(bu" 2
+\fRgetVisibleFrame\fP (function)\&.
+.IP "\(bu" 2
+\fRisAtBottom\fP (function)\&.
+.IP "\(bu" 2
+\fRisAtLeft\fP (function)\&.
+.IP "\(bu" 2
+\fRisAtRight\fP (function)\&.
+.IP "\(bu" 2
+\fRisAtTop\fP (function)\&.
+.IP "\(bu" 2
+\fRisScrollingNeeded\fP (function)\&.
+.IP "\(bu" 2
+\fRisViewWithinFrame\fP (function)\&.
+.IP "\(bu" 2
+\fRmoveView\fP (function)\&.
+.IP "\(bu" 2
+\fRpointInViewFrame\fP (function)\&.
+.IP "\(bu" 2
+\fRpointInViewVisibleArea\fP (function)\&.
+.IP "\(bu" 2
+\fRportResized\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollBy\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollTo\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollToBottom\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollToLeft\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollToRight\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollToTop\fP (function)\&.
+.IP "\(bu" 2
+\fRsetAutoAdjust\fP (function)\&.
+.IP "\(bu" 2
+\fRsetScrollOffset\fP (function)\&.
+.IP "\(bu" 2
+\fRsetScrollPercentage\fP (function)\&.
+.IP "\(bu" 2
+\fRsetViewFrame\fP (function)\&.
+.IP "\(bu" 2
+Static \fRwithPort\fP (function)\&. 
+.PP
+.SH "TouchController\&.TouchController"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRcalculateDistance\fP (function)\&.
+.IP "\(bu" 2
+\fRcalculateFlickVelocity\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRdoPinchMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoSnapback\fP (function)\&.
+.IP "\(bu" 2
+\fRdoSwipeMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoTap\fP (function)\&.
+.IP "\(bu" 2
+\fRdoTouch\fP (function)\&.
+.IP "\(bu" 2
+\fRdoTouchMove\fP (function)\&.
+.IP "\(bu" 2
+\fRgetFlickVelocity\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTouchDuration\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTouchMovePoints\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTouchStartPoint\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleEvent\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleTap\fP (function)\&.
+.IP "\(bu" 2
+\fRhandleTouchMove\fP (function)\&.
+.IP "\(bu" 2
+\fRisFlickGesture\fP (function)\&.
+.IP "\(bu" 2
+\fRisTouchActive\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveView\fP (function)\&.
+.IP "\(bu" 2
+\fRsetFlickVelocity\fP (function)\&.
+.IP "\(bu" 2
+\fRstartFlick\fP (function)\&.
+.IP "\(bu" 2
+\fRstopFlick\fP (function)\&.
+.IP "\(bu" 2
+\fRupdateFlick\fP (function)\&. 
+.PP
+.SH "View\&.View"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRviewArea\fP (accessor)\&.
+.IP "\(bu" 2
+\fRaddClickablePart\fP (function)\&.
+.IP "\(bu" 2
+\fRanimate\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDoubleClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDragComplete\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDragIn\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDragMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoDragOut\fP (function)\&.
+.IP "\(bu" 2
+\fRdoLeftClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseDown\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseEnter\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseLeave\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseUp\fP (function)\&.
+.IP "\(bu" 2
+\fRdoPinchMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoRightClick\fP (function)\&.
+.IP "\(bu" 2
+\fRdoScrollWheel\fP (function)\&.
+.IP "\(bu" 2
+\fRdoSwipeMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdoTap\fP (function)\&.
+.IP "\(bu" 2
+\fRdoTouchMove\fP (function)\&.
+.IP "\(bu" 2
+\fRdraw\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawClickableParts\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRgetClickableRectFromID\fP (function)\&.
+.IP "\(bu" 2
+\fRgetController\fP (function)\&.
+.IP "\(bu" 2
+\fRgetDrawingAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRgetHitView\fP (function)\&.
+.IP "\(bu" 2
+\fRgetID\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLayoutTransform\fP (function)\&.
+.IP "\(bu" 2
+\fRgetParentView\fP (function)\&.
+.IP "\(bu" 2
+\fRgetPartClicked\fP (function)\&.
+.IP "\(bu" 2
+\fRgetPort\fP (function)\&.
+.IP "\(bu" 2
+\fRgetViewArea\fP (function)\&.
+.IP "\(bu" 2
+\fRgetVisibleFrame\fP (function)\&.
+.IP "\(bu" 2
+\fRglobalToLocal\fP (function)\&.
+.IP "\(bu" 2
+\fRglobalToLocalRect\fP (function)\&.
+.IP "\(bu" 2
+\fRhide\fP (function)\&.
+.IP "\(bu" 2
+\fRhideSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRisDraggable\fP (function)\&.
+.IP "\(bu" 2
+\fRisEnabled\fP (function)\&.
+.IP "\(bu" 2
+\fRisVisible\fP (function)\&.
+.IP "\(bu" 2
+\fRlocalToGlobal\fP (function)\&.
+.IP "\(bu" 2
+\fRlocalToGlobalRect\fP (function)\&.
+.IP "\(bu" 2
+\fRpointInViewArea\fP (function)\&.
+.IP "\(bu" 2
+\fRpointInViewVisibleArea\fP (function)\&.
+.IP "\(bu" 2
+\fRportResized\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveClickablePart\fP (function)\&.
+.IP "\(bu" 2
+\fRsetDraggable\fP (function)\&.
+.IP "\(bu" 2
+\fRsetEnabled\fP (function)\&.
+.IP "\(bu" 2
+\fRsetID\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMaxSize\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMinSize\fP (function)\&.
+.IP "\(bu" 2
+\fRsetParentView\fP (function)\&.
+.IP "\(bu" 2
+\fRsetPort\fP (function)\&.
+.IP "\(bu" 2
+\fRsetViewArea\fP (function)\&.
+.IP "\(bu" 2
+\fRsetWantsMouseOvers\fP (function)\&.
+.IP "\(bu" 2
+\fRshow\fP (function)\&.
+.IP "\(bu" 2
+\fRshowSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRstartBeingDragTarget\fP (function)\&.
+.IP "\(bu" 2
+\fRstopBeingDragTarget\fP (function)\&.
+.IP "\(bu" 2
+\fRviewAreaChanged\fP (function)\&.
+.IP "\(bu" 2
+\fRwantsMouseOvers\fP (function)\&.
+.IP "\(bu" 2
+Static \fRwithPort\fP (function)\&. 
+.PP
+.SH "ControlStateAttributes"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRbackgroundImage\fP (function)\&.
+.IP "\(bu" 2
+\fRcustomDraw\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawAttributes\fP (function)\&.
+.IP "\(bu" 2
+\fRforegroundColor\fP (function)\&.
+.IP "\(bu" 2
+\fRmerge\fP (function)\&. 
+.PP
+.SH "IObserver"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRnotify\fP (function)\&. 
+.PP
+.SH "ItemInfo"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRequals\fP (function)\&. 
+.PP
+.SH "ListBoxLine"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&. 
+.SH "MessageViewStandalone"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRappend\fP (function)\&.
+.IP "\(bu" 2
+\fRclear\fP (function)\&.
+.IP "\(bu" 2
+\fRdestroy\fP (function)\&.
+.IP "\(bu" 2
+\fRdoKeyPress\fP (function)\&.
+.IP "\(bu" 2
+\fRdoMouseWheel\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawMessageText\fP (function)\&.
+.IP "\(bu" 2
+\fRdrawSelf\fP (function)\&.
+.IP "\(bu" 2
+\fRgetBackgroundColor\fP (function)\&.
+.IP "\(bu" 2
+\fRgetCharAt\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLength\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLine\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLineCount\fP (function)\&.
+.IP "\(bu" 2
+\fRgetLineSpacing\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMargins\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMaxLines\fP (function)\&.
+.IP "\(bu" 2
+\fRgetMessage\fP (function)\&.
+.IP "\(bu" 2
+\fRgetScrollOffset\fP (function)\&.
+.IP "\(bu" 2
+\fRgetScrollPercentage\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextAlignment\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextColor\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextStyle\fP (function)\&.
+.IP "\(bu" 2
+\fRgetTextX\fP (function)\&.
+.IP "\(bu" 2
+\fRgetWordWrap\fP (function)\&.
+.IP "\(bu" 2
+\fRgetWrappedLines\fP (function)\&.
+.IP "\(bu" 2
+\fRinsert\fP (function)\&.
+.IP "\(bu" 2
+\fRisEmpty\fP (function)\&.
+.IP "\(bu" 2
+\fRisNotEmpty\fP (function)\&.
+.IP "\(bu" 2
+\fRisScrollingNeeded\fP (function)\&.
+.IP "\(bu" 2
+\fRprepend\fP (function)\&.
+.IP "\(bu" 2
+\fRremove\fP (function)\&.
+.IP "\(bu" 2
+\fRreplace\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollDown\fP (function)\&.
+.IP "\(bu" 2
+\fRscrollUp\fP (function)\&.
+.IP "\(bu" 2
+\fRsetBackgroundColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetLineSpacing\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMargins\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMaxLines\fP (function)\&.
+.IP "\(bu" 2
+\fRsetMessage\fP (function)\&.
+.IP "\(bu" 2
+\fRsetScrollOffset\fP (function)\&.
+.IP "\(bu" 2
+\fRsetScrollPercentage\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextAlignment\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextColor\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextSize\fP (function)\&.
+.IP "\(bu" 2
+\fRsetTextStyle\fP (function)\&.
+.IP "\(bu" 2
+\fRsetWordWrap\fP (function)\&.
+.IP "\(bu" 2
+\fRupdateScrollLimits\fP (function)\&.
+.IP "\(bu" 2
+\fRwrapText\fP (function)\&. 
+.PP
+.SH "NoManagerError"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&. 
+.SH "Subject"
+.PP
+Constructor signatures and instance properties are not inferred by constructing objects\&.
+.IP "\(bu" 2
+\fRaddObserver\fP (function)\&.
+.IP "\(bu" 2
+\fRclearObservers\fP (function)\&.
+.IP "\(bu" 2
+\fRgetObserverCount\fP (function)\&.
+.IP "\(bu" 2
+\fRhasObserver\fP (function)\&.
+.IP "\(bu" 2
+\fRnotifyObservers\fP (function)\&.
+.IP "\(bu" 2
+\fRremoveObserver\fP (function)\&. 
+.PP
+

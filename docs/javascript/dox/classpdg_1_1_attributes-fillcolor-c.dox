@@ -1,7 +1,9 @@
 namespace pdg { /**
 
-\fn pdg::Attributes::fillColor(color)
+\fn pdg::Attributes::fillColor(Color color)
 
 \brief sets the fill color for shapes and drawings
+
+Accepts a Color object, a CSS color string, or a packed RGBA number.
 
 **/ }

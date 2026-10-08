@@ -6,8 +6,6 @@ namespace pdg { /**
 
 This event can be generated with #pdg.action_LayerFadeInComplete or #pdg.action_LayerFadeOutComplete when the layer finishes a fade.
 
-This event can be generated with #pdg.action_ZoomComplete with the layer finishes a zoom animation.
-
 These events are also generated regularly by a SpriteLayer to give the application a chance to take action at various stages of sprite animation and rendering.
 
     { 

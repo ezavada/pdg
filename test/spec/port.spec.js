@@ -518,6 +518,23 @@ describe("Port", function() {
         expect(width >= 0).toBeTruthy();
       });
 
+      it("keeps cached measurement consistent across partial strings, styles, and churn", function() {
+        var plain = pdg.textStyle_Plain;
+        var width = port.getTextWidth("Hello", 16, plain);
+        expect(port.getTextWidth("Hello suffix", 16, plain, 5)).toEqual(width);
+        expect(port.getTextWidth("Hello", 16, plain + pdg.textStyle_Centered)).toEqual(width);
+        var bold = port.getTextWidth("Hello", 16, pdg.textStyle_Bold);
+        var attrs = new pdg.Attributes().textSize(16).fillColor(color);
+        for (var i = 0; i < 320; i++) {
+          var label = "cache churn " + i;
+          port.drawText(label, location, attrs);
+          expect(port.getTextWidth(label, 16, plain)).toBeGreaterThan(0);
+        }
+        expect(port.getTextWidth("Hello", 16, plain)).toEqual(width);
+        expect(port.getTextWidth("Hello", 16, pdg.textStyle_Bold)).toEqual(bold);
+        if (typeof attrs.delete === 'function') attrs.delete();
+      });
+
       it("can get current font", function() {
         var font = port.getCurrentFont(pdg.textStyle_Plain);
         expect(font).toBeDefined();

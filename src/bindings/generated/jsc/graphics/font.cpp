@@ -114,10 +114,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""size"")");
-        int32 size = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 size = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""style"")");
-        unsigned long style = (argumentCount<2) ? textStyle_Plain : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        unsigned long style = (argumentCount<2) ? textStyle_Plain : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         float theFontHeight = self->getFontHeight(size, style);
         return JSValueMakeNumber(ctx, theFontHeight);
     }
@@ -129,10 +129,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""size"")");
-        int32 size = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 size = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""style"")");
-        unsigned long style = (argumentCount<2) ? textStyle_Plain : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        unsigned long style = (argumentCount<2) ? textStyle_Plain : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         float theFontLeading = self->getFontLeading(size, style);
         return JSValueMakeNumber(ctx, theFontLeading);
     }
@@ -144,10 +144,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""size"")");
-        int32 size = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 size = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""style"")");
-        unsigned long style = (argumentCount<2) ? textStyle_Plain : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        unsigned long style = (argumentCount<2) ? textStyle_Plain : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         float theFontCapHeight = self->getFontCapHeight(size, style);
         return JSValueMakeNumber(ctx, theFontCapHeight);
     }
@@ -159,10 +159,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""size"")");
-        int32 size = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 size = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""style"")");
-        unsigned long style = (argumentCount<2) ? textStyle_Plain : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        unsigned long style = (argumentCount<2) ? textStyle_Plain : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         float theFontAscent = self->getFontAscent(size, style);
         return JSValueMakeNumber(ctx, theFontAscent);
     }
@@ -174,10 +174,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""size"")");
-        int32 size = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 size = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""style"")");
-        unsigned long style = (argumentCount<2) ? textStyle_Plain : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        unsigned long style = (argumentCount<2) ? textStyle_Plain : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         float theFontDescent = self->getFontDescent(size, style);
         return JSValueMakeNumber(ctx, theFontDescent);
     }

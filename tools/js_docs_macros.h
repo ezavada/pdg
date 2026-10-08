@@ -28,6 +28,8 @@
 // -----------------------------------------------
 
 
+#include "../src/bindings/common/binding_groups.h"
+
 #ifndef PDG_JS_DOCS_MACROS_H_INCLUDED
 #define PDG_JS_DOCS_MACROS_H_INCLUDED
 

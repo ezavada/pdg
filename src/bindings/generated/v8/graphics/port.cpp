@@ -108,6 +108,34 @@ namespace pdg
         v8::Local<v8::String> name_str = v8::String::NewFromUtf8(isolate, "Port").ToLocalChecked();
         t->SetClassName(name_str);
         constructorTpl_.Reset(isolate, t);
+        v8::Local<v8::Signature> GetCamera_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetCamera_Tpl =
+            v8::FunctionTemplate::New(isolate, GetCamera, v8::Local<v8::Value>(), GetCamera_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getCamera").ToLocalChecked(), GetCamera_Tpl);
+        v8::Local<v8::Signature> GetCameraAnchor_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetCameraAnchor_Tpl =
+            v8::FunctionTemplate::New(isolate, GetCameraAnchor, v8::Local<v8::Value>(), GetCameraAnchor_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""CameraAnchor").ToLocalChecked(), GetCameraAnchor_Tpl);
+        v8::Local<v8::Signature> SetCameraAnchor_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetCameraAnchor_Tpl =
+            v8::FunctionTemplate::New(isolate, SetCameraAnchor, v8::Local<v8::Value>(), SetCameraAnchor_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""CameraAnchor").ToLocalChecked(), SetCameraAnchor_Tpl);
+        v8::Local<v8::Signature> GetCameraDrawingEnabled_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetCameraDrawingEnabled_Tpl =
+            v8::FunctionTemplate::New(isolate, GetCameraDrawingEnabled, v8::Local<v8::Value>(), GetCameraDrawingEnabled_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "get""CameraDrawingEnabled").ToLocalChecked(), GetCameraDrawingEnabled_Tpl);
+        v8::Local<v8::Signature> SetCameraDrawingEnabled_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SetCameraDrawingEnabled_Tpl =
+            v8::FunctionTemplate::New(isolate, SetCameraDrawingEnabled, v8::Local<v8::Value>(), SetCameraDrawingEnabled_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "set""CameraDrawingEnabled").ToLocalChecked(), SetCameraDrawingEnabled_Tpl);
+        v8::Local<v8::Signature> WorldToPort_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> WorldToPort_Tpl =
+            v8::FunctionTemplate::New(isolate, WorldToPort, v8::Local<v8::Value>(), WorldToPort_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "worldToPort").ToLocalChecked(), WorldToPort_Tpl);
+        v8::Local<v8::Signature> PortToWorld_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> PortToWorld_Tpl =
+            v8::FunctionTemplate::New(isolate, PortToWorld, v8::Local<v8::Value>(), PortToWorld_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "portToWorld").ToLocalChecked(), PortToWorld_Tpl);
         v8::Local<v8::Signature> GetClipRect_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetClipRect_Tpl =
             v8::FunctionTemplate::New(isolate, GetClipRect, v8::Local<v8::Value>(), GetClipRect_Sig);
@@ -237,16 +265,198 @@ namespace pdg
 
     }
 
+    void PortWrap::GetCameraAnchor(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
+        Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
+
+        ;
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+
+        pdg::Point theCameraAnchor = self->getCameraAnchor();
+        { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, theCameraAnchor) ); return; };
+    }
+
+    void PortWrap::SetCameraAnchor(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
+        Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
+
+        ;
+        if (args.Length() != 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            return;
+        }; pdg::Point value;
+        auto value_isPoint = v8_ValueIsPoint(isolate, args[1 -1], value);
+        if (!value_isPoint.has_value())
+        {
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        if (!*value_isPoint)
+        {
+            v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
+            return;
+        };
+        self->setCameraAnchor(value); { args.GetReturnValue().Set( args.This() ); return; };
+    }
+
+    void PortWrap::GetCameraDrawingEnabled(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
+        Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
+
+        ;
+        if (args.Length() != 0)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 0);
+            return;
+        };
+
+        bool theCameraDrawingEnabled = self->getCameraDrawingEnabled();
+        { args.GetReturnValue().Set( v8::Boolean::New(isolate, theCameraDrawingEnabled) ); return; };
+    }
+
+    void PortWrap::SetCameraDrawingEnabled(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
+        Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
+
+        ;
+        if (args.Length() != 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            return;
+        };
+        if (!args[1 -1]->IsBoolean())
+        {
+            v8_ThrowArgTypeException(isolate, 1, "a boolean (""theCameraDrawingEnabled"")");
+            return;
+        }
+        bool theCameraDrawingEnabled = args[1 -1]->BooleanValue(isolate);
+
+        self->setCameraDrawingEnabled(theCameraDrawingEnabled);
+        { args.GetReturnValue().Set( args.This() ); return; };
+    }
+
+    void PortWrap::GetCamera(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
+        Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
+
+        ;
+        auto* camera=self->getCamera(); if (!camera) { args.GetReturnValue().SetNull(); return; };
+        if (camera->mCameraScriptObj.IsEmpty())
+        {
+            { args.GetReturnValue().Set( CameraWrap::NewFromCpp(isolate, camera) ); return; };
+        }
+        else
+        {
+            v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, camera->mCameraScriptObj );
+            { args.GetReturnValue().Set( obj__ ); return; };
+        };
+    }
+
+    void PortWrap::WorldToPort(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
+        Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
+
+        ;
+        try
+        {
+            pdg::Point point;
+            auto point_isPoint = v8_ValueIsPoint(isolate, args[1 -1], point);
+            if (!point_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*point_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
+                return;
+            };
+            auto result=self->worldToPort(point);
+            {
+                args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, result) ); return;
+            };
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void PortWrap::PortToWorld(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
+        Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
+
+        ;
+        try
+        {
+            pdg::Point point;
+            auto point_isPoint = v8_ValueIsPoint(isolate, args[1 -1], point);
+            if (!point_isPoint.has_value())
+            {
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (!*point_isPoint)
+            {
+                v8_ThrowArgTypeException(isolate, 1, "Point", *args[1 -1]);
+                return;
+            };
+            auto result=self->portToWorld(point);
+            {
+                args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, result) ); return;
+            };
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
     void PortWrap::GetDrawingArea(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -263,10 +473,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -283,31 +490,25 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Port]" " function" "([object Rect] inClipRect)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
             return;
-        };
-        pdg::Rect theClipRect;
-        auto theClipRect_isRect = v8_ValueIsRect(isolate, args[1 -1], theClipRect);
-        if (!theClipRect_isRect.has_value())
+        }; pdg::Rect value;
+        auto value_isRect = v8_ValueIsRect(isolate, args[1 -1], value);
+        if (!value_isRect.has_value())
         {
             {
                 args.GetReturnValue().SetNull(); return;
             };
         }
-        if (!*theClipRect_isRect)
+        if (!*value_isRect)
         {
             v8_ThrowArgTypeException(isolate, 1, "Rect", *args[1 -1]);
             return;
         };
-
-        self->setClipRect(theClipRect);
-        { args.GetReturnValue().Set( args.This() ); return; };
+        self->setClipRect(value); { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::Clear(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -316,10 +517,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Color] color = TRANSPARENT_COLOR)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         pdg::Color color;
         if (args.Length() < 1)
         {
@@ -341,7 +539,7 @@ namespace pdg
             }
         };
         self->clear(color);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::SetDrawingOrigin(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -350,10 +548,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] origin)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -385,7 +580,7 @@ namespace pdg
             }
             ())));
         }
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::ResetClipRect(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -394,17 +589,14 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
         self->resetClipRect();
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawLine(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -413,10 +605,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] from, [object Point] to, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -466,7 +655,7 @@ namespace pdg
             };
         };
         self->drawLine(from, to, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawSpline(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -475,10 +664,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Spline] spline, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -503,7 +689,7 @@ namespace pdg
             };
         };
         self->drawSpline(*spline, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::GetTextWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -512,10 +698,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(string text, [number int] size, [number uint] style = textStyle_Plain, [number int] len = -1)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -556,10 +739,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Font]" " function" "([number uint] style = textStyle_Plain)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 1, "a number (""style"")");
@@ -585,10 +765,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Font] font = DEFAULT_FONT)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         Font* font = 0;
         if (args.Length() >= 1)
         {
@@ -605,7 +782,7 @@ namespace pdg
             }
         };
         self->setFont(font);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::SetFontForStyle(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -614,10 +791,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] style, [object Font] font = DEFAULT_FONT)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -645,7 +819,7 @@ namespace pdg
             }
         };
         self->setFontForStyle(font, style);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::SetFontScalingFactor(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -654,10 +828,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number scaleBy)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -670,7 +841,7 @@ namespace pdg
         }
         double scaleBy = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
         self->setFontScalingFactor(scaleBy);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::StartTrackingMouse(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -679,10 +850,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "([object Rect] rect)" " - " "NOT IMPLEMENTED").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -711,10 +879,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] trackingRef)" " - " "NOT IMPLEMENTED").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -727,7 +892,7 @@ namespace pdg
         }
         long trackingRef = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
         self->stopTrackingMouse(trackingRef);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::SetCursor(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -736,10 +901,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Image] cursorImage, [object Point] hotSpot)" " - " "NOT IMPLEMENTED").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -760,7 +922,7 @@ namespace pdg
             return;
         };
         self->setCursor(cursorImage, hotSpot);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::GetCursor(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -769,11 +931,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Image]" " function" "()" " - " "NOT IMPLEMENTED: get the Image that is being used as the cursor").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -798,18 +956,14 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "NOT IMPLEMENTED: restore the default system cursor").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
         self->resetCursor();
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawRect(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -818,10 +972,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Rect] rect, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -858,7 +1009,7 @@ namespace pdg
             };
         };
         self->drawRect(rect, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawQuad(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -867,10 +1018,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Quad] quad, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -907,7 +1055,7 @@ namespace pdg
             };
         };
         self->drawQuad(quad, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawPolygon(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -916,10 +1064,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Polygon] polygon, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -944,7 +1089,7 @@ namespace pdg
             };
         };
         self->drawPolygon(*polygon, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawEllipse(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -953,10 +1098,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] center, [number float] xRadius, [number float] yRadius, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 4)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 4);
@@ -1005,7 +1147,7 @@ namespace pdg
             };
         };
         self->drawEllipse(center, xRadius, yRadius, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawArc(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1014,10 +1156,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] center, [number float] xRadius, [number float] yRadius, [number float] startAngle, [number float] endAngle, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 6)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 6);
@@ -1078,7 +1217,7 @@ namespace pdg
             };
         };
         self->drawArc(center, xRadius, yRadius, startAngle, endAngle, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawBezier(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1087,10 +1226,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] from, [object Point] control1, [object Point] control2, [object Point] to, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 5)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 5);
@@ -1166,7 +1302,7 @@ namespace pdg
             };
         };
         self->drawBezier(from, control1, control2, to, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawCircle(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1175,10 +1311,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] center, [number float] radius, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -1221,7 +1354,7 @@ namespace pdg
             };
         };
         self->drawCircle(center, radius, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawVector(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1230,10 +1363,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Vector] vector, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -1270,7 +1400,7 @@ namespace pdg
             };
         };
         self->drawVector(vector, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawRoundedRect(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1279,10 +1409,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Rect] rect, [number float] radius, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -1325,7 +1452,7 @@ namespace pdg
             };
         };
         self->drawRoundedRect(rect, radius, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawImage(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1334,10 +1461,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "({[object Image] img, [object Point] loc, [object Attributes] attrs|[object Image] img, [object Rect] rect, [object Attributes] attrs|[object Image] img, [object Quad] quad, [object Attributes] attrs})" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -1391,7 +1515,7 @@ namespace pdg
             };
             self->drawImage(img, quad, *attrs);
         }
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawDrawing(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1400,10 +1524,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "({[object Drawing] drawing, [object Point] loc, [object Attributes] attrs|[object Drawing] drawing, [object Rect] rect, [object Attributes] attrs})" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -1457,7 +1578,7 @@ namespace pdg
             };
             self->drawDrawing(*drawing, rect, *attrs);
         }
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawText(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1466,10 +1587,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "({string text, [object Point] loc, [object Attributes] attrs|string text, [object Rect] rect, [object Attributes] attrs})" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -1529,7 +1647,7 @@ namespace pdg
             };
             self->drawText(text, rect, *attrs);
         }
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void PortWrap::DrawSphere(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1538,10 +1656,7 @@ namespace pdg
         PortWrap* objWrapper = jswrap::ObjectWrap::Unwrap<PortWrap>(args.This());
         Port* self = dynamic_cast<Port*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Point] center, [number float] radius, [object Attributes] attrs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -1584,7 +1699,7 @@ namespace pdg
             };
         };
         self->drawSphere(center, radius, *attrs);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void CleanupPortScriptObject(v8::UniquePersistent<v8::Object> &obj) { }

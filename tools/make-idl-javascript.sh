@@ -42,11 +42,14 @@ PDG_BUILD_DIR="$PDG_ROOT/build"
 PDG_TOOLS_DIR="$PDG_ROOT/tools"
 PDG_BINDING_DIR="$PDG_ROOT/src/bindings/emscripten/"
 
-if [ -z "$1" ]; then
+if [ -z "$1" ] || [[ "$1" == --* ]]; then
 	PDG_DOCS_DIR="$PDG_ROOT/docs/javascript"
 else
 	PDG_DOCS_DIR="$1"
+	shift
 fi
+# Usage: make-idl-javascript.sh [output-directory] [--include-inherited]
+idl_options=("$@")
 
 PDG_IDL_AUTO_EXIT_TIMEOUT_SECONDS="${PDG_IDL_AUTO_EXIT_TIMEOUT_SECONDS:-60}"
 PDG_IDL_WATCHDOG_SECONDS="${PDG_IDL_WATCHDOG_SECONDS:-75}"
@@ -55,6 +58,7 @@ PDG_IDL_FORCE_KILL_GRACE_SECONDS="${PDG_IDL_FORCE_KILL_GRACE_SECONDS:-5}"
 run_pdg_idl() {
 	local format="$1"
 	local output_file="$2"
+	local extra_format="$3"
 	local stderr_file="${output_file}.stderr.log"
 	local watchdog_note_file="${output_file}.watchdog.log"
 	local pdg_pid
@@ -65,7 +69,9 @@ run_pdg_idl() {
 
 	(
 		export PDG_AUTO_EXIT_TIMEOUT="$PDG_IDL_AUTO_EXIT_TIMEOUT_SECONDS"
-		"$PDG_ROOT/pdg" tools/make-idl.js "$format" > "$output_file" 2> "$stderr_file"
+		local idl_args=(tools/make-idl.js "$format" "${idl_options[@]}")
+		if [ -n "$extra_format" ]; then idl_args+=("$extra_format"); fi
+		"$PDG_ROOT/pdg" "${idl_args[@]}" > "$output_file" 2> "$stderr_file"
 	) &
 	pdg_pid=$!
 
@@ -125,3 +131,12 @@ else
 	cp $PDG_BUILD_DIR/pdg-js.json $PDG_DOCS_DIR/pdg-js.json
 	ls -l $PDG_DOCS_DIR/pdg-js.json
 fi
+
+for mvc_format in h json; do
+	if [ "$mvc_format" = h ]; then mvc_option=--doxygen-h-format; else mvc_option=--json-format; fi
+	run_pdg_idl "$mvc_option" "$PDG_BUILD_DIR/pdg-mvc-js.$mvc_format" --mvc || exit 1
+	if ! cmp -s "$PDG_BUILD_DIR/pdg-mvc-js.$mvc_format" "$PDG_DOCS_DIR/pdg-mvc-js.$mvc_format"; then
+		cp "$PDG_BUILD_DIR/pdg-mvc-js.$mvc_format" "$PDG_DOCS_DIR/pdg-mvc-js.$mvc_format" || exit 1
+		echo "Updated pdg-mvc-js.$mvc_format"
+	fi
+done

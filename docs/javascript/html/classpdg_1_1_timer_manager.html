@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -150,9 +150,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a9cfc516923ff1fa8f395f52fa6ff9927"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if the <a class="el" href="classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval">TimerManager</a> is paused  <br /></td></tr>
 <tr class="memitem:a441434bede0ba2bb4d0c08421879acf8" id="r_a441434bede0ba2bb4d0c08421879acf8"><td class="memItemLeft">boolean&#160;</td><td class="memItemRight"><a class="el" href="#a441434bede0ba2bb4d0c08421879acf8">isTimerPaused</a> (int id)</td></tr>
 <tr class="memdesc:a441434bede0ba2bb4d0c08421879acf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if a timer is paused  <br /></td></tr>
-<tr class="memitem:a03e508f0799655d63939c041ab6dae64" id="r_a03e508f0799655d63939c041ab6dae64"><td class="memItemLeft"><a class="el" href="group___events.html#classpdg_1_1_i_event_handler">IEventHandler</a>&#160;</td><td class="memItemRight"><a class="el" href="#a03e508f0799655d63939c041ab6dae64">onInterval</a> (function func, int interval)</td></tr>
+<tr class="memitem:a03e508f0799655d63939c041ab6dae64" id="r_a03e508f0799655d63939c041ab6dae64"><td class="memItemLeft"><a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a>&#160;</td><td class="memItemRight"><a class="el" href="#a03e508f0799655d63939c041ab6dae64">onInterval</a> (function func, int interval)</td></tr>
 <tr class="memdesc:a03e508f0799655d63939c041ab6dae64"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup handler to be called at a regular interval  <br /></td></tr>
-<tr class="memitem:a167e50007fd255ee23bd5e40c05c6149" id="r_a167e50007fd255ee23bd5e40c05c6149"><td class="memItemLeft"><a class="el" href="group___events.html#classpdg_1_1_i_event_handler">IEventHandler</a>&#160;</td><td class="memItemRight"><a class="el" href="#a167e50007fd255ee23bd5e40c05c6149">onTimeout</a> (function func, int delay)</td></tr>
+<tr class="memitem:a167e50007fd255ee23bd5e40c05c6149" id="r_a167e50007fd255ee23bd5e40c05c6149"><td class="memItemLeft"><a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a>&#160;</td><td class="memItemRight"><a class="el" href="#a167e50007fd255ee23bd5e40c05c6149">onTimeout</a> (function func, int delay)</td></tr>
 <tr class="memdesc:a167e50007fd255ee23bd5e40c05c6149"><td class="mdescLeft">&#160;</td><td class="mdescRight">setup handler to be called once after a delay  <br /></td></tr>
 <tr class="memitem:ab02121d4dfeb622a4ea3db42c0cb6676" id="r_ab02121d4dfeb622a4ea3db42c0cb6676"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ab02121d4dfeb622a4ea3db42c0cb6676">pause</a> ()</td></tr>
 <tr class="memdesc:ab02121d4dfeb622a4ea3db42c0cb6676"><td class="mdescLeft">&#160;</td><td class="mdescRight">pause all timers indefinitely  <br /></td></tr>
@@ -165,13 +165,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a479ca9c53cff7e1d51421f44809939f2" id="r_a479ca9c53cff7e1d51421f44809939f2"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a479ca9c53cff7e1d51421f44809939f2">unpauseTimer</a> (int id)</td></tr>
 <tr class="memdesc:a479ca9c53cff7e1d51421f44809939f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">resume a specific timer  <br /></td></tr>
 <tr class="inherit_header pub_methods_classpdg_1_1_event_emitter"><td colspan="2">Public Member Functions inherited from <a class="el" href="classpdg_1_1_event_emitter.html">EventEmitter</a></td></tr>
-<tr class="memitem:a1a8637e4144d64c8093ad39412de4a0c pub_methods_classpdg_1_1_event_emitter" id="r_a1a8637e4144d64c8093ad39412de4a0c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#a1a8637e4144d64c8093ad39412de4a0c">addHandler</a> (<a class="el" href="group___events.html#classpdg_1_1_i_event_handler">IEventHandler</a> inHandler, int inEventType=<a class="el" href="group___events.html#gaaf50a52ec4d1157cbfcfae7d3f98b4cc">all_events</a>)</td></tr>
+<tr class="memitem:a1b064cb939c42c4886307e43ed070a18 pub_methods_classpdg_1_1_event_emitter" id="r_a1b064cb939c42c4886307e43ed070a18"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#a1b064cb939c42c4886307e43ed070a18">EventEmitter</a> ()</td></tr>
+<tr class="memitem:a1a8637e4144d64c8093ad39412de4a0c pub_methods_classpdg_1_1_event_emitter" id="r_a1a8637e4144d64c8093ad39412de4a0c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#a1a8637e4144d64c8093ad39412de4a0c">addHandler</a> (<a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> inHandler, int inEventType=<a class="el" href="group___events.html#gaaf50a52ec4d1157cbfcfae7d3f98b4cc">all_events</a>)</td></tr>
 <tr class="memdesc:a1a8637e4144d64c8093ad39412de4a0c pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a new handler for some event type, or for all events if no type specified.  <br /></td></tr>
 <tr class="memitem:aba429c2b717331bb7e04dd9b923a55f4 pub_methods_classpdg_1_1_event_emitter" id="r_aba429c2b717331bb7e04dd9b923a55f4"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#aba429c2b717331bb7e04dd9b923a55f4">blockEvent</a> (int inEventType)</td></tr>
 <tr class="memdesc:aba429c2b717331bb7e04dd9b923a55f4 pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">temporarily ignore all events of a particular type.  <br /></td></tr>
 <tr class="memitem:aa821bec12eaa7e0f649397c9675ff505 pub_methods_classpdg_1_1_event_emitter" id="r_aa821bec12eaa7e0f649397c9675ff505"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#aa821bec12eaa7e0f649397c9675ff505">clear</a> ()</td></tr>
 <tr class="memdesc:aa821bec12eaa7e0f649397c9675ff505 pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove all handlers  <br /></td></tr>
-<tr class="memitem:ae2aec6b415d052c4f9f8db6be8adcbe7 pub_methods_classpdg_1_1_event_emitter" id="r_ae2aec6b415d052c4f9f8db6be8adcbe7"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#ae2aec6b415d052c4f9f8db6be8adcbe7">removeHandler</a> (<a class="el" href="group___events.html#classpdg_1_1_i_event_handler">IEventHandler</a> inHandler, int inEventType=<a class="el" href="group___events.html#gaaf50a52ec4d1157cbfcfae7d3f98b4cc">all_events</a>)</td></tr>
+<tr class="memitem:ae2aec6b415d052c4f9f8db6be8adcbe7 pub_methods_classpdg_1_1_event_emitter" id="r_ae2aec6b415d052c4f9f8db6be8adcbe7"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#ae2aec6b415d052c4f9f8db6be8adcbe7">removeHandler</a> (<a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> inHandler, int inEventType=<a class="el" href="group___events.html#gaaf50a52ec4d1157cbfcfae7d3f98b4cc">all_events</a>)</td></tr>
 <tr class="memdesc:ae2aec6b415d052c4f9f8db6be8adcbe7 pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove a handler for some event type, or for all events (see note) if no type specified.  <br /></td></tr>
 <tr class="memitem:ae23a415d502f48861eae1939744fe46b pub_methods_classpdg_1_1_event_emitter" id="r_ae23a415d502f48861eae1939744fe46b"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#ae23a415d502f48861eae1939744fe46b">unblockEvent</a> (int inEventType)</td></tr>
 <tr class="memdesc:ae23a415d502f48861eae1939744fe46b pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">stop ignoring events of a particular type  <br /></td></tr>
@@ -193,7 +194,7 @@ Related Symbols</h2></td></tr>
 <div class="line">                console.log(<a class="code hl_variable" href="namespacepdg.html#a63dd247c3a6e5669abc7b38f891b01de">evt</a>);</div>
 <div class="line">}, 1000);</div>
 <div class="ttc" id="anamespacepdg_html"><div class="ttname"><a href="namespacepdg.html">pdg</a></div><div class="ttdef"><b>Definition</b> pdg-js.h:5</div></div>
-<div class="ttc" id="anamespacepdg_html_a63dd247c3a6e5669abc7b38f891b01de"><div class="ttname"><a href="namespacepdg.html#a63dd247c3a6e5669abc7b38f891b01de">pdg::evt</a></div><div class="ttdeci">EventManager evt</div><div class="ttdef"><b>Definition</b> pdg-js.h:335</div></div>
+<div class="ttc" id="anamespacepdg_html_a63dd247c3a6e5669abc7b38f891b01de"><div class="ttname"><a href="namespacepdg.html#a63dd247c3a6e5669abc7b38f891b01de">pdg::evt</a></div><div class="ttdeci">EventManager evt</div><div class="ttdef"><b>Definition</b> pdg-js.h:352</div></div>
 </div><!-- fragment --><p>All <a class="el" href="classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval">TimerManager</a> functions are safe to perform while a timer is firing. Functions that alter a timer can be safely used even from within the handler of the timer being changed (ie: while the target timer is in the process of firing)</p>
 <p>The <a class="el" href="classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval">TimerManager</a> is an <a class="el" href="classpdg_1_1_event_emitter.html" title="Distributes events to event handlers.">EventEmitter</a>, and will generate <a class="el" href="group___events.html#gadd516deb63d17ab59bc6876867ff0802" title="a timer fire event">pdg.eventType_Timer</a> events: </p><pre class="fragment">{ 
     emitter: {},            // the emitter that generated this event
@@ -422,7 +423,7 @@ Related Symbols</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="group___events.html#classpdg_1_1_i_event_handler">IEventHandler</a> onInterval </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> onInterval </td>
           <td>(</td>
           <td class="paramtype">function</td>          <td class="paramname"><span class="paramname"><em>func</em></span>, </td>
         </tr>
@@ -435,6 +436,7 @@ Related Symbols</h2></td></tr>
 </div><div class="memdoc">
 
 <p>setup handler to be called at a regular interval </p>
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>func:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_timer_notification" title="TimerNotification">TimerNotification</a>.</dd></dl>
 <p>This creates a handler from your function and automatically assigns a timer id. You can call cancel() on the handler object returned to remove the timer and cleanup the handler. The timer field of the handler object contains the timer's id number for use in other <a class="el" href="classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval">TimerManager</a> calls.</p>
 <div class="fragment"><div class="line">var t = <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.tm.onInterval( function(<a class="code hl_variable" href="namespacepdg.html#a63dd247c3a6e5669abc7b38f891b01de">evt</a>) {</div>
 <div class="line">                console.log(<span class="stringliteral">&#39;fired &#39;</span>);</div>
@@ -448,7 +450,7 @@ Related Symbols</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>an <a class="el" href="group___events.html#classpdg_1_1_i_event_handler" title="Interface for any class which handles events.">IEventHandler</a> object with a cancel() method and a timer value</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>an <a class="el" href="classpdg_1_1_i_event_handler.html" title="Interface for any class which handles events.">IEventHandler</a> object with a cancel() method and a timer value</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a167e50007fd255ee23bd5e40c05c6149" title="setup handler to be called once after a delay">onTimeout()</a> </dd>
 <dd>
 <a class="el" href="#a06fd3940b80a9e46275fd4dcd91386c9" title="create and start a new timer">startTimer()</a> </dd></dl>
@@ -462,7 +464,7 @@ Related Symbols</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="group___events.html#classpdg_1_1_i_event_handler">IEventHandler</a> onTimeout </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> onTimeout </td>
           <td>(</td>
           <td class="paramtype">function</td>          <td class="paramname"><span class="paramname"><em>func</em></span>, </td>
         </tr>
@@ -475,6 +477,7 @@ Related Symbols</h2></td></tr>
 </div><div class="memdoc">
 
 <p>setup handler to be called once after a delay </p>
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>func:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_timer_notification" title="TimerNotification">TimerNotification</a>.</dd></dl>
 <p>This creates a handler from your function and automatically assigns a timer id. You can call cancel() on the handler object returned to remove the timer and cleanup the handler. The timer field of the handler object contains the timer's id number for use in other <a class="el" href="classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval">TimerManager</a> calls.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -483,7 +486,7 @@ Related Symbols</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>an <a class="el" href="group___events.html#classpdg_1_1_i_event_handler" title="Interface for any class which handles events.">IEventHandler</a> object with a cancel() method and a timer value</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>an <a class="el" href="classpdg_1_1_i_event_handler.html" title="Interface for any class which handles events.">IEventHandler</a> object with a cancel() method and a timer value</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a03e508f0799655d63939c041ab6dae64" title="setup handler to be called at a regular interval">onInterval()</a> </dd>
 <dd>
 <a class="el" href="#a06fd3940b80a9e46275fd4dcd91386c9" title="create and start a new timer">startTimer()</a> </dd></dl>

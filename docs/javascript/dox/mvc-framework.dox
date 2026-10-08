@@ -1,0 +1,74 @@
+/**
+\page javascript_mvc_guide JavaScript application framework
+
+The MVC interface inventory is generated separately in `pdg-mvc-js.h` and
+`pdg-mvc-js.json`. The core engine inventory remains in `pdg-js.h` and
+`pdg-js.json`. Run `tools/make-idl-javascript.sh` to regenerate both sets.
+
+The optional MVC module provides Application, Controller, View, and controls such
+as Button, Dialog, ListBox, and EditText. It is separate from the main \c pdg
+export: importing \c pdg does not make \c pdg.View or \c pdg.Controller available.
+See \ref javascript_mvc_inventory for the exports and their own public members.
+
+\note API stability: Evolving. Rendering requires a graphics-capable runtime.
+The standard Node addon does not provide graphics merely because its package
+contains the JavaScript framework sources.
+
+\section mvc_imports Importing the framework
+
+In the repository control gallery, located under \c test/js, the import is:
+\code{.js}
+const pdg = require('pdg');
+const framework = require('../../src/js/mvc-app');
+const { Controller } = framework.Controller;
+const { View } = framework.View;
+\endcode
+
+Several index exports are module objects: for example, the View constructor is
+\c framework.View.View, not \c framework.View. The inventory preserves these
+nested paths.
+
+The relative path is specific to that example's location. Adjust it for your
+application. The Node package copies these sources under \c lib/mvc-app, where
+the package import is \c require('pdg/lib/mvc-app'). That path does not enable
+GUI support in a headless runtime. Browser and iOS applications must include the
+framework files in their existing module loader; neither an ES module entry nor
+a \c pdg/mvc alias is implied by this documentation.
+
+\section mvc_view_lifecycle Creating and using a View
+
+View extends AnimatedAttributes and inherits its animation and appearance
+operations. It has no physics body. Its constructor is
+\c new\ View(controller,rect,binding), with binding defaulting to zero.
+The controller is required, and construction registers the View with it.
+
+Given an existing controller attached to an application and graphics port:
+\code{.js}
+const view = new View(controller, new pdg.Rect(0, 0, 200, 100));
+view.moveTo(150, 80, 0.5);
+view.changeFillOpacity(0.5, 0.25);
+\endcode
+
+This creates a base View; subclass drawSelf() or use a concrete control to provide
+visible content. The controller advances view animations during its draw cycle.
+Do not advance registered views a second time manually. Durations are seconds and
+rotation is clockwise radians. View layout size is independent of scale, and its
+location is the center of the unrotated layout rectangle.
+
+Use \c view.setParentView(parent) for a visual parent, and \c null to detach.
+The link supplies inherited transforms, clipping, and visibility; it does not
+replace controller ownership. Nested views must belong to the same controller.
+\c view.getParentView() returns a View or null. \c view.getController(Type)
+returns the controller only when it is an instance of Type, otherwise null.
+
+\section mvc_inventory_scope Inventory coverage
+
+The generated inventory enumerates module exports, nested module exports, and own prototype/static
+members without constructing controls or invoking getters. Inherited operations
+are identified through the base class. It deliberately labels unresolved method
+signatures and does not infer instance fields from a dummy constructor call.
+Complete typed MVC signatures remain separate work; this inventory establishes
+coverage without inventing overloads or requiring a live application window.
+
+\see AnimatedAttributes, \ref javascript_mvc_inventory
+*/

@@ -1,0 +1,135 @@
+/**
+\page native_network Native C++ network API
+
+Include `pdg/net/network.h` and link the optional `pdg-net` target in a native
+C++20 application. Configure the root project with `-DPDG_BUILD_NATIVE_NETWORK=ON`.
+The option defaults to OFF. This library is independent of script bindings and
+is excluded from Node packages and Web builds. It reuses PDG's pinned native
+WebTransport dependencies; see `src/sys/webtransport/THIRD_PARTY_NOTICES.txt`.
+
+\section native_network_usage Runtime and callbacks
+
+Construct a pdg::NetRuntime on your application thread and call poll() regularly
+from that thread. DNS runs on a resolver thread; socket I/O and callbacks are
+nonblocking and dispatched by poll(). All API methods, object destruction, and
+callbacks belong to the runtime thread. Recursive poll() calls throw
+`std::logic_error`. Destroy the runtime last; its destructor cancels operations,
+closes sockets, suppresses callbacks, and joins its resolver thread.
+
+Connections belong to the runtime until close, even if an application drops its
+last public shared pointer. Destroying a client cancels its pending connect;
+established connections remain usable. Destroying a server closes its sessions.
+A server retains accepted connections. Calling shutdown(false) stops admission
+and retains established sessions until explicitly closed or the server is
+destroyed. close(false) drains queued reliable output; close(true) discards it.
+Repeated close calls produce at most one close callback.
+
+\code{.cpp}
+#include "pdg/net/network.h"
+
+pdg::NetRuntime runtime;
+pdg::NetClient client(runtime);
+pdg::NetConnectionPtr connection;
+pdg::NetConnectOptions endpoint;
+endpoint.host = "127.0.0.1";
+endpoint.port = 5000;
+client.onError([](const pdg::NetError& error) {
+    // Report error.code and error.message to the application.
+}).connect(endpoint, [&](pdg::NetConnectionPtr connected) {
+    connection = connected;
+    connection->onMessage([](pdg::NetConnection& peer,
+                             const pdg::NetMessage& message,
+                             pdg::NetDelivery delivery) {
+        // Retain a copy of message if processing it after this callback.
+    });
+    connection->send(std::string("hello"));
+});
+// Call runtime.poll() from the application's update loop.
+\endcode
+
+The server listen callback runs after authentication and protocol negotiation.
+Return true to accept the connection or false to close it. onReady receives the
+actual bound listener ports, including ephemeral port requests (port zero).
+Requested listeners start atomically unless allowPartialListen is true.
+Startup errors and connection errors are delivered through onError. Invalid
+arguments and incorrect thread/state usage throw standard C++ exceptions;
+synchronous transport/frame-limit failures can throw pdg::NetError.
+Callbacks may send or close connections and change handlers. Callback exceptions
+propagate out of poll(); applications should handle them at the poll boundary.
+
+\section native_network_messages Messages and serialization
+
+send() accepts UTF-8 strings, byte spans, pdg::NetMessage, or pdg::ISerializable.
+sendJson() accepts validated JSON text. NetMessage::memBlock() carries owned
+bytes with the JavaScript MemBlock wire tag. JSON stays text in C++; parse it
+with the application's JSON library. Strings reject embedded NUL and invalid
+UTF-8. Byte payloads preserve embedded zero bytes.
+
+Both send and sendDgram serialize ISerializable immediately, including its
+class tag. Register the receiving C++ factory with
+`pdg::IDeserializer::registerClass<MyMessage>()`; register the equivalent
+JavaScript class with `pdg.registerSerializableClass(MyMessage)`.
+The class tag and field layout must match. Incoming NetMessage::object() owns
+the reconstructed object through a shared pointer, releasing PDG's reference
+when the last message copy disappears. Unknown classes or malformed data close
+the connection with ERR_REMOTE_BAD_DATA.
+
+Outgoing buffers are copied before send returns. Incoming messages own their
+text, bytes, and objects; callbacks receive a const reference valid for the
+callback duration. Copying NetMessage retains the data for later use.
+
+sendDgram() uses negotiated UDP/WebTransport datagrams when available and within
+the carrier size limit. Otherwise it uses the reliable stream, including over
+WebSocket, for all supported message types. NetDelivery reports the actual
+carrier: Reliable or Unreliable. hasDgram() becomes true only after negotiation.
+An unavailable UDP port leaves native TCP available for reliable fallback.
+Native UDP supports up to 1492 serialized bytes; WebTransport uses its advertised
+maximum (currently 1100). Reliable payloads must fit maxFrameSize.
+
+\section native_network_options Transports and limits
+
+| Option | Default / behavior |
+|--------|--------------------|
+| NetServerOptions::native | true; native TCP plus UDP unless noDatagram is true |
+| serverAddr / serverPort | 0.0.0.0 / 5000; zero requests an ephemeral port |
+| fixedPort | false; native bind tries up to 100 consecutive TCP ports |
+| webSocket.enabled / webTransport.enabled | false; enable listeners independently |
+| Web listener port / path / secure | 5443 / /pdg / true; secure=false applies to WebSocket |
+| Web listener allowedOrigins | empty; supply exact origins or `*` for development; origin-less clients need `""` or `*` |
+| Web listener TLS | certFile and keyFile required for secure listeners |
+| NetConnectOptions::transportPolicy | Auto; explicit WebTransport URL preferred, then WebSocket, otherwise native |
+| NativeOnly / WebSocketOnly / WebTransportRequired | Require the selected carrier |
+| timeout / webTransportTimeout | 5000 / 1500 milliseconds, total establishment / automatic WT attempt |
+| capabilityCacheTimeout | 30000 milliseconds; zero disables the negative capability cache |
+| tls.caFile | Optional private CA PEM file; otherwise use system trust |
+| tls.serverCertificateHashes | Optional WebTransport SHA-256 DER digests, lowercase hex |
+| reservationRequired | false; expectClient keys are checked before application callbacks |
+| expectClient ttl / singleUse | -1 seconds (no expiry) / false; IP `*` matches any client |
+| maxFrameSize / maxPendingBytes | 1 MiB / 4 MiB; frame range 1 byte–64 MiB, pending range 1 KiB–64 MiB |
+| handshakeTimeout | 5000 milliseconds; zero disables the PDG handshake deadline |
+| maxConnections / maxConnectionsPerIP / maxConnectionsPerOrigin | 1024 / 32 / 1024 |
+| maxConnectionsPerMinute / maxIncompleteHandshakes | 120 per IP / 128 |
+| idleTimeout | 30000 milliseconds for the WebTransport backend |
+
+Automatic fallback is sequential and uses secure WebSocket when WebTransport
+is unavailable, unsupported, or times out before establishment. Certificate,
+authentication, and PDG protocol failures do not trigger fallback. A ws:// URL
+explicitly requests plaintext WebSocket. Native TCP/UDP is plaintext; use WSS or
+WebTransport for authenticated encryption. C++ servers are supported on desktop;
+iOS provides clients only. This facade cannot be built for WASM.
+
+\section native_network_build SDK and verification
+
+The root CMake option provides the imported pdg-net target, linked to pdg-lib and
+the bundled transport archive, and the pdg-native-network-tests executable.
+For an iOS native SDK, configure `src/sys/net` separately with
+`-DCMAKE_SYSTEM_NAME=iOS`, the required SDK/architecture, and a deployment target.
+Link libpdg_net.a, webtransport/libpdg_webtransport_all.a, the matching native
+PDG core, Security, and CoreFoundation. All dependencies are static C/C++.
+FETCHCONTENT_SOURCE_DIR_PICOQUIC, PICOTLS, MBEDTLS, and CJSON overrides support
+using an existing source cache without downloading dependencies.
+
+Run `pdg-native-network-tests --selftest` or CTest's native-network test.
+Run `tools/node test/lib/native_network.integration.js <test-executable> <pdg>`
+for C++ ↔ JavaScript TCP, WS, WSS, and WebTransport protocol tests.
+*/

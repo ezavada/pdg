@@ -164,7 +164,7 @@ namespace pdg
         SCRIPT_DEBUG_ONLY( JSC_DebugPrintValue(ctx, arguments[0], "Dumping " "IEventHandler" " object:") );
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inType"")");
-        long inType = (argumentCount<2) ? pdg::all_events : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long inType = (argumentCount<2) ? pdg::all_events : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->addHandler(inHandler, inType);
         return JSValueMakeUndefined(ctx);
     }
@@ -184,7 +184,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "an object derived from ""IEventHandler"" (""inHandler"")");
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inType"")");
-        long inType = (argumentCount<2) ? pdg::all_events : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long inType = (argumentCount<2) ? pdg::all_events : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->removeHandler(inHandler, inType);
         return JSValueMakeUndefined(ctx);
     }
@@ -205,7 +205,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""inEventType"")");
-        int32 inEventType = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 inEventType = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->blockEvent(inEventType);
         return JSValueMakeUndefined(ctx);
     }
@@ -217,7 +217,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""inEventType"")");
-        int32 inEventType = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 inEventType = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->unblockEvent(inEventType);
         return JSValueMakeUndefined(ctx);
     }
@@ -251,16 +251,16 @@ namespace pdg
         double vol = (argumentCount<1) ? 1.0 : JSValueToNumber(ctx, arguments[1 -1], exception);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""offsetX"")");
-        long offsetX = (argumentCount<2) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long offsetX = (argumentCount<2) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""pitch"")");
         double pitch = (argumentCount<3) ? 0.0 : JSValueToNumber(ctx, arguments[3 -1], exception);
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""fromMs"")");
-        unsigned long fromMs = (argumentCount<4) ? 0 : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[4 -1], exception)));
+        unsigned long fromMs = (argumentCount<4) ? 0 : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[4 -1], exception));
         if (argumentCount >= 5 && !JSValueIsNumber(ctx, arguments[5 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 5, "a number (""lenMs"")");
-        long lenMs = (argumentCount<5) ? -1 : (int32)floor(JSValueToNumber(ctx, arguments[5 -1], exception));
+        long lenMs = (argumentCount<5) ? -1 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[5 -1], exception));
         self->play(vol, offsetX, pitch, fromMs, lenMs);
         return JSValueMakeUndefined(ctx);
     }
@@ -353,10 +353,10 @@ namespace pdg
         double targetOffset = JSValueToNumber(ctx, arguments[1 -1], exception);
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""msDuration"")");
-        int32 msDuration = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 msDuration = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
-        long easing = (argumentCount<3) ? EasingFuncRef::easeInOutQuad : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long easing = (argumentCount<3) ? EasingFuncRef::easeInOutQuad : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->changePitch(targetOffset, msDuration, gEasingFunctions[easing]);
@@ -375,7 +375,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""offsetX"")");
-        int32 offsetX = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 offsetX = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->setOffsetX(offsetX);
         return thisObject;
     }
@@ -387,13 +387,13 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""targetOffset"")");
-        int32 targetOffset = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 targetOffset = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""msDuration"")");
-        int32 msDuration = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 msDuration = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
-        long easing = (argumentCount<3) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long easing = (argumentCount<3) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->changePitch(targetOffset, msDuration, gEasingFunctions[easing]);
@@ -412,10 +412,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""fadeMs"")");
-        uint32 fadeMs = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 fadeMs = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""easing"")");
-        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->fadeOut(fadeMs, gEasingFunctions[easing]);
@@ -434,10 +434,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""fadeMs"")");
-        uint32 fadeMs = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 fadeMs = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""easing"")");
-        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->fadeIn(fadeMs, gEasingFunctions[easing]);
@@ -459,10 +459,10 @@ namespace pdg
         double level = JSValueToNumber(ctx, arguments[1 -1], exception);
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""fadeMs"")");
-        uint32 fadeMs = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        uint32 fadeMs = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
-        long easing = (argumentCount<3) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long easing = (argumentCount<3) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->changeVolume(level, fadeMs, gEasingFunctions[easing]);
@@ -481,7 +481,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""skipMilliseconds"")");
-        int32 skipMilliseconds = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 skipMilliseconds = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->skip(skipMilliseconds);
         return thisObject;
     }
@@ -493,7 +493,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""timeMs"")");
-        uint32 timeMs = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 timeMs = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->skipTo(timeMs);
         return thisObject;
     }

@@ -171,10 +171,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number dim, [number int] count)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -202,10 +199,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -221,10 +215,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number dt)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -246,10 +237,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -266,10 +254,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpSpace]" " function" "(number inIdleSpeedThreshold)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -292,10 +277,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -312,10 +294,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpSpace]" " function" "(number inSleepTimeThreshold)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -338,10 +317,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -358,10 +334,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpSpace]" " function" "(number inCollisionSlop)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -384,10 +357,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -404,10 +374,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpSpace]" " function" "(number inCollisionBias)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -430,10 +397,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -450,10 +414,7 @@ namespace pdg
         cpSpaceWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpSpaceWrap>(args.This());
         cpSpace* self = dynamic_cast<cpSpace*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object cpSpace]" " function" "(number inCollisionPersistence)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);

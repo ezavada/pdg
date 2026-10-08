@@ -1,7 +1,10 @@
 <map id="EventManager::EventQueueEntry" name="EventManager::EventQueueEntry">
-<area shape="rect" id="Node000001" title=" " alt="" coords="7,102,193,143"/>
-<area shape="rect" id="Node000002" href="$classpdg_1_1_user_data.html" title=" " alt="" coords="5,5,83,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="53,44,68,77,85,101,80,102,63,79,51,49"/>
-<area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="107,5,205,31"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="146,43,129,79,115,103,111,100,124,77,142,47"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,102,191,143"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_user_data.html" title=" " alt="" coords="59,5,137,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,45,101,102,95,101,96,48"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="223,5,320,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="240,38,211,57,132,104,130,99,209,53,235,40"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="214,110,435,135"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="265,44,266,62,269,77,283,94,302,110,297,109,279,98,265,79,260,63,262,48"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="312,94,293,56,279,34,281,29,298,54,317,96"/>
 </map>

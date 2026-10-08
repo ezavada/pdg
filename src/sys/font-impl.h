@@ -49,7 +49,8 @@ namespace pdg {
 
 #define NUM_TEXT_STYLES				(textStyle_Bold + textStyle_Italic + textStyle_Underline + 1)
 #define TEXT_STYLES_MASK			7L
-#define TEXT_INFO_CACHE_SIZE		24
+// Common UI sizes across plain/bold/italic fit without recreating OS fonts.
+#define TEXT_INFO_CACHE_SIZE		128
 	
 	struct FontMetricsInfo {
 		uint32		usedWhen;
@@ -74,6 +75,7 @@ namespace pdg {
 		
 		const FontMetricsInfo* fetchFontMetricsWithCaching(int size, uint32 style);
 
+		virtual void releaseFontMetrics(FontMetricsInfo* metrics);
 		virtual FontMetricsInfo* getFontMetrics(int size, uint32 style) = 0;  // this must be implemented by subclasses that know how to get font metrics
 		
 		FontImpl(Port* port, const char* fontName, float scalingFactor);

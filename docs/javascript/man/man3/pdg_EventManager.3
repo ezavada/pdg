@@ -1,4 +1,4 @@
-.TH "EventManager" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "EventManager" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -15,7 +15,7 @@ Inherits \fBEventEmitter\fP\&.
 
 .in +1c
 .ti -1c
-.RI "object \fBgetDeviceOrientation\fP (boolean absolute=false)"
+.RI "\fBDeviceOrientation\fP \fBgetDeviceOrientation\fP (boolean absolute=false)"
 .br
 .RI "\fINOT IMPLEMENTED\fP get the roll, pitch and yaw of the device "
 .ti -1c
@@ -38,6 +38,9 @@ Inherits \fBEventEmitter\fP\&.
 
 Public Member Functions inherited from \fBEventEmitter\fP
 .in +1c
+.ti -1c
+.RI "\fBEventEmitter\fP ()"
+.br
 .ti -1c
 .RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
 .br
@@ -82,7 +85,7 @@ Distributes events to event handlers\&.
 \fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
 .RE
 .PP
-The \fBEventManager\fP is the core ofthe Pixel Dust Games Framework\&. All inputs to your game arrive as events via the Event Manager\&. This includes network messages and system level notifications in addition to user inputs such as keystrokes and mouse movements\&.
+The \fBEventManager\fP is the core ofthe Pixel Dust Games Framework\&. All inputs to your game arrive as events via the \fBEvent\fP Manager\&. This includes network messages and system level notifications in addition to user inputs such as keystrokes and mouse movements\&.
 
 .PP
 The \fBEventManager\fP expects the game developer to implement \fBIEventHandler\fP subclasses and register them to handle various events they are interested in\&. 
@@ -95,7 +98,7 @@ The \fBEventManager\fP expects the game developer to implement \fBIEventHandler\
 
 .SH "Member Function Documentation"
 .PP 
-.SS "object getDeviceOrientation (boolean absolute = \fRfalse\fP)"
+.SS "\fBDeviceOrientation\fP getDeviceOrientation (boolean absolute = \fRfalse\fP)"
 
 .PP
 \fINOT IMPLEMENTED\fP get the roll, pitch and yaw of the device On mobile devices which allow the screen to be oriented different ways, this reports the current relative roll, pitch and yaw of the device\&. If absolute is if absolute is true, then yaw is compass direction from north around vertical axis, pitch is rotation around E -> W axis, and roll is rotation around N -> S axis
@@ -132,7 +135,7 @@ true if the button down or the finger is touching, or false if not
 .SS "boolean isKeyDown (string unicodeChar)"
 
 .PP
-check if a key is down Check the state of a particular key as passed in a string\&. The string should be a single character that matches the value returned in KeyPressEvent\&.unicode for the desired key\&. If the string passed has multiple characters, only the first character will be used\&. This form of the call is typically used for printable characters\&.
+check if a key is down Check the state of a particular key as passed in a string\&. The string should be a single character that matches the value returned in \fBKeyPressEvent\&.unicode\fP for the desired key\&. If the string passed has multiple characters, only the first character will be used\&. This form of the call is typically used for printable characters\&.
 
 .PP
 .PP
@@ -164,7 +167,7 @@ true if the key is pressed, or false if not
 .SS "boolean isKeyDown (uint utf16CharCode)"
 
 .PP
-check if a key is down Check the state of a particular key as passed as a UTF-16 character code value\&. This code matches the value returned in KeyPressEvent\&.unicode for the desired key\&. This is the form that would be used for non-printable codes such as key_UpArrow, key_Enter, etc\&.\&.\&.
+check if a key is down Check the state of a particular key as passed as a UTF-16 character code value\&. This code matches the value returned in \fBKeyPressEvent\&.unicode\fP for the desired key\&. This is the form that would be used for non-printable codes such as key_UpArrow, key_Enter, etc\&.\&.\&.
 
 .PP
 .PP
@@ -196,7 +199,7 @@ true if the key is pressed, or false if not
 .SS "boolean isRawKeyDown (int keyCode)"
 
 .PP
-check if a key is down Check the state of a particular key as passed as raw OS/hardware specific value\&. This code matches the value returned in KeyEvent\&.keyCode for the desired key\&. Since the keyCode values usually won't be known ahead of time, this is mainly useful when your app gives the user the ability to custom map keys to particular functions\&.
+check if a key is down Check the state of a particular key as passed as raw OS/hardware specific value\&. This code matches the value returned in \fBKeyEvent\&.keyCode\fP for the desired key\&. Since the keyCode values usually won't be known ahead of time, this is mainly useful when your app gives the user the ability to custom map keys to particular functions\&.
 
 .PP
 .PP

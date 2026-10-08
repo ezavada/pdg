@@ -1,4 +1,4 @@
-.TH "Animated" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Animated" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,14 +10,21 @@ Animated \- something that can be automatically moved, spun or resized over time
 .PP
 \fR#include <pdg\-js\&.h>\fP
 .PP
-Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEmitter\fP, \fBSprite\fP, and \fBSpriteLayer\fP\&.
+Inherited by \fBAnimatedAttributes\fP, \fBAnimationScript\fP, \fBBone\fP, \fBCamera\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEmitter\fP, \fBSprite\fP, and \fBTroupe\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
+.RI "\fBAnimated\fP ()"
+.br
+.ti -1c
 .RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandAlso\fP ()"
+.br
+.RI "Join the following operand to the preceding parallel chain\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBandThen\fP ()"
 .br
@@ -26,6 +33,10 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
 .RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBbatch\fP ()"
+.br
+.RI "Open an anonymous animation block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
 .br
@@ -99,6 +110,26 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .br
 .RI "Retire all helpers on this object\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBdiminish\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Reduce the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendBatch\fP ()"
+.br
+.RI "Close and select the innermost anonymous block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendOtherwise\fP ()"
+.br
+.RI "Close a conditional with an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendSeries\fP ()"
+.br
+.RI "Close and select the innermost series\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendWhen\fP ()"
+.br
+.RI "Close a conditional without an alternative\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBflipX\fP ()"
 .br
 .RI "Toggle the x reflection flag immediately\&. "
@@ -163,6 +194,10 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .br
 .RI "Test whether animations are running or queued\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBincrease\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block amplitude around its baseline\&. "
+.ti -1c
 .RI "boolean \fBisFlippedX\fP ()"
 .br
 .RI "Read the x reflection flag\&. "
@@ -174,6 +209,14 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .RI "boolean \fBisSchedulePaused\fP ()"
 .br
 .RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBjumpToMark\fP (string name, boolean restoreState=true)"
+.br
+.RI "Continue execution at the operation following a mark\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmark\fP (string name, boolean saveState=true)"
+.br
+.RI "Create a named script location and optionally save state on arrival\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -191,13 +234,64 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .br
 .RI "Move to a location\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBon\fP (string event, function handler)"
+.br
+.RI "Observe a selected animation block's lifecycle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonFinished\fP (function handler)"
+.br
+.RI "Observe finished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonMark\fP (function handler)"
+.br
+.RI "Observe mark events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonRepeat\fP (function handler)"
+.br
+.RI "Observe repeat events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonScriptFinished\fP (function handler)"
+.br
+.RI "Observe scriptFinished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonStarted\fP (function handler)"
+.br
+.RI "Observe started events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonUntilFired\fP (function handler)"
+.br
+.RI "Observe untilFired events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonYoyo\fP (function handler)"
+.br
+.RI "Observe yoyo events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBotherwise\fP ()"
+.br
+.RI "Open the alternative of the innermost conditional\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseIt\fP ()"
+.br
+.RI "Pause the most recently selected animation element\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
 .br
 .RI "Pause scheduled animations and their delays\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBplayScript\fP (string name)"
+.br
+.RI "Instantiate a named animation script on this target\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP (int additionalExecutions)"
+.br
+.RI "Repeat the preceding block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -206,6 +300,14 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
 .RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrestartIt\fP ()"
+.br
+.RI "Restart the most recently selected animation element from its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeIt\fP ()"
+.br
+.RI "Resume the most recently selected paused animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
 .br
@@ -218,6 +320,10 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
 .RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBseries\fP ()"
+.br
+.RI "Open a block whose successive operands wait for completion\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
 .br
@@ -283,9 +389,25 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .br
 .RI "Set logical width immediately\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBslowDown\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Divide the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBspeedUp\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstagger\fP (number intervalSeconds)"
+.br
+.RI "\fBOffset\fP the selected block's start across successive \fBTroupe\fP members\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBstopGrowing\fP ()"
 .br
 .RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopIt\fP ()"
+.br
+.RI "Stop the most recently selected animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBstopMovement\fP ()"
 .br
@@ -303,9 +425,37 @@ Inherited by \fBAnimatedAttributes\fP, \fBPart\fP, \fBParticle\fP, \fBParticleEm
 .br
 .RI "Multiply logical width and height by independent factors\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBtriggerEvent\fP (string name)"
+.br
+.RI "Emit a custom named animation event or record an event step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBuntil\fP (function evaluator)"
+.br
+.RI "Finish the preceding block when its evaluator returns true\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
 .br
 .RI "Delay the next timed animation request\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwhen\fP (function evaluator)"
+.br
+.RI "Open a conditional animation branch\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fByoyo\fP ()"
+.br
+.RI "Play the preceding trajectory forward and back\&. "
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBAnimationScript\fP \fBdefineScript\fP (string name)"
+.br
+.RI "Create a library-owned named animation recorder\&. "
+.ti -1c
+.RI "static boolean \fBdeleteScript\fP (string name)"
+.br
+.RI "Remove a definition and release its memory in the shared script library\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -353,6 +503,12 @@ It has no drawing capabilities, so it is not intended to be used directly in mos
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Animated ()"
+
+.PP
+Referenced by \fBTroupe::add()\fP, \fBaddAnimationHelper()\fP, \fBandAlso()\fP, \fBandThen()\fP, \fBbatch()\fP, \fBcancelSchedule()\fP, \fBchangeCenterOffsetBy()\fP, \fBchangeCenterOffsetBy()\fP, \fBchangeCenterOffsetTo()\fP, \fBchangeCenterOffsetTo()\fP, \fBchangeGrowingBy()\fP, \fBchangeGrowingTo()\fP, \fBchangeMovementBy()\fP, \fBchangeMovementBy()\fP, \fBchangeMovementTo()\fP, \fBchangeMovementTo()\fP, \fBchangeScaleBy()\fP, \fBchangeScaleTo()\fP, \fBchangeSpinBy()\fP, \fBchangeSpinTo()\fP, \fBchangeStretchingBy()\fP, \fBchangeStretchingTo()\fP, \fBclearAnimationHelpers()\fP, \fBTroupe::contains()\fP, \fBdiminish()\fP, \fBendBatch()\fP, \fBendOtherwise()\fP, \fBendSeries()\fP, \fBendWhen()\fP, \fBflipX()\fP, \fBflipY()\fP, \fBAnimationScript::follow()\fP, \fBCamera::follow()\fP, \fBTroupe::follow()\fP, \fBgrow()\fP, \fBincrease()\fP, \fBjumpToMark()\fP, \fBmark()\fP, \fBmoveBy()\fP, \fBmoveBy()\fP, \fBmoveTo()\fP, \fBmoveTo()\fP, \fBon()\fP, \fBonFinished()\fP, \fBonMark()\fP, \fBonRepeat()\fP, \fBonScriptFinished()\fP, \fBonStarted()\fP, \fBonUntilFired()\fP, \fBonYoyo()\fP, \fBotherwise()\fP, \fBpauseIt()\fP, \fBpauseSchedule()\fP, \fBplayScript()\fP, \fBTroupe::remove()\fP, \fBremoveAnimationHelper()\fP, \fBrepeat()\fP, \fBrepeat()\fP, \fBresizeBy()\fP, \fBresizeTo()\fP, \fBrestartIt()\fP, \fBresumeIt()\fP, \fBresumeSchedule()\fP, \fBrotateBy()\fP, \fBrotateTo()\fP, \fBseries()\fP, \fBsetCenterOffset()\fP, \fBsetFlipX()\fP, \fBsetFlipY()\fP, \fBsetGrowing()\fP, \fBsetHeight()\fP, \fBsetLocation()\fP, \fBsetLocation()\fP, \fBsetMovement()\fP, \fBsetMovement()\fP, \fBsetRotation()\fP, \fBsetScale()\fP, \fBsetSize()\fP, \fBsetSize()\fP, \fBsetSpin()\fP, \fBsetStretching()\fP, \fBsetWidth()\fP, \fBslowDown()\fP, \fBspeedUp()\fP, \fBstagger()\fP, \fBstopGrowing()\fP, \fBstopIt()\fP, \fBstopMovement()\fP, \fBstopSpinning()\fP, \fBstopStretching()\fP, \fBstretch()\fP, \fBtriggerEvent()\fP, \fBuntil()\fP, \fBwait()\fP, \fBwhen()\fP, and \fByoyo()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBAnimated\fP addAnimationHelper (\fBIAnimationHelper\fP helper)"
@@ -397,10 +553,43 @@ sprite\&.addAnimationHelper(helper)\&.setMovement(20, 0);
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP andAlso ()"
+
+.PP
+Join the following operand to the preceding parallel chain\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Requires a preceding operand that has not activated and a following operand\&. Repeated calls extend an implied batch\&. Following \fBuntil()\fP, \fByoyo()\fP, \fBrepeat()\fP, timing, amplitude and playback controls select that complete chain\&. Inside a series, the chain is one step and the next ordinary operand waits for every member to complete\&. Pending explicit \fBandThen()\fP placement is incompatible with \fBandAlso()\fP\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+target\&.series()\&.moveBy(100, 0, 2)\&.andAlso()\&.rotateBy(1, 2)
+    \&.endSeries();
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBbatch()\fP, \fBuntil()\fP, \fBseries()\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP andThen ()"
 
 .PP
-Start the next timed operation after the most recently scheduled operation finishes\&. Uses its remaining duration and delay, not the longest of all concurrent operations\&. The next request consumes this sequencing state; later calls again run concurrently unless sequenced\&. A successor acquires its properties and resolves relative targets when it starts\&. Immediate calls after \fBandThen()\fP throw even if the predecessor has finished\&. No then() method is provided, so returning an \fBAnimated\fP object from an async JavaScript function is safe\&.
+Start the next timed operation after the most recently scheduled operation finishes\&. Uses the selected operation or block, rather than all concurrent work\&. Script dependencies observe actual completion, including repeat, timing modifiers, and \fBuntil()\fP\&. The next request consumes this sequencing state; later calls again run concurrently unless sequenced\&. A successor acquires its properties and resolves relative targets when it starts\&. Inside script construction, immediate commands are recorded and run at activation; ordinary immediate calls outside construction retain their existing restrictions\&. \fBandThen()\fP\&.wait(seconds) composes completion with a delay\&. No then() method is provided, so returning an \fBAnimated\fP object from an async JavaScript function is safe\&.
 
 .PP
 \fBReturns\fP
@@ -414,6 +603,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "boolean animate (number deltaSeconds)"
 
 .PP
@@ -436,6 +627,24 @@ True if any animation value changed\&.
 .RE
 .PP
 
+.SS "\fBAnimated\fP batch ()"
+
+.PP
+Open an anonymous animation block\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Children run concurrently by default\&. \fBandThen()\fP establishes a completion dependency; \fBwait()\fP delays the following child without joining earlier children\&. Construction remains local until \fBendBatch()\fP; the new context has no preceding operand\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP cancelSchedule ()"
 
 .PP
@@ -453,10 +662,19 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Animate the rotation-center offset by a delta\&. Adds to the pivot offset\&. With \fBandThen()\fP, the delta is applied to the offset when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the rotation-center offset by a delta\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Adds to the pivot offset\&. With \fBandThen()\fP, the delta is applied to the offset when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -482,11 +700,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP changeCenterOffsetBy (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Animate the rotation-center offset by a delta\&. Adds to the pivot offset\&. With \fBandThen()\fP, the delta is applied to the offset when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the rotation-center offset by a delta\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Adds to the pivot offset\&. With \fBandThen()\fP, the delta is applied to the offset when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -510,11 +735,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Animate the rotation-center offset to a target\&. Changes the pivot offset, not the location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the rotation-center offset to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Changes the pivot offset, not the location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -540,11 +772,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP changeCenterOffsetTo (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Animate the rotation-center offset to a target\&. Changes the pivot offset, not the location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the rotation-center offset to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Changes the pivot offset, not the location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -568,11 +807,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the growing rate by an additive delta\&. Uses logical units per second equally on both axes\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the growing rate by an additive delta\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses logical units per second equally on both axes\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -596,11 +842,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the growing rate to a target\&. Uses logical units per second equally on both axes\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the growing rate to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses logical units per second equally on both axes\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -624,11 +877,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the movement rate by an additive delta\&. Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the movement rate by an additive delta\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -654,11 +914,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeMovementBy (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the movement rate by an additive delta\&. Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the movement rate by an additive delta\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -682,11 +949,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the movement rate to a target\&. Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the movement rate to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -712,11 +986,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeMovementTo (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the movement rate to a target\&. Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the movement rate to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses distance units per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -740,11 +1021,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeScaleBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Animate independent scale by additive deltas\&. Does not change logical size\&. Adds to the scale components: starting at 2, adding 0\&.5 yields 2\&.5\&. \fBAttributes::scale\fP(0\&.5) instead multiplies and yields 1\&. With \fBandThen()\fP, deltas are applied to scale at the start of the operation\&. Negative scale reflects; zero collapses an axis and makes inverse transforms singular\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate independent scale by additive deltas\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Does not change logical size\&. Adds to the scale components: starting at 2, adding 0\&.5 yields 2\&.5\&. \fBAttributes::scale\fP(0\&.5) instead multiplies and yields 1\&. With \fBandThen()\fP, deltas are applied to scale at the start of the operation\&. Negative scale reflects; zero collapses an axis and makes inverse transforms singular\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -770,11 +1058,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP changeScaleTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Animate independent scale to a target\&. Does not change logical size\&. Negative scale reflects; zero collapses an axis and makes inverse transforms singular\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate independent scale to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Does not change logical size\&. Negative scale reflects; zero collapses an axis and makes inverse transforms singular\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -800,11 +1095,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the spin rate by an additive delta\&. Uses clockwise radians per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the spin rate by an additive delta\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses clockwise radians per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -828,11 +1130,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the spin rate to a target\&. Uses clockwise radians per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the spin rate to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses clockwise radians per second\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Dynamic \fBPhysicsBody\fP owners reject this operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -856,11 +1165,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the stretching rate by an additive delta\&. Uses logical units per second independently on each axis\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the stretching rate by an additive delta\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses logical units per second independently on each axis\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. With \fBandThen()\fP, the delta is added to the rate when this operation starts\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -886,11 +1202,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate the stretching rate to a target\&. Uses logical units per second independently on each axis\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate the stretching rate to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses logical units per second independently on each axis\&. Duration is the time to reach the new rate, not the lifetime of the motion: the final rate continues until changed or stopped\&. Logical size changes independently of transform scale\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -916,7 +1239,7 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimated\fP clearAnimationHelpers ()"
 
 .PP
@@ -934,6 +1257,156 @@ The original owner object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimationScript\fP defineScript (string name)\fR [static]\fP"
+
+.PP
+Create a library-owned named animation recorder\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Nonempty unique name; duplicates throw\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An \fBAnimationScript\fP recorder with \fBAnimated\fP controls and semantic subclass commands\&. Do not delete the C++ reference\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.SS "boolean deleteScript (string name)\fR [static]\fP"
+
+.PP
+Remove a definition and release its memory in the shared script library\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Nonempty script name\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+True if the definition existed and was removed; false otherwise\&. This is a static method, also available on animated class constructors such as \fBSprite\fP, \fBCamera\fP, \fBPart\fP and \fBTroupe\fP\&. All class entry points use the same library\&. Running instances continue using their published copies\&. Deleted names can be redefined\&. Any retained recorder rejects further use; its definition graph is released at deletion, while its small wrapper survives until garbage collection\&. An empty name throws\&.
+.RE
+.PP
+.PP
+.nf
+pdg\&.Animated\&.defineScript('leave')\&.moveBy(100, 0, 0\&.5)\&.endScript();
+sprite\&.playScript('leave');
+pdg\&.Animated\&.deleteScript('leave'); // the running instance still finishes
+.fi
+.PP
+ 
+.SS "\fBAnimated\fP diminish (number factor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Reduce the preceding block amplitude around its baseline\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIfactor\fP Finite final amplitude fraction from zero to one\&. 
+.br
+\fIseconds\fP Finite nonnegative envelope duration in seconds\&. 
+.br
+\fIeasing\fP Envelope easing, default linearTween\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Transforms displacement around captured baselines; it does not scale absolute world coordinates\&. The envelope runs in this wrapper's local clock and ends with its operand; if the operand ends early, the envelope is truncated\&. Wrapper order matters: \fBrepeat()\fP\&.\fBdiminish()\fP decays across iterations, whereas \fBdiminish()\fP\&.\fBrepeat()\fP restarts the envelope each iteration\&. Programmed-rate profiles and discrete actions are unsupported\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP endBatch ()"
+
+.PP
+Close and select the innermost anonymous block\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Rejects unmatched, empty, or incomplete blocks\&. Subsequent modifiers apply to the complete group\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP endOtherwise ()"
+
+.PP
+Close a conditional with an alternative\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Requires a nonempty alternative with no pending placement\&. Use \fBendWhen()\fP when there is no alternative\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP endSeries ()"
+
+.PP
+Close and select the innermost series\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Rejects unmatched, empty or incomplete series\&. \fBendBatch()\fP cannot close a series, and \fBendSeries()\fP cannot close a batch\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBseries()\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP endWhen ()"
+
+.PP
+Close a conditional without an alternative\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Use \fBendOtherwise()\fP after \fBotherwise()\fP\&. Both closers select the whole conditional and validate only the innermost context\&. A skipped conditional completes immediately\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP flipX ()"
 
 .PP
@@ -951,6 +1424,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP flipY ()"
 
 .PP
@@ -968,6 +1443,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBRect\fP getBoundingBox ()"
 
 .PP
@@ -1174,7 +1651,14 @@ The current value\&.
 .SS "\fBAnimated\fP grow (number factor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Multiply logical width and height by one factor\&. The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, the factor is applied to size at the start of the operation\&. Transform scale remains unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Multiply logical width and height by one factor\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, the factor is applied to size at the start of the operation\&. Transform scale remains unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1198,7 +1682,7 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "boolean hasScheduledAnimations ()"
 
 .PP
@@ -1216,6 +1700,38 @@ True if an animation is running or queued\&.
 .RE
 .PP
 
+.SS "\fBAnimated\fP increase (number factor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Increase the preceding block amplitude around its baseline\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIfactor\fP Finite final amplitude multiplier of at least one; two doubles displacement\&. 
+.br
+\fIseconds\fP Finite nonnegative envelope duration in seconds\&. 
+.br
+\fIeasing\fP Envelope easing, default linearTween\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Transforms displacement around captured baselines; it does not scale absolute world coordinates\&. The envelope runs in this wrapper's local clock and ends with its operand; if the operand ends early, the envelope is truncated\&. Wrapper order matters: \fBrepeat()\fP\&.\fBincrease()\fP grows across iterations, whereas \fBincrease()\fP\&.\fBrepeat()\fP restarts the envelope each iteration\&. Programmed-rate profiles and discrete actions are unsupported\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
 .SS "boolean isFlippedX ()"
 
 .PP
@@ -1265,10 +1781,67 @@ True if scheduled animation is paused\&.
 .RE
 .PP
 
+.SS "\fBAnimated\fP jumpToMark (string name, boolean restoreState = \fRtrue\fP)"
+
+.PP
+Continue execution at the operation following a mark\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Existing mark name in the selected script\&. Unknown marks throw\&. 
+.br
+\fIrestoreState\fP Restore the saved animated state if present; default true\&. False keeps current values and captures fresh relative trajectories\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. If the mark has never been reached or was declared with saveState=false, keep current state and resume after the mark\&. A jump can be recorded in a script or requested on live playback\&. It does not execute skipped operations or reevaluate skipped conditional branches\&. Non-progressing jump loops have a runtime guard\&. Jumping restores animation state only; it does not undo application callback effects\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBmark()\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP mark (string name, boolean saveState = \fRtrue\fP)"
+
+.PP
+Create a named script location and optionally save state on arrival\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Nonempty mark name, unique within its script invocation\&. 
+.br
+\fIsaveState\fP Whether arrival saves the target's animated channel values, ordinary animation tracks and script execution cursor; default true\&. Each later arrival replaces that invocation's saved state\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Recording the mark does not capture state\&. In a series, the mark is reached after the preceding step completes; in a batch, placement remains parallel unless \fBandThen()\fP provides a dependency\&. \fBTroupe\fP marks save each member's state\&. Marks belong to independent playback instances, not the shared definition\&. State does not include physics, artwork ownership, application data or \fBTroupe\fP membership\&. Blocks containing marks or jumps reject \fByoyo()\fP, amplitude and clock modifiers\&. Full snapshots preserve mark names, saved values, ordinary animation tracks and the playback cursor needed by \fBjumpToMark()\fP\&. Unvisited marks retain no saved state; jumps to them continue after the mark without restoring state\&. Individual supported animations within such a block can still be modified\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBjumpToMark()\fP, \fBseries()\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP moveBy (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Move by an offset\&. Adds the offset to the location\&. The overload without duration applies immediately\&. A timed request replaces programmed movement\&. With \fBandThen()\fP, the relative target is resolved when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Move by an offset\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Adds the offset to the location\&. The overload without duration applies immediately\&. Only axes with nonzero offsets are acquired; a zero offset preserves that axis's existing position animation and programmed movement\&. A timed request replaces programmed movement on the acquired axes\&. With \fBandThen()\fP, the relative target is resolved when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1294,11 +1867,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP moveBy (\fBOffset\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Move by an offset\&. Adds the offset to the location\&. The overload without duration applies immediately\&. A timed request replaces programmed movement\&. With \fBandThen()\fP, the relative target is resolved when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Move by an offset\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Adds the offset to the location\&. The overload without duration applies immediately\&. Only axes with nonzero offsets are acquired; a zero offset preserves that axis's existing position animation and programmed movement\&. A timed request replaces programmed movement on the acquired axes\&. With \fBandThen()\fP, the relative target is resolved when the operation starts\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1322,11 +1902,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP moveTo (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Move to a location\&. The overload without duration applies immediately\&. The timed overload replaces programmed movement with a transition to the target location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Move to a location\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The overload without duration applies immediately\&. The timed overload replaces programmed movement with a transition to the target location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1352,11 +1939,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP moveTo (\fBPoint\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Move to a location\&. The overload without duration applies immediately\&. The timed overload replaces programmed movement with a transition to the target location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Move to a location\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The overload without duration applies immediately\&. The timed overload replaces programmed movement with a transition to the target location\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1380,7 +1974,305 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP on (string event, function handler)"
+
+.PP
+Observe a selected animation block's lifecycle\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRhandler:\fP \fBAnimationEventHandler\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIevent\fP A custom nonempty event name, or started, finished, scriptFinished, mark, yoyo, repeat or untilFired\&. 
+.br
+\fIhandler\fP Function receiving a plain \fBAnimationEvent\fP record\&. Its return value is ignored\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&.
+.RE
+.PP
+On \fBSprite\fP, numeric on(eventCode, handler) keeps its existing \fBEventSubscription\fP return; string lifecycle events return the \fBSprite\fP for chaining\&.
+
+.PP
+Registration applies to the selected operand, or to the current empty recorder/block before its first operand\&. Multiple handlers run in registration order\&. Register after a modifier to observe that modifier\&. Named definitions retain their handlers; each invocation has its own playback state\&. Registration does not emit events retroactively\&.
+
+.PP
+started and finished describe only the selected block\&. Other events propagate from children to enclosing blocks\&. finished means successful natural completion or completion through \fBuntil()\fP; \fBstopIt()\fP and channel cancellation do not report success\&. scriptFinished identifies completed named invocations, including nested invocations\&. yoyo fires at the forward-to-reverse turn; repeat fires before each additional iteration, starting at iteration 1\&. untilFired fires only when the condition ends the operand early; natural completion does not emit it\&. mark fires whenever a mark is reached, including repeat visits\&.
+
+.PP
+Handlers run synchronously after each scheduler substep publishes state, in traversal order\&. A handler may change the target or start another animation\&. The target reflects published state at delivery, which can be later than the individual event boundary when a substep crosses several events\&. Handler exceptions propagate to the caller; already delivered events are not replayed\&. Context and target are borrowed for the callback; copy the scalar fields if they are needed later\&. Handlers are runtime resources and reject portable snapshots\&.
+
+.PP
+For Troupes, finished on the collective block fires once after all members complete\&. Events inside staggered member scripts identify that member as target\&.
+
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const actor = new pdg\&.Animated();
+actor\&.moveBy(100, 0, 2)\&.andAlso()\&.rotateBy(1, 2)
+    \&.until(context => context\&.target\&.getLocation()\&.x >= 50)
+    \&.on("untilFired", event => event\&.target\&.moveBy(0, \-20, 0\&.5));
+actor\&.animate(1);
+actor\&.animate(0\&.5); // interruption handler starts the upward move
+
+.fi
+.PP
+.RE
+.PP
+\fBEvent fields\fP
+.RS 4
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP onFinished (function handler)"
+
+.PP
+Observe finished events on the selected animation block\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRhandler:\fP \fBAnimationEventHandler\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP Lifecycle callback receiving an \fBAnimationEvent\fP\&. Its return value is ignored\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Equivalent to on("finished", handler), with the same scope, timing, lifetime and error behavior\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBon()\fP, \fBanimation_script_events\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP onMark (function handler)"
+
+.PP
+Observe mark events on the selected animation block\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRhandler:\fP \fBAnimationEventHandler\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP Lifecycle callback receiving an \fBAnimationEvent\fP\&. Its return value is ignored\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Equivalent to on("mark", handler), with the same scope, timing, lifetime and error behavior\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBon()\fP, \fBanimation_script_events\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP onRepeat (function handler)"
+
+.PP
+Observe repeat events on the selected animation block\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRhandler:\fP \fBAnimationEventHandler\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP Lifecycle callback receiving an \fBAnimationEvent\fP\&. Its return value is ignored\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Equivalent to on("repeat", handler), with the same scope, timing, lifetime and error behavior\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBon()\fP, \fBanimation_script_events\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP onScriptFinished (function handler)"
+
+.PP
+Observe scriptFinished events on the selected animation block\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRhandler:\fP \fBAnimationEventHandler\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP Lifecycle callback receiving an \fBAnimationEvent\fP\&. Its return value is ignored\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Equivalent to on("scriptFinished", handler), with the same scope, timing, lifetime and error behavior\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBon()\fP, \fBanimation_script_events\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP onStarted (function handler)"
+
+.PP
+Observe started events on the selected animation block\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRhandler:\fP \fBAnimationEventHandler\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP Lifecycle callback receiving an \fBAnimationEvent\fP\&. Its return value is ignored\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Equivalent to on("started", handler), with the same scope, timing, lifetime and error behavior\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBon()\fP, \fBanimation_script_events\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP onUntilFired (function handler)"
+
+.PP
+Observe untilFired events on the selected animation block\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRhandler:\fP \fBAnimationEventHandler\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP Lifecycle callback receiving an \fBAnimationEvent\fP\&. Its return value is ignored\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Equivalent to on("untilFired", handler), with the same scope, timing, lifetime and error behavior\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBon()\fP, \fBanimation_script_events\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP onYoyo (function handler)"
+
+.PP
+Observe yoyo events on the selected animation block\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRhandler:\fP \fBAnimationEventHandler\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP Lifecycle callback receiving an \fBAnimationEvent\fP\&. Its return value is ignored\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Equivalent to on("yoyo", handler), with the same scope, timing, lifetime and error behavior\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBon()\fP, \fBanimation_script_events\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP otherwise ()"
+
+.PP
+Open the alternative of the innermost conditional\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Requires a nonempty when branch with no pending placement\&. A duplicate alternative or a mismatched inner group throws\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP pauseIt ()"
+
+.PP
+Pause the most recently selected animation element\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Freezes its local clock, envelopes and evaluator polling\&. Constant movement and unrelated blocks continue\&. Use \fBpauseSchedule()\fP to pause all scheduled animation\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP pauseSchedule ()"
 
 .PP
@@ -1398,6 +2290,31 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP playScript (string name)"
+
+.PP
+Instantiate a named animation script on this target\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Existing nonempty script name\&. Unknown names and recursive dependencies throw before execution\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Each call owns independent playback state\&. Relative targets capture values when their operation starts\&. Definitions are copied at publication, so later draft edits do not change running invocations\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP removeAnimationHelper (\fBIAnimationHelper\fP helper)"
 
 .PP
@@ -1420,10 +2337,46 @@ The original owner object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP repeat ()"
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP repeat (int additionalExecutions)"
+
+.PP
+Repeat the preceding block\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIadditionalExecutions\fP Nonnegative number of additional executions; zero plays once\&. Omit for infinite repetition (C++ default -1)\&. Explicit JavaScript counts must be integers\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Each iteration restores the block's captured channel baselines\&. Infinite zero-duration loops throw\&. Conditions are evaluated anew on each forward iteration\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Change logical size by additive deltas\&. Adds to width and height\&. The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, deltas are applied to size at the start of the operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Change logical size by additive deltas\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Adds to width and height\&. The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, deltas are applied to size at the start of the operation\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1449,11 +2402,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBAnimated\fP resizeTo (number width, number height, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Animate logical size to a target\&. Replaces constant growth and size animations; independent transform scale is unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Animate logical size to a target\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces constant growth and size animations; independent transform scale is unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1479,7 +2439,43 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP restartIt ()"
+
+.PP
+Restart the most recently selected animation element from its baseline\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Restores the selected block's owned channels and clears its playback state\&. Restarts after completion or stop; completed sibling operations are not replayed\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP resumeIt ()"
+
+.PP
+Resume the most recently selected paused animation element\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Continues from the retained sample and clock\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP resumeSchedule ()"
 
 .PP
@@ -1497,10 +2493,19 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP rotateBy (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
 
 .PP
-Rotate through a relative angle\&. The immediate overload preserves spin\&. The timed overload replaces spin and retains explicitly requested complete turns\&. Clockwise/counterclockwise direction selects the sign; AsSpecified and Shortest preserve the signed relative travel\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Rotate through a relative angle\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The immediate overload preserves spin\&. The timed overload replaces spin and retains explicitly requested complete turns\&. Clockwise/counterclockwise direction selects the sign; AsSpecified and Shortest preserve the signed relative travel\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1526,11 +2531,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+References \fBAnimated()\fP, \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
 .SS "\fBAnimated\fP rotateTo (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
 
 .PP
-Rotate to an absolute angle\&. The immediate overload preserves spin\&. The timed overload replaces spin and follows the selected angular route\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Rotate to an absolute angle\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The immediate overload preserves spin\&. The timed overload replaces spin and follows the selected angular route\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -1556,7 +2568,25 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+References \fBAnimated()\fP, \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
+.SS "\fBAnimated\fP series ()"
+
+.PP
+Open a block whose successive operands wait for completion\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Each new operand implicitly depends on the preceding operand\&. A \fBwait()\fP adds a delay after that completion\&. Nested batches, series, conditionals and script invocations each occupy one step\&. Modifiers wrap the selected step\&. \fBandAlso()\fP combines adjacent operands into one parallel step\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBendSeries()\fP, \fBbatch()\fP, \fBandAlso()\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setCenterOffset (\fBOffset\fP offset)"
 
 .PP
@@ -1579,6 +2609,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setFlipX (boolean flip)"
 
 .PP
@@ -1601,6 +2633,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setFlipY (boolean flip)"
 
 .PP
@@ -1623,6 +2657,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setGrowing (number value)"
 
 .PP
@@ -1645,6 +2681,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setHeight (number value)"
 
 .PP
@@ -1667,6 +2705,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setLocation (number x, number y)"
 
 .PP
@@ -1691,6 +2731,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setLocation (\fBPoint\fP value)"
 
 .PP
@@ -1713,6 +2755,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setMovement (number xPerSecond, number yPerSecond)"
 
 .PP
@@ -1737,6 +2781,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setMovement (\fBVector\fP value)"
 
 .PP
@@ -1759,6 +2805,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setRotation (number value)"
 
 .PP
@@ -1781,6 +2829,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setScale (number x, number y = \fRx\fP)"
 
 .PP
@@ -1805,6 +2855,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setSize (number width, number height)"
 
 .PP
@@ -1829,6 +2881,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setSize (\fBOffset\fP value)"
 
 .PP
@@ -1851,6 +2905,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setSpin (number value)"
 
 .PP
@@ -1873,6 +2929,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setStretching (number widthPerSecond, number heightPerSecond)"
 
 .PP
@@ -1897,6 +2955,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP setWidth (number value)"
 
 .PP
@@ -1919,6 +2979,95 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP slowDown (number factor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Divide the preceding block playback rate\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIfactor\fP Finite positive divisor; two produces half speed\&. 
+.br
+\fIseconds\fP Finite nonnegative transition duration in seconds\&. 
+.br
+\fIeasing\fP Rate transition easing, default linearTween\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Uses the same integrated clock and restrictions as \fBspeedUp()\fP\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP speedUp (number factor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Increase the preceding block playback rate\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIfactor\fP Finite positive final clock multiplier; values below one slow playback\&. 
+.br
+\fIseconds\fP Finite nonnegative transition duration in seconds\&. 
+.br
+\fIeasing\fP Rate transition easing, default linearTween\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Integrates the changing positive rate over time; zero duration applies it immediately\&. Dependencies wait for actual completion\&. Programmed-rate profiles and discrete actions are unsupported\&. Apply before execution begins\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimated\fP stagger (number intervalSeconds)"
+
+.PP
+\fBOffset\fP the selected block's start across successive \fBTroupe\fP members\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIintervalSeconds\fP Finite nonnegative interval in seconds\&. The first member starts immediately, the second after one interval, and the third after two\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Offsets the whole selected operation, batch, series or script per member\&. Members use flattened insertion order; duplicate targets appear once\&. \fBandThen()\fP waits for the last member\&. \fBuntil()\fP governs all members, including pending starts\&. On one \fBAnimated\fP target it adds no delay\&. Apply before activation; a missing operand throws\&. Named definitions can retain the modifier for later \fBTroupe\fP playback\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBandThen()\fP, \fBuntil()\fP, \fBTroupe\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP stopGrowing ()"
 
 .PP
@@ -1936,6 +3085,26 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP stopIt ()"
+
+.PP
+Stop the most recently selected animation element\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. “It” refers to the most recently selected operation, group, or named script\&. Retains its current sample and blocks success-dependent work\&. Does not stop unrelated siblings or constant programmed movement\&. Playback controls cannot be recorded in named definitions\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP stopMovement ()"
 
 .PP
@@ -1953,6 +3122,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP stopSpinning ()"
 
 .PP
@@ -1970,6 +3141,8 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP stopStretching ()"
 
 .PP
@@ -1987,10 +3160,19 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP stretch (number widthFactor, number heightFactor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
 
 .PP
-Multiply logical width and height by independent factors\&. The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, factors are applied to size at the start of the operation\&. Transform scale remains unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
+Multiply logical width and height by independent factors\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The overload without duration applies immediately and preserves growth rates\&. A timed request replaces growth\&. With \fBandThen()\fP, factors are applied to size at the start of the operation\&. Transform scale remains unchanged\&. Durations are explicit floating-point seconds\&. Zero applies immediately; a request after \fBwait()\fP or \fBandThen()\fP must have positive duration\&.
 
 .PP
 \fBParameters\fP
@@ -2016,7 +3198,60 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimated()\fP, and \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBAnimated\fP triggerEvent (string name)"
+
+.PP
+Emit a custom named animation event or record an event step\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Custom nonempty name\&. Built-in animation event names and the eventType_ namespace are reserved\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This animated object for chaining\&.
+.RE
+.PP
+During script recording, inside \fBbatch()\fP/series(), or after \fBandThen()\fP, this records a zero-time step\&. Playback emits the event whenever execution reaches that step, including repeat visits\&. Otherwise it emits immediately on the selected animation\&. Subscribe with on(name, handler); custom events propagate to enclosing blocks\&. This does not post numeric PDG events\&. Invalid or reserved names raise an error before modifying the script\&. Portable snapshots preserve custom event names and playback cursors\&. Receivers may register handlers after restoration; events without handlers are harmless\&. Registered callback functions remain unsupported in portable snapshots\&. 
+.PP
+\fBSee also\fP
+.RS 4
+\fBon()\fP, \fBseries()\fP, \fBandThen()\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP until (function evaluator)"
+
+.PP
+Finish the preceding block when its evaluator returns true\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRevaluator:\fP \fBAnimationEvaluator\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIevaluator\fP Synchronous boolean callable receiving target and elapsedSeconds, with the same lifetime and error rules as \fBwhen()\fP\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Evaluates before each operand tick, including activation and scheduler substeps\&. True retains the current sample and successfully finishes that operand; it does not force endpoints or start unvisited children\&. Paused blocks do not evaluate\&. Following siblings remain concurrent in a batch or root context unless \fBandThen()\fP establishes a completion dependency\&. Series successors implicitly depend on the complete selected operand\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 .SS "\fBAnimated\fP wait (number durationSeconds)"
 
 .PP
@@ -2039,6 +3274,54 @@ This object, for chaining\&.
 .RE
 .PP
 
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP when (function evaluator)"
+
+.PP
+Open a conditional animation branch\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRevaluator:\fP \fBAnimationEvaluator\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIevaluator\fP Synchronous callable returning a boolean\&. Receives a context with target and elapsedSeconds\&. C++ receives const \fBAnimationEvaluationContext\fP&; JavaScript receives a borrowed context object\&. Conditions run once at activation, never during recording\&. Captures remain owned for the definition and invocation lifetime; external C++ references must remain valid\&. Promises and nonboolean JavaScript results throw\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. The alternative is optional\&. The untaken branch performs no changes\&. Repetition outside the conditional reevaluates it; yoyo reverses the path actually taken without reevaluation\&. Evaluators must observe state; reentrant graph edits throw\&. A callback error stops that invocation and does not release dependent work\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
+.SS "\fBAnimated\fP yoyo ()"
+
+.PP
+Play the preceding trajectory forward and back\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This object for chaining\&. Reverses captured paths to their original baselines\&. Rejects programmed-rate profiles, discrete flips, and infinite child repetitions\&. Apply before playback begins; late modifiers throw without replaying elapsed work\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated()\fP\&.
 
 .SH "Author"
 .PP 

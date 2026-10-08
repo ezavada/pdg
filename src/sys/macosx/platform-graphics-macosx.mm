@@ -126,6 +126,7 @@ void platform_setHardwareNormalCursor() {
 }
 
 void platform_startDrawing(void* windRef) {
+    graphics_flushText();
     PDGOpenGLView* myView = (PDGOpenGLView*)windRef;
     if (myView) {
     	[[myView openGLContext] makeCurrentContext];
@@ -465,6 +466,14 @@ void platform_getWindowContentSize(void* windRef, long* outWidth, long* outHeigh
     NSRect contents = [myView bounds];
     *outWidth = contents.size.width;
     *outHeight = contents.size.height;
+}
+
+void platform_getWindowDrawableSize(void* windRef, long* outWidth, long* outHeight) {
+    PDGOpenGLView* view = (PDGOpenGLView*)windRef;
+    NSRect bounds = [view bounds];
+    if ([view wantsBestResolutionOpenGLSurface]) bounds = [view convertRectToBacking:bounds];
+    *outWidth = bounds.size.width;
+    *outHeight = bounds.size.height;
 }
 
 void platform_getWindowPosition(void* windRef, long* outXPos, long* outYPos) {

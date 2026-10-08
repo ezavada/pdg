@@ -88,7 +88,7 @@ BINDING_INITIALIZER_IMPL(Serializer)
     );
 	END
 METHOD_IMPL(Serializer, SetResourceMode)
-    METHOD_SIGNATURE("select embedded or externally referenced resources", [object Serializer], 1, ([number int] mode));
+    METHOD_SIGNATURE("Choose embedded image resources or permit external resource references.", [this], 1, ([number int] mode));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_INT32_ARG_RANGE(1, mode);
     try { self->setResourceMode(mode); RETURN_THIS; }
@@ -191,49 +191,49 @@ METHOD_IMPL(Serializer, Serialize_uint)
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, Serialize_color)
-	METHOD_SIGNATURE("", undefined, 1, ([object Color] val));
+	METHOD_SIGNATURE("", undefined, 1, ({[object Color const&] val|string colorName|number rgba}));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_COLOR_ARG(1, val);
 	self->serialize_color(val);
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, Serialize_offset)
-	METHOD_SIGNATURE("", undefined, 1, ([object Offset] val));
+	METHOD_SIGNATURE("", undefined, 1, ([object Offset const&] val));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_OFFSET_ARG(1, val);
 	self->serialize_offset(val);
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, Serialize_point)
-	METHOD_SIGNATURE("", undefined, 1, ([object Point] val));
+	METHOD_SIGNATURE("", undefined, 1, ([object Point const&] val));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_POINT_ARG(1, val);
 	self->serialize_point(val);
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, Serialize_vector)
-	METHOD_SIGNATURE("", undefined, 1, ([object Vector] val));
+	METHOD_SIGNATURE("", undefined, 1, ([object Vector const&] val));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_VECTOR_ARG(1, val);
 	self->serialize_vector(val);
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, Serialize_rect)
-	METHOD_SIGNATURE("", undefined, 1, ([object Rect] val));
+	METHOD_SIGNATURE("", undefined, 1, ([object Rect const&] val));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_RECT_ARG(1, r);
 	self->serialize_rect(r);
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, Serialize_rotr)
-	METHOD_SIGNATURE("", undefined, 1, ([object RotatedRect] val));
+	METHOD_SIGNATURE("", undefined, 1, ([object RotatedRect const&] val));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_ROTATED_RECT_ARG(1, val);
 	self->serialize_rotr(val);
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, Serialize_quad)
-	METHOD_SIGNATURE("", undefined, 1, ([object Quad] val));
+	METHOD_SIGNATURE("", undefined, 1, ([object Quad const&] val));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_QUAD_ARG(1, val);
 	self->serialize_quad(val);
@@ -247,17 +247,22 @@ METHOD_IMPL(Serializer, Serialize_str)
 	NO_RETURN;
 	END
 METHOD_IMPL(Serializer, Serialize_mem)
-	METHOD_SIGNATURE("", undefined, 1, ({[string Binary]|[object MemBlock]} mem));
+	METHOD_SIGNATURE("", undefined, 1, ({[object ByteArray]|[object MemBlock]} mem));
     REQUIRE_ARG_COUNT(1);
-    bool isStr = VALUE_IS_STRING(ARGV[0]);
-    if (!isStr && !VALUE_IS_OBJECT(ARGV[0])) {
-    	THROW_TYPE_ERR("argument 1 (mem) must be either a binary string or an object of type MemBlock");
+    bool isBytes = IsUint8Array(ARGV[0]);
+    if (!isBytes && !VALUE_IS_MEMBLOCK(ARGV[0])) {
+        THROW_TYPE_ERR("argument 1 (mem) must be either a Uint8Array or an object of type MemBlock"); RETURN_NULL;
     }
-    if (isStr) {
+    if (isBytes) {
     	size_t bytes = 0;
-    	uint8* ptr = (uint8*) DecodeBinary(ARGV[0], &bytes);
+        const uint8* ptr = nullptr;
+        if (!GetUint8ArrayData(ARGV[0], ptr, bytes)) {
+            THROW_TYPE_ERR("expected an attached, non-shared Uint8Array"); RETURN_NULL;
+        }
+        if (bytes > UINT32_MAX) { THROW_RANGE_ERR("byte array exceeds the supported size"); RETURN_NULL; }
 		self->serialize_mem(ptr, bytes);
 	} else {
+        if (!VALUE_IS_MEMBLOCK(ARGV[0])) { THROW_TYPE_ERR("expected Uint8Array or MemBlock"); RETURN_NULL; }
     	REQUIRE_CPP_OBJECT_ARG(1, memBlock, MemBlock);
     	self->serialize_mem(memBlock->ptr, memBlock->bytes);
     }
@@ -297,16 +302,23 @@ SERIALIZER_SIZE_OF_METHOD_IMPL(d)
 SERIALIZER_SIZE_OF_METHOD_IMPL(uint)
 SERIALIZER_SIZE_OF_METHOD_IMPL(str)
 SERIALIZER_SIZE_OF_METHOD_IMPL(bool)
-SERIALIZER_SIZE_OF_METHOD_IMPL(point)
-SERIALIZER_SIZE_OF_METHOD_IMPL(offset)
-SERIALIZER_SIZE_OF_METHOD_IMPL(vector)
-SERIALIZER_SIZE_OF_METHOD_IMPL(rect)
-SERIALIZER_SIZE_OF_METHOD_IMPL(rotr)
-SERIALIZER_SIZE_OF_METHOD_IMPL(quad)
-SERIALIZER_SIZE_OF_METHOD_IMPL(color)
+SERIALIZER_SIZE_OF_SIGNATURE_IMPL(point, [object Point const&], size_t n = self->sizeof_point(val))
+SERIALIZER_SIZE_OF_SIGNATURE_IMPL(offset, [object Offset const&], size_t n = self->sizeof_offset(val))
+SERIALIZER_SIZE_OF_SIGNATURE_IMPL(vector, [object Vector const&], size_t n = self->sizeof_vector(val))
+SERIALIZER_SIZE_OF_SIGNATURE_IMPL(rect, [object Rect const&], size_t n = self->sizeof_rect(val))
+SERIALIZER_SIZE_OF_SIGNATURE_IMPL(rotr, [object RotatedRect const&], size_t n = self->sizeof_rotr(val))
+SERIALIZER_SIZE_OF_SIGNATURE_IMPL(quad, [object Quad const&], size_t n = self->sizeof_quad(val))
+METHOD_IMPL(Serializer, Sizeof_color)
+    METHOD_SIGNATURE("Calculate the number of bytes needed to serialize the value.", [number uint], 1, ({[object Color const&] val|string colorName|number rgba}));
+    REQUIRE_ARG_COUNT(1);
+    REQUIRE_COLOR_ARG(1, val);
+    size_t n = self->sizeof_color(val);
+    RETURN_UNSIGNED(n);
+    END
 CUSTOM_SERIALIZER_SIZE_OF_METHOD_IMPL(ref,
     size_t n = self->sizeof_ref< OBJECT_REF >(&val) )
 METHOD_IMPL(Serializer, Sizeof_obj)
+    METHOD_SIGNATURE("get the number of bytes used to serialize the given object, including any objects that it serializes", [number uint], 1, ([object ISerializable const*] obj));
     REQUIRE_ARG_COUNT(1);
     if (VALUE_IS_NULL(ARGV[0])) {
         size_t n = 3; // 3 bytes for null object tag
@@ -331,18 +343,23 @@ METHOD_IMPL(Serializer, Sizeof_obj)
     END
 
 METHOD_IMPL(Serializer, Sizeof_mem)
-	METHOD_SIGNATURE("", [number uint], 1, ({[string Binary]|[object MemBlock]} mem));
+	METHOD_SIGNATURE("", [number uint], 1, ({[object ByteArray]|[object MemBlock]} mem));
     REQUIRE_ARG_COUNT(1);
-    bool isStr = VALUE_IS_STRING(ARGV[0]);
-    if (!isStr && !VALUE_IS_OBJECT(ARGV[0])) {
-    	THROW_TYPE_ERR("argument 1 (mem) must be either a binary string or an object of type MemBlock");
+    bool isBytes = IsUint8Array(ARGV[0]);
+    if (!isBytes && !VALUE_IS_MEMBLOCK(ARGV[0])) {
+        THROW_TYPE_ERR("argument 1 (mem) must be either a Uint8Array or an object of type MemBlock"); RETURN_NULL;
     }
     size_t n = 0;
-    if (isStr) {
+    if (isBytes) {
     	size_t bytes = 0;
-    	uint8* ptr = (uint8*) DecodeBinary(ARGV[0], &bytes);
+        const uint8* ptr = nullptr;
+        if (!GetUint8ArrayData(ARGV[0], ptr, bytes)) {
+            THROW_TYPE_ERR("expected an attached, non-shared Uint8Array"); RETURN_NULL;
+        }
+        if (bytes > UINT32_MAX) { THROW_RANGE_ERR("byte array exceeds the supported size"); RETURN_NULL; }
 		n = self->sizeof_mem(ptr, bytes);
 	} else {
+        if (!VALUE_IS_MEMBLOCK(ARGV[0])) { THROW_TYPE_ERR("expected Uint8Array or MemBlock"); RETURN_NULL; }
     	REQUIRE_CPP_OBJECT_ARG(1, memBlock, MemBlock);
     	n = self->sizeof_mem(memBlock->ptr, memBlock->bytes);
     }
@@ -359,3 +376,78 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Serializer)
 
 
 } // pdg namespace
+
+/* @pdg-member
+{
+  "name": "Serializer.Serializer",
+  "type": "constructor",
+  "params": [],
+  "returns": "object Serializer",
+  "brief": "Create a Serializer instance."
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Serializer.serialize_ref",
+  "value": {
+    "params": {
+      "obj": {
+        "builtin": "object"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Serializer.sizeof_ref",
+  "value": {
+    "params": {
+      "val": {
+        "builtin": "object"
+      }
+    }
+  }
+}
+*/
+
+// @pdg-member {"name":"Serializer.serialize_mem","native_binding":{"adapter":"Serializer.serialize_mem","browser":{"wrapper":{}},"binding_name":"_serialize_mem"}}
+
+// @pdg-member {"name":"Serializer.sizeof_mem","native_binding":{"adapter":"Serializer.sizeof_mem","browser":{"wrapper":{}},"binding_name":"_sizeof_mem"}}
+
+// @pdg-member {"name":"Serializer.serialize_color","native_binding":{"allow_raw_pointers":true}}
+
+
+// @pdg-member {"name":"Serializer.sizeof_color","native_binding":{"allow_raw_pointers":true}}
+
+
+// @pdg-member {"name":"Serializer.sizeof_obj","native_binding":{"allow_raw_pointers":true}}
+
+
+// @pdg-class {"name":"Serializer","native_binding":{"browser":{"base":null,"generate":true,"constructors":[{"types":[]}]}}}
+
+// Native 64-bit values and script reference serialization need custom conversion.
+
+// @pdg-member {"name":"Serializer.serialize_8u","native_binding":{"browser":{"generate":false}}}
+
+// @pdg-member {"name":"Serializer.serialize_ref","native_binding":{"browser":{"generate":false}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// @pdg-member {"name":"Serializer.sizeof_ref","native_binding":{"browser":{"generate":false}}}
+
+// 64-bit inputs still require number-to-native conversion in the browser.
+// @pdg-member {"name":"Serializer.sizeof_8","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"Serializer.sizeof_8u","native_binding":{"browser":{"generate":false}}}

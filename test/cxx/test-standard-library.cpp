@@ -74,12 +74,12 @@ void buffers() {
     char data[] = {'a', '\0', static_cast<char>(0xff), 'z'};
     pdg::MemBlock block(data, sizeof(data), false);
     expect(block.getByte(2) == 255 && block.getByte(4) == 0, "byte reads are unsigned and bounded");
-    expect(block.getBytes(3, 4) == "z", "slice length is clamped to available bytes");
+    expect(block.getBytes(3, 4).size() == 1 && block.getBytes(3, 4)[0] == 'z', "slice length is clamped to available bytes");
     expect(block.getBytes(2, std::numeric_limits<size_t>::max()).size() == 2, "slice length cannot overflow");
     expect(block.getBytes(std::numeric_limits<size_t>::max(), 1).empty(), "invalid slice start is empty");
     const auto first = block.getData();
     const auto second = block.getBytes(3, 1);
-    expect(first == std::string(data, sizeof(data)) && second == "z", "results own independent strings");
+    expect(first.data() == data && first.size() == sizeof(data) && second.data() == data + 3, "native byte access returns bounded views");
 }
 
 void serialization() {

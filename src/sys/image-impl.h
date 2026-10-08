@@ -82,12 +82,12 @@ namespace pdg {
 		virtual Image*  createImageScaled(float xscale, float yscale, FilterType filterType);
 		virtual Image*  createImageScaledToFit(Rect r, FitType fitType, FilterType filterType);
 
-		virtual void    setTransparentColor(Color rgb);
+		virtual ImageImpl& setTransparentColor(Color rgb);
 
 		virtual Color   getTransparentColor();
 		virtual uint8   getAlphaValue(int32 x, int32 y) const;
 		virtual Color   getPixel(int32 x, int32 y) const;
-		virtual void    setOpacity(uint8 opacity);
+		virtual ImageImpl& setOpacity(uint8 opacity);
 		virtual uint8   getOpacity() const;
 		virtual void	retainData();
 		virtual void	retainAlpha();
@@ -95,7 +95,7 @@ namespace pdg {
 
 		virtual void	prepareToRasterize();
 		
-		virtual void	setEdgeClamping(bool inUseEdgeClamp);
+		virtual ImageImpl& setEdgeClamping(bool inUseEdgeClamp);
 
 		virtual void	initFromFile(const char* imageFileName, const char* sourceName);
 		virtual void	initFromData(char* imageData, long imageDataLen, const char* sourceName);
@@ -151,9 +151,10 @@ ImageImpl::getData() {
 	return data; 
 }
 
-inline void 
+inline ImageImpl&
 ImageImpl::setEdgeClamping(bool inUseEdgeClamp) {
-	mUseEdgeClamp = inUseEdgeClamp; 
+	mUseEdgeClamp = inUseEdgeClamp;
+    return *this;
 }
 
 } // end namespace pdg

@@ -33,6 +33,7 @@
 #include "snapshot-codec.h"
 
 #include "pdg/sys/animated.h"
+#include "pdg/sys/color.h"
 #include "pdg/sys/iserializer.h"
 #include "pdg/sys/ideserializer.h"
 
@@ -56,7 +57,7 @@ uint32 AnimatedBase::getSerializedSize(ISerializer* serializer) const {
     SnapshotWriter out(serializer, false);
     out.flag(mSchedulePaused); out.flag(mFlipX); out.flag(mFlipY);
     const auto fields = tweenFields();
-    for (size_t i=0;i<fields.size();++i) out.floating(*fields[i], (i==5 || i==6) ? 1 : 0);
+    for (size_t i=0;i<fields.size();++i) out.floating(*fields[i], (i==animationChannel_ScaleX || i==animationChannel_ScaleY) ? 1 : 0);
     return 5 + out.size() + tweenSerializedSize(serializer);
 }
 void AnimatedBase::serialize(ISerializer* serializer) const {
@@ -65,7 +66,7 @@ void AnimatedBase::serialize(ISerializer* serializer) const {
     SnapshotWriter out(serializer, true);
     out.flag(mSchedulePaused); out.flag(mFlipX); out.flag(mFlipY);
     const auto fields = tweenFields();
-    for (size_t i=0;i<fields.size();++i) out.floating(*fields[i], (i==5 || i==6) ? 1 : 0);
+    for (size_t i=0;i<fields.size();++i) out.floating(*fields[i], (i==animationChannel_ScaleX || i==animationChannel_ScaleY) ? 1 : 0);
     serializeTweens(serializer);
 }
 void AnimatedBase::deserialize(IDeserializer* deserializer) {
@@ -78,7 +79,7 @@ void AnimatedBase::deserialize(IDeserializer* deserializer) {
     const auto fields = tweenFields();
     std::vector<float> values;
     for (size_t i = 0; i < fields.size(); ++i) {
-        const auto value = in.floating((i==5 || i==6) ? 1 : 0);
+        const auto value = in.floating((i==animationChannel_ScaleX || i==animationChannel_ScaleY) ? 1 : 0);
         if (!std::isfinite(value)) throw std::runtime_error("Invalid Animated field");
         values.push_back(value);
     }
@@ -97,9 +98,22 @@ void AnimatedBase::deserialize(IDeserializer* deserializer) {
 }
 
 std::vector<const float*> AnimatedBase::tweenFields() const {
-    return {&mLocation.x, &mLocation.y, &mFacing, &mWidth, &mHeight, &mScaleX, &mScaleY,
-        &mCenterOffset.x, &mCenterOffset.y, &mDeltaXPerMs, &mDeltaYPerMs, &mDeltaFacingPerMs,
-        &mDeltaWidthPerMs, &mDeltaHeightPerMs};
+    std::vector<const float*> fields(animationChannel_BaseCount);
+    fields[animationChannel_LocationX] = &mLocation.x;
+    fields[animationChannel_LocationY] = &mLocation.y;
+    fields[animationChannel_Facing] = &mFacing;
+    fields[animationChannel_Width] = &mWidth;
+    fields[animationChannel_Height] = &mHeight;
+    fields[animationChannel_ScaleX] = &mScaleX;
+    fields[animationChannel_ScaleY] = &mScaleY;
+    fields[animationChannel_CenterOffsetX] = &mCenterOffset.x;
+    fields[animationChannel_CenterOffsetY] = &mCenterOffset.y;
+    fields[animationChannel_MovementX] = &mDeltaXPerMs;
+    fields[animationChannel_MovementY] = &mDeltaYPerMs;
+    fields[animationChannel_Spinning] = &mDeltaFacingPerMs;
+    fields[animationChannel_StretchingWidth] = &mDeltaWidthPerMs;
+    fields[animationChannel_StretchingHeight] = &mDeltaHeightPerMs;
+    return fields;
 }
 
 void AnimatedBase::copyAnimationStateFrom(const AnimatedBase& source) {
@@ -119,6 +133,7 @@ void AnimatedBase::copyAnimationStateFrom(const AnimatedBase& source) {
     mAppendAnimation = source.mAppendAnimation; mWaitPending = source.mWaitPending;
     mAnimationOperation = source.mAnimationOperation;
     mAnimations = std::move(tracks);
+    copyScriptStateFrom(source);
 }
 
 uint32 AnimatedBase::tweenSerializedSize(ISerializer* serializer) const {
@@ -130,12 +145,13 @@ uint32 AnimatedBase::tweenSerializedSize(ISerializer* serializer) const {
         out.real(a.delaySeconds); out.real(a.durationSeconds); out.real(a.elapsedSeconds);
         out.floating(a.beginVal); out.floating(a.deltaVal); out.floating(a.targetVal);
     }
+    for(double credit:mTroupeRateTime) out.real(credit);
     return 1 + flagsSize + (hasWait ? serializer->sizeof_d(mDelaySeconds) : 0)
-        + serializer->sizeof_uint(mAnimations.size()) + static_cast<uint32>(mAnimations.size()) * 4 + out.size();
+        + serializer->sizeof_uint(mAnimations.size()) + static_cast<uint32>(mAnimations.size()) * 4 + out.size() + scriptSerializedSize(serializer);
 }
 void AnimatedBase::serializeTweens(ISerializer* serializer) const {
     const auto fields = tweenFields();
-    serializer->serialize_1u(4); // packed defaults, optional wait and sequencing state
+    serializer->serialize_1u(6); // collective integration credits and symbolic scripts follow
     const bool hasWait = mWaitPending || mDelaySeconds > 0;
     serializer->serialize_bool(hasWait);
     serializer->serialize_bool(mAppendAnimation);
@@ -152,10 +168,13 @@ void AnimatedBase::serializeTweens(ISerializer* serializer) const {
         out.real(a.delaySeconds); out.real(a.durationSeconds); out.real(a.elapsedSeconds);
         out.floating(a.beginVal); out.floating(a.deltaVal); out.floating(a.targetVal);
     }
+    SnapshotWriter credits(serializer,true);
+    for(double credit:mTroupeRateTime) credits.real(credit);
+    serializeScripts(serializer);
 }
 void AnimatedBase::deserializeTweens(IDeserializer* deserializer) {
     const auto revision = deserializer->deserialize_1u();
-    if (revision < 1 || revision > 4) throw std::runtime_error("Unsupported animation tween record");
+    if (revision < 1 || revision > 6) throw std::runtime_error("Unsupported animation tween record");
     const bool hasWait = revision == 1 || deserializer->deserialize_bool();
     const bool append = revision >= 3 && deserializer->deserialize_bool();
     const double delay = hasWait ? deserializer->deserialize_d() : 0;
@@ -192,6 +211,10 @@ void AnimatedBase::deserializeTweens(IDeserializer* deserializer) {
         a.value = const_cast<float*>(fields[field]);
         if (a.value) tracks.push_back(a);
     }
+    std::array<double,5> credits{};
+    if(revision>=6) for(auto& credit:credits) { credit=SnapshotReader(deserializer).real(); if(!std::isfinite(credit) || credit<0) throw std::runtime_error("Invalid collective integration credit"); }
+    if (revision >= 5) deserializeScripts(deserializer); else mScripts.reset();
+    mTroupeRateTime=credits;
     mDelaySeconds = delay; mAppendAnimation = append; mWaitPending = hasWait && !append; mAnimationOperation = 1;
     mAnimations = std::move(tracks);
 }
@@ -202,15 +225,18 @@ void AnimatedBase::validateDuration(double seconds) {
 }
 
 void AnimatedBase::validateImmediateOperation() const {
+    validateScriptEdit();
     if (mWaitPending || mAppendAnimation)
         throw std::invalid_argument("Only operations with a duration can be part of a timed animation sequence.");
 }
 void AnimatedBase::validateAnimationDuration(double seconds) const {
+    validateScriptEdit();
     validateDuration(seconds);
     if (seconds == 0.0) validateImmediateOperation();
 }
 
 AnimatedBase& AnimatedBase::andThen() {
+    if (scriptAndThen()) return *this;
     mDelaySeconds = 0;
     for (const auto& a : mAnimations)
         if (a.operation == mAnimationOperation)
@@ -246,6 +272,8 @@ void AnimatedBase::readAnimationFlags(Animation& a, uint8 flags, bool sequencing
 }
 
 void AnimatedBase::cancelAnimation(float* value) {
+    animationChannelAcquired(value);
+    cancelScriptChannel(value);
     std::erase_if(mAnimations, [value](const Animation& a) { return a.value == value; });
 }
 
@@ -258,6 +286,7 @@ void AnimatedBase::scheduleAnimation(float* value, float target, double seconds,
 }
 
 void AnimatedBase::moveToImpl(const Point& loc, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_LocationX,loc.x},{animationChannel_LocationY,loc.y}}, seconds, easing)) return;
     validateProgrammedTransform();
     validateAnimationDuration(seconds);
     if (!std::isfinite(loc.x) || !std::isfinite(loc.y) || !easing)
@@ -273,6 +302,28 @@ void AnimatedBase::moveToImpl(const Point& loc, double seconds, EasingFunc easin
 }
 
 
+void AnimatedBase::moveByImpl(const Offset& delta, double seconds, EasingFunc easing) {
+    validateProgrammedTransform();
+    validateAnimationDuration(seconds);
+    if (!std::isfinite(delta.x) || !std::isfinite(delta.y) || !easing)
+        throw std::invalid_argument("Movement offset and easing must be valid");
+    const bool relative = mAppendAnimation;
+    const Point before = mLocation;
+    beginAnimationRequest();
+    if (delta.x != 0) {
+        prepareAnimation(&mDeltaXPerMs);
+        if (!relative) mDeltaXPerMs = 0;
+        scheduleAnimation(&mLocation.x, relative ? delta.x : before.x + delta.x, seconds, easing);
+    }
+    if (delta.y != 0) {
+        prepareAnimation(&mDeltaYPerMs);
+        if (!relative) mDeltaYPerMs = 0;
+        scheduleAnimation(&mLocation.y, relative ? delta.y : before.y + delta.y, seconds, easing);
+    }
+    finishAnimationRequest();
+    if (before != mLocation) locationChanged(mLocation - before);
+}
+
 AnimatedBase& AnimatedBase::setMovement(const Vector& movement) { return setMovement(movement.x, movement.y); }
 AnimatedBase& AnimatedBase::setMovement(float x, float y) { return changeMovementTo(x, y, 0, linearTween); }
 AnimatedBase& AnimatedBase::setSpin(float rate) { return changeSpinTo(rate, 0, linearTween); }
@@ -281,29 +332,34 @@ AnimatedBase& AnimatedBase::changeMovementBy(const Vector& delta, double seconds
     return changeMovementBy(delta.x, delta.y, seconds, easing);
 }
 AnimatedBase& AnimatedBase::changeMovementBy(float x, float y, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_MovementX,x/1000.f},{animationChannel_MovementY,y/1000.f}}, seconds, easing, animationMode_Add)) return *this;
     const bool relative = mAppendAnimation;
     const Offset rate = getMovement();
     changeMovementTo(relative ? x : rate.x + x, relative ? y : rate.y + y, seconds, easing);
-    if (relative) setRelativeAnimationTargets(1);
+    if (relative) setRelativeAnimationTargets(animationMode_Add);
     return *this;
 }
 AnimatedBase& AnimatedBase::changeSpinBy(float delta, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_Spinning,delta/1000.f}}, seconds, easing, animationMode_Add)) return *this;
     const bool relative = mAppendAnimation;
     changeSpinTo(relative ? delta : getSpin() + delta, seconds, easing);
-    if (relative) setRelativeAnimationTargets(1);
+    if (relative) setRelativeAnimationTargets(animationMode_Add);
     return *this;
 }
 AnimatedBase& AnimatedBase::changeStretchingBy(float x, float y, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_StretchingWidth,x/1000.f},{animationChannel_StretchingHeight,y/1000.f}}, seconds, easing, animationMode_Add)) return *this;
     const bool relative = mAppendAnimation;
     const Offset rate = getStretching();
     changeStretchingTo(relative ? x : rate.x + x, relative ? y : rate.y + y, seconds, easing);
-    if (relative) setRelativeAnimationTargets(1);
+    if (relative) setRelativeAnimationTargets(animationMode_Add);
     return *this;
 }
 AnimatedBase& AnimatedBase::changeScaleBy(float x, float y, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_ScaleX,x},{animationChannel_ScaleY,y}}, seconds, easing, animationMode_Add)) return *this;
+    SampledPreparationGuard sampled(*this);
     const bool relative = mAppendAnimation;
     changeScaleTo(relative ? x : mScaleX + x, relative ? y : mScaleY + y, seconds, easing);
-    if (relative) setRelativeAnimationTargets(1);
+    if (relative) setRelativeAnimationTargets(animationMode_Add);
     return *this;
 }
 
@@ -311,6 +367,7 @@ AnimatedBase& AnimatedBase::changeMovementTo(const Vector& movement, double seco
     return changeMovementTo(movement.x, movement.y, seconds, easing);
 }
 AnimatedBase& AnimatedBase::changeMovementTo(float x, float y, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_MovementX,x/1000.f},{animationChannel_MovementY,y/1000.f}}, seconds, easing)) return *this;
     validateProgrammedTransform();
     validateAnimationDuration(seconds);
     if (!std::isfinite(x) || !std::isfinite(y) || !easing)
@@ -322,11 +379,12 @@ AnimatedBase& AnimatedBase::changeMovementTo(float x, float y, double seconds, E
     finishAnimationRequest();
     return *this;
 }
-Offset AnimatedBase::getMovement() const {
+Offset AnimatedBase::getMovement() const { validateScriptRead();
     return Offset(mDeltaXPerMs * 1000.0f, mDeltaYPerMs * 1000.0f);
 }
 
 AnimatedBase& AnimatedBase::changeStretchingTo(float x, float y, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_StretchingWidth,x/1000.f},{animationChannel_StretchingHeight,y/1000.f}}, seconds, easing)) return *this;
     validateTransformEdit();
     validateAnimationDuration(seconds);
     if (!std::isfinite(x) || !std::isfinite(y) || !easing)
@@ -338,10 +396,11 @@ AnimatedBase& AnimatedBase::changeStretchingTo(float x, float y, double seconds,
     finishAnimationRequest();
     return *this;
 }
-Offset AnimatedBase::getStretching() const {
+Offset AnimatedBase::getStretching() const { validateScriptRead();
     return Offset(mDeltaWidthPerMs * 1000.0f, mDeltaHeightPerMs * 1000.0f);
 }
 AnimatedBase& AnimatedBase::setScale(float x, float y) {
+    if (recordScriptAnimation({{animationChannel_ScaleX,x},{animationChannel_ScaleY,y}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     validateTransformEdit();
     if (!std::isfinite(x) || !std::isfinite(y))
@@ -349,10 +408,11 @@ AnimatedBase& AnimatedBase::setScale(float x, float y) {
     cancelAnimation(&mScaleX); cancelAnimation(&mScaleY);
     const Offset before(mScaleX, mScaleY);
     mScaleX = x; mScaleY = y;
-    scaleChanged(getScale() - before);
+    scaleChanged(Offset(mScaleX,mScaleY) - before);
     return *this;
 }
 AnimatedBase& AnimatedBase::changeScaleTo(float x, float y, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_ScaleX,x},{animationChannel_ScaleY,y}}, seconds, easing)) return *this;
     validateTransformEdit();
     validateAnimationDuration(seconds);
     if (!std::isfinite(x) || !std::isfinite(y) || !easing)
@@ -362,15 +422,17 @@ AnimatedBase& AnimatedBase::changeScaleTo(float x, float y, double seconds, Easi
     scheduleAnimation(&mScaleX, x, seconds, easing);
     scheduleAnimation(&mScaleY, y, seconds, easing);
     finishAnimationRequest();
-    if (before != getScale()) scaleChanged(getScale() - before);
+    if (before != Offset(mScaleX,mScaleY)) scaleChanged(Offset(mScaleX,mScaleY) - before);
     return *this;
 }
 void AnimatedBase::cancelScheduleImpl() {
+    cancelScripts();
     mAnimations.clear();
     finishAnimationRequest();
 }
 
 void AnimatedBase::resizeToImpl(float width, float height, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_Width,width},{animationChannel_Height,height}}, seconds, easing)) return;
     validateTransformEdit();
     validateAnimationDuration(seconds);
     if (!std::isfinite(width) || !std::isfinite(height) || !easing)
@@ -386,6 +448,7 @@ void AnimatedBase::resizeToImpl(float width, float height, double seconds, Easin
 }
 
 AnimatedBase& AnimatedBase::setRotation(float radians) {
+    if (recordScriptAnimation({{animationChannel_Facing,radians}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     validateTransformEdit();
     cancelAnimation(&mFacing);
@@ -395,6 +458,7 @@ AnimatedBase& AnimatedBase::setRotation(float radians) {
     return *this;
 }
 AnimatedBase& AnimatedBase::changeSpinTo(float radiansPerSecond, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_Spinning,radiansPerSecond/1000.f}}, seconds, easing)) return *this;
     validateProgrammedTransform();
     validateAnimationDuration(seconds);
     if (!std::isfinite(radiansPerSecond) || !easing)
@@ -405,7 +469,7 @@ AnimatedBase& AnimatedBase::changeSpinTo(float radiansPerSecond, double seconds,
     finishAnimationRequest();
     return *this;
 }
-float AnimatedBase::getSpin() const { return mDeltaFacingPerMs * 1000.0f; }
+float AnimatedBase::getSpin() const { validateScriptRead(); return mDeltaFacingPerMs * 1000.0f; }
 
 double AnimatedBase::rotationTarget(double begin, double target, int direction, bool relative) {
     const double pi = std::numbers::pi, turn = 2 * pi;
@@ -433,6 +497,7 @@ double AnimatedBase::rotationTarget(double begin, double target, int direction, 
 }
 
 void AnimatedBase::rotateToImpl(float radians, double seconds, EasingFunc easing, int direction) {
+    if (recordScriptAnimation({{animationChannel_Facing,radians}}, seconds, easing, animationMode_Assign, direction)) return;
     validateProgrammedTransform();
     validateAnimationDuration(seconds);
     rotationTarget(mFacing, radians, direction, false); // validate before mutation
@@ -448,6 +513,7 @@ void AnimatedBase::rotateToImpl(float radians, double seconds, EasingFunc easing
 }
 
 AnimatedBase& AnimatedBase::rotateBy(float radians, double seconds, EasingFunc easing, int direction) {
+    if (recordScriptAnimation({{animationChannel_Facing,radians}}, seconds, easing, animationMode_Add, direction)) return *this;
     validateProgrammedTransform();
     validateAnimationDuration(seconds);
     const double target = rotationTarget(mFacing, radians, direction, true);
@@ -464,6 +530,7 @@ AnimatedBase& AnimatedBase::rotateBy(float radians, double seconds, EasingFunc e
 }
 
 AnimatedBase& AnimatedBase::changeCenterOffsetTo(const Offset& offset, double seconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_CenterOffsetX,offset.x},{animationChannel_CenterOffsetY,offset.y}}, seconds, easing)) return *this;
     validateTransformEdit();
     validateAnimationDuration(seconds);
     if (!std::isfinite(offset.x) || !std::isfinite(offset.y) || !easing)
@@ -500,6 +567,7 @@ double AnimatedBase::integrateAnimation(const Animation& a, double endSeconds) {
 // flipping
 AnimatedBase&
 AnimatedBase::setFlipX(bool flip) {
+    if (recordScriptFlip(animationFlipAxis_X,flip)) return *this;
     validateImmediateOperation();
     validateTransformEdit();
 	if (mFlipX == flip) return *this;
@@ -514,6 +582,7 @@ AnimatedBase::setFlipX(bool flip) {
 
 AnimatedBase&
 AnimatedBase::setFlipY(bool flip) {
+    if (recordScriptFlip(animationFlipAxis_Y,flip)) return *this;
     validateImmediateOperation();
     validateTransformEdit();
 	if (mFlipY == flip) return *this;
@@ -532,6 +601,7 @@ AnimatedBase::setFlipY(bool flip) {
 // and programmed rates) has been calculated
 void
 AnimatedBase::addAnimationHelperImpl(IAnimationHelper* helper) {
+    validateScriptControl();
     validateImmediateOperation();
     if (!helper) throw std::invalid_argument("Animation helper must not be null");
     for (const auto& entry : mHelpers) if (entry->helper == helper) return;
@@ -541,6 +611,7 @@ AnimatedBase::addAnimationHelperImpl(IAnimationHelper* helper) {
 
 void
 AnimatedBase::removeAnimationHelperImpl(IAnimationHelper* helper) {
+    validateScriptControl();
     validateImmediateOperation();
     for (auto it = mHelpers.begin(); it != mHelpers.end(); ++it) {
         if ((*it)->helper == helper) {
@@ -554,6 +625,7 @@ AnimatedBase::removeAnimationHelperImpl(IAnimationHelper* helper) {
 
 void
 AnimatedBase::clearAnimationHelpersImpl() {
+    validateScriptControl();
     validateImmediateOperation();
     // In-flight snapshots keep owned helpers alive until the callback returns.
     for (const auto& entry : mHelpers) entry->active = false;
@@ -568,6 +640,8 @@ AnimatedBase::animate(double deltaSeconds) {
     if (!std::isfinite(deltaSeconds) || deltaSeconds < 0) {
         throw std::invalid_argument("animate requires finite nonnegative seconds");
     }
+    if (mAnimating) throw std::logic_error("Animated update cannot be reentered");
+    struct AnimationUpdateGuard { bool& flag; ~AnimationUpdateGuard() { flag=false; } } animationUpdateGuard{mAnimating};
     // Stored programmed rates are per millisecond; all public timing is seconds.
 
 	// inside the animate call
@@ -578,12 +652,16 @@ AnimatedBase::animate(double deltaSeconds) {
 	float savedFacing = mFacing;
 	float savedHeight = mHeight;
 	float savedWidth = mWidth;
-    const Offset savedScale = getScale();
+    const Offset savedScale(mScaleX,mScaleY);
 	PointT<float> savedCenterOffset = mCenterOffset;
 
     bool changes = false;
+    mScriptFrameRates={mDeltaXPerMs,mDeltaYPerMs,mDeltaFacingPerMs,mDeltaWidthPerMs,mDeltaHeightPerMs};
+    if (!mSchedulePaused) changes=advanceScripts(0,true);
+    mScriptFrameRates={mDeltaXPerMs,mDeltaYPerMs,mDeltaFacingPerMs,mDeltaWidthPerMs,mDeltaHeightPerMs};
     double remaining = deltaSeconds;
     for (;;) {
+        if (!mSchedulePaused) changes=advanceScripts(0) || changes;
         std::vector<Animation> completed;
         if (!mSchedulePaused) {
             // Publish instantaneous predecessors before a successor samples them.
@@ -591,6 +669,7 @@ AnimatedBase::animate(double deltaSeconds) {
                 if (mAnimations[i].delaySeconds > 0) { ++i; continue; }
                 if (mAnimations[i].chained) {
                     float* value = mAnimations[i].value;
+                    cancelScriptChannel(value);
                     float* competing = competingAnimationChannel(value);
                     for (size_t j=0; j<i;) {
                         if (mAnimations[j].value == value || mAnimations[j].value == competing ||
@@ -600,9 +679,9 @@ AnimatedBase::animate(double deltaSeconds) {
                     }
                     Animation& a = mAnimations[i];
                     a.chained = false;
-                    if (a.targetMode == 1) a.targetVal += *a.value;
-                    if (a.targetMode == 2) a.targetVal *= *a.value;
-                    a.targetMode = 0;
+                    if (a.targetMode == animationMode_Add) a.targetVal += *a.value;
+                    if (a.targetMode == animationMode_Multiply) a.targetVal *= *a.value;
+                    a.targetMode = animationMode_Assign;
                 }
                 Animation& a = mAnimations[i];
                 if (a.elapsedSeconds == 0) {
@@ -626,11 +705,20 @@ AnimatedBase::animate(double deltaSeconds) {
         double step = remaining;
         if (!mSchedulePaused) for (const auto& a : mAnimations)
             step = std::min(step, a.delaySeconds > 0 ? a.delaySeconds : a.durationSeconds-a.elapsedSeconds);
-        mLocation.x += mDeltaXPerMs * step * 1000;
-        mLocation.y += mDeltaYPerMs * step * 1000;
-        mFacing += mDeltaFacingPerMs * step * 1000;
-        mWidth += mDeltaWidthPerMs * step * 1000;
-        mHeight += mDeltaHeightPerMs * step * 1000;
+        if (!mSchedulePaused) step=std::min(step,scriptNextBoundary());
+        mScriptFrameRates={mDeltaXPerMs,mDeltaYPerMs,mDeltaFacingPerMs,mDeltaWidthPerMs,mDeltaHeightPerMs};
+        // Troupe rate profiles have already integrated their portion of this
+        // owner update. Consume that time once; ordinary rates cover the remainder.
+        const auto ordinaryRateTime=[&](unsigned channel) {
+            const double covered=std::min(step,mTroupeRateTime[channel]);
+            mTroupeRateTime[channel]=std::max(0.0,mTroupeRateTime[channel]-covered);
+            return step-covered;
+        };
+        mLocation.x += mDeltaXPerMs * ordinaryRateTime(0) * 1000;
+        mLocation.y += mDeltaYPerMs * ordinaryRateTime(1) * 1000;
+        mFacing += mDeltaFacingPerMs * ordinaryRateTime(2) * 1000;
+        mWidth += mDeltaWidthPerMs * ordinaryRateTime(3) * 1000;
+        mHeight += mDeltaHeightPerMs * ordinaryRateTime(4) * 1000;
         if (!mSchedulePaused) {
             if (mAppendAnimation) mDelaySeconds = std::max(0.0, mDelaySeconds-step);
             for (size_t i=0; i<mAnimations.size();) {
@@ -658,6 +746,7 @@ AnimatedBase::animate(double deltaSeconds) {
                 else ++i;
             }
         }
+        if (!mSchedulePaused) changes=advanceScripts(step) || changes;
         animationValuesChanged();
         remaining = std::max(0.0,remaining-step);
         for (const auto& a : completed) easingCompleted(a);
@@ -665,7 +754,7 @@ AnimatedBase::animate(double deltaSeconds) {
             // Sample newly due operations at the exact boundary in this tick too.
             const bool starting = !mSchedulePaused && step > 0 && std::any_of(mAnimations.begin(),mAnimations.end(),
                 [](const Animation& a) { return a.delaySeconds == 0 && a.elapsedSeconds == 0; });
-            if (!starting) break;
+            if (!starting && (mSchedulePaused || scriptNextBoundary()!=0)) break;
         }
     }
 
@@ -695,8 +784,8 @@ AnimatedBase::animate(double deltaSeconds) {
 		sizeChanged(mWidth - savedWidth, mHeight - savedHeight);
 		changes = true;
 	}
-    if (savedScale != getScale()) {
-        scaleChanged(getScale() - savedScale);
+    if (savedScale != Offset(mScaleX,mScaleY)) {
+        scaleChanged(Offset(mScaleX,mScaleY) - savedScale);
         changes = true;
     }
 	if (savedCenterOffset != mCenterOffset) {
@@ -761,7 +850,14 @@ AnimatedBase::AnimatedBase() {
 }
 
 
+std::weak_ptr<AnimatedBase*> AnimatedBase::animationLifetime() const {
+    if (!mLifetime || *mLifetime!=this) mLifetime=std::make_shared<AnimatedBase*>(const_cast<AnimatedBase*>(this));
+    return mLifetime;
+}
+
 AnimatedBase::~AnimatedBase() {
+    if (mLifetime && *mLifetime==this) *mLifetime=nullptr;
+    mScripts.reset();
     finishAnimationRequest();
 	clearAnimationHelpers();
 	mAnimations.clear();
@@ -1157,3 +1253,5 @@ EasingFunc easingIdToFunc(uint8 id) {
 
 
 } // end namespace pdg
+
+#include "animated-script.inc"

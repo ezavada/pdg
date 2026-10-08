@@ -1,37 +1,66 @@
 namespace pdg { /**
+\fn NetClient pdg::NetClient::connect(NetServerAddress serverInfo, function callback, string clientKey)
+\brief Connect to a PDG server and complete its authentication and version handshake.
 
-\fn pdg::NetClient::connect
+The callback receives one NetConnection after the handshake completes. Errors go
+to onError(). WebSocket and WebTransport connections carry the same serialized
+messages as native TCP. sendDgram() uses reliable delivery on WebSocket. Authentication failures
+close the attempt; they never start another connection automatically.
 
-\brief establish a connection to a server
+\param serverInfo Connection settings in \ref websocket_client_options.
+\param callback Function receiving the established NetConnection.
+\param clientKey Optional reservation key sent before protocol negotiation.
+\return This NetClient for chaining.
 
-Attempts to connect to the given server, and if it succeeds it invokes your callback with a new NetConnection object as the parameter. The If the connection fails, you'll get an error callback if you set one up using the onError() call. 
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\anchor websocket_client_options
+\par Client connection options
 
-An option key is passed in to do authentication if the server requires connection reservations. See NetServer.expectClient for more about client reservations.
+| Field | Default | Meaning |
+| --- | --- | --- |
+| host, port | Required for native TCP | Native server hostname and port. For WebSocket, host may be used to derive the URL. |
+| transportPolicy | "auto" | Desktop, Node and iOS preserve TCP unless a web URL is supplied. Browsers try WebTransport, then WebSocket. An explicit webTransportUrl selects WebTransport in native auto mode. "webtransport-required" forbids fallback; "websocket-only" selects WebSocket; "native-only" rejects browser use. |
+| webSocketUrl | Derived | Explicit wss:// URL. Native auto mode selects WebSocket when only this web URL is supplied. Browser auto mode derives its initial HTTPS WebTransport URL from this URL when webTransportUrl is omitted. |
+| webTransportUrl | Derived | HTTPS WebTransport URL. Derived from host, webPort and webPath, or the browser webSocketUrl. Requires an HTTP/3 WebTransport listener. |
+| serverCertificateHashes | Omitted | Optional array of {algorithm:"sha-256", value:Uint8Array or ArrayBuffer} entries, each containing a 32-byte SHA-256 DER certificate digest from a trusted bootstrap. Requires a currently valid EC certificate with validity no longer than 14 days. These hashes authenticate the server certificate; the PDG client key still authenticates the client. |
+| webTransportTimeout | 1500 | Milliseconds allocated to the initial WebTransport attempt in auto mode, within the overall timeout. |
+| capabilityCacheTimeout | 30000 | Milliseconds to cache an unsupported or timed-out WebTransport endpoint. 0 disables caching. The cache is bounded and keyed by endpoint and trust configuration. |
+| webPort, webPath | 5443, "/pdg" | Derived endpoint is wss://host:webPort/webPath. |
+| secure | true | false permits an explicit ws:// development endpoint. HTTPS pages always require wss://. |
+| timeout | 5000 for web transports and iOS | Overall connection and PDG handshake deadline in milliseconds for web transports. On desktop/Node TCP, applies only when supplied. |
+| handshakeTimeout | timeout or 5000 | PDG handshake deadline in milliseconds; web transports also respect the remaining overall timeout. |
+| maxFrameSize | 1048576 | Maximum reliable payload size in bytes. |
+| maxPendingBytes | 4194304 | Maximum retained input and pending transport output bytes. WebSocket output overflow reports ERR_BACKPRESSURE; WebTransport overflow reports ERR_BACKPRESSURE; iOS TCP/WebSocket overflow reports ERR_NETWORK_BACKPRESSURE. iOS accepts 1024 to 67108864 bytes and also bounds queued events and writes to 256 each. |
+| tls | Platform defaults | Native WebSocket client TLS settings, such as ca for a private certificate authority. WebTransport uses the platform trust store on Apple/Windows and the system CA bundle on Linux, or native tls.caFile for a private CA. Browser TLS uses platform trust. iOS WebSocket rejects custom tls options. |
 
-\param serverInfo an object with host and port that tells us where to find the NetServer
-\param callback the connection established handler for this connection
-\param clientKey [optional] the reservation key to send to the server
+\htmlonly[block]
+</div>
+\endhtmlonly
 
-\code
+\note The server must permit the page's origin and offer the pdg-net-v1
+WebSocket subprotocol. Production endpoints need a trusted certificate and a
+proxy that forwards WebSocket upgrades. WebTransport requires UDP access to the
+HTTPS endpoint port. WebSocket uses TCP. Native WebTransport clients have no
+browser Origin; permit the empty string in the listener allowedOrigins.
 
-    // start trying to connect
-    var myConnection = false;
-    var myKey = '23dj3C340efp';
-    myClient.connect( { host: 208.122.0.12, port: 5000 }, function(connection) {
-        myConnection = connection;
-    }, myKey);
+Auto mode falls back only for unavailable WebTransport, an explicitly unsupported
+endpoint, or establishment timeout, before the PDG handshake begins. Certificate,
+pin, authentication, and protocol failures are terminal. Browsers often report
+opaque failures; these are terminal rather than treated as unsupported. No
+fallback occurs after a transport has been selected or a session has connected.
 
-    // now wait for the connection to happen
-    var t = pdg.tm.onInterval( function() {
-        if (myConnection) {
-            console.log('Got connection to '+myConnection.remoteAddr);
-            t.cancel();  // stop checking
-        }
-    }, 100);  // check every 100 milleseconds
-\endcode 
-
-\sa onError
-\sa NetConnection
-\sa NetServer.expectClient
-
+\par Example
+\code{.js}
+const client = new pdg.NetClient();
+client.onError(error => console.error(error.code, error.message));
+client.connect({webSocketUrl: "wss://game.example.com/pdg"}, connection => {
+    connection.onMessage((message, connection, delivery) => {
+        console.log(message, delivery, connection.transport);
+    });
+    connection.send({join: "lobby"});
+}, "reservation-key");
+\endcode
+\see NetConnection, onError(), NetServer::expectClient()
 **/ }

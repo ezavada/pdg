@@ -22,6 +22,38 @@ void particles() {
       try { writer.serialize_obj(&empty); } catch(const std::logic_error&) { rejected=true; }
       expect(rejected,"transient particles reject incomplete serialization"); }
 
+    ParticleTrailOptions options;
+    options.lifetime=.4;options.minDistance=0;options.sampleInterval=.01;options.maxPoints=16;
+    ParticleTrail history(options);history.reset(pdg::Point(0,0),1);
+    history.advance(.1,pdg::Point(10,0),1);
+    expect(history.count==11,"fixed-interval trail samples include initial point");
+    near(history.at(5).position.x,5,"coarse ticks interpolate sampling positions");
+    history.advance(10,pdg::Point(20,0),1);
+    expect(history.count<=16,"large steps keep bounded history and work");
+    history.age(.41);expect(history.empty(),"retired history expires on simulation time");
+    { auto o=options;o.maxPoints=128;ParticleTrail clipped(o);clipped.reset(pdg::Point(0,0),1);
+      clipped.advance(1,pdg::Point(100,0),1);auto samples=clipped.samples();
+      near(samples.front().position.x,60,"oldest ribbon segment clips at lifetime boundary");
+      clipped.advance(.41,pdg::Point(100,0),1);expect(clipped.empty(),"stationary heads stop refreshing history"); }
+    { Particle transient;transient.setLifetime(.1).setTrail(options).setMovement(100,0).animate(1);
+      expect(!transient.hasTrail(),"detached expiry releases history"); }
+    history.reset(pdg::Point(0,0),1);history.advance(1e200,pdg::Point(1,0),1);
+    expect(history.count<=16,"extreme finite steps cannot spin the sampling loop");
+    history.reset(pdg::Point(0,0),1);history.advance(.1,pdg::Point(1000,0),1);
+    expect(history.count==1,"large discontinuities reset trail history");
+    Particle traced;traced.setLifetime(0).setMovement(100,0).setTrail(options).animate(.1);
+    expect(traced.getTrailPointCount()>1,"bodyless animation produces trail samples");
+    traced.setLocation(100,100);expect(traced.getTrailPointCount()==1,"explicit teleports break trails");
+    traced.animate(.1);traced.breakTrail();expect(traced.getTrailPointCount()==1,"explicit break preserves configuration");
+    traced.clearTrail();expect(!traced.hasTrail(),"clear releases trail configuration");
+    { Serializer writer;writer.setSendTags(false);auto arg=captureAnimationArgument(options);
+      const auto size=serializeAnimationArgument(arg,&writer,false);serializeAnimationArgument(arg,&writer,true);
+      expect(writer.getDataSize()==size,"trail option codec size matches write");
+      void* bytes=std::malloc(writer.getDataSize());std::memcpy(bytes,writer.getDataPtr(),writer.getDataSize());
+      Deserializer reader(bytes,writer.getDataSize());
+      auto restored=std::any_cast<ParticleTrailOptions>(deserializeAnimationArgument(&reader));
+      near(restored.lifetime,.4,"trail script options round trip");expect(restored.maxPoints==16,"trail capacity round trips"); }
+
     for(bool native : {false,true}) {
 #ifndef PDG_USE_CHIPMUNK_PHYSICS
         if(native)continue;
@@ -37,6 +69,36 @@ void particles() {
 #endif
             layer->animateLayer(milliseconds);
         };
+        auto* tracer=layer->createParticle();tracer->setLifetime(.2).setTrail(options);
+        tracer->setupPhysicsBody().setVelocity(100,0);tracer->addRef();
+        tick(100);expect(tracer->getTrailPointCount()>1,"physics trails sampled after body motion");
+        layer->stopAnimations();tick(100);near(tracer->getAge(),.1,"paused layer freezes trail source");
+        layer->startAnimations();tick(100);
+        expect(!tracer->isAlive() && layer->getParticleCount()==0,"expired trail source releases particle slot");
+        expect(layer->getParticleTrailCount()==1,"expired source leaves a fading visual tail");
+        layer->stopAnimations();tick(1000);expect(layer->getParticleTrailCount()==1,"paused layer freezes retired tails");
+        layer->startAnimations();tick(500);expect(layer->getParticleTrailCount()==0,"retired tails age out");tracer->release();
+        Particle trailTemplate;trailTemplate.setLifetime(0).setMovement(100,0).setTrail(options).animate(.1);
+        auto* trailEmitter=layer->createParticleEmitter();trailEmitter->setParticleTemplate(trailTemplate).setParticleSpeed(100).emit(2);
+        auto* fresh=layer->getNthParticle(0);expect(fresh->hasTrail() && fresh->getTrailPointCount()==0,"emission copies configuration without template history");
+        tick(100);expect(fresh->getTrailPointCount()>1,"fresh trails begin at spawn");
+        fresh->expire();layer->removeAllParticles();expect(layer->getParticleTrailCount()==0,"explicit layer cleanup drops active and retired tails");
+        layer->removeParticleEmitter(trailEmitter);
+        tracer=layer->createParticle();tracer->setLifetime(.1).setTrail(options).setMovement(100,0);
+        tick(1000);expect(layer->getParticleTrailCount()==0,"coarse expiry ticks age the remaining tail time");
+        tracer=layer->createParticle();tracer->setLifetime(0).setTrail(options).setMovement(100,0);tracer->addRef();
+        tick(100);layer->removeParticle(tracer);
+        expect(layer->getParticleTrailCount()==0 && tracer->getTrailPointCount()==1,"explicit removal clears the trail without retiring it");tracer->release();
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+        if(native) {
+            auto* substepped=layer->createParticle();substepped->setLifetime(0).setTrail(options);
+            substepped->setupPhysicsBody().setVelocity(100,0);
+            for(int n=0;n<20;++n)manager->stepAnimationPhysics(10);
+            layer->animateLayer(200);
+            expect(substepped->getTrailPointCount()==16,"every physics substep contributes history exactly once");
+            layer->removeAllParticles();
+        }
+#endif
         Particle prototype;prototype.setLifetime(1).setSize(4,6).fadeTo(0,1).grow(2,1,linearTween);
         auto* emitter=layer->createParticleEmitter();emitter->addRef();
         emitter->setParticleTemplate(prototype).setLocation(20,30).setRotation(0).setParticleSpeed(10).setEmissionRate(4).startEmitting();

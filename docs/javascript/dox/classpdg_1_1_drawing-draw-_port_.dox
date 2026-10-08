@@ -1,7 +1,0 @@
-namespace pdg { /**
-
-\fn pdg::Drawing::draw(port)
-
-\brief draws the drawing to the specified port
-
-**/ }

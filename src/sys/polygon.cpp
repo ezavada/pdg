@@ -89,7 +89,7 @@ namespace pdg {
 	}
 	
 	// Point management
-	void Polygon::addPoint(const Point& p) {
+	Polygon& Polygon::addPoint(const Point& p) {
 		// Don't add points that are too close to the previous point
 		// This prevents duplicate/colocated points that can break triangulation
 		if (!mPoints.empty()) {
@@ -100,16 +100,17 @@ namespace pdg {
 			
 			// Skip points that are less than minDistance away
 			if (distanceSquared < 1.0f) {
-				return;
+				return *this;
 			}
 		}
 		mPoints.push_back(p);
 		invalidateGeometry();
+		return *this;
 	}
 	
-	void Polygon::addSpline(Spline* spline, float uStep) {
+	Polygon& Polygon::addSpline(Spline* spline, float uStep) {
 		if (!spline) {
-			return;  // Null spline, nothing to do
+			return *this;  // Null spline, nothing to do
 		}
 		
 		// Determine the actual step to use
@@ -118,7 +119,7 @@ namespace pdg {
 		// Get the maximum u value for this spline
 		float maxU = spline->getMaxU();
 		if (maxU <= 0.0f) {
-			return;  // Empty or invalid spline
+			return *this;  // Empty or invalid spline
 		}
 		
 		// Track the last point added to filter duplicates
@@ -165,27 +166,30 @@ namespace pdg {
 		
 		// Invalidate bounds and tessellation since we added points
 		invalidateGeometry();
+		return *this;
 	}
 	
-	void Polygon::insertPoint(size_t index, const Point& p) {
+	Polygon& Polygon::insertPoint(size_t index, const Point& p) {
 		if (index > mPoints.size()) {
 			mPoints.push_back(p);
 		} else {
 			mPoints.insert(mPoints.begin() + index, p);
 		}
 		invalidateGeometry();
+		return *this;
 	}
 	
 	size_t Polygon::getPointCount() const {
 		return mPoints.size();
 	}
 	
-	void Polygon::removePoint(size_t index) {
+	Polygon& Polygon::removePoint(size_t index) {
 		if (index >= mPoints.size()) {
 			throw std::out_of_range("Polygon::removePoint: index out of range");
 		}
 		mPoints.erase(mPoints.begin() + index);
 		invalidateGeometry();
+		return *this;
 	}
 	
 	Point Polygon::getPoint(size_t index) const {
@@ -195,17 +199,19 @@ namespace pdg {
 		return mPoints[index];
 	}
 	
-	void Polygon::setPoint(size_t index, const Point& p) {
+	Polygon& Polygon::setPoint(size_t index, const Point& p) {
 		if (index >= mPoints.size()) {
 			throw std::out_of_range("Polygon::setPoint: index out of range");
 		}
 		mPoints[index] = p;
 		invalidateGeometry();
+		return *this;
 	}
 	
-	void Polygon::clearPoints() {
+	Polygon& Polygon::clearPoints() {
 		mPoints.clear();
 		invalidateGeometry();
+		return *this;
 	}
 	
 	// Geometric operations

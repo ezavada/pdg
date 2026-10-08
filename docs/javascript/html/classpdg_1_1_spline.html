@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a83da5d1a19ab523df07f7e83f491b122" id="r_a83da5d1a19ab523df07f7e83f491b122"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a83da5d1a19ab523df07f7e83f491b122">Spline</a> (number splineType=SPLINE_CUBIC_BEZIER)</td></tr>
 <tr class="memitem:a3e886ae3c8e2618fedf65722a5290e4d" id="r_a3e886ae3c8e2618fedf65722a5290e4d"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a3e886ae3c8e2618fedf65722a5290e4d">addPoint</a> (<a class="el" href="classpdg_1_1_point.html">Point</a> point)</td></tr>
 <tr class="memdesc:a3e886ae3c8e2618fedf65722a5290e4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">adds a control point to the spline  <br /></td></tr>
 <tr class="memitem:a1827840c8c6be34cc68d098a5051a24b" id="r_a1827840c8c6be34cc68d098a5051a24b"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a1827840c8c6be34cc68d098a5051a24b">addSegment</a> (<a class="el" href="classpdg_1_1_point.html">Point</a> p1, <a class="el" href="classpdg_1_1_point.html">Point</a> p2, <a class="el" href="classpdg_1_1_point.html">Point</a> p3, <a class="el" href="classpdg_1_1_point.html">Point</a> p4)</td></tr>
@@ -160,12 +161,30 @@ Hermite Spline Parameters</h1>
 <div class="line">    <span class="keyword">new</span> <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.<a class="code hl_class" href="classpdg_1_1_point.html">Point</a>(30, 0),    <span class="comment">// p3: tangent vector (direction/speed leaving start)</span></div>
 <div class="line">    <span class="keyword">new</span> <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.<a class="code hl_class" href="classpdg_1_1_point.html">Point</a>(30, 0)     <span class="comment">// p4: tangent vector (direction/speed approaching end)</span></div>
 <div class="line">);</div>
-<div class="ttc" id="aclasspdg_1_1_point_html"><div class="ttname"><a href="classpdg_1_1_point.html">pdg::Point</a></div><div class="ttdoc">point for 2D coordinate system</div><div class="ttdef"><b>Definition</b> pdg-js.h:1869</div></div>
-<div class="ttc" id="aclasspdg_1_1_spline_html"><div class="ttname"><a href="classpdg_1_1_spline.html">pdg::Spline</a></div><div class="ttdoc">Curved path defined by control points, supporting multiple spline types including cubic Bezier curves...</div><div class="ttdef"><b>Definition</b> pdg-js.h:1446</div></div>
+<div class="ttc" id="aclasspdg_1_1_point_html"><div class="ttname"><a href="classpdg_1_1_point.html">pdg::Point</a></div><div class="ttdoc">point for 2D coordinate system</div><div class="ttdef"><b>Definition</b> pdg-js.h:2259</div></div>
+<div class="ttc" id="aclasspdg_1_1_spline_html"><div class="ttname"><a href="classpdg_1_1_spline.html">pdg::Spline</a></div><div class="ttdoc">Curved path defined by control points, supporting multiple spline types including cubic Bezier curves...</div><div class="ttdef"><b>Definition</b> pdg-js.h:2725</div></div>
 <div class="ttc" id="aclasspdg_1_1_spline_html_a1827840c8c6be34cc68d098a5051a24b"><div class="ttname"><a href="#a1827840c8c6be34cc68d098a5051a24b">pdg::Spline::addSegment</a></div><div class="ttdeci">addSegment(Point p1, Point p2, Point p3, Point p4)</div><div class="ttdoc">adds a spline segment with four control points</div></div>
 <div class="ttc" id="anamespacepdg_html"><div class="ttname"><a href="namespacepdg.html">pdg</a></div><div class="ttdef"><b>Definition</b> pdg-js.h:5</div></div>
 </div><!-- fragment --> </dd></dl>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+</div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a83da5d1a19ab523df07f7e83f491b122" name="a83da5d1a19ab523df07f7e83f491b122"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83da5d1a19ab523df07f7e83f491b122">&#9670;&#160;</a></span>Spline()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Spline </td>
+          <td>(</td>
+          <td class="paramtype">number</td>          <td class="paramname"><span class="paramname"><em>splineType</em></span><span class="paramdefsep"> = </span><span class="paramdefval">SPLINE_CUBIC_BEZIER</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a3e886ae3c8e2618fedf65722a5290e4d" name="a3e886ae3c8e2618fedf65722a5290e4d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3e886ae3c8e2618fedf65722a5290e4d">&#9670;&#160;</a></span>addPoint()</h2>
 

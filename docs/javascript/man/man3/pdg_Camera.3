@@ -1,0 +1,1845 @@
+.TH "Camera" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Camera \- \fBAnimated\fP view owned by a \fBPort\fP or shared by layers\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.PP
+Inherits \fBAnimated\fP, and \fBEventEmitter\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCamera\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBanimate\fP (number seconds)"
+.br
+.ti -1c
+.RI "\fBCamera\fP \fBclearViewBounds\fP ()"
+.br
+.RI "Disable visible-world bounds\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBcutTo\fP (\fBCamera\fP destination)"
+.br
+.RI "Schedule an atomic camera visibility and picking handoff\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBfadeIn\fP (number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Fade composed camera output to full opacity\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBfadeOut\fP (number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Fade composed camera output to zero opacity\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBfadeTo\fP (number opacity, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate composed camera output opacity\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBflash\fP (number opacity, number seconds, int easing=\fBeaseOutQuad\fP)"
+.br
+.RI "Flash white at the requested opacity, then fade to zero\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBfollow\fP (\fBAnimated\fP target)"
+.br
+.RI "Follow an \fBAnimated\fP target in world coordinates\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetDeadzone\fP ()"
+.br
+.RI "Read the following deadzone\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBgetEffects\fP ()"
+.br
+.RI "Access the camera-owned transient animation stage\&. "
+.ti -1c
+.RI "number \fBgetFlashOpacity\fP ()"
+.br
+.RI "Read the composited white flash opacity\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetFollowOffset\fP ()"
+.br
+.RI "Read the following target offset\&. "
+.ti -1c
+.RI "number \fBgetLookAhead\fP ()"
+.br
+.RI "Read the following prediction horizon\&. "
+.ti -1c
+.RI "number \fBgetOpacity\fP ()"
+.br
+.RI "Read composed camera output opacity\&. "
+.ti -1c
+.RI "boolean \fBgetPixelSnapping\fP ()"
+.br
+.ti -1c
+.RI "number \fBgetSmoothing\fP ()"
+.br
+.RI "Read the following smoothing time constant\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetViewBounds\fP ()"
+.br
+.RI "Read the stored visible-world bounds\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetViewport\fP ()"
+.br
+.RI "Read this \fBCamera\fP's destination rectangle\&. "
+.ti -1c
+.RI "number \fBgetZoom\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBhasViewBounds\fP ()"
+.br
+.RI "Test whether visible-world bounds are enabled\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBhide\fP ()"
+.br
+.RI "Hide camera output and picking\&. "
+.ti -1c
+.RI "boolean \fBisFollowing\fP ()"
+.br
+.RI "Test whether a live target owns camera position\&. "
+.ti -1c
+.RI "boolean \fBisHidden\fP ()"
+.br
+.RI "Read camera output visibility\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBlumaFadeTo\fP (\fBCamera\fP destination, number seconds, \fBImage\fP mask=null, number softness=0\&.1, boolean darkFirst=false, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Reveal a live destination using a frozen luminance mask\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBmatchCutTo\fP (\fBCamera\fP destination, \fBCameraMatchCutOptions\fP options)"
+.br
+.RI "Match two \fBSprite\fP compositions and preserve apparent motion across a hard cut\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBmatchFadeTo\fP (\fBCamera\fP destination, \fBCameraMatchFadeOptions\fP options)"
+.br
+.RI "Synchronize two \fBSprite\fP compositions, crossfade while matched, then settle\&. "
+.ti -1c
+.RI "\fBIEventHandler\fP \fBonZoomComplete\fP (function callback)"
+.br
+.RI "Listen for this camera's completed zoom operations\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetDeadzone\fP (\fBRect\fP bounds)"
+.br
+.RI "Set the following deadzone relative to camera focus\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetFollowOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "\fBOffset\fP the world-space point tracked by following\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetLookAhead\fP (number seconds)"
+.br
+.RI "Set velocity-based following prediction\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetOpacity\fP (number opacity)"
+.br
+.RI "Set composed camera output opacity\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetPixelSnapping\fP (boolean snap=true)"
+.br
+.RI "Round final view translation without rounding persistent camera pose\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetSmoothing\fP (number seconds)"
+.br
+.RI "Set the following smoothing time constant\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetViewBounds\fP (\fBRect\fP bounds)"
+.br
+.RI "Constrain the visible world footprint for each viewport\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetViewport\fP (\fBRect\fP viewport)"
+.br
+.RI "Set this \fBCamera\fP's destination rectangle within its \fBPort\fP\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBsetZoom\fP (number zoom)"
+.br
+.RI "Set view magnification immediately\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBshow\fP ()"
+.br
+.RI "Show the composed camera output\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBstopFollowing\fP ()"
+.br
+.RI "Release the following controller and retain the current pose\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBtransitionTo\fP (\fBCamera\fP destination, number seconds, int style=\fBcamera_Crossfade\fP, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Transition between two live camera scenes\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBviewToWorld\fP (\fBPoint\fP point)"
+.br
+.RI "Convert a centered viewport point into world coordinates\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBwhipPanTo\fP (\fBCamera\fP destination, number seconds, int style=\fBcamera_WhipLeft\fP, number blur=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Slide live camera outputs with optional directional motion blur\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBworldToView\fP (\fBPoint\fP point)"
+.br
+.RI "Convert a world point into a centered camera viewport\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBzoom\fP (number factor, number seconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate magnification by a positive multiplier\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBzoomTo\fP (number zoom, number seconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate view magnification\&. "
+.in -1c
+
+Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "\fBAnimated\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandAlso\fP ()"
+.br
+.RI "Join the following operand to the preceding parallel chain\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandThen\fP ()"
+.br
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
+.ti -1c
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
+.br
+.RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBbatch\fP ()"
+.br
+.RI "Open an anonymous animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
+.br
+.RI "Discard scheduled animations and pending sequencing\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBdiminish\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Reduce the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendBatch\fP ()"
+.br
+.RI "Close and select the innermost anonymous block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendOtherwise\fP ()"
+.br
+.RI "Close a conditional with an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendSeries\fP ()"
+.br
+.RI "Close and select the innermost series\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendWhen\fP ()"
+.br
+.RI "Close a conditional without an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipX\fP ()"
+.br
+.RI "Toggle the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipY\fP ()"
+.br
+.RI "Toggle the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
+.br
+.RI "Read axis-aligned logical bounds\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
+.br
+.RI "Read the rotation-center offset\&. "
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.RI "Read logical height\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.br
+.RI "Read the location in the container coordinate system\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.br
+.RI "Read the programmed movement rate\&. "
+.ti -1c
+.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
+.br
+.RI "Read rotated logical bounds\&. "
+.ti -1c
+.RI "number \fBgetRotation\fP ()"
+.br
+.RI "Read the current rotation in radians\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetScale\fP ()"
+.br
+.RI "Read independent transform scale\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetSize\fP ()"
+.br
+.RI "Read logical width and height\&. "
+.ti -1c
+.RI "number \fBgetSpin\fP ()"
+.br
+.RI "Read the programmed angular rate\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
+.br
+.RI "Read logical width and height change rates\&. "
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.RI "Read logical width\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBincrease\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "boolean \fBisFlippedX\fP ()"
+.br
+.RI "Read the x reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisFlippedY\fP ()"
+.br
+.RI "Read the y reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisSchedulePaused\fP ()"
+.br
+.RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBjumpToMark\fP (string name, boolean restoreState=true)"
+.br
+.RI "Continue execution at the operation following a mark\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmark\fP (string name, boolean saveState=true)"
+.br
+.RI "Create a named script location and optionally save state on arrival\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBon\fP (string event, function handler)"
+.br
+.RI "Observe a selected animation block's lifecycle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonFinished\fP (function handler)"
+.br
+.RI "Observe finished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonMark\fP (function handler)"
+.br
+.RI "Observe mark events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonRepeat\fP (function handler)"
+.br
+.RI "Observe repeat events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonScriptFinished\fP (function handler)"
+.br
+.RI "Observe scriptFinished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonStarted\fP (function handler)"
+.br
+.RI "Observe started events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonUntilFired\fP (function handler)"
+.br
+.RI "Observe untilFired events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonYoyo\fP (function handler)"
+.br
+.RI "Observe yoyo events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBotherwise\fP ()"
+.br
+.RI "Open the alternative of the innermost conditional\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseIt\fP ()"
+.br
+.RI "Pause the most recently selected animation element\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
+.br
+.RI "Pause scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBplayScript\fP (string name)"
+.br
+.RI "Instantiate a named animation script on this target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP (int additionalExecutions)"
+.br
+.RI "Repeat the preceding block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Change logical size by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrestartIt\fP ()"
+.br
+.RI "Restart the most recently selected animation element from its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeIt\fP ()"
+.br
+.RI "Resume the most recently selected paused animation element\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
+.br
+.RI "Resume scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate through a relative angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBseries\fP ()"
+.br
+.RI "Open a block whose successive operands wait for completion\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Set the rotation-center offset immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.br
+.RI "Set the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
+.br
+.RI "Set the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
+.br
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
+.br
+.RI "Set a constant programmed angular rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
+.br
+.RI "Set independent constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.br
+.RI "Set logical width immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBslowDown\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Divide the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBspeedUp\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstagger\fP (number intervalSeconds)"
+.br
+.RI "\fBOffset\fP the selected block's start across successive \fBTroupe\fP members\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopIt\fP ()"
+.br
+.RI "Stop the most recently selected animation element\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
+.br
+.RI "Stop all programmed changes to position\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
+.br
+.RI "Stop all programmed changes to rotation\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by independent factors\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBtriggerEvent\fP (string name)"
+.br
+.RI "Emit a custom named animation event or record an event step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBuntil\fP (function evaluator)"
+.br
+.RI "Finish the preceding block when its evaluator returns true\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
+.br
+.RI "Delay the next timed animation request\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwhen\fP (function evaluator)"
+.br
+.RI "Open a conditional animation branch\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fByoyo\fP ()"
+.br
+.RI "Play the preceding trajectory forward and back\&. "
+.in -1c
+
+Public Member Functions inherited from \fBEventEmitter\fP
+.in +1c
+.ti -1c
+.RI "\fBEventEmitter\fP ()"
+.br
+.ti -1c
+.RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
+.br
+.RI "add a new handler for some event type, or for all events if no type specified\&. "
+.ti -1c
+.RI "\fBblockEvent\fP (int inEventType)"
+.br
+.RI "temporarily ignore all events of a particular type\&. "
+.ti -1c
+.RI "\fBclear\fP ()"
+.br
+.RI "remove all handlers "
+.ti -1c
+.RI "\fBremoveHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
+.br
+.RI "remove a handler for some event type, or for all events (see note) if no type specified\&. "
+.ti -1c
+.RI "\fBunblockEvent\fP (int inEventType)"
+.br
+.RI "stop ignoring events of a particular type "
+.in -1c
+.SS "Additional Inherited Members"
+
+
+Static Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "static \fBAnimationScript\fP \fBdefineScript\fP (string name)"
+.br
+.RI "Create a library-owned named animation recorder\&. "
+.ti -1c
+.RI "static boolean \fBdeleteScript\fP (string name)"
+.br
+.RI "Remove a definition and release its memory in the shared script library\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBAnimated\fP view owned by a \fBPort\fP or shared by layers\&. 
+
+Scene-owned cameras advance on their scene clock\&. Layer overrides remain available; \fBScene\fP describes ownership and pause behavior\&.
+
+.PP
+See \fBCamera visibility, fades and transitions\fP for camera visibility, composed opacity, fades and crossfades\&.
+
+.PP
+\fBCamera\fP inherits \fBEventEmitter\fP event handling and \fBAnimated\fP movement, rotation, scale, reflection, pivots, helpers, timed chains and schedule controls\&. Moving its location right moves visible world content left\&. Rotation uses radians and is inverted in the view; zoom and scale magnify content\&. \fBCamera\fP size is animation metadata and does not resize a viewport\&. For a Port-owned camera, location + centerOffset maps to the \fBPort\fP anchor, in port coordinates\&. Anchors default to (0,0)\&. An explicit layer camera maps its focus to the center of its stored viewport\&.
+
+.PP
+A layer's explicit camera overrides its \fBScene\fP camera and port camera\&. Clearing the explicit camera restores inheritance from its \fBScene\fP, or from the current \fBPort\fP for a legacy layer\&. Every \fBPort\fP owns its camera\&. Attachments retain cameras; getCamera()/getEffectiveCamera() preserve shared JavaScript identity\&. Attached cameras advance once per runtime tick regardless of attachment count or whether a layer is paused or hidden\&. Scene-owned cameras advance on scene time and stop when their scene pauses\&. animate(seconds) additionally advances state, and is intended for manual/detached animation\&.
+
+.PP
+Direct \fBPort\fP Renderer drawing applies the camera once outside local \fBAttributes\fP transforms, including nested Drawings\&. Layers project sprites, Parts, particles and tiles through their effective camera once\&. \fBPort\fP clipping and clear operations remain in port coordinates\&. MVC Views automatically draw in screen space\&. For direct screen drawing, disable camera drawing temporarily and restore it in finally\&. \fBPort\fP conversions still use the camera while drawing is disabled\&.
+
+.PP
+\fBNote\fP
+.RS 4
+\fBPort\fP attachment and rendering require a graphics-capable build\&. \fBCamera\fP animation and explicit layer attachments also work headlessly\&. \fBCamera\fP zoom must stay finite and positive, and its view must have finite, nonzero scale\&.
+.RE
+.PP
+.PP
+.nf
+const camera = port\&.getCamera();
+port\&.setCameraAnchor(new pdg\&.Point(320, 240));
+const actors = pdg\&.createSpriteLayer(port);
+const background = pdg\&.createSpriteLayer(port);
+background\&.setCameraParallax(0\&.5, 0);
+camera\&.setLocation(100, 200)\&.zoomTo(2, 0\&.5, pdg\&.linearTween);
+// Both layers inherit camera; background ignores zoom and scrolls half as far\&.
+.fi
+.PP
+ 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Camera ()"
+
+.PP
+Referenced by \fBclearViewBounds()\fP, \fBcutTo()\fP, \fBfadeIn()\fP, \fBfadeOut()\fP, \fBfadeTo()\fP, \fBflash()\fP, \fBfollow()\fP, \fBgetEffects()\fP, \fBhide()\fP, \fBlumaFadeTo()\fP, \fBmatchCutTo()\fP, \fBmatchFadeTo()\fP, \fBsetDeadzone()\fP, \fBsetFollowOffset()\fP, \fBsetLookAhead()\fP, \fBsetOpacity()\fP, \fBsetPixelSnapping()\fP, \fBsetSmoothing()\fP, \fBsetViewBounds()\fP, \fBsetViewport()\fP, \fBsetZoom()\fP, \fBshow()\fP, \fBstopFollowing()\fP, \fBtransitionTo()\fP, \fBwhipPanTo()\fP, \fBzoom()\fP, and \fBzoomTo()\fP\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "boolean animate (number seconds)"
+
+.SS "\fBCamera\fP clearViewBounds ()"
+
+.PP
+Disable visible-world bounds\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP cutTo (\fBCamera\fP destination)"
+
+.PP
+Schedule an atomic camera visibility and picking handoff\&. Hide this camera and show the destination at the scheduled instant, without a blended frame\&. Position, zoom, opacity, animation and following remain unchanged\&. The cut is immediate unless delayed by \fBwait()\fP or placed after an operation using \fBandThen()\fP\&. A paused schedule delays execution; cancellation before execution leaves both cameras' visibility unchanged\&. Cancelling after execution does not undo the cut\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdestination\fP A distinct output \fBCamera\fP\&. It may use another viewport or \fBPort\fP, or be unattached; cuts also work in headless builds\&. Effects-stage cameras cannot participate\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+A pending cut retains the destination and reserves both cameras against other handoffs\&. Pending cuts cannot be serialized, repeated, reversed or replayed with \fBrestartIt()\fP; request a new cut after completion or cancellation\&. Removing either camera's last attachment cancels a pending cut\&. Unlike blended transitions, cuts do not require contiguous scene pairs or matching viewports\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+source\&.wait(0\&.5)\&.cutTo(destination);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBtransitionTo()\fP, \fBwait()\fP, \fBandThen()\fP, \fBcancelSchedule()\fP, \fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP fadeIn (number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Fade composed camera output to full opacity\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Equivalent to fadeTo(1, seconds, easing)\&. It preserves visibility: call \fBshow()\fP explicitly if the camera is hidden\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Registered easing constant\&. Defaults to linearTween\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBCamera\fP fadeOut (number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Fade composed camera output to zero opacity\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Equivalent to fadeTo(0, seconds, easing)\&. It does not hide the camera or stop its animation, following or layer simulation\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Registered easing constant\&. Defaults to linearTween\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBCamera\fP fadeTo (number opacity, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+Animate composed camera output opacity\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Uses the shared \fBAnimated\fP scheduler, including groups, \fBwait()\fP, \fBandThen()\fP, \fBpauseSchedule()\fP, \fBcancelSchedule()\fP and selected-operation playback controls\&. It does not automatically show or hide the camera\&. Zero duration applies immediately outside a timed sequence\&. \fBCamera\fP fades preserve sprite opacity and live scene animation\&. Scheduled fades and visibility survive \fBCamera\fP snapshots\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIopacity\fP Finite output opacity from zero to one\&. 
+.br
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Registered easing constant\&. Defaults to linearTween\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Keep this camera's layers contiguous in drawing order\&. Runtime frames own compositing\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBCamera\fP flash (number opacity, number seconds, int easing = \fR\fBeaseOutQuad\fP\fP)"
+
+.PP
+Flash white at the requested opacity, then fade to zero\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIopacity\fP Finite starting opacity from zero to one\&. 
+.br
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Easing function for fading to zero, default easeOutQuad\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. At the operation start, sets the white overlay to opacity and fades it to zero over seconds\&. Supports \fBwait()\fP, \fBandThen()\fP, groups, modifiers and selected-operation controls\&. Rendering includes the overlay automatically once in the camera image, clipped to its viewport, before camera output opacity and transitions\&. Screen-space UI drawn after the scene remains above it\&. \fBAnimationScript\fP does not expose flash commands\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, and \fBpdg::easeOutQuad\fP\&.
+.SS "\fBCamera\fP follow (\fBAnimated\fP target)"
+
+.PP
+Follow an \fBAnimated\fP target in world coordinates\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItarget\fP Live \fBAnimated\fP target\&. The camera holds a checked weak reference; the application or scene keeps it alive\&. Destruction safely ends following\&. Self-following and cycles throw\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. Following takes ownership of position and cancels scheduled position/rate changes\&. Manual position or movement commands take ownership back and stop following\&. Rotation, zoom and the transient effects stage remain independent\&. Follow configuration survives \fBstopFollowing()\fP\&. Active target references are runtime resources: stop following before creating a portable snapshot\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBAnimated::Animated()\fP, and \fBCamera()\fP\&.
+.SS "\fBRect\fP getDeadzone ()"
+
+.PP
+Read the following deadzone\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A copy of the rectangle of world-space offsets\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "\fBCamera\fP getEffects ()"
+
+.PP
+Access the camera-owned transient animation stage\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The same retained \fBCamera\fP stage on repeated calls\&. C++ returns a borrowed reference; JavaScript receives a retained handle\&. The owner advances this stage once on each \fBanimate()\fP call\&. It cannot be attached to a port/layer or own nested effects\&. Play ordinary scripts here to preserve controller position\&. The stage is composed into rendering around the view anchor before bounds and pixel snapping\&. Its script controls operate independently; do not additionally animate it while its owner is updating\&. Its native playback state is included in camera snapshots\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "number getFlashOpacity ()"
+
+.PP
+Read the composited white flash opacity\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Opacity from zero to one, combining the camera and its effects stage\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "\fBOffset\fP getFollowOffset ()"
+
+.PP
+Read the following target offset\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A copy of the world-space offset\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "number getLookAhead ()"
+
+.PP
+Read the following prediction horizon\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Seconds; zero disables prediction\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "number getOpacity ()"
+
+.PP
+Read composed camera output opacity\&. Returns a value from zero to one; initially one\&. Hidden cameras retain their opacity\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Current output opacity from zero to one\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.SS "boolean getPixelSnapping ()"
+
+.SS "number getSmoothing ()"
+
+.PP
+Read the following smoothing time constant\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Seconds; zero means immediate tracking\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "\fBRect\fP getViewBounds ()"
+
+.PP
+Read the stored visible-world bounds\&. 
+.PP
+\fBReturns\fP
+.RS 4
+A copy of the world rectangle; use \fBhasViewBounds()\fP to test whether it applies\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "\fBRect\fP getViewport ()"
+
+.PP
+Read this \fBCamera\fP's destination rectangle\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The viewport in port coordinates; a Port-owned camera tracks the \fBPort\fP's drawing area, including resizing\&. An unattached camera has an empty viewport until \fBsetViewport()\fP is called\&. 
+.RE
+.PP
+
+.SS "number getZoom ()"
+
+.SS "boolean hasViewBounds ()"
+
+.PP
+Test whether visible-world bounds are enabled\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True when \fBsetViewBounds()\fP has enabled clamping\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "\fBCamera\fP hide ()"
+
+.PP
+Hide camera output and picking\&. This leaves animation, following and layer physics running\&. Showing the camera later retains the current animation state and opacity\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "boolean isFollowing ()"
+
+.PP
+Test whether a live target owns camera position\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True while following a live target, otherwise false\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "boolean isHidden ()"
+
+.PP
+Read camera output visibility\&. Visibility is independent of layer visibility and camera opacity\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+True when output is hidden, otherwise false\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.SS "\fBCamera\fP lumaFadeTo (\fBCamera\fP destination, number seconds, \fBImage\fP mask = \fRnull\fP, number softness = \fR0\&.1\fP, boolean darkFirst = \fRfalse\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Reveal a live destination using a frozen luminance mask\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The mask stretches to the common viewport using nearest sampling\&. Luminance is computed from straight RGB in linear color space; fully transparent pixels have zero luminance\&. The mask is frozen at the first rendered transition frame, while both scene images remain live\&. Without an explicit mask, that first source-camera image supplies it\&. Supplied images are retained until completion or cancellation\&. On resize, the frozen mask stretches to the new viewport\&. Progress endpoints show the complete source and destination even for uniform black or white masks\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdestination\fP Distinct camera attached to the same \fBPort\fP with the same nonempty viewport\&. 
+.br
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fImask\fP Optional \fBImage\fP, or null to derive the mask from the initial source output\&. 
+.br
+\fIsoftness\fP Reveal-band width in linear luminance units, from 0 to 1; defaults to 0\&.1\&. Zero gives a hard edge\&. 
+.br
+\fIdarkFirst\fP False reveals bright pixels first; true reveals dark pixels first\&. 
+.br
+\fIeasing\fP Easing function; defaults to easeInOutQuad\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+\fBScene\fP layers must remain contiguous\&. The source receives picking throughout the transition; completion hides it and shows the destination\&. Shared transition pause, queue, cancellation and snapshot restrictions apply\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+source\&.lumaFadeTo(destination, 1\&.0, null, 0\&.15, false, pdg\&.linearTween);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBtransitionTo()\fP, \fBwhipPanTo()\fP, \fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, and \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBCamera\fP matchCutTo (\fBCamera\fP destination, \fBCameraMatchCutOptions\fP options)"
+
+.PP
+Match two \fBSprite\fP compositions and preserve apparent motion across a hard cut\&. The mode names the reference shot and whether to match size\&. During the approach, \fRmode: \fBpdg\&.matchSource\fP\fP preserves the outgoing shot and aligns the hidden incoming camera so matchTarget reaches matchSource's live \fBPort\fP position\&. \fRmode: \fBpdg\&.matchTarget\fP\fP eases the outgoing camera so matchSource reaches matchTarget's live \fBPort\fP position\&. At the cut the engine matches projected bounds centers, apparent velocity and, with an AndSize mode, apparent size and its rate of change\&. Size means the largest dimension of the projected \fBSprite\fP bounds; rotation and aspect ratio are preserved\&.
+
+.PP
+The source schedule owns the approach and settling phases\&. Both cameras remain reserved until settling finishes; \fBandThen()\fP starts its successor afterward\&. Visibility and picking switch at the approach boundary\&. \fBwait()\fP, \fBpauseSchedule()\fP, \fBresumeSchedule()\fP, \fBcancelSchedule()\fP and \fBstopIt()\fP apply to the whole operation\&. Cancellation before the cut removes matching adjustments and restores visibility\&. Cancellation after the cut retains the incoming view at its current framing\&. Removed/reassigned subjects or detached cameras cancel safely\&. Pending operations retain the destination, check \fBSprite\fP lifetimes and cannot be saved as snapshots, repeated, reversed or restarted\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdestination\fP Incoming camera, retained until completion or cancellation\&. 
+.br
+\fIoptions\fP Matching settings described below\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This source camera for chaining\&.
+.RE
+.PP
+ 
+.PP
+\fBMatching options\fP
+.RS 4
+
+.RE
+.PP
+Field  Default  Meaning  matchSource  Required  \fBSprite\fP belonging to the source camera\&.  matchTarget  Required  Distinct \fBSprite\fP belonging to the destination camera\&.  mode  matchSource  \fBCamera\fP matching enum; see the four modes below\&.  approachSeconds  0\&.4  Finite positive time to synchronize the scenes before the cut or fade\&.  settleSeconds  0\&.4  Finite positive time to ease out inherited camera motion after the cut or fade\&.  settleReturnsCamera  false  Retain the matched framing and deceleration travel\&. Set true to restore the incoming base framing/zoom or its live following view\&.  approachEasing  easeInQuad  Registered monotonic easing with zero/one endpoints\&.  settleEasing  easeOutQuad  Registered monotonic easing controlling the decay of extra motion\&.  
+
+.PP
+Mode  Behavior  \fBpdg\&.matchSource\fP  Preserve the source shot; align the incoming camera's position and apparent motion without adjusting zoom\&.  \fBpdg\&.matchSourceAndSize\fP  Match the source shot, also matching apparent size and its rate using zoom\&.  \fBpdg\&.matchTarget\fP  Move the outgoing camera toward the target shot without adjusting zoom\&.  \fBpdg\&.matchTargetAndSize\fP  Approach the target shot's position and size; carry apparent motion and size rate through the cut\&.  
+
+.PP
+
+.PP
+Following and independent camera effects continue\&. Keeping matched framing also retains the resulting following offset\&. Matching corrections compose with the camera's live base position and zoom; settleReturnsCamera removes those corrections at completion\&. The matchSource and matchTarget modes leave zoom unchanged\&. \fBgetLocation()\fP and \fBgetZoom()\fP expose the base pose while temporary matching corrections are active; layer coordinate conversions include those corrections\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Requires graphics, Sprites on layers sharing a \fBPort\fP and identical nonempty camera viewports\&. Translation parallax must be nonzero; zoom matching also needs nonzero zoom parallax and nonempty projected bounds\&. Pixel snapping and view-bounds clamping are unsupported for either matched camera\&. Use logical \fBSprite\fP bounds that describe the artwork being matched\&. Overshooting or reversing easings throw\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+// Source and target Sprites belong to the respective cameras on the same Port\&.
+sourceCamera\&.matchCutTo(destinationCamera, {
+    matchSource: sourceSprite,
+    matchTarget: targetSprite,
+    mode: pdg\&.matchSourceAndSize,
+    settleReturnsCamera: true,
+    approachSeconds: 0\&.4,
+    settleSeconds: 0\&.6
+});
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBcutTo()\fP, \fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP matchFadeTo (\fBCamera\fP destination, \fBCameraMatchFadeOptions\fP options)"
+
+.PP
+Synchronize two \fBSprite\fP compositions, crossfade while matched, then settle\&. Uses the modes and matching settings in \fBcamera_match_options\fP\&. After the approach synchronizes the scenes, both live scenes crossfade\&. Their \fBSprite\fP bounds centers remain aligned throughout the blend; AndSize modes also maintain equal projected bounds size\&. The outgoing camera carries its approach motion through the fade\&. At the fade endpoint the destination inherits apparent motion and settles with the same behavior as \fBmatchCutTo()\fP\&. Following, \fBSprite\fP motion and camera effects continue during all three phases\&.
+
+.PP
+The source schedule owns approach, fade and settling\&. Both cameras remain reserved until settling finishes; \fBandThen()\fP follows all three phases\&. Picking uses the source during the fade and switches to the destination when fading ends\&. Pausing freezes the operation\&. Cancellation during approach or fade restores original visibility and removes matching corrections; cancellation during settling retains the incoming framing\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdestination\fP Incoming camera, retained until completion or cancellation\&. 
+.br
+\fIoptions\fP All settings in \fBcamera_match_options\fP, plus the fade settings below\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This source camera for chaining\&.
+.RE
+.PP
+ 
+.PP
+\fBAdditional matched-fade options\fP
+.RS 4
+
+.RE
+.PP
+Field  Default  Meaning  fadeSeconds  0\&.4  Finite positive blend duration in seconds, between approach and settling\&.  fadeEasing  linearTween  Registered monotonic easing with zero/one endpoints controlling the blend\&.  
+
+.PP
+
+.PP
+\fBNote\fP
+.RS 4
+Requires the same \fBSprite\fP, \fBPort\fP, viewport and parallax setup as \fBmatchCutTo()\fP\&. Each camera's layers must form a contiguous scene on their shared \fBPort\fP, as for \fBtransitionTo()\fP\&. Interleaved scenes and unrelated layers between the scenes throw\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+// These Sprites belong to the two cameras on the same Port\&.
+sourceCamera\&.matchFadeTo(destinationCamera, {
+    matchSource: sourceSprite,
+    matchTarget: targetSprite,
+    mode: pdg\&.matchSourceAndSize,
+    approachSeconds: 0\&.4,
+    fadeSeconds: 0\&.6,
+    settleSeconds: 0\&.4
+});
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBmatchCutTo()\fP, \fBtransitionTo()\fP, \fBcamera_match_options\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBIEventHandler\fP onZoomComplete (function callback)"
+
+.PP
+Listen for this camera's completed zoom operations\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBCameraZoomEventCallback\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIcallback\fP Function called synchronously with a CameraZoomInfo event\&. Its fields are camera, zoom (completed magnification), emitter (the camera), and eventType (eventType_ZoomComplete)\&. Return false to allow other handlers to run, or true to mark the event handled\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Handler with cancel() to remove this subscription\&.
+.RE
+.PP
+Both \fBzoom()\fP and \fBzoomTo()\fP emit once per completed operation\&. Zero-duration operations emit synchronously unless queued or delayed; queued operations emit when advanced\&. Cancelled or replaced operations and \fBsetZoom()\fP do not emit\&. A shared camera emits once, independently of its number of attachments\&. Schedule pause delays completion\&. Restored scheduled operations emit on the restored camera; event handlers must be registered again after loading\&. Use camera\&.addHandler(handler, \fBpdg\&.eventType_ZoomComplete\fP) to listen with an \fBIEventHandler\fP directly\&. Completion belongs to \fBCamera\fP, replacing the former \fBSpriteLayer\fP action_ZoomComplete event and layer\&.onZoomComplete()\&. 
+.PP
+.nf
+const subscription = camera\&.onZoomComplete(function(event) {
+    console\&.log('Zoom completed at', event\&.zoom);
+    return false;
+});
+camera\&.zoomTo(2, 0\&.5);
+// Later: subscription\&.cancel();
+
+.fi
+.PP
+ 
+.SS "\fBCamera\fP setDeadzone (\fBRect\fP bounds)"
+
+.PP
+Set the following deadzone relative to camera focus\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbounds\fP Finite ordered world-space offsets from location plus centerOffset\&. A zero rectangle tracks the target directly\&. The camera moves only the excess outside this rectangle, after applying prediction and follow offset\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP setFollowOffset (\fBOffset\fP offset)"
+
+.PP
+\fBOffset\fP the world-space point tracked by following\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIoffset\fP Finite horizontal and vertical offsets; initially zero\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP setLookAhead (number seconds)"
+
+.PP
+Set velocity-based following prediction\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIseconds\fP Finite nonnegative prediction horizon in seconds, initially zero\&. Velocity comes from successive observed target positions and the owner update interval\&. Teleports therefore affect prediction; \fBstopFollowing()\fP\&.follow(target) resets the sample\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP setOpacity (number opacity)"
+
+.PP
+Set composed camera output opacity\&. Initially one\&. This changes the complete camera image, including flashes, without editing sprite or particle opacity\&. Overlapping artwork keeps its appearance\&. Newly added contents inherit the camera output opacity automatically\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIopacity\fP Finite output opacity from zero to one\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Keep this camera's layers contiguous in drawing order\&. Runtime frames own compositing\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP setPixelSnapping (boolean snap = \fRtrue\fP)"
+
+.PP
+Round final view translation without rounding persistent camera pose\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsnap\fP Enable snapping; initially false on a new camera\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP setSmoothing (number seconds)"
+
+.PP
+Set the following smoothing time constant\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIseconds\fP Finite nonnegative seconds, initially zero for immediate tracking\&. Positive values use exponential smoothing with weight 1-exp(-deltaSeconds/seconds)\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP setViewBounds (\fBRect\fP bounds)"
+
+.PP
+Constrain the visible world footprint for each viewport\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbounds\fP Finite ordered world rectangle\&. Initially disabled\&. Clamping uses the inverse-transformed viewport corners, including rotation, zoom and effects\&. If a footprint is larger than its bounds, center it on that axis\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. Changes the rendered view without rewriting the persistent camera pose\&. A shared camera is clamped separately for each attachment or split-screen viewport\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP setViewport (\fBRect\fP viewport)"
+
+.PP
+Set this \fBCamera\fP's destination rectangle within its \fBPort\fP\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIviewport\fP Finite nonempty rectangle in port coordinates\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. Layer content, coordinate conversions, bounds constraints and flash overlays use this viewport\&. A Port-owned camera always covers the full \fBPort\fP; setting its viewport throws\&. An explicit layer camera defaults to the full \fBPort\fP when first attached\&. Multiple layers may share one camera and viewport\&. 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP setZoom (number zoom)"
+
+.PP
+Set view magnification immediately\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIzoom\fP Finite positive factor; 2 doubles apparent content size\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. Initial zoom is 1\&. Zoom multiplies \fBAnimated\fP scale without changing viewport size\&. Invalid zoom and immediate operations in a timed sequence throw\&. 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, and \fBzoom()\fP\&.
+.SS "\fBCamera\fP show ()"
+
+.PP
+Show the composed camera output\&. Hidden cameras continue animating and following\&. Showing a camera preserves its opacity\&. Hidden cameras do not receive sprite picking\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP stopFollowing ()"
+
+.PP
+Release the following controller and retain the current pose\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP\&.
+.SS "\fBCamera\fP transitionTo (\fBCamera\fP destination, number seconds, int style = \fR\fBcamera_Crossfade\fP\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Transition between two live camera scenes\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+For crossfades, the engine interpolates the premultiplied complete scene images, including their own opacity and flash effects\&. It does not fade individual sprites or independently source-over two weighted scenes\&. Wipes partition the viewport between the two scene images, retaining full source opacity on the unrevealed side and destination opacity on the revealed side\&. Both scenes stay live\&. At completion the source becomes hidden and the destination becomes visible; their opacity values are unchanged\&. The source receives picking during the transition, and the destination receives it after completion\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdestination\fP Retained destination camera rendering into the same \fBPort\fP and viewport\&. 
+.br
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIstyle\fP camera_Crossfade (default), camera_WipeLeft, camera_WipeRight, camera_WipeUp, camera_WipeDown, camera_LumaFade or camera_WhipLeft/Right/Up/Down\&. Luma and whip styles use default settings; use \fBlumaFadeTo()\fP or \fBwhipPanTo()\fP to customize them\&. 
+.br
+\fIeasing\fP Registered easing constant\&. Defaults to easeInOutQuad\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Keep this camera's layers contiguous in drawing order\&. Runtime frames own compositing\&.
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+// sourceWorld and destinationWorld are layers attached to the same port\&.
+const bounds = port\&.getDrawingArea();
+const source = new pdg\&.Camera()\&.setViewport(bounds);
+const destination = new pdg\&.Camera()\&.setViewport(bounds)\&.hide();
+sourceWorld\&.setCamera(source);
+destinationWorld\&.setCamera(destination);
+source\&.transitionTo(destination, 0\&.75, pdg\&.camera_Crossfade,
+                    pdg\&.easeInOutQuad);
+// To reveal from the bottom instead, choose pdg\&.camera_WipeUp\&.
+// Runtime frames advance the transition and switch visibility on completion\&.
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, \fBpdg::camera_Crossfade\fP, and \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBPoint\fP viewToWorld (\fBPoint\fP point)"
+
+.PP
+Convert a centered viewport point into world coordinates\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoint\fP Destination port coordinates, such as a pointer position\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The inverse-transformed world point\&. Route pointer input by viewport, then use this conversion for hit testing\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "\fBCamera\fP whipPanTo (\fBCamera\fP destination, number seconds, int style = \fR\fBcamera_WhipLeft\fP\fP, number blur = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Slide live camera outputs with optional directional motion blur\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The source slides out and the destination enters from the opposite edge\&. Offsets belong to composition: persistent camera location, following and parallax are unchanged\&. \fBCamera\fP opacity remains independent for each scene, and all samples clip to the common viewport\&. Blur averages eight nearby progress samples, with its spread fading to zero at the endpoints\&. The reference speed is one viewport per 0\&.65 seconds: halving the duration doubles blur spread, and doubling the duration halves it\&. Zero blur uses one sample\&. Both scenes continue rendering live; at completion the source hides and the destination shows\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdestination\fP Distinct camera attached to the same \fBPort\fP with the same nonempty viewport\&. 
+.br
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIstyle\fP camera_WhipLeft (default), camera_WhipRight, camera_WhipUp or camera_WhipDown; names describe source travel\&. 
+.br
+\fIblur\fP Strength from 0 to 1, default 0\&. At the reference duration of 0\&.65 seconds, maximum sample spread is 15 percent of the viewport extent times this strength\&. Spread scales by 0\&.65 / seconds and is capped at one viewport extent for very fast pans\&. 
+.br
+\fIeasing\fP Easing function; defaults to easeInOutQuad\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+The source receives picking until completion\&. Shared transition ordering, pause, cancellation and snapshot restrictions apply\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+source\&.whipPanTo(destination, 0\&.4, pdg\&.camera_WhipLeft, 0\&.7);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBtransitionTo()\fP, \fBlumaFadeTo()\fP, \fBCamera visibility, fades and transitions\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, \fBpdg::camera_WhipLeft\fP, and \fBpdg::easeInOutQuad\fP\&.
+.SS "\fBPoint\fP worldToView (\fBPoint\fP point)"
+
+.PP
+Convert a world point into a centered camera viewport\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoint\fP World coordinates\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The port-coordinate point including effects, bounds and pixel snapping\&. Uses the stored viewport\&. Port-owned cameras use the \fBPort\fP anchor; explicit layer cameras center the view in their viewport\&. For layer parallax, use the layer conversion APIs\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBCamera following, effects and split-screen\fP 
+.RE
+.PP
+
+.SS "\fBCamera\fP zoom (number factor, number seconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate magnification by a positive multiplier\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIfactor\fP Finite positive multiplier\&. 2 doubles zoom; 0\&.5 halves it\&. 
+.br
+\fIseconds\fP Finite nonnegative duration in seconds\&. 
+.br
+\fIeasing\fP Easing constant; defaults to easeInOutQuad\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&.
+.RE
+.PP
+Queued multipliers use the zoom at the start of the operation\&. Emits eventType_ZoomComplete when completed, just like \fBzoomTo()\fP\&. 
+.PP
+.nf
+camera\&.zoomTo(2, 0\&.5)\&.andThen()\&.zoom(0\&.5, 0\&.5); // ends at zoom 1
+
+.fi
+.PP
+ 
+.PP
+References \fBCamera()\fP, and \fBpdg::easeInOutQuad\fP\&.
+.PP
+Referenced by \fBsetZoom()\fP, and \fBzoomTo()\fP\&.
+.SS "\fBCamera\fP zoomTo (number zoom, number seconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+
+.PP
+Animate view magnification\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIzoom\fP Finite positive target factor\&. 
+.br
+\fIseconds\fP Finite nonnegative duration in seconds; zero applies immediately\&. 
+.br
+\fIeasing\fP Registered easing constant; defaults to easeInOutQuad\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This camera for chaining\&. Participates in \fBwait()\fP, \fBandThen()\fP, cancellation and schedule pause/resume\&. Emits eventType_ZoomComplete on this camera; subscribe with \fBonZoomComplete()\fP\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBonZoomComplete()\fP 
+.RE
+.PP
+
+.PP
+References \fBCamera()\fP, \fBpdg::easeInOutQuad\fP, and \fBzoom()\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

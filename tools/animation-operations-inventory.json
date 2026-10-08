@@ -1,0 +1,2161 @@
+[
+  {
+    "class": "Bone",
+    "name": "diminish",
+    "params": [
+      {
+        "type": "float",
+        "name": "influence",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Bone",
+    "name": "setIKLimits",
+    "params": [
+      {
+        "type": "double",
+        "name": "minimum",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "maximum",
+        "default": ""
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Bone",
+    "name": "setIKLimits",
+    "params": [
+      {
+        "type": "PhysicsConstraint&",
+        "name": "constraint",
+        "default": ""
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Bone",
+    "name": "clearIKLimits",
+    "params": [],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Camera",
+    "name": "follow",
+    "params": [
+      {
+        "type": "AnimatedBase&",
+        "name": "target",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "stopFollowing",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setSmoothing",
+    "params": [
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setLookAhead",
+    "params": [
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setDeadzone",
+    "params": [
+      {
+        "type": "const Rect&",
+        "name": "bounds",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setFollowOffset",
+    "params": [
+      {
+        "type": "const Offset&",
+        "name": "offset",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setViewBounds",
+    "params": [
+      {
+        "type": "const Rect&",
+        "name": "bounds",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "clearViewBounds",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setViewport",
+    "params": [
+      {
+        "type": "const Rect&",
+        "name": "viewport",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setZoom",
+    "params": [
+      {
+        "type": "float",
+        "name": "zoom",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "zoomTo",
+    "params": [
+      {
+        "type": "float",
+        "name": "zoom",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "easeInOutQuad"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "zoom",
+    "params": [
+      {
+        "type": "float",
+        "name": "factor",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "easeInOutQuad"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setPixelSnapping",
+    "params": [
+      {
+        "type": "bool",
+        "name": "snap",
+        "default": "true"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "flash",
+    "params": [
+      {
+        "type": "float",
+        "name": "opacity",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "easeOutQuad"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "show",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "hide",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "setOpacity",
+    "params": [
+      {
+        "type": "float",
+        "name": "opacity",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "fadeTo",
+    "params": [
+      {
+        "type": "float",
+        "name": "opacity",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "fadeIn",
+    "params": [
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "fadeOut",
+    "params": [
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "cutTo",
+    "params": [
+      {
+        "type": "Camera&",
+        "name": "destination",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "matchCutTo",
+    "params": [
+      {
+        "type": "Camera&",
+        "name": "destination",
+        "default": ""
+      },
+      {
+        "type": "const CameraMatchOptions&",
+        "name": "options",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "matchFadeTo",
+    "params": [
+      {
+        "type": "Camera&",
+        "name": "destination",
+        "default": ""
+      },
+      {
+        "type": "const CameraMatchOptions&",
+        "name": "options",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "transitionTo",
+    "params": [
+      {
+        "type": "Camera&",
+        "name": "destination",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "int",
+        "name": "style",
+        "default": "camera_Crossfade"
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "easeInOutQuad"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "lumaFadeTo",
+    "params": [
+      {
+        "type": "Camera&",
+        "name": "destination",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "Image*",
+        "name": "mask",
+        "default": "nullptr"
+      },
+      {
+        "type": "float",
+        "name": "softness",
+        "default": ".1f"
+      },
+      {
+        "type": "bool",
+        "name": "darkFirst",
+        "default": "false"
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "easeInOutQuad"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Camera",
+    "name": "whipPanTo",
+    "params": [
+      {
+        "type": "Camera&",
+        "name": "destination",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "int",
+        "name": "style",
+        "default": "camera_WhipLeft"
+      },
+      {
+        "type": "float",
+        "name": "blur",
+        "default": "0"
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "easeInOutQuad"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "setFrame",
+    "params": [
+      {
+        "type": "int",
+        "name": "frame",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "setWantsAnimLoopEvents",
+    "params": [
+      {
+        "type": "bool",
+        "name": "wantsThem",
+        "default": "true"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "setWantsAnimEndEvents",
+    "params": [
+      {
+        "type": "bool",
+        "name": "wantsThem",
+        "default": "true"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "setupPhysicsFromAnimationRig",
+    "params": [
+      {
+        "type": "double",
+        "name": "totalMass",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "unitsPerMeter",
+        "default": "1"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "attachAnimationPhysicsPart",
+    "params": [
+      {
+        "type": "Part*",
+        "name": "part",
+        "default": ""
+      },
+      {
+        "type": "Part*",
+        "name": "parent",
+        "default": "nullptr"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "detachAnimationPhysicsPart",
+    "params": [
+      {
+        "type": "Part*",
+        "name": "part",
+        "default": ""
+      },
+      {
+        "type": "bool",
+        "name": "includeDescendants",
+        "default": "true"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setAnimationPhysicsRoot",
+    "params": [
+      {
+        "type": "AnimationBoneId",
+        "name": "bone",
+        "default": ""
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setAnimationPhysicsRoot",
+    "params": [
+      {
+        "type": "const char*",
+        "name": "bone",
+        "default": ""
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "clearAnimationPhysicsRoot",
+    "params": [],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setAnimationPhysicsMode",
+    "params": [
+      {
+        "type": "int",
+        "name": "mode",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "recoveryTime",
+        "default": "0.5"
+      },
+      {
+        "type": "int",
+        "name": "direction",
+        "default": "rotationDirection_AsSpecified"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setAnimationPhysicsMode",
+    "params": [
+      {
+        "type": "int",
+        "name": "mode",
+        "default": ""
+      },
+      {
+        "type": "AnimationBoneId",
+        "name": "bone",
+        "default": ""
+      },
+      {
+        "type": "bool",
+        "name": "includeDescendants",
+        "default": "false"
+      },
+      {
+        "type": "double",
+        "name": "recoveryTime",
+        "default": "0.5"
+      },
+      {
+        "type": "int",
+        "name": "direction",
+        "default": "rotationDirection_AsSpecified"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setAnimationPhysicsMode",
+    "params": [
+      {
+        "type": "int",
+        "name": "mode",
+        "default": ""
+      },
+      {
+        "type": "const char*",
+        "name": "bone",
+        "default": ""
+      },
+      {
+        "type": "bool",
+        "name": "includeDescendants",
+        "default": "false"
+      },
+      {
+        "type": "double",
+        "name": "recoveryTime",
+        "default": "0.5"
+      },
+      {
+        "type": "int",
+        "name": "direction",
+        "default": "rotationDirection_AsSpecified"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setAnimationPhysicsDriveSettings",
+    "params": [
+      {
+        "type": "const AnimationPhysicsDriveSettings&",
+        "name": "settings",
+        "default": ""
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setAnimationPhysicsDriveSettings",
+    "params": [
+      {
+        "type": "const AnimationPhysicsDriveSettings&",
+        "name": "settings",
+        "default": ""
+      },
+      {
+        "type": "AnimationBoneId",
+        "name": "bone",
+        "default": ""
+      },
+      {
+        "type": "bool",
+        "name": "includeDescendants",
+        "default": "false"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setAnimationPhysicsDriveSettings",
+    "params": [
+      {
+        "type": "const AnimationPhysicsDriveSettings&",
+        "name": "settings",
+        "default": ""
+      },
+      {
+        "type": "const char*",
+        "name": "bone",
+        "default": ""
+      },
+      {
+        "type": "bool",
+        "name": "includeDescendants",
+        "default": "false"
+      }
+    ],
+    "guards": [
+      "#ifdef PDG_SPRITER_SUPPORT"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setOpacity",
+    "params": [
+      {
+        "type": "float",
+        "name": "opacity",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "fadeTo",
+    "params": [
+      {
+        "type": "float",
+        "name": "targetOpacity",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "durationSeconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "fadeIn",
+    "params": [
+      {
+        "type": "double",
+        "name": "durationSeconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "fadeOut",
+    "params": [
+      {
+        "type": "double",
+        "name": "durationSeconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "moveBehind",
+    "params": [
+      {
+        "type": "Sprite*",
+        "name": "sprite",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "moveInFrontOf",
+    "params": [
+      {
+        "type": "Sprite*",
+        "name": "sprite",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "moveToFront",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "moveToBack",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "setWantsCollideWallEvents",
+    "params": [
+      {
+        "type": "bool",
+        "name": "wantsThem",
+        "default": "true"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "setFrameCollisionMask",
+    "params": [
+      {
+        "type": "Image*",
+        "name": "frameImage",
+        "default": ""
+      },
+      {
+        "type": "Image*",
+        "name": "maskImage",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Sprite",
+    "name": "setWantsMouseOverEvents",
+    "params": [
+      {
+        "type": "bool",
+        "name": "wantsThem",
+        "default": "true"
+      }
+    ],
+    "guards": [
+      "#ifndef PDG_NO_GUI"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setWantsClickEvents",
+    "params": [
+      {
+        "type": "bool",
+        "name": "wantsThem",
+        "default": "true"
+      }
+    ],
+    "guards": [
+      "#ifndef PDG_NO_GUI"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setMouseDetectMode",
+    "params": [
+      {
+        "type": "int",
+        "name": "collisionType",
+        "default": "collide_BoundingBox"
+      }
+    ],
+    "guards": [
+      "#ifndef PDG_NO_GUI"
+    ]
+  },
+  {
+    "class": "Sprite",
+    "name": "setWantsOffscreenEvents",
+    "params": [
+      {
+        "type": "bool",
+        "name": "wantsThem",
+        "default": "true"
+      }
+    ],
+    "guards": [
+      "#ifndef PDG_NO_GUI"
+    ]
+  },
+  {
+    "class": "Part",
+    "name": "bindToBone",
+    "params": [
+      {
+        "type": "BoneId",
+        "name": "bone",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "unbindFromBone",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "bindToAnimationBinding",
+    "params": [
+      {
+        "type": "const std::string&",
+        "name": "name",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "bindToAnimationSocket",
+    "params": [
+      {
+        "type": "const std::string&",
+        "name": "name",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "setDrawing",
+    "params": [
+      {
+        "type": "const Drawing&",
+        "name": "drawing",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "setImage",
+    "params": [
+      {
+        "type": "const Image&",
+        "name": "image",
+        "default": ""
+      },
+      {
+        "type": "const Rect&",
+        "name": "localBounds",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "clearContent",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "setIKTarget",
+    "params": [
+      {
+        "type": "Part*",
+        "name": "middle",
+        "default": ""
+      },
+      {
+        "type": "Part*",
+        "name": "tip",
+        "default": ""
+      },
+      {
+        "type": "const Point&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "int",
+        "name": "space",
+        "default": "partSpace_World"
+      },
+      {
+        "type": "int",
+        "name": "bendDirection",
+        "default": "1"
+      },
+      {
+        "type": "double",
+        "name": "influence",
+        "default": "1"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "clearIKTarget",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "setIKLimits",
+    "params": [
+      {
+        "type": "double",
+        "name": "minAngle",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "maxAngle",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "setIKLimits",
+    "params": [
+      {
+        "type": "PhysicsConstraint&",
+        "name": "constraint",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "clearIKLimits",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "setIKDriveTarget",
+    "params": [
+      {
+        "type": "Part*",
+        "name": "middle",
+        "default": ""
+      },
+      {
+        "type": "Part*",
+        "name": "tip",
+        "default": ""
+      },
+      {
+        "type": "const Point&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "maxForce",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "maxTorque",
+        "default": ""
+      },
+      {
+        "type": "int",
+        "name": "space",
+        "default": "partSpace_World"
+      },
+      {
+        "type": "int",
+        "name": "bendDirection",
+        "default": "1"
+      },
+      {
+        "type": "double",
+        "name": "influence",
+        "default": "1"
+      },
+      {
+        "type": "double",
+        "name": "frequency",
+        "default": "4"
+      },
+      {
+        "type": "double",
+        "name": "dampingRatio",
+        "default": "1"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "detachSprite",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Part",
+    "name": "setParentPart",
+    "params": [
+      {
+        "type": "Part*",
+        "name": "parent",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "setTrail",
+    "params": [
+      {
+        "type": "const ParticleTrailOptions&",
+        "name": "options",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "clearTrail",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "breakTrail",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "setImage",
+    "params": [
+      {
+        "type": "const Image&",
+        "name": "image",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "setDrawing",
+    "params": [
+      {
+        "type": "const Drawing&",
+        "name": "drawing",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "clearContent",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "setOpacity",
+    "params": [
+      {
+        "type": "float",
+        "name": "opacity",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "fadeTo",
+    "params": [
+      {
+        "type": "float",
+        "name": "opacity",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "fadeIn",
+    "params": [
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "fadeOut",
+    "params": [
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Particle",
+    "name": "setLifetime",
+    "params": [
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "setParticleTemplate",
+    "params": [
+      {
+        "type": "const Particle&",
+        "name": "particle",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "setEmissionRate",
+    "params": [
+      {
+        "type": "double",
+        "name": "particlesPerSecond",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "setParticleSpeed",
+    "params": [
+      {
+        "type": "double",
+        "name": "speed",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "setParticleSpeed",
+    "params": [
+      {
+        "type": "double",
+        "name": "minimum",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "maximum",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "setSpread",
+    "params": [
+      {
+        "type": "double",
+        "name": "radians",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "setVelocityInheritance",
+    "params": [
+      {
+        "type": "double",
+        "name": "fraction",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "setSeed",
+    "params": [
+      {
+        "type": "uint32_t",
+        "name": "seed",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "startEmitting",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "ParticleEmitter",
+    "name": "stopEmitting",
+    "params": [],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeLineColor",
+    "params": [
+      {
+        "type": "const Color&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeLineThickness",
+    "params": [
+      {
+        "type": "float",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeLineOpacity",
+    "params": [
+      {
+        "type": "float",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeFillColor",
+    "params": [
+      {
+        "type": "const Color&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeFillOpacity",
+    "params": [
+      {
+        "type": "float",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeRoundedCorners",
+    "params": [
+      {
+        "type": "float",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeTextSize",
+    "params": [
+      {
+        "type": "float",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeSubsection",
+    "params": [
+      {
+        "type": "const Rect&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changePolarOffset",
+    "params": [
+      {
+        "type": "const Offset&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeLightOffset",
+    "params": [
+      {
+        "type": "const Offset&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeAmbientLight",
+    "params": [
+      {
+        "type": "const Color&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeFillGradient",
+    "params": [
+      {
+        "type": "const Point&",
+        "name": "start",
+        "default": ""
+      },
+      {
+        "type": "const Color&",
+        "name": "startColor",
+        "default": ""
+      },
+      {
+        "type": "const Point&",
+        "name": "end",
+        "default": ""
+      },
+      {
+        "type": "const Color&",
+        "name": "endColor",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeFillRadialGradient",
+    "params": [
+      {
+        "type": "const Point&",
+        "name": "center",
+        "default": ""
+      },
+      {
+        "type": "const Color&",
+        "name": "centerColor",
+        "default": ""
+      },
+      {
+        "type": "float",
+        "name": "radius",
+        "default": ""
+      },
+      {
+        "type": "const Color&",
+        "name": "endColor",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeSphereRotation",
+    "params": [
+      {
+        "type": "float",
+        "name": "radians",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      },
+      {
+        "type": "int",
+        "name": "direction",
+        "default": "rotationDirection_AsSpecified"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeFrames",
+    "params": [
+      {
+        "type": "int",
+        "name": "first",
+        "default": ""
+      },
+      {
+        "type": "int",
+        "name": "last",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeSkew",
+    "params": [
+      {
+        "type": "float",
+        "name": "x",
+        "default": ""
+      },
+      {
+        "type": "float",
+        "name": "y",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "AnimatedAttributesBase",
+    "name": "changeTransform",
+    "params": [
+      {
+        "type": "const glm::mat3&",
+        "name": "target",
+        "default": ""
+      },
+      {
+        "type": "double",
+        "name": "seconds",
+        "default": ""
+      },
+      {
+        "type": "EasingFunc",
+        "name": "easing",
+        "default": "linearTween"
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "lineColor",
+    "params": [
+      {
+        "type": "const Color&",
+        "name": "color",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "lineThickness",
+    "params": [
+      {
+        "type": "float",
+        "name": "thickness",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "lineOpacity",
+    "params": [
+      {
+        "type": "float",
+        "name": "opacity",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "lineStyle",
+    "params": [
+      {
+        "type": "LineStyle",
+        "name": "style",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "fillColor",
+    "params": [
+      {
+        "type": "const Color&",
+        "name": "color",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "fillOpacity",
+    "params": [
+      {
+        "type": "float",
+        "name": "opacity",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "fillGradient",
+    "params": [
+      {
+        "type": "const Point&",
+        "name": "start",
+        "default": ""
+      },
+      {
+        "type": "const Color&",
+        "name": "startColor",
+        "default": ""
+      },
+      {
+        "type": "const Point&",
+        "name": "end",
+        "default": ""
+      },
+      {
+        "type": "const Color&",
+        "name": "endColor",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "fillRadialGradient",
+    "params": [
+      {
+        "type": "const Point&",
+        "name": "center",
+        "default": ""
+      },
+      {
+        "type": "const Color&",
+        "name": "centerColor",
+        "default": ""
+      },
+      {
+        "type": "float",
+        "name": "radius",
+        "default": ""
+      },
+      {
+        "type": "const Color&",
+        "name": "endColor",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "texture",
+    "params": [
+      {
+        "type": "Image*",
+        "name": "texture",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "fitType",
+    "params": [
+      {
+        "type": "FitType",
+        "name": "fit",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "clipOverflow",
+    "params": [
+      {
+        "type": "bool",
+        "name": "clip",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "roundedCorners",
+    "params": [
+      {
+        "type": "float",
+        "name": "radius",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "translation",
+    "params": [
+      {
+        "type": "const Offset&",
+        "name": "offset",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "transform",
+    "params": [
+      {
+        "type": "const glm::mat3&",
+        "name": "matrix",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "setTransform",
+    "params": [
+      {
+        "type": "const glm::mat3&",
+        "name": "matrix",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "blendMode",
+    "params": [
+      {
+        "type": "BlendMode",
+        "name": "mode",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "textSize",
+    "params": [
+      {
+        "type": "float",
+        "name": "size",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "textStyle",
+    "params": [
+      {
+        "type": "uint32",
+        "name": "style",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "font",
+    "params": [
+      {
+        "type": "Font*",
+        "name": "font",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "frame",
+    "params": [
+      {
+        "type": "int",
+        "name": "frame",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "subsection",
+    "params": [
+      {
+        "type": "const Rect&",
+        "name": "section",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "sphereRotation",
+    "params": [
+      {
+        "type": "float",
+        "name": "rotation",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "polarOffset",
+    "params": [
+      {
+        "type": "const Offset&",
+        "name": "offset",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "lightOffset",
+    "params": [
+      {
+        "type": "const Offset&",
+        "name": "offset",
+        "default": ""
+      }
+    ],
+    "guards": []
+  },
+  {
+    "class": "Attributes",
+    "name": "ambientLight",
+    "params": [
+      {
+        "type": "const Color&",
+        "name": "color",
+        "default": ""
+      }
+    ],
+    "guards": []
+  }
+]

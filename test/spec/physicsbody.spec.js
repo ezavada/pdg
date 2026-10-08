@@ -1,11 +1,14 @@
 describe('PhysicsBody ownership and units', function() {
     function assignPhysics(owner, body) { 'use strict'; owner.physics = body; }
     it('keeps physical methods off Animated and Layers', function() {
-        const animated=new pdg.Animated(),layer=pdg.createSpriteLayer();
-        ['getMass','applyForce','applyTorque','getVelocity','setVelocity','setFriction','physics']
-            .forEach(name=>{expect(animated[name]).toBeUndefined();expect(layer[name]).toBeUndefined();});
-        layer.setMovement(8,0);expect(layer.getMovement().x).toBeCloseTo(8,5);
-        pdg.cleanupLayer(layer);
+        const animated=new pdg.Animated(),layer=pdg.createSpriteLayer(),camera=new pdg.Camera();
+        try {
+            ['getMass','applyForce','applyTorque','getVelocity','setVelocity','setFriction','physics']
+                .forEach(name=>{expect(animated[name]).toBeUndefined();expect(layer[name]).toBeUndefined();expect(camera[name]).toBeUndefined();});
+            expect(layer.setMovement).toBeUndefined();expect(layer.getMovement).toBeUndefined();
+            layer.setCamera(camera);camera.setMovement(8,0);
+            expect(layer.getCamera().getMovement().x).toBeCloseTo(8,5);
+        } finally { pdg.cleanupLayer(layer); }
     });
     it('shares immutable NoPhysics without allocating a body', function() {
         const sprite=new pdg.Sprite(),part=sprite.createPart('hand');
@@ -228,5 +231,48 @@ describe('PhysicsBody angular-speed breaks', function() {
                 } finally {pdg.cleanupLayer(layer);done();}
             },150);
         });
+    });
+});
+
+describe('Native-qualified object bindings', function() {
+    it('rejects invalid reference arguments before invoking native code', function() {
+        const a = new pdg.Sprite(), b = new pdg.Sprite();
+        const body = a.setupPhysicsBody(), other = b.setupPhysicsBody();
+        const collider = a.setupCollider();
+        [null, undefined, {}, 1, new pdg.Point(0, 0)].forEach(function(value) {
+            expect(()=>body.createPinJoint(value)).toThrow();
+            expect(()=>collider.setPhysicsBody(value)).toThrow();
+            expect(()=>collider.overlaps(value)).toThrow();
+        });
+        expect(body.getConstraintCount()).toBe(0);
+        const shapedJoint = body.createPinJoint(other, {x:1,y:2}, {x:3,y:4});
+        expect(shapedJoint.getAnchorA().x).toBe(1);
+        expect(shapedJoint.getAnchorB().y).toBe(4);
+        shapedJoint.disconnect();
+        const joint = body.createPinJoint(other);
+        expect(joint.getBodyA()).toBe(body);
+        expect(joint.getBodyB()).toBe(other);
+        expect(collider.setPhysicsBody(other)).toBe(collider);
+        expect(collider.getPhysicsBody()).toBe(other);
+        body.disconnect();
+    });
+    it('reacquires retained reference results after deletion of a browser handle', function() {
+        const owner = new pdg.Sprite(), otherOwner = new pdg.Sprite();
+        const body = owner.setupPhysicsBody(), other = otherOwner.setupPhysicsBody();
+        if (!body.delete) return; // Explicit Embind handle deletion is browser-only.
+        const joint = body.createPinJoint(other);
+        body.delete();
+        expect(body.isDeleted()).toBe(true);
+        expect(()=>other.createPinJoint(body)).toThrow();
+        const replacement = owner.setupPhysicsBody();
+        expect(replacement === body).toBe(false);
+        expect(replacement).toBe(owner.physics);
+        expect(joint.getBodyA()).toBe(replacement);
+        expect(replacement.getConstraint(0)).toBe(joint);
+        owner.removePhysicsBody();
+        expect(owner.physics).toBe(pdg.NoPhysics);
+        expect(replacement.isAttached()).toBe(false);
+        expect(joint.getBodyA()).toBe(pdg.NoPhysics);
+        replacement.step(.01);
     });
 });

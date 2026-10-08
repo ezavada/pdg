@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 
-<p>Bone bodies, joints, simulation state, and recovery to authored animation.  
+<p><a class="el" href="classpdg_1_1_bone.html">Bone</a> bodies, joints, simulation state, and recovery to authored animation.  
 <a href="#details">More...</a></p>
 <div class="dynheader">
 Collaboration diagram for Animation physics:</div>
@@ -161,7 +161,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga9688618b7334be11b48ce7639f44e4cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode a binding-layer physical definition.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Bone bodies, joints, simulation state, and recovery to authored animation. </p>
+<div class="textblock"><p><a class="el" href="classpdg_1_1_bone.html">Bone</a> bodies, joints, simulation state, and recovery to authored animation. </p>
 <p><a class="el" href="structpdg_1_1_animation_physics_definition.html">pdg::AnimationPhysicsDefinition</a> contains <a class="el" href="structpdg_1_1_animation_physics_body.html">pdg::AnimationPhysicsBody</a> and <a class="el" href="structpdg_1_1_animation_physics_joint.html">pdg::AnimationPhysicsJoint</a> entries. <a class="el" href="#gad3d4fbe55338cae0edac713b21385d05">pdg::AnimationPhysicsBodyMode</a> selects dynamic or kinematic bodies; <a class="el" href="#ga45f20fceb6c04cb8dd3e5b4ab424c5f0">pdg::AnimationPhysicsRootMode</a> selects fixed or following roots. <a class="el" href="structpdg_1_1_physics_body_state.html">pdg::PhysicsBodyState</a> reports positions and velocities through each mapped <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a>'s physics property.</p>
 <p>Use the <a class="el" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose-based animation extensions.">Sprite</a> physics methods for integration with its layer. The native <a class="el" href="classpdg_1_1_animation_physics_rig.html">pdg::AnimationPhysicsRig</a> provides direct integration with a Chipmunk space when <span class="tt">PDG_USE_CHIPMUNK_PHYSICS</span> is enabled. Recovery durations are seconds, angular values are radians, and velocities are per second.</p>
 <p>Animation physics requires Chipmunk. Basic is intentionally not an animation-rig backend. </p>

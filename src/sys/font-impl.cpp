@@ -104,6 +104,7 @@ namespace pdg {
 					which = i;
 				}
 			}
+			releaseFontMetrics(mFontMetricsInfo[which]);
 			mFontMetricsInfo[which] = fmi;
 		}
 		return fmi;
@@ -119,6 +120,8 @@ namespace pdg {
 			mFontMetricsInfo[i] = 0;
 		}
 	}
+
+	void FontImpl::releaseFontMetrics(FontMetricsInfo* metrics) { std::free(metrics); }
 
 	FontImpl::~FontImpl() {
 		for (int i = 0; i < TEXT_INFO_CACHE_SIZE; i++) {

@@ -121,6 +121,8 @@ try {
     Copy-Item $sourceDebugExe (Join-Path $debugStageDirectory "pdg-debug.exe")
     Copy-Item $sourceDebugPdb (Join-Path $debugStageDirectory "pdg-debug.pdb")
     Copy-Item "LICENSE", "README.md", "VERSION" $stageDirectory
+    New-Item -ItemType Directory -Force (Join-Path $stageDirectory "THIRD_PARTY_LICENSES") | Out-Null
+    Copy-Item "src/js/vendor/ws/LICENSE" (Join-Path $stageDirectory "THIRD_PARTY_LICENSES/ws.txt")
     Copy-Item "LICENSE", "README.md", "VERSION" $debugStageDirectory
     $thirdPartyLicenses = [ordered]@{
         "chipmunk.txt" = "deps\chipmunk\LICENSE.txt"

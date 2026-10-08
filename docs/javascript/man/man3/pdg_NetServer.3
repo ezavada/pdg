@@ -1,4 +1,4 @@
-.TH "NetServer" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "NetServer" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,11 +13,11 @@ NetServer \- a network endpoint that can accept incoming connections
 
 .in +1c
 .ti -1c
-.RI "\fBNetServer\fP (object opts=null)"
+.RI "\fBNetServer\fP (\fBNetServerOptions\fP opts=null)"
 .br
-.RI "constructor for a \fBNetServer\fP, sets server options "
+.RI "Configure native and optional WebSocket/WebTransport listeners for a standalone server\&. "
 .ti -1c
-.RI "number \fBbroadcast\fP (object message, function filter=null)"
+.RI "number \fBbroadcast\fP (\fBNetworkSendable\fP message, function filter=null)"
 .br
 .RI "send a message to all connections, with optional filter "
 .ti -1c
@@ -27,11 +27,15 @@ NetServer \- a network endpoint that can accept incoming connections
 .ti -1c
 .RI "\fBNetServer\fP \fBlisten\fP (function callback)"
 .br
-.RI "listen and call a function when new connections are established "
+.RI "Start configured listeners and receive authenticated PDG connections\&. "
 .ti -1c
 .RI "\fBNetServer\fP \fBonError\fP (function callback)"
 .br
 .RI "set up callback for handling errors "
+.ti -1c
+.RI "object \fBready\fP ()"
+.br
+.RI "Wait until the requested listeners are bound\&. "
 .ti -1c
 .RI "\fBshutdown\fP (boolean closeExisting=true, boolean kill=false)"
 .br
@@ -52,6 +56,9 @@ NetServer \- a network endpoint that can accept incoming connections
 .RI "number \fBhandshakeTimeout\fP"
 .br
 .RI "the number of milliseconds allowed for handshake\&. Default is 5000 (5 seconds) "
+.ti -1c
+.RI "object \fBlisteners\fP"
+.br
 .ti -1c
 .RI "boolean \fBlistening\fP"
 .br
@@ -133,50 +140,84 @@ There are 5 different ways you can allow clients to connect:
 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "NetServer (object opts = \fRnull\fP)"
+.SS "NetServer (\fBNetServerOptions\fP opts = \fRnull\fP)"
 
 .PP
-constructor for a \fBNetServer\fP, sets server options Construct a new \fBNetServer\fP with particular options or using default values if no options are specified\&.
-
-.PP
-Available options are:
-
-.PP
-.IP "1." 4
-serverAddr - a string with the IP address (or hostname), defaults to 0\&.0\&.0\&.0 (all interfaces)
-.IP "2." 4
-serverPort - a string with the port to use (defaults to 5000)
-.IP "3." 4
-fixedPort - if false, indicate if we should try sequential ports if the one we asked for is already in use (defaults to false)
-.IP "4." 4
-noDatagram - flag to indicate that we should not try to establish UDP communication with the client (defaults to false)
-.IP "5." 4
-reservationRequired - flag indicating whether clients must be authenticated or not (defaults to false)
-.IP "6." 4
-handshakeTimeout - number of milliseconds to wait for handshake to complete\&. Connection is killed if handshake not complete by that time\&. Default is 5000 (5 seconds)\&. Shorter times offer better protection against Denial of Service attacks\&.
-.PP
+Configure native and optional WebSocket/WebTransport listeners for a standalone server\&. \fBNetServer\fP is available when \fBpdg\&.hasNetworkServer\fP is true\&. Browser and iOS builds expose \fBNetClient\fP and \fBNetConnection\fP and report hasNetworkServer as false\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fIopts\fP a Javascript object with the options above
+\fIopts\fP Optional settings described below\&. Construction does not bind ports\&.
 .RE
 .PP
+ 
+.PP
+\fBServer options\fP
+.RS 4
+
+.RE
+.PP
+Field  Default  Meaning  native  true  Enable the existing TCP/UDP listener\&.  serverAddr, serverPort  "0\&.0\&.0\&.0", 5000  Native bind address and port\&. port is an alias for serverPort\&. \fBPort\fP 0 allocates an available port, reported by \fBready()\fP\&.  fixedPort  false  Allow native TCP to retry sequential ports after EADDRINUSE when false\&.  noDatagram  false  Disable native UDP and WebTransport datagram use\&. WebSocket always uses reliable delivery\&.  reservationRequired  false  Require an \fBexpectClient()\fP reservation and its key\&.  handshakeTimeout  5000  Milliseconds permitted for an incoming PDG handshake\&. 0 disables the server handshake timer\&.  webSocket  false  true enables a web listener with shared settings\&. An object overrides port, host, path, secure, tls, allowedOrigins and limits\&.  webTransport  false  true or an object enables an HTTP/3 WebTransport listener\&. The object overrides host, port, path, tls, allowedOrigins and limits\&.  webPort, webPath  5443, "/pdg"  Shared web listener port and path\&. WebSocket uses TCP and WebTransport uses UDP, so they may share a numeric port\&. Native TCP and WebSocket require separate nonzero TCP ports\&.  tls  Required for secure WebSocket  certFile and keyFile paths, or cert and key values\&. WebTransport requires certFile and keyFile paths\&. Certificate changes require restarting the listener\&.  allowedOrigins  []  Exact allowed page origins\&. Empty rejects all upgrades\&. Include a native WebSocket client's configured Origin as needed; include "" for native WebTransport clients without an Origin\&. "*" is development-only\&.  allowPartialListen  false  Permit successfully bound listeners to serve when another listener fails\&. Otherwise startup closes all listeners and \fBready()\fP rejects\&.  
+
+.PP
+WebSocket object limits: maxFrameSize (1048576 bytes), maxPendingBytes (4194304 bytes), maxConnections (1024), maxConnectionsPerIP (32), maxConnectionsPerOrigin (1024), maxConnectionsPerMinute (120 per IP), maxIncompleteHandshakes (128), and idleTimeout (30000 milliseconds between ping checks)\&. Clients that miss a pong are disconnected on the next check\&. Text messages are rejected\&.
+
+.PP
+
+.PP
+\fBNote\fP
+.RS 4
+WebSocket uses TLS by default\&. secure:false explicitly enables ws:// for local development\&. The certificate's private key belongs only on the server\&. WebTransport always uses TLS\&. Its object accepts the same limits as WebSocket, with idleTimeout as the QUIC idle deadline and maxPendingBytes from 1024 to
+.IP "67108864." 4
+Admission limits range from 1 to 4096\&. maxIncompleteHandshakes also limits pending PDG handshakes\&. listeners reports native, websocket and webtransport addresses separately after \fBready()\fP\&. A WebTransport connection reports secure:true and transport:"webtransport"\&. Its confirmed datagram limit is used by sendDgram(); larger payloads use the reliable stream\&.
+.PP
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
 .PP
 .nf
-var myServer = new pdg\&.NetServer( { serverPort: 6160, noDatagram = true } );
+const server = new pdg\&.NetServer({
+    serverPort: 5000,
+    webSocket: true,
+    webTransport: true,
+    allowedOrigins: ["https://game\&.example\&.com"],
+    tls: {certFile: "certs/server\&.crt", keyFile: "certs/server\&.key"}
+});
+server\&.onError(error => console\&.error(error\&.transport, error\&.code));
+server\&.listen(connection => {
+    connection\&.onMessage(message => connection\&.send(message));
+    return true; // Accept the authenticated connection\&.
+});
+server\&.ready()\&.then(addresses => console\&.log(addresses))\&.catch(console\&.error);
+
 .fi
 .PP
  
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBlisten()\fP, \fBready()\fP, \fBshutdown()\fP 
+.RE
+.PP
+
 .PP
 Referenced by \fBexpectClient()\fP, \fBlisten()\fP, and \fBonError()\fP\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "number broadcast (object message, function filter = \fRnull\fP)"
+.SS "number broadcast (\fBNetworkSendable\fP message, function filter = \fRnull\fP)"
 
 .PP
 send a message to all connections, with optional filter send a message to all connected clients
 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfilter:\fP \fBNetAcceptCallback\fP or \fRnull\fP\&.
+.RE
 .PP
 Go through all the NetConnections in the connections array send the message to each of them\&. If a filter function is used, instead of sending to all, only send to the ones that filter function returns true for\&.
 
@@ -186,7 +227,7 @@ The filter function should take one parameter, a Net Connection, and should retu
 .PP
 \fBParameters\fP
 .RS 4
-\fImessage\fP the message to send 
+\fImessage\fP A string, Uint8Array (including Node Buffer), JSON-compatible object or array, null, \fBMemBlock\fP, or \fBISerializable\fP\&. See \fBNetworkSendable\fP\&. Uint8Array inputs use binary serialization; JSON-compatible objects, arrays and null use JSON serialization\&. Top-level numbers and booleans are not accepted\&. 
 .br
 \fIfilter\fP the filter function\&. If not passed, all connections will be sent the message\&.
 .RE
@@ -225,35 +266,29 @@ References \fBNetServer()\fP\&.
 .SS "\fBNetServer\fP listen (function callback)"
 
 .PP
-listen and call a function when new connections are established Starts a listening port for incoming connections, and with each new connection calls the provided callback with a newly created \fBNetConnection\fP\&.
-
+Start configured listeners and receive authenticated PDG connections\&. 
 .PP
-The callback will be invoked with one parameter, a \fBNetConnection\fP\&.
-
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBNetAcceptCallback\fP\&.
+.RE
 .PP
-.PP
-.nf
-myServer\&.listen( function(myConnection) {
-    myConnection\&.send('sorry, too busy to talk');
-    myConnection\&.close();
-});
-.fi
-.PP
+Calls callback(connection) after the PDG key and version handshake\&. Return true to accept the connection; a false return or exception closes it\&. Native and WebSocket connections use this same callback\&. Call \fBready()\fP to observe startup; see \fBwebsocket_server_options\fP for listener settings and rollback behavior\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fIcallback\fP the callback function
+\fIcallback\fP Function receiving a \fBNetConnection\fP and returning whether to accept it\&. 
 .RE
 .PP
 \fBReturns\fP
 .RS 4
-itself for call chaining
+This \fBNetServer\fP for chaining\&. 
 .RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBNetConnection\fP 
+\fBready()\fP, \fBNetConnection\fP, \fBshutdown()\fP 
 .RE
 .PP
 
@@ -262,7 +297,14 @@ References \fBNetServer()\fP\&.
 .SS "\fBNetServer\fP onError (function callback)"
 
 .PP
-set up callback for handling errors These will be errors with the listening port, not with the connections themselves; those go to the connection object\&. The exception is IP mismatch on incoming connections -- those don't generate any errors to avoid spending unnecessary resources in the event of denial of service attacks\&.
+set up callback for handling errors 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBNetServerErrorCallback\fP\&.
+.RE
+.PP
+These will be errors with the listening port, not with the connections themselves; those go to the connection object\&. The exception is IP mismatch on incoming connections -- those don't generate any errors to avoid spending unnecessary resources in the event of denial of service attacks\&.
 
 .PP
 \fBParameters\fP
@@ -278,10 +320,30 @@ itself for call chaining
 
 .PP
 References \fBNetServer()\fP\&.
+.SS "object ready ()"
+
+.PP
+Wait until the requested listeners are bound\&. Returns a Promise resolving to an array of bound listener addresses, including transport, address, port and secure\&. WebSocket entries also contain path\&. server\&.listeners\&.native and server\&.listeners\&.websocket contain these snapshots, or null when unavailable\&. Call \fBlisten()\fP first\&. With the default atomic startup, a failed listener closes all requested listeners and rejects the Promise\&. With allowPartialListen, individual failures reach \fBonError()\fP and successfully bound addresses resolve; failure of every listener still rejects\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+Promise of the bound address array\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBlisten()\fP, \fBshutdown()\fP, \fBwebsocket_server_options\fP 
+.RE
+.PP
+
 .SS "shutdown (boolean closeExisting = \fRtrue\fP, boolean kill = \fRfalse\fP)"
 
 .PP
-stop listening for new connections This will also do a clean shutdown of all existing connections made through it, unless you tell it not to by passing false for closeExisting\&.
+stop listening for new connections Stops every requested native and WebSocket listener and cancels incomplete handshakes\&. server\&.listeners entries become null\&. \fBshutdown()\fP may be called repeatedly\&.
+
+.PP
+This will also do a clean shutdown of all existing connections made through it, unless you tell it not to by passing false for closeExisting\&.
 
 .PP
 To stop receiving incoming connections, but leave existing connections intact, call shutdown(false)\&. The kill parameter is ignored when closeExisting is false\&.
@@ -317,6 +379,8 @@ This can be changed at any time to affect the timeout for new incoming connectio
 
 .PP
 The connection will be dropped if handshake has not completed in this time\&. This is to help prevent denial of service attacks\&. 
+.SS "object listeners"
+
 .SS "boolean listening"
 
 .PP
@@ -336,6 +400,13 @@ This can be changed at any time \fIbefore\fP calling \fBlisten()\fP\&. It should
 .PP
 0\&.0\&.0\&.0 means all interfaces on the computer 
 .SS "object serverInfo"
+
+.PP
+\fBJavaScript value\fP
+.RS 4
+\fBNetServerOptions\fP or \fRnull\fP or \fRundefined\fP\&. 
+.RE
+.PP
 
 .SS "number serverPort"
 

@@ -1,17 +1,41 @@
 #include "pdg/sys/particle.h"
 #include <numbers>
+#include "particletrail.h"
 #include "pdg/sys/particleemitter.h"
 #include "pdg/sys/spritelayer.h"
 #include "pdg/sys/drawing.h"
 #include "pdg/sys/image.h"
 #include "pdg/sys/events.h"
 #include "pdg/sys/attributes.h"
+#include "pdg/sys/iserializer.h"
+#include "pdg/sys/ideserializer.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
 namespace pdg {
 namespace {
+// Register the pure configuration value so named scripts remain portable.
+[[maybe_unused]] const bool trailCodecRegistered=[] {
+    registerAnimationValueCodec({typeid(ParticleTrailOptions), "pdg.ParticleTrailOptions.v1",
+        [](const std::any& value, ISerializer* writer, bool writing) {
+            const auto& o=std::any_cast<const ParticleTrailOptions&>(value);o.validate();
+            uint32 size=0;
+            for(double n : {o.lifetime,double(o.width),double(o.endWidth),double(o.endOpacity),o.minDistance,o.sampleInterval,o.breakDistance,double(o.maxPoints)}) {
+                size+=writer->sizeof_d(n);if(writing)writer->serialize_d(n);
+            }
+            size+=writer->sizeof_color(o.color);if(writing)writer->serialize_color(o.color);return size;
+        },
+        [](IDeserializer* reader)->std::any {
+            ParticleTrailOptions o;
+            o.lifetime=reader->deserialize_d();o.width=reader->deserialize_d();o.endWidth=reader->deserialize_d();o.endOpacity=reader->deserialize_d();
+            o.minDistance=reader->deserialize_d();o.sampleInterval=reader->deserialize_d();o.breakDistance=reader->deserialize_d();
+            const double count=reader->deserialize_d();
+            if(!std::isfinite(count) || count<2 || count>4096 || std::floor(count)!=count)throw std::runtime_error("Invalid serialized trail capacity");
+            o.maxPoints=static_cast<uint32>(count);o.color=reader->deserialize_color();o.validate();return o;
+        }});
+    return true;
+}();
 void nonnegative(double value, const char* name) {
     if (!std::isfinite(value) || value < 0) throw std::invalid_argument(name);
 }
@@ -79,14 +103,19 @@ Particle::Particle() {
 }
 Particle::~Particle() { removeParticleEmitter(); removeCollider(); removePhysicsBody(); }
 Particle& Particle::setLifetime(double seconds) {
+    if(recordOperation("setLifetime", captureAnimationArguments(seconds))) return *this;
     nonnegative(seconds, "Particle lifetime must be finite and nonnegative"); mLifetime = seconds; return *this;
 }
 Particle& Particle::setOpacity(float opacity) {
+    if(recordOperation("setOpacity", captureAnimationArguments(opacity))) return *this;
+    validateUnrecordedOperation("Particle opacity command");
     validateImmediateOperation();
     if (!std::isfinite(opacity) || opacity < 0 || opacity > 1) throw std::invalid_argument("Opacity must be between zero and one");
     cancelAnimation(&mOpacity); mOpacity = opacity; return *this;
 }
 Particle& Particle::fadeTo(float opacity, double seconds, EasingFunc easing) {
+    if(recordOperation("fadeTo", captureAnimationArguments(opacity, seconds, easing))) return *this;
+    validateUnrecordedOperation("Particle opacity command");
     validateAnimationDuration(seconds);
     if (!std::isfinite(opacity) || opacity < 0 || opacity > 1 || !easing) throw std::invalid_argument("Invalid opacity or easing");
     beginAnimationRequest(); scheduleAnimation(&mOpacity, opacity, seconds, easing); finishAnimationRequest(); return *this;
@@ -95,10 +124,12 @@ std::vector<const float*> Particle::tweenFields() const {
     auto result = AnimatedBase::tweenFields(); result.push_back(&mOpacity); return result;
 }
 Particle& Particle::setDrawing(const Drawing& drawing) {
+    if(recordOperation("setDrawing", captureAnimationArguments(drawing))) return *this;
     auto content = drawing.share(); auto bounds = content->getBounds();
     setSize(bounds.width(), bounds.height()); mDrawing = std::move(content); return *this;
 }
 Particle& Particle::setImage(const Image& image) {
+    if(recordOperation("setImage", captureAnimationArguments(image))) return *this;
 #ifndef PDG_NO_GUI
     auto content = std::shared_ptr<Drawing>(Drawing::create());
     auto& source = const_cast<Image&>(image);
@@ -109,14 +140,21 @@ Particle& Particle::setImage(const Image& image) {
     throw std::logic_error("Particle image content requires a GUI build");
 #endif
 }
-Particle& Particle::clearContent() { mDrawing.reset(); return *this; }
+Particle& Particle::clearContent() {
+    if(recordOperation("clearContent", captureAnimationArguments())) return *this;
+    mDrawing.reset();
+    return *this;
+}
 SpatialTransform Particle::transform() const {
     auto result = SpatialTransform::fromTRS(mLocation.x + mCenterOffset.x, mLocation.y + mCenterOffset.y, mFacing, mScaleX, mScaleY);
     result.tx -= result.a*mCenterOffset.x + result.c*mCenterOffset.y;
     result.ty -= result.b*mCenterOffset.x + result.d*mCenterOffset.y;
     return result;
 }
-void Particle::locationChanged(const Offset&) { animationValuesChanged(); }
+void Particle::locationChanged(const Offset&) {
+    if(mTrail && !mTrailStepping)mTrail->reset(mLocation,mOpacity);
+    animationValuesChanged();
+}
 void Particle::rotationChanged(float) { animationValuesChanged(); }
 void Particle::centerChanged(const Offset&) { animationValuesChanged(); }
 void Particle::animationValuesChanged() {
@@ -181,16 +219,51 @@ void Particle::removeParticleEmitter() {
     if (!emitter.mEmitter) return;
     auto* old = emitter.mEmitter; emitter.mEmitter = nullptr; old->mParticle = nullptr; old->stopEmitting(); old->release();
 }
+void ParticleTrailOptions::validate() const {
+    nonnegative(lifetime,"Trail lifetime must be positive and finite");
+    nonnegative(sampleInterval,"Trail sample interval must be positive and finite");
+    nonnegative(width,"Trail width must be nonnegative and finite");
+    nonnegative(endWidth,"Trail end width must be nonnegative and finite");
+    nonnegative(minDistance,"Trail minimum distance must be nonnegative and finite");
+    nonnegative(breakDistance,"Trail break distance must be nonnegative and finite");
+    if(lifetime<=0 || sampleInterval<.0001 || maxPoints<2 || maxPoints>4096)
+        throw std::invalid_argument("Trail requires positive lifetime, sampleInterval >= 0.0001, and 2..4096 maxPoints");
+    for(float value : {endOpacity,color.red,color.green,color.blue,color.alpha})
+        if(!std::isfinite(value) || value<0 || value>1)throw std::invalid_argument("Trail colors and opacity must be in [0,1]");
+}
+Particle& Particle::setTrail(const ParticleTrailOptions& options) {
+    options.validate();
+    if(recordOperation("setTrail",captureAnimationArguments(options)))return *this;
+    auto trail=std::make_unique<ParticleTrail>(options);
+    trail->reset(mLocation,mOpacity);mTrail=std::move(trail);return *this;
+}
+Particle& Particle::clearTrail() {
+    if(recordOperation("clearTrail",captureAnimationArguments()))return *this;
+    mTrail.reset();return *this;
+}
+Particle& Particle::breakTrail() {
+    if(recordOperation("breakTrail",captureAnimationArguments()))return *this;
+    if(mTrail)mTrail->reset(mLocation,mOpacity);
+    return *this;
+}
+uint32 Particle::getTrailPointCount() const { return mTrail && !mTrail->empty() ? static_cast<uint32>(mTrail->count) : 0; }
 void Particle::expire() {
     if (!mAlive) return;
-    Hold<Particle> retained(this, refs > 0); mAlive = false;
+    Hold<Particle> retained(this, refs > 0); mAlive = false; mTrailStepping=false;
     if (emitter.mEmitter) emitter.mEmitter->stopEmitting();
-    if (mLayer) mLayer->removeParticle(this);
-    else { if (physics.isPresent()) physics.disconnect(); if (collider.isPresent()) collider->syncNative(nullptr); syncPhysicsSolver(); }
+    if (mLayer) {
+        if(mTrail)mLayer->retireParticleTrail(std::move(mTrail));
+        mLayer->removeParticle(this);
+    }
+    else { mTrail.reset(); if (physics.isPresent()) physics.disconnect(); if (collider.isPresent()) collider->syncNative(nullptr); syncPhysicsSolver(); }
 }
 void Particle::advance(double seconds) {
+    mFrameSeconds=seconds;
     mStepSeconds = mAlive ? (mLifetime > 0 ? std::min(seconds, std::max(0.0, mLifetime - mAge)) : seconds) : 0;
     if (!mAlive) return;
+    if(mTrail && !mTrail->initialized)mTrail->reset(mLocation,mOpacity);
+    mTrailStepping=true;
+    try {
     if (emitter.mEmitter && mStepSeconds > 0) emitter.mEmitter->beginStep();
     if (physics.isPresent()) physics->beginKinematicStep();
     AnimatedBase::animate(mStepSeconds);
@@ -198,8 +271,18 @@ void Particle::advance(double seconds) {
         physics->prepareKinematicStep(mStepSeconds); physics->step(mStepSeconds); physics->finishKinematicStep();
     }
     mAge += mStepSeconds;
+    } catch (...) { mTrailStepping=false; throw; }
+}
+void Particle::finishTrailStep() {
+    if(!mTrailStepping)return;
+    mTrailStepping=false;
+    if(mTrail && mAlive) {
+        mTrail->advance(mStepSeconds,mLocation,mOpacity);
+        mTrail->age(std::max(0.0,mFrameSeconds-mStepSeconds));
+    }
 }
 void Particle::finish() {
+    finishTrailStep();
     if (!mAlive) return;
     if (emitter.mEmitter && mStepSeconds > 0 && mLayer) {
         Hold<ParticleEmitter> retained(emitter.mEmitter); emitter.mEmitter->advance(mStepSeconds);
@@ -216,6 +299,7 @@ std::shared_ptr<Particle> Particle::snapshot() const {
     auto* copy = new Particle(); copy->addRef();
     std::shared_ptr<Particle> result(copy, [](Particle* p) { p->release(); });
     copy->mDrawing = mDrawing; copy->mLifetime = mLifetime;
+    if(mTrail)copy->mTrail=std::make_unique<ParticleTrail>(mTrail->options);
     if (physics.isPresent()) {
         auto& b = copy->setupPhysicsBody(physics.getMass(), physics.getMomentOfInertia());
         const auto& source = *physics.operator->();
@@ -250,6 +334,7 @@ void Particle::place(const Point& point, double rotation, const Vector& velocity
         if (a.relativeRotation && !a.resolveRotation && a.value == &mFacing) offset = rotation - mFacing;
         a.beginVal += offset; a.targetVal += offset;
     }
+    rebaseScriptState(point-mLocation,static_cast<float>(rotation-mFacing));
     mLocation = point; mFacing = rotation;
     if (physics.isPresent()) {
         physics->teleport(point + mCenterOffset, rotation); physics->setVelocity(velocity);
@@ -257,7 +342,11 @@ void Particle::place(const Point& point, double rotation, const Vector& velocity
 }
 void Particle::draw() {
 #ifndef PDG_NO_GUI
-    if (!mLayer || !mDrawing || mOpacity <= 0 || !mAlive) return;
+    if (!mLayer || !mAlive || !mLayer->getSpritePort()) return;
+    if(mTrail)drawParticleTrail(*mLayer->getSpritePort(),*mTrail,mLayer->getViewTransform());
+    if (!mDrawing || mOpacity <= 0) return;
+    if (!mLayer->getSpritePort()) return;
+    Port::ScreenDrawingScope screenDrawing(*mLayer->getSpritePort());
     auto bounds = mDrawing->getBounds();
     const double sx = bounds.width() ? mWidth / bounds.width() : 1;
     const double sy = bounds.height() ? mHeight / bounds.height() : 1;
@@ -283,32 +372,51 @@ ParticleEmitter::ParticleEmitter() {
 #endif
 }
 ParticleEmitter& ParticleEmitter::setParticleTemplate(const Particle& particle) {
+    if(recordOperation("setParticleTemplate", captureAnimationArguments(particle))) return *this;
     mTemplate = particle.snapshot(); return *this;
 }
 ParticleEmitter& ParticleEmitter::setEmissionRate(double rate) {
+    if(recordOperation("setEmissionRate", captureAnimationArguments(rate))) return *this;
     nonnegative(rate, "Emission rate must be finite and nonnegative"); mRate = rate; return *this;
 }
 ParticleEmitter& ParticleEmitter::setParticleSpeed(double minimum, double maximum) {
+    if(recordOperation("setParticleSpeed", captureAnimationArguments(minimum, maximum))) return *this;
     nonnegative(minimum, "Particle speed must be finite and nonnegative");
     nonnegative(maximum, "Particle speed must be finite and nonnegative");
     if (minimum > maximum) throw std::invalid_argument("Minimum particle speed exceeds maximum");
     mMinSpeed = minimum; mMaxSpeed = maximum; return *this;
 }
 ParticleEmitter& ParticleEmitter::setSpread(double radians) {
+    if(recordOperation("setSpread", captureAnimationArguments(radians))) return *this;
     nonnegative(radians, "Spread must be finite and nonnegative");
     if (radians > 2 * std::numbers::pi) throw std::invalid_argument("Spread cannot exceed a full turn");
     mSpread = radians; return *this;
 }
 ParticleEmitter& ParticleEmitter::setVelocityInheritance(double fraction) {
+    if(recordOperation("setVelocityInheritance", captureAnimationArguments(fraction))) return *this;
     nonnegative(fraction, "Velocity inheritance must be finite and nonnegative"); mInheritance = fraction; return *this;
 }
-ParticleEmitter& ParticleEmitter::setSeed(uint32_t seed) { mSeed = seed; mRandom = uint64_t(seed) + 1; return *this; }
+ParticleEmitter& ParticleEmitter::setSeed(uint32_t seed) {
+    if(recordOperation("setSeed", captureAnimationArguments(seed))) return *this;
+    mSeed = seed;
+    mRandom = uint64_t(seed) + 1;
+    return *this;
+}
 double ParticleEmitter::randomUnit() {
     mRandom = mRandom * UINT64_C(6364136223846793005) + UINT64_C(1442695040888963407);
     return double(mRandom >> 32) / 4294967296.0;
 }
-ParticleEmitter& ParticleEmitter::startEmitting() { mEmitting = true; return *this; }
-ParticleEmitter& ParticleEmitter::stopEmitting() { mEmitting = false; mRemainder = 0; return *this; }
+ParticleEmitter& ParticleEmitter::startEmitting() {
+    if(recordOperation("startEmitting", captureAnimationArguments())) return *this;
+    mEmitting = true;
+    return *this;
+}
+ParticleEmitter& ParticleEmitter::stopEmitting() {
+    if(recordOperation("stopEmitting", captureAnimationArguments())) return *this;
+    mEmitting = false;
+    mRemainder = 0;
+    return *this;
+}
 SpriteLayer* ParticleEmitter::getLayer() const { return mParticle ? mParticle->getLayer() : mLayer; }
 Point ParticleEmitter::worldPosition() const { return mParticle ? mParticle->transform().transformPoint(mLocation) : mLocation; }
 void ParticleEmitter::beginStep() { mStepOrigin = worldPosition(); mHaveStepOrigin = true; }
@@ -370,4 +478,12 @@ bool ParticleEmitter::animate(double seconds) {
     if (getLayer()) throw std::logic_error("Layer-owned emitters advance with their layer");
     AnimatedBase::animate(seconds); return mEmitting;
 }
+}
+
+namespace pdg {
+#include "animation-operations-particle.inc"
+}
+
+namespace pdg {
+#include "animation-operations-particleemitter.inc"
 }

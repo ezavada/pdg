@@ -46,6 +46,9 @@ if [ -z "$1" ]; then
 fi
 
 cd $PDG_ROOT
+"$PDG_ROOT/tools/node" "$PDG_ROOT/tools/build-interface-metadata.js" || exit 1
+
+"$PDG_ROOT/tools/node" "$PDG_ROOT/tools/bundle-websocket.js" || exit 1
 
 TARGET_DIR=$1
 mkdir -p $TARGET_DIR/deps/chipmunk/include
@@ -75,9 +78,9 @@ $RSYNC src/bindings/javascript/pdg.js $TARGET_DIR/lib/
 echo " * src/js ==> $TARGET_DIR/src/js"
 $RSYNC -r --delete --force src/js/* $TARGET_DIR/lib/
 echo " * src/inc ==> $TARGET_DIR/src/inc"
-$RSYNC -r --delete --force --exclude=inc/pdg/app src/inc $TARGET_DIR/src/
+$RSYNC -r --delete --force --exclude=inc/pdg/app --exclude=inc/pdg/net src/inc $TARGET_DIR/src/
 echo " * src/sys ==> $TARGET_DIR/src/sys"
-$RSYNC -r --delete --force --exclude=*/gles/*** --exclude=*/ios/*** --exclude=*/ipad/*** src/sys $TARGET_DIR/src/
+$RSYNC -r --delete --force --exclude=sys/net --exclude=*/gles/*** --exclude=*/ios/*** --exclude=*/ipad/*** src/sys $TARGET_DIR/src/
 $RSYNC src/sys/macosx/platform-image-macosx.mm $TARGET_DIR/src/sys/macosx/platform-image-macosx-objc.cxx
 echo " * tools/node-pdg/* ==> $TARGET_DIR/"
 $RSYNC -d --delete --force tools/node-pdg/* $TARGET_DIR/

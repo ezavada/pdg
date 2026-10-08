@@ -376,7 +376,7 @@ describe("ResourceManager", function() {
 
     it("can get resource data", function() {
       var data = resourceManager.getResource('strings.txt');
-      expect(typeof data).toBe('string');
+      expect(data instanceof Uint8Array).toBe(true);
       expect(data.length > 0).toBe(true);
     });
 
@@ -385,9 +385,7 @@ describe("ResourceManager", function() {
       var data = resourceManager.getResource('nonexistent.txt');
       
       expect(typeof size).toBe('number');
-      // getResource might return boolean or string depending on implementation
-      expect(typeof data === 'string' || typeof data === 'boolean').toBe(true);
-      // Should return 0 for size and empty string or false for data
+      expect(data).toBe(false);
     });
 
     it("returns consistent resource sizes", function() {
@@ -401,7 +399,7 @@ describe("ResourceManager", function() {
       var data1 = resourceManager.getResource('strings.txt');
       var data2 = resourceManager.getResource('strings.txt');
       
-      expect(data1).toBe(data2);
+      expect(data1).toEqual(data2);
     });
   });
 
@@ -650,10 +648,10 @@ describe("ResourceManager", function() {
       expect(typeof size).toBe('number');
     });
 
-    it("validates that getResource returns string", function() {
+    it("validates that getResource returns Uint8Array", function() {
       dataRefNum = resourceManager.openResourceFile('data');
       var data = resourceManager.getResource('strings.txt');
-      expect(typeof data).toBe('string');
+      expect(data instanceof Uint8Array).toBe(true);
     });
 
     it("validates consistency across multiple calls", function() {

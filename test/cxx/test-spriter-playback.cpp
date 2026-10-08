@@ -1,4 +1,5 @@
 #include "pdg/sys/sprite.h"
+#include "pdg/sys/bone.h"
 #include "pdg/sys/animationpose.h"
 #include "pdg/sys/drawing.h"
 #include "pdg/sys/animationphysics.h"
@@ -29,6 +30,8 @@
 #include <iostream>
 #include <limits>
 #include <optional>
+#include <type_traits>
+#include <utility>
 #include <string>
 
 #ifdef _WIN32
@@ -36,6 +39,11 @@
 #undef near
 #undef small
 #endif
+
+static pdg::Camera* viewCamera(pdg::SpriteLayer* layer) {
+    if (!layer->getCamera()) layer->setCamera(new pdg::Camera());
+    return layer->getCamera();
+}
 
 namespace {
 int assertions = 0;
@@ -53,6 +61,39 @@ void near(double actual, double expected, const std::string& message) {
 void step(pdg::Sprite& sprite, unsigned milliseconds) {
     sprite.doAnimate(milliseconds, false);
 }
+void animatedBones(SpriterEngine::SpriterModel& model) {
+    pdg::Sprite sprite(model.getNewEntityInstance(0), &model);
+    expect(sprite.enableAnimationPose("reference"),"Bone fixture pose enabled");
+    sprite.pauseAnimation();
+    auto* hand=sprite.getBone("hand");hand->addRef();
+    const auto original=hand->getLocation();
+    hand->moveBy(4,0,.2,pdg::linearTween);step(sprite,100);
+    near(hand->getLocation().x,original.x+2,"Sprite advances Bone exactly once");
+    sprite.getAnimationPose();sprite.getAnimationPose();
+    near(hand->getLocation().x,original.x+2,"Pose queries do not advance Bone clock");
+    hand->rotateBy(1,.2,pdg::linearTween).yoyo();hand->animate(.4);
+    near(hand->getRotation(),0,"Bone rotation yoyo returns to authored sample");
+    hand->cancelSchedule();
+    hand->setIKLimits(-.2,.3).rotateTo(2);
+    near(hand->getRotation(),.3,"Scripted rotation honors limits");
+    hand->clearIKLimits().diminish(0,0);
+    auto* forearm=sprite.getBone("forearm");const auto size=forearm->getSize();
+    const auto local=sprite.getAnimationPose().getLocalTransform(hand->getId());
+    forearm->resizeTo(size.x,size.y*2,0);
+    near(sprite.getAnimationPose().getLocalTransform(hand->getId()).x,local.x*2,"Resize moves child connection proportionally");
+    near(hand->getScale().x,1,"Resize preserves child size");
+    forearm->resizeTo(0,0,0).resizeTo(size.x,size.y,0);
+    near(sprite.getAnimationPose().getLocalTransform(hand->getId()).x,local.x,"Zero dimensions preserve proportional connection");
+    const auto bounds=forearm->getBoundingBox();expect(bounds.width()>0 && bounds.height()>0,"Bone bounds use evaluated dimensions");
+    expect(sprite.enableAnimationPose("reference"),"Rig replaced successfully");
+    expect(!hand->isAttached(),"Retained handle invalidated by rig replacement");
+    bool rejected=false;try{hand->rotateTo(1);}catch(const std::logic_error&){rejected=true;}
+    expect(rejected,"Inactive handle rejects edits");hand->release();
+    pdg::Bone* retained;
+    {pdg::Sprite temporary(model.getNewEntityInstance(0),&model);temporary.enableAnimationPose("reference");retained=temporary.getBone("hand");retained->addRef();}
+    expect(!retained->isAttached(),"Owner destruction invalidates retained Bone");retained->release();
+}
+
 void independentParts(SpriterEngine::SpriterModel& model) {
     pdg::Sprite sprite;
     auto* hand = sprite.createPart("hand");
@@ -889,12 +930,13 @@ struct RecordingPort : pdg::Port {
     std::vector<double> debugAlpha;
     struct Ellipse { pdg::Point center; float xRadius, yRadius; };
     std::vector<Ellipse> ellipses;
-    void drawEllipse(const pdg::Point& center, float xRadius, float yRadius,
+    pdg::Port& drawEllipse(const pdg::Point& center, float xRadius, float yRadius,
                      const pdg::Attributes& style) override {
         const auto p = style.getTransform() * glm::vec3(center.x, center.y, 1);
         ellipses.push_back({pdg::Point(p.x, p.y), xRadius, yRadius});
+        return *this;
     }
-    void drawLine(const pdg::Point& from, const pdg::Point& to, const pdg::Attributes& style) override {
+    pdg::Port& drawLine(const pdg::Point& from, const pdg::Point& to, const pdg::Attributes& style) override {
         operations+='L';
         auto transform = [&](const pdg::Point& point) {
             const auto p = style.getTransform() * glm::vec3(point.x,point.y,1);
@@ -902,24 +944,57 @@ struct RecordingPort : pdg::Port {
         };
         lines.push_back({transform(from), transform(to), style.getLineOpacity(), style.getLineThickness()});
         if (failLine) throw std::runtime_error("intentional debug draw failure");
+        return *this;
     }
-    void drawQuad(const pdg::Quad& quad, const pdg::Attributes& style) override {
+    pdg::Port& drawQuad(const pdg::Quad& quad, const pdg::Attributes& style) override {
         operations+='Q';
         pdg::Quad transformed(quad);
         for(auto& point:transformed.points){const auto p=style.getTransform()*glm::vec3(point.x,point.y,1);point=pdg::Point(p.x,p.y);}
         debugQuads.push_back(transformed); debugAlpha.push_back(style.getLineOpacity());
+        return *this;
     }
     pdg::Quad lastQuad;
     std::vector<pdg::Quad> quads;
     uint8 lastOpacity = 0;
-    void drawImage(pdg::Image* image, const pdg::Quad& quad, const pdg::Attributes& style) override {
+    pdg::Port& drawImage(pdg::Image* image, const pdg::Quad& quad, const pdg::Attributes& style) override {
         operations+='I';
         ++calls; lastQuad = quad;
         for(auto& point:lastQuad.points){const auto p=style.getTransform()*glm::vec3(point.x,point.y,1);point=pdg::Point(p.x,p.y);}
         lastOpacity = static_cast<uint8>(image->getOpacity()*style.getFillOpacity()); quads.push_back(lastQuad);
         if (fail) throw std::runtime_error("intentional draw failure");
+        return *this;
     }
 };
+
+void fluentPublicInterfaces() {
+    static_assert(std::is_same<decltype(std::declval<pdg::Port&>().clear()), pdg::Port&>::value, "Port clear preserves receiver type");
+    static_assert(std::is_same<decltype(std::declval<pdg::Port&>().drawCircle(pdg::Point(), 1, pdg::Attributes())), pdg::Port&>::value, "Inherited rendering helpers preserve Port");
+    static_assert(std::is_same<decltype(std::declval<pdg::Image&>().setOpacity(128)), pdg::Image&>::value, "Image setters return references");
+    static_assert(std::is_same<decltype(std::declval<pdg::ImageStrip&>().setOpacity(128)), pdg::ImageStrip&>::value, "ImageStrip setters preserve strip interface");
+    pdg::Rect rect(1,2,11,12);
+    auto sum = rect + pdg::Point(3,4);
+    near(rect.left, 1, "rectangle arithmetic leaves source unchanged");
+    near(sum.left, 4, "rectangle arithmetic produces an independent value");
+    expect(&(rect += pdg::Point(3,4)) == &rect, "rectangle compound assignment chains receiver");
+    pdg::Quad quad(rect);
+    expect(&quad.moveLeft(1).moveRight(2).moveUp(1).moveDown(2).rotate(.1).rotateAround(.1,pdg::Point()) == &quad, "quad mutations chain receiver");
+    pdg::RotatedRect rotated(rect);
+    expect(&rotated.setCenterOffset(pdg::Point()).setRotation(.1).rotate(.2) == &rotated, "rotated rectangle setters chain receiver");
+    pdg::Polygon polygon;
+    expect(&polygon.addPoint(pdg::Point(1,2)).insertPoint(1,pdg::Point(3,4)).setPoint(0,pdg::Point(5,6)).removePoint(1).clearPoints().addSpline(nullptr) == &polygon, "polygon point edits and empty spline chain receiver");
+    expect(polygon.empty(), "point editing chain preserves requested state");
+    pdg::ImageOpenGL image;
+    pdg::Image& baseImage = image;
+    pdg::ImageStrip& strip = image;
+    expect(&baseImage.setTransparentColor(pdg::Color()).setOpacity(128).setEdgeClamping(false) == &baseImage, "Image setters including no-data branch return receiver");
+    expect(&strip.setOpacity(200).setEdgeClamping(true) == &strip, "ImageStrip setters preserve strip receiver");
+    expect(image.getOpacity() == 200, "image chain updates opacity");
+    RecordingPort port;
+    expect(&port.setCameraAnchor(pdg::Point(3,4)).setCameraDrawingEnabled(false).drawLine(pdg::Point(),pdg::Point(2,3),pdg::Attributes()) == &port, "Port setters and virtual draw return same port");
+    pdg::Renderer& renderer = port;
+    expect(&renderer.drawCircle(pdg::Point(),2,pdg::Attributes()) == &renderer, "Renderer helper preserves base receiver");
+    near(port.getCameraAnchor().x,3,"Port chaining updates anchor");
+}
 
 std::shared_ptr<pdg::Drawing> lineDrawing(double alpha = .4) {
     std::shared_ptr<pdg::Drawing> drawing(pdg::Drawing::create());
@@ -955,11 +1030,12 @@ void sharedDrawingReplay() {
     port.drawDrawing(*drawable,pdg::Point(20,30),pdg::Attributes());
     near(port.lines[0].from.x,20,"Port Drawing point destination translates artwork");
     near(port.lines[0].from.y,30,"Port Drawing point destination translates y");
-    port.lines.clear();drawable->draw(&port,pdg::Rect(40,50,60,50));
+    port.lines.clear();drawable->drawTransformed(&port, pdg::Attributes().transform(drawable->destinationTransform(pdg::Quad(pdg::Rect(40,50,60,50)))));
     near(port.lines[0].from.x,40,"Drawing rect destination maps origin");
     near(port.lines[0].to.x,60,"Drawing rect destination maps scale");
 }
 void customDrawing(const std::string& path){
+    fluentPublicInterfaces();
     sharedDrawingReplay();
     RecordingPort port;auto* layer=pdg::createSpriteLayer(nullptr);layer->setSpritePort(&port);
     auto* sprite=layer->createSpriteFromSpriterFile(path.c_str());sprite->pauseAnimation();expect(sprite->enableAnimationPose("reference"),"custom drawing pose enables");
@@ -972,7 +1048,7 @@ void customDrawing(const std::string& path){
     bool expired=false;try{retained->getTransform();}catch(const std::logic_error&){expired=true;}expect(expired,"native drawing context expires after invocation");
     sprite->setLocation(pdg::Point(40,30));sprite->setScale(-2,3);sprite->rotateTo(.35);sprite->setOpacity(.5);
     auto forearm=sprite->getAnimationBoneTransform("forearm");forearm.alpha=.8;sprite->setAnimationBoneTransform("forearm",forearm);
-    layer->moveTo(pdg::Point(20,10));layer->rotateTo(.2);layer->setZoom(1.5);
+    viewCamera(layer)->moveTo(pdg::Point(20,10));viewCamera(layer)->rotateTo(.2);viewCamera(layer)->setZoom(1.5);
     const auto transform=sprite->getAnimationBoneTransform("forearm",pdg::animationSpace_World);
     const auto origin=layer->layerToPort(pdg::Point(transform.x,transform.y));pdg::AnimationTransform offset;offset.x=2;const auto endpoint=pdg::AnimationTransform::compose(transform,offset);
     const auto end=layer->layerToPort(pdg::Point(endpoint.x,endpoint.y));port.lines.clear();sprite->draw();
@@ -1033,7 +1109,7 @@ void armDrawing(const std::string& path) {
     sprite->setAnimationDebugDraw(pdg::animationDebug_Bones | pdg::animationDebug_Sockets | pdg::animationDebug_Boxes);
     expect(sprite->getAnimationDebugDraw() == pdg::animationDebug_All, "debug flags combine as integers");
     sprite->setLocation({100, 50}); sprite->setScale(-2, 3); sprite->setOpacity(0.25);
-    layer->setLocation({10, 20}); layer->setZoom(2); layer->rotateTo(3.14159265358979323846 / 2);
+    viewCamera(layer)->setLocation({10, 20}); viewCamera(layer)->setZoom(2); viewCamera(layer)->rotateTo(3.14159265358979323846 / 2);
     sprite->draw();
     expect(port.lines.size() == 11 && port.debugQuads.size() == 1, "final pose produces bone links, origins, oriented socket and box");
     const auto shoulderPort = layer->layerToPort(pdg::Point(96, 59));
@@ -1177,9 +1253,9 @@ void spriterDebugDrawing(const std::string& path) {
     RecordingPort port, nextPort;
     auto* layer = pdg::createSpriteLayer(&port);
     layer->setUseChipmunkPhysics(false);
-    layer->setLocation({10, 20}); layer->setOrigin({9, -11});
-    layer->setCenterOffset({3, -7});
-    layer->setZoom(.25); layer->rotateTo(.7);
+    viewCamera(layer)->setLocation({10, 20}); layer->getSpritePort()->setCameraAnchor({9, -11});
+    viewCamera(layer)->setCenterOffset({3, -7});
+    viewCamera(layer)->setZoom(.25); viewCamera(layer)->rotateTo(.7);
     auto* sprite = layer->createSpriteFromSpriterFile(path.c_str());
     expect(sprite != nullptr, "ordinary debug fixture loads");
     sprite->pauseAnimation(); sprite->setLocation({100, 50});
@@ -1235,7 +1311,7 @@ void spriterDebugDrawing(const std::string& path) {
     checkBox(port, layer);
     const auto oldDebugCount = port.debugQuads.size();
     const auto oldImageCount = port.calls;
-    layer->setSpritePort(&nextPort); layer->setZoom(2); layer->rotateTo(-.4);
+    layer->setSpritePort(&nextPort); viewCamera(layer)->setZoom(2); viewCamera(layer)->rotateTo(-.4);
     sprite->draw();
     checkBox(nextPort, layer);
     expect(port.debugQuads.size() == oldDebugCount && port.calls == oldImageCount,
@@ -1243,7 +1319,7 @@ void spriterDebugDrawing(const std::string& path) {
 
     auto* movedLayer = pdg::createSpriteLayer(&port);
     movedLayer->setUseChipmunkPhysics(false);
-    movedLayer->setLocation({-5, 12}); movedLayer->setZoom(.5);
+    viewCamera(movedLayer)->setLocation({-5, 12}); viewCamera(movedLayer)->setZoom(.5);
     sprite->addRef(); layer->removeSprite(sprite); movedLayer->addSprite(sprite); sprite->release();
     port.debugQuads.clear(); nextPort.debugQuads.clear();
     sprite->draw();
@@ -1279,9 +1355,9 @@ void imageDrawing() {
     RecordingPort port, nextPort;
     auto* layer = pdg::createSpriteLayer(nullptr);
     layer->setSpritePort(&port);
-    layer->setLocation(pdg::Point(10, 20));
-    layer->setZoom(2);
-    layer->rotateTo(3.14159265358979323846 / 2);
+    viewCamera(layer)->setLocation(pdg::Point(10, 20));
+    viewCamera(layer)->setZoom(2);
+    viewCamera(layer)->rotateTo(3.14159265358979323846 / 2);
     {
         auto* image = new pdg::ImageOpenGL();
         image->initEmpty(20, 10);
@@ -1294,9 +1370,9 @@ void imageDrawing() {
         file.renderSprite(&object);
         expect(port.calls == 1 && port.lastOpacity == 100, "image inherits alpha");
         expect(image->getOpacity() == 200, "shared image opacity restored");
-        near(port.lastQuad.points[pdg::lftTop].x, -100, "draw quad applies root pivot and layer x");
-        near(port.lastQuad.points[pdg::lftTop].y, 270, "draw quad applies root pivot and layer y");
-        near(port.lastQuad.points[pdg::rgtTop].x, -20, "signed texture corner order preserved");
+        near(port.lastQuad.points[pdg::lftTop].x, layer->layerToPort(pdg::Point(115,60)).x, "draw quad applies root pivot and camera x");
+        near(port.lastQuad.points[pdg::lftTop].y, layer->layerToPort(pdg::Point(115,60)).y, "draw quad applies root pivot and camera y");
+        near(port.lastQuad.points[pdg::rgtTop].x, layer->layerToPort(pdg::Point(115,20)).x, "signed texture corner order preserved");
         const auto roundTrip = layer->layerToPort(layer->portToLayer(port.lastQuad));
         for (int i = 0; i < 4; ++i) {
             near(roundTrip.points[i].x, port.lastQuad.points[i].x, "quad conversion round trip x");
@@ -1475,6 +1551,7 @@ int main(int argc, char** argv) {
         const auto armPath=path.substr(0,path.find_last_of('/')+1)+"arm.scml";
         SpriterEngine::SpriterModel arm(armPath, new pdg::PDGFileFactory(), new pdg::PDGObjectFactory());
         independentParts(arm);
+        animatedBones(arm);
     }
     pdg::cleanupLayer(layer);
     compareTransformsWithSpriter();

@@ -2,9 +2,9 @@ namespace pdg { /**
 
 \fn pdg::SpriteLayer::layerToPortVector
 
-\brief translate the point to account for layer transformations
+\brief translate the point to account for the effective camera
 
-Adjusts for layer rotation, zoom to get drawing coordinates. As with offset, vectors are not fixed in space, so origin is not considered.
+Adjusts for the effective camera rotation, zoom and scale to get drawing coordinates. As with offset, vectors are not fixed in space, so translation is not considered.
 
 \param v Vector in layer coordinates
 

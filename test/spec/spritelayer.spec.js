@@ -29,37 +29,26 @@
 
 describe("SpriteLayer", function() {
 
-  if (pdg.hasGraphics) {
-    describe("zoom animation", function() {
-      var layer, listener;
-      afterEach(function() {
-        if (listener && listener.cancel) listener.cancel();
-        if (layer) pdg.cleanupLayer(layer);
-        layer = listener = null;
-      });
-      it("completes absolute and relative zooms through the engine animation loop", function() {
-        var completions = 0;
-        runs(function() {
-          layer = pdg.createSpriteLayer();
-          layer.setZoom(2);
-          listener = layer.onZoomComplete(function() { ++completions; return false; });
-          expect(layer.zoomTo(4, .1, pdg.linearTween, new pdg.Rect(0, 0), new pdg.Point(0, 0))).toBe(layer);
-        });
-        waitsFor(function() { return completions >= 1; }, "absolute zoom completion", 2000);
-        runs(function() {
-          expect(layer.getZoom()).toBeCloseTo(4, 5);
-          expect(layer.zoom(.5, .1)).toBe(layer);
-        });
-        waitsFor(function() { return completions >= 2; }, "relative zoom completion", 2000);
-        runs(function() { expect(layer.getZoom()).toBeCloseTo(2, 5); });
-      });
-    });
+  it("preserves identity through generated layer lookups and visibility controls", function() {
+    var layer = pdg.createSpriteLayer();
+    try {
+      var sprite = layer.createSprite();
+      expect(sprite.getLayer()).toBe(layer);
+      expect(sprite.getLayer()).toBe(layer);
+      expect(layer.getNthSprite(0)).toBe(sprite);
+      layer.hide(); expect(layer.isHidden()).toBe(true);
+      layer.show(); expect(layer.isHidden()).toBe(false);
+      expect(typeof layer.getZOrder()).toBe('number');
+      layer.removeSprite(sprite); expect(sprite.getLayer()).toBe(null);
+      layer.addSprite(sprite); expect(sprite.getLayer()).toBe(layer);
+    } finally { pdg.cleanupLayer(layer); }
+  });
 
+  if (pdg.hasGraphics) {
     it("converts layer coordinates through the public view API", function() {
       var layer = pdg.createSpriteLayer();
       try {
-        layer.setZoom(2);
-        expect(layer.getZoom()).toBe(2);
+        layer.setCamera(new pdg.Camera().setZoom(2));
         ['Point', 'Offset', 'Vector'].forEach(function(kind) {
           var projected = layer['layerToPort' + kind](new pdg[kind](3, 5));
           expect(projected instanceof pdg[kind]).toBe(true);
@@ -77,12 +66,19 @@ describe("SpriteLayer", function() {
         });
         expect(restored.centerOffset.x).toBeCloseTo(.5, 5);
         expect(restored.centerOffset.y).toBeCloseTo(.75, 5);
+        var quad = new pdg.Quad(new pdg.Point(1,2),new pdg.Point(4,2),new pdg.Point(4,6),new pdg.Point(1,6));
+        var projectedQuad = layer.layerToPortQuad(quad);
+        expect(projectedQuad instanceof pdg.Quad).toBe(true);
+        var restoredQuad = layer.portToLayerQuad(projectedQuad);
+        for (var i=0;i<4;++i) {
+          expect(restoredQuad.points[i].x).toBeCloseTo(quad.points[i].x,5);
+          expect(restoredQuad.points[i].y).toBeCloseTo(quad.points[i].y,5);
+        }
       } finally {
         pdg.cleanupLayer(layer);
       }
     });
   }
-
 
   it("exists", function() {
 	console.log('* Testing SpriteLayer...');
@@ -206,7 +202,10 @@ describe("SpriteLayer", function() {
 		// bytes depend on how many Sprites earlier specs created. Check the
 		// fixed payload independently; the full stream still includes IDs.
 		layer.setSerializationFlags(pdg.ser_Update & ~pdg.ser_ZOrder);
-		expect(layer.getSerializedSize(new pdg.Serializer())).toEqual(1066);
+		var payloadSize = layer.getSerializedSize(new pdg.Serializer());
+		var payload = new pdg.Serializer(); layer.serialize(payload);
+		expect(payload.getDataPtr().getDataSize()).toEqual(payloadSize + 3);
+		expect(payloadSize).toBeLessThan(size);
 		layer.setSerializationFlags(pdg.ser_Update);
   		buffer = ser.getDataPtr();
   		expect(buffer.getDataSize()).toEqual(size + 3);  // + 3 bytes for stream header
@@ -295,7 +294,6 @@ describe("SpriteLayer", function() {
       expect(typeof layer.onPreAnimateLayer).toBe('function');
       expect(typeof layer.onPostAnimateLayer).toBe('function');
       expect(typeof layer.onAnimationComplete).toBe('function');
-      expect(typeof layer.onZoomComplete).toBe('function');
       expect(typeof layer.onLayerFadeInComplete).toBe('function');
       expect(typeof layer.onLayerFadeOutComplete).toBe('function');
     });

@@ -89,6 +89,7 @@
 #define MAX_BREAKABLE_JOINTS_PER_SPRITE 16
 
 namespace pdg {
+class Bone;
 class SpriterPoseAdapter;
 struct SpriterRigSchema;
 
@@ -103,6 +104,7 @@ class ImageImpl;  // internal implementation class
 // -----------------------------------------------------------------------------------
 
 class Sprite : public EventEmitter, public Animated<Sprite> {
+    friend class Bone;
     friend class PhysicsBodyRef<Sprite>;
     friend class ColliderRef<Sprite>;
     void initializePhysicsBody(PhysicsBody& body);
@@ -121,7 +123,7 @@ class Sprite : public EventEmitter, public Animated<Sprite> {
     void refreshPartPhysics();
     bool mRefreshingPartPhysics = false;
     bool mAnimationPrepared = false;
-    void advanceAnimation(ms_delta elapsed);
+    void advanceAnimation(double elapsed);
     void publishBodyBreak(Part* part, const PhysicsBodyBreakInfo& info);
     void finishAnimation(ms_delta elapsed, bool layerDoCollisions);
     void updatePartAttachments();
@@ -172,6 +174,9 @@ public:
      * Returns the same borrowed Part pointer. */
     Part* transferPart(Part* part, bool includeDescendants = true);
     Part* getPart(PartId id) const;
+    /// @cond INTERNAL
+    AnimatedBase* snapshotAnimationMember(uint32 id) override;
+    /// @endcond
     Part* findPart(const std::string& name) const;
     Part* getAttachmentPart() const { return mAttachmentPart; }
     size_t getPartCount() const { return mParts.size(); }
@@ -284,6 +289,38 @@ public:
     AnimationModifierId addAnimationIK(const AnimationTwoBoneIK& config, int order = 0);
     void setAnimationIKTarget(AnimationModifierId id, double x, double y, int space = animationSpace_Rig);
     AnimationIKResult getAnimationIKResult(AnimationModifierId id) const;
+    /// Register a procedural pose modifier; requires an enabled animation pose. See \ref native_procedural_animation.
+    AnimationModifierId addAnimationFABRIK(const AnimationFABRIK& config, int order = 0);
+    /// Return the latest FABRIK solve diagnostics. See \ref native_procedural_animation.
+    AnimationFABRIKResult getAnimationFABRIKResult(AnimationModifierId id) const;
+    /// Register a procedural pose modifier; requires an enabled animation pose. See \ref native_procedural_animation.
+    AnimationModifierId addAnimationJiggle(const AnimationJiggle& config, int order = 0);
+    /// Return an independent configuration record. See \ref native_procedural_animation.
+    AnimationJiggle getAnimationJiggleOptions(AnimationModifierId id) const;
+    /// Replace tuning from a complete configuration without changing topology. See \ref native_procedural_animation.
+    void setAnimationJiggleSettings(AnimationModifierId id, const AnimationJiggle& settings);
+    /// Enable or freeze jiggle; reenabling reseeds from the current pose. See \ref native_procedural_animation.
+    void setAnimationJiggleEnabled(AnimationModifierId id, bool enabled);
+    /// Return whether jiggle is enabled. See \ref native_procedural_animation.
+    bool isAnimationJiggleEnabled(AnimationModifierId id) const;
+    /// Set or linearly fade influence using simulation seconds. See \ref native_procedural_animation.
+    void setAnimationJiggleInfluence(AnimationModifierId id, double influence, double seconds = 0);
+    /// Reseed jiggle from the desired pose or target. See \ref native_procedural_animation.
+    void resetAnimationJiggle(AnimationModifierId id);
+    /// Add angular or target velocity. See \ref native_procedural_animation.
+    void kickAnimationJiggle(AnimationModifierId id, double x, double y, int joint = -1);
+    /// Return the most recently evaluated jiggle diagnostics. See \ref native_procedural_animation.
+    JiggleResult getAnimationJiggleResult(AnimationModifierId id) const;
+    /// Return an independent numerical state snapshot. See \ref native_procedural_animation.
+    JiggleState getAnimationJiggleState(AnimationModifierId id) const;
+    /// Restore validated numerical state on the same topology. See \ref native_procedural_animation.
+    void setAnimationJiggleState(AnimationModifierId id, const JiggleState&);
+    /// Remove a jiggle controller. See \ref native_procedural_animation.
+    void removeAnimationJiggle(AnimationModifierId id);
+    /// @cond INTERNAL
+    /// \internal Numeric binding transport.
+    std::vector<double> proceduralControl(int operation, const std::vector<double>& values);
+    /// @endcond
     AnimationModifierId addAnimationModifier(AnimationPipeline::Modifier callback, int stage = animationStage_PreConstraint, int order = 0);
     void removeAnimationModifier(AnimationModifierId id);
     void clearAnimationModifiers();
@@ -345,6 +382,8 @@ public:
     AnimationPose getAnimationPose() const;
     AnimationPose sampleAnimationPose(const char* clip, double timeSeconds) const;
     std::vector<std::string> getAnimationBoneNames() const;
+    Bone* getBone(const char* name);
+    Bone* getBone(AnimationBoneId id);
     std::vector<std::string> getAnimationBindingNames() const;
     AnimationTransform getAnimationBoneTransform(const char* name, int space = animationSpace_Local) const;
     AnimationTransform getAnimationBindingTransform(const char* name, int space = animationSpace_Local) const;
@@ -433,11 +472,11 @@ public:
 	// fading, with 1.0 being complete opaque and 0.0 being completely transparent
 	Sprite& setOpacity(float opacity);
 	float	getOpacity();
-	void	fadeTo(float targetOpacity, double durationSeconds, 
+	Sprite& fadeTo(float targetOpacity, double durationSeconds,
                             EasingFunc easing = linearTween);  // fadeComplete notification when done
-	void	fadeIn(double durationSeconds, 
+	Sprite& fadeIn(double durationSeconds,
                             EasingFunc easing = linearTween);  // fadeInComplete notification when done
-	void	fadeOut(double durationSeconds, 
+	Sprite& fadeOut(double durationSeconds,
                             EasingFunc easing = linearTween);  // fadeOutComplete notification when done
 
 	// arrange sprites within the layer
@@ -613,6 +652,7 @@ protected:
   #endif
 
     virtual ~Sprite();
+    std::vector<const float*> tweenFields() const override;
 
     // Mouse hit testing remains independent of physical collider selection.
 	bool hitTest(const Point& p);
@@ -626,7 +666,7 @@ protected:
     
 	// functions called from the layer
 	virtual void	draw();
-	virtual void	doAnimate(ms_delta msElapsed, bool layerDoCollisions);
+	virtual void	doAnimate(double msElapsed, bool layerDoCollisions);
     
  	int mNumFrames;
 
@@ -682,7 +722,7 @@ protected:
     cpShapeFilter mAnimationSavedFilter = CP_SHAPE_FILTER_ALL;
     double mAnimationSavedMass = 1, mAnimationSavedMoment = 1;
     double mAnimationPhysicsUnitsPerMeter = 1;
-    void prepareAnimationPhysics(ms_delta elapsed);
+    void prepareAnimationPhysics(double elapsed);
     void publishAnimationPhysics();
     void finishAnimationPhysics();
     AnimationPhysicsRig& animationPhysicsControl() const;
@@ -697,8 +737,13 @@ protected:
     void drawAnimationArt();
 	mutable std::unique_ptr<SpriterPoseAdapter> mAnimationPoseAdapter;
     mutable std::shared_ptr<AnimationPipeline> mAnimationPipeline;
-    struct AnimationIKState { AnimationTwoBoneIK config; AnimationIKResult result; };
+    mutable std::map<AnimationBoneId,std::shared_ptr<Bone>> mBones;
+    void clearBoneControls();
+    struct AnimationIKState { AnimationTwoBoneIK config; AnimationIKResult result; std::shared_ptr<struct SpriteJiggleState> jiggle; };
     mutable std::map<AnimationModifierId, std::shared_ptr<AnimationIKState>> mAnimationIK;
+    struct FABRIKState { AnimationFABRIK config; AnimationFABRIKResult result; };
+    mutable std::map<AnimationModifierId,std::shared_ptr<FABRIKState>> mAnimationFABRIK;
+    mutable std::map<AnimationModifierId,std::shared_ptr<struct SpriteJiggleState>> mAnimationJiggle;
 	std::shared_ptr<SpriterRigSchema> mAnimationRigSchema;
 	mutable std::string mAnimationRigError;
 	mutable int mAnimationDebugDraw = animationDebug_None;
@@ -728,7 +773,7 @@ protected:
 	void invalidateSpriterPose() const;
 	void refreshSpriterPose() const;
 	AnimationTransform spriterRootTransform() const;
-	void publishSpriterPose(double deltaSeconds = 0) const;
+	void publishSpriterPose(double deltaSeconds = 0,double boneSeconds = -1) const;
     void selectAnimationTime(const char* clip, double normalizedSeconds);
 	void drawAnimationDebug() const;
 	void updateAttachedSprites() const;
@@ -780,32 +825,37 @@ Sprite::getFrameCount() {
 }
 
 inline Sprite& 
-Sprite::moveToFront() { 
+Sprite::moveToFront() {
+    if(recordOperation("moveToFront", captureAnimationArguments())) return *this;
     moveInFrontOf(0);
     return *this;
 }
 
 inline Sprite& 
-Sprite::moveToBack() { 
+Sprite::moveToBack() {
+    if(recordOperation("moveToBack", captureAnimationArguments())) return *this;
     moveBehind(0); 
     return *this;
 }
 
 inline Sprite& 
 Sprite::setWantsCollideWallEvents(bool wantsThem) {
+    if(recordOperation("setWantsCollideWallEvents", captureAnimationArguments(wantsThem))) return *this;
 	wantsWallCollide = wantsThem;
 	if (wantsThem) recalcOnscreenAndInBounds();
 	return *this;
 }
 
 inline Sprite&	
-Sprite::setWantsAnimLoopEvents(bool wantsThem) { 
+Sprite::setWantsAnimLoopEvents(bool wantsThem) {
+    if(recordOperation("setWantsAnimLoopEvents", captureAnimationArguments(wantsThem))) return *this;
 	wantsAnimLoop = wantsThem; 
 	return *this; 
 }
 
 inline Sprite&	
 Sprite::setWantsAnimEndEvents(bool wantsThem) {
+    if(recordOperation("setWantsAnimEndEvents", captureAnimationArguments(wantsThem))) return *this;
 	wantsAnimEnd = wantsThem; 
 	return *this; 
 }
@@ -813,6 +863,7 @@ Sprite::setWantsAnimEndEvents(bool wantsThem) {
 #ifndef PDG_NO_GUI
 inline Sprite&	
 Sprite::setWantsOffscreenEvents(bool wantsThem) {
+    if(recordOperation("setWantsOffscreenEvents", captureAnimationArguments(wantsThem))) return *this;
 	wantsOffscreen = wantsThem; 
 	if (wantsThem) recalcOnscreenAndInBounds();
 	return *this; 

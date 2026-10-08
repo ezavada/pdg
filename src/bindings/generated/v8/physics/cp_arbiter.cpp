@@ -143,11 +143,7 @@ namespace pdg
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "true if this is the first moment of contact between the objects, false if part of an ongoing collison").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -163,10 +159,7 @@ namespace pdg
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -183,10 +176,7 @@ namespace pdg
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Vector]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -204,10 +194,7 @@ namespace pdg
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "([number int] i)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -218,7 +205,25 @@ namespace pdg
             v8_ThrowArgTypeException(isolate, 1, "a number (""i"")");
             return;
         }
-        long i = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+        double i_temp = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+        if (i_temp < -2147483648.0 || i_temp > 2147483647.0 || i_temp != (long)i_temp)
+        {
+            v8_ThrowArgTypeException(isolate, 1, "a number in range [-2147483648, 2147483647] (""i"")");
+            return;
+        }
+        int32 i = (int32)i_temp;
+        if (i < 0 || i >= cpArbiterGetCount(self))
+        {
+            std::ostringstream excpt_;
+            excpt_ << "contact index out of range";
+            isolate->ThrowException( v8::Exception::RangeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+            args.GetReturnValue().SetUndefined();
+        };
 
         cpVect pt = cpArbiterGetPointA(self, i);
         pdg::Point thePointA(pt.x, pt.y);
@@ -231,10 +236,7 @@ namespace pdg
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "([number int] i)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -245,7 +247,25 @@ namespace pdg
             v8_ThrowArgTypeException(isolate, 1, "a number (""i"")");
             return;
         }
-        long i = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+        double i_temp = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+        if (i_temp < -2147483648.0 || i_temp > 2147483647.0 || i_temp != (long)i_temp)
+        {
+            v8_ThrowArgTypeException(isolate, 1, "a number in range [-2147483648, 2147483647] (""i"")");
+            return;
+        }
+        int32 i = (int32)i_temp;
+        if (i < 0 || i >= cpArbiterGetCount(self))
+        {
+            std::ostringstream excpt_;
+            excpt_ << "contact index out of range";
+            isolate->ThrowException( v8::Exception::RangeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+            args.GetReturnValue().SetUndefined();
+        };
 
         cpVect pt = cpArbiterGetPointB(self, i);
         pdg::Point thePointB(pt.x, pt.y);
@@ -258,10 +278,7 @@ namespace pdg
         cpArbiterWrap* objWrapper = jswrap::ObjectWrap::Unwrap<cpArbiterWrap>(args.This());
         cpArbiter* self = dynamic_cast<cpArbiter*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "([number int] i)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -272,7 +289,25 @@ namespace pdg
             v8_ThrowArgTypeException(isolate, 1, "a number (""i"")");
             return;
         }
-        long i = args[1 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();
+        double i_temp = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+        if (i_temp < -2147483648.0 || i_temp > 2147483647.0 || i_temp != (long)i_temp)
+        {
+            v8_ThrowArgTypeException(isolate, 1, "a number in range [-2147483648, 2147483647] (""i"")");
+            return;
+        }
+        int32 i = (int32)i_temp;
+        if (i < 0 || i >= cpArbiterGetCount(self))
+        {
+            std::ostringstream excpt_;
+            excpt_ << "contact index out of range";
+            isolate->ThrowException( v8::Exception::RangeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }())));
+            args.GetReturnValue().SetUndefined();
+        };
 
         cpFloat theDepth = cpArbiterGetDepth(self, i);
         { args.GetReturnValue().Set( v8::Number::New(isolate, theDepth) ); return; };

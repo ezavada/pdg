@@ -241,17 +241,17 @@ describe("Serialized Data", function() {
 
     it("verifies exact sizes for memory blocks", function() {
       // Memory records include the 3-byte type tag, length and content.
-      expect(serializer.sizeof_mem("")).toBe(4); // tag + 1-byte length (0)
+      expect(serializer.sizeof_mem(new Uint8Array(0))).toBe(4); // tag + 1-byte length (0)
       
       // Small memory block
-      expect(serializer.sizeof_mem("test")).toBe(8); // tag + 1-byte length + 4 bytes content
+      expect(serializer.sizeof_mem(new Uint8Array([116, 101, 115, 116]))).toBe(8); // tag + 1-byte length + 4 bytes content
       
       // Medium memory block
-      var mediumMem = "x".repeat(1000);
+      var mediumMem = new Uint8Array(1000);
       expect(serializer.sizeof_mem(mediumMem)).toBe(1006); // tag + 3-byte length + 1000 bytes content
       
       // Large memory block
-      var largeMem = "x".repeat(100000);
+      var largeMem = new Uint8Array(100000);
       expect(serializer.sizeof_mem(largeMem)).toBe(100008); // tag + 5-byte length + 100000 bytes content
     });
 

@@ -111,7 +111,7 @@ namespace pdg
         double dim = JSValueToNumber(ctx, arguments[1 -1], exception);
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""count"")");
-        int32 count = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 count = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         cpSpaceUseSpatialHash(self, dim, count);
         return JSValueMakeUndefined(ctx);
     }

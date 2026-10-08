@@ -134,7 +134,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theLogLevel"")");
-        int32 theLogLevel = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 theLogLevel = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->setLogLevel(theLogLevel);
         return thisObject;
     }
@@ -153,7 +153,7 @@ namespace pdg
         JSStringRelease(inLogNameBase_Str);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""initMode"")");
-        long initMode = (argumentCount<2) ? pdg::LogManager::init_StdOut : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long initMode = (argumentCount<2) ? pdg::LogManager::init_StdOut : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->initialize(inLogNameBase, initMode);
         return JSValueMakeUndefined(ctx);
     }
@@ -165,7 +165,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 3);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""level"")");
-        int32 level = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 level = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsString(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a string (""category"")");
         JSStringRef category_Str = JSValueToStringCopy(ctx, arguments[2 -1], exception);
@@ -190,21 +190,49 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""length"")");
-        long length = (argumentCount<2) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long length = (argumentCount<2) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""bytesPerLine"")");
-        long bytesPerLine = (argumentCount<3) ? 20 : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
-        int dataSize = 0;
-        char* inData = 0;
-        if (JSValueIsString(ctx, arguments[0]))
+        long bytesPerLine = (argumentCount<3) ? 20 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
+        size_t available = 0;
+        if (length < 0 || bytesPerLine <= 0)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "invalid dump length or line width" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+        const char* inData = 0;
+        if (IsUint8Array(arguments[0]))
         {
             size_t bytes = 0;
-            uint8* ptr = (uint8*) DecodeBinary(arguments[0], &bytes);
-            inData = (char*)ptr;
-            dataSize = (length == 0) ? bytes : length;
+            const uint8* ptr = nullptr;
+            if (!GetUint8ArrayData(arguments[0], ptr, bytes))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected an attached, non-shared Uint8Array" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
+            if (bytes > UINT32_MAX)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "byte array exceeds the supported size" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
+            inData = (const char*)ptr;
+            available = bytes;
         }
         else
         {
+            if (!JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected Uint8Array or MemBlock" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
             MemBlock* memBlock = 0;
             if (JSValueIsObject(ctx, arguments[1 -1]))
             {
@@ -214,8 +242,17 @@ namespace pdg
             if (!memBlock)
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "an object of type ""MemBlock"" (""memBlock"")");
             inData = memBlock->ptr;
-            dataSize = (length == 0) ? memBlock->bytes : length;
+            available = memBlock->bytes;
         }
+        size_t count = length == 0 ? available : static_cast<size_t>(length);
+        if (count > available || count > (INT32_MAX - 32) / 16 || bytesPerLine > (INT32_MAX - 32) / 16)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "binaryDump range exceeds available or supported data" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+        int dataSize = static_cast<int>(count);
         int outBufSize = (4 * dataSize) + (6 * dataSize/bytesPerLine) + (4 * bytesPerLine) + 32;
         char* outBuf = new char[outBufSize];
         OS::binaryDump(outBuf, outBufSize, inData, dataSize, bytesPerLine);

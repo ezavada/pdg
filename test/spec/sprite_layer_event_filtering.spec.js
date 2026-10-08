@@ -1,4 +1,28 @@
 describe('Sprite Layer Event Filtering', function() {
+    it('routes browser action subscriptions and cancels them without changing receiver identity', function() {
+        // Browser event injection exercises generated subscriptions; native
+        // event payloads are C++ structures and use the integration tests below.
+        var layer = pdg.createSpriteLayer();
+        try {
+            if (!layer.__dispatchNativeEvent) return;
+            var calls = 0, receiver;
+            var handler = layer.on(41, function(event) { ++calls; receiver=this; return false; });
+            layer.postEvent(pdg.eventType_SpriteLayer,{action:42});
+            expect(calls).toBe(0);
+            layer.postEvent(pdg.eventType_SpriteLayer,{action:41});
+            expect(calls).toBe(1); expect(receiver).toBe(layer);
+            handler.cancel(); handler.cancel();
+            layer.postEvent(pdg.eventType_SpriteLayer,{action:41});
+            expect(calls).toBe(1);
+            expect(function(){layer.on(999,function(){return false;});}).toThrow();
+            expect(function(){layer.onMouseClick(null);}).toThrow();
+            var touch = layer.onMouseClick(function(){++calls;return true;});
+            layer.postEvent(pdg.eventType_SpriteTouch,{touchType:22});
+            expect(calls).toBe(1);
+            layer.postEvent(pdg.eventType_SpriteTouch,{touchType:24});
+            expect(calls).toBe(2); touch.cancel();
+        } finally { pdg.cleanupLayer(layer); }
+    });
     
     describe('SpriteLayer Event Handlers', function() {
         
@@ -78,13 +102,6 @@ describe('Sprite Layer Event Filtering', function() {
             pdg.cleanupLayer(layer);
         });
         
-        it('should use ScriptLayerEventHandler for OnZoomComplete', function() {
-            var layer = pdg.createSpriteLayer();
-            var handler = layer.onZoomComplete(function() {});
-            expect(handler).toBeDefined();
-            expect(typeof handler).toBe('object');
-            pdg.cleanupLayer(layer);
-        });
         
         it('should use ScriptLayerEventHandler for OnLayerFadeInComplete', function() {
             var layer = pdg.createSpriteLayer();
@@ -170,13 +187,6 @@ describe('Sprite Layer Event Filtering', function() {
             pdg.cleanupLayer(layer);
         });
         
-        it('should use ScriptLayerEventHandler for TileLayer OnZoomComplete', function() {
-            var layer = pdg.createTileLayer();
-            var handler = layer.onZoomComplete(function() { return false; });
-            expect(handler).toBeDefined();
-            expect(typeof handler).toBe('object');
-            pdg.cleanupLayer(layer);
-        });
         
         it('should use ScriptLayerEventHandler for TileLayer OnLayerFadeInComplete', function() {
             var layer = pdg.createTileLayer();
@@ -199,6 +209,7 @@ describe('Sprite Layer Event Filtering', function() {
     describe('Event Functionality Integration Tests', function() {
         
         var port;
+        var existingLayer;
         var spriteLayer;
         var sprite;
         
@@ -206,14 +217,24 @@ describe('Sprite Layer Event Filtering', function() {
             // These callbacks are driven by real port draw events. The Node
             // test host has no default main port, so give each spec an isolated
             // port and close it explicitly during teardown.
+            // Keep another layer on the same port to exercise ordering even
+            // when this suite runs alone.
             if (pdg.hasGraphics) {
                 port = pdg.gfx.createWindowPort(
                     {left: 0, top: 0, right: 800, bottom: 600},
                     "Sprite Layer Event Integration Test");
+                existingLayer = pdg.createSpriteLayer(port);
                 spriteLayer = pdg.createSpriteLayer(port);
             } else {
+                existingLayer = pdg.createSpriteLayer();
                 spriteLayer = pdg.createSpriteLayer();
             }
+            // ErasePort belongs to the first layer on the port; AnimationStart
+            // belongs to the first layer overall. New layers start at the front,
+            // so explicitly make this one backmost instead of depending on the
+            // absence of layers created by the test host or other suites.
+            spriteLayer.moveToBack();
+            expect(spriteLayer.getZOrder()).toBe(0);
             console.log("Integration test: Created NEW sprite layer:", spriteLayer);
             
             // Create a sprite to trigger events
@@ -229,6 +250,10 @@ describe('Sprite Layer Event Filtering', function() {
                 spriteLayer = null;
             }
             sprite = null;
+            if (existingLayer) {
+                pdg.cleanupLayer(existingLayer);
+                existingLayer = null;
+            }
             if (port) {
                 pdg.gfx.closeGraphicsPort(port);
                 port = null;

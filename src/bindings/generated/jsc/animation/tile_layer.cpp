@@ -40,7 +40,7 @@ namespace pdg
     {
         JSObjectRef obj = JSObjectMake(ctx, TileLayer_class(), cppObj);
         JSC_SetObjectClassConstructor(ctx, obj, TileLayer_class());
-        cppObj->mEventEmitterScriptObj = obj; cppObj->mAnimatedScriptObj = obj; cppObj->mSpriteLayerScriptObj = obj; cppObj->mTileLayerScriptObj = obj;
+        cppObj->mEventEmitterScriptObj = obj; cppObj->mSpriteLayerScriptObj = obj; cppObj->mTileLayerScriptObj = obj;
         return obj;
     }
 
@@ -89,73 +89,19 @@ namespace pdg
             { "clear", TileLayer_Clear, kJSPropertyAttributeDontDelete },
             { "blockEvent", TileLayer_BlockEvent, kJSPropertyAttributeDontDelete },
             { "unblockEvent", TileLayer_UnblockEvent, kJSPropertyAttributeDontDelete },
-            { "getBoundingBox", TileLayer_GetBoundingBox, kJSPropertyAttributeDontDelete },
-            { "getRotatedBounds", TileLayer_GetRotatedBounds, kJSPropertyAttributeDontDelete },
-            { "getLocation", TileLayer_GetLocation, kJSPropertyAttributeDontDelete },
-            { "getMovement", TileLayer_GetMovement, kJSPropertyAttributeDontDelete },
-            { "getSize", TileLayer_GetSize, kJSPropertyAttributeDontDelete },
-            { "getWidth", TileLayer_GetWidth, kJSPropertyAttributeDontDelete },
-            { "getHeight", TileLayer_GetHeight, kJSPropertyAttributeDontDelete },
-            { "getScale", TileLayer_GetScale, kJSPropertyAttributeDontDelete },
-            { "getStretching", TileLayer_GetStretching, kJSPropertyAttributeDontDelete },
-            { "getRotation", TileLayer_GetRotation, kJSPropertyAttributeDontDelete },
-            { "getCenterOffset", TileLayer_GetCenterOffset, kJSPropertyAttributeDontDelete },
-            { "getSpin", TileLayer_GetSpin, kJSPropertyAttributeDontDelete },
-            { "setLocation", TileLayer_SetLocation, kJSPropertyAttributeDontDelete },
-            { "moveTo", TileLayer_MoveTo, kJSPropertyAttributeDontDelete },
-            { "moveBy", TileLayer_MoveBy, kJSPropertyAttributeDontDelete },
-            { "setMovement", TileLayer_SetMovement, kJSPropertyAttributeDontDelete },
-            { "changeMovementTo", TileLayer_ChangeMovementTo, kJSPropertyAttributeDontDelete },
-            { "changeMovementBy", TileLayer_ChangeMovementBy, kJSPropertyAttributeDontDelete },
-            { "setSize", TileLayer_SetSize, kJSPropertyAttributeDontDelete },
-            { "changeCenterOffsetTo", TileLayer_ChangeCenterOffsetTo, kJSPropertyAttributeDontDelete },
-            { "changeCenterOffsetBy", TileLayer_ChangeCenterOffsetBy, kJSPropertyAttributeDontDelete },
-            { "setWidth", TileLayer_SetWidth, kJSPropertyAttributeDontDelete },
-            { "setHeight", TileLayer_SetHeight, kJSPropertyAttributeDontDelete },
-            { "setRotation", TileLayer_SetRotation, kJSPropertyAttributeDontDelete },
-            { "setSpin", TileLayer_SetSpin, kJSPropertyAttributeDontDelete },
-            { "setGrowing", TileLayer_SetGrowing, kJSPropertyAttributeDontDelete },
-            { "setStretching", TileLayer_SetStretching, kJSPropertyAttributeDontDelete },
-            { "setScale", TileLayer_SetScale, kJSPropertyAttributeDontDelete },
-            { "changeSpinTo", TileLayer_ChangeSpinTo, kJSPropertyAttributeDontDelete },
-            { "changeSpinBy", TileLayer_ChangeSpinBy, kJSPropertyAttributeDontDelete },
-            { "changeGrowingTo", TileLayer_ChangeGrowingTo, kJSPropertyAttributeDontDelete },
-            { "changeGrowingBy", TileLayer_ChangeGrowingBy, kJSPropertyAttributeDontDelete },
-            { "changeStretchingTo", TileLayer_ChangeStretchingTo, kJSPropertyAttributeDontDelete },
-            { "changeStretchingBy", TileLayer_ChangeStretchingBy, kJSPropertyAttributeDontDelete },
-            { "changeScaleTo", TileLayer_ChangeScaleTo, kJSPropertyAttributeDontDelete },
-            { "changeScaleBy", TileLayer_ChangeScaleBy, kJSPropertyAttributeDontDelete },
-            { "grow", TileLayer_Grow, kJSPropertyAttributeDontDelete },
-            { "stretch", TileLayer_Stretch, kJSPropertyAttributeDontDelete },
-            { "resizeBy", TileLayer_ResizeBy, kJSPropertyAttributeDontDelete },
-            { "resizeTo", TileLayer_ResizeTo, kJSPropertyAttributeDontDelete },
-            { "rotateBy", TileLayer_RotateBy, kJSPropertyAttributeDontDelete },
-            { "rotateTo", TileLayer_RotateTo, kJSPropertyAttributeDontDelete },
-            { "setCenterOffset", TileLayer_SetCenterOffset, kJSPropertyAttributeDontDelete },
-            { "setFlipX", TileLayer_SetFlipX, kJSPropertyAttributeDontDelete },
-            { "setFlipY", TileLayer_SetFlipY, kJSPropertyAttributeDontDelete },
-            { "stopMovement", TileLayer_StopMovement, kJSPropertyAttributeDontDelete },
-            { "stopSpinning", TileLayer_StopSpinning, kJSPropertyAttributeDontDelete },
-            { "stopGrowing", TileLayer_StopGrowing, kJSPropertyAttributeDontDelete },
-            { "stopStretching", TileLayer_StopStretching, kJSPropertyAttributeDontDelete },
-            { "pauseSchedule", TileLayer_PauseSchedule, kJSPropertyAttributeDontDelete },
-            { "resumeSchedule", TileLayer_ResumeSchedule, kJSPropertyAttributeDontDelete },
-            { "cancelSchedule", TileLayer_CancelSchedule, kJSPropertyAttributeDontDelete },
-            { "flipX", TileLayer_FlipX, kJSPropertyAttributeDontDelete },
-            { "flipY", TileLayer_FlipY, kJSPropertyAttributeDontDelete },
-            { "andThen", TileLayer_AndThen, kJSPropertyAttributeDontDelete },
-            { "isFlippedX", TileLayer_IsFlippedX, kJSPropertyAttributeDontDelete },
-            { "isFlippedY", TileLayer_IsFlippedY, kJSPropertyAttributeDontDelete },
-            { "isSchedulePaused", TileLayer_IsSchedulePaused, kJSPropertyAttributeDontDelete },
-            { "hasScheduledAnimations", TileLayer_HasScheduledAnimations, kJSPropertyAttributeDontDelete },
-            { "wait", TileLayer_Wait, kJSPropertyAttributeDontDelete },
-            { "addAnimationHelper", TileLayer_AddAnimationHelper, kJSPropertyAttributeDontDelete },
-            { "removeAnimationHelper", TileLayer_RemoveAnimationHelper, kJSPropertyAttributeDontDelete },
-            { "clearAnimationHelpers", TileLayer_ClearAnimationHelpers, kJSPropertyAttributeDontDelete },
+            { "setQueryBits", TileLayer_SetQueryBits, kJSPropertyAttributeDontDelete },
+            { "getQueryBits", TileLayer_GetQueryBits, kJSPropertyAttributeDontDelete },
+            { "setCamera", TileLayer_SetCamera, kJSPropertyAttributeDontDelete },
+            { "getCamera", TileLayer_GetCamera, kJSPropertyAttributeDontDelete },
+            { "getEffectiveCamera", TileLayer_GetEffectiveCamera, kJSPropertyAttributeDontDelete },
+            { "setCameraParallax", TileLayer_SetCameraParallax, kJSPropertyAttributeDontDelete },
+            { "get""WorldBounds", TileLayer_GetWorldBounds, kJSPropertyAttributeDontDelete },
+            { "set""WorldBounds", TileLayer_SetWorldBounds, kJSPropertyAttributeDontDelete },
             { "createParticle", TileLayer_CreateParticle, kJSPropertyAttributeDontDelete },
             { "addParticle", TileLayer_AddParticle, kJSPropertyAttributeDontDelete },
             { "removeParticle", TileLayer_RemoveParticle, kJSPropertyAttributeDontDelete },
             { "removeAllParticles", TileLayer_RemoveAllParticles, kJSPropertyAttributeDontDelete },
+            { "getParticleTrailCount", TileLayer_GetParticleTrailCount, kJSPropertyAttributeDontDelete },
             { "getParticleCount", TileLayer_GetParticleCount, kJSPropertyAttributeDontDelete },
             { "getNthParticle", TileLayer_GetNthParticle, kJSPropertyAttributeDontDelete },
             { "setMaxParticles", TileLayer_SetMaxParticles, kJSPropertyAttributeDontDelete },
@@ -176,7 +122,6 @@ namespace pdg
             { "moveToFront", TileLayer_MoveToFront, kJSPropertyAttributeDontDelete },
             { "moveToBack", TileLayer_MoveToBack, kJSPropertyAttributeDontDelete },
             { "getZOrder", TileLayer_GetZOrder, kJSPropertyAttributeDontDelete },
-            { "moveWith", TileLayer_MoveWith, kJSPropertyAttributeDontDelete },
             { "findSprite", TileLayer_FindSprite, kJSPropertyAttributeDontDelete },
             { "getNthSprite", TileLayer_GetNthSprite, kJSPropertyAttributeDontDelete },
             { "getSpriteZOrder", TileLayer_GetSpriteZOrder, kJSPropertyAttributeDontDelete },
@@ -193,14 +138,6 @@ namespace pdg
 #ifndef PDG_NO_GUI
             { "getSpritePort", TileLayer_GetSpritePort, kJSPropertyAttributeDontDelete },
             { "setSpritePort", TileLayer_SetSpritePort, kJSPropertyAttributeDontDelete },
-            { "setOrigin", TileLayer_SetOrigin, kJSPropertyAttributeDontDelete },
-            { "getOrigin", TileLayer_GetOrigin, kJSPropertyAttributeDontDelete },
-            { "setAutoCenter", TileLayer_SetAutoCenter, kJSPropertyAttributeDontDelete },
-            { "setFixedMoveAxis", TileLayer_SetFixedMoveAxis, kJSPropertyAttributeDontDelete },
-            { "setZoom", TileLayer_SetZoom, kJSPropertyAttributeDontDelete },
-            { "getZoom", TileLayer_GetZoom, kJSPropertyAttributeDontDelete },
-            { "zoomTo", TileLayer_ZoomTo, kJSPropertyAttributeDontDelete },
-            { "zoom", TileLayer_Zoom, kJSPropertyAttributeDontDelete },
             { "layerToPortPoint", TileLayer_LayerToPortPoint, kJSPropertyAttributeDontDelete },
             { "layerToPortOffset", TileLayer_LayerToPortOffset, kJSPropertyAttributeDontDelete },
             { "layerToPortVector", TileLayer_LayerToPortVector, kJSPropertyAttributeDontDelete },
@@ -216,13 +153,11 @@ namespace pdg
             { "setGravity", TileLayer_SetGravity, kJSPropertyAttributeDontDelete },
             { "setUseChipmunkPhysics", TileLayer_SetUseChipmunkPhysics, kJSPropertyAttributeDontDelete },
             { "setStaticLayer", TileLayer_SetStaticLayer, kJSPropertyAttributeDontDelete },
-            { "setKeepGravityDownward", TileLayer_SetKeepGravityDownward, kJSPropertyAttributeDontDelete },
             { "setDamping", TileLayer_SetDamping, kJSPropertyAttributeDontDelete },
             { "getSpace", TileLayer_GetSpace, kJSPropertyAttributeDontDelete },
 #endif
             { "setWorldSize", TileLayer_SetWorldSize, kJSPropertyAttributeDontDelete },
             { "getWorldSize", TileLayer_GetWorldSize, kJSPropertyAttributeDontDelete },
-            { "getWorldBounds", TileLayer_GetWorldBounds, kJSPropertyAttributeDontDelete },
             { "defineTileSet", TileLayer_DefineTileSet, kJSPropertyAttributeDontDelete },
             { "loadMapData", TileLayer_LoadMapData, kJSPropertyAttributeDontDelete },
             { "getMapData", TileLayer_GetMapData, kJSPropertyAttributeDontDelete },
@@ -256,7 +191,6 @@ namespace pdg
             { "onPreAnimateLayer", TileLayer_OnPreAnimateLayer, kJSPropertyAttributeDontDelete },
             { "onPostAnimateLayer", TileLayer_OnPostAnimateLayer, kJSPropertyAttributeDontDelete },
             { "onAnimationComplete", TileLayer_OnAnimationComplete, kJSPropertyAttributeDontDelete },
-            { "onZoomComplete", TileLayer_OnZoomComplete, kJSPropertyAttributeDontDelete },
             { "onLayerFadeInComplete", TileLayer_OnLayerFadeInComplete, kJSPropertyAttributeDontDelete },
             { "onLayerFadeOutComplete", TileLayer_OnLayerFadeOutComplete, kJSPropertyAttributeDontDelete },
             { 0, 0, 0 }
@@ -277,7 +211,15 @@ namespace pdg
 
     JSValueRef TileLayer_AddHandler(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
@@ -292,13 +234,21 @@ namespace pdg
         SCRIPT_DEBUG_ONLY( JSC_DebugPrintValue(ctx, arguments[0], "Dumping " "IEventHandler" " object:") );
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inType"")");
-        long inType = (argumentCount<2) ? pdg::all_events : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long inType = (argumentCount<2) ? pdg::all_events : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->addHandler(inHandler, inType);
         return JSValueMakeUndefined(ctx);
     }
     JSValueRef TileLayer_RemoveHandler(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
@@ -312,13 +262,21 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "an object derived from ""IEventHandler"" (""inHandler"")");
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inType"")");
-        long inType = (argumentCount<2) ? pdg::all_events : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long inType = (argumentCount<2) ? pdg::all_events : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->removeHandler(inHandler, inType);
         return JSValueMakeUndefined(ctx);
     }
     JSValueRef TileLayer_Clear(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -327,2074 +285,57 @@ namespace pdg
     }
     JSValueRef TileLayer_BlockEvent(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""inEventType"")");
-        int32 inEventType = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 inEventType = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->blockEvent(inEventType);
         return JSValueMakeUndefined(ctx);
     }
     JSValueRef TileLayer_UnblockEvent(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""inEventType"")");
-        int32 inEventType = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 inEventType = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->unblockEvent(inEventType);
         return JSValueMakeUndefined(ctx);
     }
-
-    JSValueRef TileLayer_GetBoundingBox(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Rect theBoundingBox = self->getBoundingBox();
-        return JSC_RectToValue(ctx, theBoundingBox, exception);
-    }
-    JSValueRef TileLayer_GetRotatedBounds(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::RotatedRect theRotatedBounds = self->getRotatedBounds();
-        return JSC_RectToValue(ctx, theRotatedBounds, exception);
-    }
-    JSValueRef TileLayer_GetLocation(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Point theLocation = self->getLocation();
-        return JSC_PointToValue(ctx, theLocation, exception);
-    }
-    JSValueRef TileLayer_GetMovement(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theMovement = self->getMovement();
-        return JSC_OffsetToValue(ctx, theMovement, exception);
-    }
-    JSValueRef TileLayer_GetSize(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theSize = self->getSize();
-        return JSC_OffsetToValue(ctx, theSize, exception);
-    }
-    JSValueRef TileLayer_GetWidth(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        double theWidth = self->getWidth();
-        return JSValueMakeNumber(ctx, theWidth);
-    }
-    JSValueRef TileLayer_GetHeight(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        double theHeight = self->getHeight();
-        return JSValueMakeNumber(ctx, theHeight);
-    }
-    JSValueRef TileLayer_GetScale(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theScale = self->getScale();
-        return JSC_OffsetToValue(ctx, theScale, exception);
-    }
-    JSValueRef TileLayer_GetStretching(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theStretching = self->getStretching();
-        return JSC_OffsetToValue(ctx, theStretching, exception);
-    }
-    JSValueRef TileLayer_GetRotation(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        double theRotation = self->getRotation();
-        return JSValueMakeNumber(ctx, theRotation);
-    }
-    JSValueRef TileLayer_GetCenterOffset(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theCenterOffset = self->getCenterOffset();
-        return JSC_OffsetToValue(ctx, theCenterOffset, exception);
-    }
-    JSValueRef TileLayer_GetSpin(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        double theSpin = self->getSpin();
-        return JSValueMakeNumber(ctx, theSpin);
-    }
-    JSValueRef TileLayer_SetLocation(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Point value;
-            auto isPoint = JSC_ValueIsPoint(ctx, arguments[0], value, exception);
-            if (!isPoint.has_value()) { return JSValueMakeNull(ctx); }
-            if (*isPoint)
-            {
-                if (argumentCount != 1)
-                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-                self->setLocation(value); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-                double x = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-                double y = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount != 2)
-                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
-                self->setLocation(x, y); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_MoveTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Point value;
-            auto isPoint = JSC_ValueIsPoint(ctx, arguments[0], value, exception);
-            if (!isPoint.has_value()) { return JSValueMakeNull(ctx); }
-            if (*isPoint)
-            {
-                if (argumentCount == 1) { self->moveTo(value); return thisObject; }
-                if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-                double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->moveTo(value, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-                double x = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-                double y = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount == 2) { self->moveTo(x, y); return thisObject; }
-                if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-                double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->moveTo(x, y, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_MoveBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Offset value;
-            auto converted = JSC_ValueIsOffset(ctx, arguments[0], value, exception);
-            if (!converted.has_value()) { return JSValueMakeNull(ctx); }
-            if (*converted)
-            {
-                if (argumentCount == 1) { self->moveBy(value); return thisObject; }
-                if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-                double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->moveBy(value, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-                double x = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-                double y = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount == 2) { self->moveBy(x, y); return thisObject; }
-                if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-                double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->moveBy(x, y, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetMovement(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Vector value;
-            auto converted = JSC_ValueIsVector(ctx, arguments[0], value, exception);
-            if (!converted.has_value()) { return JSValueMakeNull(ctx); }
-            if (*converted)
-            {
-                if (argumentCount != 1)
-                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-                self->setMovement(value); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""xPerSecond"")");
-                double xPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""yPerSecond"")");
-                double yPerSecond = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount != 2)
-                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
-                self->setMovement(xPerSecond, yPerSecond); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeMovementTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Vector value;
-            auto converted = JSC_ValueIsVector(ctx, arguments[0], value, exception);
-            if (!converted.has_value()) { return JSValueMakeNull(ctx); }
-            if (*converted)
-            {
-                if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-                double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->changeMovementTo(value, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""xPerSecond"")");
-                double xPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""yPerSecond"")");
-                double yPerSecond = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-                double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[4 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->changeMovementTo(xPerSecond, yPerSecond, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeMovementBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Vector value;
-            auto converted = JSC_ValueIsVector(ctx, arguments[0], value, exception);
-            if (!converted.has_value()) { return JSValueMakeNull(ctx); }
-            if (*converted)
-            {
-                if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-                double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->changeMovementBy(value, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""xPerSecond"")");
-                double xPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""yPerSecond"")");
-                double yPerSecond = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-                double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[4 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->changeMovementBy(xPerSecond, yPerSecond, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetSize(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Offset value;
-            auto converted = JSC_ValueIsOffset(ctx, arguments[0], value, exception);
-            if (!converted.has_value()) { return JSValueMakeNull(ctx); }
-            if (*converted)
-            {
-                if (argumentCount != 1)
-                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-                self->setSize(value); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""width"")");
-                double width = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""height"")");
-                double height = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount != 2)
-                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
-                self->setSize(width, height); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeCenterOffsetTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Offset value;
-            auto converted = JSC_ValueIsOffset(ctx, arguments[0], value, exception);
-            if (!converted.has_value()) { return JSValueMakeNull(ctx); }
-            if (*converted)
-            {
-                if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-                double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->changeCenterOffsetTo(value, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-                double x = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-                double y = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-                double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->changeCenterOffsetTo(x, y, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeCenterOffsetBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            pdg::Offset value;
-            auto converted = JSC_ValueIsOffset(ctx, arguments[0], value, exception);
-            if (!converted.has_value()) { return JSValueMakeNull(ctx); }
-            if (*converted)
-            {
-                if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-                double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->changeCenterOffsetBy(value, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-            else
-            {
-                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-                double x = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-                double y = JSValueToNumber(ctx, arguments[2 -1], exception);
-                if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-                double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-                if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                    return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-                double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-                if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                const int easing = static_cast<int>(easingValue);
-                if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-                {
-                    std::ostringstream excpt_;
-                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-                }
-                self->changeCenterOffsetBy(x, y, durationSeconds, gEasingFunctions[easing]); return thisObject;
-            }
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetWidth(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""value"")");
-            double value = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-            self->setWidth(value); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetHeight(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""value"")");
-            double value = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-            self->setHeight(value); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetRotation(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""value"")");
-            double value = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-            self->setRotation(value); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetSpin(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""value"")");
-            double value = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-            self->setSpin(value); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetGrowing(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""value"")");
-            double value = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-            self->setGrowing(value); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetStretching(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""widthPerSecond"")");
-            double widthPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""heightPerSecond"")");
-            double heightPerSecond = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount != 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
-            self->setStretching(widthPerSecond, heightPerSecond); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetScale(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true); if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-            double x = JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-            double y = (argumentCount<2) ? x : JSValueToNumber(ctx, arguments[2 -1], exception);
-            self->setScale(x, y); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeSpinTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""radiansPerSecond"")");
-            double radiansPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-            double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->changeSpinTo(radiansPerSecond, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeSpinBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""radiansPerSecond"")");
-            double radiansPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-            double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->changeSpinBy(radiansPerSecond, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeGrowingTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""amountPerSecond"")");
-            double amountPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-            double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->changeGrowingTo(amountPerSecond, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeGrowingBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""amountPerSecond"")");
-            double amountPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-            double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->changeGrowingBy(amountPerSecond, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeStretchingTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""widthPerSecond"")");
-            double widthPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""heightPerSecond"")");
-            double heightPerSecond = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-            double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->changeStretchingTo(widthPerSecond, heightPerSecond, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeStretchingBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""widthPerSecond"")");
-            double widthPerSecond = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""heightPerSecond"")");
-            double heightPerSecond = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-            double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::linearTween) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->changeStretchingBy(widthPerSecond, heightPerSecond, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeScaleTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-            double x = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-            double y = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-            double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->changeScaleTo(x, y, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ChangeScaleBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-            double x = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-            double y = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-            double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->changeScaleBy(x, y, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_Grow(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""factor"")");
-            double factor = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount == 1) { self->grow(factor); return thisObject; }
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-            double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->grow(factor, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_Stretch(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""widthFactor"")");
-            double widthFactor = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""heightFactor"")");
-            double heightFactor = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount == 2) { self->stretch(widthFactor, heightFactor); return thisObject; }
-            if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-            double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->stretch(widthFactor, heightFactor, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ResizeBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""deltaWidth"")");
-            double deltaWidth = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""deltaHeight"")");
-            double deltaHeight = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount == 2) { self->resizeBy(deltaWidth, deltaHeight); return thisObject; }
-            if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-            double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->resizeBy(deltaWidth, deltaHeight, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ResizeTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""width"")");
-            double width = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""height"")");
-            double height = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount < 3 || !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""easingValue"")");
-            double easingValue = (argumentCount<4) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            self->resizeTo(width, height, durationSeconds, gEasingFunctions[easing]); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_RotateBy(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""radians"")");
-            double radians = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount == 1) { self->rotateBy(radians); return thisObject; }
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-            double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""directionValue"")");
-            double directionValue = (argumentCount<4) ? static_cast<int>(rotationDirection_AsSpecified) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(directionValue) || std::floor(directionValue) != directionValue || directionValue < 0 || directionValue > 3)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer rotation direction" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int direction = static_cast<int>(directionValue);
-            self->rotateBy(radians, durationSeconds, gEasingFunctions[easing], direction); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_RotateTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""radians"")");
-            double radians = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount == 1) { self->rotateTo(radians); return thisObject; }
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easingValue"")");
-            double easingValue = (argumentCount<3) ? static_cast<int>(EasingFuncRef::easeInOutQuad) : JSValueToNumber(ctx, arguments[3 -1], exception);
-            if (!std::isfinite(easingValue) || std::floor(easingValue) != easingValue || easingValue < 0 || easingValue >= NUM_EASING_FUNCTIONS)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int easing = static_cast<int>(easingValue);
-            if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Unknown easing constant" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""directionValue"")");
-            double directionValue = (argumentCount<4) ? static_cast<int>(rotationDirection_AsSpecified) : JSValueToNumber(ctx, arguments[4 -1], exception);
-            if (!std::isfinite(directionValue) || std::floor(directionValue) != directionValue || directionValue < 0 || directionValue > 3)
-            {
-                std::ostringstream excpt_;
-                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected an integer rotation direction" << "')";
-                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
-            }
-            const int direction = static_cast<int>(directionValue);
-            self->rotateTo(radians, durationSeconds, gEasingFunctions[easing], direction); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetCenterOffset(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1); pdg::Offset offset;
-            auto offset_isOffset = JSC_ValueIsOffset(ctx, arguments[1 -1], offset, exception);
-            if (!offset_isOffset.has_value()) { return JSValueMakeNull(ctx); }
-            if (!*offset_isOffset)
-            {
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
-            };
-            self->setCenterOffset(offset); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetFlipX(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1); if (!JSValueIsBoolean(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""flip"")");
-            bool flip = JSValueToBoolean(ctx, arguments[1 -1]);
-            self->setFlipX(flip); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_SetFlipY(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1); if (!JSValueIsBoolean(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""flip"")");
-            bool flip = JSValueToBoolean(ctx, arguments[1 -1]);
-            self->setFlipY(flip); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_StopMovement(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->stopMovement(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_StopSpinning(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->stopSpinning(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_StopGrowing(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->stopGrowing(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_StopStretching(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->stopStretching(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_PauseSchedule(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->pauseSchedule(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ResumeSchedule(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->resumeSchedule(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_CancelSchedule(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->cancelSchedule(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_FlipX(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->flipX(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_FlipY(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->flipY(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_AndThen(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->andThen(); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_IsFlippedX(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            return JSValueMakeBoolean(ctx, self->isFlippedX());
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_IsFlippedY(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            return JSValueMakeBoolean(ctx, self->isFlippedY());
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_IsSchedulePaused(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            return JSValueMakeBoolean(ctx, self->isSchedulePaused());
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_HasScheduledAnimations(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            return JSValueMakeBoolean(ctx, self->hasScheduledAnimations());
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_Wait(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount < 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""durationSeconds"")");
-            double durationSeconds = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-            self->wait(durationSeconds); return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_AddAnimationHelper(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            self->mAnimatedScriptObj = thisObject;
-            SCRIPT_DEBUG_ONLY( JSC_DebugPrintValue(ctx, arguments[0], "Dumping " "IAnimationHelper" " object:") );
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-            IAnimationHelper* helper = 0;
-            if (JSValueIsObjectOfClass(ctx, arguments[1 -1], IAnimationHelper_class()))
-            {
-                JSObjectRef helper_ = JSValueToObject(ctx, arguments[1 -1], exception);
-                helper = IAnimationHelper_getCppObject(helper_);
-            }
-            if (!helper)
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "an object derived from ""IAnimationHelper"" (""helper"")");
-            self->addAnimationHelper(helper);
-            return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_RemoveAnimationHelper(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 1)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-            IAnimationHelper* helper = 0;
-            if (JSValueIsObject(ctx, arguments[1 -1]))
-            {
-                JSObjectRef helper_ = JSValueToObject(ctx, arguments[1 -1], exception);
-                helper = IAnimationHelper_getCppObject(helper_);
-            }
-            if (!helper)
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "an object of type ""IAnimationHelper"" (""helper"")");
-            self->removeAnimationHelper(helper);
-            return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-    JSValueRef TileLayer_ClearAnimationHelpers(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        try
-        {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            self->clearAnimationHelpers();
-            return thisObject;
-        }
-        catch (const std::exception& error)
-        {
-            {
-                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
-                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
-                JSStringRelease(errorMessage);
-                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
-                return JSValueMakeNull(ctx);
-            };
-        }
-    }
-
 #ifndef PDG_NO_GUI
 
     JSValueRef TileLayer_GetSpritePort(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -2411,7 +352,15 @@ namespace pdg
     }
     JSValueRef TileLayer_SetSpritePort(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -2426,345 +375,561 @@ namespace pdg
         self->setSpritePort(port);
         return JSValueMakeUndefined(ctx);
     }
-    JSValueRef TileLayer_SetOrigin(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Point origin;
-        auto origin_isPoint = JSC_ValueIsPoint(ctx, arguments[1 -1], origin, exception);
-        if (!origin_isPoint.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*origin_isPoint)
-        {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
-        };
-        self->setOrigin(origin);
-        return JSValueMakeUndefined(ctx);
-    }
-    JSValueRef TileLayer_GetOrigin(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        Point p = self->getOrigin();
-        return JSC_PointToValue(ctx, p, exception);
-    }
-    JSValueRef TileLayer_SetAutoCenter(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount >= 1 && !JSValueIsBoolean(ctx, arguments[1 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""autoCenter"")");
-        bool autoCenter = (argumentCount<1) ? true : JSValueToBoolean(ctx, arguments[1 -1]);
-        self->setAutoCenter(autoCenter);
-        return JSValueMakeUndefined(ctx);
-    }
-    JSValueRef TileLayer_SetFixedMoveAxis(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount >= 1 && !JSValueIsBoolean(ctx, arguments[1 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""fixedAxis"")");
-        bool fixedAxis = (argumentCount<1) ? true : JSValueToBoolean(ctx, arguments[1 -1]);
-        self->setFixedMoveAxis(fixedAxis);
-        return JSValueMakeUndefined(ctx);
-    }
-    JSValueRef TileLayer_SetZoom(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""zoomLevel"")");
-        double zoomLevel = JSValueToNumber(ctx, arguments[1 -1], exception);
-        self->setZoom(zoomLevel);
-        return JSValueMakeUndefined(ctx);
-    }
-    JSValueRef TileLayer_GetZoom(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        float zoom = self->getZoom();
-        return JSValueMakeNumber(ctx, zoom);
-    }
-    JSValueRef TileLayer_ZoomTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount < 2)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-        if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""zoomLevel"")");
-        double zoomLevel = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-        double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-        if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
-        long easing = (argumentCount<3) ? EasingFuncRef::easeInOutQuad : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
-        pdg::Rect keepInRect;
-        if (argumentCount < 4)
-        {
-            keepInRect = pdg::Rect(0,0);
-        }
-        else
-        {
-            auto keepInRect_isRect = JSC_ValueIsRect(ctx, arguments[4 -1], keepInRect, exception);
-            if (!keepInRect_isRect.has_value()) { return JSValueMakeNull(ctx); }
-            if (!*keepInRect_isRect)
-            {
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "Rect", arguments[4 -1]);
-            }
-        };
-        pdg::Point centerOn;
-        if (argumentCount < 5)
-        {
-            centerOn = pdg::Point(0,0);
-        }
-        else
-        {
-            auto centerOn_isPoint = JSC_ValueIsPoint(ctx, arguments[5 -1], centerOn, exception);
-            if (!centerOn_isPoint.has_value()) { return JSValueMakeNull(ctx); }
-            if (!*centerOn_isPoint)
-            {
-                return JSC_ThrowArgTypeException(ctx, exception, 5, "Point", arguments[5 -1]);
-            }
-        };
-        pdg::Point* centerOnPtr = (argumentCount >= 5) ? &centerOn : 0;
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->zoomTo(zoomLevel, durationSeconds, gEasingFunctions[easing], keepInRect, centerOnPtr);
-        }
-        else
-        {
-            self->zoomTo(zoomLevel, durationSeconds);
-        }
-        return thisObject;
-    }
-    JSValueRef TileLayer_Zoom(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount < 2)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
-        if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""deltaZoomLevel"")");
-        double deltaZoomLevel = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""durationSeconds"")");
-        double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
-        if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
-        long easing = (argumentCount<3) ? EasingFuncRef::easeInOutQuad : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
-        pdg::Rect keepInRect;
-        if (argumentCount < 4)
-        {
-            keepInRect = pdg::Rect(0,0);
-        }
-        else
-        {
-            auto keepInRect_isRect = JSC_ValueIsRect(ctx, arguments[4 -1], keepInRect, exception);
-            if (!keepInRect_isRect.has_value()) { return JSValueMakeNull(ctx); }
-            if (!*keepInRect_isRect)
-            {
-                return JSC_ThrowArgTypeException(ctx, exception, 4, "Rect", arguments[4 -1]);
-            }
-        };
-        pdg::Point centerOn;
-        if (argumentCount < 5)
-        {
-            centerOn = pdg::Point(0,0);
-        }
-        else
-        {
-            auto centerOn_isPoint = JSC_ValueIsPoint(ctx, arguments[5 -1], centerOn, exception);
-            if (!centerOn_isPoint.has_value()) { return JSValueMakeNull(ctx); }
-            if (!*centerOn_isPoint)
-            {
-                return JSC_ThrowArgTypeException(ctx, exception, 5, "Point", arguments[5 -1]);
-            }
-        };
-        pdg::Point* centerOnPtr = (argumentCount >= 5) ? &centerOn : 0;
-        if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
-        {
-            self->zoom(deltaZoomLevel, durationSeconds, gEasingFunctions[easing], keepInRect, centerOnPtr);
-        }
-        else
-        {
-            self->zoom(deltaZoomLevel, durationSeconds);
-        }
-        return thisObject;
-    }
     JSValueRef TileLayer_LayerToPortPoint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Point p;
-        auto p_isPoint = JSC_ValueIsPoint(ctx, arguments[1 -1], p, exception);
-        if (!p_isPoint.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*p_isPoint)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
-        };
-        Point out = self->layerToPort(p);
-        return JSC_PointToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::Point p;
+            auto p_isPoint = JSC_ValueIsPoint(ctx, arguments[1 -1], p, exception);
+            if (!p_isPoint.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*p_isPoint)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
+            };
+            Point out = self->layerToPort(p);
+            return JSC_PointToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_LayerToPortOffset(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Offset o;
-        auto o_isOffset = JSC_ValueIsOffset(ctx, arguments[1 -1], o, exception);
-        if (!o_isOffset.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*o_isOffset)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
-        };
-        Offset out = self->layerToPort(o);
-        return JSC_OffsetToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::Offset o;
+            auto o_isOffset = JSC_ValueIsOffset(ctx, arguments[1 -1], o, exception);
+            if (!o_isOffset.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*o_isOffset)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
+            };
+            Offset out = self->layerToPort(o);
+            return JSC_OffsetToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_LayerToPortVector(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Vector v;
-        auto v_isVector = JSC_ValueIsVector(ctx, arguments[1 -1], v, exception);
-        if (!v_isVector.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*v_isVector)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Vector", arguments[1 -1]);
-        };
-        Vector out = self->layerToPort(v);
-        return JSC_VectorToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::Vector v;
+            auto v_isVector = JSC_ValueIsVector(ctx, arguments[1 -1], v, exception);
+            if (!v_isVector.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*v_isVector)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Vector", arguments[1 -1]);
+            };
+            Vector out = self->layerToPort(v);
+            return JSC_VectorToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_LayerToPortRect(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::RotatedRect r;
-        auto r_isRotatedRect = JSC_ValueIsRotatedRect(ctx, arguments[1 -1], r, exception);
-        if (!r_isRotatedRect.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*r_isRotatedRect)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "RotatedRect", arguments[1 -1]);
-        };
-        RotatedRect out = self->layerToPort(r);
-        return JSC_RectToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::RotatedRect r;
+            auto r_isRotatedRect = JSC_ValueIsRotatedRect(ctx, arguments[1 -1], r, exception);
+            if (!r_isRotatedRect.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*r_isRotatedRect)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "RotatedRect", arguments[1 -1]);
+            };
+            RotatedRect out = self->layerToPort(r);
+            return JSC_RectToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_LayerToPortQuad(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Quad q;
-        auto q_isQuad = JSC_ValueIsQuad(ctx, arguments[1 -1], q, exception);
-        if (!q_isQuad.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*q_isQuad)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Quad", arguments[1 -1]);
-        };
-        Quad out = self->layerToPort(q);
-        return JSC_QuadToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::Quad q;
+            auto q_isQuad = JSC_ValueIsQuad(ctx, arguments[1 -1], q, exception);
+            if (!q_isQuad.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*q_isQuad)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Quad", arguments[1 -1]);
+            };
+            Quad out = self->layerToPort(q);
+            return JSC_QuadToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_PortToLayerPoint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Point p;
-        auto p_isPoint = JSC_ValueIsPoint(ctx, arguments[1 -1], p, exception);
-        if (!p_isPoint.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*p_isPoint)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
-        };
-        Point out = self->portToLayer(p);
-        return JSC_PointToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::Point p;
+            auto p_isPoint = JSC_ValueIsPoint(ctx, arguments[1 -1], p, exception);
+            if (!p_isPoint.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*p_isPoint)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
+            };
+            Point out = self->portToLayer(p);
+            return JSC_PointToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_PortToLayerOffset(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Offset o;
-        auto o_isOffset = JSC_ValueIsOffset(ctx, arguments[1 -1], o, exception);
-        if (!o_isOffset.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*o_isOffset)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
-        };
-        Offset out = self->portToLayer(o);
-        return JSC_OffsetToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::Offset o;
+            auto o_isOffset = JSC_ValueIsOffset(ctx, arguments[1 -1], o, exception);
+            if (!o_isOffset.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*o_isOffset)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
+            };
+            Offset out = self->portToLayer(o);
+            return JSC_OffsetToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_PortToLayerVector(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Vector v;
-        auto v_isVector = JSC_ValueIsVector(ctx, arguments[1 -1], v, exception);
-        if (!v_isVector.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*v_isVector)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Vector", arguments[1 -1]);
-        };
-        Vector out = self->portToLayer(v);
-        return JSC_VectorToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::Vector v;
+            auto v_isVector = JSC_ValueIsVector(ctx, arguments[1 -1], v, exception);
+            if (!v_isVector.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*v_isVector)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Vector", arguments[1 -1]);
+            };
+            Vector out = self->portToLayer(v);
+            return JSC_VectorToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_PortToLayerRect(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::RotatedRect r;
-        auto r_isRotatedRect = JSC_ValueIsRotatedRect(ctx, arguments[1 -1], r, exception);
-        if (!r_isRotatedRect.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*r_isRotatedRect)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "RotatedRect", arguments[1 -1]);
-        };
-        RotatedRect out = self->portToLayer(r);
-        return JSC_RectToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::RotatedRect r;
+            auto r_isRotatedRect = JSC_ValueIsRotatedRect(ctx, arguments[1 -1], r, exception);
+            if (!r_isRotatedRect.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*r_isRotatedRect)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "RotatedRect", arguments[1 -1]);
+            };
+            RotatedRect out = self->portToLayer(r);
+            return JSC_RectToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef TileLayer_PortToLayerQuad(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Quad q;
-        auto q_isQuad = JSC_ValueIsQuad(ctx, arguments[1 -1], q, exception);
-        if (!q_isQuad.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*q_isQuad)
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
         {
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "Quad", arguments[1 -1]);
-        };
-        Quad out = self->portToLayer(q);
-        return JSC_QuadToValue(ctx, out, exception);
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            pdg::Quad q;
+            auto q_isQuad = JSC_ValueIsQuad(ctx, arguments[1 -1], q, exception);
+            if (!q_isQuad.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*q_isQuad)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Quad", arguments[1 -1]);
+            };
+            Quad out = self->portToLayer(q);
+            return JSC_QuadToValue(ctx, out, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
 #endif
 
+    JSValueRef TileLayer_SetQueryBits(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        ;
+        if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""bits"")");
+        double bits = JSValueToNumber(ctx, arguments[1 -1], exception);
+        if(!std::isfinite(bits)||bits<0||bits>4294967295.0||std::floor(bits)!=bits)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "Expected unsigned 32-bit query bits" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+        self->setQueryBits(uint32_t(bits)); return JSValueMakeUndefined(ctx);
+    }
+    JSValueRef TileLayer_GetQueryBits(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        ;
+        return JSValueMakeNumber(ctx, self->getQueryBits());
+    }
+    JSValueRef TileLayer_SetCamera(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        if (!argumentCount || JSValueIsNull(ctx, arguments[0]) || JSValueIsUndefined(ctx, arguments[0]))
+        {
+            self->setCamera(nullptr); return JSValueMakeUndefined(ctx);
+        }
+        else
+        {
+            ;
+            try
+            {
+                if (!JSValueIsObjectOfClass(ctx, arguments[0], Camera_class()))
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "Expected a Camera or null" << "')";
+                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+                }
+                Camera* camera = 0;
+                if (JSValueIsObject(ctx, arguments[1 -1]))
+                {
+                    JSObjectRef camera_ = JSValueToObject(ctx, arguments[1 -1], exception);
+                    camera = Camera_getCppObject(camera_);
+                }
+                if (!camera)
+                    return JSC_ThrowArgTypeException(ctx, exception, 1, "an object of type ""Camera"" (""camera"")"); self->setCamera(camera); return JSValueMakeUndefined(ctx);
+            }
+            catch(const std::exception& error)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx);
+            }
+        }
+    }
+    JSValueRef TileLayer_GetCamera(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        ;
+        auto* camera=self->getCamera(); if (!camera) return JSValueMakeNull(ctx);
+        if (!camera->mCameraScriptObj)
+        {
+            return Camera_newFromCpp(ctx, camera);
+        }
+        else
+        {
+            return camera->mCameraScriptObj;
+        };
+    }
+    JSValueRef TileLayer_GetEffectiveCamera(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        ;
+        auto* camera=self->getEffectiveCamera(); if (!camera) return JSValueMakeNull(ctx);
+        if (!camera->mCameraScriptObj)
+        {
+            return Camera_newFromCpp(ctx, camera);
+        }
+        else
+        {
+            return camera->mCameraScriptObj;
+        };
+    }
+    JSValueRef TileLayer_SetCameraParallax(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        ;
+        try
+        {
+            if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""movementRatio"")");
+            double movementRatio = (argumentCount<1) ? 1 : JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
+            return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""zoomRatio"")");
+            double zoomRatio = (argumentCount<2) ? 1 : JSValueToNumber(ctx, arguments[2 -1], exception); self->setCameraParallax(movementRatio,zoomRatio); return JSValueMakeUndefined(ctx);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
+    }
+    JSValueRef TileLayer_GetWorldBounds(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        if (argumentCount != 0)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+        pdg::Rect theWorldBounds = self->getWorldBounds();
+        return JSC_RectToValue(ctx, theWorldBounds, exception);
+    }
+    JSValueRef TileLayer_SetWorldBounds(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        ;
+        try
+        {
+            pdg::Rect bounds;
+            auto bounds_isRect = JSC_ValueIsRect(ctx, arguments[1 -1], bounds, exception);
+            if (!bounds_isRect.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*bounds_isRect)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Rect", arguments[1 -1]);
+            };
+            self->setWorldBounds(bounds); return JSValueMakeUndefined(ctx);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
+    }
     JSValueRef TileLayer_CreateParticle(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2789,7 +954,15 @@ namespace pdg
     }
     JSValueRef TileLayer_AddParticle(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2813,7 +986,15 @@ namespace pdg
     }
     JSValueRef TileLayer_RemoveParticle(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2837,7 +1018,15 @@ namespace pdg
     }
     JSValueRef TileLayer_RemoveAllParticles(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2852,9 +1041,42 @@ namespace pdg
             return JSValueMakeNull(ctx);
         }
     }
+    JSValueRef TileLayer_GetParticleTrailCount(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
+        ;
+        try
+        {
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0); return JSValueMakeNumber(ctx, self->getParticleTrailCount());
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
+    }
     JSValueRef TileLayer_GetParticleCount(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2871,7 +1093,15 @@ namespace pdg
     }
     JSValueRef TileLayer_GetNthParticle(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2898,7 +1128,15 @@ namespace pdg
     }
     JSValueRef TileLayer_SetMaxParticles(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2917,7 +1155,15 @@ namespace pdg
     }
     JSValueRef TileLayer_GetMaxParticles(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2934,7 +1180,15 @@ namespace pdg
     }
     JSValueRef TileLayer_CreateParticleEmitter(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2959,7 +1213,15 @@ namespace pdg
     }
     JSValueRef TileLayer_RemoveParticleEmitter(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -2983,7 +1245,15 @@ namespace pdg
     }
     JSValueRef TileLayer_RemoveAllParticleEmitters(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         try
         {
@@ -3000,19 +1270,35 @@ namespace pdg
     }
     JSValueRef TileLayer_SetSerializationFlags(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""flags"")");
-        uint32 flags = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 flags = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->setSerializationFlags(flags);
         return thisObject;
     }
     JSValueRef TileLayer_StartAnimations(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3021,7 +1307,15 @@ namespace pdg
     }
     JSValueRef TileLayer_StopAnimations(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3030,7 +1324,15 @@ namespace pdg
     }
     JSValueRef TileLayer_Hide(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3039,7 +1341,15 @@ namespace pdg
     }
     JSValueRef TileLayer_Show(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3048,7 +1358,15 @@ namespace pdg
     }
     JSValueRef TileLayer_IsHidden(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3057,7 +1375,15 @@ namespace pdg
     }
     JSValueRef TileLayer_FadeIn(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
@@ -3066,7 +1392,7 @@ namespace pdg
         double durationSeconds = JSValueToNumber(ctx, arguments[1 -1], exception);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""easing"")");
-        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->fadeIn(durationSeconds, gEasingFunctions[easing]);
@@ -3079,7 +1405,15 @@ namespace pdg
     }
     JSValueRef TileLayer_FadeOut(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
@@ -3088,7 +1422,7 @@ namespace pdg
         double durationSeconds = JSValueToNumber(ctx, arguments[1 -1], exception);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""easing"")");
-        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->fadeOut(durationSeconds, gEasingFunctions[easing]);
@@ -3101,7 +1435,15 @@ namespace pdg
     }
     JSValueRef TileLayer_MoveBehind(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3118,7 +1460,15 @@ namespace pdg
     }
     JSValueRef TileLayer_MoveInFrontOf(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3135,7 +1485,15 @@ namespace pdg
     }
     JSValueRef TileLayer_MoveToFront(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3144,39 +1502,32 @@ namespace pdg
     }
     JSValueRef TileLayer_MoveToBack(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         self->moveToBack();
         return JSValueMakeUndefined(ctx);
     }
-    JSValueRef TileLayer_MoveWith(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount < 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
-        SpriteLayer* layer = 0;
-        if (JSValueIsObject(ctx, arguments[1 -1]))
-        {
-            JSObjectRef layer_ = JSValueToObject(ctx, arguments[1 -1], exception);
-            layer = SpriteLayer_getCppObject(layer_);
-        }
-        if (!layer)
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "an object of type ""SpriteLayer"" (""layer"")");
-        if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""moveRatio"")");
-        double moveRatio = (argumentCount<2) ? 1.0f : JSValueToNumber(ctx, arguments[2 -1], exception);
-        if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""zoomRatio"")");
-        double zoomRatio = (argumentCount<3) ? 1.0f : JSValueToNumber(ctx, arguments[3 -1], exception);
-        self->moveWith(layer, moveRatio, zoomRatio);
-        return JSValueMakeUndefined(ctx);
-    }
     JSValueRef TileLayer_IsSpriteBehind(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 2)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
@@ -3201,7 +1552,15 @@ namespace pdg
     }
     JSValueRef TileLayer_GetZOrder(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3210,7 +1569,15 @@ namespace pdg
     }
     JSValueRef TileLayer_GetSpriteZOrder(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3227,13 +1594,21 @@ namespace pdg
     }
     JSValueRef TileLayer_FindSprite(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         Sprite* sprite = self->findSprite(id);
         if (!sprite) return JSValueMakeNull(ctx);
         if (!sprite->mSpriteScriptObj)
@@ -3247,13 +1622,21 @@ namespace pdg
     }
     JSValueRef TileLayer_GetNthSprite(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""index"")");
-        int32 index = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 index = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         Sprite* sprite = self->getNthSprite(index);
         if (!sprite) return JSValueMakeNull(ctx);
         if (!sprite->mSpriteScriptObj)
@@ -3267,7 +1650,15 @@ namespace pdg
     }
     JSValueRef TileLayer_HasSprite(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3284,7 +1675,15 @@ namespace pdg
     }
     JSValueRef TileLayer_AddSprite(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         try
         {
             ;
@@ -3314,7 +1713,15 @@ namespace pdg
     }
     JSValueRef TileLayer_RemoveSprite(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         try
         {
             ;
@@ -3344,7 +1751,15 @@ namespace pdg
     }
     JSValueRef TileLayer_RemoveAllSprites(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         try
         {
             ;
@@ -3366,7 +1781,15 @@ namespace pdg
     }
     JSValueRef TileLayer_EnableCollisions(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3375,7 +1798,15 @@ namespace pdg
     }
     JSValueRef TileLayer_DisableCollisions(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3384,7 +1815,15 @@ namespace pdg
     }
     JSValueRef TileLayer_EnableCollisionsWithLayer(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3401,7 +1840,15 @@ namespace pdg
     }
     JSValueRef TileLayer_DisableCollisionsWithLayer(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3418,7 +1865,15 @@ namespace pdg
     }
     JSValueRef TileLayer_CreateSprite(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3436,34 +1891,37 @@ namespace pdg
 
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
 
-    JSValueRef TileLayer_SetKeepGravityDownward(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount >= 1 && !JSValueIsBoolean(ctx, arguments[1 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""keepItDownward"")");
-        bool keepItDownward = (argumentCount<1) ? true : JSValueToBoolean(ctx, arguments[1 -1]);
-        self->setKeepGravityDownward(keepItDownward);
-        return JSValueMakeUndefined(ctx);
-    }
     JSValueRef TileLayer_SetGravity(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""gravity"")");
         double gravity = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (argumentCount >= 2 && !JSValueIsBoolean(ctx, arguments[2 -1]))
-            return JSC_ThrowArgTypeException(ctx, exception, 2, "a boolean (""keepItDownward"")");
-        bool keepItDownward = (argumentCount<2) ? true : JSValueToBoolean(ctx, arguments[2 -1]);
-        self->setGravity(gravity, keepItDownward);
+        self->setGravity(gravity);
         return JSValueMakeUndefined(ctx);
     }
     JSValueRef TileLayer_SetDamping(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3475,7 +1933,15 @@ namespace pdg
     }
     JSValueRef TileLayer_SetStaticLayer(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount >= 1 && !JSValueIsBoolean(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""isStatic"")");
@@ -3485,7 +1951,15 @@ namespace pdg
     }
     JSValueRef TileLayer_SetUseChipmunkPhysics(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount >= 1 && !JSValueIsBoolean(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""useIt"")");
@@ -3495,7 +1969,15 @@ namespace pdg
     }
     JSValueRef TileLayer_GetSpace(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3506,16 +1988,24 @@ namespace pdg
 #endif
     JSValueRef TileLayer_SetWorldSize(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 2)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""width"")");
-        int32 width = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 width = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""height"")");
-        int32 height = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 height = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsBoolean(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a boolean (""repeatingX"")");
         bool repeatingX = (argumentCount<3) ? false : JSValueToBoolean(ctx, arguments[3 -1]);
@@ -3527,50 +2017,65 @@ namespace pdg
     }
     JSValueRef TileLayer_GetWorldSize(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         Rect r = self->getWorldSize();
         return JSC_RectToValue(ctx, r, exception);
     }
-    JSValueRef TileLayer_GetWorldBounds(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        Rect r = self->getWorldBounds();
-        return JSC_RectToValue(ctx, r, exception);
-    }
     JSValueRef TileLayer_GetTileTypeAt(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 2)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-        int32 x = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 x = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-        int32 y = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 y = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         uint8 tileType;
         tileType = self->getTileTypeAt(x, y);
         return JSValueMakeNumber(ctx, tileType);
     }
     JSValueRef TileLayer_GetTileTypeAndFacingAt(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 2)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-        int32 x = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 x = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-        int32 y = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 y = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         uint8 tileType;
         TileLayer::TFacing facing;
         tileType = self->getTileTypeAt(x, y, &facing);
@@ -3592,16 +2097,24 @@ namespace pdg
     }
     JSValueRef TileLayer_DefineTileSet(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 3)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 3, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""tileWidth"")");
-        int32 tileWidth = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 tileWidth = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""tileHeight"")");
-        int32 tileHeight = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 tileHeight = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         Image* tiles = 0;
         if (JSValueIsObject(ctx, arguments[3 -1]))
         {
@@ -3621,73 +2134,109 @@ namespace pdg
     }
     JSValueRef TileLayer_LoadMapData(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""mapWidth"")");
-        long mapWidth = (argumentCount<2) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long mapWidth = (argumentCount<2) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""mapHeight"")");
-        long mapHeight = (argumentCount<3) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long mapHeight = (argumentCount<3) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""dstX"")");
-        long dstX = (argumentCount<4) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[4 -1], exception));
+        long dstX = (argumentCount<4) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[4 -1], exception));
         if (argumentCount >= 5 && !JSValueIsNumber(ctx, arguments[5 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 5, "a number (""dstY"")");
-        long dstY = (argumentCount<5) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[5 -1], exception));
+        long dstY = (argumentCount<5) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[5 -1], exception));
+        if (mapWidth < 0 || mapHeight < 0 || dstX < 0 || dstY < 0)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "negative tile map dimensions" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
         if (mapWidth > self->mWorldWidth)
         {
             std::ostringstream excpt_;
             excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "argument 2 (mapWidth) is larger than world width" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
-        if ((mapWidth + dstX) > self->mWorldWidth)
+        if (mapWidth > self->mWorldWidth - dstX)
         {
             std::ostringstream excpt_;
             excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "mapWidth + dstX is larger than world width" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
         if (mapHeight > self->mWorldHeight)
         {
             std::ostringstream excpt_;
             excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "argument 3 (mapHeight) is larger than world height" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
-        if ((mapHeight + dstY) > self->mWorldHeight)
+        if (mapHeight > self->mWorldHeight - dstY)
         {
             std::ostringstream excpt_;
             excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "mapHeight + dstY is larger than world height" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
-        if (!JSValueIsString(ctx, arguments[0]) && !JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
+        if (!IsUint8Array(arguments[0]) && !JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
         {
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "argument 1 (data) must be either a binary string or an object of type MemBlock" << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "argument 1 (data) must be either a Uint8Array or an object of type MemBlock" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
-        if (JSValueIsString(ctx, arguments[0]))
+        if (IsUint8Array(arguments[0]))
         {
             size_t bytes = 0;
-            uint8* ptr = (uint8*) DecodeBinary(arguments[0], &bytes);
+            const uint8* ptr = nullptr;
+            if (!GetUint8ArrayData(arguments[0], ptr, bytes))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected an attached, non-shared Uint8Array" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
+            if (bytes > UINT32_MAX)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "byte array exceeds the supported size" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
             if (bytes < ((size_t)mapWidth * (size_t)mapHeight))
             {
                 std::ostringstream excpt_;
                 excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "argument 1 (data) is insufficient, please check mapWidth and mapHeight against data size" << "')";
                 JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
             }
             self->loadMapData(ptr, mapWidth, mapHeight, dstX, dstY);
-            std::free(ptr);
+
         }
         else
         {
+            if (!JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected Uint8Array or MemBlock" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
             MemBlock* memBlock = 0;
             if (JSValueIsObject(ctx, arguments[1 -1]))
             {
@@ -3701,7 +2250,7 @@ namespace pdg
                 std::ostringstream excpt_;
                 excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "argument 1 (data) is insufficient, please check mapWidth and mapHeight against data size" << "')";
                 JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-                return JSValueMakeNull(ctx);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
             }
             self->loadMapData((uint8*)memBlock->ptr, mapWidth, mapHeight, dstX, dstY);
         }
@@ -3709,20 +2258,28 @@ namespace pdg
     }
     JSValueRef TileLayer_GetMapData(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""mapWidth"")");
-        long mapWidth = (argumentCount<1) ? self->mWorldWidth : (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long mapWidth = (argumentCount<1) ? self->mWorldWidth : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""mapHeight"")");
-        long mapHeight = (argumentCount<2) ? self->mWorldHeight : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long mapHeight = (argumentCount<2) ? self->mWorldHeight : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""srcX"")");
-        long srcX = (argumentCount<3) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long srcX = (argumentCount<3) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""srcY"")");
-        long srcY = (argumentCount<4) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[4 -1], exception));
+        long srcY = (argumentCount<4) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[4 -1], exception));
         if (mapWidth > self->mWorldWidth)
         {
             std::ostringstream excpt_;
@@ -3768,7 +2325,15 @@ namespace pdg
     }
     JSValueRef TileLayer_GetTileSetImage(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3785,7 +2350,15 @@ namespace pdg
     }
     JSValueRef TileLayer_GetTileSize(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
@@ -3794,28 +2367,44 @@ namespace pdg
     }
     JSValueRef TileLayer_SetTileTypeAt(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 3)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 3, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-        int32 x = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 x = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-        int32 y = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 y = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""t"")");
-        uint32 t = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[3 -1], exception)));
+        uint32 t = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""facing"")");
-        unsigned long facing = (argumentCount<4) ? (uint32) TileLayer::facing_Ignore : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[4 -1], exception)));
+        unsigned long facing = (argumentCount<4) ? (uint32) TileLayer::facing_Ignore : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[4 -1], exception));
         self->setTileTypeAt(x, y, t, (TileLayer::TFacing) facing);
         return JSValueMakeUndefined(ctx);
     }
     JSValueRef TileLayer_CheckCollision(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount < 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
@@ -3829,7 +2418,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "an object of type ""Sprite"" (""movingSprite"")");
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""alphaThreshold"")");
-        unsigned long alphaThreshold = (argumentCount<2) ? 128 : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        unsigned long alphaThreshold = (argumentCount<2) ? 128 : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsBoolean(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a boolean (""shortCircuit"")");
         bool shortCircuit = (argumentCount<3) ? true : JSValueToBoolean(ctx, arguments[3 -1]);
@@ -3838,13 +2427,21 @@ namespace pdg
     }
     JSValueRef TileLayer_On(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 2)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""eventCode"")");
-        int32 eventCode = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 eventCode = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         JSObjectRef func = JSValueToObject(ctx, arguments[2 -1], exception);
         if (!func || !JSObjectIsFunction(ctx, func) )
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a function (""func"")");
@@ -3881,7 +2478,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnCollideSprite(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3904,7 +2509,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnCollideWall(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3927,7 +2540,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnOffscreen(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3950,7 +2571,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnOnscreen(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3973,7 +2602,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnExitLayer(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -3996,7 +2633,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnAnimationLoop(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4019,7 +2664,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnAnimationEnd(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4042,7 +2695,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnFadeComplete(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4065,7 +2726,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnFadeInComplete(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4088,7 +2757,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnFadeOutComplete(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4111,7 +2788,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnMouseEnter(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4134,7 +2819,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnMouseLeave(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4157,7 +2850,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnMouseDown(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4180,7 +2881,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnMouseUp(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4203,7 +2912,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnMouseClick(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4226,7 +2943,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnErasePort(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4249,7 +2974,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnPreDrawLayer(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4272,7 +3005,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnPostDrawLayer(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4295,7 +3036,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnDrawPortComplete(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4318,7 +3067,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnAnimationStart(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4341,7 +3098,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnPreAnimateLayer(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4364,7 +3129,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnPostAnimateLayer(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4387,7 +3160,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnAnimationComplete(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4408,32 +3189,17 @@ namespace pdg
         };
     }
 
-    JSValueRef TileLayer_OnZoomComplete(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-    {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
-        ;
-        if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        JSObjectRef func = JSValueToObject(ctx, arguments[1 -1], exception);
-        if (!func || !JSObjectIsFunction(ctx, func) )
-            return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""func"")");
-        ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_ZoomComplete);
-        if (!handler) return JSValueMakeNull(ctx);
-        self->addHandler(handler, pdg::eventType_SpriteLayer);
-        if (!handler) return JSValueMakeNull(ctx);
-        if (!handler->mIEventHandlerScriptObj)
-        {
-            return IEventHandler_newFromCpp(ctx, handler);
-        }
-        else
-        {
-            return handler->mIEventHandlerScriptObj;
-        };
-    }
-
     JSValueRef TileLayer_OnLayerFadeInComplete(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4456,7 +3222,15 @@ namespace pdg
 
     JSValueRef TileLayer_OnLayerFadeOutComplete(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
-        TileLayer* self = static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        TileLayer* self=static_cast<TileLayer*>(JSObjectGetPrivate(thisObject));
+        if(!self)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << "Layer is disposed" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+        }
+
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
@@ -4477,7 +3251,20 @@ namespace pdg
         };
     }
 
-    void CleanupTileLayerScriptObject(JSObjectRef obj) { }
+#ifdef PDG_USING_JAVASCRIPT_CORE
+    void CleanupTileLayerScriptObject(JSObjectRef obj) { if(obj)JSObjectSetPrivate(obj,nullptr); }
+#else
+    void CleanupTileLayerScriptObject(v8::UniquePersistent<v8::Object>& obj)
+    {
+        if(!obj.IsEmpty())
+        {
+            auto* isolate=v8::Isolate::GetCurrent();
+            auto value=v8::Local<v8::Object>::New(isolate,obj);
+            if(auto* wrapper=dynamic_cast<TileLayerWrap*>(v8script::safe_unwrap_object_wrap_or_prototype(isolate,value)))wrapper->forgetCppObject();
+            obj.Reset();
+        }
+    }
+#endif
 
     TileLayer* New_TileLayer(size_t argumentCount, const JSValueRef arguments[], JSValueRef* constructorException)
     {

@@ -1,6 +1,26 @@
 var searchData=
 [
-  ['x_0',['x',['../classpdg_1_1_point.html#a117e8fdc0c12b911e0b4d7cf0e99c897',1,'pdg::Point::x'],['../classpdg_1_1_offset.html#a117e8fdc0c12b911e0b4d7cf0e99c897',1,'pdg::Offset::x'],['../classpdg_1_1_vector.html#a117e8fdc0c12b911e0b4d7cf0e99c897',1,'pdg::Vector::x']]],
-  ['x1_1',['x1',['../classpdg_1_1_rect.html#aca5fcba3b78e5cd5526673bee2263d82',1,'pdg::Rect']]],
-  ['x2_2',['x2',['../classpdg_1_1_rect.html#acfc0abf8d3a4b4fb2c5428d6474c1e0f',1,'pdg::Rect']]]
+  ['wait_0',['wait',['../classpdg_1_1_animated.html#a3e2ac57fae74ef9606ca97e81fa9a187',1,'pdg::Animated']]],
+  ['want_1',['Getting the Results you Want',['../classpdg_1_1_tile_layer.html#autotoc_md24',1,'']]],
+  ['warn_2',['warn',['../namespacepdg.html#ac195a277add83b6d673264a523a42ec1',1,'pdg']]],
+  ['watch_20the_20solvers_20side_20by_20side_3',['Watch the solvers side by side',['../group___physics.html#physics_solver_viewer',1,'']]],
+  ['webpath_4',['webPath',['../group___structured_data_types.html#a46253cd668a74e76cf77f18d67ae7176',1,'pdg::NetServerAddress::webPath'],['../group___structured_data_types.html#a46253cd668a74e76cf77f18d67ae7176',1,'pdg::NetServerOptions::webPath']]],
+  ['webport_5',['webPort',['../group___structured_data_types.html#a1b393b200e5e844e96d5da2ed365fab9',1,'pdg::NetServerAddress::webPort'],['../group___structured_data_types.html#a1b393b200e5e844e96d5da2ed365fab9',1,'pdg::NetServerOptions::webPort']]],
+  ['websocket_6',['webSocket',['../group___structured_data_types.html#a378927bddc3b1ac8485ac00e1ca556dc',1,'pdg::NetServerOptions']]],
+  ['websocketurl_7',['webSocketUrl',['../group___structured_data_types.html#ae72f048ccd2148aabaf7161e79aedffa',1,'pdg::NetServerAddress']]],
+  ['webtransport_8',['webTransport',['../group___structured_data_types.html#ac9c31f8e48d3e14b6295c03cad7de6b1',1,'pdg::NetServerOptions']]],
+  ['webtransporttimeout_9',['webTransportTimeout',['../group___structured_data_types.html#a57eb6c3f3a67a141dbb2671a00be3093',1,'pdg::NetServerAddress']]],
+  ['webtransporturl_10',['webTransportUrl',['../group___structured_data_types.html#a498ad024d815ea9f16f7147e6584b88f',1,'pdg::NetServerAddress']]],
+  ['when_11',['when',['../classpdg_1_1_animated.html#ae356b4e88fd9dc18bad882e5cd29a589',1,'pdg::Animated']]],
+  ['whippanto_12',['whipPanTo',['../classpdg_1_1_animation_script.html#ab971540b721e455b770132cb158d7052',1,'pdg::AnimationScript::whipPanTo()'],['../classpdg_1_1_camera.html#a81a358f53cc34ae1f91057c86fc06eef',1,'pdg::Camera::whipPanTo()'],['../classpdg_1_1_troupe.html#ae71d15c256f25e89c3d8f3bc293aff4d',1,'pdg::Troupe::whipPanTo()']]],
+  ['wholerig_13',['wholeRig',['../group___structured_data_types.html#a7a133dde283d110c8719f9c3817917ee',1,'pdg::SpriteRecoveryEvent']]],
+  ['width_14',['width',['../group___structured_data_types.html#a71552aeaa4100e05a41b7b684f6df173',1,'pdg::ParticleTrailOptions::width'],['../group___structured_data_types.html#a71552aeaa4100e05a41b7b684f6df173',1,'pdg::ScreenMode::width'],['../classpdg_1_1_rect.html#aa4140800a83703eade3257ef33bd4ffc',1,'pdg::Rect::width()']]],
+  ['window_15',['Running in a Window',['../classpdg_1_1_graphics_manager.html#autotoc_md3',1,'']]],
+  ['with_20a_20fading_20trail_16',['An emitter with a fading trail',['../_particle_effects.html#particle_example',1,'']]],
+  ['withappearance_17',['withAppearance',['../classpdg_1_1_attributes.html#a7fe1d9b8abdd51950c3b9f11bd74c602',1,'pdg::Attributes']]],
+  ['withcollisionname_18',['withCollisionName',['../group___structured_data_types.html#a0f5935f189912a127c99d918d46e072a',1,'pdg::SpriteCollisionEvent']]],
+  ['withingeometricreach_19',['withinGeometricReach',['../group___structured_data_types.html#a0c25d5cd018c3f64f8ffa4ac65bf95c2',1,'pdg::FABRIKResult']]],
+  ['worldtoport_20',['worldToPort',['../classpdg_1_1_port.html#a60cdf7ccba82e73e36ba79dd6071ebe7',1,'pdg::Port']]],
+  ['worldtoview_21',['worldToView',['../classpdg_1_1_camera.html#afbdf7d61c46786a457be0a32ba9a965b',1,'pdg::Camera']]],
+  ['writelogentry_22',['writeLogEntry',['../classpdg_1_1_log_manager.html#a822027622ca087b8ec3df69489ca684f',1,'pdg::LogManager']]]
 ];

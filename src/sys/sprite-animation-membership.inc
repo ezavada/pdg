@@ -79,6 +79,7 @@ void Sprite::updateAnimationPhysicsMembers(std::map<Part*,Part*> members,bool di
 }
 #endif
 Sprite& Sprite::attachAnimationPhysicsPart(Part* part,Part* parent) {
+    if(recordOperation("attachAnimationPhysicsPart", captureAnimationArguments(part, parent))) return *this;
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
     animationPhysicsControl();
     if(!part || part->getSprite()!=this || !part->physics.isPresent())
@@ -107,6 +108,7 @@ Sprite& Sprite::attachAnimationPhysicsPart(Part* part,Part* parent) {
     return *this;
 }
 Sprite& Sprite::detachAnimationPhysicsPart(Part* part,bool descendants) {
+    if(recordOperation("detachAnimationPhysicsPart", captureAnimationArguments(part, descendants))) return *this;
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
     animationPhysicsControl();
     if(!part || part->getSprite()!=this)throw std::invalid_argument("Expected a Part owned by this Sprite");

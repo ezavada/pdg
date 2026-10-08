@@ -1,4 +1,5 @@
 #define HAS_IMAGE_METHODS(klass) \
+    METHODS_FROM(klass, Image, \
     HAS_GETTER(klass, Width)                  \
     HAS_GETTER(klass, Height)                 \
     HAS_GETTER(klass, ImageBounds)            \
@@ -12,28 +13,28 @@
     HAS_METHOD(klass, "prepareToRasterize", PrepareToRasterize)     \
     HAS_GETTER(klass, AlphaValue)             \
     HAS_METHOD(klass, "getPixel", GetPixel)  \
-
+    )
 #define IMAGE_BASE_CLASS_IMPL(klass) CR \
   PROPERTY_IMPL(klass, TransparentColor, COLOR) CR \
   GETTER_IMPL(klass, Width, INTEGER) CR \
   GETTER_IMPL(klass, Height, INTEGER) CR \
   METHOD_IMPL(klass, GetImageBounds) CR \
-	METHOD_SIGNATURE("get image boundary rect, optionally with top left at given point", CR \
-		[object Rect], 1, ([object Point] at)); CR \
+	METHOD_SIGNATURE("get image boundary rect, optionally with top left at given point",  \
+		[object Rect], 0, ([object Point&] at = Point(0,0))); CR \
     OPTIONAL_POINT_ARG(1, at, pdg::Point(0,0)); CR \
     Rect r = self->getImageBounds(at); CR \
 	RETURN(RECT2VAL(r)); CR \
 	END CR \
   METHOD_IMPL(klass, GetSubsection) CR \
-	METHOD_SIGNATURE("get image that is an arbitrary subsection of this image", CR \
-		[object Image], 1, ({[object Quad]|[object Rect]} quad)); CR \
+	METHOD_SIGNATURE("get image that is an arbitrary subsection of this image",  \
+		[object Image*], 1, ({[object Quad&]|[object Rect]} quad)); CR \
     REQUIRE_ARG_COUNT(1); CR \
 	REQUIRE_QUAD_ARG(1, quad); CR \
 	Image* image = self->getSubsection(quad); CR \
 	RETURN_CPP_OBJECT(image, Image); CR \
 	END CR \
   METHOD_IMPL(klass, GetOpacity) CR \
-	METHOD_SIGNATURE("get opacity of this image: 0.0 - completely transparent to 1.0 - completely solid", CR \
+	METHOD_SIGNATURE("get opacity of this image: 0.0 - completely transparent to 1.0 - completely solid",  \
 		number, 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
 	uint8 opacity = self->getOpacity(); CR \
@@ -41,8 +42,8 @@
 	RETURN_NUMBER(opacityFloat); CR \
 	END CR \
   METHOD_IMPL(klass, SetOpacity) CR \
-	METHOD_SIGNATURE("set opacity of this image as range from either (0-255) or (0.0 to 1.0)", CR \
-		undefined, 1, (number opacity)); CR \
+	METHOD_SIGNATURE("set opacity of this image",  \
+		[this], 1, (number opacity)); CR \
     REQUIRE_ARG_COUNT(1); CR \
 	REQUIRE_NUMBER_ARG(1, opacityFloat); CR \
 	uint32 opacity; CR \
@@ -53,33 +54,33 @@
 	} CR \
 	if (opacity > 255) opacity = 255; CR \
 	self->setOpacity(opacity); CR \
-	NO_RETURN; CR \
+	RETURN_THIS; CR \
 	END CR \
   METHOD_IMPL(klass, SetEdgeClamping) CR \
-	METHOD_SIGNATURE("set whether image uses edge clamping or not", CR \
-		undefined, 1, (boolean inUseEdgeClamp)); CR \
+	METHOD_SIGNATURE("set whether image uses edge clamping or not",  \
+		[this], 1, (boolean inUseEdgeClamp)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_BOOL_ARG(1, inUseEdgeClamp); CR \
 	self->setEdgeClamping(inUseEdgeClamp); CR \
-	NO_RETURN; CR \
+	RETURN_THIS; CR \
 	END CR \
   METHOD_IMPL(klass, RetainData) CR \
-	METHOD_SIGNATURE("retain pixel data for use by Image.getPixel()", CR \
+	METHOD_SIGNATURE("retain pixel data for use by Image.getPixel()",  \
 		undefined, 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
 	self->retainData(); CR \
 	NO_RETURN; CR \
 	END CR \
   METHOD_IMPL(klass, RetainAlpha) CR \
-	METHOD_SIGNATURE("retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions", CR \
+	METHOD_SIGNATURE("retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions",  \
 		undefined, 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
 	self->retainAlpha(); CR \
 	NO_RETURN; CR \
 	END CR \
   METHOD_IMPL(klass, PrepareToRasterize) CR \
-	METHOD_SIGNATURE("bind the image into an OpenGL texture and free image data from main memory", CR \
-		number, 0, ()); CR \
+	METHOD_SIGNATURE("bind the image into an OpenGL texture and free image data from main memory",  \
+		undefined, 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
 	self->prepareToRasterize(); CR \
 	NO_RETURN; CR \

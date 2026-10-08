@@ -4,6 +4,75 @@ describe('Particles and particle emitters', function() {
         const layer = pdg.createSpriteLayer();
         try { run(layer); } finally { pdg.cleanupLayer(layer); }
     }
+    it('samples bounded ribbons and resets them on teleports', function() {
+        const p=new pdg.Particle().setLifetime(0).setMovement(100,0);
+        expect(p.hasTrail()).toBe(false);
+        expect(p.setTrail({lifetime:.4,minDistance:0,sampleInterval:.01,maxPoints:8,color:'orange'})).toBe(p);
+        p.animate(.1);expect(p.getTrailPointCount()).toBe(8);
+        p.setLocation(500,100);expect(p.getTrailPointCount()).toBe(1);
+        p.animate(.1);expect(p.breakTrail()).toBe(p);expect(p.getTrailPointCount()).toBe(1);
+        expect(p.clearTrail()).toBe(p);expect(p.hasTrail()).toBe(false);
+        [0xFF9900FF,new pdg.Color('orange')].forEach(function(color) {p.setTrail({color:color});});
+        [{lifetime:0},{maxPoints:1},{maxPoints:2.5},{width:-1},{endOpacity:2},{sampleInterval:0},{breakDistance:Infinity},{minDistance:'2'},null].forEach(function(options) {
+            expect(function(){p.setTrail(options);}).toThrow();
+        });
+    });
+    it('records ribbon options for compatible playback targets', function() {
+        pdg.Animated.defineScript('particle-ribbon-spec').setTrail({width:3,color:'orange'}).endScript();
+        const p=new pdg.Particle().setLifetime(0).playScript('particle-ribbon-spec');
+        p.animate(.01);expect(p.hasTrail()).toBe(true);
+    });
+    it('copies trail settings but never a template history', function() {
+        withLayer(function(layer) {
+            const p=new pdg.Particle().setLifetime(0).setMovement(100,0).setTrail({minDistance:0});p.animate(.1);
+            layer.createParticleEmitter().setParticleTemplate(p).setLocation(300,200).emit(2);
+            const a=layer.getNthParticle(0),b=layer.getNthParticle(1);
+            expect(a.hasTrail()).toBe(true);expect(a.getTrailPointCount()).toBe(0);
+            a.clearTrail();expect(b.hasTrail()).toBe(true);
+            layer.removeAllParticles();expect(layer.getParticleTrailCount()).toBe(0);
+        });
+    });
+    it('preserves factory identity and detached lifetime across layers', function() {
+        const first = pdg.createSpriteLayer(), second = pdg.createSpriteLayer();
+        let firstAlive = true, secondAlive = true;
+        try {
+            const particle = first.createParticle().setLifetime(0).setLocation(5,7);
+            expect(first.getNthParticle(0)).toBe(particle);
+            first.removeParticle(particle);
+            expect(particle.getLayer()).toBe(null);
+            second.addParticle(particle);
+            expect(second.getNthParticle(0)).toBe(particle);
+            expect(particle.getLayer()).toBe(second);
+            pdg.cleanupLayer(first); firstAlive = false;
+            expect(second.getNthParticle(0)).toBe(particle);
+            pdg.cleanupLayer(second); secondAlive = false;
+            expect(particle.getLayer()).toBe(null);
+            particle.setLocation(11,13);
+            expect(particle.getLocation().x).toBe(11);
+            expect(particle.getLocation().y).toBe(13);
+        } finally {
+            if (firstAlive) pdg.cleanupLayer(first);
+            if (secondAlive) pdg.cleanupLayer(second);
+        }
+    });
+    it('replaces deleted browser handles while preserving the layer reference', function() {
+        if (!pdg.Particle.prototype.delete) return; // Embind handle lifetime only.
+        withLayer(function(layer) {
+            const first = layer.createParticle().setLifetime(0).setLocation(9,4);
+            expect(layer.getNthParticle(0)).toBe(first);
+            first.delete();
+            expect(first.isDeleted()).toBe(true);
+            const replacement = layer.getNthParticle(0);
+            expect(replacement === first).toBe(false);
+            expect(replacement.getLocation().x).toBe(9);
+            expect(layer.getNthParticle(0)).toBe(replacement);
+            layer.removeParticle(replacement);
+            expect(replacement.getLayer()).toBe(null);
+            replacement.animate(.1);
+            expect(replacement.isAlive()).toBe(true);
+            replacement.delete();
+        });
+    });
     it('has whole-body animation and optional read-only components', function() {
         const p = new pdg.Particle();
         expect(p instanceof pdg.Particle).toBe(true);
@@ -146,6 +215,18 @@ describe('Particles and particle emitters', function() {
         expect(event.angularSpeed).toBe(2);expect(event.breakAngularSpeed).toBe(1);
         expect(event.referenceBody).toBe(null);
         p.removeHandler(handler,pdg.eventType_ParticleBreak);
+    });
+    it('rebases independently copied relative script playback at emission', function() {
+        const layer=pdg.createSpriteLayer();
+        try {
+            const template=new pdg.Particle().setLifetime(0); template.batch().moveBy(10,0,1,pdg.linearTween).yoyo().endBatch().animate(.5);
+            const emitter=layer.createParticleEmitter().setParticleTemplate(template).setLocation(100,200); emitter.emit(2);
+            const first=layer.getNthParticle(0), second=layer.getNthParticle(1);
+            layer.removeParticle(first);layer.removeParticle(second);
+            first.animate(.5); expect(first.getLocation().x).toBeCloseTo(105,5);expect(first.getLocation().y).toBeCloseTo(200,5);
+            first.animate(1);expect(first.getLocation().x).toBeCloseTo(95,5);expect(second.getLocation().x).toBeCloseTo(100,5);
+            expect(template.getLocation().x).toBeCloseTo(5,5);
+        } finally {pdg.cleanupLayer(layer);}
     });
     it('rejects invalid emission parameters', function() {
         const emitter = new pdg.ParticleEmitter(), p = new pdg.Particle();

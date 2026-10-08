@@ -76,43 +76,94 @@ class ImageOpenGL;
 //! \ingroup Graphics
 // -----------------------------------------------------------------------------------
 
+class Camera;
+class ScopedCameraDrawing;
+class SpriteLayer;
+
+/// Drawing and setter operations return this port by reference for chaining.
 class Port : public Renderer {
+    friend class ScopedCameraDrawing;
+    friend class ScopedOffscreenDrawing;
+    friend class PortImpl;
+    friend class Camera;
+    mutable Camera* mCamera = nullptr;
+    friend class SpriteLayer;
+    friend class GraphicsManager;
+    std::vector<SpriteLayer*> mLayers;
+    friend class SpriteManager;
+    friend void graphics_finishDrawing(Port*);
+    std::vector<Camera*> mFrameCameras;
+    Camera* mLayerDrawingCamera = nullptr;
+    void queueCameraEffects(Camera*);
+    void finishCameraEffects();
+    Point mCameraAnchor;
+    unsigned mScreenDrawingDepth = 0, mCameraDrawingDepth = 0;
+    bool mCameraDrawingEnabled = true;
 public:
 
+    /// Port-owned camera, created lazily; its viewport always covers this Port.
+    Camera* getCamera() const;
+    /// Anchor in port coordinates; initially (0,0). Does not change the camera.
+    Port& setCameraAnchor(const Point& anchor) { mCameraAnchor = anchor; return *this; }
+    Point getCameraAnchor() const { return mCameraAnchor; }
+    glm::mat3 getCameraTransform();
+    /// Convert through this port's camera, irrespective of drawing-enable state.
+    Point worldToPort(const Point& point);
+    /// Inverse camera conversion; excludes explicit layer cameras and parallax.
+    Point portToWorld(const Point& point);
+    /// Temporarily draw in port coordinates, for UI or already projected content.
+    class ScreenDrawingScope {
+        Port* mPort;
+    public:
+        explicit ScreenDrawingScope(Port* port) : mPort(port) { if(mPort) ++mPort->mScreenDrawingDepth; }
+        explicit ScreenDrawingScope(Port& port) : ScreenDrawingScope(&port) {}
+        ~ScreenDrawingScope() { if(mPort) --mPort->mScreenDrawingDepth; }
+        ScreenDrawingScope(const ScreenDrawingScope&) = delete;
+        ScreenDrawingScope& operator=(const ScreenDrawingScope&) = delete;
+    };
+    Port& setCameraDrawingEnabled(bool enabled) { mCameraDrawingEnabled = enabled; return *this; }
+    bool getCameraDrawingEnabled() const { return mCameraDrawingEnabled; }
+    bool isCameraDrawingEnabled() const { return mCameraDrawingEnabled && !mScreenDrawingDepth && !mCameraDrawingDepth; }
+
+    Port& drawVector(const Vector& v, const Attributes& attrs) { Renderer::drawVector(v, attrs); return *this; }
+    Port& drawCircle(const Point& center, float radius, const Attributes& attrs) { Renderer::drawCircle(center, radius, attrs); return *this; }
+    Port& drawRoundedRect(const Rect& rect, float radius, const Attributes& attrs) { Renderer::drawRoundedRect(rect, radius, attrs); return *this; }
+    Port& drawBezier(const Point& from, const Point& control1, const Point& control2, const Point& to, const Attributes& attrs) { Renderer::drawBezier(from, control1, control2, to, attrs); return *this; }
+
     // Renderer interface implementation
-    virtual void drawLine(const Point& from, const Point& to, const Attributes& attrs) override;
-    virtual void drawRect(const Rect& rect, const Attributes& attrs) override;
-    virtual void drawQuad(const Quad& quad, const Attributes& attrs) override;
-    virtual void drawPolygon(const Polygon& polygon, const Attributes& attrs) override;
-    virtual void drawSpline(const Spline& spline, const Attributes& attrs) override;
-    virtual void drawEllipse(const Point& center, float xRadius, float yRadius, const Attributes& attrs) override;
-    virtual void drawArc(const Point& center, float xRadius, float yRadius, float startAngle, float endAngle, const Attributes& attrs) override;
+    virtual Port& drawLine(const Point& from, const Point& to, const Attributes& attrs) override;
+    virtual Port& drawRect(const Rect& rect, const Attributes& attrs) override;
+    virtual Port& drawQuad(const Quad& quad, const Attributes& attrs) override;
+    virtual Port& drawPolygon(const Polygon& polygon, const Attributes& attrs) override;
+    virtual Port& drawSpline(const Spline& spline, const Attributes& attrs) override;
+    virtual Port& drawEllipse(const Point& center, float xRadius, float yRadius, const Attributes& attrs) override;
+    virtual Port& drawArc(const Point& center, float xRadius, float yRadius, float startAngle, float endAngle, const Attributes& attrs) override;
 
     // New Renderer interface methods
-    virtual void drawImage(Image* img, const Point& loc, const Attributes& attrs) override;
-    virtual void drawImage(Image* img, const Rect& rect, const Attributes& attrs) override;
-    virtual void drawImage(Image* img, const Quad& quad, const Attributes& attrs) override;
-    virtual void drawDrawing(const Drawing& drawing, const Point& loc, const Attributes& attrs) override;
-    virtual void drawDrawing(const Drawing& drawing, const Rect& rect, const Attributes& attrs) override;
-    virtual void drawText(const char* text, const Point& loc, const Attributes& attrs) override;
-    virtual void drawText(const char* text, const Rect& rect, const Attributes& attrs) override;
-    virtual void drawSphere(const Point& center, float radius, const Attributes& attrs) override;
+    virtual Port& drawImage(Image* img, const Point& loc, const Attributes& attrs) override;
+    virtual Port& drawImage(Image* img, const Rect& rect, const Attributes& attrs) override;
+    virtual Port& drawImage(Image* img, const Quad& quad, const Attributes& attrs) override;
+    virtual Port& drawDrawing(const Drawing& drawing, const Point& loc, const Attributes& attrs) override;
+    virtual Port& drawDrawing(const Drawing& drawing, const Rect& rect, const Attributes& attrs) override;
+    virtual Port& drawText(const char* text, const Point& loc, const Attributes& attrs) override;
+    virtual Port& drawText(const char* text, const Rect& rect, const Attributes& attrs) override;
+    virtual Port& drawSphere(const Point& center, float radius, const Attributes& attrs) override;
 
     virtual Rect getDrawingArea();
     /// Current single clip in Port coordinates; defaults to the drawing area.
     Rect     getClipRect();
     /// Replace the clip, intersecting with the drawing area. Empty clips suppress all drawing.
-    void     setClipRect(const Rect& rect);
+    Port& setClipRect(const Rect& rect);
     /// Restore clipping to the full drawing area. There is no clip stack.
-    void     resetClipRect();
+    Port& resetClipRect();
     /** Clear the current clip to an exact RGBA color (transparent by default).
      * Unlike drawing a translucent rectangle this replaces the pixels.
      */
-    void clear(const Color& color = Color(0, 0, 0, 0));
+    Port& clear(const Color& color = Color(0, 0, 0, 0));
     /** Set the coordinate at the top left of an offscreen surface and reset its clip.
      * Does not move pixels. Main/window ports reject this operation.
      */
-    void setDrawingOrigin(const Point& origin);
+    Port& setDrawingOrigin(const Point& origin);
 
 
     int      getTextWidth(const char* text, int size,
@@ -124,16 +175,16 @@ public:
 
     // set the font used for this port
 	// with no params it sets the font to the default font for the port, which is Arial
-    void     setFont(Font* font = 0);
+    Port& setFont(Font* font = 0);
 
     // set the name of the font used for a particular style of text in this port
     // does not affect what font is used for any other styles
 	// passing nil for font resets the font for that style to the default font, which is Arial
-    void     setFontForStyle(Font* font, uint32 style);
+    Port& setFontForStyle(Font* font, uint32 style);
 
     // set a factor by which all font sizes are enlarged or reduced
     // > 1.0 is enlarge, < 1.0 is reduce, 1.0 is no scaling
-    void     setFontScalingFactor(float scaleBy);
+    Port& setFontScalingFactor(float scaleBy);
 
 	// start tracking a particular area for mouse enter/leave events
 	// when the mouse enters that area, a mouse enter event will be generated
@@ -143,11 +194,11 @@ public:
 	int      startTrackingMouse(const Rect& rect, void* userData = 0);
 
 	// stop tracking the mouse for a particular tracking rectangle
-	void     stopTrackingMouse(int trackingRef);
+	Port& stopTrackingMouse(int trackingRef);
 
-	void        setCursor(Image* cursorImage, const Point& hotSpot);
+	Port& setCursor(Image* cursorImage, const Point& hotSpot);
 	Image*      getCursor();
-	void        resetCursor();
+	Port& resetCursor();
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	SCRIPT_OBJECT_REF mPortScriptObj;
@@ -267,4 +318,3 @@ Port::drawText(const char* text, const RotatedRect& rr, int size, uint32 style, 
 #endif // PDG_NO_GUI
 
 #endif // PDG_PORT_H_INCLUDED
-

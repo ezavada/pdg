@@ -21,6 +21,7 @@
 %#include "pdg-lib.h"
 
 %#include <cstdlib>
+%#include <algorithm>
 
 
 namespace pdg {
@@ -82,24 +83,22 @@ METHOD_IMPL(ResourceManager, GetResourceSize)
 	unsigned long resSize = self->getResourceSize(resourceName);
 	RETURN_UNSIGNED(resSize);
 	END
+// @pdg-contract {"name":"ResourceManager.getResource","value":{"returns":{"one_of":[{"schema":"ByteArray"},{"type":"boolean","literal":false}]}}}
 METHOD_IMPL(ResourceManager, GetResource)
-	METHOD_SIGNATURE("", [string Binary], 1, (string resourceName));
+	METHOD_SIGNATURE("", [object ByteArray], 1, (string resourceName, [number int] maxSize = -1));
     REQUIRE_ARG_MIN_COUNT(1);
 	REQUIRE_STRING_ARG(1, resourceName);
 	OPTIONAL_INT32_ARG(2, maxSize, -1);
-	unsigned long bufferSize;
-	if (maxSize < 0) {
-		bufferSize = self->getResourceSize(resourceName);
-	} else {
-		bufferSize = maxSize;
-	}
+    unsigned long resourceSize = self->getResourceSize(resourceName);
+    unsigned long bufferSize = maxSize < 0 ? resourceSize : std::min(resourceSize, static_cast<unsigned long>(maxSize));
+    if (!bufferSize) { RETURN_FALSE; }
 	uint8* buffer = (uint8*) std::malloc(bufferSize);
 	bool loaded = self->getResource(resourceName, buffer, bufferSize);
 	if (!loaded) {
 		std::free(buffer);
 		RETURN_FALSE;
 	}
-	VALUE resultVal = EncodeBinary(buffer, bufferSize);
+	VALUE resultVal = MakeUint8Array(buffer, bufferSize);
 	std::free(buffer);
 	RETURN(resultVal);
 	END
@@ -115,3 +114,8 @@ CPP_SINGLETON_CONSTRUCTOR_IMPL(ResourceManager)
 
 } // pdg namespace
 
+
+// @pdg-member {"name":"ResourceManager.getResource","native_binding":{"adapter":"ResourceManager.getResource","binding_name":"_getResource"}}
+
+
+// @pdg-class {"name":"ResourceManager","native_binding":{"browser":{"generate":true,"base":null}}}

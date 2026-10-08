@@ -58,8 +58,9 @@ SCRIPT_METHOD_IMPL(FileManager, FindFirst)
 	OBJECT_SET_PROPERTY_VALUE(jsFindData, SYMBOL(found), BOOL2VAL(found));
 	RETURN_OBJECT(jsFindData);
 	END
+// @pdg-member {"name":"FileManager.findNext","native_binding":{"adapter":"file.find-next"}}
 SCRIPT_METHOD_IMPL(FileManager, FindNext)
-	METHOD_SIGNATURE("", object, 1, (object inFindData));
+	METHOD_SIGNATURE("", boolean, 1, (object ioFindData));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_OBJECT_ARG(1, jsFindData);
 	FindDataT* ioFindDataPtr = static_cast<FindDataT*>(OBJECT_PRIVATE_DATA(jsFindData));
@@ -103,3 +104,69 @@ SCRIPT_METHOD_IMPL(FileManager, GetApplicationResourceDirectory)
 
 
 } // pdg namespace
+
+/* @pdg-schema
+{
+  "name": "FileFindData",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "nodeName": {
+        "type": "string"
+      },
+      "isDirectory": {
+        "type": "boolean"
+      },
+      "found": {
+        "type": "boolean"
+      }
+    },
+    "identity": "FileFindData",
+    "description": "Native search handle. Obtain from findFirst and release using findClose."
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "FileManager.findFirst",
+  "value": {
+    "returns": {
+      "schema": "FileFindData"
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "FileManager.findNext",
+  "value": {
+    "params": {
+      "ioFindData": {
+        "schema": "FileFindData"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "FileManager.findClose",
+  "value": {
+    "params": {
+      "inFindData": {
+        "schema": "FileFindData"
+      }
+    }
+  }
+}
+*/
+
+// @pdg-member {"name":"FileManager.findFirst","native_binding":{"adapter":"FileManager.findFirst"}}
+
+// @pdg-member {"name":"FileManager.findClose","native_binding":{"adapter":"FileManager.findClose"}}
+
+
+// @pdg-class {"name":"FileManager","native_binding":{"browser":{"generate":true,"base":null}}}

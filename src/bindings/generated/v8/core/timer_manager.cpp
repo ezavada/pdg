@@ -209,13 +209,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object IEventHandler] inHandler, [number int] inEventType = all_events)" " - " "add a new handler for some event type, or for all events if no type specified. "
-                    " \\param inHandler the object to handle events" " \\param inEventType the type of event to handle").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -275,20 +269,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object IEventHandler] inHandler, [number int] inEventType = all_events)" " - " "remove a handler for some event type, or for all events (see note) if no type specified. "
-                    "If the handler is listed multiple times it will only remove it once.\n"
-                    "NOTE: inType == all_events doesn't work quite like you might expect. If "
-                    "you have registered a handler for multiple events, but not with all_events, "
-                    "doing removeHandler(handler, all_events) will do nothing. Basically, "
-                    "all_events is a special event type that matches all event types when "
-                    "considering whether to invoke a handler or not.\n"
-                    "It is safe to call remove handler from within an event handler's handleEvent() call."
-                    " \\param inHandler the object to handle events" " \\param inEventType the type of event to stop handling (see note)").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -311,10 +292,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "remove all handlers").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -330,14 +308,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] inEventType)" " - " "temporarily ignore all events of a particular type. "
-                    "Events that are blocked are NOT cached for later, they are just dropped."
-                    " \\param inEventType the type of event to block").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -359,13 +330,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] inEventType)" " - " "stop ignoring events of a particular type "
-                    " \\param inEventType the type of event to unblock").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -387,10 +352,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] id, [number uint] delay, boolean oneShot = true)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -424,10 +386,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] id)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -449,10 +408,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -468,10 +424,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] id, [number uint] delay)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -499,10 +452,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] id, [number int] msTime)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -536,10 +486,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -555,10 +502,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -574,10 +518,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -593,10 +534,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] id)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -618,10 +556,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] id)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -643,10 +578,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "([number int] id)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -668,10 +600,7 @@ namespace pdg
         TimerManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<TimerManagerWrap>(args.This());
         TimerManager* self = dynamic_cast<TimerManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "([number int] id)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -697,10 +626,7 @@ namespace pdg
     void TimerManagerWrap::GetMilliseconds(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         { args.GetReturnValue().Set( v8::Number::New(isolate, OS::getMilliseconds()) ); return; };
     }
 

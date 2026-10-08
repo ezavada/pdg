@@ -84,8 +84,8 @@ const fs = require('fs');
 const Module = require('module');
 
 // Set up REPL functionality
+// @pdg-member {"name":"pdg.startRepl","type":"function","brief":"start an interactive PDG terminal","params":[]}
 pdg.startRepl = function() {
-	var _sig = methodSignature("", arguments, "undefined", 0, "()"); if (_sig != null) return _sig;
 
     console.log("PDG terminal v" + process.versions['pdg']);
     

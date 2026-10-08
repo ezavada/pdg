@@ -1,4 +1,4 @@
-.TH "ElementRef" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ElementRef" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -33,6 +33,10 @@ ElementRef \- Reference to a drawing element that allows modification of its pro
 .br
 .RI "returns all control points of the element "
 .ti -1c
+.RI "string \fBgetText\fP ()"
+.br
+.RI "Get the current text of a text element\&. "
+.ti -1c
 .RI "boolean \fBhasLiveAttributes\fP ()"
 .br
 .RI "Test whether this element holds a live sample association\&. "
@@ -64,6 +68,10 @@ ElementRef \- Reference to a drawing element that allows modification of its pro
 .RI "\fBsetLiveAttributes\fP (\fBAttributes\fP attrs)"
 .br
 .RI "Associate an element with a live \fBAttributes\fP or \fBAnimatedAttributes\fP source\&. "
+.ti -1c
+.RI "\fBsetText\fP (string text)"
+.br
+.RI "Replace a text element's text while retaining its rectangle and styling\&. "
 .ti -1c
 .RI "uint \fBtype\fP ()"
 .br
@@ -122,6 +130,22 @@ returns the control point at the specified index
 
 .PP
 returns all control points of the element 
+.SS "string getText ()"
+
+.PP
+Get the current text of a text element\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The text string\&. Throws for a non-text or removed element\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetText()\fP, \fBDrawing\&.addText()\fP 
+.RE
+.PP
+
 .SS "boolean hasLiveAttributes ()"
 
 .PP
@@ -207,6 +231,27 @@ style\&.moveTo(100, 0, 1, pdg\&.linearTween);
 \fBSee also\fP
 .RS 4
 \fBclearLiveAttributes()\fP, \fBhasLiveAttributes()\fP, \fBsetAttributes()\fP, \fBgetAttributes()\fP 
+.RE
+.PP
+
+.SS "setText (string text)"
+
+.PP
+Replace a text element's text while retaining its rectangle and styling\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItext\fP Replacement string, at most 1 MiB in UTF-8; an empty string is allowed\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+undefined\&. Throws for a non-string, non-text or removed element\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBgetText()\fP, \fBDrawing\&.addText()\fP 
 .RE
 .PP
 

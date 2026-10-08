@@ -1,4 +1,4 @@
-.TH "Attributes" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Attributes" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -9,14 +9,25 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .PP
 .PP
 \fR#include <pdg\-js\&.h>\fP
+.PP
+Inherited by \fBAnimatedAttributes\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
-.RI "\fBambientLight\fP (\fBColor\fP color)"
+.RI "\fBAttributes\fP ()"
 .br
 .ti -1c
-.RI "\fBblendMode\fP (int blendMode)"
+.RI "\fBAttributes\fP \fBambientLight\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBambientLight\fP (number rgba)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBambientLight\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBblendMode\fP (int blendMode)"
 .br
 .RI "sets the blend mode for rendering operations "
 .ti -1c
@@ -24,31 +35,85 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .br
 .RI "Confine drawing overflow to the operation's bounds\&. "
 .ti -1c
-.RI "\fBfillColor\fP (\fBColor\fP color)"
+.RI "\fBAttributes\fP \fBfillColor\fP (\fBColor\fP color)"
 .br
 .RI "sets the fill color for shapes and drawings "
 .ti -1c
-.RI "\fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+.RI "\fBAttributes\fP \fBfillColor\fP (number rgba)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillColor\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
 .br
 .RI "sets a linear gradient fill from start point to end point "
 .ti -1c
-.RI "\fBfillOpacity\fP (number float opacity)"
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillOpacity\fP (number float opacity)"
 .br
 .RI "sets the opacity for fill operations (0\&.0 to 1\&.0) "
 .ti -1c
-.RI "\fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
 .br
 .RI "Create a radial gradient fill from center point to outer radius\&. "
 .ti -1c
-.RI "\fBfitType\fP (int fit)"
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number float radius, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number float radius, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number float radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number float radius, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number float radius, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number float radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfitType\fP (int fit)"
 .br
 .RI "Sets how an image should be fitted into a target rectangle\&. "
 .ti -1c
-.RI "\fBfont\fP (\fBFont\fP font)"
+.RI "\fBAttributes\fP \fBfont\fP (\fBFont\fP font=null)"
 .br
 .RI "Sets the font to use for drawing text\&. "
 .ti -1c
-.RI "\fBframe\fP (int frame)"
+.RI "\fBAttributes\fP \fBframe\fP (int frame)"
 .br
 .RI "Sets which frame of an \fBImageStrip\fP to draw\&. "
 .ti -1c
@@ -171,39 +236,45 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .br
 .RI "returns the current transformation matrix "
 .ti -1c
-.RI "\fBlightOffset\fP (\fBOffset\fP offset)"
+.RI "\fBAttributes\fP \fBlightOffset\fP (\fBOffset\fP offset)"
 .br
 .RI "Sets light source with spherical coordinates in radians\&. "
 .ti -1c
-.RI "\fBlineColor\fP (\fBColor\fP color)"
+.RI "\fBAttributes\fP \fBlineColor\fP (\fBColor\fP color)"
 .br
 .RI "sets the line color for strokes and outlines "
 .ti -1c
-.RI "\fBlineOpacity\fP (number float opacity)"
+.RI "\fBAttributes\fP \fBlineColor\fP (number rgba)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBlineColor\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBlineOpacity\fP (number float opacity)"
 .br
 .RI "sets the opacity for line strokes (0\&.0 to 1\&.0) "
 .ti -1c
-.RI "\fBlineStyle\fP (int lineStyle)"
+.RI "\fBAttributes\fP \fBlineStyle\fP (int lineStyle)"
 .br
 .RI "sets the style of line strokes (solid, dashed, etc\&.) "
 .ti -1c
-.RI "\fBlineThickness\fP (number float thickness)"
+.RI "\fBAttributes\fP \fBlineThickness\fP (number float thickness)"
 .br
 .RI "sets the thickness of line strokes in pixels "
 .ti -1c
-.RI "\fBpolarOffset\fP (\fBOffset\fP offset)"
+.RI "\fBAttributes\fP \fBpolarOffset\fP (\fBOffset\fP offset)"
 .br
 .RI "Sets the polar offset for rotating a textured sphere\&. "
 .ti -1c
-.RI "\fBrotation\fP (number float radians, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.RI "\fBAttributes\fP \fBrotation\fP (number float radians, \fBPoint\fP center=\fBPoint\fP(0, 0))"
 .br
 .RI "sets the rotation angle and center point for transformations "
 .ti -1c
-.RI "\fBroundedCorners\fP (number float radius)"
+.RI "\fBAttributes\fP \fBroundedCorners\fP (number float radius)"
 .br
 .RI "sets the radius for rounded corners "
 .ti -1c
-.RI "\fBscale\fP (number float xFactor, number float yFactor=xFactor, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.RI "\fBAttributes\fP \fBscale\fP (number float xFactor, number float yFactor=xFactor, \fBPoint\fP center=\fBPoint\fP(0, 0))"
 .br
 .RI "sets the scaling factors for x and y axes "
 .ti -1c
@@ -211,35 +282,35 @@ Attributes \- Container for styling and transformation attributes used in drawin
 .br
 .RI "Replace the affine transform immediately\&. "
 .ti -1c
-.RI "\fBskew\fP (number float xSkew, number float ySkew, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.RI "\fBAttributes\fP \fBskew\fP (number float xSkew, number float ySkew, \fBPoint\fP center=\fBPoint\fP(0, 0))"
 .br
 .RI "sets the skew transformation for x and y axes "
 .ti -1c
-.RI "\fBsphereRotation\fP (number float rotation)"
+.RI "\fBAttributes\fP \fBsphereRotation\fP (number float rotation)"
 .br
 .RI "Sets the rotation angle in radians for a textured sphere\&. "
 .ti -1c
-.RI "\fBsubsection\fP (\fBRect\fP section)"
+.RI "\fBAttributes\fP \fBsubsection\fP (\fBRect\fP section)"
 .br
 .RI "Sets a subsection of an image to draw\&. "
 .ti -1c
-.RI "\fBtextSize\fP (number float size)"
+.RI "\fBAttributes\fP \fBtextSize\fP (number float size)"
 .br
 .RI "Sets the text size in points for drawing text\&. "
 .ti -1c
-.RI "\fBtextStyle\fP (int style)"
+.RI "\fBAttributes\fP \fBtextStyle\fP (int style)"
 .br
 .RI "Sets text style flags (bold, italic, underline, alignment)\&. "
 .ti -1c
-.RI "\fBtexture\fP (\fBImage\fP texture)"
+.RI "\fBAttributes\fP \fBtexture\fP (\fBImage\fP texture)"
 .br
 .RI "Sets the texture image to use for drawing a sphere\&. "
 .ti -1c
-.RI "\fBtransform\fP (array number matrix)"
+.RI "\fBAttributes\fP \fBtransform\fP (array number matrix)"
 .br
 .RI "sets the transformation matrix directly "
 .ti -1c
-.RI "\fBtranslation\fP (\fBOffset\fP offset)"
+.RI "\fBAttributes\fP \fBtranslation\fP (\fBOffset\fP offset)"
 .br
 .RI "sets the translation offset for transformations "
 .ti -1c
@@ -259,16 +330,32 @@ Container for styling and transformation attributes used in drawing operations\&
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Attributes ()"
+
+.PP
+Referenced by \fBAnimatedAttributes::AnimatedAttributes()\fP, \fBambientLight()\fP, \fBambientLight()\fP, \fBambientLight()\fP, \fBblendMode()\fP, \fBclipOverflow()\fP, \fBfillColor()\fP, \fBfillColor()\fP, \fBfillColor()\fP, \fBfillGradient()\fP, \fBfillGradient()\fP, \fBfillGradient()\fP, \fBfillGradient()\fP, \fBfillGradient()\fP, \fBfillGradient()\fP, \fBfillGradient()\fP, \fBfillGradient()\fP, \fBfillGradient()\fP, \fBfillOpacity()\fP, \fBfillRadialGradient()\fP, \fBfillRadialGradient()\fP, \fBfillRadialGradient()\fP, \fBfillRadialGradient()\fP, \fBfillRadialGradient()\fP, \fBfillRadialGradient()\fP, \fBfillRadialGradient()\fP, \fBfillRadialGradient()\fP, \fBfillRadialGradient()\fP, \fBfitType()\fP, \fBfont()\fP, \fBframe()\fP, \fBlightOffset()\fP, \fBlineColor()\fP, \fBlineColor()\fP, \fBlineColor()\fP, \fBlineOpacity()\fP, \fBlineStyle()\fP, \fBlineThickness()\fP, \fBpolarOffset()\fP, \fBrotation()\fP, \fBroundedCorners()\fP, \fBscale()\fP, \fBsetTransform()\fP, \fBskew()\fP, \fBsphereRotation()\fP, \fBsubsection()\fP, \fBtextSize()\fP, \fBtextStyle()\fP, \fBtexture()\fP, \fBtransform()\fP, \fBtranslation()\fP, and \fBwithAppearance()\fP\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "ambientLight (\fBColor\fP color)"
+.SS "\fBAttributes\fP ambientLight (\fBColor\fP color)"
 
-.SS "blendMode (int blendMode)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP ambientLight (number rgba)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP ambientLight (string colorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP blendMode (int blendMode)"
 
 .PP
 sets the blend mode for rendering operations 
 .PP
-References \fBblendMode()\fP\&.
+References \fBAttributes()\fP, and \fBblendMode()\fP\&.
 .PP
 Referenced by \fBblendMode()\fP\&.
 .SS "\fBAttributes\fP clipOverflow (boolean clip)"
@@ -299,40 +386,124 @@ This \fBAttributes\fP object, for chaining\&.
 .RE
 .PP
 
-.SS "fillColor (\fBColor\fP color)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillColor (\fBColor\fP color)"
 
 .PP
-sets the fill color for shapes and drawings 
-.SS "fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+sets the fill color for shapes and drawings Accepts a \fBColor\fP object, a CSS color string, or a packed RGBA number\&. 
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillColor (number rgba)"
 
 .PP
-sets a linear gradient fill from start point to end point 
-.SS "fillOpacity (number float opacity)"
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillColor (string colorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+
+.PP
+sets a linear gradient fill from start point to end point Each color argument independently accepts a \fBColor\fP object, a CSS color string, or a packed RGBA number\&. 
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endRGBA)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, \fBColor\fP endColor)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, number endRGBA)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, string endColorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endRGBA)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillOpacity (number float opacity)"
 
 .PP
 sets the opacity for fill operations (0\&.0 to 1\&.0) Set the opacity of filled areas (0\&.0 = transparent, 1\&.0 = opaque)\&. 
-.SS "fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
 
 .PP
-Create a radial gradient fill from center point to outer radius\&. 
-.SS "fitType (int fit)"
+Create a radial gradient fill from center point to outer radius\&. Each color argument independently accepts a \fBColor\fP object, a CSS color string, or a packed RGBA number\&. 
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, number endRGBA)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, string endColorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, number centerRGBA, number float radius, \fBColor\fP endColor)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, number centerRGBA, number float radius, number endRGBA)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, number centerRGBA, number float radius, string endColorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, string centerColorName, number float radius, \fBColor\fP endColor)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, string centerColorName, number float radius, number endRGBA)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fillRadialGradient (\fBPoint\fP center, string centerColorName, number float radius, string endColorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP fitType (int fit)"
 
 .PP
 Sets how an image should be fitted into a target rectangle\&. 
-.SS "font (\fBFont\fP font)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP font (\fBFont\fP font = \fRnull\fP)"
 
 .PP
 Sets the font to use for drawing text\&. 
 .PP
-References \fBfont()\fP\&.
+References \fBAttributes()\fP, and \fBfont()\fP\&.
 .PP
 Referenced by \fBfont()\fP\&.
-.SS "frame (int frame)"
+.SS "\fBAttributes\fP frame (int frame)"
 
 .PP
 Sets which frame of an \fBImageStrip\fP to draw\&. 
 .PP
-References \fBframe()\fP\&.
+References \fBAttributes()\fP, and \fBframe()\fP\&.
 .PP
 Referenced by \fBframe()\fP\&.
 .SS "\fBColor\fP getAmbientLight ()"
@@ -453,55 +624,79 @@ Gets the texture image to use for drawing a sphere\&.
 
 .PP
 returns the current transformation matrix 
-.SS "lightOffset (\fBOffset\fP offset)"
+.SS "\fBAttributes\fP lightOffset (\fBOffset\fP offset)"
 
 .PP
 Sets light source with spherical coordinates in radians\&. The lightOffset is an \fBOffset\fP with two values representing spherical coordinates in radians: offset\&.x (ρ/rho): Horizontal angle (azimuth) - rotation around the vertical axis offset\&.y (θ/theta): Vertical angle (elevation/polar angle) - angle from the horizontal plane
 
 .PP
 Key Points Offset(0, 0): Light directly in front at horizon level \fBOffset\fP(π/2, 0): Light from the right side at horizon level \fBOffset\fP(0, π/2): Light from directly above \fBOffset\fP(π, 0): Light from behind at horizon level The values are relative to the sphere's center, with the light positioned at a distance proportional to the sphere's radius\&. 
-.SS "lineColor (\fBColor\fP color)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP lineColor (\fBColor\fP color)"
 
 .PP
-sets the line color for strokes and outlines 
-.SS "lineOpacity (number float opacity)"
+sets the line color for strokes and outlines Accepts a \fBColor\fP object, a CSS color string, or a packed RGBA number\&. 
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP lineColor (number rgba)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP lineColor (string colorName)"
+
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP lineOpacity (number float opacity)"
 
 .PP
 sets the opacity for line strokes (0\&.0 to 1\&.0) 
-.SS "lineStyle (int lineStyle)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP lineStyle (int lineStyle)"
 
 .PP
 sets the style of line strokes (solid, dashed, etc\&.) 
 .PP
-References \fBlineStyle()\fP\&.
+References \fBAttributes()\fP, and \fBlineStyle()\fP\&.
 .PP
 Referenced by \fBlineStyle()\fP\&.
-.SS "lineThickness (number float thickness)"
+.SS "\fBAttributes\fP lineThickness (number float thickness)"
 
 .PP
 sets the thickness of line strokes in pixels 
-.SS "polarOffset (\fBOffset\fP offset)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP polarOffset (\fBOffset\fP offset)"
 
 .PP
 Sets the polar offset for rotating a textured sphere\&. 
-.SS "rotation (number float radians, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP rotation (number float radians, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
 
 .PP
 sets the rotation angle and center point for transformations 
 .PP
+References \fBAttributes()\fP\&.
+.PP
 Referenced by \fBsphereRotation()\fP\&.
-.SS "roundedCorners (number float radius)"
+.SS "\fBAttributes\fP roundedCorners (number float radius)"
 
 .PP
 sets the radius for rounded corners 
-.SS "scale (number float xFactor, number float yFactor = \fRxFactor\fP, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP scale (number float xFactor, number float yFactor = \fRxFactor\fP, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
 
 .PP
 sets the scaling factors for x and y axes 
+.PP
+References \fBAttributes()\fP\&.
 .SS "\fBAttributes\fP setTransform (array number matrix)"
 
 .PP
-Replace the affine transform immediately\&. Unlike \fBtransform()\fP, replaces the matrix instead of postmultiplying it\&. \fBAnimatedAttributes\fP adopts it as its shared \fBAnimated\fP state and cancels conflicting transform animation\&. \fBAnimatedAttributes\fP rejects nonfinite or non-affine matrices\&.
+Replace the affine transform immediately\&. Unlike \fBtransform()\fP, replaces the matrix instead of postmultiplying it\&. \fBAnimatedAttributes\fP preserves its logical width and height, adopts the matrix as its shared \fBAnimated\fP state, and cancels conflicting transform animation\&. It rejects nonfinite or non-affine matrices and nonzero matrix columns whose corresponding logical dimension is zero\&.
 
 .PP
 \fBParameters\fP
@@ -531,44 +726,58 @@ style\&.setTransform([1, 0, 0, 0, 1, 0, 20, 10, 1]);
 .RE
 .PP
 
-.SS "skew (number float xSkew, number float ySkew, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP skew (number float xSkew, number float ySkew, \fBPoint\fP center = \fR\fBPoint\fP(0,0)\fP)"
 
 .PP
 sets the skew transformation for x and y axes 
-.SS "sphereRotation (number float rotation)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP sphereRotation (number float rotation)"
 
 .PP
 Sets the rotation angle in radians for a textured sphere\&. 
 .PP
-References \fBrotation()\fP\&.
-.SS "subsection (\fBRect\fP section)"
+References \fBAttributes()\fP, and \fBrotation()\fP\&.
+.SS "\fBAttributes\fP subsection (\fBRect\fP section)"
 
 .PP
 Sets a subsection of an image to draw\&. 
-.SS "textSize (number float size)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP textSize (number float size)"
 
 .PP
 Sets the text size in points for drawing text\&. 
-.SS "textStyle (int style)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP textStyle (int style)"
 
 .PP
 Sets text style flags (bold, italic, underline, alignment)\&. 
-.SS "texture (\fBImage\fP texture)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP texture (\fBImage\fP texture)"
 
 .PP
 Sets the texture image to use for drawing a sphere\&. 
 .PP
-References \fBtexture()\fP\&.
+References \fBAttributes()\fP, and \fBtexture()\fP\&.
 .PP
 Referenced by \fBtexture()\fP\&.
-.SS "transform (array number matrix)"
+.SS "\fBAttributes\fP transform (array number matrix)"
 
 .PP
 sets the transformation matrix directly 
-.SS "translation (\fBOffset\fP offset)"
+.PP
+References \fBAttributes()\fP\&.
+.SS "\fBAttributes\fP translation (\fBOffset\fP offset)"
 
 .PP
 sets the translation offset for transformations 
+.PP
+References \fBAttributes()\fP\&.
 .SS "\fBAttributes\fP withAppearance (\fBAttributes\fP overrides, boolean textOnly = \fRfalse\fP)"
 
 .PP
@@ -594,6 +803,8 @@ API stability: 2 — Evolving\&.
 .RE
 .PP
 
+.PP
+References \fBAttributes()\fP\&.
 
 .SH "Author"
 .PP 

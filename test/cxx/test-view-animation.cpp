@@ -23,8 +23,10 @@ static void expect(bool ok, const char* message) {
 static void near(float value, float expected, const char* message) {
     expect(std::isfinite(value) && std::abs(value-expected)<.001, message);
 }
+void testTextCache();
 int main() {
     try {
+        testTextCache();
         static_assert(std::is_base_of_v<AnimatedAttributes<View>, View>);
         static_assert(std::is_base_of_v<Attributes, Button>);
         static_assert(std::is_base_of_v<AnimatedBase, Button>);

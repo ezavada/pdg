@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -232,6 +232,39 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ad9af8484c681e6f3464aac6cb0d88a08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether this <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> owns a physical IK controller.  <br /></td></tr>
 <tr class="memitem:a6fd9ce6bfda1d4f8db101e6fe60d9b3e" id="r_a6fd9ce6bfda1d4f8db101e6fe60d9b3e"><td class="memItemLeft">const std::string &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a6fd9ce6bfda1d4f8db101e6fe60d9b3e">getIKError</a> () const</td></tr>
 <tr class="memdesc:a6fd9ce6bfda1d4f8db101e6fe60d9b3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a scheduled IK configuration error.  <br /></td></tr>
+<tr class="memitem:ade11d3899f030b8fa8f58c1179e56b32" id="r_ade11d3899f030b8fa8f58c1179e56b32"><td class="memItemLeft"><a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k_result.html">AnimationFABRIKResult</a>&#160;</td><td class="memItemRight"><a class="el" href="#ade11d3899f030b8fa8f58c1179e56b32">solveFABRIK</a> (const std::vector&lt; Part * &gt; &amp;following, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;target, const <a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k.html">AnimationFABRIK</a> &amp;options={})</td></tr>
+<tr class="memdesc:ade11d3899f030b8fa8f58c1179e56b32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve or schedule a contiguous independent <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> chain; chain excludes the receiver. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a493366d1b7c408d7abd74729243ab873" id="r_a493366d1b7c408d7abd74729243ab873"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a493366d1b7c408d7abd74729243ab873">setFABRIKTarget</a> (const std::vector&lt; Part * &gt; &amp;following, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;target, const <a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k.html">AnimationFABRIK</a> &amp;options={})</td></tr>
+<tr class="memdesc:a493366d1b7c408d7abd74729243ab873"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve or schedule a contiguous independent <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> chain; chain excludes the receiver. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a9d282af63fe6ddda4859f4c663f815dc" id="r_a9d282af63fe6ddda4859f4c663f815dc"><td class="memItemLeft"><a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k_result.html">AnimationFABRIKResult</a>&#160;</td><td class="memItemRight"><a class="el" href="#a9d282af63fe6ddda4859f4c663f815dc">getFABRIKResult</a> () const</td></tr>
+<tr class="memdesc:a9d282af63fe6ddda4859f4c663f815dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the latest scheduled FABRIK diagnostics. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:aee64a3132c153a7ff6b9981934abb335" id="r_aee64a3132c153a7ff6b9981934abb335"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#aee64a3132c153a7ff6b9981934abb335">setJiggle</a> (const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;config, const std::vector&lt; Part * &gt; &amp;following={})</td></tr>
+<tr class="memdesc:aee64a3132c153a7ff6b9981934abb335"><td class="mdescLeft">&#160;</td><td class="mdescRight">Install chain jiggle or decorate an existing <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> IK target. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a65803562d0717fd9fd80644334586426" id="r_a65803562d0717fd9fd80644334586426"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a65803562d0717fd9fd80644334586426">clearJiggle</a> ()</td></tr>
+<tr class="memdesc:a65803562d0717fd9fd80644334586426"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove jiggle and restore the underlying programmed rotations. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a388ae303a8d51b420f47432eafe79e91" id="r_a388ae303a8d51b420f47432eafe79e91"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a388ae303a8d51b420f47432eafe79e91">hasJiggle</a> () const</td></tr>
+<tr class="memdesc:a388ae303a8d51b420f47432eafe79e91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return whether this <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> owns a jiggle controller. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:ab43b79084c4975cb286d314c553e4870" id="r_ab43b79084c4975cb286d314c553e4870"><td class="memItemLeft"><a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a>&#160;</td><td class="memItemRight"><a class="el" href="#ab43b79084c4975cb286d314c553e4870">getJiggleOptions</a> () const</td></tr>
+<tr class="memdesc:ab43b79084c4975cb286d314c553e4870"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an independent configuration record. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a67b3976e87f9c98ce1724650996fa853" id="r_a67b3976e87f9c98ce1724650996fa853"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a67b3976e87f9c98ce1724650996fa853">setJiggleSettings</a> (const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;settings)</td></tr>
+<tr class="memdesc:a67b3976e87f9c98ce1724650996fa853"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace tuning from a complete configuration without changing topology. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a15d445e53045ffa5953a91f9887b19b3" id="r_a15d445e53045ffa5953a91f9887b19b3"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a15d445e53045ffa5953a91f9887b19b3">setJiggleEnabled</a> (bool)</td></tr>
+<tr class="memdesc:a15d445e53045ffa5953a91f9887b19b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or freeze jiggle; reenabling reseeds from the current pose. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:ae954261275b99224499fc011fe7e5ebd" id="r_ae954261275b99224499fc011fe7e5ebd"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ae954261275b99224499fc011fe7e5ebd">isJiggleEnabled</a> () const</td></tr>
+<tr class="memdesc:ae954261275b99224499fc011fe7e5ebd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return whether jiggle is enabled. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:ad8d80f57a1713eb3d85f4d9ef2e75973" id="r_ad8d80f57a1713eb3d85f4d9ef2e75973"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ad8d80f57a1713eb3d85f4d9ef2e75973">setJiggleInfluence</a> (double influence, double seconds=0)</td></tr>
+<tr class="memdesc:ad8d80f57a1713eb3d85f4d9ef2e75973"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set or linearly fade influence using simulation seconds. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a4bd8679c9a93782484a0ec074baadfe2" id="r_a4bd8679c9a93782484a0ec074baadfe2"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a4bd8679c9a93782484a0ec074baadfe2">resetJiggle</a> ()</td></tr>
+<tr class="memdesc:a4bd8679c9a93782484a0ec074baadfe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reseed jiggle from the desired pose or target. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:abdf1d1c7b723a59584513a687d4db42c" id="r_abdf1d1c7b723a59584513a687d4db42c"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#abdf1d1c7b723a59584513a687d4db42c">kickJiggle</a> (double x, double y=0, int joint=0)</td></tr>
+<tr class="memdesc:abdf1d1c7b723a59584513a687d4db42c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add angular or target velocity. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a4d0ff263a9659df45a089d40181ab7aa" id="r_a4d0ff263a9659df45a089d40181ab7aa"><td class="memItemLeft"><a class="el" href="structpdg_1_1_jiggle_result.html">JiggleResult</a>&#160;</td><td class="memItemRight"><a class="el" href="#a4d0ff263a9659df45a089d40181ab7aa">getJiggleResult</a> () const</td></tr>
+<tr class="memdesc:a4d0ff263a9659df45a089d40181ab7aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the most recently evaluated jiggle diagnostics. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:abd59d742dc4fcbeb86fb9a2c65e48995" id="r_abd59d742dc4fcbeb86fb9a2c65e48995"><td class="memItemLeft"><a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a>&#160;</td><td class="memItemRight"><a class="el" href="#abd59d742dc4fcbeb86fb9a2c65e48995">getJiggleState</a> () const</td></tr>
+<tr class="memdesc:abd59d742dc4fcbeb86fb9a2c65e48995"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an independent numerical state snapshot. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:adb2671ebb6f8f88afa292972f1e8dd2b" id="r_adb2671ebb6f8f88afa292972f1e8dd2b"><td class="memItemLeft">Part &amp;&#160;</td><td class="memItemRight"><a class="el" href="#adb2671ebb6f8f88afa292972f1e8dd2b">setJiggleState</a> (const <a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a> &amp;)</td></tr>
+<tr class="memdesc:adb2671ebb6f8f88afa292972f1e8dd2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restore validated numerical state on the same topology. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>.  <br /></td></tr>
+<tr class="memitem:a515dd1f09bba1bb74f9d578bbd302a7f" id="r_a515dd1f09bba1bb74f9d578bbd302a7f"><td class="memItemLeft">const std::string &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a515dd1f09bba1bb74f9d578bbd302a7f">getJiggleError</a> () const</td></tr>
 <tr class="memitem:aa17981e6f1bd5fca40b7cd391581bef6" id="r_aa17981e6f1bd5fca40b7cd391581bef6"><td class="memItemLeft">Part *&#160;</td><td class="memItemRight"><a class="el" href="#aa17981e6f1bd5fca40b7cd391581bef6">attachSprite</a> (<a class="el" href="#a3292175d54d93d126ba2829249316344">Sprite</a> *child, int placement=<a class="el" href="namespacepdg.html#a274a9d07b2387975e8fea70b107f804ea81c8ba6e97302caf9b56b0c66602234e">partPlacement_Snap</a>, Part *childMount=nullptr)</td></tr>
 <tr class="memdesc:aa17981e6f1bd5fca40b7cd391581bef6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mount an independent <a class="el" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose-based animation extensions.">Sprite</a> on this <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a>.  <br /></td></tr>
 <tr class="memitem:a986bea5927721d1dffb1bc0016bd3689" id="r_a986bea5927721d1dffb1bc0016bd3689"><td class="memItemLeft"><a class="el" href="#a3292175d54d93d126ba2829249316344">Sprite</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a986bea5927721d1dffb1bc0016bd3689">getAttachedSprite</a> () const</td></tr>
@@ -251,6 +284,39 @@ Public Member Functions</h2></td></tr>
 <tr class="inherit_header pub_methods_classpdg_1_1_animated"><td colspan="2">Public Member Functions inherited from <a class="el" href="classpdg_1_1_animated.html">Animated&lt; Part &gt;</a></td></tr>
 <tr class="memitem:a37f0ad8ee196eca50d13cf5d75c407b7 pub_methods_classpdg_1_1_animated" id="r_a37f0ad8ee196eca50d13cf5d75c407b7"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a37f0ad8ee196eca50d13cf5d75c407b7">Animated</a> ()=default</td></tr>
 <tr class="memitem:a5fe5bf99431e8b4aeafea361846ac19d pub_methods_classpdg_1_1_animated" id="r_a5fe5bf99431e8b4aeafea361846ac19d"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a5fe5bf99431e8b4aeafea361846ac19d">~Animated</a> () override=default</td></tr>
+<tr class="memitem:ad7d5cce261c0ae72b0a0c7bc0da58a34 pub_methods_classpdg_1_1_animated" id="r_ad7d5cce261c0ae72b0a0c7bc0da58a34"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#ad7d5cce261c0ae72b0a0c7bc0da58a34">playScript</a> (const std::string &amp;name)</td></tr>
+<tr class="memitem:a94fe4e8ff90be53ed8c253c240bc1c18 pub_methods_classpdg_1_1_animated" id="r_a94fe4e8ff90be53ed8c253c240bc1c18"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a94fe4e8ff90be53ed8c253c240bc1c18">batch</a> ()</td></tr>
+<tr class="memitem:abd813bedfe486e02857f2d20d88eaa22 pub_methods_classpdg_1_1_animated" id="r_abd813bedfe486e02857f2d20d88eaa22"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#abd813bedfe486e02857f2d20d88eaa22">endBatch</a> ()</td></tr>
+<tr class="memitem:ac4e7158f0d8daa57a3a4410968a6487b pub_methods_classpdg_1_1_animated" id="r_ac4e7158f0d8daa57a3a4410968a6487b"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#ac4e7158f0d8daa57a3a4410968a6487b">series</a> ()</td></tr>
+<tr class="memitem:a0653469edef98ff09d318f373226e58a pub_methods_classpdg_1_1_animated" id="r_a0653469edef98ff09d318f373226e58a"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a0653469edef98ff09d318f373226e58a">endSeries</a> ()</td></tr>
+<tr class="memitem:a24fcebfa03a8e6cd83678274c46313fd pub_methods_classpdg_1_1_animated" id="r_a24fcebfa03a8e6cd83678274c46313fd"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a24fcebfa03a8e6cd83678274c46313fd">andAlso</a> ()</td></tr>
+<tr class="memitem:ae75686ec10a0ebf249d4be8dd4fd7612 pub_methods_classpdg_1_1_animated" id="r_ae75686ec10a0ebf249d4be8dd4fd7612"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#ae75686ec10a0ebf249d4be8dd4fd7612">stagger</a> (double intervalSeconds)</td></tr>
+<tr class="memitem:a197e750e05bc4653f880986384f563e3 pub_methods_classpdg_1_1_animated" id="r_a197e750e05bc4653f880986384f563e3"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a197e750e05bc4653f880986384f563e3">mark</a> (const std::string &amp;name, bool saveState=true)</td></tr>
+<tr class="memitem:ac441c98951086dca395f24b8bdedcb30 pub_methods_classpdg_1_1_animated" id="r_ac441c98951086dca395f24b8bdedcb30"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#ac441c98951086dca395f24b8bdedcb30">jumpToMark</a> (const std::string &amp;name, bool restoreState=true)</td></tr>
+<tr class="memitem:a45b2df077ae4752841edbc375072a61b pub_methods_classpdg_1_1_animated" id="r_a45b2df077ae4752841edbc375072a61b"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a45b2df077ae4752841edbc375072a61b">on</a> (const std::string &amp;event, <a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memitem:afa21a09211c8ee1e4165cb407aed5045 pub_methods_classpdg_1_1_animated" id="r_afa21a09211c8ee1e4165cb407aed5045"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#afa21a09211c8ee1e4165cb407aed5045">triggerEvent</a> (const std::string &amp;name)</td></tr>
+<tr class="memitem:ac708f7e05a64c89688e90cc7af47ad7b pub_methods_classpdg_1_1_animated" id="r_ac708f7e05a64c89688e90cc7af47ad7b"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#ac708f7e05a64c89688e90cc7af47ad7b">onStarted</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memitem:adb2a18cb0dd386550f8cd3b2965d22c7 pub_methods_classpdg_1_1_animated" id="r_adb2a18cb0dd386550f8cd3b2965d22c7"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#adb2a18cb0dd386550f8cd3b2965d22c7">onFinished</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memitem:a45fb6cdd53080c42422da62df3e235a9 pub_methods_classpdg_1_1_animated" id="r_a45fb6cdd53080c42422da62df3e235a9"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a45fb6cdd53080c42422da62df3e235a9">onScriptFinished</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memitem:aeaba1e4dd2b7018c346b9f21f5de2ddd pub_methods_classpdg_1_1_animated" id="r_aeaba1e4dd2b7018c346b9f21f5de2ddd"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#aeaba1e4dd2b7018c346b9f21f5de2ddd">onMark</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memitem:ac61ccdbf8cdd4da06bbd2df2082fced8 pub_methods_classpdg_1_1_animated" id="r_ac61ccdbf8cdd4da06bbd2df2082fced8"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#ac61ccdbf8cdd4da06bbd2df2082fced8">onYoyo</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memitem:a8693a58c6d08bd811876f1d3ba2d8dd2 pub_methods_classpdg_1_1_animated" id="r_a8693a58c6d08bd811876f1d3ba2d8dd2"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a8693a58c6d08bd811876f1d3ba2d8dd2">onRepeat</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memitem:a0c6ec5948be4098ef7eb129cd04d18f2 pub_methods_classpdg_1_1_animated" id="r_a0c6ec5948be4098ef7eb129cd04d18f2"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a0c6ec5948be4098ef7eb129cd04d18f2">onUntilFired</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memitem:a70c331ee0f8b56b362e662878237b639 pub_methods_classpdg_1_1_animated" id="r_a70c331ee0f8b56b362e662878237b639"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a70c331ee0f8b56b362e662878237b639">when</a> (<a class="el" href="namespacepdg.html#a36f6e3a7c74c043a3bed8fce9d5badd3">AnimationEvaluator</a> evaluator)</td></tr>
+<tr class="memitem:afb9ff3a67419b421222925be3a18b840 pub_methods_classpdg_1_1_animated" id="r_afb9ff3a67419b421222925be3a18b840"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#afb9ff3a67419b421222925be3a18b840">otherwise</a> ()</td></tr>
+<tr class="memitem:a19547d9072a39831517ac8383fa44160 pub_methods_classpdg_1_1_animated" id="r_a19547d9072a39831517ac8383fa44160"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a19547d9072a39831517ac8383fa44160">endWhen</a> ()</td></tr>
+<tr class="memitem:a417d364e3a2cc19b369a7ec1a393c653 pub_methods_classpdg_1_1_animated" id="r_a417d364e3a2cc19b369a7ec1a393c653"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a417d364e3a2cc19b369a7ec1a393c653">endOtherwise</a> ()</td></tr>
+<tr class="memitem:a18dea9e914ffd88b32570a920c0ad9eb pub_methods_classpdg_1_1_animated" id="r_a18dea9e914ffd88b32570a920c0ad9eb"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a18dea9e914ffd88b32570a920c0ad9eb">until</a> (<a class="el" href="namespacepdg.html#a36f6e3a7c74c043a3bed8fce9d5badd3">AnimationEvaluator</a> evaluator)</td></tr>
+<tr class="memitem:a14d949a147353b05b6881b753ab57f5f pub_methods_classpdg_1_1_animated" id="r_a14d949a147353b05b6881b753ab57f5f"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a14d949a147353b05b6881b753ab57f5f">yoyo</a> ()</td></tr>
+<tr class="memitem:a398bf3e9fc568948633d577827a0065f pub_methods_classpdg_1_1_animated" id="r_a398bf3e9fc568948633d577827a0065f"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a398bf3e9fc568948633d577827a0065f">repeat</a> (int additionalExecutions=-1)</td></tr>
+<tr class="memitem:a7df59e3a43b9ec1d8e5501cd82a7482d pub_methods_classpdg_1_1_animated" id="r_a7df59e3a43b9ec1d8e5501cd82a7482d"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a7df59e3a43b9ec1d8e5501cd82a7482d">diminish</a> (float factor, double seconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
+<tr class="memitem:aa0031a23ce0c0622c7708083fe63efe1 pub_methods_classpdg_1_1_animated" id="r_aa0031a23ce0c0622c7708083fe63efe1"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#aa0031a23ce0c0622c7708083fe63efe1">increase</a> (float factor, double seconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
+<tr class="memitem:a72ad03492af3c266d7259f432363085a pub_methods_classpdg_1_1_animated" id="r_a72ad03492af3c266d7259f432363085a"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a72ad03492af3c266d7259f432363085a">slowDown</a> (float factor, double seconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
+<tr class="memitem:a27935fdb69bb59083aac3e72a19fe3b5 pub_methods_classpdg_1_1_animated" id="r_a27935fdb69bb59083aac3e72a19fe3b5"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a27935fdb69bb59083aac3e72a19fe3b5">speedUp</a> (float factor, double seconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
+<tr class="memitem:a7d7a8b29526586a7a5445b303dd04499 pub_methods_classpdg_1_1_animated" id="r_a7d7a8b29526586a7a5445b303dd04499"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a7d7a8b29526586a7a5445b303dd04499">stopIt</a> ()</td></tr>
+<tr class="memitem:a903c1a9eae7cb098b4a0e179cddba3c7 pub_methods_classpdg_1_1_animated" id="r_a903c1a9eae7cb098b4a0e179cddba3c7"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a903c1a9eae7cb098b4a0e179cddba3c7">restartIt</a> ()</td></tr>
+<tr class="memitem:a7b4529d500f107ccb2bc635f6fb26584 pub_methods_classpdg_1_1_animated" id="r_a7b4529d500f107ccb2bc635f6fb26584"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a7b4529d500f107ccb2bc635f6fb26584">pauseIt</a> ()</td></tr>
+<tr class="memitem:a3b4c86b3a2780fa5af592f929ce543db pub_methods_classpdg_1_1_animated" id="r_a3b4c86b3a2780fa5af592f929ce543db"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a3b4c86b3a2780fa5af592f929ce543db">resumeIt</a> ()</td></tr>
 <tr class="memitem:ae425936f355d027187d25611b3cd75dd pub_methods_classpdg_1_1_animated" id="r_ae425936f355d027187d25611b3cd75dd"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#ae425936f355d027187d25611b3cd75dd">setLocation</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc)</td></tr>
 <tr class="memdesc:ae425936f355d027187d25611b3cd75dd pub_methods_classpdg_1_1_animated"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the location immediately.     <br /></td></tr>
 <tr class="memitem:a7dbfa2832e5c0f2022a4fb7e64767122 pub_methods_classpdg_1_1_animated" id="r_a7dbfa2832e5c0f2022a4fb7e64767122"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a7dbfa2832e5c0f2022a4fb7e64767122">moveTo</a> (float x, float y)</td></tr>
@@ -348,11 +414,11 @@ Public Member Functions</h2></td></tr>
 <tr class="inherit_header pub_methods_classpdg_1_1_animated_base"><td colspan="2">Public Member Functions inherited from <a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a></td></tr>
 <tr class="memitem:afadf5de05ad225cea7008a536be52571 pub_methods_classpdg_1_1_animated_base" id="r_afadf5de05ad225cea7008a536be52571"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#afadf5de05ad225cea7008a536be52571">SERIALIZABLE_TAG</a> (CLASSTAG_ANIMATED)</td></tr>
 <tr class="memitem:ac26d1f278b35032928a332437ece750c pub_methods_classpdg_1_1_animated_base" id="r_ac26d1f278b35032928a332437ece750c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#ac26d1f278b35032928a332437ece750c">SERIALIZABLE_METHODS</a> ()</td></tr>
-<tr class="memitem:a089dc96811cc28928f10ec2e404934d9 pub_methods_classpdg_1_1_animated_base" id="r_a089dc96811cc28928f10ec2e404934d9"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a089dc96811cc28928f10ec2e404934d9">getBoundingBox</a> () const</td></tr>
+<tr class="memitem:a089dc96811cc28928f10ec2e404934d9 pub_methods_classpdg_1_1_animated_base" id="r_a089dc96811cc28928f10ec2e404934d9"><td class="memItemLeft">virtual <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a089dc96811cc28928f10ec2e404934d9">getBoundingBox</a> () const</td></tr>
 <tr class="memdesc:a089dc96811cc28928f10ec2e404934d9 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read axis-aligned logical bounds.  <br /></td></tr>
-<tr class="memitem:a419e7d793cd6e24e3b6a0e505ff9bc0b pub_methods_classpdg_1_1_animated_base" id="r_a419e7d793cd6e24e3b6a0e505ff9bc0b"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga67e6dda5714d6d005160629995986da6">RotatedRect</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a419e7d793cd6e24e3b6a0e505ff9bc0b">getRotatedBounds</a> () const</td></tr>
+<tr class="memitem:a419e7d793cd6e24e3b6a0e505ff9bc0b pub_methods_classpdg_1_1_animated_base" id="r_a419e7d793cd6e24e3b6a0e505ff9bc0b"><td class="memItemLeft">virtual <a class="el" href="group___graphics.html#ga67e6dda5714d6d005160629995986da6">RotatedRect</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a419e7d793cd6e24e3b6a0e505ff9bc0b">getRotatedBounds</a> () const</td></tr>
 <tr class="memdesc:a419e7d793cd6e24e3b6a0e505ff9bc0b pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read rotated logical bounds.  <br /></td></tr>
-<tr class="memitem:a085207e54da76b9411a9d9c5f394fee4 pub_methods_classpdg_1_1_animated_base" id="r_a085207e54da76b9411a9d9c5f394fee4"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a085207e54da76b9411a9d9c5f394fee4">getLocation</a> () const</td></tr>
+<tr class="memitem:a085207e54da76b9411a9d9c5f394fee4 pub_methods_classpdg_1_1_animated_base" id="r_a085207e54da76b9411a9d9c5f394fee4"><td class="memItemLeft">virtual <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a085207e54da76b9411a9d9c5f394fee4">getLocation</a> () const</td></tr>
 <tr class="memdesc:a085207e54da76b9411a9d9c5f394fee4 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the location in the container coordinate system.  <br /></td></tr>
 <tr class="memitem:a6820787e3db31337527e2ccec70115ea pub_methods_classpdg_1_1_animated_base" id="r_a6820787e3db31337527e2ccec70115ea"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a6820787e3db31337527e2ccec70115ea">setLocation</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc)</td></tr>
 <tr class="memdesc:a6820787e3db31337527e2ccec70115ea pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the location immediately.  <br /></td></tr>
@@ -390,11 +456,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:afc659067a38ef6b57f0ab18cea3981ce pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animate the movement rate by an additive delta.  <br /></td></tr>
 <tr class="memitem:a792e6026d67e223392aa501fdd188fb1 pub_methods_classpdg_1_1_animated_base" id="r_a792e6026d67e223392aa501fdd188fb1"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a792e6026d67e223392aa501fdd188fb1">changeMovementBy</a> (float deltaXPerSecond, float deltaYPerSecond, double durationSeconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
 <tr class="memdesc:a792e6026d67e223392aa501fdd188fb1 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animate the movement rate by an additive delta.  <br /></td></tr>
-<tr class="memitem:afe12443ceb5415bde6df20c6ade83494 pub_methods_classpdg_1_1_animated_base" id="r_afe12443ceb5415bde6df20c6ade83494"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga8c476a930ec85cdf9a5e7d7e6c405255">Offset</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#afe12443ceb5415bde6df20c6ade83494">getSize</a> () const</td></tr>
+<tr class="memitem:afe12443ceb5415bde6df20c6ade83494 pub_methods_classpdg_1_1_animated_base" id="r_afe12443ceb5415bde6df20c6ade83494"><td class="memItemLeft">virtual <a class="el" href="group___graphics.html#ga8c476a930ec85cdf9a5e7d7e6c405255">Offset</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#afe12443ceb5415bde6df20c6ade83494">getSize</a> () const</td></tr>
 <tr class="memdesc:afe12443ceb5415bde6df20c6ade83494 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read logical width and height.  <br /></td></tr>
-<tr class="memitem:aaad368cfd9ea3cf64fbc091bd886f729 pub_methods_classpdg_1_1_animated_base" id="r_aaad368cfd9ea3cf64fbc091bd886f729"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#aaad368cfd9ea3cf64fbc091bd886f729">getWidth</a> () const</td></tr>
+<tr class="memitem:aaad368cfd9ea3cf64fbc091bd886f729 pub_methods_classpdg_1_1_animated_base" id="r_aaad368cfd9ea3cf64fbc091bd886f729"><td class="memItemLeft">virtual float&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#aaad368cfd9ea3cf64fbc091bd886f729">getWidth</a> () const</td></tr>
 <tr class="memdesc:aaad368cfd9ea3cf64fbc091bd886f729 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read logical width.  <br /></td></tr>
-<tr class="memitem:ae07ffc83c6e2586b09157cacd623819b pub_methods_classpdg_1_1_animated_base" id="r_ae07ffc83c6e2586b09157cacd623819b"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#ae07ffc83c6e2586b09157cacd623819b">getHeight</a> () const</td></tr>
+<tr class="memitem:ae07ffc83c6e2586b09157cacd623819b pub_methods_classpdg_1_1_animated_base" id="r_ae07ffc83c6e2586b09157cacd623819b"><td class="memItemLeft">virtual float&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#ae07ffc83c6e2586b09157cacd623819b">getHeight</a> () const</td></tr>
 <tr class="memdesc:ae07ffc83c6e2586b09157cacd623819b pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read logical height.  <br /></td></tr>
 <tr class="memitem:a27708fce8caf1d08e818cc19f82ee7ad pub_methods_classpdg_1_1_animated_base" id="r_a27708fce8caf1d08e818cc19f82ee7ad"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a27708fce8caf1d08e818cc19f82ee7ad">setSize</a> (float width, float height)</td></tr>
 <tr class="memdesc:a27708fce8caf1d08e818cc19f82ee7ad pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set logical width and height immediately.  <br /></td></tr>
@@ -436,8 +502,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ac0b83781f5f23a276d1a6b55e7e9356c pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animate the stretching rate to a target.  <br /></td></tr>
 <tr class="memitem:a43894bc154df12e60c7d73e6d822dfc0 pub_methods_classpdg_1_1_animated_base" id="r_a43894bc154df12e60c7d73e6d822dfc0"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a43894bc154df12e60c7d73e6d822dfc0">changeStretchingBy</a> (float deltaWidthPerSecond, float deltaHeightPerSecond, double durationSeconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
 <tr class="memdesc:a43894bc154df12e60c7d73e6d822dfc0 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animate the stretching rate by an additive delta.  <br /></td></tr>
-<tr class="memitem:a0f814008a1893b1e2324e9f7793ef822 pub_methods_classpdg_1_1_animated_base" id="r_a0f814008a1893b1e2324e9f7793ef822"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga8c476a930ec85cdf9a5e7d7e6c405255">Offset</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a0f814008a1893b1e2324e9f7793ef822">getScale</a> () const</td></tr>
-<tr class="memdesc:a0f814008a1893b1e2324e9f7793ef822 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read independent transform scale.  <br /></td></tr>
+<tr class="memitem:a42d8951bbb3ad85858291eed1dbac235 pub_methods_classpdg_1_1_animated_base" id="r_a42d8951bbb3ad85858291eed1dbac235"><td class="memItemLeft">virtual <a class="el" href="group___graphics.html#ga8c476a930ec85cdf9a5e7d7e6c405255">Offset</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a42d8951bbb3ad85858291eed1dbac235">getScale</a> () const</td></tr>
+<tr class="memdesc:a42d8951bbb3ad85858291eed1dbac235 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read independent transform scale.  <br /></td></tr>
 <tr class="memitem:a5d10eaec6a68da83d6460e8fefd60a4e pub_methods_classpdg_1_1_animated_base" id="r_a5d10eaec6a68da83d6460e8fefd60a4e"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a5d10eaec6a68da83d6460e8fefd60a4e">setScale</a> (float x, float y)</td></tr>
 <tr class="memdesc:a5d10eaec6a68da83d6460e8fefd60a4e pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set independent transform scale immediately.  <br /></td></tr>
 <tr class="memitem:a791db570e7a302160bc206d4012275ea pub_methods_classpdg_1_1_animated_base" id="r_a791db570e7a302160bc206d4012275ea"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a791db570e7a302160bc206d4012275ea">setScale</a> (float scale)</td></tr>
@@ -456,9 +522,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a9dbc7d9afbc2d1b29a72cf9184588d32 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume scheduled animations and their delays.  <br /></td></tr>
 <tr class="memitem:aa0fc9389fd428d384d68ea52910e6b4d pub_methods_classpdg_1_1_animated_base" id="r_aa0fc9389fd428d384d68ea52910e6b4d"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#aa0fc9389fd428d384d68ea52910e6b4d">cancelSchedule</a> ()</td></tr>
 <tr class="memdesc:aa0fc9389fd428d384d68ea52910e6b4d pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discard scheduled animations and pending sequencing.  <br /></td></tr>
-<tr class="memitem:a08c4315a337758eba99f5986c53e5f62 pub_methods_classpdg_1_1_animated_base" id="r_a08c4315a337758eba99f5986c53e5f62"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a08c4315a337758eba99f5986c53e5f62">getRotation</a> () const</td></tr>
+<tr class="memitem:a08c4315a337758eba99f5986c53e5f62 pub_methods_classpdg_1_1_animated_base" id="r_a08c4315a337758eba99f5986c53e5f62"><td class="memItemLeft">virtual float&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a08c4315a337758eba99f5986c53e5f62">getRotation</a> () const</td></tr>
 <tr class="memdesc:a08c4315a337758eba99f5986c53e5f62 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the current rotation in radians.  <br /></td></tr>
-<tr class="memitem:a776ac85f466c1158379c594503f8f30d pub_methods_classpdg_1_1_animated_base" id="r_a776ac85f466c1158379c594503f8f30d"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga8c476a930ec85cdf9a5e7d7e6c405255">Offset</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a776ac85f466c1158379c594503f8f30d">getCenterOffset</a> () const</td></tr>
+<tr class="memitem:a776ac85f466c1158379c594503f8f30d pub_methods_classpdg_1_1_animated_base" id="r_a776ac85f466c1158379c594503f8f30d"><td class="memItemLeft">virtual <a class="el" href="group___graphics.html#ga8c476a930ec85cdf9a5e7d7e6c405255">Offset</a>&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a776ac85f466c1158379c594503f8f30d">getCenterOffset</a> () const</td></tr>
 <tr class="memdesc:a776ac85f466c1158379c594503f8f30d pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the rotation-center offset.  <br /></td></tr>
 <tr class="memitem:a560f930c348bb74f0203e9d8bd0c3af8 pub_methods_classpdg_1_1_animated_base" id="r_a560f930c348bb74f0203e9d8bd0c3af8"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a560f930c348bb74f0203e9d8bd0c3af8">setRotation</a> (float radiansRotation)</td></tr>
 <tr class="memdesc:a560f930c348bb74f0203e9d8bd0c3af8 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set rotation immediately.  <br /></td></tr>
@@ -506,6 +572,75 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a99586be9dd12b0d2a76b70227e1ceba6 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delay the next timed animation request.  <br /></td></tr>
 <tr class="memitem:a87c5c7a2c90b3f772856b561bc4b92ab pub_methods_classpdg_1_1_animated_base" id="r_a87c5c7a2c90b3f772856b561bc4b92ab"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a87c5c7a2c90b3f772856b561bc4b92ab">andThen</a> ()</td></tr>
 <tr class="memdesc:a87c5c7a2c90b3f772856b561bc4b92ab pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the next timed operation after the most recently scheduled operation finishes.  <br /></td></tr>
+<tr class="memitem:a7a4baf1a7b65026be46837f9120f7f51 pub_methods_classpdg_1_1_animated_base" id="r_a7a4baf1a7b65026be46837f9120f7f51"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a7a4baf1a7b65026be46837f9120f7f51">playScript</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:a7a4baf1a7b65026be46837f9120f7f51 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiate a named animation script on this target.  <br /></td></tr>
+<tr class="memitem:aad6a361cfbace46f9ecd5f022feb6417 pub_methods_classpdg_1_1_animated_base" id="r_aad6a361cfbace46f9ecd5f022feb6417"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#aad6a361cfbace46f9ecd5f022feb6417">batch</a> ()</td></tr>
+<tr class="memdesc:aad6a361cfbace46f9ecd5f022feb6417 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open an anonymous animation block.  <br /></td></tr>
+<tr class="memitem:a7b2454b2e615ca4288eb215c69c62aac pub_methods_classpdg_1_1_animated_base" id="r_a7b2454b2e615ca4288eb215c69c62aac"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a7b2454b2e615ca4288eb215c69c62aac">endBatch</a> ()</td></tr>
+<tr class="memdesc:a7b2454b2e615ca4288eb215c69c62aac pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close and select the innermost anonymous block.  <br /></td></tr>
+<tr class="memitem:a35a3a871875c5b8a185e409f4c34c6e5 pub_methods_classpdg_1_1_animated_base" id="r_a35a3a871875c5b8a185e409f4c34c6e5"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a35a3a871875c5b8a185e409f4c34c6e5">series</a> ()</td></tr>
+<tr class="memdesc:a35a3a871875c5b8a185e409f4c34c6e5 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a block whose successive operands wait for completion.  <br /></td></tr>
+<tr class="memitem:a5a436e02948777cb5981294814026a7a pub_methods_classpdg_1_1_animated_base" id="r_a5a436e02948777cb5981294814026a7a"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a5a436e02948777cb5981294814026a7a">endSeries</a> ()</td></tr>
+<tr class="memdesc:a5a436e02948777cb5981294814026a7a pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close and select the innermost series.  <br /></td></tr>
+<tr class="memitem:a52b28e58cb13eab21d0abd02bad065d5 pub_methods_classpdg_1_1_animated_base" id="r_a52b28e58cb13eab21d0abd02bad065d5"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a52b28e58cb13eab21d0abd02bad065d5">andAlso</a> ()</td></tr>
+<tr class="memdesc:a52b28e58cb13eab21d0abd02bad065d5 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Join the following operand to the preceding parallel chain.  <br /></td></tr>
+<tr class="memitem:a5a75e58af90b6f4944e3e1cb37f9d414 pub_methods_classpdg_1_1_animated_base" id="r_a5a75e58af90b6f4944e3e1cb37f9d414"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a5a75e58af90b6f4944e3e1cb37f9d414">stagger</a> (double intervalSeconds)</td></tr>
+<tr class="memdesc:a5a75e58af90b6f4944e3e1cb37f9d414 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="group___graphics.html#ga8c476a930ec85cdf9a5e7d7e6c405255">Offset</a> the selected block's start across successive <a class="el" href="classpdg_1_1_troupe.html" title="Animate a collection of targets with one script clock.">Troupe</a> members.  <br /></td></tr>
+<tr class="memitem:af54b1d39318b1b2dc3c17af40652a01e pub_methods_classpdg_1_1_animated_base" id="r_af54b1d39318b1b2dc3c17af40652a01e"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#af54b1d39318b1b2dc3c17af40652a01e">mark</a> (const std::string &amp;name, bool saveState=true)</td></tr>
+<tr class="memdesc:af54b1d39318b1b2dc3c17af40652a01e pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a named script location and optionally save state on arrival.  <br /></td></tr>
+<tr class="memitem:a28f6e1a705a2e862913ae390859b3f77 pub_methods_classpdg_1_1_animated_base" id="r_a28f6e1a705a2e862913ae390859b3f77"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a28f6e1a705a2e862913ae390859b3f77">jumpToMark</a> (const std::string &amp;name, bool restoreState=true)</td></tr>
+<tr class="memdesc:a28f6e1a705a2e862913ae390859b3f77 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Continue execution at the operation following a mark.  <br /></td></tr>
+<tr class="memitem:a30e562f19fce1f25a45f028d72735cdb pub_methods_classpdg_1_1_animated_base" id="r_a30e562f19fce1f25a45f028d72735cdb"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a30e562f19fce1f25a45f028d72735cdb">on</a> (const std::string &amp;event, <a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memdesc:a30e562f19fce1f25a45f028d72735cdb pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observe a selected animation block's lifecycle.  <br /></td></tr>
+<tr class="memitem:a89fb76bb3946e66d8800e5f0bc1339ba pub_methods_classpdg_1_1_animated_base" id="r_a89fb76bb3946e66d8800e5f0bc1339ba"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a89fb76bb3946e66d8800e5f0bc1339ba">triggerEvent</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:a89fb76bb3946e66d8800e5f0bc1339ba pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit a custom named animation event or record an event step.  <br /></td></tr>
+<tr class="memitem:a86f8707b0451aeb9016ae0adb986005c pub_methods_classpdg_1_1_animated_base" id="r_a86f8707b0451aeb9016ae0adb986005c"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a86f8707b0451aeb9016ae0adb986005c">recordOperation</a> (const std::string &amp;name, <a class="el" href="namespacepdg.html#a6b7eb474f0229103873fc95ffee05c7c">AnimationArguments</a> arguments)</td></tr>
+<tr class="memdesc:a86f8707b0451aeb9016ae0adb986005c pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Capture a chainable mutation when constructing a script; live calls return false.  <br /></td></tr>
+<tr class="memitem:a90b4155c3e50009b0954045eddb41317 pub_methods_classpdg_1_1_animated_base" id="r_a90b4155c3e50009b0954045eddb41317"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a90b4155c3e50009b0954045eddb41317">isRecordingOperation</a> () const</td></tr>
+<tr class="memitem:ae3ae871814f8653b5b04d677c029997b pub_methods_classpdg_1_1_animated_base" id="r_ae3ae871814f8653b5b04d677c029997b"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#ae3ae871814f8653b5b04d677c029997b">onStarted</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memdesc:ae3ae871814f8653b5b04d677c029997b pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observe started events on the selected animation block.  <br /></td></tr>
+<tr class="memitem:a1dde9ab8e25aaf5666928c7bce12c691 pub_methods_classpdg_1_1_animated_base" id="r_a1dde9ab8e25aaf5666928c7bce12c691"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a1dde9ab8e25aaf5666928c7bce12c691">onFinished</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memdesc:a1dde9ab8e25aaf5666928c7bce12c691 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observe finished events on the selected animation block.  <br /></td></tr>
+<tr class="memitem:a0ac3caf27add4c7869003f698d6fef6e pub_methods_classpdg_1_1_animated_base" id="r_a0ac3caf27add4c7869003f698d6fef6e"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a0ac3caf27add4c7869003f698d6fef6e">onScriptFinished</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memdesc:a0ac3caf27add4c7869003f698d6fef6e pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observe scriptFinished events on the selected animation block.  <br /></td></tr>
+<tr class="memitem:adfdf79a34ce482cff336815f0dbdcefc pub_methods_classpdg_1_1_animated_base" id="r_adfdf79a34ce482cff336815f0dbdcefc"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#adfdf79a34ce482cff336815f0dbdcefc">onMark</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memdesc:adfdf79a34ce482cff336815f0dbdcefc pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observe mark events on the selected animation block.  <br /></td></tr>
+<tr class="memitem:a875bae3b4add2fd7db9478261f67a62b pub_methods_classpdg_1_1_animated_base" id="r_a875bae3b4add2fd7db9478261f67a62b"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a875bae3b4add2fd7db9478261f67a62b">onYoyo</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memdesc:a875bae3b4add2fd7db9478261f67a62b pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observe yoyo events on the selected animation block.  <br /></td></tr>
+<tr class="memitem:a4cf4e0dfa0065fc7d706bca824bc3e32 pub_methods_classpdg_1_1_animated_base" id="r_a4cf4e0dfa0065fc7d706bca824bc3e32"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a4cf4e0dfa0065fc7d706bca824bc3e32">onRepeat</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memdesc:a4cf4e0dfa0065fc7d706bca824bc3e32 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observe repeat events on the selected animation block.  <br /></td></tr>
+<tr class="memitem:a00add1d685aaf1fe841534c61baac373 pub_methods_classpdg_1_1_animated_base" id="r_a00add1d685aaf1fe841534c61baac373"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a00add1d685aaf1fe841534c61baac373">onUntilFired</a> (<a class="el" href="namespacepdg.html#a6e59c9b10f2c3b96dcbe5a12d2f72506">AnimationEventHandler</a> handler)</td></tr>
+<tr class="memdesc:a00add1d685aaf1fe841534c61baac373 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observe untilFired events on the selected animation block.  <br /></td></tr>
+<tr class="memitem:a86d0cf0f2872699834365d8480d7d188 pub_methods_classpdg_1_1_animated_base" id="r_a86d0cf0f2872699834365d8480d7d188"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a86d0cf0f2872699834365d8480d7d188">when</a> (<a class="el" href="namespacepdg.html#a36f6e3a7c74c043a3bed8fce9d5badd3">AnimationEvaluator</a> evaluator)</td></tr>
+<tr class="memdesc:a86d0cf0f2872699834365d8480d7d188 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a conditional animation branch.  <br /></td></tr>
+<tr class="memitem:a88ec43ed2ab6516ed32639ce35a9389a pub_methods_classpdg_1_1_animated_base" id="r_a88ec43ed2ab6516ed32639ce35a9389a"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a88ec43ed2ab6516ed32639ce35a9389a">otherwise</a> ()</td></tr>
+<tr class="memdesc:a88ec43ed2ab6516ed32639ce35a9389a pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open the alternative of the innermost conditional.  <br /></td></tr>
+<tr class="memitem:a1561d3586e5d0e15c084a9f4988ac527 pub_methods_classpdg_1_1_animated_base" id="r_a1561d3586e5d0e15c084a9f4988ac527"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a1561d3586e5d0e15c084a9f4988ac527">endWhen</a> ()</td></tr>
+<tr class="memdesc:a1561d3586e5d0e15c084a9f4988ac527 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a conditional without an alternative.  <br /></td></tr>
+<tr class="memitem:a2d128c5b8e49a8b8565d9f771cce3fb3 pub_methods_classpdg_1_1_animated_base" id="r_a2d128c5b8e49a8b8565d9f771cce3fb3"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a2d128c5b8e49a8b8565d9f771cce3fb3">endOtherwise</a> ()</td></tr>
+<tr class="memdesc:a2d128c5b8e49a8b8565d9f771cce3fb3 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a conditional with an alternative.  <br /></td></tr>
+<tr class="memitem:a4e30b42d430c2c2d4c45b7fe4646d36f pub_methods_classpdg_1_1_animated_base" id="r_a4e30b42d430c2c2d4c45b7fe4646d36f"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a4e30b42d430c2c2d4c45b7fe4646d36f">until</a> (<a class="el" href="namespacepdg.html#a36f6e3a7c74c043a3bed8fce9d5badd3">AnimationEvaluator</a> evaluator)</td></tr>
+<tr class="memdesc:a4e30b42d430c2c2d4c45b7fe4646d36f pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finish the preceding block when its evaluator returns true.  <br /></td></tr>
+<tr class="memitem:a6f859ed6998c01d4e176ed15063b83e1 pub_methods_classpdg_1_1_animated_base" id="r_a6f859ed6998c01d4e176ed15063b83e1"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a6f859ed6998c01d4e176ed15063b83e1">yoyo</a> ()</td></tr>
+<tr class="memdesc:a6f859ed6998c01d4e176ed15063b83e1 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Play the preceding trajectory forward and back.  <br /></td></tr>
+<tr class="memitem:a70678fbabbb20ca7dfe7d19436e023d0 pub_methods_classpdg_1_1_animated_base" id="r_a70678fbabbb20ca7dfe7d19436e023d0"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a70678fbabbb20ca7dfe7d19436e023d0">repeat</a> (int additionalExecutions=-1)</td></tr>
+<tr class="memdesc:a70678fbabbb20ca7dfe7d19436e023d0 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Repeat the preceding block.  <br /></td></tr>
+<tr class="memitem:a6728814bd0f19a323a2cc03fb23928b3 pub_methods_classpdg_1_1_animated_base" id="r_a6728814bd0f19a323a2cc03fb23928b3"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a6728814bd0f19a323a2cc03fb23928b3">diminish</a> (float factor, double seconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
+<tr class="memdesc:a6728814bd0f19a323a2cc03fb23928b3 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduce the preceding block amplitude around its baseline.  <br /></td></tr>
+<tr class="memitem:a8a62e66c6b378f0f82c14681b1e490f9 pub_methods_classpdg_1_1_animated_base" id="r_a8a62e66c6b378f0f82c14681b1e490f9"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a8a62e66c6b378f0f82c14681b1e490f9">increase</a> (float factor, double seconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
+<tr class="memdesc:a8a62e66c6b378f0f82c14681b1e490f9 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increase the preceding block amplitude around its baseline.  <br /></td></tr>
+<tr class="memitem:a9be6dfe993175c1e86640feeef672819 pub_methods_classpdg_1_1_animated_base" id="r_a9be6dfe993175c1e86640feeef672819"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a9be6dfe993175c1e86640feeef672819">slowDown</a> (float factor, double seconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
+<tr class="memdesc:a9be6dfe993175c1e86640feeef672819 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide the preceding block playback rate.  <br /></td></tr>
+<tr class="memitem:a71c058390e75cb9451d08f0c5c739342 pub_methods_classpdg_1_1_animated_base" id="r_a71c058390e75cb9451d08f0c5c739342"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a71c058390e75cb9451d08f0c5c739342">speedUp</a> (float factor, double seconds, <a class="el" href="group___animation_easing.html#gac09f3f97660254c9b7d4f1ad1ce4a26e">EasingFunc</a> easing=<a class="el" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">linearTween</a>)</td></tr>
+<tr class="memdesc:a71c058390e75cb9451d08f0c5c739342 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increase the preceding block playback rate.  <br /></td></tr>
+<tr class="memitem:a1219ff10c6f85114deaad544de7fa98e pub_methods_classpdg_1_1_animated_base" id="r_a1219ff10c6f85114deaad544de7fa98e"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a1219ff10c6f85114deaad544de7fa98e">stopIt</a> ()</td></tr>
+<tr class="memdesc:a1219ff10c6f85114deaad544de7fa98e pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop the most recently selected animation element.  <br /></td></tr>
+<tr class="memitem:ab60fad762b03ab0892b14b39575eab76 pub_methods_classpdg_1_1_animated_base" id="r_ab60fad762b03ab0892b14b39575eab76"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#ab60fad762b03ab0892b14b39575eab76">restartIt</a> ()</td></tr>
+<tr class="memdesc:ab60fad762b03ab0892b14b39575eab76 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restart the most recently selected animation element from its baseline.  <br /></td></tr>
+<tr class="memitem:a84a825fa8d75eeb93d6e28406d497004 pub_methods_classpdg_1_1_animated_base" id="r_a84a825fa8d75eeb93d6e28406d497004"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a84a825fa8d75eeb93d6e28406d497004">pauseIt</a> ()</td></tr>
+<tr class="memdesc:a84a825fa8d75eeb93d6e28406d497004 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pause the most recently selected animation element.  <br /></td></tr>
+<tr class="memitem:a14bb30ea69fe742b360bc5a21eb81612 pub_methods_classpdg_1_1_animated_base" id="r_a14bb30ea69fe742b360bc5a21eb81612"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a14bb30ea69fe742b360bc5a21eb81612">resumeIt</a> ()</td></tr>
+<tr class="memdesc:a14bb30ea69fe742b360bc5a21eb81612 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resume the most recently selected paused animation element.  <br /></td></tr>
 <tr class="memitem:a21c0a4b79882adfb18aaa7f9e9633ff6 pub_methods_classpdg_1_1_animated_base" id="r_a21c0a4b79882adfb18aaa7f9e9633ff6"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a21c0a4b79882adfb18aaa7f9e9633ff6">addAnimationHelper</a> (<a class="el" href="classpdg_1_1_i_animation_helper.html">IAnimationHelper</a> *helper)</td></tr>
 <tr class="memdesc:a21c0a4b79882adfb18aaa7f9e9633ff6 pub_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a callback after the object's normal animation step.  <br /></td></tr>
 <tr class="memitem:aa976b2a2ae0e46d8cf9264604abc0739 pub_methods_classpdg_1_1_animated_base" id="r_aa976b2a2ae0e46d8cf9264604abc0739"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#aa976b2a2ae0e46d8cf9264604abc0739">removeAnimationHelper</a> (<a class="el" href="classpdg_1_1_i_animation_helper.html">IAnimationHelper</a> *helper)</td></tr>
@@ -538,6 +673,7 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
+<tr class="memitem:a4df5ac7eebb7d80d58695d8c032ad944" id="r_a4df5ac7eebb7d80d58695d8c032ad944"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#a4df5ac7eebb7d80d58695d8c032ad944">Bone</a></td></tr>
 <tr class="memitem:ac6fc18a88aeb57828b16ee8df6800c05" id="r_ac6fc18a88aeb57828b16ee8df6800c05"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#ac6fc18a88aeb57828b16ee8df6800c05">PhysicsBodyRef&lt; Part &gt;</a></td></tr>
 <tr class="memitem:a379924659d700db028e22496407b782d" id="r_a379924659d700db028e22496407b782d"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#a379924659d700db028e22496407b782d">ColliderRef&lt; Part &gt;</a></td></tr>
 <tr class="memitem:a3292175d54d93d126ba2829249316344" id="r_a3292175d54d93d126ba2829249316344"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#a3292175d54d93d126ba2829249316344">Sprite</a></td></tr>
@@ -551,6 +687,10 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a380d423cc3cb7926b5bc1a4f901232d5 pub_types_classpdg_1_1_animated" id="r_a380d423cc3cb7926b5bc1a4f901232d5"><td class="memItemLeft">using&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated.html#a380d423cc3cb7926b5bc1a4f901232d5">Self</a></td></tr>
 <tr class="inherit_header pub_static_methods_classpdg_1_1_animated_base"><td colspan="2">Static Public Member Functions inherited from <a class="el" href="classpdg_1_1_animated_base.html">AnimatedBase</a></td></tr>
 <tr class="memitem:a0a4a79f93c8181dcb949fe828c491745 pub_static_methods_classpdg_1_1_animated_base" id="r_a0a4a79f93c8181dcb949fe828c491745"><td class="memItemLeft">static <a class="el" href="classpdg_1_1_i_serializable.html">pdg::ISerializable</a> *&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a0a4a79f93c8181dcb949fe828c491745">CreateInstance</a> ()</td></tr>
+<tr class="memitem:aecb3b6406d14935d7d100c8bda596e08 pub_static_methods_classpdg_1_1_animated_base" id="r_aecb3b6406d14935d7d100c8bda596e08"><td class="memItemLeft">static <a class="el" href="classpdg_1_1_animation_script.html">AnimationScript</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#aecb3b6406d14935d7d100c8bda596e08">defineScript</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:aecb3b6406d14935d7d100c8bda596e08 pub_static_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a library-owned named animation recorder.  <br /></td></tr>
+<tr class="memitem:a912c1ced01957acf3bc50e833727612b pub_static_methods_classpdg_1_1_animated_base" id="r_a912c1ced01957acf3bc50e833727612b"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_base.html#a912c1ced01957acf3bc50e833727612b">deleteScript</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:a912c1ced01957acf3bc50e833727612b pub_static_methods_classpdg_1_1_animated_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a named definition from the shared script library.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Independently animated <a class="el" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose-based animation extensions.">Sprite</a> subsection, artwork holder, or mounting frame. </p>
@@ -571,13 +711,13 @@ Attaching an independent Sprite</h1>
 <div class="line">held-&gt;rotateTo(0.3f, 0.25, <a class="code hl_function" href="group___animation_easing.html#ga6c56ff890f5a5b89858571139cec7095">pdg::easeInOutQuad</a>);</div>
 <div class="line">held-&gt;detachSprite();</div>
 <div class="ttc" id="agroup___animation_easing_html_ga6c56ff890f5a5b89858571139cec7095"><div class="ttname"><a href="group___animation_easing.html#ga6c56ff890f5a5b89858571139cec7095">pdg::easeInOutQuad</a></div><div class="ttdeci">float easeInOutQuad(double ut, float b, float c, double ud)</div></div>
-<div class="ttc" id="anamespacepdg_html_a274a9d07b2387975e8fea70b107f804ea81c8ba6e97302caf9b56b0c66602234e"><div class="ttname"><a href="namespacepdg.html#a274a9d07b2387975e8fea70b107f804ea81c8ba6e97302caf9b56b0c66602234e">pdg::partPlacement_Snap</a></div><div class="ttdeci">@ partPlacement_Snap</div><div class="ttdef"><b>Definition</b> part.h:22</div></div>
+<div class="ttc" id="anamespacepdg_html_a274a9d07b2387975e8fea70b107f804ea81c8ba6e97302caf9b56b0c66602234e"><div class="ttname"><a href="namespacepdg.html#a274a9d07b2387975e8fea70b107f804ea81c8ba6e97302caf9b56b0c66602234e">pdg::partPlacement_Snap</a></div><div class="ttdeci">@ partPlacement_Snap</div><div class="ttdef"><b>Definition</b> part.h:23</div></div>
 </div><!-- fragment --> <h1 class="doxsection"><a class="anchor" id="part_ik"></a>
 Explicit Part-chain IK</h1>
 <p>solveIK(middle,tip,target,space,bendDirection,influence) solves two segments whose joint offsets come from the local locations of a contiguous three-Part chain. It requires neither artwork nor bones. The target defaults to owning-layer/world coordinates; partSpace_Local means the root <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a>'s parent frame. The root's local scale must have equal absolute axes; ancestor transforms may be affine/reflected. The bend direction is +1 or -1, and influence is in [0,1]. Unreachable targets clamp to the available reach and return false. Invalid topology or dynamic bodies reject the operation before changing either joint. Direct IK replaces rotation programming; <a class="el" href="#a7b2c975de541ebd332c7b2e4e8fa42dc" title="Maintain a target for a contiguous two-segment Part chain.">setIKTarget()</a> and <a class="el" href="#abdf8811508b9937a88b5fefa9c6dd77f" title="Drive a two-segment Part chain toward an IK target using bounded forces and torques.">setIKDriveTarget()</a> install recurring controllers, and <a class="el" href="#a2a0f2195c9f490832f64a45f3f57f8d4" title="Limit this joint&#39;s local rotation when solving Part IK.">setIKLimits()</a> supplies fixed or shared rotary limits. Controller takeover requires explicit release with <a class="el" href="#acb153ff01fe4ad10365218ce112ed3b5" title="Stop this root’s scheduled IK controller.">clearIKTarget()</a>.</p>
 <h1 class="doxsection"><a class="anchor" id="part_physics"></a>
 Part bodies</h1>
-<p>An unbound <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> can create its own <a class="el" href="classpdg_1_1_physics_body.html">PhysicsBody</a> without a <a class="el" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose-based animation extensions.">Sprite</a> root body. It joins the Chipmunk world on a physics-enabled layer and publishes the solved state once; removal detaches the retained body back to basic integration. This currently covers free bodies, shared constraints, contact reporting and kinematic target scheduling. Use <a class="el" href="#a6ad9b27d8ff6ce9d16ca99ed99bca9e9" title="Set up the collision geometry association for this owner.">setupCollider()</a> for explicit geometry, <a class="el" href="#a8c6cc8b15c28240b22531be993376062" title="Set up collision geometry from this Part&#39;s current artwork.">setupFrameCollider()</a> for owned artwork or an explicitly selected image binding, and setupAnimationCollider(boxName) for one authored box. Bone binding alone does not create a physical joint or give the body authority to write a bone. Generated animation physics requires Chipmunk. </p>
+<p>An unbound <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> can create its own <a class="el" href="classpdg_1_1_physics_body.html">PhysicsBody</a> without a <a class="el" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose-based animation extensions.">Sprite</a> root body. It joins the Chipmunk world on a physics-enabled layer and publishes the solved state once; removal detaches the retained body back to basic integration. This currently covers free bodies, shared constraints, contact reporting and kinematic target scheduling. Use <a class="el" href="#a6ad9b27d8ff6ce9d16ca99ed99bca9e9" title="Set up the collision geometry association for this owner.">setupCollider()</a> for explicit geometry, <a class="el" href="#a8c6cc8b15c28240b22531be993376062" title="Set up collision geometry from this Part&#39;s current artwork.">setupFrameCollider()</a> for owned artwork or an explicitly selected image binding, and setupAnimationCollider(boxName) for one authored box. <a class="el" href="classpdg_1_1_bone.html">Bone</a> binding alone does not create a physical joint or give the body authority to write a bone. Generated animation physics requires Chipmunk. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af87f7a649cfefbddb679848c3ff364e9" name="af87f7a649cfefbddb679848c3ff364e9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af87f7a649cfefbddb679848c3ff364e9">&#9670;&#160;</a></span>~Part()</h2>
@@ -842,6 +982,25 @@ Part bodies</h1>
 
 </div>
 </div>
+<a id="a65803562d0717fd9fd80644334586426" name="a65803562d0717fd9fd80644334586426"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65803562d0717fd9fd80644334586426">&#9670;&#160;</a></span>clearJiggle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; clearJiggle </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove jiggle and restore the underlying programmed rotations. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
 <a id="aa7f026e1dc83ff1985add72114c02afa" name="aa7f026e1dc83ff1985add72114c02afa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa7f026e1dc83ff1985add72114c02afa">&#9670;&#160;</a></span>detachSprite()</h2>
 
@@ -1019,6 +1178,25 @@ Part bodies</h1>
 
 </div>
 </div>
+<a id="a9d282af63fe6ddda4859f4c663f815dc" name="a9d282af63fe6ddda4859f4c663f815dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d282af63fe6ddda4859f4c663f815dc">&#9670;&#160;</a></span>getFABRIKResult()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k_result.html">AnimationFABRIKResult</a> getFABRIKResult </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the latest scheduled FABRIK diagnostics. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
 <a id="a03ad8d16d9f831b38f8b6e505295cf42" name="a03ad8d16d9f831b38f8b6e505295cf42"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a03ad8d16d9f831b38f8b6e505295cf42">&#9670;&#160;</a></span>getId()</h2>
 
@@ -1114,6 +1292,88 @@ Part bodies</h1>
 
 <p>Read the minimum local IK rotation. </p>
 <dl class="section return"><dt>Returns</dt><dd>The lower bound in local radians, or zero without limits. A linked constraint is read live; an invalid link throws. </dd></dl>
+
+</div>
+</div>
+<a id="a515dd1f09bba1bb74f9d578bbd302a7f" name="a515dd1f09bba1bb74f9d578bbd302a7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a515dd1f09bba1bb74f9d578bbd302a7f">&#9670;&#160;</a></span>getJiggleError()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; getJiggleError </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab43b79084c4975cb286d314c553e4870" name="ab43b79084c4975cb286d314c553e4870"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab43b79084c4975cb286d314c553e4870">&#9670;&#160;</a></span>getJiggleOptions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> getJiggleOptions </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return an independent configuration record. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
+<a id="a4d0ff263a9659df45a089d40181ab7aa" name="a4d0ff263a9659df45a089d40181ab7aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d0ff263a9659df45a089d40181ab7aa">&#9670;&#160;</a></span>getJiggleResult()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_jiggle_result.html">JiggleResult</a> getJiggleResult </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the most recently evaluated jiggle diagnostics. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
+<a id="abd59d742dc4fcbeb86fb9a2c65e48995" name="abd59d742dc4fcbeb86fb9a2c65e48995"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd59d742dc4fcbeb86fb9a2c65e48995">&#9670;&#160;</a></span>getJiggleState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a> getJiggleState </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return an independent numerical state snapshot. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
 
 </div>
 </div>
@@ -1336,6 +1596,33 @@ Part bodies</h1>
 
 </div>
 </div>
+<a id="a388ae303a8d51b420f47432eafe79e91" name="a388ae303a8d51b420f47432eafe79e91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a388ae303a8d51b420f47432eafe79e91">&#9670;&#160;</a></span>hasJiggle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool hasJiggle </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return whether this <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> owns a jiggle controller. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
 <a id="a49af19f53757889da92c059758b9bc6f" name="a49af19f53757889da92c059758b9bc6f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a49af19f53757889da92c059758b9bc6f">&#9670;&#160;</a></span>isAttached()</h2>
 
@@ -1445,6 +1732,53 @@ Part bodies</h1>
 
 </div>
 </div>
+<a id="ae954261275b99224499fc011fe7e5ebd" name="ae954261275b99224499fc011fe7e5ebd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae954261275b99224499fc011fe7e5ebd">&#9670;&#160;</a></span>isJiggleEnabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool isJiggleEnabled </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return whether jiggle is enabled. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
+<a id="abdf1d1c7b723a59584513a687d4db42c" name="abdf1d1c7b723a59584513a687d4db42c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abdf1d1c7b723a59584513a687d4db42c">&#9670;&#160;</a></span>kickJiggle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; kickJiggle </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>y</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>joint</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add angular or target velocity. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
 <a id="add3bc9d6e922794f54dd4e402cfd9a93" name="add3bc9d6e922794f54dd4e402cfd9a93"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#add3bc9d6e922794f54dd4e402cfd9a93">&#9670;&#160;</a></span>removeCollider()</h2>
 
@@ -1486,6 +1820,25 @@ Part bodies</h1>
 
 </div>
 </div>
+<a id="a4bd8679c9a93782484a0ec074baadfe2" name="a4bd8679c9a93782484a0ec074baadfe2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bd8679c9a93782484a0ec074baadfe2">&#9670;&#160;</a></span>resetJiggle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; resetJiggle </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reseed jiggle from the desired pose or target. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
 <a id="a095227ee2d914211388d9f2ed43d3ec0" name="a095227ee2d914211388d9f2ed43d3ec0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a095227ee2d914211388d9f2ed43d3ec0">&#9670;&#160;</a></span>setDrawing()</h2>
 
@@ -1502,7 +1855,7 @@ Part bodies</h1>
 </div><div class="memdoc">
 
 <p>Assign editable <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> artwork. </p>
-<p>Retain editable <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> contents, or an <a class="el" href="classpdg_1_1_image.html">Image</a> represented by a local rectangle. Artwork is drawn after the owner's original artwork in <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> creation order. It changes no <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> identity, logical size, local transforms or body association.</p>
+<p>Retain editable <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> contents, or an <a class="el" href="classpdg_1_1_image.html" title="Appearance setters return this image by reference for chaining.">Image</a> represented by a local rectangle. Artwork is drawn after the owner's original artwork in <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> creation order. It changes no <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> identity, logical size, local transforms or body association.</p>
 <p>Retains shared drawing contents, including later <a class="el" href="classpdg_1_1_element_ref.html" title="Handle for editing an element in shared Drawing artwork.">ElementRef</a> edits. Replaces existing content without changing the <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a>'s name, logical dimensions, animation, parent frame, or physics body. Parts draw after the owner's original artwork, in creation order.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1512,6 +1865,34 @@ Part bodies</h1>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>This object, for chaining.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a6ef0b59a07db4e2bcddf4321fa828794" title="Assign an image to a local rectangle.">setImage()</a>, <a class="el" href="#a49f9d5033e2cc7d934bac0382ee444cf" title="Remove artwork from the Part.">clearContent()</a>, <a class="el" href="#a7880ccf128fa3fef74e2b7c40524fe47" title="Read the artwork bounds.">getContentBounds()</a> </dd></dl>
+
+</div>
+</div>
+<a id="a493366d1b7c408d7abd74729243ab873" name="a493366d1b7c408d7abd74729243ab873"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a493366d1b7c408d7abd74729243ab873">&#9670;&#160;</a></span>setFABRIKTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; setFABRIKTarget </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; Part * &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>following</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>target</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k.html">AnimationFABRIK</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Solve or schedule a contiguous independent <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> chain; chain excludes the receiver. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
 
 </div>
 </div>
@@ -1611,7 +1992,7 @@ Part bodies</h1>
 <div class="line">shoulder-&gt;setIKDriveTarget(elbow, wrist, <a class="code hl_typedef" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">pdg::Point</a>(10, 8), 100, 40,</div>
 <div class="line">                          <a class="code hl_enumvalue" href="namespacepdg.html#ac423e70ccf299d87c0cc3a5de941ccfbaf6f1dc6029a26a9cc6e55373ea47488c">pdg::partSpace_Sprite</a>);</div>
 <div class="ttc" id="agroup___graphics_html_ga3ad09d2eca9e6b332034b77b71251024"><div class="ttname"><a href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">pdg::Point</a></div><div class="ttdeci">PointT&lt; float &gt; Point</div><div class="ttdef"><b>Definition</b> coordinates.h:309</div></div>
-<div class="ttc" id="anamespacepdg_html_ac423e70ccf299d87c0cc3a5de941ccfbaf6f1dc6029a26a9cc6e55373ea47488c"><div class="ttname"><a href="namespacepdg.html#ac423e70ccf299d87c0cc3a5de941ccfbaf6f1dc6029a26a9cc6e55373ea47488c">pdg::partSpace_Sprite</a></div><div class="ttdeci">@ partSpace_Sprite</div><div class="ttdef"><b>Definition</b> part.h:23</div></div>
+<div class="ttc" id="anamespacepdg_html_ac423e70ccf299d87c0cc3a5de941ccfbaf6f1dc6029a26a9cc6e55373ea47488c"><div class="ttname"><a href="namespacepdg.html#ac423e70ccf299d87c0cc3a5de941ccfbaf6f1dc6029a26a9cc6e55373ea47488c">pdg::partSpace_Sprite</a></div><div class="ttdeci">@ partSpace_Sprite</div><div class="ttdef"><b>Definition</b> part.h:24</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a7b2c975de541ebd332c7b2e4e8fa42dc" title="Maintain a target for a contiguous two-segment Part chain.">setIKTarget()</a>, <a class="el" href="#a2a0f2195c9f490832f64a45f3f57f8d4" title="Limit this joint&#39;s local rotation when solving Part IK.">setIKLimits()</a>, <a class="el" href="#acb153ff01fe4ad10365218ce112ed3b5" title="Stop this root’s scheduled IK controller.">clearIKTarget()</a>, <a class="el" href="classpdg_1_1_physics_body.html#afc4c62508dd39f28659d931322ef200b" title="Drive a dynamic body toward a position and orientation using bounded force and torque.">PhysicsBody::setDriveTarget()</a> </dd></dl>
 
@@ -1782,13 +2163,116 @@ Part bodies</h1>
 <p>Retains the image and replaces existing content. Logical dimensions, animation, parent frame, and physics remain unchanged. Requires GUI support and finite rectangle coordinates.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">image</td><td><a class="el" href="classpdg_1_1_image.html">Image</a> to display. </td></tr>
+    <tr><td class="paramname">image</td><td><a class="el" href="classpdg_1_1_image.html" title="Appearance setters return this image by reference for chaining.">Image</a> to display. </td></tr>
     <tr><td class="paramname">localBounds</td><td>Destination rectangle in the <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a>'s local coordinates.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>This object, for chaining.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a095227ee2d914211388d9f2ed43d3ec0" title="Assign editable Drawing artwork.">setDrawing()</a>, <a class="el" href="#a7880ccf128fa3fef74e2b7c40524fe47" title="Read the artwork bounds.">getContentBounds()</a> </dd></dl>
+
+</div>
+</div>
+<a id="aee64a3132c153a7ff6b9981934abb335" name="aee64a3132c153a7ff6b9981934abb335"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee64a3132c153a7ff6b9981934abb335">&#9670;&#160;</a></span>setJiggle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; setJiggle </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Part * &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>following</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Install chain jiggle or decorate an existing <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> IK target. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
+<a id="a15d445e53045ffa5953a91f9887b19b3" name="a15d445e53045ffa5953a91f9887b19b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15d445e53045ffa5953a91f9887b19b3">&#9670;&#160;</a></span>setJiggleEnabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; setJiggleEnabled </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable or freeze jiggle; reenabling reseeds from the current pose. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
+<a id="ad8d80f57a1713eb3d85f4d9ef2e75973" name="ad8d80f57a1713eb3d85f4d9ef2e75973"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8d80f57a1713eb3d85f4d9ef2e75973">&#9670;&#160;</a></span>setJiggleInfluence()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; setJiggleInfluence </td>
+          <td>(</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>influence</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set or linearly fade influence using simulation seconds. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
+<a id="a67b3976e87f9c98ce1724650996fa853" name="a67b3976e87f9c98ce1724650996fa853"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67b3976e87f9c98ce1724650996fa853">&#9670;&#160;</a></span>setJiggleSettings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; setJiggleSettings </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>settings</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace tuning from a complete configuration without changing topology. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
+
+</div>
+</div>
+<a id="adb2671ebb6f8f88afa292972f1e8dd2b" name="adb2671ebb6f8f88afa292972f1e8dd2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb2671ebb6f8f88afa292972f1e8dd2b">&#9670;&#160;</a></span>setJiggleState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Part &amp; setJiggleState </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Restore validated numerical state on the same topology. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
 
 </div>
 </div>
@@ -1897,9 +2381,9 @@ Part bodies</h1>
 </div><div class="memdoc">
 
 <p>Set up collision geometry from this <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a>'s current artwork. </p>
-<p>Follow owned <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> bounds or <a class="el" href="classpdg_1_1_image.html">Image</a> alpha, or the current image of an explicitly bound animation image. Drawings with vector/multiple elements require Bounds. Empty content contributes no source shapes.</p>
+<p>Follow owned <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> bounds or <a class="el" href="classpdg_1_1_image.html" title="Appearance setters return this image by reference for chaining.">Image</a> alpha, or the current image of an explicitly bound animation image. Drawings with vector/multiple elements require Bounds. Empty content contributes no source shapes.</p>
 <p>Reuses .collider when present, preserving its configuration, filters, material, handlers and body association. Each call replaces the previous geometry source and explicit shapes. Later <a class="el" href="classpdg_1_1_collider.html">Collider</a> add methods create persistent extra shapes. Queries and contacts refresh source geometry; source shape IDs survive artwork changes and disappearance/reappearance. See <a class="el" href="classpdg_1_1_collider.html#collider_geometry_sources" title="collider_geometry_sources">collider_geometry_sources</a>.</p>
-<p>Owned <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> content takes precedence. Bounds uses its current local bounding rectangle, including element transforms. AlphaMask requires exactly one image or image-strip element using fit_Fill; <a class="el" href="#a6ef0b59a07db4e2bcddf4321fa828794" title="Assign an image to a local rectangle.">setImage()</a> supplies suitable content. It samples the selected <a class="el" href="classpdg_1_1_attributes.html#aa5f59aa376700910958e44f39f64bddb">Attributes.frame()</a>, with an invalid frame falling back to zero as in drawing. Alpha ignores stroke, fill overlays and opacity effects. Pixel edits to an existing <a class="el" href="classpdg_1_1_image.html">Image</a> require calling <a class="el" href="#a8c6cc8b15c28240b22531be993376062" title="Set up collision geometry from this Part&#39;s current artwork.">setupFrameCollider()</a> again. Unsupported vector/multi-element/other-fit alpha sources throw; use Bounds for those Drawings. Replacing content later with an unsupported alpha source also causes source queries to throw until corrected or another source is selected.</p>
+<p>Owned <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> content takes precedence. Bounds uses its current local bounding rectangle, including element transforms. AlphaMask requires exactly one image or image-strip element using fit_Fill; <a class="el" href="#a6ef0b59a07db4e2bcddf4321fa828794" title="Assign an image to a local rectangle.">setImage()</a> supplies suitable content. It samples the selected <a class="el" href="classpdg_1_1_attributes.html#aa5f59aa376700910958e44f39f64bddb">Attributes.frame()</a>, with an invalid frame falling back to zero as in drawing. Alpha ignores stroke, fill overlays and opacity effects. Pixel edits to an existing <a class="el" href="classpdg_1_1_image.html" title="Appearance setters return this image by reference for chaining.">Image</a> require calling <a class="el" href="#a8c6cc8b15c28240b22531be993376062" title="Set up collision geometry from this Part&#39;s current artwork.">setupFrameCollider()</a> again. Unsupported vector/multi-element/other-fit alpha sources throw; use Bounds for those Drawings. Replacing content later with an unsupported alpha source also causes source queries to throw until corrected or another source is selected.</p>
 <p>Without owned content, an explicitly bound animation image (from <a class="el" href="#a5e37fc77b036d7edae4eb5ddd8d6ef0c" title="Follow an authored binding.">bindToAnimationBinding()</a>) supplies its current frame and pivot. A bone or socket binding alone does not select artwork. No artwork produces no source shapes; logical <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> width/height do not invent a frame. <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> transforms, including reflection, apply normally. Artwork changes do not change body mass or inertia.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1914,7 +2398,7 @@ Part bodies</h1>
 <div class="line"> grip-&gt;bindToAnimationBinding(<span class="stringliteral">&quot;hand_art&quot;</span>);</div>
 <div class="line"> <span class="keyword">auto</span>&amp; <a class="code hl_variable" href="#a55d2a9cc0cc93e10419cfd631dde8aa3">collider</a> = grip-&gt;setupFrameCollider(<a class="code hl_enumvalue" href="namespacepdg.html#af7a2bfb5605b01cdbab7f538375b2b5ba70e8daeb3b31af01703889f66287b21b">pdg::frameCollider_AlphaMask</a>);</div>
 <div class="line"> <a class="code hl_variable" href="#a55d2a9cc0cc93e10419cfd631dde8aa3">collider</a>.setSensor(<span class="keyword">true</span>);</div>
-<div class="ttc" id="aclasspdg_1_1_part_html_a55d2a9cc0cc93e10419cfd631dde8aa3"><div class="ttname"><a href="#a55d2a9cc0cc93e10419cfd631dde8aa3">pdg::Part::collider</a></div><div class="ttdeci">ColliderRef&lt; Part &gt; collider</div><div class="ttdef"><b>Definition</b> part.h:60</div></div>
+<div class="ttc" id="aclasspdg_1_1_part_html_a55d2a9cc0cc93e10419cfd631dde8aa3"><div class="ttname"><a href="#a55d2a9cc0cc93e10419cfd631dde8aa3">pdg::Part::collider</a></div><div class="ttdeci">ColliderRef&lt; Part &gt; collider</div><div class="ttdef"><b>Definition</b> part.h:62</div></div>
 <div class="ttc" id="anamespacepdg_html_af7a2bfb5605b01cdbab7f538375b2b5ba70e8daeb3b31af01703889f66287b21b"><div class="ttname"><a href="namespacepdg.html#af7a2bfb5605b01cdbab7f538375b2b5ba70e8daeb3b31af01703889f66287b21b">pdg::frameCollider_AlphaMask</a></div><div class="ttdeci">@ frameCollider_AlphaMask</div><div class="ttdef"><b>Definition</b> collider.h:22</div></div>
 </div><!-- fragment --> </dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0173ea1238f7de1b9ba8c85c1ce2062e" title="Select one authored animation box as this Part&#39;s collision source.">setupAnimationCollider()</a>, <a class="el" href="#a095227ee2d914211388d9f2ed43d3ec0" title="Assign editable Drawing artwork.">setDrawing()</a>, <a class="el" href="#a6ef0b59a07db4e2bcddf4321fa828794" title="Assign an image to a local rectangle.">setImage()</a>, <a class="el" href="classpdg_1_1_collider.html">Collider</a> </dd></dl>
@@ -1958,6 +2442,34 @@ Part bodies</h1>
 <dd>
 Dynamic bodies own movement and rotation. Programmed movement/spin requests on their owners throw; immediate setters teleport the body. Dynamic and static Parts retain their world position as ancestors move; kinematic Parts follow their animated parent frame. Physical transforms publish in parent-before-child order after authored animation. Local artwork may have zero scale, but a physical <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> requires an invertible parent frame.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#aefc7c6bc9cba8496da4b11c8f94a4d97" title="Detach the optional physics body.">removePhysicsBody()</a>, <a class="el" href="classpdg_1_1_physics_body.html">PhysicsBody</a> </dd></dl>
+
+</div>
+</div>
+<a id="ade11d3899f030b8fa8f58c1179e56b32" name="ade11d3899f030b8fa8f58c1179e56b32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade11d3899f030b8fa8f58c1179e56b32">&#9670;&#160;</a></span>solveFABRIK()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k_result.html">AnimationFABRIKResult</a> solveFABRIK </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; Part * &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>following</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>target</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k.html">AnimationFABRIK</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Solve or schedule a contiguous independent <a class="el" href="classpdg_1_1_part.html" title="Independently animated Sprite subsection, artwork holder, or mounting frame.">Part</a> chain; chain excludes the receiver. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </p>
 
 </div>
 </div>
@@ -2052,6 +2564,32 @@ Dynamic bodies own movement and rotation. Programmed movement/spin requests on t
 </div>
 </div>
 <a name="doc-related-members" id="doc-related-members"></a><h2 id="header-doc-related-members" class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a4df5ac7eebb7d80d58695d8c032ad944" name="a4df5ac7eebb7d80d58695d8c032ad944"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4df5ac7eebb7d80d58695d8c032ad944">&#9670;&#160;</a></span>Bone</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class Bone</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#a4df5ac7eebb7d80d58695d8c032ad944">Bone</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#a4df5ac7eebb7d80d58695d8c032ad944">Bone</a>.</p>
+
+</div>
+</div>
 <a id="a379924659d700db028e22496407b782d" name="a379924659d700db028e22496407b782d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a379924659d700db028e22496407b782d">&#9670;&#160;</a></span>ColliderRef&lt; Part &gt;</h2>
 
@@ -2071,8 +2609,6 @@ Dynamic bodies own movement and rotation. Programmed movement/spin requests on t
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p class="reference">References <a class="el" href="namespacepdg.html#a459767d508c28479e2e23635b0514cdc">pdg::boneId_None</a>.</p>
 
 </div>
 </div>

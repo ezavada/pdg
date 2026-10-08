@@ -42,16 +42,8 @@ if (typeof(fs) == 'undefined') {
 	}
 }
 
-// The native V8 client retains the legacy `method(null)` signature
-// introspection protocol. JSC and browser bindings treat null as an invalid
-// required argument instead.
+// Null is validated by the native method rather than intercepted for introspection.
 expectNullArgumentError = function(callback) {
-	var supportsNullIntrospection =
-		(typeof process != 'undefined') && !process.ios;
-	if (supportsNullIntrospection) {
-		expect(callback).not.toThrow();
-	} else {
-		expect(callback).toThrow();
-	}
+	expect(callback).toThrow();
 };
 }

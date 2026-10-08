@@ -27,12 +27,12 @@
 //
 // -----------------------------------------------
 
-if (pdg.hasNetwork == false) {
+if (pdg.hasNetworkServer == false) {
 
-	// non-network build (ie: current iOS build)
+	// Client-only runtime or a build without networking
 	describe("NetClient", function() {
-	  it("is not present", function() {
-	  	expect(pdg.NetClient).toBeUndefined();
+	  it("matches client capability", function() {
+        expect(typeof pdg.NetClient).toEqual(pdg.hasNetworkClient ? "function" : "undefined");
 	  });
 	});
 

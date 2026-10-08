@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -130,6 +130,15 @@ Classes</h2></td></tr>
 <tr class="memitem:AnimationPipeline" id="r_AnimationPipeline"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animation_pipeline.html">AnimationPipeline</a></td></tr>
 <tr class="memitem:AnimationTwoBoneIK" id="r_AnimationTwoBoneIK"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_animation_two_bone_i_k.html">AnimationTwoBoneIK</a></td></tr>
 <tr class="memitem:AnimationIKResult" id="r_AnimationIKResult"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_animation_i_k_result.html">AnimationIKResult</a></td></tr>
+<tr class="memitem:AnimationFABRIK" id="r_AnimationFABRIK"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k.html">AnimationFABRIK</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A contiguous root-to-endpoint chain. The endpoint's rotation is preserved.  <a href="structpdg_1_1_animation_f_a_b_r_i_k.html#details">More...</a><br /></td></tr>
+<tr class="memitem:AnimationFABRIKResult" id="r_AnimationFABRIKResult"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k_result.html">AnimationFABRIKResult</a></td></tr>
+<tr class="memitem:AnimationJiggleJoint" id="r_AnimationJiggleJoint"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_animation_jiggle_joint.html">AnimationJiggleJoint</a></td></tr>
+<tr class="memitem:AnimationJiggle" id="r_AnimationJiggle"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a></td></tr>
+<tr class="memitem:JiggleJointState" id="r_JiggleJointState"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_jiggle_joint_state.html">JiggleJointState</a></td></tr>
+<tr class="memitem:JiggleState" id="r_JiggleState"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a></td></tr>
+<tr class="memitem:JiggleResult" id="r_JiggleResult"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_jiggle_result.html">JiggleResult</a></td></tr>
+<tr class="memitem:SpriteJiggleState" id="r_SpriteJiggleState"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_sprite_jiggle_state.html">SpriteJiggleState</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -159,11 +168,25 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="#ggaa43382422b34225d3bd65a91f038c3fbabdf544471a8e02361393a875b5aed122">animationIK_Stretch</a> = 1
 <br />
  }</td></tr>
+<tr class="memitem:gaee3a96257794c63db049fb003bbc3574" id="r_gaee3a96257794c63db049fb003bbc3574"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gaee3a96257794c63db049fb003bbc3574">JiggleMode</a> : int { <br />
+&#160;&#160;<a class="el" href="#ggaee3a96257794c63db049fb003bbc3574aecd8e1fb04e44bf158d15b1e12bd32a4">jiggleMode_Chain</a> = 0
+, <br />
+&#160;&#160;<a class="el" href="#ggaee3a96257794c63db049fb003bbc3574ad5aa4bd653e826bfbb3827375163aa5f">jiggleMode_IKTarget</a> = 1
+<br />
+ }</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gaa992e43f2adaa552cb187ed465611b44" id="r_gaa992e43f2adaa552cb187ed465611b44"><td class="memItemLeft"><a class="el" href="structpdg_1_1_animation_i_k_result.html">AnimationIKResult</a>&#160;</td><td class="memItemRight"><a class="el" href="#gaa992e43f2adaa552cb187ed465611b44">solveAnimationTwoBoneIK</a> (<a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;pose, const <a class="el" href="structpdg_1_1_animation_two_bone_i_k.html">AnimationTwoBoneIK</a> &amp;config, const <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &amp;root={})</td></tr>
 <tr class="memdesc:gaa992e43f2adaa552cb187ed465611b44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve a contiguous two-bone chain atomically.  <br /></td></tr>
+<tr class="memitem:gac636a575c72f03edd775fb8864b29451" id="r_gac636a575c72f03edd775fb8864b29451"><td class="memItemLeft"><a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k_result.html">AnimationFABRIKResult</a>&#160;</td><td class="memItemRight"><a class="el" href="#gac636a575c72f03edd775fb8864b29451">solveAnimationFABRIK</a> (<a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;, const <a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k.html">AnimationFABRIK</a> &amp;, const <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &amp;root={})</td></tr>
+<tr class="memdesc:gac636a575c72f03edd775fb8864b29451"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve a contiguous pose chain with bounded FABRIK iterations.  <br /></td></tr>
+<tr class="memitem:ga5b109c54b26d24e22c1562e18bf37e7b" id="r_ga5b109c54b26d24e22c1562e18bf37e7b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga5b109c54b26d24e22c1562e18bf37e7b">validateAnimationJiggle</a> (const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;)</td></tr>
+<tr class="memdesc:ga5b109c54b26d24e22c1562e18bf37e7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validate finite spring tuning, ranges and sparse override identities.  <br /></td></tr>
+<tr class="memitem:ga3a7264204f1757092df550f67fa4a6c5" id="r_ga3a7264204f1757092df550f67fa4a6c5"><td class="memItemLeft"><a class="el" href="structpdg_1_1_jiggle_result.html">JiggleResult</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga3a7264204f1757092df550f67fa4a6c5">solveAnimationJiggle</a> (<a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;, const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;, <a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a> &amp;, double seconds, const <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &amp;root={}, const std::vector&lt; double &gt; &amp;minimum={}, const std::vector&lt; double &gt; &amp;maximum={})</td></tr>
+<tr class="memdesc:ga3a7264204f1757092df550f67fa4a6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advance individual world-heading springs and apply chain rotations atomically.  <br /></td></tr>
+<tr class="memitem:ga6fa6797be4f609ebd2a65e06a9a5387a" id="r_ga6fa6797be4f609ebd2a65e06a9a5387a"><td class="memItemLeft"><a class="el" href="structpdg_1_1_jiggle_result.html">JiggleResult</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga6fa6797be4f609ebd2a65e06a9a5387a">stepJiggleTarget</a> (const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;, <a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a> &amp;, double x, double y, double seconds)</td></tr>
+<tr class="memdesc:ga6fa6797be4f609ebd2a65e06a9a5387a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advance a world-space target spring and compute the influenced target.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Ordered pose callbacks, animation sources, and two-bone IK. </p>
@@ -241,7 +264,131 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="gaee3a96257794c63db049fb003bbc3574" name="gaee3a96257794c63db049fb003bbc3574"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaee3a96257794c63db049fb003bbc3574">&#9670;&#160;</a></span>JiggleMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#gaee3a96257794c63db049fb003bbc3574">JiggleMode</a> : int</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaee3a96257794c63db049fb003bbc3574aecd8e1fb04e44bf158d15b1e12bd32a4" name="ggaee3a96257794c63db049fb003bbc3574aecd8e1fb04e44bf158d15b1e12bd32a4"></a>jiggleMode_Chain&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ggaee3a96257794c63db049fb003bbc3574ad5aa4bd653e826bfbb3827375163aa5f" name="ggaee3a96257794c63db049fb003bbc3574ad5aa4bd653e826bfbb3827375163aa5f"></a>jiggleMode_IKTarget&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="gac636a575c72f03edd775fb8864b29451" name="gac636a575c72f03edd775fb8864b29451"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac636a575c72f03edd775fb8864b29451">&#9670;&#160;</a></span>solveAnimationFABRIK()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k_result.html">AnimationFABRIKResult</a> solveAnimationFABRIK </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>pose</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_f_a_b_r_i_k.html">AnimationFABRIK</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Solve a contiguous pose chain with bounded FABRIK iterations. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pose</td><td>Input and output pose; invalid inputs leave it unchanged. </td></tr>
+    <tr><td class="paramname">config</td><td>Root-to-endpoint chain, target, influence, tolerance and optional per-joint local limits. See <a class="el" href="native_procedural_animation.html" title="Procedural jiggle and FABRIK">Procedural jiggle and FABRIK</a>. </td></tr>
+    <tr><td class="paramname">root</td><td>Owning world transform; local targets use the first joint's parent frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Full-solve and applied endpoint error, convergence, iteration count, limit and geometric reach diagnostics. </dd></dl>
+
+<p class="reference">References <a class="el" href="#gac636a575c72f03edd775fb8864b29451">solveAnimationFABRIK()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#gac636a575c72f03edd775fb8864b29451">solveAnimationFABRIK()</a>.</p>
+
+</div>
+</div>
+<a id="ga3a7264204f1757092df550f67fa4a6c5" name="ga3a7264204f1757092df550f67fa4a6c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3a7264204f1757092df550f67fa4a6c5">&#9670;&#160;</a></span>solveAnimationJiggle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_jiggle_result.html">JiggleResult</a> solveAnimationJiggle </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>pose</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>root</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>minimum</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>maximum</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Advance individual world-heading springs and apply chain rotations atomically. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pose</td><td>Desired pose and resulting pose; local translations and scale are preserved. </td></tr>
+    <tr><td class="paramname">config</td><td>Chain mode configuration. Each joint needs a positive declared, inferred or overridden lever length. </td></tr>
+    <tr><td class="paramname">state</td><td>Persistent spring state; first evaluation seeds it from the desired pose. </td></tr>
+    <tr><td class="paramname">seconds</td><td>Nonnegative simulation seconds. Zero evaluates output without integrating. </td></tr>
+    <tr><td class="paramname">root</td><td>Owning world transform. </td></tr>
+    <tr><td class="paramname">minimum</td><td>Optional live local angle lower limits, one per chain joint. </td></tr>
+    <tr><td class="paramname">maximum</td><td>Matching upper limits; omit both arrays for no additional limits. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Applied influence, consumed time, substeps, and reset/limit diagnostics. </dd></dl>
+
+<p class="reference">References <a class="el" href="#ga3a7264204f1757092df550f67fa4a6c5">solveAnimationJiggle()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#ga3a7264204f1757092df550f67fa4a6c5">solveAnimationJiggle()</a>.</p>
+
+</div>
+</div>
 <a id="gaa992e43f2adaa552cb187ed465611b44" name="gaa992e43f2adaa552cb187ed465611b44"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaa992e43f2adaa552cb187ed465611b44">&#9670;&#160;</a></span>solveAnimationTwoBoneIK()</h2>
 
@@ -282,6 +429,94 @@ Functions</h2></td></tr>
 <p class="reference">References <a class="el" href="#gaa992e43f2adaa552cb187ed465611b44">solveAnimationTwoBoneIK()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="#gaa992e43f2adaa552cb187ed465611b44">solveAnimationTwoBoneIK()</a>.</p>
+
+</div>
+</div>
+<a id="ga6fa6797be4f609ebd2a65e06a9a5387a" name="ga6fa6797be4f609ebd2a65e06a9a5387a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6fa6797be4f609ebd2a65e06a9a5387a">&#9670;&#160;</a></span>stepJiggleTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_jiggle_result.html">JiggleResult</a> stepJiggleTarget </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structpdg_1_1_jiggle_state.html">JiggleState</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>y</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Advance a world-space target spring and compute the influenced target. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">config</td><td>IK-target jiggle tuning. </td></tr>
+    <tr><td class="paramname">state</td><td>Persistent target position and velocity; first evaluation seeds from the target. </td></tr>
+    <tr><td class="paramname">x</td><td>Desired world x coordinate. </td></tr>
+    <tr><td class="paramname">y</td><td>Desired world y coordinate. </td></tr>
+    <tr><td class="paramname">seconds</td><td>Nonnegative simulation seconds; zero does not integrate. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Desired, filtered and effective positions, lag, consumed time and work/reset diagnostics. </dd></dl>
+
+<p class="reference">References <a class="el" href="#ga6fa6797be4f609ebd2a65e06a9a5387a">stepJiggleTarget()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#ga6fa6797be4f609ebd2a65e06a9a5387a">stepJiggleTarget()</a>.</p>
+
+</div>
+</div>
+<a id="ga5b109c54b26d24e22c1562e18bf37e7b" name="ga5b109c54b26d24e22c1562e18bf37e7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5b109c54b26d24e22c1562e18bf37e7b">&#9670;&#160;</a></span>validateAnimationJiggle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void validateAnimationJiggle </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structpdg_1_1_animation_jiggle.html">AnimationJiggle</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Validate finite spring tuning, ranges and sparse override identities. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">config</td><td>Jiggle configuration to check. Chain geometry is validated when solving. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::invalid_argument</td><td>Invalid settings, duplicate overrides or overrides outside the chain. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="reference">References <a class="el" href="#ga5b109c54b26d24e22c1562e18bf37e7b">validateAnimationJiggle()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#ga5b109c54b26d24e22c1562e18bf37e7b">validateAnimationJiggle()</a>.</p>
 
 </div>
 </div>

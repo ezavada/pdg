@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['linestyle_0',['LineStyle',['../namespacepdg.html#a86e0f5648542856159bb40775c854aa7',1,'pdg']]]
+  ['jigglemode_0',['JiggleMode',['../group___animation_modifiers.html#gaee3a96257794c63db049fb003bbc3574',1,'pdg']]]
 ];

@@ -40,18 +40,69 @@
 #include "pdg/sys/ianimationhelper.h"
 #include "pdg/sys/easing.h"
 #include "pdg/sys/serializable.h"
+#include "pdg/sys/animationoperation.h"
 
 #include <vector>
 #include <memory>
 #include <cmath>
 #include <stdexcept>
 #include <type_traits>
+#include <functional>
+#include <array>
+#include <string>
+#include <initializer_list>
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 #include "pdg_script_bindings.h"
 #endif
 
 namespace pdg {
+
+// Internal scheduler channel IDs. Values are snapshot IDs and must remain stable.
+// Numeric channels follow tweenFields(); Camera appends its channels to the base fields.
+enum AnimationChannel : unsigned {
+    animationChannel_LocationX = 0,
+    animationChannel_LocationY = 1,
+    animationChannel_Facing = 2,
+    animationChannel_Width = 3,
+    animationChannel_Height = 4,
+    animationChannel_ScaleX = 5,
+    animationChannel_ScaleY = 6,
+    animationChannel_CenterOffsetX = 7,
+    animationChannel_CenterOffsetY = 8,
+    animationChannel_MovementX = 9,
+    animationChannel_MovementY = 10,
+    animationChannel_Spinning = 11,
+    animationChannel_StretchingWidth = 12,
+    animationChannel_StretchingHeight = 13,
+    animationChannel_CameraZoom = 14,
+    animationChannel_CameraFlashOpacity = 15,
+    animationChannel_CameraOpacity = 16,
+    animationChannel_CameraHidden = 17,
+    animationChannel_CameraTransition = 18,
+    animationChannel_BaseCount = animationChannel_CameraZoom
+};
+
+// Target interpretation shared by numeric tracks and recorded script operations.
+enum AnimationTargetMode : uint8 {
+    animationMode_Assign = 0,
+    animationMode_Add = 1,
+    animationMode_Multiply = 2,
+    animationMode_Toggle = 3,
+};
+
+enum AnimationFlipAxis : unsigned {
+    animationFlipAxis_X = 0,
+    animationFlipAxis_Y = 1
+};
+
+class AnimationScript;
+class AnimationScriptState;
+struct ScriptExecution;
+struct AnimationEvaluationContext;
+using AnimationEvaluator = std::function<bool(const AnimationEvaluationContext&)>;
+struct AnimationEvent;
+using AnimationEventHandler = std::function<void(const AnimationEvent&)>;
 
 
 // -----------------------------------------------------------------------------------
@@ -73,11 +124,11 @@ public:
 	static pdg::ISerializable* CreateInstance() { return new AnimatedBase(); }
 
 	// bounds
-	Rect			getBoundingBox() const;
-	RotatedRect		getRotatedBounds() const;
+	virtual Rect			getBoundingBox() const;
+	virtual RotatedRect		getRotatedBounds() const;
 
 	// current location in container's coordinate system
-    Point			getLocation() const;
+    virtual Point			getLocation() const;
     AnimatedBase&		setLocation(const Point& loc);
     AnimatedBase&		setLocation(float x, float y);
     AnimatedBase&		moveTo(float x, float y);
@@ -111,9 +162,9 @@ public:
                           EasingFunc easing = linearTween);
 
 	// size
-    Offset    getSize() const;
-	float	  getWidth() const;
-	float	  getHeight() const;
+    virtual Offset    getSize() const;
+	virtual float	  getWidth() const;
+	virtual float	  getHeight() const;
 	AnimatedBase& setSize(float width, float height);
     AnimatedBase& setSize(const Offset& size);
 	AnimatedBase& setWidth(float width);
@@ -148,7 +199,7 @@ public:
     AnimatedBase& changeStretchingBy(float deltaWidthPerSecond, float deltaHeightPerSecond, double durationSeconds, EasingFunc easing = linearTween);
 
     // dimensionless transform scale, independent of logical width/height.
-    Offset    getScale() const { return Offset(mScaleX, mScaleY); }
+    virtual Offset    getScale() const { validateScriptRead(); return Offset(mScaleX, mScaleY); }
     AnimatedBase& setScale(float x, float y);
     AnimatedBase& setScale(float scale) { return setScale(scale, scale); }
 
@@ -158,15 +209,15 @@ public:
                             EasingFunc easing = easeInOutQuad);
 
     // These control scheduled animations only. Constant rates, helpers and physics continue.
-    bool isSchedulePaused() const { return mSchedulePaused; }
-    bool hasScheduledAnimations() const { return !mAnimations.empty(); }
-    AnimatedBase& pauseSchedule() { mSchedulePaused = true; return *this; }
-    AnimatedBase& resumeSchedule() { mSchedulePaused = false; return *this; }
+    bool isSchedulePaused() const { validateScriptRead(); return mSchedulePaused; }
+    bool hasScheduledAnimations() const { validateScriptRead(); return !mAnimations.empty() || hasScriptAnimations(); }
+    AnimatedBase& pauseSchedule() { validateScriptControl(); mSchedulePaused = true; return *this; }
+    AnimatedBase& resumeSchedule() { validateScriptControl(); mSchedulePaused = false; return *this; }
     AnimatedBase& cancelSchedule() { cancelScheduleImpl(); return *this; }
 
 	// rotation clockwise is positive, counter-clockwise negative, around centerpoint, in radians
-	float			getRotation() const;
-	Offset          getCenterOffset() const; // relative to real bounds-based center
+	virtual float			getRotation() const;
+	virtual Offset          getCenterOffset() const; // relative to real bounds-based center
 	AnimatedBase&		setRotation(float radiansRotation);
 	AnimatedBase&		setCenterOffset(const Offset& offset); // relative to real bounds-based center
 	AnimatedBase&		rotateTo(float radiansRotation);
@@ -210,6 +261,53 @@ public:
     // Sequence the next timed operation after the most recently scheduled one.
     AnimatedBase&       andThen();
 
+    /** Record a reusable native animation definition. The library owns the builder. */
+    static AnimationScript& defineScript(const std::string& name);
+    /** Remove a definition and release its resources. Running copies continue. */
+    static bool deleteScript(const std::string& name);
+    /// @cond INTERNAL
+    static void clearScriptLibrary();
+    static bool hasScriptDefinition(const std::string& name);
+    /// @endcond
+    AnimatedBase& playScript(const std::string& name);
+    AnimatedBase& batch();
+    AnimatedBase& endBatch();
+    AnimatedBase& series();
+    AnimatedBase& endSeries();
+    AnimatedBase& andAlso();
+    AnimatedBase& stagger(double intervalSeconds);
+    AnimatedBase& mark(const std::string& name, bool saveState = true);
+    AnimatedBase& jumpToMark(const std::string& name, bool restoreState = true);
+    AnimatedBase& on(const std::string& event, AnimationEventHandler handler);
+    AnimatedBase& triggerEvent(const std::string& name);
+    /// Capture a chainable mutation when constructing a script; live calls return false.
+    bool recordOperation(const std::string& name, AnimationArguments arguments);
+    bool isRecordingOperation() const;
+    AnimatedBase& onStarted(AnimationEventHandler handler) { return on("started", std::move(handler)); }
+    AnimatedBase& onFinished(AnimationEventHandler handler) { return on("finished", std::move(handler)); }
+    AnimatedBase& onScriptFinished(AnimationEventHandler handler) { return on("scriptFinished", std::move(handler)); }
+    AnimatedBase& onMark(AnimationEventHandler handler) { return on("mark", std::move(handler)); }
+    AnimatedBase& onYoyo(AnimationEventHandler handler) { return on("yoyo", std::move(handler)); }
+    AnimatedBase& onRepeat(AnimationEventHandler handler) { return on("repeat", std::move(handler)); }
+    AnimatedBase& onUntilFired(AnimationEventHandler handler) { return on("untilFired", std::move(handler)); }
+    AnimatedBase& when(AnimationEvaluator evaluator);
+    AnimatedBase& otherwise();
+    AnimatedBase& endWhen();
+    AnimatedBase& endOtherwise();
+    AnimatedBase& until(AnimationEvaluator evaluator);
+    AnimatedBase& yoyo();
+    AnimatedBase& repeat(int additionalExecutions = -1);
+    AnimatedBase& diminish(float factor, double seconds, EasingFunc easing = linearTween);
+    AnimatedBase& increase(float factor, double seconds, EasingFunc easing = linearTween);
+    AnimatedBase& slowDown(float factor, double seconds, EasingFunc easing = linearTween);
+    AnimatedBase& speedUp(float factor, double seconds, EasingFunc easing = linearTween);
+    // "It" is the most recently selected operation, group, or named script.
+    // These control that element only; schedule-wide controls are separate.
+    AnimatedBase& stopIt();
+    AnimatedBase& restartIt();
+    AnimatedBase& pauseIt();
+    AnimatedBase& resumeIt();
+
 	// objects that will be called to help with animation of this object
 	// the animation helper(s) will be called in order they were added
 	// after all other animation (from constant motion, change over time with easing,
@@ -228,10 +326,22 @@ protected:
 /// @cond INTERNAL
 	AnimatedBase();
 	virtual ~AnimatedBase();
+    /// @cond INTERNAL
+    friend AnimationObjectArgument captureAnimationObject(RefCountedObj*);
+    std::weak_ptr<AnimatedBase*> animationLifetime() const;
+    virtual std::vector<AnimatedBase*> animationTargets() const { return {}; }
+    virtual bool isTroupe() const { return false; }
+    /// @cond INTERNAL
+    virtual ISerializable* snapshotAnimationOwner() const { return nullptr; }
+    virtual uint32 snapshotAnimationId() const { return 0; }
+    virtual AnimatedBase* snapshotAnimationMember(uint32) { return nullptr; }
+    /// @endcond
+    /// @endcond
 
 
     // Virtual behavior is separate from the typed fluent interface.
     virtual void moveToImpl(const Point& loc, double durationSeconds, EasingFunc easing);
+    void moveByImpl(const Offset& delta, double durationSeconds, EasingFunc easing);
     virtual void resizeToImpl(float width, float height, double durationSeconds, EasingFunc easing);
     virtual void cancelScheduleImpl();
     virtual void rotateToImpl(float radiansRotation, double durationSeconds, EasingFunc easing, int direction);
@@ -304,7 +414,7 @@ protected:
         bool        resolveRotation = false;
         bool        spawnRelative = false; // preserve moveBy semantics when emitting a template
         bool        chained = false; // defer channel ownership until this operation starts
-        uint8       targetMode = 0; // 0 absolute, 1 relative offset, 2 relative factor
+        uint8       targetMode = animationMode_Assign; // Stored as a byte for snapshots.
         uint64      operation = 0;
         uint8       completion = 0; // owner-specific completion kind, two wire bits
         Animation(float* valPtr, float val, EasingFunc func, double delay, double duration)
@@ -333,6 +443,58 @@ protected:
             {};
 	};
 
+    friend class Troupe;
+    friend class AnimationScriptState;
+    friend struct ScriptExecution;
+    friend class AnimationScript;
+    struct ScriptValue { unsigned field; float target; };
+    bool recordScriptAnimation(std::initializer_list<ScriptValue> values, double seconds,
+        EasingFunc easing, uint8 mode = animationMode_Assign, int direction = rotationDirection_AsSpecified, uint8 completion = 0, uint32 requiredClass = 0);
+    bool recordScriptFlip(unsigned axis, bool value, bool toggle = false);
+    bool scriptWait(double seconds);
+    bool scriptAndThen();
+    bool advanceScripts(double seconds, bool beginUpdate = false);
+    void cancelScriptChannel(float* value);
+    virtual void animationChannelAcquired(float*) {}
+    // Owners with sampled sources can choose absolute or relative channels.
+    virtual bool prepareSampledAnimation(unsigned, uint8, float) { return false; }
+    virtual void validateSampledRequest(std::initializer_list<ScriptValue>,double,EasingFunc,uint8) const {}
+    virtual bool diminishSampled(float,double,EasingFunc) { return false; }
+    unsigned mSampledPreparationDepth = 0;
+    struct SampledPreparationGuard {
+        AnimatedBase& owner;
+        explicit SampledPreparationGuard(AnimatedBase& value):owner(value){++owner.mSampledPreparationDepth;}
+        ~SampledPreparationGuard(){--owner.mSampledPreparationDepth;}
+    };
+    bool animationChannelScheduled(const float*) const;
+    bool animationChannelSelected(const float*) const;
+    void stopAnimationChannel(const float*);
+    virtual uint32 scriptClassTag() const { return CLASSTAG_ANIMATED; }
+    mutable std::shared_ptr<AnimatedBase*> mLifetime;
+    std::array<float,5> mScriptFrameRates{};
+    ScriptExecution* mScriptAcquiring = nullptr;
+    bool hasScriptAnimations() const;
+    double scriptNextBoundary() const;
+    void validateScriptEdit() const;
+    void copyScriptStateFrom(const AnimatedBase& source);
+    void rebaseScriptState(const Offset& translation, float rotation);
+    uint32 scriptSerializedSize(ISerializer*) const;
+    void serializeScripts(ISerializer*) const;
+    void deserializeScripts(IDeserializer*);
+    void cancelScripts();
+    void selectScriptOperand();
+    void selectNativeAnimation();
+    double scriptDependencyStart(uint32 id) const;
+    double scriptOwnerTime() const;
+    void enqueueScriptCompletion(unsigned field, float value, EasingFunc easing, double seconds, uint8 completion);
+    void validateScriptControl() const;
+    virtual void validateScriptRead() const;
+    void validateUnrecordedOperation(const char* name) const;
+    std::shared_ptr<AnimationScriptState> mScripts;
+    std::vector<std::weak_ptr<ScriptExecution*>> mExternalScriptExecutions;
+    std::array<double,5> mTroupeRateTime{};
+    std::vector<std::shared_ptr<AnimatedBase>> mSnapshotScriptObjects;
+
     double mDelaySeconds;
     bool   mSchedulePaused;
     bool   mAppendAnimation = false;
@@ -349,7 +511,7 @@ protected:
     void deserializeTweens(IDeserializer*);
     virtual void cancelAnimation(float* value);
     void scheduleAnimation(float* value, float target, double seconds, EasingFunc easing);
-    void beginAnimationRequest() { ++mAnimationOperation; }
+    void beginAnimationRequest() { ++mAnimationOperation; selectNativeAnimation(); }
     void finishAnimationRequest() { mDelaySeconds = 0; mAppendAnimation = false; mWaitPending = false; }
     void prepareAnimation(float* value) { if (!mAppendAnimation) cancelAnimation(value); }
     void setRelativeAnimationTargets(uint8 mode);
@@ -389,12 +551,12 @@ protected:
 
 // bounds
 inline Rect
-AnimatedBase::getBoundingBox() const {
+AnimatedBase::getBoundingBox() const { validateScriptRead();
 	return getRotatedBounds().getBounds();
 }
 
 inline RotatedRect
-AnimatedBase::getRotatedBounds() const {
+AnimatedBase::getRotatedBounds() const { validateScriptRead();
 	Rect r(std::abs(mWidth * mScaleX), std::abs(mHeight * mScaleY));
 	r.center(mLocation);
 	RotatedRect rr(r, mFacing, mCenterOffset);
@@ -405,6 +567,7 @@ AnimatedBase::getRotatedBounds() const {
 // current location in container's coordinate system
 inline AnimatedBase&
 AnimatedBase::setLocation(const Point& loc) {
+    if (recordScriptAnimation({{animationChannel_LocationX,loc.x},{animationChannel_LocationY,loc.y}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     validateTransformEdit();
 	cancelAnimation(&mLocation.x); cancelAnimation(&mLocation.y);
@@ -416,7 +579,7 @@ AnimatedBase::setLocation(const Point& loc) {
 }
 
 inline Point
-AnimatedBase::getLocation() const {
+AnimatedBase::getLocation() const { validateScriptRead();
 	return mLocation;
 }
 
@@ -440,7 +603,13 @@ AnimatedBase::moveBy(float deltaX, float deltaY) {
 
 inline AnimatedBase&
 AnimatedBase::moveBy(const Offset& delta) {
-    setLocation(getLocation()+delta);
+    if (recordScriptAnimation({{animationChannel_LocationX,delta.x},{animationChannel_LocationY,delta.y}}, 0, linearTween, animationMode_Add)) return *this;
+    validateImmediateOperation();
+    validateTransformEdit();
+    if (delta.x != 0) cancelAnimation(&mLocation.x);
+    if (delta.y != 0) cancelAnimation(&mLocation.y);
+    mLocation += delta;
+    locationChanged(delta);
     return *this;
 }
 
@@ -459,14 +628,16 @@ AnimatedBase::moveBy(float deltaX, float deltaY, double durationSeconds, EasingF
 
 inline AnimatedBase&
 AnimatedBase::moveBy(const Offset& delta, double durationSeconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_LocationX,delta.x},{animationChannel_LocationY,delta.y}}, durationSeconds, easing, animationMode_Add)) return *this;
     const bool relative = mAppendAnimation;
-    moveTo(relative ? Point(delta.x, delta.y) : mLocation + delta, durationSeconds, easing);
-    if (relative) setRelativeAnimationTargets(1);
+    moveByImpl(delta, durationSeconds, easing);
+    if (relative) setRelativeAnimationTargets(animationMode_Add);
     else for (auto& a : mAnimations) if (a.operation == mAnimationOperation) a.spawnRelative = true;
     return *this;
 }
 
 inline AnimatedBase& AnimatedBase::stopMovement() {
+    if (recordScriptAnimation({{animationChannel_MovementX,0},{animationChannel_MovementY,0}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     cancelAnimation(&mLocation.x); cancelAnimation(&mLocation.y);
     return setMovement(0, 0);
@@ -475,6 +646,7 @@ inline AnimatedBase& AnimatedBase::stopMovement() {
 // change in size
 inline AnimatedBase&
 AnimatedBase::setSize(float width, float height) {
+    if (recordScriptAnimation({{animationChannel_Width,width},{animationChannel_Height,height}}, 0, linearTween)) return *this;
 	setWidth(width);
 	setHeight(height);
 	return *this;
@@ -483,6 +655,7 @@ AnimatedBase::setSize(float width, float height) {
 
 inline AnimatedBase&
 AnimatedBase::setHeight(float height) {
+    if (recordScriptAnimation({{animationChannel_Height,height}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     validateTransformEdit();
 	cancelAnimation(&mHeight);
@@ -495,6 +668,7 @@ AnimatedBase::setHeight(float height) {
 
 inline AnimatedBase&
 AnimatedBase::setWidth(float width) {
+    if (recordScriptAnimation({{animationChannel_Width,width}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     validateTransformEdit();
 	cancelAnimation(&mWidth);
@@ -505,12 +679,12 @@ AnimatedBase::setWidth(float width) {
 }
 
 inline float
-AnimatedBase::getHeight() const {
+AnimatedBase::getHeight() const { validateScriptRead();
 	return mHeight;
 }
 
 inline float
-AnimatedBase::getWidth() const {
+AnimatedBase::getWidth() const { validateScriptRead();
 	return mWidth;
 }
 
@@ -523,6 +697,7 @@ AnimatedBase::grow(float factor) {
 
 inline AnimatedBase&
 AnimatedBase::stretch(float widthFactor, float heightFactor) {
+    if (recordScriptAnimation({{animationChannel_Width,widthFactor},{animationChannel_Height,heightFactor}}, 0, linearTween, animationMode_Multiply)) return *this;
 	return setSize(mWidth * widthFactor, mHeight * heightFactor);
 }
 
@@ -544,6 +719,7 @@ AnimatedBase::stopGrowing() {
 
 inline AnimatedBase&
 AnimatedBase::stopStretching() {
+    if (recordScriptAnimation({{animationChannel_StretchingWidth,0},{animationChannel_StretchingHeight,0}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     cancelAnimation(&mWidth); cancelAnimation(&mHeight);
     cancelAnimation(&mDeltaWidthPerMs); cancelAnimation(&mDeltaHeightPerMs);
@@ -556,9 +732,11 @@ AnimatedBase::stopStretching() {
 // animate change in size over time, relative to current size
 inline AnimatedBase&
 AnimatedBase::resizeBy(float deltaWidth, float deltaHeight, double durationSeconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_Width,deltaWidth},{animationChannel_Height,deltaHeight}}, durationSeconds, easing, animationMode_Add)) return *this;
+    SampledPreparationGuard sampled(*this);
     const bool relative = mAppendAnimation;
     resizeTo(relative ? deltaWidth : mWidth + deltaWidth, relative ? deltaHeight : mHeight + deltaHeight, durationSeconds, easing);
-    if (relative) setRelativeAnimationTargets(1);
+    if (relative) setRelativeAnimationTargets(animationMode_Add);
     return *this;
 }
 
@@ -572,15 +750,18 @@ AnimatedBase::grow(float factor, double durationSeconds, EasingFunc easing) {
  // from current size
 inline AnimatedBase&
 AnimatedBase::stretch(float widthFactor, float heightFactor, double durationSeconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_Width,widthFactor},{animationChannel_Height,heightFactor}}, durationSeconds, easing, animationMode_Multiply)) return *this;
+    SampledPreparationGuard sampled(*this);
     const bool relative = mAppendAnimation;
     resizeTo(relative ? widthFactor : mWidth * widthFactor, relative ? heightFactor : mHeight * heightFactor, durationSeconds, easing);
-    if (relative) setRelativeAnimationTargets(2);
+    if (relative) setRelativeAnimationTargets(animationMode_Multiply);
     return *this;
 }
 
 // rotation clockwise is postive, counter-clockwise negative, around centerpoint, in radians
 inline AnimatedBase&
 AnimatedBase::rotateBy(float radians) {
+    if (recordScriptAnimation({{animationChannel_Facing,radians}}, 0, linearTween, animationMode_Add)) return *this;
 	setRotation(mFacing + radians);
 	return *this;
 }
@@ -592,33 +773,36 @@ AnimatedBase::rotateTo(float radiansRotation) {
 }
 
 inline float
-AnimatedBase::getRotation() const {
+AnimatedBase::getRotation() const { validateScriptRead();
 	return mFacing;
 }
 
 inline AnimatedBase&
 AnimatedBase::flipX() {
+    if (recordScriptFlip(animationFlipAxis_X,false,true)) return *this;
 	return setFlipX(!mFlipX);
 }
 
 inline AnimatedBase&
 AnimatedBase::flipY() {
+    if (recordScriptFlip(animationFlipAxis_Y,false,true)) return *this;
 	return setFlipY(!mFlipY);
 }
 
 inline bool
-AnimatedBase::isFlippedX() const {
+AnimatedBase::isFlippedX() const { validateScriptRead();
 	return mFlipX;
 }
 
 inline bool
-AnimatedBase::isFlippedY() const {
+AnimatedBase::isFlippedY() const { validateScriptRead();
 	return mFlipY;
 }
 
 
 inline AnimatedBase&
 AnimatedBase::setCenterOffset(const Offset& offset) {
+    if (recordScriptAnimation({{animationChannel_CenterOffsetX,offset.x},{animationChannel_CenterOffsetY,offset.y}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     validateTransformEdit();
     cancelAnimation(&mCenterOffset.x); cancelAnimation(&mCenterOffset.y);
@@ -630,12 +814,13 @@ AnimatedBase::setCenterOffset(const Offset& offset) {
 
 
 inline Offset
-AnimatedBase::getCenterOffset() const {
+AnimatedBase::getCenterOffset() const { validateScriptRead();
 	return mCenterOffset;
 }
 
 inline AnimatedBase&
 AnimatedBase::stopSpinning() {
+    if (recordScriptAnimation({{animationChannel_Spinning,0}}, 0, linearTween)) return *this;
     validateImmediateOperation();
     cancelAnimation(&mFacing); cancelAnimation(&mDeltaFacingPerMs);
 	mDeltaFacingPerMs = 0.0f;
@@ -657,14 +842,17 @@ AnimatedBase::changeCenterOffsetBy(float deltaXOffset, float deltaYOffset, doubl
 
 inline AnimatedBase&
 AnimatedBase::changeCenterOffsetBy(const Offset& offset, double durationSeconds, EasingFunc easing) {
+    if (recordScriptAnimation({{animationChannel_CenterOffsetX,offset.x},{animationChannel_CenterOffsetY,offset.y}}, durationSeconds, easing, animationMode_Add)) return *this;
+    SampledPreparationGuard sampled(*this);
     const bool relative = mAppendAnimation;
     changeCenterOffsetTo(relative ? offset : mCenterOffset + offset, durationSeconds, easing);
-    if (relative) setRelativeAnimationTargets(1);
+    if (relative) setRelativeAnimationTargets(animationMode_Add);
     return *this;
 }
 
 inline AnimatedBase&
 AnimatedBase::wait(double durationSeconds) {
+    if (scriptWait(durationSeconds)) return *this;
     if (!std::isfinite(durationSeconds) || durationSeconds < 0)
         throw std::invalid_argument("wait requires finite nonnegative seconds");
     mDelaySeconds = durationSeconds;
@@ -675,9 +863,13 @@ AnimatedBase::wait(double durationSeconds) {
 
 
 inline AnimatedBase& AnimatedBase::setLocation(float x, float y) { return setLocation(Point(x, y)); }
-inline Offset AnimatedBase::getSize() const { return Offset(mWidth, mHeight); }
+inline Offset AnimatedBase::getSize() const { validateScriptRead(); return Offset(mWidth, mHeight); }
 inline AnimatedBase& AnimatedBase::setSize(const Offset& size) { return setSize(size.x, size.y); }
-inline AnimatedBase& AnimatedBase::resizeBy(float width, float height) { return setSize(mWidth + width, mHeight + height); }
+inline AnimatedBase& AnimatedBase::resizeBy(float width, float height) {
+    if (recordScriptAnimation({{animationChannel_Width,width},{animationChannel_Height,height}}, 0, linearTween, animationMode_Add)) return *this;
+    SampledPreparationGuard sampled(*this);
+    return setSize(mWidth + width, mHeight + height);
+}
 inline AnimatedBase& AnimatedBase::changeGrowingTo(float rate, double seconds, EasingFunc easing) {
     return changeStretchingTo(rate, rate, seconds, easing);
 }
@@ -701,6 +893,39 @@ protected:
     Animated() requires (!std::is_void_v<T>) = default;
 public:
     ~Animated() override = default;
+    Self& playScript(const std::string& name) { Base::playScript(name); return static_cast<Self&>(*this); }
+    Self& batch() { Base::batch(); return static_cast<Self&>(*this); }
+    Self& endBatch() { Base::endBatch(); return static_cast<Self&>(*this); }
+    Self& series() { Base::series(); return static_cast<Self&>(*this); }
+    Self& endSeries() { Base::endSeries(); return static_cast<Self&>(*this); }
+    Self& andAlso() { Base::andAlso(); return static_cast<Self&>(*this); }
+    Self& stagger(double intervalSeconds) { Base::stagger(intervalSeconds); return static_cast<Self&>(*this); }
+    Self& mark(const std::string& name, bool saveState = true) { Base::mark(name, saveState); return static_cast<Self&>(*this); }
+    Self& jumpToMark(const std::string& name, bool restoreState = true) { Base::jumpToMark(name, restoreState); return static_cast<Self&>(*this); }
+    Self& on(const std::string& event, AnimationEventHandler handler) { Base::on(event, std::move(handler)); return static_cast<Self&>(*this); }
+    Self& triggerEvent(const std::string& name) { Base::triggerEvent(name); return static_cast<Self&>(*this); }
+    Self& onStarted(AnimationEventHandler handler) { Base::onStarted(std::move(handler)); return static_cast<Self&>(*this); }
+    Self& onFinished(AnimationEventHandler handler) { Base::onFinished(std::move(handler)); return static_cast<Self&>(*this); }
+    Self& onScriptFinished(AnimationEventHandler handler) { Base::onScriptFinished(std::move(handler)); return static_cast<Self&>(*this); }
+    Self& onMark(AnimationEventHandler handler) { Base::onMark(std::move(handler)); return static_cast<Self&>(*this); }
+    Self& onYoyo(AnimationEventHandler handler) { Base::onYoyo(std::move(handler)); return static_cast<Self&>(*this); }
+    Self& onRepeat(AnimationEventHandler handler) { Base::onRepeat(std::move(handler)); return static_cast<Self&>(*this); }
+    Self& onUntilFired(AnimationEventHandler handler) { Base::onUntilFired(std::move(handler)); return static_cast<Self&>(*this); }
+    Self& when(AnimationEvaluator evaluator) { Base::when(std::move(evaluator)); return static_cast<Self&>(*this); }
+    Self& otherwise() { Base::otherwise(); return static_cast<Self&>(*this); }
+    Self& endWhen() { Base::endWhen(); return static_cast<Self&>(*this); }
+    Self& endOtherwise() { Base::endOtherwise(); return static_cast<Self&>(*this); }
+    Self& until(AnimationEvaluator evaluator) { Base::until(std::move(evaluator)); return static_cast<Self&>(*this); }
+    Self& yoyo() { Base::yoyo(); return static_cast<Self&>(*this); }
+    Self& repeat(int additionalExecutions = -1) { Base::repeat(additionalExecutions); return static_cast<Self&>(*this); }
+    Self& diminish(float factor, double seconds, EasingFunc easing = linearTween) { Base::diminish(factor, seconds, easing); return static_cast<Self&>(*this); }
+    Self& increase(float factor, double seconds, EasingFunc easing = linearTween) { Base::increase(factor, seconds, easing); return static_cast<Self&>(*this); }
+    Self& slowDown(float factor, double seconds, EasingFunc easing = linearTween) { Base::slowDown(factor, seconds, easing); return static_cast<Self&>(*this); }
+    Self& speedUp(float factor, double seconds, EasingFunc easing = linearTween) { Base::speedUp(factor, seconds, easing); return static_cast<Self&>(*this); }
+    Self& stopIt() { Base::stopIt(); return static_cast<Self&>(*this); }
+    Self& restartIt() { Base::restartIt(); return static_cast<Self&>(*this); }
+    Self& pauseIt() { Base::pauseIt(); return static_cast<Self&>(*this); }
+    Self& resumeIt() { Base::resumeIt(); return static_cast<Self&>(*this); }
     /// @copydoc AnimatedBase::setLocation(const Point&)
     Self& setLocation(const Point& loc) {
         Base::setLocation(loc);
@@ -1031,6 +1256,62 @@ public:
         Base::clearAnimationHelpers();
         return static_cast<Self&>(*this);
     }
+};
+
+/** Evaluators receive the borrowed target and the operand's local elapsed seconds. */
+struct AnimationEvaluationContext {
+    AnimatedBase& target;
+    double elapsedSeconds;
+};
+
+/** Lifecycle notification. Target is borrowed; handlers run after scheduler publication. */
+struct AnimationEvent {
+    AnimatedBase& target;
+    std::string type, scriptName, markName;
+    double elapsedSeconds;
+    unsigned iteration;
+    bool reverse;
+    std::string operationName;
+};
+
+/** Animate a collection of targets with one script clock. Members keep their
+ * rendering, physics and ordinary update owners. Membership is borrowed and
+ * expired members are skipped. Nested collections are flattened in insertion order.
+ * Snapshots serialize members as shared objects; restored members are retained.
+ */
+class Troupe : public Animated<Troupe> {
+public:
+    Troupe() = default;
+    #include "pdg/sys/animation-troupe-methods.inc"
+    uint32 getMyClassTag() const override { return CLASSTAG_TROUPE; }
+    Troupe& add(AnimatedBase& member);
+    Troupe& remove(AnimatedBase& member);
+    Troupe& clear();
+    bool contains(const AnimatedBase& member) const;
+    unsigned getMemberCount() const;
+    uint32 getSerializedSize(ISerializer* serializer) const override;
+    void serialize(ISerializer* serializer) const override;
+    void deserialize(IDeserializer* deserializer) override;
+    std::vector<AnimatedBase*> animationTargets() const override;
+    bool isTroupe() const override { return true; }
+private:
+    std::vector<std::weak_ptr<AnimatedBase*>> mMembers;
+    std::vector<std::shared_ptr<AnimatedBase>> mRestoredMembers;
+};
+
+/** Native command recorder. defineScript() retains builders for the library's lifetime. */
+class AnimationScript : public Animated<AnimationScript> {
+public:
+#ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
+    SCRIPT_OBJECT_REF mAnimationScriptScriptObj{};
+#endif
+    #include "pdg/sys/animation-script-methods.inc"
+    AnimationScript& endScript();
+    const std::string& getName() const { return mName; }
+private:
+    friend class AnimatedBase;
+    explicit AnimationScript(std::string name);
+    std::string mName;
 };
 
 } // end namespace pdg

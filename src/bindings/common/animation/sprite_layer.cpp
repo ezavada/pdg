@@ -27,6 +27,8 @@
 
 
 namespace pdg {
+
+#include "layer_lifecycle_macros.h"
     
 
 // ========================================================================================
@@ -35,13 +37,11 @@ namespace pdg {
 
 
 WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer", 
-    OBJECT_SAVE(cppObj->mEventEmitterScriptObj, obj); 
-    OBJECT_SAVE(cppObj->mAnimatedScriptObj, obj);
+    OBJECT_SAVE(cppObj->mEventEmitterScriptObj, obj);
     OBJECT_SAVE(cppObj->mSpriteLayerScriptObj, obj) )
       EXPORT_CLASS_SYMBOLS("SpriteLayer", SpriteLayer, , ,
           // method section
           HAS_EMITTER_METHODS(SpriteLayer)
-          HAS_ANIMATED_METHODS(SpriteLayer)
           HAS_SERIALIZABLE_METHODS(SpriteLayer)
           HAS_SPRITE_LAYER_METHODS(SpriteLayer)
         %#ifndef PDG_NO_GUI  CR
@@ -58,38 +58,11 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
             HAS_METHOD(SpriteLayer, "removeCharacterMapFromAll", RemoveCharacterMapFromAll)
             HAS_METHOD(SpriteLayer, "enableSpriterEvents", EnableSpriterEvents)
         %#endif CR
-          HAS_METHOD(SpriteLayer, "on", On)
-          HAS_METHOD(SpriteLayer, "onCollideSprite", OnCollideSprite)
-          HAS_METHOD(SpriteLayer, "onCollideWall", OnCollideWall)
-          HAS_METHOD(SpriteLayer, "onOffscreen", OnOffscreen)
-          HAS_METHOD(SpriteLayer, "onOnscreen", OnOnscreen)
-          HAS_METHOD(SpriteLayer, "onExitLayer", OnExitLayer)
-          HAS_METHOD(SpriteLayer, "onAnimationLoop", OnAnimationLoop)
-          HAS_METHOD(SpriteLayer, "onAnimationEnd", OnAnimationEnd)
-          HAS_METHOD(SpriteLayer, "onFadeComplete", OnFadeComplete)
-          HAS_METHOD(SpriteLayer, "onFadeInComplete", OnFadeInComplete)
-          HAS_METHOD(SpriteLayer, "onFadeOutComplete", OnFadeOutComplete)
-          HAS_METHOD(SpriteLayer, "onMouseEnter", OnMouseEnter)
-          HAS_METHOD(SpriteLayer, "onMouseLeave", OnMouseLeave)
-          HAS_METHOD(SpriteLayer, "onMouseDown", OnMouseDown)
-          HAS_METHOD(SpriteLayer, "onMouseUp", OnMouseUp)
-          HAS_METHOD(SpriteLayer, "onMouseClick", OnMouseClick)
-          HAS_METHOD(SpriteLayer, "onErasePort", OnErasePort)
-          HAS_METHOD(SpriteLayer, "onPreDrawLayer", OnPreDrawLayer)
-          HAS_METHOD(SpriteLayer, "onPostDrawLayer", OnPostDrawLayer)
-          HAS_METHOD(SpriteLayer, "onDrawPortComplete", OnDrawPortComplete)
-          HAS_METHOD(SpriteLayer, "onAnimationStart", OnAnimationStart)
-          HAS_METHOD(SpriteLayer, "onPreAnimateLayer", OnPreAnimateLayer)
-          HAS_METHOD(SpriteLayer, "onPostAnimateLayer", OnPostAnimateLayer)
-          HAS_METHOD(SpriteLayer, "onAnimationComplete", OnAnimationComplete)
-          HAS_METHOD(SpriteLayer, "onZoomComplete", OnZoomComplete)
-          HAS_METHOD(SpriteLayer, "onLayerFadeInComplete", OnLayerFadeInComplete)
-          HAS_METHOD(SpriteLayer, "onLayerFadeOutComplete", OnLayerFadeOutComplete)
+          HAS_SPRITE_LAYER_EVENT_METHODS(SpriteLayer)
       );
       END
       
   EMITTER_BASE_CLASS_IMPL(SpriteLayer)
-  ANIMATED_BASE_CLASS_IMPL(SpriteLayer)
   SERIALIZABLE_BASE_CLASS_IMPL(SpriteLayer)
   %#ifndef PDG_NO_GUI
   SPRITE_LAYER_BASE_CLASS_GUI_IMPL(SpriteLayer)
@@ -107,7 +80,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
   // 	END
   %#ifdef PDG_SPRITER_SUPPORT
   METHOD_IMPL(SpriteLayer, CreateSpriteFromSpriterFile)
-      METHOD_SIGNATURE("", [object Sprite], 1, (string inFileName, string inEntityName = null)); 
+      METHOD_SIGNATURE("", [object Sprite*], 1, (string inFileName, string inEntityName = null));
       REQUIRE_ARG_MIN_COUNT(1);
       REQUIRE_STRING_ARG(1, inFileName);
       const char* inEntityName = 0;
@@ -119,7 +92,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       RETURN_NEW_CPP_OBJECT(sprite, Sprite);
       END
   METHOD_IMPL(SpriteLayer, CreateSpriteFromSpriterEntity)
-      METHOD_SIGNATURE("", [object Sprite], 1, (string inEntityName)); 
+      METHOD_SIGNATURE("", [object Sprite*], 1, (string inEntityName));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_STRING_ARG(1, inEntityName);
       Sprite* sprite = self->createSpriteFromSpriterEntity(inEntityName);
@@ -148,7 +121,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
 
   %#endif
   METHOD_IMPL(SpriteLayer, On)
-      METHOD_SIGNATURE("", [object IEventHandler], 2, ([number int] eventCode, function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 2, ([number int] eventCode, function func));
       REQUIRE_ARG_COUNT(2);
       REQUIRE_INT32_ARG(1, eventCode);
       REQUIRE_FUNCTION_ARG(2, func);
@@ -170,7 +143,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
   
   // SpriteLayer convenience event methods
   METHOD_IMPL(SpriteLayer, OnCollideSprite)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -180,7 +153,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnCollideWall)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -190,7 +163,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnOffscreen)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_Offscreen);
@@ -200,7 +173,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnOnscreen)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_Onscreen);
@@ -210,7 +183,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnExitLayer)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_ExitLayer);
@@ -220,7 +193,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnAnimationLoop)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_AnimationLoop);
@@ -230,7 +203,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnAnimationEnd)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_AnimationEnd);
@@ -240,7 +213,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
     METHOD_IMPL(SpriteLayer, OnFadeComplete)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeComplete);
@@ -250,7 +223,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
 
   METHOD_IMPL(SpriteLayer, OnFadeInComplete)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeInComplete);
@@ -260,7 +233,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
 
   METHOD_IMPL(SpriteLayer, OnFadeOutComplete)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeOutComplete);
@@ -270,7 +243,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnMouseEnter)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseEnter);
@@ -280,7 +253,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnMouseLeave)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseLeave);
@@ -290,7 +263,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnMouseDown)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseDown);
@@ -300,7 +273,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnMouseUp)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseUp);
@@ -310,7 +283,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnMouseClick)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseClick);
@@ -320,7 +293,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnErasePort)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_ErasePort);
@@ -330,7 +303,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnPreDrawLayer)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_PreDrawLayer);
@@ -340,7 +313,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnPostDrawLayer)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_PostDrawLayer);
@@ -350,7 +323,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnDrawPortComplete)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_DrawPortComplete);
@@ -360,7 +333,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnAnimationStart)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_AnimationStart);
@@ -370,7 +343,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnPreAnimateLayer)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_PreAnimateLayer);
@@ -380,7 +353,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnPostAnimateLayer)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_PostAnimateLayer);
@@ -390,7 +363,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnAnimationComplete)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_AnimationComplete);
@@ -398,19 +371,9 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       self->addHandler(handler, pdg::eventType_SpriteLayer);
       RETURN_CPP_OBJECT(handler, IEventHandler);
       END
-  
-  METHOD_IMPL(SpriteLayer, OnZoomComplete)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
-      REQUIRE_ARG_COUNT(1);
-      REQUIRE_FUNCTION_ARG(1, func);
-      ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_ZoomComplete);
-      if (!handler) RETURN_NULL;
-      self->addHandler(handler, pdg::eventType_SpriteLayer);
-      RETURN_CPP_OBJECT(handler, IEventHandler);
-      END
-  
+
   METHOD_IMPL(SpriteLayer, OnLayerFadeInComplete)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_FadeInComplete);
@@ -420,7 +383,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   METHOD_IMPL(SpriteLayer, OnLayerFadeOutComplete)
-      METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+      METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_FUNCTION_ARG(1, func);
       ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_FadeOutComplete);
@@ -429,7 +392,18 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       RETURN_CPP_OBJECT(handler, IEventHandler);
       END
   
-  CLEANUP_IMPL(SpriteLayer)
+  %#ifdef PDG_USING_JAVASCRIPT_CORE
+void CleanupSpriteLayerScriptObject(JSObjectRef obj) { if(obj)JSObjectSetPrivate(obj,nullptr); }
+%#else
+void CleanupSpriteLayerScriptObject(v8::UniquePersistent<v8::Object>& obj) {
+    if(!obj.IsEmpty()) {
+        auto* isolate=v8::Isolate::GetCurrent();
+        auto value=v8::Local<v8::Object>::New(isolate,obj);
+        if(auto* wrapper=dynamic_cast<SpriteLayerWrap*>(v8script::safe_unwrap_object_wrap_or_prototype(isolate,value)))wrapper->forgetCppObject();
+        obj.Reset();
+    }
+}
+%#endif
   
   CPP_MANAGED_CONSTRUCTOR_IMPL(SpriteLayer)
     %#ifndef PDG_NO_GUI
@@ -441,7 +415,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   FUNCTION_IMPL(CreateSpriteLayer)
-      METHOD_SIGNATURE("", [object SpriteLayer], 1, ([object Port] port = null)); 
+      METHOD_SIGNATURE("", [object SpriteLayer*], 1, ([object Port*] port = null));
     %#ifndef PDG_NO_GUI
       OPTIONAL_CPP_OBJECT_ARG(1, port, Port, 0);
        SpriteLayer* layer = createSpriteLayer(port);
@@ -452,7 +426,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   FUNCTION_IMPL(CreateSpriteLayerFromSpriterFile)
-      METHOD_SIGNATURE("", [object SpriteLayer], 1, (string layerSpriterFilename, boolean addSprites = true, [object Port] port = null)); 
+      METHOD_SIGNATURE("", [object SpriteLayer*], 1, (string layerSpriterFilename, boolean addSprites = true, [object Port*] port = null));
       REQUIRE_ARG_MIN_COUNT(1);
       REQUIRE_STRING_ARG(1, layerSpriterFilename);
       OPTIONAL_BOOL_ARG(2, addSprites, true);
@@ -466,7 +440,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   FUNCTION_IMPL(CleanupLayer)
-      METHOD_SIGNATURE("", undefined, 1, ([object SpriteLayer] layer)); 
+      METHOD_SIGNATURE("", undefined, 1, ([object SpriteLayer*] layer));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_CPP_OBJECT_ARG(1, layer, SpriteLayer);
       cleanupLayer(layer);
@@ -474,7 +448,7 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
       END
   
   FUNCTION_IMPL(CreateTileLayer)
-      METHOD_SIGNATURE("", [object TileLayer], 1, ([object Port] port = null)); 
+      METHOD_SIGNATURE("", [object TileLayer*], 1, ([object Port*] port = null));
     %#ifndef PDG_NO_GUI
       OPTIONAL_CPP_OBJECT_ARG(1, port, Port, 0);
        TileLayer* layer = createTileLayer(port);
@@ -488,3 +462,71 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(SpriteLayer, "createSpriteLayer",
 
 } // pdg namespace
 
+
+// @pdg-member {"name":"SpriteLayer.hasSprite","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"SpriteLayer.setUseChipmunkPhysics","native_binding":{"binding_name":"_setUseChipmunkPhysics","browser":{"guard":"PDG_USE_CHIPMUNK_PHYSICS"}}}
+
+/* @pdg-class
+{
+  "name": "SpriteLayer",
+  "native_binding": {
+    "browser": {
+      "generate": true,
+      "base": null,
+      "support_bindings": [
+        {
+          "name": "_addNativeEventBridge",
+          "symbol": "pdg::emscriptenSpriteLayerAddEventBridge"
+        }
+      ],
+      "defaults": {
+        "exceptions": "javascript",
+        "arguments": "idl"
+      },
+      "remember_receiver": true,
+      "events": {
+        "extends": "Sprite",
+        "families": [
+          {
+            "event": "eventType_SpriteLayer",
+            "field": "action",
+            "methods": {
+              "onErasePort": 40,
+              "onPreDrawLayer": 41,
+              "onPostDrawLayer": 42,
+              "onDrawPortComplete": 43,
+              "onAnimationStart": 44,
+              "onPreAnimateLayer": 45,
+              "onPostAnimateLayer": 46,
+              "onAnimationComplete": 47,
+              "onLayerFadeInComplete": 49,
+              "onLayerFadeOutComplete": 50
+            }
+          }
+        ],
+        "selector": "on"
+      },
+      "pointer_policy": "borrowed"
+    }
+  }
+}
+*/
+
+// @pdg-member {"name":"SpriteLayer.setSpritePort","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"SpriteLayer.getSpritePort","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"SpriteLayer.setGravity","native_binding":{"browser":{"guard":["PDG_SPRITER_SUPPORT","PDG_USE_CHIPMUNK_PHYSICS"]},"binding_name":"_setGravity"}}
+
+// @pdg-member {"name":"SpriteLayer.setDamping","native_binding":{"browser":{"guard":["PDG_SPRITER_SUPPORT","PDG_USE_CHIPMUNK_PHYSICS"]}}}
+
+// @pdg-member {"name":"SpriteLayer.applyCharacterMapToAll","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenLayerApplyCharacterMap"}}
+
+// @pdg-member {"name":"SpriteLayer.removeCharacterMapFromAll","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenLayerRemoveCharacterMap"}}
+
+// @pdg-member {"name":"SpriteLayer.enableSpriterEvents","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// Spriter factories retain custom loading and sprite-cleanup bookkeeping.
+// @pdg-member {"name":"SpriteLayer.createSpriteFromSpriterEntity","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"SpriteLayer.createSpriteFromSpriterFile","native_binding":{"browser":{"generate":false}}}

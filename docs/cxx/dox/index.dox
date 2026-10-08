@@ -22,7 +22,7 @@ This is the **C++ API reference** for the current source tree. Start with
 | Respond to input and engine notifications | pdg::IEventHandler, pdg::EventEmitter, pdg::EventManager, \ref Events |
 | Load resources, schedule work, or play audio | \ref Managers and \ref Sound |
 | Save or transmit structured state | pdg::ISerializable, pdg::Serializer, pdg::Deserializer, \ref Serialization |
-| Add simulation or native networking | \ref Physics and \ref Network |
+| Add simulation or native networking | \ref Physics and \ref Network; optional \ref native_network |
 
 \section cxx_model How an application fits together
 

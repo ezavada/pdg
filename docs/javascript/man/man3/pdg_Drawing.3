@@ -1,8 +1,8 @@
-.TH "Drawing" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Drawing" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-Drawing \- Container for drawing elements (lines, shapes, images) that can be rendered to a \fBPort\fP\&.  
+Drawing \- Container for drawing elements (lines, shapes, images, text) that can be rendered to a \fBPort\fP\&.  
 
 .SH SYNOPSIS
 .br
@@ -53,13 +53,13 @@ Drawing \- Container for drawing elements (lines, shapes, images) that can be re
 .br
 .RI "adds a spline element to the drawing "
 .ti -1c
+.RI "\fBElementRef\fP \fBaddText\fP (string text, \fBRect\fP rect, \fBAttributes\fP attrs)"
+.br
+.RI "Add editable text to a drawing\&. "
+.ti -1c
 .RI "\fBPoint\fP \fBcenterPoint\fP ()"
 .br
 .RI "returns the center point of the drawing "
-.ti -1c
-.RI "\fBdraw\fP (\fBPort\fP port)"
-.br
-.RI "draws the drawing to the specified port "
 .ti -1c
 .RI "boolean \fBempty\fP ()"
 .br
@@ -83,7 +83,7 @@ Drawing \- Container for drawing elements (lines, shapes, images) that can be re
 .in -1c
 .SH "Detailed Description"
 .PP 
-Container for drawing elements (lines, shapes, images) that can be rendered to a \fBPort\fP\&. 
+Container for drawing elements (lines, shapes, images, text) that can be rendered to a \fBPort\fP\&. 
 
 
 .PP
@@ -138,14 +138,63 @@ adds a rectangle element to the drawing
 
 .PP
 adds a spline element to the drawing 
+.SS "\fBElementRef\fP addText (string text, \fBRect\fP rect, \fBAttributes\fP attrs)"
+
+.PP
+Add editable text to a drawing\&. Copies the text and attributes\&. Use font(), textSize(), textStyle(), fillColor() and fillOpacity() on the attributes to style it, as with \fBPort\&.drawText()\fP\&. Newlines are supported\&. The rectangle supplies the local layout bounds and four editable corner control points; hit testing uses that rectangle rather than glyph outlines\&. Element and parent transforms and opacities apply normally, including live attributes\&.
+
+.PP
+Text and styling are saved with drawing artwork in Part/Sprite snapshots\&. \fBFont\fP names and scaling factors are saved; font files are not embedded\&. The receiving system must provide the font for the same appearance\&. Older drawing snapshots remain readable\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fItext\fP Text string, including the empty string; at most 1 MiB in UTF-8\&. 
+.br
+\fIrect\fP Finite rectangle with right >= left and bottom >= top, in drawing coordinates\&. 
+.br
+\fIattrs\fP Text styling and transformation attributes\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An \fBElementRef\fP of type \fBpdg\&.type_Text\fP for later editing\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Rendering requires a graphics build\&. In this example, sprite is an existing \fBSprite\fP; serializing it also saves the drawing assigned to its label \fBPart\fP\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+var drawing = pdg\&.createDrawing();
+var attrs = new pdg\&.Attributes()\&.font(pdg\&.gfx\&.createFont("Arial"))
+    \&.textSize(24)\&.textStyle(pdg\&.textStyle_Bold)\&.fillColor("white");
+var label = drawing\&.addText("Player 1", new pdg\&.Rect(0, 0, 180, 40), attrs);
+sprite\&.createPart("label")\&.setDrawing(drawing);
+label\&.setText("Player 2");
+var save = new pdg\&.Serializer();
+save\&.serialize_obj(sprite);
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBElementRef\&.getText()\fP, \fBElementRef\&.setText()\fP, \fBPart\&.setDrawing()\fP, \fBPort\&.drawText()\fP 
+.RE
+.PP
+
 .SS "\fBPoint\fP centerPoint ()"
 
 .PP
 returns the center point of the drawing 
-.SS "draw (\fBPort\fP port)"
-
-.PP
-draws the drawing to the specified port 
 .SS "boolean empty ()"
 
 .PP

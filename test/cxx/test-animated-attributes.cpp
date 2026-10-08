@@ -199,7 +199,24 @@ void preservedLogicalSize() {
         }
     }
 }
+void recordedAppearance() {
+    AnimatedBase::defineScript("attribute-script")
+        .series().changeFillOpacity(0.,1.,linearTween).lineThickness(3.).endSeries().endScript();
+    AnimatedAttributes<> target;
+    target.playScript("attribute-script"); target.animate(.5);
+    near(target.getFillOpacity(),.5,"recorded appearance interpolates on the script clock");
+    near(target.getLineThickness(),1,"deferred attribute setter waits for preceding operation");
+    target.animate(.5);
+    near(target.getFillOpacity(),0,"recorded appearance reaches target");
+    near(target.getLineThickness(),3,"deferred attribute setter applies on activation");
+    AnimatedAttributes<> live;
+    live.series().changeFillOpacity(0,1,linearTween).lineThickness(4).endSeries();
+    near(live.getLineThickness(),1,"live series records setters without side effects");
+    live.animate(1);
+    near(live.getLineThickness(),4,"live series plays deferred setter");
+}
 int main() { try {
+    recordedAppearance();
     preservedLogicalSize();
     fluentOwners();inheritedTransforms();
     composedTransforms();

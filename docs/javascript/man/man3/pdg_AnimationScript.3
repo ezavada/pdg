@@ -1,0 +1,1817 @@
+.TH "AnimationScript" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AnimationScript \- Library-owned recorder for reusable native animation commands\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.PP
+Inherits \fBAnimated\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAnimationScript\fP \fBambientLight\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBambientLight\fP (number colorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBambientLight\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBattachAnimationPhysicsPart\fP (\fBPart\fP part, \fBPart\fP parent=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBbindToAnimationBinding\fP (string name)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBbindToAnimationSocket\fP (string name)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBbindToBone\fP (number bone)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBblendMode\fP (number mode)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBbreakTrail\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeAmbientLight\fP (\fBColor\fP target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeAmbientLight\fP (number targetRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeAmbientLight\fP (string targetName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillColor\fP (\fBColor\fP target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillColor\fP (number targetRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillColor\fP (string targetName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endColorRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, \fBColor\fP endColor, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, number endColorRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, string endColorName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endColorRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillOpacity\fP (number target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, \fBColor\fP endColor, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, number endColorRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, string endColorName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, number centerColorRGBA, number radius, \fBColor\fP endColor, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, number centerColorRGBA, number radius, number endColorRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, number centerColorRGBA, number radius, string endColorName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, \fBColor\fP endColor, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, number endColorRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, string endColorName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeFrames\fP (number first, number last, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeLightOffset\fP (\fBOffset\fP target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeLineColor\fP (\fBColor\fP target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeLineColor\fP (number targetRGBA, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeLineColor\fP (string targetName, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeLineOpacity\fP (number target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeLineThickness\fP (number target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangePolarOffset\fP (\fBOffset\fP target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeRoundedCorners\fP (number target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeSkew\fP (number x, number y, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeSphereRotation\fP (number radians, number seconds, number easing=undefined, number direction=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeSubsection\fP (\fBRect\fP target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeTextSize\fP (number target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBchangeTransform\fP (\fBAffineTransform\fP target, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBclearAnimationPhysicsRoot\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBclearContent\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBclearIKLimits\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBclearIKTarget\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBclearTrail\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBclearViewBounds\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBclipOverflow\fP (boolean clip)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBcutTo\fP (\fBCamera\fP destination)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBdetachAnimationPhysicsPart\fP (\fBPart\fP part, boolean includeDescendants=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBdetachSprite\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBendScript\fP ()"
+.br
+.RI "Validate and seal this definition\&. "
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfadeIn\fP (number durationSeconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfadeIn\fP (number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfadeOut\fP (number durationSeconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfadeOut\fP (number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfadeTo\fP (number opacity, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfadeTo\fP (number targetOpacity, number durationSeconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillColor\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillColor\fP (number colorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillColor\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endColorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, number endColorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endColorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillOpacity\fP (number opacity)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, number endColorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerColorRGBA, number radius, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerColorRGBA, number radius, number endColorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerColorRGBA, number radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, number endColorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfitType\fP (number fit)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBflash\fP (number opacity, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfollow\fP (\fBAnimated\fP target)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBfont\fP (\fBFont\fP font)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBframe\fP (number frame)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBhide\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBlightOffset\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBlineColor\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBlineColor\fP (number colorRGBA)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBlineColor\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBlineOpacity\fP (number opacity)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBlineStyle\fP (number style)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBlineThickness\fP (number thickness)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBlumaFadeTo\fP (\fBCamera\fP destination, number seconds, \fBImage\fP mask=undefined, number softness=undefined, boolean darkFirst=undefined, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBmatchCutTo\fP (\fBCamera\fP destination, \fBCameraMatchCutOptions\fP options)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBmatchFadeTo\fP (\fBCamera\fP destination, \fBCameraMatchFadeOptions\fP options)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBmoveBehind\fP (\fBSprite\fP sprite)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBmoveInFrontOf\fP (\fBSprite\fP sprite)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBmoveToBack\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBmoveToFront\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBpolarOffset\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBroundedCorners\fP (number radius)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetAnimationPhysicsDriveSettings\fP (\fBAnimationPhysicsDriveSettings\fP settings)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetAnimationPhysicsDriveSettings\fP (\fBAnimationPhysicsDriveSettings\fP settings, number bone, boolean includeDescendants=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetAnimationPhysicsDriveSettings\fP (\fBAnimationPhysicsDriveSettings\fP settings, string bone, boolean includeDescendants=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetAnimationPhysicsMode\fP (number mode, number bone, boolean includeDescendants=undefined, number recoveryTime=undefined, number direction=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetAnimationPhysicsMode\fP (number mode, number recoveryTime=undefined, number direction=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetAnimationPhysicsMode\fP (number mode, string bone, boolean includeDescendants=undefined, number recoveryTime=undefined, number direction=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetAnimationPhysicsRoot\fP (number bone)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetAnimationPhysicsRoot\fP (string bone)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetDeadzone\fP (\fBRect\fP bounds)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetDrawing\fP (\fBDrawing\fP drawing)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetEmissionRate\fP (number particlesPerSecond)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetFollowOffset\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetFrame\fP (number frame)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetFrameCollisionMask\fP (\fBImage\fP frameImage, \fBImage\fP maskImage)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetIKDriveTarget\fP (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, number maxForce, number maxTorque, number space=undefined, number bendDirection=undefined, number influence=undefined, number frequency=undefined, number dampingRatio=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetIKLimits\fP (number minAngle, number maxAngle)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetIKLimits\fP (number minimum, number maximum)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetIKLimits\fP (\fBPhysicsConstraint\fP constraint)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetIKTarget\fP (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, number space=undefined, number bendDirection=undefined, number influence=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetImage\fP (\fBImage\fP image)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetImage\fP (\fBImage\fP image, \fBRect\fP localBounds)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetLifetime\fP (number seconds)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetLookAhead\fP (number seconds)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetMouseDetectMode\fP (number collisionType=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetOpacity\fP (number opacity)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetParentPart\fP (\fBPart\fP parent)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetParticleSpeed\fP (number minimum, number maximum)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetParticleSpeed\fP (number speed)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetParticleTemplate\fP (\fBParticle\fP particle)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetPixelSnapping\fP (boolean snap=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetSeed\fP (number seed)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetSmoothing\fP (number seconds)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetSpread\fP (number radians)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetTrail\fP (\fBParticleTrailOptions\fP options)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetTransform\fP (\fBAffineTransform\fP matrix)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetupPhysicsFromAnimationRig\fP (number totalMass, number unitsPerMeter=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetVelocityInheritance\fP (number fraction)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetViewBounds\fP (\fBRect\fP bounds)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetViewport\fP (\fBRect\fP viewport)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetWantsAnimEndEvents\fP (boolean wantsThem=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetWantsAnimLoopEvents\fP (boolean wantsThem=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetWantsClickEvents\fP (boolean wantsThem=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetWantsCollideWallEvents\fP (boolean wantsThem=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetWantsMouseOverEvents\fP (boolean wantsThem=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetWantsOffscreenEvents\fP (boolean wantsThem=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsetZoom\fP (number zoom)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBshow\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsphereRotation\fP (number rotation)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBstartEmitting\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBstopEmitting\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBstopFollowing\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBsubsection\fP (\fBRect\fP section)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBtextSize\fP (number size)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBtextStyle\fP (number style)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBtexture\fP (\fBImage\fP texture)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBtransform\fP (\fBAffineTransform\fP matrix)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBtransitionTo\fP (\fBCamera\fP destination, number seconds, number style=undefined, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBtranslation\fP (\fBOffset\fP offset)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBunbindFromBone\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBwhipPanTo\fP (\fBCamera\fP destination, number seconds, number style=undefined, number blur=undefined, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBzoom\fP (number factor, number seconds, number easing=undefined)"
+.br
+.ti -1c
+.RI "\fBAnimationScript\fP \fBzoomTo\fP (number zoom, number seconds, number easing=undefined)"
+.br
+.in -1c
+
+Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "\fBAnimated\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandAlso\fP ()"
+.br
+.RI "Join the following operand to the preceding parallel chain\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandThen\fP ()"
+.br
+.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
+.ti -1c
+.RI "boolean \fBanimate\fP (number deltaSeconds)"
+.br
+.RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBbatch\fP ()"
+.br
+.RI "Open an anonymous animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
+.br
+.RI "Discard scheduled animations and pending sequencing\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset by a delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate the rotation-center offset to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the growing rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the movement rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate independent scale to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the spin rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate by an additive delta\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Animate the stretching rate to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
+.br
+.RI "Retire all helpers on this object\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBdiminish\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Reduce the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendBatch\fP ()"
+.br
+.RI "Close and select the innermost anonymous block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendOtherwise\fP ()"
+.br
+.RI "Close a conditional with an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendSeries\fP ()"
+.br
+.RI "Close and select the innermost series\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendWhen\fP ()"
+.br
+.RI "Close a conditional without an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipX\fP ()"
+.br
+.RI "Toggle the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBflipY\fP ()"
+.br
+.RI "Toggle the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
+.br
+.RI "Read axis-aligned logical bounds\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
+.br
+.RI "Read the rotation-center offset\&. "
+.ti -1c
+.RI "number \fBgetHeight\fP ()"
+.br
+.RI "Read logical height\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.br
+.RI "Read the location in the container coordinate system\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.br
+.RI "Read the programmed movement rate\&. "
+.ti -1c
+.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
+.br
+.RI "Read rotated logical bounds\&. "
+.ti -1c
+.RI "number \fBgetRotation\fP ()"
+.br
+.RI "Read the current rotation in radians\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetScale\fP ()"
+.br
+.RI "Read independent transform scale\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetSize\fP ()"
+.br
+.RI "Read logical width and height\&. "
+.ti -1c
+.RI "number \fBgetSpin\fP ()"
+.br
+.RI "Read the programmed angular rate\&. "
+.ti -1c
+.RI "\fBOffset\fP \fBgetStretching\fP ()"
+.br
+.RI "Read logical width and height change rates\&. "
+.ti -1c
+.RI "number \fBgetWidth\fP ()"
+.br
+.RI "Read logical width\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by one factor\&. "
+.ti -1c
+.RI "boolean \fBhasScheduledAnimations\fP ()"
+.br
+.RI "Test whether animations are running or queued\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBincrease\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "boolean \fBisFlippedX\fP ()"
+.br
+.RI "Read the x reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisFlippedY\fP ()"
+.br
+.RI "Read the y reflection flag\&. "
+.ti -1c
+.RI "boolean \fBisSchedulePaused\fP ()"
+.br
+.RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBjumpToMark\fP (string name, boolean restoreState=true)"
+.br
+.RI "Continue execution at the operation following a mark\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmark\fP (string name, boolean saveState=true)"
+.br
+.RI "Create a named script location and optionally save state on arrival\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move by an offset\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Move to a location\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBon\fP (string event, function handler)"
+.br
+.RI "Observe a selected animation block's lifecycle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonFinished\fP (function handler)"
+.br
+.RI "Observe finished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonMark\fP (function handler)"
+.br
+.RI "Observe mark events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonRepeat\fP (function handler)"
+.br
+.RI "Observe repeat events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonScriptFinished\fP (function handler)"
+.br
+.RI "Observe scriptFinished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonStarted\fP (function handler)"
+.br
+.RI "Observe started events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonUntilFired\fP (function handler)"
+.br
+.RI "Observe untilFired events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonYoyo\fP (function handler)"
+.br
+.RI "Observe yoyo events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBotherwise\fP ()"
+.br
+.RI "Open the alternative of the innermost conditional\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseIt\fP ()"
+.br
+.RI "Pause the most recently selected animation element\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
+.br
+.RI "Pause scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBplayScript\fP (string name)"
+.br
+.RI "Instantiate a named animation script on this target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
+.br
+.RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP (int additionalExecutions)"
+.br
+.RI "Repeat the preceding block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Change logical size by additive deltas\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrestartIt\fP ()"
+.br
+.RI "Restart the most recently selected animation element from its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeIt\fP ()"
+.br
+.RI "Resume the most recently selected paused animation element\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
+.br
+.RI "Resume scheduled animations and their delays\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate through a relative angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
+.br
+.RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBseries\fP ()"
+.br
+.RI "Open a block whose successive operands wait for completion\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Set the rotation-center offset immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.br
+.RI "Set the x reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
+.br
+.RI "Set the y reflection flag immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
+.br
+.RI "Set equal constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
+.br
+.RI "Set logical height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.br
+.RI "Set the location immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.br
+.RI "Set a constant programmed movement rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
+.br
+.RI "Set rotation immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
+.br
+.RI "Set independent transform scale immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
+.br
+.RI "Set logical width and height immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
+.br
+.RI "Set a constant programmed angular rate immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
+.br
+.RI "Set independent constant growth rates immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.br
+.RI "Set logical width immediately\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBslowDown\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Divide the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBspeedUp\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstagger\fP (number intervalSeconds)"
+.br
+.RI "\fBOffset\fP the selected block's start across successive \fBTroupe\fP members\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopIt\fP ()"
+.br
+.RI "Stop the most recently selected animation element\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopMovement\fP ()"
+.br
+.RI "Stop all programmed changes to position\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
+.br
+.RI "Stop all programmed changes to rotation\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopStretching\fP ()"
+.br
+.RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.br
+.RI "Multiply logical width and height by independent factors\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBtriggerEvent\fP (string name)"
+.br
+.RI "Emit a custom named animation event or record an event step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBuntil\fP (function evaluator)"
+.br
+.RI "Finish the preceding block when its evaluator returns true\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
+.br
+.RI "Delay the next timed animation request\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwhen\fP (function evaluator)"
+.br
+.RI "Open a conditional animation branch\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fByoyo\fP ()"
+.br
+.RI "Play the preceding trajectory forward and back\&. "
+.in -1c
+.SS "Additional Inherited Members"
+
+
+Static Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "static \fBAnimationScript\fP \fBdefineScript\fP (string name)"
+.br
+.RI "Create a library-owned named animation recorder\&. "
+.ti -1c
+.RI "static boolean \fBdeleteScript\fP (string name)"
+.br
+.RI "Remove a definition and release its memory in the shared script library\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Library-owned recorder for reusable native animation commands\&. 
+
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBAnimationScript\fP ambientLight (\fBColor\fP color)"
+
+.SS "\fBAnimationScript\fP ambientLight (number colorRGBA)"
+
+.SS "\fBAnimationScript\fP ambientLight (string colorName)"
+
+.SS "\fBAnimationScript\fP attachAnimationPhysicsPart (\fBPart\fP part, \fBPart\fP parent = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRpart:\fP \fR\fBPart\fP\fP or \fRnull\fP\&. 
+
+.PP
+Parameter \fRparent:\fP \fR\fBPart\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP bindToAnimationBinding (string name)"
+
+.SS "\fBAnimationScript\fP bindToAnimationSocket (string name)"
+
+.SS "\fBAnimationScript\fP bindToBone (number bone)"
+
+.SS "\fBAnimationScript\fP blendMode (number mode)"
+
+.SS "\fBAnimationScript\fP breakTrail ()"
+
+.SS "\fBAnimationScript\fP changeAmbientLight (\fBColor\fP target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeAmbientLight (number targetRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeAmbientLight (string targetName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillColor (\fBColor\fP target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillColor (number targetRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillColor (string targetName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endColorRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, \fBColor\fP endColor, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, number endColorRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, string endColorName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endColorRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillOpacity (number target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, \fBColor\fP endColor, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, number endColorRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, string endColorName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, number centerColorRGBA, number radius, \fBColor\fP endColor, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, number centerColorRGBA, number radius, number endColorRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, number centerColorRGBA, number radius, string endColorName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, \fBColor\fP endColor, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, number endColorRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, string endColorName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeFrames (number first, number last, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeLightOffset (\fBOffset\fP target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeLineColor (\fBColor\fP target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeLineColor (number targetRGBA, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeLineColor (string targetName, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeLineOpacity (number target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeLineThickness (number target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changePolarOffset (\fBOffset\fP target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeRoundedCorners (number target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeSkew (number x, number y, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeSphereRotation (number radians, number seconds, number easing = \fRundefined\fP, number direction = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeSubsection (\fBRect\fP target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeTextSize (number target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP changeTransform (\fBAffineTransform\fP target, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP clearAnimationPhysicsRoot ()"
+
+.SS "\fBAnimationScript\fP clearContent ()"
+
+.SS "\fBAnimationScript\fP clearIKLimits ()"
+
+.SS "\fBAnimationScript\fP clearIKTarget ()"
+
+.SS "\fBAnimationScript\fP clearTrail ()"
+
+.SS "\fBAnimationScript\fP clearViewBounds ()"
+
+.SS "\fBAnimationScript\fP clipOverflow (boolean clip)"
+
+.SS "\fBAnimationScript\fP cutTo (\fBCamera\fP destination)"
+
+.SS "\fBAnimationScript\fP detachAnimationPhysicsPart (\fBPart\fP part, boolean includeDescendants = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRpart:\fP \fR\fBPart\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP detachSprite ()"
+
+.SS "\fBAnimationScript\fP endScript ()"
+
+.PP
+Validate and seal this definition\&. 
+.PP
+\fBReturns\fP
+.RS 4
+This recorder for chaining\&. Further edits throw\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNative animation scripts\fP 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP fadeIn (number durationSeconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP fadeIn (number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP fadeOut (number durationSeconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP fadeOut (number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP fadeTo (number opacity, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP fadeTo (number targetOpacity, number durationSeconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP fillColor (\fBColor\fP color)"
+
+.SS "\fBAnimationScript\fP fillColor (number colorRGBA)"
+
+.SS "\fBAnimationScript\fP fillColor (string colorName)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endColorRGBA)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, \fBColor\fP endColor)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, number endColorRGBA)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, number startColorRGBA, \fBPoint\fP end, string endColorName)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endColorRGBA)"
+
+.SS "\fBAnimationScript\fP fillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName)"
+
+.SS "\fBAnimationScript\fP fillOpacity (number opacity)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, \fBColor\fP endColor)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, number endColorRGBA)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, string endColorName)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, number centerColorRGBA, number radius, \fBColor\fP endColor)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, number centerColorRGBA, number radius, number endColorRGBA)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, number centerColorRGBA, number radius, string endColorName)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, \fBColor\fP endColor)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, number endColorRGBA)"
+
+.SS "\fBAnimationScript\fP fillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, string endColorName)"
+
+.SS "\fBAnimationScript\fP fitType (number fit)"
+
+.SS "\fBAnimationScript\fP flash (number opacity, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP follow (\fBAnimated\fP target)"
+
+.PP
+References \fBAnimated::Animated()\fP\&.
+.SS "\fBAnimationScript\fP font (\fBFont\fP font)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfont:\fP \fR\fBFont\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBfont()\fP\&.
+.PP
+Referenced by \fBfont()\fP\&.
+.SS "\fBAnimationScript\fP frame (number frame)"
+
+.PP
+References \fBframe()\fP\&.
+.PP
+Referenced by \fBframe()\fP, and \fBsetFrame()\fP\&.
+.SS "\fBAnimationScript\fP hide ()"
+
+.SS "\fBAnimationScript\fP lightOffset (\fBOffset\fP offset)"
+
+.SS "\fBAnimationScript\fP lineColor (\fBColor\fP color)"
+
+.SS "\fBAnimationScript\fP lineColor (number colorRGBA)"
+
+.SS "\fBAnimationScript\fP lineColor (string colorName)"
+
+.SS "\fBAnimationScript\fP lineOpacity (number opacity)"
+
+.SS "\fBAnimationScript\fP lineStyle (number style)"
+
+.SS "\fBAnimationScript\fP lineThickness (number thickness)"
+
+.SS "\fBAnimationScript\fP lumaFadeTo (\fBCamera\fP destination, number seconds, \fBImage\fP mask = \fRundefined\fP, number softness = \fRundefined\fP, boolean darkFirst = \fRundefined\fP, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRmask:\fP \fR\fBImage\fP\fP or \fRnull\fP\&. 
+
+.PP
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP matchCutTo (\fBCamera\fP destination, \fBCameraMatchCutOptions\fP options)"
+
+.SS "\fBAnimationScript\fP matchFadeTo (\fBCamera\fP destination, \fBCameraMatchFadeOptions\fP options)"
+
+.SS "\fBAnimationScript\fP moveBehind (\fBSprite\fP sprite)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRsprite:\fP \fR\fBSprite\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP moveInFrontOf (\fBSprite\fP sprite)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRsprite:\fP \fR\fBSprite\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP moveToBack ()"
+
+.SS "\fBAnimationScript\fP moveToFront ()"
+
+.SS "\fBAnimationScript\fP polarOffset (\fBOffset\fP offset)"
+
+.SS "\fBAnimationScript\fP roundedCorners (number radius)"
+
+.SS "\fBAnimationScript\fP setAnimationPhysicsDriveSettings (\fBAnimationPhysicsDriveSettings\fP settings)"
+
+.SS "\fBAnimationScript\fP setAnimationPhysicsDriveSettings (\fBAnimationPhysicsDriveSettings\fP settings, number bone, boolean includeDescendants = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setAnimationPhysicsDriveSettings (\fBAnimationPhysicsDriveSettings\fP settings, string bone, boolean includeDescendants = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setAnimationPhysicsMode (number mode, number bone, boolean includeDescendants = \fRundefined\fP, number recoveryTime = \fRundefined\fP, number direction = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setAnimationPhysicsMode (number mode, number recoveryTime = \fRundefined\fP, number direction = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setAnimationPhysicsMode (number mode, string bone, boolean includeDescendants = \fRundefined\fP, number recoveryTime = \fRundefined\fP, number direction = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setAnimationPhysicsRoot (number bone)"
+
+.SS "\fBAnimationScript\fP setAnimationPhysicsRoot (string bone)"
+
+.SS "\fBAnimationScript\fP setDeadzone (\fBRect\fP bounds)"
+
+.SS "\fBAnimationScript\fP setDrawing (\fBDrawing\fP drawing)"
+
+.SS "\fBAnimationScript\fP setEmissionRate (number particlesPerSecond)"
+
+.SS "\fBAnimationScript\fP setFollowOffset (\fBOffset\fP offset)"
+
+.SS "\fBAnimationScript\fP setFrame (number frame)"
+
+.PP
+References \fBframe()\fP\&.
+.SS "\fBAnimationScript\fP setFrameCollisionMask (\fBImage\fP frameImage, \fBImage\fP maskImage)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRframeImage:\fP \fR\fBImage\fP\fP or \fRnull\fP\&. 
+
+.PP
+Parameter \fRmaskImage:\fP \fR\fBImage\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP setIKDriveTarget (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, number maxForce, number maxTorque, number space = \fRundefined\fP, number bendDirection = \fRundefined\fP, number influence = \fRundefined\fP, number frequency = \fRundefined\fP, number dampingRatio = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRmiddle:\fP \fR\fBPart\fP\fP or \fRnull\fP\&. 
+
+.PP
+Parameter \fRtip:\fP \fR\fBPart\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP setIKLimits (number minAngle, number maxAngle)"
+
+.SS "\fBAnimationScript\fP setIKLimits (number minimum, number maximum)"
+
+.SS "\fBAnimationScript\fP setIKLimits (\fBPhysicsConstraint\fP constraint)"
+
+.SS "\fBAnimationScript\fP setIKTarget (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, number space = \fRundefined\fP, number bendDirection = \fRundefined\fP, number influence = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRmiddle:\fP \fR\fBPart\fP\fP or \fRnull\fP\&. 
+
+.PP
+Parameter \fRtip:\fP \fR\fBPart\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP setImage (\fBImage\fP image)"
+
+.SS "\fBAnimationScript\fP setImage (\fBImage\fP image, \fBRect\fP localBounds)"
+
+.SS "\fBAnimationScript\fP setLifetime (number seconds)"
+
+.SS "\fBAnimationScript\fP setLookAhead (number seconds)"
+
+.SS "\fBAnimationScript\fP setMouseDetectMode (number collisionType = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setOpacity (number opacity)"
+
+.SS "\fBAnimationScript\fP setParentPart (\fBPart\fP parent)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRparent:\fP \fR\fBPart\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP setParticleSpeed (number minimum, number maximum)"
+
+.SS "\fBAnimationScript\fP setParticleSpeed (number speed)"
+
+.SS "\fBAnimationScript\fP setParticleTemplate (\fBParticle\fP particle)"
+
+.SS "\fBAnimationScript\fP setPixelSnapping (boolean snap = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setSeed (number seed)"
+
+.SS "\fBAnimationScript\fP setSmoothing (number seconds)"
+
+.SS "\fBAnimationScript\fP setSpread (number radians)"
+
+.SS "\fBAnimationScript\fP setTrail (\fBParticleTrailOptions\fP options)"
+
+.SS "\fBAnimationScript\fP setTransform (\fBAffineTransform\fP matrix)"
+
+.SS "\fBAnimationScript\fP setupPhysicsFromAnimationRig (number totalMass, number unitsPerMeter = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setVelocityInheritance (number fraction)"
+
+.SS "\fBAnimationScript\fP setViewBounds (\fBRect\fP bounds)"
+
+.SS "\fBAnimationScript\fP setViewport (\fBRect\fP viewport)"
+
+.SS "\fBAnimationScript\fP setWantsAnimEndEvents (boolean wantsThem = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setWantsAnimLoopEvents (boolean wantsThem = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setWantsClickEvents (boolean wantsThem = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setWantsCollideWallEvents (boolean wantsThem = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setWantsMouseOverEvents (boolean wantsThem = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setWantsOffscreenEvents (boolean wantsThem = \fRundefined\fP)"
+
+.SS "\fBAnimationScript\fP setZoom (number zoom)"
+
+.PP
+References \fBzoom()\fP\&.
+.SS "\fBAnimationScript\fP show ()"
+
+.SS "\fBAnimationScript\fP sphereRotation (number rotation)"
+
+.SS "\fBAnimationScript\fP startEmitting ()"
+
+.SS "\fBAnimationScript\fP stopEmitting ()"
+
+.SS "\fBAnimationScript\fP stopFollowing ()"
+
+.SS "\fBAnimationScript\fP subsection (\fBRect\fP section)"
+
+.SS "\fBAnimationScript\fP textSize (number size)"
+
+.SS "\fBAnimationScript\fP textStyle (number style)"
+
+.SS "\fBAnimationScript\fP texture (\fBImage\fP texture)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRtexture:\fP \fR\fBImage\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBtexture()\fP\&.
+.PP
+Referenced by \fBtexture()\fP\&.
+.SS "\fBAnimationScript\fP transform (\fBAffineTransform\fP matrix)"
+
+.SS "\fBAnimationScript\fP transitionTo (\fBCamera\fP destination, number seconds, number style = \fRundefined\fP, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP translation (\fBOffset\fP offset)"
+
+.SS "\fBAnimationScript\fP unbindFromBone ()"
+
+.SS "\fBAnimationScript\fP whipPanTo (\fBCamera\fP destination, number seconds, number style = \fRundefined\fP, number blur = \fRundefined\fP, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.SS "\fBAnimationScript\fP zoom (number factor, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+Referenced by \fBsetZoom()\fP, and \fBzoomTo()\fP\&.
+.SS "\fBAnimationScript\fP zoomTo (number zoom, number seconds, number easing = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBzoom()\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

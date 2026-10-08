@@ -1,4 +1,4 @@
-.TH "CpArbiter" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "CpArbiter" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -75,7 +75,19 @@ get the depth of penetration for a particular contact point
 .PP
 \fBParameters\fP
 .RS 4
-\fIi\fP index into contact points
+\fIi\fP integer index into contact points, from 0 through \fBgetCount()\fP - 1
+.RE
+.PP
+\fBExceptions\fP
+.RS 4
+\fITypeError\fP if i is not a signed 32-bit integer\&. 
+.br
+\fIRangeError\fP if i is outside the current contact count\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Read contact data during the collision callback while the arbiter is valid\&.
 .RE
 .PP
 \fBReturns\fP
@@ -106,7 +118,19 @@ get the location of a particular contact point
 .PP
 \fBParameters\fP
 .RS 4
-\fIi\fP index into contact points
+\fIi\fP integer index into contact points, from 0 through \fBgetCount()\fP - 1
+.RE
+.PP
+\fBExceptions\fP
+.RS 4
+\fITypeError\fP if i is not a signed 32-bit integer\&. 
+.br
+\fIRangeError\fP if i is outside the current contact count\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Read contact data during the collision callback while the arbiter is valid\&.
 .RE
 .PP
 \fBReturns\fP
@@ -122,7 +146,19 @@ get the location of a particular contact point
 .PP
 \fBParameters\fP
 .RS 4
-\fIi\fP index into contact points
+\fIi\fP integer index into contact points, from 0 through \fBgetCount()\fP - 1
+.RE
+.PP
+\fBExceptions\fP
+.RS 4
+\fITypeError\fP if i is not a signed 32-bit integer\&. 
+.br
+\fIRangeError\fP if i is outside the current contact count\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Read contact data during the collision callback while the arbiter is valid\&.
 .RE
 .PP
 \fBReturns\fP

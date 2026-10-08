@@ -16,6 +16,8 @@
 // -----------------------------------------------
 
 
+#include "../../common/binding_groups.h"
+
 #ifndef PDG_SCRIPT_MACROS_H_INCLUDED
 #define PDG_SCRIPT_MACROS_H_INCLUDED
 
@@ -85,8 +87,8 @@
 #define NUM2VAL(n)          JSValueMakeNumber(ctx, n)
 #define BOOL2VAL(b)         JSValueMakeBoolean(ctx, b)
 //#define VAL2STR    // not that simple, use VALUE_TO_CSTRING
-#define VAL2INT(val)		(int32)floor(JSValueToNumber(ctx, val, exception))
-#define VAL2UINT(val)		(uint32)floor(fabs(JSValueToNumber(ctx, val, exception)))
+#define VAL2INT(val)		pdg::JSC_NumberToInt32(JSValueToNumber(ctx, val, exception))
+#define VAL2UINT(val)		pdg::JSC_NumberToUint32(JSValueToNumber(ctx, val, exception))
 #define VAL2NUM(val)		JSValueToNumber(ctx, val, exception)
 #define VAL2BOOL(val)		JSValueToBoolean(ctx, val)
 
@@ -1330,30 +1332,59 @@ klass* New_##klass(SCRIPT_ARGS) { return klass::getSingletonInstance(); }
 #define SIG_COLOR		object
 #define SIG_SPLINE		[object Spline]
 
-#define SIG_1u_STR     "[number uint]"
-#define SIG_2u_STR     "[number uint]"
-#define SIG_3u_STR     "[number uint]"
-#define SIG_4u_STR     "[number uint]"
-#define SIG_8u_STR     "[number uint]"
-#define SIG_1_STR      "[number int]"
-#define SIG_2_STR      "[number int]"
-#define SIG_4_STR      "[number int]"
-#define SIG_8_STR      "[number int]"
-#define SIG_f_STR      "number"
-#define SIG_d_STR      "number"
-#define SIG_uint_STR   "[number uint]"
-#define SIG_bool_STR   "boolean"
-#define SIG_point_STR  "[object Point]"
-#define SIG_offset_STR "[object Offset]"
-#define SIG_vector_STR "[object Vector]"
-#define SIG_color_STR  "[object Color]"
-#define SIG_rect_STR   "[object Rect]"
-#define SIG_rotr_STR   "[object RotatedRect]"
-#define SIG_quad_STR   "[object Quad]"
-#define SIG_str_STR    "string"
-#define SIG_ref_STR    "object"
-#define SIG_mem_STR    "{[string Binary]|[object MemBlock]}"
-#define SIG_obj_STR    "constructor"
+#define PDG_SIGNATURE_STRING_IMPL(value) #value
+#define PDG_SIGNATURE_STRING(value) PDG_SIGNATURE_STRING_IMPL(value)
+
+#define SIG_1u [number uint]
+#define SIG_1u_STR PDG_SIGNATURE_STRING(SIG_1u)
+#define SIG_2u [number uint]
+#define SIG_2u_STR PDG_SIGNATURE_STRING(SIG_2u)
+#define SIG_3u [number uint]
+#define SIG_3u_STR PDG_SIGNATURE_STRING(SIG_3u)
+#define SIG_4u [number uint]
+#define SIG_4u_STR PDG_SIGNATURE_STRING(SIG_4u)
+#define SIG_8u [number uint]
+#define SIG_8u_STR PDG_SIGNATURE_STRING(SIG_8u)
+#define SIG_1 [number int]
+#define SIG_1_STR PDG_SIGNATURE_STRING(SIG_1)
+#define SIG_2 [number int]
+#define SIG_2_STR PDG_SIGNATURE_STRING(SIG_2)
+#define SIG_4 [number int]
+#define SIG_4_STR PDG_SIGNATURE_STRING(SIG_4)
+#define SIG_8 [number int]
+#define SIG_8_STR PDG_SIGNATURE_STRING(SIG_8)
+#define SIG_f number
+#define SIG_f_STR PDG_SIGNATURE_STRING(SIG_f)
+#define SIG_d number
+#define SIG_d_STR PDG_SIGNATURE_STRING(SIG_d)
+#define SIG_uint [number uint]
+#define SIG_uint_STR PDG_SIGNATURE_STRING(SIG_uint)
+#define SIG_bool boolean
+#define SIG_bool_STR PDG_SIGNATURE_STRING(SIG_bool)
+#define SIG_point [object Point]
+#define SIG_point_STR PDG_SIGNATURE_STRING(SIG_point)
+#define SIG_offset [object Offset]
+#define SIG_offset_STR PDG_SIGNATURE_STRING(SIG_offset)
+#define SIG_vector [object Vector]
+#define SIG_vector_STR PDG_SIGNATURE_STRING(SIG_vector)
+#define SIG_color [object Color]
+#define SIG_color_STR PDG_SIGNATURE_STRING(SIG_color)
+#define SIG_rect [object Rect]
+#define SIG_rect_STR PDG_SIGNATURE_STRING(SIG_rect)
+#define SIG_rotr [object RotatedRect]
+#define SIG_rotr_STR PDG_SIGNATURE_STRING(SIG_rotr)
+#define SIG_quad [object Quad]
+#define SIG_quad_STR PDG_SIGNATURE_STRING(SIG_quad)
+#define SIG_str string
+#define SIG_str_STR PDG_SIGNATURE_STRING(SIG_str)
+#define SIG_ref object
+#define SIG_ref_STR PDG_SIGNATURE_STRING(SIG_ref)
+#define VALUE_IS_MEMBLOCK(val) JSValueIsObjectOfClass(ctx, val, MemBlock_class())
+
+#define SIG_mem {[object ByteArray]|[object MemBlock]}
+#define SIG_mem_STR PDG_SIGNATURE_STRING(SIG_mem)
+#define SIG_obj constructor
+#define SIG_obj_STR PDG_SIGNATURE_STRING(SIG_obj)
 
 #define SIG_RET_BOOL		boolean
 #define SIG_RET_UNSIGNED	number
@@ -1381,7 +1412,7 @@ METHOD_IMPL(klass, Get##prop)  		CR \
 
 #define CUSTOM_SETTER_IMPL(klass, prop, type, xargc, m, xargs, setcode) \
 METHOD_IMPL(klass, Set##prop)  		CR \
-	SETTER_SIG([object klass], SIG_##type, in##prop) CR \
+	SETTER_SIG([this], SIG_##type, in##prop) CR \
     REQUIRE_ARG_##m##COUNT(xargc);  CR \
     REQUIRE_##type##_ARG(1, the##prop);  CR \
     xargs						 	\
@@ -1400,10 +1431,10 @@ CUSTOM_SETTER_IMPL(klass, prop, type, 1, , , self->set##prop(the##prop) )
 	SETTER_IMPL(klass, prop, type)
 
 #define CP_GETTER_IMPL(klass, prop, type) \
-CUSTOM_GETTER_IMPL(klass, prop, type, 0, , , C_##type the##prop = klass##Get##prop(self), () )
+CUSTOM_GETTER_IMPL(klass, prop, type, 0, , , C_##type the##prop = PDG_NATIVE_C_CALL(klass##Get##prop, self), () )
 
 #define CP_SETTER_IMPL(klass, prop, type) \
-CUSTOM_SETTER_IMPL(klass, prop, type, 1, , , klass##Set##prop(self, the##prop) )
+CUSTOM_SETTER_IMPL(klass, prop, type, 1, , , PDG_NATIVE_C_CALL(klass##Set##prop, self, the##prop) )
 
 #define CP_PROPERTY_IMPL(klass, prop, type) \
 	CP_GETTER_IMPL(klass, prop, type) CR \
@@ -1414,15 +1445,9 @@ CUSTOM_SETTER_IMPL(klass, prop, type, 1, , , klass##Set##prop(self, the##prop) )
 //MARK: METHOD SIGNATURE MACROS
 // ========================================================================================
 
-#define METHOD_SIGNATURE_NO_DOCS(rettype, paramcount, params) \
-// 	if (ARGC == 1 && VALUE_IS_NULL(ARGV[0])) {   CR \
-// 		RETURN_STRING(#rettype " function" #params);                CR \
-// 	}
-
-#define METHOD_SIGNATURE(brief, rettype, paramcount, params) \
-// 	if (ARGC == 1 && VALUE_IS_NULL(ARGV[0])) {   CR \
-// 		RETURN_STRING(#rettype " function" #params " - " brief);    CR \
-// 	}
+// Signature declarations are consumed by the metadata extractor, not runtime calls.
+#define METHOD_SIGNATURE_NO_DOCS(rettype, paramcount, params)
+#define METHOD_SIGNATURE(brief, rettype, paramcount, params)
 
 #define CUSTOM_GETTER_SIG(rettype, params) METHOD_SIGNATURE_NO_DOCS(rettype, 0, params)
 #define GETTER_SIG(rettype) METHOD_SIGNATURE_NO_DOCS(rettype, 0, ())
@@ -1430,10 +1455,11 @@ CUSTOM_SETTER_IMPL(klass, prop, type, 1, , , klass##Set##prop(self, the##prop) )
 
 
 #define CUSTOM_SERIALIZER_SIZE_OF_METHOD_IMPL(type, ops) \
+    SERIALIZER_SIZE_OF_SIGNATURE_IMPL(type, SIG_##type, ops)
+
+#define SERIALIZER_SIZE_OF_SIGNATURE_IMPL(type, signature, ops) \
 METHOD_IMPL(Serializer, Sizeof_##type)   CR \
-	if (ARGC == 1 && VALUE_IS_NULL(ARGV[0])) {                  CR \
-		RETURN_STRING("[number uint] function(" SIG_##type##_STR " val) - " ); CR \
-	} CR \
+    METHOD_SIGNATURE("Calculate the number of bytes needed to serialize the value.", [number uint], 1, (signature val)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_##type##_ARG(1, val); CR \
 	ops; CR \

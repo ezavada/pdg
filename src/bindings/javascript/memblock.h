@@ -40,6 +40,9 @@
 #include <cstdlib>
 #include <string>
 #include <span>
+#ifdef __EMSCRIPTEN__
+#include <emscripten/val.h>
+#endif
 
 namespace pdg {
 
@@ -51,10 +54,18 @@ struct MemBlock {
 	bool	owned;
     MemBlock(char* p, size_t n, bool own);
     MemBlock(size_t n);
-    std::string getData() const;
+    #ifdef __EMSCRIPTEN__
+    emscripten::val getData() const;
+#else
+    std::span<const char> getData() const;
+#endif
     size_t  getDataSize();
     unsigned char getByte(size_t i);
-    std::string getBytes(size_t start, size_t len) const;
+    #ifdef __EMSCRIPTEN__
+    emscripten::val getBytes(size_t start, size_t len) const;
+#else
+    std::span<const char> getBytes(size_t start, size_t len) const;
+#endif
     std::span<const char> view() const { return {ptr, ptr ? bytes : 0}; }
     MemBlock(const MemBlock&) = delete;
     MemBlock& operator=(const MemBlock&) = delete;

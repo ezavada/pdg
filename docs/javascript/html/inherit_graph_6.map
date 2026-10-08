@@ -1,3 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classpdg_1_1_color.html" title="color in RGB space, with optional alpha" alt="" coords="5,5,58,31"/>
+<area shape="rect" id="Node000000" href="$namespacepdg.html#structpdg_1_1_animation_drawable_callback" title="Choose artwork during rendering. Return Drawing or null; undefined and Promises are invalid." alt="" coords="5,5,191,31"/>
 </map>

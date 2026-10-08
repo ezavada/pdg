@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['memstats_0',['MemStats',['../structpdg_1_1_mem_stats.html',1,'pdg']]],
-  ['modifierkeyinfo_1',['ModifierKeyInfo',['../structpdg_1_1_modifier_key_info.html',1,'pdg']]],
-  ['mouseinfo_2',['MouseInfo',['../structpdg_1_1_mouse_info.html',1,'pdg']]],
-  ['mousetrackinginfo_3',['MouseTrackingInfo',['../structpdg_1_1_mouse_tracking_info.html',1,'pdg']]]
+  ['level_0',['level',['../structpdg_1_1log_1_1level.html',1,'pdg::log']]],
+  ['log_1',['log',['../classpdg_1_1log.html',1,'pdg']]],
+  ['logmanager_2',['LogManager',['../classpdg_1_1_log_manager.html',1,'pdg']]]
 ];

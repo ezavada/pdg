@@ -2,6 +2,7 @@
 // do not always have identical method signatures
 
 #include "pdg_em_adaptors.h"
+#include "../common/animation/particle_trail_options.h"
 #include "pdg-lib.h"
 
 #ifndef PDG_NO_GUI
@@ -18,10 +19,36 @@
 #include <unordered_map>
 #include <vector>
 
-
 namespace pdg {
 
 namespace {
+
+// JS storage and Wasm storage are distinct. Copy Uint8Array bytes into Wasm;
+// an existing MemBlock can be borrowed for this synchronous call.
+struct ScriptBytes {
+    std::vector<uint8> storage;
+    const uint8* data = nullptr;
+    size_t size = 0;
+    explicit ScriptBytes(const emscripten::val& value) {
+        if (value.instanceof(emscripten::val::global("Uint8Array"))) {
+            auto buffer = value["buffer"];
+            auto shared = emscripten::val::global("SharedArrayBuffer");
+            if (!shared.isUndefined() && buffer.instanceof(shared))
+                throw std::invalid_argument("shared byte arrays are not supported");
+            // Also rejects detached buffers, including zero-length views.
+            auto view = emscripten::val::global("Uint8Array").new_(buffer, value["byteOffset"], value["byteLength"]);
+            size = view["byteLength"].as<size_t>();
+            storage.resize(size);
+            if (size) emscripten::val(emscripten::typed_memory_view(size, storage.data())).call<void>("set", view);
+            data = storage.data();
+        } else {
+            auto* block = value.as<MemBlock*>(emscripten::allow_raw_pointers());
+            if (!block) throw std::invalid_argument("expected Uint8Array or MemBlock");
+            data = reinterpret_cast<const uint8*>(block->ptr);
+            size = block->bytes;
+        }
+    }
+};
 
 emscripten::val pointToVal(const Point& point) {
     emscripten::val result = emscripten::val::object();
@@ -109,6 +136,10 @@ public:
                 event.set("action", info->action);
                 event.set("actingLayer", mJsEmitter);
                 event.set("millisec", static_cast<double>(info->millisec));
+            } else if (eventData && eventType == eventType_ZoomComplete) {
+                const auto* info = static_cast<const CameraZoomInfo*>(eventData);
+                event.set("camera", mJsEmitter);
+                event.set("zoom", info->zoom);
             } else if (eventData && eventType == eventType_ColliderContact) {
                 const auto* info = static_cast<const ColliderContact*>(eventData);
                 auto handle=[](Collider* c) { c->addRef(); return std::shared_ptr<Collider>(c,[](Collider* p){p->release();}); };
@@ -362,18 +393,7 @@ int emscriptenPortStartTrackingMouse(Port& port, const Rect& rect) {
     return port.startTrackingMouse(rect, nullptr);
 }
 
-void emscriptenPortDrawCircle(Port& port, const Point& center, float radius,
-                              const Attributes& attributes) {
-    port.drawCircle(center, radius, attributes);
-}
 
-void emscriptenPortDrawQuad(Port& port, const emscripten::val& quad,
-                            const Attributes& attributes) {
-    const emscripten::val points = quad["points"];
-    port.drawQuad(Quad(points[0].as<Point>(), points[1].as<Point>(),
-                       points[2].as<Point>(), points[3].as<Point>()),
-                  attributes);
-}
 
 std::string emscriptenFontGetName(Font& font) {
     return font.getFontName();
@@ -399,9 +419,10 @@ float emscriptenFontGetDescent(Font& font, int size, int style) {
     return font.getFontDescent(size, static_cast<uint32>(style));
 }
 
-void emscriptenDrawingDraw(Drawing& drawing, Port* port) {
-    if (port) drawing.draw(port);
-}
+
+
+
+
 
 #ifdef PDG_SPRITER_SUPPORT
 
@@ -470,17 +491,10 @@ void emscriptenSpriteSetupAnimationPhysics(Sprite& sprite,emscripten::val values
     std::vector<double> numbers;const auto count=values["length"].as<unsigned>();if(count>1500000)throw std::invalid_argument("Invalid physical rig array length");
     for(unsigned i=0;i<count;++i){if(values[i].typeOf().as<std::string>()!="number")throw std::invalid_argument("Invalid physical rig number");numbers.push_back(values[i].as<double>());}
     sprite.setupAnimationPhysics(decodeAnimationPhysicsDefinition(numbers));});}
-void emscriptenSpriteDisableAnimationPhysics(Sprite& sprite,double seconds,int direction){poseScriptCall([&]{sprite.disableAnimationPhysics(seconds,direction);});}
 void emscriptenSpriteSetAnimationPhysicsMode(Sprite& sprite,int mode,double bone,bool descendants,double seconds,int direction){poseScriptCall([&]{if(bone<0)sprite.setAnimationPhysicsMode(mode,seconds,direction);else sprite.setAnimationPhysicsMode(mode,AnimationBoneId(bone),descendants,seconds,direction);});}
 int emscriptenSpriteGetAnimationPhysicsMode(const Sprite& sprite,double bone,bool descendants){return poseScriptCall([&]{return bone<0?sprite.getAnimationPhysicsMode():sprite.getAnimationPhysicsMode(AnimationBoneId(bone),descendants);});}
 void emscriptenSpriteSetAnimationPhysicsDriveSettings(Sprite& sprite,double force,double torque,double frequency,double damping,int direction,double bone,bool descendants){poseScriptCall([&]{AnimationPhysicsDriveSettings settings{force,torque,frequency,damping,direction};if(bone<0)sprite.setAnimationPhysicsDriveSettings(settings);else sprite.setAnimationPhysicsDriveSettings(settings,AnimationBoneId(bone),descendants);});}
 emscripten::val emscriptenSpriteGetAnimationPhysicsDriveSettings(const Sprite& sprite,uint32_t bone){return poseScriptCall([&]{const auto settings=sprite.getAnimationPhysicsDriveSettings(bone);if(!settings)return emscripten::val::null();auto result=emscripten::val::array();int i=0;for(double value:{settings->maxForce,settings->maxTorque,settings->frequency,settings->dampingRatio,double(settings->direction)})result.set(i++,value);return result;});}
-void emscriptenSpriteSetupPhysicsFromAnimationRig(Sprite& sprite,double mass,double units){poseScriptCall([&]{sprite.setupPhysicsFromAnimationRig(mass,units);});}
-void emscriptenSpriteAttachAnimationPhysicsPart(Sprite& sprite,Part* part,Part* parent){poseScriptCall([&]{sprite.attachAnimationPhysicsPart(part,parent);});}
-void emscriptenSpriteDetachAnimationPhysicsPart(Sprite& sprite,Part* part,bool descendants){poseScriptCall([&]{sprite.detachAnimationPhysicsPart(part,descendants);});}
-void emscriptenSpriteSetAnimationPhysicsRoot(Sprite& sprite,uint32_t bone){poseScriptCall([&]{sprite.setAnimationPhysicsRoot(bone);});}
-void emscriptenSpriteClearAnimationPhysicsRoot(Sprite& sprite){poseScriptCall([&]{sprite.clearAnimationPhysicsRoot();});}
-uint32_t emscriptenSpriteGetAnimationPhysicsRoot(const Sprite& sprite){return poseScriptCall([&]{return sprite.getAnimationPhysicsRoot();});}
 
 uint32_t emscriptenSpriteAddAnimationDrawable(Sprite& sprite,emscripten::val callback,emscripten::val values,const std::string& slot){return poseScriptCall([&]{
     if(!ScriptValue::global("Array").call<bool>("isArray",values)||values["length"].as<unsigned>()!=9)throw std::invalid_argument("Invalid drawing options");
@@ -499,8 +513,6 @@ uint32_t emscriptenSpriteAddAnimationDrawable(Sprite& sprite,emscripten::val cal
         if(!drawing)throw std::invalid_argument("Animation drawing callback must return a Drawing or null");
         return drawing->share();
     });});}
-void emscriptenSpriteSetAnimationDrawableEnabled(Sprite& sprite,uint32_t id,bool enabled){poseScriptCall([&]{sprite.setAnimationDrawableEnabled(id,enabled);});}
-std::string emscriptenSpriteGetAnimationDrawableError(const Sprite& sprite,uint32_t id){return poseScriptCall([&]{return sprite.getAnimationDrawableError(id);});}
 emscripten::val emscriptenSpriteGetAnimationDrawBounds(const Sprite& sprite){return poseScriptCall([&]{const auto bounds=sprite.getAnimationDrawBounds();auto result=ScriptValue::object();result.set("left",bounds.left);result.set("top",bounds.top);result.set("right",bounds.right);result.set("bottom",bounds.bottom);result.set("uncullable",bounds.uncullable);return result;});}
 
 uint32_t emscriptenSpriteAddAnimationIK(Sprite& sprite, emscripten::val object, int order) {
@@ -524,7 +536,6 @@ uint32_t emscriptenSpriteAddAnimationIK(Sprite& sprite, emscripten::val object, 
         config.middleMax=object["middleMax"].as<double>();
         return sprite.addAnimationIK(config,order);});
 }
-void emscriptenSpriteSetAnimationIKTarget(Sprite& sprite,uint32_t id,double x,double y,int space) {poseScriptCall([&]{sprite.setAnimationIKTarget(id,x,y,space);});}
 emscripten::val emscriptenSpriteGetAnimationIKResult(const Sprite& sprite,uint32_t id) {
     return poseScriptCall([&]{auto value=sprite.getAnimationIKResult(id);auto result=ScriptValue::object();
         result.set("reachError",value.reachError);
@@ -537,7 +548,7 @@ emscripten::val emscriptenSpriteGetAnimationIKResult(const Sprite& sprite,uint32
 
 uint32_t emscriptenSpriteAddAnimationModifier(Sprite& sprite, emscripten::val callback, int stage, int order) {
     return poseScriptCall([&] { return sprite.addAnimationModifier([callback](AnimationPoseView view,const AnimationModifierContext& context) {
-        auto info=ScriptValue::object();info.set("deltaSeconds",context.deltaSeconds);info.set("root",poseTransformValue(context.root));info.set("revision",std::to_string(context.revision));
+        auto info=ScriptValue::object();info.set("deltaSeconds",context.deltaSeconds);info.set("simulationDeltaSeconds",context.simulationDeltaSeconds);info.set("root",poseTransformValue(context.root));info.set("revision",std::to_string(context.revision));
         const auto snapshot=view.copy();auto edits=callback(poseSnapshotValue(snapshot),info);
         if (edits.typeOf().as<std::string>()=="string") throw std::runtime_error(edits.as<std::string>());
         if (!ScriptValue::global("Array").call<bool>("isArray",edits) || edits["length"].as<unsigned>()!=snapshot.getRig()->getBoneCount()) throw std::runtime_error("Wrong modifier bone count");
@@ -549,12 +560,7 @@ uint32_t emscriptenSpriteAddAnimationModifier(Sprite& sprite, emscripten::val ca
         }
     },stage,order); });
 }
-void emscriptenSpriteSetAnimationSource(Sprite& sprite,int source) { poseScriptCall([&]{sprite.setAnimationSource(source);}); }
-std::string emscriptenSpriteGetAnimationModifierError(const Sprite& sprite,uint32_t id) { return poseScriptCall([&]{return sprite.getAnimationModifierError(id);}); }
 
-void emscriptenSpriteSetAnimationDebugDraw(Sprite& sprite, int flags) {
-    poseScriptCall([&] { sprite.setAnimationDebugDraw(flags); });
-}
 bool emscriptenSpriteEnableAnimationPose(Sprite& sprite, const std::string& clip) { return sprite.enableAnimationPose(clip.c_str()); }
 emscripten::val emscriptenSpriteGetAnimationPose(const Sprite& sprite) {
     return poseScriptCall([&] { return poseSnapshotValue(sprite.getAnimationPose()); });
@@ -593,7 +599,9 @@ bool emscriptenSpriteHasAnimation(Sprite& sprite, const emscripten::val& animati
         return std::isfinite(id) && id >= 0 && id <= 4294967295.0
             && id == std::floor(id) && sprite.hasAnimation(static_cast<uint32>(id));
     }
-    return sprite.hasAnimation(animation.isNull() ? "" : animation.as<std::string>().c_str());
+    if (animation.typeOf().as<std::string>() != "string")
+        throw std::invalid_argument("Expected an animation name or numeric ID");
+    return sprite.hasAnimation(animation.as<std::string>().c_str());
 }
 
 void emscriptenSpriteStartAnimation(Sprite& sprite, const emscripten::val& animation) {
@@ -651,10 +659,7 @@ void emscriptenLayerRemoveCharacterMap(SpriteLayer& layer, const std::string& na
 #endif
 
 #ifndef PDG_NO_SOUND
-void emscriptenSoundPlay(Sound& sound, float volume, int32 offsetX, float pitch,
-                         ms_time fromMs, ms_delta lengthMs) {
-    sound.play(volume, offsetX, pitch, fromMs, lengthMs);
-}
+
 void emscriptenSoundChangePitch(Sound& sound, float target, ms_delta duration) {
     sound.changePitch(target, duration);
 }
@@ -745,134 +750,34 @@ MemBlock* emscriptenCreateEmptyMemBlock() {
     return new MemBlock(0);
 }
 
-Polygon* emscriptenPolygonIntersection(Polygon& polygon, const Polygon& other) {
-    return new Polygon(polygon.intersection(other));
+EasingFunc emscriptenEasingArgument(double id) {
+    if (!std::isfinite(id) || std::floor(id) != id || id < 0 || id >= NUM_EASING_FUNCTIONS ||
+        !gEasingFunctions[static_cast<int>(id)]) throw std::invalid_argument("Unknown easing constant");
+    return gEasingFunctions[static_cast<int>(id)];
 }
 
-Polygon* emscriptenPolygonUnion(Polygon& polygon, const Polygon& other) {
-    return new Polygon(polygon.unionWith(other));
-}
 
-static EasingFunc emscriptenAnimatedEasing(int easing, int fallback) {
-    if (easing < 0 || easing >= NUM_EASING_FUNCTIONS || !gEasingFunctions[easing])
-        throw std::invalid_argument("Unknown easing constant");
-    return gEasingFunctions[easing];
+emscripten::val browserSnapshotObject(const ISerializable* object) {
+    if(!object) return emscripten::val::null();
+    auto* value=const_cast<ISerializable*>(object);
+    if(auto* target=dynamic_cast<Troupe*>(value)) return emscripten::val(browserRetain(target));
+    if(auto* target=dynamic_cast<Sprite*>(value)) return emscripten::val(browserRetain(target));
+    if(auto* target=dynamic_cast<Camera*>(value)) return emscripten::val(browserRetain(target));
+    if(auto* target=dynamic_cast<AnimatedBase*>(value)) return emscripten::val(target,emscripten::allow_raw_pointers());
+    if(auto* target=dynamic_cast<SpriteLayer*>(value)) return emscripten::val(target,emscripten::allow_raw_pointers());
+    if(auto* target=dynamic_cast<ImageStrip*>(value)) return emscripten::val(target,emscripten::allow_raw_pointers());
+    return emscripten::val(value,emscripten::allow_raw_pointers());
 }
-
-static emscripten::val rotatedBoundsValue(const RotatedRect& bounds) {
-    emscripten::val result = emscripten::val::object();
-    result.set("left", bounds.left);
-    result.set("top", bounds.top);
-    result.set("right", bounds.right);
-    result.set("bottom", bounds.bottom);
-    result.set("radians", bounds.radians);
-    emscripten::val centerOffset = emscripten::val::object();
-    centerOffset.set("x", bounds.centerOffset.x);
-    centerOffset.set("y", bounds.centerOffset.y);
-    result.set("centerOffset", centerOffset);
-    return result;
-}
-
-#ifndef PDG_NO_GUI
-emscripten::val emscriptenLayerToPortRect(const SpriteLayer& layer, const Rect& rect, float radians, const Offset& center) {
-    RotatedRect value(rect, radians); value.centerOffset = center;
-    return rotatedBoundsValue(layer.layerToPort(value));
-}
-emscripten::val emscriptenPortToLayerRect(const SpriteLayer& layer, const Rect& rect, float radians, const Offset& center) {
-    RotatedRect value(rect, radians); value.centerOffset = center;
-    return rotatedBoundsValue(layer.portToLayer(value));
-}
-#endif
-
-emscripten::val emscriptenAnimatedGetRotatedBounds(AnimatedBase& animated) {
-    return rotatedBoundsValue(animated.getRotatedBounds());
-}
-emscripten::val emscriptenSpriteGetFrameRotatedBounds(Sprite& sprite, int frame) {
-    return rotatedBoundsValue(sprite.getFrameRotatedBounds(frame));
-}
-
-void emscriptenAnimatedMoveTo(AnimatedBase& animated, const Point& value, double seconds, int easing) {
-    poseScriptCall([&] { animated.moveTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedMoveBy(AnimatedBase& animated, const Offset& value, double seconds, int easing) {
-    poseScriptCall([&] { animated.moveBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedChangeMovementTo(AnimatedBase& animated, const Vector& value, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeMovementTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
-}
-
-void emscriptenAnimatedChangeMovementBy(AnimatedBase& animated, const Vector& value, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeMovementBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
-}
-
-void emscriptenAnimatedChangeCenterOffsetTo(AnimatedBase& animated, const Offset& value, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeCenterOffsetTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedChangeCenterOffsetBy(AnimatedBase& animated, const Offset& value, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeCenterOffsetBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedGrow(AnimatedBase& animated, float value, double seconds, int easing) {
-    poseScriptCall([&] { animated.grow(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedRotateTo(AnimatedBase& animated, float value, double seconds, int easing, int direction) {
-    poseScriptCall([&] { animated.rotateTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad), direction); });
-}
-
-void emscriptenAnimatedRotateBy(AnimatedBase& animated, float value, double seconds, int easing, int direction) {
-    poseScriptCall([&] { animated.rotateBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad), direction); });
-}
-
-void emscriptenAnimatedChangeSpinTo(AnimatedBase& animated, float value, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeSpinTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
-}
-
-void emscriptenAnimatedChangeSpinBy(AnimatedBase& animated, float value, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeSpinBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
-}
-
-void emscriptenAnimatedChangeGrowingTo(AnimatedBase& animated, float value, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeGrowingTo(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
-}
-
-void emscriptenAnimatedChangeGrowingBy(AnimatedBase& animated, float value, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeGrowingBy(value, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
-}
-
-void emscriptenAnimatedStretch(AnimatedBase& animated, float x, float y, double seconds, int easing) {
-    poseScriptCall([&] { animated.stretch(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedResizeTo(AnimatedBase& animated, float x, float y, double seconds, int easing) {
-    poseScriptCall([&] { animated.resizeTo(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedResizeBy(AnimatedBase& animated, float x, float y, double seconds, int easing) {
-    poseScriptCall([&] { animated.resizeBy(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedChangeScaleTo(AnimatedBase& animated, float x, float y, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeScaleTo(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedChangeScaleBy(AnimatedBase& animated, float x, float y, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeScaleBy(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::easeInOutQuad)); });
-}
-
-void emscriptenAnimatedChangeStretchingTo(AnimatedBase& animated, float x, float y, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeStretchingTo(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
-}
-
-void emscriptenAnimatedChangeStretchingBy(AnimatedBase& animated, float x, float y, double seconds, int easing) {
-    poseScriptCall([&] { animated.changeStretchingBy(x, y, seconds, emscriptenAnimatedEasing(easing, EasingFuncIds::linearTween)); });
-}
-
-bool emscriptenAnimatedAnimate(AnimatedBase& animated, double elapsed) {
-    return animated.animate(elapsed);
+ISerializable* browserSnapshotPointer(const emscripten::val& value) {
+    if(value.isNull() || value.isUndefined() || value["$$"].isUndefined()) return nullptr;
+    const auto tag=value.call<uint32>("getMyClassTag");
+    if(tag==CLASSTAG_TROUPE) return value.as<Troupe*>(emscripten::allow_raw_pointers());
+    if(tag==CLASSTAG_ANIMATED) return value.as<AnimatedBase*>(emscripten::allow_raw_pointers());
+    if(tag==CLASSTAG_CAMERA) return value.as<Camera*>(emscripten::allow_raw_pointers());
+    if(tag==CLASSTAG_SPRITE) return value.as<Sprite*>(emscripten::allow_raw_pointers());
+    if(tag==CLASSTAG_SPRITE_LAYER || tag==CLASSTAG_TILE_LAYER) return value.as<SpriteLayer*>(emscripten::allow_raw_pointers());
+    if(tag==CLASSTAG_IMAGE) return value.as<Image*>(emscripten::allow_raw_pointers());
+    return value.as<ISerializable*>(emscripten::allow_raw_pointers());
 }
 
 ImageStrip* emscriptenCreateSnapshotImage() {
@@ -930,11 +835,13 @@ emscripten::val emscriptenResourceGet(ResourceManager& manager, const std::strin
     size_t bufferSize = maxSize < 0 ? resourceSize : std::min(resourceSize, static_cast<size_t>(maxSize));
     if (bufferSize == 0) return emscripten::val(false);
 
-    std::string value(bufferSize, '\0');
+    std::vector<uint8> value(bufferSize);
     if (!manager.getResource(resourceName.c_str(), value.data(), bufferSize)) {
         return emscripten::val(false);
     }
-    return emscripten::val(value);
+    auto result = emscripten::val::global("Uint8Array").new_(bufferSize);
+    result.call<void>("set", emscripten::val(emscripten::typed_memory_view(bufferSize, value.data())));
+    return result;
 }
 
 Image* emscriptenResourceGetImage(ResourceManager& manager, const std::string& imageName) {
@@ -960,24 +867,6 @@ void emscriptenAttributesSetFitType(Attributes& attributes, int fit) {
 void emscriptenAttributesSetBlendMode(Attributes& attributes, int mode) {
     poseScriptCall([&] {
     attributes.blendMode(static_cast<BlendMode>(mode));
-    });
-}
-
-void emscriptenAttributesRotate(Attributes& attributes, float radians, const Point& center) {
-    poseScriptCall([&] {
-    attributes.rotation(radians, center);
-    });
-}
-
-void emscriptenAttributesScale(Attributes& attributes, float xFactor, float yFactor, const Point& center) {
-    poseScriptCall([&] {
-    attributes.scale(xFactor, yFactor, center);
-    });
-}
-
-void emscriptenAttributesSkew(Attributes& attributes, float xSkew, float ySkew, const Point& center) {
-    poseScriptCall([&] {
-    attributes.skew(xSkew, ySkew, center);
     });
 }
 
@@ -1017,111 +906,9 @@ Attributes* emscriptenAnimatedAttributesBase(AnimatedAttributesBase& self) {
     return static_cast<Attributes*>(&self);
 }
 
-static EasingFunc animatedAttributesEasing(int easing) {
-    if (easing < 0 || easing >= NUM_EASING_FUNCTIONS)
-        throw std::invalid_argument("Invalid appearance easing constant");
-    return gEasingFunctions[easing];
-}
-
-void emscriptenAnimatedAttributesChangeLineColor(AnimatedAttributesBase& self, const Color& target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeLineColor(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeLineThickness(AnimatedAttributesBase& self, float target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeLineThickness(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeLineOpacity(AnimatedAttributesBase& self, float target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeLineOpacity(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeFillColor(AnimatedAttributesBase& self, const Color& target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeFillColor(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeFillOpacity(AnimatedAttributesBase& self, float target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeFillOpacity(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeRoundedCorners(AnimatedAttributesBase& self, float target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeRoundedCorners(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeTextSize(AnimatedAttributesBase& self, float target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeTextSize(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeSubsection(AnimatedAttributesBase& self, const Rect& target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeSubsection(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangePolarOffset(AnimatedAttributesBase& self, const Offset& target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changePolarOffset(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeLightOffset(AnimatedAttributesBase& self, const Offset& target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeLightOffset(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeAmbientLight(AnimatedAttributesBase& self, const Color& target, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeAmbientLight(target, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeSkew(AnimatedAttributesBase& self, float x, float y, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeSkew(x, y, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeSphereRotation(AnimatedAttributesBase& self, float radians, double seconds, int easing, int direction) {
-    poseScriptCall([&] {
-    self.changeSphereRotation(radians, seconds, animatedAttributesEasing(easing), direction);
-    });
-}
-
-void emscriptenAnimatedAttributesChangeFrames(AnimatedAttributesBase& self, int first, int last, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeFrames(first, last, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeFillGradient(AnimatedAttributesBase& self, const Point& start, const Color& startColor, const Point& end, const Color& endColor, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeFillGradient(start, startColor, end, endColor, seconds, animatedAttributesEasing(easing));
-    });
-}
-
-void emscriptenAnimatedAttributesChangeFillRadialGradient(AnimatedAttributesBase& self, const Point& center, const Color& centerColor, float radius, const Color& endColor, double seconds, int easing) {
-    poseScriptCall([&] {
-    self.changeFillRadialGradient(center, centerColor, radius, endColor, seconds, animatedAttributesEasing(easing));
-    });
-}
-
 void emscriptenAnimatedAttributesChangeTransform(AnimatedAttributesBase& self, const emscripten::val& matrix, double seconds, int easing) {
     poseScriptCall([&] {
-    self.changeTransform(attributesMatrix(matrix), seconds, animatedAttributesEasing(easing));
+    self.changeTransform(attributesMatrix(matrix), seconds, emscriptenEasingArgument(easing));
     });
 }
 
@@ -1152,16 +939,14 @@ int emscriptenAttributesGetBlendMode(Attributes& attributes) {
     return static_cast<int>(attributes.getBlendMode());
 }
 
-Drawing* emscriptenCreateDrawing() {
-    return Drawing::create();
+ElementRef* emscriptenDrawingAddText(Drawing& drawing, const std::string& text, const Rect& rect, const Attributes& attrs) {
+    return poseScriptCall([&]{return drawing.addText(text.c_str(),rect,attrs);});
 }
-
-ElementRef* emscriptenDrawingAddSpline(Drawing& drawing, Spline& spline, const Attributes& attributes) {
-    return drawing.addSpline(std::move(spline), attributes);
+std::string emscriptenElementGetText(ElementRef& element) {
+    return poseScriptCall([&]{return std::string(element.getText());});
 }
-
-ElementRef* emscriptenDrawingAddPolygon(Drawing& drawing, Polygon& polygon, const Attributes& attributes) {
-    return drawing.addPolygon(std::move(polygon), attributes);
+void emscriptenElementSetText(ElementRef& element, const std::string& text) {
+    poseScriptCall([&]{element.setText(text.c_str());});
 }
 
 emscripten::val emscriptenElementGetControlPoints(ElementRef& element) {
@@ -1238,21 +1023,20 @@ void emscriptenLogWrite(LogManager& manager, int level, const std::string& categ
     manager.writeLogEntry(static_cast<int8>(level), category.c_str(), message.c_str());
 }
 
-void emscriptenLogSetLevel(LogManager& manager, int level) {
-    manager.setLogLevel(static_cast<int8>(level));
+
+
+void emscriptenTileLoadMapData(TileLayer& layer, const emscripten::val& data, int width, int height, int dstX, int dstY) {
+    auto world = layer.getWorldSize();
+    if (width < 0 || height < 0 || dstX < 0 || dstY < 0 ||
+            width > world.width() - dstX || height > world.height() - dstY)
+        throw std::out_of_range("tile map region exceeds world bounds");
+    ScriptBytes bytes(data);
+    if (static_cast<size_t>(width) * static_cast<size_t>(height) > bytes.size)
+        throw std::out_of_range("insufficient tile map bytes");
+    if (width && height) layer.loadMapData(bytes.data, width, height, dstX, dstY);
 }
 
-int emscriptenLogGetLevel(LogManager& manager) {
-    return manager.getLogLevel();
-}
 
-void emscriptenTileDefineSet(TileLayer& layer, int tileWidth, int tileHeight, Image* tiles) {
-    layer.defineTileSet(tileWidth, tileHeight, tiles);
-}
-
-void emscriptenTileSetWorldSize(TileLayer& layer, long width, long height) {
-    layer.setWorldSize(width, height);
-}
 
 int emscriptenTileGetType(TileLayer& layer, long x, long y) {
     return layer.getTileTypeAt(x, y);
@@ -1271,19 +1055,7 @@ emscripten::val emscriptenTileGetTypeAndFacing(TileLayer& layer, long x, long y)
     return result;
 }
 
-static RotatedRect emscriptenRotatedRectFromVal(const emscripten::val& value) {
-    RotatedRect result(Rect(
-        value["left"].as<float>(), value["top"].as<float>(),
-        value["right"].as<float>(), value["bottom"].as<float>()),
-        value["radians"].as<float>());
-    emscripten::val center = value["centerOffset"];
-    if (!center.isUndefined() && !center.isNull()) {
-        result.centerOffset = Offset(center["x"].as<float>(), center["y"].as<float>());
-    }
-    return result;
-}
-
-static Quad emscriptenQuadFromVal(const emscripten::val& value) {
+Quad emscriptenQuadFromVal(const emscripten::val& value) {
     emscripten::val points = value["points"];
     return Quad(
         Point(points[0]["x"].as<float>(), points[0]["y"].as<float>()),
@@ -1296,72 +1068,22 @@ void emscriptenSerializerSerialize8(Serializer& serializer, double value) {
     serializer.serialize_8(static_cast<int64>(value));
 }
 
-void emscriptenSerializerSerialize4(Serializer& serializer, int value) {
-    serializer.serialize_4(static_cast<int32>(value));
-}
-
-void emscriptenSerializerSerialize2(Serializer& serializer, int value) {
-    serializer.serialize_2(static_cast<int16>(value));
-}
-
-void emscriptenSerializerSerialize1(Serializer& serializer, int value) {
-    serializer.serialize_1(static_cast<int8>(value));
-}
-
-void emscriptenSerializerSerializeFloat(Serializer& serializer, double value) {
-    serializer.serialize_f(static_cast<float>(value));
-}
-
-void emscriptenSerializerSerializeDouble(Serializer& serializer, double value) {
-    serializer.serialize_d(value);
-}
-
-void emscriptenSerializerSerializePoint(Serializer& serializer, const Point& value) {
-    serializer.serialize_point(value);
-}
-
-void emscriptenSerializerSerializeVector(Serializer& serializer, const Vector& value) {
-    serializer.serialize_vector(value);
-}
-
 void emscriptenSerializerSerializeString(Serializer& serializer, const std::string& value) {
     serializer.serialize_str(value.c_str());
 }
 
-void emscriptenSerializerSerializeMem(Serializer& serializer, const std::string& value) {
-    serializer.serialize_mem(value.data(), static_cast<uint32>(value.size()));
-}
-
-void emscriptenSerializerSerializeRotatedRect(Serializer& serializer, const emscripten::val& value) {
-    serializer.serialize_rotr(emscriptenRotatedRectFromVal(value));
-}
-
-void emscriptenSerializerSerializeQuad(Serializer& serializer, const emscripten::val& value) {
-    serializer.serialize_quad(emscriptenQuadFromVal(value));
+void emscriptenSerializerSerializeMem(Serializer& serializer, const emscripten::val& value) {
+    ScriptBytes bytes(value);
+    serializer.serialize_mem(bytes.data, static_cast<uint32>(bytes.size));
 }
 
 uint32 emscriptenSerializerSizeofString(Serializer& serializer, const std::string& value) {
     return serializer.sizeof_str(value.c_str());
 }
 
-uint32 emscriptenSerializerSizeofPoint(Serializer& serializer, const Point& value) {
-    return serializer.sizeof_point(value);
-}
-
-uint32 emscriptenSerializerSizeofVector(Serializer& serializer, const Vector& value) {
-    return serializer.sizeof_vector(value);
-}
-
-uint32 emscriptenSerializerSizeofMem(Serializer& serializer, const std::string& value) {
-    return serializer.sizeof_mem(value.data(), static_cast<uint32>(value.size()));
-}
-
-uint32 emscriptenSerializerSizeofRotatedRect(Serializer& serializer, const emscripten::val& value) {
-    return serializer.sizeof_rotr(emscriptenRotatedRectFromVal(value));
-}
-
-uint32 emscriptenSerializerSizeofQuad(Serializer& serializer, const emscripten::val& value) {
-    return serializer.sizeof_quad(emscriptenQuadFromVal(value));
+uint32 emscriptenSerializerSizeofMem(Serializer& serializer, const emscripten::val& value) {
+    ScriptBytes bytes(value);
+    return serializer.sizeof_mem(bytes.data, static_cast<uint32>(bytes.size));
 }
 
 MemBlock* emscriptenSerializerGetData(Serializer& serializer) {
@@ -1370,34 +1092,6 @@ MemBlock* emscriptenSerializerGetData(Serializer& serializer) {
 
 double emscriptenDeserializerDeserialize8(Deserializer& deserializer) {
     return static_cast<double>(deserializer.deserialize_8());
-}
-
-int emscriptenDeserializerDeserialize4(Deserializer& deserializer) {
-    return deserializer.deserialize_4();
-}
-
-int emscriptenDeserializerDeserialize2(Deserializer& deserializer) {
-    return deserializer.deserialize_2();
-}
-
-int emscriptenDeserializerDeserialize1(Deserializer& deserializer) {
-    return deserializer.deserialize_1();
-}
-
-double emscriptenDeserializerDeserializeFloat(Deserializer& deserializer) {
-    return deserializer.deserialize_f();
-}
-
-double emscriptenDeserializerDeserializeDouble(Deserializer& deserializer) {
-    return deserializer.deserialize_d();
-}
-
-Point emscriptenDeserializerDeserializePoint(Deserializer& deserializer) {
-    return deserializer.deserialize_point();
-}
-
-Vector emscriptenDeserializerDeserializeVector(Deserializer& deserializer) {
-    return deserializer.deserialize_vector();
 }
 
 std::string emscriptenDeserializerDeserializeString(Deserializer& deserializer) {
@@ -1414,23 +1108,7 @@ MemBlock* emscriptenDeserializerDeserializeMem(Deserializer& deserializer) {
     return result;
 }
 
-emscripten::val emscriptenDeserializerDeserializeRotatedRect(Deserializer& deserializer) {
-    RotatedRect value = deserializer.deserialize_rotr();
-    emscripten::val result = emscripten::val::object();
-    result.set("left", value.left);
-    result.set("top", value.top);
-    result.set("right", value.right);
-    result.set("bottom", value.bottom);
-    result.set("radians", value.radians);
-    emscripten::val center = emscripten::val::object();
-    center.set("x", value.centerOffset.x);
-    center.set("y", value.centerOffset.y);
-    result.set("centerOffset", center);
-    return result;
-}
-
-emscripten::val emscriptenDeserializerDeserializeQuad(Deserializer& deserializer) {
-    Quad value = deserializer.deserialize_quad();
+emscripten::val emscriptenQuadValue(const Quad& value) {
     emscripten::val points = emscripten::val::array();
     for (int i = 0; i < 4; ++i) {
         emscripten::val point = emscripten::val::object();
@@ -1443,8 +1121,14 @@ emscripten::val emscriptenDeserializerDeserializeQuad(Deserializer& deserializer
     return result;
 }
 
-void emscriptenDeserializerSetData(Deserializer& deserializer, MemBlock& data) {
-    deserializer.setDataPtr(data.ptr, static_cast<uint32>(data.bytes));
+void emscriptenDeserializerSetData(Deserializer& deserializer, const emscripten::val& data) {
+    if (data.instanceof(emscripten::val::global("Uint8Array"))) {
+        ScriptBytes bytes(data);
+        deserializer.setDataCopy(bytes.data, static_cast<uint32>(bytes.size));
+    } else {
+        auto* block = data.as<MemBlock*>(emscripten::allow_raw_pointers());
+        deserializer.setDataPtr(block->ptr, static_cast<uint32>(block->bytes));
+    }
 }
 
 uint32 emscriptenSpriteLayerGetSerializedSize(SpriteLayer& layer, Serializer& serializer) {
@@ -1480,7 +1164,6 @@ void emscriptenQuit() {
 bool emscriptenIsQuitting() {
     return pdg_LibIsQuitting();
 }
-
 
 // end stuff to add to C++ API
 
@@ -1546,3 +1229,19 @@ void platform_pollEvents()
 }
 
 } // end namespace pdg
+
+namespace pdg {
+ParticleTrailOptions browserParticleTrailOptions(const emscripten::val& value) {
+    if(value.isNull() || value.typeOf().as<std::string>()!="object") throw std::invalid_argument("Expected trail options record");
+    auto number=[&](const char* key,double fallback) {auto v=value[key];if(v.isUndefined())return fallback;if(v.typeOf().as<std::string>()!="number")throw std::invalid_argument("Expected numeric trail option");return v.as<double>();};
+    auto color=[&](Color fallback) {
+        auto v=value["color"];if(v.isUndefined())return fallback;
+        const auto type=v.typeOf().as<std::string>();
+        if(type=="string")return Color::makeColor(v.as<std::string>().c_str());
+        if(type=="number")return Color(v.as<uint32>());
+        if(v.isNull() || type!="object")throw std::invalid_argument("Expected trail Color");
+        return v.as<Color>();
+    };
+    return readParticleTrailOptions(number,color);
+}
+}

@@ -1,5 +1,5 @@
 /**
-\fn pdg::Sprite::addAnimationIK(object config, int order)
+\fn pdg::Sprite::addAnimationIK(AnimationIKOptions config, int order)
 \brief Register a two-bone inverse-kinematics controller.
 
 Validates a trial solve before registration. The controller runs in animationStage_Constraint on each evaluation, using the freshly sampled joint offsets. Inspect its result to distinguish unreachable, limited, and stretched solutions.

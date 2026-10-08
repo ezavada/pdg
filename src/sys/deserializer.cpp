@@ -27,6 +27,7 @@
 
 
 #include "pdg_project.h"
+#include "pdg/sys/camera.h"
 
 #include "pdg/sys/deserializer.h"
 #include "pdg/sys/serializable.h"
@@ -402,6 +403,9 @@ Deserializer::deserialize_obj() {
 			}
 		}
         if (!obj && classTag == CLASSTAG_SPRITE) obj = Sprite::CreateInstance();
+        if (!obj && classTag == CLASSTAG_CAMERA) obj = Camera::CreateInstance();
+        if (!obj && classTag == CLASSTAG_TROUPE) obj = new Troupe();
+        if (!obj && classTag == CLASSTAG_ANIMATED) obj = AnimatedBase::CreateInstance();
         if (!obj && classTag == CLASSTAG_IMAGE) {
 #ifdef PDG_NO_GUI
             obj = new ImageImpl();
@@ -455,7 +459,15 @@ void* Deserializer::deserialize_ptr() {
 	return ptr;
 }
 
+void Deserializer::setDataCopy(const void* ptr, uint32 ptrSize) {
+    std::vector<uint8> copy(ptrSize);
+    if (ptrSize) std::memcpy(copy.data(), ptr, ptrSize);
+    mOwnedData.swap(copy);
+    setDataPtr(mOwnedData.data(), ptrSize);
+}
+
 void Deserializer::setDataPtr(void* ptr, uint32 ptrSize) {
+    if (ptr != mOwnedData.data()) mOwnedData.clear();
     mUsingTags = false;
     mLastBoolByte = 0;
     mBoolBitOffset = 0;

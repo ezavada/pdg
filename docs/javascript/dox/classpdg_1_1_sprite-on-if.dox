@@ -1,9 +1,19 @@
 namespace pdg { /**
 
-\fn pdg::Sprite::on
+\fn pdg::Sprite::on(int eventCode, function func)
 
 \brief set event handler for all different sprite events
 
 \sa IEventHandler
 
 **/ }
+
+/**
+\fn pdg::Sprite::on(string event, function handler)
+\brief Observe the selected Sprite animation block's lifecycle.
+\param event Lifecycle event name; see \ref animation_script_events.
+\param handler Function receiving an AnimationEvent record.
+\return This Sprite for chaining.
+String events use Animated's selected-block lifecycle contract. Numeric events use the overload above and return an event subscription.
+\see Animated::on(), \ref animation_script_events
+*/

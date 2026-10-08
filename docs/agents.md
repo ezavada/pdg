@@ -17,7 +17,6 @@ Keep those categories separate when you edit.
 - High-level project overview comes from `README.md` and `docs/cxx/dox/index.dox`.
 - C++ API doc sources live primarily under `docs/cxx/dox`.
 - JavaScript doc sources live primarily under `docs/javascript/dox` plus the IDL/doc-generation flow in `tools/make-idl.js` and related scripts.
-- `docs/note-ai` contains design notes, migration plans, and analysis. It is helpful context, not automatically authoritative.
 
 ## Do Not Edit Generated Output First
 

@@ -1,4 +1,4 @@
-.TH "RotatedRect" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "RotatedRect" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -22,15 +22,15 @@ Inherits \fBRect\fP\&.
 .br
 .RI "create a \fBQuad\fP by applying the rectangle's rotation around the center point with offset "
 .ti -1c
-.RI "\fBrotate\fP (number rotateRadians)"
+.RI "\fBRotatedRect\fP \fBrotate\fP (number rotateRadians)"
 .br
 .RI "change the rotation of this rectangle by some number of radians "
 .ti -1c
-.RI "\fBsetCenterOffset\fP (\fBOffset\fP cpOffset)"
+.RI "\fBRotatedRect\fP \fBsetCenterOffset\fP (\fBOffset\fP cpOffset)"
 .br
 .RI "set an offset for point around which rotation is applied "
 .ti -1c
-.RI "\fBsetRotation\fP (number rotationRadians, \fBOffset\fP cpOffset=null)"
+.RI "\fBRotatedRect\fP \fBsetRotation\fP (number rotationRadians, \fBOffset\fP cpOffset=null)"
 .br
 .RI "set the rotation of this rectangle to a particular amount in radians "
 .in -1c
@@ -53,6 +53,9 @@ Public Member Functions inherited from \fBRect\fP
 .RI "\fBRect\fP (\fBPoint\fP topLeft, number w, number h)"
 .br
 .ti -1c
+.RI "\fBRect\fP (Rect source)"
+.br
+.ti -1c
 .RI "\fBRect\fP \fBadd\fP (\fBPoint\fP p)"
 .br
 .RI "add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates "
@@ -65,11 +68,11 @@ Public Member Functions inherited from \fBRect\fP
 .br
 .RI "set this rectangle equal to the given one "
 .ti -1c
-.RI "\fBcenter\fP (\fBPoint\fP p)"
+.RI "\fBRect\fP \fBcenter\fP (\fBPoint\fP p)"
 .br
 .RI "center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle "
 .ti -1c
-.RI "\fBcenter\fP (\fBRect\fP r)"
+.RI "\fBRect\fP \fBcenter\fP (\fBRect\fP r)"
 .br
 .RI "center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle "
 .ti -1c
@@ -109,7 +112,7 @@ Public Member Functions inherited from \fBRect\fP
 .br
 .RI "return true if this rectangle is equal to the given one "
 .ti -1c
-.RI "\fBgrow\fP (number delta)"
+.RI "\fBRect\fP \fBgrow\fP (number delta)"
 .br
 .RI "increase the height and width of the rectangle while leaving the center point unchanged "
 .ti -1c
@@ -117,15 +120,15 @@ Public Member Functions inherited from \fBRect\fP
 .br
 .RI "get the height of this rectangle "
 .ti -1c
-.RI "\fBhorzGrow\fP (number delta)"
+.RI "\fBRect\fP \fBhorzGrow\fP (number delta)"
 .br
 .RI "increase the width of the rectangle while leaving the center point unchanged "
 .ti -1c
-.RI "\fBhorzScale\fP (number f)"
+.RI "\fBRect\fP \fBhorzScale\fP (number f)"
 .br
 .RI "change the x coordinates of the rectangle by a multiplier "
 .ti -1c
-.RI "\fBhorzShrink\fP (number delta)"
+.RI "\fBRect\fP \fBhorzShrink\fP (number delta)"
 .br
 .RI "reduce the width of the rectangle while leaving the center point unchanged "
 .ti -1c
@@ -149,35 +152,35 @@ Public Member Functions inherited from \fBRect\fP
 .br
 .RI "Subtract another rectangle from this rectangle, returning the difference\&. "
 .ti -1c
-.RI "\fBmoveDown\fP (number delta)"
+.RI "\fBRect\fP \fBmoveDown\fP (number delta)"
 .br
 .RI "move the rectangle down by some amount "
 .ti -1c
-.RI "\fBmoveLeft\fP (number delta)"
+.RI "\fBRect\fP \fBmoveLeft\fP (number delta)"
 .br
 .RI "move the rectangle to the left by some amount "
 .ti -1c
-.RI "\fBmoveRight\fP (number delta)"
+.RI "\fBRect\fP \fBmoveRight\fP (number delta)"
 .br
 .RI "move the rectangle to the right by some amount "
 .ti -1c
-.RI "\fBmoveTo\fP (number x, number y)"
+.RI "\fBRect\fP \fBmoveTo\fP (number x, number y)"
 .br
 .RI "moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point "
 .ti -1c
-.RI "\fBmoveTo\fP (\fBPoint\fP p)"
+.RI "\fBRect\fP \fBmoveTo\fP (\fBPoint\fP p)"
 .br
 .RI "moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point "
 .ti -1c
-.RI "\fBmoveUp\fP (number delta)"
+.RI "\fBRect\fP \fBmoveUp\fP (number delta)"
 .br
 .RI "move the rectangle up by some amount "
 .ti -1c
-.RI "\fBmoveXTo\fP (number x)"
+.RI "\fBRect\fP \fBmoveXTo\fP (number x)"
 .br
 .RI "move the rectangle to a particular x location, leaving y unchanged "
 .ti -1c
-.RI "\fBmoveYTo\fP (number y)"
+.RI "\fBRect\fP \fBmoveYTo\fP (number y)"
 .br
 .RI "move the rectangle to a particular y location, leaving x unchanged "
 .ti -1c
@@ -213,27 +216,27 @@ Public Member Functions inherited from \fBRect\fP
 .br
 .RI "get top right corner point of this rectangle "
 .ti -1c
-.RI "\fBround\fP ()"
+.RI "\fBRect\fP \fBround\fP ()"
 .br
 .RI "round the coordinates to closest whole number "
 .ti -1c
-.RI "\fBscale\fP (number f)"
+.RI "\fBRect\fP \fBscale\fP (number f)"
 .br
 .RI "change the coordinates of the rectangle by a multiplier "
 .ti -1c
-.RI "\fBsetHeight\fP (number h)"
+.RI "\fBRect\fP \fBsetHeight\fP (number h)"
 .br
 .RI "Set the height of this rectangle, keeping the top edge fixed\&. "
 .ti -1c
-.RI "\fBsetSize\fP (number n)"
+.RI "\fBRect\fP \fBsetSize\fP (number n)"
 .br
 .RI "set the size (width & height) of the rectangle "
 .ti -1c
-.RI "\fBsetWidth\fP (number w)"
+.RI "\fBRect\fP \fBsetWidth\fP (number w)"
 .br
 .RI "Set the width of this rectangle, keeping the left edge fixed\&. "
 .ti -1c
-.RI "\fBshrink\fP (number delta)"
+.RI "\fBRect\fP \fBshrink\fP (number delta)"
 .br
 .RI "reduce the height and width of the rectangle while leaving the center point unchanged "
 .ti -1c
@@ -261,15 +264,15 @@ Public Member Functions inherited from \fBRect\fP
 .br
 .RI "get the smallest possible new rectangle that contains both rectangles "
 .ti -1c
-.RI "\fBvertGrow\fP (number delta)"
+.RI "\fBRect\fP \fBvertGrow\fP (number delta)"
 .br
 .RI "increase the height of the rectangle while leaving the center point unchanged "
 .ti -1c
-.RI "\fBvertScale\fP (number f)"
+.RI "\fBRect\fP \fBvertScale\fP (number f)"
 .br
 .RI "change the y coordinates of the rectangle by a multiplier "
 .ti -1c
-.RI "\fBvertShrink\fP (number delta)"
+.RI "\fBRect\fP \fBvertShrink\fP (number delta)"
 .br
 .RI "reduce the height of the rectangle while leaving the center point unchanged "
 .ti -1c
@@ -349,24 +352,32 @@ rectangle with rotation for 2D coordinate system\&.
 
 .PP
 References \fBRect::Rect()\fP\&.
+.PP
+Referenced by \fBrotate()\fP, \fBsetCenterOffset()\fP, and \fBsetRotation()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBQuad\fP getQuad ()"
 
 .PP
 create a \fBQuad\fP by applying the rectangle's rotation around the center point with offset 
-.SS "rotate (number rotateRadians)"
+.SS "\fBRotatedRect\fP rotate (number rotateRadians)"
 
 .PP
 change the rotation of this rectangle by some number of radians 
-.SS "setCenterOffset (\fBOffset\fP cpOffset)"
+.PP
+References \fBRotatedRect()\fP\&.
+.SS "\fBRotatedRect\fP setCenterOffset (\fBOffset\fP cpOffset)"
 
 .PP
 set an offset for point around which rotation is applied 
-.SS "setRotation (number rotationRadians, \fBOffset\fP cpOffset = \fRnull\fP)"
+.PP
+References \fBRotatedRect()\fP\&.
+.SS "\fBRotatedRect\fP setRotation (number rotationRadians, \fBOffset\fP cpOffset = \fRnull\fP)"
 
 .PP
 set the rotation of this rectangle to a particular amount in radians 
+.PP
+References \fBRotatedRect()\fP\&.
 .SH "Member Data Documentation"
 .PP 
 .SS "number bottom"

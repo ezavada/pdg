@@ -28,6 +28,29 @@
 
 
 namespace pdg {
+%#ifdef PDG_USING_JAVASCRIPT_CORE
+%#define PROCEDURAL_PARAMETERS JSContextRef ctx, JSValueRef* exception
+%#define PROCEDURAL_ARGUMENTS ctx, exception
+%#else
+%#define PROCEDURAL_PARAMETERS v8::Isolate* isolate
+%#define PROCEDURAL_ARGUMENTS isolate
+%#endif
+
+static std::vector<double> proceduralBindingValues(PROCEDURAL_PARAMETERS, VALUE input) {
+    std::vector<double> values;
+    %#ifdef PDG_USING_JAVASCRIPT_CORE
+    if(!JSValueIsArray(ctx,input)) { throw std::invalid_argument("Expected procedural array"); }
+    auto a=JSValueToObject(ctx,input,exception);auto key=JSStringCreateWithUTF8CString("length");
+    double n=JSValueToNumber(ctx,JSObjectGetProperty(ctx,a,key,exception),exception);JSStringRelease(key);
+    if(*exception||n>50000) { throw std::invalid_argument("Invalid procedural array"); }
+    for(unsigned i=0;i<n;++i){auto item=JSObjectGetPropertyAtIndex(ctx,a,i,exception);if(*exception||!JSValueIsNumber(ctx,item)) { throw std::invalid_argument("Invalid procedural number"); }values.push_back(JSValueToNumber(ctx,item,exception));}
+    %#else
+    if(!input->IsArray()) { throw std::invalid_argument("Expected procedural array"); }auto a=input.As<v8::Array>();if(a->Length()>50000) { throw std::invalid_argument("Procedural array too long"); }
+    for(unsigned i=0;i<a->Length();++i){v8::Local<v8::Value> item;if(!a->Get(isolate->GetCurrentContext(),i).ToLocal(&item)||!item->IsNumber()) { throw std::invalid_argument("Invalid procedural number"); }values.push_back(item.As<v8::Number>()->Value());}
+    %#endif
+    return values;
+}
+
     
 // ========================================================================================
 // ========================================================================================
@@ -194,22 +217,22 @@ static OBJECT_REF animationSnapshotValue(PDG_POSE_SCRIPT_PARAMETERS, const Anima
 static std::vector<double> animationPhysicsValues(PDG_POSE_SCRIPT_PARAMETERS,VALUE input){
     std::vector<double> result;
     %#ifdef PDG_USING_JAVASCRIPT_CORE
-    if(!JSValueIsArray(ctx,input))throw std::invalid_argument("Expected physical rig array");
+    if(!JSValueIsArray(ctx,input)) { throw std::invalid_argument("Expected physical rig array"); }
     auto array=JSValueToObject(ctx,input,exception);auto key=JSStringCreateWithUTF8CString("length");
     const auto length=JSValueToNumber(ctx,JSObjectGetProperty(ctx,array,key,exception),exception);JSStringRelease(key);
-    if(*exception||length>1500000)throw std::invalid_argument("Invalid physical rig array length");
-    for(unsigned i=0;i<length;++i){auto value=JSObjectGetPropertyAtIndex(ctx,array,i,exception);if(*exception||!JSValueIsNumber(ctx,value))throw std::invalid_argument("Invalid physical rig number");result.push_back(JSValueToNumber(ctx,value,exception));}
+    if(*exception||length>1500000) { throw std::invalid_argument("Invalid physical rig array length"); }
+    for(unsigned i=0;i<length;++i){auto value=JSObjectGetPropertyAtIndex(ctx,array,i,exception);if(*exception||!JSValueIsNumber(ctx,value)) { throw std::invalid_argument("Invalid physical rig number"); }result.push_back(JSValueToNumber(ctx,value,exception));}
     %#else
-    if(!input->IsArray())throw std::invalid_argument("Expected physical rig array");
-    auto array=input.As<v8::Array>();if(array->Length()>1500000)throw std::invalid_argument("Invalid physical rig array length");
-    for(unsigned i=0;i<array->Length();++i){v8::Local<v8::Value> value;if(!array->Get(isolate->GetCurrentContext(),i).ToLocal(&value)||!value->IsNumber())throw std::invalid_argument("Invalid physical rig number");result.push_back(value.As<v8::Number>()->Value());}
+    if(!input->IsArray()) { throw std::invalid_argument("Expected physical rig array"); }
+    auto array=input.As<v8::Array>();if(array->Length()>1500000) { throw std::invalid_argument("Invalid physical rig array length"); }
+    for(unsigned i=0;i<array->Length();++i){v8::Local<v8::Value> value;if(!array->Get(isolate->GetCurrentContext(),i).ToLocal(&value)||!value->IsNumber()) { throw std::invalid_argument("Invalid physical rig number"); }result.push_back(value.As<v8::Number>()->Value());}
     %#endif
     return result;
 }
 
 static AnimationTwoBoneIK animationScriptIKConfig(PDG_POSE_SCRIPT_PARAMETERS, VALUE value) {
     AnimationTwoBoneIK config;
-    if (!VALUE_IS_OBJECT(value)) throw std::invalid_argument("Expected IK configuration");
+    if (!VALUE_IS_OBJECT(value)) { throw std::invalid_argument("Expected IK configuration"); }
     %#ifdef PDG_USING_JAVASCRIPT_CORE
     auto object=JSValueToObject(ctx,value,exception);
     %#else
@@ -218,28 +241,28 @@ static AnimationTwoBoneIK animationScriptIKConfig(PDG_POSE_SCRIPT_PARAMETERS, VA
     auto read=[&](const char* name) {
         %#ifdef PDG_USING_JAVASCRIPT_CORE
         auto key=JSStringCreateWithUTF8CString(name);auto item=JSObjectGetProperty(ctx,object,key,exception);JSStringRelease(key);
-        if (*exception || !JSValueIsNumber(ctx,item)) throw std::invalid_argument("Invalid IK configuration field");
+        if (*exception || !JSValueIsNumber(ctx,item)) { throw std::invalid_argument("Invalid IK configuration field"); }
         double number=JSValueToNumber(ctx,item,exception);
         %#else
         v8::Local<v8::Value> item;
-        if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,name).ToLocalChecked()).ToLocal(&item) || !item->IsNumber()) throw std::invalid_argument("Invalid IK configuration field");
+        if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,name).ToLocalChecked()).ToLocal(&item) || !item->IsNumber()) { throw std::invalid_argument("Invalid IK configuration field"); }
         double number=item.As<v8::Number>()->Value();
         %#endif
-        if (!std::isfinite(number)) throw std::invalid_argument("Nonfinite IK configuration field");
+        if (!std::isfinite(number)) { throw std::invalid_argument("Nonfinite IK configuration field"); }
         return number;
     };
-    {double n=read("root");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.root=static_cast<AnimationBoneId>(n);}
-    {double n=read("middle");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.middle=static_cast<AnimationBoneId>(n);}
-    {double n=read("tip");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.tip=static_cast<AnimationBoneId>(n);}
+    {double n=read("root");if(n<0 || n>=animation_NoBone || n!=std::floor(n)) { throw std::invalid_argument("Invalid IK bone ID"); }config.root=static_cast<AnimationBoneId>(n);}
+    {double n=read("middle");if(n<0 || n>=animation_NoBone || n!=std::floor(n)) { throw std::invalid_argument("Invalid IK bone ID"); }config.middle=static_cast<AnimationBoneId>(n);}
+    {double n=read("tip");if(n<0 || n>=animation_NoBone || n!=std::floor(n)) { throw std::invalid_argument("Invalid IK bone ID"); }config.tip=static_cast<AnimationBoneId>(n);}
     config.rootLength=read("rootLength");
     config.middleLength=read("middleLength");
     config.targetX=read("targetX");
     config.targetY=read("targetY");
     config.influence=read("influence");
-    {double n=read("space");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.space=static_cast<int>(n);}
-    {double n=read("bendDirection");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.bendDirection=static_cast<int>(n);}
-    {double n=read("stretch");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.stretch=static_cast<int>(n);}
-    {double n=read("matchOrientation");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.matchOrientation=static_cast<int>(n);}
+    {double n=read("space");if(n<-1 || n>2 || n!=std::floor(n)) { throw std::invalid_argument("Invalid IK enum"); }config.space=static_cast<int>(n);}
+    {double n=read("bendDirection");if(n<-1 || n>2 || n!=std::floor(n)) { throw std::invalid_argument("Invalid IK enum"); }config.bendDirection=static_cast<int>(n);}
+    {double n=read("stretch");if(n<-1 || n>2 || n!=std::floor(n)) { throw std::invalid_argument("Invalid IK enum"); }config.stretch=static_cast<int>(n);}
+    {double n=read("matchOrientation");if(n<-1 || n>2 || n!=std::floor(n)) { throw std::invalid_argument("Invalid IK enum"); }config.matchOrientation=static_cast<int>(n);}
     config.targetRotation=read("targetRotation");
     config.rootMin=read("rootMin");
     config.rootMax=read("rootMax");
@@ -263,11 +286,13 @@ static OBJECT_REF animationIKResultValue(PDG_POSE_SCRIPT_PARAMETERS, const Anima
 }
 
 DECLARE_SYMBOL(deltaSeconds);
+DECLARE_SYMBOL(simulationDeltaSeconds);
 DECLARE_SYMBOL(root);
 DECLARE_SYMBOL(revision);
 static OBJECT_REF animationModifierContextValue(PDG_POSE_SCRIPT_PARAMETERS, const AnimationModifierContext& context) {
     OBJECT_REF result = OBJECT_CREATE_EMPTY(0);
     OBJECT_SET_PROPERTY_VALUE(result, SYMBOL(deltaSeconds), NUM2VAL(context.deltaSeconds));
+    OBJECT_SET_PROPERTY_VALUE(result, SYMBOL(simulationDeltaSeconds), NUM2VAL(context.simulationDeltaSeconds));
     OBJECT_SET_PROPERTY_VALUE(result, SYMBOL(root), animationTransformValue(PDG_POSE_SCRIPT_ARGUMENTS,context.root));
     OBJECT_SET_PROPERTY_VALUE(result, SYMBOL(revision), STR2VAL(std::to_string(context.revision).c_str()));
     return result;
@@ -284,13 +309,13 @@ static void applyAnimationScriptEdits(PDG_POSE_SCRIPT_PARAMETERS, AnimationPoseV
     const auto count = view.copy().getRig()->getBoneCount();
     const char* fields[] = {"x","y","rotation","scaleX","scaleY","alpha"};
     %#ifdef PDG_USING_JAVASCRIPT_CORE
-    if (!edits || !JSValueIsArray(ctx,edits)) throw std::invalid_argument("Modifier bridge must return bone transforms");
+    if (!edits || !JSValueIsArray(ctx,edits)) { throw std::invalid_argument("Modifier bridge must return bone transforms"); }
     auto array = JSValueToObject(ctx,edits,exception);
     auto lengthKey = JSStringCreateWithUTF8CString("length");
     auto lengthValue = JSObjectGetProperty(ctx,array,lengthKey,exception); JSStringRelease(lengthKey);
-    if (*exception || JSValueToNumber(ctx,lengthValue,exception) != count) throw std::invalid_argument("Wrong modifier bone count");
+    if (*exception || JSValueToNumber(ctx,lengthValue,exception) != count) { throw std::invalid_argument("Wrong modifier bone count"); }
     %#else
-    if (edits.IsEmpty() || !edits->IsArray() || edits.As<v8::Array>()->Length() != count) throw std::invalid_argument("Wrong modifier bone count");
+    if (edits.IsEmpty() || !edits->IsArray() || edits.As<v8::Array>()->Length() != count) { throw std::invalid_argument("Wrong modifier bone count"); }
     auto array = edits.As<v8::Array>();
     %#endif
     for (uint32_t id=0;id<count;++id) {
@@ -298,23 +323,22 @@ static void applyAnimationScriptEdits(PDG_POSE_SCRIPT_PARAMETERS, AnimationPoseV
         double* values[] = {&transform.x,&transform.y,&transform.rotation,&transform.scaleX,&transform.scaleY,&transform.alpha};
         %#ifdef PDG_USING_JAVASCRIPT_CORE
         auto item=JSObjectGetPropertyAtIndex(ctx,array,id,exception);
-        if (*exception || !JSValueIsObject(ctx,item)) throw std::invalid_argument("Invalid modifier transform");
+        if (*exception || !JSValueIsObject(ctx,item)) { throw std::invalid_argument("Invalid modifier transform"); }
         auto object=JSValueToObject(ctx,item,exception);
         %#else
         v8::Local<v8::Value> item;
-        if (!array->Get(isolate->GetCurrentContext(),id).ToLocal(&item) || !item->IsObject()) throw std::invalid_argument("Invalid modifier transform");
+        if (!array->Get(isolate->GetCurrentContext(),id).ToLocal(&item) || !item->IsObject()) { throw std::invalid_argument("Invalid modifier transform"); }
         auto object=item.As<v8::Object>();
         %#endif
         for (int field=0;field<6;++field) {
             %#ifdef PDG_USING_JAVASCRIPT_CORE
             auto key=JSStringCreateWithUTF8CString(fields[field]);
             auto value=JSObjectGetProperty(ctx,object,key,exception);JSStringRelease(key);
-            if (*exception || !JSValueIsNumber(ctx,value)) throw std::invalid_argument("Modifier transform fields must be numbers");
+            if (*exception || !JSValueIsNumber(ctx,value)) { throw std::invalid_argument("Modifier transform fields must be numbers"); }
             *values[field]=JSValueToNumber(ctx,value,exception);
             %#else
             v8::Local<v8::Value> value;
-            if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,fields[field]).ToLocalChecked()).ToLocal(&value) || !value->IsNumber())
-                throw std::invalid_argument("Modifier transform fields must be numbers");
+            if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,fields[field]).ToLocalChecked()).ToLocal(&value) || !value->IsNumber()) { throw std::invalid_argument("Modifier transform fields must be numbers"); }
             *values[field]=value.As<v8::Number>()->Value();
             %#endif
         }
@@ -361,7 +385,7 @@ static std::shared_ptr<Drawing> animationScriptDrawingValue(PDG_POSE_SCRIPT_PARA
     }
     if(VALUE_IS_NULL(input))return {};
     EXTRACT_CPP_OBJECT_OR_SUBCLASS_VALUE(input,result,Drawing);
-    if(!result)throw std::invalid_argument("Animation drawing callback must return a Drawing or null");
+    if(!result) { throw std::invalid_argument("Animation drawing callback must return a Drawing or null"); }
     return result->share();
 }
 struct AnimationScriptDrawing : AnimationScriptModifier {
@@ -409,6 +433,310 @@ static void Sprite_finalize(JSObjectRef object) {
 %#else
 %#define SPRITE_SAVE_WEAK(sprite, obj) sprite->mSpriteScriptObj.Reset(isolate,obj); sprite->mSpriteScriptObj.SetWeak(); sprite->mAnimatedScriptObj.Reset(isolate,obj); sprite->mAnimatedScriptObj.SetWeak(); sprite->mEventEmitterScriptObj.Reset(isolate,obj); sprite->mEventEmitterScriptObj.SetWeak(); sprite->mISerializableScriptObj.Reset(isolate,obj); sprite->mISerializableScriptObj.SetWeak()
 %#endif
+/* @pdg-schema
+{
+  "name": "AnimationDrawableCallback",
+  "value": {
+    "kind": "callback",
+    "synchronous": true,
+    "description": "Choose artwork during rendering. Return Drawing or null; undefined and Promises are invalid.",
+    "params": [
+      {
+        "name": "context",
+        "type": "object",
+        "schema": "AnimationDrawableContext"
+      }
+    ],
+    "returns": {
+      "type": "object Drawing",
+      "nullable": true
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationDrawableContext",
+  "value": {
+    "kind": "context",
+    "lifetime": "callback",
+    "description": "Borrowed drawing context; expires when the synchronous callback returns.",
+    "methods": {
+      "getTransform": {
+        "params": [
+          {
+            "name": "space",
+            "type": "number int",
+            "optional": true,
+            "default_value": "animationSpace_World"
+          }
+        ],
+        "returns": {
+          "type": "object",
+          "schema": "AnimationTransform",
+          "ownership": "owned"
+        },
+        "description": "Copy the selected bone transform in local, rig, or owning-layer coordinates."
+      },
+      "copyPose": {
+        "params": [],
+        "returns": {
+          "schema": "AnimationPose"
+        },
+        "description": "Copy the final animation pose. See Sprite.getAnimationPose for the snapshot format."
+      }
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationDrawableOptions",
+  "value": {
+    "kind": "record",
+    "description": "Options shared by both Sprite.addAnimationDrawable overloads.",
+    "fields": {
+      "bone": {
+        "one_of": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number int"
+          }
+        ],
+        "description": "Existing bone name or zero-based bone ID."
+      },
+      "placement": {
+        "type": "number int",
+        "optional": true,
+        "default_value": "animationDraw_AfterAll",
+        "description": "Use an animationDraw placement constant."
+      },
+      "slot": {
+        "type": "string",
+        "optional": true,
+        "default_value": "\"\"",
+        "description": "Required for slot placements; omit for BeforeAll and AfterAll."
+      },
+      "order": {
+        "type": "number int",
+        "optional": true,
+        "default_value": "0",
+        "description": "Lower values draw first within the same placement and slot; ties preserve registration order."
+      },
+      "strokeSpace": {
+        "type": "number int",
+        "optional": true,
+        "default_value": "animationStroke_PortPixels",
+        "description": "Use an animationStroke constant."
+      },
+      "bounds": {
+        "type": "object",
+        "schema": "AnimationDrawingBounds",
+        "optional": true,
+        "description": "Omit if safe bounds are unknown."
+      },
+      "uncullable": {
+        "type": "boolean",
+        "optional": true,
+        "description": "Defaults to true without bounds and false with bounds."
+      }
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationDrawingBounds",
+  "value": {
+    "kind": "record",
+    "description": "Finite bone-local artwork bounds, including stroke extents.",
+    "fields": {
+      "left": {
+        "type": "number",
+        "description": "Minimum horizontal coordinate."
+      },
+      "top": {
+        "type": "number",
+        "description": "Minimum vertical coordinate."
+      },
+      "right": {
+        "type": "number",
+        "description": "Maximum horizontal coordinate; must be at least left."
+      },
+      "bottom": {
+        "type": "number",
+        "description": "Maximum vertical coordinate; must be at least top."
+      }
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationTransform",
+  "value": {
+    "kind": "record",
+    "description": "A plain transform record. All six fields must be finite numbers.",
+    "fields": {
+      "x": {
+        "type": "number",
+        "description": "Horizontal translation in the selected coordinate space."
+      },
+      "y": {
+        "type": "number",
+        "description": "Vertical translation in the selected coordinate space."
+      },
+      "rotation": {
+        "type": "number",
+        "description": "Clockwise radians."
+      },
+      "scaleX": {
+        "type": "number",
+        "description": "Horizontal scale; platform frames require a nonzero value."
+      },
+      "scaleY": {
+        "type": "number",
+        "description": "Vertical scale; platform frames require a nonzero value."
+      },
+      "alpha": {
+        "type": "number",
+        "description": "Opacity from zero to one."
+      }
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationSpringState",
+  "value": {
+    "kind": "record",
+    "description": "An independent spring position and velocity sample. All fields must be finite numbers.",
+    "fields": {
+      "x": {
+        "type": "number",
+        "description": "Horizontal position in the application coordinate frame."
+      },
+      "y": {
+        "type": "number",
+        "description": "Vertical position in the application coordinate frame."
+      },
+      "velocityX": {
+        "type": "number",
+        "description": "Horizontal distance units per second."
+      },
+      "velocityY": {
+        "type": "number",
+        "description": "Vertical distance units per second."
+      }
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationEventHandler",
+  "value": {
+    "native_binding": {
+      "type": "pdg::AnimationEventHandler",
+      "browser": {
+        "argument": "animation-event-handler"
+      }
+    },
+    "kind": "callback",
+    "synchronous": true,
+    "description": "Receives a lifecycle notification after the scheduler publishes its state. Return value is ignored.",
+    "params": [
+      {
+        "name": "event",
+        "type": "object",
+        "schema": "AnimationEvent"
+      }
+    ],
+    "returns": {
+      "type": "void"
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "target": {
+        "type": "object Animated",
+        "ownership": "borrowed"
+      },
+      "type": {
+        "type": "string"
+      },
+      "scriptName": {
+        "type": "string"
+      },
+      "markName": {
+        "type": "string"
+      },
+      "operationName": {
+        "type": "string"
+      },
+      "elapsedSeconds": {
+        "type": "number"
+      },
+      "iteration": {
+        "type": "number"
+      },
+      "reverse": {
+        "type": "boolean"
+      }
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationEvaluator",
+  "value": {
+    "native_binding": {"type":"pdg::AnimationEvaluator","browser":{"argument":"animation-evaluator"}},
+    "kind": "callback",
+    "synchronous": true,
+    "description": "Observe the playback target and return a boolean. Promises and nonboolean results are invalid.",
+    "params": [
+      {
+        "name": "context",
+        "type": "object",
+        "schema": "AnimationEvaluationContext"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    }
+  }
+}
+*/
+/* @pdg-schema
+{
+  "name": "AnimationEvaluationContext",
+  "value": {
+    "kind": "record",
+    "description": "Borrowed synchronous evaluator context. Do not retain it after the call.",
+    "fields": {
+      "target": {
+        "type": "object Animated",
+        "ownership": "borrowed",
+        "description": "Current playback target; observe its state without editing the executing graph."
+      },
+      "elapsedSeconds": {
+        "type": "number",
+        "description": "Elapsed local time of the conditional or until wrapper."
+      }
+    }
+  }
+}
+*/
 WRAPPER_INITIALIZER_IMPL_REFCOUNTED_CUSTOM(Sprite,
     SPRITE_SAVE_WEAK(cppObj, obj); cppObj->addRef())
     EXPORT_FINALIZED_CLASS_SYMBOLS("Sprite", Sprite, Sprite_finalize, , ,
@@ -473,6 +801,7 @@ WRAPPER_INITIALIZER_IMPL_REFCOUNTED_CUSTOM(Sprite,
         HAS_METHOD(Sprite, "setAnimationDrawableEnabled", SetAnimationDrawableEnabled)
         HAS_METHOD(Sprite, "getAnimationDrawableError", GetAnimationDrawableError)
         HAS_METHOD(Sprite, "getAnimationDrawBounds", GetAnimationDrawBounds)
+        HAS_METHOD(Sprite, "_procedural", ProceduralControl)
         HAS_METHOD(Sprite, "addAnimationIK", AddAnimationIK)
         HAS_METHOD(Sprite, "setAnimationIKTarget", SetAnimationIKTarget)
         HAS_METHOD(Sprite, "getAnimationIKResult", GetAnimationIKResult)
@@ -489,6 +818,7 @@ WRAPPER_INITIALIZER_IMPL_REFCOUNTED_CUSTOM(Sprite,
 		HAS_METHOD(Sprite, "disableAnimationPose", DisableAnimationPose)
 		HAS_METHOD(Sprite, "isAnimationPoseEnabled", IsAnimationPoseEnabled)
 		HAS_METHOD(Sprite, "getAnimationRigError", GetAnimationRigError)
+		HAS_METHOD(Sprite, "getBone", GetBone)
 		HAS_METHOD(Sprite, "getAnimationBoneNames", GetAnimationBoneNames)
 		HAS_METHOD(Sprite, "getAnimationBindingNames", GetAnimationBindingNames)
 		HAS_METHOD(Sprite, "getAnimationBoneTransform", GetAnimationBoneTransform)
@@ -587,7 +917,7 @@ METHOD_IMPL(Sprite, GetFrameRotatedBounds)
 	RETURN( RECT2VAL(r) );
 	END
 METHOD_IMPL(Sprite, SetFrame)
-	METHOD_SIGNATURE("", [object Sprite], 1, ([number int] frame));
+	METHOD_SIGNATURE("sets the current frame of the sprite to the specified frame number", [this], 1, ([number int] frame));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_INT32_ARG(1, frame);
 	self->setFrame(frame);
@@ -624,25 +954,25 @@ METHOD_IMPL(Sprite, StopFrameAnimation)
 	NO_RETURN;
 	END
 METHOD_IMPL(Sprite, SetWantsAnimLoopEvents)
-	METHOD_SIGNATURE("", [object Sprite], 0, (boolean wantsThem = true));
+	METHOD_SIGNATURE("enables or disables animation loop event generation for this sprite", [this], 0, (boolean wantsThem = true));
     OPTIONAL_BOOL_ARG(1, wantsThem, true);
 	self->setWantsAnimLoopEvents(wantsThem);
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, SetWantsAnimEndEvents)
-	METHOD_SIGNATURE("", [object Sprite], 0, (boolean wantsThem = true));
+	METHOD_SIGNATURE("enables or disables animation end event generation for this sprite", [this], 0, (boolean wantsThem = true));
     OPTIONAL_BOOL_ARG(1, wantsThem, true);
 	self->setWantsAnimEndEvents(wantsThem);
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, SetWantsCollideWallEvents)
-	METHOD_SIGNATURE("", [object Sprite], 0, (boolean wantsThem = true));
+	METHOD_SIGNATURE("enables or disables wall collision event generation for this sprite", [this], 0, (boolean wantsThem = true));
     OPTIONAL_BOOL_ARG(1, wantsThem, true);
 	self->setWantsCollideWallEvents(wantsThem);
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, AddFramesImage)
-	METHOD_SIGNATURE("", undefined, 3, ([object Image] image, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames));
+	METHOD_SIGNATURE("", undefined, 3, ([object Image*] image, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames));
     REQUIRE_ARG_MIN_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, image, Image);
     OPTIONAL_INT32_ARG(2, startingFrame, Sprite::start_FromFirstFrame);
@@ -821,7 +1151,7 @@ METHOD_IMPL(Sprite, GetAttachPoint)
 	END
 
 METHOD_IMPL(Sprite, AttachSprite)
-	METHOD_SIGNATURE("", undefined, 2, ([object Sprite] sprite, string attachPointName));
+	METHOD_SIGNATURE("", undefined, 2, ([object Sprite*] sprite, string attachPointName));
 	REQUIRE_ARG_COUNT(2);
 	REQUIRE_CPP_OBJECT_ARG(1, sprite, Sprite);
 	REQUIRE_STRING_ARG(2, attachPointName);
@@ -830,7 +1160,7 @@ METHOD_IMPL(Sprite, AttachSprite)
 	END
 
 METHOD_IMPL(Sprite, DetachSprite)
-	METHOD_SIGNATURE("", undefined, 1, ([object Sprite] sprite));
+	METHOD_SIGNATURE("", undefined, 1, ([object Sprite*] sprite));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_CPP_OBJECT_ARG(1, sprite, Sprite);
 	self->detachSprite(sprite);
@@ -838,7 +1168,7 @@ METHOD_IMPL(Sprite, DetachSprite)
 	END
 
 METHOD_IMPL(Sprite, GetAttachedSprite)
-	METHOD_SIGNATURE("", [object Sprite], 1, (string attachPointName));
+	METHOD_SIGNATURE("", [object Sprite*], 1, (string attachPointName));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_STRING_ARG(1, attachPointName);
 	pdg::Sprite* attached = self->getAttachedSprite(attachPointName);
@@ -861,13 +1191,13 @@ METHOD_IMPL(Sprite, ActivateSubEntity)
 %#endif
 %#ifndef PDG_NO_GUI
 METHOD_IMPL(Sprite, SetWantsOffscreenEvents)
-	METHOD_SIGNATURE("", [object Sprite], 0, (boolean wantsThem = true));
+	METHOD_SIGNATURE("enables or disables offscreen event generation for this sprite", [this], 0, (boolean wantsThem = true));
     OPTIONAL_BOOL_ARG(1, wantsThem, true);
 	self->setWantsOffscreenEvents(wantsThem);
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, SetDrawHelper)
-	METHOD_SIGNATURE("", undefined, 1, ([object ISpriteDrawHelper] helper));
+	METHOD_SIGNATURE("", undefined, 1, ([object ISpriteDrawHelper*] helper));
 	OBJECT_SAVE(self->mSpriteScriptObj, THIS);
     REQUIRE_ARG_COUNT(1);
     REQUIRE_CPP_OBJECT_OR_SUBCLASS_OR_NULL_ARG(1, helper, ISpriteDrawHelper);
@@ -876,7 +1206,7 @@ METHOD_IMPL(Sprite, SetDrawHelper)
 	NO_RETURN;
 	END
 METHOD_IMPL(Sprite, SetPostDrawHelper)
-	METHOD_SIGNATURE("", undefined, 1, ([object ISpriteDrawHelper] helper));
+	METHOD_SIGNATURE("", undefined, 1, ([object ISpriteDrawHelper*] helper));
 	OBJECT_SAVE(self->mSpriteScriptObj, THIS);
     REQUIRE_ARG_COUNT(1);
     REQUIRE_CPP_OBJECT_OR_SUBCLASS_OR_NULL_ARG(1, helper, ISpriteDrawHelper);
@@ -886,7 +1216,7 @@ METHOD_IMPL(Sprite, SetPostDrawHelper)
 	END
 %#endif // !PDG_NO_GUI
 METHOD_IMPL(Sprite, ChangeFramesImage)
-	METHOD_SIGNATURE("", undefined, 2, ([object Image] oldImage, [object Image] newImage));
+	METHOD_SIGNATURE("", undefined, 2, ([object Image*] oldImage, [object Image*] newImage));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_CPP_OBJECT_ARG(1, oldImage, Image);
     REQUIRE_CPP_OBJECT_ARG(2, newImage, Image);
@@ -894,7 +1224,7 @@ METHOD_IMPL(Sprite, ChangeFramesImage)
 	NO_RETURN;
 	END
 METHOD_IMPL(Sprite, OffsetFrameCenters)
-	METHOD_SIGNATURE("", undefined, 5, ([number int] offsetX, [number int] offsetY, [object Image] image = null, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames));
+	METHOD_SIGNATURE("", undefined, 5, ([number int] offsetX, [number int] offsetY, [object Image*] image = null, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames));
     REQUIRE_ARG_MIN_COUNT(2);
     REQUIRE_INT32_ARG(1, offsetX);
     REQUIRE_INT32_ARG(2, offsetY);
@@ -905,14 +1235,14 @@ METHOD_IMPL(Sprite, OffsetFrameCenters)
 	NO_RETURN;
 	END
 METHOD_IMPL(Sprite, GetFrameCenterOffset)
-	METHOD_SIGNATURE("", [object Offset], 2, ([object Image] image = null, [number int] frameNum = 0));
+	METHOD_SIGNATURE("", [object Offset], 2, ([object Image*] image = null, [number int] frameNum = 0));
     OPTIONAL_CPP_OBJECT_ARG(1, image, Image, 0);
     OPTIONAL_INT32_ARG(2, frameNum, 0);
 	pdg::Offset offset = self->getFrameCenterOffset(image, frameNum);
 	RETURN_OFFSET(offset);
 	END
 METHOD_IMPL(Sprite, SetOpacity)
-	METHOD_SIGNATURE("", [object Sprite], 1, (number opacity));
+	METHOD_SIGNATURE("sets the opacity level for this sprite (0.0 to 1.0)", [this], 1, (number opacity));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, opacity);
 	self->setOpacity(opacity);
@@ -925,7 +1255,7 @@ METHOD_IMPL(Sprite, GetOpacity)
 	RETURN_NUMBER(opacity);
 	END
 METHOD_IMPL(Sprite, FadeTo)
-	METHOD_SIGNATURE("", undefined, 3, (number targetOpacity, number durationSeconds, [number int] easing = linearTween));
+	METHOD_SIGNATURE("", [this], 3, (number targetOpacity, number durationSeconds, [number int] easing = linearTween));
     REQUIRE_ARG_MIN_COUNT(1);
 	REQUIRE_NUMBER_ARG(1, targetOpacity);
 	REQUIRE_NUMBER_ARG(2, durationSeconds);
@@ -935,10 +1265,10 @@ METHOD_IMPL(Sprite, FadeTo)
     } else {
 		self->fadeTo(targetOpacity, durationSeconds);
 	}
-	NO_RETURN;
+	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, FadeIn)
-	METHOD_SIGNATURE("", undefined, 2, (number durationSeconds, [number int] easing = linearTween));
+	METHOD_SIGNATURE("", [this], 2, (number durationSeconds, [number int] easing = linearTween));
     REQUIRE_ARG_MIN_COUNT(1);
 	REQUIRE_NUMBER_ARG(1, durationSeconds);
 	OPTIONAL_INT32_ARG(2, easing, EasingFuncRef::linearTween);
@@ -947,10 +1277,10 @@ METHOD_IMPL(Sprite, FadeIn)
     } else {
 		self->fadeIn(durationSeconds);
 	}
-	NO_RETURN;
+	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, FadeOut)
-	METHOD_SIGNATURE("", undefined, 2, (number durationSeconds, [number int] easing = linearTween));
+	METHOD_SIGNATURE("", [this], 2, (number durationSeconds, [number int] easing = linearTween));
     REQUIRE_ARG_MIN_COUNT(1);
 	REQUIRE_NUMBER_ARG(1, durationSeconds);
 	OPTIONAL_INT32_ARG(2, easing, EasingFuncRef::linearTween);
@@ -959,10 +1289,10 @@ METHOD_IMPL(Sprite, FadeOut)
     } else {
 		self->fadeOut(durationSeconds);
 	}
-	NO_RETURN;
+	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, IsBehind)
-	METHOD_SIGNATURE("", boolean, 1, ([object Sprite] sprite));
+	METHOD_SIGNATURE("", boolean, 1, ([object Sprite*] sprite));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, sprite, Sprite);
 	bool behind = self->isBehind(sprite);
@@ -975,33 +1305,33 @@ METHOD_IMPL(Sprite, GetZOrder)
 	RETURN_INTEGER(zorder);
 	END
 METHOD_IMPL(Sprite, MoveBehind)
-	METHOD_SIGNATURE("", [object Sprite], 1, ([object Sprite] sprite));
+	METHOD_SIGNATURE("make this sprite be drawn before another sprite (visually behind)", [this], 1, ([object Sprite*] sprite));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, sprite, Sprite);
 	self->moveBehind(sprite);
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, MoveInFrontOf)
-	METHOD_SIGNATURE("", [object Sprite], 1, ([object Sprite] sprite));
+	METHOD_SIGNATURE("make this sprite be drawn just after another sprite (visually in front of)", [this], 1, ([object Sprite*] sprite));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, sprite, Sprite);
 	self->moveInFrontOf(sprite);
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, MoveToFront)
-	METHOD_SIGNATURE("put this sprite in front of all others in its layer", [object Sprite], 0, ());
+	METHOD_SIGNATURE("put this sprite in front of all others in its layer", [this], 0, ());
     REQUIRE_ARG_COUNT(0);
 	self->moveToFront();
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, MoveToBack)
-	METHOD_SIGNATURE("put this sprite behind all others in its layer", [object Sprite], 0, ());
+	METHOD_SIGNATURE("put this sprite behind all others in its layer", [this], 0, ());
     REQUIRE_ARG_COUNT(0);
 	self->moveToBack();
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, SetupFrameCollider)
-    METHOD_SIGNATURE("Follow current frame collision geometry", [object Collider], 0, ([number int] mode = frameCollider_AlphaMask, [number int] alphaThreshold = 128));
+    METHOD_SIGNATURE("Follow current frame collision geometry", [object Collider&], 0, ([number int] mode = frameCollider_AlphaMask, [number int] alphaThreshold = 128));
     try {
         OPTIONAL_NUMBER_ARG(1,modeValue,static_cast<double>(frameCollider_AlphaMask));
         OPTIONAL_NUMBER_ARG(2,threshold,128);
@@ -1016,45 +1346,52 @@ METHOD_IMPL(Sprite, SetupFrameCollider)
     } catch(const std::exception& e) { THROW_ERR(e.what()); }
     END
 METHOD_IMPL(Sprite, SetupAnimationCollider)
-    METHOD_SIGNATURE("Follow authored animation collision boxes", [object Collider], 0, ());
+    METHOD_SIGNATURE("Follow authored animation collision boxes", [object Collider&], 0, ());
     try { REQUIRE_ARG_COUNT(0); auto* result=&self->setupAnimationCollider(); RETURN_CPP_OBJECT(result,Collider); }
     catch(const std::exception& e) { THROW_ERR(e.what()); }
     END
 METHOD_IMPL(Sprite, SetFrameCollisionMask)
-    METHOD_SIGNATURE("Assign a mask to frames using an image", [object Sprite], 2, ([object Image] frameImage, [object Image] maskImage));
+    METHOD_SIGNATURE("Assign a mask to frames using an image.", [this], 2, ([object Image*] frameImage, [object Image*] maskImage));
     try { REQUIRE_ARG_COUNT(2); REQUIRE_CPP_OBJECT_ARG(1,image,Image); Image* mask=nullptr; if(!VALUE_IS_NULL(ARGV[1])) { REQUIRE_CPP_OBJECT_ARG(2,value,Image); mask=value; }
         self->setFrameCollisionMask(image,mask); RETURN_THIS;
     } catch(const std::exception& e) { THROW_ERR(e.what()); }
     END
 %#ifndef PDG_NO_GUI
 METHOD_IMPL(Sprite, SetWantsMouseOverEvents)
-	METHOD_SIGNATURE("", [object Sprite], 1, (boolean wantsThem = true));
+	METHOD_SIGNATURE("enables or disables mouse over event generation for this sprite", [this], 1, (boolean wantsThem = true));
     OPTIONAL_BOOL_ARG(1, wantsThem, true);
 	self->setWantsMouseOverEvents(wantsThem);
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, SetWantsClickEvents)
-	METHOD_SIGNATURE("", [object Sprite], 1, (boolean wantsThem = true));
+	METHOD_SIGNATURE("enables or disables click event generation for this sprite", [this], 1, (boolean wantsThem = true));
     OPTIONAL_BOOL_ARG(1, wantsThem, true);
 	self->setWantsClickEvents(wantsThem);
 	RETURN_THIS;
 	END
 METHOD_IMPL(Sprite, SetMouseDetectMode)
-	METHOD_SIGNATURE("", [object Sprite], 1, ([number int] collisionType = collide_BoundingBox));
+	METHOD_SIGNATURE("sets the mouse detection mode for this sprite", [this], 1, ([number int] collisionType = collide_BoundingBox));
     OPTIONAL_INT32_ARG(1, collisionType, Sprite::collide_BoundingBox);
 	self->setMouseDetectMode(collisionType);
 	RETURN_THIS;
 	END
 %#endif // !PDG_NO_GUI
 METHOD_IMPL(Sprite, GetLayer)
-	METHOD_SIGNATURE("get the layer that contains this sprite", [object SpriteLayer], 0, ());
+	METHOD_SIGNATURE("get the layer that contains this sprite", [object SpriteLayer*], 0, ());
     REQUIRE_ARG_COUNT(0);
 	SpriteLayer* layer = self->getLayer();
 	RETURN_CPP_OBJECT(layer, SpriteLayer);
 	END
 METHOD_IMPL(Sprite, On)
-	METHOD_SIGNATURE("", [object IEventHandler], 2, ([number int] eventCode, function func));
+	METHOD_SIGNATURE("Register a numeric Sprite event or a string animation lifecycle event.", [object IEventHandler*], 2, ({ [number int] eventCode, function func | string event, [function AnimationEventHandler] handler }));
 	REQUIRE_ARG_COUNT(2);
+    if(VALUE_IS_STRING(ARGV[0])) {
+        OBJECT_SAVE_WEAK(self->mAnimatedScriptObj, THIS);
+        REQUIRE_STRING_ARG(1, event);
+        REQUIRE_FUNCTION_ARG(2, handler);
+        try { self->on(event,MakeAnimationEventHandler(handler)); RETURN_THIS; }
+        catch(const std::exception& error) { THROW_ERR_MESSAGE(error.what()); }
+    }
 	REQUIRE_INT32_ARG(1, eventCode);
 	REQUIRE_FUNCTION_ARG(2, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -1073,7 +1410,7 @@ METHOD_IMPL(Sprite, On)
 
 // Sprite convenience event methods
 METHOD_IMPL(Sprite, OnCollideSprite)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -1086,7 +1423,7 @@ METHOD_IMPL(Sprite, OnCollideSprite)
 	END
 
 METHOD_IMPL(Sprite, OnCollideWall)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -1096,7 +1433,7 @@ METHOD_IMPL(Sprite, OnCollideWall)
 	END
 
 METHOD_IMPL(Sprite, OnOffscreen)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_Offscreen);
@@ -1106,7 +1443,7 @@ METHOD_IMPL(Sprite, OnOffscreen)
 	END
 
 METHOD_IMPL(Sprite, OnOnscreen)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_Onscreen);
@@ -1116,7 +1453,7 @@ METHOD_IMPL(Sprite, OnOnscreen)
 	END
 
 METHOD_IMPL(Sprite, OnExitLayer)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_ExitLayer);
@@ -1126,7 +1463,7 @@ METHOD_IMPL(Sprite, OnExitLayer)
 	END
 
 METHOD_IMPL(Sprite, OnAnimationLoop)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -1136,7 +1473,7 @@ METHOD_IMPL(Sprite, OnAnimationLoop)
 	END
 
 METHOD_IMPL(Sprite, OnAnimationEnd)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_AnimationEnd);
@@ -1146,7 +1483,7 @@ METHOD_IMPL(Sprite, OnAnimationEnd)
 	END
 
 METHOD_IMPL(Sprite, OnAnimationBlendComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_AnimationBlendComplete);
@@ -1155,7 +1492,7 @@ METHOD_IMPL(Sprite, OnAnimationBlendComplete)
 	RETURN_CPP_OBJECT(handler, IEventHandler);
 	END
 METHOD_IMPL(Sprite, OnAnimationPhysicsRecoveryComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_AnimationPhysicsRecoveryComplete);
@@ -1165,7 +1502,7 @@ METHOD_IMPL(Sprite, OnAnimationPhysicsRecoveryComplete)
 	END
 
 METHOD_IMPL(Sprite, OnFadeComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeComplete);
@@ -1175,7 +1512,7 @@ METHOD_IMPL(Sprite, OnFadeComplete)
 	END
 
 METHOD_IMPL(Sprite, OnFadeInComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeInComplete);
@@ -1185,7 +1522,7 @@ METHOD_IMPL(Sprite, OnFadeInComplete)
 	END
 
 METHOD_IMPL(Sprite, OnFadeOutComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeOutComplete);
@@ -1195,7 +1532,7 @@ METHOD_IMPL(Sprite, OnFadeOutComplete)
 	END
 
 METHOD_IMPL(Sprite, OnMouseEnter)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseEnter);
@@ -1205,7 +1542,7 @@ METHOD_IMPL(Sprite, OnMouseEnter)
 	END
 
 METHOD_IMPL(Sprite, OnMouseLeave)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseLeave);
@@ -1215,7 +1552,7 @@ METHOD_IMPL(Sprite, OnMouseLeave)
 	END
 
 METHOD_IMPL(Sprite, OnMouseDown)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseDown);
@@ -1225,7 +1562,7 @@ METHOD_IMPL(Sprite, OnMouseDown)
 	END
 
 METHOD_IMPL(Sprite, OnMouseUp)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseUp);
@@ -1235,7 +1572,7 @@ METHOD_IMPL(Sprite, OnMouseUp)
 	END
 
 METHOD_IMPL(Sprite, OnMouseClick)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseClick);
@@ -1335,13 +1672,13 @@ METHOD_IMPL(Sprite, SetupAnimationPhysics)
     NO_RETURN;
     END
 METHOD_IMPL(Sprite, SetupPhysicsFromAnimationRig)
-    METHOD_SIGNATURE("generate a dynamic rig from the reference skeleton", [object Sprite], 1, (number totalMass, number unitsPerMeter = 1));
+    METHOD_SIGNATURE("Generate a dynamic physical rig from the reference skeleton.", [this], 1, (number totalMass, number unitsPerMeter = 1));
     REQUIRE_ARG_MIN_COUNT(1); REQUIRE_NUMBER_ARG(1,mass); OPTIONAL_NUMBER_ARG(2,units,1);
     try { self->setupPhysicsFromAnimationRig(mass,units); } catch(const std::exception& error) { THROW_ERR(error.what()); RETURN_NULL; }
     RETURN_THIS;
     END
 METHOD_IMPL(Sprite, AttachAnimationPhysicsPart)
-    METHOD_SIGNATURE("register a physical Part in the generated rig assembly", [object Sprite], 1, ([object Part] part, [object Part] parent = null));
+    METHOD_SIGNATURE("Register a physical Part in a physical rig's mass assembly.", [this], 1, ([object Part*] part, [object Part*] parent = null));
     REQUIRE_ARG_MIN_COUNT(1);REQUIRE_CPP_OBJECT_ARG(1,part,Part);
     Part* parent=nullptr;
     if(ARGC>1 && !VALUE_IS_NULL(ARGV[1])) { REQUIRE_CPP_OBJECT_ARG(2,value,Part);parent=value; }
@@ -1349,17 +1686,17 @@ METHOD_IMPL(Sprite, AttachAnimationPhysicsPart)
     RETURN_THIS;
     END
 METHOD_IMPL(Sprite, DetachAnimationPhysicsPart)
-    METHOD_SIGNATURE("release rig membership and disconnect boundary joints", [object Sprite], 1, ([object Part] part, boolean includeDescendants = true));
+    METHOD_SIGNATURE("Release a Part or subtree from the physics assembly.", [this], 1, ([object Part*] part, boolean includeDescendants = true));
     REQUIRE_ARG_MIN_COUNT(1);REQUIRE_CPP_OBJECT_ARG(1,part,Part);OPTIONAL_BOOL_ARG(2,descendants,true);
     try { self->detachAnimationPhysicsPart(part,descendants); } catch(const std::exception& error) { THROW_ERR(error.what()); RETURN_NULL; }
     RETURN_THIS;
     END
 METHOD_IMPL(Sprite, IsAnimationPhysicsPartAttached)
-    METHOD_SIGNATURE("test whether a Part contributes to this generated rig assembly", boolean, 1, ([object Part] part));
+    METHOD_SIGNATURE("test whether a Part contributes to this generated rig assembly", boolean, 1, ([object Part const*] part));
     REQUIRE_ARG_COUNT(1);REQUIRE_CPP_OBJECT_ARG(1,part,Part);RETURN_BOOL(self->isAnimationPhysicsPartAttached(part));
     END
 METHOD_IMPL(Sprite, SetAnimationPhysicsRoot)
-    METHOD_SIGNATURE("select the physical root bone", [object Sprite], 1, ({number bone | string bone}));
+    METHOD_SIGNATURE("Select the bone receiving whole-Sprite impulses and root follow.", [this], 1, ({number bone | string bone}));
     REQUIRE_ARG_COUNT(1); REQUIRE_UINT32_ARG(1,bone);
     try { self->setAnimationPhysicsRoot(bone); } catch(const std::exception& error) { THROW_ERR(error.what()); RETURN_NULL; }
     RETURN_THIS;
@@ -1370,7 +1707,7 @@ METHOD_IMPL(Sprite, GetAnimationPhysicsRoot)
     try { RETURN_NUMBER(self->getAnimationPhysicsRoot()); } catch(const std::exception& error) { THROW_ERR(error.what()); RETURN_NULL; }
     END
 METHOD_IMPL(Sprite, ClearAnimationPhysicsRoot)
-    METHOD_SIGNATURE("restore automatic physical root selection", [object Sprite], 0, ());
+    METHOD_SIGNATURE("Restore automatic physical root selection.", [this], 0, ());
     REQUIRE_ARG_COUNT(0);
     try { self->clearAnimationPhysicsRoot(); } catch(const std::exception& error) { THROW_ERR(error.what()); RETURN_NULL; }
     RETURN_THIS;
@@ -1389,7 +1726,7 @@ METHOD_IMPL(Sprite, GetAnimationPhysicsSetupWarnings)
     RETURN_OBJECT(result);
     END
 METHOD_IMPL(Sprite, SetAnimationPhysicsMode)
-    METHOD_SIGNATURE("change whole-rig or selected bone control", [object Sprite], 1, ([number int] mode, {string bone = undefined | [number uint] bone = undefined}, boolean includeDescendants = false, number recoveryTime = 0.5, [number int] direction = rotationDirection_AsSpecified));
+    METHOD_SIGNATURE("Select animation control for a physical rig or its bones.", [this], 1, ([number int] mode, {string bone = undefined | [number uint] bone = undefined}, boolean includeDescendants = false, number recoveryTime = 0.5, [number int] direction = rotationDirection_AsSpecified));
     REQUIRE_ARG_COUNT(5); REQUIRE_INT32_ARG(1,mode); REQUIRE_NUMBER_ARG(2,bone); REQUIRE_BOOL_ARG(3,descendants); REQUIRE_NUMBER_ARG(4,seconds); REQUIRE_INT32_ARG(5,direction);
     try { if(bone<0)self->setAnimationPhysicsMode(mode,seconds,direction);else self->setAnimationPhysicsMode(mode,AnimationBoneId(bone),descendants,seconds,direction); }
     catch(const std::exception& error){THROW_ERR(error.what());RETURN_NULL;} RETURN_THIS;
@@ -1401,7 +1738,7 @@ METHOD_IMPL(Sprite, GetAnimationPhysicsMode)
     catch(const std::exception& error){THROW_ERR(error.what());RETURN_NULL;}
     END
 METHOD_IMPL(Sprite, SetAnimationPhysicsDriveSettings)
-    METHOD_SIGNATURE("configure selected animation drive force and response", [object Sprite], 1, (object settings, {string bone = undefined | [number uint] bone = undefined}, boolean includeDescendants = false));
+    METHOD_SIGNATURE("Replace drive settings for a skeleton selection.", [this], 1, (object settings, {string bone = undefined | [number uint] bone = undefined}, boolean includeDescendants = false));
     REQUIRE_ARG_COUNT(7); REQUIRE_NUMBER_ARG(1,force); REQUIRE_NUMBER_ARG(2,torque); REQUIRE_NUMBER_ARG(3,frequency); REQUIRE_NUMBER_ARG(4,damping); REQUIRE_INT32_ARG(5,direction); REQUIRE_NUMBER_ARG(6,bone); REQUIRE_BOOL_ARG(7,descendants);
     try { AnimationPhysicsDriveSettings settings{force,torque,frequency,damping,int(direction)}; if(bone<0)self->setAnimationPhysicsDriveSettings(settings);else self->setAnimationPhysicsDriveSettings(settings,AnimationBoneId(bone),descendants); }
     catch(const std::exception& error){THROW_ERR(error.what());RETURN_NULL;} RETURN_THIS;
@@ -1432,7 +1769,7 @@ METHOD_IMPL(Sprite, DisableAnimationPhysics)
     END
 
 METHOD_IMPL(Sprite, AddAnimationDrawable)
-    METHOD_SIGNATURE("attach artwork to an animation bone", [number uint], 2, ({ [object Drawing] drawing | function callback }, object options));
+    METHOD_SIGNATURE("attach artwork to an animation bone", [number uint], 2, ({ [object Drawing const&] drawing | [function AnimationDrawableCallback] callback }, [object AnimationDrawableOptions] options));
     REQUIRE_ARG_MIN_COUNT(3);REQUIRE_STRING_ARG(3,slot);
     if(!VALUE_IS_FUNCTION(ARGV[0])){
         EXTRACT_CPP_OBJECT_OR_SUBCLASS_VALUE(ARGV[0],drawing,Drawing);
@@ -1475,6 +1812,22 @@ METHOD_IMPL(Sprite, GetAnimationDrawBounds)
     METHOD_SIGNATURE("read conservative visual bounds in owning-layer coordinates", object, 0, ());
     REQUIRE_ARG_COUNT(0);
     try{RETURN_OBJECT(animationDrawingBoundsValue(PDG_POSE_SCRIPT_ARGUMENTS,self->getAnimationDrawBounds()));}catch(const std::exception& error){THROW_ERR(error.what());RETURN_NULL;}
+    END
+
+
+METHOD_IMPL(Sprite, ProceduralControl)
+    METHOD_SIGNATURE("internal procedural value adapter", object, 2, (int operation, object values));
+    REQUIRE_ARG_COUNT(2); REQUIRE_NUMBER_ARG(1,operation);
+    try {
+        if(!std::isfinite(operation)||operation!=std::floor(operation)||operation<1||operation>16) { throw std::invalid_argument("Invalid procedural operation"); }
+        auto result=self->proceduralControl(int(operation),proceduralBindingValues(PROCEDURAL_ARGUMENTS,ARGV[1]));
+        %#ifdef PDG_USING_JAVASCRIPT_CORE
+        auto a=JSObjectMakeArray(ctx,0,nullptr,exception);for(unsigned i=0;i<result.size();++i)JSObjectSetPropertyAtIndex(ctx,a,i,NUM2VAL(result[i]),exception);
+        %#else
+        auto a=v8::Array::New(isolate);for(unsigned i=0;i<result.size();++i)(void)a->Set(isolate->GetCurrentContext(),i,NUM2VAL(result[i])).ToChecked();
+        %#endif
+        RETURN(a);
+    } catch(const std::exception& e){THROW_ERR(e.what());RETURN_NULL;}
     END
 
 METHOD_IMPL(Sprite, AddAnimationIK)
@@ -1582,6 +1935,16 @@ METHOD_IMPL(Sprite, GetAnimationRigError)
     METHOD_SIGNATURE("", string, 0, ());
     REQUIRE_ARG_COUNT(0);
     RETURN_STRING(self->getAnimationRigError().c_str());
+    END
+METHOD_IMPL(Sprite, GetBone)
+    METHOD_SIGNATURE("Get animated controls for a bone in the current rig.", [object Bone*], 1, ({ string name | [number uint] id }));
+    REQUIRE_ARG_COUNT(1);
+    try {
+        Bone* bone;
+        if(VALUE_IS_STRING(ARGV[0])) { REQUIRE_STRING_ARG(1,name);bone=self->getBone(name); }
+        else { REQUIRE_UINT32_ARG(1,id);bone=self->getBone(id); }
+        RETURN_CPP_OBJECT(bone,Bone);
+    } catch(const std::exception& error) { THROW_ERR(error.what()); }
     END
 METHOD_IMPL(Sprite, GetAnimationBoneNames)
     METHOD_SIGNATURE("", [object Array], 0, ());
@@ -1724,29 +2087,30 @@ METHOD_IMPL(Sprite, SampleAnimationPose)
 
 
 METHOD_IMPL(Sprite, GetAttachmentPart)
-    METHOD_SIGNATURE("mounting Part controlling this Sprite root, or null", [object Part], 0, ());
+    METHOD_SIGNATURE("mounting Part controlling this Sprite root, or null", [object Part*], 0, ());
     REQUIRE_ARG_COUNT(0); auto* mount=self->getAttachmentPart(); RETURN_CPP_OBJECT(mount,Part);
     END
 METHOD_IMPL(Sprite, CreatePart)
-    METHOD_SIGNATURE("create an independently animated Part owned by this Sprite", [object Part], 1, (string name));
+    METHOD_SIGNATURE("create an independently animated Part owned by this Sprite", [object Part*], 1, (string name));
     REQUIRE_ARG_COUNT(1); REQUIRE_STRING_ARG(1, name);
     try { auto* part = self->createPart(name); RETURN_CPP_OBJECT(part, Part); }
     catch (const std::exception& error) { THROW_ERR(error.what()); }
     END
 METHOD_IMPL(Sprite, TransferPart)
-    METHOD_SIGNATURE("move a Part and optional subtree into this Sprite", [object Part], 1, (Part part, boolean includeDescendants = true));
+    METHOD_SIGNATURE("move a Part and optional subtree into this Sprite", [object Part*], 1, ([object Part*] part, boolean includeDescendants = true));
     REQUIRE_ARG_MIN_COUNT(1); REQUIRE_CPP_OBJECT_ARG(1, part, Part); OPTIONAL_BOOL_ARG(2, descendants, true);
     try { auto* result=self->transferPart(part,descendants); RETURN_CPP_OBJECT(result,Part); }
     catch(const std::exception& error) { THROW_ERR(error.what()); }
     END
 METHOD_IMPL(Sprite, GetPart)
-    METHOD_SIGNATURE("get a Part by its per-Sprite ID, or null", [object Part], 1, ([number uint] id));
+    METHOD_SIGNATURE("get a Part by its per-Sprite ID, or null", [object Part*], 1, ([number uint] id));
     REQUIRE_ARG_COUNT(1); REQUIRE_NUMBER_ARG(1, id);
     if (!std::isfinite(id) || id < 0 || id > partId_None || std::floor(id) != id) { THROW_RANGE_ERR("Expected a Part ID"); RETURN_NULL; }
     auto* part = self->getPart(static_cast<PartId>(id)); RETURN_CPP_OBJECT(part, Part);
     END
+// @pdg-contract {"name":"Sprite.findPart","value":{"returns":{"type":"object Part","nullable":true}}}
 METHOD_IMPL(Sprite, FindPart)
-    METHOD_SIGNATURE("find a Part by its unique name, or null", [object Part], 1, (string name));
+    METHOD_SIGNATURE("find a Part by its unique name, or null", [object Part*], 1, (string name));
     REQUIRE_ARG_COUNT(1); REQUIRE_STRING_ARG(1, name);
     auto* part = self->findPart(name); RETURN_CPP_OBJECT(part, Part);
     END
@@ -1810,7 +2174,7 @@ METHOD_IMPL(Sprite, ReadPhysics)
     } catch (const std::exception& error) { THROW_ERR(error.what()); }
     END
 METHOD_IMPL(Sprite, SetupPhysicsBody)
-    METHOD_SIGNATURE("set up the body, applying mass and inertia on every call", [object PhysicsBody], 0, (number mass = 1, number momentOfInertia = 1));
+    METHOD_SIGNATURE("set up the body, applying mass and inertia on every call", [object PhysicsBody&], 0, (number mass = 1, number momentOfInertia = 1));
     try {
         OPTIONAL_NUMBER_ARG(1,mass,1.0); OPTIONAL_NUMBER_ARG(2,inertia,1.0); auto* body=&self->setupPhysicsBody(mass,inertia); RETURN_CPP_OBJECT(body,PhysicsBody);
     } catch (const std::exception& error) { THROW_ERR(error.what()); }
@@ -1821,4 +2185,574 @@ METHOD_IMPL(Sprite, RemovePhysicsBody)
         REQUIRE_ARG_COUNT(0); self->removePhysicsBody(); NO_RETURN;
     } catch (const std::exception& error) { THROW_ERR(error.what()); }
     END
+METHOD_IMPL(Sprite, ReadCollider)
+    METHOD_SIGNATURE("", [object Collider&], 0, ());
+    try { REQUIRE_ARG_COUNT(0); auto* result=&static_cast<Collider&>(self->collider); RETURN_CPP_OBJECT(result,Collider); } catch (const std::exception& error) { THROW_ERR(error.what()); }
+    END
+METHOD_IMPL(Sprite, SetupCollider)
+    METHOD_SIGNATURE("set up the collision geometry association", [object Collider&], 0, ());
+    try { REQUIRE_ARG_COUNT(0); auto* result=&self->setupCollider(); RETURN_CPP_OBJECT(result,Collider); } catch (const std::exception& error) { THROW_ERR(error.what()); }
+    END
+METHOD_IMPL(Sprite, RemoveCollider)
+    METHOD_SIGNATURE("", undefined, 0, ());
+    try { REQUIRE_ARG_COUNT(0); self->removeCollider(); NO_RETURN; } catch (const std::exception& error) { THROW_ERR(error.what()); }
+    END
+
 } // pdg namespace
+
+/* @pdg-member
+{
+  "name": "Sprite.Sprite",
+  "type": "constructor",
+  "params": [],
+  "returns": "object Sprite",
+  "brief": "Create a Sprite instance."
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationBonePose",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "name": {
+        "type": "string"
+      },
+      "parent": {
+        "type": "number",
+        "nullable": true
+      }
+    },
+    "extends": [
+      "AnimationTransform"
+    ]
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationBindingPose",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "name": {
+        "type": "string"
+      },
+      "parent": {
+        "type": "number",
+        "nullable": true
+      },
+      "kind": {
+        "type": "number"
+      }
+    },
+    "extends": [
+      "AnimationTransform"
+    ]
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationVariable",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "object": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "type": {
+        "type": "number"
+      },
+      "value": {
+        "one_of": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationTags",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "object": {
+        "type": "string"
+      },
+      "tags": {
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationPose",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "rigRevision": {
+        "type": "string"
+      },
+      "bones": {
+        "items": {
+          "schema": "AnimationBonePose"
+        }
+      },
+      "bindings": {
+        "items": {
+          "schema": "AnimationBindingPose"
+        }
+      },
+      "variables": {
+        "items": {
+          "schema": "AnimationVariable"
+        }
+      },
+      "tags": {
+        "items": {
+          "schema": "AnimationTags"
+        }
+      }
+    },
+    "description": "Independent pose snapshot; bone and binding transforms are local to their parent."
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationPose",
+  "value": {
+    "returns": {
+      "schema": "AnimationPose",
+      "ownership": "owned"
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.sampleAnimationPose",
+  "value": {
+    "returns": {
+      "schema": "AnimationPose",
+      "ownership": "owned"
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationBoneTransform",
+  "value": {
+    "returns": {
+      "schema": "AnimationTransform",
+      "ownership": "owned"
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationBindingTransform",
+  "value": {
+    "returns": {
+      "schema": "AnimationTransform",
+      "ownership": "owned"
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationBoneNames",
+  "value": {
+    "returns": {
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationBindingNames",
+  "value": {
+    "returns": {
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAppliedCharacterMaps",
+  "value": {
+    "returns": {
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getPartNames",
+  "value": {
+    "returns": {
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationPhysicsSetupWarnings",
+  "value": {
+    "returns": {
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationDrawBounds",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "left": {
+        "type": "number"
+      },
+      "top": {
+        "type": "number"
+      },
+      "right": {
+        "type": "number"
+      },
+      "bottom": {
+        "type": "number"
+      },
+      "uncullable": {
+        "type": "boolean"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationDrawBounds",
+  "value": {
+    "returns": {
+      "schema": "AnimationDrawBounds"
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationIKResult",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "reachError": {
+        "type": "number"
+      },
+      "reachable": {
+        "type": "boolean"
+      },
+      "clamped": {
+        "type": "boolean"
+      },
+      "limited": {
+        "type": "boolean"
+      },
+      "stretched": {
+        "type": "boolean"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationIKResult",
+  "value": {
+    "returns": {
+      "schema": "AnimationIKResult"
+    }
+  }
+}
+*/
+
+// @pdg-member {"name":"Sprite.addFramesImage","native_binding":{"allow_raw_pointers":true,"binding_name":"_addFramesImage"}}
+
+// @pdg-member {"name":"Sprite.startFrameAnimation","native_binding":{"binding_name":"_startFrameAnimation"}}
+
+/* @pdg-class
+{
+  "name": "Sprite",
+  "native_binding": {
+    "browser": {
+      "generate": true,
+      "base": "pdg::AnimatedBase",
+      "support_bindings": [
+        {
+          "name": "_addNativeEventBridge",
+          "symbol": "pdg::emscriptenSpriteAddEventBridge"
+        }
+      ],
+      "defaults": {
+        "exceptions": "javascript",
+        "arguments": "idl"
+      },
+      "events": {
+        "families": [
+          {
+            "event": "eventType_SpriteCollide",
+            "field": "action",
+            "methods": {
+              "onCollideSprite": 0,
+              "onCollideWall": 1
+            }
+          },
+          {
+            "event": "eventType_SpriteAnimate",
+            "field": "action",
+            "methods": {
+              "onOffscreen": 2,
+              "onOnscreen": 3,
+              "onExitLayer": 4,
+              "onAnimationLoop": 8,
+              "onAnimationEnd": 9,
+              "onFadeComplete": 10,
+              "onFadeInComplete": 11,
+              "onFadeOutComplete": 12,
+              "onAnimationBlendComplete": 15,
+              "onAnimationPhysicsRecoveryComplete": 17
+            }
+          },
+          {
+            "event": "eventType_SpriteTouch",
+            "field": "touchType",
+            "methods": {
+              "onMouseEnter": 20,
+              "onMouseLeave": 21,
+              "onMouseDown": 22,
+              "onMouseUp": 23,
+              "onMouseClick": 24
+            }
+          }
+        ],
+        "selector": "on"
+      }
+    }
+  }
+}
+*/
+
+// @pdg-member {"name":"Sprite.hasAnimation","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteHasAnimation"}}
+
+// @pdg-member {"name":"Sprite.seekAnimation","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteSeekAnimation"}}
+
+// @pdg-member {"name":"Sprite.transitionToAnimation","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteTransitionToAnimation"}}
+
+// @pdg-member {"name":"Sprite.isAnimationTransitioning","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationTransitionProgress","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.isAnimationPhysicsEnabled","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.setupAnimationPhysics","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteSetupAnimationPhysics"}}
+
+// @pdg-member {"name":"Sprite.setupPhysicsFromAnimationRig","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.attachAnimationPhysicsPart","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.detachAnimationPhysicsPart","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.isAnimationPhysicsPartAttached","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Sprite.setAnimationPhysicsRoot","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"signature":"pdg::Sprite&(pdg::AnimationBoneId)"}}
+
+// @pdg-member {"name":"Sprite.getAnimationPhysicsRoot","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.clearAnimationPhysicsRoot","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationPhysicsSetupWarnings","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationPhysicsSetupWarnings"}}
+
+// @pdg-member {"name":"Sprite.setAnimationPhysicsMode","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteSetAnimationPhysicsMode"}}
+
+// @pdg-member {"name":"Sprite.getAnimationPhysicsMode","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationPhysicsMode"}}
+
+// @pdg-member {"name":"Sprite.setAnimationPhysicsDriveSettings","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteSetAnimationPhysicsDriveSettings"}}
+
+// @pdg-member {"name":"Sprite.getAnimationPhysicsDriveSettings","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationPhysicsDriveSettings"}}
+
+// @pdg-member {"name":"Sprite.disableAnimationPhysics","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.addAnimationDrawable","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteAddAnimationDrawable"}}
+
+// @pdg-member {"name":"Sprite.removeAnimationDrawable","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.clearAnimationDrawables","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.setAnimationDrawableEnabled","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationDrawableError","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationDrawBounds","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationDrawBounds"}}
+
+// @pdg-member {"name":"Sprite.addAnimationIK","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteAddAnimationIK"}}
+
+// @pdg-member {"name":"Sprite.setAnimationIKTarget","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationIKResult","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationIKResult"}}
+
+// @pdg-member {"name":"Sprite.addAnimationModifier","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteAddAnimationModifier"}}
+
+// @pdg-member {"name":"Sprite.removeAnimationModifier","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.clearAnimationModifiers","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationModifierError","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.setAnimationSource","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationSource","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.isAnimationDrawingSupported","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.setAnimationDebugDraw","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationDebugDraw","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.enableAnimationPose","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteEnableAnimationPose"}}
+
+// @pdg-member {"name":"Sprite.disableAnimationPose","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.isAnimationPoseEnabled","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationRigError","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationPose","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationPose"}}
+
+// @pdg-member {"name":"Sprite.sampleAnimationPose","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteSampleAnimationPose"}}
+
+// @pdg-member {"name":"Sprite.getAnimationBoneNames","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationBoneNames"}}
+// @pdg-member {"name":"Sprite.getBone","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"Sprite.getBone"}}
+
+// @pdg-member {"name":"Sprite.getAnimationBindingNames","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationBindingNames"}}
+
+// @pdg-member {"name":"Sprite.getAnimationBoneTransform","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationBoneTransform","binding_name":"_getAnimationBoneTransform"}}
+
+// @pdg-member {"name":"Sprite.getAnimationBindingTransform","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAnimationBindingTransform","binding_name":"_getAnimationBindingTransform"}}
+
+// @pdg-member {"name":"Sprite.setAnimationBoneTransform","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteSetAnimationBoneTransform"}}
+
+// @pdg-member {"name":"Sprite.clearAnimationBoneTransforms","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.startAnimation","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteStartAnimation"}}
+
+// @pdg-member {"name":"Sprite.applyCharacterMap","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteApplyCharacterMap"}}
+
+// @pdg-member {"name":"Sprite.removeCharacterMap","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteRemoveCharacterMap"}}
+
+// @pdg-member {"name":"Sprite.removeAllCharacterMaps","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAppliedCharacterMaps","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAppliedCharacterMaps"}}
+
+// @pdg-member {"name":"Sprite.enableSpriterEvents","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.areSpriterEventsEnabled","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.blendToAnimation","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteBlendToAnimation"}}
+
+// @pdg-member {"name":"Sprite.isBlending","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getBlendProgress","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.pauseAnimation","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.resumeAnimation","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.stopAnimation","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.isAnimationPlaying","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.isAnimationPaused","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getAnimationProgress","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.hasAttachPoint","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteHasAttachPoint"}}
+
+// @pdg-member {"name":"Sprite.getAttachPoint","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetAttachPoint"}}
+
+// @pdg-member {"name":"Sprite.attachSprite","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteAttachSprite","allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Sprite.detachSprite","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Sprite.activateSubEntity","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteActivateSubEntity"}}
+
+// @pdg-member {"name":"Sprite.getSpriterCollisionBox","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetCollisionBox"}}
+
+// @pdg-member {"name":"Sprite.isSpriterCollisionActive","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteIsCollisionActive"}}
+
+// @pdg-member {"name":"Sprite.getSpriterCollisionBoxCount","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.getSpriterCollisionBoxName","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"},"adapter":"browser.emscriptenSpriteGetCollisionBoxName"}}
+
+// Remaining custom calls adapt component references, loading, serialization,
+// draw-helper callbacks, or static functions exposed as instance methods.
+
+// @pdg-member {"name":"Sprite.deserialize","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"Sprite.getAttachedSprite","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"Sprite.getPartNames","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"Sprite.getSerializedSize","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"Sprite.serialize","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"Sprite.setDrawHelper","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"Sprite.setPostDrawHelper","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"Sprite.setupAnimationCollider","native_binding":{"browser":{"guard":"PDG_SPRITER_SUPPORT"}}}
+
+// @pdg-member {"name":"Sprite.supportsAnimationPhysics","native_binding":{"browser":{"generate":false}}}

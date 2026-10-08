@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -139,6 +139,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a734190dc8bd058287b146ebeb2d3e216" id="r_a734190dc8bd058287b146ebeb2d3e216"><td class="memItemLeft">const std::vector&lt; <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &gt; &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a734190dc8bd058287b146ebeb2d3e216">getControlPoints</a> () const</td></tr>
 <tr class="memitem:a239a2004a8e6b5b4797d6e81edaf356c" id="r_a239a2004a8e6b5b4797d6e81edaf356c"><td class="memItemLeft">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a239a2004a8e6b5b4797d6e81edaf356c">getControlPoint</a> (int controlPointIndex) const</td></tr>
 <tr class="memitem:ae8b532e60fbd8468b5578b888c2936c4" id="r_ae8b532e60fbd8468b5578b888c2936c4"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ae8b532e60fbd8468b5578b888c2936c4">changeControlPoint</a> (int controlPointIndex, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;controlPoint)</td></tr>
+<tr class="memitem:a16ad987dcc45c4298799f4337b9a3c96" id="r_a16ad987dcc45c4298799f4337b9a3c96"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#a16ad987dcc45c4298799f4337b9a3c96">getText</a> () const</td></tr>
+<tr class="memdesc:a16ad987dcc45c4298799f4337b9a3c96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Borrow the owned UTF-8 text; throws for non-text or removed elements.  <br /></td></tr>
+<tr class="memitem:a87ce9816b80abba22c4109bec3aabefb" id="r_a87ce9816b80abba22c4109bec3aabefb"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a87ce9816b80abba22c4109bec3aabefb">setText</a> (const char *text)</td></tr>
+<tr class="memdesc:a87ce9816b80abba22c4109bec3aabefb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy replacement UTF-8 text without changing layout or styling.  <br /></td></tr>
 <tr class="memitem:ae4cbe9a3554f0a882b1bf9b54bcf939c" id="r_ae4cbe9a3554f0a882b1bf9b54bcf939c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ae4cbe9a3554f0a882b1bf9b54bcf939c">getAttributes</a> (<a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) const</td></tr>
 <tr class="memitem:a3421d58eec4fe6a9896b8a2999901a90" id="r_a3421d58eec4fe6a9896b8a2999901a90"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a3421d58eec4fe6a9896b8a2999901a90">setAttributes</a> (const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
 <tr class="memitem:a211a0744c73a98fb003d33223ad3c3d0" id="r_a211a0744c73a98fb003d33223ad3c3d0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a211a0744c73a98fb003d33223ad3c3d0">setLiveAttributes</a> (const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
@@ -318,6 +322,27 @@ Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a16ad987dcc45c4298799f4337b9a3c96" name="a16ad987dcc45c4298799f4337b9a3c96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16ad987dcc45c4298799f4337b9a3c96">&#9670;&#160;</a></span>getText()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * getText </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Borrow the owned UTF-8 text; throws for non-text or removed elements. </p>
+<p>Get the text of a text element.</p>
+<dl class="section return"><dt>Returns</dt><dd>Borrowed null-terminated UTF-8 text, valid until the element's text changes or its contents are removed. Throws for a non-text or removed element. </dd></dl>
 
 </div>
 </div>
@@ -502,16 +527,42 @@ Protected Attributes</h2></td></tr>
 <div class="line">style.<a class="code hl_function" href="classpdg_1_1_animated.html#a7dbfa2832e5c0f2022a4fb7e64767122">moveTo</a>(100, 0, 1, <a class="code hl_function" href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">pdg::linearTween</a>);</div>
 <div class="line">style.<a class="code hl_function" href="classpdg_1_1_animated_attributes_base.html#a1faa0d18b0d1f276239eb0133ab7e047">animate</a>(0.25); <span class="comment">// All associated elements observe this sample.</span></div>
 <div class="ttc" id="aclasspdg_1_1_animated_attributes_base_html_a1faa0d18b0d1f276239eb0133ab7e047"><div class="ttname"><a href="classpdg_1_1_animated_attributes_base.html#a1faa0d18b0d1f276239eb0133ab7e047">pdg::AnimatedAttributesBase::animate</a></div><div class="ttdeci">bool animate(double seconds) override</div><div class="ttdoc">Advance appearance and transform animation.</div></div>
-<div class="ttc" id="aclasspdg_1_1_animated_attributes_html"><div class="ttname"><a href="classpdg_1_1_animated_attributes.html">pdg::AnimatedAttributes</a></div><div class="ttdoc">Drawing attributes with programmed movement and appearance animation.</div><div class="ttdef"><b>Definition</b> animatedattributes.h:117</div></div>
-<div class="ttc" id="aclasspdg_1_1_animated_attributes_html_a5dd48246d05d7a7a1d726693424dc00a"><div class="ttname"><a href="classpdg_1_1_animated_attributes.html#a5dd48246d05d7a7a1d726693424dc00a">pdg::AnimatedAttributes::fillColor</a></div><div class="ttdeci">Self &amp; fillColor(const Color &amp;color)</div><div class="ttdef"><b>Definition</b> animatedattributes.h:242</div></div>
-<div class="ttc" id="aclasspdg_1_1_animated_html_a7dbfa2832e5c0f2022a4fb7e64767122"><div class="ttname"><a href="classpdg_1_1_animated.html#a7dbfa2832e5c0f2022a4fb7e64767122">pdg::Animated::moveTo</a></div><div class="ttdeci">Self &amp; moveTo(float x, float y)</div><div class="ttdoc">Move to a location.</div><div class="ttdef"><b>Definition</b> animated.h:715</div></div>
+<div class="ttc" id="aclasspdg_1_1_animated_attributes_html"><div class="ttname"><a href="classpdg_1_1_animated_attributes.html">pdg::AnimatedAttributes</a></div><div class="ttdoc">Drawing attributes with programmed movement and appearance animation.</div><div class="ttdef"><b>Definition</b> animatedattributes.h:118</div></div>
+<div class="ttc" id="aclasspdg_1_1_animated_attributes_html_a5dd48246d05d7a7a1d726693424dc00a"><div class="ttname"><a href="classpdg_1_1_animated_attributes.html#a5dd48246d05d7a7a1d726693424dc00a">pdg::AnimatedAttributes::fillColor</a></div><div class="ttdeci">Self &amp; fillColor(const Color &amp;color)</div><div class="ttdef"><b>Definition</b> animatedattributes.h:243</div></div>
+<div class="ttc" id="aclasspdg_1_1_animated_html_a7dbfa2832e5c0f2022a4fb7e64767122"><div class="ttname"><a href="classpdg_1_1_animated.html#a7dbfa2832e5c0f2022a4fb7e64767122">pdg::Animated::moveTo</a></div><div class="ttdeci">Self &amp; moveTo(float x, float y)</div><div class="ttdoc">Move to a location.</div><div class="ttdef"><b>Definition</b> animated.h:940</div></div>
 <div class="ttc" id="aclasspdg_1_1_drawing_html_abf52e9a12438af1bdeeed26816f859ed"><div class="ttname"><a href="classpdg_1_1_drawing.html#abf52e9a12438af1bdeeed26816f859ed">pdg::Drawing::create</a></div><div class="ttdeci">static Drawing * create()</div></div>
-<div class="ttc" id="aclasspdg_1_1_element_ref_html_a60891326460c419d8df160d56c9ba2d2"><div class="ttname"><a href="#a60891326460c419d8df160d56c9ba2d2">pdg::ElementRef::drawing</a></div><div class="ttdeci">std::shared_ptr&lt; Drawing &gt; drawing</div><div class="ttdef"><b>Definition</b> drawing.h:110</div></div>
+<div class="ttc" id="aclasspdg_1_1_element_ref_html_a60891326460c419d8df160d56c9ba2d2"><div class="ttname"><a href="#a60891326460c419d8df160d56c9ba2d2">pdg::ElementRef::drawing</a></div><div class="ttdeci">std::shared_ptr&lt; Drawing &gt; drawing</div><div class="ttdef"><b>Definition</b> drawing.h:115</div></div>
 <div class="ttc" id="agroup___animation_easing_html_gab1bf645757e67b61cf52ee82994046fc"><div class="ttname"><a href="group___animation_easing.html#gab1bf645757e67b61cf52ee82994046fc">pdg::linearTween</a></div><div class="ttdeci">float linearTween(double ut, float b, float c, double ud)</div></div>
 <div class="ttc" id="agroup___graphics_html_ga7ee736664a9e39162d1b60170692b7b7"><div class="ttname"><a href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">pdg::Rect</a></div><div class="ttdeci">RectT&lt; float &gt; Rect</div><div class="ttdef"><b>Definition</b> coordinates.h:587</div></div>
 <div class="ttc" id="astructpdg_1_1_color_html"><div class="ttname"><a href="structpdg_1_1_color.html">pdg::Color</a></div><div class="ttdef"><b>Definition</b> color.h:103</div></div>
 </div><!-- fragment --> </dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#ab623dc3b2063bc1fd37ff9c30e6057e6" title="Freeze the current sample and stop following its source.">clearLiveAttributes()</a>, <a class="el" href="#a1b196b2b41773b2cffab3f3bdb32d14e" title="Test whether the element holds a live sample association.">hasLiveAttributes()</a>, <a class="el" href="#a3421d58eec4fe6a9896b8a2999901a90">setAttributes()</a>, <a class="el" href="#ae4cbe9a3554f0a882b1bf9b54bcf939c">getAttributes()</a> </dd></dl>
+
+</div>
+</div>
+<a id="a87ce9816b80abba22c4109bec3aabefb" name="a87ce9816b80abba22c4109bec3aabefb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87ce9816b80abba22c4109bec3aabefb">&#9670;&#160;</a></span>setText()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setText </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy replacement UTF-8 text without changing layout or styling. </p>
+<p>Copy new text into an element while retaining its rectangle and styling.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">text</td><td>Non-null, null-terminated UTF-8 text of at most 1 MiB; may be empty. Throws for a non-text or removed element. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -71,9 +71,9 @@ void graphics_CG_drawText(CGContextRef context, FontImplMac* font, int size, uin
 void graphics_CG_drawTextRun(CGContextRef context, FontImplMac* font, int size, uint32 style, const utf16char* text, int len, float xOffset);
 
 // Helper function to draw glyphs using modern CoreText API
-void graphics_CT_drawGlyphs(CGContextRef context, MacAPI::PrivateOSFontRef cgFont, CGFloat fontSize, const MacAPI::CGGlyph* glyphs, size_t count) {
+void graphics_CT_drawGlyphs(CGContextRef context, FontImplMac* font, int size, uint32 style, const MacAPI::CGGlyph* glyphs, size_t count) {
 	// Create CTFont from CGFont
-	CTFontRef ctFont = CTFontCreateWithGraphicsFont(cgFont, fontSize, NULL, NULL);
+	CTFontRef ctFont = static_cast<CTFontRef>(font->getCoreTextFont(size, style));
 	if (!ctFont) return;
 	
 	// Get current text position
@@ -86,21 +86,20 @@ void graphics_CT_drawGlyphs(CGContextRef context, MacAPI::PrivateOSFontRef cgFon
 	
 	// Create an array of positions for each glyph
 	// Calculate positions based on glyph advances
-	CGPoint* positions = new CGPoint[count];
+	std::vector<CGPoint> positions(count);
+    std::vector<CGSize> advances(count);
+    CTFontGetAdvancesForGlyphs(ctFont, kCTFontOrientationHorizontal, glyphs, advances.data(), count);
 	CGFloat xOffset = 0.0;
 	
 	for (size_t i = 0; i < count; i++) {
 		// Position each glyph at the current offset from the text position
 		positions[i] = CGPointMake(textPos.x + xOffset, textPos.y);
 		
-		// Get the advance width for this glyph to position the next one
-		CGSize advance;
-		CTFontGetAdvancesForGlyphs(ctFont, kCTFontOrientationHorizontal, &glyphs[i], &advance, 1);
-		xOffset += advance.width;
+        xOffset += advances[i].width;
 	}
 	
 	// Draw the glyphs using CoreText
-	CTFontDrawGlyphs(ctFont, glyphs, positions, count, context);
+	CTFontDrawGlyphs(ctFont, glyphs, positions.data(), count, context);
 	
 	// Restore the original text matrix
 	MacAPI::CGContextSetTextMatrix(context, savedTextMatrix);
@@ -109,8 +108,6 @@ void graphics_CT_drawGlyphs(CGContextRef context, MacAPI::PrivateOSFontRef cgFon
 	MacAPI::CGContextSetTextPosition(context, textPos.x + xOffset, textPos.y);
 	
 	// Clean up
-	delete[] positions;
-	CFRelease(ctFont);
 }
 
 // Helper to draw a single text run with a specific font
@@ -132,7 +129,7 @@ void graphics_CG_drawTextRun(CGContextRef context, FontImplMac* font, int size, 
 	MacAPI::CGContextSetTextPosition(context, pos.x, pos.y);
 	
 	// Use modern CoreText API instead of deprecated CGContextShowGlyphs
-	graphics_CT_drawGlyphs(context, fontRef, size * font->mScalingFactor, glyphs, len);
+	graphics_CT_drawGlyphs(context, font, size, style, glyphs, len);
 }
     
 void graphics_CG_drawText(CGContextRef context, FontImplMac* font, int size, uint32 style, const char* text, int len) {
@@ -160,7 +157,7 @@ void graphics_CG_drawText(CGContextRef context, FontImplMac* font, int size, uin
 		MacAPI::CGContextSetFont(context, fontRef);
 		MacAPI::CGContextSetFontSize(context, size * font->mScalingFactor);
 		// Use modern CoreText API instead of deprecated CGContextShowGlyphs
-		graphics_CT_drawGlyphs(context, fontRef, size * font->mScalingFactor, glyphs, len);
+		graphics_CT_drawGlyphs(context, font, size, style, glyphs, len);
 	} else {
 		// Slow path: need fallback fonts - split into runs
 		std::vector<TextRun> runs = FontFallbackManager::getInstance().splitIntoRuns(
@@ -193,15 +190,15 @@ Port* graphics_newPort(GraphicsManager* mgr) {
 }
 
 // internal implementation of text drawing
-void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& quad, int size, uint32 style, Color rgba) {
+void graphics_drawTextRaster(PortImpl& port, const char* text, int len, const Quad& quad, int size, uint32 style, Color rgba, TextCacheEntry* cachedEntry) {
 	FontImplMac* font = dynamic_cast<FontImplMac*> ( port.getCurrentFont(style) );
 	if (!font) return;
 
-	TextCacheEntry* textInfo = port.getTextFromCache(text, len, font, size, style);  // creates an entry if one doesn't already exist
+	TextCacheEntry* textInfo = cachedEntry ? cachedEntry : port.getTextFromCache(text, len, font, size, style);  // creates an entry if one doesn't already exist
 	if (!textInfo) return;
 
 	// it's possible that we've never measured this text
-	if (textInfo->width == 0) {
+	if (!textInfo->measured) {
 		textInfo->width = port.getTextWidth(text, size, style, len);
 	}
 	if (textInfo->texture == 0) {
@@ -223,7 +220,6 @@ void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& qu
 		size_t dataSize = glBufferHeight * glBufferPitch;
 		char* imageData = (char*) std::malloc( dataSize );
 		if (!imageData) {
-			delete textInfo;
 			return;
 		}
 		
@@ -254,14 +250,8 @@ void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& qu
 		}
 		
 		// create the Open GL texture
-		glGenTextures(1, &textInfo->texture);
-		glBindTexture(GL_TEXTURE_2D, textInfo->texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, glBufferWidth, glBufferHeight, 0,
-					 GL_ALPHA, GL_UNSIGNED_BYTE, imageData);
+		port.mTextCache.uploadPixels(textInfo, imageData, glBufferWidth, glBufferHeight, GL_ALPHA, port.mStateCache, 1, true);
+        MacAPI::CGContextRelease(cgl_ctx);
 		std::free(imageData);
 		imageData = 0;
 		
@@ -276,34 +266,11 @@ void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& qu
 		}
 		
 		// Add the new text entry to the port's cache
-		port.addTextToCache(textInfo);
+		textInfo->textureBytes = static_cast<size_t>(glBufferWidth) * glBufferHeight * 1;
+        port.addTextToCache(textInfo);
 	}
 
-	Point topLeft, topRight, bottomLeft, bottomRight;
-	topLeft = quad.points[lftTop];
-	topRight = quad.points[rgtTop];
-	bottomLeft = quad.points[lftBot];
-	bottomRight = quad.points[rgtBot];
-	
-	port.setOpenGLModesForDrawing(true); // must use alpha for text
-	glColor4f(rgba.red, rgba.green, rgba.blue, rgba.alpha);
-	glEnable(GL_TEXTURE_2D);
-	// Use state cache to avoid redundant texture binds
-	port.mStateCache.bindTexture(textInfo->texture);
-	extern GLuint gBoundTexture;
-	gBoundTexture = textInfo->texture;
-	glBegin(GL_TRIANGLE_STRIP);
-	glTexCoord2f (0.0, textInfo->ty);
-	glVertex2f( bottomLeft.x, bottomLeft.y );
-	glTexCoord2f (textInfo->tx_topoffset, 0.0);
-	glVertex2f( topLeft.x, topLeft.y );
-	glTexCoord2f (textInfo->tx, textInfo->ty);
-	glVertex2f( bottomRight.x, bottomRight.y );
-	glTexCoord2f (textInfo->tx + textInfo->tx_topoffset, 0.0);
-	glVertex2f( topRight.x, topRight.y );
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
+    graphics_submitText(port, *textInfo, quad, rgba);
 }
 	
 // ==================================================================
@@ -324,11 +291,9 @@ Port::getTextWidth(const char* text, int size, uint32 style, int len) {
 	FontImplMac* font = dynamic_cast<FontImplMac*> ( getCurrentFont(style) );
 	if (!font) return 0;
 	
-	// For text width measurement, we need to use the port's cache
-	// But since this is a static method, we'll create a temporary entry
-	TextCacheEntry* textInfo = new TextCacheEntry(text, len, font, size, style); // creates new entry for measurement
-	if (!textInfo) return 0;
-	if (textInfo->width == 0) {
+    auto& port = static_cast<PortImpl&>(*this);
+    TextCacheEntry* textInfo = port.getTextFromCache(text, len, font, size, style);
+	if (!textInfo->measured) {
 		static MacAPI::CGContextRef sFontMeasuringContext = 0;
 		static char sStaticJunkImageData[4];
 		if (!sFontMeasuringContext) {
@@ -346,10 +311,11 @@ Port::getTextWidth(const char* text, int size, uint32 style, int len) {
 		// save the new info in the cache
 		textInfo->ascent = std::ceil(font->getFontAscent(size, style));
 		textInfo->charHeight = textInfo->ascent + std::ceil(font->getFontDescent(size, style));
-		textInfo->width = std::ceil(textPt.x);  // text position moved from offset 0 to new width
+		textInfo->advanceWidth = textPt.x;
+        textInfo->width = std::ceil(textPt.x);  // text position moved from offset 0 to new width
+        textInfo->measured = true;
 	}
     int width = textInfo->width;
-    delete textInfo; // Clean up temporary entry
     return width;
 }
 
@@ -359,16 +325,34 @@ FontImplMac::FontImplMac(Port* port, const char* fontName, float scalingFactor)
 }
 
 FontImplMac::~FontImplMac() {
-	for (int i = 0; i < TEXT_INFO_CACHE_SIZE; i++) {
-		if (mFontMetricsInfo[i]) {
-			MacFontMetricsInfo* mfmi = (MacFontMetricsInfo*) mFontMetricsInfo[i];
-			MacAPI::CFRelease(mfmi->mMacFont);
-		}
-	}
+    for (auto*& metrics : mFontMetricsInfo) {
+        releaseFontMetrics(metrics);
+        metrics = nullptr;
+    }
+}
+
+void FontImplMac::releaseFontMetrics(FontMetricsInfo* metrics) {
+    if (!metrics) return;
+    auto* mac = static_cast<MacFontMetricsInfo*>(metrics);
+    if (mac->mCoreTextFont) CFRelease(static_cast<CTFontRef>(mac->mCoreTextFont));
+    if (mac->mMacFont) MacAPI::CFRelease(mac->mMacFont);
+    std::free(mac);
+}
+
+void* FontImplMac::getCoreTextFont(int size, uint32 style) {
+    auto* metrics = const_cast<MacFontMetricsInfo*>(
+        static_cast<const MacFontMetricsInfo*>(fetchFontMetricsWithCaching(size, style)));
+    if (!metrics) return nullptr;
+    if (!metrics->mCoreTextFont && metrics->mMacFont) {
+        metrics->mCoreTextFont = const_cast<void*>(static_cast<const void*>(
+            CTFontCreateWithGraphicsFont(metrics->mMacFont, size * mScalingFactor, nullptr, nullptr)));
+    }
+    return metrics->mCoreTextFont;
 }
 
 FontMetricsInfo* FontImplMac::getFontMetrics(int size, uint32 style) {
 	MacFontMetricsInfo* mfmi = (MacFontMetricsInfo*) std::malloc(sizeof(MacFontMetricsInfo));
+	mfmi->mCoreTextFont = nullptr;
 	mfmi->size = size;
 	mfmi->style = style;
 	MacAPI::CFStringRef name = MacAPI::CFStringCreateWithCString(0, getFontName(), kCFStringEncodingUTF8);

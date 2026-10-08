@@ -1,4 +1,5 @@
 #include "pdg/sys/collider.h"
+#include "pdg/sys/collisionquery.h"
 #include <numbers>
 #include "image-impl.h"
 #include <algorithm>
@@ -1218,4 +1219,5 @@ void CollisionWorld::step(const std::vector<Collider *> &input, double seconds,
         event.b->dispatch(c);
     }
 }
+#include "collisionquery.inc"
 } // namespace pdg

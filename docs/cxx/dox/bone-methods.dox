@@ -1,0 +1,67 @@
+/**
+\fn Bone* pdg::Sprite::getBone(const char* name)
+\brief Get animated controls for a bone in the current rig.
+
+\param name Authored bone name; unknown names throw.
+\return A borrowed Bone pointer with stable identity in this Sprite and rig. Use addRef()/release() if keeping it after rig replacement or owner destruction.
+\note Enable the Sprite's animation pose first. Handles become invalid when
+that rig is replaced or disabled.
+\see Bone, getAnimationBoneNames()
+*/
+
+
+/**
+\fn Bone* pdg::Sprite::getBone(AnimationBoneId id)
+\brief Get animated controls for a bone in the current rig.
+
+\param id Bone ID in the current rig; unknown IDs throw.
+\return A borrowed Bone pointer with stable identity in this Sprite and rig. Use addRef()/release() if keeping it after rig replacement or owner destruction.
+\note Enable the Sprite's animation pose first. Handles become invalid when
+that rig is replaced or disabled.
+\see Bone, getAnimationBoneNames()
+*/
+
+
+/**
+\fn Bone& pdg::Bone::diminish(float influence, double seconds, EasingFunc easing)
+\brief Ease scripted bone influence back toward the running animation.
+
+Blends controlled channels toward each fresh authored sample. Zero releases all
+controlled channels, including flips. This changes scripted influence, not alpha.
+A value between zero and one retains the corresponding fraction of control.
+
+\param influence Finite factor from zero to one.
+\param seconds Finite nonnegative duration in seconds.
+\param easing Easing function; default pdg::linearTween.
+\return This Bone for chaining.
+\see getInfluence(), Animated::series()
+*/
+
+/**
+\fn Bone& pdg::Bone::setIKLimits(double minimum, double maximum)
+\brief Set final local rotation limits.
+\param minimum Finite lower angle in radians.
+\param maximum Finite upper angle, no smaller than minimum and at most one turn above it.
+\return This Bone for chaining. Invalid ranges throw without changing the limits.
+\see clearIKLimits()
+*/
+
+/**
+\fn Bone& pdg::Bone::setIKLimits(PhysicsConstraint& constraint)
+\brief Share a live rotary limit with the bone.
+
+The constraint must join this bone's physical Part and its physical parent.
+Changes to the constraint update limits immediately. Disconnecting it releases
+its limit; clearIKLimits() removes the explicit association without disconnecting
+physics. Automatically discovered physical or IK limits may still apply.
+
+\param constraint Active rotary limit for this bone's physical joint.
+\return This Bone for chaining; incompatible constraints throw.
+\see PhysicsConstraint::setAngleLimits(), clearIKLimits()
+*/
+
+/**
+\fn Bone& pdg::Bone::clearIKLimits()
+\brief Remove this Bone's explicit limit override.
+\return This Bone for chaining. Existing Part, IK and physical-joint limits still apply.
+*/

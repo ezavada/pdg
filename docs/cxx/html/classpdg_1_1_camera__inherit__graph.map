@@ -1,0 +1,13 @@
+<map id="Camera" name="Camera">
+<area shape="rect" id="Node000001" title="Animated view owned by a Port or shared by layers.Each Port owns its camera. A layer uses its retaine..." alt="" coords="117,300,184,326"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated.html" title=" " alt="" coords="5,226,152,252"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="102,260,141,299,136,300,100,265"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="25,153,132,178"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="80,191,81,226,76,225,77,196"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="32,79,125,105"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="79,118,81,153,76,152,78,123"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="23,5,134,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="79,44,81,79,76,78,78,49"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="175,226,272,252"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="203,262,164,302,161,297,198,264"/>
+</map>

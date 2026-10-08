@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['schedule_20controls_0',['Programmed transforms and schedule controls',['../group___animation.html#animation_programming',1,'']]],
-  ['side_1',['Watch the solvers side by side',['../group___physics.html#physics_solver_viewer',1,'']]],
-  ['side_20by_20side_2',['Watch the solvers side by side',['../group___physics.html#physics_solver_viewer',1,'']]],
-  ['solver_20comparison_3',['Basic and Chipmunk solver comparison',['../group___physics.html#physics_solver_comparison',1,'']]],
-  ['solvers_20side_20by_20side_4',['Watch the solvers side by side',['../group___physics.html#physics_solver_viewer',1,'']]],
-  ['sprite_5',['Attaching an independent Sprite',['../classpdg_1_1_part.html#part_mounting',1,'']]],
-  ['stability_6',['API stability',['../index.html#api_stability',1,'']]],
-  ['start_20here_7',['Start here',['../index.html#cxx_start',1,'']]]
+  ['part_20bodies_0',['Part bodies',['../classpdg_1_1_part.html#part_physics',1,'']]],
+  ['part_20chain_20ik_1',['Explicit Part-chain IK',['../classpdg_1_1_part.html#part_ik',1,'']]],
+  ['particle_20effects_2',['Particle effects',['../_particle_effects.html',1,'']]],
+  ['pdg_3',['PDG',['../index.html#cxx_about',1,'About PDG'],['../index.html',1,'Pixel Dust Game Engine (PDG)']]],
+  ['pixel_20dust_20game_20engine_20pdg_4',['Pixel Dust Game Engine (PDG)',['../index.html',1,'']]],
+  ['point_20fountain_5',['A fading point fountain',['../_particle_effects.html#particle_example',1,'']]],
+  ['procedural_20jiggle_20and_20fabrik_6',['Procedural jiggle and FABRIK',['../native_procedural_animation.html',1,'']]],
+  ['programmed_20transforms_20and_20schedule_20controls_7',['Programmed transforms and schedule controls',['../group___animation.html#animation_programming',1,'']]]
 ];

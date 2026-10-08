@@ -10,6 +10,7 @@ class SpriteAnimationSnapshot {
         AnimationTwoBoneIK config;
         AnimationIKResult result;
     };
+    struct Procedural { AnimationModifierId id;int order,kind;bool enabled;std::string error;std::vector<double> values,state;double fadeStart=1,fadeTarget=1,fadeElapsed=0,fadeDuration=0; };
     struct Artwork {
         AnimationDrawableId id;
         AnimationDrawableOptions options;
@@ -33,6 +34,7 @@ class SpriteAnimationSnapshot {
         std::vector<std::string> maps;
         std::map<AnimationBoneId,AnimationTransform> overrides;
         std::vector<IK> ik;
+        std::vector<Procedural> procedural;
         std::vector<Artwork> artwork;
         uint32 nextModifier=1,nextDrawable=1;
         uint64_t revision=1;
@@ -46,7 +48,13 @@ class SpriteAnimationSnapshot {
         if(s.mAnimationPipeline) {
             for(const auto& entry:s.mAnimationPipeline->mEntries) {
                 auto found=s.mAnimationIK.find(entry->id);
-                if(found==s.mAnimationIK.end())throw std::runtime_error("Cannot snapshot animation modifier callbacks");
+                if(found==s.mAnimationIK.end()) {
+                    Procedural p{entry->id,entry->order,0,entry->enabled,entry->error,{},{}};
+                    if(auto f=s.mAnimationFABRIK.find(entry->id);f!=s.mAnimationFABRIK.end()){p.kind=1;p.values=encodeFABRIK(f->second->config);}
+                    else if(auto j=s.mAnimationJiggle.find(entry->id);j!=s.mAnimationJiggle.end()){p.kind=2;p.values=encodeJiggle(j->second->config);p.state=encodeJiggleState(j->second->state);p.fadeStart=j->second->fadeStart;p.fadeTarget=j->second->fadeTarget;p.fadeElapsed=j->second->fadeElapsed;p.fadeDuration=j->second->fadeDuration;}
+                    else throw std::runtime_error("Cannot snapshot animation modifier callbacks");
+                    result.procedural.push_back(std::move(p));continue;
+                }
                 result.ik.push_back({entry->id,entry->order,entry->enabled,entry->error,found->second->config,found->second->result});
             }
             result.nextModifier=s.mAnimationPipeline->mNextId;result.revision=s.mAnimationPipeline->mRevision;
@@ -129,6 +137,12 @@ class SpriteAnimationSnapshot {
                 auto entry=s.mAnimationPipeline->find(id);entry->enabled=item.enabled;entry->error=item.error;
                 s.mAnimationIK.at(id)->result=item.result;
             }
+            for(const auto& item:state.procedural) {
+                s.mAnimationPipeline->mNextId=item.id;ProceduralValues values(item.values);
+                if(item.kind==1){auto c=decodeFABRIK(values);values.end();s.addAnimationFABRIK(c,item.order);}
+                else{auto c=decodeJiggle(values);values.end();s.addAnimationJiggle(c,item.order);ProceduralValues saved(item.state);auto j=decodeJiggleState(saved);saved.end();s.setAnimationJiggleState(item.id,j);auto& live=*s.mAnimationJiggle.at(item.id);live.fadeStart=item.fadeStart;live.fadeTarget=item.fadeTarget;live.fadeElapsed=item.fadeElapsed;live.fadeDuration=item.fadeDuration;}
+                auto entry=s.mAnimationPipeline->find(item.id);entry->enabled=item.enabled;entry->error=item.error;
+            }
             s.mAnimationPipeline->mNextId=state.nextModifier;s.mAnimationPipeline->mRevision=state.revision;
 #ifndef PDG_NO_GUI
             for(const auto& item:state.artwork) {
@@ -188,7 +202,7 @@ class SpriteAnimationSnapshot {
         auto number=[&](double v,double fallback=0){out.real(v,fallback);};
         str(state.entity);str(state.clip);number(state.seconds);
         out.floating(state.scaleX,1);out.floating(state.scaleY,1);
-        out.byte((state.paused?1:0)|(state.finished?2:0)|(state.events?4:0)|(state.pose?8:0)|(state.blending?16:0));
+        out.byte((state.paused?1:0)|(state.finished?2:0)|(state.events?4:0)|(state.pose?8:0)|(state.blending?16:0)|(!state.procedural.empty()?32:0));
         str(state.blendTarget);number(state.blendDuration);number(state.blendElapsed);number(state.blendProgress);
         integer(state.maps.size());for(const auto& name:state.maps)str(name);
         if(state.pose) {
@@ -209,6 +223,10 @@ class SpriteAnimationSnapshot {
                 for(auto member:{&AnimationTwoBoneIK::rootLength,&AnimationTwoBoneIK::middleLength,&AnimationTwoBoneIK::targetX,&AnimationTwoBoneIK::targetY,&AnimationTwoBoneIK::influence,&AnimationTwoBoneIK::targetRotation,&AnimationTwoBoneIK::rootMin,&AnimationTwoBoneIK::rootMax,&AnimationTwoBoneIK::middleMin,&AnimationTwoBoneIK::middleMax})number(c.*member,defaults.*member);
                 const auto& r=item.result;number(r.reachError);
                 out.byte((r.reachable?1:0)|(r.clamped?2:0)|(r.limited?4:0)|(r.stretched?8:0));
+            }
+            if(!state.procedural.empty()) {
+                integer(state.procedural.size());
+                for(const auto& item:state.procedural){integer(item.id);out.signedInteger(item.order);out.byte(item.kind);out.flag(item.enabled);str(item.error);integer(item.values.size());for(double v:item.values)number(v);integer(item.state.size());for(double v:item.state)number(v);number(item.fadeStart,1);number(item.fadeTarget,1);number(item.fadeElapsed);number(item.fadeDuration);}
             }
             integer(state.nextDrawable);integer(state.artwork.size());
             for(const auto& item:state.artwork) {
@@ -264,7 +282,7 @@ public:
             state.entity=str();state.clip=str();state.seconds=number();
             state.scaleX=in.floating(1);state.scaleY=in.floating(1);
             const auto flags=reader->deserialize_1u();
-            if(flags>31||state.seconds<0||!std::isfinite(state.seconds*1000.)||!std::isfinite(state.scaleX)||!std::isfinite(state.scaleY))throw std::runtime_error("Invalid imported playback state");
+            if(flags>63||state.seconds<0||!std::isfinite(state.seconds*1000.)||!std::isfinite(state.scaleX)||!std::isfinite(state.scaleY))throw std::runtime_error("Invalid imported playback state");
             state.paused=flags&1;state.finished=flags&2;state.events=flags&4;state.pose=flags&8;state.blending=flags&16;
             state.blendTarget=str();state.blendDuration=number();state.blendElapsed=number();state.blendProgress=number();
             if(state.blendDuration<0||state.blendElapsed<0||state.blendProgress<0||state.blendProgress>1||
@@ -300,6 +318,10 @@ public:
                     for(auto member:{&AnimationTwoBoneIK::rootLength,&AnimationTwoBoneIK::middleLength,&AnimationTwoBoneIK::targetX,&AnimationTwoBoneIK::targetY,&AnimationTwoBoneIK::influence,&AnimationTwoBoneIK::targetRotation,&AnimationTwoBoneIK::rootMin,&AnimationTwoBoneIK::rootMax,&AnimationTwoBoneIK::middleMin,&AnimationTwoBoneIK::middleMax})c.*member=number(defaults.*member);
                     auto& r=item.result;r.reachError=number();auto bits=reader->deserialize_1u();if(bits>15||r.reachError<0)throw std::runtime_error("Invalid authored IK result");
                     r.reachable=bits&1;r.clamped=bits&2;r.limited=bits&4;r.stretched=bits&8;state.ik.push_back(std::move(item));
+                }
+                if(flags&32){
+                    auto count=reader->deserialize_uint();if(count>4096)throw std::runtime_error("Too many procedural controllers");
+                    while(count--){Procedural p;p.id=reader->deserialize_uint();if(!p.id||p.id>=state.nextModifier||!ids.insert(p.id).second)throw std::runtime_error("Invalid procedural ID");p.order=in.signedInteger();p.kind=reader->deserialize_1u();if(p.kind!=1&&p.kind!=2)throw std::runtime_error("Invalid procedural kind");p.enabled=flag();p.error=str();auto readValues=[&]{std::vector<double> v;auto n=reader->deserialize_uint();if(n>50000)throw std::runtime_error("Procedural state too large");while(n--)v.push_back(number());return v;};p.values=readValues();p.state=readValues();p.fadeStart=number(1);p.fadeTarget=number(1);p.fadeElapsed=number();p.fadeDuration=number();if(p.fadeStart<0||p.fadeStart>1||p.fadeTarget<0||p.fadeTarget>1||p.fadeElapsed<0||p.fadeDuration<0||p.fadeElapsed>p.fadeDuration)throw std::runtime_error("Invalid jiggle fade");state.procedural.push_back(std::move(p));}
                 }
                 state.nextDrawable=reader->deserialize_uint();count=reader->deserialize_uint();if(count>1000000)throw std::runtime_error("Too many authored drawables");ids.clear();
                 while(count--) {

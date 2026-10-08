@@ -54,14 +54,23 @@ namespace pdg {
 extern bool s_HaveSavedError;
 SAVED_ERROR_STORAGE;  // scripting language specific storage of a saved error
 
-VALUE EncodeBinary(const void *buf, size_t len);
-void* DecodeBinary(VALUE_REF val, size_t* outLen = 0);
+AnimationEvaluator MakeAnimationEvaluator(FUNCTION_REF evaluator);
+AnimationEventHandler MakeAnimationEventHandler(FUNCTION_REF handler);
+%#ifdef PDG_USING_V8
+void ClearAnimationEvaluatorCallbacks();
+%#endif
+
+VALUE MakeUint8Array(const void* data, size_t size);
+bool IsUint8Array(VALUE_REF value);
+bool GetUint8ArrayData(VALUE_REF value, const uint8*& data, size_t& size);
 
 %#ifdef PDG_USING_V8
+AnimatedBase* V8_GetAnimationTarget(v8::Isolate* isolate, v8::Local<v8::Value> value);
 ISerializable* V8_GetSerializable(v8::Isolate* isolate, v8::Local<v8::Value> value);
 %#endif
 
 %#ifdef PDG_USING_JAVASCRIPT_CORE
+AnimatedBase* JSC_GetAnimationTarget(JSContextRef ctx, JSValueRef value);
 ISerializable* JSC_GetSerializable(JSContextRef ctx, JSValueRef value);
 %#endif
 
@@ -155,7 +164,6 @@ protected:
 	SAVED_FUNCTION mScriptDeserializeFunc;
 	SAVED_FUNCTION mScriptGetMyClassTagFunc;
 };
-
 
 
 %#ifndef PDG_NO_GUI

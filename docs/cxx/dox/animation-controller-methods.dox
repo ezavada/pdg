@@ -211,7 +211,7 @@ Clip uses the sampled animation; Reference and Procedural start from the rig ref
 */
 
 /**
-\fn AnimationPose pdg::AnimationPipeline::evaluate(const AnimationPose & base, const AnimationTransform & root, double deltaSeconds, const std::map< AnimationBoneId, AnimationTransform > & overrides)
+\fn AnimationPose pdg::AnimationPipeline::evaluate(const AnimationPose & base, const AnimationTransform & root, double deltaSeconds, const std::map< AnimationBoneId, AnimationTransform > & overrides, const std::function<void(AnimationPose&,bool)>& controls)
 \brief Evaluate a fresh pose through the modifier stages.
 
 Copies the base for Clip mode, or creates a reference pose for Reference/Procedural mode, then applies overrides and callbacks. Callback failures roll back only that callback, record a diagnostic, and continue with the remaining entries. Rejects recursive evaluation and invalid inputs.
@@ -220,6 +220,7 @@ Copies the base for Clip mode, or creates a reference pose for Reference/Procedu
 \param root Valid owner root transform in owning-layer coordinates.
 \param deltaSeconds Finite nonnegative elapsed seconds. Zero requests reevaluation without advancing controller time.
 \param overrides Absolute parent-local transforms indexed by bone ID.
+\param controls Optional owner controls, called before modifiers with false and afterwards with true to enforce final constraints.
 
 \return An owned final pose. The input base is unchanged.
 

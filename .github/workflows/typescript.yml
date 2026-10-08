@@ -1,0 +1,35 @@
+name: TypeScript
+on:
+  push:
+    paths:
+      - 'docs/javascript/pdg-js.json'
+      - 'docs/typescript/**'
+      - 'src/typescript/**'
+      - 'tools/typescript/**'
+      - 'types/**'
+      - 'test/typescript/**'
+      - '.github/workflows/typescript.yml'
+  pull_request:
+    paths:
+      - 'docs/javascript/pdg-js.json'
+      - 'docs/typescript/**'
+      - 'src/typescript/**'
+      - 'tools/typescript/**'
+      - 'types/**'
+      - 'test/typescript/**'
+      - '.github/workflows/typescript.yml'
+permissions:
+  contents: read
+jobs:
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: tools/typescript/package-lock.json
+      - run: npm ci --prefix tools/typescript --ignore-scripts
+      - run: npm test --prefix tools/typescript
+      - run: npm run docs --prefix tools/typescript

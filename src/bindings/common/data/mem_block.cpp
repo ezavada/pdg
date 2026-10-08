@@ -23,6 +23,8 @@
 %#include <cstdlib>
 
 
+// @pdg-schema {"name":"ByteArray","value":{"kind":"alias","value":{"builtin":"Uint8Array"}}}
+
 namespace pdg {
     
 // ========================================================================================
@@ -39,9 +41,9 @@ BINDING_INITIALIZER_IMPL(MemBlock)
     );
 	END
 METHOD_IMPL(MemBlock, GetData)
-	METHOD_SIGNATURE("", [string Binary], 0, ())
+	METHOD_SIGNATURE("", [object ByteArray], 0, ())
     REQUIRE_ARG_COUNT(0);
-	VALUE resultVal = EncodeBinary(self->ptr, self->bytes);
+	VALUE resultVal = MakeUint8Array(self->ptr, self->bytes);
 	RETURN(resultVal);
 	END
 METHOD_IMPL(MemBlock, GetDataSize)
@@ -56,12 +58,12 @@ METHOD_IMPL(MemBlock, GetByte)
 	RETURN_UNSIGNED(self->getByte(i));
 	END
 METHOD_IMPL(MemBlock, GetBytes)
-	METHOD_SIGNATURE("", [string Binary], 2, ([number uint] start, [number uint] len))
+	METHOD_SIGNATURE("", [object ByteArray], 2, ([number uint] start, [number uint] len))
     REQUIRE_ARG_COUNT(2);
     REQUIRE_UINT32_ARG(1, start);
     REQUIRE_UINT32_ARG(2, len);
-	const std::string bytes = self->getBytes(start, len);
-	VALUE resultVal = EncodeBinary(bytes.data(), bytes.size());
+	const auto bytes = self->getBytes(start, len);
+	VALUE resultVal = MakeUint8Array(bytes.data(), bytes.size());
 	RETURN(resultVal);
 	END
 
@@ -72,3 +74,7 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(MemBlock)
 	END
 
 } // pdg namespace
+
+// @pdg-member {"name":"MemBlock.MemBlock","type":"constructor","params":[],"returns":"object MemBlock","brief":"Create a MemBlock instance.","native_binding":{"adapter":"MemBlock.MemBlock","browser":{"generate":true}}}
+
+// @pdg-class {"name":"MemBlock","native_binding":{"browser":{"generate":true,"base":null}}}

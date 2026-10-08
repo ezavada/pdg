@@ -126,7 +126,7 @@ The overload without duration applies immediately. The timed overload replaces p
 \fn AnimatedBase& pdg::AnimatedBase::moveBy(float deltaX, float deltaY)
 \brief Move by an offset.
 
-Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+Adds the offset to the location. The overload without duration applies immediately. Only axes with nonzero offsets are acquired; a zero offset preserves that axis's existing position animation and programmed movement. A timed request replaces programmed movement on the acquired axes. With andThen(), the relative target is resolved when the operation starts. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
 \param deltaX Relative offset in the container coordinate system.
 \param deltaY Relative offset in the container coordinate system.
@@ -140,7 +140,7 @@ Adds the offset to the location. The overload without duration applies immediate
 \fn AnimatedBase& pdg::AnimatedBase::moveBy(const Offset& delta)
 \brief Move by an offset.
 
-Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
+Adds the offset to the location. The overload without duration applies immediately. Only axes with nonzero offsets are acquired; a zero offset preserves that axis's existing position animation and programmed movement. A timed request replaces programmed movement on the acquired axes. With andThen(), the relative target is resolved when the operation starts. This is an immediate, chainable operation. It throws after wait() or andThen(); only operations with a duration can be part of a timed animation sequence.
 
 \param delta Relative offset in the container coordinate system.
 
@@ -184,7 +184,7 @@ The overload without duration applies immediately. The timed overload replaces p
 \fn AnimatedBase& pdg::AnimatedBase::moveBy(float deltaX, float deltaY, double durationSeconds, EasingFunc easing)
 \brief Move by an offset.
 
-Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+Adds the offset to the location. The overload without duration applies immediately. Only axes with nonzero offsets are acquired; a zero offset preserves that axis's existing position animation and programmed movement. A timed request replaces programmed movement on the acquired axes. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
 \param deltaX Relative offset in the container coordinate system.
 \param deltaY Relative offset in the container coordinate system.
@@ -200,7 +200,7 @@ Adds the offset to the location. The overload without duration applies immediate
 \fn AnimatedBase& pdg::AnimatedBase::moveBy(const Offset& delta, double durationSeconds, EasingFunc easing)
 \brief Move by an offset.
 
-Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+Adds the offset to the location. The overload without duration applies immediately. Only axes with nonzero offsets are acquired; a zero offset preserves that axis's existing position animation and programmed movement. A timed request replaces programmed movement on the acquired axes. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
 \param delta Relative offset in the container coordinate system.
 \param durationSeconds Finite nonnegative duration in seconds.

@@ -1,15 +1,16 @@
 #define HAS_SERIALIZABLE_METHODS(klass) \
+    METHODS_FROM(klass, ISerializable, \
     HAS_GETTER(klass, MyClassTag)             \
     HAS_GETTER(klass, SerializedSize)         \
     HAS_METHOD(klass, "serialize", Serialize)      \
     HAS_METHOD(klass, "deserialize", Deserialize)  \
-
+    )
 
 #define SERIALIZABLE_BASE_CLASS_IMPL(klass) CR \
   GETTER_IMPL(klass, MyClassTag, UINT32) CR \
   METHOD_IMPL(klass, GetSerializedSize) CR \
-	METHOD_SIGNATURE("get size of this object's data for the given stream", CR \
-		[number uint], 1, ([object Serializer] serializer)); CR \
+	METHOD_SIGNATURE("get size of this object's data for the given stream",  \
+		[number uint], 1, ([object Serializer*] serializer)); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
     REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer); CR \
     try { CR \
@@ -18,16 +19,16 @@
     } catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
 	END CR \
   METHOD_IMPL(klass, Serialize) CR \
-	METHOD_SIGNATURE("write this object's data into the given stream", CR \
-		undefined, 1, ([object Serializer] serializer)); CR \
+	METHOD_SIGNATURE("write this object's data into the given stream",  \
+		undefined, 1, ([object Serializer*] serializer)); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
     REQUIRE_CPP_OBJECT_ARG(1, serializer, Serializer); CR \
     try { self->serialize(serializer); NO_RETURN; } CR \
     catch (const std::exception& error) { THROW_ERR(error.what()); } CR \
 	END CR \
   METHOD_IMPL(klass, Deserialize) CR \
-	METHOD_SIGNATURE("read this object's data from the given stream", CR \
-		undefined, 1, ([object Deserializer] deserializer)); CR \
+	METHOD_SIGNATURE("read this object's data from the given stream",  \
+		undefined, 1, ([object Deserializer*] deserializer)); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
     REQUIRE_CPP_OBJECT_ARG(1, deserializer, Deserializer); CR \
     try { CR \

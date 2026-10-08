@@ -102,6 +102,8 @@ BINDING_CLASS(Polygon)
 DECL_END
 
 BINDING_CLASS(ElementRef)
+  METHOD(ElementRef, GetText)
+  METHOD(ElementRef, SetText)
   METHOD(ElementRef, Type)
   METHOD(ElementRef, GetControlPoints)
   METHOD(ElementRef, GetControlPoint)
@@ -149,6 +151,7 @@ DECL_END
 Attributes* ExtractAttributes(VALUE_REF value);
 
 BINDING_CLASS(Drawing)
+  METHOD(Drawing, AddText)
   METHOD(Drawing, AddLine)
   METHOD(Drawing, AddSpline)
   METHOD(Drawing, AddRect)
@@ -166,7 +169,6 @@ BINDING_CLASS(Drawing)
   METHOD(Drawing, CenterPoint)
   METHOD(Drawing, Empty)
 %#ifndef PDG_NO_GUI
-  METHOD(Drawing, Draw)
 %#endif // !PDG_NO_GUI
 DECL_END
 
@@ -205,6 +207,11 @@ WRAPPER_CLASS(Font)
 DECL_END
 
 WRAPPER_CLASS(Port)
+  METHOD(Port, GetCamera)
+  PROPERTY(Port, CameraAnchor)
+  PROPERTY(Port, CameraDrawingEnabled)
+  METHOD(Port, WorldToPort)
+  METHOD(Port, PortToWorld)
   PROPERTY(Port, ClipRect)
   METHOD(Port, ResetClipRect)
   METHOD(Port, Clear)

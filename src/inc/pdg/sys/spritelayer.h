@@ -33,7 +33,7 @@
 
 #include "pdg_project.h"
 
-#include "pdg/sys/animated.h"
+#include "pdg/sys/camera.h"
 #include "pdg/sys/eventemitter.h"
 #include "pdg/sys/serializable.h"
 #include "pdg/sys/os.h"
@@ -55,7 +55,9 @@
 #include <set>
 
 namespace pdg {
+class ParticleTrail;
 class CollisionWorld;
+class Collider;
 class Particle;
 class ParticleEmitter;
 
@@ -65,26 +67,22 @@ class Port;
 class Sprite;
 class SpriteLayer;
 class SpriteManager;
+class Scene;
 class TimerManager;
 
 /// @cond INTERNAL
-struct LinkedLayerInfo {
-	float	moveRatio;
-	float	zoomRatio;
-	SpriteLayer* linkedLayer;
-};
 /// @endcond
 
 // flags for SpriteLayer::setSerializationFlags()
 enum {
 	ser_Positions = 	1 << 0,  // just position, rotation, frame number
 	ser_ZOrder =		1 << 1,  // Z-Order of sprites within layer
-	ser_Sizes =			1 << 2,  // height & width of sprites
+	ser_Sizes =			1 << 2,  // layer world bounds and sprite sizes
 	ser_Animations = 	1 << 3,  // animation settings in effect
 	ser_Motion = 		1 << 4,  // motion settings in effect
 	ser_Forces = 		1 << 5,  // physics forces in effect
 	ser_Physics = 		1 << 6,  // physics settings (mass, friction, etc)
-	ser_LayerDraw =		1 << 7,  // layer position, zoom and rotation info
+	ser_LayerDraw =		1 << 7,  // explicit camera and parallax settings
 	ser_ImageRefs =		1 << 8,  // references to recreate images
 	ser_SCMLRefs =		1 << 9,  // references to SCML data
 	ser_HelperRefs = 	1 << 10, // references to helper object
@@ -102,7 +100,7 @@ enum {
 // Used to create and track collections of sprites
 // -----------------------------------------------------------------------------------
 
-class SpriteLayer : public EventEmitter, public Animated<SpriteLayer>, public Serializable<SpriteLayer>
+class SpriteLayer : public EventEmitter, public Serializable<SpriteLayer>
 {
 friend class Sprite;
     /// @cond INTERNAL
@@ -112,9 +110,24 @@ friend class Part;
 friend class Particle;
 friend class ParticleEmitter;
 friend class SpriteManager;
+friend class Scene;
+    SpriteManager* mManager = nullptr;
+    ms_time mDetachedClock = 0;
+    bool mClockDetached = false;
+    ms_time animationMilliseconds() const;
+    void rebaseFadeClock(ms_time oldTime, ms_time newTime);
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    cpSpace* mDetachedSpace = nullptr;
+    void movePhysicsTo(cpSpace* space);
+#endif
+friend class Camera;
     std::vector<Particle*> mParticles, mParticleStep;
     std::vector<ParticleEmitter*> mParticleEmitters;
     uint32 mMaxParticles = 10000;
+    std::vector<std::unique_ptr<ParticleTrail>> mParticleTrails;
+    void retireParticleTrail(std::unique_ptr<ParticleTrail> trail);
+
+    uint32_t mQueryBits = 1;
     bool mParticlesPrepared = false;
     void advanceParticles(double seconds);
     void finishParticles(double seconds);
@@ -123,11 +136,18 @@ friend class SpriteManager;
     void prepareColliders(void* space);
     void solveColliders(double seconds);
 public:
+    /// Runtime scene-query groups; independent of draw order/contact masks; not serialized.
+    void setQueryBits(uint32_t bits) { mQueryBits = bits; }
+    uint32_t getQueryBits() const { return mQueryBits; }
+    /// @cond INTERNAL
+    void collectQueryColliders(std::vector<Collider*>& colliders) const;
+    /// @endcond
     /** Create a layer-owned particle; null when the particle budget is full. */
     Particle* createParticle();
     void addParticle(Particle* particle);
     void removeParticle(Particle* particle);
     void removeAllParticles();
+    uint32 getParticleTrailCount() const;
     uint32 getParticleCount() const { return static_cast<uint32>(mParticles.size()); }
     Particle* getNthParticle(uint32 index) const;
     SpriteLayer& setMaxParticles(uint32 count) { mMaxParticles = count; return *this; }
@@ -157,12 +177,30 @@ public:
 		action_PostAnimateLayer = 46,	// after animation is run on any of the object in a particular layer
 		action_AnimationComplete = 47,	// after animation is run on all the objects in a layer for a particular animation cycle
 		
-		action_ZoomComplete = 48,		// a zoom done with animateZoomTo has finished 
 		action_FadeInComplete = 49,		// a fade done with fadeIn has finished
 		action_FadeOutComplete = 50		// a fade done with fadeOut has finished
 	};
 
-	const float noZoom;
+    /** \brief Attach a shared animated view.
+     * \param camera Retained camera, or nullptr to inherit the current port camera.
+     * Layer visibility, fades, simulation pause, bounds and gravity are independent.
+     */
+    void setCamera(Camera* camera);
+    /// Borrowed explicit camera; nullptr means inherit the port's camera.
+    Camera* getCamera() const { return mCamera; }
+    /// Borrowed explicit or inherited camera; nullptr means identity view.
+    Camera* getEffectiveCamera() const;
+    /** \brief Set per-layer parallax for the effective camera.
+     * \param movementRatio Finite factor applied to camera location; default 1.
+     * \param zoomRatio Finite exponent applied to camera zoom; default 1.
+     * Zero ignores that component. Rotation, scale, reflection and pivot still apply.
+     */
+    void setCameraParallax(float movementRatio = 1, float zoomRatio = 1);
+    void setWorldBounds(const Rect& bounds);
+    Rect getWorldBounds() const { return mWorldBounds; }
+#ifndef PDG_NO_GUI
+    SpatialTransform getViewTransform() const;
+#endif
 	
 	// this is the port that the sprites in this layer will render into
     // multiple layers can render into same port creating, drawn in order of creation
@@ -190,36 +228,6 @@ public:
 	void 			moveToFront();
 	void 			moveToBack();
 	int				getZOrder();
-
-	// link layers so they move, rotate and zoom together
-	// rotation is always at 1:1 ratio, but movement and zoom ratios can be optionally specified
-	virtual	void	moveWith(SpriteLayer* layer, float moveRatio = 1.0f, float zoomRatio = 1.0f);
-
-  #ifndef PDG_NO_GUI
-	// origin is the position of the sprite world's center point in the Port when the location is 0,0
-    // origin isn't affect by zoom or rotation, it happens after all of those are applied
-    void    		setOrigin(const Point& origin);
-    Point			getOrigin() const;
-
-    // auto-adjust center offset and location to keep both zoom and rotation center at the origin 
-    // (same point in Port). So for example if you want to have the world rotate and zoom around your 
-    // character then set the origin to your character's screen location, setAutoCenter(true), and
-    // setFixedMoveAxis(true) then all movement and rotation will be relative to your character's
-    // fixed screen location
-    void            setAutoCenter(bool autoCenter = true);
-    // if true, movement is along port axis. If false, movement is on the layer axis
-    void            setFixedMoveAxis(bool fixedAxis = true);
-
-	// zooming
-	virtual void	setZoom(float zoomLevel);
-	float           getZoom() const;
-
-	 // keeps centered, taking into account layer center offset
-	virtual void	zoomTo(float zoomLevel, double durationSeconds, EasingFunc easing = easeInOutQuad, 
-							Rect keepInRect = Rect(0,0), const Point* centerOn = 0);
-	void			zoom(float deltaZoomLevel, double durationSeconds, EasingFunc easing = easeInOutQuad, 
-							Rect keepInRect = Rect(0,0), const Point* centerOn = 0);
-  #endif // ! PDG_NO_GUI
 
 	// find, add and remove sprites from the layer
 	virtual Sprite*	findSprite(long id); 	// find a sprite in the layer by id. Be sure to addRef() the sprite if you hang onto the reference
@@ -264,7 +272,7 @@ public:
   #endif // PDG_SPRITER_SUPPORT
 
   #ifndef PDG_NO_GUI
-    // coordinate conversions, adjusting for offset, zoom and rotation of layer
+    // coordinate conversions through the effective camera
     virtual Point           layerToPort(const Point& p) const;
     virtual Offset          layerToPort(const Offset& p) const;
     virtual Vector          layerToPort(const Vector& p) const;
@@ -295,8 +303,7 @@ public:
     cpSpace*    getSpace();
 
     // continual force
-    void        setGravity(float gravity, bool keepItDownward = true); // applies to all layers, pulls everything downward
-    void        setKeepGravityDownward(bool keepItDownward = true);
+    void        setGravity(float gravity); // applies to all layers, pulls everything downward
 
     // continual damping effect of movement. Identical to calling
     // setMoveFriction() and setSpinFriction() on every sprite in every layer
@@ -308,7 +315,6 @@ protected:
 #endif
 /// @cond CXX
 
-    std::vector<const float*> tweenFields() const override;
     void validateInitialSnapshot() const;
     void readSerializedState(IDeserializer* deserializer, uint32 flags);
     void adoptInitialSnapshot(SpriteLayer& staged);
@@ -328,18 +334,13 @@ protected:
   #endif
     SpriteLayer();
     virtual ~SpriteLayer();
-	virtual void	locationChanged(const Offset& delta) override;
-    virtual void    rotationChanged(float deltaRadians) override;
 
   #ifndef PDG_NO_GUI
-  	// zoom is a visual effect only, so we don't worry about it on a non-gui build
-    virtual void    easingCompleted(const Animation& a) override;  // override for zoom-based easing
-	virtual void	zoomChanged(float deltaZoom);
 	// layer drawing
 	virtual void drawLayer();
   #endif // ! PDG_NO_GUI
 
-	virtual void animateLayer(ms_delta msElapsed);
+	virtual void animateLayer(double msElapsed);
 
     // do collision between layers
 
@@ -369,7 +370,7 @@ protected:
 
   #ifndef PDG_NO_GUI
     Port* mPort;
-    Point mOrigin;
+
   #endif
 
 	bool mHidden;
@@ -380,16 +381,9 @@ protected:
 	ms_time mDoneFadingInAt = 0;
 	ms_time mDoneFadingOutAt = 0;
 
-  #ifndef PDG_NO_GUI
-	float mZoom;
-
-	bool mAutoCenter;
-    bool mFixedMoveAxis;
-  #endif
-
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
     float mGravity;
-	bool mKeepGravityDownward;
+
 	bool mUseChipmunkPhysics;
 	bool mIsStaticLayer;
   #endif
@@ -405,13 +399,15 @@ protected:
 
     std::vector<SpriteLayer*> mCollideLayers;
     
-    std::vector<LinkedLayerInfo> mLinkedLayers;
-	SpriteLayer* mControlledBy;
+    Camera* mCamera = nullptr;
+    Rect mWorldBounds;
+    float mCameraMoveRatio = 1, mCameraZoomRatio = 1;
+#ifndef PDG_NO_GUI
+#endif
 
 	// caching of frequently used expensive calculations
 	
-	float mFacingCos;
-	float mFacingSin;
+
 	
 	uint32 mSerFlags;
 	
@@ -419,18 +415,6 @@ protected:
 
 /// @endcond
 };
-
-#ifndef PDG_NO_GUI
-inline void
-SpriteLayer::setAutoCenter(bool autoCenter) {
-    mAutoCenter = autoCenter;
-}
-
-inline void
-SpriteLayer::setFixedMoveAxis(bool fixedMove) {
-    mFixedMoveAxis = fixedMove;
-}
-#endif
 
 inline void 
 SpriteLayer::moveToFront() { 
@@ -451,27 +435,6 @@ SpriteLayer::layerToPort(const Vector& v) const {
 inline Vector
 SpriteLayer::portToLayer(const Vector& v) const {
     return portToLayer(Offset(v));
-}
-
-inline void  
-SpriteLayer::setOrigin(const Point& origin) {
-    mOrigin = origin;
-}
-
-inline Point 
-SpriteLayer::getOrigin() const {
-	return mOrigin;
-}
-
-inline float
-SpriteLayer::getZoom() const {
-    return mZoom;
-}
-
-inline void	
-SpriteLayer::zoom(float deltaZoom, double durationSeconds, EasingFunc easing, 
-				Rect keepInRect, const Point* centerOn) {
-	zoomTo(mZoom * deltaZoom, durationSeconds, easing, keepInRect, centerOn);
 }
 
 inline Port*   

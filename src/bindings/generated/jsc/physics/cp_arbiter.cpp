@@ -132,7 +132,20 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""i"")");
-        int32 i = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        double i_temp = JSValueToNumber(ctx, arguments[1 -1], exception);
+        if (i_temp < -2147483648.0 || i_temp > 2147483647.0 || i_temp != (long)i_temp)
+        {
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "a number in range [-2147483648, 2147483647] (""i"")");
+        }
+        int32 i = (int32)i_temp;
+        if (i < 0 || i >= cpArbiterGetCount(self))
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "contact index out of range" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
+        };
         cpVect pt = cpArbiterGetPointA(self, i);
         pdg::Point thePointA(pt.x, pt.y);
         return JSC_PointToValue(ctx, thePointA, exception);
@@ -146,7 +159,20 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""i"")");
-        int32 i = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        double i_temp = JSValueToNumber(ctx, arguments[1 -1], exception);
+        if (i_temp < -2147483648.0 || i_temp > 2147483647.0 || i_temp != (long)i_temp)
+        {
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "a number in range [-2147483648, 2147483647] (""i"")");
+        }
+        int32 i = (int32)i_temp;
+        if (i < 0 || i >= cpArbiterGetCount(self))
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "contact index out of range" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
+        };
         cpVect pt = cpArbiterGetPointB(self, i);
         pdg::Point thePointB(pt.x, pt.y);
         return JSC_PointToValue(ctx, thePointB, exception);
@@ -160,7 +186,20 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""i"")");
-        int32 i = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        double i_temp = JSValueToNumber(ctx, arguments[1 -1], exception);
+        if (i_temp < -2147483648.0 || i_temp > 2147483647.0 || i_temp != (long)i_temp)
+        {
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "a number in range [-2147483648, 2147483647] (""i"")");
+        }
+        int32 i = (int32)i_temp;
+        if (i < 0 || i >= cpArbiterGetCount(self))
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "contact index out of range" << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
+        };
         cpFloat theDepth = cpArbiterGetDepth(self, i);
         return JSValueMakeNumber(ctx, theDepth);
     }

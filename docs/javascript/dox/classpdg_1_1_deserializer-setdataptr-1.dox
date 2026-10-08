@@ -1,16 +1,8 @@
 namespace pdg { /**
+\fn pdg::Deserializer::setDataPtr(Uint8Array data)
+\brief Initialize a reader from an owned copy of Uint8Array bytes.
 
-\fn pdg::Deserializer::setDataPtr(BinaryString data)
-
-\brief set the serialized data
-
-Set the data block that should be deserialized. It should have been created at some point by a pdg.Serializer.
-
-\deprecated Node.js maintainers have deprecated BinaryString, so it may not be around in future versions
-
-\param data the BinaryString object with the serialized data
-
-\sa setDataPtr(MemBlock)
-\sa Serializer.getDataPtr
-
+Copies only the supplied view's bytes, including when the view is a Node Buffer. The deserializer retains the copy until its input is replaced or the reader is destroyed. Mutating, detaching or collecting the source after this call cannot change the reader. Strings are rejected.
+\param data A Uint8Array containing a serialized stream.
+\see setDataPtr(MemBlock)
 **/ }

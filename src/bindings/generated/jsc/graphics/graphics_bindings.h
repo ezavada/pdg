@@ -178,6 +178,8 @@ namespace pdg
     }
     extern JSObjectRef ElementRef_newFromCpp(JSContextRef, ElementRef*);
 
+    extern JSValueRef ElementRef_GetText(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef ElementRef_SetText(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef ElementRef_Type(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef ElementRef_GetControlPoints(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef ElementRef_GetControlPoint(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
@@ -279,6 +281,39 @@ namespace pdg
     }
     extern JSObjectRef AnimatedAttributesBase_newFromCpp(JSContextRef, AnimatedAttributesBase*);
 
+    extern JSValueRef AnimatedAttributesBase_PlayScript(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Batch(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_EndBatch(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Series(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_EndSeries(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_AndAlso(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Stagger(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Mark(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_JumpToMark(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_ScriptOn(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_TriggerEvent(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_OnStarted(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_OnFinished(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_OnScriptFinished(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_OnMark(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_OnYoyo(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_OnRepeat(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_OnUntilFired(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_When(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Otherwise(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_EndWhen(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_EndOtherwise(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Until(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Yoyo(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Repeat(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Diminish(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_Increase(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_SlowDown(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_SpeedUp(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_StopIt(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_RestartIt(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_PauseIt(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef AnimatedAttributesBase_ResumeIt(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef AnimatedAttributesBase_GetBoundingBox(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef AnimatedAttributesBase_GetRotatedBounds(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef AnimatedAttributesBase_GetLocation(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
@@ -438,6 +473,7 @@ namespace pdg
     }
     extern JSObjectRef Drawing_newFromCpp(JSContextRef, Drawing*);
 
+    extern JSValueRef Drawing_AddText(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef Drawing_AddLine(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef Drawing_AddSpline(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef Drawing_AddRect(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
@@ -455,7 +491,6 @@ namespace pdg
     extern JSValueRef Drawing_CenterPoint(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef Drawing_Empty(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
 #ifndef PDG_NO_GUI
-    extern JSValueRef Drawing_Draw(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
 #endif
 
 #ifndef PDG_NO_GUI
@@ -523,6 +558,13 @@ namespace pdg
     }
     extern JSObjectRef Port_newFromCpp(JSContextRef, Port*);
 
+    extern JSValueRef Port_GetCamera(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef Port_GetCameraAnchor(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef Port_SetCameraAnchor(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef Port_GetCameraDrawingEnabled(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef Port_SetCameraDrawingEnabled(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef Port_WorldToPort(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    extern JSValueRef Port_PortToWorld(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef Port_GetClipRect(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef Port_SetClipRect(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     extern JSValueRef Port_ResetClipRect(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);

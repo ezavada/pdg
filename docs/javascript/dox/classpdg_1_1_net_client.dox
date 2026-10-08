@@ -6,6 +6,32 @@ namespace pdg { /**
 
 NetClient is part of the PDG Engine's custom protocol for games. It handles protocol negotiation and optional connections. It establishes both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server. 
 
+On iOS JavaScriptCore, NetClient connects to existing PDG TCP/UDP servers using
+host and port. hasNetwork and hasNetworkClient are true; hasNetworkServer is
+false and NetServer is unavailable. UDP uses the TCP local endpoint; sendDgram()
+uses TCP until UDP negotiation succeeds, when UDP becomes unavailable, or for
+serialized messages larger than 1492 bytes. Pass {noDatagram: true} to the
+constructor to disable UDP.
+
+Callbacks run on the engine's JavaScript thread. Entering the background closes
+connections and reports ERR_NETWORK_BACKGROUND through onError(); onClose()
+runs when the engine resumes. Reconnect explicitly when the application becomes
+active. No automatic reconnect occurs. Native TCP/UDP is unencrypted;
+NetConnection.secure is false for native transport. iOS also supports WebSocket:
+pass webSocketUrl or transportPolicy: "websocket-only" to connect to a PDG
+WebSocket listener. WSS uses the iOS certificate trust store and reports secure
+as true; ws:// requires secure: false. Custom tls options are unsupported on iOS.
+WebSocket sendDgram() uses reliable delivery and hasDgram remains false.
+The server must allow clients without a browser Origin header.
+
+Desktop, Node and iOS also support WebTransport. Supply webTransportUrl and
+transportPolicy:"webtransport-required" to require its TLS reliable stream and
+optional datagrams. Browser auto mode attempts WebTransport before WebSocket.
+See \ref websocket_client_options for deadlines, fallback and certificate hashes.
+
+\note Apps connecting to a server on the local network must supply an
+NSLocalNetworkUsageDescription in their Info.plist. The OS controls permission.
+
 NetClient doesn't actually handle network communication, it only establishes the connection. Once established, it creates NetConnection objects you can use to send and receive data.
 
 \warning NetClient, NetServer, and NetConnection all work together over a custom protocol. Do not attempt to use NetClient to connect to other kinds of servers, such as HTTP or raw TCP sockets. There are perfectly fine [Net][1] and [HTTP][2] modules built-in to Node.js (and thus to PDG) for that. 

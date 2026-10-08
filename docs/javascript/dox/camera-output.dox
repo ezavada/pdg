@@ -1,0 +1,376 @@
+/**
+\page camera_output Camera visibility, fades and transitions
+
+The engine composes camera output using private offscreen buffers during runtime
+frames. Application code controls visibility, opacity and transitions; it does not
+allocate or draw those buffers. Layer fades still modify individual contents.
+Camera fades apply to the complete scene image, preserving overlapping artwork.
+
+Keep a composited camera's layers contiguous in drawing order. Transition scenes
+must not straddle another overlapping camera or screen-space drawing. The engine
+rejects ambiguous ordering instead of rearranging the scene. Put screen-space UI
+after the scene pair, using screen drawing, so it remains above the transition.
+Independent split-screen views keep their own viewport clipping.
+
+Use cutTo(destination) for a scheduled visibility handoff with no blend. Cuts can
+use independent viewports or Ports and do not need contiguous scene pairs.
+
+\anchor camera_wipe_directions
+Wipe names describe the reveal boundary's travel direction, rather than the edge
+where the destination first appears. Wipes use a hard boundary with no softening
+or opacity interpolation. Progress zero displays the source; progress one displays
+the destination. The boundary is aligned to whole pixels inside the common viewport.
+
+| Style | Destination is revealed from | Boundary travels toward |
+| --- | --- | --- |
+| camera_WipeLeft | Right edge | Left edge |
+| camera_WipeRight | Left edge | Right edge |
+| camera_WipeUp | Bottom edge | Top edge |
+| camera_WipeDown | Top edge | Bottom edge |
+
+Queued and active blended transitions reserve both cameras and retain the destination.
+They must share exactly one Port and an identical nonempty viewport. Self,
+cross-port, mismatched-viewport and overlapping transitions throw. Validation
+also occurs when a queued operation starts. Cancel with cancelSchedule() or
+stopIt(): cancellation restores visibility as it was at transition start. Removing
+the last attachment of either camera also cancels safely. Fade and transition
+progress obey the source camera's shared scheduler, with no separate timer.
+
+All transition styles support scheduling, groups, pause and cancellation. Repetition,
+reversal, gain/clock trajectory modifiers and until() are not supported. A
+completed or cancelled transition must be requested again with transitionTo(),
+rather than restarted through restartIt(). Wipes retain source picking throughout
+the transition; the destination receives picking only after the handoff. Active/queued transitions contain
+runtime references and cannot be saved as portable snapshots. Camera opacity,
+visibility and ordinary fade schedules are portable.
+
+\note Camera transitions require graphics, two attached scene cameras, and matching
+viewports. Camera state and ordinary fade animation also work in headless builds.
+*/
+
+/**
+\fn Camera pdg::Camera::show()
+\brief Show the composed camera output.
+
+Hidden cameras continue animating and following. Showing a camera preserves its opacity. Hidden cameras do not receive sprite picking.
+
+\return This camera for chaining.
+\see \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::hide()
+\brief Hide camera output and picking.
+
+This leaves animation, following and layer physics running. Showing the camera later retains the current animation state and opacity.
+
+\return This camera for chaining.
+\see \ref camera_output
+*/
+
+/**
+\fn boolean pdg::Camera::isHidden()
+\brief Read camera output visibility.
+
+Visibility is independent of layer visibility and camera opacity.
+
+\return True when output is hidden, otherwise false.
+\see \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::setOpacity(number opacity)
+\brief Set composed camera output opacity.
+
+Initially one. This changes the complete camera image, including flashes, without editing sprite or particle opacity. Overlapping artwork keeps its appearance. Newly added contents inherit the camera output opacity automatically.
+
+\param opacity Finite output opacity from zero to one.
+\return This camera for chaining.
+\note Keep this camera's layers contiguous in drawing order. Runtime frames own compositing.
+\see \ref camera_output
+*/
+
+/**
+\fn number pdg::Camera::getOpacity()
+\brief Read composed camera output opacity.
+
+Returns a value from zero to one; initially one. Hidden cameras retain their opacity.
+
+\return Current output opacity from zero to one.
+\see \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::fadeTo(number opacity, number seconds, number easing = linearTween)
+\brief Animate composed camera output opacity.
+
+Uses the shared Animated scheduler, including groups, wait(), andThen(), pauseSchedule(), cancelSchedule() and selected-operation playback controls. It does not automatically show or hide the camera. Zero duration applies immediately outside a timed sequence. Camera fades preserve sprite opacity and live scene animation. Scheduled fades and visibility survive Camera snapshots.
+
+\param opacity Finite output opacity from zero to one.
+\param seconds Finite nonnegative duration in seconds.
+\param easing Registered easing constant. Defaults to linearTween.
+\return This camera for chaining.
+\note Keep this camera's layers contiguous in drawing order. Runtime frames own compositing.
+\see \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::fadeIn(number seconds, number easing = linearTween)
+\brief Fade composed camera output to full opacity.
+
+Equivalent to fadeTo(1, seconds, easing). It preserves visibility: call show() explicitly if the camera is hidden.
+
+\param seconds Finite nonnegative duration in seconds.
+\param easing Registered easing constant. Defaults to linearTween.
+\return This camera for chaining.
+\see \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::fadeOut(number seconds, number easing = linearTween)
+\brief Fade composed camera output to zero opacity.
+
+Equivalent to fadeTo(0, seconds, easing). It does not hide the camera or stop its animation, following or layer simulation.
+
+\param seconds Finite nonnegative duration in seconds.
+\param easing Registered easing constant. Defaults to linearTween.
+\return This camera for chaining.
+\see \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::transitionTo(Camera destination, number seconds, number style = camera_Crossfade, number easing = easeInOutQuad)
+\brief Transition between two live camera scenes.
+
+For crossfades, the engine interpolates the premultiplied complete scene images, including their own opacity and flash effects. It does not fade individual sprites or independently source-over two weighted scenes. Wipes partition the viewport between the two scene images, retaining full source opacity on the unrevealed side and destination opacity on the revealed side. Both scenes stay live. At completion the source becomes hidden and the destination becomes visible; their opacity values are unchanged. The source receives picking during the transition, and the destination receives it after completion.
+
+\param destination Retained destination camera rendering into the same Port and viewport.
+\param seconds Finite nonnegative duration in seconds.
+\param style camera_Crossfade (default), camera_WipeLeft, camera_WipeRight, camera_WipeUp, camera_WipeDown, camera_LumaFade or camera_WhipLeft/Right/Up/Down. Luma and whip styles use default settings; use lumaFadeTo() or whipPanTo() to customize them.
+\param easing Registered easing constant. Defaults to easeInOutQuad.
+\return This camera for chaining.
+\note Keep this camera's layers contiguous in drawing order. Runtime frames own compositing.
+
+\par Example
+\code{.js}
+// sourceWorld and destinationWorld are layers attached to the same port.
+const bounds = port.getDrawingArea();
+const source = new pdg.Camera().setViewport(bounds);
+const destination = new pdg.Camera().setViewport(bounds).hide();
+sourceWorld.setCamera(source);
+destinationWorld.setCamera(destination);
+source.transitionTo(destination, 0.75, pdg.camera_Crossfade,
+                    pdg.easeInOutQuad);
+// To reveal from the bottom instead, choose pdg.camera_WipeUp.
+// Runtime frames advance the transition and switch visibility on completion.
+\endcode
+\see \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::lumaFadeTo(Camera destination, number seconds, Image mask = null, number softness = 0.1, boolean darkFirst = false, number easing = easeInOutQuad)
+\brief Reveal a live destination using a frozen luminance mask.
+
+The mask stretches to the common viewport using nearest sampling. Luminance is computed from straight RGB in linear color space; fully transparent pixels have zero luminance. The mask is frozen at the first rendered transition frame, while both scene images remain live. Without an explicit mask, that first source-camera image supplies it. Supplied images are retained until completion or cancellation. On resize, the frozen mask stretches to the new viewport. Progress endpoints show the complete source and destination even for uniform black or white masks.
+
+\param destination Distinct camera attached to the same Port with the same nonempty viewport.
+\param seconds Finite nonnegative duration in seconds.
+\param mask Optional Image, or null to derive the mask from the initial source output.
+\param softness Reveal-band width in linear luminance units, from 0 to 1; defaults to 0.1. Zero gives a hard edge.
+\param darkFirst False reveals bright pixels first; true reveals dark pixels first.
+\param easing Easing function; defaults to easeInOutQuad.
+\return This camera for chaining.
+\note Scene layers must remain contiguous. The source receives picking throughout the transition; completion hides it and shows the destination. Shared transition pause, queue, cancellation and snapshot restrictions apply.
+\par Example
+\code{js}
+source.lumaFadeTo(destination, 1.0, null, 0.15, false, pdg.linearTween);
+\endcode
+\see transitionTo(), whipPanTo(), \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::whipPanTo(Camera destination, number seconds, number style = camera_WhipLeft, number blur = 0, number easing = easeInOutQuad)
+\brief Slide live camera outputs with optional directional motion blur.
+
+The source slides out and the destination enters from the opposite edge. Offsets belong to composition: persistent camera location, following and parallax are unchanged. Camera opacity remains independent for each scene, and all samples clip to the common viewport. Blur averages eight nearby progress samples, with its spread fading to zero at the endpoints. The reference speed is one viewport per 0.65 seconds: halving the duration doubles blur spread, and doubling the duration halves it. Zero blur uses one sample. Both scenes continue rendering live; at completion the source hides and the destination shows.
+
+\param destination Distinct camera attached to the same Port with the same nonempty viewport.
+\param seconds Finite nonnegative duration in seconds.
+\param style camera_WhipLeft (default), camera_WhipRight, camera_WhipUp or camera_WhipDown; names describe source travel.
+\param blur Strength from 0 to 1, default 0. At the reference duration of 0.65 seconds, maximum sample spread is 15 percent of the viewport extent times this strength. Spread scales by 0.65 / seconds and is capped at one viewport extent for very fast pans.
+\param easing Easing function; defaults to easeInOutQuad.
+\return This camera for chaining.
+\note The source receives picking until completion. Shared transition ordering, pause, cancellation and snapshot restrictions apply.
+\par Example
+\code{js}
+source.whipPanTo(destination, 0.4, pdg.camera_WhipLeft, 0.7);
+\endcode
+\see transitionTo(), lumaFadeTo(), \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::cutTo(Camera destination)
+\brief Schedule an atomic camera visibility and picking handoff.
+
+Hide this camera and show the destination at the scheduled instant, without a
+blended frame. Position, zoom, opacity, animation and following remain unchanged.
+The cut is immediate unless delayed by wait() or placed after an operation using
+andThen(). A paused schedule delays execution; cancellation before execution
+leaves both cameras' visibility unchanged. Cancelling after execution does not
+undo the cut.
+
+\param destination A distinct output Camera. It may use another viewport or Port,
+    or be unattached; cuts also work in headless builds. Effects-stage cameras
+    cannot participate.
+\return This camera for chaining.
+\note A pending cut retains the destination and reserves both cameras against
+    other handoffs. Pending cuts cannot be serialized, repeated, reversed or
+    replayed with restartIt(); request a new cut after completion or cancellation.
+    Removing either camera's last attachment cancels a pending cut. Unlike blended
+    transitions, cuts do not require contiguous scene pairs or matching viewports.
+\par Example
+\code{js}
+source.wait(0.5).cutTo(destination);
+\endcode
+\see transitionTo(), wait(), andThen(), cancelSchedule(), \ref camera_output
+*/
+
+/**
+\fn Camera pdg::Camera::matchCutTo(Camera destination, CameraMatchCutOptions options)
+\brief Match two Sprite compositions and preserve apparent motion across a hard cut.
+
+The mode names the reference shot and whether to match size. During the approach, `mode: pdg.matchSource`
+preserves the outgoing shot and aligns the hidden incoming camera so matchTarget
+reaches matchSource's live Port position. `mode: pdg.matchTarget` eases the outgoing
+camera so matchSource reaches matchTarget's live Port position. At the cut the
+engine matches projected bounds centers, apparent velocity and, with an AndSize mode,
+apparent size and its rate of change. Size means the largest dimension of the
+projected Sprite bounds; rotation and aspect ratio are preserved.
+
+The source schedule owns the approach and settling phases. Both cameras remain
+reserved until settling finishes; andThen() starts its successor afterward.
+Visibility and picking switch at the approach boundary. wait(), pauseSchedule(),
+resumeSchedule(), cancelSchedule() and stopIt() apply to the whole operation.
+Cancellation before the cut removes matching adjustments and restores visibility.
+Cancellation after the cut retains the incoming view at its current framing.
+Removed/reassigned subjects or detached cameras cancel safely. Pending operations
+retain the destination, check Sprite lifetimes and cannot be saved as snapshots,
+repeated, reversed or restarted.
+
+\param destination Incoming camera, retained until completion or cancellation.
+\param options Matching settings described below.
+\return This source camera for chaining.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\anchor camera_match_options
+\par Matching options
+
+| Field | Default | Meaning |
+| --- | --- | --- |
+| matchSource | Required | Sprite belonging to the source camera. |
+| matchTarget | Required | Distinct Sprite belonging to the destination camera. |
+| mode | matchSource | Camera matching enum; see the four modes below. |
+| approachSeconds | 0.4 | Finite positive time to synchronize the scenes before the cut or fade. |
+| settleSeconds | 0.4 | Finite positive time to ease out inherited camera motion after the cut or fade. |
+| settleReturnsCamera | false | Retain the matched framing and deceleration travel. Set true to restore the incoming base framing/zoom or its live following view. |
+| approachEasing | easeInQuad | Registered monotonic easing with zero/one endpoints. |
+| settleEasing | easeOutQuad | Registered monotonic easing controlling the decay of extra motion. |
+
+| Mode | Behavior |
+| --- | --- |
+| pdg.matchSource | Preserve the source shot; align the incoming camera's position and apparent motion without adjusting zoom. |
+| pdg.matchSourceAndSize | Match the source shot, also matching apparent size and its rate using zoom. |
+| pdg.matchTarget | Move the outgoing camera toward the target shot without adjusting zoom. |
+| pdg.matchTargetAndSize | Approach the target shot's position and size; carry apparent motion and size rate through the cut. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+Following and independent camera effects continue. Keeping matched framing also
+retains the resulting following offset. Matching corrections compose with the
+camera's live base position and zoom; settleReturnsCamera removes those corrections
+at completion. The matchSource and matchTarget modes leave zoom unchanged.
+getLocation() and getZoom() expose the base pose while temporary matching
+corrections are active; layer coordinate conversions include those corrections.
+
+\note Requires graphics, Sprites on layers sharing a Port and identical nonempty
+camera viewports. Translation parallax must be nonzero; zoom matching also needs
+nonzero zoom parallax and nonempty projected bounds. Pixel snapping and view-bounds
+clamping are unsupported for either matched camera. Use logical Sprite bounds
+that describe the artwork being matched. Overshooting or reversing easings throw.
+
+\par Example
+\code{.js}
+// Source and target Sprites belong to the respective cameras on the same Port.
+sourceCamera.matchCutTo(destinationCamera, {
+    matchSource: sourceSprite,
+    matchTarget: targetSprite,
+    mode: pdg.matchSourceAndSize,
+    settleReturnsCamera: true,
+    approachSeconds: 0.4,
+    settleSeconds: 0.6
+});
+\endcode
+\see cutTo(), \ref camera_output
+*/
+
+
+/**
+\fn Camera pdg::Camera::matchFadeTo(Camera destination, CameraMatchFadeOptions options)
+\brief Synchronize two Sprite compositions, crossfade while matched, then settle.
+
+Uses the modes and matching settings in \ref camera_match_options. After the
+approach synchronizes the scenes, both live scenes crossfade. Their Sprite bounds
+centers remain aligned throughout the blend; AndSize modes also maintain equal
+projected bounds size. The outgoing camera carries its approach motion through
+the fade. At the fade endpoint the destination inherits apparent motion and
+settles with the same behavior as matchCutTo(). Following, Sprite motion and
+camera effects continue during all three phases.
+
+The source schedule owns approach, fade and settling. Both cameras remain
+reserved until settling finishes; andThen() follows all three phases. Picking
+uses the source during the fade and switches to the destination when fading ends.
+Pausing freezes the operation. Cancellation during approach or fade restores
+original visibility and removes matching corrections; cancellation during
+settling retains the incoming framing.
+
+\param destination Incoming camera, retained until completion or cancellation.
+\param options All settings in \ref camera_match_options, plus the fade settings below.
+\return This source camera for chaining.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\anchor camera_match_fade_options
+\par Additional matched-fade options
+
+| Field | Default | Meaning |
+| --- | --- | --- |
+| fadeSeconds | 0.4 | Finite positive blend duration in seconds, between approach and settling. |
+| fadeEasing | linearTween | Registered monotonic easing with zero/one endpoints controlling the blend. |
+
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+\note Requires the same Sprite, Port, viewport and parallax setup as matchCutTo().
+Each camera's layers must form a contiguous scene on their shared Port, as for
+transitionTo(). Interleaved scenes and unrelated layers between the scenes throw.
+
+\par Example
+\code{.js}
+// These Sprites belong to the two cameras on the same Port.
+sourceCamera.matchFadeTo(destinationCamera, {
+    matchSource: sourceSprite,
+    matchTarget: targetSprite,
+    mode: pdg.matchSourceAndSize,
+    approachSeconds: 0.4,
+    fadeSeconds: 0.6,
+    settleSeconds: 0.4
+});
+\endcode
+\see matchCutTo(), transitionTo(), \ref camera_match_options
+*/

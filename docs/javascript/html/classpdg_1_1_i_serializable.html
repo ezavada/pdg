@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#related">Related Symbols</a> &#124;
 <a href="classpdg_1_1_i_serializable-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">ISerializable Class Reference<div class="ingroups"><a class="el" href="group___serialization.html">Serialization</a></div></div></div>
@@ -125,6 +126,10 @@ Inheritance diagram for ISerializable:</div>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:ad8cfd42a0b3990e41ff44e1c59cec14f" id="r_ad8cfd42a0b3990e41ff44e1c59cec14f"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ad8cfd42a0b3990e41ff44e1c59cec14f">ISerializable</a> (function getSerializedSize, function serialize, function deserialize, function getMyClassTag)</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-related" class="groupheader"><a id="related" name="related"></a>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
@@ -199,7 +204,46 @@ Example</h2>
 <a class="el" href="classpdg_1_1_deserializer.html" title="deserialize data from a serialized data stream">Deserializer</a> </dd>
 <dd>
 <a class="el" href="namespacepdg.html#a438e049366918636b7e1a67479994756">pdg.registerSerializableClass</a> </dd></dl>
-</div></div><!-- contents -->
+</div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ad8cfd42a0b3990e41ff44e1c59cec14f" name="ad8cfd42a0b3990e41ff44e1c59cec14f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8cfd42a0b3990e41ff44e1c59cec14f">&#9670;&#160;</a></span>ISerializable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ISerializable </td>
+          <td>(</td>
+          <td class="paramtype">function</td>          <td class="paramname"><span class="paramname"><em>getSerializedSize</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">function</td>          <td class="paramname"><span class="paramname"><em>serialize</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">function</td>          <td class="paramname"><span class="paramname"><em>deserialize</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">function</td>          <td class="paramname"><span class="paramname"><em>getMyClassTag</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>getSerializedSize:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_serialized_size_callback" title="SerializedSizeCallback">SerializedSizeCallback</a>. </dd>
+<dd>
+Parameter <code>serialize:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_serialize_callback" title="SerializeCallback">SerializeCallback</a>. </dd>
+<dd>
+Parameter <code>deserialize:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_deserialize_callback" title="DeserializeCallback">DeserializeCallback</a>. </dd>
+<dd>
+Parameter <code>getMyClassTag:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_class_tag_callback" title="ClassTagCallback">ClassTagCallback</a>. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <div class="contents">
 	<h2 class="groupheader">User Comments</h2>
 	<div id="disqus_thread"></div>

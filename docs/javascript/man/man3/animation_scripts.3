@@ -1,0 +1,53 @@
+.TH "animation_scripts" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+animation_scripts \- Native animation scripts 
+.PP
+Animated scripts record commands in C++ and execute on the same scheduler as ordinary animation\&. JavaScript uses the same command graph and playback implementation in V8, JavaScriptCore and WebAssembly\&. AnimationScript and Troupe record Animated commands and semantic subclass operations, including Sprite frames and opacity, AnimatedAttributes appearance, and camera controls\&. Commands are applied to compatible playback targets; an incompatible target emits unsupportedOp and preserves the command duration\&. Sprite clip playback and clip transitions are not recorder commands\&.
+
+.PP
+Definitions are library-owned\&. endScript() validates and seals a definition; omission keeps an editable draft that playScript() validates and copies\&. Duplicate names throw\&. Getters on a recorder throw because it has no live target\&. Commands on a recorder do not mutate target state\&. Schedule controls and animation helpers cannot be recorded\&.
+
+.PP
+Placement composes: andThen()\&.wait(0\&.2) delays the next block by 0\&.2 seconds after actual completion\&. Repeated waits add\&. Explicit pending placement needs a successor when closing a definition, branch or group; live pending placement can survive updates and snapshots\&. Ordinary immediate calls outside a block retain their normal behavior\&. Live groups publish at an owner update boundary\&. Apply trajectory modifiers before activation; playback controls operate on the retained selected block later\&.
+
+.PP
+Relative moveBy() acquires only axes with nonzero offsets\&. Thus moveBy(0, 100, 4) can continue alongside moveBy(100, 0, 2)\&.andAlso()\&.rotateBy(1, 2)\&.until(test): the condition finishes only horizontal movement and rotation\&. Without a duration, moveBy(0, 100) applies an immediate vertical offset\&. Absolute moveTo() still acquires both axes\&.
+
+.PP
+Recorder arguments are captured when the method is called: geometry and colors are copied, while engine objects keep native identity\&. Animated object references are borrowed; keep their owners alive until playback\&. Omitted trailing arguments preserve the playback target's native defaults\&. Unsupported argument types throw before recording; target-specific validation occurs on playback\&. Portable snapshots support scalar, string, geometry, color and supported object arguments\&. Resource references and compound options without a portable codec reject snapshots\&.
+
+.PP
+.PP
+.nf
+pdg\&.Animated\&.defineScript('highlight')
+    \&.series()\&.fillColor('gold')\&.changeFillOpacity(0\&.5, 0\&.3, pdg\&.linearTween)
+    \&.lineThickness(3)\&.endSeries()\&.endScript();
+const appearance = new pdg\&.AnimatedAttributes();
+appearance\&.playScript('highlight');
+appearance\&.animate(0\&.15); // halfway through the opacity change
+.fi
+.PP
+
+.PP
+Each target has one update owner\&. animate() takes seconds; playing a script does not create another clock\&. Attached cameras and engine-managed sprites already receive updates\&. Native snapshots preserve definitions, selected operands, cursors, baselines, delays, repeats and controls\&. Evaluators and custom easing callbacks are runtime resources and explicitly reject portable snapshots, even in unvisited branches\&. Full snapshots preserve saved marks, custom event steps and Troupe membership/collective playback through shared object references\&. Event handlers remain runtime resources and reject portable snapshots\&.
+
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+pdg\&.Animated\&.defineScript('vibrate')
+    \&.moveBy(6, 0, 0\&.05)\&.yoyo()\&.repeat(5)\&.diminish(0, 0\&.6)\&.endScript();
+var target = new pdg\&.Animated();
+target\&.setLocation(100, 200)\&.playScript('vibrate');
+target\&.animate(0\&.6); // back at (100, 200)
+
+.fi
+.PP
+ 
+.RE
+.PP
+

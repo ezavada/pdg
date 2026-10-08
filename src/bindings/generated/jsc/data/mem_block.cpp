@@ -97,7 +97,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        JSValueRef resultVal = EncodeBinary(self->ptr, self->bytes);
+        JSValueRef resultVal = MakeUint8Array(self->ptr, self->bytes);
         return resultVal;
     }
     JSValueRef MemBlock_GetDataSize(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -116,7 +116,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""i"")");
-        uint32 i = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 i = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         return JSValueMakeNumber(ctx, self->getByte(i));
     }
     JSValueRef MemBlock_GetBytes(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -127,12 +127,12 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""start"")");
-        uint32 start = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 start = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""len"")");
-        uint32 len = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
-        const std::string bytes = self->getBytes(start, len);
-        JSValueRef resultVal = EncodeBinary(bytes.data(), bytes.size());
+        uint32 len = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
+        const auto bytes = self->getBytes(start, len);
+        JSValueRef resultVal = MakeUint8Array(bytes.data(), bytes.size());
         return resultVal;
     }
 

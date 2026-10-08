@@ -1,4 +1,4 @@
-.TH "AnimationSpringTarget" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "AnimationSpringTarget" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -21,15 +21,15 @@ AnimationSpringTarget \- Spring target smoothing and recoil impulses\&.
 .br
 .RI "Change spring velocity immediately\&. "
 .ti -1c
-.RI "object \fBgetState\fP ()"
+.RI "\fBAnimationSpringState\fP \fBgetState\fP ()"
 .br
 .RI "Copy spring position and velocity\&. "
 .ti -1c
-.RI "\fBsetState\fP (object state)"
+.RI "\fBsetState\fP (\fBAnimationSpringState\fP state)"
 .br
 .RI "Replace spring position and velocity\&. "
 .ti -1c
-.RI "object \fBupdate\fP (number targetX, number targetY, number deltaSeconds)"
+.RI "\fBAnimationSpringState\fP \fBupdate\fP (number targetX, number targetY, number deltaSeconds)"
 .br
 .RI "Advance the spring toward a fixed target\&. "
 .in -1c
@@ -119,7 +119,7 @@ No value\&.
 .RE
 .PP
 
-.SS "object getState ()"
+.SS "\fBAnimationSpringState\fP getState ()"
 
 .PP
 Copy spring position and velocity\&. Editing the returned object does not change the helper\&.
@@ -134,7 +134,7 @@ An independent state object described below\&.
 .PP
 \fBSpring state\fP
 .RS 4
-Field  Meaning  \fRx\fP, \fRy\fP  Position in the application's chosen coordinate frame\&.  \fRvelocityX\fP, \fRvelocityY\fP  Velocity in that frame's distance units per second\&.  
+See \fBAnimationSpringState\fP for the generated field schema\&.
 .RE
 .PP
 
@@ -145,7 +145,7 @@ Field  Meaning  \fRx\fP, \fRy\fP  Position in the application's chosen coordinat
 .RE
 .PP
 
-.SS "setState (object state)"
+.SS "setState (\fBAnimationSpringState\fP state)"
 
 .PP
 Replace spring position and velocity\&. Validates all components before changing the state\&. Invalid or overflowing values leave it unchanged\&.
@@ -167,7 +167,7 @@ No value\&.
 .RE
 .PP
 
-.SS "object update (number targetX, number targetY, number deltaSeconds)"
+.SS "\fBAnimationSpringState\fP update (number targetX, number targetY, number deltaSeconds)"
 
 .PP
 Advance the spring toward a fixed target\&. Uses analytic damped-spring integration, treating the target as constant throughout this step\&. Zero elapsed time preserves state\&. Invalid or overflowing results leave state unchanged\&.

@@ -1,0 +1,425 @@
+/**
+\fn pdg::Sprite::addAnimationFABRIK(AnimationFABRIKOptions options, number order)
+\brief Register a procedural pose modifier; requires an enabled animation pose.
+
+See \ref procedural_fabrik_options.
+
+Use setAnimationIKTarget(id, x, y, space) to update the scheduled target.
+\param options Configuration described in the shared options reference.
+\param order Ordering within the modifier stage; default zero.
+\return Controller ID.
+*/
+
+/**
+\fn pdg::Sprite::addAnimationJiggle(AnimationJiggleOptions options, number order)
+\brief Register a procedural pose modifier; requires an enabled animation pose.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\note Enable the animation pose and register the two-bone IK before decorating its target.
+\par Example
+\code{.js}
+const ik = sprite.addAnimationIK({root: 'shoulder', middle: 'forearm',
+    tip: 'hand', targetX: 15, targetY: 4});
+const spring = sprite.addAnimationJiggle({mode: pdg.jiggleMode_IKTarget,
+    ik, frequency: 3, dampingRatio: 0.35});
+sprite.setAnimationIKTarget(ik, 8, 12);
+// The desired target stays (8,12); the effective target moves toward it.
+\endcode
+\param options Configuration described in the shared options reference.
+\param order Ordering within the modifier stage; default zero.
+\return Controller ID.
+
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\anchor procedural_jiggle_options
+\par Jiggle configuration
+
+All numbers are finite. Angles use radians, frequency uses Hz, and durations use seconds.
+`mode` is required: `jiggleMode_Chain` rotates individual joints;
+`jiggleMode_IKTarget` filters an existing two-bone IK target in world coordinates.
+Chain entries are contiguous, ordered from root to tip. Sprite entries accept bone
+names or IDs and include the root. Part entries are Parts from the same Sprite and
+exclude the receiver. Independent Parts must have uniform, nonsingular scales;
+dynamic Parts use target jiggle through setIKDriveTarget(), rather than chain jiggle.
+
+| Field | Default | Meaning |
+| --- | --- | --- |
+| `mode` | Required | Chain or IK target mode. |
+| `chain` | Empty | Chain entries; omit for IK target mode. |
+| `ik` | 0 | Existing Sprite two-bone IK modifier ID; required for Sprite target mode. |
+| `frequency` | 3 | Positive spring frequency, at most 60 Hz. |
+| `dampingRatio` | 0.4 | Damping in [0,4]; below 1 oscillates, 1 is critical damping. |
+| `influence` | 1 | Applied effect in [0,1]; zero keeps simulation running. |
+| `inertia` | 0.5 | Chain response to pivot acceleration in [0,1]. |
+| `length` | 0 | Positive lever length, or infer from authored length/next joint. Supply for a terminal Part. |
+| `maxAngle` | pi/3 | Positive maximum chain deviation, at most pi. |
+| `gravityX`, `gravityY` | 0 | World acceleration in engine units/second squared. |
+| `maxAngularSpeed` | 20 | Positive chain speed cap in radians/second. |
+| `maxDistance` | 32 | Positive target lag cap in world units. |
+| `maxSpeed` | 1000 | Positive target speed cap in world units/second. |
+| `maxStepSeconds` | 1/120 | Positive maximum simulation substep; at most 1/30 second. |
+| `maxSubsteps` | 16 | Integer from 1 through 64. Longer steps reseed. |
+| `teleportDistance` | 128 | Positive world displacement threshold for reseeding. |
+| `teleportAngle` | pi/2 | Positive chain base-angle threshold, at most pi. |
+| `enabled` | true | False bypasses the effect and freezes state; reenabling reseeds. |
+| `resetOnSeek` | true | Sprite jiggle reseeds when the animation is explicitly sought. |
+| `resetOnTeleport` | true | Reseed following large base/target changes. |
+| `joints` | Empty | Sparse per-joint overrides in chain mode. |
+
+Each joint override identifies a Sprite `bone` by name/ID or a Part by `part`
+(or its stable `bone` ID returned by getJiggleOptions()). It may override `length`,
+`frequency`, `dampingRatio`, `inertia`, `maxAngle`, `maxAngularSpeed`, `gravityX`
+and `gravityY`. Omitted fields inherit controller tuning. Joint IDs must be unique
+and belong to the chain. Settings patches replace the `joints` array as a whole.
+Unknown settings and attempts to change topology through settings throw.
+
+Modifiers execute by stage, then order, then registration. IK target jiggle runs
+inside its associated solve; its registration order must be zero. Chain jiggle runs
+in the post-constraint stage. Built-in controllers reject overlapping rotation
+ownership. Custom pose callbacks may compose explicitly. Jiggle does not perform
+obstacle queries: existing physical bodies and colliders handle contact in the
+physics step, with physical IK drives receiving the filtered target.
+
+\anchor procedural_fabrik_options
+\par FABRIK configuration and results
+
+Sprite `chain` contains at least three contiguous bone names/IDs; the last is the
+endpoint. Part `chain` excludes the receiver and contains at least two descendants.
+Solvers change rotating-joint angles and preserve link offsets, scale and endpoint
+local orientation. Part FABRIK uses live setIKLimits() limits.
+
+| Field | Default | Meaning |
+| --- | --- | --- |
+| `targetX`, `targetY` | 0 | Sprite target; Part methods accept a Point separately. |
+| `space` | Rig / Sprite | animationSpace_* for Sprite; partSpace_* for Part. |
+| `influence` | 1 | Applied solve influence in [0,1]. |
+| `tolerance` | 0.01 | Positive acceptable endpoint error in world units. |
+| `maxIterations` | 16 | Integer from 1 through 256. |
+| `bendDirection` | 1 | Exactly 1 or -1; deterministic initial bend direction. |
+| `minimum`, `maximum` | Empty | Sprite local angle limits; one entry per rotating joint. |
+
+`FABRIKResult` contains `solveError` (full solve), `reachError` (after influence),
+`iterations`, `converged`, `reached`, `limited`, and `withinGeometricReach`.
+Unreachable or constrained targets return a bounded best effort. `converged` refers
+to full solve tolerance; `reached` refers to the applied endpoint. Invalid chains,
+limits or nonfinite settings throw before modifying the pose.
+
+\anchor procedural_jiggle_state
+\par Jiggle results and state
+
+`JiggleResult` contains `lagDistance`, applied `influence`, `simulatedSeconds`,
+`substeps`, `limited`, and `reset`. Target mode additionally reports world-space
+`desiredTarget`, `filteredTarget`, and `effectiveTarget` records with x/y fields.
+Chain mode leaves target diagnostics at zero. Results describe the last evaluation.
+
+`JiggleState` is an independent numerical snapshot: `version: 1`, `mode`, `chain`, associated `ik`, `rigRevision`, `initialized`,
+`x`, `y`, `velocityX`, `velocityY`, and `joints`. Each joint contains world
+`angle`, angular `velocity`, desired world heading `desired`, `pivotX`, `pivotY`,
+`pivotVelocityX`, and `pivotVelocityY`. Restore only to the same mode and topology;
+state restore does not replace settings, programmed base motion or fades.
+Full Sprite/Layer snapshots preserve settings, fades and underlying Part rotations;
+incremental updates transfer state while requiring unchanged controller topology.
+Getters do not advance simulation. Springs use simulation time even while the clip
+playback is paused, and simulation pause freezes them.
+\htmlonly[block]
+</div>
+\endhtmlonly
+*/
+
+/**
+\fn pdg::Sprite::getAnimationFABRIKResult(number id)
+\brief Return the latest FABRIK solve diagnostics.
+
+See \ref procedural_fabrik_options.
+
+\param id Controller ID returned by registration.
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Sprite::getAnimationJiggleOptions(number id)
+\brief Return an independent configuration record.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Sprite::setAnimationJiggleSettings(number id, AnimationJiggleSettings settings)
+\brief Patch tuning without changing topology.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\param settings Sparse tuning patch; omitted fields retain their current values.
+*/
+
+/**
+\fn pdg::Sprite::setAnimationJiggleEnabled(number id, boolean enabled)
+\brief Enable or freeze jiggle; reenabling reseeds from the current pose.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\param enabled Whether to apply and simulate the controller.
+*/
+
+/**
+\fn pdg::Sprite::isAnimationJiggleEnabled(number id)
+\brief Return whether jiggle is enabled.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Sprite::setAnimationJiggleInfluence(number id, number influence, number seconds)
+\brief Set or linearly fade influence using simulation seconds.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\param influence Influence in [0,1].
+\param seconds Linear fade duration in simulation seconds; omitted or zero applies immediately.
+*/
+
+/**
+\fn pdg::Sprite::resetAnimationJiggle(number id)
+\brief Reseed jiggle from the desired pose or target.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+*/
+
+/**
+\fn pdg::Sprite::kickAnimationJiggle(number id, AnimationJiggleKick kick)
+\brief Add angular or target velocity.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\param kick Chain joint plus angularVelocity, or target velocityX/velocityY in world units/second.
+*/
+
+/**
+\fn pdg::Sprite::getAnimationJiggleResult(number id)
+\brief Return the most recently evaluated jiggle diagnostics.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Sprite::getAnimationJiggleState(number id)
+\brief Return an independent numerical state snapshot.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Sprite::setAnimationJiggleState(number id, JiggleState state)
+\brief Restore validated numerical state on the same topology.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+\param state Previously captured state for the same mode and topology.
+*/
+
+/**
+\fn pdg::Sprite::removeAnimationJiggle(number id)
+\brief Remove a jiggle controller.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param id Controller ID returned by registration.
+*/
+
+/**
+\fn pdg::Part::solveFABRIK(Part[] chain, Point target, PartFABRIKOptions options)
+\brief Solve or schedule a contiguous independent Part chain; chain excludes the receiver.
+
+See \ref procedural_fabrik_options.
+
+One-shot solve returns diagnostics and applies angles immediately.
+Scheduled controller owners must be cleared before installing competing controllers.
+\param chain Contiguous descendants, excluding this Part.
+\param target Desired endpoint in the configured coordinate frame.
+\param options Configuration described in the shared options reference.
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Part::setFABRIKTarget(Part[] chain, Point target, PartFABRIKOptions options)
+\brief Solve or schedule a contiguous independent Part chain; chain excludes the receiver.
+
+See \ref procedural_fabrik_options.
+
+The last chain entry is the endpoint. Call again to update its target.
+Use clearIKTarget() to remove the scheduled solver.
+\param chain Contiguous descendants, excluding this Part.
+\param target Desired endpoint in the configured coordinate frame.
+\param options Configuration described in the shared options reference.
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::getFABRIKResult()
+\brief Return the latest scheduled FABRIK diagnostics.
+
+See \ref procedural_fabrik_options.
+
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Part::setJiggle(PartJiggleOptions options)
+\brief Install chain jiggle or decorate an existing Part IK target.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\note Create a parent/child chain of independent Parts before installing chain jiggle.
+\par Example
+\code{.js}
+root.setJiggle({mode: pdg.jiggleMode_Chain, chain: [middle, tip],
+    length: 12, frequency: 2, dampingRatio: 0.3,
+    joints: [{part: tip, frequency: 4}]});
+root.kickJiggle({joint: middle, angularVelocity: 2});
+// Angular velocity is in radians/second, rather than an angle offset.
+\endcode
+\param options Configuration described in the shared options reference.
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::clearJiggle()
+\brief Remove jiggle and restore the underlying programmed rotations.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::hasJiggle()
+\brief Return whether this Part owns a jiggle controller.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Part::getJiggleOptions()
+\brief Return an independent configuration record.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Part::setJiggleSettings(PartJiggleSettings settings)
+\brief Patch tuning without changing topology.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param settings Sparse tuning patch; omitted fields retain their current values.
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::setJiggleEnabled(boolean enabled)
+\brief Enable or freeze jiggle; reenabling reseeds from the current pose.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param enabled Whether to apply and simulate the controller.
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::isJiggleEnabled()
+\brief Return whether jiggle is enabled.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Part::setJiggleInfluence(number influence, number seconds)
+\brief Set or linearly fade influence using simulation seconds.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param influence Influence in [0,1].
+\param seconds Linear fade duration in simulation seconds; omitted or zero applies immediately.
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::resetJiggle()
+\brief Reseed jiggle from the desired pose or target.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::kickJiggle(PartJiggleKick kick)
+\brief Add angular or target velocity.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param kick Chain joint plus angularVelocity, or target velocityX/velocityY in world units/second.
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::getJiggleResult()
+\brief Return the most recently evaluated jiggle diagnostics.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Part::getJiggleState()
+\brief Return an independent numerical state snapshot.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\return An independent value describing the controller.
+*/
+
+/**
+\fn pdg::Part::setJiggleState(JiggleState state)
+\brief Restore validated numerical state on the same topology.
+
+See \ref procedural_jiggle_options and \ref procedural_jiggle_state.
+
+\param state Previously captured state for the same mode and topology.
+\return This Part for chaining.
+*/
+
+/**
+\fn pdg::Part::getJiggleError()
+\brief Return the last chain jiggle or FABRIK evaluation error.
+\return An error message, or the empty string after successful evaluation. Target-mode errors are reported by getIKError().
+*/

@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -107,6 +107,8 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classpdg_1_1_event_emitter-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">EventEmitter Class Reference<div class="ingroups"><a class="el" href="group___events.html">Events</a></div></div></div>
@@ -122,31 +124,48 @@ Inheritance diagram for EventEmitter:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpdg_1_1_event_emitter__inherit__graph.png" border="0" usemap="#a_event_emitter_inherit__map" loading="lazy" alt="Inheritance graph"/></div>
 <map name="a_event_emitter_inherit__map" id="a_event_emitter_inherit__map">
-<area shape="rect" title="Distributes events to event handlers." alt="" coords="349,5,447,31"/>
-<area shape="rect" href="classpdg_1_1_event_manager.html" title=" " alt="" coords="5,79,111,105"/>
-<area shape="poly" title=" " alt="" coords="334,35,112,82,110,77,334,30"/>
-<area shape="rect" href="classpdg_1_1_network_manager.html" title=" " alt="" coords="135,79,256,105"/>
-<area shape="poly" title=" " alt="" coords="347,38,231,81,229,76,352,36"/>
-<area shape="rect" href="classpdg_1_1_particle.html" title=" " alt="" coords="280,79,345,105"/>
-<area shape="poly" title=" " alt="" coords="374,40,328,81,326,76,370,42"/>
-<area shape="rect" href="classpdg_1_1_sound.html" title=" " alt="" coords="369,79,427,105"/>
-<area shape="poly" title=" " alt="" coords="400,44,400,80,396,77,396,49"/>
-<area shape="rect" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose&#45;based animation extensions." alt="" coords="452,79,507,105"/>
-<area shape="poly" title=" " alt="" coords="424,39,468,79,463,78,422,44"/>
-<area shape="rect" href="classpdg_1_1_sprite_layer.html" title="Collection of sprites with shared animation control and layer transforms." alt="" coords="532,79,619,105"/>
-<area shape="poly" title=" " alt="" coords="442,34,548,78,542,79,442,40"/>
-<area shape="rect" href="classpdg_1_1_timer_manager.html" title=" " alt="" coords="643,79,748,105"/>
-<area shape="poly" title=" " alt="" coords="462,32,647,78,642,79,462,37"/>
-<area shape="rect" href="classpdg_1_1_tile_layer.html" title=" " alt="" coords="538,153,612,178"/>
-<area shape="poly" title=" " alt="" coords="577,118,577,154,573,150,573,122"/>
+<area shape="rect" title="Distributes events to event handlers." alt="" coords="441,5,538,31"/>
+<area shape="rect" href="classpdg_1_1_camera.html" title="Animated view owned by a Port or shared by layers.Each Port owns its camera. A layer uses its retaine..." alt="" coords="5,79,73,105"/>
+<area shape="poly" title=" " alt="" coords="423,28,271,51,86,82,74,84,72,79,85,76,270,45,428,26"/>
+<area shape="rect" href="classpdg_1_1_event_manager.html" title=" " alt="" coords="97,79,202,105"/>
+<area shape="poly" title=" " alt="" coords="425,35,203,82,202,77,427,30"/>
+<area shape="rect" href="classpdg_1_1_network_manager.html" title=" " alt="" coords="227,79,347,105"/>
+<area shape="poly" title=" " alt="" coords="443,36,322,81,321,76,438,37"/>
+<area shape="rect" href="classpdg_1_1_particle.html" title=" " alt="" coords="372,79,437,105"/>
+<area shape="poly" title=" " alt="" coords="466,40,420,81,417,76,461,42"/>
+<area shape="rect" href="classpdg_1_1_scene.html" title="Own layers, an isolated physics world, camera advancement and logical timers." alt="" coords="460,79,519,105"/>
+<area shape="poly" title=" " alt="" coords="491,44,492,80,487,77,488,49"/>
+<area shape="rect" href="classpdg_1_1_sound.html" title=" " alt="" coords="543,79,602,105"/>
+<area shape="poly" title=" " alt="" coords="516,39,561,79,556,78,514,44"/>
+<area shape="rect" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose&#45;based animation extensions." alt="" coords="626,79,681,105"/>
+<area shape="poly" title=" " alt="" coords="532,35,628,78,623,78,531,40"/>
+<area shape="rect" href="classpdg_1_1_sprite_layer.html" title="Collection of sprites with shared animation control and layer transforms." alt="" coords="706,79,793,105"/>
+<area shape="poly" title=" " alt="" coords="549,33,708,78,703,79,548,38"/>
+<area shape="rect" href="classpdg_1_1_timer_manager.html" title=" " alt="" coords="818,79,922,105"/>
+<area shape="poly" title=" " alt="" coords="554,29,820,80,815,81,553,34"/>
+<area shape="rect" href="classpdg_1_1_tile_layer.html" title=" " alt="" coords="712,153,787,178"/>
+<area shape="poly" title=" " alt="" coords="752,118,752,154,748,150,748,122"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
+<div class="dynheader">
+Collaboration diagram for EventEmitter:</div>
+<div class="dyncontent">
+<div class="center"><img src="classpdg_1_1_event_emitter__coll__graph.png" border="0" usemap="#a_event_emitter_coll__map" loading="lazy" alt="Collaboration graph"/></div>
+<map name="a_event_emitter_coll__map" id="a_event_emitter_coll__map">
+<area shape="rect" title="Distributes events to event handlers." alt="" coords="5,102,103,128"/>
+<area shape="rect" title=" " alt="" coords="40,5,260,31"/>
+<area shape="poly" title=" " alt="" coords="90,40,72,57,61,79,57,102,52,100,56,77,68,53,93,36"/>
+<area shape="rect" href="classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="161,102,259,128"/>
+<area shape="poly" title=" " alt="" coords="144,44,144,62,149,77,160,90,176,102,171,101,156,94,144,79,139,63,141,49"/>
+<area shape="poly" title=" " alt="" coords="218,85,219,71,214,56,203,43,189,34,189,29,206,39,219,54,224,70,222,88"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a603f553c11f5ac7d926cbaedf5bbf6bd" id="r_a603f553c11f5ac7d926cbaedf5bbf6bd"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a603f553c11f5ac7d926cbaedf5bbf6bd">addHandler</a> (<a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> *inHandler, long inType=<a class="el" href="namespacepdg.html#a0d1c4e3a2c5511c6356affe7b73c1244ae5a424ad315a11cfdcbfe961a6164cf3">all_events</a>)</td></tr>
+<tr class="memitem:a603f553c11f5ac7d926cbaedf5bbf6bd" id="r_a603f553c11f5ac7d926cbaedf5bbf6bd"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a603f553c11f5ac7d926cbaedf5bbf6bd">addHandler</a> (<a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> *inHandler, long inType=<a class="el" href="namespacepdg.html#af0f2303de4058edb3176e422394ca675ae5a424ad315a11cfdcbfe961a6164cf3">all_events</a>)</td></tr>
 <tr class="memdesc:a603f553c11f5ac7d926cbaedf5bbf6bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a new handler for some event type, or for all events if no type specified  <br /></td></tr>
-<tr class="memitem:a73c74daa2322e34f3939bc965a3344de" id="r_a73c74daa2322e34f3939bc965a3344de"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a73c74daa2322e34f3939bc965a3344de">removeHandler</a> (<a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> *inHandler, long inType=<a class="el" href="namespacepdg.html#a0d1c4e3a2c5511c6356affe7b73c1244ae5a424ad315a11cfdcbfe961a6164cf3">all_events</a>)</td></tr>
+<tr class="memitem:a73c74daa2322e34f3939bc965a3344de" id="r_a73c74daa2322e34f3939bc965a3344de"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a73c74daa2322e34f3939bc965a3344de">removeHandler</a> (<a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> *inHandler, long inType=<a class="el" href="namespacepdg.html#af0f2303de4058edb3176e422394ca675ae5a424ad315a11cfdcbfe961a6164cf3">all_events</a>)</td></tr>
 <tr class="memdesc:a73c74daa2322e34f3939bc965a3344de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a handler for some event type, or for all events if no type specified.  <br /></td></tr>
 <tr class="memitem:abae9cc00d0353760feba0fd327f11c77" id="r_abae9cc00d0353760feba0fd327f11c77"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#abae9cc00d0353760feba0fd327f11c77">clear</a> (bool doRelease=true)</td></tr>
 <tr class="memdesc:abae9cc00d0353760feba0fd327f11c77"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove all handlers  <br /></td></tr>
@@ -159,6 +178,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6dc0de916b4bf31b9e552570ad70187d" id="r_a6dc0de916b4bf31b9e552570ad70187d"><td class="memItemLeft">virtual&#160;</td><td class="memItemRight"><a class="el" href="#a6dc0de916b4bf31b9e552570ad70187d">~EventEmitter</a> ()</td></tr>
 <tr class="memitem:a5f94ddacd9b1f50710fadeb0fb5f197e" id="r_a5f94ddacd9b1f50710fadeb0fb5f197e"><td class="memItemLeft">virtual bool&#160;</td><td class="memItemRight"><a class="el" href="#a5f94ddacd9b1f50710fadeb0fb5f197e">postEvent</a> (long inEventType, void *inEventData, <a class="el" href="#a1b064cb939c42c4886307e43ed070a18">EventEmitter</a> *fromEmitter=0)</td></tr>
 <tr class="memdesc:a5f94ddacd9b1f50710fadeb0fb5f197e"><td class="mdescLeft">&#160;</td><td class="mdescRight">post an event for immediate handling locally, or relay it to the EventManger  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pro-methods" class="groupheader"><a id="pro-methods" name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a415a7dd3dc8690f8e776aa4fe5926e05" id="r_a415a7dd3dc8690f8e776aa4fe5926e05"><td class="memItemLeft">virtual bool&#160;</td><td class="memItemRight"><a class="el" href="#a415a7dd3dc8690f8e776aa4fe5926e05">acceptsEvents</a> () const</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pro-attribs" class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:aaa3f5c8a7f1460d4c64d16db406bc988" id="r_aaa3f5c8a7f1460d4c64d16db406bc988"><td class="memItemLeft">std::shared_ptr&lt; <a class="el" href="#a1b064cb939c42c4886307e43ed070a18">EventEmitter</a> * &gt;&#160;</td><td class="memItemRight"><a class="el" href="#aaa3f5c8a7f1460d4c64d16db406bc988">mLifetime</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -198,7 +225,7 @@ Friends</h2></td></tr>
 
 <p>constructor for new event emitter </p>
 
-<p class="reference">Referenced by <a class="el" href="structpdg_1_1_event_manager_1_1_event_queue_entry.html#ab817d194f96f84b5497df8ba1cc9cea2">EventManager::EventQueueEntry::EventQueueEntry()</a>, <a class="el" href="classpdg_1_1_event_manager.html#ae222a5172b0f366065c80bb70cf590f9">EventManager::enqueueEvent()</a>, <a class="el" href="classpdg_1_1_event_manager.html#a1edb796880d876a55651f6f6efc4847c">EventManager::getQueuedEvent()</a>, <a class="el" href="#a5f94ddacd9b1f50710fadeb0fb5f197e">postEvent()</a>, <a class="el" href="classpdg_1_1_event_manager.html#a5f94ddacd9b1f50710fadeb0fb5f197e">EventManager::postEvent()</a>, <a class="el" href="classpdg_1_1_event_manager.html#afff9eac43601d633fb144109b0712f40">EventManager::postEventToEmitter()</a>, and <a class="el" href="classpdg_1_1_event_manager.html#a9fdf78f77569afbe33b0c699c911ba56">EventManager::RemoveEnqueuedEventsForEmitter()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="structpdg_1_1_event_manager_1_1_event_queue_entry.html#ab817d194f96f84b5497df8ba1cc9cea2">EventManager::EventQueueEntry::EventQueueEntry()</a>, <a class="el" href="classpdg_1_1_event_manager.html#ae222a5172b0f366065c80bb70cf590f9">EventManager::enqueueEvent()</a>, <a class="el" href="classpdg_1_1_event_manager.html#a1edb796880d876a55651f6f6efc4847c">EventManager::getQueuedEvent()</a>, <a class="el" href="#a5f94ddacd9b1f50710fadeb0fb5f197e">postEvent()</a>, <a class="el" href="classpdg_1_1_event_manager.html#a5f94ddacd9b1f50710fadeb0fb5f197e">EventManager::postEvent()</a>, <a class="el" href="classpdg_1_1_scene.html#a752a8ccb8373feb14d679cd7d76dcd15">Scene::postEvent()</a>, <a class="el" href="classpdg_1_1_event_manager.html#afff9eac43601d633fb144109b0712f40">EventManager::postEventToEmitter()</a>, <a class="el" href="classpdg_1_1_event_manager.html#a9fdf78f77569afbe33b0c699c911ba56">EventManager::RemoveEnqueuedEventsForEmitter()</a>, and <a class="el" href="classpdg_1_1_scene.html#aa3532d80eeb74981774799d66fac7a7e">Scene::subscribe()</a>.</p>
 
 </div>
 </div>
@@ -228,6 +255,31 @@ Friends</h2></td></tr>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a415a7dd3dc8690f8e776aa4fe5926e05" name="a415a7dd3dc8690f8e776aa4fe5926e05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a415a7dd3dc8690f8e776aa4fe5926e05">&#9670;&#160;</a></span>acceptsEvents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool acceptsEvents </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel protected">protected</span><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a603f553c11f5ac7d926cbaedf5bbf6bd" name="a603f553c11f5ac7d926cbaedf5bbf6bd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a603f553c11f5ac7d926cbaedf5bbf6bd">&#9670;&#160;</a></span>addHandler()</h2>
 
@@ -245,7 +297,7 @@ Friends</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>inType</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="namespacepdg.html#a0d1c4e3a2c5511c6356affe7b73c1244ae5a424ad315a11cfdcbfe961a6164cf3">all_events</a></span>&#160;)</td>
+          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>inType</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="namespacepdg.html#af0f2303de4058edb3176e422394ca675ae5a424ad315a11cfdcbfe961a6164cf3">all_events</a></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -257,7 +309,7 @@ Friends</h2></td></tr>
 
 <p>add a new handler for some event type, or for all events if no type specified </p>
 
-<p class="reference">References <a class="el" href="namespacepdg.html#a0d1c4e3a2c5511c6356affe7b73c1244ae5a424ad315a11cfdcbfe961a6164cf3">pdg::all_events</a>.</p>
+<p class="reference">References <a class="el" href="namespacepdg.html#af0f2303de4058edb3176e422394ca675ae5a424ad315a11cfdcbfe961a6164cf3">pdg::all_events</a>.</p>
 
 </div>
 </div>
@@ -353,9 +405,9 @@ Friends</h2></td></tr>
 
 <p>post an event for immediate handling locally, or relay it to the EventManger </p>
 
-<p>Reimplemented in <a class="el" href="classpdg_1_1_event_manager.html#a5f94ddacd9b1f50710fadeb0fb5f197e">EventManager</a>.</p>
+<p>Reimplemented in <a class="el" href="classpdg_1_1_event_manager.html#a5f94ddacd9b1f50710fadeb0fb5f197e">EventManager</a>, and <a class="el" href="classpdg_1_1_scene.html#a752a8ccb8373feb14d679cd7d76dcd15">Scene</a>.</p>
 
-<p class="reference">References <a class="el" href="#a1b064cb939c42c4886307e43ed070a18">EventEmitter()</a>.</p>
+<p class="reference">References <a class="el" href="#a1b064cb939c42c4886307e43ed070a18">EventEmitter()</a>, and <a class="el" href="#aaa3f5c8a7f1460d4c64d16db406bc988">mLifetime</a>.</p>
 
 </div>
 </div>
@@ -376,7 +428,7 @@ Friends</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>inType</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="namespacepdg.html#a0d1c4e3a2c5511c6356affe7b73c1244ae5a424ad315a11cfdcbfe961a6164cf3">all_events</a></span>&#160;)</td>
+          <td class="paramtype">long</td>          <td class="paramname"><span class="paramname"><em>inType</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="namespacepdg.html#af0f2303de4058edb3176e422394ca675ae5a424ad315a11cfdcbfe961a6164cf3">all_events</a></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -399,7 +451,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="reference">References <a class="el" href="namespacepdg.html#a0d1c4e3a2c5511c6356affe7b73c1244ae5a424ad315a11cfdcbfe961a6164cf3">pdg::all_events</a>.</p>
+<p class="reference">References <a class="el" href="namespacepdg.html#af0f2303de4058edb3176e422394ca675ae5a424ad315a11cfdcbfe961a6164cf3">pdg::all_events</a>.</p>
 
 </div>
 </div>
@@ -456,6 +508,31 @@ Friends</h2></td></tr>
 <p class="reference">References <a class="el" href="#aba45a46c615e2683daffdae82e2d3b8f">EventManager</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="classpdg_1_1_event_manager.html#a2eaf8ec7358b4560b08d0ddba3770609">EventManager::~EventManager()</a>, and <a class="el" href="#aba45a46c615e2683daffdae82e2d3b8f">EventManager</a>.</p>
+
+</div>
+</div>
+<a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="aaa3f5c8a7f1460d4c64d16db406bc988" name="aaa3f5c8a7f1460d4c64d16db406bc988"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa3f5c8a7f1460d4c64d16db406bc988">&#9670;&#160;</a></span>mLifetime</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="#a1b064cb939c42c4886307e43ed070a18">EventEmitter</a>*&gt; mLifetime</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">Referenced by <a class="el" href="#a5f94ddacd9b1f50710fadeb0fb5f197e">postEvent()</a>.</p>
 
 </div>
 </div>

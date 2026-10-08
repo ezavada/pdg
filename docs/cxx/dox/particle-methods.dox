@@ -533,3 +533,73 @@ Default 10000. Zero prevents creation/emission; lowering the budget does not rem
 \return This SpriteLayer.
 \see ParticleEffects
 */
+
+/**
+\fn Particle& Particle::setTrail(const ParticleTrailOptions& options)
+\brief Configure a bounded ribbon following the particle's motion.
+\param options Ribbon lifetime, sampling, width, color and fade settings.
+\return The receiver for call chaining.
+
+Positions are sampled after animation and physics in layer coordinates. Camera
+movement does not extend trails. Widths and minDistance are layer units; lifetime
+and sampleInterval are simulation seconds. Width and opacity interpolate linearly
+with sample age toward endWidth and endOpacity. Color alpha multiplies the sampled
+particle opacity. Fixed time samples are interpolated within a tick; minDistance
+filters nearby samples. maxPoints bounds stored history; a temporary render head
+connects it to the current position. Full history capacity shortens the visible trail.
+
+Replacing settings, breakTrail(), and explicit setLocation() calls reset history.
+A per-step displacement above breakDistance resets it automatically; zero disables
+that safeguard. Emitter templates copy settings without history. At expiry, the
+layer retains only the fading ribbon while releasing the particle and physics.
+Removing a particle explicitly clears its history; removeAllParticles() and layer
+disposal also clear retired tails. Retired tails are capped by the layer particle
+budget and 65536 reserved history points; oldest tails are discarded first.
+Histories are transient and omitted from snapshots; configuration values in named
+scripts are serializable. Layer animation pauses and scene clocks govern aging.
+
+\note Headless builds sample trails; GUI builds render solid, antialiased CPU
+ribbons with normal alpha blending. No artwork or physics body is required.
+Nonfinite or out-of-range settings throw std::invalid_argument. sampleInterval must
+be at least 0.0001 seconds; maxPoints must be 2..4096, lifetime positive, dimensions
+and distances nonnegative, and color channels/endOpacity in [0,1].
+
+\code{.cpp}
+ParticleTrailOptions trail;
+trail.lifetime=0.4; trail.width=6; trail.endWidth=0;
+trail.color=Color::makeColor("orange");
+Particle prototype;
+prototype.setLifetime(1.5).setTrail(trail);
+layer->createParticleEmitter()->setParticleTemplate(prototype)
+    .setLocation(200,300).setRotation(-1.5707963)
+    .setParticleSpeed(150,200).setEmissionRate(25).startEmitting();
+\endcode
+\see Particle::clearTrail, Particle::breakTrail, SpriteLayer::getParticleTrailCount
+*/
+/**
+\fn Particle& Particle::clearTrail()
+\brief Disable the trail and release its history.
+\return The receiver for call chaining.
+*/
+/**
+\fn Particle& Particle::breakTrail()
+\brief Start fresh history at the current position, keeping trail settings.
+Does nothing when no trail is configured.
+\return The receiver for call chaining.
+*/
+/**
+\fn bool Particle::hasTrail() const
+\brief Test whether a trail is configured, including an empty history.
+\return True when configured; expiry transfers it to its layer, or clears it if detached, and returns false.
+*/
+/**
+\fn uint32 Particle::getTrailPointCount() const
+\brief Count retained history points, excluding the temporary render head.
+\return Zero for disabled, uninitialized or fully aged history; otherwise at most maxPoints.
+Includes the boundary point used to clip the oldest visible segment.
+*/
+/**
+\fn uint32 SpriteLayer::getParticleTrailCount() const
+\brief Count live unexpired histories and retained fading tails.
+\return Trail count, including one-point histories not yet visible.
+*/

@@ -68,3 +68,6 @@ test/perf_tests/cpp-pdgmark/pdgmark_results.json
 test/perf_tests/cpp-bunnymark/bunnymark
 
 test/perf_tests/cpp-pdgmark/pdgmark
+
+/tools/typescript/node_modules/
+/docs/typescript/html/

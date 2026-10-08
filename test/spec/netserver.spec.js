@@ -37,9 +37,9 @@ if ((process.env.PDG_DEBUG && process.env.PDG_DEBUG.indexOf('NET_') != -1)
  	NET_TEST_LOG = function(msg) {};
 }
 
-if (pdg.hasNetwork == false) {
+if (pdg.hasNetworkServer == false) {
 
-	// non-network build (ie: current iOS build)
+	// Client-only runtime or a build without networking
 	describe("NetServer", function() {
 	  it("is not present", function() {
 	  	expect(pdg.NetServer).toBeUndefined();

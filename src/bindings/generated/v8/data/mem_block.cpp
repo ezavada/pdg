@@ -139,16 +139,12 @@ namespace pdg
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(args.This());
         MemBlock* self = dynamic_cast<MemBlock*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[string Binary]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
         };
-        v8::Local<v8::Value> resultVal = EncodeBinary(self->ptr, self->bytes);
+        v8::Local<v8::Value> resultVal = MakeUint8Array(self->ptr, self->bytes);
         { args.GetReturnValue().Set( resultVal ); return; };
     }
 
@@ -158,10 +154,6 @@ namespace pdg
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(args.This());
         MemBlock* self = dynamic_cast<MemBlock*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -176,10 +168,6 @@ namespace pdg
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(args.This());
         MemBlock* self = dynamic_cast<MemBlock*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "([number uint] i)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -200,10 +188,6 @@ namespace pdg
         MemBlockWrap* objWrapper = jswrap::ObjectWrap::Unwrap<MemBlockWrap>(args.This());
         MemBlock* self = dynamic_cast<MemBlock*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[string Binary]" " function" "([number uint] start, [number uint] len)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -221,8 +205,8 @@ namespace pdg
             return;
         }
         unsigned long len = args[2 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();
-        const std::string bytes = self->getBytes(start, len);
-        v8::Local<v8::Value> resultVal = EncodeBinary(bytes.data(), bytes.size());
+        const auto bytes = self->getBytes(start, len);
+        v8::Local<v8::Value> resultVal = MakeUint8Array(bytes.data(), bytes.size());
         { args.GetReturnValue().Set( resultVal ); return; };
     }
 

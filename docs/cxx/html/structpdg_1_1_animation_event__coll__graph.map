@@ -1,0 +1,13 @@
+<map id="AnimationEvent" name="AnimationEvent">
+<area shape="rect" id="Node000001" title=" " alt="" coords="80,313,194,339"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="32,155,138,181"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,194,101,240,117,288,131,313,126,312,112,290,96,241,88,199"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="15,80,107,106"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="70,118,84,155,78,155,70,124"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,5,117,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="61,44,64,80,58,80,61,49"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="172,155,225,181"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="192,195,158,290,145,315,142,311,153,288,188,197"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="131,80,274,106"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="202,119,201,156,196,154,200,124"/>
+</map>

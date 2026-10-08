@@ -1,9 +1,12 @@
 <map id="SoundEventInfo" name="SoundEventInfo">
-<area shape="rect" id="Node000001" title=" " alt="" coords="61,177,175,203"/>
-<area shape="rect" id="Node000002" href="$classpdg_1_1_sound.html" title=" " alt="" coords="89,80,147,106"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,120,121,177,115,175,116,123"/>
-<area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,5,103,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="75,40,110,79,105,81,74,45"/>
-<area shape="rect" id="Node000004" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="126,5,238,31"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="163,41,130,82,126,78,159,45"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="228,199,342,224"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_sound.html" title=" " alt="" coords="256,102,314,128"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="287,141,287,199,283,197,283,145"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="114,5,211,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="195,37,218,53,275,101,270,102,215,57,195,42"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,102,226,128"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="118,42,110,56,106,67,106,79,112,102,107,101,101,79,101,66,105,54,121,38"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="128,87,133,77,156,33,159,29,138,79,132,90"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="234,5,346,31"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="290,44,288,103,283,100,287,48"/>
 </map>

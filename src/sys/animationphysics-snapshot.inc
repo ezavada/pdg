@@ -132,3 +132,8 @@ void AnimationPhysicsRig::moveToSpace(cpSpace* space) {
     if(mStorage->ownsSpace)cpSpaceFree(mStorage->space);
     mStorage->space=space;mStorage->ownsSpace=false;
 }
+
+void AnimationPhysicsRig::adoptMovedSpace(cpSpace* space) {
+    if(mStorage->ownsSpace && mStorage->space!=space)cpSpaceFree(mStorage->space);
+    mStorage->space=space;mStorage->ownsSpace=false;
+}

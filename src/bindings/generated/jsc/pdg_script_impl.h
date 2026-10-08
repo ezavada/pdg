@@ -44,14 +44,23 @@ namespace pdg
     extern bool s_HaveSavedError;
     extern std::ostringstream s_SavedError;
 
-    JSValueRef EncodeBinary(const void *buf, size_t len);
-    void* DecodeBinary(JSValueRef val, size_t* outLen = 0);
+    AnimationEvaluator MakeAnimationEvaluator(JSObjectRef evaluator);
+    AnimationEventHandler MakeAnimationEventHandler(JSObjectRef handler);
+#ifdef PDG_USING_V8
+    void ClearAnimationEvaluatorCallbacks();
+#endif
+
+    JSValueRef MakeUint8Array(const void* data, size_t size);
+    bool IsUint8Array(JSValueRef value);
+    bool GetUint8ArrayData(JSValueRef value, const uint8*& data, size_t& size);
 
 #ifdef PDG_USING_V8
+    AnimatedBase* V8_GetAnimationTarget(v8::Isolate* isolate, v8::Local<v8::Value> value);
     ISerializable* V8_GetSerializable(v8::Isolate* isolate, v8::Local<v8::Value> value);
 #endif
 
 #ifdef PDG_USING_JAVASCRIPT_CORE
+    AnimatedBase* JSC_GetAnimationTarget(JSContextRef ctx, JSValueRef value);
     ISerializable* JSC_GetSerializable(JSContextRef ctx, JSValueRef value);
 #endif
 

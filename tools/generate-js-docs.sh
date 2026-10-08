@@ -74,7 +74,6 @@ sed 's/%#.*$//g' $PDG_BUILD_DIR/tmp2-js.js > $PDG_BUILD_DIR/tmp-js.js
 sed 's/# .*$//g' $PDG_BUILD_DIR/tmp-js.js > $PDG_BUILD_DIR/tmp2-js.js
 sed 's/\*\*\*"/\/** /g' $PDG_BUILD_DIR/tmp2-js.js > $PDG_BUILD_DIR/tmp-js.js
 sed 's/"\*\*\*/ *\//g' $PDG_BUILD_DIR/tmp-js.js > $PDG_BUILD_DIR/tmp2-js.js
-# sed 's/\[string Binary]/BinaryString/g' $PDG_BUILD_DIR/tmp2-js.js > $PDG_BUILD_DIR/tmp-js.js
 # sed 's/\[\]/$/g' $PDG_BUILD_DIR/tmp-js.js > $PDG_BUILD_DIR/tmp2-js.js
 # sed 's/\[object //g' $PDG_BUILD_DIR/tmp2-js.js > $PDG_BUILD_DIR/tmp-js.js
 # sed 's/\[number //g' $PDG_BUILD_DIR/tmp-js.js > $PDG_BUILD_DIR/tmp2-js.js

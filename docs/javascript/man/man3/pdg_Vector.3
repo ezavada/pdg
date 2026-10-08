@@ -1,4 +1,4 @@
-.TH "Vector" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Vector" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -24,7 +24,7 @@ Inherits \fBOffset\fP\&.
 .RI "\fBVector\fP (number[] xy)"
 .br
 .ti -1c
-.RI "\fBVector\fP (object xy)"
+.RI "\fBVector\fP (\fBXY\fP xy)"
 .br
 .ti -1c
 .RI "number \fBdotProduct\fP (\fBVector\fP vector)"
@@ -64,7 +64,7 @@ Public Member Functions inherited from \fBOffset\fP
 .RI "\fBOffset\fP (number[] xy)"
 .br
 .ti -1c
-.RI "\fBOffset\fP (object xy)"
+.RI "\fBOffset\fP (\fBXY\fP xy)"
 .br
 .ti -1c
 .RI "\fBOffset\fP \fBadd\fP (\fBOffset\fP offset)"
@@ -159,7 +159,14 @@ Referenced by \fBdotProduct()\fP, \fBnormal()\fP, and \fBunit()\fP\&.
 References \fBx\fP, and \fBy\fP\&.
 .SS "Vector (number[] xy)"
 
-.SS "Vector (object xy)"
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRxy:\fP \fBXY\fP\&. 
+.RE
+.PP
+
+.SS "Vector (\fBXY\fP xy)"
 
 .SH "Member Function Documentation"
 .PP 

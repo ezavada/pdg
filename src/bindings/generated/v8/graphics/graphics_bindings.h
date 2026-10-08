@@ -248,6 +248,8 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, ElementRef* cppObj);
             ElementRefWrap(ElementRef* obj) : cppPtr_(obj) {}
 
+            static void GetText (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetText (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Type (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetControlPoints (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetControlPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -373,6 +375,39 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, AnimatedAttributesBase* cppObj);
             AnimatedAttributesBaseWrap(AnimatedAttributesBase* obj) : cppPtr_(obj) {}
 
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -544,6 +579,7 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Drawing* cppObj);
             DrawingWrap(Drawing* obj) : cppPtr_(obj) {}
 
+            static void AddText (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void AddLine (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void AddSpline (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void AddRect (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -561,7 +597,6 @@ namespace pdg
             static void CenterPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Empty (const v8::FunctionCallbackInfo<v8::Value>& args);
 #ifndef PDG_NO_GUI
-            static void Draw (const v8::FunctionCallbackInfo<v8::Value>& args);
 #endif
     };
 
@@ -664,6 +699,13 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Port* cppObj);
             PortWrap(Port* obj) : cppPtr_(obj) {}
 
+            static void GetCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCameraAnchor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCameraAnchor (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCameraDrawingEnabled (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCameraDrawingEnabled (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void WorldToPort (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PortToWorld (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetClipRect (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetClipRect (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void ResetClipRect (const v8::FunctionCallbackInfo<v8::Value>& args);

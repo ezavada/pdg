@@ -1,0 +1,11 @@
+<map id="Troupe" name="Troupe">
+<area shape="rect" id="Node000001" title="Animate a collection of targets with one script clock." alt="" coords="45,300,106,326"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_animated.html" title=" " alt="" coords="5,226,146,252"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="77,266,78,300,73,299,74,269"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="22,153,129,178"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="77,191,78,226,73,225,74,196"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="29,79,122,105"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="76,118,78,153,73,152,75,123"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="20,5,131,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="76,44,78,79,73,78,75,49"/>
+</map>

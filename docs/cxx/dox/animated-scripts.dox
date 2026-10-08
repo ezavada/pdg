@@ -1,0 +1,463 @@
+/**
+\page animation_scripts Native animation scripts
+
+Animated scripts record commands in C++ and execute on the same scheduler as ordinary animation. JavaScript uses the same command graph and playback implementation in V8, JavaScriptCore and WebAssembly. This surface records Animated geometry, scale, pivots, flips and programmed rates. Sprite clip/opacity and AnimatedAttributes appearance commands are not exposed on AnimationScript. Unsupported conversions throw rather than silently omit subclass actions.
+
+Definitions are library-owned. endScript() validates and seals a definition; omission keeps an editable draft that playScript() validates and copies. Duplicate names throw. Getters on a recorder throw because it has no live target. Commands on a recorder do not mutate target state. Schedule controls and animation helpers cannot be recorded.
+
+Placement composes: andThen().wait(0.2) delays the next block by 0.2 seconds after actual completion. Repeated waits add. Explicit pending placement needs a successor when closing a definition, branch or group; live pending placement can survive updates and snapshots. Ordinary immediate calls outside a block retain their normal behavior. Live groups publish at an owner update boundary. Apply trajectory modifiers before activation; playback controls operate on the retained selected block later.
+
+Relative moveBy() acquires only axes with nonzero offsets. Thus moveBy(0, 100, 4) can continue alongside moveBy(100, 0, 2).andAlso().rotateBy(1, 2).until(test): the condition finishes only horizontal movement and rotation. Without a duration, moveBy(0, 100) applies an immediate vertical offset. Absolute moveTo() still acquires both axes.
+
+Each target has one update owner. animate() takes seconds; playing a script does not create another clock. Attached cameras and engine-managed sprites already receive updates. Native snapshots preserve definitions, selected operands, cursors, baselines, delays, repeats and controls. Evaluators and custom easing callbacks are runtime resources and explicitly reject portable snapshots, even in unvisited branches. Full snapshots preserve saved marks, custom event steps and Troupe membership/collective playback through shared object references. Event handlers remain runtime resources and reject portable snapshots.
+
+\par Example
+\code{.cpp}
+pdg::Animated<>::defineScript("vibrate")
+    .moveBy(6, 0, 0.05).yoyo().repeat(5).diminish(0, 0.6).endScript();
+pdg::Animated<> target;
+target.setLocation(100, 200).playScript("vibrate");
+target.animate(0.6); // back at (100, 200)
+\endcode
+*/
+
+/**
+\fn pdg::AnimatedBase::playScript(const std::string& name)
+\brief Instantiate a named animation script on this target.
+
+\param name Existing nonempty script name. Unknown names and recursive dependencies throw before execution.
+\return This object for chaining.
+Each call owns independent playback state. Relative targets capture values when their operation starts. Definitions are copied at publication, so later draft edits do not change running invocations.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::batch()
+\brief Open an anonymous animation block.
+
+\return This object for chaining.
+Children run concurrently by default. andThen() establishes a completion dependency; wait() delays the following child without joining earlier children. Construction remains local until endBatch(); the new context has no preceding operand.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::endBatch()
+\brief Close and select the innermost anonymous block.
+
+\return This object for chaining.
+Rejects unmatched, empty, or incomplete blocks. Subsequent modifiers apply to the complete group.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::when(AnimationEvaluator evaluator)
+\brief Open a conditional animation branch.
+
+\param evaluator Synchronous callable returning a boolean. Receives a context with target and elapsedSeconds. C++ receives const AnimationEvaluationContext&; JavaScript receives a borrowed context object. Conditions run once at activation, never during recording. Captures remain owned for the definition and invocation lifetime; external C++ references must remain valid. Promises and nonboolean JavaScript results throw.
+\return This object for chaining.
+The alternative is optional. The untaken branch performs no changes. Repetition outside the conditional reevaluates it; yoyo reverses the path actually taken without reevaluation. Evaluators must observe state; reentrant graph edits throw. A callback error stops that invocation and does not release dependent work.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::otherwise()
+\brief Open the alternative of the innermost conditional.
+
+\return This object for chaining.
+Requires a nonempty when branch with no pending placement. A duplicate alternative or a mismatched inner group throws.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::endWhen()
+\brief Close a conditional without an alternative.
+
+\return This object for chaining.
+Use endOtherwise() after otherwise(). Both closers select the whole conditional and validate only the innermost context. A skipped conditional completes immediately.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::endOtherwise()
+\brief Close a conditional with an alternative.
+
+\return This object for chaining.
+Requires a nonempty alternative with no pending placement. Use endWhen() when there is no alternative.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::until(AnimationEvaluator evaluator)
+\brief Finish the preceding block when its evaluator returns true.
+
+\param evaluator Synchronous boolean callable receiving target and elapsedSeconds, with the same lifetime and error rules as when().
+\return This object for chaining.
+Evaluates before each operand tick, including activation and scheduler substeps. True retains the current sample and successfully finishes that operand; it does not force endpoints or start unvisited children. Paused blocks do not evaluate. Following siblings remain concurrent in a batch or root context unless andThen() establishes a completion dependency. Series successors implicitly depend on the complete selected operand.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::yoyo()
+\brief Play the preceding trajectory forward and back.
+
+\return This object for chaining.
+Reverses captured paths to their original baselines. Rejects programmed-rate profiles, discrete flips, and infinite child repetitions. Apply before playback begins; late modifiers throw without replaying elapsed work.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::repeat(int additionalExecutions)
+\brief Repeat the preceding block.
+
+\param additionalExecutions Nonnegative number of additional executions; zero plays once. Omit for infinite repetition (C++ default -1). Explicit JavaScript counts must be integers.
+\return This object for chaining.
+Each iteration restores the block's captured channel baselines. Infinite zero-duration loops throw. Conditions are evaluated anew on each forward iteration.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::diminish(float factor, double seconds, EasingFunc easing)
+\brief Reduce the preceding block amplitude around its baseline.
+
+\param factor Finite final amplitude fraction from zero to one.
+\param seconds Finite nonnegative envelope duration in seconds.
+\param easing Envelope easing, default linearTween.
+\return This object for chaining.
+Transforms displacement around captured baselines; it does not scale absolute world coordinates. The envelope runs in this wrapper's local clock and ends with its operand; if the operand ends early, the envelope is truncated. Wrapper order matters: repeat().diminish() decays across iterations, whereas diminish().repeat() restarts the envelope each iteration. Programmed-rate profiles and discrete actions are unsupported.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::increase(float factor, double seconds, EasingFunc easing)
+\brief Increase the preceding block amplitude around its baseline.
+
+\param factor Finite final amplitude multiplier of at least one; two doubles displacement.
+\param seconds Finite nonnegative envelope duration in seconds.
+\param easing Envelope easing, default linearTween.
+\return This object for chaining.
+Transforms displacement around captured baselines; it does not scale absolute world coordinates. The envelope runs in this wrapper's local clock and ends with its operand; if the operand ends early, the envelope is truncated. Wrapper order matters: repeat().increase() grows across iterations, whereas increase().repeat() restarts the envelope each iteration. Programmed-rate profiles and discrete actions are unsupported.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::speedUp(float factor, double seconds, EasingFunc easing)
+\brief Increase the preceding block playback rate.
+
+\param factor Finite positive final clock multiplier; values below one slow playback.
+\param seconds Finite nonnegative transition duration in seconds.
+\param easing Rate transition easing, default linearTween.
+\return This object for chaining.
+Integrates the changing positive rate over time; zero duration applies it immediately. Dependencies wait for actual completion. Programmed-rate profiles and discrete actions are unsupported. Apply before execution begins.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::slowDown(float factor, double seconds, EasingFunc easing)
+\brief Divide the preceding block playback rate.
+
+\param factor Finite positive divisor; two produces half speed.
+\param seconds Finite nonnegative transition duration in seconds.
+\param easing Rate transition easing, default linearTween.
+\return This object for chaining.
+Uses the same integrated clock and restrictions as speedUp().
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::stopIt()
+\brief Stop the most recently selected animation element.
+
+\return This object for chaining.
+“It” refers to the most recently selected operation, group, or named script. Retains its current sample and blocks success-dependent work. Does not stop unrelated siblings or constant programmed movement. Playback controls cannot be recorded in named definitions.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::pauseIt()
+\brief Pause the most recently selected animation element.
+
+\return This object for chaining.
+Freezes its local clock, envelopes and evaluator polling. Constant movement and unrelated blocks continue. Use pauseSchedule() to pause all scheduled animation.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::resumeIt()
+\brief Resume the most recently selected paused animation element.
+
+\return This object for chaining.
+Continues from the retained sample and clock.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::restartIt()
+\brief Restart the most recently selected animation element from its baseline.
+
+\return This object for chaining.
+Restores the selected block's owned channels and clears its playback state. Restarts after completion or stop; completed sibling operations are not replayed.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::defineScript(const std::string& name)
+\brief Create a library-owned named animation recorder.
+\param name Nonempty unique name; duplicates throw.
+\return An AnimationScript recorder inheriting Animated's fluent command surface. Do not delete the C++ reference.
+\see \ref animation_scripts
+*/
+/**
+\class pdg::AnimationScript
+\brief Library-owned recorder for reusable native animation commands.
+\see \ref animation_scripts
+*/
+/**
+\fn pdg::AnimationScript::endScript()
+\brief Validate and seal this definition.
+\return This recorder for chaining. Further edits throw.
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::series()
+\brief Open a block whose successive operands wait for completion.
+\return This object for chaining.
+Each new operand implicitly depends on the preceding operand. A wait() adds a delay after that completion. Nested batches, series, conditionals and script invocations each occupy one step. Modifiers wrap the selected step. andAlso() combines adjacent operands into one parallel step.
+\see endSeries(), batch(), andAlso()
+*/
+/**
+\fn pdg::AnimatedBase::endSeries()
+\brief Close and select the innermost series.
+\return This object for chaining.
+Rejects unmatched, empty or incomplete series. endBatch() cannot close a series, and endSeries() cannot close a batch.
+\see series()
+*/
+/**
+\fn pdg::AnimatedBase::andAlso()
+\brief Join the following operand to the preceding parallel chain.
+\return This object for chaining.
+Requires a preceding operand that has not activated and a following operand. Repeated calls extend an implied batch. Following until(), yoyo(), repeat(), timing, amplitude and playback controls select that complete chain. Inside a series, the chain is one step and the next ordinary operand waits for every member to complete. Pending explicit andThen() placement is incompatible with andAlso().
+\par Example
+\code{.cpp}
+target.series().moveBy(100, 0, 2).andAlso().rotateBy(1, 2)
+    .endSeries();
+\endcode
+\see batch(), until(), series()
+*/
+/**
+\fn pdg::AnimatedBase::stagger(double intervalSeconds)
+\brief Offset the selected block's start across successive Troupe members.
+\param intervalSeconds Finite nonnegative interval in seconds. The first member starts immediately, the second after one interval, and the third after two.
+\return This object for chaining.
+Offsets the whole selected operation, batch, series or script per member. Members use flattened insertion order; duplicate targets appear once. andThen() waits for the last member. until() governs all members, including pending starts. On one Animated target it adds no delay. Apply before activation; a missing operand throws. Named definitions can retain the modifier for later Troupe playback.
+\see andThen(), until(), Troupe
+*/
+/**
+\fn pdg::AnimatedBase::mark(const std::string& name, bool saveState)
+\brief Create a named script location and optionally save state on arrival.
+\param name Nonempty mark name, unique within its script invocation.
+\param saveState Whether arrival saves the target's animated channel values, ordinary animation tracks and script execution cursor; default true. Each later arrival replaces that invocation's saved state.
+\return This object for chaining.
+Recording the mark does not capture state. In a series, the mark is reached after the preceding step completes; in a batch, placement remains parallel unless andThen() provides a dependency. Troupe marks save each member's state. Marks belong to independent playback instances, not the shared definition. State does not include physics, artwork ownership, application data or Troupe membership. Blocks containing marks or jumps reject yoyo(), amplitude and clock modifiers. Full snapshots preserve mark names, saved values, ordinary animation tracks and the playback cursor needed by jumpToMark(). Unvisited marks retain no saved state; jumps to them continue after the mark without restoring state. Individual supported animations within such a block can still be modified.
+\see jumpToMark(), series()
+*/
+/**
+\fn pdg::AnimatedBase::jumpToMark(const std::string& name, bool restoreState)
+\brief Continue execution at the operation following a mark.
+\param name Existing mark name in the selected script. Unknown marks throw.
+\param restoreState Restore the saved animated state if present; default true. False keeps current values and captures fresh relative trajectories.
+\return This object for chaining.
+If the mark has never been reached or was declared with saveState=false, keep current state and resume after the mark. A jump can be recorded in a script or requested on live playback. It does not execute skipped operations or reevaluate skipped conditional branches. Non-progressing jump loops have a runtime guard. Jumping restores animation state only; it does not undo application callback effects.
+\see mark()
+*/
+
+/**
+\class pdg::Troupe
+\brief Animate a collection of targets with one script clock.
+
+Troupe inherits Animated's script command surface. add(), remove() and clear() edit direct membership. Sprites, Parts, AnimatedAttributes, ordinary Animated targets and other Troupes are accepted. Members are borrowed; keep their native objects or JavaScript wrappers alive while using them. Expired targets are skipped. Self-membership and cycles throw. A repeated direct add is idempotent. Nested membership is flattened in insertion order and a leaf target receives each operation once, even when multiple membership paths reach it.
+
+Commands use each member's own coordinate system and activation-time baseline. A batch or series has collective completion dependencies, and a conditional or until evaluator for the shared graph sees the Troupe. Staggering an entire block creates separate member executions; evaluators inside that staggered block see the member target. Targets and order are captured when the block is published. Removing a member stops its outstanding contribution on the next Troupe update; additions participate in subsequently published blocks.
+
+Advance the Troupe with animate(deltaSeconds) once per frame, before its members' ordinary animation updates when using programmed-rate profiles. The Troupe drives only its shared script; it does not call Sprite physics, drawing, managers or nested Troupes' independently scheduled work. Members retain their normal update owners. Member setters interrupt matching Troupe channels. Programmed-rate contributions are integrated by the Troupe and consumed once by the member's next ordinary update. Troupe snapshots serialize direct members, including nested Troupes, through object references and preserve collective playback and saved marks. A restored Troupe retains its loaded members. Part members reference the owning Sprite and stable Part ID, so a separately saved Sprite or layer shares the same restored Part. Detached Parts have no standalone snapshot format and raise an error. Write layers, Troupes and independently saved members through the same Serializer to share identities without duplication. Full layer records use object references for Sprites. Layers do not automatically include Troupes; the application must explicitly save each Troupe whose collective animation should resume. Saving a member alone preserves its own animations, while collective playback is stored in the Troupe.
+\par Example
+\code
+Troupe dancers;
+dancers.add(alice).add(bob);
+dancers.moveBy(50, 0, 1).stagger(0.1).andThen().rotateBy(1, 0.5);
+\endcode
+\see Animated, animation_scripts
+*/
+
+/**
+\fn pdg::Troupe::add(pdg::AnimatedBase& member)
+\brief Add a borrowed animation target or nested Troupe.
+\param member Animation target or nested Troupe.
+\return This Troupe for chaining.
+Repeated direct adds leave membership unchanged. Cycles and animation recorders throw. Keep the member alive while using it.
+\see Troupe
+*/
+/**
+\fn pdg::Troupe::remove(pdg::AnimatedBase& member)
+\brief Remove a direct member.
+\param member Animation target or nested Troupe.
+\return This Troupe for chaining.
+An absent member leaves membership unchanged. Other paths through nested Troupes still count as membership.
+\see Troupe
+*/
+/**
+\fn pdg::Troupe::clear()
+\brief Remove every direct member.
+\return This Troupe for chaining.
+Does not destroy members or change their independent schedules.
+\see Troupe
+*/
+/**
+\fn pdg::Troupe::contains(const pdg::AnimatedBase& member) const
+\brief Test direct or nested membership.
+\param member Animation target or nested Troupe.
+\return True when a membership path reaches the target.
+Expired members do not count.
+\see Troupe
+*/
+/**
+\fn pdg::Troupe::getMemberCount() const
+\brief Count live direct members.
+\return The number of live direct members.
+Each nested Troupe counts as one direct member, regardless of its leaf count.
+\see Troupe
+*/
+
+/**
+\fn pdg::AnimatedBase::on(const std::string& event, AnimationEventHandler handler)
+\brief Observe a selected animation block's lifecycle.
+
+\param event A custom nonempty event name, or started, finished, scriptFinished, mark, yoyo, repeat or untilFired.
+\param handler Callable receiving const AnimationEvent&. Its return value is ignored.
+\return This object for chaining.
+
+Registration applies to the selected operand, or to the current empty recorder/block before its first operand. Multiple handlers run in registration order. Register after a modifier to observe that modifier. Named definitions retain their handlers; each invocation has its own playback state. Registration does not emit events retroactively.
+
+started and finished describe only the selected block. Other events propagate from children to enclosing blocks. finished means successful natural completion or completion through until(); stopIt() and channel cancellation do not report success. scriptFinished identifies completed named invocations, including nested invocations. yoyo fires at the forward-to-reverse turn; repeat fires before each additional iteration, starting at iteration 1. untilFired fires only when the condition ends the operand early; natural completion does not emit it. mark fires whenever a mark is reached, including repeat visits.
+
+Handlers run synchronously after each scheduler substep publishes state, in traversal order. A handler may change the target or start another animation. The target reflects published state at delivery, which can be later than the individual event boundary when a substep crosses several events. Handler exceptions propagate to the caller; already delivered events are not replayed. Context and target are borrowed for the callback; copy the scalar fields if they are needed later. Handlers are runtime resources and reject portable snapshots.
+
+For Troupes, finished on the collective block fires once after all members complete. Events inside staggered member scripts identify that member as target.
+
+\par Example
+\code{.cpp}
+pdg::Animated<> actor;
+actor.moveBy(100, 0, 2).andAlso().rotateBy(1, 2)
+    .until([](const pdg::AnimationEvaluationContext& context) {
+        return context.target.getLocation().x >= 50;
+    }).on("untilFired", [](const pdg::AnimationEvent& event) {
+        event.target.moveBy(0, -20, 0.5);
+    });
+actor.animate(1);
+actor.animate(0.5); // interruption handler starts the upward move
+\endcode
+
+\anchor animation_script_events
+\par Event fields
+\htmlonly
+<div class="shared-api-options" style="border:1px solid #888; padding:1em; margin:1em 0;">
+<table>
+<tr><th>Field</th><th>Meaning</th></tr>
+<tr><td>target</td><td>Borrowed playback Animated target, or Troupe for a collective event.</td></tr>
+<tr><td>type</td><td>The event name.</td></tr>
+<tr><td>scriptName</td><td>Nearest enclosing named script; empty for anonymous animation.</td></tr>
+<tr><td>markName</td><td>Mark label for a mark event; otherwise empty.</td></tr>
+<tr><td>elapsedSeconds</td><td>Elapsed local time of the emitting operand.</td></tr>
+<tr><td>iteration</td><td>Additional repeat iteration, starting at 1 for repeat events; otherwise 0.</td></tr>
+<tr><td>reverse</td><td>True when the emitting yoyo wrapper has entered its reverse leg.</td></tr>
+</table>
+</div>
+\endhtmlonly
+\see \ref animation_scripts
+*/
+
+/**
+\fn pdg::AnimatedBase::onStarted(AnimationEventHandler handler)
+\brief Observe started events on the selected animation block.
+\param handler Lifecycle callback receiving an AnimationEvent. Its return value is ignored.
+\return This object for chaining.
+Equivalent to on("started", handler), with the same scope, timing, lifetime and error behavior.
+\see on(), \ref animation_script_events
+*/
+
+/**
+\fn pdg::AnimatedBase::onFinished(AnimationEventHandler handler)
+\brief Observe finished events on the selected animation block.
+\param handler Lifecycle callback receiving an AnimationEvent. Its return value is ignored.
+\return This object for chaining.
+Equivalent to on("finished", handler), with the same scope, timing, lifetime and error behavior.
+\see on(), \ref animation_script_events
+*/
+
+/**
+\fn pdg::AnimatedBase::onScriptFinished(AnimationEventHandler handler)
+\brief Observe scriptFinished events on the selected animation block.
+\param handler Lifecycle callback receiving an AnimationEvent. Its return value is ignored.
+\return This object for chaining.
+Equivalent to on("scriptFinished", handler), with the same scope, timing, lifetime and error behavior.
+\see on(), \ref animation_script_events
+*/
+
+/**
+\fn pdg::AnimatedBase::onMark(AnimationEventHandler handler)
+\brief Observe mark events on the selected animation block.
+\param handler Lifecycle callback receiving an AnimationEvent. Its return value is ignored.
+\return This object for chaining.
+Equivalent to on("mark", handler), with the same scope, timing, lifetime and error behavior.
+\see on(), \ref animation_script_events
+*/
+
+/**
+\fn pdg::AnimatedBase::onYoyo(AnimationEventHandler handler)
+\brief Observe yoyo events on the selected animation block.
+\param handler Lifecycle callback receiving an AnimationEvent. Its return value is ignored.
+\return This object for chaining.
+Equivalent to on("yoyo", handler), with the same scope, timing, lifetime and error behavior.
+\see on(), \ref animation_script_events
+*/
+
+/**
+\fn pdg::AnimatedBase::onRepeat(AnimationEventHandler handler)
+\brief Observe repeat events on the selected animation block.
+\param handler Lifecycle callback receiving an AnimationEvent. Its return value is ignored.
+\return This object for chaining.
+Equivalent to on("repeat", handler), with the same scope, timing, lifetime and error behavior.
+\see on(), \ref animation_script_events
+*/
+
+/**
+\fn pdg::AnimatedBase::onUntilFired(AnimationEventHandler handler)
+\brief Observe untilFired events on the selected animation block.
+\param handler Lifecycle callback receiving an AnimationEvent. Its return value is ignored.
+\return This object for chaining.
+Equivalent to on("untilFired", handler), with the same scope, timing, lifetime and error behavior.
+\see on(), \ref animation_script_events
+*/
+
+/**
+\fn pdg::AnimatedBase::triggerEvent(const std::string& name)
+\brief Emit a custom named animation event or record an event step.
+\param name Custom nonempty name. Built-in animation event names and the eventType_ namespace are reserved.
+\return This animated object for chaining.
+
+During script recording, inside batch()/series(), or after andThen(), this records a zero-time step. Playback emits the event whenever execution reaches that step, including repeat visits. Otherwise it emits immediately on the selected animation. Subscribe with on(name, handler); custom events propagate to enclosing blocks. This does not post numeric PDG events. Invalid or reserved names raise an error before modifying the script. Portable snapshots preserve custom event names and playback cursors. Receivers may register handlers after restoration; events without handlers are harmless. Registered callback functions remain unsupported in portable snapshots.
+\see on(), series(), andThen()
+*/
+
+/**
+\fn pdg::AnimatedBase::deleteScript(const std::string& name)
+\brief Remove a named definition from the shared script library.
+
+\param name Nonempty script name.
+\return True if a definition was removed; false if the name was absent.
+This static method releases the stored definition and its captured resources.
+Published executions retain independent copies and continue. Further playback
+using the deleted name fails until it is defined again. Retained recorder objects
+reject further edits after deletion. Empty names throw.
+\see pdg::AnimatedBase::defineScript
+*/

@@ -1,6 +1,6 @@
 namespace pdg { /**
 
-\fn pdg::NetServer::broadcast
+\fn number pdg::NetServer::broadcast(NetworkSendable message, function filter)
 
 \brief send a message to all connected clients
 
@@ -8,7 +8,10 @@ Go through all the NetConnections in the connections array send the message to e
 
 The filter function should take one parameter, a Net Connection, and should return true if the connection passes the filter, and false if it is excluded by the filter.
 
-\param message the message to send
+\param message A string, Uint8Array (including Node Buffer), JSON-compatible object
+or array, null, MemBlock, or ISerializable. See \ref pdg::NetworkSendable.
+Uint8Array inputs use binary serialization; JSON-compatible objects, arrays and
+null use JSON serialization. Top-level numbers and booleans are not accepted.
 \param filter the filter function. If not passed, all connections will be sent the message.
 
 \return the number of connections that were actually sent a message

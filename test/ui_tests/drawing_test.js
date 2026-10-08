@@ -965,8 +965,39 @@ function runPolygonDrawingTest(port) {
     
 }
 
+// Read rendered pixels so ignored material colors fail on OpenGL ES too.
+var sphereColorsChecked = false;
+function checkSphereColors() {
+    if (sphereColorsChecked) return;
+    var surface = pdg.gfx.createOffscreenPort(new pdg.Rect(192, 64));
+    if (!surface) throw Error("Could not create sphere color check surface");
+    try {
+        surface.drawRect(surface.getDrawingArea(), new pdg.Attributes().fillColor("black"));
+        ["red", "lime", "blue"].forEach(function(color, index) {
+            surface.drawSphere(new pdg.Point(32 + index * 64, 32), 24,
+                new pdg.Attributes().fillColor(color).lightOffset(new pdg.Offset(index * Math.PI / 4, 0)));
+        });
+        var pixels = new pdg.Image(surface, pdg.CopyPixels);
+        ["red", "green", "blue"].forEach(function(channel, index) {
+            var pixel = pixels.getPixel(32 + index * 64, 32);
+            var dominant = pixel[channel];
+            if (dominant < 0.25 || ["red", "green", "blue"].some(function(other) {
+                return other !== channel && pixel[other] > dominant * 0.3;
+            })) throw Error("Sphere lost its " + channel + " material color: " + JSON.stringify(pixel));
+        });
+        sphereColorsChecked = true;
+        console.log("PASS: rendered sphere pixels preserve red, green and blue materials");
+    } catch (error) {
+        console.error("ERROR: " + error.message);
+        process.exit(1);
+    } finally {
+        pdg.gfx.closeGraphicsPort(surface);
+    }
+}
+
 // Test 8: Sphere drawing with Renderer API
 function runSphereDrawingTest(port) {
+    checkSphereColors();
     var testTitle = "Renderer API Sphere Drawing Test";
     var titlePoint = new pdg.Point(port.getDrawingArea().width()/2, 60);
     var textAttrs = new pdg.Attributes().textSize(20).textStyle(pdg.textStyle_Centered + pdg.textStyle_Bold).fillColor("yellow");

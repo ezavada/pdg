@@ -75,8 +75,9 @@ system. Sprite events propagate from the Sprite to its SpriteLayer and then to
 the EventManager until handled. See \ref Events for event constants and payloads.
 
 The optional MVC framework in `src/js/mvc-app/` adds controllers, views, dialogs,
-and controls. The framework README and control gallery show its module imports,
-layout and input handling, and application lifecycle.
+and controls. See \ref javascript_mvc_guide for imports and lifecycle, and
+\ref javascript_mvc_inventory for its separately exported classes and members.
+The framework README and control gallery provide further layout and input examples.
 
 \section js_animation Character animation
 

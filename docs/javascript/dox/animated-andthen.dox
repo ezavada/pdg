@@ -2,7 +2,7 @@
 \fn pdg::Animated::andThen()
 \brief Start the next timed operation after the most recently scheduled operation finishes.
 
-Uses its remaining duration and delay, not the longest of all concurrent operations. The next request consumes this sequencing state; later calls again run concurrently unless sequenced. A successor acquires its properties and resolves relative targets when it starts. Immediate calls after andThen() throw even if the predecessor has finished. No then() method is provided, so returning an Animated object from an async JavaScript function is safe.
+Uses the selected operation or block, rather than all concurrent work. Script dependencies observe actual completion, including repeat, timing modifiers, and until(). The next request consumes this sequencing state; later calls again run concurrently unless sequenced. A successor acquires its properties and resolves relative targets when it starts. Inside script construction, immediate commands are recorded and run at activation; ordinary immediate calls outside construction retain their existing restrictions. andThen().wait(seconds) composes completion with a delay. No then() method is provided, so returning an Animated object from an async JavaScript function is safe.
 
 
 \return This object, for chaining.

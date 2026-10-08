@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['netconnect_0',['NetConnect',['../structpdg_1_1_net_connect.html',1,'pdg']]],
-  ['netdata_1',['NetData',['../structpdg_1_1_net_data.html',1,'pdg']]],
-  ['netdisconnect_2',['NetDisconnect',['../structpdg_1_1_net_disconnect.html',1,'pdg']]],
-  ['neterror_3',['NetError',['../structpdg_1_1_net_error.html',1,'pdg']]],
-  ['networkmanager_4',['NetworkManager',['../classpdg_1_1_network_manager.html',1,'pdg']]]
+  ['memstats_0',['MemStats',['../structpdg_1_1_mem_stats.html',1,'pdg']]],
+  ['modifierkeyinfo_1',['ModifierKeyInfo',['../structpdg_1_1_modifier_key_info.html',1,'pdg']]],
+  ['mouseinfo_2',['MouseInfo',['../structpdg_1_1_mouse_info.html',1,'pdg']]],
+  ['mousetrackinginfo_3',['MouseTrackingInfo',['../structpdg_1_1_mouse_tracking_info.html',1,'pdg']]]
 ];

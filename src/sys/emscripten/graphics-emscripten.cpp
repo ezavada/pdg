@@ -20,70 +20,76 @@
 
 namespace pdg {
 
+// Keep Canvas2D resources per WASM module, rather than allocating a canvas on
+// every measurement or cache miss. Raster pixels stay in the browser/GPU path.
+EM_JS(void, pdg_em_init_text_canvases, (), {
+    if (Module['pdgTextCanvases']) return;
+    if (typeof document === 'undefined' && typeof OffscreenCanvas === 'undefined') return;
+    const create = () => {
+        const canvas = typeof OffscreenCanvas !== 'undefined'
+            ? new OffscreenCanvas(1, 1) : document.createElement('canvas');
+        return {canvas, context: canvas.getContext('2d'), font: ''};
+    };
+    Module['pdgTextCanvases'] = {measure: create(), raster: create()};
+});
+
 EM_JS(double, pdg_em_measure_text, (const char* text, const char* family, int size, int style), {
     const value = UTF8ToString(text);
-    const fontFamily = UTF8ToString(family) || "Arial";
-    if (typeof document === 'undefined' && typeof OffscreenCanvas === 'undefined') {
-        return value.length * size * 0.6;
+    const state = Module['pdgTextCanvases'];
+    if (!state) return value.length * size * 0.6;
+    const font = ((style & 2) ? 'italic ' : '') + ((style & 1) ? 'bold ' : '')
+        + size + 'px ' + (UTF8ToString(family) || 'Arial');
+    if (state.measure.font !== font) {
+        state.measure.context.font = font;
+        state.measure.font = font;
     }
-    const canvas = typeof OffscreenCanvas !== 'undefined'
-        ? new OffscreenCanvas(1, 1)
-        : document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    const italic = (style & 2) ? "italic " : "";
-    const bold = (style & 1) ? "bold " : "";
-    context.font = italic + bold + size + "px " + fontFamily;
-    return context.measureText(value).width;
+    return state.measure.context.measureText(value).width;
 });
 
 EM_JS(double, pdg_em_cap_height, (const char* family, int size, int style), {
-    const canvas = typeof OffscreenCanvas !== 'undefined'
-        ? new OffscreenCanvas(1, 1) : document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    context.font = ((style & 2) ? "italic " : "") + ((style & 1) ? "bold " : "")
-        + size + "px " + (UTF8ToString(family) || "Arial");
-    return context.measureText("H").actualBoundingBoxAscent;
+    const state = Module['pdgTextCanvases'];
+    if (!state) return size * 0.8;
+    const font = ((style & 2) ? 'italic ' : '') + ((style & 1) ? 'bold ' : '')
+        + size + 'px ' + (UTF8ToString(family) || 'Arial');
+    if (state.measure.font !== font) {
+        state.measure.context.font = font;
+        state.measure.font = font;
+    }
+    return state.measure.context.measureText('H').actualBoundingBoxAscent;
 });
 
-EM_JS(void, pdg_em_rasterize_text,
-      (const char* text, const char* family, int size, int style, int width, int height,
-       int ascent, unsigned char* pixels), {
-    const pixelCount = width * height;
-    for (let index = 0; index < pixelCount; ++index) {
-        const target = pixels + index * 4;
-        HEAPU8[target] = 255;
-        HEAPU8[target + 1] = 255;
-        HEAPU8[target + 2] = 255;
-        HEAPU8[target + 3] = 0;
-    }
-    if (typeof document === 'undefined' && typeof OffscreenCanvas === 'undefined') return;
-    const canvas = typeof OffscreenCanvas !== 'undefined'
-        ? new OffscreenCanvas(width, height)
-        : document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const context = canvas.getContext("2d");
-    const fontFamily = UTF8ToString(family) || "Arial";
-    const italic = (style & 2) ? "italic " : "";
-    const bold = (style & 1) ? "bold " : "";
-    context.font = italic + bold + size + "px " + fontFamily;
-    context.textBaseline = "alphabetic";
-    context.fillStyle = "#fff";
+EM_JS(int, pdg_em_upload_text,
+      (const char* text, const char* family, int size, int style, int width, int height, int ascent, int x, int y), {
+    const state = Module['pdgTextCanvases'];
+    if (!state) return 0;
+    const {canvas, context} = state.raster;
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
+    context.clearRect(0, 0, width, height);
+    context.font = ((style & 2) ? 'italic ' : '') + ((style & 1) ? 'bold ' : '')
+        + size + 'px ' + (UTF8ToString(family) || 'Arial');
+    context.textBaseline = 'alphabetic';
+    context.fillStyle = '#fff';
     context.fillText(UTF8ToString(text), 0, ascent);
     if (style & 4) {
         const thickness = Math.max(1, Math.ceil(size / 12));
         context.fillRect(0, ascent + thickness, width, thickness);
     }
-    const rgba = context.getImageData(0, 0, width, height).data;
-    for (let index = 0; index < pixelCount; ++index) {
-        HEAPU8[pixels + index * 4 + 3] = rgba[index * 4 + 3];
-    }
+    const gl = GL.currentContext.GLctx;
+    const premultiplied = gl.getParameter(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL);
+    const flip = gl.getParameter(gl.UNPACK_FLIP_Y_WEBGL);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultiplied);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flip);
+    return 1;
 });
 
 class FontImplEmscripten final : public FontImpl {
 public:
     FontImplEmscripten(Port* port, const char* fontName, float scalingFactor)
-        : FontImpl(port, fontName, scalingFactor) {}
+        : FontImpl(port, fontName, scalingFactor) { pdg_em_init_text_canvases(); }
 
     FontMetricsInfo* getFontMetrics(int size, uint32 style) override {
         FontMetricsInfo* metrics = static_cast<FontMetricsInfo*>(std::malloc(sizeof(FontMetricsInfo)));
@@ -134,65 +140,49 @@ int Port::getTextWidth(const char* text, int size, uint32 style, int len) {
     if (len == 0) return 0;
     FontImplEmscripten* font = dynamic_cast<FontImplEmscripten*>(getCurrentFont(style));
     if (!font) return 0;
-    std::string value(text, static_cast<size_t>(len));
-    const int scaledSize = std::max(1, static_cast<int>(std::ceil(size * font->mScalingFactor)));
-    return static_cast<int>(std::ceil(pdg_em_measure_text(
-        value.c_str(), font->getFontName(), scaledSize, static_cast<int>(style))));
+    auto& port = static_cast<PortImpl&>(*this);
+    auto* entry = port.getTextFromCache(text, len, font, size, style);
+    if (!entry->measured) {
+        const int scaledSize = std::max(1, static_cast<int>(std::ceil(size * font->mScalingFactor)));
+        const double advance = pdg_em_measure_text(
+            entry->mText.c_str(), font->getFontName(), scaledSize, static_cast<int>(style));
+        entry->advanceWidth = advance;
+        entry->width = static_cast<int>(std::ceil(advance));
+        entry->measured = true;
+    }
+    return entry->width;
 }
 
-void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& quad,
-                       int size, uint32 style, Color rgba) {
+void graphics_drawTextRaster(PortImpl& port, const char* text, int len, const Quad& quad,
+                       int size, uint32 style, Color rgba, TextCacheEntry* cachedEntry) {
     FontImplEmscripten* font = dynamic_cast<FontImplEmscripten*>(port.getCurrentFont(style));
     if (!font) return;
-    TextCacheEntry* textInfo = port.getTextFromCache(text, len, font, size, style);
+    TextCacheEntry* textInfo = cachedEntry ? cachedEntry : port.getTextFromCache(text, len, font, size, style);
     if (!textInfo) return;
-    if (textInfo->width == 0) textInfo->width = port.getTextWidth(text, size, style, len);
+    if (!textInfo->measured) textInfo->width = port.getTextWidth(text, size, style, len);
 
     if (textInfo->texture == 0) {
         const int extraWidth = (style & textStyle_Italic) ? size : 0;
         const int textureWidth = std::max(1, textInfo->width + extraWidth);
         const int textureHeight = std::max(1, textInfo->charHeight);
-        unsigned char* imageData = static_cast<unsigned char*>(
-            std::malloc(static_cast<size_t>(textureWidth) * textureHeight * 4));
-        if (!imageData) return;
+        port.mTextCache.reserveTexture(textInfo, textureWidth, textureHeight, GL_RGBA, port.mStateCache);
         const int scaledSize = std::max(1, static_cast<int>(std::ceil(size * font->mScalingFactor)));
-        pdg_em_rasterize_text(text, font->getFontName(), scaledSize, static_cast<int>(style),
-                              textureWidth, textureHeight, textInfo->ascent, imageData);
-
-        glGenTextures(1, &textInfo->texture);
-        port.mStateCache.bindTexture(textInfo->texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        // WebGL maps legacy alpha-only textures inconsistently under Emscripten's
-        // fixed-function emulation. White RGB lets glColor4f tint the glyph while
-        // the Canvas2D coverage remains in alpha.
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-        std::free(imageData);
+        if (!pdg_em_upload_text(textInfo->mText.c_str(), font->getFontName(), scaledSize,
+                                static_cast<int>(style), textureWidth, textureHeight, textInfo->ascent, textInfo->atlasX, textInfo->atlasY)) {
+            if (!textInfo->atlas) glDeleteTextures(1, &textInfo->texture);
+            textInfo->atlas.reset();
+            textInfo->texture = 0;
+            port.mStateCache.resetState();
+            return;
+        }
         textInfo->tx = 1.0f;
         textInfo->ty = 1.0f;
         textInfo->tx_topoffset = 0.0f;
+        textInfo->textureBytes = static_cast<size_t>(textureWidth) * textureHeight * 4;
         port.addTextToCache(textInfo);
     }
 
-    const Point& topLeft = quad.points[lftTop];
-    const Point& topRight = quad.points[rgtTop];
-    const Point& bottomLeft = quad.points[lftBot];
-    const Point& bottomRight = quad.points[rgtBot];
-    port.setOpenGLModesForDrawing(true);
-    glColor4f(rgba.red, rgba.green, rgba.blue, rgba.alpha);
-    glEnable(GL_TEXTURE_2D);
-    port.mStateCache.bindTexture(textInfo->texture);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(bottomLeft.x, bottomLeft.y);
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(topLeft.x, topLeft.y);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(bottomRight.x, bottomRight.y);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(topRight.x, topRight.y);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
+    graphics_submitText(port, *textInfo, quad, rgba, true);
 }
 
 } // namespace pdg

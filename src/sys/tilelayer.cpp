@@ -47,6 +47,10 @@
 #endif // ! PDG_NO_GUI
 
 #include <cstdlib>
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <stdexcept>
 
 //#define TILING_INTERNAL_DEBUG 1
 
@@ -90,17 +94,12 @@ TileLayer::setWorldSize(long width, long height, bool repeatingX, bool repeating
 	mRepeatingX = repeatingX;
 	mRepeatingY = repeatingY;
 	
+	setWorldBounds(Rect(mWorldWidth*mSrcTileWidth,mWorldHeight*mSrcTileHeight));
 	mDataSize = mWorldWidth * mWorldHeight;
 	
 	// allocate a datablock for the layer
 	mTileData = (uint8*) std::malloc( mDataSize );
 	std::memset(mTileData, 0, mDataSize);
-}
-
-Rect
-TileLayer::getWorldBounds() {
-	Rect worldRect(mWorldWidth * mSrcTileWidth, mWorldHeight * mSrcTileHeight);
-	return worldRect;
 }
 
 Rect
@@ -113,6 +112,7 @@ TileLayer::defineTileSet(int tileWidth, int tileHeight, Image* tiles, bool hasTr
 	// save tile width and height
 	mSrcTileWidth = tileWidth;
 	mSrcTileHeight = tileHeight;
+    setWorldBounds(Rect(mWorldWidth*mSrcTileWidth,mWorldHeight*mSrcTileHeight));
 	mHasTransparency = hasTransparency;
   #ifndef PDG_NO_GUI
 	mMipMode = GL_NEAREST;
@@ -163,7 +163,7 @@ TileLayer::defineTileSet(int tileWidth, int tileHeight, Image* tiles, bool hasTr
 }
 
 void
-TileLayer::loadMapData(uint8* dataPtr, long mapWidth, long mapHeight, long dstX, long dstY) {
+TileLayer::loadMapData(const uint8* dataPtr, long mapWidth, long mapHeight, long dstX, long dstY) {
 	// copy the data into the allocated block, row by row, starting at dstX, dstY
 	// and taking mapWidth as row length to copy and mapHeight as number of rows to copy
 	/*
@@ -341,366 +341,83 @@ TileLayer::checkCollision(Sprite *movingSprite, uint8 alphaThreshold, bool short
 #define ADJUST(n) n
 
 #ifndef PDG_NO_GUI
-void 
+void
 TileLayer::drawLayer() {
-	if (mHidden) return;
-	Port* drawingPort = mPort ? mPort : GraphicsManager::instance().getMainPort();
-	if (!drawingPort) return;
-	if (!mTiles || !mTileData || (mDataSize == 0) ||
-		(mSrcTileWidth <= 0) || (mSrcTileHeight <= 0) ||
-		(mSrcTileCountX <= 0) || (mSrcTileCountY <= 0) ||
-		(mWorldWidth <= 0) || (mWorldHeight <= 0)) {
-		SpriteLayer::drawLayer();
-		return;
-	}
-	// calculate number of cells that are visible
-	Rect drawRect = drawingPort->getClipRect();
-	if (drawRect.empty()) { 
-		drawRect = drawingPort->getDrawingArea();
-	}
+    if (mHidden || !mPort) return;
+    ScopedOffscreenDrawing offscreenDrawing(mPort);
+    Port::ScreenDrawingScope screenDrawing(*mPort);
+    if (!mTiles || !mTileData || !mDataSize || mSrcTileWidth<=0 || mSrcTileHeight<=0 ||
+        mSrcTileCountX<=0 || mSrcTileCountY<=0 || mWorldWidth<=0 || mWorldHeight<=0) {
+        SpriteLayer::drawLayer(); return;
+    }
+    const Rect clip=mPort->getClipRect();
+    if (clip.empty()) return;
+    const auto view=getViewTransform(), inverse=view.inverse();
+    Quad visibleQuad(clip);
+    for (auto& point:visibleQuad.points) point=inverse.transformPoint(point);
+    const Rect visible=visibleQuad.getBounds();
+    // Clamp finite maps before converting to tile indices. Repeating maps keep
+    // negative indices so getTileTypeAt() can wrap them in world coordinates.
+    auto tileIndex=[](double value) {
+        if (!std::isfinite(value) || value<=double(std::numeric_limits<long>::min()) ||
+            value>=double(std::numeric_limits<long>::max()))
+            throw std::out_of_range("Camera view exceeds tile index range");
+        return static_cast<long>(value);
+    };
+    const double left=std::floor(visible.left/mSrcTileWidth), top=std::floor(visible.top/mSrcTileHeight);
+    const double right=std::ceil(visible.right/mSrcTileWidth), bottom=std::ceil(visible.bottom/mSrcTileHeight);
+    const long x0=tileIndex(mRepeatingX?left:std::clamp(left,0.0,double(mWorldWidth)));
+    const long y0=tileIndex(mRepeatingY?top:std::clamp(top,0.0,double(mWorldHeight)));
+    const long x1=tileIndex(mRepeatingX?right:std::clamp(right,0.0,double(mWorldWidth)));
+    const long y1=tileIndex(mRepeatingY?bottom:std::clamp(bottom,0.0,double(mWorldHeight)));
+    rec_PixelXOffset=visible.left-std::floor(visible.left/mSrcTileWidth)*mSrcTileWidth;
+    rec_PixelYOffset=visible.top-std::floor(visible.top/mSrcTileHeight)*mSrcTileHeight;
 
-    Point origin(-mLocation.x, -mLocation.y);
-    origin *= mZoom;
-    origin -= mOrigin;
-
-	float dstTileWidth = mSrcTileWidth * mZoom;
-	float dstTileHeight = mSrcTileHeight * mZoom;
-	int dstTileCountX = 2 + drawRect.width() / dstTileWidth;
-	int dstTileCountY = 2 + drawRect.height() / dstTileHeight;
-		
-	int dataXOffset = origin.x / dstTileWidth;
-	int dataYOffset = origin.y / dstTileHeight;
-
-	// do we use automatic N/S/E/W facing of tiles?
-	bool useFacing = mUseFacing;
-	bool flipHorizOnly = mUseFlipping &&  mFlipHoriz && !mFlipVert;
-	bool flipVertOnly  = mUseFlipping && !mFlipHoriz &&  mFlipVert;
-	bool flipBoth      = mUseFlipping &&  mFlipHoriz &&  mFlipVert;
-	uint8 maxUnalteredVal = 0xFF;
-	if (useFacing || flipBoth) {
-		maxUnalteredVal = 0x3F;
-	} else if (flipHorizOnly || flipVertOnly) {
-		maxUnalteredVal = 0x7F;
-	}
-	
-	float pixelXOffset = fmodf(origin.x, dstTileWidth);
-	float pixelYOffset = fmodf(origin.y, dstTileHeight);
-	
-	rec_PixelXOffset = pixelXOffset;
-	rec_PixelYOffset = pixelYOffset;
-	
-	static int maxVertexCount = 12000;  // this is what has been observed on the iPad
-	static int maxIndexCount = 4000;	// might be able to scale this down for iPhone
-	
-	static GLfloat* vertexArray = 0;
-	static int	  vertexArraySize = 0;
-	if (!vertexArray || (vertexArraySize < maxVertexCount)) {
-		if (vertexArray) {
-			std::free(vertexArray);
-		}
-		// we have both 2 components (x & y) for each of two elements (vertex coordinates and texture coordinates)
-		vertexArraySize = maxVertexCount + 400;  // 100 extra vertex elements so we don't have to keep reallocating
-		vertexArray = (GLfloat*) std::malloc( vertexArraySize * sizeof(GLfloat) );
-		DEBUG_PRINT("Reallocated tile vertex array to %d elements", vertexArraySize);
-	}
-	// check/reallocate space for those cells in index array
-	static GLushort* indexArray = 0;
-	static int		 indexArraySize = 0;
-	if (!indexArray || (indexArraySize < maxIndexCount)) {
-		if (indexArray) {
-			std::free(indexArray);
-		}
-		indexArraySize = maxIndexCount + 200;  // 100 extra indices so we don't have to keep reallocating
-		indexArray = (GLushort*)std::malloc(indexArraySize * sizeof(GLushort));
-		DEBUG_PRINT("Reallocated tile index array to %d elements", indexArraySize);
-	}
-	
-	// build vertex array
-	int i = 0;
-	int j = 0;
-
-	bool haveNonEmptyTile = !mHasTransparency;  // if we have transparency, we need to look for non empty tiles
-	bool haveTiledRow = false;
-	uint8* dataEnd = mTileData + mWorldWidth * mWorldHeight;
-
-    
-	// specify vertex & texture coordinate positions
-	int startY = -1; //(origin.y < 0) ? -1 : 0;
-	int maxY = dstTileCountY; //(origin.y < 0) ? dstTileCountY - 1 : dstTileCountY;
-	int vertexPtr = 0;
-	for (int ty = startY; ty < maxY; ty++) {
-		float y = ADJUST((float)ty * dstTileHeight - pixelYOffset);
-		float y2 = ADJUST(y + dstTileHeight);
-		TileLayer::TFacing facing;
-		int startX = -1; //(origin.x < 0) ? -1 : 0;
-		int maxX = dstTileCountX; //(origin.x < 0) ? dstTileCountX - 1 : dstTileCountX;
-		float v1,h1,v2,h2,v3,h3,v4,h4;
-		uint8* dataRowPtr = (uint8*)mTileData + ((ty + dataYOffset) * mWorldWidth);
-		bool inEmptyRegion = false;
-		bool emptyRow = mHasTransparency;  // we only look for empty rows if we have transparency
-		for (int tx = startX; tx < maxX; tx++) {
-			float x = ADJUST((float)tx * dstTileWidth - pixelXOffset);
-			float x2 = ADJUST(x + dstTileWidth);
-			bool needTopLeftOnly = false;
-			uint8* dp = dataRowPtr + tx + dataXOffset;
-			uint8 t = ( (dp < mTileData) || (dp >= dataEnd) ) ? 0 : *dp;
-			if ((t == 0) && mHasTransparency) {
-				needTopLeftOnly = (!emptyRow && !inEmptyRegion);
-				inEmptyRegion = true;
-				if (!needTopLeftOnly) {
-					continue;
-				}
-			}
-#ifdef TILING_INTERNAL_DEBUG
-			Rect r;
-			r.top = y;
-			r.bottom = y2;
-			r.left = x;
-			r.right = x + dstTileWidth;
-			drawingPort->frameRect(r, Color(1.0f,1.0f,1.0f,0.25f));
-//            continue;
-#endif
-			int dx;
-			int dy;
-			
-			if (t <= maxUnalteredVal) {
-				
-				dx = t % mSrcTileCountX;
-				dy = t / mSrcTileCountX;
-				
-				v1 = (float)dy * mTileWorldRatioY;
-				h1 = (float)dx * mTileWorldRatioX;
-				v2 = v1;
-				h2 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-				v3 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-				h3 = h1;
-				v4 = v3;
-				h4 = h2;
-			}
-			else {
-				if (useFacing || flipBoth) {
-					facing = (TFacing)(t & 0xC0);
-					t = t & 0x3F;
-				} else if (flipHorizOnly || flipVertOnly) {
-					facing = (TFacing)(t & 0x80);
-					t = t & 0x7f;
-				}
-				
-				dx = t % mSrcTileCountX;
-				dy = t / mSrcTileCountX;
-				
-				if (useFacing) {
-					// facing cases
-					if (facing == facing_South) {
-						v1 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-						h1 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-						v2 = v1;
-						h2 = (float)(dx) * mTileWorldRatioX;
-						v3 = (float)(dy) * mTileWorldRatioY;
-						h3 = h1;
-						v4 = v3;
-						h4 = h2;
-					}
-					else if (facing == facing_East) {
-						v1 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-						h1 = (float)dx * mTileWorldRatioX;
-						v2 = (float)(dy) * mTileWorldRatioY;
-						h2 = h1;
-						v3 = v1;
-						h3 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-						v4 = v2;
-						h4 = h3;
-					}
-					else if (facing == facing_West) {
-						v1 = (float)dy * mTileWorldRatioY;
-						h1 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-						v2 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-						h2 = h1;
-						v3 = v1;
-						h3 = (float)dx * mTileWorldRatioX;
-						v4 = v2;
-						h4 = h3;
-					}
-				} else {
-					// flipping cases
-					if (flipHorizOnly) {
-						
-						v1 = (float)dy * mTileWorldRatioY;
-						h1 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-						v2 = v1;
-						h2 = (float)dx * mTileWorldRatioX;
-						v3 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-						h3 = h1;
-						v4 = v3;
-						h4 = h2;
-						
-					} else if (flipVertOnly) {
-						
-						v1 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-						h1 = (float)dx * mTileWorldRatioX;
-						v2 = v1;
-						h2 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-						v3 = (float)dy * mTileWorldRatioY;
-						h3 = h1;
-						v4 = v3;
-						h4 = h2;
-						
-					} else if (facing == flipped_Horizontal) {
-						
-						v1 = (float)dy * mTileWorldRatioY;
-						h1 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-						v2 = v1;
-						h2 = (float)dx * mTileWorldRatioX;
-						v3 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-						h3 = h1;
-						v4 = v3;
-						h4 = h2;
-						
-					} else if (facing == flipped_Vertical) {
-
-						v1 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-						h1 = (float)dx * mTileWorldRatioX;
-						v2 = v1;
-						h2 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-						v3 = (float)dy * mTileWorldRatioY;
-						h3 = h1;
-						v4 = v3;
-						h4 = h2;
-						
-					} else {
-						// flipped both ways
-						v1 = (float)((dy+1) * mTileWorldRatioY) - mPixelWorldRatioY;
-						h1 = (float)((dx+1) * mTileWorldRatioX) - mPixelWorldRatioX;
-						v2 = v1;
-						h2 = (float)dx * mTileWorldRatioX;
-						v3 = (float)dy * mTileWorldRatioY;
-						h3 = h1;
-						v4 = v3;
-						h4 = h2;
-					}
-				}
-			}
-			
-			// entry for each topLeft vertex position, offset 0
-			vertexArray[i++] = x;
-			vertexArray[i++] = y;
-	
-			// entry for topLeft texture coordinate			
-			vertexArray[i++] = h1;
-			vertexArray[i++] = v1;
-			
-			if (needTopLeftOnly) {
-				indexArray[j++] = vertexPtr;		// top left vertex
-				indexArray[j++] = vertexPtr;		// top left vertex
-				vertexPtr += 1;
-			} else {
-				
-				if ((haveTiledRow && emptyRow) || (!emptyRow && inEmptyRegion)) {
-					// start of new section after an empty region empty
-					indexArray[j++] = vertexPtr;		// top left vertex
-					indexArray[j++] = vertexPtr;		// top left vertex		
-				}
-				
-				emptyRow = false;
-				inEmptyRegion = false;
-				
-				// topRight vertex, offset 1
-				vertexArray[i++] = x2;
-				vertexArray[i++] = y;
-				// topRight texture Coord
-				vertexArray[i++] = h2;
-				vertexArray[i++] = v2;
-				// botRight vertex, offset 2
-				vertexArray[i++] = x2;
-				vertexArray[i++] = y2;
-				// botRight texture Coord		
-				vertexArray[i++] = h4;
-				vertexArray[i++] = v4;
-				// botLeft vertex, offset 3	
-				vertexArray[i++] = x;
-				vertexArray[i++] = y2;
-				// botLeft texture Coord			
-				vertexArray[i++] = h3;
-				vertexArray[i++] = v3;
-				indexArray[j++] = vertexPtr + 3;	// bottom left vertex
-				indexArray[j++] = vertexPtr;		// top left vertex
-				indexArray[j++] = vertexPtr + 2;	// bottom right vertex
-				indexArray[j++] = vertexPtr + 1;	// top right vertex
-				vertexPtr += 4;
-			}
-			if ( (i >= (vertexArraySize - 16) ) || (j >= (indexArraySize - 6))) {
-				break;
-			}
-		}
-		if ( (i >= (vertexArraySize - 16) ) || (j >= (indexArraySize - 6))) {
-			break;
-		}
-		if (!emptyRow) {
-			// end of row, wrap around
-			int index = indexArray[j-2];
-			indexArray[j++] = index;
-			indexArray[j++] = index;
-			haveTiledRow = true;
-			haveNonEmptyTile = true; 
-		}
-	} 
-	if (i > maxVertexCount) {
-		maxVertexCount = i + 100;
-		DEBUG_PRINT("Tile set max vertex count: %d", maxVertexCount);
-	}
-	DEBUG_ASSERT(vertexArraySize >= i, "MEMORY STOMP!!! wrote past end of tile vertex array");
-	if (j > maxIndexCount) {
-		maxIndexCount = j + 100;
-		DEBUG_PRINT("Tile set max index count: %d", maxIndexCount);
-	}
-	DEBUG_ASSERT(indexArraySize >= j, "MEMORY STOMP!!! wrote past end of tile index array");
-	
-	if (haveNonEmptyTile && mTiles) {
-		static_cast<ImageOpenGL*>(mTiles)->bindTexture(mMipMode);
-
-		PortImpl& port = static_cast<PortImpl&>(*drawingPort); // get us access to our private data
-		port.setOpenGLModesForDrawing( (static_cast<ImageOpenGL*>(mTiles)->mTextureFormat == GL_RGBA) && mHasTransparency);
-		
-		// define triange strip using indexed vertices
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 4*sizeof(GLfloat), vertexArray);
-		glTexCoordPointer(2, GL_FLOAT, 4*sizeof(GLfloat), vertexArray+2);
-		
-		// draw opengl array
-		if (haveNonEmptyTile) {
-			glDrawElements(GL_TRIANGLE_STRIP, j, GL_UNSIGNED_SHORT, indexArray);
-		}
-
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-
-	#ifdef TILING_INTERNAL_DEBUG
-		Point lp = Point(vertexArray[indexArray[0]], vertexArray[indexArray[0] + 1]);
-		for (i = 1; i < j; i++) {
-			int ai = indexArray[i] * 4;
-			Point p = Point(vertexArray[ai], vertexArray[ai + 1]);
-			if (i % 4 == 2) {
-				drawingPort->drawLine(lp, p, Color(1.0f, 0.0f, 0.0f, 0.5f) );
-			}
-			if (i % 4 == 0) {
-				drawingPort->drawLine(lp, p, Color(1.0f, 0.0f, 1.0f, 0.5f) );
-			}
-			lp = p;
-		}
-		drawingPort->drawLine(Point(0, -mZoomedOrigin.y), Point(drawRect.width(), -mZoomedOrigin.y), Color(1.0f, 0.0f, 0.0f, 0.5f) );
-		drawingPort->drawLine(Point(-mZoomedOrigin.x, 0), Point(-mZoomedOrigin.x, drawRect.height()), Color(1.0f, 0.0f, 0.0f, 0.5f) );
-	#endif
-	} // end if haveNonEmptyTile
-	
-	SpriteLayer::drawLayer();
+    Port* previousPort=mTiles->setPort(mPort);
+    struct RestoreImagePort { Image* image; Port* port; ~RestoreImagePort() { image->setPort(port); } } restorePort{mTiles,previousPort};
+    auto* image=static_cast<ImageOpenGL*>(mTiles);
+    static_cast<PortImpl&>(*mPort).setOpenGLModesForDrawing(mHasTransparency,blendMode_Normal,image->usesPremultipliedAlpha());
+    image->bindTexture(mMipMode);
+    glColor4f(1,1,1,1);
+    glBegin(GL_TRIANGLES);
+    for (long y=y0;y<y1;++y) for (long x=x0;x<x1;++x) {
+        TFacing facing;
+        const uint8 encoded=getTileTypeAt(x,y,&facing);
+        const unsigned mask=mUseFacing || (mUseFlipping&&mFlipHoriz&&mFlipVert)?0x3f:
+            mUseFlipping&&(mFlipHoriz||mFlipVert)?0x7f:0xff;
+        const unsigned tile=encoded&mask;
+        if ((!tile&&mHasTransparency) || tile>=unsigned(mSrcTileCountX*mSrcTileCountY)) continue;
+        const unsigned tx=tile%mSrcTileCountX, ty=tile/mSrcTileCountX;
+        const float u0=tx*mTileWorldRatioX, v0=ty*mTileWorldRatioY;
+        const float u1=(tx+1)*mTileWorldRatioX-mPixelWorldRatioX;
+        const float v1=(ty+1)*mTileWorldRatioY-mPixelWorldRatioY;
+        Point uv[4]={Point(u0,v0),Point(u1,v0),Point(u1,v1),Point(u0,v1)};
+        if (mUseFacing) {
+            const unsigned turns=unsigned(facing)/64;
+            Point original[4]={uv[0],uv[1],uv[2],uv[3]};
+            for (unsigned corner=0;corner<4;++corner) uv[corner]=original[(corner+4-turns)%4];
+        } else if (mUseFlipping) {
+            if (unsigned(facing)&flipped_Horizontal) { std::swap(uv[0],uv[1]);std::swap(uv[3],uv[2]); }
+            if (unsigned(facing)&flipped_Vertical) { std::swap(uv[0],uv[3]);std::swap(uv[1],uv[2]); }
+        }
+        Quad quad(Rect(double(x)*mSrcTileWidth,double(y)*mSrcTileHeight,
+                       double(x+1)*mSrcTileWidth,double(y+1)*mSrcTileHeight));
+        for (auto& point:quad.points) point=view.transformPoint(point);
+        // Independent triangles avoid the fixed-size strip buffer truncating
+        // wide or rotated camera views, and avoid connections across empty tiles.
+        for (unsigned corner:{0u,1u,2u,0u,2u,3u}) {
+            glTexCoord2f(uv[corner].x,uv[corner].y);
+            glVertex2f(quad.points[corner].x,quad.points[corner].y);
+        }
+    }
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    SpriteLayer::drawLayer();
 }
 #endif // ! PDG_NO_GUI
 
 void 
-TileLayer::animateLayer(ms_delta msElapsed) {
+TileLayer::animateLayer(double msElapsed) {
 	SpriteLayer::animateLayer(msElapsed);
 }
 	

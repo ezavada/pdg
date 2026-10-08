@@ -1,5 +1,5 @@
 <map id="Renderer" name="Renderer">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,80,31"/>
-<area shape="rect" id="Node000002" href="$classpdg_1_1_port.html" title=" " alt="" coords="20,79,65,105"/>
+<area shape="rect" id="Node000001" title="Drawing operations return the renderer by reference for chaining." alt="" coords="5,5,80,31"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining." alt="" coords="20,79,65,105"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="45,45,45,79,40,78,40,48"/>
 </map>

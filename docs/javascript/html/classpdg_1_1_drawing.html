@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 
-<p>Container for drawing elements (lines, shapes, images) that can be rendered to a <a class="el" href="classpdg_1_1_port.html" title="area in which drawing is done, a viewport (GUI Only)">Port</a>.  
+<p>Container for drawing elements (lines, shapes, images, text) that can be rendered to a <a class="el" href="classpdg_1_1_port.html" title="area in which drawing is done, a viewport (GUI Only)">Port</a>.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -133,10 +133,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a7dd52f16e05273027489e666f5f3e1eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">adds a rectangle element to the drawing  <br /></td></tr>
 <tr class="memitem:af2caf4d351c808e6beeecaa79ad9f885" id="r_af2caf4d351c808e6beeecaa79ad9f885"><td class="memItemLeft"><a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a>&#160;</td><td class="memItemRight"><a class="el" href="#af2caf4d351c808e6beeecaa79ad9f885">addSpline</a> (<a class="el" href="classpdg_1_1_spline.html">Spline</a> spline, <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> attrs)</td></tr>
 <tr class="memdesc:af2caf4d351c808e6beeecaa79ad9f885"><td class="mdescLeft">&#160;</td><td class="mdescRight">adds a spline element to the drawing  <br /></td></tr>
+<tr class="memitem:a33aebd0d624b68b105e865ddc5af0807" id="r_a33aebd0d624b68b105e865ddc5af0807"><td class="memItemLeft"><a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a>&#160;</td><td class="memItemRight"><a class="el" href="#a33aebd0d624b68b105e865ddc5af0807">addText</a> (string text, <a class="el" href="classpdg_1_1_rect.html">Rect</a> rect, <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> attrs)</td></tr>
+<tr class="memdesc:a33aebd0d624b68b105e865ddc5af0807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add editable text to a drawing.  <br /></td></tr>
 <tr class="memitem:af372674219a70e1e81db4f347ffb1651" id="r_af372674219a70e1e81db4f347ffb1651"><td class="memItemLeft"><a class="el" href="classpdg_1_1_point.html">Point</a>&#160;</td><td class="memItemRight"><a class="el" href="#af372674219a70e1e81db4f347ffb1651">centerPoint</a> ()</td></tr>
 <tr class="memdesc:af372674219a70e1e81db4f347ffb1651"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the center point of the drawing  <br /></td></tr>
-<tr class="memitem:a5fd8e1eff4c41fe819d51129493d244a" id="r_a5fd8e1eff4c41fe819d51129493d244a"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a5fd8e1eff4c41fe819d51129493d244a">draw</a> (<a class="el" href="classpdg_1_1_port.html">Port</a> port)</td></tr>
-<tr class="memdesc:a5fd8e1eff4c41fe819d51129493d244a"><td class="mdescLeft">&#160;</td><td class="mdescRight">draws the drawing to the specified port  <br /></td></tr>
 <tr class="memitem:a952d6ee1578865e93cb6d9003eb9cff5" id="r_a952d6ee1578865e93cb6d9003eb9cff5"><td class="memItemLeft">boolean&#160;</td><td class="memItemRight"><a class="el" href="#a952d6ee1578865e93cb6d9003eb9cff5">empty</a> ()</td></tr>
 <tr class="memdesc:a952d6ee1578865e93cb6d9003eb9cff5"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns true if the drawing has no elements  <br /></td></tr>
 <tr class="memitem:ab5b837f274753c7d2d6164117b3568d4" id="r_ab5b837f274753c7d2d6164117b3568d4"><td class="memItemLeft"><a class="el" href="classpdg_1_1_rect.html">Rect</a>&#160;</td><td class="memItemRight"><a class="el" href="#ab5b837f274753c7d2d6164117b3568d4">getBounds</a> ()</td></tr>
@@ -149,10 +149,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a2920b9c669fcc496ecab08cfce4b8b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the element hit by the specified point, or null if none  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Container for drawing elements (lines, shapes, images) that can be rendered to a <a class="el" href="classpdg_1_1_port.html" title="area in which drawing is done, a viewport (GUI Only)">Port</a>. </p>
+<div class="textblock"><p>Container for drawing elements (lines, shapes, images, text) that can be rendered to a <a class="el" href="classpdg_1_1_port.html" title="area in which drawing is done, a viewport (GUI Only)">Port</a>. </p>
 <dl class="section note"><dt>Note</dt><dd><b>API Stability: 2 — Evolving</b>. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See <a class="el" href="index.html#api_stability" title="API stability">API stability</a>.</dd></dl>
-<p><a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images) that can be rendered to a Port.">Drawing</a> contents are shared by nested drawings and animation attachments. <a class="el" href="classpdg_1_1_element_ref.html" title="Reference to a drawing element that allows modification of its properties and control points.">ElementRef</a> retains its drawing contents, so elements remain editable while those owners exist. Nested drawing cycles are rejected. Persistent animation artwork is registered with Sprite.addAnimationDrawable(drawing, options); dynamic callbacks return a <a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images) that can be rendered to a Port.">Drawing</a> or null.</p>
-<p>Port.drawDrawing(drawing, point, attributes) translates drawing coordinates by the point before applying the parent transform. Its rectangle overload maps the drawing's geometric bounds into that rectangle. Nested <a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images) that can be rendered to a Port.">Drawing</a> elements use the same bounds mapping. Native Quad/RotatedRect <a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images) that can be rendered to a Port.">Drawing</a> destinations require a finite affine parallelogram; degenerate source bounds retain unit scale on that axis. Inherited transforms and opacities do not mutate stored element <a class="el" href="classpdg_1_1_attributes.html" title="Container for styling and transformation attributes used in drawing operations.">Attributes</a>. </p>
+<p><a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images, text) that can be rendered to a Port.">Drawing</a> contents are shared by nested drawings and animation attachments. <a class="el" href="classpdg_1_1_element_ref.html" title="Reference to a drawing element that allows modification of its properties and control points.">ElementRef</a> retains its drawing contents, so elements remain editable while those owners exist. Nested drawing cycles are rejected. Persistent animation artwork is registered with Sprite.addAnimationDrawable(drawing, options); dynamic callbacks return a <a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images, text) that can be rendered to a Port.">Drawing</a> or null.</p>
+<p>Port.drawDrawing(drawing, point, attributes) translates drawing coordinates by the point before applying the parent transform. Its rectangle overload maps the drawing's geometric bounds into that rectangle. Nested <a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images, text) that can be rendered to a Port.">Drawing</a> elements use the same bounds mapping. Native Quad/RotatedRect <a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images, text) that can be rendered to a Port.">Drawing</a> destinations require a finite affine parallelogram; degenerate source bounds retain unit scale on that axis. Inherited transforms and opacities do not mutate stored element <a class="el" href="classpdg_1_1_attributes.html" title="Container for styling and transformation attributes used in drawing operations.">Attributes</a>. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a5c3f7e00c57587d8a060d201ee36427e" name="a5c3f7e00c57587d8a060d201ee36427e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5c3f7e00c57587d8a060d201ee36427e">&#9670;&#160;</a></span>addArc()</h2>
@@ -434,6 +434,56 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a33aebd0d624b68b105e865ddc5af0807" name="a33aebd0d624b68b105e865ddc5af0807"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33aebd0d624b68b105e865ddc5af0807">&#9670;&#160;</a></span>addText()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a> addText </td>
+          <td>(</td>
+          <td class="paramtype">string</td>          <td class="paramname"><span class="paramname"><em>text</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classpdg_1_1_rect.html">Rect</a></td>          <td class="paramname"><span class="paramname"><em>rect</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classpdg_1_1_attributes.html">Attributes</a></td>          <td class="paramname"><span class="paramname"><em>attrs</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add editable text to a drawing. </p>
+<p>Copies the text and attributes. Use font(), textSize(), textStyle(), fillColor() and fillOpacity() on the attributes to style it, as with <a class="el" href="classpdg_1_1_port.html#abadc3ad8486836e4f16651bcb61b8991" title="Draws text at the specified location with styling attributes.">Port.drawText()</a>. Newlines are supported. The rectangle supplies the local layout bounds and four editable corner control points; hit testing uses that rectangle rather than glyph outlines. Element and parent transforms and opacities apply normally, including live attributes.</p>
+<p>Text and styling are saved with drawing artwork in Part/Sprite snapshots. <a class="el" href="classpdg_1_1_font.html" title="font for text drawing and measuring (GUI Only)">Font</a> names and scaling factors are saved; font files are not embedded. The receiving system must provide the font for the same appearance. Older drawing snapshots remain readable.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">text</td><td>Text string, including the empty string; at most 1 MiB in UTF-8. </td></tr>
+    <tr><td class="paramname">rect</td><td>Finite rectangle with right &gt;= left and bottom &gt;= top, in drawing coordinates. </td></tr>
+    <tr><td class="paramname">attrs</td><td>Text styling and transformation attributes. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An <a class="el" href="classpdg_1_1_element_ref.html" title="Reference to a drawing element that allows modification of its properties and control points.">ElementRef</a> of type <a class="el" href="namespacepdg.html#aa26e35c0d357764d6109f7cf9788930b">pdg.type_Text</a> for later editing.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Rendering requires a graphics build. In this example, sprite is an existing <a class="el" href="classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn">Sprite</a>; serializing it also saves the drawing assigned to its label <a class="el" href="classpdg_1_1_part.html" title="An independently animated part owned by a Sprite.">Part</a>. </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line">var drawing = pdg.createDrawing();</div>
+<div class="line">var attrs = new pdg.Attributes().font(pdg.gfx.createFont(&quot;Arial&quot;))</div>
+<div class="line">    .textSize(24).textStyle(pdg.textStyle_Bold).fillColor(&quot;white&quot;);</div>
+<div class="line">var label = drawing.addText(&quot;Player 1&quot;, new pdg.Rect(0, 0, 180, 40), attrs);</div>
+<div class="line">sprite.createPart(&quot;label&quot;).setDrawing(drawing);</div>
+<div class="line">label.setText(&quot;Player 2&quot;);</div>
+<div class="line">var save = new pdg.Serializer();</div>
+<div class="line">save.serialize_obj(sprite);</div>
+</div><!-- fragment --> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_element_ref.html#a787a8b4145449843adff9e020d9a4ffb" title="Get the current text of a text element.">ElementRef.getText()</a>, <a class="el" href="classpdg_1_1_element_ref.html#a6488b77784170bfed41262ac8954ecff" title="Replace a text element&#39;s text while retaining its rectangle and styling.">ElementRef.setText()</a>, <a class="el" href="classpdg_1_1_part.html#a819ad45aae1940475f597e36b52158e5" title="Assign editable Drawing artwork.">Part.setDrawing()</a>, <a class="el" href="classpdg_1_1_port.html#abadc3ad8486836e4f16651bcb61b8991" title="Draws text at the specified location with styling attributes.">Port.drawText()</a> </dd></dl>
+
+</div>
+</div>
 <a id="af372674219a70e1e81db4f347ffb1651" name="af372674219a70e1e81db4f347ffb1651"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af372674219a70e1e81db4f347ffb1651">&#9670;&#160;</a></span>centerPoint()</h2>
 
@@ -450,25 +500,6 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>returns the center point of the drawing </p>
-
-</div>
-</div>
-<a id="a5fd8e1eff4c41fe819d51129493d244a" name="a5fd8e1eff4c41fe819d51129493d244a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fd8e1eff4c41fe819d51129493d244a">&#9670;&#160;</a></span>draw()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">draw </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classpdg_1_1_port.html">Port</a></td>          <td class="paramname"><span class="paramname"><em>port</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>draws the drawing to the specified port </p>
 
 </div>
 </div>

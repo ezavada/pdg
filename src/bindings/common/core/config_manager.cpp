@@ -48,6 +48,8 @@ METHOD_IMPL(ConfigManager, UseConfig)
 	bool result = self->useConfig(inConfigName);
 	RETURN_BOOL(result);
 	END
+// @pdg-contract {"name":"ConfigManager.getConfigString","value":{"returns":{"one_of":[{"type":"string"},{"type":"undefined"}]}}}
+// @pdg-member {"name":"ConfigManager.getConfigString","native_binding":{"adapter":"config.get-string","browser":{"wrapper":{}}}}
 METHOD_IMPL(ConfigManager, GetConfigString)	
 	METHOD_SIGNATURE("", string, 1, (string inConfigItemName))
     REQUIRE_ARG_COUNT(1);
@@ -60,6 +62,7 @@ METHOD_IMPL(ConfigManager, GetConfigString)
 		RETURN_UNDEFINED;
 	}
 	END
+// @pdg-contract {"name":"ConfigManager.getConfigLong","value":{"returns":{"one_of":[{"type":"number"},{"type":"undefined"}]}}}
 METHOD_IMPL(ConfigManager, GetConfigLong)	
 	METHOD_SIGNATURE("", number, 1, (string inConfigItemName))
     REQUIRE_ARG_COUNT(1);
@@ -72,6 +75,7 @@ METHOD_IMPL(ConfigManager, GetConfigLong)
 		RETURN_UNDEFINED;
 	}
 	END
+// @pdg-contract {"name":"ConfigManager.getConfigFloat","value":{"returns":{"one_of":[{"type":"number"},{"type":"undefined"}]}}}
 METHOD_IMPL(ConfigManager, GetConfigFloat)	
 	METHOD_SIGNATURE("", number, 1, (string inConfigItemName))
     REQUIRE_ARG_COUNT(1);
@@ -84,6 +88,7 @@ METHOD_IMPL(ConfigManager, GetConfigFloat)
 		RETURN_UNDEFINED;
 	}
 	END
+// @pdg-contract {"name":"ConfigManager.getConfigBool","value":{"returns":{"one_of":[{"type":"boolean"},{"type":"undefined"}]}}}
 METHOD_IMPL(ConfigManager, GetConfigBool)	
 	METHOD_SIGNATURE("", boolean, 1, (string inConfigItemName))
     REQUIRE_ARG_COUNT(1);
@@ -132,4 +137,22 @@ METHOD_IMPL(ConfigManager, SetConfigBool)
 
 CPP_SINGLETON_CONSTRUCTOR_IMPL(ConfigManager)
 
-} // namespace pdg 
+} // namespace pdg
+
+// @pdg-member {"name":"ConfigManager.useConfig","native_binding":{"adapter":"ConfigManager.useConfig","browser":{"wrapper":{}}}}
+
+// @pdg-member {"name":"ConfigManager.getConfigLong","native_binding":{"adapter":"ConfigManager.getConfigLong","browser":{"wrapper":{}}}}
+
+// @pdg-member {"name":"ConfigManager.getConfigFloat","native_binding":{"adapter":"ConfigManager.getConfigFloat","browser":{"wrapper":{}}}}
+
+// @pdg-member {"name":"ConfigManager.getConfigBool","native_binding":{"adapter":"ConfigManager.getConfigBool","browser":{"wrapper":{}}}}
+
+// @pdg-member {"name":"ConfigManager.setConfigString","native_binding":{"adapter":"ConfigManager.setConfigString","browser":{"wrapper":{}}}}
+
+// @pdg-member {"name":"ConfigManager.setConfigLong","native_binding":{"adapter":"ConfigManager.setConfigLong","browser":{"wrapper":{}}}}
+
+// @pdg-member {"name":"ConfigManager.setConfigFloat","native_binding":{"adapter":"ConfigManager.setConfigFloat","browser":{"wrapper":{}}}}
+
+// @pdg-member {"name":"ConfigManager.setConfigBool","native_binding":{"adapter":"ConfigManager.setConfigBool","browser":{"wrapper":{}}}}
+
+// @pdg-class {"name":"ConfigManager","native_binding":{"browser":{"generate":true,"base":null}}}

@@ -1,8 +1,54 @@
 require('./SpecHelper');
 describe('AnimatedAttributes', function() {
+    it('accepts color names, packed colors and Color objects in color animations', function() {
+        ['FillColor','LineColor','AmbientLight'].forEach(function(channel) {
+            ['blue', 0xff0000ff, new pdg.Color('red')].forEach(function(input) {
+                const a = new pdg.AnimatedAttributes();
+                const expected = typeof input === 'object' ? input : new pdg.Color(input);
+                expect(a['change'+channel](input, 1, pdg.linearTween)).toBe(a);
+                a.animate(1);
+                const actual = a['get'+channel]();
+                ['red','green','blue','alpha'].forEach(function(component) {
+                    expect(actual[component]).toBeCloseTo(expected[component], 5);
+                });
+                expect(function() { a['change'+channel](null, 1); }).toThrow();
+            });
+        });
+    });
+    it('accepts independently mixed color forms at both gradient endpoints', function() {
+        const point = new pdg.Point(0, 0), end = new pdg.Point(10, 20);
+        const colors = [new pdg.Color('red'), 'blue', 0xff0000ff];
+        colors.forEach(function(first) { colors.forEach(function(last) {
+            const expectedFirst = typeof first === 'object' ? first : new pdg.Color(first);
+            const expectedLast = typeof last === 'object' ? last : new pdg.Color(last);
+            ['fillGradient','fillRadialGradient','changeFillGradient','changeFillRadialGradient'].forEach(function(method) {
+                const a = new pdg.AnimatedAttributes();
+                const radial = method.indexOf('Radial') >= 0;
+                const args = [point, first, radial ? 10 : end, last];
+                if (method.indexOf('change') === 0) args.push(1);
+                expect(a[method].apply(a,args)).toBe(a);
+                a.animate(1);
+                const actualFirst = radial ? a.getRadialGradientCenterColor() : a.getGradientStartColor();
+                const actualLast = radial ? a.getRadialGradientEndColor() : a.getGradientEndColor();
+                ['red','green','blue','alpha'].forEach(function(component) {
+                    expect(actualFirst[component]).toBeCloseTo(expectedFirst[component],5);
+                    expect(actualLast[component]).toBeCloseTo(expectedLast[component],5);
+                });
+            });
+        }); });
+    });
     it('keeps the proportional fit alias mapped to overflow', function() {
         expect(pdg.fit_FillKeepProportions).toBe(pdg.fit_Overflow);
         expect(new pdg.Attributes().fitType(pdg.fit_FillKeepProportions).getFitType()).toBe(pdg.fit_Overflow);
+    });
+    it('copies native const-reference values without sharing mutable identity', function() {
+        const attributes = new pdg.Attributes().polarOffset(new pdg.Offset(3, 4));
+        const first = attributes.getPolarOffset();
+        const second = attributes.getPolarOffset();
+        expect(first).not.toBe(second);
+        first.x = 99;
+        expect(second.x).toBe(3);
+        expect(attributes.getPolarOffset().x).toBe(3);
     });
     it('stores text styles without requiring a graphics backend', function() {
         const plain = new pdg.Attributes(), animated = new pdg.AnimatedAttributes();

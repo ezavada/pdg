@@ -28,6 +28,8 @@
 
 namespace pdg {
 
+#include "layer_lifecycle_macros.h"
+
 // ========================================================================================
 //MARK: TileLayer
 // ========================================================================================
@@ -36,14 +38,12 @@ DECLARE_SYMBOL(tileType);
 DECLARE_SYMBOL(facing);
 
 WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(TileLayer, "createTileLayer", 
-  OBJECT_SAVE(cppObj->mEventEmitterScriptObj, obj); 
-  OBJECT_SAVE(cppObj->mAnimatedScriptObj, obj);
+  OBJECT_SAVE(cppObj->mEventEmitterScriptObj, obj);
   OBJECT_SAVE(cppObj->mSpriteLayerScriptObj, obj);
   OBJECT_SAVE(cppObj->mTileLayerScriptObj, obj) )
     EXPORT_CLASS_SYMBOLS("TileLayer", TileLayer, , ,
     	// method section
 		HAS_EMITTER_METHODS(TileLayer)
-		HAS_ANIMATED_METHODS(TileLayer)
 		HAS_SPRITE_LAYER_METHODS(TileLayer)
 	  %#ifndef PDG_NO_GUI  CR
 		HAS_SPRITE_LAYER_GUI_METHODS(TileLayer)
@@ -53,7 +53,6 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(TileLayer, "createTileLayer",
 	  %#endif CR
 		HAS_METHOD(TileLayer, "setWorldSize", SetWorldSize)
 		HAS_METHOD(TileLayer, "getWorldSize", GetWorldSize)
-		HAS_METHOD(TileLayer, "getWorldBounds", GetWorldBounds)
 		HAS_METHOD(TileLayer, "defineTileSet", DefineTileSet)
 		HAS_METHOD(TileLayer, "loadMapData", LoadMapData)
 		HAS_METHOD(TileLayer, "getMapData", GetMapData)
@@ -63,38 +62,11 @@ WRAPPER_INITIALIZER_IMPL_FACTORY_ONLY(TileLayer, "createTileLayer",
 		HAS_METHOD(TileLayer, "getTileTypeAndFacingAt", GetTileTypeAndFacingAt)
 		HAS_METHOD(TileLayer, "setTileTypeAt", SetTileTypeAt)
 		HAS_METHOD(TileLayer, "checkCollision", CheckCollision)
-		HAS_METHOD(TileLayer, "on", On)
-		HAS_METHOD(TileLayer, "onCollideSprite", OnCollideSprite)
-		HAS_METHOD(TileLayer, "onCollideWall", OnCollideWall)
-		HAS_METHOD(TileLayer, "onOffscreen", OnOffscreen)
-		HAS_METHOD(TileLayer, "onOnscreen", OnOnscreen)
-		HAS_METHOD(TileLayer, "onExitLayer", OnExitLayer)
-		HAS_METHOD(TileLayer, "onAnimationLoop", OnAnimationLoop)
-		HAS_METHOD(TileLayer, "onAnimationEnd", OnAnimationEnd)
-		HAS_METHOD(TileLayer, "onFadeComplete", OnFadeComplete)
-		HAS_METHOD(TileLayer, "onFadeInComplete", OnFadeInComplete)
-		HAS_METHOD(TileLayer, "onFadeOutComplete", OnFadeOutComplete)
-		HAS_METHOD(TileLayer, "onMouseEnter", OnMouseEnter)
-		HAS_METHOD(TileLayer, "onMouseLeave", OnMouseLeave)
-		HAS_METHOD(TileLayer, "onMouseDown", OnMouseDown)
-		HAS_METHOD(TileLayer, "onMouseUp", OnMouseUp)
-		HAS_METHOD(TileLayer, "onMouseClick", OnMouseClick)
-		HAS_METHOD(TileLayer, "onErasePort", OnErasePort)
-		HAS_METHOD(TileLayer, "onPreDrawLayer", OnPreDrawLayer)
-		HAS_METHOD(TileLayer, "onPostDrawLayer", OnPostDrawLayer)
-		HAS_METHOD(TileLayer, "onDrawPortComplete", OnDrawPortComplete)
-		HAS_METHOD(TileLayer, "onAnimationStart", OnAnimationStart)
-		HAS_METHOD(TileLayer, "onPreAnimateLayer", OnPreAnimateLayer)
-		HAS_METHOD(TileLayer, "onPostAnimateLayer", OnPostAnimateLayer)
-		HAS_METHOD(TileLayer, "onAnimationComplete", OnAnimationComplete)
-		HAS_METHOD(TileLayer, "onZoomComplete", OnZoomComplete)
-		HAS_METHOD(TileLayer, "onLayerFadeInComplete", OnLayerFadeInComplete)
-		HAS_METHOD(TileLayer, "onLayerFadeOutComplete", OnLayerFadeOutComplete)
+		HAS_SPRITE_LAYER_EVENT_METHODS(TileLayer)
     );
 	END
 	
 EMITTER_BASE_CLASS_IMPL(TileLayer)
-ANIMATED_BASE_CLASS_IMPL(TileLayer)
 %#ifndef PDG_NO_GUI
 SPRITE_LAYER_BASE_CLASS_GUI_IMPL(TileLayer)
 %#endif
@@ -116,12 +88,6 @@ METHOD_IMPL(TileLayer, GetWorldSize)
 	METHOD_SIGNATURE("", [object Rect], 0, ());
     REQUIRE_ARG_COUNT(0);
     Rect r = self->getWorldSize();
-	RETURN( RECT2VAL(r) );
-	END
-METHOD_IMPL(TileLayer, GetWorldBounds)
-	METHOD_SIGNATURE("", [object Rect], 0, ());
-    REQUIRE_ARG_COUNT(0);
-    Rect r = self->getWorldBounds();
 	RETURN( RECT2VAL(r) );
 	END
 METHOD_IMPL(TileLayer, GetTileTypeAt)
@@ -154,7 +120,7 @@ METHOD_IMPL(TileLayer, GetTileTypeAndFacingAt)
 	RETURN_OBJECT(tileInfo);		
 	END
 METHOD_IMPL(TileLayer, DefineTileSet)
-	METHOD_SIGNATURE("", undefined, 5, ([number int] tileWidth, [number int] tileHeight, [object Image] tiles, boolean hasTransparency = true, boolean flipTiles = false));
+	METHOD_SIGNATURE("", undefined, 5, ([number int] tileWidth, [number int] tileHeight, [object Image*] tiles, boolean hasTransparency = true, boolean flipTiles = false));
     REQUIRE_ARG_MIN_COUNT(3);
     REQUIRE_INT32_ARG(1, tileWidth);
     REQUIRE_INT32_ARG(2, tileHeight);
@@ -165,46 +131,52 @@ METHOD_IMPL(TileLayer, DefineTileSet)
 	NO_RETURN;
 	END
 METHOD_IMPL(TileLayer, LoadMapData)
-	METHOD_SIGNATURE("", undefined, 5, ({[string Binary]|[object MemBlock]} data, [number int] mapWidth = 0, [number int] mapHeight = 0, [number int] dstX, [number int] dstY));
+	METHOD_SIGNATURE("", undefined, 5, ({[object ByteArray]|[object MemBlock]} data, [number int] mapWidth = 0, [number int] mapHeight = 0, [number int] dstX = 0, [number int] dstY = 0));
     REQUIRE_ARG_MIN_COUNT(1);
     OPTIONAL_INT32_ARG(2, mapWidth, 0);
     OPTIONAL_INT32_ARG(3, mapHeight, 0);
     OPTIONAL_INT32_ARG(4, dstX, 0);
     OPTIONAL_INT32_ARG(5, dstY, 0);
+    if (mapWidth < 0 || mapHeight < 0 || dstX < 0 || dstY < 0) { THROW_RANGE_ERR("negative tile map dimensions"); RETURN_NULL; }
     if (mapWidth > self->mWorldWidth) {
-   		THROW_RANGE_ERR("argument 2 (mapWidth) is larger than world width");
+        THROW_RANGE_ERR("argument 2 (mapWidth) is larger than world width"); RETURN_NULL;
     }
-    if ((mapWidth + dstX) > self->mWorldWidth) {
-   		THROW_RANGE_ERR("mapWidth + dstX is larger than world width");
+    if (mapWidth > self->mWorldWidth - dstX) {
+        THROW_RANGE_ERR("mapWidth + dstX is larger than world width"); RETURN_NULL;
     }
     if (mapHeight > self->mWorldHeight) {
-   		THROW_RANGE_ERR("argument 3 (mapHeight) is larger than world height");
+        THROW_RANGE_ERR("argument 3 (mapHeight) is larger than world height"); RETURN_NULL;
     }
-    if ((mapHeight + dstY) > self->mWorldHeight) {
-   		THROW_RANGE_ERR("mapHeight + dstY is larger than world height");
+    if (mapHeight > self->mWorldHeight - dstY) {
+        THROW_RANGE_ERR("mapHeight + dstY is larger than world height"); RETURN_NULL;
     }
-    if (!VALUE_IS_STRING(ARGV[0]) && !VALUE_IS_OBJECT_OF_CLASS(ARGV[0], MemBlock)) {
-    	THROW_TYPE_ERR("argument 1 (data) must be either a binary string or an object of type MemBlock");
+    if (!IsUint8Array(ARGV[0]) && !VALUE_IS_MEMBLOCK(ARGV[0])) {
+        THROW_TYPE_ERR("argument 1 (data) must be either a Uint8Array or an object of type MemBlock"); RETURN_NULL;
     }
-    if (VALUE_IS_STRING(ARGV[0])) {
+    if (IsUint8Array(ARGV[0])) {
     	size_t bytes = 0;
-    	uint8* ptr = (uint8*) DecodeBinary(ARGV[0], &bytes);
+        const uint8* ptr = nullptr;
+        if (!GetUint8ArrayData(ARGV[0], ptr, bytes)) {
+            THROW_TYPE_ERR("expected an attached, non-shared Uint8Array"); RETURN_NULL;
+        }
+        if (bytes > UINT32_MAX) { THROW_RANGE_ERR("byte array exceeds the supported size"); RETURN_NULL; }
     	if (bytes < ((size_t)mapWidth * (size_t)mapHeight)) {
-    		THROW_RANGE_ERR("argument 1 (data) is insufficient, please check mapWidth and mapHeight against data size");
+            THROW_RANGE_ERR("argument 1 (data) is insufficient, please check mapWidth and mapHeight against data size"); RETURN_NULL;
     	}
     	self->loadMapData(ptr, mapWidth, mapHeight, dstX, dstY);
-		std::free(ptr);
+
 	} else {
+        if (!VALUE_IS_MEMBLOCK(ARGV[0])) { THROW_TYPE_ERR("expected Uint8Array or MemBlock"); RETURN_NULL; }
     	REQUIRE_CPP_OBJECT_ARG(1, memBlock, MemBlock);
     	if (memBlock->bytes < ((size_t)mapWidth * (size_t)mapHeight)) {
-    		THROW_RANGE_ERR("argument 1 (data) is insufficient, please check mapWidth and mapHeight against data size");
+            THROW_RANGE_ERR("argument 1 (data) is insufficient, please check mapWidth and mapHeight against data size"); RETURN_NULL;
     	}
 		self->loadMapData((uint8*)memBlock->ptr, mapWidth, mapHeight, dstX, dstY);
     }
 	NO_RETURN;
 	END
 METHOD_IMPL(TileLayer, GetMapData)
-	METHOD_SIGNATURE("", [object MemBlock], 4, ([number int] mapWidth = 0, [number int] mapHeight = 0, [number int] srcX, [number int] srcY));
+	METHOD_SIGNATURE("", [object MemBlock], 4, ([number int] mapWidth = worldWidth, [number int] mapHeight = worldHeight, [number int] srcX = 0, [number int] srcY = 0));
     OPTIONAL_INT32_ARG(1, mapWidth, self->mWorldWidth);
     OPTIONAL_INT32_ARG(2, mapHeight, self->mWorldHeight);
     OPTIONAL_INT32_ARG(3, srcX, 0);
@@ -229,7 +201,7 @@ METHOD_IMPL(TileLayer, GetMapData)
 	RETURN_CPP_OBJECT(memBlock, MemBlock);
 	END
 METHOD_IMPL(TileLayer, GetTileSetImage)
-	METHOD_SIGNATURE("", [object Image], 0, ());
+	METHOD_SIGNATURE("", [object Image*], 0, ());
     REQUIRE_ARG_COUNT(0);
     Image* tiles = self->getTileSetImage();
     RETURN_CPP_OBJECT(tiles, Image);
@@ -251,7 +223,7 @@ METHOD_IMPL(TileLayer, SetTileTypeAt)
 	NO_RETURN;
 	END
 METHOD_IMPL(TileLayer, CheckCollision)
-	METHOD_SIGNATURE("", number, 0, ([object Sprite] movingSprite, [number uint] alphaThreshold = 128, boolean shortCircuit = true));
+	METHOD_SIGNATURE("", number, 0, ([object Sprite*] movingSprite, [number uint] alphaThreshold = 128, boolean shortCircuit = true));
     REQUIRE_ARG_MIN_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, movingSprite, Sprite);
     OPTIONAL_UINT32_ARG(2, alphaThreshold, 128);
@@ -260,7 +232,7 @@ METHOD_IMPL(TileLayer, CheckCollision)
     RETURN_UNSIGNED(overlapPx);
 	END
 METHOD_IMPL(TileLayer, On)
-	METHOD_SIGNATURE("", [object IEventHandler], 2, ([number int] eventCode, function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 2, ([number int] eventCode, function func));
 	REQUIRE_ARG_COUNT(2);
 	REQUIRE_INT32_ARG(1, eventCode);
 	REQUIRE_FUNCTION_ARG(2, func);
@@ -282,7 +254,7 @@ METHOD_IMPL(TileLayer, On)
 
 // TileLayer convenience event methods
 METHOD_IMPL(TileLayer, OnCollideSprite)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -292,7 +264,7 @@ METHOD_IMPL(TileLayer, OnCollideSprite)
 	END
 
 METHOD_IMPL(TileLayer, OnCollideWall)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -302,7 +274,7 @@ METHOD_IMPL(TileLayer, OnCollideWall)
 	END
 
 METHOD_IMPL(TileLayer, OnOffscreen)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -312,7 +284,7 @@ METHOD_IMPL(TileLayer, OnOffscreen)
 	END
 
 METHOD_IMPL(TileLayer, OnOnscreen)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -322,7 +294,7 @@ METHOD_IMPL(TileLayer, OnOnscreen)
 	END
 
 METHOD_IMPL(TileLayer, OnExitLayer)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -332,7 +304,7 @@ METHOD_IMPL(TileLayer, OnExitLayer)
 	END
 
 METHOD_IMPL(TileLayer, OnAnimationLoop)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptEventHandler* handler = new ScriptEventHandler(func);
@@ -342,7 +314,7 @@ METHOD_IMPL(TileLayer, OnAnimationLoop)
 	END
 
 METHOD_IMPL(TileLayer, OnAnimationEnd)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_AnimationEnd);
@@ -352,7 +324,7 @@ METHOD_IMPL(TileLayer, OnAnimationEnd)
 	END
 
 METHOD_IMPL(TileLayer, OnFadeComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeComplete);
@@ -362,7 +334,7 @@ METHOD_IMPL(TileLayer, OnFadeComplete)
 	END
 
 METHOD_IMPL(TileLayer, OnFadeInComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeInComplete);
@@ -372,7 +344,7 @@ METHOD_IMPL(TileLayer, OnFadeInComplete)
 	END
 
 METHOD_IMPL(TileLayer, OnFadeOutComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptAnimationEventHandler* handler = new ScriptAnimationEventHandler(func, pdg::Sprite::action_FadeOutComplete);
@@ -382,7 +354,7 @@ METHOD_IMPL(TileLayer, OnFadeOutComplete)
 	END
 
 METHOD_IMPL(TileLayer, OnMouseEnter)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseEnter);
@@ -392,7 +364,7 @@ METHOD_IMPL(TileLayer, OnMouseEnter)
 	END
 
 METHOD_IMPL(TileLayer, OnMouseLeave)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseLeave);
@@ -402,7 +374,7 @@ METHOD_IMPL(TileLayer, OnMouseLeave)
 	END
 
 METHOD_IMPL(TileLayer, OnMouseDown)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseDown);
@@ -412,7 +384,7 @@ METHOD_IMPL(TileLayer, OnMouseDown)
 	END
 
 METHOD_IMPL(TileLayer, OnMouseUp)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseUp);
@@ -422,7 +394,7 @@ METHOD_IMPL(TileLayer, OnMouseUp)
 	END
 
 METHOD_IMPL(TileLayer, OnMouseClick)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptTouchEventHandler* handler = new ScriptTouchEventHandler(func, pdg::Sprite::touch_MouseClick);
@@ -432,7 +404,7 @@ METHOD_IMPL(TileLayer, OnMouseClick)
 	END
 
 METHOD_IMPL(TileLayer, OnErasePort)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_ErasePort);
@@ -442,7 +414,7 @@ METHOD_IMPL(TileLayer, OnErasePort)
 	END
 
 METHOD_IMPL(TileLayer, OnPreDrawLayer)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_PreDrawLayer);
@@ -452,7 +424,7 @@ METHOD_IMPL(TileLayer, OnPreDrawLayer)
 	END
 
 METHOD_IMPL(TileLayer, OnPostDrawLayer)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_PostDrawLayer);
@@ -462,7 +434,7 @@ METHOD_IMPL(TileLayer, OnPostDrawLayer)
 	END
 
 METHOD_IMPL(TileLayer, OnDrawPortComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_DrawPortComplete);
@@ -472,7 +444,7 @@ METHOD_IMPL(TileLayer, OnDrawPortComplete)
 	END
 
 METHOD_IMPL(TileLayer, OnAnimationStart)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_AnimationStart);
@@ -482,7 +454,7 @@ METHOD_IMPL(TileLayer, OnAnimationStart)
 	END
 
 METHOD_IMPL(TileLayer, OnPreAnimateLayer)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_PreAnimateLayer);
@@ -492,7 +464,7 @@ METHOD_IMPL(TileLayer, OnPreAnimateLayer)
 	END
 
 METHOD_IMPL(TileLayer, OnPostAnimateLayer)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_PostAnimateLayer);
@@ -502,7 +474,7 @@ METHOD_IMPL(TileLayer, OnPostAnimateLayer)
 	END
 
 METHOD_IMPL(TileLayer, OnAnimationComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_AnimationComplete);
@@ -511,18 +483,8 @@ METHOD_IMPL(TileLayer, OnAnimationComplete)
 	RETURN_CPP_OBJECT(handler, IEventHandler);
 	END
 
-METHOD_IMPL(TileLayer, OnZoomComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
-	REQUIRE_ARG_COUNT(1);
-	REQUIRE_FUNCTION_ARG(1, func);
-	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_ZoomComplete);
-	if (!handler) RETURN_NULL;
-	self->addHandler(handler, pdg::eventType_SpriteLayer);
-	RETURN_CPP_OBJECT(handler, IEventHandler);
-	END
-
 METHOD_IMPL(TileLayer, OnLayerFadeInComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_FadeInComplete);
@@ -532,7 +494,7 @@ METHOD_IMPL(TileLayer, OnLayerFadeInComplete)
 	END
 
 METHOD_IMPL(TileLayer, OnLayerFadeOutComplete)
-	METHOD_SIGNATURE("", [object IEventHandler], 1, (function func));
+	METHOD_SIGNATURE("", [object IEventHandler*], 1, (function func));
 	REQUIRE_ARG_COUNT(1);
 	REQUIRE_FUNCTION_ARG(1, func);
 	ScriptLayerEventHandler* handler = new ScriptLayerEventHandler(func, pdg::SpriteLayer::action_FadeOutComplete);
@@ -541,7 +503,18 @@ METHOD_IMPL(TileLayer, OnLayerFadeOutComplete)
 	RETURN_CPP_OBJECT(handler, IEventHandler);
 	END
 
-CLEANUP_IMPL(TileLayer)
+%#ifdef PDG_USING_JAVASCRIPT_CORE
+void CleanupTileLayerScriptObject(JSObjectRef obj) { if(obj)JSObjectSetPrivate(obj,nullptr); }
+%#else
+void CleanupTileLayerScriptObject(v8::UniquePersistent<v8::Object>& obj) {
+    if(!obj.IsEmpty()) {
+        auto* isolate=v8::Isolate::GetCurrent();
+        auto value=v8::Local<v8::Object>::New(isolate,obj);
+        if(auto* wrapper=dynamic_cast<TileLayerWrap*>(v8script::safe_unwrap_object_wrap_or_prototype(isolate,value)))wrapper->forgetCppObject();
+        obj.Reset();
+    }
+}
+%#endif
 
 CPP_MANAGED_CONSTRUCTOR_IMPL(TileLayer)
 	return new TileLayer();
@@ -549,3 +522,41 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(TileLayer)
 
 
 } // pdg namespace
+
+/* @pdg-schema
+{
+  "name": "TileInfo",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "tileType": {
+        "type": "number"
+      },
+      "facing": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "TileLayer.getTileTypeAndFacingAt",
+  "value": {
+    "returns": {
+      "schema": "TileInfo"
+    }
+  }
+}
+*/
+
+// @pdg-member {"name":"TileLayer.loadMapData","native_binding":{"adapter":"TileLayer.loadMapData","browser":{"wrapper":{"constraints":{"mapWidth":{"min":0},"mapHeight":{"min":0},"dstX":{"min":0},"dstY":{"min":0}}}},"binding_name":"_loadMapData"}}
+
+
+// @pdg-class {"name":"TileLayer","native_binding":{"browser":{"generate":true,"base":"pdg::SpriteLayer"}}}
+
+// Map byte ownership and collision output parameters still require adapters.
+// @pdg-member {"name":"TileLayer.checkCollision","native_binding":{"browser":{"generate":false}}}
+
+// @pdg-member {"name":"TileLayer.getMapData","native_binding":{"browser":{"generate":false}}}

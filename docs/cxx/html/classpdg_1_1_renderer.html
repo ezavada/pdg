@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -112,14 +112,17 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 
+<p><a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> operations return the renderer by reference for chaining.  
+ <a href="#details">More...</a></p>
+
 <p><code>#include &lt;renderer.h&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Renderer:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpdg_1_1_renderer__inherit__graph.png" border="0" usemap="#a_renderer_inherit__map" loading="lazy" alt="Inheritance graph"/></div>
 <map name="a_renderer_inherit__map" id="a_renderer_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,5,80,31"/>
-<area shape="rect" href="classpdg_1_1_port.html" title=" " alt="" coords="20,79,65,105"/>
+<area shape="rect" title="Drawing operations return the renderer by reference for chaining." alt="" coords="5,5,80,31"/>
+<area shape="rect" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining." alt="" coords="20,79,65,105"/>
 <area shape="poly" title=" " alt="" coords="45,45,45,79,40,78,40,48"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -127,27 +130,29 @@ Inheritance diagram for Renderer:</div>
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a82f5f1b60e836bc86031909251d74c76" id="r_a82f5f1b60e836bc86031909251d74c76"><td class="memItemLeft">virtual&#160;</td><td class="memItemRight"><a class="el" href="#a82f5f1b60e836bc86031909251d74c76">~Renderer</a> ()=default</td></tr>
-<tr class="memitem:a492dd1ec49b6944bd191db386ae97da0" id="r_a492dd1ec49b6944bd191db386ae97da0"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a492dd1ec49b6944bd191db386ae97da0">drawLine</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:a9f917b65a083c0515b89aa5486d92dcb" id="r_a9f917b65a083c0515b89aa5486d92dcb"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a9f917b65a083c0515b89aa5486d92dcb">drawVector</a> (const <a class="el" href="group___graphics.html#gacd7abb9e87eb29fe1b6d677b7e51a814">Vector</a> &amp;v, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
-<tr class="memitem:a223ea829babb2d8c6e3c33c67481fc6c" id="r_a223ea829babb2d8c6e3c33c67481fc6c"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a223ea829babb2d8c6e3c33c67481fc6c">drawSpline</a> (const <a class="el" href="classpdg_1_1_spline.html">Spline</a> &amp;spline, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:a2d51a8ed724dc1c5c7ee04b117ed2515" id="r_a2d51a8ed724dc1c5c7ee04b117ed2515"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a2d51a8ed724dc1c5c7ee04b117ed2515">drawArc</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, float startAngle, float endAngle, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:a08b002499a89b00d231c175dcbf2ffd6" id="r_a08b002499a89b00d231c175dcbf2ffd6"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a08b002499a89b00d231c175dcbf2ffd6">drawBezier</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control1, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control2, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
-<tr class="memitem:a27ea31a3ac3b068a76400be6efa4aac4" id="r_a27ea31a3ac3b068a76400be6efa4aac4"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a27ea31a3ac3b068a76400be6efa4aac4">drawRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:ac31f4ca351189b56aa8b39de94cfe414" id="r_ac31f4ca351189b56aa8b39de94cfe414"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ac31f4ca351189b56aa8b39de94cfe414">drawQuad</a> (const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:aee55eddbaea5d2700375658a46e12dac" id="r_aee55eddbaea5d2700375658a46e12dac"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aee55eddbaea5d2700375658a46e12dac">drawCircle</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
-<tr class="memitem:a1421e218b0aa38bf6d5c39ec7984e7db" id="r_a1421e218b0aa38bf6d5c39ec7984e7db"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a1421e218b0aa38bf6d5c39ec7984e7db">drawPolygon</a> (const <a class="el" href="classpdg_1_1_polygon.html">Polygon</a> &amp;polygon, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:a76606725ac064f153a0feb8b3d03c5ca" id="r_a76606725ac064f153a0feb8b3d03c5ca"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a76606725ac064f153a0feb8b3d03c5ca">drawEllipse</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:ab954b4d34f782dac9c807891e99dc991" id="r_ab954b4d34f782dac9c807891e99dc991"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ab954b4d34f782dac9c807891e99dc991">drawRoundedRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
-<tr class="memitem:a1aa7da0060a5289ac6d9e3513b3ddfc8" id="r_a1aa7da0060a5289ac6d9e3513b3ddfc8"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a1aa7da0060a5289ac6d9e3513b3ddfc8">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:ab7dbcc38dd3ec0e354fc70380bcf3d95" id="r_ab7dbcc38dd3ec0e354fc70380bcf3d95"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ab7dbcc38dd3ec0e354fc70380bcf3d95">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:add47ffdb637c35359325da2a4ac55d4d" id="r_add47ffdb637c35359325da2a4ac55d4d"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#add47ffdb637c35359325da2a4ac55d4d">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:ad59193eea03dbbcbd70d11f0e1934241" id="r_ad59193eea03dbbcbd70d11f0e1934241"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ad59193eea03dbbcbd70d11f0e1934241">drawDrawing</a> (const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;drawing, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:a402f96fbdbbefe4c7a8f6b16870af844" id="r_a402f96fbdbbefe4c7a8f6b16870af844"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a402f96fbdbbefe4c7a8f6b16870af844">drawDrawing</a> (const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;drawing, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:ae8e005e43a2a8c3e165f5c0c6f7278c9" id="r_ae8e005e43a2a8c3e165f5c0c6f7278c9"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ae8e005e43a2a8c3e165f5c0c6f7278c9">drawText</a> (const char *text, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:a34167fbf63a3cd003f119f557fe80253" id="r_a34167fbf63a3cd003f119f557fe80253"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a34167fbf63a3cd003f119f557fe80253">drawText</a> (const char *text, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
-<tr class="memitem:a7d8a023b43352e7b1d93b849e9982cce" id="r_a7d8a023b43352e7b1d93b849e9982cce"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a7d8a023b43352e7b1d93b849e9982cce">drawSphere</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:ad5bfc77d7e2a717ef6251cdd2796165e" id="r_ad5bfc77d7e2a717ef6251cdd2796165e"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ad5bfc77d7e2a717ef6251cdd2796165e">drawLine</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a1a9dfff9e7a8a630e43dc7077036ac8f" id="r_a1a9dfff9e7a8a630e43dc7077036ac8f"><td class="memItemLeft"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a1a9dfff9e7a8a630e43dc7077036ac8f">drawVector</a> (const <a class="el" href="group___graphics.html#gacd7abb9e87eb29fe1b6d677b7e51a814">Vector</a> &amp;v, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a98301ac704e61f6f6fdd57469cc561cb" id="r_a98301ac704e61f6f6fdd57469cc561cb"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a98301ac704e61f6f6fdd57469cc561cb">drawSpline</a> (const <a class="el" href="classpdg_1_1_spline.html">Spline</a> &amp;spline, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:ae913b712619d064140e234a700b627d5" id="r_ae913b712619d064140e234a700b627d5"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ae913b712619d064140e234a700b627d5">drawArc</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, float startAngle, float endAngle, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a8241e22d1a61ff0f7359c14bf94998de" id="r_a8241e22d1a61ff0f7359c14bf94998de"><td class="memItemLeft"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a8241e22d1a61ff0f7359c14bf94998de">drawBezier</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control1, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control2, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a241fd24aa1912f64d73d5a7dc519097e" id="r_a241fd24aa1912f64d73d5a7dc519097e"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a241fd24aa1912f64d73d5a7dc519097e">drawRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:ad3905a284689eda07ede36943c5088cf" id="r_ad3905a284689eda07ede36943c5088cf"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ad3905a284689eda07ede36943c5088cf">drawQuad</a> (const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a55d05138a55ccc8c40d1ca4cd5359ef0" id="r_a55d05138a55ccc8c40d1ca4cd5359ef0"><td class="memItemLeft"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a55d05138a55ccc8c40d1ca4cd5359ef0">drawCircle</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a1f8b6840e9d5f821211e2a96c894d71d" id="r_a1f8b6840e9d5f821211e2a96c894d71d"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a1f8b6840e9d5f821211e2a96c894d71d">drawPolygon</a> (const <a class="el" href="classpdg_1_1_polygon.html">Polygon</a> &amp;polygon, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:af13a15291835080332747a7b17efc61f" id="r_af13a15291835080332747a7b17efc61f"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#af13a15291835080332747a7b17efc61f">drawEllipse</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a91a19f580b445efb3b4601f34cb2dd02" id="r_a91a19f580b445efb3b4601f34cb2dd02"><td class="memItemLeft"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a91a19f580b445efb3b4601f34cb2dd02">drawRoundedRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a45d029832d00edfd47c196a620caa495" id="r_a45d029832d00edfd47c196a620caa495"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a45d029832d00edfd47c196a620caa495">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a323935a07dc322f6223c127b01d46aa1" id="r_a323935a07dc322f6223c127b01d46aa1"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a323935a07dc322f6223c127b01d46aa1">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a038895d68ea732e060336e8a52f0af7d" id="r_a038895d68ea732e060336e8a52f0af7d"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a038895d68ea732e060336e8a52f0af7d">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a515c965b339e25fbe727c91672c73469" id="r_a515c965b339e25fbe727c91672c73469"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a515c965b339e25fbe727c91672c73469">drawDrawing</a> (const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;drawing, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a4b7f904ae128a329a519926b3aef75d1" id="r_a4b7f904ae128a329a519926b3aef75d1"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a4b7f904ae128a329a519926b3aef75d1">drawDrawing</a> (const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;drawing, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:abec3892cf9f827a19baa1640e2a12295" id="r_abec3892cf9f827a19baa1640e2a12295"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#abec3892cf9f827a19baa1640e2a12295">drawText</a> (const char *text, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a05075d67e58c80ecc98941576233f5da" id="r_a05075d67e58c80ecc98941576233f5da"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a05075d67e58c80ecc98941576233f5da">drawText</a> (const char *text, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:a2ab767c5866a32f979070dc004d1497a" id="r_a2ab767c5866a32f979070dc004d1497a"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a2ab767c5866a32f979070dc004d1497a">drawSphere</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
 </table>
-<a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> operations return the renderer by reference for chaining. </p>
+</div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a82f5f1b60e836bc86031909251d74c76" name="a82f5f1b60e836bc86031909251d74c76"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a82f5f1b60e836bc86031909251d74c76">&#9670;&#160;</a></span>~Renderer()</h2>
 
@@ -174,8 +179,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
-<a id="a2d51a8ed724dc1c5c7ee04b117ed2515" name="a2d51a8ed724dc1c5c7ee04b117ed2515"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d51a8ed724dc1c5c7ee04b117ed2515">&#9670;&#160;</a></span>drawArc()</h2>
+<a id="ae913b712619d064140e234a700b627d5" name="ae913b712619d064140e234a700b627d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae913b712619d064140e234a700b627d5">&#9670;&#160;</a></span>drawArc()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -184,7 +189,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawArc </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawArc </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>center</em></span>, </td>
         </tr>
@@ -221,14 +226,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a27b1c0726501e44888d265eb4d1f65bd">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#ad9b33a2d7c674b4f962df534c432f3f5">Port</a>.</p>
 
-<p class="reference">References <a class="el" href="#a08b002499a89b00d231c175dcbf2ffd6">drawBezier()</a>.</p>
+<p class="reference">References <a class="el" href="#a8241e22d1a61ff0f7359c14bf94998de">drawBezier()</a>.</p>
 
 </div>
 </div>
-<a id="a08b002499a89b00d231c175dcbf2ffd6" name="a08b002499a89b00d231c175dcbf2ffd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08b002499a89b00d231c175dcbf2ffd6">&#9670;&#160;</a></span>drawBezier()</h2>
+<a id="a8241e22d1a61ff0f7359c14bf94998de" name="a8241e22d1a61ff0f7359c14bf94998de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8241e22d1a61ff0f7359c14bf94998de">&#9670;&#160;</a></span>drawBezier()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -237,7 +242,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void drawBezier </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawBezier </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>from</em></span>, </td>
         </tr>
@@ -269,14 +274,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="reference">References <a class="el" href="classpdg_1_1_spline.html#a168f754cae47c3adf22ca2e93f74ba88">Spline::addSegment()</a>, and <a class="el" href="#a223ea829babb2d8c6e3c33c67481fc6c">drawSpline()</a>.</p>
+<p class="reference">References <a class="el" href="classpdg_1_1_spline.html#a168f754cae47c3adf22ca2e93f74ba88">Spline::addSegment()</a>, and <a class="el" href="#a98301ac704e61f6f6fdd57469cc561cb">drawSpline()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#a2d51a8ed724dc1c5c7ee04b117ed2515">drawArc()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#ae913b712619d064140e234a700b627d5">drawArc()</a>, and <a class="el" href="classpdg_1_1_port.html#afa8ebda902a039065dc2800579fa8cf5">Port::drawBezier()</a>.</p>
 
 </div>
 </div>
-<a id="aee55eddbaea5d2700375658a46e12dac" name="aee55eddbaea5d2700375658a46e12dac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aee55eddbaea5d2700375658a46e12dac">&#9670;&#160;</a></span>drawCircle()</h2>
+<a id="a55d05138a55ccc8c40d1ca4cd5359ef0" name="a55d05138a55ccc8c40d1ca4cd5359ef0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55d05138a55ccc8c40d1ca4cd5359ef0">&#9670;&#160;</a></span>drawCircle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -285,7 +290,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void drawCircle </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawCircle </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>center</em></span>, </td>
         </tr>
@@ -307,14 +312,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="reference">References <a class="el" href="#a76606725ac064f153a0feb8b3d03c5ca">drawEllipse()</a>.</p>
+<p class="reference">References <a class="el" href="#af13a15291835080332747a7b17efc61f">drawEllipse()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#ac31f4ca351189b56aa8b39de94cfe414">drawQuad()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classpdg_1_1_port.html#a8d8cd9d573bdc72f5d3f56079bd080b8">Port::drawCircle()</a>, and <a class="el" href="#ad3905a284689eda07ede36943c5088cf">drawQuad()</a>.</p>
 
 </div>
 </div>
-<a id="ad59193eea03dbbcbd70d11f0e1934241" name="ad59193eea03dbbcbd70d11f0e1934241"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad59193eea03dbbcbd70d11f0e1934241">&#9670;&#160;</a></span>drawDrawing() <span class="overload">[1/2]</span></h2>
+<a id="a515c965b339e25fbe727c91672c73469" name="a515c965b339e25fbe727c91672c73469"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a515c965b339e25fbe727c91672c73469">&#9670;&#160;</a></span>drawDrawing() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -323,7 +328,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawDrawing </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawDrawing </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>drawing</em></span>, </td>
         </tr>
@@ -345,12 +350,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a2fae74ac318beab87ef8c22a2a7da215">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a2d2f874b0d1d2e3d31fa008a9ccb986c">Port</a>.</p>
 
 </div>
 </div>
-<a id="a402f96fbdbbefe4c7a8f6b16870af844" name="a402f96fbdbbefe4c7a8f6b16870af844"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a402f96fbdbbefe4c7a8f6b16870af844">&#9670;&#160;</a></span>drawDrawing() <span class="overload">[2/2]</span></h2>
+<a id="a4b7f904ae128a329a519926b3aef75d1" name="a4b7f904ae128a329a519926b3aef75d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b7f904ae128a329a519926b3aef75d1">&#9670;&#160;</a></span>drawDrawing() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -359,7 +364,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawDrawing </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawDrawing </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>drawing</em></span>, </td>
         </tr>
@@ -381,12 +386,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a009dbc29af211596eee13404d1adb790">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#aa468198b4cd66e7bef397d58ad5478be">Port</a>.</p>
 
 </div>
 </div>
-<a id="a76606725ac064f153a0feb8b3d03c5ca" name="a76606725ac064f153a0feb8b3d03c5ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76606725ac064f153a0feb8b3d03c5ca">&#9670;&#160;</a></span>drawEllipse()</h2>
+<a id="af13a15291835080332747a7b17efc61f" name="af13a15291835080332747a7b17efc61f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af13a15291835080332747a7b17efc61f">&#9670;&#160;</a></span>drawEllipse()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -395,7 +400,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawEllipse </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawEllipse </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>center</em></span>, </td>
         </tr>
@@ -422,16 +427,16 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a8d541a360397d82464edbf87a48f3686">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a73674b01787db9ac3ae82425120dcfd4">Port</a>.</p>
 
-<p class="reference">References <a class="el" href="#ab954b4d34f782dac9c807891e99dc991">drawRoundedRect()</a>.</p>
+<p class="reference">References <a class="el" href="#a91a19f580b445efb3b4601f34cb2dd02">drawRoundedRect()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#aee55eddbaea5d2700375658a46e12dac">drawCircle()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#a55d05138a55ccc8c40d1ca4cd5359ef0">drawCircle()</a>.</p>
 
 </div>
 </div>
-<a id="a1aa7da0060a5289ac6d9e3513b3ddfc8" name="a1aa7da0060a5289ac6d9e3513b3ddfc8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1aa7da0060a5289ac6d9e3513b3ddfc8">&#9670;&#160;</a></span>drawImage() <span class="overload">[1/3]</span></h2>
+<a id="a45d029832d00edfd47c196a620caa495" name="a45d029832d00edfd47c196a620caa495"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45d029832d00edfd47c196a620caa495">&#9670;&#160;</a></span>drawImage() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -440,7 +445,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawImage </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawImage </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_image.html">Image</a> *</td>          <td class="paramname"><span class="paramname"><em>img</em></span>, </td>
         </tr>
@@ -462,12 +467,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a4dc2d3312ef65347a106b93397113139">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#aabf8b267355f9657e67466709204f613">Port</a>.</p>
 
 </div>
 </div>
-<a id="add47ffdb637c35359325da2a4ac55d4d" name="add47ffdb637c35359325da2a4ac55d4d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add47ffdb637c35359325da2a4ac55d4d">&#9670;&#160;</a></span>drawImage() <span class="overload">[2/3]</span></h2>
+<a id="a038895d68ea732e060336e8a52f0af7d" name="a038895d68ea732e060336e8a52f0af7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a038895d68ea732e060336e8a52f0af7d">&#9670;&#160;</a></span>drawImage() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -476,7 +481,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawImage </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawImage </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_image.html">Image</a> *</td>          <td class="paramname"><span class="paramname"><em>img</em></span>, </td>
         </tr>
@@ -498,12 +503,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a7b4b01414d555ea9edd402b226983704">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#afe585fd6be1ee63f5c6ee07910c568a9">Port</a>.</p>
 
 </div>
 </div>
-<a id="ab7dbcc38dd3ec0e354fc70380bcf3d95" name="ab7dbcc38dd3ec0e354fc70380bcf3d95"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7dbcc38dd3ec0e354fc70380bcf3d95">&#9670;&#160;</a></span>drawImage() <span class="overload">[3/3]</span></h2>
+<a id="a323935a07dc322f6223c127b01d46aa1" name="a323935a07dc322f6223c127b01d46aa1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a323935a07dc322f6223c127b01d46aa1">&#9670;&#160;</a></span>drawImage() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -512,7 +517,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawImage </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawImage </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_image.html">Image</a> *</td>          <td class="paramname"><span class="paramname"><em>img</em></span>, </td>
         </tr>
@@ -534,12 +539,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a38f3cff803f3a8111429c9258e55d633">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#ab031149bf639c197dc3f335e70a9e981">Port</a>.</p>
 
 </div>
 </div>
-<a id="a492dd1ec49b6944bd191db386ae97da0" name="a492dd1ec49b6944bd191db386ae97da0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a492dd1ec49b6944bd191db386ae97da0">&#9670;&#160;</a></span>drawLine()</h2>
+<a id="ad5bfc77d7e2a717ef6251cdd2796165e" name="ad5bfc77d7e2a717ef6251cdd2796165e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5bfc77d7e2a717ef6251cdd2796165e">&#9670;&#160;</a></span>drawLine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -548,7 +553,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawLine </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawLine </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>from</em></span>, </td>
         </tr>
@@ -570,16 +575,16 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a2e7c5b2c4abac4722973456c8cd94fdb">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a8f35f970935591261ba691df18878493">Port</a>.</p>
 
-<p class="reference">References <a class="el" href="#a9f917b65a083c0515b89aa5486d92dcb">drawVector()</a>.</p>
+<p class="reference">References <a class="el" href="#a1a9dfff9e7a8a630e43dc7077036ac8f">drawVector()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#a9f917b65a083c0515b89aa5486d92dcb">drawVector()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#a1a9dfff9e7a8a630e43dc7077036ac8f">drawVector()</a>.</p>
 
 </div>
 </div>
-<a id="a1421e218b0aa38bf6d5c39ec7984e7db" name="a1421e218b0aa38bf6d5c39ec7984e7db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1421e218b0aa38bf6d5c39ec7984e7db">&#9670;&#160;</a></span>drawPolygon()</h2>
+<a id="a1f8b6840e9d5f821211e2a96c894d71d" name="a1f8b6840e9d5f821211e2a96c894d71d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f8b6840e9d5f821211e2a96c894d71d">&#9670;&#160;</a></span>drawPolygon()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -588,7 +593,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawPolygon </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawPolygon </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classpdg_1_1_polygon.html">Polygon</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>polygon</em></span>, </td>
         </tr>
@@ -605,12 +610,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#ad5bd2b908fc24c852fe1f0bf8253c50d">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#aed7e7e341ae3abf6eb19b58e8524645b">Port</a>.</p>
 
 </div>
 </div>
-<a id="ac31f4ca351189b56aa8b39de94cfe414" name="ac31f4ca351189b56aa8b39de94cfe414"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac31f4ca351189b56aa8b39de94cfe414">&#9670;&#160;</a></span>drawQuad()</h2>
+<a id="ad3905a284689eda07ede36943c5088cf" name="ad3905a284689eda07ede36943c5088cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3905a284689eda07ede36943c5088cf">&#9670;&#160;</a></span>drawQuad()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -619,7 +624,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawQuad </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawQuad </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>quad</em></span>, </td>
         </tr>
@@ -636,14 +641,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#ae68b9010f7e5cde8c49bbdd457afd2d5">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a53e437200d7eb0ebf35af08e6ab847a7">Port</a>.</p>
 
-<p class="reference">References <a class="el" href="#aee55eddbaea5d2700375658a46e12dac">drawCircle()</a>.</p>
+<p class="reference">References <a class="el" href="#a55d05138a55ccc8c40d1ca4cd5359ef0">drawCircle()</a>.</p>
 
 </div>
 </div>
-<a id="a27ea31a3ac3b068a76400be6efa4aac4" name="a27ea31a3ac3b068a76400be6efa4aac4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27ea31a3ac3b068a76400be6efa4aac4">&#9670;&#160;</a></span>drawRect()</h2>
+<a id="a241fd24aa1912f64d73d5a7dc519097e" name="a241fd24aa1912f64d73d5a7dc519097e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a241fd24aa1912f64d73d5a7dc519097e">&#9670;&#160;</a></span>drawRect()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -652,7 +657,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawRect </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawRect </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rect</em></span>, </td>
         </tr>
@@ -669,14 +674,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a9f08ff60e04e96b03907650c1a44aa7a">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a1dbb73f0de2f240cd27aa58dd1923a87">Port</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#ab954b4d34f782dac9c807891e99dc991">drawRoundedRect()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#a91a19f580b445efb3b4601f34cb2dd02">drawRoundedRect()</a>.</p>
 
 </div>
 </div>
-<a id="ab954b4d34f782dac9c807891e99dc991" name="ab954b4d34f782dac9c807891e99dc991"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab954b4d34f782dac9c807891e99dc991">&#9670;&#160;</a></span>drawRoundedRect()</h2>
+<a id="a91a19f580b445efb3b4601f34cb2dd02" name="a91a19f580b445efb3b4601f34cb2dd02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91a19f580b445efb3b4601f34cb2dd02">&#9670;&#160;</a></span>drawRoundedRect()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -685,7 +690,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void drawRoundedRect </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawRoundedRect </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rect</em></span>, </td>
         </tr>
@@ -707,14 +712,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="reference">References <a class="el" href="#a27ea31a3ac3b068a76400be6efa4aac4">drawRect()</a>, and <a class="el" href="classpdg_1_1_attributes.html#aa235ffd0e421e918325f4983c6d26ee3">Attributes::roundedCorners()</a>.</p>
+<p class="reference">References <a class="el" href="#a241fd24aa1912f64d73d5a7dc519097e">drawRect()</a>, and <a class="el" href="classpdg_1_1_attributes.html#aa235ffd0e421e918325f4983c6d26ee3">Attributes::roundedCorners()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#a76606725ac064f153a0feb8b3d03c5ca">drawEllipse()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#af13a15291835080332747a7b17efc61f">drawEllipse()</a>, and <a class="el" href="classpdg_1_1_port.html#a6a7d20a3cbcc473ebd8b787fe9a383c9">Port::drawRoundedRect()</a>.</p>
 
 </div>
 </div>
-<a id="a7d8a023b43352e7b1d93b849e9982cce" name="a7d8a023b43352e7b1d93b849e9982cce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d8a023b43352e7b1d93b849e9982cce">&#9670;&#160;</a></span>drawSphere()</h2>
+<a id="a2ab767c5866a32f979070dc004d1497a" name="a2ab767c5866a32f979070dc004d1497a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ab767c5866a32f979070dc004d1497a">&#9670;&#160;</a></span>drawSphere()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -723,7 +728,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawSphere </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawSphere </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>center</em></span>, </td>
         </tr>
@@ -745,12 +750,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#aa8d66bf935879d8892aadd1778620f32">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a86c141133dfe992454ad09bf4457c286">Port</a>.</p>
 
 </div>
 </div>
-<a id="a223ea829babb2d8c6e3c33c67481fc6c" name="a223ea829babb2d8c6e3c33c67481fc6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a223ea829babb2d8c6e3c33c67481fc6c">&#9670;&#160;</a></span>drawSpline()</h2>
+<a id="a98301ac704e61f6f6fdd57469cc561cb" name="a98301ac704e61f6f6fdd57469cc561cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98301ac704e61f6f6fdd57469cc561cb">&#9670;&#160;</a></span>drawSpline()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -759,7 +764,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawSpline </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawSpline </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classpdg_1_1_spline.html">Spline</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>spline</em></span>, </td>
         </tr>
@@ -776,14 +781,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a8b85ccb4ec3d0a7794c539e7cf033956">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a34d79935e215b7299275aef71f610858">Port</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#a08b002499a89b00d231c175dcbf2ffd6">drawBezier()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#a8241e22d1a61ff0f7359c14bf94998de">drawBezier()</a>.</p>
 
 </div>
 </div>
-<a id="ae8e005e43a2a8c3e165f5c0c6f7278c9" name="ae8e005e43a2a8c3e165f5c0c6f7278c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8e005e43a2a8c3e165f5c0c6f7278c9">&#9670;&#160;</a></span>drawText() <span class="overload">[1/2]</span></h2>
+<a id="abec3892cf9f827a19baa1640e2a12295" name="abec3892cf9f827a19baa1640e2a12295"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abec3892cf9f827a19baa1640e2a12295">&#9670;&#160;</a></span>drawText() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -792,7 +797,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawText </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawText </td>
           <td>(</td>
           <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span>, </td>
         </tr>
@@ -814,12 +819,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a7e9407747e144558b2e0c83a50558689">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a5dbdbf514ef1ecf5594ee9e32581f3e5">Port</a>.</p>
 
 </div>
 </div>
-<a id="a34167fbf63a3cd003f119f557fe80253" name="a34167fbf63a3cd003f119f557fe80253"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34167fbf63a3cd003f119f557fe80253">&#9670;&#160;</a></span>drawText() <span class="overload">[2/2]</span></h2>
+<a id="a05075d67e58c80ecc98941576233f5da" name="a05075d67e58c80ecc98941576233f5da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05075d67e58c80ecc98941576233f5da">&#9670;&#160;</a></span>drawText() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -828,7 +833,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawText </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawText </td>
           <td>(</td>
           <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span>, </td>
         </tr>
@@ -850,12 +855,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classpdg_1_1_port.html#a4831d4f11be67fe184ff496aec1729d3">Port</a>.</p>
+<p>Implemented in <a class="el" href="classpdg_1_1_port.html#aa8b828f257e76b3d96dbd724b10f8ff6">Port</a>.</p>
 
 </div>
 </div>
-<a id="a9f917b65a083c0515b89aa5486d92dcb" name="a9f917b65a083c0515b89aa5486d92dcb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f917b65a083c0515b89aa5486d92dcb">&#9670;&#160;</a></span>drawVector()</h2>
+<a id="a1a9dfff9e7a8a630e43dc7077036ac8f" name="a1a9dfff9e7a8a630e43dc7077036ac8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a9dfff9e7a8a630e43dc7077036ac8f">&#9670;&#160;</a></span>drawVector()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -864,7 +869,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void drawVector </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp; drawVector </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#gacd7abb9e87eb29fe1b6d677b7e51a814">Vector</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>, </td>
         </tr>
@@ -881,9 +886,9 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="reference">References <a class="el" href="#a492dd1ec49b6944bd191db386ae97da0">drawLine()</a>, <a class="el" href="classpdg_1_1_offset_t.html#a9a4f74af87a76a4c3dcb729cb0e68f8d">OffsetT&lt; T &gt;::x</a>, and <a class="el" href="classpdg_1_1_offset_t.html#a1cb2b5ea04251d543e49356ef54eb853">OffsetT&lt; T &gt;::y</a>.</p>
+<p class="reference">References <a class="el" href="#ad5bfc77d7e2a717ef6251cdd2796165e">drawLine()</a>, <a class="el" href="classpdg_1_1_offset_t.html#a9a4f74af87a76a4c3dcb729cb0e68f8d">OffsetT&lt; T &gt;::x</a>, and <a class="el" href="classpdg_1_1_offset_t.html#a1cb2b5ea04251d543e49356ef54eb853">OffsetT&lt; T &gt;::y</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#a492dd1ec49b6944bd191db386ae97da0">drawLine()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#ad5bfc77d7e2a717ef6251cdd2796165e">drawLine()</a>, and <a class="el" href="classpdg_1_1_port.html#a6614f100bbd02672eed8ea33df446b3b">Port::drawVector()</a>.</p>
 
 </div>
 </div>

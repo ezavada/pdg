@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -130,11 +130,13 @@ Collaboration diagram for Deserializer:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpdg_1_1_deserializer__coll__graph.png" border="0" usemap="#a_deserializer_coll__map" loading="lazy" alt="Collaboration graph"/></div>
 <map name="a_deserializer_coll__map" id="a_deserializer_coll__map">
-<area shape="rect" title=" " alt="" coords="90,102,180,128"/>
+<area shape="rect" title=" " alt="" coords="174,102,264,128"/>
 <area shape="rect" href="classpdg_1_1_i_deserializer.html" title=" " alt="" coords="5,5,100,31"/>
-<area shape="poly" title=" " alt="" coords="74,40,127,101,122,102,71,45"/>
+<area shape="poly" title=" " alt="" coords="88,37,200,100,196,103,86,42"/>
 <area shape="rect" title=" " alt="" coords="124,5,314,31"/>
-<area shape="poly" title=" " alt="" coords="201,42,148,103,144,99,196,43"/>
+<area shape="poly" title=" " alt="" coords="221,45,222,103,217,100,217,48"/>
+<area shape="rect" title=" " alt="" coords="343,5,452,31"/>
+<area shape="poly" title=" " alt="" coords="392,44,384,65,370,80,346,95,318,106,265,115,264,110,317,100,343,90,367,76,379,62,388,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -175,6 +177,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3f4333a48cff92a9d5d13e68933f919b" id="r_a3f4333a48cff92a9d5d13e68933f919b"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_i_serializable.html">ISerializable</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a3f4333a48cff92a9d5d13e68933f919b">deserialize_obj</a> ()</td></tr>
 <tr class="memdesc:a3f4333a48cff92a9d5d13e68933f919b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserialize a serializable object.  <br /></td></tr>
 <tr class="memitem:a782c0a294b9be2e1dd24c98b621ff41b" id="r_a782c0a294b9be2e1dd24c98b621ff41b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a782c0a294b9be2e1dd24c98b621ff41b">setDataPtr</a> (void *ptr, uint32 ptrSize)</td></tr>
+<tr class="memitem:aff0896c8e51657722c443533ea05c53b" id="r_aff0896c8e51657722c443533ea05c53b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aff0896c8e51657722c443533ea05c53b">setDataCopy</a> (const void *ptr, uint32 ptrSize)</td></tr>
+<tr class="memdesc:aff0896c8e51657722c443533ea05c53b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy input bytes; subsequent source mutations do not affect this reader.  <br /></td></tr>
 <tr class="memitem:a43e0ec855f3a7ebf9f98fbee5321edcf" id="r_a43e0ec855f3a7ebf9f98fbee5321edcf"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a43e0ec855f3a7ebf9f98fbee5321edcf">Deserializer</a> ()</td></tr>
 <tr class="memitem:a3fb0a73fb21a11d28399dc16597c4d38" id="r_a3fb0a73fb21a11d28399dc16597c4d38"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a3fb0a73fb21a11d28399dc16597c4d38">Deserializer</a> (void *ptr, uint32 ptrSize)</td></tr>
 <tr class="memitem:ad138a8438c274612a12eb13470bbef5a" id="r_ad138a8438c274612a12eb13470bbef5a"><td class="memItemLeft">virtual&#160;</td><td class="memItemRight"><a class="el" href="#ad138a8438c274612a12eb13470bbef5a">~Deserializer</a> ()</td></tr>
@@ -214,6 +218,7 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a10f6339a97506d6415570955ba473693" id="r_a10f6339a97506d6415570955ba473693"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a10f6339a97506d6415570955ba473693">mBoolBitOffset</a></td></tr>
 <tr class="memitem:afeb33d2ad8cbbeae9ac2907c7c62eb6f" id="r_afeb33d2ad8cbbeae9ac2907c7c62eb6f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#afeb33d2ad8cbbeae9ac2907c7c62eb6f">mUsingTags</a></td></tr>
 <tr class="memitem:a62a46c2594c3e72894181f0c9242fc5c" id="r_a62a46c2594c3e72894181f0c9242fc5c"><td class="memItemLeft">std::vector&lt; <a class="el" href="classpdg_1_1_i_serializable.html">ISerializable</a> * &gt;&#160;</td><td class="memItemRight"><a class="el" href="#a62a46c2594c3e72894181f0c9242fc5c">mDeserializedInstances</a></td></tr>
+<tr class="memitem:ada01393f42c18cccc98c86477e3395e9" id="r_ada01393f42c18cccc98c86477e3395e9"><td class="memItemLeft">std::vector&lt; uint8 &gt;&#160;</td><td class="memItemRight"><a class="el" href="#ada01393f42c18cccc98c86477e3395e9">mOwnedData</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-inherited" class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -295,6 +300,8 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#a62a46c2594c3e72894181f0c9242fc5c">mDeserializedInstances</a>.</p>
 
 </div>
 </div>
@@ -859,6 +866,29 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="aff0896c8e51657722c443533ea05c53b" name="aff0896c8e51657722c443533ea05c53b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff0896c8e51657722c443533ea05c53b">&#9670;&#160;</a></span>setDataCopy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setDataCopy </td>
+          <td>(</td>
+          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32</td>          <td class="paramname"><span class="paramname"><em>ptrSize</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy input bytes; subsequent source mutations do not affect this reader. </p>
+
+</div>
+</div>
 <a id="a782c0a294b9be2e1dd24c98b621ff41b" name="a782c0a294b9be2e1dd24c98b621ff41b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a782c0a294b9be2e1dd24c98b621ff41b">&#9670;&#160;</a></span>setDataPtr()</h2>
 
@@ -1016,6 +1046,8 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p class="reference">Referenced by <a class="el" href="#ad138a8438c274612a12eb13470bbef5a">~Deserializer()</a>.</p>
+
 </div>
 </div>
 <a id="ac108667ba4dba581345e4a74a956e341" name="ac108667ba4dba581345e4a74a956e341"></a>
@@ -1029,6 +1061,28 @@ Additional Inherited Members</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">uint8 mLastBoolByte</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ada01393f42c18cccc98c86477e3395e9" name="ada01393f42c18cccc98c86477e3395e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada01393f42c18cccc98c86477e3395e9">&#9670;&#160;</a></span>mOwnedData</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;uint8&gt; mOwnedData</td>
         </tr>
       </table>
   </td>

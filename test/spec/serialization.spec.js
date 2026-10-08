@@ -316,6 +316,54 @@ describe("Serialization", function() {
   });
 
   describe("Error Handling", function() {
+    it("preserves ECMAScript integer coercion in serialized values", function() {
+      var inputs = [-1.75, -0.75, 0.75, 4294967297, -4294967297, NaN, Infinity, -Infinity];
+      ['1', '2', 'uint'].forEach(function(kind) {
+        var writer = new pdg.Serializer();
+        inputs.forEach(function(value) { writer['serialize_' + kind](value); });
+        var reader = new pdg.Deserializer();
+        reader.setDataPtr(writer.getDataPtr());
+        inputs.forEach(function(value) {
+          expect(reader['deserialize_' + kind]()).toBe(kind === 'uint' ? value >>> 0 : value | 0);
+        });
+      });
+    });
+    it("uses the same numeric validation rules across script backends", function() {
+      var ranges = [
+        ['serialize_1', -128, 127], ['serialize_1u', 0, 255],
+        ['serialize_2', -32768, 32767], ['serialize_2u', 0, 65535],
+        ['serialize_3u', 0, 16777215], ['serialize_4', -2147483648, 2147483647],
+        ['serialize_4u', 0, 4294967295]
+      ];
+      function rejectsType(method, value) {
+        var error;
+        try { serializer[method](value); } catch (caught) { error = caught; }
+        expect(error ? error.name : method + '(' + String(value) + ') accepted').toBe('TypeError');
+      }
+      ranges.forEach(function(entry) {
+        var method = entry[0], min = entry[1], max = entry[2];
+        expect(function() { serializer[method](min); }).not.toThrow();
+        expect(function() { serializer[method](max); }).not.toThrow();
+        var invalid = [min - 1, max + 1, null, undefined, '1', true];
+        if (method === 'serialize_1' || method === 'serialize_2') {
+          [0.5, NaN, Infinity, -Infinity, 4294967297].forEach(function(value) {
+            expect(function() { serializer[method](value); }).not.toThrow();
+          });
+        } else invalid = invalid.concat([0.5, NaN, Infinity, -Infinity]);
+        invalid.forEach(function(value) { rejectsType(method, value); });
+        expect(function() { serializer[method](); }).toThrow();
+        expect(function() { serializer[method](1, 2); }).toThrow();
+      });
+      ['serialize_uint', 'serialize_f', 'serialize_d', 'serialize_8'].forEach(function(method) {
+        [null, undefined, '1', true].forEach(function(value) { rejectsType(method, value); });
+      });
+      var before = serializer.getDataSize();
+      [NaN, Infinity, -Infinity].forEach(function(value) {
+        expect(function() { serializer.serialize_uint(value); }).not.toThrow();
+      });
+      expect(serializer.getDataSize() - before).toBe(3);
+    });
+
     it("handles null and undefined parameters gracefully", function() {
       expectNullArgumentError(function() {
         serializer.serialize_str(null);
@@ -397,6 +445,22 @@ describe("Serialization", function() {
       expect(ptr2).toBeDefined();
       expect(ptr1.constructor.name).toBe('MemBlock');
       expect(ptr2.constructor.name).toBe('MemBlock');
+    });
+
+    it("serializes color names and packed colors like explicit Color objects", function() {
+      ['blue', 0xff0000ff].forEach(function(input) {
+        var expected = new pdg.Color(input);
+        var writer = new pdg.Serializer();
+        // Size accounting tracks packed boolean bits, so compare fresh counters.
+        expect(writer.sizeof_color(input)).toBe(new pdg.Serializer().sizeof_color(expected));
+        writer.serialize_color(input);
+        var reader = new pdg.Deserializer();
+        reader.setDataPtr(writer.getDataPtr());
+        var actual = reader.deserialize_color();
+        ['red', 'green', 'blue', 'alpha'].forEach(function(component) {
+          expect(actual[component]).toBeCloseTo(expected[component], 5);
+        });
+      });
     });
 
     it("validates deserialized Color objects", function() {
@@ -533,7 +597,7 @@ describe("Serialization", function() {
     });
 
     it("validates deserialized MemBlock objects", function() {
-      var testData = "Test binary data";
+      var testData = new Uint8Array([0, 127, 128, 255]);
       serializer.serialize_mem(testData);
       
       memBlock = serializer.getDataPtr();
@@ -723,7 +787,8 @@ describe("Snapshot resources", function() {
         var image=new pdg.ImageStrip('./data/yinyang.png'); image.setNumFrames(2);
         var a=source.createSprite(), b=source.createSprite();
         a.addFramesImage(image); b.addFramesImage(image); b.setFrame(1);
-        source.setScale(2,3); source.changeScaleTo(4,5,1,pdg.linearTween);source.pauseSchedule();
+        var camera=new pdg.Camera();source.setCamera(camera);
+        camera.setScale(2,3);camera.changeScaleTo(4,5,1,pdg.linearTween);camera.pauseSchedule();
         [pdg.serialization_Complete,pdg.serialization_ExternalReferences].forEach(function(mode) {
           var writer=new pdg.Serializer();writer.setResourceMode(mode);source.serialize(writer);
           var reader=new pdg.Deserializer();reader.setDataPtr(writer.getDataPtr());
@@ -731,10 +796,15 @@ describe("Snapshot resources", function() {
           expect(copy.getNthSprite(0).getFrameCount()).toBe(2);
           expect(copy.getNthSprite(1).getCurrentFrame()).toBe(1);
           expect(copy.getNthSprite(2)).toBe(null);
-          expect(copy.getScale().x).toBe(2);
-          expect(copy.isSchedulePaused()).toBe(true);
-          copy.resumeSchedule();
-          expect(copy.hasScheduledAnimations()).toBe(true); // native owner test steps the restored curve
+          expect(copy.getCamera()).not.toBe(camera);
+          expect(copy.getCamera().getScale().x).toBe(2);
+          expect(copy.getCamera().isSchedulePaused()).toBe(true);
+          copy.getCamera().resumeSchedule();
+          expect(copy.getCamera().hasScheduledAnimations()).toBe(true);
+          copy.getCamera().animate(1);
+          expect(copy.getCamera().getScale().x).toBeCloseTo(4,5);
+          expect(copy.getCamera().getScale().y).toBeCloseTo(5,5);
+          expect(camera.getScale().x).toBe(2); // restored animation is independent
           copy.removeAllSprites();
         });
       } finally { pdg.cleanupLayer(copy);pdg.cleanupLayer(source); }

@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -114,22 +114,26 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4d7524949caf0f7d1bca50cd8e8dc32f" id="r_a4d7524949caf0f7d1bca50cd8e8dc32f"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a4d7524949caf0f7d1bca50cd8e8dc32f">NetClient</a> (object opts=null)</td></tr>
-<tr class="memdesc:a4d7524949caf0f7d1bca50cd8e8dc32f"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor for <a class="el" href="classpdg_1_1_net_client.html" title="a network endpoint that can initiate a connection">NetClient</a>, sets client options  <br /></td></tr>
-<tr class="memitem:aa857a00f6787c73aeb7e547b9f1e5caf" id="r_aa857a00f6787c73aeb7e547b9f1e5caf"><td class="memItemLeft"><a class="el" href="#a4d7524949caf0f7d1bca50cd8e8dc32f">NetClient</a>&#160;</td><td class="memItemRight"><a class="el" href="#aa857a00f6787c73aeb7e547b9f1e5caf">connect</a> (object serverInfo, function callback, string clientKey=&quot;&quot;)</td></tr>
-<tr class="memdesc:aa857a00f6787c73aeb7e547b9f1e5caf"><td class="mdescLeft">&#160;</td><td class="mdescRight">connect to a server for your game  <br /></td></tr>
-<tr class="memitem:a027c614ca15613c112edf56a97f457b0" id="r_a027c614ca15613c112edf56a97f457b0"><td class="memItemLeft"><a class="el" href="#a4d7524949caf0f7d1bca50cd8e8dc32f">NetClient</a>&#160;</td><td class="memItemRight"><a class="el" href="#a027c614ca15613c112edf56a97f457b0">onError</a> (function callback)</td></tr>
+<tr class="memitem:a0ba0209948fb64d150fc17630f926cb3" id="r_a0ba0209948fb64d150fc17630f926cb3"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a0ba0209948fb64d150fc17630f926cb3">NetClient</a> (<a class="el" href="group___structured_data_types.html#structpdg_1_1_net_client_options">NetClientOptions</a> opt=null)</td></tr>
+<tr class="memdesc:a0ba0209948fb64d150fc17630f926cb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor for <a class="el" href="classpdg_1_1_net_client.html" title="a network endpoint that can initiate a connection">NetClient</a>, sets client options  <br /></td></tr>
+<tr class="memitem:abe47c38ddb01b45ba04d9563e8abbe9b" id="r_abe47c38ddb01b45ba04d9563e8abbe9b"><td class="memItemLeft"><a class="el" href="#a0ba0209948fb64d150fc17630f926cb3">NetClient</a>&#160;</td><td class="memItemRight"><a class="el" href="#abe47c38ddb01b45ba04d9563e8abbe9b">connect</a> (<a class="el" href="group___structured_data_types.html#structpdg_1_1_net_server_address">NetServerAddress</a> serverInfo, function callback, string clientKey=&quot;&quot;)</td></tr>
+<tr class="memdesc:abe47c38ddb01b45ba04d9563e8abbe9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">connect to a server for your game  <br /></td></tr>
+<tr class="memitem:a027c614ca15613c112edf56a97f457b0" id="r_a027c614ca15613c112edf56a97f457b0"><td class="memItemLeft"><a class="el" href="#a0ba0209948fb64d150fc17630f926cb3">NetClient</a>&#160;</td><td class="memItemRight"><a class="el" href="#a027c614ca15613c112edf56a97f457b0">onError</a> (function callback)</td></tr>
 <tr class="memdesc:a027c614ca15613c112edf56a97f457b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the callback function that will handle errors  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a206d0aca063acd86a0375d214ec5b7d3" id="r_a206d0aca063acd86a0375d214ec5b7d3"><td class="memItemLeft">boolean&#160;</td><td class="memItemRight"><a class="el" href="#a206d0aca063acd86a0375d214ec5b7d3">connection</a></td></tr>
-<tr class="memdesc:a206d0aca063acd86a0375d214ec5b7d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">reference to the <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a>, or boolean false if not yet connected  <br /></td></tr>
+<tr class="memitem:aaf90243575f21580c1b44b3aabbccb90" id="r_aaf90243575f21580c1b44b3aabbccb90"><td class="memItemLeft">object&#160;</td><td class="memItemRight"><a class="el" href="#aaf90243575f21580c1b44b3aabbccb90">connection</a></td></tr>
+<tr class="memdesc:aaf90243575f21580c1b44b3aabbccb90"><td class="mdescLeft">&#160;</td><td class="mdescRight">reference to the <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a>, or boolean false if not yet connected  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>a network endpoint that can initiate a connection </p>
 <dl class="section note"><dt>Note</dt><dd><b>API Stability: 2 — Evolving</b>. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See <a class="el" href="index.html#api_stability" title="API stability">API stability</a>.</dd></dl>
 <p><a class="el" href="classpdg_1_1_net_client.html" title="a network endpoint that can initiate a connection">NetClient</a> is part of the PDG Engine's custom protocol for games. It handles protocol negotiation and optional connections. It establishes both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server.</p>
+<p>On iOS JavaScriptCore, <a class="el" href="classpdg_1_1_net_client.html" title="a network endpoint that can initiate a connection">NetClient</a> connects to existing PDG TCP/UDP servers using host and port. hasNetwork and hasNetworkClient are true; hasNetworkServer is false and <a class="el" href="classpdg_1_1_net_server.html" title="a network endpoint that can accept incoming connections">NetServer</a> is unavailable. UDP uses the TCP local endpoint; sendDgram() uses TCP until UDP negotiation succeeds, when UDP becomes unavailable, or for serialized messages larger than 1492 bytes. Pass {noDatagram: true} to the constructor to disable UDP.</p>
+<p>Callbacks run on the engine's JavaScript thread. Entering the background closes connections and reports ERR_NETWORK_BACKGROUND through <a class="el" href="#a027c614ca15613c112edf56a97f457b0" title="set the callback function that will handle errors">onError()</a>; onClose() runs when the engine resumes. Reconnect explicitly when the application becomes active. No automatic reconnect occurs. Native TCP/UDP is unencrypted; <a class="el" href="classpdg_1_1_net_connection.html#ac7651ce651d099ea208e881f64f98935" title="Read-only indication that the carrier uses TLS.">NetConnection.secure</a> is false for native transport. iOS also supports WebSocket: pass webSocketUrl or transportPolicy: "websocket-only" to connect to a PDG WebSocket listener. WSS uses the iOS certificate trust store and reports secure as true; ws:// requires secure: false. Custom tls options are unsupported on iOS. WebSocket sendDgram() uses reliable delivery and hasDgram remains false. The server must allow clients without a browser Origin header.</p>
+<p>Desktop, Node and iOS also support WebTransport. Supply webTransportUrl and transportPolicy:"webtransport-required" to require its TLS reliable stream and optional datagrams. Browser auto mode attempts WebTransport before WebSocket. See <a class="el" href="#websocket_client_options" title="websocket_client_options">websocket_client_options</a> for deadlines, fallback and certificate hashes.</p>
+<dl class="section note"><dt>Note</dt><dd>Apps connecting to a server on the local network must supply an NSLocalNetworkUsageDescription in their Info.plist. The OS controls permission.</dd></dl>
 <p><a class="el" href="classpdg_1_1_net_client.html" title="a network endpoint that can initiate a connection">NetClient</a> doesn't actually handle network communication, it only establishes the connection. Once established, it creates <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a> objects you can use to send and receive data.</p>
 <dl class="section warning"><dt>Warning</dt><dd><a class="el" href="classpdg_1_1_net_client.html" title="a network endpoint that can initiate a connection">NetClient</a>, <a class="el" href="classpdg_1_1_net_server.html" title="a network endpoint that can accept incoming connections">NetServer</a>, and <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a> all work together over a custom protocol. Do not attempt to use <a class="el" href="classpdg_1_1_net_client.html" title="a network endpoint that can initiate a connection">NetClient</a> to connect to other kinds of servers, such as HTTP or raw TCP sockets. There are perfectly fine <a href="http://nodejs.org/api/net.html">Net</a> and <a href="http://nodejs.org/api/http.html">HTTP</a> modules built-in to Node.js (and thus to PDG) for that.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a> </dd>
@@ -140,8 +144,8 @@ Public Attributes</h2></td></tr>
 <dd>
 <a href="http://nodejs.org/api/http.html">Node.js HTTP module</a> </dd></dl>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4d7524949caf0f7d1bca50cd8e8dc32f" name="a4d7524949caf0f7d1bca50cd8e8dc32f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d7524949caf0f7d1bca50cd8e8dc32f">&#9670;&#160;</a></span>NetClient()</h2>
+<a id="a0ba0209948fb64d150fc17630f926cb3" name="a0ba0209948fb64d150fc17630f926cb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ba0209948fb64d150fc17630f926cb3">&#9670;&#160;</a></span>NetClient()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -149,7 +153,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">NetClient </td>
           <td>(</td>
-          <td class="paramtype">object</td>          <td class="paramname"><span class="paramname"><em>opts</em></span><span class="paramdefsep"> = </span><span class="paramdefval">null</span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="group___structured_data_types.html#structpdg_1_1_net_client_options">NetClientOptions</a></td>          <td class="paramname"><span class="paramname"><em>opt</em></span><span class="paramdefsep"> = </span><span class="paramdefval">null</span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -163,29 +167,29 @@ Public Attributes</h2></td></tr>
 </ol>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">opts</td><td>a Javascript object with the options above</td></tr>
+    <tr><td class="paramname">opt</td><td>A <a class="el" href="group___structured_data_types.html#structpdg_1_1_net_client_options" title="NetClientOptions.">NetClientOptions</a> record, or null to use the defaults.</td></tr>
   </table>
   </dd>
 </dl>
-<div class="fragment"><div class="line">var myClient = <span class="keyword">new</span> <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.<a class="code hl_class" href="classpdg_1_1_net_client.html">NetClient</a>( {noDatagram = <span class="keyword">true</span>} );</div>
-<div class="ttc" id="aclasspdg_1_1_net_client_html"><div class="ttname"><a href="classpdg_1_1_net_client.html">pdg::NetClient</a></div><div class="ttdoc">a network endpoint that can initiate a connection</div><div class="ttdef"><b>Definition</b> pdg-js.h:2073</div></div>
+<div class="fragment"><div class="line">var myClient = <span class="keyword">new</span> <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.<a class="code hl_class" href="classpdg_1_1_net_client.html">NetClient</a>( {noDatagram: <span class="keyword">true</span>} );</div>
+<div class="ttc" id="aclasspdg_1_1_net_client_html"><div class="ttname"><a href="classpdg_1_1_net_client.html">pdg::NetClient</a></div><div class="ttdoc">a network endpoint that can initiate a connection</div><div class="ttdef"><b>Definition</b> pdg-js.h:1887</div></div>
 <div class="ttc" id="anamespacepdg_html"><div class="ttname"><a href="namespacepdg.html">pdg</a></div><div class="ttdef"><b>Definition</b> pdg-js.h:5</div></div>
 </div><!-- fragment --> 
-<p class="reference">Referenced by <a class="el" href="#aa857a00f6787c73aeb7e547b9f1e5caf">connect()</a>, and <a class="el" href="#a027c614ca15613c112edf56a97f457b0">onError()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#abe47c38ddb01b45ba04d9563e8abbe9b">connect()</a>, and <a class="el" href="#a027c614ca15613c112edf56a97f457b0">onError()</a>.</p>
 
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
-<a id="aa857a00f6787c73aeb7e547b9f1e5caf" name="aa857a00f6787c73aeb7e547b9f1e5caf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa857a00f6787c73aeb7e547b9f1e5caf">&#9670;&#160;</a></span>connect()</h2>
+<a id="abe47c38ddb01b45ba04d9563e8abbe9b" name="abe47c38ddb01b45ba04d9563e8abbe9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe47c38ddb01b45ba04d9563e8abbe9b">&#9670;&#160;</a></span>connect()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#a4d7524949caf0f7d1bca50cd8e8dc32f">NetClient</a> connect </td>
+          <td class="memname"><a class="el" href="#a0ba0209948fb64d150fc17630f926cb3">NetClient</a> connect </td>
           <td>(</td>
-          <td class="paramtype">object</td>          <td class="paramname"><span class="paramname"><em>serverInfo</em></span>, </td>
+          <td class="paramtype"><a class="el" href="group___structured_data_types.html#structpdg_1_1_net_server_address">NetServerAddress</a></td>          <td class="paramname"><span class="paramname"><em>serverInfo</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -201,39 +205,69 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>connect to a server for your game </p>
-<p>establish a connection to a server</p>
-<p>Attempts to connect to the given server, and if it succeeds it invokes your callback with a new <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a> object as the parameter. The If the connection fails, you'll get an error callback if you set one up using the <a class="el" href="#a027c614ca15613c112edf56a97f457b0" title="set the callback function that will handle errors">onError()</a> call.</p>
-<p>An option key is passed in to do authentication if the server requires connection reservations. See <a class="el" href="classpdg_1_1_net_server.html#a043dab23ed00e10c564b4c7e1cf0fcc8" title="make a connection reservation for a client">NetServer.expectClient</a> for more about client reservations.</p>
+<p>Connect to a PDG server and complete its authentication and version handshake.</p>
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>callback:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_net_connect_callback" title="NetConnectCallback">NetConnectCallback</a>.</dd></dl>
+<p>The callback receives one <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a> after the handshake completes. Errors go to <a class="el" href="#a027c614ca15613c112edf56a97f457b0" title="set the callback function that will handle errors">onError()</a>. WebSocket and WebTransport connections carry the same serialized messages as native TCP. sendDgram() uses reliable delivery on WebSocket. Authentication failures close the attempt; they never start another connection automatically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">serverInfo</td><td>an object with host and port that tells us where to find the <a class="el" href="classpdg_1_1_net_server.html" title="a network endpoint that can accept incoming connections">NetServer</a> </td></tr>
-    <tr><td class="paramname">callback</td><td>the connection established handler for this connection </td></tr>
-    <tr><td class="paramname">clientKey</td><td>[optional] the reservation key to send to the server</td></tr>
+    <tr><td class="paramname">serverInfo</td><td>Connection settings in <a class="el" href="#websocket_client_options" title="websocket_client_options">websocket_client_options</a>. </td></tr>
+    <tr><td class="paramname">callback</td><td>Function receiving the established <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a>. </td></tr>
+    <tr><td class="paramname">clientKey</td><td>Optional reservation key sent before protocol negotiation. </td></tr>
   </table>
   </dd>
 </dl>
-<div class="fragment"><div class="line"><span class="comment">// start trying to connect</span></div>
-<div class="line">var myConnection = <span class="keyword">false</span>;</div>
-<div class="line">var myKey = <span class="stringliteral">&#39;23dj3C340efp&#39;</span>;</div>
-<div class="line">myClient.connect( { host: 208.122.0.12, port: 5000 }, function(<a class="code hl_variable" href="#a206d0aca063acd86a0375d214ec5b7d3">connection</a>) {</div>
-<div class="line">    myConnection = <a class="code hl_variable" href="#a206d0aca063acd86a0375d214ec5b7d3">connection</a>;</div>
-<div class="line">}, myKey);</div>
-<div class="line"> </div>
-<div class="line"><span class="comment">// now wait for the connection to happen</span></div>
-<div class="line">var t = <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.tm.onInterval( function() {</div>
-<div class="line">    <span class="keywordflow">if</span> (myConnection) {</div>
-<div class="line">        console.log(<span class="stringliteral">&#39;Got connection to &#39;</span>+myConnection.remoteAddr);</div>
-<div class="line">        t.cancel();  <span class="comment">// stop checking</span></div>
-<div class="line">    }</div>
-<div class="line">}, 100);  <span class="comment">// check every 100 milleseconds</span></div>
-<div class="ttc" id="aclasspdg_1_1_net_client_html_a206d0aca063acd86a0375d214ec5b7d3"><div class="ttname"><a href="#a206d0aca063acd86a0375d214ec5b7d3">pdg::NetClient::connection</a></div><div class="ttdeci">boolean connection</div><div class="ttdoc">reference to the NetConnection, or boolean false if not yet connected</div><div class="ttdef"><b>Definition</b> pdg-js.h:2075</div></div>
-</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="#a027c614ca15613c112edf56a97f457b0" title="set the callback function that will handle errors">onError</a> </dd>
-<dd>
-<a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a> </dd>
-<dd>
-<a class="el" href="classpdg_1_1_net_server.html#a043dab23ed00e10c564b4c7e1cf0fcc8" title="make a connection reservation for a client">NetServer.expectClient</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>This <a class="el" href="classpdg_1_1_net_client.html" title="a network endpoint that can initiate a connection">NetClient</a> for chaining.</dd></dl>
 
-<p class="reference">References <a class="el" href="#a4d7524949caf0f7d1bca50cd8e8dc32f">NetClient()</a>.</p>
+<div class="shared-api-options">
+<p> <a class="anchor" id="websocket_client_options"></a></p><dl class="section user"><dt>Client connection options</dt><dd></dd></dl>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Field  </th><th class="markdownTableHeadNone">Default  </th><th class="markdownTableHeadNone">Meaning  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">host, port  </td><td class="markdownTableBodyNone">Required for native TCP  </td><td class="markdownTableBodyNone">Native server hostname and port. For WebSocket, host may be used to derive the URL.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">transportPolicy  </td><td class="markdownTableBodyNone">"auto"  </td><td class="markdownTableBodyNone">Desktop, Node and iOS preserve TCP unless a web URL is supplied. Browsers try WebTransport, then WebSocket. An explicit webTransportUrl selects WebTransport in native auto mode. "webtransport-required" forbids fallback; "websocket-only" selects WebSocket; "native-only" rejects browser use.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">webSocketUrl  </td><td class="markdownTableBodyNone">Derived  </td><td class="markdownTableBodyNone">Explicit wss:// URL. Native auto mode selects WebSocket when only this web URL is supplied. Browser auto mode derives its initial HTTPS WebTransport URL from this URL when webTransportUrl is omitted.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">webTransportUrl  </td><td class="markdownTableBodyNone">Derived  </td><td class="markdownTableBodyNone">HTTPS WebTransport URL. Derived from host, webPort and webPath, or the browser webSocketUrl. Requires an HTTP/3 WebTransport listener.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">serverCertificateHashes  </td><td class="markdownTableBodyNone">Omitted  </td><td class="markdownTableBodyNone">Optional array of {algorithm:"sha-256", value:Uint8Array or ArrayBuffer} entries, each containing a 32-byte SHA-256 DER certificate digest from a trusted bootstrap. Requires a currently valid EC certificate with validity no longer than 14 days. These hashes authenticate the server certificate; the PDG client key still authenticates the client.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">webTransportTimeout  </td><td class="markdownTableBodyNone">1500  </td><td class="markdownTableBodyNone">Milliseconds allocated to the initial WebTransport attempt in auto mode, within the overall timeout.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">capabilityCacheTimeout  </td><td class="markdownTableBodyNone">30000  </td><td class="markdownTableBodyNone">Milliseconds to cache an unsupported or timed-out WebTransport endpoint. 0 disables caching. The cache is bounded and keyed by endpoint and trust configuration.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">webPort, webPath  </td><td class="markdownTableBodyNone">5443, "/pdg"  </td><td class="markdownTableBodyNone">Derived endpoint is wss://host:webPort/webPath.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">secure  </td><td class="markdownTableBodyNone">true  </td><td class="markdownTableBodyNone">false permits an explicit ws:// development endpoint. HTTPS pages always require wss://.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">timeout  </td><td class="markdownTableBodyNone">5000 for web transports and iOS  </td><td class="markdownTableBodyNone">Overall connection and PDG handshake deadline in milliseconds for web transports. On desktop/Node TCP, applies only when supplied.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">handshakeTimeout  </td><td class="markdownTableBodyNone">timeout or 5000  </td><td class="markdownTableBodyNone">PDG handshake deadline in milliseconds; web transports also respect the remaining overall timeout.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">maxFrameSize  </td><td class="markdownTableBodyNone">1048576  </td><td class="markdownTableBodyNone">Maximum reliable payload size in bytes.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">maxPendingBytes  </td><td class="markdownTableBodyNone">4194304  </td><td class="markdownTableBodyNone">Maximum retained input and pending transport output bytes. WebSocket output overflow reports ERR_BACKPRESSURE; WebTransport overflow reports ERR_BACKPRESSURE; iOS TCP/WebSocket overflow reports ERR_NETWORK_BACKPRESSURE. iOS accepts 1024 to 67108864 bytes and also bounds queued events and writes to 256 each.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">tls  </td><td class="markdownTableBodyNone">Platform defaults  </td><td class="markdownTableBodyNone">Native WebSocket client TLS settings, such as ca for a private certificate authority. WebTransport uses the platform trust store on Apple/Windows and the system CA bundle on Linux, or native tls.caFile for a private CA. Browser TLS uses platform trust. iOS WebSocket rejects custom tls options.  </td></tr>
+</table>
+
+</div>
+<dl class="section note"><dt>Note</dt><dd>The server must permit the page's origin and offer the pdg-net-v1 WebSocket subprotocol. Production endpoints need a trusted certificate and a proxy that forwards WebSocket upgrades. WebTransport requires UDP access to the HTTPS endpoint port. WebSocket uses TCP. Native WebTransport clients have no browser Origin; permit the empty string in the listener allowedOrigins.</dd></dl>
+<p>Auto mode falls back only for unavailable WebTransport, an explicitly unsupported endpoint, or establishment timeout, before the PDG handshake begins. Certificate, pin, authentication, and protocol failures are terminal. Browsers often report opaque failures; these are terminal rather than treated as unsupported. No fallback occurs after a transport has been selected or a session has connected.</p>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line">const client = new pdg.NetClient();</div>
+<div class="line">client.onError(error =&gt; console.error(error.code, error.message));</div>
+<div class="line">client.connect({webSocketUrl: &quot;wss://game.example.com/pdg&quot;}, connection =&gt; {</div>
+<div class="line">    connection.onMessage((message, connection, delivery) =&gt; {</div>
+<div class="line">        console.log(message, delivery, connection.transport);</div>
+<div class="line">    });</div>
+<div class="line">    connection.send({join: &quot;lobby&quot;});</div>
+<div class="line">}, &quot;reservation-key&quot;);</div>
+</div><!-- fragment --> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a>, <a class="el" href="#a027c614ca15613c112edf56a97f457b0" title="set the callback function that will handle errors">onError()</a>, <a class="el" href="classpdg_1_1_net_server.html#a043dab23ed00e10c564b4c7e1cf0fcc8" title="make a connection reservation for a client">NetServer::expectClient()</a> </dd></dl>
+
+<p class="reference">References <a class="el" href="#a0ba0209948fb64d150fc17630f926cb3">NetClient()</a>.</p>
 
 </div>
 </div>
@@ -244,7 +278,7 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#a4d7524949caf0f7d1bca50cd8e8dc32f">NetClient</a> onError </td>
+          <td class="memname"><a class="el" href="#a0ba0209948fb64d150fc17630f926cb3">NetClient</a> onError </td>
           <td>(</td>
           <td class="paramtype">function</td>          <td class="paramname"><span class="paramname"><em>callback</em></span></td><td>)</td>
           <td></td>
@@ -253,7 +287,8 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>set the callback function that will handle errors </p>
-<p>This function will be called whenever a call to <a class="el" href="#aa857a00f6787c73aeb7e547b9f1e5caf" title="connect to a server for your game">connect()</a> fails. The function will be called with a single parameter, a string of the error message.</p>
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>callback:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_net_client_error_callback" title="NetClientErrorCallback">NetClientErrorCallback</a>.</dd></dl>
+<p>This function will be called whenever a call to <a class="el" href="#abe47c38ddb01b45ba04d9563e8abbe9b" title="connect to a server for your game">connect()</a> fails. The function will be called with a single parameter, a string of the error message.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">callback</td><td>the error handling function for this connection</td></tr>
@@ -264,26 +299,30 @@ Public Attributes</h2></td></tr>
 <div class="fragment"><div class="line">myClient.onError( function(msg) {</div>
 <div class="line">    console.log(<span class="stringliteral">&quot;Connection failed: &quot;</span>+msg);</div>
 <div class="line">}</div>
-</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa857a00f6787c73aeb7e547b9f1e5caf" title="connect to a server for your game">connect</a> </dd></dl>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="#abe47c38ddb01b45ba04d9563e8abbe9b" title="connect to a server for your game">connect</a> </dd></dl>
 
-<p class="reference">References <a class="el" href="#a4d7524949caf0f7d1bca50cd8e8dc32f">NetClient()</a>.</p>
+<p class="reference">References <a class="el" href="#a0ba0209948fb64d150fc17630f926cb3">NetClient()</a>.</p>
 
 </div>
 </div>
 <a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
-<a id="a206d0aca063acd86a0375d214ec5b7d3" name="a206d0aca063acd86a0375d214ec5b7d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a206d0aca063acd86a0375d214ec5b7d3">&#9670;&#160;</a></span>connection</h2>
+<a id="aaf90243575f21580c1b44b3aabbccb90" name="aaf90243575f21580c1b44b3aabbccb90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf90243575f21580c1b44b3aabbccb90">&#9670;&#160;</a></span>connection</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">boolean connection</td>
+          <td class="memname">object connection</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>reference to the <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a>, or boolean false if not yet connected </p>
+<dl class="section user"><dt>JavaScript value</dt><dd><code><a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a></code> or <code>false</code>.</dd></dl>
+<p>The property starts as the literal <code>false</code>. After the underlying socket connects, it holds a <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a>. It is not a general boolean flag, and assigning a connection does not by itself mean the PDG protocol handshake has completed. Use the connect callback to know when the connection is ready for application messages.</p>
+<dl class="section note"><dt>Note</dt><dd>A retained connection object is not proof that its socket is still open. Use the connection callbacks to track disconnection and errors.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#abe47c38ddb01b45ba04d9563e8abbe9b" title="connect to a server for your game">NetClient::connect()</a>, <a class="el" href="classpdg_1_1_net_connection.html" title="sends data between two network endpoints">NetConnection</a> </dd></dl>
 
 </div>
 </div>

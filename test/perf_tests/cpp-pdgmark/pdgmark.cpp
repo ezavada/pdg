@@ -23,11 +23,15 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 
 #include "../quick.h"
 
 using namespace pdg;
 perf::Quick gQuick;
+const bool gChangingText = std::getenv("PDG_TEXT_WORKLOAD")
+    && std::strcmp(std::getenv("PDG_TEXT_WORKLOAD"), "changing") == 0;
+unsigned long long gTextSequence = 0;
 
 // Configuration
 const int BASE_OBJECTS = 50;            // Base number of objects to add
@@ -354,13 +358,14 @@ public:
         rotationSpeed = ((rand() / (float)RAND_MAX) - 0.5f) * 0.01f;
         
         int styles[] = {textStyle_Plain, textStyle_Bold, textStyle_Italic};
-        style = styles[rand() % 3];
+        style = gChangingText ? textStyle_Plain : styles[rand() % 3];
         position = pdg::Point(x, y);
         // Retain the fixed text style and draw position; update rotation only.
         attrs.textSize(size).textStyle(style).fillColor(color);
     }
     
     virtual void update() {
+        if (gChangingText) text = "Score " + std::to_string(++gTextSequence);
         rotation += rotationSpeed;
     }
     

@@ -44,7 +44,11 @@
 namespace pdg {
 
 
-std::string MemBlock::getData() const {
+#ifdef __EMSCRIPTEN__
+emscripten::val MemBlock::getData() const {
+#else
+std::span<const char> MemBlock::getData() const {
+#endif
     return getBytes(0, bytes);
 }
 
@@ -86,12 +90,23 @@ MemBlock::~MemBlock() {
   #endif
 }
 
-std::string MemBlock::getBytes(size_t start, size_t len) const {
+#ifdef __EMSCRIPTEN__
+emscripten::val MemBlock::getBytes(size_t start, size_t len) const {
+    const auto data = view();
+    size_t count = start < data.size() ? std::min(len, data.size() - start) : 0;
+    auto result = emscripten::val::global("Uint8Array").new_(count);
+    if (count) result.call<void>("set", emscripten::val(emscripten::typed_memory_view(count,
+        reinterpret_cast<const unsigned char*>(data.data() + start))));
+    return result;
+}
+#else
+std::span<const char> MemBlock::getBytes(size_t start, size_t len) const {
     const auto data = view();
     if (start >= data.size()) return {};
-    const auto slice = data.subspan(start, std::min(len, data.size() - start));
-    return std::string(slice.begin(), slice.end());
+    return data.subspan(start, std::min(len, data.size() - start));
 }
+#endif
+
 
 
 } // end pdg namespace

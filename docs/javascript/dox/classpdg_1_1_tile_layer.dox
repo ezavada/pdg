@@ -15,7 +15,7 @@ Tile sets can contain transparency, either through a transparent color or via an
 
 Tile sets can support tile rotation (facing) or tile flipping (vertical, horizontal, or both). You cannot use both rotation and flipping in the same layer. 
 
-\warning While individual tiles can be rotated, the TileLayer itself cannot. This is a departure from the expected capabilities of SpriteLayers in general, and will be addressed in a future release.
+Tile rendering uses the effective Camera, including rotation, zoom, nonuniform scale and reflection.
 
 Getting the Results you Want
 ----------------------------
@@ -24,10 +24,11 @@ For truly impressive maps, you will rarely use just a single TileLayer. Because 
 
 You can intersperse regular SpriteLayers in between TileLayers to provided animated effects to make your characters move at the right layer (underneath the tree-tops, for example).
 
-Be sure to link together all your layers using SpriteLayer.moveWith().
+Attach a shared Camera to the destination Port or individual layers. Layers inherit their port camera unless explicitly overridden; SpriteLayer.setCameraParallax() can give backgrounds different motion.
 
 \sa defineTileSet
 \sa Image.setTransparentColor
-\sa SpriteLayer.moveWith
+\sa SpriteLayer.setCamera
+\sa SpriteLayer.setCameraParallax
 
 **/ }

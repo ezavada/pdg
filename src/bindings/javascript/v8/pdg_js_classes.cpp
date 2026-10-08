@@ -95,7 +95,7 @@ static v8::Persistent<v8::Object> s_BindingTarget;
 // ========================================================================================
 
 FUNCTION_IMPL(GetConfigManager)
-	METHOD_SIGNATURE("", [object ConfigManager], 0, ()); 
+	METHOD_SIGNATURE("", [object ConfigManager*], 0, ());
     RETURN( ConfigManagerWrap::GetScriptSingletonInstance(isolate) );
     END
 
@@ -104,7 +104,7 @@ FUNCTION_IMPL(GetConfigManager)
 // ========================================================================================
 
 FUNCTION_IMPL(GetLogManager)
-	METHOD_SIGNATURE("", [object LogManager], 0, ()); 
+	METHOD_SIGNATURE("", [object LogManager*], 0, ());
     RETURN( LogManagerWrap::GetScriptSingletonInstance(isolate) );
 END
 
@@ -125,7 +125,6 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(IEventHandler)
 	handler->addRef();
 	return handler;
 	END
-
 
 
 // ========================================================================================
@@ -157,7 +156,7 @@ STATIC_METHOD_IMPL(EventManager, GetDeviceOrientation)
 	RETURN(jsOrientation);
 	END
 FUNCTION_IMPL(GetEventManager)
-	METHOD_SIGNATURE("", [object EventManager], 0, ());
+	METHOD_SIGNATURE("", [object EventManager*], 0, ());
     v8::Local<v8::Object> jsInstance = EventManagerWrap::GetScriptSingletonInstance(isolate);
     EventManager* evtMgr = EventManager::getSingletonInstance();
     evtMgr->mEventEmitterScriptObj.Reset(isolate, jsInstance);
@@ -169,7 +168,7 @@ FUNCTION_IMPL(GetEventManager)
 // ========================================================================================
 
 METHOD_IMPL(ResourceManager, GetImage)
-	METHOD_SIGNATURE("", [object Image], 1, (string imageName));
+	METHOD_SIGNATURE("", [object Image*], 1, (string imageName));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_STRING_ARG(1, imageName);
 	Image* img = self->getImage(imageName);
@@ -182,7 +181,7 @@ METHOD_IMPL(ResourceManager, GetImage)
 	RETURN(obj);
 	END
 METHOD_IMPL(ResourceManager, GetImageStrip)
-	METHOD_SIGNATURE("", [object ImageStrip], 1, (string imageName));
+	METHOD_SIGNATURE("", [object ImageStrip*], 1, (string imageName));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_STRING_ARG(1, imageName);
 	ImageStrip* img = self->getImageStrip(imageName);
@@ -197,7 +196,7 @@ METHOD_IMPL(ResourceManager, GetImageStrip)
 	END
 %#ifndef PDG_NO_SOUND
 METHOD_IMPL(ResourceManager, GetSound)
-	METHOD_SIGNATURE("", [object Sound], 1, (string soundName));
+	METHOD_SIGNATURE("", [object Sound*], 1, (string soundName));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_STRING_ARG(1, soundName);
 	Sound* snd = self->getSound(soundName);
@@ -216,7 +215,7 @@ METHOD_IMPL(ResourceManager, GetSound)
 
 
 FUNCTION_IMPL(GetResourceManager)
-	METHOD_SIGNATURE("", [object ResourceManager], 0, ());
+	METHOD_SIGNATURE("", [object ResourceManager*], 0, ());
     RETURN( ResourceManagerWrap::GetScriptSingletonInstance(isolate) );
     END
 
@@ -253,11 +252,30 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(ISerializable)
 
 // Convert each native wrapper before selecting its ISerializable base. Sprite
 // and Layer use multiple inheritance, so casting an unrelated wrapper is invalid.
+AnimatedBase* V8_GetAnimationTarget(v8::Isolate* isolate, v8::Local<v8::Value> value) {
+    auto* wrapper=v8script::safe_unwrap_object_wrap_or_prototype(isolate,value);
+    if(auto* target=dynamic_cast<TroupeWrap*>(wrapper)) return target->getCppObject();
+%#ifdef PDG_SPRITER_SUPPORT
+    if(auto* target=dynamic_cast<BoneWrap*>(wrapper)) return target->getCppObject();
+%#endif
+    if(auto* target=dynamic_cast<PartWrap*>(wrapper)) return target->getCppObject();
+    if(auto* target=dynamic_cast<SpriteWrap*>(wrapper)) return target->getCppObject();
+    if(auto* target=dynamic_cast<AnimatedAttributesBaseWrap*>(wrapper)) return target->getCppObject();
+    if(auto* target=dynamic_cast<CameraWrap*>(wrapper)) return target->getCppObject();
+    if(auto* target=dynamic_cast<ParticleWrap*>(wrapper)) return target->getCppObject();
+    if(auto* target=dynamic_cast<ParticleEmitterWrap*>(wrapper)) return target->getCppObject();
+    if(auto* target=dynamic_cast<AnimatedBaseWrap*>(wrapper)) return target->getCppObject();
+    return nullptr;
+}
+
 ISerializable* V8_GetSerializable(v8::Isolate* isolate, v8::Local<v8::Value> value) {
     auto* wrapper = v8script::safe_unwrap_object_wrap_or_prototype(isolate, value);
     // Image data and snapshots are available without a rendering backend.
     if (auto* image = dynamic_cast<ImageStripWrap*>(wrapper)) return image->getCppObject();
     if (auto* image = dynamic_cast<ImageWrap*>(wrapper)) return image->getCppObject();
+    if (auto* camera = dynamic_cast<CameraWrap*>(wrapper)) return camera->getCppObject();
+    if (auto* troupe = dynamic_cast<TroupeWrap*>(wrapper)) return troupe->getCppObject();
+    if (auto* animated = dynamic_cast<AnimatedBaseWrap*>(wrapper)) return animated->getCppObject();
     if (auto* sprite = dynamic_cast<SpriteWrap*>(wrapper)) return sprite->getCppObject();
     if (auto* layer = dynamic_cast<TileLayerWrap*>(wrapper)) return static_cast<Serializable<SpriteLayer>*>(layer->getCppObject());
     if (auto* layer = dynamic_cast<SpriteLayerWrap*>(wrapper)) return static_cast<Serializable<SpriteLayer>*>(layer->getCppObject());
@@ -269,7 +287,9 @@ ISerializable* V8_GetSerializable(v8::Isolate* isolate, v8::Local<v8::Value> val
     return nullptr;
 }
 
+// @pdg-member {"name":"Serializer.serialize_obj","native_binding":{"allow_raw_pointers":true}}
 METHOD_IMPL(Serializer, Serialize_obj)
+    METHOD_SIGNATURE("Serializes an ISerializable object", undefined, 1, ([object ISerializable const*] obj));
 	self->mSerializerScriptObj.Reset(isolate, args.This());  // correct for callbacks
     REQUIRE_ARG_COUNT(1);
 	ISerializable* obj = V8_GetSerializable(isolate, ARGV[0]);
@@ -361,7 +381,6 @@ FUNCTION_IMPL(RegisterSerializableObject)
     END
 
 
-
 %#ifndef PDG_NO_GUI
 
 // ========================================================================================
@@ -401,13 +420,12 @@ METHOD_IMPL(GraphicsManager, GetNthSupportedScreenMode);
 	END
 
 FUNCTION_IMPL(GetGraphicsManager)
-	METHOD_SIGNATURE("", [object GraphicsManager], 0, ()); 
+	METHOD_SIGNATURE("", [object GraphicsManager*], 0, ());
     RETURN( GraphicsManagerWrap::GetScriptSingletonInstance(isolate) );
     END
 
 
 %#endif //!PDG_NO_GUI
-
 
 
 %#ifndef PDG_NO_SOUND
@@ -417,7 +435,7 @@ FUNCTION_IMPL(GetGraphicsManager)
 // ========================================================================================
 
 FUNCTION_IMPL(GetSoundManager)
-	METHOD_SIGNATURE("", [object SoundManager], 0, ()); 
+	METHOD_SIGNATURE("", [object SoundManager*], 0, ());
     RETURN( SoundManagerWrap::GetScriptSingletonInstance(isolate) );
     END
 
@@ -429,7 +447,7 @@ FUNCTION_IMPL(GetSoundManager)
 // ========================================================================================
 
 FUNCTION_IMPL(GetFileManager)
-	METHOD_SIGNATURE("", [object FileManager], 0, ()); 
+	METHOD_SIGNATURE("", [object FileManager*], 0, ());
     RETURN( FileManagerWrap::GetScriptSingletonInstance(isolate) );
     END
 
@@ -439,7 +457,7 @@ FUNCTION_IMPL(GetFileManager)
 // ========================================================================================
 
 FUNCTION_IMPL(GetTimerManager)
-	METHOD_SIGNATURE("", [object TimerManager], 0, ()); 
+	METHOD_SIGNATURE("", [object TimerManager*], 0, ());
     v8::Local<v8::Object> jsInstance = TimerManagerWrap::GetScriptSingletonInstance(isolate);
     TimerManager* timMgr = TimerManager::getSingletonInstance();
     timMgr->mEventEmitterScriptObj.Reset(isolate, jsInstance);
@@ -474,8 +492,6 @@ static v8::Persistent<v8::Function> s_CustomScriptEasing[MAX_CUSTOM_EASINGS];
 
 // ========================================================================================
 // ========================================================================================
-
-
 
 
 %#ifndef PDG_NO_GUI
@@ -686,8 +702,11 @@ ScriptEventHandler::ScriptEventHandler(FUNCTION_REF func) {
 bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
   	v8::Local<v8::Object> jsEvent = v8::Object::New(isolate);
-    if (emitter->mEventEmitterScriptObj.IsEmpty())
+    if (emitter->mEventEmitterScriptObj.IsEmpty()) {
         if (auto* particle = dynamic_cast<Particle*>(emitter)) ParticleWrap::NewFromCpp(isolate, particle);
+        else if (auto* scene = dynamic_cast<Scene*>(emitter)) SceneWrap::NewFromCpp(isolate, scene);
+        else if (auto* camera = dynamic_cast<Camera*>(emitter)) CameraWrap::NewFromCpp(isolate, camera);
+    }
     v8::Local<v8::Object> emitter_ = v8::Local<v8::Object>::New(isolate, emitter->mEventEmitterScriptObj);
     v8::Local<v8::Object> obj1_;
     v8::Local<v8::Object> obj2_;
@@ -806,6 +825,12 @@ bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, vo
             OBJECT_SET_PROPERTY_VALUE(jsEvent,STR2VAL("breakAngularSpeed"),NUM2VAL(info->breakAngularSpeed));
             OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("body"), (info->body ? (info->body->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, info->body) : v8::Local<v8::Object>::New(isolate, info->body->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>()));
             OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("referenceBody"), (info->referenceBody ? (info->referenceBody->mPhysicsBodyScriptObj.IsEmpty() ? PhysicsBodyWrap::NewFromCpp(isolate, info->referenceBody) : v8::Local<v8::Object>::New(isolate, info->referenceBody->mPhysicsBodyScriptObj)).As<v8::Value>() : v8::Null(isolate).As<v8::Value>()));
+            break;
+        }
+        case pdg::eventType_ZoomComplete: {
+            const auto* info = static_cast<CameraZoomInfo*>(inEventData);
+            OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("camera"), emitter_);
+            OBJECT_SET_PROPERTY_VALUE(jsEvent, STR2VAL("zoom"), NUM2VAL(info->zoom));
             break;
         }
         case pdg::eventType_ColliderContact: {
@@ -1307,6 +1332,7 @@ bool ScriptAnimationHelper::animate(AnimatedBase* what, double deltaSeconds) noe
         else if (auto* emission = dynamic_cast<ParticleEmitter*>(what)) ParticleEmitterWrap::NewFromCpp(isolate, emission);
         else if (auto* part = dynamic_cast<Part*>(what)) PartWrap::NewFromCpp(isolate, part);
         else if (auto* sprite = dynamic_cast<Sprite*>(what)) SpriteWrap::NewFromCpp(isolate, sprite);
+        else if (auto* camera = dynamic_cast<Camera*>(what)) CameraWrap::NewFromCpp(isolate, camera);
         else AnimatedBaseWrap::NewFromCpp(isolate, what);
     }
     argv[0] = v8::Local<v8::Object>::New(isolate, what->mAnimatedScriptObj);
@@ -1415,43 +1441,25 @@ bool ScriptSpriteDrawHelper::draw(Sprite* sprite, Port* port) noexcept {
 // ========================================================================================
 
 
-v8::Local<v8::Value> EncodeBinary(const void *buf, size_t len) {
-    v8::Isolate* isolate = v8::Isolate::GetCurrent();
-	v8::EscapableHandleScope scope(isolate);
-	const uint8 *cbuf = static_cast<const uint8*>(buf);
-	uint16* twobytebuf = new uint16[len];
-	for (size_t i = 0; i < len; i++) {
-	  twobytebuf[i] = cbuf[i];
-	}
-	v8::Local<v8::String> chunk = v8::String::NewFromTwoByte(isolate, twobytebuf, v8::NewStringType::kNormal, len).ToLocalChecked();
-	delete [] twobytebuf;
-	return scope.Escape(chunk);
+v8::Local<v8::Value> MakeUint8Array(const void* data, size_t size) {
+    auto* isolate = v8::Isolate::GetCurrent();
+    auto buffer = v8::ArrayBuffer::New(isolate, size);
+    if (size) std::memcpy(buffer->Data(), data, size);
+    return v8::Uint8Array::New(buffer, 0, size);
 }
 
+bool IsUint8Array(v8::Local<v8::Value> value) { return value->IsUint8Array(); }
 
-// Returns number of bytes written. 
-// call free on the pointer returned when you are done with it
-void* DecodeBinary(v8::Local<v8::Value> val, size_t* outLen) {
-	v8::Isolate* isolate = v8::Isolate::GetCurrent();
-	v8::Local<v8::String> str = val->ToString(isolate->GetCurrentContext()).ToLocalChecked();
-	size_t buflen = str->Length();
-	if (outLen) {
-		*outLen = buflen;
-	}
-
-	uint16_t * twobytebuf = new uint16_t[buflen];
-	str->WriteV2(isolate, 0, static_cast<uint32_t>(buflen), twobytebuf);
-
-	char* buf = (char*)std::malloc(buflen);
-	for (size_t i = 0; i < buflen; i++) {
-		unsigned char* bp = reinterpret_cast<unsigned char*>(&twobytebuf[i]);
-		buf[i] = *bp;
-	}
-	delete [] twobytebuf;
-	return buf;
+// Borrow only for the synchronous native call; never retain this pointer.
+bool GetUint8ArrayData(v8::Local<v8::Value> value, const uint8*& data, size_t& size) {
+    if (!value->IsUint8Array()) return false;
+    auto array = value.As<v8::Uint8Array>();
+    auto buffer = array->Buffer();
+    if (buffer->IsSharedArrayBuffer() || buffer->WasDetached()) return false;
+    size = array->ByteLength();
+    data = size ? static_cast<const uint8*>(buffer->Data()) + array->ByteOffset() : nullptr;
+    return true;
 }
-
-
 
 // =========================  easing functions =============================
 
@@ -1524,6 +1532,20 @@ FUNCTION_IMPL(RegisterEasingFunction)
 END
 
 
+FUNCTION_IMPL(DeleteAnimationScript)
+    REQUIRE_ARG_COUNT(1);
+    REQUIRE_STRING_ARG(1, name);
+    try { const bool removed=AnimatedBase::deleteScript(name); RETURN_BOOL(removed); }
+    catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); }
+END
+
+FUNCTION_IMPL(DefineAnimationScript)
+    REQUIRE_ARG_COUNT(1);
+    REQUIRE_STRING_ARG(1, name);
+    try { auto* builder=&AnimatedBase::defineScript(name); RETURN_CPP_OBJECT(builder, AnimationScript); }
+    catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); }
+END
+
 FUNCTION_IMPL(FinishedScriptSetup)
 	scriptSetupCompleted();  // let the application do anything further it needs to
 	NO_RETURN;
@@ -1579,7 +1601,15 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CLASS(TimerManager);
 	INIT_CLASS(IAnimationHelper);
 	INIT_CLASS(AnimatedBase);
+    INIT_CLASS(AnimationScript);
+    INIT_CLASS(Troupe);
 	INIT_CLASS(Part);
+%#ifdef PDG_SPRITER_SUPPORT
+    INIT_CLASS(Bone);
+%#endif
+    INIT_CLASS(CollisionQueryBuffer);
+    INIT_CLASS(Scene);
+    INIT_CLASS(Camera);
     INIT_CLASS(Particle);
     INIT_CLASS(ParticleEmitter);
     INIT_CLASS(PhysicsBody);
@@ -1629,6 +1659,8 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_FUNCTION("setSerializationDebugMode", SetSerializationDebugMode);
 
     INIT_FUNCTION("registerEasingFunction", RegisterEasingFunction);
+    INIT_FUNCTION("_defineAnimationScript", DefineAnimationScript);
+    INIT_FUNCTION("_deleteAnimationScript", DeleteAnimationScript);
     
     INIT_FUNCTION("getFileManager", GetFileManager);
     INIT_FUNCTION("getLogManager", GetLogManager);
@@ -1681,6 +1713,21 @@ void initBindings(v8::Local<v8::Object> target) {
     INIT_CONSTANT("colliderSource_Animation", colliderSource_Animation);
     INIT_CONSTANT("frameCollider_Bounds", frameCollider_Bounds);
     INIT_CONSTANT("frameCollider_AlphaMask", frameCollider_AlphaMask);
+    INIT_CONSTANT("eventType_ZoomComplete", eventType_ZoomComplete);
+    INIT_CONSTANT("camera_Crossfade", camera_Crossfade);
+    INIT_CONSTANT("camera_WipeLeft", camera_WipeLeft);
+    INIT_CONSTANT("camera_WipeRight", camera_WipeRight);
+    INIT_CONSTANT("camera_WipeUp", camera_WipeUp);
+    INIT_CONSTANT("camera_WipeDown", camera_WipeDown);
+    INIT_CONSTANT("camera_LumaFade", camera_LumaFade);
+    INIT_CONSTANT("camera_WhipLeft", camera_WhipLeft);
+    INIT_CONSTANT("camera_WhipRight", camera_WhipRight);
+    INIT_CONSTANT("camera_WhipUp", camera_WhipUp);
+    INIT_CONSTANT("camera_WhipDown", camera_WhipDown);
+    INIT_CONSTANT("matchSource", matchSource);
+    INIT_CONSTANT("matchSourceAndSize", matchSourceAndSize);
+    INIT_CONSTANT("matchTarget", matchTarget);
+    INIT_CONSTANT("matchTargetAndSize", matchTargetAndSize);
     INIT_CONSTANT("eventType_ColliderContact", eventType_ColliderContact);
     INIT_CONSTANT("eventType_ParticleBreak", eventType_ParticleBreak);
 	INIT_CONSTANT("eventType_SpriteBreak", eventType_SpriteBreak);
@@ -1782,6 +1829,7 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CONSTANT("type_Image", type_Image);
 	INIT_CONSTANT("type_ImageStrip", type_ImageStrip);
 	INIT_CONSTANT("type_Drawing", type_Drawing);
+	INIT_CONSTANT("type_Text", type_Text);
 
 	INIT_CONSTANT("gradientType_None", gradientType_None);
 	INIT_CONSTANT("gradientType_Linear", gradientType_Linear);
@@ -1936,7 +1984,6 @@ void initBindings(v8::Local<v8::Object> target) {
 	INIT_CONSTANT("action_PreAnimateLayer", SpriteLayer::action_PreAnimateLayer);
 	INIT_CONSTANT("action_PostAnimateLayer", SpriteLayer::action_PostAnimateLayer);
 	INIT_CONSTANT("action_AnimationComplete", SpriteLayer::action_AnimationComplete);
-	INIT_CONSTANT("action_ZoomComplete", SpriteLayer::action_ZoomComplete);
 	INIT_CONSTANT("action_LayerFadeInComplete", SpriteLayer::action_FadeInComplete);
 	INIT_CONSTANT("action_LayerFadeOutComplete", SpriteLayer::action_FadeOutComplete);
 
@@ -2070,3 +2117,1711 @@ extern "C" void pdg_LibContainerDoIdle() {
 	}
 	)
 }
+
+/* @pdg-member
+{
+  "name": "IEventHandler.IEventHandler",
+  "type": "constructor",
+  "params": [
+    {
+      "name": "callback",
+      "type": "function NativeEventCallback"
+    }
+  ],
+  "returns": "object IEventHandler",
+  "brief": "Wrap a synchronous event callback returning a boolean."
+}
+*/
+
+/* @pdg-member
+{
+  "name": "IAnimationHelper.IAnimationHelper",
+  "type": "constructor",
+  "params": [
+    {
+      "name": "callback",
+      "type": "function AnimationHelperCallback"
+    }
+  ],
+  "returns": "object IAnimationHelper",
+  "brief": "Wrap an animation helper callback."
+}
+*/
+
+/* @pdg-member
+{
+  "name": "ISpriteDrawHelper.ISpriteDrawHelper",
+  "type": "constructor",
+  "params": [
+    {
+      "name": "callback",
+      "type": "function SpriteDrawCallback"
+    }
+  ],
+  "returns": "object ISpriteDrawHelper",
+  "brief": "Wrap a sprite drawing callback."
+}
+*/
+
+/* @pdg-member
+{
+  "name": "ISerializable.ISerializable",
+  "type": "constructor",
+  "params": [
+    {
+      "name": "getSerializedSize",
+      "type": "function SerializedSizeCallback"
+    },
+    {
+      "name": "serialize",
+      "type": "function SerializeCallback"
+    },
+    {
+      "name": "deserialize",
+      "type": "function DeserializeCallback"
+    },
+    {
+      "name": "getMyClassTag",
+      "type": "function ClassTagCallback"
+    }
+  ],
+  "returns": "object ISerializable",
+  "brief": "Wrap serialization callbacks."
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "Event",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "EventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "Event"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "StartupEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "startupReason": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "StartupEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "StartupEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ShutdownEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "exitReason": {
+        "type": "number"
+      },
+      "exitCode": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ShutdownEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "ShutdownEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "TimerEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "id": {
+        "type": "number"
+      },
+      "millisec": {
+        "type": "number"
+      },
+      "msElapsed": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "TimerEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "TimerEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "KeyEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "keyCode": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "KeyEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "KeyEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "KeyPressEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "shift": {
+        "type": "boolean"
+      },
+      "ctrl": {
+        "type": "boolean"
+      },
+      "alt": {
+        "type": "boolean"
+      },
+      "meta": {
+        "type": "boolean"
+      },
+      "unicode": {
+        "type": "number"
+      },
+      "isRepeating": {
+        "type": "boolean"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "KeyPressEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "KeyPressEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "MouseEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "shift": {
+        "type": "boolean"
+      },
+      "ctrl": {
+        "type": "boolean"
+      },
+      "alt": {
+        "type": "boolean"
+      },
+      "meta": {
+        "type": "boolean"
+      },
+      "mousePos": {
+        "type": "object Point"
+      },
+      "lastClickPos": {
+        "type": "object Point"
+      },
+      "leftButton": {
+        "type": "boolean"
+      },
+      "rightButton": {
+        "type": "boolean"
+      },
+      "buttonNumber": {
+        "type": "number"
+      },
+      "lastClickElapsed": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "MouseEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "MouseEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ScrollWheelEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "shift": {
+        "type": "boolean"
+      },
+      "ctrl": {
+        "type": "boolean"
+      },
+      "alt": {
+        "type": "boolean"
+      },
+      "meta": {
+        "type": "boolean"
+      },
+      "horizDelta": {
+        "type": "number"
+      },
+      "vertDelta": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ScrollWheelEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "ScrollWheelEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "MouseTrackingEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "shift": {
+        "type": "boolean"
+      },
+      "ctrl": {
+        "type": "boolean"
+      },
+      "alt": {
+        "type": "boolean"
+      },
+      "meta": {
+        "type": "boolean"
+      },
+      "mousePos": {
+        "type": "object Point"
+      },
+      "lastClickPos": {
+        "type": "object Point"
+      },
+      "leftButton": {
+        "type": "boolean"
+      },
+      "rightButton": {
+        "type": "boolean"
+      },
+      "buttonNumber": {
+        "type": "number"
+      },
+      "lastClickElapsed": {
+        "type": "number"
+      },
+      "trackingRef": {
+        "type": "number"
+      }
+    },
+    "description": "Browser mouse tracking payload; the native V8 converter does not deliver these events."
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "MouseTrackingEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "MouseTrackingEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "PortDrawEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "port": {
+        "type": "object Port"
+      },
+      "frameNum": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "PortDrawEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "PortDrawEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "PortResizeEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "port": {
+        "type": "object Port"
+      },
+      "screenPos": {
+        "type": "number"
+      },
+      "oldScreenPos": {
+        "type": "number"
+      },
+      "oldWidth": {
+        "type": "number"
+      },
+      "oldHeight": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "PortResizeEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "PortResizeEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SoundEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "eventCode": {
+        "type": "number"
+      },
+      "sound": {
+        "type": "object Sound"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SoundEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SoundEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "CameraZoomEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "camera": {
+        "type": "object Camera"
+      },
+      "zoom": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "CameraZoomEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "CameraZoomEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteAnimationEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "action": {
+        "type": "number"
+      },
+      "actingSprite": {
+        "type": "object Sprite",
+        "nullable": true
+      },
+      "inLayer": {
+        "type": "object SpriteLayer",
+        "nullable": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteAnimationEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SpriteAnimationEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteRecoveryEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "action": {
+        "type": "number"
+      },
+      "actingSprite": {
+        "type": "object Sprite",
+        "nullable": true
+      },
+      "inLayer": {
+        "type": "object SpriteLayer",
+        "nullable": true
+      },
+      "id": {
+        "type": "number"
+      },
+      "bone": {
+        "type": "number"
+      },
+      "wholeRig": {
+        "type": "boolean"
+      },
+      "includeDescendants": {
+        "type": "boolean"
+      },
+      "mode": {
+        "type": "number"
+      },
+      "bodyCount": {
+        "type": "number"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteRecoveryEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SpriteRecoveryEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteLayerEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "action": {
+        "type": "number"
+      },
+      "actingLayer": {
+        "type": "object SpriteLayer",
+        "nullable": true
+      },
+      "millisec": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteLayerEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SpriteLayerEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteTouchEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "shift": {
+        "type": "boolean"
+      },
+      "ctrl": {
+        "type": "boolean"
+      },
+      "alt": {
+        "type": "boolean"
+      },
+      "meta": {
+        "type": "boolean"
+      },
+      "mousePos": {
+        "type": "object Point"
+      },
+      "lastClickPos": {
+        "type": "object Point"
+      },
+      "leftButton": {
+        "type": "boolean"
+      },
+      "rightButton": {
+        "type": "boolean"
+      },
+      "buttonNumber": {
+        "type": "number"
+      },
+      "lastClickElapsed": {
+        "type": "number"
+      },
+      "touchType": {
+        "type": "number"
+      },
+      "touchedSprite": {
+        "type": "object Sprite"
+      },
+      "inLayer": {
+        "type": "object SpriteLayer"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteTouchEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SpriteTouchEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteCollisionEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "action": {
+        "type": "number"
+      },
+      "actingSprite": {
+        "type": "object Sprite",
+        "nullable": true
+      },
+      "inLayer": {
+        "type": "object SpriteLayer",
+        "nullable": true
+      },
+      "targetSprite": {
+        "type": "object Sprite",
+        "optional": true
+      },
+      "normal": {
+        "type": "object Vector"
+      },
+      "impulse": {
+        "type": "object Vector"
+      },
+      "force": {
+        "type": "number"
+      },
+      "arbiter": {
+        "type": "object CpArbiter",
+        "optional": true
+      },
+      "isFirstContact": {
+        "type": "boolean",
+        "optional": true
+      },
+      "collisionName": {
+        "type": "string",
+        "nullable": true,
+        "optional": true
+      },
+      "withCollisionName": {
+        "type": "string",
+        "nullable": true,
+        "optional": true
+      },
+      "kineticEnergy": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteCollisionEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SpriteCollisionEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ColliderContactEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "collider": {
+        "type": "object Collider"
+      },
+      "other": {
+        "type": "object Collider"
+      },
+      "shape": {
+        "type": "number"
+      },
+      "otherShape": {
+        "type": "number"
+      },
+      "phase": {
+        "type": "number"
+      },
+      "penetration": {
+        "type": "number"
+      },
+      "point": {
+        "type": "object Point"
+      },
+      "normal": {
+        "type": "object Vector"
+      },
+      "impulse": {
+        "type": "object Vector"
+      },
+      "sensor": {
+        "type": "boolean"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ColliderContactEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "ColliderContactEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ParticleBreakEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "angularSpeed": {
+        "type": "number"
+      },
+      "breakAngularSpeed": {
+        "type": "number"
+      },
+      "body": {
+        "type": "object PhysicsBody",
+        "nullable": true
+      },
+      "referenceBody": {
+        "type": "object PhysicsBody",
+        "nullable": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ParticleBreakEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "ParticleBreakEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteBreakEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "action": {
+        "type": "number"
+      },
+      "actingSprite": {
+        "type": "object Sprite",
+        "nullable": true
+      },
+      "inLayer": {
+        "type": "object SpriteLayer",
+        "nullable": true
+      },
+      "targetSprite": {
+        "type": "object Sprite",
+        "nullable": true
+      },
+      "impulse": {
+        "type": "number"
+      },
+      "force": {
+        "type": "number"
+      },
+      "breakForce": {
+        "type": "number"
+      },
+      "reason": {
+        "type": "number"
+      },
+      "angularSpeed": {
+        "type": "number"
+      },
+      "breakAngularSpeed": {
+        "type": "number"
+      },
+      "body": {
+        "type": "object PhysicsBody",
+        "nullable": true
+      },
+      "referenceBody": {
+        "type": "object PhysicsBody",
+        "nullable": true
+      },
+      "part": {
+        "type": "object Part",
+        "nullable": true
+      },
+      "joint": {
+        "type": "object CpConstraint",
+        "nullable": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteBreakEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SpriteBreakEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteTriggerEvent",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "action": {
+        "type": "number"
+      },
+      "actingSprite": {
+        "type": "object Sprite",
+        "nullable": true
+      },
+      "inLayer": {
+        "type": "object SpriteLayer",
+        "nullable": true
+      },
+      "triggerName": {
+        "type": "string"
+      },
+      "clipName": {
+        "type": "string"
+      },
+      "entityName": {
+        "type": "string"
+      },
+      "timeSeconds": {
+        "type": "number"
+      },
+      "offsetSeconds": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteTriggerEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SpriteTriggerEvent"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationHelperCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "animated",
+        "type": "object Animated"
+      },
+      {
+        "name": "deltaSeconds",
+        "type": "number"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteDrawCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "sprite",
+        "type": "object Sprite"
+      },
+      {
+        "name": "port",
+        "type": "object Port"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SerializedSizeCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "serializer",
+        "type": "object Serializer"
+      }
+    ],
+    "returns": {
+      "type": "number"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SerializeCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "serializer",
+        "type": "object Serializer"
+      }
+    ],
+    "returns": {
+      "type": "void"
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "DeserializeCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "deserializer",
+        "type": "object Deserializer"
+      }
+    ],
+    "returns": {
+      "type": "void"
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ClassTagCallback",
+  "value": {
+    "kind": "callback",
+    "params": [],
+    "returns": {
+      "type": "number"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SerializableFactory",
+  "value": {
+    "kind": "constructor",
+    "params": [],
+    "returns": {
+      "type": "object ISerializable"
+    },
+    "description": "A no-argument constructor returning an ISerializable instance."
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "EasingCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "elapsed",
+        "type": "number"
+      },
+      {
+        "name": "begin",
+        "type": "number"
+      },
+      {
+        "name": "change",
+        "type": "number"
+      },
+      {
+        "name": "duration",
+        "type": "number"
+      }
+    ],
+    "returns": {
+      "type": "number"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.registerSerializableClass",
+  "value": {
+    "params": {
+      "klass": {
+        "schema": "SerializableFactory"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.registerEasingFunction",
+  "value": {
+    "params": {
+      "easingFunc": {
+        "schema": "EasingCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "DeviceOrientation",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "roll": {
+        "type": "number"
+      },
+      "pitch": {
+        "type": "number"
+      },
+      "yaw": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "EventManager.getDeviceOrientation",
+  "value": {
+    "returns": {
+      "schema": "DeviceOrientation"
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "ScreenMode",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "width": {
+        "type": "number"
+      },
+      "height": {
+        "type": "number"
+      },
+      "depth": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "CurrentScreenMode",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "maxWindowRect": {
+        "type": "object Rect"
+      }
+    },
+    "extends": [
+      "ScreenMode"
+    ]
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "GraphicsManager.getCurrentScreenMode",
+  "value": {
+    "returns": {
+      "schema": "CurrentScreenMode"
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "GraphicsManager.getNthSupportedScreenMode",
+  "value": {
+    "returns": {
+      "schema": "ScreenMode"
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "EventMap",
+  "value": {
+    "kind": "event_map",
+    "entries": {
+      "eventType_Shutdown": {
+        "schema": "ShutdownEvent"
+      },
+      "eventType_Timer": {
+        "schema": "TimerEvent"
+      },
+      "eventType_KeyDown": {
+        "schema": "KeyEvent"
+      },
+      "eventType_KeyUp": {
+        "schema": "KeyEvent"
+      },
+      "eventType_KeyPress": {
+        "schema": "KeyPressEvent"
+      },
+      "eventType_MouseDown": {
+        "schema": "MouseEvent"
+      },
+      "eventType_MouseUp": {
+        "schema": "MouseEvent"
+      },
+      "eventType_MouseMove": {
+        "schema": "MouseEvent"
+      },
+      "eventType_ScrollWheel": {
+        "schema": "ScrollWheelEvent"
+      },
+      "eventType_PortDraw": {
+        "schema": "PortDrawEvent"
+      },
+      "eventType_PortResized": {
+        "schema": "PortResizeEvent"
+      },
+      "eventType_SoundEvent": {
+        "schema": "SoundEvent"
+      },
+      "eventType_SpriteAnimate": {
+        "schema": "SpriteAnimationEvent"
+      },
+      "eventType_SpriteLayer": {
+        "schema": "SpriteLayerEvent"
+      },
+      "eventType_SpriteTouch": {
+        "schema": "SpriteTouchEvent"
+      },
+      "eventType_SpriteCollide": {
+        "schema": "SpriteCollisionEvent"
+      },
+      "eventType_SpriteBreak": {
+        "schema": "SpriteBreakEvent"
+      },
+      "eventType_SpriteTriggerEvent": {
+        "schema": "SpriteTriggerEvent"
+      },
+      "eventType_ParticleBreak": {
+        "schema": "ParticleBreakEvent"
+      },
+      "eventType_ColliderContact": {
+        "schema": "ColliderContactEvent"
+      },
+      "eventType_ZoomComplete": {
+        "schema": "CameraZoomEvent"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "NativeEventCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "Event"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "IEventHandler.IEventHandler",
+  "value": {
+    "params": {
+      "callback": {
+        "schema": "NativeEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteTouchNotification",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "emitter": {
+        "type": "object EventEmitter"
+      },
+      "eventType": {
+        "type": "number"
+      },
+      "touchType": {
+        "type": "number"
+      },
+      "touchedSprite": {
+        "type": "object Sprite"
+      },
+      "inLayer": {
+        "type": "object SpriteLayer"
+      }
+    },
+    "description": "Touch convenience handlers expose the touched sprite, layer and touch type."
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SpriteTouchNotificationCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "SpriteTouchNotification"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+// @pdg-member {"name":"GraphicsManager.getCurrentScreenMode","native_binding":{"adapter":"browser.emscriptenGraphicsGetCurrentScreenMode"}}
+
+// @pdg-member {"name":"GraphicsManager.getNthSupportedScreenMode","native_binding":{"adapter":"browser.emscriptenGraphicsGetNthSupportedScreenMode"}}
+
+// @pdg-member {"name":"ResourceManager.getSound","native_binding":{"browser":{"guard":"!PDG_NO_SOUND"},"adapter":"browser.emscriptenResourceGetSound","allow_raw_pointers":true,"binding_name":"_getSound"}}

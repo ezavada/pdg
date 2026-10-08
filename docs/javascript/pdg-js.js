@@ -3,44 +3,214 @@
 
 var pdg = {
 
+    action_AnimationBlendComplete : 15,
+    action_AnimationComplete : 47,
+    action_AnimationEnd : 9,
+    action_AnimationLoop : 8,
+    action_AnimationPhysicsRecoveryComplete : 17,
+    action_AnimationStart : 44,
+    action_BodyBreak : 16,
+    action_CollideSprite : 0,
+    action_CollideWall : 1,
+    action_DrawPortComplete : 43,
+    action_ErasePort : 40,
+    action_ExitLayer : 4,
+    action_FadeComplete : 10,
+    action_FadeInComplete : 11,
+    action_FadeOutComplete : 12,
+    action_JointBreak : 13,
+    action_LayerFadeInComplete : 49,
+    action_LayerFadeOutComplete : 50,
+    action_Offscreen : 2,
+    action_Onscreen : 3,
+    action_PostAnimateLayer : 46,
+    action_PostDrawLayer : 42,
+    action_PreAnimateLayer : 45,
+    action_PreDrawLayer : 41,
     all_events : 0,
-    eventType_Shutdown : 2,
-    eventType_Timer : 3,
+    all_Frames : 0,
+    animate_Bidirectional : 2,
+    animate_EndToStart : 1,
+    animate_Looping : 4,
+    animate_NoLooping : 0,
+    animate_StartToEnd : 0,
+    animate_Unidirectional : 0,
+    animationBinding_Box : 2,
+    animationBinding_Image : 0,
+    animationBinding_Point : 1,
+    animationBody_Dynamic : 0,
+    animationBody_Kinematic : 1,
+    animationDebug_All : 7,
+    animationDebug_Bones : 1,
+    animationDebug_Boxes : 4,
+    animationDebug_None : 0,
+    animationDebug_Sockets : 2,
+    animationDraw_AfterAll : 1,
+    animationDraw_AfterSlot : 3,
+    animationDraw_BeforeAll : 0,
+    animationDraw_BeforeSlot : 2,
+    animationDraw_ReplaceSlot : 4,
+    animationIK_NoStretch : 0,
+    animationIK_Stretch : 1,
+    animationPhysics_Driven : 2,
+    animationPhysics_Dynamic : 1,
+    animationPhysics_Kinematic : 0,
+    animationPhysics_Mixed : 3,
+    animationRoot_Fixed : 0,
+    animationRoot_Follow : 1,
+    animationSource_Clip : 0,
+    animationSource_Procedural : 2,
+    animationSource_Reference : 1,
+    animationSpace_Local : 0,
+    animationSpace_Rig : 1,
+    animationSpace_World : 2,
+    animationStage_Constraint : 1,
+    animationStage_PostConstraint : 2,
+    animationStage_PreConstraint : 0,
+    animationStroke_Local : 1,
+    animationStroke_PortPixels : 0,
+    animationVariable_Float : 0,
+    animationVariable_Int : 1,
+    animationVariable_String : 2,
+    blendMode_Additive : 1,
+    blendMode_Darken : 4,
+    blendMode_Lighten : 5,
+    blendMode_Multiply : 2,
+    blendMode_Normal : 0,
+    blendMode_Screen : 3,
+    boneId_None : 4294967295,
+    camera_Crossfade : 0,
+    camera_LumaFade : 5,
+    camera_WhipDown : 9,
+    camera_WhipLeft : 6,
+    camera_WhipRight : 7,
+    camera_WhipUp : 8,
+    camera_WipeDown : 4,
+    camera_WipeLeft : 1,
+    camera_WipeRight : 2,
+    camera_WipeUp : 3,
+    collide_AlphaChannel : 4,
+    collide_BoundingBox : 2,
+    collide_CollisionRadius : 3,
+    collide_Last : 5,
+    collide_None : 0,
+    collide_Point : 1,
+    collide_SpriterCollisionBox : 5,
+    colliderSource_Animation : 2,
+    colliderSource_Explicit : 0,
+    colliderSource_Frame : 1,
+    collision_Begin : 0,
+    collision_End : 2,
+    collision_Stay : 1,
+    collisionShape_Capsule : 5,
+    collisionShape_Circle : 1,
+    collisionShape_Convex : 2,
+    collisionShape_ImageMask : 4,
+    collisionShape_None : 0,
+    collisionShape_Polygon : 3,
+    constraint_Gear : 9,
+    constraint_Groove : 4,
+    constraint_Motor : 10,
+    constraint_Pin : 1,
+    constraint_Pivot : 3,
+    constraint_Ratchet : 8,
+    constraint_RotaryLimit : 7,
+    constraint_RotarySpring : 6,
+    constraint_Slide : 2,
+    constraint_Spring : 5,
+    CopyPixels : true,
+    easeInBack : 25,
+    easeInBounce : 22,
+    easeInCirc : 19,
+    easeInCubic : 4,
+    easeInExpo : 16,
+    easeInOutBack : 27,
+    easeInOutBounce : 24,
+    easeInOutCirc : 21,
+    easeInOutCubic : 6,
+    easeInOutExpo : 18,
+    easeInOutQuad : 3,
+    easeInOutQuint : 12,
+    easeInOutSine : 15,
+    easeInQuad : 1,
+    easeInQuart : 7,
+    easeInQuint : 10,
+    easeInSine : 13,
+    easeOutBack : 26,
+    easeOutBounce : 23,
+    easeOutCirc : 20,
+    easeOutCubic : 5,
+    easeOutExpo : 17,
+    easeOutQuad : 2,
+    easeOutQuart : 8,
+    easeOutQuint : 11,
+    easeOutSine : 14,
+    eventType_ColliderContact : 26,
     eventType_KeyDown : 4,
-    eventType_KeyUp : 5,
     eventType_KeyPress : 6,
+    eventType_KeyUp : 5,
     eventType_MouseDown : 7,
-    eventType_MouseUp : 8,
-    eventType_MouseMove : 9,
     eventType_MouseEnter : 22,
     eventType_MouseLeave : 23,
+    eventType_MouseMove : 9,
+    eventType_MouseUp : 8,
+    eventType_ParticleBreak : 27,
+    eventType_PortDraw : 24,
     eventType_PortResized : 15,
     eventType_ScrollWheel : 16,
-    eventType_SpriteTouch : 19,
-    eventType_SpriteAnimate : 17,
-    eventType_SpriteLayer : 18,
-    eventType_SpriteCollide : 20,
-    eventType_SpriteBreak : 21,
+    eventType_Shutdown : 2,
     eventType_SoundEvent : 14,
-    eventType_PortDraw : 24,
-    soundEvent_DonePlaying : 0,
-    soundEvent_Looping : 1,
-    soundEvent_FailedToPlay : 2,
-    key_Break : 1,
-    key_Home : 2,
-    key_End : 3,
-    key_Clear : 4,
-    key_Help : 5,
-    key_Pause : 6,
-    key_Mute : 7,
+    eventType_SpriteAnimate : 17,
+    eventType_SpriteBreak : 21,
+    eventType_SpriteCollide : 20,
+    eventType_SpriteLayer : 18,
+    eventType_SpriteTouch : 19,
+    eventType_SpriteTriggerEvent : 25,
+    eventType_Timer : 3,
+    eventType_ZoomComplete : 28,
+    facing_East : 64,
+    facing_Ignore : 256,
+    facing_North : 0,
+    facing_South : 128,
+    facing_West : 192,
+    fit_Clipped : 6,
+    fit_Fill : 1,
+    fit_FillKeepProportions : 5,
+    fit_Height : 2,
+    fit_Inside : 4,
+    fit_None : 0,
+    fit_Overflow : 5,
+    fit_Tile : 9,
+    fit_TileX : 7,
+    fit_TileY : 8,
+    fit_Width : 3,
+    flipped_Both : 192,
+    flipped_Horizontal : 64,
+    flipped_Ignore : 256,
+    flipped_None : 0,
+    flipped_Vertical : 128,
+    frameCollider_AlphaMask : 1,
+    frameCollider_Bounds : 0,
+    gradientType_Linear : 1,
+    gradientType_None : 0,
+    gradientType_Radial : 2,
+    init_AppendToExisting : 2,
+    init_CreateUniqueNewFile : 0,
+    init_OverwriteExisting : 1,
+    init_StdErr : 4,
+    init_StdOut : 3,
     key_Backspace : 8,
+    key_Break : 1,
+    key_Clear : 4,
     key_Delete : 127,
-    key_Tab : 9,
-    key_PageUp : 11,
-    key_PageDown : 12,
-    key_Return : 13,
+    key_DownArrow : 31,
+    key_End : 3,
     key_Enter : 13,
+    key_Escape : 27,
     key_F1 : 14,
+    key_F10 : 23,
+    key_F11 : 24,
+    key_F12 : 25,
     key_F2 : 15,
     key_F3 : 16,
     key_F4 : 17,
@@ -49,379 +219,1454 @@ var pdg = {
     key_F7 : 20,
     key_F8 : 21,
     key_F9 : 22,
-    key_F10 : 23,
-    key_F11 : 24,
-    key_F12 : 25,
     key_FirstF : 14,
-    key_LastF : 25,
-    key_Insert : 26,
-    key_Escape : 27,
-    key_LeftArrow : 28,
-    key_RightArrow : 29,
-    key_UpArrow : 30,
-    key_DownArrow : 31,
     key_FirstPrintable : 32,
+    key_Help : 5,
+    key_Home : 2,
+    key_Insert : 26,
+    key_LastF : 25,
+    key_LeftArrow : 28,
+    key_Mute : 7,
+    key_PageDown : 12,
+    key_PageUp : 11,
+    key_Pause : 6,
+    key_Return : 13,
+    key_RightArrow : 29,
+    key_Tab : 9,
+    key_UpArrow : 30,
+    keyCode_Alt : 58,
+    keyCode_Control : 59,
+    keyCode_LeftAlt : 58,
+    keyCode_LeftControl : 59,
+    keyCode_LeftMeta : 55,
+    keyCode_LeftShift : 56,
+    keyCode_Meta : 55,
+    keyCode_RightAlt : 61,
+    keyCode_RightControl : 62,
+    keyCode_RightMeta : 54,
+    keyCode_RightShift : 60,
+    keyCode_Shift : 56,
+    lftBot : 3,
+    lftTop : 0,
+    linearTween : 0,
+    lineStyle_Auto : 0,
+    lineStyle_DashDot : 5,
+    lineStyle_DashDotDot : 6,
+    lineStyle_Dashed : 3,
+    lineStyle_Dotted : 4,
+    lineStyle_None : 1,
+    lineStyle_Solid : 2,
+    partId_None : 4294967295,
+    partPlacement_PreserveWorld : 1,
+    partPlacement_Snap : 0,
+    partSpace_Local : 0,
+    partSpace_Sprite : 1,
+    partSpace_World : 2,
+    physicsBody_Dynamic : 1,
+    physicsBody_Kinematic : 2,
+    physicsBody_None : 0,
+    physicsBody_Static : 3,
+    physicsBreak_AngularSpeed : 1,
+    physicsBreak_Force : 0,
+    physicsForce_None : 0,
+    physicsSolver_Basic : 1,
+    physicsSolver_Chipmunk : 2,
+    physicsSolver_None : 0,
+    rgtBot : 2,
+    rgtTop : 1,
+    rotationDirection_AsSpecified : 0,
+    rotationDirection_Clockwise : 2,
+    rotationDirection_CounterClockwise : 3,
+    rotationDirection_Shortest : 1,
+    screenPos_FaceDown : 5,
+    screenPos_FaceUp : 4,
     screenPos_Normal : 0,
     screenPos_Rotated180 : 1,
     screenPos_Rotated90Clockwise : 2,
     screenPos_Rotated90CounterClockwise : 3,
-    screenPos_FaceUp : 4,
-    screenPos_FaceDown : 5,
-    textStyle_Plain : 0,
-    textStyle_Bold : 1,
-    textStyle_Italic : 2,
-    textStyle_Underline : 4,
-    textStyle_Centered : 16,
-    textStyle_LeftJustified : 0,
-    textStyle_RightJustified : 32,
-    fit_None : 0,
-    fit_Height : 1,
-    fit_Width : 2,
-    fit_Inside : 3,
-    fit_Fill : 4,
-    fit_FillKeepProportions : 5,
-    init_CreateUniqueNewFile : 0,
-    init_OverwriteExisting : 1,
-    init_AppendToExisting : 2,
-    init_StdOut : 3,
-    init_StdErr : 4,
-    duration_Constant : -1,
-    duration_Instantaneous : 0,
-    animate_StartToEnd : 0,
-    animate_EndToStart : 1,
-    animate_Unidirectional : 0,
-    animate_Bidirectional : 2,
-    animate_NoLooping : 0,
-    animate_Looping : 4,
+    ser_Animations : 8,
+    ser_Forces : 32,
+    ser_Full : 18431,
+    ser_HelperObjs : 8192,
+    ser_HelperRefs : 1024,
+    ser_ImageRefs : 256,
+    ser_InitialData : 16384,
+    ser_LayerDraw : 128,
+    ser_Micro : 3,
+    ser_Motion : 16,
+    ser_Physics : 64,
+    ser_Positions : 1,
+    ser_SCMLRefs : 512,
+    ser_Sizes : 4,
+    ser_Update : 127,
+    ser_ZOrder : 2,
+    serialization_Complete : 0,
+    serialization_ExternalReferences : 1,
+    SharedSurface : false,
+    soundEvent_DonePlaying : 0,
+    soundEvent_FailedToPlay : 2,
+    soundEvent_Looping : 1,
+    spline_Cardinal : 2,
+    spline_CubicBezier : 4,
+    spline_Hermite : 1,
+    spline_NaturalCubic : 6,
+    spline_TCB : 5,
+    spline_UniformB : 3,
     start_FromFirstFrame : -1,
     start_FromLastFrame : -2,
-    all_Frames : 0,
-    action_CollideSprite : 0,
-    action_CollideWall : 1,
-    action_Offscreen : 2,
-    action_Onscreen : 3,
-    action_ExitLayer : 4,
-    action_AnimationLoop : 8,
-    action_AnimationEnd : 9,
-    action_FadeComplete : 10,
-    action_FadeInComplete : 11,
-    action_FadeOutComplete : 12,
-    action_JointBreak : 13,
-    touch_MouseEnter : 20,
-    touch_MouseLeave : 21,
-    touch_MouseDown : 22,
-    touch_MouseUp : 23,
-    touch_MouseClick : 24,
-    collide_None : 0,
-    collide_Point : 1,
-    collide_BoundingBox : 2,
-    collide_CollisionRadius : 3,
-    collide_AlphaChannel : 4,
-    collide_Last : 4,
-    action_ErasePort : 40,
-    action_PreDrawLayer : 41,
-    action_PostDrawLayer : 42,
-    action_DrawPortComplete : 43,
-    action_AnimationStart : 44,
-    action_PreAnimateLayer : 45,
-    action_PostAnimateLayer : 46,
-    action_AnimationComplete : 47,
-    action_ZoomComplete : 48,
-    action_LayerFadeInComplete : 49,
-    action_LayerFadeOutComplete : 50,
-    facing_North : 0,
-    facing_East : 64,
-    facing_South : 128,
-    facing_West : 192,
-    facing_Ignore : 256,
-    flipped_None : 0,
-    flipped_Horizontal : 64,
-    flipped_Vertical : 128,
-    flipped_Both : 192,
-    flipped_Ignore : 256,
+    textStyle_Bold : 1,
+    textStyle_Centered : 16,
+    textStyle_Italic : 2,
+    textStyle_LeftJustified : 0,
+    textStyle_Plain : 0,
+    textStyle_RightJustified : 32,
+    textStyle_Underline : 4,
+    timer_Never : -1,
     timer_OneShot : true,
     timer_Repeating : false,
-    timer_Never : -1,
-    linearTween : 0,
-    easeInQuad : 1,
-    easeOutQuad : 2,
-    easeInOutQuad : 3,
-    easeInCubic : 4,
-    easeOutCubic : 5,
-    easeInOutCubic : 6,
-    easeInQuart : 7,
-    easeOutQuart : 8,
-    easeInQuint : 10,
-    easeOutQuint : 11,
-    easeInOutQuint : 12,
-    easeInSine : 13,
-    easeOutSine : 14,
-    easeInOutSine : 15,
-    easeInExpo : 16,
-    easeOutExpo : 17,
-    easeInOutExpo : 18,
-    easeInCirc : 19,
-    easeOutCirc : 20,
-    easeInOutCirc : 21,
-    easeInBounce : 22,
-    easeOutBounce : 23,
-    easeInOutBounce : 24,
-    easeInBack : 25,
-    easeOutBack : 26,
-    easeInOutBack : 27,
-    ser_Positions : 1,
-    ser_ZOrder : 2,
-    ser_Sizes : 4,
-    ser_Animations : 8,
-    ser_Motion : 16,
-    ser_Forces : 32,
-    ser_Physics : 64,
-    ser_LayerDraw : 128,
-    ser_ImageRefs : 256,
-    ser_SCMLRefs : 512,
-    ser_HelperRefs : 1024,
-    ser_HelperObjs : 8192,
-    ser_InitialData : 16384,
-    ser_Micro : 3,
-    ser_Update : 127,
-    ser_Full : 18303,
-    running : null,   // boolean
-    quitting : null,   // boolean
-    lftTop : 0,
-    rgtTop : 1,
-    rgtBot : 2,
-    lftBot : 3,
-    hasNetwork : null,   // boolean
-    fs : null,   // FileManager
-    evt : null,   // EventManager
-    tm : null,   // TimerManager
-    res : null,   // ResourceManager
+    touch_MouseClick : 24,
+    touch_MouseDown : 22,
+    touch_MouseEnter : 20,
+    touch_MouseLeave : 21,
+    touch_MouseUp : 23,
+    type_Arc : 3,
+    type_Drawing : 10,
+    type_Ellipse : 7,
+    type_Image : 8,
+    type_ImageStrip : 9,
+    type_Line : 1,
+    type_Polygon : 6,
+    type_Quad : 5,
+    type_Rect : 4,
+    type_Spline : 2,
+    argv : null,   // string[]
     cfg : null,   // ConfigManager
-    lm : null,   // LogManager
+    evt : null,   // EventManager
+    fs : null,   // FileManager
     gfx : null,   // GraphicsManager
     hasGraphics : null,   // boolean
-    snd : null,   // SoundManager
+    hasNetwork : null,   // boolean
     hasSound : null,   // boolean
-    argv : null,   // string[]
-    rand : () => {},
-    srand : (seed) => {},
-    setSerializationDebugMode : (debugMode) => {},
-    registerEasingFunction : (easingFunc) => {},
-    getFileManager : () => {},
-    getLogManager : () => {},
-    getConfigManager : () => {},
-    getResourceManager : () => {},
-    getEventManager : () => {},
-    getTimerManager : () => {},
-    registerSerializableClass : (klass) => {},
-    getGraphicsManager : () => {},
-    getSoundManager : () => {},
-    createSpriteLayer : (port) => {},
-    createSpriteLayerFromSCMLFile : (layerSCMLFilename, addSprites, port) => {},
-    cleanupSpriteLayer : (layer) => {},
-    createTileLayer : (port) => {},
-    quit : () => {},
-    run : () => {},
-    idle : () => {},
-    // openDebugger: start node-inspector and open a debugger window in your browser
-    openDebugger : () => {},
-    // openConsole: open a pdg console window
-    openConsole : () => {},
-    // openCommandPort: start a REPL server on a TCP port
-    openCommandPort : (port) => {},
-    log : (msg) => {},
-    info : (msg) => {},
-    warn : (msg) => {},
-    fatal : (msg) => {},
-    error : (msg) => {},
-    debug : (msg) => {},
-    trace : (msg) => {},
+    lm : null,   // LogManager
+    quitting : null,   // boolean
+    res : null,   // ResourceManager
+    running : null,   // boolean
+    snd : null,   // SoundManager
+    tm : null,   // TimerManager
+    // animationHasTag: test an authored tag in an owned pose snapshot
+    animationHasTag : (pose, object, tag) => {},
     captureConsole : () => {},
+    cleanupLayer : (layer) => {},
+    createDrawing : () => {},
     // createSerializableObject: Creates a pdg.ISerializable object from a JavaScript object with serialization methods
     createSerializableObject : (obj, classTag) => {},
+    createSpriteLayer : (port) => {},
+    createSpriteLayerFromSpriterFile : (layerSpriterFilename, addSprites, port) => {},
+    createTileLayer : (port) => {},
+    debug : (msg) => {},
+    // describeInterface: format a structured interface description as readable signatures
+    describeInterface : (interfaceName, memberName) => {},
+    error : (msg) => {},
+    fatal : (msg) => {},
+    getConfigManager : () => {},
+    getEventManager : () => {},
+    getFileManager : () => {},
+    getGraphicsManager : () => {},
+    // getInterfaceMetadata: return an independent structured interface description without invoking engine code
+    getInterfaceMetadata : (interfaceName, memberName) => {},
+    getLogManager : () => {},
+    getResourceManager : () => {},
+    getSoundManager : () => {},
+    getTimerManager : () => {},
+    idle : () => {},
+    info : (msg) => {},
+    log : (msg) => {},
     on : (eventType, func) => {},
+    onKeyDown : (func) => {},
+    onKeyPress : (func) => {},
+    onKeyUp : (func) => {},
+    onMouseDown : (func) => {},
+    onMouseMove : (func) => {},
+    onMouseUp : (func) => {},
     onShutdown : (func) => {},
     onTimer : (func) => {},
-    onKeyDown : (func) => {},
-    onKeyUp : (func) => {},
-    onKeyPress : (func) => {},
-    onMouseDown : (func) => {},
-    onMouseUp : (func) => {},
-    onMouseMove : (func) => {},
-    startRepl : () => {},
+    // openCommandPort: start a REPL server on a TCP port
+    openCommandPort : (port) => {},
+    // openConsole: open a pdg console window
+    openConsole : () => {},
+    // openDebugger: start node-inspector and open a debugger window in your browser
+    openDebugger : () => {},
+    quit : () => {},
+    rand : () => {},
+    registerEasingFunction : (easingFunc) => {},
+    registerSerializableClass : (klass) => {},
+    run : () => {},
+    setSerializationDebugMode : (debugMode) => {},
+    srand : (seed) => {},
+    trace : (msg) => {},
+    warn : (msg) => {},
 
-    MemBlock : () => { return {
-        getData : () => { return string /* Binary */; }, 
-        getDataSize : () => { return number; }, 
-        getByte : (i) => { return number; }, 
-        getBytes : (start, len) => { return string /* Binary */; }, 
-        toBuffer : () => { return Buffer; }, 
+    Animated : () => { return {
+        // addAnimationHelper: Register a callback after the object's normal animation step.
+        addAnimationHelper : (helper) => { return this; },
+        // andThen: Start the next timed operation after the most recently scheduled operation finishes.
+        andThen : () => { return this; },
+        animate : (deltaSeconds) => { return boolean; },
+        // cancelSchedule: Discard scheduled animations and pending sequencing.
+        cancelSchedule : () => { return this; },
+        // changeCenterOffsetBy: Animate the rotation-center offset by a delta.
+        changeCenterOffsetBy : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeCenterOffsetTo: Animate the rotation-center offset to a target.
+        changeCenterOffsetTo : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeGrowingBy: Animate the growing rate by an additive delta.
+        changeGrowingBy : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeGrowingTo: Animate the growing rate to a target.
+        changeGrowingTo : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementBy: Animate the movement rate by an additive delta.
+        changeMovementBy : (value, durationSeconds, easing) => { return this; },
+        changeMovementBy : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementTo: Animate the movement rate to a target.
+        changeMovementTo : (value, durationSeconds, easing) => { return this; },
+        changeMovementTo : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeScaleBy: Animate independent scale by additive deltas.
+        changeScaleBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeScaleTo: Animate independent scale to a target.
+        changeScaleTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeSpinBy: Animate the spin rate by an additive delta.
+        changeSpinBy : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeSpinTo: Animate the spin rate to a target.
+        changeSpinTo : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingBy: Animate the stretching rate by an additive delta.
+        changeStretchingBy : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingTo: Animate the stretching rate to a target.
+        changeStretchingTo : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // clearAnimationHelpers: Retire all helpers on this object.
+        clearAnimationHelpers : () => { return this; },
+        // defineScript: create a library-owned named animation recorder
+        defineScript : (name) => { return AnimationScript; },
+        // diminish: Reduce the preceding block amplitude around its baseline.
+        diminish : (factor, seconds, easing) => { return this; },
+        // endGroup: Close and select the innermost anonymous block.
+        endGroup : () => { return this; },
+        // endOtherwise: Close a conditional with an alternative.
+        endOtherwise : () => { return this; },
+        // endWhen: Close a conditional without an alternative.
+        endWhen : () => { return this; },
+        // flipX: Toggle the x reflection flag immediately.
+        flipX : () => { return this; },
+        // flipY: Toggle the y reflection flag immediately.
+        flipY : () => { return this; },
+        getBoundingBox : () => { return Rect; },
+        getCenterOffset : () => { return Offset; },
+        getHeight : () => { return number; },
+        getLocation : () => { return Point; },
+        getMovement : () => { return Offset; },
+        getRotatedBounds : () => { return RotatedRect; },
+        getRotation : () => { return number; },
+        getScale : () => { return Offset; },
+        getSize : () => { return Offset; },
+        getSpin : () => { return number; },
+        getStretching : () => { return Offset; },
+        getWidth : () => { return number; },
+        // group: Open an anonymous animation block.
+        group : () => { return this; },
+        // grow: Multiply logical width and height by one factor.
+        grow : (factor, durationSeconds, easing) => { return this; },
+        hasScheduledAnimations : () => { return boolean; },
+        // increase: Increase the preceding block amplitude around its baseline.
+        increase : (factor, seconds, easing) => { return this; },
+        isFlippedX : () => { return boolean; },
+        isFlippedY : () => { return boolean; },
+        isSchedulePaused : () => { return boolean; },
+        // moveBy: Move by an offset.
+        moveBy : (value, durationSeconds, easing) => { return this; },
+        moveBy : (x, y, durationSeconds, easing) => { return this; },
+        // moveTo: Move to a location.
+        moveTo : (value, durationSeconds, easing) => { return this; },
+        moveTo : (x, y, durationSeconds, easing) => { return this; },
+        // otherwise: Open the alternative of the innermost conditional.
+        otherwise : () => { return this; },
+        // pauseIt: Pause the most recently selected animation element.
+        pauseIt : () => { return this; },
+        // pauseSchedule: Pause scheduled animations and their delays.
+        pauseSchedule : () => { return this; },
+        // play: Instantiate a named animation script on this target.
+        play : (name) => { return this; },
+        // removeAnimationHelper: Retire a specific animation helper.
+        removeAnimationHelper : (helper) => { return this; },
+        // repeat: Repeat the preceding block.
+        repeat : () => { return this; },
+        repeat : (additionalExecutions) => { return this; },
+        // resizeBy: Change logical size by additive deltas.
+        resizeBy : (deltaWidth, deltaHeight, durationSeconds, easing) => { return this; },
+        // resizeTo: Animate logical size to a target.
+        resizeTo : (width, height, durationSeconds, easing) => { return this; },
+        // restartIt: Restart the most recently selected animation element from its baseline.
+        restartIt : () => { return this; },
+        // resumeIt: Resume the most recently selected paused animation element.
+        resumeIt : () => { return this; },
+        // resumeSchedule: Resume scheduled animations and their delays.
+        resumeSchedule : () => { return this; },
+        // rotateBy: Rotate through a relative angle.
+        rotateBy : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotateTo: Rotate to an absolute angle.
+        rotateTo : (radians, durationSeconds, easing, direction) => { return this; },
+        // setCenterOffset: Set the rotation-center offset immediately.
+        setCenterOffset : (offset) => { return this; },
+        // setFlipX: Set the x reflection flag immediately.
+        setFlipX : (flip) => { return this; },
+        // setFlipY: Set the y reflection flag immediately.
+        setFlipY : (flip) => { return this; },
+        // setGrowing: Set equal constant growth rates immediately.
+        setGrowing : (value) => { return this; },
+        // setHeight: Set logical height immediately.
+        setHeight : (value) => { return this; },
+        // setLocation: Set the location immediately.
+        setLocation : (value) => { return this; },
+        setLocation : (x, y) => { return this; },
+        // setMovement: Set a constant programmed movement rate immediately.
+        setMovement : (value) => { return this; },
+        setMovement : (xPerSecond, yPerSecond) => { return this; },
+        // setRotation: Set rotation immediately.
+        setRotation : (value) => { return this; },
+        // setScale: Set independent transform scale immediately.
+        setScale : (x, y) => { return this; },
+        // setSize: Set logical width and height immediately.
+        setSize : (value) => { return this; },
+        setSize : (width, height) => { return this; },
+        // setSpin: Set a constant programmed angular rate immediately.
+        setSpin : (value) => { return this; },
+        // setStretching: Set independent constant growth rates immediately.
+        setStretching : (widthPerSecond, heightPerSecond) => { return this; },
+        // setWidth: Set logical width immediately.
+        setWidth : (value) => { return this; },
+        // slowDown: Divide the preceding block playback rate.
+        slowDown : (factor, seconds, easing) => { return this; },
+        // speedUp: Increase the preceding block playback rate.
+        speedUp : (factor, seconds, easing) => { return this; },
+        // stopGrowing: Stop all programmed changes to logical size.
+        stopGrowing : () => { return this; },
+        // stopIt: Stop the most recently selected animation element.
+        stopIt : () => { return this; },
+        // stopMovement: Stop all programmed changes to position.
+        stopMovement : () => { return this; },
+        // stopSpinning: Stop all programmed changes to rotation.
+        stopSpinning : () => { return this; },
+        // stopStretching: Stop all programmed changes to logical size.
+        stopStretching : () => { return this; },
+        // stretch: Multiply logical width and height by independent factors.
+        stretch : (widthFactor, heightFactor, durationSeconds, easing) => { return this; },
+        // until: Finish the preceding block when its evaluator returns true.
+        until : (evaluator) => { return this; },
+        // wait: Delay the next timed animation request.
+        wait : (durationSeconds) => { return this; },
+        // when: Open a conditional animation branch.
+        when : (evaluator) => { return this; },
+        // yoyo: Play the preceding trajectory forward and back.
+        yoyo : () => { return this; },
     }; },
 
-    // NOTE: Primary access via singleton instance: pdg.fs
-    FileManager : () => { return {
-        findFirst : (inFindName) => { return object; }, 
-        findNext : (inFindData) => { return object; }, 
-        findClose : (inFindData) => {},
-        getApplicationDataDirectory : () => { return string; }, 
-        getApplicationDirectory : () => { return string; }, 
-        getApplicationResourceDirectory : () => { return string; }, 
-        findFiles : (name) => { return [""] /* array of strings */; }, 
-        findDirs : (name) => { return [""] /* array of strings */; }, 
+    AnimatedAttributes : () => { return {
+   //  TODO: derive from Animated
+        // addAnimationHelper: Register a callback after the object's normal animation step.
+        addAnimationHelper : (helper) => { return this; },
+        // ambientLight: Set the ambient light.
+        ambientLight : (color) => { return this; },
+        // andThen: Start the next timed operation after the most recently scheduled operation finishes.
+        andThen : () => { return this; },
+        // animate: advance attributes in seconds
+        animate : (deltaSeconds) => { return boolean; },
+        // blendMode: sets the blend mode for rendering operations
+        blendMode : (blendMode) => { return this; },
+        // cancelSchedule: Discard scheduled animations and pending sequencing.
+        cancelSchedule : () => { return this; },
+        // changeAmbientLight: Animate ambient light color.
+        changeAmbientLight : (target, seconds, easing) => { return this; },
+        // changeCenterOffsetBy: Animate the rotation-center offset by a delta.
+        changeCenterOffsetBy : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeCenterOffsetTo: Animate the rotation-center offset to a target.
+        changeCenterOffsetTo : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeFillColor: Animate solid fill color.
+        changeFillColor : (target, seconds, easing) => { return this; },
+        // changeFillGradient: Animate a linear fill gradient.
+        changeFillGradient : (start, startColor, end, endColor, seconds, easing) => { return this; },
+        // changeFillOpacity: Animate fill opacity.
+        changeFillOpacity : (target, seconds, easing) => { return this; },
+        // changeFillRadialGradient: Animate a radial fill gradient.
+        changeFillRadialGradient : (center, centerColor, radius, endColor, seconds, easing) => { return this; },
+        // changeFrames: Animate an inclusive sequence of image frames.
+        changeFrames : (first, last, seconds, easing) => { return this; },
+        // changeGrowingBy: Animate the growing rate by an additive delta.
+        changeGrowingBy : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeGrowingTo: Animate the growing rate to a target.
+        changeGrowingTo : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeLightOffset: Animate sphere light offset.
+        changeLightOffset : (target, seconds, easing) => { return this; },
+        // changeLineColor: Animate stroke color.
+        changeLineColor : (target, seconds, easing) => { return this; },
+        // changeLineOpacity: Animate stroke opacity.
+        changeLineOpacity : (target, seconds, easing) => { return this; },
+        // changeLineThickness: Animate stroke thickness.
+        changeLineThickness : (target, seconds, easing) => { return this; },
+        // changeMovementBy: Animate the movement rate by an additive delta.
+        changeMovementBy : (value, durationSeconds, easing) => { return this; },
+        changeMovementBy : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementTo: Animate the movement rate to a target.
+        changeMovementTo : (value, durationSeconds, easing) => { return this; },
+        changeMovementTo : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changePolarOffset: Animate sphere polar offset.
+        changePolarOffset : (target, seconds, easing) => { return this; },
+        // changeRoundedCorners: Animate corner radius.
+        changeRoundedCorners : (target, seconds, easing) => { return this; },
+        // changeScaleBy: Animate independent scale by additive deltas.
+        changeScaleBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeScaleTo: Animate independent scale to a target.
+        changeScaleTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeSkew: Animate a relative shear.
+        changeSkew : (x, y, seconds, easing) => { return this; },
+        // changeSphereRotation: Animate spherical-image rotation.
+        changeSphereRotation : (radians, seconds, easing, direction) => { return this; },
+        // changeSpinBy: Animate the spin rate by an additive delta.
+        changeSpinBy : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeSpinTo: Animate the spin rate to a target.
+        changeSpinTo : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingBy: Animate the stretching rate by an additive delta.
+        changeStretchingBy : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingTo: Animate the stretching rate to a target.
+        changeStretchingTo : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeSubsection: Animate image subsection.
+        changeSubsection : (target, seconds, easing) => { return this; },
+        // changeTextSize: Animate text size.
+        changeTextSize : (target, seconds, easing) => { return this; },
+        // changeTransform: Animate a replacement affine matrix.
+        changeTransform : (matrix, seconds, easing) => { return this; },
+        // clearAnimationHelpers: Retire all helpers on this object.
+        clearAnimationHelpers : () => { return this; },
+        // clipOverflow: Confine drawing overflow to the operation's bounds.
+        clipOverflow : (clip) => { return this; },
+        // defineScript: create a library-owned named animation recorder
+        defineScript : (name) => { return AnimationScript; },
+        // diminish: Reduce the preceding block amplitude around its baseline.
+        diminish : (factor, seconds, easing) => { return this; },
+        // endGroup: Close and select the innermost anonymous block.
+        endGroup : () => { return this; },
+        // endOtherwise: Close a conditional with an alternative.
+        endOtherwise : () => { return this; },
+        // endWhen: Close a conditional without an alternative.
+        endWhen : () => { return this; },
+        // fillColor: sets the fill color for shapes and drawings
+        fillColor : (color) => { return this; },
+        // fillGradient: sets a linear gradient fill from start point to end point
+        fillGradient : (start, startColor, end, endColor) => { return this; },
+        // fillOpacity: sets the opacity for fill operations (0.0 to 1.0)
+        fillOpacity : (opacity) => { return this; },
+        // fillRadialGradient: Create a radial gradient fill from center point to outer radius
+        fillRadialGradient : (center, centerColor, radius, endColor) => { return this; },
+        // fitType: Sets how an image should be fitted into a target rectangle
+        fitType : (fit) => { return this; },
+        // flipX: Toggle the x reflection flag immediately.
+        flipX : () => { return this; },
+        // flipY: Toggle the y reflection flag immediately.
+        flipY : () => { return this; },
+        // font: Sets the font to use for drawing text
+        font : (font) => { return this; },
+        // frame: Sets which frame of an ImageStrip to draw
+        frame : (frame) => { return this; },
+        getAmbientLight : () => { return Color; },
+        getBlendMode : () => { return number /* int */; },
+        getBoundingBox : () => { return Rect; },
+        getCenterOffset : () => { return Offset; },
+        getClipOverflow : () => { return boolean; },
+        getFillColor : () => { return Color; },
+        getFillOpacity : () => { return number float; },
+        getFitType : () => { return number /* int */; },
+        getFont : () => { return Font; },
+        getFrame : () => { return number /* int */; },
+        getGradientEnd : () => { return Point; },
+        getGradientEndColor : () => { return Color; },
+        getGradientStart : () => { return Point; },
+        getGradientStartColor : () => { return Color; },
+        getGradientType : () => { return number /* int */; },
+        getHeight : () => { return number; },
+        getLightOffset : () => { return Offset; },
+        getLineColor : () => { return Color; },
+        getLineOpacity : () => { return number float; },
+        getLineStyle : () => { return number /* uint */; },
+        getLineThickness : () => { return number float; },
+        getLocation : () => { return Point; },
+        getMovement : () => { return Offset; },
+        getPolarOffset : () => { return Offset; },
+        getRadialGradientCenter : () => { return Point; },
+        getRadialGradientCenterColor : () => { return Color; },
+        getRadialGradientEndColor : () => { return Color; },
+        getRadialGradientRadius : () => { return number float; },
+        getRotatedBounds : () => { return RotatedRect; },
+        getRotation : () => { return number; },
+        getRoundedCornerRadius : () => { return number float; },
+        getScale : () => { return Offset; },
+        getSize : () => { return Offset; },
+        getSphereRotation : () => { return number float; },
+        getSpin : () => { return number; },
+        getStretching : () => { return Offset; },
+        getSubsection : () => { return Rect; },
+        getTextSize : () => { return number float; },
+        getTextStyle : () => { return number /* int */; },
+        getTexture : () => { return Image; },
+        getTransform : () => { return array number; },
+        getWidth : () => { return number; },
+        // group: Open an anonymous animation block.
+        group : () => { return this; },
+        // grow: Multiply logical width and height by one factor.
+        grow : (factor, durationSeconds, easing) => { return this; },
+        hasScheduledAnimations : () => { return boolean; },
+        // increase: Increase the preceding block amplitude around its baseline.
+        increase : (factor, seconds, easing) => { return this; },
+        isFlippedX : () => { return boolean; },
+        isFlippedY : () => { return boolean; },
+        isSchedulePaused : () => { return boolean; },
+        // lightOffset: Sets light source with spherical coordinates in radians
+        lightOffset : (offset) => { return this; },
+        // lineColor: sets the line color for strokes and outlines
+        lineColor : (color) => { return this; },
+        // lineOpacity: sets the opacity for line strokes (0.0 to 1.0)
+        lineOpacity : (opacity) => { return this; },
+        // lineStyle: sets the style of line strokes (solid, dashed, etc.)
+        lineStyle : (lineStyle) => { return this; },
+        // lineThickness: sets the thickness of line strokes in pixels
+        lineThickness : (thickness) => { return this; },
+        // moveBy: Move by an offset.
+        moveBy : (value, durationSeconds, easing) => { return this; },
+        moveBy : (x, y, durationSeconds, easing) => { return this; },
+        // moveTo: Move to a location.
+        moveTo : (value, durationSeconds, easing) => { return this; },
+        moveTo : (x, y, durationSeconds, easing) => { return this; },
+        // otherwise: Open the alternative of the innermost conditional.
+        otherwise : () => { return this; },
+        // pauseIt: Pause the most recently selected animation element.
+        pauseIt : () => { return this; },
+        // pauseSchedule: Pause scheduled animations and their delays.
+        pauseSchedule : () => { return this; },
+        // play: Instantiate a named animation script on this target.
+        play : (name) => { return this; },
+        // polarOffset: Sets the polar offset for rotating a textured sphere
+        polarOffset : (offset) => { return this; },
+        // removeAnimationHelper: Retire a specific animation helper.
+        removeAnimationHelper : (helper) => { return this; },
+        // repeat: Repeat the preceding block.
+        repeat : () => { return this; },
+        repeat : (additionalExecutions) => { return this; },
+        // resizeBy: Change logical size by additive deltas.
+        resizeBy : (deltaWidth, deltaHeight, durationSeconds, easing) => { return this; },
+        // resizeTo: Animate logical size to a target.
+        resizeTo : (width, height, durationSeconds, easing) => { return this; },
+        // restartIt: Restart the most recently selected animation element from its baseline.
+        restartIt : () => { return this; },
+        // resumeIt: Resume the most recently selected paused animation element.
+        resumeIt : () => { return this; },
+        // resumeSchedule: Resume scheduled animations and their delays.
+        resumeSchedule : () => { return this; },
+        // rotateBy: Rotate through a relative angle.
+        rotateBy : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotateTo: Rotate to an absolute angle.
+        rotateTo : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotation: sets the rotation angle and center point for transformations
+        rotation : (radians, center) => { return this; },
+        // roundedCorners: sets the radius for rounded corners
+        roundedCorners : (radius) => { return this; },
+        // scale: sets the scaling factors for x and y axes
+        scale : (xFactor, yFactor, center) => { return this; },
+        // setCenterOffset: Set the rotation-center offset immediately.
+        setCenterOffset : (offset) => { return this; },
+        // setFlipX: Set the x reflection flag immediately.
+        setFlipX : (flip) => { return this; },
+        // setFlipY: Set the y reflection flag immediately.
+        setFlipY : (flip) => { return this; },
+        // setGrowing: Set equal constant growth rates immediately.
+        setGrowing : (value) => { return this; },
+        // setHeight: Set logical height immediately.
+        setHeight : (value) => { return this; },
+        // setLocation: Set the location immediately.
+        setLocation : (value) => { return this; },
+        setLocation : (x, y) => { return this; },
+        // setMovement: Set a constant programmed movement rate immediately.
+        setMovement : (value) => { return this; },
+        setMovement : (xPerSecond, yPerSecond) => { return this; },
+        // setRotation: Set rotation immediately.
+        setRotation : (value) => { return this; },
+        // setScale: Set independent transform scale immediately.
+        setScale : (x, y) => { return this; },
+        // setSize: Set logical width and height immediately.
+        setSize : (value) => { return this; },
+        setSize : (width, height) => { return this; },
+        // setSpin: Set a constant programmed angular rate immediately.
+        setSpin : (value) => { return this; },
+        // setStretching: Set independent constant growth rates immediately.
+        setStretching : (widthPerSecond, heightPerSecond) => { return this; },
+        // setTransform: Replace the affine transform immediately.
+        setTransform : (matrix) => { return this; },
+        // setWidth: Set logical width immediately.
+        setWidth : (value) => { return this; },
+        // skew: sets the skew transformation for x and y axes
+        skew : (xSkew, ySkew, center) => { return this; },
+        // slowDown: Divide the preceding block playback rate.
+        slowDown : (factor, seconds, easing) => { return this; },
+        // speedUp: Increase the preceding block playback rate.
+        speedUp : (factor, seconds, easing) => { return this; },
+        // sphereRotation: Sets the rotation angle in radians for a textured sphere
+        sphereRotation : (rotation) => { return this; },
+        // stopGrowing: Stop all programmed changes to logical size.
+        stopGrowing : () => { return this; },
+        // stopIt: Stop the most recently selected animation element.
+        stopIt : () => { return this; },
+        // stopMovement: Stop all programmed changes to position.
+        stopMovement : () => { return this; },
+        // stopSpinning: Stop all programmed changes to rotation.
+        stopSpinning : () => { return this; },
+        // stopStretching: Stop all programmed changes to logical size.
+        stopStretching : () => { return this; },
+        // stretch: Multiply logical width and height by independent factors.
+        stretch : (widthFactor, heightFactor, durationSeconds, easing) => { return this; },
+        // subsection: Sets a subsection of an image to draw
+        subsection : (section) => { return this; },
+        // textSize: Sets the text size in points for drawing text
+        textSize : (size) => { return this; },
+        // textStyle: Sets text style flags (bold, italic, underline, alignment)
+        textStyle : (style) => { return this; },
+        // texture: Sets the texture image to use for drawing a sphere
+        texture : (texture) => { return this; },
+        // transform: sets the transformation matrix directly
+        transform : (matrix) => { return this; },
+        // translation: sets the translation offset for transformations
+        translation : (offset) => { return this; },
+        // until: Finish the preceding block when its evaluator returns true.
+        until : (evaluator) => { return this; },
+        // wait: Delay the next timed animation request.
+        wait : (durationSeconds) => { return this; },
+        // when: Open a conditional animation branch.
+        when : (evaluator) => { return this; },
+        withAppearance : (overrides, textOnly) => { return Attributes; },
+        // yoyo: Play the preceding trajectory forward and back.
+        yoyo : () => { return this; },
     }; },
 
-    // NOTE: Primary access via singleton instance: pdg.lm
-    LogManager : () => { return {
-        init_CreateUniqueNewFile : 0,
-        init_OverwriteExisting : 1,
-        init_AppendToExisting : 2,
-        init_StdOut : 3,
-        init_StdErr : 4,
-        getLogLevel : () => { return number; }, 
-        setLogLevel : (inLogLevel) => { return LogManager; }, 
-        initialize : (inLogNameBase, initMode) => {},
-        writeLogEntry : (level, category, message) => {},
-        binaryDump : (inData, length, bytesPerLine) => { return string; }, 
-        binaryDump : (inData, length, bytesPerLine) => { return string; }, 
+    AnimationContactTarget : () => { return {
+
+        // AnimationContactTarget: create an unlocked contact target
+        AnimationContactTarget : () => { return AnimationContactTarget; },
+
+        // getState: copy contact position and influence
+        getState : () => { return object; },
+        // lockPlatform: lock a contact to a moving platform
+        lockPlatform : (x, y, support, frame) => {},
+        // lockWorld: lock a contact in world coordinates
+        lockWorld : (x, y) => {},
+        // release: release a contact with an optional fade
+        release : (fadeSeconds) => {},
+        // update: update a contact lock or fade its influence
+        update : (deltaSeconds, contactActive, withinReach, support, frame, releaseSeconds) => { return object; },
+    }; },
+
+    AnimationScript : () => { return {
+   //  TODO: derive from Animated
+        // addAnimationHelper: Register a callback after the object's normal animation step.
+        addAnimationHelper : (helper) => { return this; },
+        // andThen: Start the next timed operation after the most recently scheduled operation finishes.
+        andThen : () => { return this; },
+        animate : (deltaSeconds) => { return boolean; },
+        // cancelSchedule: Discard scheduled animations and pending sequencing.
+        cancelSchedule : () => { return this; },
+        // changeCenterOffsetBy: Animate the rotation-center offset by a delta.
+        changeCenterOffsetBy : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeCenterOffsetTo: Animate the rotation-center offset to a target.
+        changeCenterOffsetTo : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeGrowingBy: Animate the growing rate by an additive delta.
+        changeGrowingBy : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeGrowingTo: Animate the growing rate to a target.
+        changeGrowingTo : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementBy: Animate the movement rate by an additive delta.
+        changeMovementBy : (value, durationSeconds, easing) => { return this; },
+        changeMovementBy : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementTo: Animate the movement rate to a target.
+        changeMovementTo : (value, durationSeconds, easing) => { return this; },
+        changeMovementTo : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeScaleBy: Animate independent scale by additive deltas.
+        changeScaleBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeScaleTo: Animate independent scale to a target.
+        changeScaleTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeSpinBy: Animate the spin rate by an additive delta.
+        changeSpinBy : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeSpinTo: Animate the spin rate to a target.
+        changeSpinTo : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingBy: Animate the stretching rate by an additive delta.
+        changeStretchingBy : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingTo: Animate the stretching rate to a target.
+        changeStretchingTo : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // clearAnimationHelpers: Retire all helpers on this object.
+        clearAnimationHelpers : () => { return this; },
+        // defineScript: create a library-owned named animation recorder
+        defineScript : (name) => { return AnimationScript; },
+        // diminish: Reduce the preceding block amplitude around its baseline.
+        diminish : (factor, seconds, easing) => { return this; },
+        // endGroup: Close and select the innermost anonymous block.
+        endGroup : () => { return this; },
+        // endOtherwise: Close a conditional with an alternative.
+        endOtherwise : () => { return this; },
+        // endScript: Validate and seal this definition.
+        endScript : () => { return this; },
+        // endWhen: Close a conditional without an alternative.
+        endWhen : () => { return this; },
+        // flipX: Toggle the x reflection flag immediately.
+        flipX : () => { return this; },
+        // flipY: Toggle the y reflection flag immediately.
+        flipY : () => { return this; },
+        getBoundingBox : () => { return Rect; },
+        getCenterOffset : () => { return Offset; },
+        getHeight : () => { return number; },
+        getLocation : () => { return Point; },
+        getMovement : () => { return Offset; },
+        getRotatedBounds : () => { return RotatedRect; },
+        getRotation : () => { return number; },
+        getScale : () => { return Offset; },
+        getSize : () => { return Offset; },
+        getSpin : () => { return number; },
+        getStretching : () => { return Offset; },
+        getWidth : () => { return number; },
+        // group: Open an anonymous animation block.
+        group : () => { return this; },
+        // grow: Multiply logical width and height by one factor.
+        grow : (factor, durationSeconds, easing) => { return this; },
+        hasScheduledAnimations : () => { return boolean; },
+        // increase: Increase the preceding block amplitude around its baseline.
+        increase : (factor, seconds, easing) => { return this; },
+        isFlippedX : () => { return boolean; },
+        isFlippedY : () => { return boolean; },
+        isSchedulePaused : () => { return boolean; },
+        // moveBy: Move by an offset.
+        moveBy : (value, durationSeconds, easing) => { return this; },
+        moveBy : (x, y, durationSeconds, easing) => { return this; },
+        // moveTo: Move to a location.
+        moveTo : (value, durationSeconds, easing) => { return this; },
+        moveTo : (x, y, durationSeconds, easing) => { return this; },
+        // otherwise: Open the alternative of the innermost conditional.
+        otherwise : () => { return this; },
+        // pauseIt: Pause the most recently selected animation element.
+        pauseIt : () => { return this; },
+        // pauseSchedule: Pause scheduled animations and their delays.
+        pauseSchedule : () => { return this; },
+        // play: Instantiate a named animation script on this target.
+        play : (name) => { return this; },
+        // removeAnimationHelper: Retire a specific animation helper.
+        removeAnimationHelper : (helper) => { return this; },
+        // repeat: Repeat the preceding block.
+        repeat : () => { return this; },
+        repeat : (additionalExecutions) => { return this; },
+        // resizeBy: Change logical size by additive deltas.
+        resizeBy : (deltaWidth, deltaHeight, durationSeconds, easing) => { return this; },
+        // resizeTo: Animate logical size to a target.
+        resizeTo : (width, height, durationSeconds, easing) => { return this; },
+        // restartIt: Restart the most recently selected animation element from its baseline.
+        restartIt : () => { return this; },
+        // resumeIt: Resume the most recently selected paused animation element.
+        resumeIt : () => { return this; },
+        // resumeSchedule: Resume scheduled animations and their delays.
+        resumeSchedule : () => { return this; },
+        // rotateBy: Rotate through a relative angle.
+        rotateBy : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotateTo: Rotate to an absolute angle.
+        rotateTo : (radians, durationSeconds, easing, direction) => { return this; },
+        // setCenterOffset: Set the rotation-center offset immediately.
+        setCenterOffset : (offset) => { return this; },
+        // setFlipX: Set the x reflection flag immediately.
+        setFlipX : (flip) => { return this; },
+        // setFlipY: Set the y reflection flag immediately.
+        setFlipY : (flip) => { return this; },
+        // setGrowing: Set equal constant growth rates immediately.
+        setGrowing : (value) => { return this; },
+        // setHeight: Set logical height immediately.
+        setHeight : (value) => { return this; },
+        // setLocation: Set the location immediately.
+        setLocation : (value) => { return this; },
+        setLocation : (x, y) => { return this; },
+        // setMovement: Set a constant programmed movement rate immediately.
+        setMovement : (value) => { return this; },
+        setMovement : (xPerSecond, yPerSecond) => { return this; },
+        // setRotation: Set rotation immediately.
+        setRotation : (value) => { return this; },
+        // setScale: Set independent transform scale immediately.
+        setScale : (x, y) => { return this; },
+        // setSize: Set logical width and height immediately.
+        setSize : (value) => { return this; },
+        setSize : (width, height) => { return this; },
+        // setSpin: Set a constant programmed angular rate immediately.
+        setSpin : (value) => { return this; },
+        // setStretching: Set independent constant growth rates immediately.
+        setStretching : (widthPerSecond, heightPerSecond) => { return this; },
+        // setWidth: Set logical width immediately.
+        setWidth : (value) => { return this; },
+        // slowDown: Divide the preceding block playback rate.
+        slowDown : (factor, seconds, easing) => { return this; },
+        // speedUp: Increase the preceding block playback rate.
+        speedUp : (factor, seconds, easing) => { return this; },
+        // stopGrowing: Stop all programmed changes to logical size.
+        stopGrowing : () => { return this; },
+        // stopIt: Stop the most recently selected animation element.
+        stopIt : () => { return this; },
+        // stopMovement: Stop all programmed changes to position.
+        stopMovement : () => { return this; },
+        // stopSpinning: Stop all programmed changes to rotation.
+        stopSpinning : () => { return this; },
+        // stopStretching: Stop all programmed changes to logical size.
+        stopStretching : () => { return this; },
+        // stretch: Multiply logical width and height by independent factors.
+        stretch : (widthFactor, heightFactor, durationSeconds, easing) => { return this; },
+        // until: Finish the preceding block when its evaluator returns true.
+        until : (evaluator) => { return this; },
+        // wait: Delay the next timed animation request.
+        wait : (durationSeconds) => { return this; },
+        // when: Open a conditional animation branch.
+        when : (evaluator) => { return this; },
+        // yoyo: Play the preceding trajectory forward and back.
+        yoyo : () => { return this; },
+    }; },
+
+    AnimationSpringTarget : () => { return {
+
+        // AnimationSpringTarget: create a damped spring target
+        AnimationSpringTarget : (mass, stiffness, damping) => { return AnimationSpringTarget; },
+
+        // applyImpulse: apply an impulse to the spring target
+        applyImpulse : (x, y) => {},
+        // getState: copy spring position and velocity
+        getState : () => { return object; },
+        // setState: replace spring position and velocity
+        setState : (state) => {},
+        // update: advance the spring toward a target
+        update : (targetX, targetY, deltaSeconds) => { return object; },
+    }; },
+
+    Attributes : () => { return {
+        // ambientLight: Set the ambient light.
+        ambientLight : (color) => { return this; },
+        // blendMode: sets the blend mode for rendering operations
+        blendMode : (blendMode) => { return this; },
+        // clipOverflow: Confine drawing overflow to the operation's bounds.
+        clipOverflow : (clip) => { return this; },
+        // fillColor: sets the fill color for shapes and drawings
+        fillColor : (color) => { return this; },
+        // fillGradient: sets a linear gradient fill from start point to end point
+        fillGradient : (start, startColor, end, endColor) => { return this; },
+        // fillOpacity: sets the opacity for fill operations (0.0 to 1.0)
+        fillOpacity : (opacity) => { return this; },
+        // fillRadialGradient: Create a radial gradient fill from center point to outer radius
+        fillRadialGradient : (center, centerColor, radius, endColor) => { return this; },
+        // fitType: Sets how an image should be fitted into a target rectangle
+        fitType : (fit) => { return this; },
+        // font: Sets the font to use for drawing text
+        font : (font) => { return this; },
+        // frame: Sets which frame of an ImageStrip to draw
+        frame : (frame) => { return this; },
+        getAmbientLight : () => { return Color; },
+        getBlendMode : () => { return number /* int */; },
+        getClipOverflow : () => { return boolean; },
+        getFillColor : () => { return Color; },
+        getFillOpacity : () => { return number float; },
+        getFitType : () => { return number /* int */; },
+        getFont : () => { return Font; },
+        getFrame : () => { return number /* int */; },
+        getGradientEnd : () => { return Point; },
+        getGradientEndColor : () => { return Color; },
+        getGradientStart : () => { return Point; },
+        getGradientStartColor : () => { return Color; },
+        getGradientType : () => { return number /* int */; },
+        getLightOffset : () => { return Offset; },
+        getLineColor : () => { return Color; },
+        getLineOpacity : () => { return number float; },
+        getLineStyle : () => { return number /* uint */; },
+        getLineThickness : () => { return number float; },
+        getPolarOffset : () => { return Offset; },
+        getRadialGradientCenter : () => { return Point; },
+        getRadialGradientCenterColor : () => { return Color; },
+        getRadialGradientEndColor : () => { return Color; },
+        getRadialGradientRadius : () => { return number float; },
+        getRoundedCornerRadius : () => { return number float; },
+        getSphereRotation : () => { return number float; },
+        getSubsection : () => { return Rect; },
+        getTextSize : () => { return number float; },
+        getTextStyle : () => { return number /* int */; },
+        getTexture : () => { return Image; },
+        getTransform : () => { return array number; },
+        // lightOffset: Sets light source with spherical coordinates in radians
+        lightOffset : (offset) => { return this; },
+        // lineColor: sets the line color for strokes and outlines
+        lineColor : (color) => { return this; },
+        // lineOpacity: sets the opacity for line strokes (0.0 to 1.0)
+        lineOpacity : (opacity) => { return this; },
+        // lineStyle: sets the style of line strokes (solid, dashed, etc.)
+        lineStyle : (lineStyle) => { return this; },
+        // lineThickness: sets the thickness of line strokes in pixels
+        lineThickness : (thickness) => { return this; },
+        // polarOffset: Sets the polar offset for rotating a textured sphere
+        polarOffset : (offset) => { return this; },
+        // rotation: sets the rotation angle and center point for transformations
+        rotation : (radians, center) => { return this; },
+        // roundedCorners: sets the radius for rounded corners
+        roundedCorners : (radius) => { return this; },
+        // scale: sets the scaling factors for x and y axes
+        scale : (xFactor, yFactor, center) => { return this; },
+        // setTransform: Replace the affine transform immediately.
+        setTransform : (matrix) => { return this; },
+        // skew: sets the skew transformation for x and y axes
+        skew : (xSkew, ySkew, center) => { return this; },
+        // sphereRotation: Sets the rotation angle in radians for a textured sphere
+        sphereRotation : (rotation) => { return this; },
+        // subsection: Sets a subsection of an image to draw
+        subsection : (section) => { return this; },
+        // textSize: Sets the text size in points for drawing text
+        textSize : (size) => { return this; },
+        // textStyle: Sets text style flags (bold, italic, underline, alignment)
+        textStyle : (style) => { return this; },
+        // texture: Sets the texture image to use for drawing a sphere
+        texture : (texture) => { return this; },
+        // transform: sets the transformation matrix directly
+        transform : (matrix) => { return this; },
+        // translation: sets the translation offset for transformations
+        translation : (offset) => { return this; },
+        withAppearance : (overrides, textOnly) => { return Attributes; },
+    }; },
+
+    Camera : () => { return {
+   //  TODO: derive from Animated, EventEmitter
+
+        // Camera: create an animated camera with an identity view
+        Camera : () => { return Camera; },
+
+        // addAnimationHelper: Register a callback after the object's normal animation step.
+        addAnimationHelper : (helper) => { return this; },
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        // andThen: Start the next timed operation after the most recently scheduled operation finishes.
+        andThen : () => { return this; },
+        animate : (seconds) => { return boolean; },
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        // cancelSchedule: Discard scheduled animations and pending sequencing.
+        cancelSchedule : () => { return this; },
+        // changeCenterOffsetBy: Animate the rotation-center offset by a delta.
+        changeCenterOffsetBy : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeCenterOffsetTo: Animate the rotation-center offset to a target.
+        changeCenterOffsetTo : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeGrowingBy: Animate the growing rate by an additive delta.
+        changeGrowingBy : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeGrowingTo: Animate the growing rate to a target.
+        changeGrowingTo : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementBy: Animate the movement rate by an additive delta.
+        changeMovementBy : (value, durationSeconds, easing) => { return this; },
+        changeMovementBy : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementTo: Animate the movement rate to a target.
+        changeMovementTo : (value, durationSeconds, easing) => { return this; },
+        changeMovementTo : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeScaleBy: Animate independent scale by additive deltas.
+        changeScaleBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeScaleTo: Animate independent scale to a target.
+        changeScaleTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeSpinBy: Animate the spin rate by an additive delta.
+        changeSpinBy : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeSpinTo: Animate the spin rate to a target.
+        changeSpinTo : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingBy: Animate the stretching rate by an additive delta.
+        changeStretchingBy : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingTo: Animate the stretching rate to a target.
+        changeStretchingTo : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // clear: remove all handlers
+        clear : () => {},
+        // clearAnimationHelpers: Retire all helpers on this object.
+        clearAnimationHelpers : () => { return this; },
+        // clearViewBounds: Disable visible-world bounds.
+        clearViewBounds : () => { return this; },
+        // cutTo: Schedule an atomic camera visibility and picking handoff.
+        cutTo : (destination) => { return this; },
+        // defineScript: create a library-owned named animation recorder
+        defineScript : (name) => { return AnimationScript; },
+        // diminish: Reduce the preceding block amplitude around its baseline.
+        diminish : (factor, seconds, easing) => { return this; },
+        // endGroup: Close and select the innermost anonymous block.
+        endGroup : () => { return this; },
+        // endOtherwise: Close a conditional with an alternative.
+        endOtherwise : () => { return this; },
+        // endWhen: Close a conditional without an alternative.
+        endWhen : () => { return this; },
+        // fadeIn: Fade composed output to full opacity.
+        fadeIn : (seconds, easing) => { return this; },
+        // fadeOut: Fade composed output to zero opacity.
+        fadeOut : (seconds, easing) => { return this; },
+        // fadeTo: Animate composed output opacity.
+        fadeTo : (opacity, seconds, easing) => { return this; },
+        // flash: Flash white at the requested opacity, then fade to zero.
+        flash : (opacity, seconds, easing) => { return this; },
+        // flipX: Toggle the x reflection flag immediately.
+        flipX : () => { return this; },
+        // flipY: Toggle the y reflection flag immediately.
+        flipY : () => { return this; },
+        // follow: Follow an Animated target in world coordinates.
+        follow : (target) => { return this; },
+        getBoundingBox : () => { return Rect; },
+        getCenterOffset : () => { return Offset; },
+        getDeadzone : () => { return Rect; },
+        getEffects : () => { return Camera; },
+        getFlashOpacity : () => { return number; },
+        getFollowOffset : () => { return Offset; },
+        getHeight : () => { return number; },
+        getLocation : () => { return Point; },
+        getLookAhead : () => { return number; },
+        getMovement : () => { return Offset; },
+        getOpacity : () => { return number; },
+        getPixelSnapping : () => { return boolean; },
+        getRotatedBounds : () => { return RotatedRect; },
+        getRotation : () => { return number; },
+        getScale : () => { return Offset; },
+        getSize : () => { return Offset; },
+        getSmoothing : () => { return number; },
+        getSpin : () => { return number; },
+        getStretching : () => { return Offset; },
+        getViewBounds : () => { return Rect; },
+        getViewport : () => { return Rect; },
+        getWidth : () => { return number; },
+        getZoom : () => { return number; },
+        // group: Open an anonymous animation block.
+        group : () => { return this; },
+        // grow: Multiply logical width and height by one factor.
+        grow : (factor, durationSeconds, easing) => { return this; },
+        hasScheduledAnimations : () => { return boolean; },
+        hasViewBounds : () => { return boolean; },
+        // hide: Hide output and picking without stopping animation.
+        hide : () => { return this; },
+        // increase: Increase the preceding block amplitude around its baseline.
+        increase : (factor, seconds, easing) => { return this; },
+        isFlippedX : () => { return boolean; },
+        isFlippedY : () => { return boolean; },
+        isFollowing : () => { return boolean; },
+        isHidden : () => { return boolean; },
+        isSchedulePaused : () => { return boolean; },
+        // lumaFadeTo: Reveal a live destination using a frozen luminance mask.
+        lumaFadeTo : (destination, seconds, mask, softness, darkFirst, easing) => { return this; },
+        // moveBy: Move by an offset.
+        moveBy : (value, durationSeconds, easing) => { return this; },
+        moveBy : (x, y, durationSeconds, easing) => { return this; },
+        // moveTo: Move to a location.
+        moveTo : (value, durationSeconds, easing) => { return this; },
+        moveTo : (x, y, durationSeconds, easing) => { return this; },
+        // onZoomComplete: listen for completion of camera zoom operations
+        onZoomComplete : (callback) => { return IEventHandler; },
+        // otherwise: Open the alternative of the innermost conditional.
+        otherwise : () => { return this; },
+        // pauseIt: Pause the most recently selected animation element.
+        pauseIt : () => { return this; },
+        // pauseSchedule: Pause scheduled animations and their delays.
+        pauseSchedule : () => { return this; },
+        // play: Instantiate a named animation script on this target.
+        play : (name) => { return this; },
+        // removeAnimationHelper: Retire a specific animation helper.
+        removeAnimationHelper : (helper) => { return this; },
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        // repeat: Repeat the preceding block.
+        repeat : () => { return this; },
+        repeat : (additionalExecutions) => { return this; },
+        // resizeBy: Change logical size by additive deltas.
+        resizeBy : (deltaWidth, deltaHeight, durationSeconds, easing) => { return this; },
+        // resizeTo: Animate logical size to a target.
+        resizeTo : (width, height, durationSeconds, easing) => { return this; },
+        // restartIt: Restart the most recently selected animation element from its baseline.
+        restartIt : () => { return this; },
+        // resumeIt: Resume the most recently selected paused animation element.
+        resumeIt : () => { return this; },
+        // resumeSchedule: Resume scheduled animations and their delays.
+        resumeSchedule : () => { return this; },
+        // rotateBy: Rotate through a relative angle.
+        rotateBy : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotateTo: Rotate to an absolute angle.
+        rotateTo : (radians, durationSeconds, easing, direction) => { return this; },
+        // setCenterOffset: Set the rotation-center offset immediately.
+        setCenterOffset : (offset) => { return this; },
+        // setDeadzone: Set the following deadzone relative to camera focus.
+        setDeadzone : (bounds) => { return this; },
+        // setFlipX: Set the x reflection flag immediately.
+        setFlipX : (flip) => { return this; },
+        // setFlipY: Set the y reflection flag immediately.
+        setFlipY : (flip) => { return this; },
+        // setFollowOffset: Offset the world-space point tracked by following.
+        setFollowOffset : (offset) => { return this; },
+        // setGrowing: Set equal constant growth rates immediately.
+        setGrowing : (value) => { return this; },
+        // setHeight: Set logical height immediately.
+        setHeight : (value) => { return this; },
+        // setLocation: Set the location immediately.
+        setLocation : (value) => { return this; },
+        setLocation : (x, y) => { return this; },
+        // setLookAhead: Set velocity-based following prediction.
+        setLookAhead : (seconds) => { return this; },
+        // setMovement: Set a constant programmed movement rate immediately.
+        setMovement : (value) => { return this; },
+        setMovement : (xPerSecond, yPerSecond) => { return this; },
+        // setOpacity: Set composed output opacity without changing sprite opacity.
+        setOpacity : (opacity) => { return this; },
+        // setPixelSnapping: Round final view translation without rounding persistent camera pose.
+        setPixelSnapping : (snap) => { return this; },
+        // setRotation: Set rotation immediately.
+        setRotation : (value) => { return this; },
+        // setScale: Set independent transform scale immediately.
+        setScale : (x, y) => { return this; },
+        // setSize: Set logical width and height immediately.
+        setSize : (value) => { return this; },
+        setSize : (width, height) => { return this; },
+        // setSmoothing: Set the following smoothing time constant.
+        setSmoothing : (seconds) => { return this; },
+        // setSpin: Set a constant programmed angular rate immediately.
+        setSpin : (value) => { return this; },
+        // setStretching: Set independent constant growth rates immediately.
+        setStretching : (widthPerSecond, heightPerSecond) => { return this; },
+        // setViewBounds: Constrain the visible world footprint for each viewport.
+        setViewBounds : (bounds) => { return this; },
+        // setViewport: Set this Camera's destination rectangle within its Port.
+        setViewport : (viewport) => { return this; },
+        // setWidth: Set logical width immediately.
+        setWidth : (value) => { return this; },
+        // setZoom: Set view magnification immediately.
+        setZoom : (zoom) => { return this; },
+        // show: Show this camera's composed scene.
+        show : () => { return this; },
+        // slowDown: Divide the preceding block playback rate.
+        slowDown : (factor, seconds, easing) => { return this; },
+        // speedUp: Increase the preceding block playback rate.
+        speedUp : (factor, seconds, easing) => { return this; },
+        // stopFollowing: Release the following controller and retain the current pose.
+        stopFollowing : () => { return this; },
+        // stopGrowing: Stop all programmed changes to logical size.
+        stopGrowing : () => { return this; },
+        // stopIt: Stop the most recently selected animation element.
+        stopIt : () => { return this; },
+        // stopMovement: Stop all programmed changes to position.
+        stopMovement : () => { return this; },
+        // stopSpinning: Stop all programmed changes to rotation.
+        stopSpinning : () => { return this; },
+        // stopStretching: Stop all programmed changes to logical size.
+        stopStretching : () => { return this; },
+        // stretch: Multiply logical width and height by independent factors.
+        stretch : (widthFactor, heightFactor, durationSeconds, easing) => { return this; },
+        // transitionTo: Transition between live camera scenes sharing a Port and viewport.
+        transitionTo : (destination, seconds, style, easing) => { return this; },
+        // unblockEvent: stop ignoring events of a particular type
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
+        // until: Finish the preceding block when its evaluator returns true.
+        until : (evaluator) => { return this; },
+        viewToWorld : (point) => { return Point; },
+        // wait: Delay the next timed animation request.
+        wait : (durationSeconds) => { return this; },
+        // when: Open a conditional animation branch.
+        when : (evaluator) => { return this; },
+        // whipPanTo: Slide live camera outputs with optional directional blur.
+        whipPanTo : (destination, seconds, style, blur, easing) => { return this; },
+        worldToView : (point) => { return Point; },
+        // yoyo: Play the preceding trajectory forward and back.
+        yoyo : () => { return this; },
+        // zoom: Animate magnification by a positive multiplier.
+        zoom : (factor, seconds, easing) => { return this; },
+        // zoomTo: Animate view magnification.
+        zoomTo : (zoom, seconds, easing) => { return this; },
+    }; },
+
+    Collider : () => { return {
+
+        NoCollider : null,
+
+        addBox : (bounds) => { return number /* uint */; },
+        addCapsule : (start, end, radius) => { return number /* uint */; },
+        addCircle : (radius, center) => { return number /* uint */; },
+        addImageMask : (image, localBounds, alphaThreshold) => { return number /* uint */; },
+        addPolygon : (vertices) => { return number /* uint */; },
+        addPolygon : (polygon) => { return number /* uint */; },
+        // clearShapes: Remove every collision shape.
+        clearShapes : () => { return this; },
+        contains : (worldPoint) => { return boolean; },
+        getBounds : () => { return Rect; },
+        getCapsuleEnd : (shapeId) => { return Point; },
+        getCapsuleRadius : (shapeId) => { return number; },
+        getCapsuleStart : (shapeId) => { return Point; },
+        getCategory : () => { return number; },
+        getCircleRadius : (shapeId) => { return number; },
+        getCollisionMask : () => { return number; },
+        getContactError : () => { return string; },
+        getFriction : () => { return number; },
+        getGeometrySource : () => { return number; },
+        getGroup : () => { return number; },
+        getId : () => { return number; },
+        getPhysicsBody : () => { return PhysicsBody; },
+        getRestitution : () => { return number; },
+        getShapeCount : () => { return number; },
+        getShapeId : (id) => { return number /* uint */; },
+        getShapeName : (shapeId) => { return string; },
+        getShapeType : (shapeId) => { return number; },
+        // getWantsContactEvents: whether owner contact events are requested
+        getWantsContactEvents : () => { return boolean; },
+        isAttached : () => { return boolean; },
+        isEnabled : () => { return boolean; },
+        isPresent : () => { return boolean; },
+        isSensor : () => { return boolean; },
+        isSourceShape : (shapeId) => { return boolean; },
+        overlaps : (other) => { return boolean; },
+        removeShape : (id) => { return boolean; },
+        // setBox: Replace all geometry with one rectangle.
+        setBox : (bounds) => { return this; },
+        // setCapsule: Replace all geometry with one capsule.
+        setCapsule : (start, end, radius) => { return this; },
+        // setCategory: Set this collider's category bits.
+        setCategory : (value) => { return this; },
+        // setCircle: Replace all geometry with one circle.
+        setCircle : (radius, center) => { return this; },
+        // setCollisionFilter: Filter contacts independently of owner type.
+        setCollisionFilter : (callback) => { return this; },
+        // setCollisionMask: Set the categories this collider accepts.
+        setCollisionMask : (value) => { return this; },
+        // setContactHandler: Install a contact listener.
+        setContactHandler : (callback) => { return this; },
+        // setEnabled: Enable or suspend participation in collision worlds.
+        setEnabled : (value) => { return this; },
+        // setFriction: Override this collider's contact friction.
+        setFriction : (value) => { return this; },
+        // setGroup: Set an optional collision exclusion group.
+        setGroup : (value) => { return this; },
+        // setImageMask: Copy opaque image pixels into collision geometry.
+        setImageMask : (image, localBounds, alphaThreshold) => { return this; },
+        // setPhysicsBody: Associate these shapes with an explicit compound body.
+        setPhysicsBody : (body) => { return this; },
+        // setPolygon: Replace all geometry with one polygon.
+        setPolygon : (vertices) => { return this; },
+        setPolygon : (polygon) => { return this; },
+        // setRestitution: Override this collider's restitution.
+        setRestitution : (value) => { return this; },
+        // setSensor: Choose overlap-only contact reporting.
+        setSensor : (value) => { return this; },
+        // setWantsContactEvents: Enable contact events on the owning Sprite.
+        setWantsContactEvents : (wanted) => { return this; },
+        // useBodyMaterial: Clear both per-collider material overrides.
+        useBodyMaterial : () => { return this; },
+        // useOwnerPhysics: Restore the owner's current body association.
+        useOwnerPhysics : () => { return this; },
+    }; },
+
+    Color : () => { return {
+
+        alpha : null,
+        blue : null,
+        green : null,
+        red : null,
+
+        // Color: create and color and set rgb values
+        Color : () => { return Color; },
+        Color : (c) => { return Color; },
+        Color : (colorstr) => { return Color; },
+        Color : (r, g, b, alpha) => { return Color; },
+
+        // assign: copy a color
+        assign : (color) => { return this; },
+        // convertToGrayscale: convert this color to a matching shade of grey
+        convertToGrayscale : () => {},
+        // equals: return true if this color is equal to the other (ignoring alpha)
+        equals : (color) => { return boolean; },
+        // notEquals: return true if this color is not equal to the other (ignoring alpha)
+        notEquals : (color) => { return boolean; },
     }; },
 
     // NOTE: Primary access via singleton instance: pdg.cfg
     ConfigManager : () => { return {
-        useConfig : (inConfigName) => { return boolean; }, 
-        getConfigString : (inConfigItemName) => { return string; }, 
-        getConfigLong : (inConfigItemName) => { return number; }, 
-        getConfigFloat : (inConfigItemName) => { return number; }, 
-        getConfigBool : (inConfigItemName) => { return boolean; }, 
-        setConfigString : (inConfigItemName, inValue) => {},
-        setConfigLong : (inConfigItemName, inValue) => {},
-        setConfigFloat : (inConfigItemName, inValue) => {},
+        getConfigBool : (inConfigItemName) => { return boolean; },
+        getConfigFloat : (inConfigItemName) => { return number; },
+        getConfigLong : (inConfigItemName) => { return number; },
+        getConfigString : (inConfigItemName) => { return string; },
         setConfigBool : (inConfigItemName, inValue) => {},
+        setConfigFloat : (inConfigItemName, inValue) => {},
+        setConfigLong : (inConfigItemName, inValue) => {},
+        setConfigString : (inConfigItemName, inValue) => {},
+        useConfig : (inConfigName) => { return boolean; },
     }; },
 
-    // NOTE: Primary access via singleton instance: pdg.res
-    ResourceManager : () => { return {
-        getLanguage : () => { return string; }, 
-        setLanguage : (inLanguage) => { return ResourceManager; }, 
-        openResourceFile : (filename) => { return number; }, 
-        closeResourceFile : (refNum) => {},
-        getImage : (imageName) => { return Image; }, 
-        getImageStrip : (imageName) => { return ImageStrip; }, 
-        getString : (id, substring) => { return string; }, 
-        getResourceSize : (resourceName) => { return number; }, 
-        getResource : (resourceName) => { return string /* Binary */; }, 
-        getResourcePaths : () => { return string; }, 
+    CpArbiter : () => { return {
+        getCount : () => { return number; },
+        getDepth : (i) => { return number; },
+        getNormal : () => { return Vector; },
+        getPointA : (i) => { return Point; },
+        getPointB : (i) => { return Point; },
+        // isFirstContact: true if this is the first moment of contact between the objects, false if part of an ongoing collison
+        isFirstContact : () => { return boolean; },
     }; },
 
-    Serializer : () => { return {
-        serialize_8 : (val) => {},
-        serialize_8u : (val) => {},
-        sizeof_8 : (val) => { return number /* uint */; }, 
-        sizeof_8u : (val) => { return number /* uint */; }, 
-        serialize_d : (val) => {},
-        serialize_f : (val) => {},
-        serialize_4 : (val) => {},
-        serialize_4u : (val) => {},
-        serialize_3u : (val) => {},
-        serialize_2 : (val) => {},
-        serialize_2u : (val) => {},
-        serialize_1 : (val) => {},
-        serialize_1u : (val) => {},
-        serialize_bool : (val) => {},
-        serialize_uint : (val) => {},
-        serialize_color : (val) => {},
-        serialize_offset : (val) => {},
-        serialize_point : (val) => {},
-        serialize_vector : (val) => {},
-        serialize_rect : (val) => {},
-        serialize_rotr : (val) => {},
-        serialize_quad : (val) => {},
-        serialize_str : (str) => {},
-        serialize_mem : (mem) => {},
-        serialize_mem : (mem) => {},
-        // serialize_obj: Serializes an ISerializable object
-        serialize_obj : (obj) => {},
-        serialize_ref : (obj) => {},
-        sizeof_d : (val) => { return number /* uint */; }, 
-        sizeof_f : (val) => { return number /* uint */; }, 
-        sizeof_4 : (val) => { return number /* uint */; }, 
-        sizeof_4u : (val) => { return number /* uint */; }, 
-        sizeof_3u : (val) => { return number /* uint */; }, 
-        sizeof_2 : (val) => { return number /* uint */; }, 
-        sizeof_2u : (val) => { return number /* uint */; }, 
-        sizeof_1 : (val) => { return number /* uint */; }, 
-        sizeof_1u : (val) => { return number /* uint */; }, 
-        sizeof_bool : (val) => { return number /* uint */; }, 
-        sizeof_uint : (val) => { return number /* uint */; }, 
-        sizeof_color : (val) => { return number /* uint */; }, 
-        sizeof_offset : (val) => { return number /* uint */; }, 
-        sizeof_point : (val) => { return number /* uint */; }, 
-        sizeof_vector : (val) => { return number /* uint */; }, 
-        sizeof_rect : (val) => { return number /* uint */; }, 
-        sizeof_rotr : (val) => { return number /* uint */; }, 
-        sizeof_quad : (val) => { return number /* uint */; }, 
-        sizeof_str : (val) => { return number /* uint */; }, 
-        sizeof_mem : (mem) => { return number /* uint */; }, 
-        sizeof_mem : (mem) => { return number /* uint */; }, 
-        // sizeof_obj: Calculates the serialized size of an ISerializable object
-        sizeof_obj : (obj) => { return number /* uint */; }, 
-        sizeof_ref : (val) => { return number /* uint */; }, 
-        getDataSize : () => { return number; }, 
-        getDataPtr : () => { return MemBlock; }, 
+    CpConstraint : () => { return {
+        activateBodies : () => {},
+        getAnchor : () => { return Offset; },
+        getErrorBias : () => { return number; },
+        getGearInitialAngle : () => { return number; },
+        getGearRatio : () => { return number; },
+        getGrooveEnd : () => { return Offset; },
+        getGrooveStart : () => { return Offset; },
+        getImpulse : () => { return number; },
+        getMaxAngle : () => { return number; },
+        getMaxBias : () => { return number; },
+        getMaxForce : () => { return number; },
+        getMinAngle : () => { return number; },
+        getMotorSpinRate : () => { return number; },
+        getOtherAnchor : () => { return Offset; },
+        getOtherSprite : () => { return Sprite; },
+        getPinDist : () => { return number; },
+        getRatchetAngle : () => { return number; },
+        getRatchetInterval : () => { return number; },
+        getRatchetPhase : () => { return number; },
+        getRotarySpringRestAngle : () => { return number; },
+        getSlideMaxDist : () => { return number; },
+        getSlideMinDist : () => { return number; },
+        getSpringDamping : () => { return number; },
+        getSpringRestLength : () => { return number; },
+        getSpringStiffness : () => { return number; },
+        getSprite : () => { return Sprite; },
+        getType : () => { return string; },
+        setAnchor : (inAnchor) => { return this; },
+        setErrorBias : (inErrorBias) => { return this; },
+        setGearInitialAngle : (inGearInitialAngle) => { return this; },
+        setGearRatio : (inGearRatio) => { return this; },
+        setGrooveEnd : (inGrooveEnd) => { return this; },
+        setGrooveStart : (inGrooveStart) => { return this; },
+        setMaxAngle : (inMaxAngle) => { return this; },
+        setMaxBias : (inMaxBias) => { return this; },
+        setMaxForce : (inMaxForce) => { return this; },
+        setMinAngle : (inMinAngle) => { return this; },
+        setMotorSpinRate : (inMotorSpinRate) => { return this; },
+        setOtherAnchor : (inOtherAnchor) => { return this; },
+        setPinDist : (inPinDist) => { return this; },
+        setRatchetAngle : (inRatchetAngle) => { return this; },
+        setRatchetInterval : (inRatchetInterval) => { return this; },
+        setRatchetPhase : (inRatchetPhase) => { return this; },
+        setRotarySpringRestAngle : (inRotarySpringRestAngle) => { return this; },
+        setSlideMaxDist : (inSlideMaxDist) => { return this; },
+        setSlideMinDist : (inSlideMinDist) => { return this; },
+        setSpringDamping : (inSpringDamping) => { return this; },
+        setSpringRestLength : (inSpringRestLength) => { return this; },
+        setSpringStiffness : (inSpringStiffness) => { return this; },
+    }; },
+
+    CpSpace : () => { return {
+        getCollisionBias : () => { return number; },
+        getCollisionPersistence : () => { return number; },
+        getCollisionSlop : () => { return number; },
+        getIdleSpeedThreshold : () => { return number; },
+        getSleepTimeThreshold : () => { return number; },
+        reindexStatic : () => {},
+        setCollisionBias : (inCollisionBias) => { return this; },
+        setCollisionPersistence : (inCollisionPersistence) => { return this; },
+        setCollisionSlop : (inCollisionSlop) => { return this; },
+        setIdleSpeedThreshold : (inIdleSpeedThreshold) => { return this; },
+        setSleepTimeThreshold : (inSleepTimeThreshold) => { return this; },
+        step : (dt) => {},
+        useSpatialHash : (dim, count) => {},
     }; },
 
     Deserializer : () => { return {
-        deserialize_8 : () => { return number; }, 
-        deserialize_8u : () => { return number; }, 
-        deserialize_d : () => { return number; }, 
-        deserialize_f : () => { return number; }, 
-        deserialize_4 : () => { return number; }, 
-        deserialize_4u : () => { return number; }, 
-        deserialize_3u : () => { return number; }, 
-        deserialize_2 : () => { return number; }, 
-        deserialize_2u : () => { return number; }, 
-        deserialize_1 : () => { return number; }, 
-        deserialize_1u : () => { return number; }, 
-        deserialize_bool : () => { return boolean; }, 
-        deserialize_uint : () => { return number; }, 
-        deserialize_color : () => { return Color; }, 
-        deserialize_offset : () => { return Offset; }, 
-        deserialize_point : () => { return Point; }, 
-        deserialize_vector : () => { return Vector; }, 
-        deserialize_rect : () => { return Rect; }, 
-        deserialize_rotr : () => { return RotatedRect; }, 
-        deserialize_quad : () => { return Quad; }, 
-        deserialize_str : () => { return string; }, 
-        deserialize_mem : () => { return MemBlock; }, 
-        deserialize_memGetLen : () => { return number; }, 
-        deserialize_obj : () => { return ISerializable; }, 
-        deserialize_ref : () => { return object; }, 
+        deserialize_1 : () => { return number; },
+        deserialize_1u : () => { return number; },
+        deserialize_2 : () => { return number; },
+        deserialize_2u : () => { return number; },
+        deserialize_3u : () => { return number; },
+        deserialize_4 : () => { return number; },
+        deserialize_4u : () => { return number; },
+        deserialize_8 : () => { return number; },
+        deserialize_8u : () => { return number; },
+        deserialize_bool : () => { return boolean; },
+        deserialize_color : () => { return Color; },
+        deserialize_d : () => { return number; },
+        deserialize_f : () => { return number; },
+        deserialize_mem : () => { return MemBlock; },
+        deserialize_memGetLen : () => { return number; },
+        deserialize_obj : () => { return ISerializable; },
+        deserialize_offset : () => { return Offset; },
+        deserialize_point : () => { return Point; },
+        deserialize_quad : () => { return Quad; },
+        deserialize_rect : () => { return Rect; },
+        deserialize_ref : () => { return object; },
+        deserialize_rotr : () => { return RotatedRect; },
+        deserialize_str : () => { return string; },
+        deserialize_uint : () => { return number; },
+        deserialize_vector : () => { return Vector; },
         setDataPtr : (data) => {},
         setDataPtr : (data) => {},
     }; },
 
-    ISerializable : () => { return {
+    Drawing : () => { return {
+        addArc : (center, xRadius, yRadius, startAngle, endAngle, attrs) => { return ElementRef; },
+        addDrawing : (rect, drawing, attrs) => { return ElementRef; },
+        addEllipse : (center, xRadius, yRadius, attrs) => { return ElementRef; },
+        addImage : (rect, image, attrs) => { return ElementRef; },
+        addImageStrip : (rect, imageStrip, attrs) => { return ElementRef; },
+        addLine : (from, to, attrs) => { return ElementRef; },
+        addPolygon : (polygon, attrs) => { return ElementRef; },
+        addQuad : (quad, attrs) => { return ElementRef; },
+        addRect : (rect, attrs) => { return ElementRef; },
+        addSpline : (spline, attrs) => { return ElementRef; },
+        centerPoint : () => { return Point; },
+        empty : () => { return boolean; },
+        getBounds : () => { return Rect; },
+        getElement : (index) => { return ElementRef; },
+        getElementCount : () => { return number /* uint */; },
+        getElementHitBy : (point) => { return ElementRef; },
     }; },
 
-    IEventHandler : () => { return {
+    ElementRef : () => { return {
+        changeControlPoint : (controlPointIndex, controlPoint) => {},
+        clearLiveAttributes : () => {},
+        getAttributes : () => { return Attributes; },
+        getControlPoint : (controlPointIndex) => { return Point; },
+        getControlPoints : () => { return array; },
+        hasLiveAttributes : () => { return boolean; },
+        moveBackward : () => {},
+        moveForward : () => {},
+        moveToBack : () => {},
+        moveToFront : () => {},
+        remove : () => {},
+        setAttributes : (attrs) => {},
+        setLiveAttributes : (attrs) => {},
+        type : () => { return number /* uint */; },
     }; },
 
     EventEmitter : () => { return {
-        // addHandler: add a new handler for some event type, or for all events if no type specified.  
-        // \param inHandler the object to handle events 
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
         // \param inEventType the type of event to handle
         addHandler : (inHandler, inEventType) => {},
-        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
-        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
-        // It is safe to call remove handler from within an event handler's handleEvent() call. 
-        // \param inHandler the object to handle events 
-        // \param inEventType the type of event to stop handling (see note)
-        removeHandler : (inHandler, inEventType) => {},
-        // clear: remove all handlers
-        clear : () => {},
-        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped. 
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
         // \param inEventType the type of event to block
         blockEvent : (inEventType) => {},
-        // unblockEvent: stop ignoring events of a particular type  
+        // clear: remove all handlers
+        clear : () => {},
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        // unblockEvent: stop ignoring events of a particular type
         // \param inEventType the type of event to unblock
         unblockEvent : (inEventType) => {},
     }; },
@@ -429,892 +1674,2544 @@ var pdg = {
     // NOTE: Primary access via singleton instance: pdg.evt
     EventManager : () => { return {
    //  TODO: derive from EventEmitter
-        isKeyDown : (unicodeChar) => { return boolean; }, 
-        isKeyDown : (utf16CharCode) => { return boolean; }, 
-        isRawKeyDown : (keyCode) => { return boolean; }, 
-        isButtonDown : (buttonNumber) => { return boolean; }, 
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        // clear: remove all handlers
+        clear : () => {},
         // getDeviceOrientation: NOT IMPLEMENTED
-        getDeviceOrientation : (absolute) => { return object; }, 
+        getDeviceOrientation : (absolute) => { return object; },
+        isButtonDown : (buttonNumber) => { return boolean; },
+        isKeyDown : (unicodeChar) => { return boolean; },
+        isKeyDown : (utf16CharCode) => { return boolean; },
+        isRawKeyDown : (keyCode) => { return boolean; },
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        // unblockEvent: stop ignoring events of a particular type
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
     }; },
 
-    // NOTE: Primary access via singleton instance: pdg.tm
-    TimerManager : () => { return {
-   //  TODO: derive from EventEmitter
-        startTimer : (id, delay, oneShot) => {},
-        cancelTimer : (id) => {},
-        cancelAllTimers : () => {},
-        delayTimer : (id, delay) => {},
-        delayTimerUntil : (id, msTime) => {},
-        pause : () => {},
-        unpause : () => {},
-        isPaused : () => { return boolean; }, 
-        pauseTimer : (id) => {},
-        unpauseTimer : (id) => {},
-        isTimerPaused : (id) => { return boolean; }, 
-        getWhenTimerFiresNext : (id) => { return number; }, 
-        getMilliseconds : () => { return number; }, 
-        // onTimeout: setup handler to be called once after delay ms
-        onTimeout : (func, delay) => { return IEventHandler; }, 
-        // onInterval: setup handler to be called regularly at interval ms
-        onInterval : (func, interval) => { return IEventHandler; }, 
+    // NOTE: Primary access via singleton instance: pdg.fs
+    FileManager : () => { return {
+        findClose : (inFindData) => {},
+        findDirs : (name) => { return [""] /* array of strings */; },
+        findFiles : (name) => { return [""] /* array of strings */; },
+        findFirst : (inFindName) => { return object; },
+        findNext : (ioFindData) => { return boolean; },
+        getApplicationDataDirectory : () => { return string; },
+        getApplicationDirectory : () => { return string; },
+        getApplicationResourceDirectory : () => { return string; },
+    }; },
+
+    Font : () => { return {
+        getFontAscent : (size, style) => { return number; },
+        getFontCapHeight : (size, style) => { return number; },
+        getFontDescent : (size, style) => { return number; },
+        getFontHeight : (size, style) => { return number; },
+        getFontLeading : (size, style) => { return number; },
+        getFontName : () => { return string; },
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.gfx
+    GraphicsManager : () => { return {
+        // closeAllGraphicsPorts: close all active graphics ports (e.g. for test cleanup)
+        closeAllGraphicsPorts : () => {},
+        // closeGraphicsPort: close given port, along with its window and restore screen mode if changed
+        closeGraphicsPort : (port) => {},
+        // createFont: get a font with optional scaling adjust
+        createFont : (fontName, scalingFactor) => { return Font; },
+        // createFullScreenPort: create full screen drawing port with given dimensions on given screen, optionally changing depth
+        createFullScreenPort : (rect, screenNum, allowResChange, bpp) => { return Port; },
+        // createOffscreenPort: create a persistent transparent drawing surface without a window
+        createOffscreenPort : (rect) => { return Port; },
+        // createWindowPort: create windowed drawing port with given dimensions, title and depth
+        createWindowPort : (rect, windName, bpp) => { return Port; },
+        // getCurrentScreenMode: returns object with width, height, depth and maxWindowRect for specified screen
+        getCurrentScreenMode : (screenNum) => { return object; },
+        getFPS : () => { return number; },
+        // getMainPort: return the primary graphics port
+        getMainPort : () => { return Port; },
+        getMouse : (mouseNumber) => { return Point; },
+        // getNthSupportedScreenMode: returns object with width, height, depth and maxWindowRect for specified screen
+        getNthSupportedScreenMode : (n, screenNum) => { return object; },
+        getNumScreens : () => { return number; },
+        getNumSupportedScreenModes : (screen) => { return number; },
+        // getScreenBounds: returns the bounds (position and size) of a screen in the global coordinate space
+        getScreenBounds : (screenNum) => { return Rect; },
+        getTargetFPS : () => { return number; },
+        // inFullScreenMode: return whether primary graphics port is fullscreen or not
+        inFullScreenMode : () => { return boolean; },
+        // setScreenMode: changes specified screen to closest matching mode
+        setScreenMode : (width, height, screenNum, bpp) => {},
+        setTargetFPS : (inTargetFPS) => { return this; },
+        // switchToFullScreenMode: change a port to fullscreen mode, return true on success
+        switchToFullScreenMode : (allowResChange, port) => { return boolean; },
+        // switchToWindowMode: change a port to window mode, return true on success
+        switchToWindowMode : (port, windName) => { return boolean; },
     }; },
 
     IAnimationHelper : () => { return {
     }; },
 
-    Animated : () => { return {
-        getBoundingBox : () => { return Rect; }, 
-        getRotatedBounds : () => { return RotatedRect; }, 
-        getLocation : () => { return Point; }, 
-        setLocation : (inLocation) => { return Animated; }, 
-        getSpeed : () => { return number; }, 
-        setSpeed : (inSpeed) => { return Animated; }, 
-        getVelocity : () => { return Vector; }, 
-        setVelocity : (deltaPerSec) => { return Animated; }, 
-        setVelocity : (deltaXPerSec, deltaYPerSec) => { return Animated; }, 
-        getWidth : () => { return number; }, 
-        setWidth : (inWidth) => { return Animated; }, 
-        getHeight : () => { return number; }, 
-        setHeight : (inHeight) => { return Animated; }, 
-        getRotation : () => { return number; }, 
-        setRotation : (inRotation) => { return Animated; }, 
-        getCenterOffset : () => { return Offset; }, 
-        setCenterOffset : (inCenterOffset) => { return Animated; }, 
-        getSpin : () => { return number; }, 
-        setSpin : (inSpin) => { return Animated; }, 
-        getMass : () => { return number; }, 
-        setMass : (inMass) => { return Animated; }, 
-        getMoveFriction : () => { return number; }, 
-        setMoveFriction : (inMoveFriction) => { return Animated; }, 
-        getSpinFriction : () => { return number; }, 
-        setSpinFriction : (inSpinFriction) => { return Animated; }, 
-        getSizeFriction : () => { return number; }, 
-        setSizeFriction : (inSizeFriction) => { return Animated; }, 
-        move : (delta, msDuration, easing) => {},
-        moveTo : (where, msDuration, easing) => {},
-        setVelocityInRadians : (speed, direction) => { return Animated; }, 
-        getMovementDirectionInRadians : () => { return number; }, 
-        stopMoving : () => {},
-        accelerate : (deltaSpeed, msDuration, easing) => {},
-        accelerateTo : (speed, msDuration, easing) => {},
-        setSize : (width, height) => { return Animated; }, 
-        grow : (factor, msDuration, easing) => {},
-        stretch : (widthFactor, heightFactor, msDuration, easing) => {},
-        startGrowing : (amountPerSecond) => {},
-        stopGrowing : () => {},
-        startStretching : (widthPerSecond, heightPerSecond) => {},
-        stopStretching : () => {},
-        resize : (deltaWidth, deltaHeight, msDuration, easing) => {},
-        resizeTo : (width, height, msDuration, easing) => {},
-        rotate : (radians, msDuration, easing) => {},
-        rotateTo : (radiansRotation, msDuration, easing) => {},
-        stopSpinning : () => {},
-        changeCenter : (offset, msDuration, easing) => {},
-        changeCenterTo : (offset, msDuration, easing) => {},
-        wait : (msDuration) => { return Animated; }, 
-        setFriction : (frictionCoefficient) => { return Animated; }, 
-        applyForce : (force, msDuration) => {},
-        applyTorque : (forceSpin, msDuration) => {},
-        stopAllForces : () => {},
-        addAnimationHelper : (helper) => {},
-        removeAnimationHelper : (helper) => {},
-        clearAnimationHelpers : () => {},
-        animate : (msElapsed) => { return boolean; }, 
+    IEventHandler : () => { return {
     }; },
 
-    CpArbiter : () => { return {
-        // isFirstContact: true if this is the first moment of contact between the objects, false if part of an ongoing collison
-        isFirstContact : () => { return boolean; }, 
-        getCount : () => { return number; }, 
-        getNormal : () => { return Vector; }, 
-        getPointA : (i) => { return Point; }, 
-        getPointB : (i) => { return Point; }, 
-        getDepth : (i) => { return number; }, 
+    Image : () => { return {
+
+        // Image: load an image file or create a snapshot or live image of an offscreen port
+        Image : (filename) => { return Image; },
+        Image : (port, copyPixels) => { return Image; },
+
+        // deserialize: read this object's data from the given stream
+        deserialize : (deserializer) => {},
+        getAlphaValue : (p) => { return number; },
+        getAlphaValue : (x, y) => { return number; },
+        getHeight : () => { return number; },
+        // getImageBounds: get image boundary rect, optionally with top left at given point
+        getImageBounds : (at) => { return Rect; },
+        getMyClassTag : () => { return number; },
+        // getOpacity: get opacity of this image: 0.0 - completely transparent to 1.0 - completely solid
+        getOpacity : () => { return number; },
+        getPixel : (p) => { return Color; },
+        getPixel : (x, y) => { return Color; },
+        // getSerializedSize: get size of this object's data for the given stream
+        getSerializedSize : (serializer) => { return number /* uint */; },
+        // getSubsection: get image that is an arbitrary subsection of this image
+        getSubsection : (quad) => { return Image; },
+        getSubsection : (quad) => { return Image; },
+        getTransparentColor : () => { return Color; },
+        getWidth : () => { return number; },
+        // prepareToRasterize: bind the image into an OpenGL texture and free image data from main memory
+        prepareToRasterize : () => {},
+        // retainAlpha: retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions
+        retainAlpha : () => {},
+        // retainData: retain pixel data for use by Image.getPixel()
+        retainData : () => {},
+        // serialize: write this object's data into the given stream
+        serialize : (serializer) => {},
+        // setEdgeClamping: set whether image uses edge clamping or not
+        setEdgeClamping : (inUseEdgeClamp) => { return this; },
+        // setOpacity: set opacity of this image
+        setOpacity : (opacity) => { return this; },
+        setTransparentColor : (inTransparentColor) => { return this; },
     }; },
 
-    CpConstraint : () => { return {
-        getType : () => { return string; }, 
-        activateBodies : () => {},
-        getImpulse : () => { return number; }, 
-        getMaxForce : () => { return number; }, 
-        setMaxForce : (inMaxForce) => { return CpConstraint; }, 
-        getErrorBias : () => { return number; }, 
-        setErrorBias : (inErrorBias) => { return CpConstraint; }, 
-        getMaxBias : () => { return number; }, 
-        setMaxBias : (inMaxBias) => { return CpConstraint; }, 
-        getSprite : () => { return Sprite; }, 
-        getOtherSprite : () => { return Sprite; }, 
-        getAnchor : () => { return Offset; }, 
-        setAnchor : (inAnchor) => { return CpConstraint; }, 
-        getOtherAnchor : () => { return Offset; }, 
-        setOtherAnchor : (inOtherAnchor) => { return CpConstraint; }, 
-        getPinDist : () => { return number; }, 
-        setPinDist : (inPinDist) => { return CpConstraint; }, 
-        getSpringStiffness : () => { return number; }, 
-        setSpringStiffness : (inSpringStiffness) => { return CpConstraint; }, 
-        getSpringDamping : () => { return number; }, 
-        setSpringDamping : (inSpringDamping) => { return CpConstraint; }, 
-        getSlideMinDist : () => { return number; }, 
-        setSlideMinDist : (inSlideMinDist) => { return CpConstraint; }, 
-        getSlideMaxDist : () => { return number; }, 
-        setSlideMaxDist : (inSlideMaxDist) => { return CpConstraint; }, 
-        getGrooveStart : () => { return Offset; }, 
-        setGrooveStart : (inGrooveStart) => { return CpConstraint; }, 
-        getGrooveEnd : () => { return Offset; }, 
-        setGrooveEnd : (inGrooveEnd) => { return CpConstraint; }, 
-        getSpringRestLength : () => { return number; }, 
-        setSpringRestLength : (inSpringRestLength) => { return CpConstraint; }, 
-        getRotarySpringRestAngle : () => { return number; }, 
-        setRotarySpringRestAngle : (inRotarySpringRestAngle) => { return CpConstraint; }, 
-        getMinAngle : () => { return number; }, 
-        setMinAngle : (inMinAngle) => { return CpConstraint; }, 
-        getMaxAngle : () => { return number; }, 
-        setMaxAngle : (inMaxAngle) => { return CpConstraint; }, 
-        getRatchetAngle : () => { return number; }, 
-        setRatchetAngle : (inRatchetAngle) => { return CpConstraint; }, 
-        getRatchetPhase : () => { return number; }, 
-        setRatchetPhase : (inRatchetPhase) => { return CpConstraint; }, 
-        getRatchetInterval : () => { return number; }, 
-        setRatchetInterval : (inRatchetInterval) => { return CpConstraint; }, 
-        getGearRatio : () => { return number; }, 
-        setGearRatio : (inGearRatio) => { return CpConstraint; }, 
-        getGearInitialAngle : () => { return number; }, 
-        setGearInitialAngle : (inGearInitialAngle) => { return CpConstraint; }, 
-        getMotorSpinRate : () => { return number; }, 
-        setMotorSpinRate : (inMotorSpinRate) => { return CpConstraint; }, 
+    ImageStrip : () => { return {
+   //  TODO: derive from Image
+        // deserialize: read this object's data from the given stream
+        deserialize : (deserializer) => {},
+        getAlphaValue : (p) => { return number; },
+        getAlphaValue : (x, y) => { return number; },
+        // getFrame: get image that is a single frame of this multi-frame image
+        getFrame : (frameNum) => { return Image; },
+        getFrameWidth : () => { return number; },
+        getHeight : () => { return number; },
+        // getImageBounds: get image boundary rect, optionally with top left at given point
+        getImageBounds : (at) => { return Rect; },
+        getMyClassTag : () => { return number; },
+        getNumFrames : () => { return number; },
+        // getOpacity: get opacity of this image: 0.0 - completely transparent to 1.0 - completely solid
+        getOpacity : () => { return number; },
+        getPixel : (p) => { return Color; },
+        getPixel : (x, y) => { return Color; },
+        // getSerializedSize: get size of this object's data for the given stream
+        getSerializedSize : (serializer) => { return number /* uint */; },
+        // getSubsection: get image that is an arbitrary subsection of this image
+        getSubsection : (quad) => { return Image; },
+        getSubsection : (quad) => { return Image; },
+        getTransparentColor : () => { return Color; },
+        getWidth : () => { return number; },
+        // prepareToRasterize: bind the image into an OpenGL texture and free image data from main memory
+        prepareToRasterize : () => {},
+        // retainAlpha: retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions
+        retainAlpha : () => {},
+        // retainData: retain pixel data for use by Image.getPixel()
+        retainData : () => {},
+        // serialize: write this object's data into the given stream
+        serialize : (serializer) => {},
+        // setEdgeClamping: set whether image uses edge clamping or not
+        setEdgeClamping : (inUseEdgeClamp) => { return this; },
+        setFrameWidth : (inFrameWidth) => { return this; },
+        setNumFrames : (inNumFrames) => { return this; },
+        // setOpacity: set opacity of this image
+        setOpacity : (opacity) => { return this; },
+        setTransparentColor : (inTransparentColor) => { return this; },
     }; },
 
-    CpSpace : () => { return {
-        useSpatialHash : (dim, count) => {},
-        reindexStatic : () => {},
-        step : (dt) => {},
-        getIdleSpeedThreshold : () => { return number; }, 
-        setIdleSpeedThreshold : (inIdleSpeedThreshold) => { return CpSpace; }, 
-        getSleepTimeThreshold : () => { return number; }, 
-        setSleepTimeThreshold : (inSleepTimeThreshold) => { return CpSpace; }, 
-        getCollisionSlop : () => { return number; }, 
-        setCollisionSlop : (inCollisionSlop) => { return CpSpace; }, 
-        getCollisionBias : () => { return number; }, 
-        setCollisionBias : (inCollisionBias) => { return CpSpace; }, 
-        getCollisionPersistence : () => { return number; }, 
-        setCollisionPersistence : (inCollisionPersistence) => { return CpSpace; }, 
+    ISerializable : () => { return {
     }; },
 
     ISpriteDrawHelper : () => { return {
     }; },
 
-    ISpriteCollideHelper : () => { return {
+    // NOTE: Primary access via singleton instance: pdg.lm
+    LogManager : () => { return {
+
+        init_AppendToExisting : 2,
+        init_CreateUniqueNewFile : 0,
+        init_OverwriteExisting : 1,
+        init_StdErr : 4,
+        init_StdOut : 3,
+
+        binaryDump : (inData, length, bytesPerLine) => { return string; },
+        binaryDump : (inData, length, bytesPerLine) => { return string; },
+        getLogLevel : () => { return number; },
+        initialize : (inLogNameBase, initMode) => {},
+        setLogLevel : (inLogLevel) => { return this; },
+        writeLogEntry : (level, category, message) => {},
     }; },
 
-    Sprite : () => { return {
-   //  TODO: derive from Animated, EventEmitter, ISerializable
-        getMyClassTag : () => { return number; }, 
-        // getSerializedSize: get size of this object's data for the given stream
-        getSerializedSize : (serializer) => { return number /* uint */; }, 
-        // serialize: write this object's data into the given stream
-        serialize : (serializer) => {},
-        // deserialize: read this object's data from the given stream
-        deserialize : (deserializer) => {},
-        getFrameRotatedBounds : (frameNum) => { return RotatedRect; }, 
-        setFrame : (frame) => { return Sprite; }, 
-        // getCurrentFrame: which frame of animation the sprite is currently showing
-        getCurrentFrame : () => { return number; }, 
-        // getFrameCount: total number of frames of animation for this sprite
-        getFrameCount : () => { return number; }, 
-        startFrameAnimation : (fps, startingFrame, numFrames, animateFlags) => {},
-        stopFrameAnimation : () => {},
-        getWantsAnimLoopEvents : () => { return boolean; }, 
-        setWantsAnimLoopEvents : (wantsThem) => { return Sprite; }, 
-        getWantsAnimEndEvents : () => { return boolean; }, 
-        setWantsAnimEndEvents : (wantsThem) => { return Sprite; }, 
-        getWantsCollideWallEvents : () => { return boolean; }, 
-        setWantsCollideWallEvents : (wantsThem) => { return Sprite; }, 
-        addFramesImage : (image, startingFrame, numFrames) => {},
-        hasAnimation : (animationId) => { return boolean; }, 
-        hasAnimation : (animationName) => { return boolean; }, 
-        startAnimation : (animationId) => {},
-        startAnimation : (animationName) => {},
-        setEntityScale : (xScale, yScale) => { return Sprite; }, 
-        changeFramesImage : (oldImage, newImage) => {},
-        offsetFrameCenters : (offsetX, offsetY, image, startingFrame, numFrames) => {},
-        getFrameCenterOffset : (image, frameNum) => { return Offset; }, 
-        getOpacity : () => { return number; }, 
-        setOpacity : (opacity) => { return Sprite; }, 
-        fadeTo : (targetOpacity, msDuration, easing) => {},
-        fadeIn : (msDuration, easing) => {},
-        fadeOut : (msDuration, easing) => {},
-        isBehind : (sprite) => { return boolean; }, 
-        getZOrder : () => { return number /* int */; }, 
-        moveBehind : (sprite) => { return Sprite; }, 
-        moveInFrontOf : (sprite) => { return Sprite; }, 
-        // moveToFront: put this sprite in front of all others in its layer
-        moveToFront : () => { return Sprite; }, 
-        // moveToBack: put this sprite behind all others in its layer
-        moveToBack : () => { return Sprite; }, 
-        enableCollisions : (collisionType) => { return Sprite; }, 
-        disableCollisions : () => { return Sprite; }, 
-        getCollisionRadius : () => { return number; }, 
-        setCollisionRadius : (pixelRadius) => { return Sprite; }, 
-        useCollisionMask : (frameImage, maskImage) => {},
-        setCollisionHelper : (helper) => {},
-        getElasticity : () => { return number; }, 
-        setElasticity : (elasticity) => { return Sprite; }, 
-        // getLayer: get the layer that contains this sprite
-        getLayer : () => { return SpriteLayer; }, 
-        setDrawHelper : (helper) => {},
-        setPostDrawHelper : (helper) => {},
-        getWantsMouseOverEvents : () => { return boolean; }, 
-        setWantsMouseOverEvents : (wantsThem) => { return Sprite; }, 
-        getWantsClickEvents : () => { return boolean; }, 
-        setWantsClickEvents : (wantsThem) => { return Sprite; }, 
-        getMouseDetectMode : () => { return number; }, 
-        setMouseDetectMode : (collisionType) => { return Sprite; }, 
-        getWantsOffscreenEvents : () => { return boolean; }, 
-        setWantsOffscreenEvents : (wantsThem) => { return Sprite; }, 
-        makeStatic : () => { return Sprite; }, 
-        getFriction : () => { return number; }, 
-        setCollideGroup : (group) => { return Sprite; }, 
-        getCollideGroup : () => { return number; }, 
-        pinJoint : (anchor, otherSprite, otherAnchor, breakingForce) => { return CpConstraint; }, 
-        slideJoint : (anchor, otherSprite, otherAnchor, minDist, maxDist, breakingForce) => { return CpConstraint; }, 
-        pivotJoint : (otherSprite, pivot, breakingForce) => { return CpConstraint; }, 
-        grooveJoint : (grooveStart, grooveEnd, otherSprite, otherAnchor, breakingForce) => { return CpConstraint; }, 
-        springJoint : (anchor, otherSprite, otherAnchor, restLength, stiffness, damping, breakingForce) => { return CpConstraint; }, 
-        rotarySpring : (otherSprite, restAngle, stiffness, damping, breakingForce) => { return CpConstraint; }, 
-        rotaryLimit : (otherSprite, minAngle, maxAngle, breakingForce) => { return CpConstraint; }, 
-        ratchet : (otherSprite, rachetInterval, phase, breakingForce) => { return CpConstraint; }, 
-        gear : (otherSprite, gearRatio, initialAngle, breakingForce) => { return CpConstraint; }, 
-        motor : (otherSprite, spin, maxTorque) => { return CpConstraint; }, 
-        removeJoint : (joint) => {},
-        disconnect : (otherSprite) => {},
-        makeJointBreakable : (joint, breakingForce) => {},
-        makeJointUnbreakable : (joint) => {},
-        on : (eventCode, func) => { return IEventHandler; }, 
-        onCollideSprite : (func) => { return IEventHandler; }, 
-        onCollideWall : (func) => { return IEventHandler; }, 
-        onOffscreen : (func) => { return IEventHandler; }, 
-        onOnscreen : (func) => { return IEventHandler; }, 
-        onExitLayer : (func) => { return IEventHandler; }, 
-        onAnimationLoop : (func) => { return IEventHandler; }, 
-        onAnimationEnd : (func) => { return IEventHandler; }, 
-        onFadeComplete : (func) => { return IEventHandler; }, 
-        onFadeInComplete : (func) => { return IEventHandler; }, 
-        onFadeOutComplete : (func) => { return IEventHandler; }, 
-        onMouseEnter : (func) => { return IEventHandler; }, 
-        onMouseLeave : (func) => { return IEventHandler; }, 
-        onMouseDown : (func) => { return IEventHandler; }, 
-        onMouseUp : (func) => { return IEventHandler; }, 
-        onMouseClick : (func) => { return IEventHandler; }, 
+    MemBlock : () => { return {
+        getByte : (i) => { return number; },
+        getBytes : (start, len) => { return string /* Binary */; },
+        getData : () => { return string /* Binary */; },
+        getDataSize : () => { return number; },
+        toBuffer : () => { return Buffer; },
     }; },
 
-    SpriteLayer : () => { return {
-   //  TODO: derive from Animated, EventEmitter, ISerializable
-        getMyClassTag : () => { return number; }, 
-        // getSerializedSize: get size of this object's data for the given stream
-        getSerializedSize : (serializer) => { return number /* uint */; }, 
-        // serialize: write this object's data into the given stream
-        serialize : (serializer) => {},
-        // deserialize: read this object's data from the given stream
-        deserialize : (deserializer) => {},
-        setSerializationFlags : (flags) => { return SpriteLayer; }, 
-        startAnimations : () => {},
-        stopAnimations : () => {},
-        hide : () => {},
-        show : () => {},
-        isHidden : () => { return boolean; }, 
-        fadeIn : (msDuration, easing) => {},
-        fadeOut : (msDuration, easing) => {},
-        moveBehind : (layer) => {},
-        moveInFrontOf : (layer) => {},
-        // moveToFront: move this layer in front of all other layers
-        moveToFront : () => {},
-        // moveToBack: move this layer behind all other layers
-        moveToBack : () => {},
-        getZOrder : () => { return number /* int */; }, 
-        moveWith : (layer, moveRatio, zoomRatio) => {},
-        findSprite : (id) => { return Sprite; }, 
-        getNthSprite : (index) => { return Sprite; }, 
-        getSpriteZOrder : (sprite) => { return number /* int */; }, 
-        isSpriteBehind : (sprite, otherSprite) => { return boolean; }, 
-        hasSprite : (sprite) => { return boolean; }, 
-        addSprite : (newSprite) => {},
-        removeSprite : (oldSprite) => {},
-        removeAllSprites : () => {},
-        enableCollisions : () => {},
-        disableCollisions : () => {},
-        enableCollisionsWithLayer : (otherLayer) => {},
-        disableCollisionsWithLayer : (otherLayer) => {},
-        createSprite : () => { return Sprite; }, 
-        getSpritePort : () => { return Port; }, 
-        setSpritePort : (port) => {},
-        setOrigin : (origin) => {},
-        // getOrigin: get the point in the layer that is drawn at 0,0 in the port
-        getOrigin : () => { return Point; }, 
-        setAutoCenter : (autoCenter) => {},
-        setFixedMoveAxis : (fixedAxis) => {},
-        setZoom : (zoomLevel) => {},
-        // getZoom: get the current zoom factor
-        getZoom : () => { return number; }, 
-        zoomTo : (zoomLevel, msDuration, easing, keepInRect, centerOn) => {},
-        zoom : (deltaZoomLevel, msDuration, easing, keepInRect, centerOn) => {},
-        layerToPortPoint : (p) => { return Point; }, 
-        layerToPortOffset : (o) => { return Offset; }, 
-        layerToPortVector : (v) => { return Vector; }, 
-        layerToPortRect : (r) => { return RotatedRect; }, 
-        layerToPortQuad : (q) => { return Quad; }, 
-        portToLayerPoint : (p) => { return Point; }, 
-        portToLayerOffset : (o) => { return Offset; }, 
-        portToLayerVector : (v) => { return Vector; }, 
-        portToLayerRect : (r) => { return RotatedRect; }, 
-        portToLayerQuad : (q) => { return Quad; }, 
-        setGravity : (gravity, keepItDownward) => {},
-        setUseChipmunkPhysics : (useIt) => {},
-        setStaticLayer : (isStatic) => {},
-        setKeepGravityDownward : (keepItDownward) => {},
-        setDamping : (damping) => {},
-        getSpace : () => { return CpSpace; }, 
-        createSpriteFromSCML : (inSCML, inEntityName) => { return Sprite; }, 
-        createSpriteFromSCMLFile : (inFileName, inEntityName) => { return Sprite; }, 
-        createSpriteFromSCMLEntity : (inEntityName) => { return Sprite; }, 
-        on : (eventCode, func) => { return IEventHandler; }, 
-        onCollideSprite : (func) => { return IEventHandler; }, 
-        onCollideWall : (func) => { return IEventHandler; }, 
-        onOffscreen : (func) => { return IEventHandler; }, 
-        onOnscreen : (func) => { return IEventHandler; }, 
-        onExitLayer : (func) => { return IEventHandler; }, 
-        onAnimationLoop : (func) => { return IEventHandler; }, 
-        onAnimationEnd : (func) => { return IEventHandler; }, 
-        onFadeComplete : (func) => { return IEventHandler; }, 
-        onFadeInComplete : (func) => { return IEventHandler; }, 
-        onFadeOutComplete : (func) => { return IEventHandler; }, 
-        onMouseEnter : (func) => { return IEventHandler; }, 
-        onMouseLeave : (func) => { return IEventHandler; }, 
-        onMouseDown : (func) => { return IEventHandler; }, 
-        onMouseUp : (func) => { return IEventHandler; }, 
-        onMouseClick : (func) => { return IEventHandler; }, 
-        onErasePort : (func) => { return IEventHandler; }, 
-        onPreDrawLayer : (func) => { return IEventHandler; }, 
-        onPostDrawLayer : (func) => { return IEventHandler; }, 
-        onDrawPortComplete : (func) => { return IEventHandler; }, 
-        onAnimationStart : (func) => { return IEventHandler; }, 
-        onPreAnimateLayer : (func) => { return IEventHandler; }, 
-        onPostAnimateLayer : (func) => { return IEventHandler; }, 
-        onAnimationComplete : (func) => { return IEventHandler; }, 
-        onZoomComplete : (func) => { return IEventHandler; }, 
-        onLayerFadeInComplete : (func) => { return IEventHandler; }, 
-        onLayerFadeOutComplete : (func) => { return IEventHandler; }, 
-    }; },
+    NetClient : () => { return {
 
-    TileLayer : () => { return {
-   //  TODO: derive from SpriteLayer
-        setWorldSize : (width, height, repeatingX, repeatingY) => {},
-        getWorldSize : () => { return Rect; }, 
-        getWorldBounds : () => { return Rect; }, 
-        defineTileSet : (tileWidth, tileHeight, tiles, hasTransparency, flipTiles) => {},
-        loadMapData : (data, mapWidth, mapHeight, dstX, dstY) => {},
-        loadMapData : (data, mapWidth, mapHeight, dstX, dstY) => {},
-        getMapData : (mapWidth, mapHeight, srcX, srcY) => { return MemBlock; }, 
-        getTileSetImage : () => { return Image; }, 
-        getTileSize : () => { return Point; }, 
-        getTileTypeAt : (x, y) => { return number; }, 
-        getTileTypeAndFacingAt : (x, y) => { return object; }, 
-        setTileTypeAt : (x, y, t, facing) => {},
-        checkCollision : (movingSprite, alphaThreshold, shortCircuit) => { return number; }, 
-    }; },
+        connection : null,
 
-    Image : () => { return {
-        getWidth : () => { return number; }, 
-        getHeight : () => { return number; }, 
-        // getImageBounds: get image boundary rect, optionally with top left at given point
-        getImageBounds : (at) => { return Rect; }, 
-        // getSubsection: get image that is an arbitrary subsection of this image
-        getSubsection : (quad) => { return Image; }, 
-        getSubsection : (quad) => { return Image; }, 
-        setTransparentColor : (inTransparentColor) => { return Image; }, 
-        // getOpacity: get opacity of this image: 0.0
-        getOpacity : () => { return number; }, 
-        // setOpacity: set opacity of this image as range from either (0-255) or (0.0 to 1.0)
-        setOpacity : (opacity) => {},
-        // setEdgeClamping: set whether image uses edge clamping or not
-        setEdgeClamping : (inUseEdgeClamp) => {},
-        getTransparentColor : () => { return Color; }, 
-        // retainData: retain pixel data for use by Image.getPixel()
-        retainData : () => {},
-        // retainAlpha: retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions
-        retainAlpha : () => {},
-        // prepareToRasterize: bind the image into an OpenGL texture and free image data from main memory
-        prepareToRasterize : () => { return number; }, 
-        getAlphaValue : (p) => { return number; }, 
-        getAlphaValue : (x, y) => { return number; }, 
-        getPixel : (p) => { return Color; }, 
-        getPixel : (x, y) => { return Color; }, 
-    }; },
+        // NetClient: create a network client
+        NetClient : (opts) => { return NetClient; },
 
-    ImageStrip : () => { return {
-   //  TODO: derive from Image
-        // getFrame: get image that is a single frame of this multi-frame image
-        getFrame : (frameNum) => { return Image; }, 
-        getFrameWidth : () => { return number; }, 
-        setFrameWidth : (inFrameWidth) => { return ImageStrip; }, 
-        getNumFrames : () => { return number; }, 
-        setNumFrames : (inNumFrames) => { return ImageStrip; }, 
-    }; },
-
-    Font : () => { return {
-        getFontName : () => { return string; }, 
-        getFontHeight : (size, style) => { return number; }, 
-        getFontLeading : (size, style) => { return number; }, 
-        getFontAscent : (size, style) => { return number; }, 
-        getFontDescent : (size, style) => { return number; }, 
-    }; },
-
-    Port : () => { return {
-        getClipRect : () => { return Rect; }, 
-        setClipRect : (inClipRect) => { return Port; }, 
-        // getCursor: NOT IMPLEMENTED: get the Image that is being used as the cursor
-        getCursor : () => { return Image; }, 
-        // setCursor: NOT IMPLEMENTED
-        setCursor : (cursorImage, hotSpot) => {},
-        getDrawingArea : () => { return Rect; }, 
-        fillRect : (quad, rgba) => {},
-        fillRect : (quad, rgba) => {},
-        frameRect : (quad, rgba) => {},
-        frameRect : (quad, rgba) => {},
-        drawLine : (from, to, rgba) => {},
-        frameOval : (centerPt, xRadius, yRadius, rgba) => {},
-        fillOval : (centerPt, xRadius, yRadius, rgba) => {},
-        frameCircle : (centerPt, radius, rgba) => {},
-        fillCircle : (centerPt, radius, rgba) => {},
-        frameRoundRect : (rect, radius, rgba) => {},
-        fillRoundRect : (rect, radius, rgba) => {},
-        fillRectEx : (quad, pattern, patternShift, rgba) => {},
-        fillRectEx : (quad, pattern, patternShift, rgba) => {},
-        frameRectEx : (quad, thickness, pattern, patternShift, rgba) => {},
-        frameRectEx : (quad, thickness, pattern, patternShift, rgba) => {},
-        drawLineEx : (from, to, thickness, pattern, patternShift, rgba) => {},
-        fillRectWithGradient : (quad, startColor, endColor) => {},
-        fillRectWithGradient : (quad, startColor, endColor) => {},
-        drawText : (text, location, size, style, rgba) => {},
-        drawText : (text, quad, size, style, rgba) => {},
-        drawText : (text, rect, size, style, rgba) => {},
-        drawImage : (img, loc) => {},
-        drawImage : (img, quad) => {},
-        drawImage : (img, rect, fitType, clipOverflow) => {},
-        drawTexture : (img, r) => {},
-        drawTexturedSphere : (img, loc, radius, rotation, polarOffsetRadians, lightOffsetRadians) => {},
-        drawTexturedSphere : (imgStrip, frameNum, loc, radius, rotation, polarOffsetRadians, lightOffsetRadians) => {},
-        getTextWidth : (text, size, style, len) => { return number; }, 
-        getCurrentFont : (style) => { return Font; }, 
-        setFont : (font) => {},
-        setFontForStyle : (style, font) => {},
-        setFontScalingFactor : (scaleBy) => {},
-        // startTrackingMouse: NOT IMPLEMENTED
-        startTrackingMouse : (rect) => { return number; }, 
-        // stopTrackingMouse: NOT IMPLEMENTED
-        stopTrackingMouse : (trackingRef) => {},
-        // resetCursor: NOT IMPLEMENTED: restore the default system cursor
-        resetCursor : () => {},
-    }; },
-
-    // NOTE: Primary access via singleton instance: pdg.gfx
-    GraphicsManager : () => { return {
-        getNumScreens : () => { return number; }, 
-        getFPS : () => { return number; }, 
-        getTargetFPS : () => { return number; }, 
-        setTargetFPS : (inTargetFPS) => { return GraphicsManager; }, 
-        getMouse : (mouseNumber) => { return Point; }, 
-        // getCurrentScreenMode: returns object with width, height, depth and maxWindowRect for specified screen
-        getCurrentScreenMode : (screenNum) => { return object; }, 
-        // getScreenBounds: returns the bounds (position and size) of a screen in the global coordinate space
-        getScreenBounds : (screenNum) => { return Rect; }, 
-        getNumSupportedScreenModes : (screen) => { return number; }, 
-        // getNthSupportedScreenMode: returns object with width, height, depth and maxWindowRect for specified screen
-        getNthSupportedScreenMode : (n, screenNum) => { return object; }, 
-        // setScreenMode: changes specified screen to closest matching mode
-        setScreenMode : (width, height, screenNum, bpp) => {},
-        // createWindowPort: create windowed drawing port with given dimensions, title and depth
-        createWindowPort : (rect, windName, bpp) => { return Port; }, 
-        // createFullScreenPort: create full screen drawing port with given dimensions on given screen, optionally changing depth
-        createFullScreenPort : (rect, screenNum, allowResChange, bpp) => { return Port; }, 
-        // closeGraphicsPort: close given port, along with its window and restore screen mode if changed
-        closeGraphicsPort : (port) => {},
-        // createFont: get a font with optional scaling adjust
-        createFont : (fontName, scalingFactor) => { return Font; }, 
-        // getMainPort: return the primary graphics port
-        getMainPort : () => { return Port; }, 
-        // switchToFullScreenMode: change a port to fullscreen mode, return true on success
-        switchToFullScreenMode : (allowResChange, port) => { return boolean; }, 
-        // switchToWindowMode: change a port to window mode, return true on success
-        switchToWindowMode : (port, windName) => { return boolean; }, 
-        // inFullScreenMode: return whether primary graphics port is fullscreen or not
-        inFullScreenMode : () => { return boolean; }, 
-    }; },
-
-    Sound : () => { return {
-   //  TODO: derive from EventEmitter
-        getVolume : () => { return number; }, 
-        setVolume : (inVolume) => { return Sound; }, 
-        play : (vol, offsetX, pitch, fromMs, lenMs) => {},
-        start : () => {},
-        stop : () => {},
-        pause : () => {},
-        resume : () => {},
-        isPaused : () => { return boolean; }, 
-        setLooping : (loopingOn) => { return Sound; }, 
-        isLooping : () => { return boolean; }, 
-        setPitch : (pitchOffset) => { return Sound; }, 
-        changePitch : (targetOffset, msDuration, easing) => {},
-        setOffsetX : (offsetX) => { return Sound; }, 
-        changeOffsetX : (targetOffset, msDuration, easing) => {},
-        fadeOut : (fadeMs, easing) => {},
-        fadeIn : (fadeMs, easing) => {},
-        changeVolume : (level, fadeMs, easing) => {},
-        skip : (skipMilliseconds) => { return Sound; }, 
-        skipTo : (timeMs) => { return Sound; }, 
-        on : (eventCode, func) => { return IEventHandler; }, 
-        onDonePlaying : (func) => { return IEventHandler; }, 
-        onLooping : (func) => { return IEventHandler; }, 
-        onFailedToPlay : (func) => { return IEventHandler; }, 
-    }; },
-
-    // NOTE: Primary access via singleton instance: pdg.snd
-    SoundManager : () => { return {
-        // setVolume: 0.0
-        setVolume : (level) => {},
-        setMute : (muted) => {},
-        on : (eventCode, func) => { return IEventHandler; }, 
-        onDonePlaying : (func) => { return IEventHandler; }, 
-        onLooping : (func) => { return IEventHandler; }, 
-        onFailedToPlay : (func) => { return IEventHandler; }, 
-    }; },
-
-    Point : () => { return {
-   //  TODO: derive from Offset
-        x : null,
-        y : null,
-        // Point: create and set x & y values
-        Point : () => { return Point; }, 
-        Point : (x, y) => { return Point; }, 
-        Point : (xy) => { return Point; }, 
-        Point : (xy) => { return Point; }, 
-        // distance: get distance from another point
-        distance : (point) => { return number; }, 
-        // offset: get the offset of this point from another point
-        offset : (point) => { return Offset; }, 
-    }; },
-
-    Offset : () => { return {
-        x : null,
-        y : null,
-        // Offset: create and set x & y values
-        Offset : () => { return Offset; }, 
-        Offset : (x, y) => { return Offset; }, 
-        Offset : (xy) => { return Offset; }, 
-        Offset : (xy) => { return Offset; }, 
-        // equals: return true if this point is equal to the other
-        equals : (offset) => { return boolean; }, 
-        // notEquals: return true if this point is not equal to the other
-        notEquals : (offset) => { return boolean; }, 
-        // assign: set this offset equal to the given offset
-        assign : (offset) => { return Offset; }, 
-        // add: add an offset to this one
-        add : (offset) => { return Offset; }, 
-        // sub: subtract an offset from this one
-        sub : (offset) => { return Offset; }, 
-        // mul: multiply this offset by the given one
-        mul : (offset) => { return Offset; }, 
-        // div: divide this offset by the given one
-        div : (offset) => { return Offset; }, 
-        // plus: return new offset that is this offset plus given offset
-        plus : (offset) => { return Offset; }, 
-        // minus: return new offset that is this offset minus given offset
-        minus : (offset) => { return Offset; }, 
-        // times: return new offset that is this offset multiplied by given offset
-        times : (offset) => { return Offset; }, 
-        // dividedby: return new offset that is this offset divided by given offset
-        dividedby : (offset) => { return Offset; }, 
-        // vector: return a new vector from this offset
-        vector : () => { return Vector; }, 
-    }; },
-
-    Vector : () => { return {
-   //  TODO: derive from Offset
-        x : null,
-        y : null,
-        // Vector: create and set x & y values
-        Vector : () => { return Vector; }, 
-        Vector : (x, y) => { return Vector; }, 
-        Vector : (xy) => { return Vector; }, 
-        Vector : (xy) => { return Vector; }, 
-        // unit: get the unit vector of this vector, ie: A.unit() = (A.x / |A|, A.y / |A|)
-        unit : () => { return Vector; }, 
-        // normal: get the normal of this vector, ie: A.normal() = (-A.y, A.x)
-        normal : () => { return Vector; }, 
-        // dotProduct: get dot product for this vector with a 2nd vector
-        dotProduct : (vector) => { return number; }, 
-        // vectorLength: get length as a vector (distance from origin)
-        vectorLength : () => { return number; }, 
-        // vectorAngle: get angle (in radians) for this vector
-        vectorAngle : () => { return number; }, 
-        // projection: projection of a point onto the line defined by this vector, ie: A.projection(B) = ((A . B) / |B|^2) * B
-        projection : (point) => { return Point; }, 
-    }; },
-
-    Rect : () => { return {
-        left : null,
-        top : null,
-        right : null,
-        bottom : null,
-        // Rect: create and set values
-        Rect : () => { return Rect; }, 
-        Rect : (w, h) => { return Rect; }, 
-        Rect : (topLeft, w, h) => { return Rect; }, 
-        Rect : (leftTop, rightBottom) => { return Rect; }, 
-        Rect : (left, top, right, bottom) => { return Rect; }, 
-        // empty: return true if this rectangle is empty (no width or no height)
-        empty : () => { return boolean; }, 
-        // contains: contains([Point] p) return true if the point is inside this rectangle
-        // contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle
-        contains : (r) => { return boolean; }, 
-        contains : (p) => { return boolean; }, 
-        // overlaps: return true if this rectangle overlaps the other rectangle at all (sharing an edge is not overlapping)
-        overlaps : (r) => { return boolean; }, 
-        // leftTop: get top left corner point of this rectangle
-        leftTop : () => { return Point; }, 
-        // rightTop: get top right corner point of this rectangle
-        rightTop : () => { return Point; }, 
-        // leftBottom: get bottom left corner point of this rectangle
-        leftBottom : () => { return Point; }, 
-        // rightBottom: get bottom right corner point of this rectangle
-        rightBottom : () => { return Point; }, 
-        // centerPoint: get center point of this rectangle
-        centerPoint : () => { return Point; }, 
-        // x1: alias for Rect.left
-        x1 : () => { return number; }, 
-        // y1: alias for Rect.top
-        y1 : () => { return number; }, 
-        // x2: alias for Rect.right
-        x2 : () => { return number; }, 
-        // y2: alias for Rect.bottom
-        y2 : () => { return number; }, 
-        // width: get the width of this rectangle
-        width : () => { return number; }, 
-        // height: get the height of this rectangle
-        height : () => { return number; }, 
-        // intersection: get a new rectangle that is the overlapping area of the the rectangles
-        intersection : (r) => { return Rect; }, 
-        // unionWith: get the smallest possible new rectangle that contains both rectangles
-        unionWith : (r) => { return Rect; }, 
-        // moveLeft: move the rectangle to the left by some amount
-        moveLeft : (delta) => {},
-        // moveRight: move the rectangle to the right by some amount
-        moveRight : (delta) => {},
-        // moveUp: move the rectangle up by some amount
-        moveUp : (delta) => {},
-        // moveDown: move the rectangle down by some amount
-        moveDown : (delta) => {},
-        // moveXTo: move the rectangle to a particular x location, leaving y unchanged
-        moveXTo : (x) => {},
-        // moveYTo: move the rectangle to a particular y location, leaving x unchanged
-        moveYTo : (y) => {},
-        // moveTo: moveTo(x,y): the rectangle to a particular (x, y) location
-        // moveTo([Point] p): move the rectangle to a particular point
-        moveTo : (x, y) => {},
-        moveTo : (p) => {},
-        // center: center([Point] p): move the rectangle to be centered over a particular point
-        // center([Rect] r): move the rectangle to be centered within/relative to another rectangle
-        center : (r) => {},
-        center : (p) => {},
-        // setSize: set the size (width & height) of the rectangle
-        setSize : (n) => {},
-        setWidth : (w) => {},
-        setHeight : (h) => {},
-        // horzShrink: reduce the width of the rectangle while leaving the center point unchanged
-        horzShrink : (delta) => {},
-        // vertShrink: reduce the height of the rectangle while leaving the center point unchanged
-        vertShrink : (delta) => {},
-        // horzGrow: increase the width of the rectangle while leaving the center point unchanged
-        horzGrow : (delta) => {},
-        // vertGrow: increase the height of the rectangle while leaving the center point unchanged
-        vertGrow : (delta) => {},
-        // shrink: reduce the height and width of the rectangle while leaving the center point unchanged
-        shrink : (delta) => {},
-        // grow: increase the height and width of the rectangle while leaving the center point unchanged
-        grow : (delta) => {},
-        // horzScale: change the x coordinates of the rectangle by a multiplier
-        horzScale : (f) => {},
-        // vertScale: change the y coordinates of the rectangle by a multiplier
-        vertScale : (f) => {},
-        // scale: change the coordinates of the rectangle by a multiplier
-        scale : (f) => {},
-        // round: round the coordinates to closest whole number
-        round : () => {},
-        // toQuad: convert rectangle to a Quad
-        toQuad : () => { return Quad; }, 
-        // equals: return true if this rectangle is equal to the given one
-        equals : (r2) => { return boolean; }, 
-        // notEquals: return true if this rectangle is not equal to the given one
-        notEquals : (r2) => { return boolean; }, 
-        // assign: set this rectangle equal to the given one
-        assign : (r2) => { return Rect; }, 
-        // add: add([Point] p): offset this rectangle's location by adding x & y coordinates of the point
-        // add([Rect] r): add another rectangle to this one by adding corresponding coordinates
-        add : (r2) => { return Rect; }, 
-        add : (p) => { return Rect; }, 
-        // sub: sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point
-        // sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates
-        sub : (r2) => { return Rect; }, 
-        sub : (p) => { return Rect; }, 
-        // mul: mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point
-        // mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle
-        mul : (r2) => { return Rect; }, 
-        mul : (p) => { return Rect; }, 
-        // div: div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point
-        // div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle
-        div : (r2) => { return Rect; }, 
-        div : (p) => { return Rect; }, 
-        plus : (r2) => { return Rect; }, 
-        plus : (p) => { return Rect; }, 
-        minus : (r2) => { return Rect; }, 
-        minus : (p) => { return Rect; }, 
-        times : (r2) => { return Rect; }, 
-        times : (p) => { return Rect; }, 
-        dividedby : (r2) => { return Rect; }, 
-        dividedby : (p) => { return Rect; }, 
-    }; },
-
-    Quad : () => { return {
-        points : null,
-        // Quad: new Quad(): create an empty quad at 0,0
-        // new Quad([Quad] q): copy from another quad
-        // new Quad([Rect] r): create a quad from a rectangle
-        // new Quad([RotatedRect r]): create a quad from a rotated rectangle
-        // new Quad([Point] p1, [Point] p2, [Point] p3, [Point] p4): create a quad given its corner points
-        // new Quad([Point] p[4]): create a quad given an array of 4 points
-        Quad : () => { return Quad; }, 
-        Quad : (q) => { return Quad; }, 
-        Quad : (r) => { return Quad; }, 
-        Quad : (r) => { return Quad; }, 
-        Quad : (p1, p2, p3, p4) => { return Quad; }, 
-        Quad : (p) => { return Quad; }, 
-        // getBounds: return a rectangle that bounds the quad
-        getBounds : () => { return Rect; }, 
-        // centerPoint: return the calculated centerpoint of the quad
-        centerPoint : () => { return Point; }, 
-        // equals: return true if this quad is equal to the given one
-        equals : (q2) => { return boolean; }, 
-        // notEquals: return true if this quad is not equal to the given one
-        notEquals : (q2) => { return boolean; }, 
-        // contains: returns true if the point is contained within this quad
-        contains : (p) => { return boolean; }, 
-        // moveLeft: move the quad to the left by some amount
-        moveLeft : (delta) => {},
-        // moveRight: move the quad to the right by some amount
-        moveRight : (delta) => {},
-        // moveUp: move the quad up by some amount
-        moveUp : (delta) => {},
-        // moveDown: move the quad down by some amount
-        moveDown : (delta) => {},
-        // rotate: rotate(n): rotate the quad by a rotation in radians (around the calculated center point of the quad)
-        // rotate(n, [Offset] o): rotate the quad by a rotation in radians around an offset center point
-        rotate : (rotationRadians, centerPtOffset) => {},
-    }; },
-
-    RotatedRect : () => { return {
-   //  TODO: derive from Rect
-        left : null,
-        top : null,
-        right : null,
-        bottom : null,
-        centerOffset : null,
-        // RotatedRect: create a new RotatedRect
-        RotatedRect : (rect, rotationRadians, cpOffset) => { return RotatedRect; }, 
-        // setCenterOffset: set an offset for point around which rotation is applied
-        setCenterOffset : (cpOffset) => {},
-        // setRotation: set the rotation of this rectangle to a particular amount in radians
-        setRotation : (rotationRadians, cpOffset) => {},
-        // rotate: change the rotation of this rectangle by some number of radians
-        rotate : (rotateRadians) => {},
-        // getQuad: create a Quad by applying the rectangle's rotation around the center point with offset
-        getQuad : () => { return Quad; }, 
-    }; },
-
-    Color : () => { return {
-        red : null,
-        green : null,
-        blue : null,
-        alpha : null,
-        // Color: create and color and set rgb values
-        Color : () => { return Color; }, 
-        Color : (c) => { return Color; }, 
-        Color : (colorstr) => { return Color; }, 
-        Color : (r, g, b, alpha) => { return Color; }, 
-        // equals: return true if this color is equal to the other (ignoring alpha)
-        equals : (color) => { return boolean; }, 
-        // notEquals: return true if this color is not equal to the other (ignoring alpha)
-        notEquals : (color) => { return boolean; }, 
-        // assign: set this color equal to the given color
-        assign : (color) => { return Color; }, 
-        // convertToGrayscale: convert this color to a matching shade of grey
-        convertToGrayscale : () => {},
+        // connect: connect to a server for your game
+        connect : (serverInfo, callback, clientKey) => { return this; },
+        // onError: set the callback function that will handle errors
+        onError : (callback) => { return this; },
     }; },
 
     NetConnection : () => { return {
+
+        hasDgram : null,
         localAddr : null,
         localPort : null,
         remoteAddr : null,
         remotePort : null,
-        hasDgram : null,
+
         // NetConnection: create a NetConnection to manage a socket
-        NetConnection : (socket) => { return NetConnection; }, 
+        NetConnection : (socket) => { return NetConnection; },
+
         // close: close the connection
         close : (kill) => {},
-        // onClose: setup connection close handler
-        onClose : (callback) => { return NetConnection; }, 
-        // onMessage: setup incoming message handler
-        onMessage : (callback) => { return NetConnection; }, 
-        // send: send a message via a reliable transport mechanism
-        send : (message) => {},
-        send : (message) => {},
-        send : (message) => {},
-        send : (message) => {},
-        // sendDgram: send a message via the fastest transport mechanism
-        sendDgram : (message) => {},
-        sendDgram : (message) => {},
-        sendDgram : (message) => {},
-        sendDgram : (message) => {},
-    }; },
-
-    NetClient : () => { return {
-        connection : null,
-        // NetClient: create a network client
-        NetClient : (opts) => { return NetClient; }, 
-        // connect: connect to a server for your game
-        connect : (serverInfo, callback, clientKey) => { return NetClient; }, 
-        // onError: setup error handler
-        onError : (callback) => { return NetClient; }, 
+        // onClose: set callback to handle connection closing
+        onClose : (callback) => { return this; },
+        // onMessage: set callback to handle receipt of a network message
+        onMessage : (callback) => { return this; },
+        // send: send a serializable object to the remote endpoint
+        send : (message) => { return this; },
+        send : (message) => { return this; },
+        send : (message) => { return this; },
+        send : (message) => { return this; },
+        // sendDgram: send a serializable object to the remote endpoint via UDP
+        sendDgram : (message) => { return this; },
+        sendDgram : (message) => { return this; },
+        sendDgram : (message) => { return this; },
+        sendDgram : (message) => { return this; },
     }; },
 
     NetServer : () => { return {
-        serverPort : null,
-        serverAddr : null,
-        handshakeTimeout : null,
-        reservationRequired : null,
+
         allowDatagram : null,
-        listening : null,
         connections : null,
+        handshakeTimeout : null,
+        listening : null,
+        reservationRequired : null,
+        serverAddr : null,
+        serverInfo : null,
+        serverPort : null,
+
         // NetServer: create a network server
-        NetServer : (opts) => { return NetServer; }, 
-        // listen: open the server for incoming connections
-        listen : (callback) => { return NetServer; }, 
+        NetServer : (opts) => { return NetServer; },
+
         // broadcast: send a message to all connections, with optional filter
-        broadcast : (message, filter) => { return number; }, 
-        // expectClient: client reservation
-        expectClient : (clientKey, clientIpAddr, reservationTTL, singleUse) => { return NetServer; }, 
-        // onError: setup error handler
-        onError : (callback) => { return NetServer; }, 
+        broadcast : (message, filter) => { return number; },
+        // expectClient: make a connection reservation for a client
+        expectClient : (clientKey, clientIpAddr, reservationTTL, singleUse) => { return this; },
+        // listen: listen and call a function when new connections are established
+        listen : (callback) => { return this; },
+        // onError: set up callback for handling errors
+        onError : (callback) => { return this; },
         // shutdown: close the listener and don't accept new connections
         shutdown : (closeExisting, kill) => {},
+    }; },
+
+    Offset : () => { return {
+
+        x : null,
+        y : null,
+
+        // Offset: create and set x & y values
+        Offset : () => { return Offset; },
+        Offset : (x, y) => { return Offset; },
+        Offset : (xy) => { return Offset; },
+        Offset : (xy) => { return Offset; },
+
+        // add: add an offset to this one
+        add : (offset) => { return this; },
+        // assign: set this offset equal to the given offset
+        assign : (offset) => { return this; },
+        // div: divide this offset by the given one
+        div : (offset) => { return this; },
+        // dividedby: return new offset that is this offset divided by given offset
+        dividedby : (offset) => { return Offset; },
+        // equals: return true if this point is equal to the other
+        equals : (offset) => { return boolean; },
+        // minus: return new offset that is this offset minus given offset
+        minus : (offset) => { return Offset; },
+        // mul: multiply this offset by the given one
+        mul : (offset) => { return this; },
+        // notEquals: return true if this point is not equal to the other
+        notEquals : (offset) => { return boolean; },
+        // plus: return new offset that is this offset plus given offset
+        plus : (offset) => { return Offset; },
+        // sub: subtract an offset from this one
+        sub : (offset) => { return this; },
+        // times: return new offset that is this offset multiplied by given offset
+        times : (offset) => { return Offset; },
+        // vector: return a new vector from this offset
+        vector : () => { return Vector; },
+    }; },
+
+    Part : () => { return {
+   //  TODO: derive from Animated
+
+        collider : null,
+        physics : null,
+
+        // addAnimationHelper: Register a callback after the object's normal animation step.
+        addAnimationHelper : (helper) => { return this; },
+        // andThen: Start the next timed operation after the most recently scheduled operation finishes.
+        andThen : () => { return this; },
+        // animate: advance local programming in seconds
+        // owned Parts already step with their Sprite
+        animate : (deltaSeconds) => { return boolean; },
+        // attachSprite: return a new animated mounting Part retaining an independent child Sprite
+        attachSprite : (child, placement) => { return Part; },
+        attachSprite : (child, placement, childMount) => { return Part; },
+        // bindToAnimationBinding: Follow an authored binding.
+        bindToAnimationBinding : (name) => { return this; },
+        // bindToAnimationSocket: Follow an authored socket.
+        bindToAnimationSocket : (name) => { return this; },
+        // bindToBone: Follow a bone while preserving local offsets.
+        bindToBone : (boneId) => { return this; },
+        // cancelSchedule: Discard scheduled animations and pending sequencing.
+        cancelSchedule : () => { return this; },
+        // changeCenterOffsetBy: Animate the rotation-center offset by a delta.
+        changeCenterOffsetBy : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeCenterOffsetTo: Animate the rotation-center offset to a target.
+        changeCenterOffsetTo : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeGrowingBy: Animate the growing rate by an additive delta.
+        changeGrowingBy : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeGrowingTo: Animate the growing rate to a target.
+        changeGrowingTo : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementBy: Animate the movement rate by an additive delta.
+        changeMovementBy : (value, durationSeconds, easing) => { return this; },
+        changeMovementBy : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementTo: Animate the movement rate to a target.
+        changeMovementTo : (value, durationSeconds, easing) => { return this; },
+        changeMovementTo : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeScaleBy: Animate independent scale by additive deltas.
+        changeScaleBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeScaleTo: Animate independent scale to a target.
+        changeScaleTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeSpinBy: Animate the spin rate by an additive delta.
+        changeSpinBy : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeSpinTo: Animate the spin rate to a target.
+        changeSpinTo : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingBy: Animate the stretching rate by an additive delta.
+        changeStretchingBy : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingTo: Animate the stretching rate to a target.
+        changeStretchingTo : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // clearAnimationHelpers: Retire all helpers on this object.
+        clearAnimationHelpers : () => { return this; },
+        // clearContent: Remove artwork from the Part.
+        clearContent : () => { return this; },
+        // clearIKLimits: Remove this joint's IK rotation limits.
+        clearIKLimits : () => { return this; },
+        // clearIKTarget: Stop this root's scheduled IK controller.
+        clearIKTarget : () => { return this; },
+        // defineScript: create a library-owned named animation recorder
+        defineScript : (name) => { return AnimationScript; },
+        // detachSprite: Release a mounted Sprite.
+        detachSprite : () => { return this; },
+        // diminish: Reduce the preceding block amplitude around its baseline.
+        diminish : (factor, seconds, easing) => { return this; },
+        // endGroup: Close and select the innermost anonymous block.
+        endGroup : () => { return this; },
+        // endOtherwise: Close a conditional with an alternative.
+        endOtherwise : () => { return this; },
+        // endWhen: Close a conditional without an alternative.
+        endWhen : () => { return this; },
+        // flipX: Toggle the x reflection flag immediately.
+        flipX : () => { return this; },
+        // flipY: Toggle the y reflection flag immediately.
+        flipY : () => { return this; },
+        // getAnimationBindingName: authored frame in the owning Sprite's enabled rig
+        getAnimationBindingName : () => { return string; },
+        // getAnimationSocketName: authored frame in the owning Sprite's enabled rig
+        getAnimationSocketName : () => { return string; },
+        // getAttachedSprite: retained child Sprite, or null on an ordinary or detached mounting Part
+        getAttachedSprite : () => { return Sprite; },
+        // getAttachmentError: empty on success
+        // diagnostic when follow placement cannot be represented
+        getAttachmentError : () => { return string; },
+        // getBoneId: boneId_None when unbound, detached, or the rig has changed
+        getBoneId : () => { return number /* uint */; },
+        getBoundingBox : () => { return Rect; },
+        getCenterOffset : () => { return Offset; },
+        // getContentBounds: current artwork bounds
+        // local means artwork coordinates
+        getContentBounds : (space) => { return Rect; },
+        getHeight : () => { return number; },
+        // getId: stable per-Sprite Part ID
+        getId : () => { return number /* uint */; },
+        // getIKError: error from the last scheduled solve, or empty on success
+        getIKError : () => { return string; },
+        // getIKMaxAngle: maximum local IK rotation in radians, or zero without limits
+        getIKMaxAngle : () => { return number; },
+        // getIKMinAngle: minimum local IK rotation in radians, or zero without limits
+        getIKMinAngle : () => { return number; },
+        getLocation : () => { return Point; },
+        getMovement : () => { return Offset; },
+        getName : () => { return string; },
+        // getParentPart: explicit parent Part, or null
+        getParentPart : () => { return Part; },
+        getRotatedBounds : () => { return RotatedRect; },
+        getRotation : () => { return number; },
+        getScale : () => { return Offset; },
+        getSize : () => { return Offset; },
+        getSpin : () => { return number; },
+        // getSprite: owning Sprite, or null after removal
+        getSprite : () => { return Sprite; },
+        getStretching : () => { return Offset; },
+        // getTransform: affine snapshot with a,b,c,d,tx,ty
+        // world means owning-layer space
+        getTransform : (space) => { return object; },
+        getWidth : () => { return number; },
+        // group: Open an anonymous animation block.
+        group : () => { return this; },
+        // grow: Multiply logical width and height by one factor.
+        grow : (factor, durationSeconds, easing) => { return this; },
+        // hasContent: whether artwork is associated with the Part
+        hasContent : () => { return boolean; },
+        // hasIKLimits: whether this joint has local IK rotation limits
+        hasIKLimits : () => { return boolean; },
+        // hasIKTarget: whether this Part has a scheduled IK controller
+        hasIKTarget : () => { return boolean; },
+        hasScheduledAnimations : () => { return boolean; },
+        // increase: Increase the preceding block amplitude around its baseline.
+        increase : (factor, seconds, easing) => { return this; },
+        // isAttached: whether a Sprite still owns this Part
+        isAttached : () => { return boolean; },
+        isBoundToBone : () => { return boolean; },
+        isFlippedX : () => { return boolean; },
+        isFlippedY : () => { return boolean; },
+        // isIKDriven: whether the scheduled IK controller drives physical bodies
+        isIKDriven : () => { return boolean; },
+        // isIKTargetReached: whether the last scheduled solve reached its target
+        isIKTargetReached : () => { return boolean; },
+        isSchedulePaused : () => { return boolean; },
+        // moveBy: Move by an offset.
+        moveBy : (value, durationSeconds, easing) => { return this; },
+        moveBy : (x, y, durationSeconds, easing) => { return this; },
+        // moveTo: Move to a location.
+        moveTo : (value, durationSeconds, easing) => { return this; },
+        moveTo : (x, y, durationSeconds, easing) => { return this; },
+        // otherwise: Open the alternative of the innermost conditional.
+        otherwise : () => { return this; },
+        // pauseIt: Pause the most recently selected animation element.
+        pauseIt : () => { return this; },
+        // pauseSchedule: Pause scheduled animations and their delays.
+        pauseSchedule : () => { return this; },
+        // play: Instantiate a named animation script on this target.
+        play : (name) => { return this; },
+        // removeAnimationHelper: Retire a specific animation helper.
+        removeAnimationHelper : (helper) => { return this; },
+        removeCollider : () => {},
+        // removePhysicsBody: detach the body
+        // retained references keep their state
+        removePhysicsBody : () => {},
+        // repeat: Repeat the preceding block.
+        repeat : () => { return this; },
+        repeat : (additionalExecutions) => { return this; },
+        // resizeBy: Change logical size by additive deltas.
+        resizeBy : (deltaWidth, deltaHeight, durationSeconds, easing) => { return this; },
+        // resizeTo: Animate logical size to a target.
+        resizeTo : (width, height, durationSeconds, easing) => { return this; },
+        // restartIt: Restart the most recently selected animation element from its baseline.
+        restartIt : () => { return this; },
+        // resumeIt: Resume the most recently selected paused animation element.
+        resumeIt : () => { return this; },
+        // resumeSchedule: Resume scheduled animations and their delays.
+        resumeSchedule : () => { return this; },
+        // rotateBy: Rotate through a relative angle.
+        rotateBy : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotateTo: Rotate to an absolute angle.
+        rotateTo : (radians, durationSeconds, easing, direction) => { return this; },
+        // setCenterOffset: Set the rotation-center offset immediately.
+        setCenterOffset : (offset) => { return this; },
+        // setDrawing: Assign editable Drawing artwork.
+        setDrawing : (drawing) => { return this; },
+        // setFlipX: Set the x reflection flag immediately.
+        setFlipX : (flip) => { return this; },
+        // setFlipY: Set the y reflection flag immediately.
+        setFlipY : (flip) => { return this; },
+        // setGrowing: Set equal constant growth rates immediately.
+        setGrowing : (value) => { return this; },
+        // setHeight: Set logical height immediately.
+        setHeight : (value) => { return this; },
+        // setIKDriveTarget: Drive a two-segment Part chain toward an IK target using bounded forces and torques.
+        setIKDriveTarget : (middle, tip, target, maxForce, maxTorque, space, bendDirection, influence, frequency, dampingRatio) => { return this; },
+        // setIKLimits: Share a live physical rotary limit with this IK joint.
+        setIKLimits : (minAngle, maxAngle) => { return this; },
+        setIKLimits : (constraint) => { return this; },
+        // setIKTarget: Maintain a target for a contiguous two-segment Part chain.
+        setIKTarget : (middle, tip, target, space, bendDirection, influence) => { return this; },
+        // setImage: Assign an image to a local rectangle.
+        setImage : (image, localBounds) => { return this; },
+        // setLocation: Set the location immediately.
+        setLocation : (value) => { return this; },
+        setLocation : (x, y) => { return this; },
+        // setMovement: Set a constant programmed movement rate immediately.
+        setMovement : (value) => { return this; },
+        setMovement : (xPerSecond, yPerSecond) => { return this; },
+        // setParentPart: Select an explicit parent Part.
+        setParentPart : () => { return this; },
+        setParentPart : (parent) => { return this; },
+        // setRotation: Set rotation immediately.
+        setRotation : (value) => { return this; },
+        // setScale: Set independent transform scale immediately.
+        setScale : (x, y) => { return this; },
+        // setSize: Set logical width and height immediately.
+        setSize : (value) => { return this; },
+        setSize : (width, height) => { return this; },
+        // setSpin: Set a constant programmed angular rate immediately.
+        setSpin : (value) => { return this; },
+        // setStretching: Set independent constant growth rates immediately.
+        setStretching : (widthPerSecond, heightPerSecond) => { return this; },
+        // setupAnimationCollider: Follow a named authored collision box
+        setupAnimationCollider : (boxName) => { return Collider; },
+        // setupCollider: set up the collision geometry association
+        setupCollider : () => { return Collider; },
+        // setupFrameCollider: Follow current frame collision geometry
+        setupFrameCollider : (mode, alphaThreshold) => { return Collider; },
+        // setupPhysicsBody: set up the body, applying mass and inertia on every call
+        setupPhysicsBody : (mass, momentOfInertia) => { return PhysicsBody; },
+        // setWidth: Set logical width immediately.
+        setWidth : (value) => { return this; },
+        // slowDown: Divide the preceding block playback rate.
+        slowDown : (factor, seconds, easing) => { return this; },
+        // solveIK: solve a contiguous Part chain without bones
+        // returns whether the target is reached
+        solveIK : (middle, tip, target, space, bendDirection, influence) => { return boolean; },
+        // speedUp: Increase the preceding block playback rate.
+        speedUp : (factor, seconds, easing) => { return this; },
+        // stopGrowing: Stop all programmed changes to logical size.
+        stopGrowing : () => { return this; },
+        // stopIt: Stop the most recently selected animation element.
+        stopIt : () => { return this; },
+        // stopMovement: Stop all programmed changes to position.
+        stopMovement : () => { return this; },
+        // stopSpinning: Stop all programmed changes to rotation.
+        stopSpinning : () => { return this; },
+        // stopStretching: Stop all programmed changes to logical size.
+        stopStretching : () => { return this; },
+        // stretch: Multiply logical width and height by independent factors.
+        stretch : (widthFactor, heightFactor, durationSeconds, easing) => { return this; },
+        // unbindFromBone: Clear authored frame bindings.
+        unbindFromBone : () => { return this; },
+        // until: Finish the preceding block when its evaluator returns true.
+        until : (evaluator) => { return this; },
+        // wait: Delay the next timed animation request.
+        wait : (durationSeconds) => { return this; },
+        // when: Open a conditional animation branch.
+        when : (evaluator) => { return this; },
+        // yoyo: Play the preceding trajectory forward and back.
+        yoyo : () => { return this; },
+    }; },
+
+    Particle : () => { return {
+   //  TODO: derive from Animated, EventEmitter
+
+        collider : null,
+        emitter : null,
+        physics : null,
+
+        // addAnimationHelper: Register a callback after the object's normal animation step.
+        addAnimationHelper : (helper) => { return this; },
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        // andThen: Start the next timed operation after the most recently scheduled operation finishes.
+        andThen : () => { return this; },
+        // animate: advance a detached object in simulation seconds
+        animate : (seconds) => { return boolean; },
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        // cancelSchedule: Discard scheduled animations and pending sequencing.
+        cancelSchedule : () => { return this; },
+        // changeCenterOffsetBy: Animate the rotation-center offset by a delta.
+        changeCenterOffsetBy : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeCenterOffsetTo: Animate the rotation-center offset to a target.
+        changeCenterOffsetTo : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeGrowingBy: Animate the growing rate by an additive delta.
+        changeGrowingBy : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeGrowingTo: Animate the growing rate to a target.
+        changeGrowingTo : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementBy: Animate the movement rate by an additive delta.
+        changeMovementBy : (value, durationSeconds, easing) => { return this; },
+        changeMovementBy : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementTo: Animate the movement rate to a target.
+        changeMovementTo : (value, durationSeconds, easing) => { return this; },
+        changeMovementTo : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeScaleBy: Animate independent scale by additive deltas.
+        changeScaleBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeScaleTo: Animate independent scale to a target.
+        changeScaleTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeSpinBy: Animate the spin rate by an additive delta.
+        changeSpinBy : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeSpinTo: Animate the spin rate to a target.
+        changeSpinTo : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingBy: Animate the stretching rate by an additive delta.
+        changeStretchingBy : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingTo: Animate the stretching rate to a target.
+        changeStretchingTo : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // clear: remove all handlers
+        clear : () => {},
+        // clearAnimationHelpers: Retire all helpers on this object.
+        clearAnimationHelpers : () => { return this; },
+        // clearContent: Remove the artwork.
+        clearContent : () => { return this; },
+        // defineScript: create a library-owned named animation recorder
+        defineScript : (name) => { return AnimationScript; },
+        // diminish: Reduce the preceding block amplitude around its baseline.
+        diminish : (factor, seconds, easing) => { return this; },
+        // endGroup: Close and select the innermost anonymous block.
+        endGroup : () => { return this; },
+        // endOtherwise: Close a conditional with an alternative.
+        endOtherwise : () => { return this; },
+        // endWhen: Close a conditional without an alternative.
+        endWhen : () => { return this; },
+        expire : () => {},
+        // fadeTo: Schedule a whole-particle fade.
+        fadeTo : (opacity, seconds, easing) => { return this; },
+        // flipX: Toggle the x reflection flag immediately.
+        flipX : () => { return this; },
+        // flipY: Toggle the y reflection flag immediately.
+        flipY : () => { return this; },
+        getAge : () => { return number; },
+        getBoundingBox : () => { return Rect; },
+        getCenterOffset : () => { return Offset; },
+        getHeight : () => { return number; },
+        getLayer : () => { return SpriteLayer; },
+        getLifetime : () => { return number; },
+        getLocation : () => { return Point; },
+        getMovement : () => { return Offset; },
+        getOpacity : () => { return number; },
+        getParticleEmitter : () => { return ParticleEmitter; },
+        getRotatedBounds : () => { return RotatedRect; },
+        getRotation : () => { return number; },
+        getScale : () => { return Offset; },
+        getSize : () => { return Offset; },
+        getSpin : () => { return number; },
+        getStretching : () => { return Offset; },
+        getWidth : () => { return number; },
+        // group: Open an anonymous animation block.
+        group : () => { return this; },
+        // grow: Multiply logical width and height by one factor.
+        grow : (factor, durationSeconds, easing) => { return this; },
+        hasContent : () => { return boolean; },
+        hasScheduledAnimations : () => { return boolean; },
+        // increase: Increase the preceding block amplitude around its baseline.
+        increase : (factor, seconds, easing) => { return this; },
+        isAlive : () => { return boolean; },
+        isFlippedX : () => { return boolean; },
+        isFlippedY : () => { return boolean; },
+        isSchedulePaused : () => { return boolean; },
+        // moveBy: Move by an offset.
+        moveBy : (value, durationSeconds, easing) => { return this; },
+        moveBy : (x, y, durationSeconds, easing) => { return this; },
+        // moveTo: Move to a location.
+        moveTo : (value, durationSeconds, easing) => { return this; },
+        moveTo : (x, y, durationSeconds, easing) => { return this; },
+        // otherwise: Open the alternative of the innermost conditional.
+        otherwise : () => { return this; },
+        // pauseIt: Pause the most recently selected animation element.
+        pauseIt : () => { return this; },
+        // pauseSchedule: Pause scheduled animations and their delays.
+        pauseSchedule : () => { return this; },
+        // play: Instantiate a named animation script on this target.
+        play : (name) => { return this; },
+        // removeAnimationHelper: Retire a specific animation helper.
+        removeAnimationHelper : (helper) => { return this; },
+        removeCollider : () => {},
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        removeParticleEmitter : () => {},
+        removePhysicsBody : () => {},
+        // repeat: Repeat the preceding block.
+        repeat : () => { return this; },
+        repeat : (additionalExecutions) => { return this; },
+        // resizeBy: Change logical size by additive deltas.
+        resizeBy : (deltaWidth, deltaHeight, durationSeconds, easing) => { return this; },
+        // resizeTo: Animate logical size to a target.
+        resizeTo : (width, height, durationSeconds, easing) => { return this; },
+        // restartIt: Restart the most recently selected animation element from its baseline.
+        restartIt : () => { return this; },
+        // resumeIt: Resume the most recently selected paused animation element.
+        resumeIt : () => { return this; },
+        // resumeSchedule: Resume scheduled animations and their delays.
+        resumeSchedule : () => { return this; },
+        // rotateBy: Rotate through a relative angle.
+        rotateBy : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotateTo: Rotate to an absolute angle.
+        rotateTo : (radians, durationSeconds, easing, direction) => { return this; },
+        // setCenterOffset: Set the rotation-center offset immediately.
+        setCenterOffset : (offset) => { return this; },
+        // setDrawing: Assign whole-particle Drawing artwork.
+        setDrawing : (content) => { return this; },
+        // setFlipX: Set the x reflection flag immediately.
+        setFlipX : (flip) => { return this; },
+        // setFlipY: Set the y reflection flag immediately.
+        setFlipY : (flip) => { return this; },
+        // setGrowing: Set equal constant growth rates immediately.
+        setGrowing : (value) => { return this; },
+        // setHeight: Set logical height immediately.
+        setHeight : (value) => { return this; },
+        // setImage: Assign whole-particle Image artwork.
+        setImage : (content) => { return this; },
+        // setLifetime: Set the lifetime in simulation seconds.
+        setLifetime : (value) => { return this; },
+        // setLocation: Set the location immediately.
+        setLocation : (value) => { return this; },
+        setLocation : (x, y) => { return this; },
+        // setMovement: Set a constant programmed movement rate immediately.
+        setMovement : (value) => { return this; },
+        setMovement : (xPerSecond, yPerSecond) => { return this; },
+        // setOpacity: Set whole-particle opacity.
+        setOpacity : (value) => { return this; },
+        // setRotation: Set rotation immediately.
+        setRotation : (value) => { return this; },
+        // setScale: Set independent transform scale immediately.
+        setScale : (x, y) => { return this; },
+        // setSize: Set logical width and height immediately.
+        setSize : (value) => { return this; },
+        setSize : (width, height) => { return this; },
+        // setSpin: Set a constant programmed angular rate immediately.
+        setSpin : (value) => { return this; },
+        // setStretching: Set independent constant growth rates immediately.
+        setStretching : (widthPerSecond, heightPerSecond) => { return this; },
+        setupCollider : () => { return Collider; },
+        setupParticleEmitter : () => { return ParticleEmitter; },
+        setupPhysicsBody : (mass, momentOfInertia) => { return PhysicsBody; },
+        // setWidth: Set logical width immediately.
+        setWidth : (value) => { return this; },
+        // slowDown: Divide the preceding block playback rate.
+        slowDown : (factor, seconds, easing) => { return this; },
+        // speedUp: Increase the preceding block playback rate.
+        speedUp : (factor, seconds, easing) => { return this; },
+        // stopGrowing: Stop all programmed changes to logical size.
+        stopGrowing : () => { return this; },
+        // stopIt: Stop the most recently selected animation element.
+        stopIt : () => { return this; },
+        // stopMovement: Stop all programmed changes to position.
+        stopMovement : () => { return this; },
+        // stopSpinning: Stop all programmed changes to rotation.
+        stopSpinning : () => { return this; },
+        // stopStretching: Stop all programmed changes to logical size.
+        stopStretching : () => { return this; },
+        // stretch: Multiply logical width and height by independent factors.
+        stretch : (widthFactor, heightFactor, durationSeconds, easing) => { return this; },
+        // unblockEvent: stop ignoring events of a particular type
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
+        // until: Finish the preceding block when its evaluator returns true.
+        until : (evaluator) => { return this; },
+        // wait: Delay the next timed animation request.
+        wait : (durationSeconds) => { return this; },
+        // when: Open a conditional animation branch.
+        when : (evaluator) => { return this; },
+        // yoyo: Play the preceding trajectory forward and back.
+        yoyo : () => { return this; },
+    }; },
+
+    ParticleEmitter : () => { return {
+   //  TODO: derive from Animated
+        // addAnimationHelper: Register a callback after the object's normal animation step.
+        addAnimationHelper : (helper) => { return this; },
+        // andThen: Start the next timed operation after the most recently scheduled operation finishes.
+        andThen : () => { return this; },
+        // animate: advance a detached object in simulation seconds
+        animate : (seconds) => { return boolean; },
+        // cancelSchedule: Discard scheduled animations and pending sequencing.
+        cancelSchedule : () => { return this; },
+        // changeCenterOffsetBy: Animate the rotation-center offset by a delta.
+        changeCenterOffsetBy : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeCenterOffsetTo: Animate the rotation-center offset to a target.
+        changeCenterOffsetTo : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeGrowingBy: Animate the growing rate by an additive delta.
+        changeGrowingBy : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeGrowingTo: Animate the growing rate to a target.
+        changeGrowingTo : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementBy: Animate the movement rate by an additive delta.
+        changeMovementBy : (value, durationSeconds, easing) => { return this; },
+        changeMovementBy : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementTo: Animate the movement rate to a target.
+        changeMovementTo : (value, durationSeconds, easing) => { return this; },
+        changeMovementTo : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeScaleBy: Animate independent scale by additive deltas.
+        changeScaleBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeScaleTo: Animate independent scale to a target.
+        changeScaleTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeSpinBy: Animate the spin rate by an additive delta.
+        changeSpinBy : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeSpinTo: Animate the spin rate to a target.
+        changeSpinTo : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingBy: Animate the stretching rate by an additive delta.
+        changeStretchingBy : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingTo: Animate the stretching rate to a target.
+        changeStretchingTo : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // clearAnimationHelpers: Retire all helpers on this object.
+        clearAnimationHelpers : () => { return this; },
+        // defineScript: create a library-owned named animation recorder
+        defineScript : (name) => { return AnimationScript; },
+        // diminish: Reduce the preceding block amplitude around its baseline.
+        diminish : (factor, seconds, easing) => { return this; },
+        emit : (count) => { return number; },
+        // endGroup: Close and select the innermost anonymous block.
+        endGroup : () => { return this; },
+        // endOtherwise: Close a conditional with an alternative.
+        endOtherwise : () => { return this; },
+        // endWhen: Close a conditional without an alternative.
+        endWhen : () => { return this; },
+        // flipX: Toggle the x reflection flag immediately.
+        flipX : () => { return this; },
+        // flipY: Toggle the y reflection flag immediately.
+        flipY : () => { return this; },
+        getBoundingBox : () => { return Rect; },
+        getCenterOffset : () => { return Offset; },
+        getEmissionRate : () => { return number; },
+        getHeight : () => { return number; },
+        getLayer : () => { return SpriteLayer; },
+        getLocation : () => { return Point; },
+        getMaxParticleSpeed : () => { return number; },
+        getMinParticleSpeed : () => { return number; },
+        getMovement : () => { return Offset; },
+        getParticle : () => { return Particle; },
+        getRotatedBounds : () => { return RotatedRect; },
+        getRotation : () => { return number; },
+        getScale : () => { return Offset; },
+        getSeed : () => { return number; },
+        getSize : () => { return Offset; },
+        getSpin : () => { return number; },
+        getSpread : () => { return number; },
+        getStretching : () => { return Offset; },
+        getVelocityInheritance : () => { return number; },
+        getWidth : () => { return number; },
+        // group: Open an anonymous animation block.
+        group : () => { return this; },
+        // grow: Multiply logical width and height by one factor.
+        grow : (factor, durationSeconds, easing) => { return this; },
+        hasParticleTemplate : () => { return boolean; },
+        hasScheduledAnimations : () => { return boolean; },
+        // increase: Increase the preceding block amplitude around its baseline.
+        increase : (factor, seconds, easing) => { return this; },
+        isEmitting : () => { return boolean; },
+        isFlippedX : () => { return boolean; },
+        isFlippedY : () => { return boolean; },
+        isSchedulePaused : () => { return boolean; },
+        // moveBy: Move by an offset.
+        moveBy : (value, durationSeconds, easing) => { return this; },
+        moveBy : (x, y, durationSeconds, easing) => { return this; },
+        // moveTo: Move to a location.
+        moveTo : (value, durationSeconds, easing) => { return this; },
+        moveTo : (x, y, durationSeconds, easing) => { return this; },
+        // otherwise: Open the alternative of the innermost conditional.
+        otherwise : () => { return this; },
+        // pauseIt: Pause the most recently selected animation element.
+        pauseIt : () => { return this; },
+        // pauseSchedule: Pause scheduled animations and their delays.
+        pauseSchedule : () => { return this; },
+        // play: Instantiate a named animation script on this target.
+        play : (name) => { return this; },
+        // removeAnimationHelper: Retire a specific animation helper.
+        removeAnimationHelper : (helper) => { return this; },
+        // repeat: Repeat the preceding block.
+        repeat : () => { return this; },
+        repeat : (additionalExecutions) => { return this; },
+        // resizeBy: Change logical size by additive deltas.
+        resizeBy : (deltaWidth, deltaHeight, durationSeconds, easing) => { return this; },
+        // resizeTo: Animate logical size to a target.
+        resizeTo : (width, height, durationSeconds, easing) => { return this; },
+        // restartIt: Restart the most recently selected animation element from its baseline.
+        restartIt : () => { return this; },
+        // resumeIt: Resume the most recently selected paused animation element.
+        resumeIt : () => { return this; },
+        // resumeSchedule: Resume scheduled animations and their delays.
+        resumeSchedule : () => { return this; },
+        // rotateBy: Rotate through a relative angle.
+        rotateBy : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotateTo: Rotate to an absolute angle.
+        rotateTo : (radians, durationSeconds, easing, direction) => { return this; },
+        // setCenterOffset: Set the rotation-center offset immediately.
+        setCenterOffset : (offset) => { return this; },
+        // setEmissionRate: Set the continuous emission rate.
+        setEmissionRate : (value) => { return this; },
+        // setFlipX: Set the x reflection flag immediately.
+        setFlipX : (flip) => { return this; },
+        // setFlipY: Set the y reflection flag immediately.
+        setFlipY : (flip) => { return this; },
+        // setGrowing: Set equal constant growth rates immediately.
+        setGrowing : (value) => { return this; },
+        // setHeight: Set logical height immediately.
+        setHeight : (value) => { return this; },
+        // setLocation: Set the location immediately.
+        setLocation : (value) => { return this; },
+        setLocation : (x, y) => { return this; },
+        // setMovement: Set a constant programmed movement rate immediately.
+        setMovement : (value) => { return this; },
+        setMovement : (xPerSecond, yPerSecond) => { return this; },
+        // setParticleSpeed: Set initial particle speed.
+        setParticleSpeed : (minimum, maximum) => { return this; },
+        // setParticleTemplate: Capture the configuration for future emissions.
+        setParticleTemplate : (particle) => { return this; },
+        // setRotation: Set rotation immediately.
+        setRotation : (value) => { return this; },
+        // setScale: Set independent transform scale immediately.
+        setScale : (x, y) => { return this; },
+        // setSeed: Reset emission randomness.
+        setSeed : (seed) => { return this; },
+        // setSize: Set logical width and height immediately.
+        setSize : (value) => { return this; },
+        setSize : (width, height) => { return this; },
+        // setSpin: Set a constant programmed angular rate immediately.
+        setSpin : (value) => { return this; },
+        // setSpread: Set the full angular emission spread.
+        setSpread : (value) => { return this; },
+        // setStretching: Set independent constant growth rates immediately.
+        setStretching : (widthPerSecond, heightPerSecond) => { return this; },
+        // setVelocityInheritance: Set initial velocity inheritance.
+        setVelocityInheritance : (value) => { return this; },
+        // setWidth: Set logical width immediately.
+        setWidth : (value) => { return this; },
+        // slowDown: Divide the preceding block playback rate.
+        slowDown : (factor, seconds, easing) => { return this; },
+        // speedUp: Increase the preceding block playback rate.
+        speedUp : (factor, seconds, easing) => { return this; },
+        // startEmitting: Enable continuous emission.
+        startEmitting : () => { return this; },
+        // stopEmitting: Stop continuous emission.
+        stopEmitting : () => { return this; },
+        // stopGrowing: Stop all programmed changes to logical size.
+        stopGrowing : () => { return this; },
+        // stopIt: Stop the most recently selected animation element.
+        stopIt : () => { return this; },
+        // stopMovement: Stop all programmed changes to position.
+        stopMovement : () => { return this; },
+        // stopSpinning: Stop all programmed changes to rotation.
+        stopSpinning : () => { return this; },
+        // stopStretching: Stop all programmed changes to logical size.
+        stopStretching : () => { return this; },
+        // stretch: Multiply logical width and height by independent factors.
+        stretch : (widthFactor, heightFactor, durationSeconds, easing) => { return this; },
+        // until: Finish the preceding block when its evaluator returns true.
+        until : (evaluator) => { return this; },
+        // wait: Delay the next timed animation request.
+        wait : (durationSeconds) => { return this; },
+        // when: Open a conditional animation branch.
+        when : (evaluator) => { return this; },
+        // yoyo: Play the preceding trajectory forward and back.
+        yoyo : () => { return this; },
+    }; },
+
+    PhysicsBody : () => { return {
+
+        NoPhysics : null,
+
+        // addContinuousForce: persists until removeForce or stopAllForces
+        addContinuousForce : (force) => { return number /* uint */; },
+        // addContinuousTorque: persists until removeForce or stopAllForces
+        addContinuousTorque : (torque) => { return number /* uint */; },
+        // applyAngularImpulse: Change angular momentum immediately.
+        applyAngularImpulse : (impulse) => { return this; },
+        // applyForce: world force for finite seconds
+        // zero duration contributes nothing
+        applyForce : (force, durationSeconds, delaySeconds) => { return number /* uint */; },
+        applyForce : (force, durationSeconds, delaySeconds, worldPoint) => { return number /* uint */; },
+        // applyImpulse: Change momentum immediately.
+        applyImpulse : (impulse) => { return this; },
+        applyImpulse : (impulse, worldPoint) => { return this; },
+        // applyTorque: torque for finite seconds, using moment of inertia
+        applyTorque : (torque, durationSeconds, delaySeconds) => { return number /* uint */; },
+        // clearDrive: Remove the active physical drive.
+        clearDrive : () => { return this; },
+        createGear : (other, ratio, phase) => { return PhysicsConstraint; },
+        createGrooveJoint : (other, start, end, otherAnchor) => { return PhysicsConstraint; },
+        createMotor : (other, radiansPerSecond, maxTorque) => { return PhysicsConstraint; },
+        createPinJoint : (other, anchor, otherAnchor) => { return PhysicsConstraint; },
+        createPivotJoint : (other, anchor, otherAnchor) => { return PhysicsConstraint; },
+        createRatchet : (other, interval, phase) => { return PhysicsConstraint; },
+        createRotaryLimit : (other, minAngle, maxAngle) => { return PhysicsConstraint; },
+        createRotarySpring : (other, restAngle, stiffness, damping) => { return PhysicsConstraint; },
+        createSlideJoint : (other, anchor, otherAnchor, minDistance, maxDistance) => { return PhysicsConstraint; },
+        createSpring : (other, anchor, otherAnchor, restLength, stiffness, damping) => { return PhysicsConstraint; },
+        // disconnect: Disconnect this body's constraints.
+        disconnect : (other) => { return this; },
+        getAngularDamping : () => { return number; },
+        getAngularMomentum : () => { return number; },
+        getAngularVelocity : () => { return number; },
+        // getBreakAngularSpeed: angular-speed break threshold in radians/second
+        // zero disables
+        getBreakAngularSpeed : () => { return number; },
+        // getBreakAngularSpeedReference: optional reference body, or null for absolute angular speed
+        getBreakAngularSpeedReference : () => { return PhysicsBody; },
+        getConstraint : (index) => { return PhysicsConstraint; },
+        getConstraintCount : () => { return number; },
+        // getDriveState: independent snapshot of the drive target and last force
+        getDriveState : () => { return object; },
+        getFriction : () => { return number; },
+        getLinearDamping : () => { return number; },
+        getMass : () => { return number; },
+        getMode : () => { return number; },
+        getMomentOfInertia : () => { return number; },
+        getMovementDirectionInRadians : () => { return number; },
+        getRestitution : () => { return number; },
+        getSolver : () => { return number; },
+        getSpeed : () => { return number; },
+        // getState: snapshot in owning-layer/world coordinates and seconds
+        getState : () => { return object; },
+        // getVelocity: world distance units per second
+        getVelocity : () => { return Vector; },
+        isAttached : () => { return boolean; },
+        // isDriveEnabled: whether an active physical drive is installed
+        isDriveEnabled : () => { return boolean; },
+        isPresent : () => { return boolean; },
+        removeForce : (id) => { return boolean; },
+        // setAngularDamping: Set the body's angular damping.
+        setAngularDamping : (value) => { return this; },
+        // setAngularVelocity: Set the body's angular velocity.
+        setAngularVelocity : (value) => { return this; },
+        // setBreakAngularSpeed: Notify when absolute angular speed exceeds the limit.
+        setBreakAngularSpeed : (radiansPerSecond) => { return this; },
+        setBreakAngularSpeed : (radiansPerSecond, referenceBody) => { return this; },
+        // setDriveTarget: Drive a dynamic body toward a position and orientation using bounded force and torque.
+        setDriveTarget : (position, radians, maxForce, maxTorque, frequency, dampingRatio, direction) => { return this; },
+        // setFriction: Set the body's contact friction.
+        setFriction : (value) => { return this; },
+        // setLinearDamping: Set the body's linear damping.
+        setLinearDamping : (value) => { return this; },
+        // setMass: Set the body's mass.
+        setMass : (value) => { return this; },
+        // setMode: Set the body's simulation mode.
+        setMode : (value) => { return this; },
+        // setMomentOfInertia: Set the body's moment of inertia.
+        setMomentOfInertia : (value) => { return this; },
+        // setRestitution: Set the body's restitution.
+        setRestitution : (value) => { return this; },
+        // setSpeed: Set the body's speed.
+        setSpeed : (value) => { return this; },
+        // setVelocity: Set linear velocity.
+        setVelocity : (velocity) => { return this; },
+        setVelocity : (xPerSecond, yPerSecond) => { return this; },
+        // setVelocityInRadians: Set velocity from speed and direction.
+        setVelocityInRadians : (speed, direction) => { return this; },
+        // step: advance a detached basic body in seconds
+        // owned bodies advance automatically
+        step : (deltaSeconds) => {},
+        // stopAllForces: Clear active and delayed forces, torques and the physical drive.
+        stopAllForces : () => { return this; },
+        // stopMoving: Clear linear velocity.
+        stopMoving : () => { return this; },
+        // stopSpinning: Clear angular velocity.
+        stopSpinning : () => { return this; },
+        // teleport: Move a body immediately.
+        teleport : (position, radians) => { return this; },
+    }; },
+
+    PhysicsConstraint : () => { return {
+        disconnect : () => {},
+        // getAnchorA: read body-local constraint geometry
+        getAnchorA : () => { return Point; },
+        // getAnchorB: read body-local constraint geometry
+        getAnchorB : () => { return Point; },
+        getBodyA : () => { return PhysicsBody; },
+        getBodyB : () => { return PhysicsBody; },
+        getBreakForce : () => { return number; },
+        getCollideBodies : () => { return boolean; },
+        getForce : () => { return number; },
+        // getGrooveEnd: read body-local constraint geometry
+        getGrooveEnd : () => { return Point; },
+        // getGrooveStart: read body-local constraint geometry
+        getGrooveStart : () => { return Point; },
+        getImpulse : () => { return number; },
+        // getMaxAngle: rotary-limit angle in radians
+        getMaxAngle : () => { return number; },
+        getMaxForce : () => { return number; },
+        // getMinAngle: rotary-limit angle in radians
+        getMinAngle : () => { return number; },
+        getType : () => { return number; },
+        isActive : () => { return boolean; },
+        isBroken : () => { return boolean; },
+        // setAnchorA: Move the connection point on body A.
+        setAnchorA : (anchor) => { return this; },
+        // setAnchorB: Move the connection point on body B.
+        setAnchorB : (anchor) => { return this; },
+        // setAnchors: Move both connection points atomically.
+        setAnchors : (anchorA, anchorB) => { return this; },
+        // setAngleLimits: Change both bounds of a rotary-limit constraint.
+        setAngleLimits : (minAngle, maxAngle) => { return this; },
+        // setBreakForce: Choose the force or torque that breaks this constraint.
+        setBreakForce : (value) => { return this; },
+        // setCollideBodies: Allow contacts between connected endpoints.
+        setCollideBodies : (value) => { return this; },
+        // setGroove: Move both endpoints of a groove joint's track atomically.
+        setGroove : (start, end) => { return this; },
+        // setMaxForce: Set the maximum constraint force or torque.
+        setMaxForce : (value) => { return this; },
+    }; },
+
+    Point : () => { return {
+   //  TODO: derive from Offset
+
+        x : null,
+        y : null,
+
+        // Point: create and set x & y values
+        Point : () => { return Point; },
+        Point : (x, y) => { return Point; },
+        Point : (xy) => { return Point; },
+        Point : (xy) => { return Point; },
+
+        // add: add an offset to this one
+        add : (offset) => { return this; },
+        // assign: set this offset equal to the given offset
+        assign : (offset) => { return this; },
+        // distance: get distance from another point
+        distance : (point) => { return number; },
+        // div: divide this offset by the given one
+        div : (offset) => { return this; },
+        // dividedby: return new offset that is this offset divided by given offset
+        dividedby : (offset) => { return Offset; },
+        // equals: return true if this point is equal to the other
+        equals : (offset) => { return boolean; },
+        // minus: return new offset that is this offset minus given offset
+        minus : (offset) => { return Offset; },
+        // mul: multiply this offset by the given one
+        mul : (offset) => { return this; },
+        // notEquals: return true if this point is not equal to the other
+        notEquals : (offset) => { return boolean; },
+        // offset: get the offset of this point from another point
+        offset : (point) => { return Offset; },
+        // plus: return new offset that is this offset plus given offset
+        plus : (offset) => { return Offset; },
+        // sub: subtract an offset from this one
+        sub : (offset) => { return this; },
+        // times: return new offset that is this offset multiplied by given offset
+        times : (offset) => { return Offset; },
+        // vector: return a new vector from this offset
+        vector : () => { return Vector; },
+    }; },
+
+    Polygon : () => { return {
+        // addPoint: adds a point to the end of the polygon
+        addPoint : (point) => { return this; },
+        // addSpline: adds a spline curve to the polygon
+        addSpline : (spline, uStep) => { return this; },
+        // center: centers the polygon at the specified point
+        center : (point) => { return this; },
+        centerPoint : () => { return Point; },
+        // clearPoints: removes all points from the polygon
+        clearPoints : () => { return this; },
+        contains : (point) => { return boolean; },
+        empty : () => { return boolean; },
+        equals : (other) => { return boolean; },
+        getBounds : () => { return Rect; },
+        getPoint : (index) => { return Point; },
+        getPointCount : () => { return number /* uint */; },
+        // horzScale: scales the polygon horizontally by the specified factor
+        horzScale : (factor) => { return this; },
+        // insertPoint: inserts a point at the specified index
+        insertPoint : (index, point) => { return this; },
+        intersection : (other) => { return Polygon; },
+        // move: moves the polygon by the specified offset vector
+        move : (offset) => { return this; },
+        // moveDown: moves the polygon down by the specified amount
+        moveDown : (delta) => { return this; },
+        // moveLeft: moves the polygon left by the specified amount
+        moveLeft : (delta) => { return this; },
+        // moveRight: moves the polygon right by the specified amount
+        moveRight : (delta) => { return this; },
+        // moveTo: moves the polygon to the specified coordinates
+        moveTo : (point) => { return this; },
+        moveTo : (x, y) => { return this; },
+        // moveUp: moves the polygon up by the specified amount
+        moveUp : (delta) => { return this; },
+        // moveXTo: moves the polygon to the specified x coordinate
+        moveXTo : (x) => { return this; },
+        // moveYTo: moves the polygon to the specified y coordinate
+        moveYTo : (y) => { return this; },
+        // removePoint: removes the point at the specified index
+        removePoint : (index) => { return this; },
+        // rotate: rotates the polygon by the specified angle in radians
+        rotate : (radians) => { return this; },
+        // rotateAround: rotates the polygon around the specified center point
+        rotateAround : (radians, centerPoint) => { return this; },
+        // scale: scales the polygon by the specified factor
+        scale : (factor) => { return this; },
+        // scaleAround: scales the polygon around the specified center point
+        scaleAround : (factor, centerPoint) => { return this; },
+        // setPoint: sets the point at the specified index
+        setPoint : (index, point) => { return this; },
+        unionWith : (other) => { return Polygon; },
+        // vertScale: scales the polygon vertically by the specified factor
+        vertScale : (factor) => { return this; },
+    }; },
+
+    Port : () => { return {
+        // clear: Replace pixels inside the current clip with an exact color.
+        clear : (color) => { return this; },
+        // drawArc: Draw an elliptical arc using the specified center, radii, and angle range
+        drawArc : (center, xRadius, yRadius, startAngle, endAngle, attrs) => { return this; },
+        // drawBezier: draws a Bezier curve with the specified control points and attributes
+        drawBezier : (from, control1, control2, to, attrs) => { return this; },
+        // drawCircle: Draw a circle at the specified center point with given radius
+        drawCircle : (center, radius, attrs) => { return this; },
+        // drawDrawing: Draws a Drawing object at the specified location with styling attributes
+        drawDrawing : (drawing, loc, attrs) => { return this; },
+        drawDrawing : (drawing, rect, attrs) => { return this; },
+        // drawEllipse: Draw an ellipse at the specified center point with given x and y radii
+        drawEllipse : (center, xRadius, yRadius, attrs) => { return this; },
+        // drawImage: Draws an image at the specified location with styling attributes
+        drawImage : (img, loc, attrs) => { return this; },
+        drawImage : (img, rect, attrs) => { return this; },
+        drawImage : (img, quad, attrs) => { return this; },
+        // drawLine: draws a line from one point to another with the specified attributes
+        drawLine : (from, to, attrs) => { return this; },
+        // drawPolygon: draws a polygon with the specified attributes
+        drawPolygon : (polygon, attrs) => { return this; },
+        // drawQuad: draws a quad with the specified attributes
+        drawQuad : (quad, attrs) => { return this; },
+        // drawRect: draws a rectangle with the specified attributes
+        drawRect : (rect, attrs) => { return this; },
+        // drawRoundedRect: Draw a rectangle with rounded corners using the specified corner radius
+        drawRoundedRect : (rect, radius, attrs) => { return this; },
+        // drawSphere: Draws a textured sphere at the specified center point with given radius and styling attributes
+        drawSphere : (center, radius, attrs) => { return this; },
+        // drawSpline: draws a spline curve with the specified attributes
+        drawSpline : (spline, attrs) => { return this; },
+        // drawText: Draws text at the specified location with styling attributes
+        drawText : (text, loc, attrs) => { return this; },
+        drawText : (text, rect, attrs) => { return this; },
+        // drawVector: Draw a vector (arrow) from origin to the specified endpoint
+        drawVector : (vector, attrs) => { return this; },
+        getCamera : () => { return Camera; },
+        getCameraAnchor : () => { return Point; },
+        getCameraDrawingEnabled : () => { return boolean; },
+        getClipRect : () => { return Rect; },
+        getCurrentFont : (style) => { return Font; },
+        // getCursor: NOT IMPLEMENTED: get the Image that is being used as the cursor
+        getCursor : () => { return Image; },
+        getDrawingArea : () => { return Rect; },
+        getTextWidth : (text, size, style, len) => { return number; },
+        portToWorld : (point) => { return Point; },
+        // resetClipRect: Restore the clipping rectangle to the full drawing area.
+        resetClipRect : () => { return this; },
+        // resetCursor: NOT IMPLEMENTED
+        resetCursor : () => { return this; },
+        setCameraAnchor : (inCameraAnchor) => { return this; },
+        setCameraDrawingEnabled : (inCameraDrawingEnabled) => { return this; },
+        setClipRect : (inClipRect) => { return this; },
+        // setCursor: NOT IMPLEMENTED
+        setCursor : (cursorImage, hotSpot) => { return this; },
+        // setDrawingOrigin: Set the Port coordinate at the top left of an offscreen surface.
+        setDrawingOrigin : (origin) => { return this; },
+        // setFont: sets the current font for text rendering
+        setFont : (font) => { return this; },
+        // setFontForStyle: Set a custom font for a specific text style (bold, italic, etc.)
+        setFontForStyle : (style, font) => { return this; },
+        // setFontScalingFactor: Set a scaling factor to adjust the size of all rendered text
+        setFontScalingFactor : (scaleBy) => { return this; },
+        // startTrackingMouse: NOT IMPLEMENTED
+        startTrackingMouse : (rect) => { return number; },
+        // stopTrackingMouse: NOT IMPLEMENTED
+        stopTrackingMouse : (trackingRef) => { return this; },
+        worldToPort : (point) => { return Point; },
+    }; },
+
+    Quad : () => { return {
+
+        points : null,
+
+        // Quad: create a new Quad
+        Quad : () => { return Quad; },
+        Quad : (q) => { return Quad; },
+        Quad : (r) => { return Quad; },
+        Quad : (r) => { return Quad; },
+        Quad : (p1, p2, p3, p4) => { return Quad; },
+        Quad : (p) => { return Quad; },
+
+        // centerPoint: return the calculated centerpoint of the quad
+        centerPoint : () => { return Point; },
+        // contains: returns true if the point is contained within this quad
+        contains : (p) => { return boolean; },
+        // equals: return true if this quad is equal to the given one
+        equals : (q2) => { return boolean; },
+        // getBounds: return a rectangle that bounds the quad
+        getBounds : () => { return Rect; },
+        // moveDown: move the quad down by some amount
+        moveDown : (delta) => { return this; },
+        // moveLeft: move the quad to the left by some amount
+        moveLeft : (delta) => { return this; },
+        // moveRight: move the quad to the right by some amount
+        moveRight : (delta) => { return this; },
+        // moveUp: move the quad up by some amount
+        moveUp : (delta) => { return this; },
+        // notEquals: return true if this quad is not equal to the given one
+        notEquals : (q2) => { return boolean; },
+        // rotate: rotate(n): rotate the quad by a rotation in radians (around the calculated center point of the quad)
+        // rotate(n, [Offset] o): rotate the quad by a rotation in radians around an offset center point
+        rotate : (rotationRadians, centerPtOffset) => { return this; },
+    }; },
+
+    Rect : () => { return {
+
+        bottom : null,
+        left : null,
+        right : null,
+        top : null,
+
+        // Rect: create a new Rect
+        Rect : () => { return Rect; },
+        Rect : (w, h) => { return Rect; },
+        Rect : (topLeft, w, h) => { return Rect; },
+        Rect : (leftTop, rightBottom) => { return Rect; },
+        Rect : (left, top, right, bottom) => { return Rect; },
+
+        // add: add([Point] p): offset this rectangle's location by adding x & y coordinates of the point
+        // add([Rect] r): add another rectangle to this one by adding corresponding coordinates
+        add : (r2) => { return this; },
+        add : (p) => { return this; },
+        // assign: set this rectangle equal to the given one
+        assign : (r2) => { return this; },
+        // center: center([Point] p): move the rectangle to be centered over a particular point
+        // center([Rect] r): move the rectangle to be centered within/relative to another rectangle
+        center : (r) => { return this; },
+        center : (p) => { return this; },
+        // centerPoint: get center point of this rectangle
+        centerPoint : () => { return Point; },
+        // contains: contains([Point] p) return true if the point is inside this rectangle
+        // contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle
+        contains : (r) => { return boolean; },
+        contains : (p) => { return boolean; },
+        // div: div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point
+        // div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle
+        div : (r2) => { return this; },
+        div : (p) => { return this; },
+        dividedby : (r2) => { return Rect; },
+        dividedby : (p) => { return Rect; },
+        // empty: return true if this rectangle is empty (no width or no height)
+        empty : () => { return boolean; },
+        // equals: return true if this rectangle is equal to the given one
+        equals : (r2) => { return boolean; },
+        // grow: increase the height and width of the rectangle while leaving the center point unchanged
+        grow : (delta) => { return this; },
+        // height: get the height of this rectangle
+        height : () => { return number; },
+        // horzGrow: increase the width of the rectangle while leaving the center point unchanged
+        horzGrow : (delta) => { return this; },
+        // horzScale: change the x coordinates of the rectangle by a multiplier
+        horzScale : (f) => { return this; },
+        // horzShrink: reduce the width of the rectangle while leaving the center point unchanged
+        horzShrink : (delta) => { return this; },
+        // intersection: get a new rectangle that is the overlapping area of the the rectangles
+        intersection : (r) => { return Rect; },
+        // leftBottom: get bottom left corner point of this rectangle
+        leftBottom : () => { return Point; },
+        // leftTop: get top left corner point of this rectangle
+        leftTop : () => { return Point; },
+        minus : (r2) => { return Rect; },
+        minus : (p) => { return Rect; },
+        // moveDown: move the rectangle down by some amount
+        moveDown : (delta) => { return this; },
+        // moveLeft: move the rectangle to the left by some amount
+        moveLeft : (delta) => { return this; },
+        // moveRight: move the rectangle to the right by some amount
+        moveRight : (delta) => { return this; },
+        // moveTo: moveTo(x,y): the rectangle to a particular (x, y) location
+        // moveTo([Point] p): move the rectangle to a particular point
+        moveTo : (x, y) => { return this; },
+        moveTo : (p) => { return this; },
+        // moveUp: move the rectangle up by some amount
+        moveUp : (delta) => { return this; },
+        // moveXTo: move the rectangle to a particular x location, leaving y unchanged
+        moveXTo : (x) => { return this; },
+        // moveYTo: move the rectangle to a particular y location, leaving x unchanged
+        moveYTo : (y) => { return this; },
+        // mul: mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point
+        // mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle
+        mul : (r2) => { return this; },
+        mul : (p) => { return this; },
+        // notEquals: return true if this rectangle is not equal to the given one
+        notEquals : (r2) => { return boolean; },
+        // overlaps: return true if this rectangle overlaps the other rectangle at all (sharing an edge is not overlapping)
+        overlaps : (r) => { return boolean; },
+        plus : (r2) => { return Rect; },
+        plus : (p) => { return Rect; },
+        // rightBottom: get bottom right corner point of this rectangle
+        rightBottom : () => { return Point; },
+        // rightTop: get top right corner point of this rectangle
+        rightTop : () => { return Point; },
+        // round: round the coordinates to closest whole number
+        round : () => { return this; },
+        // scale: change the coordinates of the rectangle by a multiplier
+        scale : (f) => { return this; },
+        // setHeight: Set the height of this rectangle, keeping the top edge fixed
+        setHeight : (h) => { return this; },
+        // setSize: set the size (width & height) of the rectangle
+        setSize : (n) => { return this; },
+        // setWidth: Set the width of this rectangle, keeping the left edge fixed
+        setWidth : (w) => { return this; },
+        // shrink: reduce the height and width of the rectangle while leaving the center point unchanged
+        shrink : (delta) => { return this; },
+        // sub: sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point
+        // sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates
+        sub : (r2) => { return this; },
+        sub : (p) => { return this; },
+        times : (r2) => { return Rect; },
+        times : (p) => { return Rect; },
+        // toQuad: convert rectangle to a Quad
+        toQuad : () => { return Quad; },
+        // unionWith: get the smallest possible new rectangle that contains both rectangles
+        unionWith : (r) => { return Rect; },
+        // vertGrow: increase the height of the rectangle while leaving the center point unchanged
+        vertGrow : (delta) => { return this; },
+        // vertScale: change the y coordinates of the rectangle by a multiplier
+        vertScale : (f) => { return this; },
+        // vertShrink: reduce the height of the rectangle while leaving the center point unchanged
+        vertShrink : (delta) => { return this; },
+        // width: get the width of this rectangle
+        width : () => { return number; },
+        // x1: alias for Rect.left
+        x1 : () => { return number; },
+        // x2: alias for Rect.right
+        x2 : () => { return number; },
+        // y1: alias for Rect.top
+        y1 : () => { return number; },
+        // y2: alias for Rect.bottom
+        y2 : () => { return number; },
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.res
+    ResourceManager : () => { return {
+        closeResourceFile : (refNum) => {},
+        getImage : (imageName) => { return Image; },
+        getImageStrip : (imageName) => { return ImageStrip; },
+        getLanguage : () => { return string; },
+        getResource : (resourceName, maxSize) => { return string /* Binary */; },
+        getResourcePaths : () => { return string; },
+        getResourceSize : (resourceName) => { return number; },
+        getSound : (soundName) => { return Sound; },
+        getString : (id, substring) => { return string; },
+        openResourceFile : (filename) => { return number; },
+        setLanguage : (inLanguage) => { return this; },
+    }; },
+
+    RotatedRect : () => { return {
+   //  TODO: derive from Rect
+
+        bottom : null,
+        centerOffset : null,
+        left : null,
+        radians : null,
+        right : null,
+        top : null,
+
+        // RotatedRect: create a new RotatedRect
+        RotatedRect : (rect, rotationRadians, cpOffset) => { return RotatedRect; },
+
+        // add: add([Point] p): offset this rectangle's location by adding x & y coordinates of the point
+        // add([Rect] r): add another rectangle to this one by adding corresponding coordinates
+        add : (r2) => { return this; },
+        add : (p) => { return this; },
+        // assign: set this rectangle equal to the given one
+        assign : (r2) => { return this; },
+        // center: center([Point] p): move the rectangle to be centered over a particular point
+        // center([Rect] r): move the rectangle to be centered within/relative to another rectangle
+        center : (r) => { return this; },
+        center : (p) => { return this; },
+        // centerPoint: get center point of this rectangle
+        centerPoint : () => { return Point; },
+        // contains: contains([Point] p) return true if the point is inside this rectangle
+        // contains([Rect] r) return true if the rectangle passed in is entirely inside this rectangle
+        contains : (r) => { return boolean; },
+        contains : (p) => { return boolean; },
+        // div: div([Point] p): change this rectangle's location by dividing by x & y coordinates of the point
+        // div([Rect] r): change this rect by dividing by corresponding coordinates of another rectangle
+        div : (r2) => { return this; },
+        div : (p) => { return this; },
+        dividedby : (r2) => { return Rect; },
+        dividedby : (p) => { return Rect; },
+        // empty: return true if this rectangle is empty (no width or no height)
+        empty : () => { return boolean; },
+        // equals: return true if this rectangle is equal to the given one
+        equals : (r2) => { return boolean; },
+        // getQuad: create a Quad by applying the rectangle's rotation around the center point with offset
+        getQuad : () => { return Quad; },
+        // grow: increase the height and width of the rectangle while leaving the center point unchanged
+        grow : (delta) => { return this; },
+        // height: get the height of this rectangle
+        height : () => { return number; },
+        // horzGrow: increase the width of the rectangle while leaving the center point unchanged
+        horzGrow : (delta) => { return this; },
+        // horzScale: change the x coordinates of the rectangle by a multiplier
+        horzScale : (f) => { return this; },
+        // horzShrink: reduce the width of the rectangle while leaving the center point unchanged
+        horzShrink : (delta) => { return this; },
+        // intersection: get a new rectangle that is the overlapping area of the the rectangles
+        intersection : (r) => { return Rect; },
+        // leftBottom: get bottom left corner point of this rectangle
+        leftBottom : () => { return Point; },
+        // leftTop: get top left corner point of this rectangle
+        leftTop : () => { return Point; },
+        minus : (r2) => { return Rect; },
+        minus : (p) => { return Rect; },
+        // moveDown: move the rectangle down by some amount
+        moveDown : (delta) => { return this; },
+        // moveLeft: move the rectangle to the left by some amount
+        moveLeft : (delta) => { return this; },
+        // moveRight: move the rectangle to the right by some amount
+        moveRight : (delta) => { return this; },
+        // moveTo: moveTo(x,y): the rectangle to a particular (x, y) location
+        // moveTo([Point] p): move the rectangle to a particular point
+        moveTo : (x, y) => { return this; },
+        moveTo : (p) => { return this; },
+        // moveUp: move the rectangle up by some amount
+        moveUp : (delta) => { return this; },
+        // moveXTo: move the rectangle to a particular x location, leaving y unchanged
+        moveXTo : (x) => { return this; },
+        // moveYTo: move the rectangle to a particular y location, leaving x unchanged
+        moveYTo : (y) => { return this; },
+        // mul: mul([Point] p): change this rectangle's location by multiplying by x & y coordinates of the point
+        // mul([Rect] r): change this rect by multiplying by corresponding coordinates of another rectangle
+        mul : (r2) => { return this; },
+        mul : (p) => { return this; },
+        // notEquals: return true if this rectangle is not equal to the given one
+        notEquals : (r2) => { return boolean; },
+        // overlaps: return true if this rectangle overlaps the other rectangle at all (sharing an edge is not overlapping)
+        overlaps : (r) => { return boolean; },
+        plus : (r2) => { return Rect; },
+        plus : (p) => { return Rect; },
+        // rightBottom: get bottom right corner point of this rectangle
+        rightBottom : () => { return Point; },
+        // rightTop: get top right corner point of this rectangle
+        rightTop : () => { return Point; },
+        // rotate: change the rotation of this rectangle by some number of radians
+        rotate : (rotateRadians) => { return this; },
+        // round: round the coordinates to closest whole number
+        round : () => { return this; },
+        // scale: change the coordinates of the rectangle by a multiplier
+        scale : (f) => { return this; },
+        // setCenterOffset: set an offset for point around which rotation is applied
+        setCenterOffset : (cpOffset) => { return this; },
+        // setHeight: Set the height of this rectangle, keeping the top edge fixed
+        setHeight : (h) => { return this; },
+        // setRotation: set the rotation of this rectangle to a particular amount in radians
+        setRotation : (rotationRadians, cpOffset) => { return this; },
+        // setSize: set the size (width & height) of the rectangle
+        setSize : (n) => { return this; },
+        // setWidth: Set the width of this rectangle, keeping the left edge fixed
+        setWidth : (w) => { return this; },
+        // shrink: reduce the height and width of the rectangle while leaving the center point unchanged
+        shrink : (delta) => { return this; },
+        // sub: sub([Point] p): offset this rectangle's location by subtracting x & y coordinates of the point
+        // sub([Rect] r): add another rectangle to this one by subtracting corresponding coordinates
+        sub : (r2) => { return this; },
+        sub : (p) => { return this; },
+        times : (r2) => { return Rect; },
+        times : (p) => { return Rect; },
+        // toQuad: convert rectangle to a Quad
+        toQuad : () => { return Quad; },
+        // unionWith: get the smallest possible new rectangle that contains both rectangles
+        unionWith : (r) => { return Rect; },
+        // vertGrow: increase the height of the rectangle while leaving the center point unchanged
+        vertGrow : (delta) => { return this; },
+        // vertScale: change the y coordinates of the rectangle by a multiplier
+        vertScale : (f) => { return this; },
+        // vertShrink: reduce the height of the rectangle while leaving the center point unchanged
+        vertShrink : (delta) => { return this; },
+        // width: get the width of this rectangle
+        width : () => { return number; },
+        // x1: alias for Rect.left
+        x1 : () => { return number; },
+        // x2: alias for Rect.right
+        x2 : () => { return number; },
+        // y1: alias for Rect.top
+        y1 : () => { return number; },
+        // y2: alias for Rect.bottom
+        y2 : () => { return number; },
+    }; },
+
+    Serializer : () => { return {
+        getDataPtr : () => { return MemBlock; },
+        getDataSize : () => { return number; },
+        // getResourceMode: get this stream's resource policy
+        getResourceMode : () => { return number /* int */; },
+        serialize_1 : (val) => {},
+        serialize_1u : (val) => {},
+        serialize_2 : (val) => {},
+        serialize_2u : (val) => {},
+        serialize_3u : (val) => {},
+        serialize_4 : (val) => {},
+        serialize_4u : (val) => {},
+        serialize_8 : (val) => {},
+        serialize_8u : (val) => {},
+        serialize_bool : (val) => {},
+        serialize_color : (val) => {},
+        serialize_d : (val) => {},
+        serialize_f : (val) => {},
+        serialize_mem : (mem) => {},
+        serialize_mem : (mem) => {},
+        // serialize_obj: Serializes an ISerializable object
+        serialize_obj : (obj) => {},
+        serialize_offset : (val) => {},
+        serialize_point : (val) => {},
+        serialize_quad : (val) => {},
+        serialize_rect : (val) => {},
+        serialize_ref : (obj) => {},
+        serialize_rotr : (val) => {},
+        serialize_str : (str) => {},
+        serialize_uint : (val) => {},
+        serialize_vector : (val) => {},
+        // setResourceMode: Choose embedded image resources or permit external resource references.
+        setResourceMode : (mode) => { return this; },
+        // sizeof_1: Calculate the number of bytes needed to serialize the value.
+        sizeof_1 : (val) => { return number /* uint */; },
+        // sizeof_1u: Calculate the number of bytes needed to serialize the value.
+        sizeof_1u : (val) => { return number /* uint */; },
+        // sizeof_2: Calculate the number of bytes needed to serialize the value.
+        sizeof_2 : (val) => { return number /* uint */; },
+        // sizeof_2u: Calculate the number of bytes needed to serialize the value.
+        sizeof_2u : (val) => { return number /* uint */; },
+        // sizeof_3u: Calculate the number of bytes needed to serialize the value.
+        sizeof_3u : (val) => { return number /* uint */; },
+        // sizeof_4: Calculate the number of bytes needed to serialize the value.
+        sizeof_4 : (val) => { return number /* uint */; },
+        // sizeof_4u: Calculate the number of bytes needed to serialize the value.
+        sizeof_4u : (val) => { return number /* uint */; },
+        // sizeof_8: Calculate the number of bytes needed to serialize the value.
+        sizeof_8 : (val) => { return number /* uint */; },
+        // sizeof_8u: Calculate the number of bytes needed to serialize the value.
+        sizeof_8u : (val) => { return number /* uint */; },
+        // sizeof_bool: Calculate the number of bytes needed to serialize the value.
+        sizeof_bool : (val) => { return number /* uint */; },
+        // sizeof_color: Calculate the number of bytes needed to serialize the value.
+        sizeof_color : (val) => { return number /* uint */; },
+        // sizeof_d: Calculate the number of bytes needed to serialize the value.
+        sizeof_d : (val) => { return number /* uint */; },
+        // sizeof_f: Calculate the number of bytes needed to serialize the value.
+        sizeof_f : (val) => { return number /* uint */; },
+        sizeof_mem : (mem) => { return number /* uint */; },
+        sizeof_mem : (mem) => { return number /* uint */; },
+        // sizeof_obj: get the number of bytes used to serialize the given object, including any objects that it serializes
+        sizeof_obj : (obj) => { return number /* uint */; },
+        // sizeof_offset: Calculate the number of bytes needed to serialize the value.
+        sizeof_offset : (val) => { return number /* uint */; },
+        // sizeof_point: Calculate the number of bytes needed to serialize the value.
+        sizeof_point : (val) => { return number /* uint */; },
+        // sizeof_quad: Calculate the number of bytes needed to serialize the value.
+        sizeof_quad : (val) => { return number /* uint */; },
+        // sizeof_rect: Calculate the number of bytes needed to serialize the value.
+        sizeof_rect : (val) => { return number /* uint */; },
+        // sizeof_ref: Calculate the number of bytes needed to serialize the value.
+        sizeof_ref : (val) => { return number /* uint */; },
+        // sizeof_rotr: Calculate the number of bytes needed to serialize the value.
+        sizeof_rotr : (val) => { return number /* uint */; },
+        // sizeof_str: Calculate the number of bytes needed to serialize the value.
+        sizeof_str : (val) => { return number /* uint */; },
+        // sizeof_uint: Calculate the number of bytes needed to serialize the value.
+        sizeof_uint : (val) => { return number /* uint */; },
+        // sizeof_vector: Calculate the number of bytes needed to serialize the value.
+        sizeof_vector : (val) => { return number /* uint */; },
+    }; },
+
+    Sound : () => { return {
+   //  TODO: derive from EventEmitter
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        changeOffsetX : (targetOffset, msDuration, easing) => {},
+        changePitch : (targetOffset, msDuration, easing) => {},
+        changeVolume : (level, fadeMs, easing) => {},
+        // clear: remove all handlers
+        clear : () => {},
+        fadeIn : (fadeMs, easing) => {},
+        fadeOut : (fadeMs, easing) => {},
+        getVolume : () => { return number; },
+        isLooping : () => { return boolean; },
+        isPaused : () => { return boolean; },
+        on : (eventCode, func) => { return IEventHandler; },
+        onDonePlaying : (func) => { return IEventHandler; },
+        onFailedToPlay : (func) => { return IEventHandler; },
+        onLooping : (func) => { return IEventHandler; },
+        pause : () => {},
+        play : (vol, offsetX, pitch, fromMs, lenMs) => {},
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        resume : () => {},
+        // setLooping: set if the sound should loop or not
+        setLooping : (loopingOn) => { return this; },
+        // setOffsetX: set the left/right positioning of the sound's origin
+        setOffsetX : (offsetX) => { return this; },
+        // setPitch: set the pitch of a sound
+        setPitch : (pitchOffset) => { return this; },
+        setVolume : (inVolume) => { return this; },
+        // skip: skip ahead or back in a sound
+        skip : (skipMilliseconds) => { return this; },
+        // skipTo: skipTo a particular time position in a sound
+        skipTo : (timeMs) => { return this; },
+        start : () => {},
+        stop : () => {},
+        // unblockEvent: stop ignoring events of a particular type
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.snd
+    SoundManager : () => { return {
+        on : (eventCode, func) => { return IEventHandler; },
+        onDonePlaying : (func) => { return IEventHandler; },
+        onFailedToPlay : (func) => { return IEventHandler; },
+        onLooping : (func) => { return IEventHandler; },
+        setMute : (muted) => {},
+        // setVolume: 0.0 - silent to 1.0 - full volume
+        setVolume : (level) => {},
+    }; },
+
+    Spline : () => { return {
+        addPoint : (point) => {},
+        addSegment : (p1, p2, p3, p4) => {},
+        getBounds : () => { return Rect; },
+        getFirstOrder : (u) => { return Point; },
+        getMaxU : () => { return number; },
+        getPoint : (pointIndex) => { return Point; },
+        getPointCount : () => { return number; },
+        getSecondOrder : (u) => { return Point; },
+        setPoint : (pointIndex, point) => {},
+    }; },
+
+    Sprite : () => { return {
+   //  TODO: derive from Animated, EventEmitter, ISerializable
+
+        collider : null,
+        physics : null,
+
+        activateSubEntity : (entityName, animationName) => {},
+        // addAnimationDrawable: attach artwork to an animation bone
+        addAnimationDrawable : (drawing, options) => { return number /* uint */; },
+        addAnimationDrawable : (callback, options) => { return number /* uint */; },
+        // addAnimationHelper: Register a callback after the object's normal animation step.
+        addAnimationHelper : (helper) => { return this; },
+        // addAnimationIK: register a two-bone IK constraint
+        addAnimationIK : (config, order) => { return number /* uint */; },
+        // addAnimationModifier: register a synchronous borrowed-pose callback
+        addAnimationModifier : (callback, stage, order) => { return number /* uint */; },
+        addFramesImage : (image, startingFrame, numFrames) => {},
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        // andThen: Start the next timed operation after the most recently scheduled operation finishes.
+        andThen : () => { return this; },
+        animate : (deltaSeconds) => { return boolean; },
+        applyCharacterMap : (mapName) => {},
+        areSpriterEventsEnabled : () => { return boolean; },
+        // attachAnimationPhysicsPart: Register a physical Part in a physical rig's mass assembly.
+        attachAnimationPhysicsPart : (part, parent) => { return this; },
+        attachSprite : (sprite, attachPointName) => {},
+        blendToAnimation : (animationId, blendTime) => {},
+        blendToAnimation : (animationName, blendTime) => {},
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        // cancelSchedule: Discard scheduled animations and pending sequencing.
+        cancelSchedule : () => { return this; },
+        // changeCenterOffsetBy: Animate the rotation-center offset by a delta.
+        changeCenterOffsetBy : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeCenterOffsetTo: Animate the rotation-center offset to a target.
+        changeCenterOffsetTo : (value, durationSeconds, easing) => { return this; },
+        changeCenterOffsetTo : (x, y, durationSeconds, easing) => { return this; },
+        changeFramesImage : (oldImage, newImage) => {},
+        // changeGrowingBy: Animate the growing rate by an additive delta.
+        changeGrowingBy : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeGrowingTo: Animate the growing rate to a target.
+        changeGrowingTo : (amountPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementBy: Animate the movement rate by an additive delta.
+        changeMovementBy : (value, durationSeconds, easing) => { return this; },
+        changeMovementBy : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeMovementTo: Animate the movement rate to a target.
+        changeMovementTo : (value, durationSeconds, easing) => { return this; },
+        changeMovementTo : (xPerSecond, yPerSecond, durationSeconds, easing) => { return this; },
+        // changeScaleBy: Animate independent scale by additive deltas.
+        changeScaleBy : (x, y, durationSeconds, easing) => { return this; },
+        // changeScaleTo: Animate independent scale to a target.
+        changeScaleTo : (x, y, durationSeconds, easing) => { return this; },
+        // changeSpinBy: Animate the spin rate by an additive delta.
+        changeSpinBy : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeSpinTo: Animate the spin rate to a target.
+        changeSpinTo : (radiansPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingBy: Animate the stretching rate by an additive delta.
+        changeStretchingBy : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // changeStretchingTo: Animate the stretching rate to a target.
+        changeStretchingTo : (widthPerSecond, heightPerSecond, durationSeconds, easing) => { return this; },
+        // clear: remove all handlers
+        clear : () => {},
+        clearAnimationBoneTransforms : () => {},
+        // clearAnimationDrawables: release all drawing callbacks
+        clearAnimationDrawables : () => {},
+        // clearAnimationHelpers: Retire all helpers on this object.
+        clearAnimationHelpers : () => { return this; },
+        // clearAnimationModifiers: remove all pose callbacks at the next evaluation boundary
+        clearAnimationModifiers : () => {},
+        // clearAnimationPhysicsRoot: Restore automatic physical root selection.
+        clearAnimationPhysicsRoot : () => { return this; },
+        // clearParts: detach all Parts
+        clearParts : () => {},
+        // createPart: create an independently animated Part owned by this Sprite
+        createPart : (name) => { return Part; },
+        // defineScript: create a library-owned named animation recorder
+        defineScript : (name) => { return AnimationScript; },
+        // deserialize: read this object's data from the given stream
+        deserialize : (deserializer) => {},
+        // detachAnimationPhysicsPart: Release a Part or subtree from the physics assembly.
+        detachAnimationPhysicsPart : (part, includeDescendants) => { return this; },
+        detachSprite : (sprite) => {},
+        // diminish: Reduce the preceding block amplitude around its baseline.
+        diminish : (factor, seconds, easing) => { return this; },
+        // disableAnimationPhysics: recover animation control and remove the physical rig
+        disableAnimationPhysics : (recoveryTime, direction) => {},
+        disableAnimationPose : () => {},
+        // enableAnimationPose: enable fixed-hierarchy poses using a reference clip at time zero
+        enableAnimationPose : (referenceAnimation) => { return boolean; },
+        enableSpriterEvents : (enable) => {},
+        // endGroup: Close and select the innermost anonymous block.
+        endGroup : () => { return this; },
+        // endOtherwise: Close a conditional with an alternative.
+        endOtherwise : () => { return this; },
+        // endWhen: Close a conditional without an alternative.
+        endWhen : () => { return this; },
+        fadeIn : (durationSeconds, easing) => {},
+        fadeOut : (durationSeconds, easing) => {},
+        fadeTo : (targetOpacity, durationSeconds, easing) => {},
+        // findPart: find a Part by its unique name, or null
+        findPart : (name) => { return Part; },
+        // flipX: Toggle the x reflection flag immediately.
+        flipX : () => { return this; },
+        // flipY: Toggle the y reflection flag immediately.
+        flipY : () => { return this; },
+        getAnimationBindingNames : () => { return Array; },
+        // getAnimationBindingTransform: read an owned transform in local, rig or world coordinates
+        getAnimationBindingTransform : (name, space) => { return object; },
+        getAnimationBoneNames : () => { return Array; },
+        // getAnimationBoneTransform: read an owned transform in local, rig or world coordinates
+        getAnimationBoneTransform : (name, space) => { return object; },
+        // getAnimationDebugDraw: read per-instance animationDebug flag bits
+        getAnimationDebugDraw : () => { return number /* int */; },
+        // getAnimationDrawableError: read a disabled drawable failure
+        getAnimationDrawableError : (id) => { return string; },
+        // getAnimationDrawBounds: read conservative visual bounds in owning-layer coordinates
+        getAnimationDrawBounds : () => { return object; },
+        // getAnimationIKResult: read reach, clamp, stretch, and limit diagnostics
+        getAnimationIKResult : (id) => { return object; },
+        // getAnimationModifierError: read a disabled callback's diagnostic
+        getAnimationModifierError : (id) => { return string; },
+        // getAnimationPhysicsDriveSettings: copy a bone's configured drive settings or return null
+        getAnimationPhysicsDriveSettings : (bone) => { return object; },
+        getAnimationPhysicsDriveSettings : (bone) => { return object; },
+        // getAnimationPhysicsMode: query actual whole-rig or selected bone control
+        getAnimationPhysicsMode : (bone, includeDescendants) => { return number /* int */; },
+        getAnimationPhysicsMode : (bone, includeDescendants) => { return number /* int */; },
+        // getAnimationPhysicsRoot: get the selected physical root bone ID
+        getAnimationPhysicsRoot : () => { return number /* uint */; },
+        // getAnimationPhysicsSetupWarnings: copy setup geometry diagnostics
+        getAnimationPhysicsSetupWarnings : () => { return Array; },
+        // getAnimationPose: copy the final local pose into an owned snapshot
+        getAnimationPose : () => { return object; },
+        getAnimationProgress : () => { return number; },
+        getAnimationRigError : () => { return string; },
+        // getAnimationSource: read the animation source integer constant
+        getAnimationSource : () => { return number /* int */; },
+        // getAnimationTransitionProgress: read normalized independently timed crossfade progress
+        getAnimationTransitionProgress : () => { return number; },
+        getAppliedCharacterMaps : () => { return Array; },
+        getAttachedSprite : (attachPointName) => { return Sprite; },
+        // getAttachmentPart: mounting Part controlling this Sprite root, or null
+        getAttachmentPart : () => { return Part; },
+        getAttachPoint : (attachPointName) => { return Offset; },
+        getBlendProgress : () => { return number; },
+        getBoundingBox : () => { return Rect; },
+        getCenterOffset : () => { return Offset; },
+        // getCurrentFrame: which frame of animation the sprite is currently showing
+        getCurrentFrame : () => { return number; },
+        getFrameCenterOffset : (image, frameNum) => { return Offset; },
+        // getFrameCount: total number of frames of animation for this sprite
+        getFrameCount : () => { return number; },
+        getFrameRotatedBounds : (frameNum) => { return RotatedRect; },
+        getHeight : () => { return number; },
+        // getLayer: get the layer that contains this sprite
+        getLayer : () => { return SpriteLayer; },
+        getLocation : () => { return Point; },
+        getMouseDetectMode : () => { return number; },
+        getMovement : () => { return Offset; },
+        getMyClassTag : () => { return number; },
+        getOpacity : () => { return number; },
+        // getPart: get a Part by its per-Sprite ID, or null
+        getPart : (id) => { return Part; },
+        getPartCount : () => { return number /* uint */; },
+        // getPartNames: owned names in creation order
+        getPartNames : () => { return Array; },
+        getRotatedBounds : () => { return RotatedRect; },
+        getRotation : () => { return number; },
+        getScale : () => { return Offset; },
+        // getSerializedSize: get size of this object's data for the given stream
+        getSerializedSize : (serializer) => { return number /* uint */; },
+        getSize : () => { return Offset; },
+        getSpin : () => { return number; },
+        // getSpriterCollisionBox: get a Spriter collision box by name
+        getSpriterCollisionBox : (boxName) => { return RotatedRect; },
+        // getSpriterCollisionBoxCount: get the number of active Spriter collision boxes
+        getSpriterCollisionBoxCount : () => { return number; },
+        // getSpriterCollisionBoxName: get the name of a Spriter collision box by index
+        getSpriterCollisionBoxName : (index) => { return string; },
+        getStretching : () => { return Offset; },
+        getWantsAnimEndEvents : () => { return boolean; },
+        getWantsAnimLoopEvents : () => { return boolean; },
+        getWantsClickEvents : () => { return boolean; },
+        getWantsCollideWallEvents : () => { return boolean; },
+        getWantsMouseOverEvents : () => { return boolean; },
+        getWantsOffscreenEvents : () => { return boolean; },
+        getWidth : () => { return number; },
+        getZOrder : () => { return number /* int */; },
+        // group: Open an anonymous animation block.
+        group : () => { return this; },
+        // grow: Multiply logical width and height by one factor.
+        grow : (factor, durationSeconds, easing) => { return this; },
+        hasAnimation : (animationId) => { return boolean; },
+        hasAnimation : (animationName) => { return boolean; },
+        hasAttachPoint : (attachPointName) => { return boolean; },
+        hasScheduledAnimations : () => { return boolean; },
+        // increase: Increase the preceding block amplitude around its baseline.
+        increase : (factor, seconds, easing) => { return this; },
+        // isAnimationDrawingSupported: test GUI drawing capability without changing pose state
+        isAnimationDrawingSupported : () => { return boolean; },
+        isAnimationPaused : () => { return boolean; },
+        // isAnimationPhysicsEnabled: test physical animation state
+        isAnimationPhysicsEnabled : () => { return boolean; },
+        // isAnimationPhysicsPartAttached: test whether a Part contributes to this generated rig assembly
+        isAnimationPhysicsPartAttached : (part) => { return boolean; },
+        isAnimationPlaying : () => { return boolean; },
+        isAnimationPoseEnabled : () => { return boolean; },
+        // isAnimationTransitioning: test independently timed crossfade state
+        isAnimationTransitioning : () => { return boolean; },
+        isBehind : (sprite) => { return boolean; },
+        isBlending : () => { return boolean; },
+        isFlippedX : () => { return boolean; },
+        isFlippedY : () => { return boolean; },
+        isSchedulePaused : () => { return boolean; },
+        // isSpriterCollisionActive: check if a Spriter collision box is active
+        isSpriterCollisionActive : (boxName) => { return boolean; },
+        // moveBehind: make this sprite be drawn before another sprite (visually behind)
+        moveBehind : (sprite) => { return this; },
+        // moveBy: Move by an offset.
+        moveBy : (value, durationSeconds, easing) => { return this; },
+        moveBy : (x, y, durationSeconds, easing) => { return this; },
+        // moveInFrontOf: make this sprite be drawn just after another sprite (visually in front of)
+        moveInFrontOf : (sprite) => { return this; },
+        // moveTo: Move to a location.
+        moveTo : (value, durationSeconds, easing) => { return this; },
+        moveTo : (x, y, durationSeconds, easing) => { return this; },
+        // moveToBack: put this sprite behind all others in its layer
+        moveToBack : () => { return this; },
+        // moveToFront: put this sprite in front of all others in its layer
+        moveToFront : () => { return this; },
+        offsetFrameCenters : (offsetX, offsetY, image, startingFrame, numFrames) => {},
+        on : (eventCode, func) => { return IEventHandler; },
+        onAnimationBlendComplete : (func) => { return IEventHandler; },
+        onAnimationEnd : (func) => { return IEventHandler; },
+        onAnimationLoop : (func) => { return IEventHandler; },
+        onAnimationPhysicsRecoveryComplete : (func) => { return IEventHandler; },
+        onCollideSprite : (func) => { return IEventHandler; },
+        onCollideWall : (func) => { return IEventHandler; },
+        onExitLayer : (func) => { return IEventHandler; },
+        onFadeComplete : (func) => { return IEventHandler; },
+        onFadeInComplete : (func) => { return IEventHandler; },
+        onFadeOutComplete : (func) => { return IEventHandler; },
+        onMouseClick : (func) => { return IEventHandler; },
+        onMouseDown : (func) => { return IEventHandler; },
+        onMouseEnter : (func) => { return IEventHandler; },
+        onMouseLeave : (func) => { return IEventHandler; },
+        onMouseUp : (func) => { return IEventHandler; },
+        onOffscreen : (func) => { return IEventHandler; },
+        onOnscreen : (func) => { return IEventHandler; },
+        // otherwise: Open the alternative of the innermost conditional.
+        otherwise : () => { return this; },
+        pauseAnimation : () => {},
+        // pauseIt: Pause the most recently selected animation element.
+        pauseIt : () => { return this; },
+        // pauseSchedule: Pause scheduled animations and their delays.
+        pauseSchedule : () => { return this; },
+        // play: Instantiate a named animation script on this target.
+        play : (name) => { return this; },
+        removeAllCharacterMaps : () => {},
+        // removeAnimationDrawable: remove a drawing registration at a safe frame boundary
+        removeAnimationDrawable : (id) => {},
+        // removeAnimationHelper: Retire a specific animation helper.
+        removeAnimationHelper : (helper) => { return this; },
+        // removeAnimationModifier: remove a modifier at the next evaluation boundary
+        removeAnimationModifier : (id) => {},
+        removeCharacterMap : (mapName) => {},
+        removeCollider : () => {},
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        // removePart: detach a Part
+        // retained references keep their local state
+        removePart : (id) => { return boolean; },
+        // removePhysicsBody: detach the body
+        // retained references keep their state
+        removePhysicsBody : () => {},
+        // repeat: Repeat the preceding block.
+        repeat : () => { return this; },
+        repeat : (additionalExecutions) => { return this; },
+        // resizeBy: Change logical size by additive deltas.
+        resizeBy : (deltaWidth, deltaHeight, durationSeconds, easing) => { return this; },
+        // resizeTo: Animate logical size to a target.
+        resizeTo : (width, height, durationSeconds, easing) => { return this; },
+        // restartIt: Restart the most recently selected animation element from its baseline.
+        restartIt : () => { return this; },
+        resumeAnimation : () => {},
+        // resumeIt: Resume the most recently selected paused animation element.
+        resumeIt : () => { return this; },
+        // resumeSchedule: Resume scheduled animations and their delays.
+        resumeSchedule : () => { return this; },
+        // rotateBy: Rotate through a relative angle.
+        rotateBy : (radians, durationSeconds, easing, direction) => { return this; },
+        // rotateTo: Rotate to an absolute angle.
+        rotateTo : (radians, durationSeconds, easing, direction) => { return this; },
+        // sampleAnimationPose: sample an independent pose at a floating-point seconds timestamp
+        sampleAnimationPose : (clip, timeSeconds) => { return object; },
+        // seekAnimation: select an independent clip time in floating-point seconds
+        seekAnimation : (clip, timeSeconds) => {},
+        // serialize: write this object's data into the given stream
+        serialize : (serializer) => {},
+        // setAnimationBoneTransform: set a persistent absolute local bone override
+        setAnimationBoneTransform : (name, transform) => {},
+        // setAnimationDebugDraw: select per-instance animationDebug flag bits
+        setAnimationDebugDraw : (flags) => {},
+        // setAnimationDrawableEnabled: enable or disable a drawing registration
+        setAnimationDrawableEnabled : (id, enabled) => {},
+        // setAnimationIKTarget: update an IK target in explicit owning-layer coordinates
+        setAnimationIKTarget : (id, x, y, space) => {},
+        // setAnimationPhysicsDriveSettings: Replace drive settings for a skeleton selection.
+        setAnimationPhysicsDriveSettings : (settings, bone, includeDescendants) => { return this; },
+        setAnimationPhysicsDriveSettings : (settings, bone, includeDescendants) => { return this; },
+        // setAnimationPhysicsMode: Select animation control for a physical rig or its bones.
+        setAnimationPhysicsMode : (mode, bone, includeDescendants, recoveryTime, direction) => { return this; },
+        setAnimationPhysicsMode : (mode, bone, includeDescendants, recoveryTime, direction) => { return this; },
+        // setAnimationPhysicsRoot: Select the bone receiving whole-Sprite impulses and root follow.
+        setAnimationPhysicsRoot : (bone) => { return this; },
+        setAnimationPhysicsRoot : (bone) => { return this; },
+        // setAnimationSource: select a clip, reference, or procedural base
+        setAnimationSource : (source) => {},
+        // setCenterOffset: Set the rotation-center offset immediately.
+        setCenterOffset : (offset) => { return this; },
+        setDrawHelper : (helper) => {},
+        // setFlipX: Set the x reflection flag immediately.
+        setFlipX : (flip) => { return this; },
+        // setFlipY: Set the y reflection flag immediately.
+        setFlipY : (flip) => { return this; },
+        // setFrame: sets the current frame of the sprite to the specified frame number
+        setFrame : (frame) => { return this; },
+        // setFrameCollisionMask: Assign a mask to frames using an image.
+        setFrameCollisionMask : (frameImage, maskImage) => { return this; },
+        // setGrowing: Set equal constant growth rates immediately.
+        setGrowing : (value) => { return this; },
+        // setHeight: Set logical height immediately.
+        setHeight : (value) => { return this; },
+        // setLocation: Set the location immediately.
+        setLocation : (value) => { return this; },
+        setLocation : (x, y) => { return this; },
+        // setMouseDetectMode: sets the mouse detection mode for this sprite
+        setMouseDetectMode : (collisionType) => { return this; },
+        // setMovement: Set a constant programmed movement rate immediately.
+        setMovement : (value) => { return this; },
+        setMovement : (xPerSecond, yPerSecond) => { return this; },
+        // setOpacity: sets the opacity level for this sprite (0.0 to 1.0)
+        setOpacity : (opacity) => { return this; },
+        setPostDrawHelper : (helper) => {},
+        // setRotation: Set rotation immediately.
+        setRotation : (value) => { return this; },
+        // setScale: Set independent transform scale immediately.
+        setScale : (x, y) => { return this; },
+        // setSize: Set logical width and height immediately.
+        setSize : (value) => { return this; },
+        setSize : (width, height) => { return this; },
+        // setSpin: Set a constant programmed angular rate immediately.
+        setSpin : (value) => { return this; },
+        // setStretching: Set independent constant growth rates immediately.
+        setStretching : (widthPerSecond, heightPerSecond) => { return this; },
+        // setupAnimationCollider: Follow authored animation collision boxes
+        setupAnimationCollider : () => { return Collider; },
+        // setupAnimationPhysics: create a versioned physical rig
+        setupAnimationPhysics : (definition) => {},
+        // setupCollider: set up the collision geometry association
+        setupCollider : () => { return Collider; },
+        // setupFrameCollider: Follow current frame collision geometry
+        setupFrameCollider : (mode, alphaThreshold) => { return Collider; },
+        // setupPhysicsBody: set up the body, applying mass and inertia on every call
+        setupPhysicsBody : (mass, momentOfInertia) => { return PhysicsBody; },
+        // setupPhysicsFromAnimationRig: Generate a dynamic physical rig from the reference skeleton.
+        setupPhysicsFromAnimationRig : (totalMass, unitsPerMeter) => { return this; },
+        // setWantsAnimEndEvents: enables or disables animation end event generation for this sprite
+        setWantsAnimEndEvents : (wantsThem) => { return this; },
+        // setWantsAnimLoopEvents: enables or disables animation loop event generation for this sprite
+        setWantsAnimLoopEvents : (wantsThem) => { return this; },
+        // setWantsClickEvents: enables or disables click event generation for this sprite
+        setWantsClickEvents : (wantsThem) => { return this; },
+        // setWantsCollideWallEvents: enables or disables wall collision event generation for this sprite
+        setWantsCollideWallEvents : (wantsThem) => { return this; },
+        // setWantsMouseOverEvents: enables or disables mouse over event generation for this sprite
+        setWantsMouseOverEvents : (wantsThem) => { return this; },
+        // setWantsOffscreenEvents: enables or disables offscreen event generation for this sprite
+        setWantsOffscreenEvents : (wantsThem) => { return this; },
+        // setWidth: Set logical width immediately.
+        setWidth : (value) => { return this; },
+        // slowDown: Divide the preceding block playback rate.
+        slowDown : (factor, seconds, easing) => { return this; },
+        // speedUp: Increase the preceding block playback rate.
+        speedUp : (factor, seconds, easing) => { return this; },
+        startAnimation : (animationId) => {},
+        startAnimation : (animationName) => {},
+        startFrameAnimation : (fps, startingFrame, numFrames, animateFlags) => {},
+        stopAnimation : () => {},
+        stopFrameAnimation : () => {},
+        // stopGrowing: Stop all programmed changes to logical size.
+        stopGrowing : () => { return this; },
+        // stopIt: Stop the most recently selected animation element.
+        stopIt : () => { return this; },
+        // stopMovement: Stop all programmed changes to position.
+        stopMovement : () => { return this; },
+        // stopSpinning: Stop all programmed changes to rotation.
+        stopSpinning : () => { return this; },
+        // stopStretching: Stop all programmed changes to logical size.
+        stopStretching : () => { return this; },
+        // stretch: Multiply logical width and height by independent factors.
+        stretch : (widthFactor, heightFactor, durationSeconds, easing) => { return this; },
+        // supportsAnimationPhysics: test physical animation capability
+        supportsAnimationPhysics : () => { return boolean; },
+        // transferPart: move a Part and optional subtree into this Sprite
+        transferPart : (part, includeDescendants) => { return Part; },
+        // transitionToAnimation: select an independent clip time in floating-point seconds
+        transitionToAnimation : (clip, timeSeconds, durationSeconds) => {},
+        // unblockEvent: stop ignoring events of a particular type
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
+        // until: Finish the preceding block when its evaluator returns true.
+        until : (evaluator) => { return this; },
+        // wait: Delay the next timed animation request.
+        wait : (durationSeconds) => { return this; },
+        // when: Open a conditional animation branch.
+        when : (evaluator) => { return this; },
+        // yoyo: Play the preceding trajectory forward and back.
+        yoyo : () => { return this; },
+    }; },
+
+    SpriteLayer : () => { return {
+   //  TODO: derive from EventEmitter, ISerializable
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        addParticle : (value) => {},
+        addSprite : (newSprite) => {},
+        applyCharacterMapToAll : (mapName) => {},
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        // clear: remove all handlers
+        clear : () => {},
+        createParticle : () => { return Particle; },
+        createParticleEmitter : () => { return ParticleEmitter; },
+        createSprite : () => { return Sprite; },
+        createSpriteFromSpriterEntity : (inEntityName) => { return Sprite; },
+        createSpriteFromSpriterFile : (inFileName, inEntityName) => { return Sprite; },
+        // deserialize: read this object's data from the given stream
+        deserialize : (deserializer) => {},
+        disableCollisions : () => {},
+        disableCollisionsWithLayer : (otherLayer) => {},
+        enableCollisions : () => {},
+        enableCollisionsWithLayer : (otherLayer) => {},
+        enableSpriterEvents : (enable) => {},
+        // fadeIn: fade entire layer to full opacity over time
+        fadeIn : (durationSeconds, easing) => { return this; },
+        // fadeOut: fade out the entire layer to full transparency over time
+        fadeOut : (durationSeconds, easing) => { return this; },
+        findSprite : (id) => { return Sprite; },
+        getCamera : () => { return Camera; },
+        getEffectiveCamera : () => { return Camera; },
+        getMaxParticles : () => { return number /* uint */; },
+        getMyClassTag : () => { return number; },
+        getNthParticle : (value) => { return Particle; },
+        getNthSprite : (index) => { return Sprite; },
+        getParticleCount : () => { return number /* uint */; },
+        // getSerializedSize: get size of this object's data for the given stream
+        getSerializedSize : (serializer) => { return number /* uint */; },
+        getSpace : () => { return CpSpace; },
+        getSpritePort : () => { return Port; },
+        getSpriteZOrder : (sprite) => { return number /* int */; },
+        getWorldBounds : () => { return Rect; },
+        getZOrder : () => { return number /* int */; },
+        hasSprite : (sprite) => { return boolean; },
+        hide : () => {},
+        isHidden : () => { return boolean; },
+        isSpriteBehind : (sprite, otherSprite) => { return boolean; },
+        layerToPortOffset : (o) => { return Offset; },
+        layerToPortPoint : (p) => { return Point; },
+        layerToPortQuad : (q) => { return Quad; },
+        layerToPortRect : (r) => { return RotatedRect; },
+        layerToPortVector : (v) => { return Vector; },
+        moveBehind : (layer) => {},
+        moveInFrontOf : (layer) => {},
+        // moveToBack: move this layer behind all other layers
+        moveToBack : () => {},
+        // moveToFront: move this layer in front of all other layers
+        moveToFront : () => {},
+        on : (eventCode, func) => { return IEventHandler; },
+        onAnimationComplete : (func) => { return IEventHandler; },
+        onAnimationEnd : (func) => { return IEventHandler; },
+        onAnimationLoop : (func) => { return IEventHandler; },
+        onAnimationStart : (func) => { return IEventHandler; },
+        onCollideSprite : (func) => { return IEventHandler; },
+        onCollideWall : (func) => { return IEventHandler; },
+        onDrawPortComplete : (func) => { return IEventHandler; },
+        onErasePort : (func) => { return IEventHandler; },
+        onExitLayer : (func) => { return IEventHandler; },
+        onFadeComplete : (func) => { return IEventHandler; },
+        onFadeInComplete : (func) => { return IEventHandler; },
+        onFadeOutComplete : (func) => { return IEventHandler; },
+        onLayerFadeInComplete : (func) => { return IEventHandler; },
+        onLayerFadeOutComplete : (func) => { return IEventHandler; },
+        onMouseClick : (func) => { return IEventHandler; },
+        onMouseDown : (func) => { return IEventHandler; },
+        onMouseEnter : (func) => { return IEventHandler; },
+        onMouseLeave : (func) => { return IEventHandler; },
+        onMouseUp : (func) => { return IEventHandler; },
+        onOffscreen : (func) => { return IEventHandler; },
+        onOnscreen : (func) => { return IEventHandler; },
+        onPostAnimateLayer : (func) => { return IEventHandler; },
+        onPostDrawLayer : (func) => { return IEventHandler; },
+        onPreAnimateLayer : (func) => { return IEventHandler; },
+        onPreDrawLayer : (func) => { return IEventHandler; },
+        portToLayerOffset : (o) => { return Offset; },
+        portToLayerPoint : (p) => { return Point; },
+        portToLayerQuad : (q) => { return Quad; },
+        portToLayerRect : (r) => { return RotatedRect; },
+        portToLayerVector : (v) => { return Vector; },
+        removeAllParticleEmitters : () => {},
+        removeAllParticles : () => {},
+        removeAllSprites : () => {},
+        removeCharacterMapFromAll : (mapName) => {},
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        removeParticle : (value) => {},
+        removeParticleEmitter : (value) => {},
+        removeSprite : (oldSprite) => {},
+        // serialize: write this object's data into the given stream
+        serialize : (serializer) => {},
+        setCamera : (camera) => {},
+        setCameraParallax : (movementRatio, zoomRatio) => {},
+        setDamping : (damping) => {},
+        setGravity : (gravity) => {},
+        // setMaxParticles: Set the shared particle budget.
+        setMaxParticles : (value) => { return this; },
+        // setSerializationFlags: set the mode for sprite layer serialization
+        setSerializationFlags : (flags) => { return this; },
+        setSpritePort : (port) => {},
+        setStaticLayer : (isStatic) => {},
+        setUseChipmunkPhysics : (useIt) => {},
+        setWorldBounds : (bounds) => {},
+        show : () => {},
+        startAnimations : () => {},
+        stopAnimations : () => {},
+        // unblockEvent: stop ignoring events of a particular type
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
+    }; },
+
+    TileLayer : () => { return {
+   //  TODO: derive from SpriteLayer
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        addParticle : (value) => {},
+        addSprite : (newSprite) => {},
+        applyCharacterMapToAll : (mapName) => {},
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        checkCollision : (movingSprite, alphaThreshold, shortCircuit) => { return number; },
+        // clear: remove all handlers
+        clear : () => {},
+        createParticle : () => { return Particle; },
+        createParticleEmitter : () => { return ParticleEmitter; },
+        createSprite : () => { return Sprite; },
+        createSpriteFromSpriterEntity : (inEntityName) => { return Sprite; },
+        createSpriteFromSpriterFile : (inFileName, inEntityName) => { return Sprite; },
+        defineTileSet : (tileWidth, tileHeight, tiles, hasTransparency, flipTiles) => {},
+        // deserialize: read this object's data from the given stream
+        deserialize : (deserializer) => {},
+        disableCollisions : () => {},
+        disableCollisionsWithLayer : (otherLayer) => {},
+        enableCollisions : () => {},
+        enableCollisionsWithLayer : (otherLayer) => {},
+        enableSpriterEvents : (enable) => {},
+        // fadeIn: fade entire layer to full opacity over time
+        fadeIn : (durationSeconds, easing) => { return this; },
+        // fadeOut: fade out the entire layer to full transparency over time
+        fadeOut : (durationSeconds, easing) => { return this; },
+        findSprite : (id) => { return Sprite; },
+        getCamera : () => { return Camera; },
+        getEffectiveCamera : () => { return Camera; },
+        getMapData : (mapWidth, mapHeight, srcX, srcY) => { return MemBlock; },
+        getMaxParticles : () => { return number /* uint */; },
+        getMyClassTag : () => { return number; },
+        getNthParticle : (value) => { return Particle; },
+        getNthSprite : (index) => { return Sprite; },
+        getParticleCount : () => { return number /* uint */; },
+        // getSerializedSize: get size of this object's data for the given stream
+        getSerializedSize : (serializer) => { return number /* uint */; },
+        getSpace : () => { return CpSpace; },
+        getSpritePort : () => { return Port; },
+        getSpriteZOrder : (sprite) => { return number /* int */; },
+        getTileSetImage : () => { return Image; },
+        getTileSize : () => { return Point; },
+        getTileTypeAndFacingAt : (x, y) => { return object; },
+        getTileTypeAt : (x, y) => { return number; },
+        getWorldBounds : () => { return Rect; },
+        getWorldSize : () => { return Rect; },
+        getZOrder : () => { return number /* int */; },
+        hasSprite : (sprite) => { return boolean; },
+        hide : () => {},
+        isHidden : () => { return boolean; },
+        isSpriteBehind : (sprite, otherSprite) => { return boolean; },
+        layerToPortOffset : (o) => { return Offset; },
+        layerToPortPoint : (p) => { return Point; },
+        layerToPortQuad : (q) => { return Quad; },
+        layerToPortRect : (r) => { return RotatedRect; },
+        layerToPortVector : (v) => { return Vector; },
+        loadMapData : (data, mapWidth, mapHeight, dstX, dstY) => {},
+        loadMapData : (data, mapWidth, mapHeight, dstX, dstY) => {},
+        moveBehind : (layer) => {},
+        moveInFrontOf : (layer) => {},
+        // moveToBack: move this layer behind all other layers
+        moveToBack : () => {},
+        // moveToFront: move this layer in front of all other layers
+        moveToFront : () => {},
+        on : (eventCode, func) => { return IEventHandler; },
+        onAnimationComplete : (func) => { return IEventHandler; },
+        onAnimationEnd : (func) => { return IEventHandler; },
+        onAnimationLoop : (func) => { return IEventHandler; },
+        onAnimationStart : (func) => { return IEventHandler; },
+        onCollideSprite : (func) => { return IEventHandler; },
+        onCollideWall : (func) => { return IEventHandler; },
+        onDrawPortComplete : (func) => { return IEventHandler; },
+        onErasePort : (func) => { return IEventHandler; },
+        onExitLayer : (func) => { return IEventHandler; },
+        onFadeComplete : (func) => { return IEventHandler; },
+        onFadeInComplete : (func) => { return IEventHandler; },
+        onFadeOutComplete : (func) => { return IEventHandler; },
+        onLayerFadeInComplete : (func) => { return IEventHandler; },
+        onLayerFadeOutComplete : (func) => { return IEventHandler; },
+        onMouseClick : (func) => { return IEventHandler; },
+        onMouseDown : (func) => { return IEventHandler; },
+        onMouseEnter : (func) => { return IEventHandler; },
+        onMouseLeave : (func) => { return IEventHandler; },
+        onMouseUp : (func) => { return IEventHandler; },
+        onOffscreen : (func) => { return IEventHandler; },
+        onOnscreen : (func) => { return IEventHandler; },
+        onPostAnimateLayer : (func) => { return IEventHandler; },
+        onPostDrawLayer : (func) => { return IEventHandler; },
+        onPreAnimateLayer : (func) => { return IEventHandler; },
+        onPreDrawLayer : (func) => { return IEventHandler; },
+        portToLayerOffset : (o) => { return Offset; },
+        portToLayerPoint : (p) => { return Point; },
+        portToLayerQuad : (q) => { return Quad; },
+        portToLayerRect : (r) => { return RotatedRect; },
+        portToLayerVector : (v) => { return Vector; },
+        removeAllParticleEmitters : () => {},
+        removeAllParticles : () => {},
+        removeAllSprites : () => {},
+        removeCharacterMapFromAll : (mapName) => {},
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        removeParticle : (value) => {},
+        removeParticleEmitter : (value) => {},
+        removeSprite : (oldSprite) => {},
+        // serialize: write this object's data into the given stream
+        serialize : (serializer) => {},
+        setCamera : (camera) => {},
+        setCameraParallax : (movementRatio, zoomRatio) => {},
+        setDamping : (damping) => {},
+        setGravity : (gravity) => {},
+        // setMaxParticles: Set the shared particle budget.
+        setMaxParticles : (value) => { return this; },
+        // setSerializationFlags: set the mode for sprite layer serialization
+        setSerializationFlags : (flags) => { return this; },
+        setSpritePort : (port) => {},
+        setStaticLayer : (isStatic) => {},
+        setTileTypeAt : (x, y, t, facing) => {},
+        setUseChipmunkPhysics : (useIt) => {},
+        setWorldBounds : (bounds) => {},
+        setWorldSize : (width, height, repeatingX, repeatingY) => {},
+        show : () => {},
+        startAnimations : () => {},
+        stopAnimations : () => {},
+        // unblockEvent: stop ignoring events of a particular type
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
+    }; },
+
+    // NOTE: Primary access via singleton instance: pdg.tm
+    TimerManager : () => { return {
+   //  TODO: derive from EventEmitter
+        // addHandler: add a new handler for some event type, or for all events if no type specified.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to handle
+        addHandler : (inHandler, inEventType) => {},
+        // blockEvent: temporarily ignore all events of a particular type. Events that are blocked are NOT cached for later, they are just dropped.
+        // \param inEventType the type of event to block
+        blockEvent : (inEventType) => {},
+        cancelAllTimers : () => {},
+        cancelTimer : (id) => {},
+        // clear: remove all handlers
+        clear : () => {},
+        delayTimer : (id, delay) => {},
+        delayTimerUntil : (id, msTime) => {},
+        getMilliseconds : () => { return number; },
+        getWhenTimerFiresNext : (id) => { return number; },
+        isPaused : () => { return boolean; },
+        isTimerPaused : (id) => { return boolean; },
+        // onInterval: setup handler to be called regularly at interval ms
+        onInterval : (func, interval) => { return IEventHandler; },
+        // onTimeout: setup handler to be called once after delay ms
+        onTimeout : (func, delay) => { return IEventHandler; },
+        pause : () => {},
+        pauseTimer : (id) => {},
+        // removeHandler: remove a handler for some event type, or for all events (see note) if no type specified. If the handler is listed multiple times it will only remove it once.
+        // NOTE: inType == all_events doesn't work quite like you might expect. If you have registered a handler for multiple events, but not with all_events, doing removeHandler(handler, all_events) will do nothing. Basically, all_events is a special event type that matches all event types when considering whether to invoke a handler or not.
+        // It is safe to call remove handler from within an event handler's handleEvent() call.
+        // \param inHandler the object to handle events
+        // \param inEventType the type of event to stop handling (see note)
+        removeHandler : (inHandler, inEventType) => {},
+        startTimer : (id, delay, oneShot) => {},
+        // unblockEvent: stop ignoring events of a particular type
+        // \param inEventType the type of event to unblock
+        unblockEvent : (inEventType) => {},
+        unpause : () => {},
+        unpauseTimer : (id) => {},
+    }; },
+
+    Vector : () => { return {
+   //  TODO: derive from Offset
+
+        x : null,
+        y : null,
+
+        // Vector: create and set x & y values
+        Vector : () => { return Vector; },
+        Vector : (x, y) => { return Vector; },
+        Vector : (xy) => { return Vector; },
+        Vector : (xy) => { return Vector; },
+
+        // add: add an offset to this one
+        add : (offset) => { return this; },
+        // assign: set this offset equal to the given offset
+        assign : (offset) => { return this; },
+        // div: divide this offset by the given one
+        div : (offset) => { return this; },
+        // dividedby: return new offset that is this offset divided by given offset
+        dividedby : (offset) => { return Offset; },
+        // dotProduct: get dot product for this vector with a 2nd vector
+        dotProduct : (vector) => { return number; },
+        // equals: return true if this point is equal to the other
+        equals : (offset) => { return boolean; },
+        // minus: return new offset that is this offset minus given offset
+        minus : (offset) => { return Offset; },
+        // mul: multiply this offset by the given one
+        mul : (offset) => { return this; },
+        // normal: get the normal of this vector, ie: A.normal() = (-A.y, A.x)
+        normal : () => { return Vector; },
+        // notEquals: return true if this point is not equal to the other
+        notEquals : (offset) => { return boolean; },
+        // plus: return new offset that is this offset plus given offset
+        plus : (offset) => { return Offset; },
+        // projection: projection of a point onto the line defined by this vector, ie: A.projection(B) = ((A . B) / |B|^2) * B
+        projection : (point) => { return Point; },
+        // sub: subtract an offset from this one
+        sub : (offset) => { return this; },
+        // times: return new offset that is this offset multiplied by given offset
+        times : (offset) => { return Offset; },
+        // unit: get the unit vector of this vector, ie: A.unit() = (A.x / |A|, A.y / |A|)
+        unit : () => { return Vector; },
+        // vector: return a new vector from this offset
+        vector : () => { return Vector; },
+        // vectorAngle: get angle (in radians) for this vector
+        vectorAngle : () => { return number; },
+        // vectorLength: get length as a vector (distance from origin)
+        vectorLength : () => { return number; },
     }; },
 
 };

@@ -86,7 +86,7 @@ WASM_ARCH_OUT_DIR=$(PDG_ROOT)/build/wasm/$(WASM_ARCH)
 
 ifeq ($(WASM_BUILD),test)
 WASM_OUT_DIR=$(WASM_ARCH_OUT_DIR)
-DEFINES='-DDEBUG' '-DPDG_DEBUG_OUT_TO_LOG' $(COMMON_DEFINES)
+DEFINES='-DDEBUG' '-DPDG_DEBUG_OUT_TO_LOG' '-DPDG_BROWSER_BINDING_TESTS' $(COMMON_DEFINES)
 BUILD_FLAGS=-O0 -gsource-map
 LIBS += -s STACK_OVERFLOW_CHECK=2
 else ifeq ($(WASM_BUILD),debug)
@@ -127,6 +127,17 @@ PDG_SPRITER_OBJS := $(addprefix $(OUT_DIR)/pdg-spriter/,$(addsuffix .cpp.o,$(PDG
 
 
 RUNTIME_JS_FILES= \
+    --embed-file $(SRC_JS_DIR)/net_bytes.js@/js_modules/net_bytes.js \
+    --embed-file $(SRC_JS_DIR)/net_transport.js@/js_modules/net_transport.js \
+    --embed-file $(SRC_JS_DIR)/net_websocket_client.js@/js_modules/net_websocket_client.js \
+    --embed-file $(SRC_JS_DIR)/net_webtransport_client.js@/js_modules/net_webtransport_client.js \
+    --embed-file $(SRC_JS_DIR)/net_transport_selector.js@/js_modules/net_transport_selector.js \
+    --embed-file $(SRC_JS_DIR)/netconnection.js@/js_modules/netconnection.js \
+    --embed-file $(SRC_JS_DIR)/netclient.js@/js_modules/netclient.js \
+    --embed-file $(SRC_BINDINGS_DIR)/pdg_em_runtime.js@/js_modules/pdg_em_runtime.js \
+    --embed-file $(SRC_BINDINGS_DIR)/pdg_em_generated.js@/js_modules/pdg_em_generated.js \
+    --embed-file $(SRC_JS_DIR)/interface_metadata.js@/js_modules/interface_metadata.js \
+    --embed-file $(SRC_JS_DIR)/interface_metadata_data.js@/js_modules/interface_metadata_data.js \
     --embed-file $(SRC_JS_DIR)/dump.js@/js_modules/dump.js \
     --embed-file $(SRC_JS_DIR)/coordinates.js@/js_modules/coordinates.js \
     --embed-file $(SRC_JS_DIR)/color.js@/js_modules/color.js \
@@ -136,6 +147,11 @@ RUNTIME_JS_FILES= \
 # UI scripts run from /, while benchmark scripts use /test/perf_tests. Include the
 # two shared shape-fill textures at their UI-relative paths as well.
 TEST_JS_FILES= \
+    --exclude-file '*/fixtures/websocket/echo_host.js' \
+    --exclude-file '*/fixtures/webtransport/*' \
+    --exclude-file '*/fixtures/ios_network/*' \
+    --exclude-file '*/fixtures/websocket/*.key' \
+    --exclude-file '*/fixtures/websocket/*.crt' \
     --embed-file $(PDG_ROOT)/test/data@/data \
     --embed-file $(PDG_ROOT)/test/data@/test/data \
     --embed-file $(PDG_ROOT)/test/perf_tests/canvasmark2013/images/texture5.png@/perf_tests/canvasmark2013/images/texture5.png \
@@ -164,6 +180,9 @@ OBJS= \
     $(OUT_DIR)/ConvertUTF.c.o \
 	$(OUT_DIR)/memblock.cpp.o \
 	$(OUT_DIR)/animated.cpp.o \
+	$(OUT_DIR)/scene.cpp.o \
+	$(OUT_DIR)/camera.cpp.o \
+	$(OUT_DIR)/bone.cpp.o \
 	$(OUT_DIR)/physicsbody.cpp.o \
 	$(OUT_DIR)/particle.cpp.o \
 	$(OUT_DIR)/collider.cpp.o \
@@ -266,19 +285,26 @@ $(OUT_DIR):
 $(OBJS): | $(OUT_DIR)
 
 
-#bindings: $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
-#	@echo  'Creating JavaScript bindings for C++ objects...'
-#	@$(CXX) --bind $(CXXFLAGS) -o $(SRC_BINDINGS_DIR)/pdg_em_bindings.js $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
-#	-@ls -l $(SRC_BINDINGS_DIR)/bindings.*
-#	@echo Done.
+PDG_METADATA_INPUTS := $(shell find $(PDG_ROOT)/src/bindings/common $(SRC_JS_DIR) -type f \( -name '*.cpp' -o -name '*.h' -o -name '*.inc' -o -name '*.js' \) ! -name interface_metadata_data.js)
+$(SRC_JS_DIR)/interface_metadata_data.js: $(PDG_METADATA_INPUTS) $(wildcard $(SRC_BINDINGS_DIR)/*.h $(SRC_BINDINGS_DIR)/*.cpp) $(PDG_ROOT)/src/bindings/javascript/v8/pdg_js_classes.cpp $(PDG_ROOT)/src/bindings/javascript/v8/pdg_script_macros.h $(PDG_ROOT)/src/bindings/javascript/v8/pdg_js_macros.h $(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js $(PDG_ROOT)/tools/build-interface-metadata.js $(PDG_ROOT)/tools/animation-recorder.js $(PDG_ROOT)/tools/animation-operations-inventory.json $(PDG_ROOT)/tools/interface-metadata-source.js $(PDG_ROOT)/tools/interface-metadata-macros.h $(PDG_ROOT)/tools/api-contracts.js $(PDG_ROOT)/deps/node/deps/acorn/acorn/dist/acorn.js $(PDG_ROOT)/VERSION
+	$(PDG_ROOT)/tools/node $(PDG_ROOT)/tools/build-interface-metadata.js
 
+# This inexpensive source-only pass runs once per make invocation, before any
+# consumer of the generated bindings. It validates the manual inventory too.
+.PHONY: emscripten-bindings check-emscripten-bindings
+emscripten-bindings:
+	$(PDG_ROOT)/tools/node $(PDG_ROOT)/tools/emscripten/generate.js
 
-# $(ADDITIONAL_JS_FILES) -s EXPORTED_FUNCTIONS=$(EXPORTS)
-#	-@rm parser.out WebIDLGrammar.pkl 
-libpdg: $(OBJS) \
+check-emscripten-bindings:
+	$(PDG_ROOT)/tools/node $(PDG_ROOT)/tools/emscripten/generate.js --check
+
+libpdg: emscripten-bindings $(SRC_BINDINGS_DIR)/pdg_em_runtime.js $(SRC_BINDINGS_DIR)/pdg_em_generated.js
+
+libpdg: $(wildcard $(SRC_JS_DIR)/net*.js) $(SRC_JS_DIR)/interface_metadata.js $(SRC_JS_DIR)/interface_metadata_data.js $(OBJS) \
 	$(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp \
 	$(SRC_BINDINGS_DIR)/pdg.embind \
 	$(SRC_BINDINGS_DIR)/pdg_em_particles.h \
+	$(SRC_BINDINGS_DIR)/pdg_em_camera.h \
 	$(SRC_BINDINGS_DIR)/platform-emscripten.js \
 	$(SRC_BINDINGS_DIR)/pdg_emscripten.js \
 	$(SRC_BINDINGS_JAVASCRIPT_DIR)/pdg.js
@@ -289,6 +315,7 @@ libpdg: $(OBJS) \
 
 
 # this C++ file contains the actual bindings spec
+$(OUT_DIR)/pdg_em_bindings.cpp.o: | emscripten-bindings
 $(OUT_DIR)/pdg_em_bindings.cpp.o: $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp $(SRC_BINDINGS_DIR)/pdg_em_adaptors.h
 	@echo  'Compiling pdg_em_bindings.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/pdg_em_bindings.cpp.o -c $(SRC_BINDINGS_DIR)/pdg_em_bindings.cpp
@@ -322,6 +349,14 @@ $(OUT_DIR)/physicsbody.cpp.o: $(SRC_SYS_DIR)/physicsbody.cpp
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OUT_DIR)/collider.cpp.o: $(SRC_SYS_DIR)/collider.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OUT_DIR)/camera.cpp.o: $(SRC_SYS_DIR)/camera.cpp
+	@echo 'Compiling camera.cpp...'
+	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/camera.cpp.o -c $(SRC_SYS_DIR)/camera.cpp
+
+$(OUT_DIR)/bone.cpp.o: $(SRC_SYS_DIR)/bone.cpp
+	@echo 'Compiling bone.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OUT_DIR)/animated.cpp.o: $(SRC_SYS_DIR)/animated.cpp
@@ -758,3 +793,6 @@ clean:
 $(OBJS): $(PDG_ROOT)/tools/pdg-js.mak
 
 -include $(OBJS:.o=.d)
+
+$(OUT_DIR)/scene.cpp.o: $(SRC_SYS_DIR)/scene.cpp
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<

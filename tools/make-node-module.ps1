@@ -178,6 +178,7 @@ $npmEnvironment = @{
     "npm_config_cache" = $npmCacheDir
     "npm_config_msvs_version" = "2022"
     "GYP_MSVS_VERSION" = "2022"
+    "PDG_NODE_BUILD_CONFIG" = $Config
     "PATH" = "$nodeDir;$env:PATH"
 }
 $bundledNodeGyp = Join-Path $repoRoot "tools\npm\node_modules\node-gyp\bin\node-gyp.js"
@@ -189,7 +190,7 @@ if ($Config -eq "Debug") {
 }
 
 Write-Host "Packaging the PDG Node.js module..." -ForegroundColor Cyan
-& (Join-Path $PSScriptRoot "copy-node-module-source.ps1") $targetDir
+& (Join-Path $PSScriptRoot "copy-node-module-source.ps1") -TargetDir $targetDir -NodeExecutable $nodeExe
 
 Invoke-Npm -WorkingDirectory $targetDir -Arguments @("pack") -Environment $npmEnvironment
 

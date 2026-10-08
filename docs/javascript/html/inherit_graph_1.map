@@ -1,3 +1,42 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classpdg_1_1_animation_contact_target.html" title="World and platform contact locks with timed release." alt="" coords="5,5,167,31"/>
+<area shape="rect" id="Node000000" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="16,203,92,228"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_animated_attributes.html" title="Drawing attributes with programmed movement and appearance animation." alt="" coords="151,5,283,31"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="61,187,74,154,92,114,117,75,149,40,169,29,166,34,152,44,121,78,97,117,79,156,66,189"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animation_script.html" title="Library&#45;owned recorder for reusable native animation commands." alt="" coords="160,153,274,179"/>
+<area shape="poly" id="edge2_Node000000_Node000003" title=" " alt="" coords="105,198,173,178,170,182,109,202"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_bone.html" title="Animate a single bone in a Sprite&#39;s current rig." alt="" coords="191,203,242,228"/>
+<area shape="poly" id="edge3_Node000000_Node000004" title=" " alt="" coords="106,213,192,214,189,217,109,218"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_camera.html" title="Animated view owned by a Port or shared by layers." alt="" coords="183,301,250,327"/>
+<area shape="poly" id="edge4_Node000000_Node000005" title=" " alt="" coords="80,236,114,263,152,288,185,303,180,305,149,293,111,267,81,241"/>
+<area shape="rect" id="Node000016" href="$classpdg_1_1_part.html" title="An independently animated part owned by a Sprite." alt="" coords="194,252,240,278"/>
+<area shape="poly" id="edge5_Node000000_Node000016" title=" " alt="" coords="106,229,196,257,192,260,108,234"/>
+<area shape="rect" id="Node000008" href="$classpdg_1_1_particle.html" title="Lightweight whole&#45;body artwork and optional physics." alt="" coords="184,351,250,376"/>
+<area shape="poly" id="edge6_Node000000_Node000008" title=" " alt="" coords="69,239,105,290,127,315,152,337,186,355,182,357,149,342,123,319,101,293,70,245"/>
+<area shape="rect" id="Node000017" href="$classpdg_1_1_particle_emitter.html" title="A configurable point source of independent particles." alt="" coords="163,55,270,80"/>
+<area shape="poly" id="edge7_Node000000_Node000017" title=" " alt="" coords="67,188,101,138,123,112,149,89,171,79,168,83,152,94,127,116,105,141,72,190"/>
+<area shape="rect" id="Node000011" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="189,400,244,426"/>
+<area shape="poly" id="edge8_Node000000_Node000011" title=" " alt="" coords="63,240,79,275,97,314,121,353,152,387,170,398,191,407,186,408,168,403,149,391,117,356,92,317,74,277,64,246"/>
+<area shape="rect" id="Node000018" href="$classpdg_1_1_troupe.html" title="Animate a collection of targets with one script clock." alt="" coords="186,104,248,130"/>
+<area shape="poly" id="edge9_Node000000_Node000018" title=" " alt="" coords="78,191,111,164,149,138,187,124,184,128,152,143,114,168,83,194"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_attributes.html" title="Container for styling and transformation attributes used in drawing operations." alt="" coords="15,5,93,31"/>
+<area shape="poly" id="edge10_Node000002_Node000001" title=" " alt="" coords="107,16,152,16,148,20,110,20"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,475,103,500"/>
+<area shape="poly" id="edge11_Node000006_Node000005" title=" " alt="" coords="86,463,101,449,116,419,122,391,129,364,149,336,164,325,185,319,181,323,167,330,153,340,134,366,127,393,121,421,105,452,91,466"/>
+<area shape="poly" id="edge13_Node000006_Node000008" title=" " alt="" coords="84,463,101,448,114,431,123,416,133,401,149,385,186,369,182,373,152,390,137,404,128,419,119,434,105,452,88,467"/>
+<area shape="poly" id="edge16_Node000006_Node000011" title=" " alt="" coords="90,465,150,434,191,420,187,424,152,439,93,469"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_event_manager.html" title="Distributes events to event handlers." alt="" coords="164,597,270,623"/>
+<area shape="poly" id="edge12_Node000006_Node000007" title=" " alt="" coords="74,510,109,548,152,584,174,596,168,597,149,588,106,552,74,515"/>
+<area shape="rect" id="Node000009" href="$classpdg_1_1_scene.html" title="Own layers, an isolated physics world, a camera, timers and simulation time." alt="" coords="188,647,246,672"/>
+<area shape="poly" id="edge14_Node000006_Node000009" title=" " alt="" coords="67,512,101,574,124,606,152,633,170,644,190,654,185,653,167,649,149,638,120,609,96,576,65,517"/>
+<area shape="rect" id="Node000010" href="$classpdg_1_1_sound.html" title="handles both short sounds and music (GUI Only)" alt="" coords="188,499,246,524"/>
+<area shape="poly" id="edge15_Node000006_Node000010" title=" " alt="" coords="117,494,190,506,185,509,118,499"/>
+<area shape="rect" id="Node000013" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="173,449,260,475"/>
+<area shape="poly" id="edge17_Node000006_Node000013" title=" " alt="" coords="117,475,175,467,171,471,119,480"/>
+<area shape="rect" id="Node000015" href="$classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval" alt="" coords="165,548,269,574"/>
+<area shape="poly" id="edge19_Node000006_Node000015" title=" " alt="" coords="92,505,152,534,179,547,174,548,150,539,92,511"/>
+<area shape="rect" id="Node000014" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="331,449,405,475"/>
+<area shape="poly" id="edge18_Node000013_Node000014" title=" " alt="" coords="275,460,333,461,328,463,277,465"/>
+<area shape="rect" id="Node000012" href="$classpdg_1_1_i_serializable.html" title="Interface for an object which can be serialized." alt="" coords="8,412,100,438"/>
+<area shape="poly" id="edge20_Node000012_Node000011" title=" " alt="" coords="115,418,191,413,187,417,117,423"/>
+<area shape="poly" id="edge21_Node000012_Node000013" title=" " alt="" coords="115,436,175,451,170,454,116,441"/>
 </map>

@@ -58,6 +58,8 @@ namespace pdg {
 
 const char* getEventName(long eventType) {
     switch (eventType) {
+    case eventType_ZoomComplete:
+        return "eventType_ZoomComplete";
     case eventType_ParticleBreak:
         return "eventType_ParticleBreak";
     case eventType_ColliderContact:

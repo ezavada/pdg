@@ -1,0 +1,4857 @@
+.TH "StructuredDataTypes" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+StructuredDataTypes \- Structured Data Types
+.PP
+ \- Data records, options, event payloads, and value types used by the JavaScript API\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBAffineTransform\fP"
+.br
+.RI "\fBAffineTransform\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationBindingPose\fP"
+.br
+.RI "\fBAnimationBindingPose\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationBonePose\fP"
+.br
+.RI "\fBAnimationBonePose\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationContactState\fP"
+.br
+.RI "An independent contact position and influence sample\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawableContext\fP"
+.br
+.RI "Borrowed drawing context; expires when the synchronous callback returns\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawableOptions\fP"
+.br
+.RI "Options shared by both \fBSprite\&.addAnimationDrawable\fP overloads\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawBounds\fP"
+.br
+.RI "\fBAnimationDrawBounds\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawingBounds\fP"
+.br
+.RI "Finite bone-local artwork bounds, including stroke extents\&. "
+.ti -1c
+.RI "struct \fBAnimationEvaluationContext\fP"
+.br
+.RI "Borrowed synchronous evaluator context\&. Do not retain it after the call\&. "
+.ti -1c
+.RI "struct \fBAnimationEvent\fP"
+.br
+.RI "\fBAnimationEvent\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationFABRIKOptions\fP"
+.br
+.RI "\fBAnimationFABRIKOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationIKOptions\fP"
+.br
+.RI "\fBAnimationIKOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationIKResult\fP"
+.br
+.RI "\fBAnimationIKResult\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationJiggleJointOptions\fP"
+.br
+.RI "\fBAnimationJiggleJointOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationJiggleKick\fP"
+.br
+.RI "\fBAnimationJiggleKick\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationJiggleOptions\fP"
+.br
+.RI "\fBAnimationJiggleOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationJiggleSettings\fP"
+.br
+.RI "\fBAnimationJiggleSettings\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationModifierContext\fP"
+.br
+.RI "\fBAnimationModifierContext\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsBodyDefinition\fP"
+.br
+.RI "\fBAnimationPhysicsBodyDefinition\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsDefinition\fP"
+.br
+.RI "\fBAnimationPhysicsDefinition\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsDriveOptions\fP"
+.br
+.RI "\fBAnimationPhysicsDriveOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsDriveSettings\fP"
+.br
+.RI "\fBAnimationPhysicsDriveSettings\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsJointDefinition\fP"
+.br
+.RI "\fBAnimationPhysicsJointDefinition\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPose\fP"
+.br
+.RI "Independent pose snapshot; bone and binding transforms are local to their parent\&. "
+.ti -1c
+.RI "struct \fBAnimationPoseView\fP"
+.br
+.RI "\fBAnimationPoseView\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationSpringState\fP"
+.br
+.RI "An independent spring position and velocity sample\&. All fields must be finite numbers\&. "
+.ti -1c
+.RI "struct \fBAnimationTags\fP"
+.br
+.RI "\fBAnimationTags\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationTransform\fP"
+.br
+.RI "A plain transform record\&. All six fields must be finite numbers\&. "
+.ti -1c
+.RI "struct \fBAnimationVariable\fP"
+.br
+.RI "\fBAnimationVariable\fP\&. "
+.ti -1c
+.RI "struct \fBByteArray\fP"
+.br
+.RI "\fBByteArray\fP\&. "
+.ti -1c
+.RI "struct \fBCameraMatchCutOptions\fP"
+.br
+.RI "\fBCameraMatchCutOptions\fP\&. "
+.ti -1c
+.RI "struct \fBCameraMatchFadeOptions\fP"
+.br
+.RI "\fBCameraMatchFadeOptions\fP\&. "
+.ti -1c
+.RI "struct \fBCameraZoomEvent\fP"
+.br
+.RI "\fBCameraZoomEvent\fP\&. "
+.ti -1c
+.RI "struct \fBColliderContact\fP"
+.br
+.RI "\fBColliderContact\fP\&. "
+.ti -1c
+.RI "struct \fBColliderContactEvent\fP"
+.br
+.RI "\fBColliderContactEvent\fP\&. "
+.ti -1c
+.RI "struct \fBCollisionQueryHit\fP"
+.br
+.RI "\fBCollisionQueryHit\fP\&. "
+.ti -1c
+.RI "struct \fBCollisionQueryOptions\fP"
+.br
+.RI "\fBCollisionQueryOptions\fP\&. "
+.ti -1c
+.RI "struct \fBCurrentScreenMode\fP"
+.br
+.RI "\fBCurrentScreenMode\fP\&. "
+.ti -1c
+.RI "struct \fBDeviceOrientation\fP"
+.br
+.RI "\fBDeviceOrientation\fP\&. "
+.ti -1c
+.RI "struct \fBEasingFunction\fP"
+.br
+.RI "A PDG easing constant identifying a built-in easing function\&. "
+.ti -1c
+.RI "struct \fBEvent\fP"
+.br
+.RI "\fBEvent\fP\&. "
+.ti -1c
+.RI "struct \fBEventMap\fP"
+.br
+.RI "\fBEventMap\fP\&. "
+.ti -1c
+.RI "struct \fBEventSubscription\fP"
+.br
+.RI "\fBEventSubscription\fP\&. "
+.ti -1c
+.RI "struct \fBFABRIKResult\fP"
+.br
+.RI "\fBFABRIKResult\fP\&. "
+.ti -1c
+.RI "struct \fBFileFindData\fP"
+.br
+.RI "Native search handle\&. Obtain from findFirst and release using findClose\&. "
+.ti -1c
+.RI "struct \fBInterfaceMetadata\fP"
+.br
+.RI "An independent metadata module, class or member record\&. Extension fields contain JSON metadata\&. "
+.ti -1c
+.RI "struct \fBJiggleJointState\fP"
+.br
+.RI "\fBJiggleJointState\fP\&. "
+.ti -1c
+.RI "struct \fBJiggleResult\fP"
+.br
+.RI "\fBJiggleResult\fP\&. "
+.ti -1c
+.RI "struct \fBJiggleState\fP"
+.br
+.RI "\fBJiggleState\fP\&. "
+.ti -1c
+.RI "struct \fBJiggleTarget\fP"
+.br
+.RI "\fBJiggleTarget\fP\&. "
+.ti -1c
+.RI "struct \fBJSONValue\fP"
+.br
+.RI "\fBJSONValue\fP\&. "
+.ti -1c
+.RI "struct \fBKeyEvent\fP"
+.br
+.RI "\fBKeyEvent\fP\&. "
+.ti -1c
+.RI "struct \fBKeyPressEvent\fP"
+.br
+.RI "\fBKeyPressEvent\fP\&. "
+.ti -1c
+.RI "struct \fBMouseEvent\fP"
+.br
+.RI "\fBMouseEvent\fP\&. "
+.ti -1c
+.RI "struct \fBMouseTrackingEvent\fP"
+.br
+.RI "Browser mouse tracking payload; the native V8 converter does not deliver these events\&. "
+.ti -1c
+.RI "struct \fBNetClientOptions\fP"
+.br
+.RI "\fBNetClientOptions\fP\&. "
+.ti -1c
+.RI "struct \fBNetServerAddress\fP"
+.br
+.RI "\fBNetServerAddress\fP\&. "
+.ti -1c
+.RI "struct \fBNetServerOptions\fP"
+.br
+.RI "\fBNetServerOptions\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkData\fP"
+.br
+.RI "\fBNetworkData\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkError\fP"
+.br
+.RI "\fBNetworkError\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkMessage\fP"
+.br
+.RI "\fBNetworkMessage\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkSendable\fP"
+.br
+.RI "\fBNetworkSendable\fP\&. "
+.ti -1c
+.RI "struct \fBParameterMetadata\fP"
+.br
+.RI "\fBParameterMetadata\fP\&. "
+.ti -1c
+.RI "struct \fBPartFABRIKOptions\fP"
+.br
+.RI "\fBPartFABRIKOptions\fP\&. "
+.ti -1c
+.RI "struct \fBParticleBreakEvent\fP"
+.br
+.RI "\fBParticleBreakEvent\fP\&. "
+.ti -1c
+.RI "struct \fBParticleTrailOptions\fP"
+.br
+.RI "\fBParticleTrailOptions\fP\&. "
+.ti -1c
+.RI "struct \fBPartJiggleJointOptions\fP"
+.br
+.RI "\fBPartJiggleJointOptions\fP\&. "
+.ti -1c
+.RI "struct \fBPartJiggleKick\fP"
+.br
+.RI "\fBPartJiggleKick\fP\&. "
+.ti -1c
+.RI "struct \fBPartJiggleOptions\fP"
+.br
+.RI "\fBPartJiggleOptions\fP\&. "
+.ti -1c
+.RI "struct \fBPartJiggleSettings\fP"
+.br
+.RI "\fBPartJiggleSettings\fP\&. "
+.ti -1c
+.RI "struct \fBPhysicsBodyState\fP"
+.br
+.RI "\fBPhysicsBodyState\fP\&. "
+.ti -1c
+.RI "struct \fBPhysicsDriveState\fP"
+.br
+.RI "\fBPhysicsDriveState\fP\&. "
+.ti -1c
+.RI "struct \fBPortDrawEvent\fP"
+.br
+.RI "\fBPortDrawEvent\fP\&. "
+.ti -1c
+.RI "struct \fBPortResizeEvent\fP"
+.br
+.RI "\fBPortResizeEvent\fP\&. "
+.ti -1c
+.RI "struct \fBRuntimeProfile\fP"
+.br
+.RI "\fBRuntimeProfile\fP\&. "
+.ti -1c
+.RI "struct \fBScreenMode\fP"
+.br
+.RI "\fBScreenMode\fP\&. "
+.ti -1c
+.RI "struct \fBScrollWheelEvent\fP"
+.br
+.RI "\fBScrollWheelEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSerializableImplementation\fP"
+.br
+.RI "\fBSerializableImplementation\fP\&. "
+.ti -1c
+.RI "struct \fBShutdownEvent\fP"
+.br
+.RI "\fBShutdownEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSoundEvent\fP"
+.br
+.RI "\fBSoundEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteAnimationEvent\fP"
+.br
+.RI "\fBSpriteAnimationEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteBreakEvent\fP"
+.br
+.RI "\fBSpriteBreakEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteCollisionEvent\fP"
+.br
+.RI "\fBSpriteCollisionEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteLayerEvent\fP"
+.br
+.RI "\fBSpriteLayerEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteRecoveryEvent\fP"
+.br
+.RI "\fBSpriteRecoveryEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteTouchEvent\fP"
+.br
+.RI "\fBSpriteTouchEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteTouchNotification\fP"
+.br
+.RI "Touch convenience handlers expose the touched sprite, layer and touch type\&. "
+.ti -1c
+.RI "struct \fBSpriteTriggerEvent\fP"
+.br
+.RI "\fBSpriteTriggerEvent\fP\&. "
+.ti -1c
+.RI "struct \fBStartupEvent\fP"
+.br
+.RI "\fBStartupEvent\fP\&. "
+.ti -1c
+.RI "struct \fBTileInfo\fP"
+.br
+.RI "\fBTileInfo\fP\&. "
+.ti -1c
+.RI "struct \fBTimerEvent\fP"
+.br
+.RI "\fBTimerEvent\fP\&. "
+.ti -1c
+.RI "struct \fBTimerSubscription\fP"
+.br
+.RI "\fBTimerSubscription\fP\&. "
+.ti -1c
+.RI "struct \fBXY\fP"
+.br
+.RI "A plain pair of coordinates accepted by geometry constructors\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Data records, options, event payloads, and value types used by the JavaScript API\&. 
+
+These names describe the structure of values accepted or returned by PDG\&. They are documentation types, not constructors or additional runtime exports\&. Follow a type's fields and ownership notes when creating or retaining a value; native handles must be obtained from the documented factory or getter\&. 
+.SH "Class Documentation"
+.PP 
+.SH "struct pdg::AffineTransform"
+.PP 
+\fBAffineTransform\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  a  \fRnumber\fP  Required  b  \fRnumber\fP  Required  c  \fRnumber\fP  Required  d  \fRnumber\fP  Required  tx  \fRnumber\fP  Required  ty  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIa\fP a Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIb\fP b Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIc\fP c Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fId\fP d Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fItx\fP tx Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIty\fP ty Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationBindingPose"
+.PP 
+\fBAnimationBindingPose\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Extends: \fBAnimationTransform\fP\&.  
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  kind  \fRnumber\fP  Required  name  \fRstring\fP  Required  parent  \fRnumber\fP or \fRnull\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIkind\fP kind Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fIname\fP name Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+number \fIparent\fP parent Type: \fRnumber\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationBonePose"
+.PP 
+\fBAnimationBonePose\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Extends: \fBAnimationTransform\fP\&.  
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  name  \fRstring\fP  Required  parent  \fRnumber\fP or \fRnull\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+string \fIname\fP name Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+number \fIparent\fP parent Type: \fRnumber\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationContactState"
+.PP 
+An independent contact position and influence sample\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  influence  \fRnumber\fP  Required  Remaining influence, from zero to one\&.  locked  \fRboolean\fP  Required  Whether the target currently holds a contact lock\&.  x  \fRnumber\fP  Required  Horizontal position in owning-layer coordinates\&.  y  \fRnumber\fP  Required  Vertical position in owning-layer coordinates\&.   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIinfluence\fP Remaining influence, from zero to one\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIlocked\fP Whether the target currently holds a contact lock\&. Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIx\fP Horizontal position in owning-layer coordinates\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIy\fP Vertical position in owning-layer coordinates\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationDrawableContext"
+.PP 
+Borrowed drawing context; expires when the synchronous callback returns\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Lifetime: callback\&. 
+.PP
+\fBMethods\fP
+.RS 4
+Method  Result  Behavior  copyPose()  \fBAnimationPose\fP  Copy the final animation pose\&. See \fBSprite\&.getAnimationPose\fP for the snapshot format\&.  getTransform(space = animationSpace_World)  \fBAnimationTransform\fP  Copy the selected bone transform in local, rig, or owning-layer coordinates\&.  
+.RE
+.PP
+
+.SH "struct pdg::AnimationDrawableOptions"
+.PP 
+Options shared by both \fBSprite\&.addAnimationDrawable\fP overloads\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bone  \fRstring\fP or \fRnumber\fP int  Required  Existing bone name or zero-based bone ID\&.  bounds  \fBAnimationDrawingBounds\fP  Optional  Omit if safe bounds are unknown\&.  order  \fRnumber\fP int  0  Lower values draw first within the same placement and slot; ties preserve registration order\&.  placement  \fRnumber\fP int  animationDraw_AfterAll  Use an animationDraw placement constant\&.  slot  \fRstring\fP  ""  Required for slot placements; omit for BeforeAll and AfterAll\&.  strokeSpace  \fRnumber\fP int  animationStroke_PortPixels  Use an animationStroke constant\&.  uncullable  \fRboolean\fP  Optional  Defaults to true without bounds and false with bounds\&.   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIbone\fP Existing bone name or zero-based bone ID\&. Type: \fRstring\fP or \fRnumber\fP int\&. Required\&. 
+.br
+.PP
+\fBAnimationDrawingBounds\fP \fIbounds\fP Omit if safe bounds are unknown\&. Type: \fBAnimationDrawingBounds\fP\&. Optional\&. 
+.br
+.PP
+int \fIorder\fP Lower values draw first within the same placement and slot; ties preserve registration order\&. Type: \fRnumber\fP int\&. Optional\&. Default: \fR0\fP\&. 
+.br
+.PP
+int \fIplacement\fP Use an animationDraw placement constant\&. Type: \fRnumber\fP int\&. Optional\&. Default: \fRanimationDraw_AfterAll\fP\&. 
+.br
+.PP
+string \fIslot\fP Required for slot placements; omit for BeforeAll and AfterAll\&. Type: \fRstring\fP\&. Optional\&. Default: \fR""\fP\&. 
+.br
+.PP
+int \fIstrokeSpace\fP Use an animationStroke constant\&. Type: \fRnumber\fP int\&. Optional\&. Default: \fRanimationStroke_PortPixels\fP\&. 
+.br
+.PP
+boolean \fIuncullable\fP Defaults to true without bounds and false with bounds\&. Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationDrawBounds"
+.PP 
+\fBAnimationDrawBounds\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bottom  \fRnumber\fP  Required  left  \fRnumber\fP  Required  right  \fRnumber\fP  Required  top  \fRnumber\fP  Required  uncullable  \fRboolean\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIbottom\fP bottom Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIleft\fP left Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIright\fP right Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fItop\fP top Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIuncullable\fP uncullable Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationDrawingBounds"
+.PP 
+Finite bone-local artwork bounds, including stroke extents\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bottom  \fRnumber\fP  Required  Maximum vertical coordinate; must be at least top\&.  left  \fRnumber\fP  Required  Minimum horizontal coordinate\&.  right  \fRnumber\fP  Required  Maximum horizontal coordinate; must be at least left\&.  top  \fRnumber\fP  Required  Minimum vertical coordinate\&.   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIbottom\fP Maximum vertical coordinate; must be at least top\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIleft\fP Minimum horizontal coordinate\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIright\fP Maximum horizontal coordinate; must be at least left\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fItop\fP Minimum vertical coordinate\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationEvaluationContext"
+.PP 
+Borrowed synchronous evaluator context\&. Do not retain it after the call\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  elapsedSeconds  \fRnumber\fP  Required  Elapsed local time of the conditional or until wrapper\&.  target  \fR\fBAnimated\fP\fP  Required  Current playback target; observe its state without editing the executing graph\&.   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIelapsedSeconds\fP Elapsed local time of the conditional or until wrapper\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBAnimated\fP \fItarget\fP Current playback target; observe its state without editing the executing graph\&. Type: \fR\fBAnimated\fP\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationEvent"
+.PP 
+\fBAnimationEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  elapsedSeconds  \fRnumber\fP  Required  iteration  \fRnumber\fP  Required  markName  \fRstring\fP  Required  operationName  \fRstring\fP  Required  reverse  \fRboolean\fP  Required  scriptName  \fRstring\fP  Required  target  \fR\fBAnimated\fP\fP  Required  type  \fRstring\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIelapsedSeconds\fP elapsedSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIiteration\fP iteration Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fImarkName\fP markName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+string \fIoperationName\fP operationName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+boolean \fIreverse\fP reverse Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+string \fIscriptName\fP scriptName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+\fBAnimated\fP \fItarget\fP target Type: \fR\fBAnimated\fP\fP\&. Required\&. 
+.br
+.PP
+string \fItype\fP type Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationFABRIKOptions"
+.PP 
+\fBAnimationFABRIKOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bendDirection  \fRnumber\fP  Optional  chain  Array of \fRstring\fP or \fRnumber\fP uint  Required  influence  \fRnumber\fP  Optional  maximum  Array of \fRnumber\fP  Optional  maxIterations  \fRnumber\fP  Optional  minimum  Array of \fRnumber\fP  Optional  space  \fRnumber\fP  Optional  targetX  \fRnumber\fP  Optional  targetY  \fRnumber\fP  Optional  tolerance  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIbendDirection\fP bendDirection Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIchain\fP chain Type: Array of \fRstring\fP or \fRnumber\fP uint\&. Required\&. 
+.br
+.PP
+number \fIinfluence\fP influence Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fImaximum\fP maximum Type: Array of \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxIterations\fP maxIterations Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIminimum\fP minimum Type: Array of \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIspace\fP space Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fItargetX\fP targetX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fItargetY\fP targetY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fItolerance\fP tolerance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationIKOptions"
+.PP 
+\fBAnimationIKOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bendDirection  \fRnumber\fP  Optional  influence  \fRnumber\fP  Optional  matchOrientation  \fRboolean\fP  Optional  middle  \fRstring\fP or \fRnumber\fP  Required  middleLength  \fRnumber\fP  Optional  middleMax  \fRnumber\fP  Optional  middleMin  \fRnumber\fP  Optional  root  \fRstring\fP or \fRnumber\fP  Required  rootLength  \fRnumber\fP  Optional  rootMax  \fRnumber\fP  Optional  rootMin  \fRnumber\fP  Optional  space  \fRnumber\fP  Optional  stretch  \fRnumber\fP  Optional  targetRotation  \fRnumber\fP  Optional  targetX  \fRnumber\fP  Optional  targetY  \fRnumber\fP  Optional  tip  \fRstring\fP or \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIbendDirection\fP bendDirection Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinfluence\fP influence Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fImatchOrientation\fP matchOrientation Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+object \fImiddle\fP middle Type: \fRstring\fP or \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImiddleLength\fP middleLength Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImiddleMax\fP middleMax Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImiddleMin\fP middleMin Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIroot\fP root Type: \fRstring\fP or \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIrootLength\fP rootLength Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIrootMax\fP rootMax Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIrootMin\fP rootMin Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIspace\fP space Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIstretch\fP stretch Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fItargetRotation\fP targetRotation Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fItargetX\fP targetX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fItargetY\fP targetY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fItip\fP tip Type: \fRstring\fP or \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationIKResult"
+.PP 
+\fBAnimationIKResult\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  clamped  \fRboolean\fP  Required  limited  \fRboolean\fP  Required  reachable  \fRboolean\fP  Required  reachError  \fRnumber\fP  Required  stretched  \fRboolean\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIclamped\fP clamped Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIlimited\fP limited Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIreachable\fP reachable Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIreachError\fP reachError Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIstretched\fP stretched Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationJiggleJointOptions"
+.PP 
+\fBAnimationJiggleJointOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bone  \fRstring\fP or \fRnumber\fP uint  Optional  dampingRatio  \fRnumber\fP  Optional  frequency  \fRnumber\fP  Optional  gravityX  \fRnumber\fP  Optional  gravityY  \fRnumber\fP  Optional  inertia  \fRnumber\fP  Optional  length  \fRnumber\fP  Optional  maxAngle  \fRnumber\fP  Optional  maxAngularSpeed  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIbone\fP bone Type: \fRstring\fP or \fRnumber\fP uint\&. Optional\&. 
+.br
+.PP
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityX\fP gravityX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityY\fP gravityY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinertia\fP inertia Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIlength\fP length Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngle\fP maxAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngularSpeed\fP maxAngularSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationJiggleKick"
+.PP 
+\fBAnimationJiggleKick\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  angularVelocity  \fRnumber\fP  Optional  joint  \fRstring\fP or \fRnumber\fP uint  Optional  velocityX  \fRnumber\fP  Optional  velocityY  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIangularVelocity\fP angularVelocity Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIjoint\fP joint Type: \fRstring\fP or \fRnumber\fP uint\&. Optional\&. 
+.br
+.PP
+number \fIvelocityX\fP velocityX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIvelocityY\fP velocityY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationJiggleOptions"
+.PP 
+\fBAnimationJiggleOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  chain  Array of \fRstring\fP or \fRnumber\fP uint  Optional  dampingRatio  \fRnumber\fP  Optional  enabled  \fRboolean\fP  Optional  frequency  \fRnumber\fP  Optional  gravityX  \fRnumber\fP  Optional  gravityY  \fRnumber\fP  Optional  ik  \fRnumber\fP uint  Optional  inertia  \fRnumber\fP  Optional  influence  \fRnumber\fP  Optional  joints  Array of \fBAnimationJiggleJointOptions\fP  Optional  length  \fRnumber\fP  Optional  maxAngle  \fRnumber\fP  Optional  maxAngularSpeed  \fRnumber\fP  Optional  maxDistance  \fRnumber\fP  Optional  maxSpeed  \fRnumber\fP  Optional  maxStepSeconds  \fRnumber\fP  Optional  maxSubsteps  \fRnumber\fP  Optional  mode  \fRnumber\fP uint  Required  resetOnSeek  \fRboolean\fP  Optional  resetOnTeleport  \fRboolean\fP  Optional  teleportAngle  \fRnumber\fP  Optional  teleportDistance  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIchain\fP chain Type: Array of \fRstring\fP or \fRnumber\fP uint\&. Optional\&. 
+.br
+.PP
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIenabled\fP enabled Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityX\fP gravityX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityY\fP gravityY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number uint \fIik\fP ik Type: \fRnumber\fP uint\&. Optional\&. 
+.br
+.PP
+number \fIinertia\fP inertia Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinfluence\fP influence Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIjoints\fP joints Type: Array of \fBAnimationJiggleJointOptions\fP\&. Optional\&. 
+.br
+.PP
+number \fIlength\fP length Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngle\fP maxAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngularSpeed\fP maxAngularSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxDistance\fP maxDistance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxSpeed\fP maxSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxStepSeconds\fP maxStepSeconds Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxSubsteps\fP maxSubsteps Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number uint \fImode\fP mode Type: \fRnumber\fP uint\&. Required\&. 
+.br
+.PP
+boolean \fIresetOnSeek\fP resetOnSeek Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIresetOnTeleport\fP resetOnTeleport Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIteleportAngle\fP teleportAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIteleportDistance\fP teleportDistance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationJiggleSettings"
+.PP 
+\fBAnimationJiggleSettings\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  dampingRatio  \fRnumber\fP  Optional  enabled  \fRboolean\fP  Optional  frequency  \fRnumber\fP  Optional  gravityX  \fRnumber\fP  Optional  gravityY  \fRnumber\fP  Optional  inertia  \fRnumber\fP  Optional  influence  \fRnumber\fP  Optional  joints  Array of \fBAnimationJiggleJointOptions\fP  Optional  length  \fRnumber\fP  Optional  maxAngle  \fRnumber\fP  Optional  maxAngularSpeed  \fRnumber\fP  Optional  maxDistance  \fRnumber\fP  Optional  maxSpeed  \fRnumber\fP  Optional  maxStepSeconds  \fRnumber\fP  Optional  maxSubsteps  \fRnumber\fP  Optional  resetOnSeek  \fRboolean\fP  Optional  resetOnTeleport  \fRboolean\fP  Optional  teleportAngle  \fRnumber\fP  Optional  teleportDistance  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIenabled\fP enabled Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityX\fP gravityX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityY\fP gravityY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinertia\fP inertia Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinfluence\fP influence Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIjoints\fP joints Type: Array of \fBAnimationJiggleJointOptions\fP\&. Optional\&. 
+.br
+.PP
+number \fIlength\fP length Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngle\fP maxAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngularSpeed\fP maxAngularSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxDistance\fP maxDistance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxSpeed\fP maxSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxStepSeconds\fP maxStepSeconds Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxSubsteps\fP maxSubsteps Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIresetOnSeek\fP resetOnSeek Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIresetOnTeleport\fP resetOnTeleport Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIteleportAngle\fP teleportAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIteleportDistance\fP teleportDistance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationModifierContext"
+.PP 
+\fBAnimationModifierContext\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Lifetime: Borrowed and frozen for the duration of the synchronous callback\&.\&.  
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  deltaSeconds  \fRnumber\fP  Required  revision  \fRstring\fP  Required  root  \fBAnimationTransform\fP  Required  simulationDeltaSeconds  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIdeltaSeconds\fP deltaSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fIrevision\fP revision Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+\fBAnimationTransform\fP \fIroot\fP root Type: \fBAnimationTransform\fP\&. Required\&. 
+.br
+.PP
+number \fIsimulationDeltaSeconds\fP simulationDeltaSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationPhysicsBodyDefinition"
+.PP 
+\fBAnimationPhysicsBodyDefinition\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bone  \fRstring\fP or \fRnumber\fP  Required  categories  \fRnumber\fP  Optional  elasticity  \fRnumber\fP  Optional  friction  \fRnumber\fP  Optional  length  \fRnumber\fP  Required  mask  \fRnumber\fP  Optional  mass  \fRnumber\fP  Required  mode  \fRnumber\fP  Optional  offsetRotation  \fRnumber\fP  Optional  offsetX  \fRnumber\fP  Optional  offsetY  \fRnumber\fP  Optional  radius  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIbone\fP bone Type: \fRstring\fP or \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIcategories\fP categories Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIelasticity\fP elasticity Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIfriction\fP friction Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIlength\fP length Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImask\fP mask Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImass\fP mass Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImode\fP mode Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIoffsetRotation\fP offsetRotation Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIoffsetX\fP offsetX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIoffsetY\fP offsetY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIradius\fP radius Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationPhysicsDefinition"
+.PP 
+\fBAnimationPhysicsDefinition\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bodies  Array of \fBAnimationPhysicsBodyDefinition\fP  Required  joints  Array of \fBAnimationPhysicsJointDefinition\fP  Optional  rootBody  \fRnumber\fP  Optional  rootMode  \fRnumber\fP  Optional  selfCollisions  \fRboolean\fP  Optional  version  \fR1\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIbodies\fP bodies Type: Array of \fBAnimationPhysicsBodyDefinition\fP\&. Required\&. 
+.br
+.PP
+object \fIjoints\fP joints Type: Array of \fBAnimationPhysicsJointDefinition\fP\&. Optional\&. 
+.br
+.PP
+number \fIrootBody\fP rootBody Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIrootMode\fP rootMode Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIselfCollisions\fP selfCollisions Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+object \fIversion\fP version Type: \fR1\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationPhysicsDriveOptions"
+.PP 
+\fBAnimationPhysicsDriveOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  dampingRatio  \fRnumber\fP  Optional  direction  \fRnumber\fP  Optional  frequency  \fRnumber\fP  Optional  maxForce  \fRnumber\fP  Required  maxTorque  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIdirection\fP direction Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxForce\fP maxForce Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImaxTorque\fP maxTorque Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationPhysicsDriveSettings"
+.PP 
+\fBAnimationPhysicsDriveSettings\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  dampingRatio  \fRnumber\fP  Required  direction  \fRnumber\fP  Required  frequency  \fRnumber\fP  Required  maxForce  \fRnumber\fP  Required  maxTorque  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIdirection\fP direction Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImaxForce\fP maxForce Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImaxTorque\fP maxTorque Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationPhysicsJointDefinition"
+.PP 
+\fBAnimationPhysicsJointDefinition\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  child  \fRnumber\fP  Required  childX  \fRnumber\fP  Optional  childY  \fRnumber\fP  Optional  collide  \fRboolean\fP  Optional  maxAngle  \fRnumber\fP  Optional  maxForce  \fRnumber\fP  Optional  minAngle  \fRnumber\fP  Optional  parent  \fRnumber\fP  Required  parentX  \fRnumber\fP  Optional  parentY  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIchild\fP child Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIchildX\fP childX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIchildY\fP childY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIcollide\fP collide Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngle\fP maxAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxForce\fP maxForce Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIminAngle\fP minAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIparent\fP parent Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIparentX\fP parentX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIparentY\fP parentY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationPose"
+.PP 
+Independent pose snapshot; bone and binding transforms are local to their parent\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bindings  Array of \fBAnimationBindingPose\fP  Required  bones  Array of \fBAnimationBonePose\fP  Required  rigRevision  \fRstring\fP  Required  tags  Array of \fBAnimationTags\fP  Required  variables  Array of \fBAnimationVariable\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIbindings\fP bindings Type: Array of \fBAnimationBindingPose\fP\&. Required\&. 
+.br
+.PP
+object \fIbones\fP bones Type: Array of \fBAnimationBonePose\fP\&. Required\&. 
+.br
+.PP
+string \fIrigRevision\fP rigRevision Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+object \fItags\fP tags Type: Array of \fBAnimationTags\fP\&. Required\&. 
+.br
+.PP
+object \fIvariables\fP variables Type: Array of \fBAnimationVariable\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationPoseView"
+.PP 
+\fBAnimationPoseView\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Lifetime: Valid only during the modifier callback\&. Retain copy() instead\&.\&. 
+.PP
+\fBMethods\fP
+.RS 4
+Method  Result  Behavior  copy()  \fBAnimationPose\fP  getLocalTransform(id)  \fBAnimationTransform\fP  getTransform(id, space = undefined)  \fBAnimationTransform\fP  rotateLocal(id, angle)  \fRvoid\fP  setLocalTransform(id, transform)  \fRvoid\fP   
+.RE
+.PP
+\fBFields\fP
+.RS 4
+| Field | Type | Required/default | Meaning | | --- | --- | --- | --- |  
+.RE
+.PP
+
+.SH "struct pdg::AnimationSpringState"
+.PP 
+An independent spring position and velocity sample\&. All fields must be finite numbers\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  velocityX  \fRnumber\fP  Required  Horizontal distance units per second\&.  velocityY  \fRnumber\fP  Required  Vertical distance units per second\&.  x  \fRnumber\fP  Required  Horizontal position in the application coordinate frame\&.  y  \fRnumber\fP  Required  Vertical position in the application coordinate frame\&.   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIvelocityX\fP Horizontal distance units per second\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIvelocityY\fP Vertical distance units per second\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIx\fP Horizontal position in the application coordinate frame\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIy\fP Vertical position in the application coordinate frame\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationTags"
+.PP 
+\fBAnimationTags\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  object  \fRstring\fP  Required  tags  Array of \fRstring\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+string \fIobject\fP object Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+\fBobject\fP \fItags\fP tags Type: Array of \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationTransform"
+.PP 
+A plain transform record\&. All six fields must be finite numbers\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alpha  \fRnumber\fP  Required  Opacity from zero to one\&.  rotation  \fRnumber\fP  Required  Clockwise radians\&.  scaleX  \fRnumber\fP  Required  Horizontal scale; platform frames require a nonzero value\&.  scaleY  \fRnumber\fP  Required  Vertical scale; platform frames require a nonzero value\&.  x  \fRnumber\fP  Required  Horizontal translation in the selected coordinate space\&.  y  \fRnumber\fP  Required  Vertical translation in the selected coordinate space\&.   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIalpha\fP Opacity from zero to one\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIrotation\fP Clockwise radians\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIscaleX\fP Horizontal scale; platform frames require a nonzero value\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIscaleY\fP Vertical scale; platform frames require a nonzero value\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIx\fP Horizontal translation in the selected coordinate space\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIy\fP Vertical translation in the selected coordinate space\&. Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::AnimationVariable"
+.PP 
+\fBAnimationVariable\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  name  \fRstring\fP  Required  object  \fRstring\fP  Required  type  \fRnumber\fP  Required  value  \fRstring\fP or \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+string \fIname\fP name Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+string \fIobject\fP object Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+number \fItype\fP type Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBobject\fP \fIvalue\fP value Type: \fRstring\fP or \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::ByteArray"
+.PP 
+\fBByteArray\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+\fBType\fP
+.RS 4
+\fRUint8Array\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::CameraMatchCutOptions"
+.PP 
+\fBCameraMatchCutOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  approachEasing  \fRnumber\fP  Optional  approachSeconds  \fRnumber\fP  Optional  matchSource  \fR\fBSprite\fP\fP  Required  matchTarget  \fR\fBSprite\fP\fP  Required  mode  \fRnumber\fP  Optional  settleEasing  \fRnumber\fP  Optional  settleReturnsCamera  \fRboolean\fP  Optional  settleSeconds  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIapproachEasing\fP approachEasing Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIapproachSeconds\fP approachSeconds Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+\fBSprite\fP \fImatchSource\fP matchSource Type: \fR\fBSprite\fP\fP\&. Required\&. 
+.br
+.PP
+\fBSprite\fP \fImatchTarget\fP matchTarget Type: \fR\fBSprite\fP\fP\&. Required\&. 
+.br
+.PP
+number \fImode\fP mode Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIsettleEasing\fP settleEasing Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIsettleReturnsCamera\fP settleReturnsCamera Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIsettleSeconds\fP settleSeconds Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::CameraMatchFadeOptions"
+.PP 
+\fBCameraMatchFadeOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Extends: \fBCameraMatchCutOptions\fP\&.  
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  fadeEasing  \fRnumber\fP  Optional  fadeSeconds  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIfadeEasing\fP fadeEasing Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIfadeSeconds\fP fadeSeconds Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::CameraZoomEvent"
+.PP 
+\fBCameraZoomEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  camera  \fR\fBCamera\fP\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  zoom  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBCamera\fP \fIcamera\fP camera Type: \fR\fBCamera\fP\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIzoom\fP zoom Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::ColliderContact"
+.PP 
+\fBColliderContact\fP\&. 
+
+One shape contact delivered as eventType_ColliderContact\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  collider  \fR\fBCollider\fP\fP  Required  impulse  \fR\fBVector\fP\fP  Required  normal  \fR\fBVector\fP\fP  Required  other  \fR\fBCollider\fP\fP  Required  otherShape  \fRnumber\fP  Required  penetration  \fRnumber\fP  Required  phase  \fRnumber\fP  Required  point  \fR\fBPoint\fP\fP  Required  sensor  \fRboolean\fP  Required  shape  \fRnumber\fP  Required  
+.RE
+.PP
+Enable \fBCollider::setWantsContactEvents()\fP on each collider whose owner should receive notifications\&. Both \fBSprite\fP and \fBPart\fP colliders deliver through the owning \fBSprite\fP\&. Each receiving collider sees itself as \fR\fBcollider\fP\fP; vectors reverse for the other endpoint\&. Delivery occurs synchronously after the solve\&.
+
+.PP
+
+.PP
+\fBContact fields\fP
+.RS 4
+
+.RE
+.PP
+Field  Meaning  emitter  Owning \fBSprite\fP receiving this event  eventType  \fBpdg::eventType_ColliderContact\fP  collider, other  Shared \fBCollider\fP handles identifying both endpoints  shape, otherShape  Stable shape IDs within the corresponding colliders  phase  collision_Begin, collision_Stay or collision_End  point  Approximate contact \fBPoint\fP in owning-layer/world coordinates  normal  Unit \fBVector\fP directed from collider toward other  impulse  Actual impulse applied to other; zero for sensors, sleeping contacts and end contacts  penetration  Nonnegative overlap depth; zero for an end contact  sensor  Whether either collider is a sensor  
+
+.PP
+
+.PP
+Chipmunk contacts reuse its solved manifold: point is the mean of the contact midpoints and penetration is the greatest overlap depth\&. Sleeping pairs continue to report collision_Stay without a new impulse\&.
+
+.PP
+Geometry, filters and physical associations are evaluated for the solved frame\&. A callback can remove an endpoint before another notification is delivered; retained handles remain safe and isAttached() reports their current state\&. Contact identity is per shape pair, so compound geometry can generate several notifications for the same two owners\&. Native \fBColliderContact\fP pointers are borrowed only for the callback; JavaScript retains its \fBCollider\fP handles\&. 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBCollider\fP \fIcollider\fP collider Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fIimpulse\fP impulse Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fInormal\fP normal Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBCollider\fP \fIother\fP other Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIotherShape\fP otherShape Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpenetration\fP penetration Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIphase\fP phase Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIpoint\fP point Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIsensor\fP sensor Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIshape\fP shape Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::ColliderContactEvent"
+.PP 
+\fBColliderContactEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  collider  \fR\fBCollider\fP\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  impulse  \fR\fBVector\fP\fP  Required  normal  \fR\fBVector\fP\fP  Required  other  \fR\fBCollider\fP\fP  Required  otherShape  \fRnumber\fP  Required  penetration  \fRnumber\fP  Required  phase  \fRnumber\fP  Required  point  \fR\fBPoint\fP\fP  Required  sensor  \fRboolean\fP  Required  shape  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBCollider\fP \fIcollider\fP collider Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fIimpulse\fP impulse Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fInormal\fP normal Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBCollider\fP \fIother\fP other Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIotherShape\fP otherShape Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpenetration\fP penetration Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIphase\fP phase Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIpoint\fP point Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIsensor\fP sensor Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIshape\fP shape Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::CollisionQueryHit"
+.PP 
+\fBCollisionQueryHit\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  collider  \fR\fBCollider\fP\fP  Required  distance  \fRnumber\fP  Required  fraction  \fRnumber\fP  Required  initialOverlap  \fRboolean\fP  Required  normal  \fR\fBVector\fP\fP  Required  point  \fR\fBPoint\fP\fP  Required  shapeId  \fRnumber\fP uint  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBCollider\fP \fIcollider\fP collider Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIdistance\fP distance Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIfraction\fP fraction Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIinitialOverlap\fP initialOverlap Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fInormal\fP normal Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIpoint\fP point Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+number uint \fIshapeId\fP shapeId Type: \fRnumber\fP uint\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::CollisionQueryOptions"
+.PP 
+\fBCollisionQueryOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  categoryMask  \fRnumber\fP uint  Optional  excludedBodies  Array of \fR\fBPhysicsBody\fP\fP  Optional  excludedColliders  Array of \fR\fBCollider\fP\fP  Optional  includeSensors  \fRboolean\fP  Optional  layerMask  \fRnumber\fP uint  Optional  layers  Array of \fR\fBSpriteLayer\fP\fP  Optional  maxHits  \fRnumber\fP uint  16  predicate  \fBCollisionQueryPredicate\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number uint \fIcategoryMask\fP categoryMask Type: \fRnumber\fP uint\&. Optional\&. 
+.br
+.PP
+object \fIexcludedBodies\fP excludedBodies Type: Array of \fR\fBPhysicsBody\fP\fP\&. Optional\&. 
+.br
+.PP
+object \fIexcludedColliders\fP excludedColliders Type: Array of \fR\fBCollider\fP\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIincludeSensors\fP includeSensors Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number uint \fIlayerMask\fP layerMask Type: \fRnumber\fP uint\&. Optional\&. 
+.br
+.PP
+object \fIlayers\fP layers Type: Array of \fR\fBSpriteLayer\fP\fP\&. Optional\&. 
+.br
+.PP
+number uint \fImaxHits\fP maxHits Type: \fRnumber\fP uint\&. Optional\&. Default: \fR16\fP\&. 
+.br
+.PP
+\fBCollisionQueryPredicate\fP \fIpredicate\fP predicate Type: \fBCollisionQueryPredicate\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::CurrentScreenMode"
+.PP 
+\fBCurrentScreenMode\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Extends: \fBScreenMode\fP\&.  
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  maxWindowRect  \fR\fBRect\fP\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBRect\fP \fImaxWindowRect\fP maxWindowRect Type: \fR\fBRect\fP\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::DeviceOrientation"
+.PP 
+\fBDeviceOrientation\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  pitch  \fRnumber\fP  Required  roll  \fRnumber\fP  Required  yaw  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIpitch\fP pitch Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIroll\fP roll Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIyaw\fP yaw Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::EasingFunction"
+.PP 
+A PDG easing constant identifying a built-in easing function\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+\fBType\fP
+.RS 4
+\fRnumber\fP int\&. 
+.RE
+.PP
+
+.SH "struct pdg::Event"
+.PP 
+\fBEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::EventMap"
+.PP 
+\fBEventMap\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+\fBEvent payloads\fP
+.RS 4
+\fBEvent\fP constant  Payload  eventType_ColliderContact  \fBColliderContactEvent\fP  eventType_KeyDown  \fBKeyEvent\fP  eventType_KeyPress  \fBKeyPressEvent\fP  eventType_KeyUp  \fBKeyEvent\fP  eventType_MouseDown  \fBMouseEvent\fP  eventType_MouseMove  \fBMouseEvent\fP  eventType_MouseUp  \fBMouseEvent\fP  eventType_ParticleBreak  \fBParticleBreakEvent\fP  eventType_PortDraw  \fBPortDrawEvent\fP  eventType_PortResized  \fBPortResizeEvent\fP  eventType_ScrollWheel  \fBScrollWheelEvent\fP  eventType_Shutdown  \fBShutdownEvent\fP  eventType_SoundEvent  \fBSoundEvent\fP  eventType_SpriteAnimate  \fBSpriteAnimationEvent\fP  eventType_SpriteBreak  \fBSpriteBreakEvent\fP  eventType_SpriteCollide  \fBSpriteCollisionEvent\fP  eventType_SpriteLayer  \fBSpriteLayerEvent\fP  eventType_SpriteTouch  \fBSpriteTouchEvent\fP  eventType_SpriteTriggerEvent  \fBSpriteTriggerEvent\fP  eventType_Timer  \fBTimerEvent\fP  eventType_ZoomComplete  \fBCameraZoomEvent\fP  
+.RE
+.PP
+
+.SH "struct pdg::EventSubscription"
+.PP 
+\fBEventSubscription\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Extends: \fR\fBIEventHandler\fP\fP\&. 
+.PP
+\fBMethods\fP
+.RS 4
+Method  Result  Behavior  cancel()  \fRvoid\fP  Unregister this handler\&.   
+.RE
+.PP
+\fBFields\fP
+.RS 4
+| Field | Type | Required/default | Meaning | | --- | --- | --- | --- |  
+.RE
+.PP
+
+.SH "struct pdg::FABRIKResult"
+.PP 
+\fBFABRIKResult\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  converged  \fRboolean\fP  Required  iterations  \fRnumber\fP  Required  limited  \fRboolean\fP  Required  reached  \fRboolean\fP  Required  reachError  \fRnumber\fP  Required  solveError  \fRnumber\fP  Required  withinGeometricReach  \fRboolean\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIconverged\fP converged Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIiterations\fP iterations Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIlimited\fP limited Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIreached\fP reached Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIreachError\fP reachError Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIsolveError\fP solveError Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIwithinGeometricReach\fP withinGeometricReach Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::FileFindData"
+.PP 
+Native search handle\&. Obtain from findFirst and release using findClose\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  found  \fRboolean\fP  Required  isDirectory  \fRboolean\fP  Required  nodeName  \fRstring\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIfound\fP found Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIisDirectory\fP isDirectory Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+string \fInodeName\fP nodeName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::InterfaceMetadata"
+.PP 
+An independent metadata module, class or member record\&. Extension fields contain JSON metadata\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  brief  \fRstring\fP  Optional  implements  Array of \fRstring\fP  Optional  interface  Array of \fBInterfaceMetadata\fP  Optional  name  \fRstring\fP  Required  params  Array of \fBParameterMetadata\fP or Array of Array of \fBParameterMetadata\fP  Optional  returns  \fRstring\fP  Optional  runtime_profile  \fBRuntimeProfile\fP  Optional  schemas  Dictionary of \fBJSONValue\fP  Optional  type  \fRstring\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+string \fIbrief\fP brief Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+object \fIimplements\fP implements Type: Array of \fRstring\fP\&. Optional\&. 
+.br
+.PP
+object \fIinterface\fP interface Type: Array of \fBInterfaceMetadata\fP\&. Optional\&. 
+.br
+.PP
+string \fIname\fP name Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+object \fIparams\fP params Type: Array of \fBParameterMetadata\fP or Array of Array of \fBParameterMetadata\fP\&. Optional\&. 
+.br
+.PP
+string \fIreturns\fP returns Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+\fBRuntimeProfile\fP \fIruntime_profile\fP runtime_profile Type: \fBRuntimeProfile\fP\&. Optional\&. 
+.br
+.PP
+object \fIschemas\fP schemas Type: Dictionary of \fBJSONValue\fP\&. Optional\&. 
+.br
+.PP
+string \fItype\fP type Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::JiggleJointState"
+.PP 
+\fBJiggleJointState\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  angle  \fRnumber\fP  Required  desired  \fRnumber\fP  Required  pivotVelocityX  \fRnumber\fP  Required  pivotVelocityY  \fRnumber\fP  Required  pivotX  \fRnumber\fP  Required  pivotY  \fRnumber\fP  Required  velocity  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIangle\fP angle Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIdesired\fP desired Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpivotVelocityX\fP pivotVelocityX Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpivotVelocityY\fP pivotVelocityY Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpivotX\fP pivotX Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpivotY\fP pivotY Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIvelocity\fP velocity Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::JiggleResult"
+.PP 
+\fBJiggleResult\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  desiredTarget  \fBJiggleTarget\fP  Required  effectiveTarget  \fBJiggleTarget\fP  Required  filteredTarget  \fBJiggleTarget\fP  Required  influence  \fRnumber\fP  Required  lagDistance  \fRnumber\fP  Required  limited  \fRboolean\fP  Required  reset  \fRboolean\fP  Required  simulatedSeconds  \fRnumber\fP  Required  substeps  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBJiggleTarget\fP \fIdesiredTarget\fP desiredTarget Type: \fBJiggleTarget\fP\&. Required\&. 
+.br
+.PP
+\fBJiggleTarget\fP \fIeffectiveTarget\fP effectiveTarget Type: \fBJiggleTarget\fP\&. Required\&. 
+.br
+.PP
+\fBJiggleTarget\fP \fIfilteredTarget\fP filteredTarget Type: \fBJiggleTarget\fP\&. Required\&. 
+.br
+.PP
+number \fIinfluence\fP influence Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIlagDistance\fP lagDistance Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIlimited\fP limited Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIreset\fP reset Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIsimulatedSeconds\fP simulatedSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIsubsteps\fP substeps Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::JiggleState"
+.PP 
+\fBJiggleState\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  chain  Array of \fRnumber\fP uint  Required  ik  \fRnumber\fP uint  Required  initialized  \fRboolean\fP  Required  joints  Array of \fBJiggleJointState\fP  Required  mode  \fRnumber\fP uint  Required  rigRevision  \fRstring\fP  Required  velocityX  \fRnumber\fP  Required  velocityY  \fRnumber\fP  Required  version  \fR1\fP  Required  x  \fRnumber\fP  Required  y  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIchain\fP chain Type: Array of \fRnumber\fP uint\&. Required\&. 
+.br
+.PP
+number uint \fIik\fP ik Type: \fRnumber\fP uint\&. Required\&. 
+.br
+.PP
+boolean \fIinitialized\fP initialized Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+object \fIjoints\fP joints Type: Array of \fBJiggleJointState\fP\&. Required\&. 
+.br
+.PP
+number uint \fImode\fP mode Type: \fRnumber\fP uint\&. Required\&. 
+.br
+.PP
+string \fIrigRevision\fP rigRevision Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+number \fIvelocityX\fP velocityX Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIvelocityY\fP velocityY Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+object \fIversion\fP version Type: \fR1\fP\&. Required\&. 
+.br
+.PP
+number \fIx\fP x Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIy\fP y Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::JiggleTarget"
+.PP 
+\fBJiggleTarget\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  x  \fRnumber\fP  Required  y  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIx\fP x Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIy\fP y Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::JSONValue"
+.PP 
+\fBJSONValue\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+\fBType\fP
+.RS 4
+\fRstring\fP or \fRnumber\fP or \fRboolean\fP or \fRnull\fP or Array of \fBJSONValue\fP or Dictionary of \fBJSONValue\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::KeyEvent"
+.PP 
+\fBKeyEvent\fP\&. 
+
+a key down or up event
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  keyCode  \fRnumber\fP  Required  
+.RE
+.PP
+Generated by the \fBEventManager\fP when the user pushes down on a key (\fBpdg\&.eventType_KeyDown\fP) or releases a key (\fBpdg\&.eventType_KeyUp\fP)\&. Use this for arcade style key handling\&.
+
+.PP
+For keyboard data entry, use \fBpdg\&.eventType_KeyPress\fP\&. 
+.PP
+.nf
+{ 
+    emitter: {},       // the emitter that generated this event
+    eventType: 4,      // the event type (eventType_KeyUp or eventType_KeyDown)
+    keyCode: 34        // the raw key code from the OS
+} 
+
+.fi
+.PP
+
+.PP
+\fBPlatform-Specific Key Codes\fP
+.RS 4
+
+.RE
+.PP
+The \fRkeyCode\fP field contains \fBplatform-specific raw hardware keycodes\fP from the operating system:
+.IP "\(bu" 2
+\fBMac OS X\fP: Hardware scan codes from NSEvent (e\&.g\&., 56 for left shift)
+.IP "\(bu" 2
+\fBWindows\fP: Virtual key codes (VK_* constants, e\&.g\&., 0xA0 for left shift)
+.IP "\(bu" 2
+\fBLinux/GLFW\fP: GLFW scan codes
+.PP
+
+.PP
+\fBWarning\fP
+.RS 4
+If you need to check for specific keys in a cross-platform way, use \fBpdg\&.eventType_KeyPress\fP events instead, which provide unicode character codes\&. However, modifier keys (shift, control, alt, meta) do not generate KeyPress events, so PDG provides platform-specific constants (see \fBKey Code Constants\fP) that allow you to write cross-platform code for detecting modifier key presses:
+.IP "\(bu" 2
+\fBpdg\&.keyCode_LeftShift\fP, \fBpdg\&.keyCode_RightShift\fP, \fBpdg\&.keyCode_Shift\fP
+.IP "\(bu" 2
+\fBpdg\&.keyCode_LeftControl\fP, \fBpdg\&.keyCode_RightControl\fP, \fBpdg\&.keyCode_Control\fP
+.IP "\(bu" 2
+\fBpdg\&.keyCode_LeftAlt\fP, \fBpdg\&.keyCode_RightAlt\fP, \fBpdg\&.keyCode_Alt\fP
+.IP "\(bu" 2
+\fBpdg\&.keyCode_LeftMeta\fP, \fBpdg\&.keyCode_RightMeta\fP, \fBpdg\&.keyCode_Meta\fP
+.PP
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_KeyDown\fP 
+
+.PP
+\fBpdg\&.eventType_KeyUp\fP 
+
+.PP
+\fBpdg\&.eventType_KeyPress\fP 
+
+.PP
+\fBpdg\&.onKeyDown()\fP 
+
+.PP
+\fBpdg\&.EventManager\&.isKeyDown()\fP 
+
+.PP
+\fBpdg\&.EventManager\&.isRawKeyDown()\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIkeyCode\fP keyCode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::KeyPressEvent"
+.PP 
+\fBKeyPressEvent\fP\&. 
+
+the user pressed and released a key
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  isRepeating  \fRboolean\fP  Required  meta  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  unicode  \fRnumber\fP  Required  
+.RE
+.PP
+Generated by the \fBEventManager\fP when the user presses and releases a key (a keystroke)\&. Also generated by repeat key events from the OS when a key is held down\&.
+
+.PP
+For arcade style multi-key handling see \fBpdg\&.eventType_KeyDown\fP and \fBpdg\&.eventType_KeyUp\fP\&. 
+.PP
+.nf
+{ 
+    emitter: {},            // the emitter that generated this event
+    eventType: 6,           // the event type (eventType_KeyPress)
+    shift: false,           // true if the shift key is held down
+    ctrl: false,            // true if the control key is held down
+    alt: false,             // true if the alt (or option) key is held down
+    meta: false,            // true if the meta (windows or command) key is held down
+    unicode: 48,            // the Unicode character code generated by this key
+    isRepeating: false,     // true if this is a repeat key event
+} 
+
+.fi
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_KeyPress\fP 
+
+.PP
+\fBpdg\&.onKeyPress()\fP 
+
+.PP
+\fBKey Code Constants\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIisRepeating\fP isRepeating Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIunicode\fP unicode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::MouseEvent"
+.PP 
+\fBMouseEvent\fP\&. 
+
+the user did something with the mouse
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  buttonNumber  \fRnumber\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  lastClickElapsed  \fRnumber\fP  Required  lastClickPos  \fR\fBPoint\fP\fP  Required  leftButton  \fRboolean\fP  Required  meta  \fRboolean\fP  Required  mousePos  \fR\fBPoint\fP\fP  Required  rightButton  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  
+.RE
+.PP
+Generated by the \fBEventManager\fP whenever the user moves the mouse (\fBpdg\&.eventType_MouseMove\fP) or clicks a mouse button (\fBpdg\&.eventType_MouseDown\fP and \fBpdg\&.eventType_MouseUp\fP)\&.
+
+.PP
+The \fBEventManager\fP also tracks the state of the mouse buttons, so you can retrieve that at any time with \fBpdg\&.EventManager\&.isButtonDown()\fP\&. The \fBGraphicsManager\fP tracks the position of the mouse, and that can be retrieved at any time with \fBpdg\&.GraphicsManager\&.getMouse()\fP\&. 
+.PP
+.nf
+{ 
+    emitter: {},            // the emitter that generated this event
+    eventType: 7,           // the event type (eventType_MouseUp|Down|Move)
+    shift: false,           // true if the shift key is held down
+    ctrl: false,            // true if the control key is held down
+    alt: false,             // true if the alt (or option) key is held down
+    meta: false,            // true if the meta (windows or command) key is held down
+    mousePos: {
+        x: 456,                         // the x coordinate of the mouse when the event occurred
+        y: 201              // the y coordinate of the mouse when the event occurred
+    },
+    leftButton: false,      // true if the left mouse button was down
+    rightButton: false,     // true if the right mouse button was down
+    buttonNumber: 0,        // button number (0=left, 1=right, 2=middle) or finger ID for touch
+    lastClickPos: { 
+        x: 456,                         // the x coordinate of the last mouseDown event
+        y: 201              // the y coordinate of the last mouseDown event
+    },
+    lastClickElapsed: 201   // the number of milliseconds since the last mouseDown
+}
+
+.fi
+.PP
+
+.PP
+Location and time since the last mouseDown event are provided to make it easier to detect double-clicks, dragging, and gestures\&.
+
+.PP
+\fBNote\fP
+.RS 4
+on a touch device mouse moved events are only generated when the user is touching the device, and each finger touching is treated like a separate mouse button, with the button number based on the order the fingers touched the device\&.
+
+.PP
+A \fBSpriteLayer\fP has the ability to automatically handle these mouse events and generate \fBpdg\&.eventType_SpriteTouch\fP for any \fBSprite\fP that was clicked on, or pass these on as mouse events if no \fBSprite\fP was hit\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_MouseDown\fP 
+
+.PP
+\fBpdg\&.eventType_MouseUp\fP 
+
+.PP
+\fBpdg\&.eventType_MouseMove\fP 
+
+.PP
+\fBpdg\&.eventType_SpriteTouch\fP 
+
+.PP
+\fBpdg\&.onMouseDown()\fP 
+
+.PP
+\fBpdg\&.onMouseUp()\fP 
+
+.PP
+\fBpdg\&.onMouseMove()\fP 
+
+.PP
+\fBpdg\&.EventManager\&.isButtonDown()\fP 
+
+.PP
+\fBpdg\&.GraphicsManager\&.getMouse()\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIbuttonNumber\fP buttonNumber Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIlastClickElapsed\fP lastClickElapsed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIlastClickPos\fP lastClickPos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIleftButton\fP leftButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fImousePos\fP mousePos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIrightButton\fP rightButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::MouseTrackingEvent"
+.PP 
+Browser mouse tracking payload; the native V8 converter does not deliver these events\&. 
+
+the mouse entered or left a tracking region (\fINOT IMPLEMENTED\fP)
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  buttonNumber  \fRnumber\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  lastClickElapsed  \fRnumber\fP  Required  lastClickPos  \fR\fBPoint\fP\fP  Required  leftButton  \fRboolean\fP  Required  meta  \fRboolean\fP  Required  mousePos  \fR\fBPoint\fP\fP  Required  rightButton  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  trackingRef  \fRnumber\fP  Required  
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIbuttonNumber\fP buttonNumber Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIlastClickElapsed\fP lastClickElapsed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIlastClickPos\fP lastClickPos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIleftButton\fP leftButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fImousePos\fP mousePos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIrightButton\fP rightButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fItrackingRef\fP trackingRef Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::NetClientOptions"
+.PP 
+\fBNetClientOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  noDatagram  \fRboolean\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fInoDatagram\fP noDatagram Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::NetServerAddress"
+.PP 
+\fBNetServerAddress\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  capabilityCacheTimeout  \fRnumber\fP  Optional  handshakeTimeout  \fRnumber\fP  Optional  host  \fRstring\fP  Optional  maxFrameSize  \fRnumber\fP  Optional  maxPendingBytes  \fRnumber\fP  Optional  port  \fRnumber\fP  Optional  secure  \fRboolean\fP  Optional  serverCertificateHashes  Array of \fRobject\fP  Optional  timeout  \fRnumber\fP  Optional  tls  \fRobject\fP  Optional  transportPolicy  \fRstring\fP  Optional  webPath  \fRstring\fP  Optional  webPort  \fRnumber\fP  Optional  webSocketUrl  \fRstring\fP  Optional  webTransportTimeout  \fRnumber\fP  Optional  webTransportUrl  \fRstring\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIcapabilityCacheTimeout\fP capabilityCacheTimeout Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIhandshakeTimeout\fP handshakeTimeout Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+string \fIhost\fP host Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxFrameSize\fP maxFrameSize Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxPendingBytes\fP maxPendingBytes Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIport\fP port Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIsecure\fP secure Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+object \fIserverCertificateHashes\fP serverCertificateHashes Type: Array of \fRobject\fP\&. Optional\&. 
+.br
+.PP
+number \fItimeout\fP timeout Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fItls\fP tls Type: \fRobject\fP\&. Optional\&. 
+.br
+.PP
+string \fItransportPolicy\fP transportPolicy Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+string \fIwebPath\fP webPath Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+number \fIwebPort\fP webPort Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+string \fIwebSocketUrl\fP webSocketUrl Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+number \fIwebTransportTimeout\fP webTransportTimeout Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+string \fIwebTransportUrl\fP webTransportUrl Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::NetServerOptions"
+.PP 
+\fBNetServerOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  allowedOrigins  Array of \fRstring\fP  Optional  allowPartialListen  \fRboolean\fP  Optional  fixedPort  \fRboolean\fP  Optional  handshakeTimeout  \fRnumber\fP  Optional  native  \fRboolean\fP  Optional  noDatagram  \fRboolean\fP  Optional  port  \fRnumber\fP  Optional  reservationRequired  \fRboolean\fP  Optional  serverAddr  \fRstring\fP  Optional  serverPort  \fRnumber\fP  Optional  tls  \fRobject\fP  Optional  webPath  \fRstring\fP  Optional  webPort  \fRnumber\fP  Optional  webSocket  \fRboolean\fP or \fRobject\fP  Optional  webTransport  \fRboolean\fP or \fRobject\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIallowedOrigins\fP allowedOrigins Type: Array of \fRstring\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIallowPartialListen\fP allowPartialListen Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIfixedPort\fP fixedPort Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIhandshakeTimeout\fP handshakeTimeout Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fInative\fP native Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+boolean \fInoDatagram\fP noDatagram Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIport\fP port Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIreservationRequired\fP reservationRequired Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+string \fIserverAddr\fP serverAddr Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+number \fIserverPort\fP serverPort Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fItls\fP tls Type: \fRobject\fP\&. Optional\&. 
+.br
+.PP
+string \fIwebPath\fP webPath Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+number \fIwebPort\fP webPort Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIwebSocket\fP webSocket Type: \fRboolean\fP or \fRobject\fP\&. Optional\&. 
+.br
+.PP
+object \fIwebTransport\fP webTransport Type: \fRboolean\fP or \fRobject\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::NetworkData"
+.PP 
+\fBNetworkData\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+\fBType\fP
+.RS 4
+\fRnull\fP or Array of \fBJSONValue\fP or Dictionary of \fBJSONValue\fP or \fBByteArray\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetworkError"
+.PP 
+\fBNetworkError\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  code  \fRstring\fP  Optional  host  \fRstring\fP  Optional  message  \fRstring\fP  Required  port  \fRnumber\fP  Optional  transport  \fRstring\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+string \fIcode\fP code Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+string \fIhost\fP host Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+string \fImessage\fP message Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+number \fIport\fP port Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+string \fItransport\fP transport Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::NetworkMessage"
+.PP 
+\fBNetworkMessage\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+\fBType\fP
+.RS 4
+\fBJSONValue\fP or \fR\fBMemBlock\fP\fP or \fR\fBISerializable\fP\fP or \fBByteArray\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetworkSendable"
+.PP 
+\fBNetworkSendable\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+\fBType\fP
+.RS 4
+\fRstring\fP or \fBNetworkData\fP or \fR\fBMemBlock\fP\fP or \fR\fBISerializable\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::ParameterMetadata"
+.PP 
+\fBParameterMetadata\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  default_value  \fRstring\fP  Optional  name  \fRstring\fP  Required  optional  \fRboolean\fP  Optional  type  \fRstring\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+string \fIdefault_value\fP default_value Type: \fRstring\fP\&. Optional\&. 
+.br
+.PP
+string \fIname\fP name Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+boolean \fIoptional\fP optional Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+string \fItype\fP type Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PartFABRIKOptions"
+.PP 
+\fBPartFABRIKOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bendDirection  \fRnumber\fP  Optional  influence  \fRnumber\fP  Optional  maxIterations  \fRnumber\fP  Optional  space  \fRnumber\fP  Optional  tolerance  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIbendDirection\fP bendDirection Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinfluence\fP influence Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxIterations\fP maxIterations Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIspace\fP space Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fItolerance\fP tolerance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::ParticleBreakEvent"
+.PP 
+\fBParticleBreakEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  angularSpeed  \fRnumber\fP  Required  body  \fR\fBPhysicsBody\fP\fP or \fRnull\fP  Required  breakAngularSpeed  \fRnumber\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  referenceBody  \fR\fBPhysicsBody\fP\fP or \fRnull\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIangularSpeed\fP angularSpeed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPhysicsBody\fP \fIbody\fP body Type: \fR\fBPhysicsBody\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIbreakAngularSpeed\fP breakAngularSpeed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPhysicsBody\fP \fIreferenceBody\fP referenceBody Type: \fR\fBPhysicsBody\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::ParticleTrailOptions"
+.PP 
+\fBParticleTrailOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  breakDistance  \fRnumber\fP  Optional  Per-step displacement that resets history; 0 disables (default 256)\&.  color  \fR\fBColor\fP\fP or \fRstring\fP or \fRnumber\fP  Optional  Trail color, CSS color name or packed RGBA (default orange)\&.  endOpacity  \fRnumber\fP  Optional  Opacity multiplier at the oldest end, 0\&.\&.1 (default 0)\&.  endWidth  \fRnumber\fP  Optional  Width at the oldest end (default 0)\&.  lifetime  \fRnumber\fP  Optional  History lifetime in simulation seconds (default 0\&.4)\&.  maxPoints  \fRnumber\fP  Optional  History capacity, integer 2\&.\&.4096 (default 32)\&.  minDistance  \fRnumber\fP  Optional  Minimum distance between stored samples (default 2)\&.  sampleInterval  \fRnumber\fP  Optional  Sampling interval in simulation seconds, at least 0\&.0001 (default 1/60)\&.  width  \fRnumber\fP  Optional  Width at the head in layer units (default 6)\&.   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIbreakDistance\fP Per-step displacement that resets history; 0 disables (default 256)\&. Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIcolor\fP Trail color, CSS color name or packed RGBA (default orange)\&. Type: \fR\fBColor\fP\fP or \fRstring\fP or \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIendOpacity\fP Opacity multiplier at the oldest end, 0\&.\&.1 (default 0)\&. Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIendWidth\fP Width at the oldest end (default 0)\&. Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIlifetime\fP History lifetime in simulation seconds (default 0\&.4)\&. Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxPoints\fP History capacity, integer 2\&.\&.4096 (default 32)\&. Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIminDistance\fP Minimum distance between stored samples (default 2)\&. Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIsampleInterval\fP Sampling interval in simulation seconds, at least 0\&.0001 (default 1/60)\&. Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIwidth\fP Width at the head in layer units (default 6)\&. Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PartJiggleJointOptions"
+.PP 
+\fBPartJiggleJointOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  bone  \fRnumber\fP uint  Optional  dampingRatio  \fRnumber\fP  Optional  frequency  \fRnumber\fP  Optional  gravityX  \fRnumber\fP  Optional  gravityY  \fRnumber\fP  Optional  inertia  \fRnumber\fP  Optional  length  \fRnumber\fP  Optional  maxAngle  \fRnumber\fP  Optional  maxAngularSpeed  \fRnumber\fP  Optional  part  \fR\fBPart\fP\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number uint \fIbone\fP bone Type: \fRnumber\fP uint\&. Optional\&. 
+.br
+.PP
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityX\fP gravityX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityY\fP gravityY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinertia\fP inertia Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIlength\fP length Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngle\fP maxAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngularSpeed\fP maxAngularSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+\fBPart\fP \fIpart\fP part Type: \fR\fBPart\fP\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PartJiggleKick"
+.PP 
+\fBPartJiggleKick\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  angularVelocity  \fRnumber\fP  Optional  joint  \fR\fBPart\fP\fP  Optional  velocityX  \fRnumber\fP  Optional  velocityY  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIangularVelocity\fP angularVelocity Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+\fBPart\fP \fIjoint\fP joint Type: \fR\fBPart\fP\fP\&. Optional\&. 
+.br
+.PP
+number \fIvelocityX\fP velocityX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIvelocityY\fP velocityY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PartJiggleOptions"
+.PP 
+\fBPartJiggleOptions\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  chain  Array of \fR\fBPart\fP\fP  Optional  dampingRatio  \fRnumber\fP  Optional  enabled  \fRboolean\fP  Optional  frequency  \fRnumber\fP  Optional  gravityX  \fRnumber\fP  Optional  gravityY  \fRnumber\fP  Optional  inertia  \fRnumber\fP  Optional  influence  \fRnumber\fP  Optional  joints  Array of \fBPartJiggleJointOptions\fP  Optional  length  \fRnumber\fP  Optional  maxAngle  \fRnumber\fP  Optional  maxAngularSpeed  \fRnumber\fP  Optional  maxDistance  \fRnumber\fP  Optional  maxSpeed  \fRnumber\fP  Optional  maxStepSeconds  \fRnumber\fP  Optional  maxSubsteps  \fRnumber\fP  Optional  mode  \fRnumber\fP uint  Required  resetOnSeek  \fRboolean\fP  Optional  resetOnTeleport  \fRboolean\fP  Optional  teleportAngle  \fRnumber\fP  Optional  teleportDistance  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIchain\fP chain Type: Array of \fR\fBPart\fP\fP\&. Optional\&. 
+.br
+.PP
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIenabled\fP enabled Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityX\fP gravityX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityY\fP gravityY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinertia\fP inertia Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinfluence\fP influence Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIjoints\fP joints Type: Array of \fBPartJiggleJointOptions\fP\&. Optional\&. 
+.br
+.PP
+number \fIlength\fP length Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngle\fP maxAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngularSpeed\fP maxAngularSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxDistance\fP maxDistance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxSpeed\fP maxSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxStepSeconds\fP maxStepSeconds Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxSubsteps\fP maxSubsteps Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number uint \fImode\fP mode Type: \fRnumber\fP uint\&. Required\&. 
+.br
+.PP
+boolean \fIresetOnSeek\fP resetOnSeek Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIresetOnTeleport\fP resetOnTeleport Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIteleportAngle\fP teleportAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIteleportDistance\fP teleportDistance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PartJiggleSettings"
+.PP 
+\fBPartJiggleSettings\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  dampingRatio  \fRnumber\fP  Optional  enabled  \fRboolean\fP  Optional  frequency  \fRnumber\fP  Optional  gravityX  \fRnumber\fP  Optional  gravityY  \fRnumber\fP  Optional  inertia  \fRnumber\fP  Optional  influence  \fRnumber\fP  Optional  joints  Array of \fBPartJiggleJointOptions\fP  Optional  length  \fRnumber\fP  Optional  maxAngle  \fRnumber\fP  Optional  maxAngularSpeed  \fRnumber\fP  Optional  maxDistance  \fRnumber\fP  Optional  maxSpeed  \fRnumber\fP  Optional  maxStepSeconds  \fRnumber\fP  Optional  maxSubsteps  \fRnumber\fP  Optional  resetOnSeek  \fRboolean\fP  Optional  resetOnTeleport  \fRboolean\fP  Optional  teleportAngle  \fRnumber\fP  Optional  teleportDistance  \fRnumber\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIenabled\fP enabled Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityX\fP gravityX Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIgravityY\fP gravityY Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinertia\fP inertia Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIinfluence\fP influence Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+object \fIjoints\fP joints Type: Array of \fBPartJiggleJointOptions\fP\&. Optional\&. 
+.br
+.PP
+number \fIlength\fP length Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngle\fP maxAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxAngularSpeed\fP maxAngularSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxDistance\fP maxDistance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxSpeed\fP maxSpeed Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxStepSeconds\fP maxStepSeconds Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fImaxSubsteps\fP maxSubsteps Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIresetOnSeek\fP resetOnSeek Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+boolean \fIresetOnTeleport\fP resetOnTeleport Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIteleportAngle\fP teleportAngle Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+number \fIteleportDistance\fP teleportDistance Type: \fRnumber\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PhysicsBodyState"
+.PP 
+\fBPhysicsBodyState\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  angularVelocity  \fRnumber\fP  Required  rotation  \fRnumber\fP  Required  velocityX  \fRnumber\fP  Required  velocityY  \fRnumber\fP  Required  x  \fRnumber\fP  Required  y  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIangularVelocity\fP angularVelocity Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIrotation\fP rotation Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIvelocityX\fP velocityX Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIvelocityY\fP velocityY Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIx\fP x Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIy\fP y Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PhysicsDriveState"
+.PP 
+\fBPhysicsDriveState\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  dampingRatio  \fRnumber\fP  Required  enabled  \fRboolean\fP  Required  forceX  \fRnumber\fP  Required  forceY  \fRnumber\fP  Required  frequency  \fRnumber\fP  Required  maxForce  \fRnumber\fP  Required  maxTorque  \fRnumber\fP  Required  positionError  \fRnumber\fP  Required  rotation  \fRnumber\fP  Required  rotationError  \fRnumber\fP  Required  torque  \fRnumber\fP  Required  x  \fRnumber\fP  Required  y  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIdampingRatio\fP dampingRatio Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIenabled\fP enabled Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIforceX\fP forceX Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIforceY\fP forceY Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIfrequency\fP frequency Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImaxForce\fP maxForce Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImaxTorque\fP maxTorque Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpositionError\fP positionError Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIrotation\fP rotation Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIrotationError\fP rotationError Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fItorque\fP torque Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIx\fP x Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIy\fP y Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PortDrawEvent"
+.PP 
+\fBPortDrawEvent\fP\&. 
+
+a port needs to be redrawn (\fIGUI Only\fP)
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  frameNum  \fRnumber\fP  Required  port  \fR\fBPort\fP\fP  Required  
+.RE
+.PP
+Generated by the \fBGraphicsManager\fP whenever it is time to redraw a \fBPort\fP\&. All drawing calls should be done during the handling of a \fBpdg\&.eventType_PortDraw\fP\&. 
+.PP
+.nf
+{ 
+    emitter: {},       // the emitter that generated this event
+    eventType: 24,     // the event type (eventType_PortDraw)
+    port: {},          // the port that needs to be redrawn
+    frameNum: 12897    // how many times this event has been generated for this port
+}
+
+.fi
+.PP
+
+.PP
+\fBNote\fP
+.RS 4
+these events are never generated in a non-GUI build, such as the PDG Node\&.js plugin
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_PortDraw\fP 
+
+.PP
+\fBpdg\&.Port\fP 
+
+.PP
+\fBpdg\&.GraphicsManager\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIframeNum\fP frameNum Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPort\fP \fIport\fP port Type: \fR\fBPort\fP\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::PortResizeEvent"
+.PP 
+\fBPortResizeEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  oldHeight  \fRnumber\fP  Required  oldScreenPos  \fRnumber\fP  Required  oldWidth  \fRnumber\fP  Required  port  \fR\fBPort\fP\fP  Required  screenPos  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIoldHeight\fP oldHeight Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIoldScreenPos\fP oldScreenPos Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIoldWidth\fP oldWidth Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPort\fP \fIport\fP port Type: \fR\fBPort\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIscreenPos\fP screenPos Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::RuntimeProfile"
+.PP 
+\fBRuntimeProfile\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  capabilities  Dictionary of \fRboolean\fP  Required  runtime  \fRstring\fP  Required  scope  \fRstring\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+object \fIcapabilities\fP capabilities Type: Dictionary of \fRboolean\fP\&. Required\&. 
+.br
+.PP
+string \fIruntime\fP runtime Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+string \fIscope\fP scope Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::ScreenMode"
+.PP 
+\fBScreenMode\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  depth  \fRnumber\fP  Required  height  \fRnumber\fP  Required  width  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIdepth\fP depth Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIheight\fP height Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIwidth\fP width Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::ScrollWheelEvent"
+.PP 
+\fBScrollWheelEvent\fP\&. 
+
+the user repositioned the scroll wheel
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  horizDelta  \fRnumber\fP  Required  meta  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  vertDelta  \fRnumber\fP  Required  
+.RE
+.PP
+Generated by the \fBEventManager\fP when the user moves the scroll wheel\&. 
+.PP
+.nf
+{ 
+    emitter: {},            // the emitter that generated this event
+    eventType: 16,          // the event type (eventType_ScrollWheel)
+    shift: false,           // true if the shift key is held down
+    ctrl: false,            // true if the control key is held down
+    alt: false,             // true if the alt (or option) key is held down
+    meta: false,            // true if the meta (windows or command) key is held down
+    horizDelta: 0,          // the amount of horizontal scroll wheel movement
+    vertDelta: -48          // the amount of vertical scroll wheel movement
+}
+
+.fi
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_ScrollWheel\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIhorizDelta\fP horizDelta Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIvertDelta\fP vertDelta Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SerializableImplementation"
+.PP 
+\fBSerializableImplementation\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+\fBMethods\fP
+.RS 4
+Method  Result  Behavior  deserialize(deserializer)  \fRvoid\fP  getSerializedSize(serializer)  \fRnumber\fP  serialize(serializer)  \fRvoid\fP   
+.RE
+.PP
+\fBFields\fP
+.RS 4
+| Field | Type | Required/default | Meaning | | --- | --- | --- | --- |  
+.RE
+.PP
+
+.SH "struct pdg::ShutdownEvent"
+.PP 
+\fBShutdownEvent\fP\&. 
+
+a timer fire event
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  exitCode  \fRnumber\fP  Required  exitReason  \fRnumber\fP  Required  
+.RE
+.PP
+Generated by the Pixel Dust Game Engine when the application exits normally\&. This is usually when \fBpdg\&.quit()\fP is called\&. 
+.PP
+.nf
+{ 
+    emitter: {},            // the emitter that generated this event
+    eventType: 2,           // the event type (eventType_Shutdown)
+    exitReason: 0,          // the reason the application exited (TBD, always 0)
+    exitCode: 0             // the exit code that will be returned to the OS
+} 
+
+.fi
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_Shutdown\fP 
+
+.PP
+\fBpdg\&.quit()\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIexitCode\fP exitCode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIexitReason\fP exitReason Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SoundEvent"
+.PP 
+\fBSoundEvent\fP\&. 
+
+a sound completed or is looping (\fIGUI Only\fP)
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventCode  \fRnumber\fP  Required  eventType  \fRnumber\fP  Required  sound  \fR\fBSound\fP\fP  Required  
+.RE
+.PP
+Generated by the \fBSoundManager\fP whenever a sound finishes playing (\fBpdg\&.soundEvent_DonePlaying\fP), or reaches the end and loops (\fBpdg\&.soundEvent_Looping\fP)\&. If there is an error, you will get eventCode \fBpdg\&.soundEvent_FailedToPlay\fP
+
+.PP
+For keyboard data entry, use \fBpdg\&.eventType_KeyPress\fP\&. 
+.PP
+.nf
+{ 
+    emitter: {},       // the emitter that generated this event
+    eventType: 14,     // the event type (eventType_SoundEvent)
+    eventCode: 0,      // the sound event code (one of: soundEvent_DonePlaying(0), 
+
+.fi
+.PP
+ \fBsoundEvent_Looping(1)\fP, or \fBsoundEvent_FailedToPlay(2)\fP) sound: {} // the \fBSound\fP object that caused the event }
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_SoundEvent\fP 
+
+.PP
+\fBpdg\&.soundEvent_DonePlaying\fP 
+
+.PP
+\fBpdg\&.soundEvent_Looping\fP 
+
+.PP
+\fBpdg\&.soundEvent_FailedToPlay\fP 
+
+.PP
+\fBSound\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventCode\fP eventCode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSound\fP \fIsound\fP sound Type: \fR\fBSound\fP\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SpriteAnimationEvent"
+.PP 
+\fBSpriteAnimationEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SpriteBreakEvent"
+.PP 
+\fBSpriteBreakEvent\fP\&. 
+
+A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  angularSpeed  \fRnumber\fP  Required  body  \fR\fBPhysicsBody\fP\fP or \fRnull\fP  Required  breakAngularSpeed  \fRnumber\fP  Required  breakForce  \fRnumber\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  force  \fRnumber\fP  Required  impulse  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  joint  \fR\fBCpConstraint\fP\fP or \fRnull\fP  Required  part  \fR\fBPart\fP\fP or \fRnull\fP  Required  reason  \fRnumber\fP  Required  referenceBody  \fR\fBPhysicsBody\fP\fP or \fRnull\fP  Required  targetSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  
+.RE
+.PP
+Register an \fBIEventHandler\fP for eventType_SpriteBreak on the owning \fBSprite\fP\&. \fBPart\fP body notifications use their owning \fBSprite\fP's route\&. Inspect reason to distinguish the two event forms\&. Body notifications work with both basic and Chipmunk solvers\&.
+
+.PP
+ 
+.PP
+\fBBreak event fields\fP
+.RS 4
+
+.RE
+.PP
+Field  Meaning  emitter, eventType  Standard event emitter and eventType_SpriteBreak\&.  actingSprite, inLayer  Owning \fBSprite\fP and its layer (null outside a layer)\&.  reason  physicsBreak_AngularSpeed or physicsBreak_Force\&.  action  action_BodyBreak for speed; action_JointBreak for legacy force breaks\&.  body, part  Source \fBPhysicsBody\fP and optional \fBPart\fP for speed; null for legacy force breaks\&.  referenceBody  Optional angular-speed reference \fBPhysicsBody\fP, otherwise null\&.  angularSpeed  Measured speed magnitude in radians/second; zero for force breaks\&.  breakAngularSpeed  Configured speed threshold in radians/second; zero for force breaks\&.  targetSprite, joint  Legacy joint endpoint and \fBCpConstraint\fP; null for speed events\&.  impulse, force, breakForce  Legacy joint impulse, solved force and break threshold; zero for speed events\&.  
+
+.PP
+
+.PP
+Angular-speed notifications do not clamp speed, apply braking, disconnect joints or split artwork, regardless of the handler's return value\&. They fire once per sampled excursion above the limit; returning to or below the limit rearms them\&. See \fBPhysicsBody\&.setBreakAngularSpeed()\fP for sampling and reference lifetime rules\&.
+
+.PP
+Legacy Chipmunk joint-force events retain their existing behavior: returning true handles the notification; an unhandled event invokes the existing disconnect path\&. Shared \fBPhysicsConstraint\fP force breaking retains its existing behavior too; this body feature does not add force events to that separate constraint path\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBPhysicsBody\&.setBreakAngularSpeed()\fP, \fBpdg\&.eventType_SpriteBreak\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIangularSpeed\fP angularSpeed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPhysicsBody\fP \fIbody\fP body Type: \fR\fBPhysicsBody\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIbreakAngularSpeed\fP breakAngularSpeed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIbreakForce\fP breakForce Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIforce\fP force Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIimpulse\fP impulse Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBCpConstraint\fP \fIjoint\fP joint Type: \fR\fBCpConstraint\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBPart\fP \fIpart\fP part Type: \fR\fBPart\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIreason\fP reason Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPhysicsBody\fP \fIreferenceBody\fP referenceBody Type: \fR\fBPhysicsBody\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBSprite\fP \fItargetSprite\fP targetSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SpriteCollisionEvent"
+.PP 
+\fBSpriteCollisionEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  arbiter  \fR\fBCpArbiter\fP\fP  Optional  collisionName  \fRstring\fP or \fRnull\fP  Optional  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  force  \fRnumber\fP  Required  impulse  \fR\fBVector\fP\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  isFirstContact  \fRboolean\fP  Optional  kineticEnergy  \fRnumber\fP  Required  normal  \fR\fBVector\fP\fP  Required  targetSprite  \fR\fBSprite\fP\fP  Optional  withCollisionName  \fRstring\fP or \fRnull\fP  Optional   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBCpArbiter\fP \fIarbiter\fP arbiter Type: \fR\fBCpArbiter\fP\fP\&. Optional\&. 
+.br
+.PP
+string \fIcollisionName\fP collisionName Type: \fRstring\fP or \fRnull\fP\&. Optional\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIforce\fP force Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fIimpulse\fP impulse Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+boolean \fIisFirstContact\fP isFirstContact Type: \fRboolean\fP\&. Optional\&. 
+.br
+.PP
+number \fIkineticEnergy\fP kineticEnergy Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fInormal\fP normal Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBSprite\fP \fItargetSprite\fP targetSprite Type: \fR\fBSprite\fP\fP\&. Optional\&. 
+.br
+.PP
+string \fIwithCollisionName\fP withCollisionName Type: \fRstring\fP or \fRnull\fP\&. Optional\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SpriteLayerEvent"
+.PP 
+\fBSpriteLayerEvent\fP\&. 
+
+something happened to this layer
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  millisec  \fRnumber\fP  Required  
+.RE
+.PP
+This event can be generated with \fBpdg\&.action_LayerFadeInComplete\fP or \fBpdg\&.action_LayerFadeOutComplete\fP when the layer finishes a fade\&.
+
+.PP
+These events are also generated regularly by a \fBSpriteLayer\fP to give the application a chance to take action at various stages of sprite animation and rendering\&. 
+.PP
+.nf
+{ 
+    emitter: {},            // the emitter that generated this event
+    eventType: 18,          // the event type (eventType_SpriteLayer)
+    action: 0,              // one of: action_AnimationStart/Complete, etc\&.\&.\&.
+    actingLayer: {},        // the SpriteLayer that is taking action
+    millisec: 1025448321,   // the millisecond time when this entire animation step started (when action_AnimationStart fired) 
+}  
+
+.fi
+.PP
+
+.PP
+A single step of animation will generate these events:
+
+.PP
+.IP "\(bu" 2
+\fBpdg\&.action_AnimationStart\fP with actingLayer set to the first layer (Z-order = 0)
+.IP "\(bu" 2
+for each layer, with actingLayer set to that layer, in Z-order (0\&.\&.\&.n):
+.IP "  \(bu" 4
+\fBpdg\&.action_PreAnimateLayer\fP just before animation starts
+.IP "  \(bu" 4
+\fBpdg\&.action_PostAnimateLayer\fP after all animation is complete
+.PP
+
+.IP "\(bu" 2
+\fBpdg\&.action_AnimationComplete\fP with actingLayer set to the last layer
+.PP
+
+.PP
+In a similar fashion, a rendering a single frame will generate these events:
+
+.PP
+.IP "\(bu" 2
+\fBpdg\&.action_ErasePort\fP with actingLayer set to the first layer (Z-order = 0)
+.IP "\(bu" 2
+for each layer, with actingLayer set to that layer, in Z-order (0\&.\&.\&.n):
+.IP "  \(bu" 4
+\fBpdg\&.action_PreDrawLayer\fP just before layer rendering starts
+.IP "  \(bu" 4
+\fBpdg\&.action_PostDrawLayer\fP after all sprites in the layer have been drawn
+.PP
+
+.IP "\(bu" 2
+\fBpdg\&.action_DrawPortComplete\fP with actingLayer set to the last layer
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_SpriteLayer\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSpriteLayer\fP \fIactingLayer\fP actingLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImillisec\fP millisec Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SpriteRecoveryEvent"
+.PP 
+\fBSpriteRecoveryEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  bodyCount  \fRnumber\fP  Required  bone  \fRnumber\fP  Required  disabled  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  id  \fRnumber\fP  Required  includeDescendants  \fRboolean\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  mode  \fRnumber\fP  Required  wholeRig  \fRboolean\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIbodyCount\fP bodyCount Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIbone\fP bone Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIdisabled\fP disabled Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIid\fP id Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIincludeDescendants\fP includeDescendants Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fImode\fP mode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIwholeRig\fP wholeRig Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SpriteTouchEvent"
+.PP 
+\fBSpriteTouchEvent\fP\&. 
+
+the user clicked on (or touched) a \fBSprite\fP
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  buttonNumber  \fRnumber\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP  Required  lastClickElapsed  \fRnumber\fP  Required  lastClickPos  \fR\fBPoint\fP\fP  Required  leftButton  \fRboolean\fP  Required  meta  \fRboolean\fP  Required  mousePos  \fR\fBPoint\fP\fP  Required  rightButton  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  touchedSprite  \fR\fBSprite\fP\fP  Required  touchType  \fRnumber\fP  Required  
+.RE
+.PP
+This event is generated by a \fBSprite\fP whenever a user clicks on it (or touches it in on a touch device)\&.
+
+.PP
+.PP
+.nf
+{
+    emitter: {},            // the emitter that generated this event
+    eventType: 19,          // the event type (eventType_SpriteTouch)
+    shift: false,           // true if the shift key is held down
+    ctrl: false,            // true if the control key is held down
+    alt: false,             // true if the alt (or option) key is held down
+    meta: false,            // true if the meta (windows or command) key is held down
+    mousePos: {
+        x: 456,             // the x coordinate of the mouse when the event occurred
+        y: 201              // the y coordinate of the mouse when the event occurred
+    },
+    leftButton: false,      // true if the left mouse button was down
+    rightButton: false,     // true if the right mouse button was down
+    buttonNumber: 0,        // button number (0=left, 1=right, 2=middle) or finger ID for touch
+    lastClickPos: { 
+        x: 456,             // the x coordinate of the last mouseDown event
+        y: 201              // the y coordinate of the last mouseDown event
+    },
+    lastClickElapsed: 201,  // the number of milliseconds since the last mouseDown
+    touchType: 22,          // touch_MouseDown(22), touch_MouseUp(23), or touch_MouseClick(24)
+    touchedSprite: {},      // the Sprite that was clicked or touched
+    inLayer: {}             // the SpriteLayer that contains the Sprite
+}  
+.fi
+.PP
+
+.PP
+A single click may generate up to three separate events, each with a different touchType:
+
+.PP
+.IP "\(bu" 2
+\fBpdg\&.touch_MouseDown\fP when a mouse button goes down inside a \fBSprite\fP
+.IP "\(bu" 2
+\fBpdg\&.touch_MouseUp\fP when a mouse button is released inside a \fBSprite\fP
+.IP "\(bu" 2
+\fBpdg\&.touch_MouseClick\fP when the mouse button was clicked and released inside the same \fBSprite\fP
+.PP
+
+.PP
+\fBNote\fP
+.RS 4
+Click events must be turned on for each \fBSprite\fP using \fBSprite\&.setWantsClickEvents()\fP
+
+.PP
+If no \fBSprite\fP was hit by a mouse event, the original \fBpdg\&.eventType_MouseDown\fP or \fBpdg\&.eventType_MouseUp\fP is passed on through the \fBEventManager\fP
+.RE
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_SpriteTouch\fP 
+
+.PP
+\fBpdg\&.Sprite\&.onMouseDown()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.onMouseUp()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.onMouseClick()\fP 
+
+.PP
+\fBpdg\&.Sprite\&.setWantsClickEvents()\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIbuttonNumber\fP buttonNumber Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIlastClickElapsed\fP lastClickElapsed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIlastClickPos\fP lastClickPos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIleftButton\fP leftButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fImousePos\fP mousePos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIrightButton\fP rightButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBSprite\fP \fItouchedSprite\fP touchedSprite Type: \fR\fBSprite\fP\fP\&. Required\&. 
+.br
+.PP
+number \fItouchType\fP touchType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SpriteTouchNotification"
+.PP 
+Touch convenience handlers expose the touched sprite, layer and touch type\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP  Required  touchedSprite  \fR\fBSprite\fP\fP  Required  touchType  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP\&. Required\&. 
+.br
+.PP
+\fBSprite\fP \fItouchedSprite\fP touchedSprite Type: \fR\fBSprite\fP\fP\&. Required\&. 
+.br
+.PP
+number \fItouchType\fP touchType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::SpriteTriggerEvent"
+.PP 
+\fBSpriteTriggerEvent\fP\&. 
+
+Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  clipName  \fRstring\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  entityName  \fRstring\fP  Required  eventType  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  offsetSeconds  \fRnumber\fP  Required  timeSeconds  \fRnumber\fP  Required  triggerName  \fRstring\fP  Required  
+.RE
+.PP
+The common JavaScript payload contains:
+
+.PP
+Field  Meaning  \fR\fBemitter\fP\fP  \fBEvent\fP emitter delivering the notification  \fR\fBeventType\fP\fP  \fBpdg::eventType_SpriteTriggerEvent\fP  \fR\fBactingSprite\fP\fP  \fBSprite\fP whose animation crossed the trigger  \fR\fBinLayer\fP\fP  \fBSpriteLayer\fP containing that \fBSprite\fP  \fR\fBtriggerName\fP\fP  Authored eventline name  \fR\fBclipName\fP\fP  Clip containing the eventline key  \fR\fBentityName\fP\fP  Spriter entity containing the clip  \fR\fBtimeSeconds\fP\fP  Authored key position from clip start, in floating-point seconds  \fR\fBoffsetSeconds\fP\fP  Occurrence offset from the start of the update, in floating-point seconds  
+
+.PP
+Subscribe by event type and inspect \fR\fBtriggerName\fP\fP to distinguish authored triggers\&. An \fR\fBaction\fP\fP field is not a portable trigger discriminator\&. The native compatibility field \fRframeTime\fP uses integer milliseconds and is omitted from JavaScript\&. The native event ID is currently exposed by the browser bridge but not the V8/JavaScriptCore bridges\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg::Sprite::enableSpriterEvents\fP 
+
+.PP
+\fBpdg::eventType_SpriteTriggerEvent\fP 
+
+.PP
+\fBAuthored Spriter triggers\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fIclipName\fP clipName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+string \fIentityName\fP entityName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIoffsetSeconds\fP offsetSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fItimeSeconds\fP timeSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fItriggerName\fP triggerName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::StartupEvent"
+.PP 
+\fBStartupEvent\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  startupReason  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIstartupReason\fP startupReason Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::TileInfo"
+.PP 
+\fBTileInfo\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  facing  \fRnumber\fP  Required  tileType  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIfacing\fP facing Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fItileType\fP tileType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::TimerEvent"
+.PP 
+\fBTimerEvent\fP\&. 
+
+a timer fire event
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  id  \fRnumber\fP  Required  millisec  \fRnumber\fP  Required  msElapsed  \fRnumber\fP  Required  
+.RE
+.PP
+Generated by the \fBpdg\&.TimerManager\fP when a timer fires
+
+.PP
+.PP
+.nf
+{ 
+    emitter: {},            // the emitter that generated this event
+    eventType: 3,           // the event type (eventType_Timer)
+    id: 117440512,          // the timer id (auto-generated up by onTimeout())
+    millisec: 1025448321,   // the millisecond time when the timer fired
+    msElapsed: 18896        // the time elapsed since the timer was started or last fired
+} 
+.fi
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg\&.eventType_Timer\fP 
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIid\fP id Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImillisec\fP millisec Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImsElapsed\fP msElapsed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::TimerSubscription"
+.PP 
+\fBTimerSubscription\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+Extends: \fBEventSubscription\fP\&.  
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  timer  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fItimer\fP timer Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::XY"
+.PP 
+A plain pair of coordinates accepted by geometry constructors\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  x  \fRnumber\fP  Required  y  \fRnumber\fP  Required   
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+number \fIx\fP x Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIy\fP y Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

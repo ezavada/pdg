@@ -34,6 +34,8 @@
 #include "physics-scaling.h"
 
 #include "pdg/sys/sprite.h"
+#include "pdg/sys/proceduralcodec.h"
+#include "pdg/sys/bone.h"
 #include "pdg/sys/drawing.h"
 #include "pdg/sys/spritelayer.h"
 #include "pdg/sys/os.h"
@@ -272,6 +274,10 @@ void Sprite::validateInitialSnapshot(bool layerGraph) const {
 #include "physics-graph-snapshot.inc"
 #include "sprite-part-snapshot.inc"
 
+std::vector<const float*> Sprite::tweenFields() const {
+    auto fields=AnimatedBase::tweenFields(); fields.push_back(&mOpacity); return fields;
+}
+
 uint32 Sprite::getSerializedSize(ISerializer* serializer) const {
     PhysicsGraphSnapshot scene(*this);
     PhysicsSnapshotScope physicsScope(serializer, scene.bodies());
@@ -344,7 +350,7 @@ uint32 Sprite::getSerializedSize(ISerializer* serializer) const {
 			totalSize += 4; // 1 byte each for mCurrFrame, mFirstFrame, mLastFrame, mFadeCompleteAction
             if (serFlags & ser_InitialData) { SnapshotWriter out(serializer,false);out.floating(mCurrFramePrecise,mCurrFrame);totalSize+=out.size(); }
 			size_t numAnims = mAnimations.size();
-			totalSize += serializer->sizeof_uint(UINT32_MAX) + 1 + serializer->sizeof_uint((uint32)numAnims);
+			totalSize += serializer->sizeof_uint(UINT32_MAX) + 1 + serializer->sizeof_uint((uint32)numAnims) + scriptSerializedSize(serializer);
             const bool hasWait = mWaitPending || mDelaySeconds > 0;
             totalSize += serializer->sizeof_bool(mSchedulePaused);
             totalSize += serializer->sizeof_bool(hasWait);
@@ -560,9 +566,9 @@ void Sprite::serialize(ISerializer* serializer) const {
 			serializer->serialize_1(mFadeCompleteAction);
             if (serFlags & ser_InitialData) SnapshotWriter(serializer,true).floating(mCurrFramePrecise,mCurrFrame);
 			uint32 numAnims = (uint32)mAnimations.size();
-			// Revision 7 also carries sampled Part motion in incremental updates.
+			// Revision 8 adds shared native animation script playback state.
             serializer->serialize_uint(UINT32_MAX);
-            serializer->serialize_1u(7);
+            serializer->serialize_1u(8);
             const bool hasWait = mWaitPending || mDelaySeconds > 0;
             serializer->serialize_bool(mSchedulePaused);
             serializer->serialize_bool(hasWait);
@@ -618,6 +624,7 @@ void Sprite::serialize(ISerializer* serializer) const {
 					out.floating(anim.deltaVal);
 				}
 			}
+            serializeScripts(serializer);
 
 		}
 //   #ifdef PDG_SCML_SUPPORT
@@ -930,7 +937,7 @@ void Sprite::deserialize(IDeserializer* deserializer) {
             if (secondsFormat) {
                 animationRevision = deserializer->deserialize_1u();
                 receivedAnimationRevision=animationRevision;
-                if (animationRevision < 1 || animationRevision > 7)
+                if (animationRevision < 1 || animationRevision > 8)
                     throw std::runtime_error("Unsupported Sprite animation record revision");
                 mSchedulePaused = false; mDelaySeconds = 0; mAppendAnimation = false; mWaitPending = false; mAnimationOperation = 1;
                 if (animationRevision >= 4) {
@@ -1018,6 +1025,7 @@ void Sprite::deserialize(IDeserializer* deserializer) {
                     throw std::runtime_error("Invalid serialized animation timing");
                 mAnimations[i] = anim;
 			}
+            if (animationRevision>=8) deserializeScripts(deserializer); else mScripts.reset();
 
 		}
 //   #ifdef PDG_SCML_SUPPORT
@@ -1279,6 +1287,7 @@ void Sprite::freeUserData() {
 
 // sets current frame of Sprite to a given frame number
 Sprite&    Sprite::setFrame(int frame) {
+    if(recordOperation("setFrame", captureAnimationArguments(frame))) return *this;
 	mSpriteAnimatingBackwardsNow = false;
 	DEBUG_ASSERT(frame >= 0 && frame < MAX_FRAMES_PER_SPRITE, "invalid frame number passed to sprite setFrame");
 	if (frame < 0) {
@@ -1404,6 +1413,7 @@ void Sprite::seekAnimation(const char* clip, double timeSeconds) {
     const auto candidate=sampleAnimationPose(clip,timeSeconds);
     for(AnimationBoneId id=0;id<candidate.getRig()->getBoneCount();++id)candidate.getWorldTransform(id,spriterRootTransform());
     for(AnimationBindingId id=0;id<candidate.getRig()->getBindingCount();++id)candidate.getWorldBindingTransform(id,spriterRootTransform());
+    for(auto& [id,j]:mAnimationJiggle)if(j->config.resetOnSeek)j->state={};
     mAnimationPoseAdapter->cancelTransition();selectAnimationTime(clip,time);refreshSpriterPose();
 }
 void Sprite::transitionToAnimation(const char* clip,double timeSeconds,double durationSeconds) {
@@ -1426,22 +1436,39 @@ void Sprite::transitionToAnimation(const char* clip,double timeSeconds,double du
 bool Sprite::isAnimationTransitioning() const {return mAnimationPoseAdapter && mAnimationPoseAdapter->isTransitioning();}
 double Sprite::getAnimationTransitionProgress() const {return mAnimationPoseAdapter?mAnimationPoseAdapter->transitionProgress():0;}
 
+#include "sprite-procedural.inc"
+
 AnimationModifierId Sprite::addAnimationIK(const AnimationTwoBoneIK& config, int order) {
+    for(auto& [id,j]:mAnimationJiggle)if(j->config.mode==jiggleMode_Chain)for(auto bone:j->config.chain)if(bone==config.root||bone==config.middle)throw std::logic_error("IK overlaps jiggle rotations");
+    for(auto& [id,f]:mAnimationFABRIK)for(auto bone:{config.root,config.middle})if(std::find(f->config.chain.begin(),f->config.chain.end()-1,bone)!=f->config.chain.end()-1)throw std::logic_error("IK overlaps FABRIK rotations");
     auto candidate = getAnimationPose();
     auto state = std::make_shared<AnimationIKState>(); state->config = config;
     state->result = solveAnimationTwoBoneIK(candidate, config, spriterRootTransform());
-    const auto id = addAnimationModifier([state](AnimationPoseView view, const AnimationModifierContext& context) {
+    const auto id = addAnimationModifier([this,state](AnimationPoseView view, const AnimationModifierContext& context) {
         auto pose = view.copy();
-        state->result = solveAnimationTwoBoneIK(pose, state->config, context.root);
+        auto config=state->config;
+        std::optional<SpriteJiggleState> jiggleNext;
+        if(state->jiggle) {
+            auto target=jiggleWorldTarget(pose,config,context.root);
+            jiggleNext=*state->jiggle;auto result=advanceSpriteJiggle(*jiggleNext,target.x,target.y,context.simulationDeltaSeconds);
+            config.targetX=result.effectiveX;config.targetY=result.effectiveY;config.space=animationSpace_World;
+        }
+        for(auto id:{config.root,config.middle})if(auto found=mBones.find(id);found!=mBones.end())if(auto limits=found->second->rotationLimits(pose)){
+            if(id==config.root){config.rootMin=std::max(config.rootMin,limits->first);config.rootMax=std::min(config.rootMax,limits->second);}
+            else{config.middleMin=std::max(config.middleMin,limits->first);config.middleMax=std::min(config.middleMax,limits->second);}
+        }
+        state->result = solveAnimationTwoBoneIK(pose, config, context.root);
         view.setLocalTransform(state->config.root, pose.getLocalTransform(state->config.root));
         view.setLocalTransform(state->config.middle, pose.getLocalTransform(state->config.middle));
         view.setLocalTransform(state->config.tip, pose.getLocalTransform(state->config.tip));
+        if(jiggleNext)*state->jiggle=std::move(*jiggleNext);
     }, animationStage_Constraint, order);
     mAnimationIK.emplace(id,state); return id;
 }
 void Sprite::setAnimationIKTarget(AnimationModifierId id, double x, double y, int space) {
     if (!std::isfinite(x) || !std::isfinite(y) || space < animationSpace_Local || space > animationSpace_World)
         throw std::invalid_argument("Invalid IK target or coordinate space");
+    if(auto f=mAnimationFABRIK.find(id);f!=mAnimationFABRIK.end()) { f->second->config.targetX=x;f->second->config.targetY=y;f->second->config.space=space;invalidateSpriterPose();return; }
     const auto found=mAnimationIK.find(id);
     if(found==mAnimationIK.end()) throw std::out_of_range("Unknown IK constraint ID");
     found->second->config.targetX=x; found->second->config.targetY=y; found->second->config.space=space;
@@ -1462,12 +1489,16 @@ AnimationModifierId Sprite::addAnimationModifier(AnimationPipeline::Modifier cal
     invalidateSpriterPose(); return id;
 }
 void Sprite::removeAnimationModifier(AnimationModifierId id) {
-    mAnimationIK.erase(id);
-    if (mAnimationPipeline) { mAnimationPipeline->removeModifier(id); invalidateSpriterPose(); }
+    if (mAnimationPipeline) {
+        if(auto ik=mAnimationIK.find(id);ik!=mAnimationIK.end()&&ik->second->jiggle) {
+            for(auto j=mAnimationJiggle.begin();j!=mAnimationJiggle.end();)if(j->second==ik->second->jiggle){mAnimationPipeline->removeModifier(j->first);j=mAnimationJiggle.erase(j);}else ++j;
+        }
+        if(auto j=mAnimationJiggle.find(id);j!=mAnimationJiggle.end()&&j->second->config.mode==jiggleMode_IKTarget) {auto ik=mAnimationIK.find(j->second->config.ik);if(ik!=mAnimationIK.end())ik->second->jiggle.reset();}
+        mAnimationIK.erase(id);mAnimationFABRIK.erase(id);mAnimationJiggle.erase(id);mAnimationPipeline->removeModifier(id); invalidateSpriterPose(); }
 }
 void Sprite::clearAnimationModifiers() {
-    mAnimationIK.clear();
-    if (mAnimationPipeline) { mAnimationPipeline->clearModifiers(); invalidateSpriterPose(); }
+    mAnimationIK.clear();mAnimationFABRIK.clear();mAnimationJiggle.clear();
+    if (mAnimationPipeline) { mAnimationPipeline->clearModifiers();mAnimationIK.clear();mAnimationFABRIK.clear();mAnimationJiggle.clear(); invalidateSpriterPose(); }
 }
 std::string Sprite::getAnimationModifierError(AnimationModifierId id) const {
     if (!mAnimationPipeline) throw std::logic_error("Animation pose is disabled");
@@ -1498,6 +1529,7 @@ void Sprite::drawAnimationDebug() const {
     if (!mAnimationDebugDraw || !mAnimationPoseAdapter || !mLayer) return;
     Port* port = mLayer->getSpritePort();
     if (!port) return;
+    Port::ScreenDrawingScope screenDrawing(*port);
     const auto& pose = mAnimationPoseAdapter->pose();
     const auto& rig = pose.getRig();
     const auto root = spriterRootTransform();
@@ -1620,7 +1652,7 @@ void Sprite::drawAnimationArt(){
 #ifndef PDG_NO_GUI
     if(!mLayer || !mLayer->getSpritePort() || !mAnimationPoseAdapter)return;
     if(mAnimationDrawings.empty()){mEntityInstance->render();return;}
-    auto* port=mLayer->getSpritePort();const auto pose=mAnimationPoseAdapter->pose().copy();const auto root=spriterRootTransform();
+    auto* port=mLayer->getSpritePort(); Port::ScreenDrawingScope screenDrawing(*port); const auto pose=mAnimationPoseAdapter->pose().copy();const auto root=spriterRootTransform();
     mAnimationDrawings.beginFrame();
     struct EndFrame{AnimationDrawings& drawings;~EndFrame(){drawings.endFrame();}} frame{mAnimationDrawings};
     auto render=[&](int placement,const std::string& slot){
@@ -1662,6 +1694,7 @@ bool Sprite::supportsAnimationPhysics() {
 #endif
 }
 Sprite& Sprite::setupPhysicsFromAnimationRig(double totalMass, double unitsPerMeter) {
+    if(recordOperation("setupPhysicsFromAnimationRig", captureAnimationArguments(totalMass, unitsPerMeter))) return *this;
     if (AnimationPipeline::isInsideCallback()) throw std::logic_error("Physical rig changes must occur outside modifiers");
     if (!std::isfinite(totalMass) || totalMass <= 0 || !std::isfinite(unitsPerMeter) || unitsPerMeter <= 0)
         throw std::invalid_argument("Total mass and unitsPerMeter must be finite positive numbers");
@@ -1699,6 +1732,7 @@ AnimationBoneId Sprite::getAnimationPhysicsRoot() const {
     return selectAnimationPhysicsRoot(*rig,mAnimationPhysicsRootOverride);
 }
 Sprite& Sprite::setAnimationPhysicsRoot(const char* name) {
+    if(recordOperation("setAnimationPhysicsRoot", captureAnimationArguments(name))) return *this;
     auto rig=getAnimationRig();
     if (!rig || !name) throw std::invalid_argument("Physical root requires a bone in the enabled rig");
     const auto id=rig->findBone(name);
@@ -1706,6 +1740,7 @@ Sprite& Sprite::setAnimationPhysicsRoot(const char* name) {
     return setAnimationPhysicsRoot(id);
 }
 Sprite& Sprite::setAnimationPhysicsRoot(AnimationBoneId bone) {
+    if(recordOperation("setAnimationPhysicsRoot", captureAnimationArguments(bone))) return *this;
     if (AnimationPipeline::isInsideCallback()) throw std::logic_error("Physical root changes must occur outside modifiers");
     auto rig=getAnimationRig();
     if (!rig || bone>=rig->getBoneCount()) throw std::invalid_argument("Unknown physical root bone");
@@ -1724,6 +1759,7 @@ Sprite& Sprite::setAnimationPhysicsRoot(AnimationBoneId bone) {
     mAnimationPhysicsRootOverride=bone;return *this;
 }
 Sprite& Sprite::clearAnimationPhysicsRoot() {
+    if(recordOperation("clearAnimationPhysicsRoot", captureAnimationArguments())) return *this;
     auto rig=getAnimationRig();if (!rig) throw std::logic_error("Enable an animation pose before selecting its physical root");
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
     if(mAnimationPhysics)
@@ -1886,6 +1922,7 @@ void Sprite::releaseAnimationPhysics() {
         part->removePhysicsBody();
     }
     mAnimationPhysicsParts.clear();
+    for(auto& [id,bone]:mBones)bone->mGeometryRig=nullptr;
     mAnimationPhysics.reset();mAnimationDesired.reset();
     physics->configureMass(total,inertia);
     physics.setMode(mAnimationSavedBodyType==CP_BODY_TYPE_DYNAMIC?physicsBody_Dynamic:mAnimationSavedBodyType==CP_BODY_TYPE_STATIC?physicsBody_Static:physicsBody_Kinematic);
@@ -1899,7 +1936,7 @@ void Sprite::releaseAnimationPhysics() {
 #endif
 }
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-void Sprite::prepareAnimationPhysics(ms_delta elapsed){
+void Sprite::prepareAnimationPhysics(double elapsed){
     if(!mAnimationPhysics || !mAnimationPoseAdapter || !mAnimationDesired)return;
     mAnimationPhysics->prepare(*mAnimationDesired,spriterRootTransform(),double(elapsed)/1000.0);
 }
@@ -1935,12 +1972,13 @@ bool Sprite::enableAnimationPose(const char* referenceAnimation) {
         auto rig = schema->referenceRig(*mSpriterModel, referenceAnimation);
         auto adapter = std::make_unique<SpriterPoseAdapter>(*mEntityInstance, schema, rig);
         adapter->evaluate(mIsBlending ? mBlendTargetName : "", mBlendProgress, spriterRootTransform());
+        clearBoneControls();
         mAnimationDrawings.clear();
         mAnimationRigSchema = std::move(schema);
         mAnimationPoseAdapter = std::move(adapter);
         mAnimationPhysicsRootOverride=animation_NoBone;mAnimationPhysicsSetupWarnings.clear();
         mAnimationPipeline = std::make_shared<AnimationPipeline>();
-        mAnimationIK.clear();
+        mAnimationIK.clear();mAnimationJiggle.clear();mAnimationFABRIK.clear();
         mAnimationRigError.clear();
         mAnimationDebugDraw = animationDebug_None;
         invalidateSpriterPose();
@@ -1959,10 +1997,11 @@ void Sprite::disableAnimationPose() {
     if(mAnimationPhysics && (getSpace() && cpSpaceIsLocked(getSpace())))
         throw std::logic_error("Disable animation poses outside locked physics callbacks");
 #endif
-    releaseAnimationPhysics();
     if (AnimationPipeline::isInsideCallback()) throw std::logic_error("Rig replacement is not allowed inside a modifier");
+    releaseAnimationPhysics();
+    clearBoneControls();
     mAnimationPipeline.reset();
-    mAnimationIK.clear();
+    mAnimationIK.clear();mAnimationFABRIK.clear();mAnimationJiggle.clear();
     mAnimationDrawings.clear();
     mAnimationPoseAdapter.reset();
 	for (auto* part : mParts) part->unbindFromBone();
@@ -1991,6 +2030,13 @@ std::vector<std::string> Sprite::getAnimationBoneNames() const {
     const auto rig = getAnimationRig();
     if (rig) for (AnimationBoneId id = 0; id < rig->getBoneCount(); ++id) names.push_back(rig->getBone(id).name);
     return names;
+}
+void Sprite::clearBoneControls(){for(auto& [id,bone]:mBones)bone->invalidate();mBones.clear();}
+Bone* Sprite::getBone(const char* name){auto rig=getAnimationRig();if(!rig)throw std::logic_error("Enable an animation pose first");return getBone(rig->findBone(name?name:""));}
+Bone* Sprite::getBone(AnimationBoneId id){
+    auto rig=getAnimationRig();if(!rig)throw std::logic_error("Enable an animation pose first");rig->getBone(id);
+    auto& bone=mBones[id];if(bone && bone->mRig!=rig){bone->invalidate();bone.reset();}if(!bone){auto* value=new Bone(this,rig,id);value->addRef();bone=std::shared_ptr<Bone>(value,[](Bone* b){b->release();});value->sample(getAnimationPose());}
+    return bone.get();
 }
 std::vector<std::string> Sprite::getAnimationBindingNames() const {
     std::vector<std::string> names;
@@ -2026,10 +2072,23 @@ void Sprite::clearAnimationBoneTransforms() {
     mAnimationPoseAdapter->clearBoneOverrides();
     invalidateSpriterPose(); refreshSpriterPose();
 }
-void Sprite::publishSpriterPose(double deltaSeconds) const {
+void Sprite::publishSpriterPose(double deltaSeconds,double boneSeconds) const {
     if (!mAnimationPoseAdapter) return;
     try {
-        mAnimationPoseAdapter->evaluate(mIsBlending ? mBlendTargetName : "", mBlendProgress, spriterRootTransform(), mAnimationPipeline.get(), deltaSeconds);
+        const auto controls=[this,seconds=boneSeconds<0?deltaSeconds:boneSeconds](AnimationPose& pose,bool final){
+            std::vector<std::shared_ptr<Bone>> bones;
+            for(const auto& [id,bone]:mBones) {
+                if(bone->mRig!=pose.getRig()){bone->invalidate();continue;}
+                bones.push_back(bone);
+            }
+            const auto depth=[&](AnimationBoneId id){unsigned n=0;for(auto p=pose.getRig()->getBone(id).parent;p!=animation_NoBone;p=pose.getRig()->getBone(p).parent)++n;return n;};
+            std::stable_sort(bones.begin(),bones.end(),[&](const auto& a,const auto& b){return depth(a->mId)<depth(b->mId);});
+            for(const auto& bone:bones)if(bone->isAttached()) {
+                if(!final){bone->sample(pose);if(seconds>0)bone->animate(seconds);}
+                if(bone->isAttached())bone->apply(pose,final);
+            }
+        };
+        mAnimationPoseAdapter->evaluate(mIsBlending ? mBlendTargetName : "", mBlendProgress, spriterRootTransform(), mAnimationPipeline.get(), deltaSeconds,controls,boneSeconds<0?deltaSeconds:boneSeconds);
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
         if(mAnimationPhysics && mAnimationDesired)*mAnimationDesired=mAnimationPoseAdapter->pose().copy();
 #endif
@@ -2040,10 +2099,11 @@ void Sprite::publishSpriterPose(double deltaSeconds) const {
         if(mAnimationPhysics)const_cast<Sprite*>(this)->releaseAnimationPhysics();
 #endif
         const_cast<Sprite*>(this)->mAnimationDrawings.clear();
+        const_cast<Sprite*>(this)->clearBoneControls();
         mAnimationPoseAdapter.reset();
     for (auto* part : mParts) part->unbindFromBone();
         mAnimationPipeline.reset();
-    mAnimationIK.clear();
+    mAnimationIK.clear();mAnimationFABRIK.clear();mAnimationJiggle.clear();
         mAnimationDebugDraw = animationDebug_None;
         // Restore the normal evaluator path after a failed publication.
         if (mIsBlending) mEntityInstance->blend(mBlendProgress, mEntityInstance->getTimeRatio());
@@ -2075,6 +2135,7 @@ bool Sprite::hasAnimation(int animationId) {
 }
 
 void Sprite::startAnimation(const char* animationName) {
+    validateUnrecordedOperation("Sprite appearance or clip command");
     if (AnimationPipeline::isInsideCallback()) throw std::logic_error("Playback/rig changes must occur outside a modifier");
 	if (!hasAnimation(animationName)) return;
 	if(mAnimationPoseAdapter)mAnimationPoseAdapter->cancelTransition();
@@ -2089,6 +2150,7 @@ void Sprite::startAnimation(const char* animationName) {
 }
 
 void Sprite::startAnimation(int animationId) {
+    validateUnrecordedOperation("Sprite appearance or clip command");
 	if (hasAnimation(animationId)) startAnimation(mSpriterAnimationNames[animationId].c_str());
 }
 
@@ -2384,10 +2446,11 @@ void Sprite::activateSubEntity(const char* entityName, const char* animationName
 		if (mEntityInstance->currentEntityName() != oldEntity) {
 			clearAttachedSprites();
             mAnimationDrawings.clear();
+            clearBoneControls();
 			mAnimationPoseAdapter.reset();
     for (auto* part : mParts) part->unbindFromBone();
             mAnimationPipeline.reset();
-    mAnimationIK.clear();
+    mAnimationIK.clear();mAnimationFABRIK.clear();mAnimationJiggle.clear();
             mAnimationDebugDraw = animationDebug_None;
 			mAnimationRigSchema.reset();
 			mAnimationRigError = "Entity changed; enable the new rig explicitly";
@@ -2537,12 +2600,14 @@ Offset	Sprite::getFrameCenterOffset(Image* image, int frameNum) {
 
 // arrange sprites within layer
 Sprite& Sprite::moveBehind(Sprite* sprite) {
+    if(recordOperation("moveBehind", captureAnimationArguments(sprite))) return *this;
     if (mLayer && sprite && sprite != this && sprite->mLayer == mLayer)
         mLayer->reorderSprite(this, sprite->mPrevSprite);
     return *this;
 }
 
 Sprite& Sprite::moveInFrontOf(Sprite* sprite) {
+    if(recordOperation("moveInFrontOf", captureAnimationArguments(sprite))) return *this;
     if (mLayer && sprite && sprite != this && sprite->mLayer == mLayer)
         mLayer->reorderSprite(this, sprite);
     return *this;
@@ -2561,6 +2626,8 @@ bool Sprite::isBehind(Sprite* sprite) {
 
 // fading, with 1.0 being complete opaque and 0.0 being completely transparent
 Sprite& Sprite::setOpacity(float opacity) {
+    if(recordOperation("setOpacity", captureAnimationArguments(opacity))) return *this;
+    validateUnrecordedOperation("Sprite appearance or clip command");
 	mOpacity = opacity;
 	if (mOpacity > 1.0) {
 		mOpacity = 1.0;
@@ -2574,7 +2641,9 @@ float Sprite::getOpacity() {
 	return mOpacity;
 }
 
-void Sprite::fadeTo(float targetOpacity, double durationSeconds, EasingFunc easing) {
+Sprite& Sprite::fadeTo(float targetOpacity, double durationSeconds, EasingFunc easing) {
+    if(recordOperation("fadeTo", captureAnimationArguments(targetOpacity, durationSeconds, easing))) return *this;
+    validateUnrecordedOperation("Sprite appearance or clip command");
 	if (targetOpacity > 1.0) {
 		targetOpacity = 1.0;
 	} else if (targetOpacity < 0.0) {
@@ -2589,9 +2658,12 @@ void Sprite::fadeTo(float targetOpacity, double durationSeconds, EasingFunc easi
     mAnimations.push_back(a);
 	mFadeCompleteAction = action_FadeComplete;
     finishAnimationRequest();
+    return *this;
 }
 
-void Sprite::fadeIn(double durationSeconds, EasingFunc easing)  {
+Sprite& Sprite::fadeIn(double durationSeconds, EasingFunc easing) {
+    if(recordOperation("fadeIn", captureAnimationArguments(durationSeconds, easing))) return *this;
+    validateUnrecordedOperation("Sprite appearance or clip command");
     validateAnimationDuration(durationSeconds);
 	if (!mAppendAnimation && mOpacity == 1.0) {  // if we are at our default full opacity, then set to transparent
 		mOpacity = 0.0;     // this handles common case where we create a new sprite and want it
@@ -2599,12 +2671,16 @@ void Sprite::fadeIn(double durationSeconds, EasingFunc easing)  {
 	fadeTo(1.0, durationSeconds, easing);
 	mFadeCompleteAction = action_FadeInComplete;
     mAnimations.back().completion = 2;
+    return *this;
 }
 
-void Sprite::fadeOut(double durationSeconds, EasingFunc easing) {
+Sprite& Sprite::fadeOut(double durationSeconds, EasingFunc easing) {
+    if(recordOperation("fadeOut", captureAnimationArguments(durationSeconds, easing))) return *this;
+    validateUnrecordedOperation("Sprite appearance or clip command");
 	fadeTo(0.0, durationSeconds, easing);
 	mFadeCompleteAction = action_FadeOutComplete;
     mAnimations.back().completion = 3;
+    return *this;
 }
 
 
@@ -2619,6 +2695,7 @@ void Sprite::fadeOut(double durationSeconds, EasingFunc easing) {
 
 
 Sprite& Sprite::setFrameCollisionMask(Image* frameImage, Image* maskImage) {
+    if(recordOperation("setFrameCollisionMask", captureAnimationArguments(frameImage, maskImage))) return *this;
 	ImageImpl* img = dynamic_cast<ImageImpl*>(maskImage);
 	for (int i = 0; i< mNumFrames; i++) {
 		if (mFrames[i].image == frameImage) {
@@ -2639,7 +2716,8 @@ Sprite& Sprite::setFrameCollisionMask(Image* frameImage, Image* maskImage) {
 
 	
 #ifndef PDG_NO_GUI
-Sprite& Sprite::setWantsMouseOverEvents(bool wantsThem) { 
+Sprite& Sprite::setWantsMouseOverEvents(bool wantsThem) {
+    if(recordOperation("setWantsMouseOverEvents", captureAnimationArguments(wantsThem))) return *this;
 	wantsMouseOver = wantsThem; 
 	if (wantsThem) {
 		mLayer->wantMouseOverEvents();
@@ -2649,7 +2727,8 @@ Sprite& Sprite::setWantsMouseOverEvents(bool wantsThem) {
 	return *this; 
 }
 	
-Sprite& Sprite::setWantsClickEvents(bool wantsThem) { 
+Sprite& Sprite::setWantsClickEvents(bool wantsThem) {
+    if(recordOperation("setWantsClickEvents", captureAnimationArguments(wantsThem))) return *this;
 	wantsClicks = wantsThem;
 	if (wantsThem) {
 		mLayer->wantClickEvents();
@@ -2660,6 +2739,7 @@ Sprite& Sprite::setWantsClickEvents(bool wantsThem) {
 }
 
 Sprite& Sprite::setMouseDetectMode(int collisionType) {
+    if(recordOperation("setMouseDetectMode", captureAnimationArguments(collisionType))) return *this;
 	mMouseDetectMode = collisionType;
 	return *this;
 }
@@ -2726,6 +2806,7 @@ bool Sprite::hitTest(const Point& p) {
 	
 void	Sprite::draw() {
 #ifndef PDG_NO_GUI
+    Port::ScreenDrawingScope screenDrawing(mPort);
 	bool shouldDraw = true;
 	if (mDrawHelper) {
 		shouldDraw = mDrawHelper->draw(this, mPort);
@@ -2826,7 +2907,7 @@ void Sprite::easingCompleted(const Animation& a) {
 
 
 void
-Sprite::doAnimate(ms_delta msElapsed, bool layerDoCollisions) {
+Sprite::doAnimate(double msElapsed, bool layerDoCollisions) {
     const bool retained = refs > 0;
     if (retained) addRef();
     struct Release { Sprite* sprite; ~Release() { if (sprite) sprite->release(); } } release{retained ? this : nullptr};
@@ -2835,7 +2916,7 @@ Sprite::doAnimate(ms_delta msElapsed, bool layerDoCollisions) {
     finishAnimation(msElapsed, layerDoCollisions);
 }
 
-void Sprite::advanceAnimation(ms_delta msElapsed) {
+void Sprite::advanceAnimation(double msElapsed) {
     
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
     if (USE_CHIPMUNK && !cpBodyIsSleeping(mBody)) {
@@ -2850,7 +2931,7 @@ void Sprite::advanceAnimation(ms_delta msElapsed) {
   #endif
 
     // do all the primary animation
-  	SPRITEANIMATE_DEBUG_ONLY( OS::_DOUT("Sprite [%p] animate @ %ld", this, msElapsed); )
+	SPRITEANIMATE_DEBUG_ONLY( OS::_DOUT("Sprite [%p] animate @ %g", this, msElapsed); )
     AnimatedBase::animate(static_cast<double>(msElapsed) / 1000.0);
     if (physics != PhysicsBody::NoPhysics && physics.getSolver()==physicsSolver_Basic) {
         physics.step(static_cast<double>(msElapsed)/1000.0);
@@ -2904,7 +2985,7 @@ void Sprite::advanceAnimation(ms_delta msElapsed) {
 		if (!mIsBlending && !mIsAnimationPaused && mEntityInstance->animationJustFinished()
 			&& mEntityInstance->getTimeRatio() >= 1.0) mIsAnimationFinished = true;
         const bool wasTransitioning=isAnimationTransitioning();
-		publishSpriterPose(mIsAnimationPaused ? 0.0 : static_cast<double>(msElapsed) / 1000.0);
+		publishSpriterPose(mIsAnimationPaused ? 0.0 : static_cast<double>(msElapsed) / 1000.0,static_cast<double>(msElapsed)/1000.0);
         if(isAnimationTransitioning())mIsAnimationFinished=false;
         else if(wasTransitioning && mAnimationPoseAdapter) {
             mIsAnimationFinished=mEntityInstance->getTimeRatio()>=1;
@@ -3589,7 +3670,7 @@ Sprite::recalcOnscreenAndInBounds() {
 	}
   #endif
 	if (wantsWallCollide) {
-		Rect lb = mLayer->getRotatedBounds();
+		Rect lb = mLayer->getWorldBounds();
 		Rect sb = srb.getBounds();
 //  		SPRITEANIMATE_DEBUG_ONLY( OS::_DOUT("  lb [%0.2f,%0.2f,%0.2f,%0.2f] sb [%0.2f,%0.2f,%0.2f,%0.2f]", lb.left, lb.top, lb.right, lb.bottom, sb.left, sb.top, sb.right, sb.bottom ); )
 		mInBounds = lb.overlaps(sb);
@@ -4062,7 +4143,7 @@ void Part::refreshDependents() {
     else updateAttachment();
 }
 void Part::locationChanged(const Offset&) { syncPhysicsTransform(); refreshDependents(); }
-void Part::rotationChanged(float) { syncPhysicsTransform(); refreshDependents(); }
+void Part::rotationChanged(float) { if(mProceduralOwner&&!mApplyingProcedural)mProceduralBase=mFacing;syncPhysicsTransform(); refreshDependents(); }
 void Part::scaleChanged(const Offset&) { syncPhysicsTransform(); refreshDependents(); }
 void Part::flipChanged(bool, bool) { scaleChanged(Offset()); }
 void Part::stepPhysics(double seconds) {
@@ -4074,13 +4155,22 @@ void Part::stepPhysics(double seconds) {
 bool Part::animate(double seconds) {
     addRef();
     struct Release { Part* part; ~Release() { part->release(); } } release{this};
+    if(mSprite)for(auto* part:mSprite->mParts)if(part->mProceduralOwner==this)part->restoreProceduralBase();
+    restoreProceduralBase();
     const bool animated = AnimatedBase::animate(seconds);
-    const bool solved = applyIKTarget();
+    stepProcedural(seconds);
+    const bool solved = applyIKTarget(seconds);
     stepPhysics(seconds);
     return animated || solved || physics != PhysicsBody::NoPhysics;
 }
 
 // Independent parts are available with or without Spriter/Chipmunk.
+ISerializable* Part::snapshotAnimationOwner() const {
+    if(!mSprite) throw std::runtime_error("A detached Part cannot be serialized as a Troupe member");
+    return mSprite;
+}
+AnimatedBase* Sprite::snapshotAnimationMember(uint32 id) { return getPart(id); }
+
 Part::Part(Sprite* sprite, PartId id, const std::string& name)
     : mSprite(sprite), mId(id), mName(name) {
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
@@ -4088,7 +4178,8 @@ Part::Part(Sprite* sprite, PartId id, const std::string& name)
 #endif
 }
 void Part::detach() {
-    clearIKTarget();
+    if(mProceduralOwner)mFacing=mProceduralBase;
+    clearJiggle();clearIKTarget();mProceduralOwner=nullptr;
     detachSprite();
     removePhysicsBody();
     setParentLink(nullptr);
@@ -4105,6 +4196,7 @@ bool Part::hasCurrentRig() const {
 BoneId Part::getBoneId() const { return hasCurrentRig() ? mBone : boneId_None; }
 
 Part& Part::bindToBone(BoneId bone) {
+    if(recordOperation("bindToBone", captureAnimationArguments(bone))) return *this;
     if (bone == boneId_None) return unbindFromBone();
 #ifdef PDG_SPRITER_SUPPORT
     const auto rig = mSprite ? mSprite->getAnimationRig() : nullptr;
@@ -4120,6 +4212,7 @@ Part& Part::bindToBone(BoneId bone) {
 #endif
 }
 Part& Part::unbindFromBone() {
+    if(recordOperation("unbindFromBone", captureAnimationArguments())) return *this;
     validateTransformEdit();
     mBone = boneId_None; mBinding = mSocket = std::numeric_limits<uint32_t>::max();
     mRig.reset();
@@ -4131,6 +4224,7 @@ Part& Part::unbindFromBone() {
     return *this;
 }
 Part& Part::bindToAnimationBinding(const std::string& name) {
+    if(recordOperation("bindToAnimationBinding", captureAnimationArguments(name))) return *this;
 #ifdef PDG_SPRITER_SUPPORT
     const auto rig = mSprite ? mSprite->getAnimationRig() : nullptr;
     const auto id = rig ? rig->findBinding(name) : animation_NoBinding;
@@ -4143,6 +4237,7 @@ Part& Part::bindToAnimationBinding(const std::string& name) {
 #endif
 }
 Part& Part::bindToAnimationSocket(const std::string& name) {
+    if(recordOperation("bindToAnimationSocket", captureAnimationArguments(name))) return *this;
 #ifdef PDG_SPRITER_SUPPORT
     const auto rig = mSprite ? mSprite->getAnimationRig() : nullptr;
     const auto id = rig ? rig->findSocket(name) : animation_NoSocket;
@@ -4166,8 +4261,13 @@ std::string Part::getAnimationSocketName() const {
 #endif
     return {};
 }
-Part& Part::setDrawing(const Drawing& drawing) { mDrawing=drawing.share(); return *this; }
+Part& Part::setDrawing(const Drawing& drawing) {
+    if(recordOperation("setDrawing", captureAnimationArguments(drawing))) return *this;
+    mDrawing=drawing.share();
+    return *this;
+}
 Part& Part::setImage(const Image& image, const Rect& bounds) {
+    if(recordOperation("setImage", captureAnimationArguments(image, bounds))) return *this;
 #ifndef PDG_NO_GUI
     if (!std::isfinite(bounds.left) || !std::isfinite(bounds.top) ||
         !std::isfinite(bounds.right) || !std::isfinite(bounds.bottom))
@@ -4179,7 +4279,11 @@ Part& Part::setImage(const Image& image, const Rect& bounds) {
     throw std::logic_error("Part image content requires a GUI build");
 #endif
 }
-Part& Part::clearContent() { mDrawing.reset();return *this; }
+Part& Part::clearContent() {
+    if(recordOperation("clearContent", captureAnimationArguments())) return *this;
+    mDrawing.reset();
+    return *this;
+}
 Rect Part::getContentBounds(int space) const {
     const auto transform=getTransform(space); // validate space even when empty
     if (!mDrawing) return Rect();
@@ -4191,6 +4295,7 @@ Rect Part::getContentBounds(int space) const {
 void Part::drawContent() {
 #ifndef PDG_NO_GUI
     if (!mDrawing || !mSprite || !mSprite->mLayer || !mSprite->mPort) return;
+    Port::ScreenDrawingScope screenDrawing(*mSprite->mPort);
     const auto transform=getTransform(partSpace_World);
     auto point=[&](float x,float y) {return mSprite->mLayer->layerToPort(transform.transformPoint(Point(x,y)));};
     const auto origin=point(0,0), x=point(1,0), y=point(0,1);
@@ -4201,6 +4306,7 @@ void Part::drawContent() {
 #endif
 }
 Part& Part::setParentPart(Part* parent) {
+    if(recordOperation("setParentPart", captureAnimationArguments(parent))) return *this;
     validateProgrammedTransform();
     if (parent && (!mSprite || parent->mSprite != mSprite))
         throw std::invalid_argument("Part parent must belong to the same Sprite");
@@ -4325,6 +4431,7 @@ void Sprite::clearParts() {
     for (auto* part : parts) part->setParentLink(nullptr);
     for (auto* part : parts) { part->detach(); part->release(); }
 }
+#include "part-procedural.inc"
 #include "part-ik.inc"
 
 void Part::decomposeMount(const SpatialTransform& t, Point& location, float& angle, Offset& scale) {
@@ -4376,6 +4483,7 @@ Part* Part::attachSprite(Sprite* child, int placement, Part* childMount) {
     mount->updateAttachment();return mount;
 }
 Part& Part::detachSprite() {
+    if(recordOperation("detachSprite", captureAnimationArguments())) return *this;
     auto* child=mAttachedSprite;mAttachedSprite=nullptr;mAttachmentError.clear();
     if(child) {child->mAttachmentPart=nullptr;child->release();}
     return *this;
@@ -4445,11 +4553,12 @@ void Sprite::animateParts(double seconds) {
     const auto parts = orderedParts();
     for (auto* part : parts) part->addRef();
     try {
+        for (auto* part : parts) if (part->mSprite == this) part->restoreProceduralBase();
         for (auto* part : parts) if (part->mSprite == this) part->AnimatedBase::animate(seconds);
         // Every helper has supplied this step's local pose before ordered IK.
         // Controllers use stable Part IDs and tolerate removal/reparenting by helpers.
         const auto controllers = orderedParts();
-        for (auto* part : controllers) part->applyIKTarget();
+        for (auto* part : controllers) {part->stepProcedural(seconds);part->applyIKTarget(seconds);}
         for (auto* part : parts) if (part->mSprite == this) part->stepPhysics(seconds);
         refreshPartPhysics();
     } catch (...) { for (auto* part : parts) part->release(); throw; }
@@ -4457,6 +4566,9 @@ void Sprite::animateParts(double seconds) {
 }
 
 Sprite::~Sprite() {
+#ifdef PDG_SPRITER_SUPPORT
+    clearBoneControls();
+#endif
     removeCollider();
     for (int i=0; i<mNumFrames; ++i) {
         if (mFrames[i].image) mFrames[i].image->release();
@@ -4474,7 +4586,7 @@ Sprite::~Sprite() {
     mAnimationPhysics.reset();mAnimationDesired.reset();
 #endif
     mAnimationDrawings.clear();
-    mAnimationPipeline.reset(); mAnimationIK.clear();
+    mAnimationPipeline.reset(); mAnimationIK.clear();mAnimationFABRIK.clear();mAnimationJiggle.clear();
 #endif
     //                DEBUG_ONLY( OS::_DOUT("dt Sprite %p", this) = 0; )
     if(collider!=Collider::NoCollider) collider.setEnabled(false);
@@ -4639,3 +4751,11 @@ bool Sprite::checkSpriterCollisionBoxPointCollision(const Point& p) {
 
 	
 } // end namespace pdg
+
+namespace pdg {
+#include "animation-operations-sprite.inc"
+}
+
+namespace pdg {
+#include "animation-operations-part.inc"
+}

@@ -71,7 +71,8 @@ class FontImplWin : public FontImpl {
 public:
 	FontImplWin(Port* port, const char* fontName, float scalingFactor);
 	virtual ~FontImplWin();
-	virtual FontMetricsInfo* getFontMetrics(int size, uint32 style);
+	FontMetricsInfo* getFontMetrics(int size, uint32 style) override;
+    void releaseFontMetrics(FontMetricsInfo* metrics) override;
 	WinAPI::HFONT getWindowsFont(int size, uint32 style);
 };
 

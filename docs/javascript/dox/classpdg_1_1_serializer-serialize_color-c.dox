@@ -1,16 +1,16 @@
 namespace pdg { /**
 
-\fn pdg::Serializer::serialize_color
+\fn pdg::Serializer::serialize_color(Color val)
 
 \brief serialize a Color
 
-Write a Color's RBGA values into the data stream.
+Write a Color's RGBA values into the data stream. Also accepts a CSS color string or a packed RGBA number.
 
 \warning the Color is written as a 24 (no alpha channel) or 32 bit color (with alpha channel). If you need to preserve greater color precision than this, you will need to serialize the components yourself.
 
-\note data size: varies, call serializedSize(Color) to determine
+\note data size: varies, call sizeof_color(Color) to determine
 
-\sa serializedSize(Color)
+\sa sizeof_color(Color)
 \sa Deserializer.deserialize_color()
 
 

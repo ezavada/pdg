@@ -1,0 +1,508 @@
+{
+  "version": 1,
+  "inventory": "src/bindings/emscripten/manual-bindings.json",
+  "scope": "All remaining native public members in manual-bindings.json, each assigned one primary reason. Source inspection, not a runtime parity claim. Explicit adapter mappings, support bindings, properties and JavaScript-only helpers are outside this inventory.",
+  "status_definitions": {
+    "implemented": "Browser implementation found in native registration or JS wrapper; not a blanket behavior/parity guarantee.",
+    "conditional": "Implementation is guarded by PDG_SPRITER_SUPPORT.",
+    "inherited": "Browser resolves an inherited method rather than an own registration.",
+    "missing": "No browser registration or JS implementation found in reviewed sources.",
+    "placeholder": "Public JS method exists but returns a fixed placeholder."
+  },
+  "count": 72,
+  "status_counts": {
+    "implemented": 50,
+    "conditional": 4,
+    "missing": 14,
+    "placeholder": 4
+  },
+  "groups": [
+    {
+      "id": "argument-rules",
+      "title": "Defaults and validation still written in JavaScript",
+      "reason": "Wrappers implement defaults, integer ranges, enum domains, finite-value and arity checks. Simple defaults are already supported; compound/domain validation must be preserved or derived from source before removing the wrappers.",
+      "next_step": "Use existing IDL default handling; generalize source-derived validation for finite coordinates, enum/range checks and dependent defaults. Keep engine preconditions distinct from argument validation.",
+      "sources": [
+        "src/bindings/emscripten/pdg_em_parts.h",
+        "src/bindings/emscripten/pdg_em_camera.h",
+        "src/bindings/emscripten/pdg_em_particles.h",
+        "src/bindings/javascript/pdg.js",
+        "src/bindings/emscripten/pdg_em_custom.inc"
+      ],
+      "members": [
+        {
+          "name": "Collider.addCircle",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.addImageMask",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.getCapsuleEnd",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.getCapsuleRadius",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.getCapsuleStart",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.getCircleRadius",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.getShapeId",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.getShapeName",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.getShapeType",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.isSourceShape",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.removeShape",
+          "status": "implemented"
+        },
+        {
+          "name": "Collider.setImageMask",
+          "status": "implemented"
+        },
+        {
+          "name": "Part.solveIK",
+          "status": "implemented"
+        },
+        {
+          "name": "ParticleEmitter.emit",
+          "status": "implemented"
+        },
+        {
+          "name": "PhysicsBody.applyTorque",
+          "status": "implemented"
+        },
+        {
+          "name": "PhysicsBody.removeForce",
+          "status": "implemented"
+        },
+        {
+          "name": "PhysicsBody.step",
+          "status": "implemented",
+          "note": "Native adapter rejects attached bodies before calling step; preserve this binding-specific precondition."
+        }
+      ],
+      "count": 17
+    },
+    {
+      "id": "signature-dispatch",
+      "title": "Overloads, argument reshaping and call dispatch",
+      "reason": "The public call is not a single unambiguous member pointer: overload selection, argument reordering, convenience composition, or static-to-instance exposure is handwritten.",
+      "next_step": "Derive overload selection from shared native call bodies and model reusable argument/default transformations; preserve API semantics.",
+      "sources": [
+        "src/bindings/emscripten/pdg_em_parts.h",
+        "src/bindings/emscripten/pdg_em_camera.h",
+        "src/bindings/emscripten/pdg_em_particles.h",
+        "src/bindings/emscripten/pdg_em_custom.inc",
+        "src/bindings/javascript/pdg.js",
+        "src/inc/pdg/sys/tilelayer.h",
+        "src/inc/pdg/sys/image.h"
+      ],
+      "members": [
+        {
+          "name": "Image.getImageBounds",
+          "status": "implemented",
+          "note": "No-argument/native mutable Point& overloads; shared point adapter exists, public optional/null dispatch remains manual."
+        },
+        {
+          "name": "Part.setIKLimits",
+          "status": "implemented",
+          "note": "One PhysicsConstraint or two angles select different native overloads."
+        },
+        {
+          "name": "ParticleEmitter.setParticleSpeed",
+          "status": "implemented",
+          "note": "One speed means min=max; selects the two-argument native overload."
+        },
+        {
+          "name": "PhysicsBody.applyForce",
+          "status": "implemented",
+          "note": "Optional application point selects overloads; applyForce reorders arguments; velocity accepts vector or x/y."
+        },
+        {
+          "name": "PhysicsBody.applyImpulse",
+          "status": "implemented",
+          "note": "Optional application point selects overloads; applyForce reorders arguments; velocity accepts vector or x/y."
+        },
+        {
+          "name": "PhysicsBody.setVelocity",
+          "status": "implemented",
+          "note": "Optional application point selects overloads; applyForce reorders arguments; velocity accepts vector or x/y."
+        },
+        {
+          "name": "Sprite.supportsAnimationPhysics",
+          "status": "conditional",
+          "note": "Static native capability query exposed as an instance method under PDG_SPRITER_SUPPORT."
+        },
+        {
+          "name": "TileLayer.checkCollision",
+          "status": "missing",
+          "note": "No browser registration or JS wrapper found. Native signature includes an extra optional float* output parameter omitted by the script API."
+        }
+      ],
+      "count": 8
+    },
+    {
+      "id": "records-arrays",
+      "title": "Structured records and collections",
+      "reason": "Manual value_object definitions, vector/array conversion or options-object expansion supply a different ABI from the public structured data types.",
+      "next_step": "Generate structured record fields and collection conversion from schema/native type mappings; preserve limits, ownership and defaults.",
+      "sources": [
+        "src/bindings/emscripten/pdg_em_parts.h",
+        "src/bindings/emscripten/pdg_em_camera.h",
+        "src/bindings/emscripten/pdg_em_custom.inc",
+        "src/bindings/javascript/pdg.js"
+      ],
+      "members": [
+        {
+          "name": "Camera.matchCutTo",
+          "status": "implemented",
+          "note": "Validates options, expands fields and reconstructs CameraMatchOptions, including sprite handles and easing functions."
+        },
+        {
+          "name": "Camera.matchFadeTo",
+          "status": "implemented",
+          "note": "Validates matching and fade options, expands fields and reconstructs CameraMatchOptions, including sprite handles and easing functions."
+        },
+        {
+          "name": "Collider.addPolygon",
+          "status": "implemented",
+          "note": "Point[] or Polygon becomes std::vector<Point>; 3..4096 vertex guard."
+        },
+        {
+          "name": "Collider.setPolygon",
+          "status": "implemented",
+          "note": "Point[] or Polygon becomes std::vector<Point>; 3..4096 vertex guard."
+        },
+        {
+          "name": "Part.getTransform",
+          "status": "implemented",
+          "note": "SpatialTransform value_object registration plus validated/default coordinate-space argument."
+        },
+        {
+          "name": "PhysicsBody.getDriveState",
+          "status": "implemented",
+          "note": "Direct getters depend on handwritten PhysicsBodyState/PhysicsDriveState value_object registrations."
+        },
+        {
+          "name": "PhysicsBody.getState",
+          "status": "implemented",
+          "note": "Direct getters depend on handwritten PhysicsBodyState/PhysicsDriveState value_object registrations."
+        },
+        {
+          "name": "Sprite.getPartNames",
+          "status": "implemented",
+          "note": "Native string collection copied into a JavaScript array."
+        }
+      ],
+      "count": 8
+    },
+    {
+      "id": "callbacks",
+      "title": "Callback interfaces and lifetimes",
+      "reason": "Native interface bridges or std::function adapters retain JS callbacks, control lifetime, translate arguments/results and preserve identity. Evaluator conversion alone does not implement these different callback contracts.",
+      "next_step": "Define reusable callback/interface contracts once per shape, including ownership, error handling, cancellation and synchronous return validation.",
+      "sources": [
+        "src/bindings/emscripten/pdg_em_animation_helpers.h",
+        "src/bindings/emscripten/pdg_em_parts.h",
+        "src/bindings/javascript/pdg.js",
+        "src/bindings/common/animation/sprite.cpp",
+        "src/bindings/emscripten/pdg_em_custom.inc"
+      ],
+      "members": [
+        {
+          "name": "Animated.addAnimationHelper",
+          "status": "implemented",
+          "note": "Native IAnimationHelper implementation plus owner-scoped ID registry and destructor cleanup."
+        },
+        {
+          "name": "Animated.removeAnimationHelper",
+          "status": "implemented",
+          "note": "Native IAnimationHelper implementation plus owner-scoped ID registry and destructor cleanup."
+        },
+        {
+          "name": "Collider.setCollisionFilter",
+          "status": "implemented",
+          "note": "Contact records and canonical handles; collision-filter callback must return boolean."
+        },
+        {
+          "name": "Collider.setContactHandler",
+          "status": "implemented",
+          "note": "Contact records and canonical handles; collision-filter callback must return boolean."
+        },
+        {
+          "name": "Sprite.setDrawHelper",
+          "status": "missing",
+          "note": "No browser method implementation found; native drawing-helper interface/lifetime bridge required."
+        },
+        {
+          "name": "Sprite.setPostDrawHelper",
+          "status": "missing",
+          "note": "No browser method implementation found; native drawing-helper interface/lifetime bridge required."
+        },
+        {
+          "name": "pdg.registerEasingFunction",
+          "status": "implemented",
+          "note": "Callback registry and fixed native function-pointer trampolines. Distinct from converting an already registered easing ID."
+        }
+      ],
+      "count": 7
+    },
+    {
+      "id": "serialization",
+      "title": "Serialization interfaces and script-object registry",
+      "reason": "Concrete Serializer/Deserializer wrappers must bridge ISerializer*/IDeserializer* parameters; script class/reference registration depends on runtime object identity rather than a plain native member call.",
+      "next_step": "Generate concrete-to-interface pointer adapters, and implement a shared browser object/reference registry contract for the missing reference APIs.",
+      "sources": [
+        "src/bindings/emscripten/pdg_em_custom.inc",
+        "src/bindings/javascript/pdg.js",
+        "src/bindings/common/data/serializer.cpp",
+        "src/bindings/common/data/deserializer.cpp"
+      ],
+      "members": [
+        {
+          "name": "Deserializer.deserialize_ref",
+          "status": "missing",
+          "note": "No browser method found; needs the matching runtime-reference registry/stream contract."
+        },
+        {
+          "name": "Image.deserialize",
+          "status": "implemented",
+          "note": "Concrete wrapper reference passed to native serializer/deserializer interface pointer."
+        },
+        {
+          "name": "Image.getSerializedSize",
+          "status": "implemented",
+          "note": "Concrete wrapper reference passed to native serializer/deserializer interface pointer."
+        },
+        {
+          "name": "Image.serialize",
+          "status": "implemented",
+          "note": "Concrete wrapper reference passed to native serializer/deserializer interface pointer."
+        },
+        {
+          "name": "Serializer.serialize_ref",
+          "status": "missing",
+          "note": "No browser method found. Common binding uses runtime OBJECT_REF; browser object serialization does not supply these separate APIs."
+        },
+        {
+          "name": "Serializer.sizeof_ref",
+          "status": "missing",
+          "note": "No browser method found. Common binding uses runtime OBJECT_REF; browser object serialization does not supply these separate APIs."
+        },
+        {
+          "name": "Sprite.deserialize",
+          "status": "implemented",
+          "note": "Concrete wrapper reference passed to native serializer/deserializer interface pointer."
+        },
+        {
+          "name": "Sprite.getSerializedSize",
+          "status": "implemented",
+          "note": "Concrete wrapper reference passed to native serializer/deserializer interface pointer."
+        },
+        {
+          "name": "Sprite.serialize",
+          "status": "implemented",
+          "note": "Concrete wrapper reference passed to native serializer/deserializer interface pointer."
+        },
+        {
+          "name": "pdg.registerSerializableClass",
+          "status": "implemented",
+          "note": "JavaScript constructor/class-tag registry, independent of native function-pointer class factories."
+        }
+      ],
+      "count": 10
+    },
+    {
+      "id": "resource-factories",
+      "title": "Resource factories and Spriter lookup",
+      "reason": "File/Port construction and Spriter lookup use native factory functions, C strings and retained object results, rather than ordinary constructors/member calls.",
+      "next_step": "Derive factory dispatch and string conversion policies; retain small engine-specific load/lookup functions where they perform actual resource work.",
+      "sources": [
+        "src/bindings/emscripten/pdg_em_custom.inc",
+        "src/bindings/emscripten/pdg_em_adaptors.cpp",
+        "src/bindings/javascript/pdg.js"
+      ],
+      "members": [
+        {
+          "name": "Image.Image",
+          "status": "implemented",
+          "note": "Filename path uses generated factory registration; offscreen Port overload and copyPixels handling remain handwritten JS/static factory."
+        },
+        {
+          "name": "Sprite.getAttachedSprite",
+          "status": "conditional",
+          "note": "Named attachment lookup through string-conversion adapter and retained canonical sprite, guarded by PDG_SPRITER_SUPPORT."
+        },
+        {
+          "name": "SpriteLayer.createSpriteFromSpriterEntity",
+          "status": "conditional",
+          "note": "Spriter load/lookup adapter and retained sprite result, guarded by PDG_SPRITER_SUPPORT."
+        },
+        {
+          "name": "SpriteLayer.createSpriteFromSpriterFile",
+          "status": "conditional",
+          "note": "Spriter load/lookup adapter and retained sprite result, guarded by PDG_SPRITER_SUPPORT."
+        }
+      ],
+      "count": 4
+    },
+    {
+      "id": "binary-numbers",
+      "title": "Binary spans and 64-bit number representation",
+      "reason": "A byte span needs pointer/length/ownership rules; 64-bit native values need an explicit JavaScript number conversion policy.",
+      "next_step": "Reuse byte-array/MemBlock policies with safe length and copy semantics; define signed/unsigned 64-bit numeric conversion consistently rather than using incidental casts.",
+      "sources": [
+        "src/bindings/emscripten/pdg_em_parts.h",
+        "src/bindings/javascript/pdg.js",
+        "src/bindings/common/animation/tile_layer.cpp",
+        "src/bindings/common/data/serializer.cpp",
+        "src/bindings/emscripten/pdg_em_custom.inc"
+      ],
+      "members": [
+        {
+          "name": "Collider.getId",
+          "status": "implemented",
+          "note": "Native uint64_t is explicitly converted to double; document/preserve precision semantics."
+        },
+        {
+          "name": "LogManager.binaryDump",
+          "status": "implemented",
+          "note": "Pure JavaScript Uint8Array/MemBlock formatting fallback; native API takes a pointer and length."
+        },
+        {
+          "name": "Serializer.serialize_8u",
+          "status": "missing",
+          "note": "No browser registration found; signed serialize_8 has an explicit adapter but unsigned does not."
+        },
+        {
+          "name": "Serializer.sizeof_8",
+          "status": "implemented",
+          "note": "JavaScript validates number and returns fixed size 8; no native integer conversion needed for sizing."
+        },
+        {
+          "name": "Serializer.sizeof_8u",
+          "status": "implemented",
+          "note": "JavaScript validates number and returns fixed size 8; no native integer conversion needed for sizing."
+        },
+        {
+          "name": "TileLayer.getMapData",
+          "status": "missing",
+          "note": "No browser registration found. Native returns byte pointer; common binding copies width*height into owned MemBlock and supplies world-size defaults."
+        }
+      ],
+      "count": 6
+    },
+    {
+      "id": "platform",
+      "title": "Platform forwarding, browser timers and placeholders",
+      "reason": "Public manager methods map to platform free functions, browser scheduling or window/fullscreen APIs rather than matching native instance signatures. Some have only placeholders or no browser mapping.",
+      "next_step": "Separate generator forwarding policies from real browser backend work; implement actual input state/fullscreen behavior before claiming parity.",
+      "sources": [
+        "src/bindings/javascript/pdg.js",
+        "src/bindings/common/core/event_manager.cpp",
+        "src/bindings/common/core/timer_manager.cpp",
+        "src/bindings/common/graphics/graphics_manager.cpp"
+      ],
+      "members": [
+        {
+          "name": "EventManager.getDeviceOrientation",
+          "status": "placeholder",
+          "note": "Browser returns zero roll/pitch/yaw."
+        },
+        {
+          "name": "EventManager.isButtonDown",
+          "status": "placeholder",
+          "note": "Browser returns false unconditionally."
+        },
+        {
+          "name": "EventManager.isKeyDown",
+          "status": "placeholder",
+          "note": "Browser returns false unconditionally."
+        },
+        {
+          "name": "EventManager.isRawKeyDown",
+          "status": "placeholder",
+          "note": "Browser returns false unconditionally."
+        },
+        {
+          "name": "GraphicsManager.createFullScreenPort",
+          "status": "missing",
+          "note": "No browser registration/wrapper found. Native mappings also need Port/string/default conversion and platform capability handling."
+        },
+        {
+          "name": "GraphicsManager.switchToFullScreenMode",
+          "status": "missing",
+          "note": "No browser registration/wrapper found. Native mappings also need Port/string/default conversion and platform capability handling."
+        },
+        {
+          "name": "GraphicsManager.switchToWindowMode",
+          "status": "missing",
+          "note": "No browser registration/wrapper found. Native mappings also need Port/string/default conversion and platform capability handling."
+        },
+        {
+          "name": "TimerManager.getMilliseconds",
+          "status": "implemented",
+          "note": "Browser singleton uses its JS clock/scheduler; native startTimer has additional UserData* argument."
+        },
+        {
+          "name": "TimerManager.startTimer",
+          "status": "implemented",
+          "note": "Browser singleton uses its JS clock/scheduler; native startTimer has additional UserData* argument."
+        }
+      ],
+      "count": 9
+    },
+    {
+      "id": "chipmunk-c-api",
+      "title": "Chipmunk user-data and owner queries",
+      "reason": "The remaining getType, getSprite and getOtherSprite calls recover type or owner data from native user-data pointers. Receiver-first C dispatch, joint selection and vector conversion are generated.",
+      "next_step": "Define safe type/owner recovery and borrowed-handle lifetime contracts before generating these queries.",
+      "sources": [
+        "src/bindings/common/physics/cp_arbiter.cpp",
+        "src/bindings/common/physics/cp_constraint.cpp",
+        "src/bindings/common/physics/cp_space.cpp",
+        "src/bindings/emscripten/pdg.embind"
+      ],
+      "members": [
+        {
+          "name": "CpConstraint.getOtherSprite",
+          "status": "missing",
+          "note": "Resolve cpBody A/B then recover Sprite from body user data; requires owner identity/lifetime handling."
+        },
+        {
+          "name": "CpConstraint.getSprite",
+          "status": "missing",
+          "note": "Resolve cpBody A/B then recover Sprite from body user data; requires owner identity/lifetime handling."
+        },
+        {
+          "name": "CpConstraint.getType",
+          "status": "missing",
+          "note": "Read joint type string from cpConstraint user data."
+        }
+      ],
+      "count": 3
+    }
+  ],
+  "inventory_sha256": "0de8145d084b26816f427c709448b983a9e7412648766d1d0733c1dc74f4195f",
+  "reviewed_base_commit": "beea4af5b",
+  "reviewed_state": "Working tree after native signature audit and follow-through migrations; shared policies replace 29 more manual registrations. Remaining entries need additional ABI, conversion, validation or platform work."
+}

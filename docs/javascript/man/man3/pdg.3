@@ -1,4 +1,4 @@
-.TH "pdg" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "pdg" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,6 +10,10 @@ pdg
 
 .in +1c
 .ti -1c
+.RI "struct \fBAffineTransform\fP"
+.br
+.RI "\fBAffineTransform\fP\&. "
+.ti -1c
 .RI "class \fBAnimated\fP"
 .br
 .RI "something that can be automatically moved, spun or resized over time\&. "
@@ -18,21 +22,221 @@ pdg
 .br
 .RI "\fBDrawing\fP attributes with programmed movement and appearance animation\&. "
 .ti -1c
+.RI "struct \fBAnimationBindingPose\fP"
+.br
+.RI "\fBAnimationBindingPose\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationBonePose\fP"
+.br
+.RI "\fBAnimationBonePose\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationContactState\fP"
+.br
+.RI "An independent contact position and influence sample\&. "
+.ti -1c
 .RI "class \fBAnimationContactTarget\fP"
 .br
 .RI "World and platform contact locks with timed release\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawableCallback\fP"
+.br
+.RI "Choose artwork during rendering\&. Return \fBDrawing\fP or null; undefined and Promises are invalid\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawableContext\fP"
+.br
+.RI "Borrowed drawing context; expires when the synchronous callback returns\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawableOptions\fP"
+.br
+.RI "Options shared by both \fBSprite\&.addAnimationDrawable\fP overloads\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawBounds\fP"
+.br
+.RI "\fBAnimationDrawBounds\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationDrawingBounds\fP"
+.br
+.RI "Finite bone-local artwork bounds, including stroke extents\&. "
+.ti -1c
+.RI "struct \fBAnimationEvaluationContext\fP"
+.br
+.RI "Borrowed synchronous evaluator context\&. Do not retain it after the call\&. "
+.ti -1c
+.RI "struct \fBAnimationEvaluator\fP"
+.br
+.RI "Observe the playback target and return a boolean\&. Promises and nonboolean results are invalid\&. "
+.ti -1c
+.RI "struct \fBAnimationEvent\fP"
+.br
+.RI "\fBAnimationEvent\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationEventHandler\fP"
+.br
+.RI "Receives a lifecycle notification after the scheduler publishes its state\&. Return value is ignored\&. "
+.ti -1c
+.RI "struct \fBAnimationFABRIKOptions\fP"
+.br
+.RI "\fBAnimationFABRIKOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationHelperCallback\fP"
+.br
+.RI "\fBAnimationHelperCallback\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationIKOptions\fP"
+.br
+.RI "\fBAnimationIKOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationIKResult\fP"
+.br
+.RI "\fBAnimationIKResult\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationJiggleJointOptions\fP"
+.br
+.RI "\fBAnimationJiggleJointOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationJiggleKick\fP"
+.br
+.RI "\fBAnimationJiggleKick\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationJiggleOptions\fP"
+.br
+.RI "\fBAnimationJiggleOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationJiggleSettings\fP"
+.br
+.RI "\fBAnimationJiggleSettings\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationModifierCallback\fP"
+.br
+.RI "\fBAnimationModifierCallback\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationModifierContext\fP"
+.br
+.RI "\fBAnimationModifierContext\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsBodyDefinition\fP"
+.br
+.RI "\fBAnimationPhysicsBodyDefinition\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsDefinition\fP"
+.br
+.RI "\fBAnimationPhysicsDefinition\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsDriveOptions\fP"
+.br
+.RI "\fBAnimationPhysicsDriveOptions\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsDriveSettings\fP"
+.br
+.RI "\fBAnimationPhysicsDriveSettings\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPhysicsJointDefinition\fP"
+.br
+.RI "\fBAnimationPhysicsJointDefinition\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationPose\fP"
+.br
+.RI "Independent pose snapshot; bone and binding transforms are local to their parent\&. "
+.ti -1c
+.RI "struct \fBAnimationPoseView\fP"
+.br
+.RI "\fBAnimationPoseView\fP\&. "
+.ti -1c
+.RI "class \fBAnimationScript\fP"
+.br
+.RI "Library-owned recorder for reusable native animation commands\&. "
+.ti -1c
+.RI "struct \fBAnimationSpringState\fP"
+.br
+.RI "An independent spring position and velocity sample\&. All fields must be finite numbers\&. "
 .ti -1c
 .RI "class \fBAnimationSpringTarget\fP"
 .br
 .RI "Spring target smoothing and recoil impulses\&. "
 .ti -1c
+.RI "struct \fBAnimationTags\fP"
+.br
+.RI "\fBAnimationTags\fP\&. "
+.ti -1c
+.RI "struct \fBAnimationTransform\fP"
+.br
+.RI "A plain transform record\&. All six fields must be finite numbers\&. "
+.ti -1c
+.RI "struct \fBAnimationVariable\fP"
+.br
+.RI "\fBAnimationVariable\fP\&. "
+.ti -1c
 .RI "class \fBAttributes\fP"
 .br
 .RI "Container for styling and transformation attributes used in drawing operations\&. "
 .ti -1c
+.RI "class \fBBone\fP"
+.br
+.RI "Animate a single bone in a \fBSprite\fP's current rig\&. "
+.ti -1c
+.RI "struct \fBByteArray\fP"
+.br
+.RI "\fBByteArray\fP\&. "
+.ti -1c
+.RI "class \fBCamera\fP"
+.br
+.RI "\fBAnimated\fP view owned by a \fBPort\fP or shared by layers\&. "
+.ti -1c
+.RI "struct \fBCameraMatchCutOptions\fP"
+.br
+.RI "\fBCameraMatchCutOptions\fP\&. "
+.ti -1c
+.RI "struct \fBCameraMatchFadeOptions\fP"
+.br
+.RI "\fBCameraMatchFadeOptions\fP\&. "
+.ti -1c
+.RI "struct \fBCameraZoomEvent\fP"
+.br
+.RI "\fBCameraZoomEvent\fP\&. "
+.ti -1c
+.RI "struct \fBCameraZoomEventCallback\fP"
+.br
+.RI "\fBCameraZoomEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBClassTagCallback\fP"
+.br
+.RI "\fBClassTagCallback\fP\&. "
+.ti -1c
 .RI "class \fBCollider\fP"
 .br
 .RI "Optional shapes, filtering, sensors and contacts for a \fBSprite\fP, \fBPart\fP or \fBParticle\fP\&. "
+.ti -1c
+.RI "struct \fBColliderContact\fP"
+.br
+.RI "\fBColliderContact\fP\&. "
+.ti -1c
+.RI "struct \fBColliderContactCallback\fP"
+.br
+.RI "\fBColliderContactCallback\fP\&. "
+.ti -1c
+.RI "struct \fBColliderContactEvent\fP"
+.br
+.RI "\fBColliderContactEvent\fP\&. "
+.ti -1c
+.RI "struct \fBColliderContactEventCallback\fP"
+.br
+.RI "\fBColliderContactEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBColliderFilterCallback\fP"
+.br
+.RI "\fBColliderFilterCallback\fP\&. "
+.ti -1c
+.RI "struct \fBCollisionQueryHit\fP"
+.br
+.RI "\fBCollisionQueryHit\fP\&. "
+.ti -1c
+.RI "struct \fBCollisionQueryOptions\fP"
+.br
+.RI "\fBCollisionQueryOptions\fP\&. "
+.ti -1c
+.RI "struct \fBCollisionQueryPredicate\fP"
+.br
+.RI "\fBCollisionQueryPredicate\fP\&. "
 .ti -1c
 .RI "class \fBColor\fP"
 .br
@@ -54,17 +258,45 @@ pdg
 .br
 .RI "container for simulating objects (\fIChipmunk Physics Only\fP) "
 .ti -1c
+.RI "struct \fBCurrentScreenMode\fP"
+.br
+.RI "\fBCurrentScreenMode\fP\&. "
+.ti -1c
+.RI "struct \fBDeserializeCallback\fP"
+.br
+.RI "\fBDeserializeCallback\fP\&. "
+.ti -1c
 .RI "class \fBDeserializer\fP"
 .br
 .RI "deserialize data from a serialized data stream "
 .ti -1c
+.RI "struct \fBDeviceOrientation\fP"
+.br
+.RI "\fBDeviceOrientation\fP\&. "
+.ti -1c
 .RI "class \fBDrawing\fP"
 .br
-.RI "Container for drawing elements (lines, shapes, images) that can be rendered to a \fBPort\fP\&. "
+.RI "Container for drawing elements (lines, shapes, images, text) that can be rendered to a \fBPort\fP\&. "
+.ti -1c
+.RI "struct \fBEasingCallback\fP"
+.br
+.RI "\fBEasingCallback\fP\&. "
+.ti -1c
+.RI "struct \fBEasingFunction\fP"
+.br
+.RI "A PDG easing constant identifying a built-in easing function\&. "
 .ti -1c
 .RI "class \fBElementRef\fP"
 .br
 .RI "Reference to a drawing element that allows modification of its properties and control points\&. "
+.ti -1c
+.RI "struct \fBEvent\fP"
+.br
+.RI "\fBEvent\fP\&. "
+.ti -1c
+.RI "struct \fBEventCallback\fP"
+.br
+.RI "\fBEventCallback\fP\&. "
 .ti -1c
 .RI "class \fBEventEmitter\fP"
 .br
@@ -73,6 +305,22 @@ pdg
 .RI "class \fBEventManager\fP"
 .br
 .RI "Distributes events to event handlers\&. "
+.ti -1c
+.RI "struct \fBEventMap\fP"
+.br
+.RI "\fBEventMap\fP\&. "
+.ti -1c
+.RI "struct \fBEventSubscription\fP"
+.br
+.RI "\fBEventSubscription\fP\&. "
+.ti -1c
+.RI "struct \fBFABRIKResult\fP"
+.br
+.RI "\fBFABRIKResult\fP\&. "
+.ti -1c
+.RI "struct \fBFileFindData\fP"
+.br
+.RI "Native search handle\&. Obtain from findFirst and release using findClose\&. "
 .ti -1c
 .RI "class \fBFileManager\fP"
 .br
@@ -102,6 +350,10 @@ pdg
 .br
 .RI "bitmap image containing a number of frames that can be blitted onto the screen "
 .ti -1c
+.RI "struct \fBInterfaceMetadata\fP"
+.br
+.RI "An independent metadata module, class or member record\&. Extension fields contain JSON metadata\&. "
+.ti -1c
 .RI "class \fBISerializable\fP"
 .br
 .RI "Interface for an object which can be serialized\&. "
@@ -110,49 +362,205 @@ pdg
 .br
 .RI "helper for drawing sprite overlays and add-on effects "
 .ti -1c
+.RI "struct \fBJiggleJointState\fP"
+.br
+.RI "\fBJiggleJointState\fP\&. "
+.ti -1c
+.RI "struct \fBJiggleResult\fP"
+.br
+.RI "\fBJiggleResult\fP\&. "
+.ti -1c
+.RI "struct \fBJiggleState\fP"
+.br
+.RI "\fBJiggleState\fP\&. "
+.ti -1c
+.RI "struct \fBJiggleTarget\fP"
+.br
+.RI "\fBJiggleTarget\fP\&. "
+.ti -1c
+.RI "struct \fBJSONValue\fP"
+.br
+.RI "\fBJSONValue\fP\&. "
+.ti -1c
+.RI "struct \fBKeyEvent\fP"
+.br
+.RI "\fBKeyEvent\fP\&. "
+.ti -1c
+.RI "struct \fBKeyEventCallback\fP"
+.br
+.RI "\fBKeyEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBKeyPressEvent\fP"
+.br
+.RI "\fBKeyPressEvent\fP\&. "
+.ti -1c
+.RI "struct \fBKeyPressEventCallback\fP"
+.br
+.RI "\fBKeyPressEventCallback\fP\&. "
+.ti -1c
 .RI "class \fBLogManager\fP"
 .br
 .RI "used for doing logging with variable debug levels "
 .ti -1c
 .RI "class \fBMemBlock\fP"
 .br
-.RI "holds arbitrary blocks of memory "
+.RI "Hold native memory for exchange between PDG APIs\&. "
+.ti -1c
+.RI "struct \fBMouseEvent\fP"
+.br
+.RI "\fBMouseEvent\fP\&. "
+.ti -1c
+.RI "struct \fBMouseEventCallback\fP"
+.br
+.RI "\fBMouseEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBMouseTrackingEvent\fP"
+.br
+.RI "Browser mouse tracking payload; the native V8 converter does not deliver these events\&. "
+.ti -1c
+.RI "struct \fBMouseTrackingEventCallback\fP"
+.br
+.RI "\fBMouseTrackingEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBNativeEventCallback\fP"
+.br
+.RI "\fBNativeEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBNetAcceptCallback\fP"
+.br
+.RI "\fBNetAcceptCallback\fP\&. "
 .ti -1c
 .RI "class \fBNetClient\fP"
 .br
 .RI "a network endpoint that can initiate a connection "
 .ti -1c
+.RI "struct \fBNetClientErrorCallback\fP"
+.br
+.RI "\fBNetClientErrorCallback\fP\&. "
+.ti -1c
+.RI "struct \fBNetClientOptions\fP"
+.br
+.RI "\fBNetClientOptions\fP\&. "
+.ti -1c
+.RI "struct \fBNetCloseCallback\fP"
+.br
+.RI "\fBNetCloseCallback\fP\&. "
+.ti -1c
+.RI "struct \fBNetConnectCallback\fP"
+.br
+.RI "\fBNetConnectCallback\fP\&. "
+.ti -1c
 .RI "class \fBNetConnection\fP"
 .br
 .RI "sends data between two network endpoints "
+.ti -1c
+.RI "struct \fBNetMessageCallback\fP"
+.br
+.RI "\fBNetMessageCallback\fP\&. "
 .ti -1c
 .RI "class \fBNetServer\fP"
 .br
 .RI "a network endpoint that can accept incoming connections "
 .ti -1c
+.RI "struct \fBNetServerAddress\fP"
+.br
+.RI "\fBNetServerAddress\fP\&. "
+.ti -1c
+.RI "struct \fBNetServerErrorCallback\fP"
+.br
+.RI "\fBNetServerErrorCallback\fP\&. "
+.ti -1c
+.RI "struct \fBNetServerOptions\fP"
+.br
+.RI "\fBNetServerOptions\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkData\fP"
+.br
+.RI "\fBNetworkData\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkError\fP"
+.br
+.RI "\fBNetworkError\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkMessage\fP"
+.br
+.RI "\fBNetworkMessage\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkSendable\fP"
+.br
+.RI "\fBNetworkSendable\fP\&. "
+.ti -1c
+.RI "struct \fBNetworkSocket\fP"
+.br
+.RI "\fBNetworkSocket\fP\&. "
+.ti -1c
 .RI "class \fBOffset\fP"
 .br
 .RI "offset within a 2D coordinate system "
+.ti -1c
+.RI "struct \fBParameterMetadata\fP"
+.br
+.RI "\fBParameterMetadata\fP\&. "
 .ti -1c
 .RI "class \fBPart\fP"
 .br
 .RI "An independently animated part owned by a \fBSprite\fP\&. "
 .ti -1c
+.RI "struct \fBPartFABRIKOptions\fP"
+.br
+.RI "\fBPartFABRIKOptions\fP\&. "
+.ti -1c
 .RI "class \fBParticle\fP"
 .br
 .RI "Lightweight whole-body artwork and optional physics\&. "
+.ti -1c
+.RI "struct \fBParticleBreakEvent\fP"
+.br
+.RI "\fBParticleBreakEvent\fP\&. "
+.ti -1c
+.RI "struct \fBParticleBreakEventCallback\fP"
+.br
+.RI "\fBParticleBreakEventCallback\fP\&. "
 .ti -1c
 .RI "class \fBParticleEmitter\fP"
 .br
 .RI "A configurable point source of independent particles\&. "
 .ti -1c
+.RI "struct \fBParticleTrailOptions\fP"
+.br
+.RI "\fBParticleTrailOptions\fP\&. "
+.ti -1c
+.RI "struct \fBPartJiggleJointOptions\fP"
+.br
+.RI "\fBPartJiggleJointOptions\fP\&. "
+.ti -1c
+.RI "struct \fBPartJiggleKick\fP"
+.br
+.RI "\fBPartJiggleKick\fP\&. "
+.ti -1c
+.RI "struct \fBPartJiggleOptions\fP"
+.br
+.RI "\fBPartJiggleOptions\fP\&. "
+.ti -1c
+.RI "struct \fBPartJiggleSettings\fP"
+.br
+.RI "\fBPartJiggleSettings\fP\&. "
+.ti -1c
 .RI "class \fBPhysicsBody\fP"
 .br
 .RI "Optional physical motion for a \fBSprite\fP or \fBPart\fP, using seconds\&. "
 .ti -1c
+.RI "struct \fBPhysicsBodyState\fP"
+.br
+.RI "\fBPhysicsBodyState\fP\&. "
+.ti -1c
 .RI "class \fBPhysicsConstraint\fP"
 .br
 .RI "A retained physical relationship between any two \fBPhysicsBody\fP owners\&. "
+.ti -1c
+.RI "struct \fBPhysicsDriveState\fP"
+.br
+.RI "\fBPhysicsDriveState\fP\&. "
 .ti -1c
 .RI "class \fBPoint\fP"
 .br
@@ -165,6 +573,22 @@ pdg
 .RI "class \fBPort\fP"
 .br
 .RI "area in which drawing is done, a viewport (\fIGUI Only\fP) "
+.ti -1c
+.RI "struct \fBPortDrawEvent\fP"
+.br
+.RI "\fBPortDrawEvent\fP\&. "
+.ti -1c
+.RI "struct \fBPortDrawEventCallback\fP"
+.br
+.RI "\fBPortDrawEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBPortResizeEvent\fP"
+.br
+.RI "\fBPortResizeEvent\fP\&. "
+.ti -1c
+.RI "struct \fBPortResizeEventCallback\fP"
+.br
+.RI "\fBPortResizeEventCallback\fP\&. "
 .ti -1c
 .RI "class \fBQuad\fP"
 .br
@@ -182,13 +606,65 @@ pdg
 .br
 .RI "rectangle with rotation for 2D coordinate system\&. "
 .ti -1c
+.RI "struct \fBRuntimeProfile\fP"
+.br
+.RI "\fBRuntimeProfile\fP\&. "
+.ti -1c
+.RI "class \fBScene\fP"
+.br
+.RI "Own layers, an isolated physics world, a camera, timers and simulation time\&. "
+.ti -1c
+.RI "struct \fBScreenMode\fP"
+.br
+.RI "\fBScreenMode\fP\&. "
+.ti -1c
+.RI "struct \fBScrollWheelEvent\fP"
+.br
+.RI "\fBScrollWheelEvent\fP\&. "
+.ti -1c
+.RI "struct \fBScrollWheelEventCallback\fP"
+.br
+.RI "\fBScrollWheelEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSerializableFactory\fP"
+.br
+.RI "A no-argument constructor returning an \fBISerializable\fP instance\&. "
+.ti -1c
+.RI "struct \fBSerializableImplementation\fP"
+.br
+.RI "\fBSerializableImplementation\fP\&. "
+.ti -1c
+.RI "struct \fBSerializeCallback\fP"
+.br
+.RI "\fBSerializeCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSerializedSizeCallback\fP"
+.br
+.RI "\fBSerializedSizeCallback\fP\&. "
+.ti -1c
 .RI "class \fBSerializer\fP"
 .br
 .RI "serialize data into memory "
 .ti -1c
+.RI "struct \fBShutdownEvent\fP"
+.br
+.RI "\fBShutdownEvent\fP\&. "
+.ti -1c
+.RI "struct \fBShutdownEventCallback\fP"
+.br
+.RI "\fBShutdownEventCallback\fP\&. "
+.ti -1c
 .RI "class \fBSound\fP"
 .br
 .RI "handles both short sounds and music (\fIGUI Only\fP) "
+.ti -1c
+.RI "struct \fBSoundEvent\fP"
+.br
+.RI "\fBSoundEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSoundEventCallback\fP"
+.br
+.RI "\fBSoundEventCallback\fP\&. "
 .ti -1c
 .RI "class \fBSoundManager\fP"
 .br
@@ -202,27 +678,131 @@ pdg
 .br
 .RI "animated, moving image that is automatically moved, animated, and drawn "
 .ti -1c
+.RI "struct \fBSpriteAnimationEvent\fP"
+.br
+.RI "\fBSpriteAnimationEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteAnimationEventCallback\fP"
+.br
+.RI "\fBSpriteAnimationEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteBreakEvent\fP"
+.br
+.RI "\fBSpriteBreakEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteBreakEventCallback\fP"
+.br
+.RI "\fBSpriteBreakEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteCollisionEvent\fP"
+.br
+.RI "\fBSpriteCollisionEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteCollisionEventCallback\fP"
+.br
+.RI "\fBSpriteCollisionEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteDrawCallback\fP"
+.br
+.RI "\fBSpriteDrawCallback\fP\&. "
+.ti -1c
 .RI "class \fBSpriteLayer\fP"
 .br
 .RI "creates and tracks collections of sprites "
+.ti -1c
+.RI "struct \fBSpriteLayerEvent\fP"
+.br
+.RI "\fBSpriteLayerEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteLayerEventCallback\fP"
+.br
+.RI "\fBSpriteLayerEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteRecoveryEvent\fP"
+.br
+.RI "\fBSpriteRecoveryEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteRecoveryEventCallback\fP"
+.br
+.RI "\fBSpriteRecoveryEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteTouchEvent\fP"
+.br
+.RI "\fBSpriteTouchEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteTouchEventCallback\fP"
+.br
+.RI "\fBSpriteTouchEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteTouchNotification\fP"
+.br
+.RI "Touch convenience handlers expose the touched sprite, layer and touch type\&. "
+.ti -1c
+.RI "struct \fBSpriteTouchNotificationCallback\fP"
+.br
+.RI "\fBSpriteTouchNotificationCallback\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteTriggerEvent\fP"
+.br
+.RI "\fBSpriteTriggerEvent\fP\&. "
+.ti -1c
+.RI "struct \fBSpriteTriggerEventCallback\fP"
+.br
+.RI "\fBSpriteTriggerEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBStartupEvent\fP"
+.br
+.RI "\fBStartupEvent\fP\&. "
+.ti -1c
+.RI "struct \fBStartupEventCallback\fP"
+.br
+.RI "\fBStartupEventCallback\fP\&. "
+.ti -1c
+.RI "struct \fBTileInfo\fP"
+.br
+.RI "\fBTileInfo\fP\&. "
 .ti -1c
 .RI "class \fBTileLayer\fP"
 .br
 .RI "efficiently handles large tile datasets, useful for backgrounds, terrains, etc\&.\&.\&. "
 .ti -1c
+.RI "struct \fBTimerEvent\fP"
+.br
+.RI "\fBTimerEvent\fP\&. "
+.ti -1c
+.RI "struct \fBTimerEventCallback\fP"
+.br
+.RI "\fBTimerEventCallback\fP\&. "
+.ti -1c
 .RI "class \fBTimerManager\fP"
 .br
 .RI "manages timers that can fire at a particular time, or repeatedly at an interval "
 .ti -1c
+.RI "struct \fBTimerNotification\fP"
+.br
+.RI "\fBTimerNotification\fP\&. "
+.ti -1c
+.RI "struct \fBTimerSubscription\fP"
+.br
+.RI "\fBTimerSubscription\fP\&. "
+.ti -1c
+.RI "class \fBTroupe\fP"
+.br
+.RI "Animate a collection of targets with one script clock\&. "
+.ti -1c
 .RI "class \fBVector\fP"
 .br
 .RI "vector (magnitude and direction) within a 2D coordinate system\&. "
+.ti -1c
+.RI "struct \fBXY\fP"
+.br
+.RI "A plain pair of coordinates accepted by geometry constructors\&. "
 .in -1c
 .SS "Functions"
 
 .in +1c
 .ti -1c
-.RI "boolean \fBanimationHasTag\fP (object pose, string object, string tag)"
+.RI "boolean \fBanimationHasTag\fP (\fBAnimationPose\fP pose, string object, string tag)"
 .br
 .RI "Test sampled animation metadata for a tag\&. "
 .ti -1c
@@ -243,7 +823,7 @@ pdg
 .RI "\fBDrawing\fP \fBcreateDrawing\fP ()"
 .br
 .ti -1c
-.RI "\fBISerializable\fP \fBcreateSerializableObject\fP (object obj, uint classTag)"
+.RI "\fBISerializable\fP \fBcreateSerializableObject\fP (\fBSerializableImplementation\fP obj, uint classTag)"
 .br
 .ti -1c
 .RI "\fBSpriteLayer\fP \fBcreateSpriteLayer\fP (\fBPort\fP port=null)"
@@ -272,6 +852,10 @@ pdg
 .ti -1c
 .RI "\fBdebug\fP (string msg)"
 .br
+.ti -1c
+.RI "string \fBdescribeInterface\fP (string interfaceName=undefined, string memberName=undefined)"
+.br
+.RI "Format structured interface metadata as readable signatures\&. "
 .ti -1c
 .RI "\fBerror\fP (string msg)"
 .br
@@ -318,6 +902,10 @@ pdg
 .RI "\fBgetGraphicsManager\fP"
 .br
 .RI "get the singleton instance of the \fBGraphicsManager\fP used by the pdg framework "
+.ti -1c
+.RI "\fBInterfaceMetadata\fP \fBgetInterfaceMetadata\fP (string interfaceName=undefined, string memberName=undefined)"
+.br
+.RI "Return an independent structured description of the available interface\&. "
 .ti -1c
 .RI "\fBLogManager\fP \fBgetLogManager\fP ()"
 .br
@@ -423,7 +1011,7 @@ pdg
 .RI "\fBrun\fP ()"
 .br
 .ti -1c
-.RI "\fBsetSerializationDebugMode\fP (bool debugMode)"
+.RI "\fBsetSerializationDebugMode\fP (boolean debugMode)"
 .br
 .ti -1c
 .RI "\fBsnd\fP"
@@ -539,10 +1127,6 @@ pdg
 .RI "const \fBaction_PreDrawLayer\fP = 41"
 .br
 .RI "eventType_SpriteLayer action: about to render a particular \fBSpriteLayer\fP "
-.ti -1c
-.RI "const \fBaction_ZoomComplete\fP = 48"
-.br
-.RI "eventType_SpriteLayer action: zooming a particular sprite layer is complete "
 .ti -1c
 .RI "const \fBall_events\fP = 0"
 .br
@@ -703,6 +1287,36 @@ pdg
 .br
 .ti -1c
 .RI "const \fBboneId_None\fP = 4294967295"
+.br
+.ti -1c
+.RI "const \fBcamera_Crossfade\fP = 0"
+.br
+.ti -1c
+.RI "const \fBcamera_LumaFade\fP = 5"
+.br
+.ti -1c
+.RI "const \fBcamera_WhipDown\fP = 9"
+.br
+.ti -1c
+.RI "const \fBcamera_WhipLeft\fP = 6"
+.br
+.ti -1c
+.RI "const \fBcamera_WhipRight\fP = 7"
+.br
+.ti -1c
+.RI "const \fBcamera_WhipUp\fP = 8"
+.br
+.ti -1c
+.RI "const \fBcamera_WipeDown\fP = 4"
+.br
+.ti -1c
+.RI "const \fBcamera_WipeLeft\fP = 1"
+.br
+.ti -1c
+.RI "const \fBcamera_WipeRight\fP = 2"
+.br
+.ti -1c
+.RI "const \fBcamera_WipeUp\fP = 3"
 .br
 .ti -1c
 .RI "\fBConfigManager\fP \fBcfg\fP"
@@ -965,6 +1579,9 @@ pdg
 .br
 .RI "a timer fire event "
 .ti -1c
+.RI "const \fBeventType_ZoomComplete\fP = 28"
+.br
+.ti -1c
 .RI "\fBEventManager\fP \fBevt\fP"
 .br
 .ti -1c
@@ -1058,6 +1675,14 @@ pdg
 .RI "boolean \fBhasNetwork\fP"
 .br
 .ti -1c
+.RI "boolean \fBhasNetworkClient\fP"
+.br
+.RI "True when \fBNetClient\fP is available\&. "
+.ti -1c
+.RI "boolean \fBhasNetworkServer\fP"
+.br
+.RI "True when \fBNetServer\fP and incoming listeners are available\&. "
+.ti -1c
 .RI "boolean \fBhasSound\fP"
 .br
 .ti -1c
@@ -1074,6 +1699,12 @@ pdg
 .br
 .ti -1c
 .RI "const \fBinit_StdOut\fP = 3"
+.br
+.ti -1c
+.RI "const \fBjiggleMode_Chain\fP = 0"
+.br
+.ti -1c
+.RI "const \fBjiggleMode_IKTarget\fP = 1"
 .br
 .ti -1c
 .RI "const \fBkey_Backspace\fP = 8"
@@ -1260,6 +1891,18 @@ pdg
 .br
 .ti -1c
 .RI "\fBLogManager\fP \fBlm\fP"
+.br
+.ti -1c
+.RI "const \fBmatchSource\fP = 0"
+.br
+.ti -1c
+.RI "const \fBmatchSourceAndSize\fP = 1"
+.br
+.ti -1c
+.RI "const \fBmatchTarget\fP = 2"
+.br
+.ti -1c
+.RI "const \fBmatchTargetAndSize\fP = 3"
 .br
 .ti -1c
 .RI "const \fBpartId_None\fP = 4294967295"
@@ -1534,10 +2177,1219 @@ pdg
 .ti -1c
 .RI "const \fBtype_Spline\fP = 2"
 .br
+.ti -1c
+.RI "const \fBtype_Text\fP = 11"
+.br
 .in -1c
+.SH "Class Documentation"
+.PP 
+.SH "struct pdg::AnimationDrawableCallback"
+.PP 
+Choose artwork during rendering\&. Return \fBDrawing\fP or null; undefined and Promises are invalid\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(context)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fR\fBDrawing\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter context: \fBAnimationDrawableContext\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::AnimationEvaluator"
+.PP 
+Observe the playback target and return a boolean\&. Promises and nonboolean results are invalid\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(context)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter context: \fBAnimationEvaluationContext\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::AnimationEventHandler"
+.PP 
+Receives a lifecycle notification after the scheduler publishes its state\&. Return value is ignored\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBAnimationEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::AnimationHelperCallback"
+.PP 
+\fBAnimationHelperCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(animated,deltaSeconds)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter animated: \fR\fBAnimated\fP\fP\&. Parameter deltaSeconds: \fRnumber\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::AnimationModifierCallback"
+.PP 
+\fBAnimationModifierCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(pose,context)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRundefined\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter pose: \fBAnimationPoseView\fP\&. Parameter context: \fBAnimationModifierContext\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::CameraZoomEventCallback"
+.PP 
+\fBCameraZoomEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBCameraZoomEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::ClassTagCallback"
+.PP 
+\fBClassTagCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback()\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRnumber\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. 
+.RE
+.PP
+
+.SH "struct pdg::ColliderContactCallback"
+.PP 
+\fBColliderContactCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(contact)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter contact: \fBColliderContact\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::ColliderContactEventCallback"
+.PP 
+\fBColliderContactEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBColliderContactEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::ColliderFilterCallback"
+.PP 
+\fBColliderFilterCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(collider,other)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter collider: \fR\fBCollider\fP\fP\&. Parameter other: \fR\fBCollider\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::CollisionQueryPredicate"
+.PP 
+\fBCollisionQueryPredicate\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. Lifetime: Synchronous; do not mutate geometry or scene membership, advance scenes, or recursively query\&.\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(collider)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. Parameter collider: \fR\fBCollider\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::DeserializeCallback"
+.PP 
+\fBDeserializeCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(deserializer)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter deserializer: \fR\fBDeserializer\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::EasingCallback"
+.PP 
+\fBEasingCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(elapsed,begin,change,duration)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRnumber\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter elapsed: \fRnumber\fP\&. Parameter begin: \fRnumber\fP\&. Parameter change: \fRnumber\fP\&. Parameter duration: \fRnumber\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::EventCallback"
+.PP 
+\fBEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::KeyEventCallback"
+.PP 
+\fBKeyEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBKeyEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::KeyPressEventCallback"
+.PP 
+\fBKeyPressEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBKeyPressEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::MouseEventCallback"
+.PP 
+\fBMouseEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBMouseEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::MouseTrackingEventCallback"
+.PP 
+\fBMouseTrackingEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBMouseTrackingEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NativeEventCallback"
+.PP 
+\fBNativeEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetAcceptCallback"
+.PP 
+\fBNetAcceptCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(connection)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter connection: \fR\fBNetConnection\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetClientErrorCallback"
+.PP 
+\fBNetClientErrorCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(error,endpoint)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter error: \fBNetworkError\fP\&. Parameter endpoint: \fR\fBNetClient\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetCloseCallback"
+.PP 
+\fBNetCloseCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(connection)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter connection: \fR\fBNetConnection\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetConnectCallback"
+.PP 
+\fBNetConnectCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(connection)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter connection: \fR\fBNetConnection\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetMessageCallback"
+.PP 
+\fBNetMessageCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(message,connection,transport)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter message: \fBNetworkMessage\fP\&. Parameter connection: \fR\fBNetConnection\fP\fP\&. Parameter transport: \fR"tcp"\fP or \fR"udp"\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetServerErrorCallback"
+.PP 
+\fBNetServerErrorCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(error,endpoint)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter error: \fBNetworkError\fP\&. Parameter endpoint: \fR\fBNetServer\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::NetworkSocket"
+.PP 
+\fBNetworkSocket\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBExternal type\fP
+.RS 4
+\fRSocket\fP from \fRnode:net\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::ParticleBreakEventCallback"
+.PP 
+\fBParticleBreakEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBParticleBreakEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::PortDrawEventCallback"
+.PP 
+\fBPortDrawEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBPortDrawEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::PortResizeEventCallback"
+.PP 
+\fBPortResizeEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBPortResizeEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::ScrollWheelEventCallback"
+.PP 
+\fBScrollWheelEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBScrollWheelEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SerializableFactory"
+.PP 
+A no-argument constructor returning an \fBISerializable\fP instance\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRnew\fP callback() 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fR\fBISerializable\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SerializeCallback"
+.PP 
+\fBSerializeCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(serializer)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter serializer: \fR\fBSerializer\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SerializedSizeCallback"
+.PP 
+\fBSerializedSizeCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(serializer)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRnumber\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter serializer: \fR\fBSerializer\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::ShutdownEventCallback"
+.PP 
+\fBShutdownEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBShutdownEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SoundEventCallback"
+.PP 
+\fBSoundEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSoundEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteAnimationEventCallback"
+.PP 
+\fBSpriteAnimationEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSpriteAnimationEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteBreakEventCallback"
+.PP 
+\fBSpriteBreakEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSpriteBreakEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteCollisionEventCallback"
+.PP 
+\fBSpriteCollisionEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSpriteCollisionEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteDrawCallback"
+.PP 
+\fBSpriteDrawCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(sprite,port)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter sprite: \fR\fBSprite\fP\fP\&. Parameter port: \fR\fBPort\fP\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteLayerEventCallback"
+.PP 
+\fBSpriteLayerEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSpriteLayerEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteRecoveryEventCallback"
+.PP 
+\fBSpriteRecoveryEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSpriteRecoveryEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteTouchEventCallback"
+.PP 
+\fBSpriteTouchEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSpriteTouchEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteTouchNotificationCallback"
+.PP 
+\fBSpriteTouchNotificationCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSpriteTouchNotification\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::SpriteTriggerEventCallback"
+.PP 
+\fBSpriteTriggerEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBSpriteTriggerEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::StartupEventCallback"
+.PP 
+\fBStartupEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBStartupEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::TimerEventCallback"
+.PP 
+\fBTimerEventCallback\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRboolean\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Must return synchronously\&. Parameter event: \fBTimerEvent\fP\&. 
+.RE
+.PP
+
+.SH "struct pdg::TimerNotification"
+.PP 
+\fBTimerNotification\fP\&. 
+
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&. 
+.RE
+.PP
+\fBCall signature\fP
+.RS 4
+\fRcallback(event)\fP 
+.RE
+.PP
+\fBResult\fP
+.RS 4
+\fRvoid\fP\&. Parameter event: \fBTimerEvent\fP\&. 
+.RE
+.PP
+
 .SH "Function Documentation"
 .PP 
-.SS "boolean animationHasTag (object pose, string object, string tag)"
+.SS "boolean animationHasTag (\fBAnimationPose\fP pose, string object, string tag)"
 
 .PP
 Test sampled animation metadata for a tag\&. Reads an owned snapshot without changing playback\&. Object and tag names are exact and case-sensitive\&. Missing objects/tags return false; an invalid snapshot or non-string names throw\&.
@@ -1596,7 +3448,7 @@ Referenced by \fBcleanupLayer()\fP\&.
 References \fBcreateDrawing()\fP\&.
 .PP
 Referenced by \fBcreateDrawing()\fP\&.
-.SS "\fBISerializable\fP createSerializableObject (object obj, uint classTag)"
+.SS "\fBISerializable\fP createSerializableObject (\fBSerializableImplementation\fP obj, uint classTag)"
 
 .PP
 References \fBcreateSerializableObject()\fP\&.
@@ -1669,6 +3521,34 @@ create a new \fBTileLayer\fP attached to a particular port
 References \fBdebug()\fP\&.
 .PP
 Referenced by \fBdebug()\fP\&.
+.SS "string describeInterface (string interfaceName = \fRundefined\fP, string memberName = \fRundefined\fP)"
+
+.PP
+Format structured interface metadata as readable signatures\&. Uses the same selectors, available interfaces, independent metadata, and errors as \fBgetInterfaceMetadata()\fP\&. Includes each overload, parameter defaults, return type, and brief description\&. With a class or module selector, lists its members\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIinterfaceName\fP Optional interface or root export name\&. 
+.br
+\fImemberName\fP Optional member name within the selected interface\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A string describing the selected interface or member\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg::getInterfaceMetadata\fP 
+.RE
+.PP
+
+.PP
+References \fBdescribeInterface()\fP\&.
+.PP
+Referenced by \fBdescribeInterface()\fP\&.
 .SS "error (string msg)"
 
 .PP
@@ -1725,6 +3605,48 @@ get the singleton instance of the \fBGraphicsManager\fP used by the pdg framewor
 .RE
 .PP
 
+.SS "\fBInterfaceMetadata\fP getInterfaceMetadata (string interfaceName = \fRundefined\fP, string memberName = \fRundefined\fP)"
+
+.PP
+Return an independent structured description of the available interface\&. With both arguments omitted, returns the module inventory, including classes, constants, functions, inherited methods, overload parameter lists, defaults, return contracts, and shared record and callback schemas\&. With interfaceName, returns that class or root export\&. With both names, returns the selected member and all its overloads\&. Use "pdg" as interfaceName to select a root member\&.
+
+.PP
+No constructors, methods, or property getters are invoked\&. Exports unavailable in the current build are omitted\&. Every result is an independent copy; changing it does not change subsequent queries\&. Accessor values are not evaluated\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIinterfaceName\fP Optional interface or root export name\&. 
+.br
+\fImemberName\fP Optional member name within the selected interface\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+A plain metadata record\&. Invalid selector types throw TypeError; unknown names throw RangeError\&.
+.RE
+.PP
+.PP
+.nf
+const move = pdg\&.getInterfaceMetadata('Polygon', 'moveTo');
+for (const params of move\&.params) {
+    console\&.log(params\&.map(param => param\&.type + ' ' + param\&.name)\&.join(', '));
+}
+console\&.log(pdg\&.describeInterface('Polygon', 'moveTo'));
+.fi
+.PP
+
+.PP
+\fBSee also\fP
+.RS 4
+\fBpdg::describeInterface\fP 
+.RE
+.PP
+
+.PP
+References \fBgetInterfaceMetadata()\fP\&.
+.PP
+Referenced by \fBgetInterfaceMetadata()\fP\&.
 .SS "\fBLogManager\fP getLogManager ()"
 
 .PP
@@ -1790,10 +3712,24 @@ Referenced by \fBlog()\fP\&.
 .SS "\fBIEventHandler\fP on (int eventType, function func)"
 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBEventCallback\fP\&. 
+.RE
+.PP
+
+.PP
 References \fBon()\fP\&.
 .PP
 Referenced by \fBon()\fP\&.
 .SS "\fBIEventHandler\fP onKeyDown (function func)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBKeyEventCallback\fP\&. 
+.RE
+.PP
 
 .PP
 References \fBonKeyDown()\fP\&.
@@ -1802,10 +3738,24 @@ Referenced by \fBonKeyDown()\fP\&.
 .SS "\fBIEventHandler\fP onKeyPress (function func)"
 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBKeyPressEventCallback\fP\&. 
+.RE
+.PP
+
+.PP
 References \fBonKeyPress()\fP\&.
 .PP
 Referenced by \fBonKeyPress()\fP\&.
 .SS "\fBIEventHandler\fP onKeyUp (function func)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBKeyEventCallback\fP\&. 
+.RE
+.PP
 
 .PP
 References \fBonKeyUp()\fP\&.
@@ -1814,10 +3764,24 @@ Referenced by \fBonKeyUp()\fP\&.
 .SS "\fBIEventHandler\fP onMouseDown (function func)"
 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBMouseEventCallback\fP\&. 
+.RE
+.PP
+
+.PP
 References \fBonMouseDown()\fP\&.
 .PP
 Referenced by \fBonMouseDown()\fP\&.
 .SS "\fBIEventHandler\fP onMouseMove (function func)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBMouseEventCallback\fP\&. 
+.RE
+.PP
 
 .PP
 References \fBonMouseMove()\fP\&.
@@ -1826,16 +3790,37 @@ Referenced by \fBonMouseMove()\fP\&.
 .SS "\fBIEventHandler\fP onMouseUp (function func)"
 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBMouseEventCallback\fP\&. 
+.RE
+.PP
+
+.PP
 References \fBonMouseUp()\fP\&.
 .PP
 Referenced by \fBonMouseUp()\fP\&.
 .SS "\fBIEventHandler\fP onShutdown (function func)"
 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBShutdownEventCallback\fP\&. 
+.RE
+.PP
+
+.PP
 References \fBonShutdown()\fP\&.
 .PP
 Referenced by \fBonShutdown()\fP\&.
 .SS "\fBIEventHandler\fP onTimer (function func)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBTimerEventCallback\fP\&. 
+.RE
+.PP
 
 .PP
 References \fBonTimer()\fP\&.
@@ -1874,10 +3859,24 @@ Referenced by \fBrand()\fP\&.
 .SS "int registerEasingFunction (function easingFunc)"
 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fReasingFunc:\fP \fBEasingCallback\fP\&. 
+.RE
+.PP
+
+.PP
 References \fBregisterEasingFunction()\fP\&.
 .PP
 Referenced by \fBregisterEasingFunction()\fP\&.
 .SS "registerSerializableClass (function klass)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRklass:\fP \fBSerializableFactory\fP\&. 
+.RE
+.PP
 
 .PP
 References \fBregisterSerializableClass()\fP\&.
@@ -1889,7 +3888,7 @@ Referenced by \fBregisterSerializableClass()\fP\&.
 References \fBrun()\fP\&.
 .PP
 Referenced by \fBrun()\fP\&.
-.SS "setSerializationDebugMode (bool debugMode)"
+.SS "setSerializationDebugMode (boolean debugMode)"
 
 .PP
 References \fBsetSerializationDebugMode()\fP\&.
@@ -2042,6 +4041,30 @@ contains the arguments passed on the command line If this was launched by being 
 
 .SS "const boneId_None = 4294967295"
 
+.SS "const camera_Crossfade = 0"
+
+.PP
+Referenced by \fBCamera::transitionTo()\fP\&.
+.SS "const camera_LumaFade = 5"
+
+.SS "const camera_WhipDown = 9"
+
+.SS "const camera_WhipLeft = 6"
+
+.PP
+Referenced by \fBCamera::whipPanTo()\fP\&.
+.SS "const camera_WhipRight = 7"
+
+.SS "const camera_WhipUp = 8"
+
+.SS "const camera_WipeDown = 4"
+
+.SS "const camera_WipeLeft = 1"
+
+.SS "const camera_WipeRight = 2"
+
+.SS "const camera_WipeUp = 3"
+
 .SS "\fBConfigManager\fP cfg\fR [related]\fP"
 
 .SS "const collide_AlphaChannel = 4"
@@ -2127,7 +4150,7 @@ Referenced by \fBSprite::setMouseDetectMode()\fP\&.
 .SS "const easeInOutQuad = 3"
 
 .PP
-Referenced by \fBAnimated::changeCenterOffsetBy()\fP, \fBAnimated::changeCenterOffsetBy()\fP, \fBAnimatedAttributes::changeCenterOffsetBy()\fP, \fBAnimatedAttributes::changeCenterOffsetBy()\fP, \fBPart::changeCenterOffsetBy()\fP, \fBPart::changeCenterOffsetBy()\fP, \fBAnimated::changeCenterOffsetTo()\fP, \fBAnimated::changeCenterOffsetTo()\fP, \fBAnimatedAttributes::changeCenterOffsetTo()\fP, \fBAnimatedAttributes::changeCenterOffsetTo()\fP, \fBPart::changeCenterOffsetTo()\fP, \fBPart::changeCenterOffsetTo()\fP, \fBSound::changePitch()\fP, \fBAnimated::changeScaleBy()\fP, \fBAnimatedAttributes::changeScaleBy()\fP, \fBPart::changeScaleBy()\fP, \fBAnimated::changeScaleTo()\fP, \fBAnimatedAttributes::changeScaleTo()\fP, \fBPart::changeScaleTo()\fP, \fBAnimated::grow()\fP, \fBAnimatedAttributes::grow()\fP, \fBPart::grow()\fP, \fBAnimated::moveBy()\fP, \fBAnimated::moveBy()\fP, \fBAnimatedAttributes::moveBy()\fP, \fBAnimatedAttributes::moveBy()\fP, \fBPart::moveBy()\fP, \fBPart::moveBy()\fP, \fBAnimated::moveTo()\fP, \fBAnimated::moveTo()\fP, \fBAnimatedAttributes::moveTo()\fP, \fBAnimatedAttributes::moveTo()\fP, \fBPart::moveTo()\fP, \fBPart::moveTo()\fP, \fBAnimated::resizeBy()\fP, \fBAnimatedAttributes::resizeBy()\fP, \fBPart::resizeBy()\fP, \fBAnimated::resizeTo()\fP, \fBAnimatedAttributes::resizeTo()\fP, \fBPart::resizeTo()\fP, \fBAnimated::rotateBy()\fP, \fBAnimatedAttributes::rotateBy()\fP, \fBPart::rotateBy()\fP, \fBAnimated::rotateTo()\fP, \fBAnimatedAttributes::rotateTo()\fP, \fBPart::rotateTo()\fP, \fBAnimated::stretch()\fP, \fBAnimatedAttributes::stretch()\fP, \fBPart::stretch()\fP, \fBSpriteLayer::zoom()\fP, and \fBSpriteLayer::zoomTo()\fP\&.
+Referenced by \fBAnimated::changeCenterOffsetBy()\fP, \fBAnimated::changeCenterOffsetBy()\fP, \fBAnimated::changeCenterOffsetTo()\fP, \fBAnimated::changeCenterOffsetTo()\fP, \fBSound::changePitch()\fP, \fBAnimated::changeScaleBy()\fP, \fBAnimated::changeScaleTo()\fP, \fBAnimated::grow()\fP, \fBCamera::lumaFadeTo()\fP, \fBAnimated::moveBy()\fP, \fBAnimated::moveBy()\fP, \fBAnimated::moveTo()\fP, \fBAnimated::moveTo()\fP, \fBAnimated::resizeBy()\fP, \fBAnimated::resizeTo()\fP, \fBAnimated::rotateBy()\fP, \fBAnimated::rotateTo()\fP, \fBAnimated::stretch()\fP, \fBCamera::transitionTo()\fP, \fBCamera::whipPanTo()\fP, \fBCamera::zoom()\fP, and \fBCamera::zoomTo()\fP\&.
 .SS "const easeInOutQuint = 12"
 
 .SS "const easeInOutSine = 15"
@@ -2152,11 +4175,15 @@ Referenced by \fBAnimated::changeCenterOffsetBy()\fP, \fBAnimated::changeCenterO
 
 .SS "const easeOutQuad = 2"
 
+.PP
+Referenced by \fBCamera::flash()\fP\&.
 .SS "const easeOutQuart = 8"
 
 .SS "const easeOutQuint = 11"
 
 .SS "const easeOutSine = 14"
+
+.SS "const eventType_ZoomComplete = 28"
 
 .SS "\fBEventManager\fP evt\fR [related]\fP"
 
@@ -2224,6 +4251,14 @@ Referenced by \fBPart::setupFrameCollider()\fP, and \fBSprite::setupFrameCollide
 
 .SS "boolean hasNetwork"
 
+.SS "boolean hasNetworkClient"
+
+.PP
+True when \fBNetClient\fP is available\&. Browser WebSocket, iOS JavaScriptCore TCP/UDP and WebSocket, and standalone runtimes expose clients\&. hasNetwork remains the broad networking capability flag; use hasNetworkServer before hosting\&. 
+.SS "boolean hasNetworkServer"
+
+.PP
+True when \fBNetServer\fP and incoming listeners are available\&. True in standalone and Node runtimes, false in browser and iOS/JSC runtimes\&. 
 .SS "boolean hasSound"
 
 .SS "const init_AppendToExisting = 2"
@@ -2236,6 +4271,10 @@ Referenced by \fBPart::setupFrameCollider()\fP, and \fBSprite::setupFrameCollide
 
 .SS "const init_StdOut = 3"
 
+.SS "const jiggleMode_Chain = 0"
+
+.SS "const jiggleMode_IKTarget = 1"
+
 .SS "const lftBot = 3"
 
 .SS "const lftTop = 0"
@@ -2243,7 +4282,7 @@ Referenced by \fBPart::setupFrameCollider()\fP, and \fBSprite::setupFrameCollide
 .SS "const linearTween = 0"
 
 .PP
-Referenced by \fBAnimatedAttributes::changeAmbientLight()\fP, \fBAnimatedAttributes::changeFillColor()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillOpacity()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFrames()\fP, \fBAnimated::changeGrowingBy()\fP, \fBAnimatedAttributes::changeGrowingBy()\fP, \fBPart::changeGrowingBy()\fP, \fBAnimated::changeGrowingTo()\fP, \fBAnimatedAttributes::changeGrowingTo()\fP, \fBPart::changeGrowingTo()\fP, \fBAnimatedAttributes::changeLightOffset()\fP, \fBAnimatedAttributes::changeLineColor()\fP, \fBAnimatedAttributes::changeLineOpacity()\fP, \fBAnimatedAttributes::changeLineThickness()\fP, \fBAnimated::changeMovementBy()\fP, \fBAnimated::changeMovementBy()\fP, \fBAnimatedAttributes::changeMovementBy()\fP, \fBAnimatedAttributes::changeMovementBy()\fP, \fBPart::changeMovementBy()\fP, \fBPart::changeMovementBy()\fP, \fBAnimated::changeMovementTo()\fP, \fBAnimated::changeMovementTo()\fP, \fBAnimatedAttributes::changeMovementTo()\fP, \fBAnimatedAttributes::changeMovementTo()\fP, \fBPart::changeMovementTo()\fP, \fBPart::changeMovementTo()\fP, \fBSound::changeOffsetX()\fP, \fBAnimatedAttributes::changePolarOffset()\fP, \fBAnimatedAttributes::changeRoundedCorners()\fP, \fBAnimatedAttributes::changeSkew()\fP, \fBAnimatedAttributes::changeSphereRotation()\fP, \fBAnimated::changeSpinBy()\fP, \fBAnimatedAttributes::changeSpinBy()\fP, \fBPart::changeSpinBy()\fP, \fBAnimated::changeSpinTo()\fP, \fBAnimatedAttributes::changeSpinTo()\fP, \fBPart::changeSpinTo()\fP, \fBAnimated::changeStretchingBy()\fP, \fBAnimatedAttributes::changeStretchingBy()\fP, \fBPart::changeStretchingBy()\fP, \fBAnimated::changeStretchingTo()\fP, \fBAnimatedAttributes::changeStretchingTo()\fP, \fBPart::changeStretchingTo()\fP, \fBAnimatedAttributes::changeSubsection()\fP, \fBAnimatedAttributes::changeTextSize()\fP, \fBAnimatedAttributes::changeTransform()\fP, \fBSound::changeVolume()\fP, \fBSound::fadeIn()\fP, \fBSprite::fadeIn()\fP, \fBSpriteLayer::fadeIn()\fP, \fBSound::fadeOut()\fP, \fBSprite::fadeOut()\fP, \fBSpriteLayer::fadeOut()\fP, \fBParticle::fadeTo()\fP, and \fBSprite::fadeTo()\fP\&.
+Referenced by \fBAnimatedAttributes::changeAmbientLight()\fP, \fBAnimatedAttributes::changeAmbientLight()\fP, \fBAnimatedAttributes::changeAmbientLight()\fP, \fBAnimatedAttributes::changeFillColor()\fP, \fBAnimatedAttributes::changeFillColor()\fP, \fBAnimatedAttributes::changeFillColor()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillGradient()\fP, \fBAnimatedAttributes::changeFillOpacity()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFillRadialGradient()\fP, \fBAnimatedAttributes::changeFrames()\fP, \fBAnimated::changeGrowingBy()\fP, \fBAnimated::changeGrowingTo()\fP, \fBAnimatedAttributes::changeLightOffset()\fP, \fBAnimatedAttributes::changeLineColor()\fP, \fBAnimatedAttributes::changeLineColor()\fP, \fBAnimatedAttributes::changeLineColor()\fP, \fBAnimatedAttributes::changeLineOpacity()\fP, \fBAnimatedAttributes::changeLineThickness()\fP, \fBAnimated::changeMovementBy()\fP, \fBAnimated::changeMovementBy()\fP, \fBAnimated::changeMovementTo()\fP, \fBAnimated::changeMovementTo()\fP, \fBSound::changeOffsetX()\fP, \fBAnimatedAttributes::changePolarOffset()\fP, \fBAnimatedAttributes::changeRoundedCorners()\fP, \fBAnimatedAttributes::changeSkew()\fP, \fBAnimatedAttributes::changeSphereRotation()\fP, \fBAnimated::changeSpinBy()\fP, \fBAnimated::changeSpinTo()\fP, \fBAnimated::changeStretchingBy()\fP, \fBAnimated::changeStretchingTo()\fP, \fBAnimatedAttributes::changeSubsection()\fP, \fBAnimatedAttributes::changeTextSize()\fP, \fBAnimatedAttributes::changeTransform()\fP, \fBSound::changeVolume()\fP, \fBAnimated::diminish()\fP, \fBBone::diminish()\fP, \fBCamera::fadeIn()\fP, \fBSound::fadeIn()\fP, \fBSprite::fadeIn()\fP, \fBSpriteLayer::fadeIn()\fP, \fBCamera::fadeOut()\fP, \fBSound::fadeOut()\fP, \fBSprite::fadeOut()\fP, \fBSpriteLayer::fadeOut()\fP, \fBCamera::fadeTo()\fP, \fBParticle::fadeTo()\fP, \fBSprite::fadeTo()\fP, \fBAnimated::increase()\fP, \fBAnimated::slowDown()\fP, and \fBAnimated::speedUp()\fP\&.
 .SS "const lineStyle_Auto = 0"
 
 .SS "const lineStyle_DashDot = 5"
@@ -2259,6 +4298,14 @@ Referenced by \fBAnimatedAttributes::changeAmbientLight()\fP, \fBAnimatedAttribu
 .SS "const lineStyle_Solid = 2"
 
 .SS "\fBLogManager\fP lm"
+
+.SS "const matchSource = 0"
+
+.SS "const matchSourceAndSize = 1"
+
+.SS "const matchTarget = 2"
+
+.SS "const matchTargetAndSize = 3"
 
 .SS "const partId_None = 4294967295"
 
@@ -2305,7 +4352,7 @@ Referenced by \fBPart::setIKDriveTarget()\fP, \fBPart::setIKTarget()\fP, and \fB
 .SS "const rotationDirection_AsSpecified = 0"
 
 .PP
-Referenced by \fBAnimatedAttributes::changeSphereRotation()\fP, \fBSprite::disableAnimationPhysics()\fP, \fBAnimated::rotateBy()\fP, \fBAnimatedAttributes::rotateBy()\fP, \fBPart::rotateBy()\fP, \fBAnimated::rotateTo()\fP, \fBAnimatedAttributes::rotateTo()\fP, \fBPart::rotateTo()\fP, \fBSprite::setAnimationPhysicsMode()\fP, and \fBSprite::setAnimationPhysicsMode()\fP\&.
+Referenced by \fBAnimatedAttributes::changeSphereRotation()\fP, \fBSprite::disableAnimationPhysics()\fP, \fBAnimated::rotateBy()\fP, \fBAnimated::rotateTo()\fP, \fBSprite::setAnimationPhysicsMode()\fP, and \fBSprite::setAnimationPhysicsMode()\fP\&.
 .SS "const rotationDirection_Clockwise = 2"
 
 .SS "const rotationDirection_CounterClockwise = 3"
@@ -2490,6 +4537,8 @@ Referenced by \fBPort::getCurrentFont()\fP, \fBFont::getFontAscent()\fP, \fBFont
 .SS "const type_Rect = 4"
 
 .SS "const type_Spline = 2"
+
+.SS "const type_Text = 11"
 
 .SH "Author"
 .PP 

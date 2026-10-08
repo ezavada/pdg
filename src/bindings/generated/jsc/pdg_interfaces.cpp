@@ -129,7 +129,7 @@ namespace pdg
         {
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""utf16CharCode"")");
-            uint32 utf16CharCode = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+            uint32 utf16CharCode = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
             return JSValueMakeBoolean(ctx, OS::isKeyDown(utf16CharCode));
         }
     }
@@ -267,6 +267,24 @@ namespace pdg
         return serializable;
     }
 
+    AnimatedBase* JSC_GetAnimationTarget(JSContextRef ctx, JSValueRef value)
+    {
+        if(!JSValueIsObject(ctx,value)) return nullptr;
+        auto object=JSValueToObject(ctx,value,nullptr);
+        if(JSValueIsObjectOfClass(ctx,value,Troupe_class())) return Troupe_getCppObject(object);
+#ifdef PDG_SPRITER_SUPPORT
+        if(JSValueIsObjectOfClass(ctx,value,Bone_class())) return Bone_getCppObject(object);
+#endif
+        if(JSValueIsObjectOfClass(ctx,value,Part_class())) return Part_getCppObject(object);
+        if(JSValueIsObjectOfClass(ctx,value,Sprite_class())) return Sprite_getCppObject(object);
+        if(JSValueIsObjectOfClass(ctx,value,AnimatedAttributesBase_class())) return AnimatedAttributesBase_getCppObject(object);
+        if(JSValueIsObjectOfClass(ctx,value,Camera_class())) return Camera_getCppObject(object);
+        if(JSValueIsObjectOfClass(ctx,value,Particle_class())) return Particle_getCppObject(object);
+        if(JSValueIsObjectOfClass(ctx,value,ParticleEmitter_class())) return ParticleEmitter_getCppObject(object);
+        if(JSValueIsObjectOfClass(ctx,value,AnimatedBase_class())) return AnimatedBase_getCppObject(object);
+        return nullptr;
+    }
+
     ISerializable* JSC_GetSerializable(JSContextRef ctx, JSValueRef value)
     {
         if (!JSValueIsObject(ctx, value)) return nullptr;
@@ -277,6 +295,9 @@ namespace pdg
         if (JSValueIsObjectOfClass(ctx, value, Sprite_class())) return Sprite_getCppObject(object);
         if (JSValueIsObjectOfClass(ctx, value, TileLayer_class())) return static_cast<Serializable<SpriteLayer>*>(TileLayer_getCppObject(object));
         if (JSValueIsObjectOfClass(ctx, value, SpriteLayer_class())) return static_cast<Serializable<SpriteLayer>*>(SpriteLayer_getCppObject(object));
+        if (JSValueIsObjectOfClass(ctx, value, Camera_class())) return Camera_getCppObject(object);
+        if (JSValueIsObjectOfClass(ctx, value, Troupe_class())) return Troupe_getCppObject(object);
+        if (JSValueIsObjectOfClass(ctx, value, AnimatedBase_class())) return AnimatedBase_getCppObject(object);
         if (JSValueIsObjectOfClass(ctx, value, ISerializable_class())) return ISerializable_getCppObject(object);
         return nullptr;
     }
@@ -339,7 +360,7 @@ namespace pdg
         }
         else if (JSValueIsNumber(ctx, arguments[0]))
         {
-            uint32 val = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[0], exception)));
+            uint32 val = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[0], exception));
             dataSize = self->sizeof_uint(val);
         }
         else if (auto isColor = JSC_ValueIsColor(ctx, arguments[0], color, exception); !isColor.has_value())
@@ -425,7 +446,7 @@ namespace pdg
         JSObjectRef obj = JSValueToObject(ctx, arguments[1 -1], exception);
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""uniqueId"")");
-        uint32 uniqueId = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        uint32 uniqueId = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
 
         JSObjectRef objRef;
         objRef = obj;
@@ -445,7 +466,7 @@ namespace pdg
         ;
         if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""screenNum"")");
-        long screenNum = (argumentCount<1) ? screenNum_PrimaryScreen : (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long screenNum = (argumentCount<1) ? screenNum_PrimaryScreen : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         pdg::Rect maxWindowRect;
         pdg::GraphicsManager::ScreenMode mode;
         mode = self->getCurrentScreenMode(screenNum, &maxWindowRect);
@@ -467,10 +488,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""n"")");
-        int32 n = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 n = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""screenNum"")");
-        long screenNum = (argumentCount<2) ? screenNum_PrimaryScreen : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long screenNum = (argumentCount<2) ? screenNum_PrimaryScreen : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         pdg::GraphicsManager::ScreenMode mode;
         mode = self->getNthSupportedScreenMode(n, screenNum);
 
@@ -625,7 +646,7 @@ namespace pdg
                 )
                 return 0;
         }
-        return (uint32)floor(fabs(JSValueToNumber(ctx, resVal, exception)));
+        return pdg::JSC_NumberToUint32(JSValueToNumber(ctx, resVal, exception));
     }
 
     void
@@ -727,7 +748,7 @@ namespace pdg
                 )
                 return 0;
         }
-        return (uint32)floor(fabs(JSValueToNumber(ctx, resVal, exception)));
+        return pdg::JSC_NumberToUint32(JSValueToNumber(ctx, resVal, exception));
     }
 
     static JSStringRef symbol_collider = 0;
@@ -811,6 +832,8 @@ namespace pdg
     static JSStringRef symbol_triggerName = 0;
     static JSStringRef symbol_clipName = 0;
     static JSStringRef symbol_entityName = 0;
+    static JSStringRef symbol_camera = 0;
+    static JSStringRef symbol_zoom = 0;
     static JSStringRef symbol_timeSeconds = 0;
     static JSStringRef symbol_offsetSeconds = 0;
 
@@ -820,7 +843,11 @@ namespace pdg
         JSValueRef _exception = 0;
         JSValueRef* exception = &_exception;
         if (!emitter->mEventEmitterScriptObj)
+        {
             if (auto* particle = dynamic_cast<Particle*>(emitter)) Particle_newFromCpp(ctx, particle);
+            else if (auto* scene = dynamic_cast<Scene*>(emitter)) Scene_newFromCpp(ctx, scene);
+            else if (auto* camera = dynamic_cast<Camera*>(emitter)) Camera_newFromCpp(ctx, camera);
+        }
         JSObjectRef jsEvent = JSC_ObjectCreateEmpty(ctx, 0);
         JSObjectSetProperty(ctx, jsEvent, ((symbol_emitter) ? symbol_emitter : symbol_emitter = JSStringCreateWithUTF8CString("emitter")), emitter->mEventEmitterScriptObj, kJSPropertyAttributeNone, exception);
         JSObjectSetProperty(ctx, jsEvent, ((symbol_eventType) ? symbol_eventType : symbol_eventType = JSStringCreateWithUTF8CString("eventType")), JSValueMakeNumber(ctx, inEventType), kJSPropertyAttributeNone, exception);
@@ -930,6 +957,13 @@ namespace pdg
                 JSObjectSetProperty(ctx, jsEvent, ((symbol_breakAngularSpeed) ? symbol_breakAngularSpeed : symbol_breakAngularSpeed = JSStringCreateWithUTF8CString("breakAngularSpeed")), JSValueMakeNumber(ctx, info->breakAngularSpeed), kJSPropertyAttributeNone, exception);
                 JSObjectSetProperty(ctx, jsEvent, ((symbol_body) ? symbol_body : symbol_body = JSStringCreateWithUTF8CString("body")), (info->body ? info->body->mPhysicsBodyScriptObj ? info->body->mPhysicsBodyScriptObj : PhysicsBody_newFromCpp(ctx, info->body) : JSValueMakeNull(ctx)), kJSPropertyAttributeNone, exception);
                 JSObjectSetProperty(ctx, jsEvent, ((symbol_referenceBody) ? symbol_referenceBody : symbol_referenceBody = JSStringCreateWithUTF8CString("referenceBody")), (info->referenceBody ? info->referenceBody->mPhysicsBodyScriptObj ? info->referenceBody->mPhysicsBodyScriptObj : PhysicsBody_newFromCpp(ctx, info->referenceBody) : JSValueMakeNull(ctx)), kJSPropertyAttributeNone, exception);
+                break;
+            }
+            case pdg::eventType_ZoomComplete:
+            {
+                const auto* info = static_cast<CameraZoomInfo*>(inEventData);
+                JSObjectSetProperty(ctx, jsEvent, ((symbol_camera) ? symbol_camera : symbol_camera = JSStringCreateWithUTF8CString("camera")), emitter->mEventEmitterScriptObj, kJSPropertyAttributeNone, exception);
+                JSObjectSetProperty(ctx, jsEvent, ((symbol_zoom) ? symbol_zoom : symbol_zoom = JSStringCreateWithUTF8CString("zoom")), JSValueMakeNumber(ctx, info->zoom), kJSPropertyAttributeNone, exception);
                 break;
             }
             case pdg::eventType_ColliderContact:
@@ -1281,6 +1315,7 @@ namespace pdg
             else if (auto* emission = dynamic_cast<ParticleEmitter*>(what)) ParticleEmitter_newFromCpp(ctx, emission);
             else if (auto* part = dynamic_cast<Part*>(what)) Part_newFromCpp(ctx, part);
             else if (auto* sprite = dynamic_cast<Sprite*>(what)) Sprite_newFromCpp(ctx, sprite);
+            else if (auto* camera = dynamic_cast<Camera*>(what)) Camera_newFromCpp(ctx, camera);
             else AnimatedBase_newFromCpp(ctx, what);
         }
         argv[0] = what->mAnimatedScriptObj;
@@ -1538,6 +1573,65 @@ namespace pdg
         return JSValueMakeUndefined(ctx);
     }
 
+    JSValueRef DeleteAnimationScript(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        if (argumentCount != 1)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+        if (!JSValueIsString(ctx, arguments[1 -1]))
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""name"")");
+        JSStringRef name_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+        MemBlock name_Mem(JSStringGetMaximumUTF8CStringSize(name_Str));
+        JSStringGetUTF8CString(name_Str, name_Mem.ptr, name_Mem.bytes);
+        const char* name = (const char*)name_Mem.ptr;
+        JSStringRelease(name_Str);
+        try { const bool removed=AnimatedBase::deleteScript(name); return JSValueMakeBoolean(ctx, removed); }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
+    JSValueRef DefineAnimationScript(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        if (argumentCount != 1)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+        if (!JSValueIsString(ctx, arguments[1 -1]))
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""name"")");
+        JSStringRef name_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+        MemBlock name_Mem(JSStringGetMaximumUTF8CStringSize(name_Str));
+        JSStringGetUTF8CString(name_Str, name_Mem.ptr, name_Mem.bytes);
+        const char* name = (const char*)name_Mem.ptr;
+        JSStringRelease(name_Str);
+        try
+        {
+            auto* builder=&AnimatedBase::defineScript(name); if (!builder) return JSValueMakeNull(ctx);
+            if (!builder->mAnimationScriptScriptObj)
+            {
+                return AnimationScript_newFromCpp(ctx, builder);
+            }
+            else
+            {
+                return builder->mAnimationScriptScriptObj;
+            };
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
     JSValueRef FinishedScriptSetup(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         scriptSetupCompleted();
@@ -1625,10 +1719,36 @@ namespace pdg
         JSObjectRef AnimatedBaseObj = JSC_CreateClassConstructor(ctx, "Animated", AnimatedBaseNativeConstructor, 0);
         JSC_RegisterClassConstructor(AnimatedBase_class(), AnimatedBaseObj);
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("Animated"), AnimatedBaseObj, kJSPropertyAttributeNone, NULL);
+        JSObjectRef AnimationScriptNativeConstructor = JSObjectMakeConstructor(ctx, AnimationScript_class(), AnimationScript_new);
+        JSObjectRef AnimationScriptObj = JSC_CreateClassConstructor(ctx, "AnimationScript", AnimationScriptNativeConstructor, 0);
+        JSC_RegisterClassConstructor(AnimationScript_class(), AnimationScriptObj);
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("AnimationScript"), AnimationScriptObj, kJSPropertyAttributeNone, NULL);
+        JSObjectRef TroupeNativeConstructor = JSObjectMakeConstructor(ctx, Troupe_class(), Troupe_new);
+        JSObjectRef TroupeObj = JSC_CreateClassConstructor(ctx, "Troupe", TroupeNativeConstructor, 0);
+        JSC_RegisterClassConstructor(Troupe_class(), TroupeObj);
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("Troupe"), TroupeObj, kJSPropertyAttributeNone, NULL);
         JSObjectRef PartNativeConstructor = JSObjectMakeConstructor(ctx, Part_class(), Part_new);
         JSObjectRef PartObj = JSC_CreateClassConstructor(ctx, "Part", PartNativeConstructor, 0);
         JSC_RegisterClassConstructor(Part_class(), PartObj);
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("Part"), PartObj, kJSPropertyAttributeNone, NULL);
+#ifdef PDG_SPRITER_SUPPORT
+        JSObjectRef BoneNativeConstructor = JSObjectMakeConstructor(ctx, Bone_class(), Bone_new);
+        JSObjectRef BoneObj = JSC_CreateClassConstructor(ctx, "Bone", BoneNativeConstructor, 0);
+        JSC_RegisterClassConstructor(Bone_class(), BoneObj);
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("Bone"), BoneObj, kJSPropertyAttributeNone, NULL);
+#endif
+        JSObjectRef CollisionQueryBufferNativeConstructor = JSObjectMakeConstructor(ctx, CollisionQueryBuffer_class(), CollisionQueryBuffer_new);
+        JSObjectRef CollisionQueryBufferObj = JSC_CreateClassConstructor(ctx, "CollisionQueryBuffer", CollisionQueryBufferNativeConstructor, 0);
+        JSC_RegisterClassConstructor(CollisionQueryBuffer_class(), CollisionQueryBufferObj);
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("CollisionQueryBuffer"), CollisionQueryBufferObj, kJSPropertyAttributeNone, NULL);
+        JSObjectRef SceneNativeConstructor = JSObjectMakeConstructor(ctx, Scene_class(), Scene_new);
+        JSObjectRef SceneObj = JSC_CreateClassConstructor(ctx, "Scene", SceneNativeConstructor, 0);
+        JSC_RegisterClassConstructor(Scene_class(), SceneObj);
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("Scene"), SceneObj, kJSPropertyAttributeNone, NULL);
+        JSObjectRef CameraNativeConstructor = JSObjectMakeConstructor(ctx, Camera_class(), Camera_new);
+        JSObjectRef CameraObj = JSC_CreateClassConstructor(ctx, "Camera", CameraNativeConstructor, 0);
+        JSC_RegisterClassConstructor(Camera_class(), CameraObj);
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("Camera"), CameraObj, kJSPropertyAttributeNone, NULL);
         JSObjectRef ParticleNativeConstructor = JSObjectMakeConstructor(ctx, Particle_class(), Particle_new);
         JSObjectRef ParticleObj = JSC_CreateClassConstructor(ctx, "Particle", ParticleNativeConstructor, 0);
         JSC_RegisterClassConstructor(Particle_class(), ParticleObj);
@@ -1768,6 +1888,12 @@ namespace pdg
         JSStringRef RegisterEasingFunctionName = JSStringCreateWithUTF8CString("registerEasingFunction");
         JSObjectRef RegisterEasingFunctionRef = JSObjectMakeFunctionWithCallback(ctx, RegisterEasingFunctionName, RegisterEasingFunction);
         JSObjectSetProperty(ctx, globalObject, RegisterEasingFunctionName, RegisterEasingFunctionRef, kJSPropertyAttributeNone, exception);;
+        JSStringRef DefineAnimationScriptName = JSStringCreateWithUTF8CString("_defineAnimationScript");
+        JSObjectRef DefineAnimationScriptRef = JSObjectMakeFunctionWithCallback(ctx, DefineAnimationScriptName, DefineAnimationScript);
+        JSObjectSetProperty(ctx, globalObject, DefineAnimationScriptName, DefineAnimationScriptRef, kJSPropertyAttributeNone, exception);;
+        JSStringRef DeleteAnimationScriptName = JSStringCreateWithUTF8CString("_deleteAnimationScript");
+        JSObjectRef DeleteAnimationScriptRef = JSObjectMakeFunctionWithCallback(ctx, DeleteAnimationScriptName, DeleteAnimationScript);
+        JSObjectSetProperty(ctx, globalObject, DeleteAnimationScriptName, DeleteAnimationScriptRef, kJSPropertyAttributeNone, exception);;
 
         JSStringRef GetFileManagerName = JSStringCreateWithUTF8CString("getFileManager");
         JSObjectRef GetFileManagerRef = JSObjectMakeFunctionWithCallback(ctx, GetFileManagerName, GetFileManager);
@@ -1847,6 +1973,21 @@ namespace pdg
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("colliderSource_Animation"), JSValueMakeNumber(ctx, colliderSource_Animation), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("frameCollider_Bounds"), JSValueMakeNumber(ctx, frameCollider_Bounds), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("frameCollider_AlphaMask"), JSValueMakeNumber(ctx, frameCollider_AlphaMask), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("eventType_ZoomComplete"), JSValueMakeNumber(ctx, eventType_ZoomComplete), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_Crossfade"), JSValueMakeNumber(ctx, camera_Crossfade), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_WipeLeft"), JSValueMakeNumber(ctx, camera_WipeLeft), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_WipeRight"), JSValueMakeNumber(ctx, camera_WipeRight), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_WipeUp"), JSValueMakeNumber(ctx, camera_WipeUp), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_WipeDown"), JSValueMakeNumber(ctx, camera_WipeDown), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_LumaFade"), JSValueMakeNumber(ctx, camera_LumaFade), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_WhipLeft"), JSValueMakeNumber(ctx, camera_WhipLeft), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_WhipRight"), JSValueMakeNumber(ctx, camera_WhipRight), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_WhipUp"), JSValueMakeNumber(ctx, camera_WhipUp), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("camera_WhipDown"), JSValueMakeNumber(ctx, camera_WhipDown), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("matchSource"), JSValueMakeNumber(ctx, matchSource), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("matchSourceAndSize"), JSValueMakeNumber(ctx, matchSourceAndSize), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("matchTarget"), JSValueMakeNumber(ctx, matchTarget), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("matchTargetAndSize"), JSValueMakeNumber(ctx, matchTargetAndSize), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("eventType_ColliderContact"), JSValueMakeNumber(ctx, eventType_ColliderContact), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("eventType_ParticleBreak"), JSValueMakeNumber(ctx, eventType_ParticleBreak), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("eventType_SpriteBreak"), JSValueMakeNumber(ctx, eventType_SpriteBreak), kJSPropertyAttributeNone, exception);;
@@ -1946,6 +2087,7 @@ namespace pdg
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("type_Image"), JSValueMakeNumber(ctx, type_Image), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("type_ImageStrip"), JSValueMakeNumber(ctx, type_ImageStrip), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("type_Drawing"), JSValueMakeNumber(ctx, type_Drawing), kJSPropertyAttributeNone, exception);;
+        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("type_Text"), JSValueMakeNumber(ctx, type_Text), kJSPropertyAttributeNone, exception);;
 
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("gradientType_None"), JSValueMakeNumber(ctx, gradientType_None), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("gradientType_Linear"), JSValueMakeNumber(ctx, gradientType_Linear), kJSPropertyAttributeNone, exception);;
@@ -2099,7 +2241,6 @@ namespace pdg
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("action_PreAnimateLayer"), JSValueMakeNumber(ctx, SpriteLayer::action_PreAnimateLayer), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("action_PostAnimateLayer"), JSValueMakeNumber(ctx, SpriteLayer::action_PostAnimateLayer), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("action_AnimationComplete"), JSValueMakeNumber(ctx, SpriteLayer::action_AnimationComplete), kJSPropertyAttributeNone, exception);;
-        JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("action_ZoomComplete"), JSValueMakeNumber(ctx, SpriteLayer::action_ZoomComplete), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("action_LayerFadeInComplete"), JSValueMakeNumber(ctx, SpriteLayer::action_FadeInComplete), kJSPropertyAttributeNone, exception);;
         JSObjectSetProperty(ctx, globalObject, JSStringCreateWithUTF8CString("action_LayerFadeOutComplete"), JSValueMakeNumber(ctx, SpriteLayer::action_FadeOutComplete), kJSPropertyAttributeNone, exception);;
 

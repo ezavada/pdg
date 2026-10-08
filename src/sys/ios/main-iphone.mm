@@ -229,6 +229,11 @@ void platform_getWindowContentSize(void* windRef, long* outWidth, long* outHeigh
 	*outHeight = rect.size.height;
 }
 
+void platform_getWindowDrawableSize(void* windRef, long* outWidth, long* outHeight) {
+    // This backend currently creates its GL drawable in screen coordinates.
+    platform_getWindowContentSize(windRef, outWidth, outHeight);
+}
+
 bool platform_closestScreenMode(int screenNum, long* ioWidth, long* ioHeight, int* ioBpp) {
 	UIScreen* screen = [UIScreen mainScreen];
 	CGRect rect = [screen applicationFrame];

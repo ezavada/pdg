@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -117,19 +117,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a45a560c59d27eda84ef4a315223b78fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a damped spring target.  <br /></td></tr>
 <tr class="memitem:a274e7dbfea0ffb9e9d9c07c8c3d1278c" id="r_a274e7dbfea0ffb9e9d9c07c8c3d1278c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c">applyImpulse</a> (number x, number y)</td></tr>
 <tr class="memdesc:a274e7dbfea0ffb9e9d9c07c8c3d1278c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change spring velocity immediately.  <br /></td></tr>
-<tr class="memitem:af4f332788d27149189f1045f99c6a08c" id="r_af4f332788d27149189f1045f99c6a08c"><td class="memItemLeft">object&#160;</td><td class="memItemRight"><a class="el" href="#af4f332788d27149189f1045f99c6a08c">getState</a> ()</td></tr>
-<tr class="memdesc:af4f332788d27149189f1045f99c6a08c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy spring position and velocity.  <br /></td></tr>
-<tr class="memitem:a847f421d467a3644f73651188c12b747" id="r_a847f421d467a3644f73651188c12b747"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a847f421d467a3644f73651188c12b747">setState</a> (object state)</td></tr>
-<tr class="memdesc:a847f421d467a3644f73651188c12b747"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace spring position and velocity.  <br /></td></tr>
-<tr class="memitem:a2b963347f7014f5ef1a7433adc9fc4f2" id="r_a2b963347f7014f5ef1a7433adc9fc4f2"><td class="memItemLeft">object&#160;</td><td class="memItemRight"><a class="el" href="#a2b963347f7014f5ef1a7433adc9fc4f2">update</a> (number targetX, number targetY, number deltaSeconds)</td></tr>
-<tr class="memdesc:a2b963347f7014f5ef1a7433adc9fc4f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advance the spring toward a fixed target.  <br /></td></tr>
+<tr class="memitem:aa2fa84584847cb60074b73c95f3028c6" id="r_aa2fa84584847cb60074b73c95f3028c6"><td class="memItemLeft"><a class="el" href="group___structured_data_types.html#structpdg_1_1_animation_spring_state">AnimationSpringState</a>&#160;</td><td class="memItemRight"><a class="el" href="#aa2fa84584847cb60074b73c95f3028c6">getState</a> ()</td></tr>
+<tr class="memdesc:aa2fa84584847cb60074b73c95f3028c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy spring position and velocity.  <br /></td></tr>
+<tr class="memitem:a6d0512c1c9f3af5fff9ad26818b3e3a8" id="r_a6d0512c1c9f3af5fff9ad26818b3e3a8"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a6d0512c1c9f3af5fff9ad26818b3e3a8">setState</a> (<a class="el" href="group___structured_data_types.html#structpdg_1_1_animation_spring_state">AnimationSpringState</a> state)</td></tr>
+<tr class="memdesc:a6d0512c1c9f3af5fff9ad26818b3e3a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace spring position and velocity.  <br /></td></tr>
+<tr class="memitem:aef5eb45836c3f3e529b6049aa9b98307" id="r_aef5eb45836c3f3e529b6049aa9b98307"><td class="memItemLeft"><a class="el" href="group___structured_data_types.html#structpdg_1_1_animation_spring_state">AnimationSpringState</a>&#160;</td><td class="memItemRight"><a class="el" href="#aef5eb45836c3f3e529b6049aa9b98307">update</a> (number targetX, number targetY, number deltaSeconds)</td></tr>
+<tr class="memdesc:aef5eb45836c3f3e529b6049aa9b98307"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advance the spring toward a fixed target.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Spring target smoothing and recoil impulses. </p>
 <dl class="section note"><dt>Note</dt><dd><b>API Stability: 2 — Evolving</b>. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See <a class="el" href="index.html#api_stability" title="API stability">API stability</a>.</dd></dl>
-<p>Keeps position and velocity independently of a <a class="el" href="classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn">Sprite</a>. Call <a class="el" href="#a2b963347f7014f5ef1a7433adc9fc4f2" title="Advance the spring toward a fixed target.">update()</a> with a target and elapsed seconds to smooth motion, or <a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c" title="Change spring velocity immediately.">applyImpulse()</a> to produce recoil. <a class="el" href="#af4f332788d27149189f1045f99c6a08c" title="Copy spring position and velocity.">getState()</a> returns a copy; <a class="el" href="#a847f421d467a3644f73651188c12b747" title="Replace spring position and velocity.">setState()</a> replaces all position and velocity fields.</p>
+<p>Keeps position and velocity independently of a <a class="el" href="classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn">Sprite</a>. Call <a class="el" href="#aef5eb45836c3f3e529b6049aa9b98307" title="Advance the spring toward a fixed target.">update()</a> with a target and elapsed seconds to smooth motion, or <a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c" title="Change spring velocity immediately.">applyImpulse()</a> to produce recoil. <a class="el" href="#aa2fa84584847cb60074b73c95f3028c6" title="Copy spring position and velocity.">getState()</a> returns a copy; <a class="el" href="#a6d0512c1c9f3af5fff9ad26818b3e3a8" title="Replace spring position and velocity.">setState()</a> replaces all position and velocity fields.</p>
 <p>The helper does not update automatically. Apply each sample to a freshly evaluated pose instead of adding it repeatedly to the previous final pose.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a45a560c59d27eda84ef4a315223b78fd" title="Create a damped spring target.">AnimationSpringTarget()</a>, <a class="el" href="#a2b963347f7014f5ef1a7433adc9fc4f2" title="Advance the spring toward a fixed target.">update()</a>, <a class="el" href="animation_target_adapters.html" title="Animation target adapters">Animation target adapters</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a45a560c59d27eda84ef4a315223b78fd" title="Create a damped spring target.">AnimationSpringTarget()</a>, <a class="el" href="#aef5eb45836c3f3e529b6049aa9b98307" title="Advance the spring toward a fixed target.">update()</a>, <a class="el" href="animation_target_adapters.html" title="Animation target adapters">Animation target adapters</a> </dd></dl>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a45a560c59d27eda84ef4a315223b78fd" name="a45a560c59d27eda84ef4a315223b78fd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a45a560c59d27eda84ef4a315223b78fd">&#9670;&#160;</a></span>AnimationSpringTarget()</h2>
@@ -170,7 +170,7 @@ Public Member Functions</h2></td></tr>
 <div class="line">const offset = recoil.update(0, 0, 1 / 60);</div>
 <div class="line">// Apply offset.x/y to a freshly sampled pose.</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2b963347f7014f5ef1a7433adc9fc4f2" title="Advance the spring toward a fixed target.">update()</a>, <a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c" title="Change spring velocity immediately.">applyImpulse()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aef5eb45836c3f3e529b6049aa9b98307" title="Advance the spring toward a fixed target.">update()</a>, <a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c" title="Change spring velocity immediately.">applyImpulse()</a> </dd></dl>
 
 </div>
 </div>
@@ -204,18 +204,18 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>No value.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a2b963347f7014f5ef1a7433adc9fc4f2" title="Advance the spring toward a fixed target.">update()</a>, <a class="el" href="#af4f332788d27149189f1045f99c6a08c" title="Copy spring position and velocity.">getState()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aef5eb45836c3f3e529b6049aa9b98307" title="Advance the spring toward a fixed target.">update()</a>, <a class="el" href="#aa2fa84584847cb60074b73c95f3028c6" title="Copy spring position and velocity.">getState()</a> </dd></dl>
 
 </div>
 </div>
-<a id="af4f332788d27149189f1045f99c6a08c" name="af4f332788d27149189f1045f99c6a08c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4f332788d27149189f1045f99c6a08c">&#9670;&#160;</a></span>getState()</h2>
+<a id="aa2fa84584847cb60074b73c95f3028c6" name="aa2fa84584847cb60074b73c95f3028c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2fa84584847cb60074b73c95f3028c6">&#9670;&#160;</a></span>getState()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">object getState </td>
+          <td class="memname"><a class="el" href="group___structured_data_types.html#structpdg_1_1_animation_spring_state">AnimationSpringState</a> getState </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -228,23 +228,15 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>An independent state object described below.</dd></dl>
 
 <div class="shared-api-options">
-<p><a class="anchor" id="animation_spring_state"></a></p><dl class="section user"><dt>Spring state</dt><dd><table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Field  </th><th class="markdownTableHeadNone">Meaning  </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><span class="tt">x</span>, <span class="tt">y</span>  </td><td class="markdownTableBodyNone">Position in the application's chosen coordinate frame.  </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><span class="tt">velocityX</span>, <span class="tt">velocityY</span>  </td><td class="markdownTableBodyNone">Velocity in that frame's distance units per second.  </td></tr>
-</table>
-</dd></dl>
+<p><a class="anchor" id="animation_spring_state"></a></p><dl class="section user"><dt>Spring state</dt><dd>See <a class="el" href="group___structured_data_types.html#structpdg_1_1_animation_spring_state" title="AnimationSpringState">AnimationSpringState</a> for the generated field schema.</dd></dl>
 
 </div>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a847f421d467a3644f73651188c12b747" title="Replace spring position and velocity.">setState()</a>, <a class="el" href="#a2b963347f7014f5ef1a7433adc9fc4f2" title="Advance the spring toward a fixed target.">update()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a6d0512c1c9f3af5fff9ad26818b3e3a8" title="Replace spring position and velocity.">setState()</a>, <a class="el" href="#aef5eb45836c3f3e529b6049aa9b98307" title="Advance the spring toward a fixed target.">update()</a> </dd></dl>
 
 </div>
 </div>
-<a id="a847f421d467a3644f73651188c12b747" name="a847f421d467a3644f73651188c12b747"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a847f421d467a3644f73651188c12b747">&#9670;&#160;</a></span>setState()</h2>
+<a id="a6d0512c1c9f3af5fff9ad26818b3e3a8" name="a6d0512c1c9f3af5fff9ad26818b3e3a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d0512c1c9f3af5fff9ad26818b3e3a8">&#9670;&#160;</a></span>setState()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,7 +244,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">setState </td>
           <td>(</td>
-          <td class="paramtype">object</td>          <td class="paramname"><span class="paramname"><em>state</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="group___structured_data_types.html#structpdg_1_1_animation_spring_state">AnimationSpringState</a></td>          <td class="paramname"><span class="paramname"><em>state</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -267,18 +259,18 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>No value.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af4f332788d27149189f1045f99c6a08c" title="Copy spring position and velocity.">getState()</a>, <a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c" title="Change spring velocity immediately.">applyImpulse()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa2fa84584847cb60074b73c95f3028c6" title="Copy spring position and velocity.">getState()</a>, <a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c" title="Change spring velocity immediately.">applyImpulse()</a> </dd></dl>
 
 </div>
 </div>
-<a id="a2b963347f7014f5ef1a7433adc9fc4f2" name="a2b963347f7014f5ef1a7433adc9fc4f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b963347f7014f5ef1a7433adc9fc4f2">&#9670;&#160;</a></span>update()</h2>
+<a id="aef5eb45836c3f3e529b6049aa9b98307" name="aef5eb45836c3f3e529b6049aa9b98307"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef5eb45836c3f3e529b6049aa9b98307">&#9670;&#160;</a></span>update()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">object update </td>
+          <td class="memname"><a class="el" href="group___structured_data_types.html#structpdg_1_1_animation_spring_state">AnimationSpringState</a> update </td>
           <td>(</td>
           <td class="paramtype">number</td>          <td class="paramname"><span class="paramname"><em>targetX</em></span>, </td>
         </tr>
@@ -306,7 +298,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>An owned copy of the new state; see <a class="el" href="#animation_spring_state" title="animation_spring_state">animation_spring_state</a>.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#af4f332788d27149189f1045f99c6a08c" title="Copy spring position and velocity.">getState()</a>, <a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c" title="Change spring velocity immediately.">applyImpulse()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aa2fa84584847cb60074b73c95f3028c6" title="Copy spring position and velocity.">getState()</a>, <a class="el" href="#a274e7dbfea0ffb9e9d9c07c8c3d1278c" title="Change spring velocity immediately.">applyImpulse()</a> </dd></dl>
 
 </div>
 </div>

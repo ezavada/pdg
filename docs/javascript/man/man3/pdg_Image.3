@@ -1,4 +1,4 @@
-.TH "Image" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Image" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -39,7 +39,7 @@ Inherited by \fBImageStrip\fP\&.
 .br
 .RI "get the height in pixels of the image "
 .ti -1c
-.RI "\fBRect\fP \fBgetImageBounds\fP (\fBPoint\fP at)"
+.RI "\fBRect\fP \fBgetImageBounds\fP (\fBPoint\fP at=\fBPoint\fP(0, 0))"
 .br
 .RI "get image boundary rect, optionally with top left at given point "
 .ti -1c
@@ -79,7 +79,7 @@ Inherited by \fBImageStrip\fP\&.
 .br
 .RI "get the width in pixels of the image "
 .ti -1c
-.RI "number \fBprepareToRasterize\fP ()"
+.RI "\fBprepareToRasterize\fP ()"
 .br
 .RI "bind the image into an OpenGL texture and free image data from main memory "
 .ti -1c
@@ -95,11 +95,11 @@ Inherited by \fBImageStrip\fP\&.
 .br
 .RI "Save this image with pixels or a resolvable resource reference\&. "
 .ti -1c
-.RI "\fBsetEdgeClamping\fP (boolean inUseEdgeClamp)"
+.RI "\fBImage\fP \fBsetEdgeClamping\fP (boolean inUseEdgeClamp)"
 .br
 .RI "set whether image uses edge clamping or not "
 .ti -1c
-.RI "\fBsetOpacity\fP (number opacity)"
+.RI "\fBImage\fP \fBsetOpacity\fP (number opacity)"
 .br
 .RI "set opacity of this image "
 .ti -1c
@@ -161,7 +161,7 @@ Load a bitmap image from a file\&.
 .PP
 
 .PP
-Referenced by \fBImageStrip::getFrame()\fP, \fBgetSubsection()\fP, \fBgetSubsection()\fP, and \fBsetTransparentColor()\fP\&.
+Referenced by \fBImageStrip::getFrame()\fP, \fBgetSubsection()\fP, \fBgetSubsection()\fP, \fBsetEdgeClamping()\fP, \fBsetOpacity()\fP, and \fBsetTransparentColor()\fP\&.
 .SS "Image (\fBPort\fP port, boolean copyPixels = \fR\fBCopyPixels\fP\fP)"
 
 .PP
@@ -332,7 +332,7 @@ the image height in pixels
 .RE
 .PP
 
-.SS "\fBRect\fP getImageBounds (\fBPoint\fP at)"
+.SS "\fBRect\fP getImageBounds (\fBPoint\fP at = \fR\fBPoint\fP(0,0)\fP)"
 
 .PP
 get image boundary rect, optionally with top left at given point Get a rectangle with the same height and width as the image\&. The location of the rectangle will either be with the top left at (0,0); or optionally at the point passed in, usually the point at which the image is located in some screen or view coordinate system\&.
@@ -547,7 +547,7 @@ the image width in pixels
 .RE
 .PP
 
-.SS "number prepareToRasterize ()"
+.SS "prepareToRasterize ()"
 
 .PP
 bind the image into an OpenGL texture and free image data from main memory You usually won't need to do this explicitly, it is done automatically the first time an image is drawn\&. This is here to allow you to convert images ahead of time if needed to prevent frame rate hits from conversion while drawing\&.
@@ -602,7 +602,7 @@ Save this image with pixels or a resolvable resource reference\&.
 .RE
 .PP
 
-.SS "setEdgeClamping (boolean inUseEdgeClamp)"
+.SS "\fBImage\fP setEdgeClamping (boolean inUseEdgeClamp)"
 
 .PP
 set whether image uses edge clamping or not Edge Clamping is useful for applications where you want a single copy of the texture to appear on a large surface\&. It makes the edges on a large surface align more cleanly with the edges of the image\&. You should turn off edge clamping with images you intend to use as repeating textures, such as with calls to Port\&.drawTexture() or Port\&.drawTexturedSphere()\&.
@@ -638,7 +638,9 @@ Port\&.drawTexturedSphere()
 .RE
 .PP
 
-.SS "setOpacity (number opacity)"
+.PP
+References \fBImage()\fP\&.
+.SS "\fBImage\fP setOpacity (number opacity)"
 
 .PP
 set opacity of this image Opacity can be used on an \fBImage\fP regardless of whether it has an alpha channel or not\&. In images with an alpha channel, the transparency of any given pixel is that pixel's alpha channel value * the image opacity (0\&.0 \&.\&. 1\&.0)\&.
@@ -655,6 +657,8 @@ set opacity of this image Opacity can be used on an \fBImage\fP regardless of wh
 .RE
 .PP
 
+.PP
+References \fBImage()\fP\&.
 .SS "\fBImage\fP setTransparentColor (\fBColor\fP inTransparentColor)"
 
 .PP

@@ -1,0 +1,52 @@
+/**
+\class pdg::Scene
+\ingroup Animation
+\brief Own layers, an isolated physics world, camera advancement and logical timers.
+
+Scenes draw in construction order above legacy layers. pause() freezes simulation,
+physics, owned camera animation and timers while rendering continues. A later HUD
+scene can share the same Port and continue advancing. Layer camera overrides remain
+supported; a camera has only one automatic scene owner.
+
+removeLayer() transfers responsibility without destruction. disposeLayer() destroys
+an attached layer. dispose() cancels timers, disconnects subscribe() registrations,
+destroys attached layers and releases the world; detached layers survive. Disposal
+is idempotent and physical cleanup is deferred during traversal. Detach and attach
+outside traversal and disconnect cross-layer constraints before detachment.
+
+setFixedStep(), advance(), getSimulationTime() and getDroppedTime() use seconds;
+timer creation and delays use milliseconds. Fixed step zero selects variable-step
+updates. Host admission is limited to 0.25 seconds and eight fixed steps per update.
+Discarded time does not advance timers. Fixed-step interpolation affects sprite
+root transforms during rendering; physics and queries use authoritative state.
+Camera and skeletal poses hold current state. Timer IDs are positive and local.
+Repeating intervals must be positive and fire at most once per step. Scene resume
+preserves individual timer pauses and excludes elapsed paused time. setTimeScale()
+accepts finite nonnegative values; zero freezes advancement without explicit pause.
+
+subscribe(emitter, handler, type) retains the handler and disconnects the exact
+registration on disposal; the emitter may be destroyed first. cancel/unsubscribe
+operations on unknown IDs do nothing. Raw input is controlled independently with
+setInputEnabled(). Audio and external asynchronous work remain application policy.
+
+\note Include pdg/sys/scene.h, pdg/sys/spritelayer.h and pdg/sys/sprite.h. Native stack scenes are
+supported. Heap scenes use addRef()/release() following PDG conventions. Explicitly
+dispose() before abandoning a scene. Shared ports and artwork retain existing ownership.
+
+\code{.cpp}
+pdg::Scene gameplay, hud;
+gameplay.setManual(true);
+hud.setManual(true);
+gameplay.setFixedStep(1.0 / 60);
+auto* actors = gameplay.createSpriteLayer();
+auto* indicator = hud.createSpriteLayer()->createSprite();
+indicator->setSpin(2);
+gameplay.pause();
+gameplay.advance(0.1); // Held pose.
+hud.advance(0.1);      // Independent HUD animation.
+gameplay.resume();
+gameplay.removeLayer(actors);
+hud.addLayer(actors);  // Explicitly transfer the surviving layer.
+hud.disposeLayer(actors);
+\endcode
+*/

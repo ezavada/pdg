@@ -65,6 +65,7 @@ protected:
     void validateAttributeEdit() const override { validateImmediateOperation(); }
     void attributeChanging(AttributeChannel channel) override;
     void animationValuesChanged() override;
+    std::vector<const float*> tweenFields() const override;
     void cancelAnimation(float* value) override;
     bool animationChannelsConflict(float* a, float* b) const override;
     void animationStarting(Animation& a) override;

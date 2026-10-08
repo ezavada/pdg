@@ -43,6 +43,11 @@
 #include <utility>
 #include <stdexcept>
 #include "drawing-snapshot.h"
+#include "pdg/sys/font.h"
+#ifndef PDG_NO_GUI
+#include "pdg/sys/graphicsmanager.h"
+#include "font-impl.h"
+#endif
 #include "pdg/sys/iserializer.h"
 #include "pdg/sys/ideserializer.h"
 #include "pdg/sys/serializable.h"
@@ -209,6 +214,22 @@ struct DrawingElement : public Element {
     }
 };
 
+struct TextElement : public Element {
+    std::string text;
+    Rect rect;
+    static std::string checkedText(const char* value) {
+        if (!value || std::strlen(value)>1048576) throw std::invalid_argument("Drawing text must be a string of at most 1 MiB");
+        return value;
+    }
+    TextElement(const char* value,const Rect& box,const Attributes& attributes)
+        : Element(attributes),text(checkedText(value)),rect(box) {
+        for(float v:{box.left,box.top,box.right,box.bottom})
+            if(!std::isfinite(v)) throw std::invalid_argument("Text rectangle must be finite");
+        if(box.right<box.left || box.bottom<box.top) throw std::invalid_argument("Text rectangle must be ordered");
+        controlPoints={box.leftTop(),box.rightTop(),box.rightBottom(),box.leftBottom()};
+    }
+};
+
 // ================================
 // Helper functions for bounds calculation and hit detection
 // ================================
@@ -255,6 +276,7 @@ Rect getElementBounds(const Element* element, ElementType type) {
             const ImageElement* imgEl = static_cast<const ImageElement*>(element);
             return imgEl->rect;
         }
+        case type_Text: return static_cast<const TextElement*>(element)->rect;
         case type_Drawing: {
             const DrawingElement* drawEl = static_cast<const DrawingElement*>(element);
             return drawEl->rect;
@@ -308,6 +330,7 @@ bool isPointInElement(const Element* element, ElementType type, const Point& poi
             return isPointInSpline(splineEl, point);
         }
         case type_Image:
+        case type_Text:
         case type_Drawing: {
             // For images and drawings, use the rect bounds
             Rect bounds = getElementBounds(element, type);
@@ -425,6 +448,11 @@ public:
 
     ElementRef* addImage(const Rect& rect, const Image& image, const Attributes& attrs) override;
     ElementRef* addImageStrip(const Rect& rect, const ImageStrip& imageStrip, const Attributes& attrs) override;
+    ElementRef* addText(const char*,const Rect&,const Attributes&) override;
+    TextElement& textElement(size_t index) const {
+        if(index>=elements.size() || elements[index].first!=type_Text) throw std::logic_error("Element is not text");
+        return *static_cast<TextElement*>(elements[index].second);
+    }
     ElementRef* addDrawing(const Rect& rect, const Drawing& drawing, const Attributes& attrs) override;
 
     size_t getElementCount() const override;
@@ -582,6 +610,12 @@ ElementRef*  DrawingImpl::addImageStrip(const Rect& rect, const ImageStrip& imag
     return new ElementRef(this, elements.size() - 1);
 }
 
+ElementRef* DrawingImpl::addText(const char* text,const Rect& rect,const Attributes& attrs) {
+    auto element=std::make_unique<TextElement>(text,rect,attrs);
+    elements.emplace_back(type_Text,element.get());element.release();invalidateBounds();
+    return new ElementRef(this,elements.size()-1);
+}
+
 ElementRef* DrawingImpl::addDrawing(const Rect& rect, const Drawing& drawing, const Attributes& attrs) {
     const auto* child = dynamic_cast<const DrawingImpl*>(&drawing);
     if (!child || child->contains(*this))
@@ -712,8 +746,9 @@ void DrawingImpl::changeElementControlPointPosition(size_t index, size_t control
             }
             case type_Image:
             case type_ImageStrip:
+            case type_Text:
             case type_Drawing: {
-                auto& rect = type == type_Drawing ? static_cast<DrawingElement*>(element)->rect
+                auto& rect = type == type_Text ? static_cast<TextElement*>(element)->rect : type == type_Drawing ? static_cast<DrawingElement*>(element)->rect
                                                   : static_cast<ImageElement*>(element)->rect;
                 if (controlPointIndex == 0 || controlPointIndex == 3) rect.left = controlPoint.x;
                 else rect.right = controlPoint.x;
@@ -925,6 +960,10 @@ void DrawingImpl::drawTransformed(Port* port, const Attributes& parent, bool loc
                 }
                 break;
             }
+            case type_Text: {
+                const auto* text=static_cast<TextElement*>(elementData);
+                port->drawText(text->text.c_str(),text->rect,attrs);break;
+            }
             case type_Drawing: {
                 DrawingElement* drawingElement = static_cast<DrawingElement*>(elementData);
                 attrs.setTransform(attrs.getTransform() * drawingElement->drawing->destinationTransform(Quad(drawingElement->rect)));
@@ -1009,3 +1048,13 @@ void ElementRef::remove() {
 }
 
 } // end namespace pdg
+
+namespace pdg {
+const char* ElementRef::getText() const {
+    return static_cast<DrawingImpl*>(drawing.get())->textElement(resolveIndex()).text.c_str();
+}
+void ElementRef::setText(const char* value) {
+    auto& element=static_cast<DrawingImpl*>(drawing.get())->textElement(resolveIndex());
+    element.text=TextElement::checkedText(value);
+}
+}

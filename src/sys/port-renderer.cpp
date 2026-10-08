@@ -35,6 +35,8 @@
 
 #include "pdg/sys/port.h"
 #include "port-clip.h"
+#include "particletrail.h"
+#include "pdg/sys/camera.h"
 #include "pdg/sys/renderer.h"
 #include "pdg/sys/graphics.h"
 #include "pdg/sys/drawing.h"
@@ -45,9 +47,73 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <optional>
 
 
 namespace pdg {
+    void Camera::drawEffects(Port& port) const {
+        const Rect viewport=getViewport();
+        if (!std::isfinite(viewport.left) || !std::isfinite(viewport.top) || !std::isfinite(viewport.right) || !std::isfinite(viewport.bottom) || viewport.right<viewport.left || viewport.bottom<viewport.top)
+            throw std::invalid_argument("Camera viewport must be finite and ordered");
+        const float opacity=getFlashOpacity();
+        if (opacity>0) {
+            Port::ScreenDrawingScope scope(port); Attributes attributes;
+            attributes.fillColor(Color(1.f,1.f,1.f,opacity)); port.drawRect(viewport,attributes);
+        }
+    }
+
+
+    Camera* Port::getCamera() const {
+        if (!mCamera) {
+            auto* camera=new Camera();
+            camera->mOwnerPort=const_cast<Port*>(this);
+            camera->attach(); mCamera=camera;
+        }
+        return mCamera;
+    }
+    void Port::queueCameraEffects(Camera* camera) {
+        if (!camera || std::find(mFrameCameras.begin(),mFrameCameras.end(),camera)!=mFrameCameras.end()) return;
+        camera->addRef(); mFrameCameras.push_back(camera);
+    }
+    void Port::finishCameraEffects() {
+        if (mCamera) queueCameraEffects(mCamera);
+        auto cameras=std::move(mFrameCameras); mFrameCameras.clear();
+        struct Release { std::vector<Camera*>& cameras; ~Release(){for(auto* camera:cameras)camera->release();} } release{cameras};
+        for (auto* camera:cameras) camera->drawEffects(*this);
+    }
+    glm::mat3 Port::getCameraTransform() {
+        const auto view = getCamera()->viewportTransform();
+        return glm::mat3(view.a,view.b,0, view.c,view.d,0, view.tx,view.ty,1);
+    }
+    Point Port::worldToPort(const Point& point) {
+        const auto p = getCameraTransform()*glm::vec3(point.x,point.y,1); return Point(p.x,p.y);
+    }
+    Point Port::portToWorld(const Point& point) {
+        const auto p = glm::inverse(getCameraTransform())*glm::vec3(point.x,point.y,1); return Point(p.x,p.y);
+    }
+    // One composition at the outer drawing operation, including retained Drawings.
+    class ScopedCameraDrawing {
+        Port& port;
+        // Nested scopes borrow the outer scope's attributes. Even the outer
+        // scope needs storage only when the camera actually changes the view.
+        std::optional<Attributes> transformed;
+        const Attributes& prepare(const Attributes& input) {
+            if (!port.isCameraDrawingEnabled()) return input;
+            const auto view = port.getCameraTransform();
+            if (view == glm::mat3(1.0f)) return input;
+            transformed.emplace(input);
+            transformed->setTransform(view * input.getTransform());
+            return *transformed;
+        }
+    public:
+        const Attributes& attributes;
+        ScopedCameraDrawing(Port& p, const Attributes& input) : port(p), attributes(prepare(input)) {
+            ++port.mCameraDrawingDepth;
+        }
+        ~ScopedCameraDrawing() { --port.mCameraDrawingDepth; }
+        ScopedCameraDrawing(const ScopedCameraDrawing&) = delete;
+        ScopedCameraDrawing& operator=(const ScopedCameraDrawing&) = delete;
+    };
 
     // Helper structure to hold calculated texture UV coordinates
     struct TextureUVBounds {
@@ -339,6 +405,51 @@ namespace pdg {
         }
     }
 
+    void drawParticleTrail(Port& output,const ParticleTrail& trail,const SpatialTransform& view) {
+        const auto points=trail.samples();
+        if(points.size()<2)return;
+        auto& port=static_cast<PortImpl&>(output);
+        std::vector<Offset> normals(points.size()-1),joins(points.size());
+        for(size_t i=0;i<normals.size();++i) {
+            const auto delta=points[i+1].position-points[i].position;
+            const double length=std::hypot(delta.x,delta.y);
+            normals[i]=length>1e-6 ? Offset(-delta.y/length,delta.x/length) : Offset();
+        }
+        joins.front()=normals.front();joins.back()=normals.back();
+        for(size_t i=1;i+1<points.size();++i) {
+            const auto a=normals[i-1],b=normals[i];
+            const double denominator=1+a.x*b.x+a.y*b.y;
+            if(denominator<.125) joins[i]=b; // bounded join at reversals/sharp corners
+            else joins[i]=Offset((a.x+b.x)/denominator,(a.y+b.y)/denominator);
+        }
+        port.setOpenGLModesForDrawing(true,blendMode_Normal);
+        const auto& options=trail.options;
+        auto vertex=[&](size_t i,float side,float fringe,float coverage) {
+            const auto& sample=points[i];
+            const float age=std::clamp(float((trail.time-sample.time)/options.lifetime),0.f,1.f);
+            const float width=options.width+(options.endWidth-options.width)*age;
+            const auto join=joins[i];
+            const double scale=std::hypot(view.a*join.x+view.c*join.y,view.b*join.x+view.d*join.y);
+            const double offset=side*(width*.5+(scale>1e-6 ? fringe/scale : 0));
+            const auto p=view.transformPoint(Point(sample.position.x+join.x*offset,sample.position.y+join.y*offset));
+            const float alpha=options.color.alpha*sample.opacity*(1+(options.endOpacity-1)*age)*coverage*std::min(1.0,double(width)*scale);
+            glVertexColor4f(options.color.red,options.color.green,options.color.blue,alpha);
+            glVertex2f(p.x,p.y);
+        };
+        // Solid center plus a one-pixel antialias fringe. Keep batches within
+        // the browser's emulated fixed-function vertex/color array capacity.
+        for(int band=0;band<3;++band)for(size_t start=0;start+1<points.size();start+=120) {
+            const size_t end=std::min(start+120,points.size()-1);
+            glBegin(GL_TRIANGLE_STRIP);
+            for(size_t i=start;i<=end;++i) {
+                if(band==0) {vertex(i,-1,0,1);vertex(i,1,0,1);}
+                if(band==1) {vertex(i,-1,1,0);vertex(i,-1,0,1);}
+                if(band==2) {vertex(i,1,0,1);vertex(i,1,1,0);}
+            }
+            glEnd();
+        }
+    }
+
     // Helper function to calculate proper UV coordinates based on fitType
     // Takes into account texture buffer size vs actual image size, and applies fitType
     TextureUVBounds calculateTextureFitUVs(Image* texture, const Rect& shapeBounds, FitType fitType) {
@@ -455,8 +566,10 @@ namespace pdg {
     // Port Renderer interface implementation
     // -----------------------------------------------------------------------------------
 
-    void Port::drawLine(const Point& from, const Point& to, const Attributes& attrs) {
+    Port& Port::drawLine(const Point& from, const Point& to, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         ScopedPortClip clip(this, Rect(std::min(from.x,to.x), std::min(from.y,to.y), std::max(from.x,to.x), std::max(from.y,to.y)), attrs, std::max(0.5f, attrs.getLineThickness()/2));
         // Apply transformation if needed
         Point transformedFrom = from;
@@ -482,7 +595,7 @@ namespace pdg {
         const float padding = std::max(0.5f, attrs.getLineThickness()/2);
         lineBounds.left -= padding; lineBounds.top -= padding;
         lineBounds.right += padding; lineBounds.bottom += padding;
-        if (lineBounds.intersection(drawableRect).empty()) return;
+        if (lineBounds.intersection(drawableRect).empty()) return *this;
 
         // Set up OpenGL state
         port.setOpenGLModesForDrawing(lineColor.alpha < 1.0f, attrs.getBlendMode());
@@ -508,10 +621,13 @@ namespace pdg {
         
         // Mark port as needing redraw
         port.mNeedRedraw = true;
+        return *this;
     }
 
-    void Port::drawRect(const Rect& rect, const Attributes& attrs) {
+    Port& Port::drawRect(const Rect& rect, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
 
         // Handle rounded corners by creating and drawing a polygon
         if (attrs.getRoundedCornerRadius() > 0.0f) {
@@ -520,16 +636,18 @@ namespace pdg {
             Polygon polygon;
             MakeRoundedRectPolygon(rect, xRadius, yRadius, polygon);
             drawPolygon(polygon, attrs);
-            return;
+            return *this;
         }
 
         // everything else is just a quad
         drawQuad(rect, attrs);
-        return;
+        return *this;
     }
 
-    void Port::drawQuad(const Quad& quad, const Attributes& attrs) {
+    Port& Port::drawQuad(const Quad& quad, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         ScopedPortClip clip(this, quad.getBounds(), attrs);
         // Get port implementation for OpenGL access
         PortImpl& port = static_cast<PortImpl&>(*this);
@@ -572,7 +690,7 @@ namespace pdg {
         }
         
         // Check if quad is within drawable area
-        if (transformedQuad.getBounds().intersection(port.drawableRect()).empty()) return;
+        if (transformedQuad.getBounds().intersection(port.drawableRect()).empty()) return *this;
 
         // Handle texture first (highest priority)
         if (texture && texture->width > 0 && texture->height > 0) {
@@ -783,10 +901,13 @@ namespace pdg {
         
         // Mark port as needing redraw
         port.mNeedRedraw = true;
+        return *this;
     }
 
-    void Port::drawPolygon(const Polygon& polygon, const Attributes& attrs) {
+    Port& Port::drawPolygon(const Polygon& polygon, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         ScopedPortClip clip(this, polygon.getBounds(), attrs);
         // Get port implementation for OpenGL access
         PortImpl& port = static_cast<PortImpl&>(*this);
@@ -798,7 +919,7 @@ namespace pdg {
         fillColor.alpha *= attrs.getFillOpacity();
         LineStyle lineStyle = attrs.getLineStyle();
 
-        if (polygon.empty()) return;
+        if (polygon.empty()) return *this;
 
         // Fit and transform the source contour at draw time. Keep tessellation
         // on the source Polygon so changing Attributes never rebuilds its mesh.
@@ -812,7 +933,7 @@ namespace pdg {
         if (texture) {
             const auto uvBounds = calculateTextureFitUVs(texture, originalBounds, attrs.getFitType());
             if (uvBounds.useDrawRect) {
-                if (originalBounds.empty()) return;
+                if (originalBounds.empty()) return *this;
                 drawBounds = uvBounds.drawRect;
                 const float scaleX = drawBounds.width() / originalBounds.width();
                 const float scaleY = drawBounds.height() / originalBounds.height();
@@ -845,7 +966,7 @@ namespace pdg {
             transformedBounds.top = std::min(transformedBounds.top, p.y);
             transformedBounds.bottom = std::max(transformedBounds.bottom, p.y);
         }
-        if (transformedBounds.intersection(port.drawableRect()).empty()) return;
+        if (transformedBounds.intersection(port.drawableRect()).empty()) return *this;
 
         // Handle texture first (highest priority).
         if (texture) {
@@ -957,12 +1078,15 @@ namespace pdg {
 
         // Mark port as needing redraw
         port.mNeedRedraw = true;
+        return *this;
     }
 
-    void Port::drawSpline(const Spline& spline, const Attributes& attrs) {
+    Port& Port::drawSpline(const Spline& spline, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         ScopedPortClip clip(this, spline.getBounds(), attrs, std::max(0.5f, attrs.getLineThickness()/2));
-        if (!attrs.hasLine()) return;
+        if (!attrs.hasLine()) return *this;
         // Apply colors with opacity
         Color lineColor = attrs.getLineColor();
         lineColor.alpha *= attrs.getLineOpacity();
@@ -982,7 +1106,7 @@ namespace pdg {
         // Draw the spline using existing Port method for now
         if (numSegments < 2) numSegments = 2;
 
-        if (maxU <= 0.0f) return;  // No segments to draw
+        if (maxU <= 0.0f) return *this;  // No segments to draw
         
         port.setOpenGLModesForDrawing(lineColor.alpha < 1.0f, attrs.getBlendMode());
         glColor4f(lineColor.red, lineColor.green, lineColor.blue, lineColor.alpha); 
@@ -1009,11 +1133,13 @@ namespace pdg {
         if (attrs.getLineThickness() > 1.0f) {
             glLineWidth(1.0f);
         }
+        return *this;
+    }
 
-     }
-
-    void Port::drawEllipse(const Point& center, float xRadius, float yRadius, const Attributes& attrs) {
+    Port& Port::drawEllipse(const Point& center, float xRadius, float yRadius, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         ScopedPortClip clip(this, Rect(center.x-std::abs(xRadius), center.y-std::abs(yRadius), center.x+std::abs(xRadius), center.y+std::abs(yRadius)), attrs);
         // Get port implementation for OpenGL access
         PortImpl& port = static_cast<PortImpl&>(*this);
@@ -1288,13 +1414,16 @@ namespace pdg {
         
         // Mark port as needing redraw
         port.mNeedRedraw = true;
+        return *this;
     }
 
 
-    void Port::drawArc(const Point& center, float xRadius, float yRadius, float startAngle, float endAngle, const Attributes& attrs) {
+    Port& Port::drawArc(const Point& center, float xRadius, float yRadius, float startAngle, float endAngle, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         ScopedPortClip clip(this, Rect(center.x-std::abs(xRadius), center.y-std::abs(yRadius), center.x+std::abs(xRadius), center.y+std::abs(yRadius)), attrs, std::max(0.5f, attrs.getLineThickness()/2));
-        if (!attrs.hasLine()) return;
+        if (!attrs.hasLine()) return *this;
         // Apply transformation if needed
         Point transformedCenter = center;
         bool needsTransform = false;
@@ -1313,7 +1442,7 @@ namespace pdg {
         const float extentY = std::hypot(matrix[0][1]*xRadius, matrix[1][1]*yRadius) + attrs.getLineThickness()/2;
         Rect arcBounds(transformedCenter.x-extentX, transformedCenter.y-extentY,
                        transformedCenter.x+extentX, transformedCenter.y+extentY);
-        if (arcBounds.intersection(port.drawableRect()).empty()) return;
+        if (arcBounds.intersection(port.drawableRect()).empty()) return *this;
 
         // Apply colors with opacity
         Color lineColor = attrs.getLineColor();
@@ -1354,6 +1483,7 @@ namespace pdg {
         
         // Mark port as needing redraw
         port.mNeedRedraw = true;
+        return *this;
     }
 
     void MakeRoundedRectPolygon(const Rect& rect, float xRadius, float yRadius, Polygon& polygon) {
@@ -1386,20 +1516,28 @@ namespace pdg {
     // New Renderer interface methods for images, drawings, text, and spheres
     // -----------------------------------------------------------------------------------
 
-    void Port::drawImage(Image* img, const Point& loc, const Attributes& attrs) {
+    Port& Port::drawImage(Image* img, const Point& loc, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
-        if (!img) return;
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
+        if (!img) return *this;
         drawImage(img, Rect(loc, img->getWidth(), img->getHeight()), attrs);
+        return *this;
     }
 
-    void Port::drawImage(Image* img, const Rect& rect, const Attributes& attrs) {
+    Port& Port::drawImage(Image* img, const Rect& rect, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         drawImage(img, Quad(rect), attrs);
+        return *this;
     }
     
-    void Port::drawImage(Image* img, const Quad& quad, const Attributes& attrs) {
+    Port& Port::drawImage(Image* img, const Quad& quad, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
-        if (!img) return;
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
+        if (!img) return *this;
         ScopedPortClip clip(this, quad.getBounds(), attrs);
         struct RestoreOpacity {
             Image* image; uint8 opacity;
@@ -1411,11 +1549,11 @@ namespace pdg {
         const int frame = strip && attrs.getFrame() >= 0 && attrs.getFrame() < strip->frames ? attrs.getFrame() : 0;
         Rect source(img->getWidth(), img->getHeight());
         if (!attrs.getSubsection().empty()) source = source.intersection(attrs.getSubsection());
-        if (source.empty()) return;
+        if (source.empty()) return *this;
         if (strip) source += Offset(frame * img->getWidth(), 0);
         const float width = std::hypot(quad.points[1].x-quad.points[0].x, quad.points[1].y-quad.points[0].y);
         const float height = std::hypot(quad.points[3].x-quad.points[0].x, quad.points[3].y-quad.points[0].y);
-        if (width <= 0 || height <= 0) return;
+        if (width <= 0 || height <= 0) return *this;
         auto point = [&](float x, float y) {
             const auto& q = quad.points;
             const float u=x/width, v=y/height;
@@ -1455,27 +1593,36 @@ namespace pdg {
             draw(Rect((width-w)/2,(height-h)/2,(width+w)/2,(height+h)/2), attrs.getClipOverflow() || fit == fit_Clipped);
         }
         if (attrs.hasLine() || attrs.hasFill()) drawQuad(quad, attrs);
+        return *this;
     }
 
-    void Port::drawDrawing(const Drawing& drawing, const Point& loc, const Attributes& attrs) {
+    Port& Port::drawDrawing(const Drawing& drawing, const Point& loc, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         glm::mat3 offset(1);
         offset[2] = glm::vec3(loc.x, loc.y, 1);
         Attributes parent(attrs);
         parent.setTransform(attrs.getTransform() * offset);
         drawing.drawTransformed(this, parent);
+        return *this;
     }
 
-    void Port::drawDrawing(const Drawing& drawing, const Rect& rect, const Attributes& attrs) {
+    Port& Port::drawDrawing(const Drawing& drawing, const Rect& rect, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         Attributes parent(attrs);
         parent.setTransform(attrs.getTransform() * drawing.destinationTransform(Quad(rect)));
         drawing.drawTransformed(this, parent);
+        return *this;
     }
 
-    void Port::drawText(const char* text, const Point& loc, const Attributes& attrs) {
-        ScopedOffscreenDrawing offscreenScope(this);
-        if (!text) return;
+    Port& Port::drawText(const char* text, const Point& loc, const Attributes& inputAttrs) {
+        ScopedOffscreenDrawing offscreenScope(this, true);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
+        if (!text) return *this;
         
         // Get text properties from attributes
         float size = attrs.getTextSize();
@@ -1512,7 +1659,7 @@ namespace pdg {
                 if (font && originalFont) {
                     setFont(originalFont);
                 }
-                return;
+                return *this;
             }
             
             // Use the same measured baseline bounds for layout and overflow clipping.
@@ -1538,7 +1685,7 @@ namespace pdg {
             if (font && originalFont) {
                 setFont(originalFont);
             }
-            return;
+            return *this;
         }
         
         // No transformation - use simple point-based drawing
@@ -1548,12 +1695,15 @@ namespace pdg {
         if (font && originalFont) {
             setFont(originalFont);
         }
+        return *this;
     }
 
-    void Port::drawText(const char* text, const Rect& rect, const Attributes& attrs) {
-        ScopedOffscreenDrawing offscreenScope(this);
+    Port& Port::drawText(const char* text, const Rect& rect, const Attributes& inputAttrs) {
+        ScopedOffscreenDrawing offscreenScope(this, true);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         ScopedPortClip clip(this, rect, attrs);
-        if (!text) return;
+        if (!text) return *this;
         
         // Get text properties from attributes
         float size = attrs.getTextSize();
@@ -1593,7 +1743,7 @@ namespace pdg {
             if (font && originalFont) {
                 setFont(originalFont);
             }
-            return;
+            return *this;
         }
         
         // No transformation - use simple rect-based drawing
@@ -1603,21 +1753,24 @@ namespace pdg {
         if (font && originalFont) {
             setFont(originalFont);
         }
+        return *this;
     }
 
-    void Port::drawSphere(const Point& center, float radius, const Attributes& attrs) {
+    Port& Port::drawSphere(const Point& center, float radius, const Attributes& inputAttrs) {
         ScopedOffscreenDrawing offscreenScope(this);
+        ScopedCameraDrawing cameraScope(*this, inputAttrs);
+        const Attributes& attrs = cameraScope.attributes;
         ScopedPortClip clip(this, Rect(center.x-radius, center.y-radius, center.x+radius, center.y+radius), attrs);
-        // Apply transformation if needed
-        Point transformedCenter = center;
-        float transformedRadius = radius;
-        
-        if (attrs.getTransform() != glm::mat3(1.0f)) {
-            glm::vec3 transformed = attrs.getTransform() * glm::vec3(center.x, center.y, 1.0f);
-            transformedCenter = Point(transformed.x, transformed.y);
-            // For uniform scaling, we can extract the scale factor from the transform
-            // For now, assume the transform only affects position
-        }
+        // Preserve the complete affine view, including anisotropic scale and
+        // reflection, while the sphere renderer builds its local 3D geometry.
+        static_cast<PortImpl&>(*this).setOpenGLModesForDrawing(false);
+        const auto& t=attrs.getTransform();
+        const GLfloat matrix[16]={t[0][0],t[0][1],0,0, t[1][0],t[1][1],0,0,
+                                  0,0,1,0, t[2][0],t[2][1],0,1};
+        glPushMatrix(); glMultMatrixf(matrix);
+        struct RestoreMatrix { ~RestoreMatrix() { glPopMatrix(); } } restoreMatrix;
+        const Point& transformedCenter = center;
+        const float transformedRadius = radius;
         
         // Get sphere properties from attributes
         float rotation = attrs.getSphereRotation();
@@ -1654,6 +1807,7 @@ namespace pdg {
             
             drawColoredSphere(fillColor, transformedCenter, transformedRadius, rotation, polarOffset, lightOffset, ambientLight);
         }
+        return *this;
     }
 
     // Helper method to draw textured polygons

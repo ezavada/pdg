@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -129,7 +129,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>font for text drawing and measuring (<em>GUI Only</em>) </p>
 <dl class="section note"><dt>Note</dt><dd><b>API Stability: 3 — Stable</b>. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See <a class="el" href="index.html#api_stability" title="API stability">API stability</a>.</dd></dl>
-<p>You cannot create fonts directly, they must be loaded by the Graphics Manager. <a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images) that can be rendered to a Port.">Drawing</a> text is done through the <a class="el" href="classpdg_1_1_port.html" title="area in which drawing is done, a viewport (GUI Only)">Port</a> class after assigning a font. The <a class="el" href="classpdg_1_1_font.html" title="font for text drawing and measuring (GUI Only)">Font</a> object is read only, and has methods for getting measurement info (<a class="el" href="classpdg_1_1_font.html" title="font for text drawing and measuring (GUI Only)">Font</a> Metrics) for the font.</p>
+<p>You cannot create fonts directly, they must be loaded by the Graphics Manager. <a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images, text) that can be rendered to a Port.">Drawing</a> text is done through the <a class="el" href="classpdg_1_1_port.html" title="area in which drawing is done, a viewport (GUI Only)">Port</a> class after assigning a font. The <a class="el" href="classpdg_1_1_font.html" title="font for text drawing and measuring (GUI Only)">Font</a> object is read only, and has methods for getting measurement info (<a class="el" href="classpdg_1_1_font.html" title="font for text drawing and measuring (GUI Only)">Font</a> Metrics) for the font.</p>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
 Font Metrics:</h2>
 <ul>
@@ -146,11 +146,11 @@ Font Metrics Illustration</div></div>
 <dd>
 <a class="el" href="classpdg_1_1_port.html#a66907738fb56b2255740d24e7406948f" title="returns the current font for the specified style">Port.getCurrentFont</a> </dd>
 <dd>
-<a class="el" href="classpdg_1_1_port.html#a4ad60b2e1ebf1b697b305c98c89b7b2f" title="sets the current font for text rendering">Port.setFont</a> </dd>
+<a class="el" href="classpdg_1_1_port.html#a1e297fc0545fd684d6d3d06a3289db28" title="sets the current font for text rendering">Port.setFont</a> </dd>
 <dd>
-<a class="el" href="classpdg_1_1_port.html#a656c023f7c5d5e89063261755df4a971" title="Set a custom font for a specific text style (bold, italic, etc.).">Port.setFontForStyle</a> </dd>
+<a class="el" href="classpdg_1_1_port.html#aadafad8ddc0b0ac4c8d963db812be918" title="Set a custom font for a specific text style (bold, italic, etc.).">Port.setFontForStyle</a> </dd>
 <dd>
-<a class="el" href="classpdg_1_1_port.html#ac84dea85de2ad1ac1152e0aa845a58d0" title="Set a scaling factor to adjust the size of all rendered text.">Port.setFontScalingFactor</a> </dd></dl>
+<a class="el" href="classpdg_1_1_port.html#a26fc20c240def732a3d8a8d55fde4dd1" title="Set a scaling factor to adjust the size of all rendered text.">Port.setFontScalingFactor</a> </dd></dl>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="aded37c65905281eaf10f7dfaf357d0ae" name="aded37c65905281eaf10f7dfaf357d0ae"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aded37c65905281eaf10f7dfaf357d0ae">&#9670;&#160;</a></span>getFontAscent()</h2>
@@ -208,7 +208,7 @@ Font Metrics Illustration</div></div>
 <p>Use this metric to align an icon or control with the visible capitals in a label. It excludes accents, descenders, and line spacing, unlike the full font ascent or height.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">size</td><td><a class="el" href="classpdg_1_1_font.html" title="font for text drawing and measuring (GUI Only)">Font</a> size, using the same units as <a class="el" href="classpdg_1_1_port.html#a4e7c14b78ae4157b0e37038e981f2d6f" title="Draws text at the specified location with styling attributes.">Port::drawText()</a>. </td></tr>
+    <tr><td class="paramname">size</td><td><a class="el" href="classpdg_1_1_font.html" title="font for text drawing and measuring (GUI Only)">Font</a> size, using the same units as <a class="el" href="classpdg_1_1_port.html#abadc3ad8486836e4f16651bcb61b8991" title="Draws text at the specified location with styling attributes.">Port::drawText()</a>. </td></tr>
     <tr><td class="paramname">style</td><td>Optional text style flags; defaults to textStyle_Plain. </td></tr>
   </table>
   </dd>

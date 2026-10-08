@@ -149,16 +149,16 @@ Port* graphics_newPort(GraphicsManager* mgr) {
 }
 
 // internal implementation of text drawing
-void graphics_drawText(PortImpl& portimpl, const char* text, int len, const Quad& quad, int size, uint32 style, Color rgba) {
+void graphics_drawTextRaster(PortImpl& portimpl, const char* text, int len, const Quad& quad, int size, uint32 style, Color rgba, TextCacheEntry* cachedEntry) {
     PortImplWin& port = static_cast<PortImplWin&>(portimpl); // get us access to our private data
  	FontImplWin* font = dynamic_cast<FontImplWin*> ( port.getCurrentFont(style) );
 	if (!font) return;
 
-	TextCacheEntry* textInfo = port.getTextFromCache(text, len, font, size, style);  // creates an entry if one doesn't already exist
+	TextCacheEntry* textInfo = cachedEntry ? cachedEntry : port.getTextFromCache(text, len, font, size, style);  // creates an entry if one doesn't already exist
 	if (!textInfo) return;
 
 	// it's possible that we've never measured this text
-	if (textInfo->width == 0) {
+	if (!textInfo->measured) {
 		textInfo->width = port.getTextWidth(text, size, style, len);
 	}
 	if (textInfo->texture == 0) {
@@ -217,21 +217,12 @@ void graphics_drawText(PortImpl& portimpl, const char* text, int len, const Quad
 		std::memset( imageData, 0x00, dataSize );
 		int yOffset = glBufferHeight - textInfo->charHeight;
 
-		HBRUSH hBrush = CreateSolidBrush(RGB(10,10,10));
-//		WinAPI::FillRect(hMemDC, &rRect, hBrush);
 		WinAPI::SetBkMode(hMemDC, TRANSPARENT);
 		WinAPI::SetTextColor(hMemDC, RGB(255, 255, 255) );
 		WinAPI::ExtTextOutW(hMemDC, 0, yOffset, ETO_CLIPPED, &rRect, theText, len, NULL);  // Unicode vers supported on Win98
 
 		// create the Open GL texture
-		glGenTextures(1, &textInfo->texture);
-		glBindTexture(GL_TEXTURE_2D, textInfo->texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, glBufferWidth, glBufferHeight, 0,
-					 GL_ALPHA, GL_UNSIGNED_BYTE, imageData);
+		port.mTextCache.uploadPixels(textInfo, imageData, glBufferWidth, glBufferHeight, GL_ALPHA, port.mStateCache, 4, true);
 
 		WinAPI::DeleteObject(hBitmap);
 		WinAPI::DeleteDC(hMemDC);
@@ -249,34 +240,11 @@ void graphics_drawText(PortImpl& portimpl, const char* text, int len, const Quad
 		}
 		
 		// Add the new text entry to the port's cache
-		port.addTextToCache(textInfo);
+		textInfo->textureBytes = static_cast<size_t>(glBufferWidth) * glBufferHeight * 1;
+        port.addTextToCache(textInfo);
 	}
 
-	Point topLeft, topRight, bottomLeft, bottomRight;
-	topLeft = quad.points[lftTop];
-	topRight = quad.points[rgtTop];
-	bottomLeft = quad.points[lftBot];
-	bottomRight = quad.points[rgtBot];
-	
-	port.setOpenGLModesForDrawing(true); // must use alpha for text
-	glColor4f(rgba.red, rgba.green, rgba.blue, rgba.alpha);
-	glEnable(GL_TEXTURE_2D);
-	// Use state cache to avoid redundant texture binds
-	port.mStateCache.bindTexture(textInfo->texture);
-	extern GLuint gBoundTexture;
-	gBoundTexture = textInfo->texture;
-	glBegin(GL_TRIANGLE_STRIP);
-	glTexCoord2f (0.0, 0.0);
-	glVertex2f( bottomLeft.x, bottomLeft.y );
-	glTexCoord2f (textInfo->tx_topoffset, textInfo->ty);
-	glVertex2f( topLeft.x, topLeft.y );
-	glTexCoord2f (textInfo->tx, 0.0);
-	glVertex2f( bottomRight.x, bottomRight.y );
-	glTexCoord2f (textInfo->tx + textInfo->tx_topoffset, textInfo->ty);
-	glVertex2f( topRight.x, topRight.y );
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
+    graphics_submitText(port, *textInfo, quad, rgba, false, true);
 }
 	
 // ==================================================================
@@ -296,6 +264,8 @@ Port::getTextWidth(const char* text, int size, uint32 style, int len) {
 	if (len == 0) return 0;
 	FontImplWin* font = dynamic_cast<FontImplWin*> ( getCurrentFont(style) );
 	if (!font) return 0;
+    TextCacheEntry* textInfo = port.getTextFromCache(text, len, font, size, style);
+    if (textInfo->measured) return textInfo->width;
     int textWidth = 0;
   	WinAPI::HDC dc = graphics_getPortDC(this);
 	if (!dc) return 0;
@@ -314,6 +284,9 @@ Port::getTextWidth(const char* text, int size, uint32 style, int len) {
 	textWidth = textSize.cx;
 	// put back the font and clean up created font
     WinAPI::SelectObject(dc, oldFont);
+    textInfo->advanceWidth = textWidth;
+    textInfo->width = textWidth;
+    textInfo->measured = true;
     return textWidth;
 }
 
@@ -323,12 +296,17 @@ FontImplWin::FontImplWin(Port* port, const char* fontName, float scalingFactor)
 }
 
 FontImplWin::~FontImplWin() {
-	for (int i = 0; i < TEXT_INFO_CACHE_SIZE; i++) {
-		if (mFontMetricsInfo[i]) {
-			WinFontMetricsInfo* mfmi = (WinFontMetricsInfo*) mFontMetricsInfo[i];
-			WinAPI::DeleteObject(mfmi->mWinFont);
-		}
-	}
+    for (auto*& metrics : mFontMetricsInfo) {
+        releaseFontMetrics(metrics);
+        metrics = nullptr;
+    }
+}
+
+void FontImplWin::releaseFontMetrics(FontMetricsInfo* metrics) {
+    if (!metrics) return;
+    auto* windows = static_cast<WinFontMetricsInfo*>(metrics);
+    if (windows->mWinFont) WinAPI::DeleteObject(windows->mWinFont);
+    std::free(windows);
 }
 
 FontMetricsInfo* FontImplWin::getFontMetrics(int size, uint32 style) {

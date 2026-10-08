@@ -12,11 +12,14 @@ and resource availability during sizing.
 \fn void pdg::SpriteLayer::serialize(ISerializer* serializer) const
 \brief Save selected Layer state and its ordered sprites.
 \param serializer Destination writer; not null. Select its resource mode before writing.
-The default `ser_Full` includes Layer draw transforms, initial identities, frame
+The default `ser_Full` includes explicit Camera and parallax settings, initial identities, frame
 artwork, playback, programmed tweens, root and Part PhysicsBody state and active drives.
 Remaining Layer fade completion delays use seconds. Shared images are written
 once and use the writer's embedded-resource or external-reference policy.
 
+
+Camera state requires `ser_LayerDraw`; `ser_Update` alone leaves the current camera
+attachment unchanged. Layer world bounds use `ser_Sizes`.
 
 Updates with `ser_Animations` (including `ser_Update`) transfer sampled local Part
 transforms, reflection, constant movement and scheduled animations by Part ID.
@@ -108,8 +111,8 @@ Initial records load into an empty or populated Layer, preserving shared resourc
 and Sprite order. Mount links are validated after creating the entire collection,
 including cycle/duplicate-owner checks. Record/resource validation completes before replacing live
 membership and state. Retained old sprites are detached; restored bodies join
-the solver after validation. Layer tween pointers, including zoom, are rebound to
-the receiving object. A validation failure preserves existing state; discard the
+the solver after validation. Camera tween pointers, including zoom, are rebound to
+the restored camera. Shared explicit cameras retain identity within one stream. A validation failure preserves existing state; discard the
 failed reader.
 
 The destination keeps its Port, event handlers and caller-selected serialization

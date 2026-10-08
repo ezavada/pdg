@@ -1,0 +1,43 @@
+/**
+\fn pdg::getInterfaceMetadata(string interfaceName, string memberName)
+\brief Return an independent structured description of the available interface.
+
+With both arguments omitted, returns the module inventory, including classes,
+constants, functions, inherited methods, overload parameter lists, defaults, return
+contracts, and shared record and callback schemas. With interfaceName, returns
+that class or root export. With both names, returns the selected member and all
+its overloads. Use "pdg" as interfaceName to select a root member.
+
+No constructors, methods, or property getters are invoked. Exports unavailable
+in the current build are omitted. Every result is an independent copy; changing
+it does not change subsequent queries. Accessor values are not evaluated.
+
+\param interfaceName Optional interface or root export name.
+\param memberName Optional member name within the selected interface.
+\return A plain metadata record. Invalid selector types throw TypeError; unknown
+names throw RangeError.
+
+\code{.js}
+const move = pdg.getInterfaceMetadata('Polygon', 'moveTo');
+for (const params of move.params) {
+    console.log(params.map(param => param.type + ' ' + param.name).join(', '));
+}
+console.log(pdg.describeInterface('Polygon', 'moveTo'));
+\endcode
+
+\sa pdg::describeInterface
+*/
+
+/**
+\fn pdg::describeInterface(string interfaceName, string memberName)
+\brief Format structured interface metadata as readable signatures.
+
+Uses the same selectors, available interfaces, independent metadata, and errors
+as getInterfaceMetadata(). Includes each overload, parameter defaults, return
+type, and brief description. With a class or module selector, lists its members.
+
+\param interfaceName Optional interface or root export name.
+\param memberName Optional member name within the selected interface.
+\return A string describing the selected interface or member.
+\sa pdg::getInterfaceMetadata
+*/

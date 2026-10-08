@@ -1,4 +1,4 @@
-.TH "Collider" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Collider" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -389,7 +389,14 @@ One stable shape ID for the complete mask\&.
 .SS "uint addPolygon (array vertices)"
 
 .PP
-Add a simple local polygon, including concave outlines\&. Copies the outline and decomposes concave regions into convex solver pieces, retaining one public shape ID\&. Collinear edge points and a repeated closing point are accepted; crossings, touching edges, zero-area outlines and nonfinite points are rejected without changing existing geometry\&. Basic and Chipmunk use the same decomposition\&.
+Add a simple local polygon, including concave outlines\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRvertices:\fP Array of \fR\fBPoint\fP\fP\&.
+.RE
+.PP
+Copies the outline and decomposes concave regions into convex solver pieces, retaining one public shape ID\&. Collinear edge points and a repeated closing point are accepted; crossings, touching edges, zero-area outlines and nonfinite points are rejected without changing existing geometry\&. Basic and Chipmunk use the same decomposition\&.
 
 .PP
 \fBParameters\fP
@@ -926,7 +933,14 @@ This object, for chaining\&.
 .SS "\fBCollider\fP setCollisionFilter (function callback)"
 
 .PP
-Filter contacts independently of owner type\&. The predicate receives this \fBCollider\fP and the other \fBCollider\fP and must return a boolean\&. Returning false suppresses response and contact notifications\&. It can run multiple times during a step; keep it a read-only decision\&. Geometric \fBcontains()\fP/overlaps() queries ignore it\&. Exceptions reject the pair and are recorded by \fBgetContactError()\fP\&. Pass null to clear the callback\&. Owner detachment clears callbacks\&. See \fBcollider_geometry_sources\fP\&.
+Filter contacts independently of owner type\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBColliderFilterCallback\fP or \fRnull\fP\&.
+.RE
+.PP
+The predicate receives this \fBCollider\fP and the other \fBCollider\fP and must return a boolean\&. Returning false suppresses response and contact notifications\&. It can run multiple times during a step; keep it a read-only decision\&. Geometric \fBcontains()\fP/overlaps() queries ignore it\&. Exceptions reject the pair and are recorded by \fBgetContactError()\fP\&. Pass null to clear the callback\&. Owner detachment clears callbacks\&. See \fBcollider_geometry_sources\fP\&.
 
 .PP
 \fBParameters\fP
@@ -960,7 +974,14 @@ This object, for chaining\&.
 .SS "\fBCollider\fP setContactHandler (function callback)"
 
 .PP
-Install a contact listener\&. The callback receives a contact with collider/other, shape/otherShape, phase, point, normal, impulse, penetration and sensor\&. It runs after solving and may remove owners\&. It is independent of owner event delivery through \fBsetWantsContactEvents()\fP\&. Pass null to clear the callback\&. Owner detachment clears callbacks\&. See \fBcollider_geometry_sources\fP\&.
+Install a contact listener\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBColliderContactCallback\fP or \fRnull\fP\&.
+.RE
+.PP
+The callback receives a contact with collider/other, shape/otherShape, phase, point, normal, impulse, penetration and sensor\&. It runs after solving and may remove owners\&. It is independent of owner event delivery through \fBsetWantsContactEvents()\fP\&. Pass null to clear the callback\&. Owner detachment clears callbacks\&. See \fBcollider_geometry_sources\fP\&.
 
 .PP
 \fBParameters\fP
@@ -1066,7 +1087,14 @@ This object, for chaining\&.
 .SS "\fBCollider\fP setPolygon (array vertices)"
 
 .PP
-Replace all geometry with one polygon\&. Stops any frame/animation source after validation succeeds\&. Accepts the same outlines as \fBaddPolygon()\fP\&. See \fBcollider_geometry_sources\fP\&.
+Replace all geometry with one polygon\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRvertices:\fP Array of \fR\fBPoint\fP\fP\&.
+.RE
+.PP
+Stops any frame/animation source after validation succeeds\&. Accepts the same outlines as \fBaddPolygon()\fP\&. See \fBcollider_geometry_sources\fP\&.
 
 .PP
 \fBParameters\fP

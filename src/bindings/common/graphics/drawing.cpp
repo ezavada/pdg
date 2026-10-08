@@ -1,7 +1,7 @@
 // -----------------------------------------------
 // drawing.cpp
 //
-// JavaScript bindings for Drawing and ElementRef classes
+// Class-specific JavaScript bindings.
 //
 // Written by AI Assistant, 2025
 // Copyright (c) 2025, Dream Rock Studios, LLC
@@ -25,167 +25,6 @@
 
 namespace pdg {
 
-// ===== ElementRef Bindings =====
-
-WRAPPER_INITIALIZER_IMPL_CUSTOM(ElementRef,
-    OBJECT_SAVE(cppObj->mElementRefScriptObj, obj)
-)
-    EXPORT_CLASS_SYMBOLS("ElementRef", ElementRef, , ,
-        // method section
-        HAS_METHOD(ElementRef, "type", Type)
-        HAS_METHOD(ElementRef, "getControlPoints", GetControlPoints)
-        HAS_METHOD(ElementRef, "getControlPoint", GetControlPoint)
-        HAS_METHOD(ElementRef, "changeControlPoint", ChangeControlPoint)
-        HAS_METHOD(ElementRef, "getAttributes", GetAttributes)
-        HAS_METHOD(ElementRef, "setAttributes", SetAttributes)
-        HAS_METHOD(ElementRef, "setLiveAttributes", SetLiveAttributes)
-        HAS_METHOD(ElementRef, "clearLiveAttributes", ClearLiveAttributes)
-        HAS_METHOD(ElementRef, "hasLiveAttributes", HasLiveAttributes)
-        HAS_METHOD(ElementRef, "moveForward", MoveForward)
-        HAS_METHOD(ElementRef, "moveBackward", MoveBackward)
-        HAS_METHOD(ElementRef, "moveToFront", MoveToFront)
-        HAS_METHOD(ElementRef, "moveToBack", MoveToBack)
-        HAS_METHOD(ElementRef, "remove", Remove)
-    );
-    END
-
-CPP_MANAGED_CONSTRUCTOR_IMPL(ElementRef)
-    SETUP_NON_SCRIPT_CALL;
-    
-    // ElementRef should not be constructed directly by JavaScript
-    return nullptr;
-END
-
-CLEANUP_IMPL(ElementRef)
-
-METHOD_IMPL(ElementRef, Type)
-    METHOD_SIGNATURE("", [number uint], 0, ()); 
-    REQUIRE_ARG_COUNT(0);
-    ElementType type = self->type();
-    RETURN_UINT32(static_cast<uint32_t>(type));
-    END
-
-METHOD_IMPL(ElementRef, GetControlPoints)
-    METHOD_SIGNATURE("", [array], 0, ()); 
-    REQUIRE_ARG_COUNT(0);
-    const std::vector<Point>& points = self->getControlPoints();
-    
-    // Create JavaScript array of Point objects
-    %#ifdef PDG_USING_JAVASCRIPT_CORE
-    JSObjectRef result = JSObjectMakeArray(ctx, 0, nullptr, exception);
-    for (size_t i = 0; i < points.size(); i++) {
-        Point point = points[i];
-        JSObjectSetPropertyAtIndex(ctx, result, (unsigned)i, POINT2VAL(point), exception);
-    }
-    %#else
-    v8::Local<v8::Array> result = v8::Array::New(isolate, points.size());
-    v8::Local<v8::Context> context = isolate->GetCurrentContext();
-    
-    for (size_t i = 0; i < points.size(); i++) {
-        Point point = points[i]; // Create a non-const copy
-        result->Set(context, i, POINT2VAL(point)).ToChecked();
-    }
-    %#endif
-
-    RETURN_OBJECT(result);
-    END
-
-METHOD_IMPL(ElementRef, GetControlPoint)
-    METHOD_SIGNATURE("", [object Point], 1, ([number uint] controlPointIndex)); 
-    REQUIRE_ARG_COUNT(1);
-    REQUIRE_UINT32_ARG(1, controlPointIndex);
-    try {
-        const Point& point = self->getControlPoint(controlPointIndex);
-        Point pointCopy = point; // Create a non-const copy
-        RETURN_POINT(pointCopy);
-    } catch (const std::out_of_range& e) {
-        THROW_RANGE_ERR("ElementRef::getControlPoint: index out of range");
-    }
-    END
-
-METHOD_IMPL(ElementRef, ChangeControlPoint)
-    METHOD_SIGNATURE("", undefined, 2, ([number uint] controlPointIndex, [object Point] controlPoint)); 
-    REQUIRE_ARG_COUNT(2);
-    REQUIRE_UINT32_ARG(1, controlPointIndex);
-    REQUIRE_POINT_ARG(2, controlPoint);
-    try {
-        self->changeControlPoint(controlPointIndex, controlPoint);
-    } catch (const std::out_of_range& e) {
-        THROW_RANGE_ERR("ElementRef::changeControlPoint: index out of range");
-    }
-    NO_RETURN;
-    END
-
-METHOD_IMPL(ElementRef, GetAttributes)
-    METHOD_SIGNATURE("", [object Attributes], 0, ()); 
-    REQUIRE_ARG_COUNT(0);
-    Attributes* attrsPtr = new Attributes();
-    self->getAttributes(*attrsPtr);
-    RETURN_CPP_OBJECT(attrsPtr, Attributes);
-    END
-
-METHOD_IMPL(ElementRef, SetAttributes)
-    METHOD_SIGNATURE("", undefined, 1, ([object Attributes] attrs)); 
-    REQUIRE_ARG_COUNT(1);
-    REQUIRE_ATTRIBUTES_ARG(1, attrs);
-    self->setAttributes(*attrs);
-    NO_RETURN;
-    END
-
-METHOD_IMPL(ElementRef, SetLiveAttributes)
-    METHOD_SIGNATURE("", undefined, 1, ([object Attributes] attrs));
-    REQUIRE_ARG_COUNT(1);
-    REQUIRE_ATTRIBUTES_ARG(1, attrs);
-    self->setLiveAttributes(*attrs);
-    NO_RETURN;
-    END
-METHOD_IMPL(ElementRef, ClearLiveAttributes)
-    METHOD_SIGNATURE("", undefined, 0, ());
-    REQUIRE_ARG_COUNT(0);
-    self->clearLiveAttributes();
-    NO_RETURN;
-    END
-METHOD_IMPL(ElementRef, HasLiveAttributes)
-    METHOD_SIGNATURE("", boolean, 0, ());
-    REQUIRE_ARG_COUNT(0);
-    RETURN_BOOL(self->hasLiveAttributes());
-    END
-
-METHOD_IMPL(ElementRef, MoveForward)
-    METHOD_SIGNATURE("", undefined, 0, ()); 
-    REQUIRE_ARG_COUNT(0);
-    self->moveForward();
-    NO_RETURN;
-    END
-
-METHOD_IMPL(ElementRef, MoveBackward)
-    METHOD_SIGNATURE("", undefined, 0, ()); 
-    REQUIRE_ARG_COUNT(0);
-    self->moveBackward();
-    NO_RETURN;
-    END
-
-METHOD_IMPL(ElementRef, MoveToFront)
-    METHOD_SIGNATURE("", undefined, 0, ()); 
-    REQUIRE_ARG_COUNT(0);
-    self->moveToFront();
-    NO_RETURN;
-    END
-
-METHOD_IMPL(ElementRef, MoveToBack)
-    METHOD_SIGNATURE("", undefined, 0, ()); 
-    REQUIRE_ARG_COUNT(0);
-    self->moveToBack();
-    NO_RETURN;
-    END
-
-METHOD_IMPL(ElementRef, Remove)
-    METHOD_SIGNATURE("", undefined, 0, ()); 
-    REQUIRE_ARG_COUNT(0);
-    self->remove();
-    NO_RETURN;
-    END
-
 // ===== Drawing Bindings =====
 
 WRAPPER_INITIALIZER_IMPL_CUSTOM(Drawing,
@@ -193,6 +32,7 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Drawing,
 )
     EXPORT_CLASS_SYMBOLS("Drawing", Drawing, , ,
         // method section
+        HAS_METHOD(Drawing, "addText", AddText)
         HAS_METHOD(Drawing, "addLine", AddLine)
         HAS_METHOD(Drawing, "addSpline", AddSpline)
         HAS_METHOD(Drawing, "addRect", AddRect)
@@ -209,9 +49,6 @@ WRAPPER_INITIALIZER_IMPL_CUSTOM(Drawing,
         HAS_METHOD(Drawing, "getBounds", GetBounds)
         HAS_METHOD(Drawing, "centerPoint", CenterPoint)
         HAS_METHOD(Drawing, "empty", Empty)
-    %#ifndef PDG_NO_GUI CR
-        HAS_METHOD(Drawing, "draw", Draw)
-    %#endif // !PDG_NO_GUI
         CR
     );
     END
@@ -226,14 +63,21 @@ END
 CLEANUP_IMPL(Drawing)
 
 FUNCTION_IMPL(CreateDrawing)
-    METHOD_SIGNATURE("", [object Drawing], 0, ()); 
+    METHOD_SIGNATURE("", [object Drawing*], 0, ());
     REQUIRE_ARG_COUNT(0);
     Drawing* drawing = Drawing::create();
     RETURN_NEW_CPP_OBJECT(drawing, Drawing);
     END
 
+METHOD_IMPL(Drawing, AddText)
+    METHOD_SIGNATURE("Add owned UTF-8 text in a local rectangle.", [object ElementRef*], 3, (string text, [object Rect const&] rect, [object Attributes const&] attrs));
+    REQUIRE_ARG_COUNT(3);REQUIRE_STRING_ARG(1,text);REQUIRE_RECT_ARG(2,rect);REQUIRE_ATTRIBUTES_ARG(3,attrs);
+    try {auto* result=self->addText(text,rect,*attrs);RETURN_CPP_OBJECT(result,ElementRef);}
+    catch(const std::exception& error) {THROW_ERR(error.what());}
+END
+
 METHOD_IMPL(Drawing, AddLine)
-    METHOD_SIGNATURE("", [object ElementRef], 3, ([object Point] from, [object Point] to, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 3, ([object Point const&] from, [object Point const&] to, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(3);
     REQUIRE_POINT_ARG(1, from);
     REQUIRE_POINT_ARG(2, to);
@@ -243,7 +87,7 @@ METHOD_IMPL(Drawing, AddLine)
     END
 
 METHOD_IMPL(Drawing, AddSpline)
-    METHOD_SIGNATURE("", [object ElementRef], 2, ([object Spline] spline, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 2, ([object Spline&&] spline, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
     REQUIRE_ATTRIBUTES_ARG(2, attrs);
@@ -252,7 +96,7 @@ METHOD_IMPL(Drawing, AddSpline)
     END
 
 METHOD_IMPL(Drawing, AddRect)
-    METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 2, ([object Rect const&] rect, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_RECT_ARG(1, rect);
     REQUIRE_ATTRIBUTES_ARG(2, attrs);
@@ -261,7 +105,7 @@ METHOD_IMPL(Drawing, AddRect)
     END
 
 METHOD_IMPL(Drawing, AddQuad)
-    METHOD_SIGNATURE("", [object ElementRef], 2, ([object Quad] quad, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 2, ([object Quad const&] quad, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_QUAD_ARG(1, quad);
     REQUIRE_ATTRIBUTES_ARG(2, attrs);
@@ -270,7 +114,7 @@ METHOD_IMPL(Drawing, AddQuad)
     END
 
 METHOD_IMPL(Drawing, AddPolygon)
-    METHOD_SIGNATURE("", [object ElementRef], 2, ([object Polygon] polygon, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 2, ([object Polygon&&] polygon, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_CPP_OBJECT_ARG(1, polygon, Polygon);
     REQUIRE_ATTRIBUTES_ARG(2, attrs);
@@ -279,7 +123,7 @@ METHOD_IMPL(Drawing, AddPolygon)
     END
 
 METHOD_IMPL(Drawing, AddEllipse)
-    METHOD_SIGNATURE("", [object ElementRef], 4, ([object Point] center, number xRadius, number yRadius, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 4, ([object Point const&] center, number xRadius, number yRadius, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(4);
     REQUIRE_POINT_ARG(1, center);
     REQUIRE_NUMBER_ARG(2, xRadius);
@@ -290,7 +134,7 @@ METHOD_IMPL(Drawing, AddEllipse)
     END
 
 METHOD_IMPL(Drawing, AddArc)
-    METHOD_SIGNATURE("", [object ElementRef], 6, ([object Point] center, number xRadius, number yRadius, number startAngle, number endAngle, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 6, ([object Point const&] center, number xRadius, number yRadius, number startAngle, number endAngle, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(6);
     REQUIRE_POINT_ARG(1, center);
     REQUIRE_NUMBER_ARG(2, xRadius);
@@ -303,7 +147,7 @@ METHOD_IMPL(Drawing, AddArc)
     END
 
 METHOD_IMPL(Drawing, AddImage)
-    METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object Image] image, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 2, ([object Rect const&] rect, [object Image const&] image, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
     REQUIRE_CPP_OBJECT_ARG(2, image, Image);
@@ -313,7 +157,7 @@ METHOD_IMPL(Drawing, AddImage)
     END
 
 METHOD_IMPL(Drawing, AddImageStrip)
-    METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object ImageStrip] imageStrip, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 2, ([object Rect const&] rect, [object ImageStrip const&] imageStrip, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
     REQUIRE_CPP_OBJECT_ARG(2, imageStrip, ImageStrip);
@@ -323,7 +167,7 @@ METHOD_IMPL(Drawing, AddImageStrip)
     END
 
 METHOD_IMPL(Drawing, AddDrawing)
-    METHOD_SIGNATURE("", [object ElementRef], 2, ([object Rect] rect, [object Drawing] drawing, [object Attributes] attrs)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 2, ([object Rect const&] rect, [object Drawing const&] drawing, [object Attributes const&] attrs));
     REQUIRE_ARG_COUNT(3);
     REQUIRE_RECT_ARG(1, rect);
     REQUIRE_CPP_OBJECT_ARG(2, drawing, Drawing);
@@ -344,7 +188,7 @@ METHOD_IMPL(Drawing, GetElementCount)
     END
 
 METHOD_IMPL(Drawing, GetElement)
-    METHOD_SIGNATURE("", [object ElementRef], 1, ([number uint] index)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 1, ([number uint] index));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_UINT32_ARG(1, index);
     try {
@@ -356,7 +200,7 @@ METHOD_IMPL(Drawing, GetElement)
     END
 
 METHOD_IMPL(Drawing, GetElementHitBy)
-    METHOD_SIGNATURE("", [object ElementRef], 1, ([object Point] point)); 
+    METHOD_SIGNATURE("", [object ElementRef*], 1, ([object Point const&] point));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_POINT_ARG(1, point);
     ElementRef* result = self->getElementHitBy(point);
@@ -384,19 +228,27 @@ METHOD_IMPL(Drawing, Empty)
     RETURN_BOOL(empty);
     END
 
-%#ifndef PDG_NO_GUI
-
-METHOD_IMPL(Drawing, Draw)
-    METHOD_SIGNATURE("", undefined, 1, ([object Port] port)); 
-    REQUIRE_ARG_COUNT(1);
-    REQUIRE_CPP_OBJECT_ARG(1, port, Port);
-    
-    // For now, just draw without transformation
-    // TODO: Add support for transformation arguments
-    self->draw(port);
-    NO_RETURN;
-    END
-
-%#endif // !PDG_NO_GUI
-
 } // namespace pdg
+
+// @pdg-class {"name":"Drawing","construction":{"kind":"factory","factory":"pdg.createDrawing"},"native_binding":{"browser":{"generate":true,"base":null}}}
+// @pdg-member {"name":"Drawing.addText","native_binding":{"adapter":"Drawing.addText"}}
+
+// @pdg-member {"name":"Drawing.addLine","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.addArc","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.addRect","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.addQuad","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.addEllipse","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.addImage","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.addImageStrip","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.addDrawing","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.getElement","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"Drawing.getElementHitBy","native_binding":{"allow_raw_pointers":true}}

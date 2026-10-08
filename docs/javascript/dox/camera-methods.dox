@@ -1,0 +1,175 @@
+/**
+\class pdg::Camera
+\ingroup Animation Graphics
+\brief Animated view owned by a Port or shared by layers.
+
+Scene-owned cameras advance on their scene clock. Layer overrides remain available;
+\ref pdg::Scene describes ownership and pause behavior.
+
+See \ref camera_output for camera visibility, composed opacity, fades and crossfades.
+
+Camera inherits EventEmitter event handling and Animated movement, rotation, scale, reflection, pivots, helpers,
+timed chains and schedule controls. Moving its location right moves visible world
+content left. Rotation uses radians and is inverted in the view; zoom and scale
+magnify content. Camera size is animation metadata and does not resize a viewport.
+For a Port-owned camera, location + centerOffset maps to the Port anchor, in port coordinates. Anchors default to (0,0). An explicit layer camera maps its focus to the center of its stored viewport.
+
+A layer's explicit camera overrides its Scene camera and port camera. Clearing
+the explicit camera restores inheritance from its Scene, or from the current Port
+for a legacy layer. Every Port owns its camera.
+Attachments retain cameras; getCamera()/getEffectiveCamera() preserve shared
+JavaScript identity. Attached cameras advance once per runtime tick regardless
+of attachment count or whether a layer is paused or hidden. Scene-owned cameras
+advance on scene time and stop when their scene pauses. animate(seconds)
+additionally advances state, and is intended for manual/detached animation.
+
+Direct Port Renderer drawing applies the camera once outside local Attributes
+transforms, including nested Drawings. Layers project sprites, Parts, particles
+and tiles through their effective camera once. Port clipping and clear operations
+remain in port coordinates. MVC Views automatically draw in screen space.
+For direct screen drawing, disable camera drawing temporarily and restore it in
+finally. Port conversions still use the camera while drawing is disabled.
+
+\note Port attachment and rendering require a graphics-capable build. Camera
+animation and explicit layer attachments also work headlessly. Camera zoom must
+stay finite and positive, and its view must have finite, nonzero scale.
+
+\code{.js}
+const camera = port.getCamera();
+port.setCameraAnchor(new pdg.Point(320, 240));
+const actors = pdg.createSpriteLayer(port);
+const background = pdg.createSpriteLayer(port);
+background.setCameraParallax(0.5, 0);
+camera.setLocation(100, 200).zoomTo(2, 0.5, pdg.linearTween);
+// Both layers inherit camera; background ignores zoom and scrolls half as far.
+\endcode
+*/
+
+/**
+\fn Camera pdg::Camera::setZoom(number zoom)
+\brief Set view magnification immediately.
+\param zoom Finite positive factor; 2 doubles apparent content size.
+\return This camera for chaining.
+Initial zoom is 1. Zoom multiplies Animated scale without changing viewport size.
+Invalid zoom and immediate operations in a timed sequence throw.
+*/
+
+/**
+\fn Camera pdg::Camera::zoomTo(number zoom, number seconds, number easing = easeInOutQuad)
+\brief Animate view magnification.
+\param zoom Finite positive target factor.
+\param seconds Finite nonnegative duration in seconds; zero applies immediately.
+\param easing Registered easing constant; defaults to easeInOutQuad.
+\return This camera for chaining.
+Participates in wait(), andThen(), cancellation and schedule pause/resume.
+Emits eventType_ZoomComplete on this camera; subscribe with onZoomComplete().
+
+\see onZoomComplete()
+*/
+
+/**
+\fn Camera pdg::Camera::setPixelSnapping(boolean snap = true)
+\brief Round final view translation without rounding persistent camera pose.
+\param snap Enable snapping; initially false on a new camera.
+\return This camera for chaining.
+*/
+
+
+
+/**
+\fn void pdg::SpriteLayer::setCameraParallax(number movementRatio = 1, number zoomRatio = 1)
+\brief Adjust camera scrolling and zoom for this layer.
+\param movementRatio Finite factor multiplying camera location.
+\param zoomRatio Finite exponent applied to camera zoom.
+Zero ignores that component. Rotation, scale, reflection and pivot still apply.
+The destination port's anchor remains the same for explicit and inherited cameras.
+Layer bounds, fades, visibility, physics and simulation pause remain independent.
+*/
+
+/**
+\fn void pdg::SpriteLayer::setWorldBounds(Rect bounds)
+\brief Set world bounds for sprite boundary checks.
+\param bounds Finite ordered rectangle independent of camera and viewport.
+Tile-layer map dimensions initialize its bounds. Camera motion never changes them.
+*/
+
+/**
+\fn Point pdg::Port::worldToPort(Point point)
+\brief Project a world point using this port's camera and anchor.
+\param point World-coordinate point.
+\return Port-coordinate point; using the Port's built-in camera.
+Use layerToPortPoint() for a layer's explicit camera or parallax settings.
+*/
+
+/**
+\fn Point pdg::Port::portToWorld(Point point)
+\brief Invert this port's camera view.
+\param point Port-coordinate point.
+\return World-coordinate point; using the Port's built-in camera.
+Use portToLayerPoint() for a layer's explicit camera or parallax settings.
+*/
+
+/**
+\fn Port pdg::Port::setCameraAnchor(Point anchor)
+\brief Set the Port-owned camera's anchor within its full-port viewport.
+\param anchor Point relative to drawing-area top-left; initially (0,0).
+\return This port for chaining.
+Each port can use a different anchor without changing the shared camera pose.
+*/
+
+/**
+\fn Port pdg::Port::setCameraDrawingEnabled(boolean enabled)
+\brief Select world or screen coordinates for direct drawing.
+\param enabled True to apply the port camera; false for screen-space drawing.
+\return This port for chaining.
+Coordinate conversions and layer camera selection are unchanged by this setting.
+\code{.js}
+const previous = port.getCameraDrawingEnabled();
+port.setCameraDrawingEnabled(false);
+try { port.drawRect(new pdg.Rect(10, 10, 30, 30), hudAttributes); }
+finally { port.setCameraDrawingEnabled(previous); }
+\endcode
+*/
+
+/**
+\fn Camera pdg::Camera::zoom(number factor, number seconds, number easing = easeInOutQuad)
+\brief Animate magnification by a positive multiplier.
+\param factor Finite positive multiplier. 2 doubles zoom; 0.5 halves it.
+\param seconds Finite nonnegative duration in seconds.
+\param easing Easing constant; defaults to easeInOutQuad.
+\return This camera for chaining.
+
+Queued multipliers use the zoom at the start of the operation. Emits
+eventType_ZoomComplete when completed, just like zoomTo().
+\code{.js}
+camera.zoomTo(2, 0.5).andThen().zoom(0.5, 0.5); // ends at zoom 1
+\endcode
+*/
+
+/**
+\fn IEventHandler pdg::Camera::onZoomComplete(function callback)
+\brief Listen for this camera's completed zoom operations.
+\param callback Function called synchronously with a CameraZoomInfo event.
+Its fields are camera, zoom (completed magnification), emitter (the camera), and
+ eventType (eventType_ZoomComplete). Return false to allow other handlers
+ to run, or true to mark the event handled.
+\return Handler with cancel() to remove this subscription.
+
+Both zoom() and zoomTo() emit once per completed operation. Zero-duration
+operations emit synchronously unless queued or delayed; queued operations emit
+when advanced. Cancelled or replaced operations and setZoom() do not emit.
+A shared camera emits once, independently of its number of attachments. Schedule
+pause delays completion. Restored scheduled operations emit on the restored
+camera; event handlers must be registered again after loading.
+Use camera.addHandler(handler, pdg.eventType_ZoomComplete) to listen with
+an IEventHandler directly. Completion belongs to Camera, replacing the former
+SpriteLayer action_ZoomComplete event and layer.onZoomComplete().
+\code{.js}
+const subscription = camera.onZoomComplete(function(event) {
+    console.log('Zoom completed at', event.zoom);
+    return false;
+});
+camera.zoomTo(2, 0.5);
+// Later: subscription.cancel();
+\endcode
+*/

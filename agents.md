@@ -38,7 +38,6 @@ The repo reflects that split:
 - JavaScript documentation is derived from IDL/doc-generation flows in `tools/make-idl.js`, `tools/generate-js-docs.sh`, and related binding sources.
 - Generated binding output is produced by `tools/gen-script-interface.sh` and `tools/gen-script-interface.ps1`.
 - Doxygen regeneration is driven by scripts in `tools`.
-- `docs/note-ai` is useful context, but it is analysis and planning material. Verify assumptions there against current source before acting on them.
 
 ## Verification
 

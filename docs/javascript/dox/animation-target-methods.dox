@@ -33,10 +33,7 @@ Editing the returned object does not change the helper.
 
 \anchor animation_spring_state
 \par Spring state
-| Field | Meaning |
-| --- | --- |
-| `x`, `y` | Position in the application's chosen coordinate frame. |
-| `velocityX`, `velocityY` | Velocity in that frame's distance units per second. |
+See \ref pdg::AnimationSpringState for the generated field schema.
 
 \htmlonly[block]
 </div>
@@ -46,7 +43,7 @@ Editing the returned object does not change the helper.
 */
 
 /**
-\fn pdg::AnimationSpringTarget::setState(object state)
+\fn pdg::AnimationSpringTarget::setState(AnimationSpringState state)
 \brief Replace spring position and velocity.
 
 Validates all components before changing the state. Invalid or overflowing values leave it unchanged.
@@ -118,11 +115,7 @@ Editing the returned object does not change the helper.
 
 \anchor animation_contact_state
 \par Contact state
-| Field | Meaning |
-| --- | --- |
-| `x`, `y` | Locked or last-released point in owning-layer coordinates. |
-| `influence` | Weight from 0 to 1; fades after release. |
-| `locked` | True while tracking a world point or platform; false during and after release. |
+See \ref pdg::AnimationContactState for the generated field schema.
 
 \htmlonly[block]
 </div>
@@ -146,7 +139,7 @@ Replaces any previous lock and resets influence to 1. The point remains fixed un
 */
 
 /**
-\fn pdg::AnimationContactTarget::lockPlatform(number x, number y, number support, object frame)
+\fn pdg::AnimationContactTarget::lockPlatform(number x, number y, number support, AnimationTransform frame)
 \brief Lock a contact to a moving support.
 
 Converts the world point into the platform frame. Subsequent update() calls transform that local point using the same support's current frame. Replaces any previous lock and resets influence to 1. Singular frames throw.
@@ -184,7 +177,7 @@ Sets locked false immediately and preserves the last position. Influence falls l
 */
 
 /**
-\fn pdg::AnimationContactTarget::update(number deltaSeconds, boolean contactActive, boolean withinReach, number support, object frame, number releaseSeconds)
+\fn pdg::AnimationContactTarget::update(number deltaSeconds, boolean contactActive, boolean withinReach, number support, AnimationTransform frame, number releaseSeconds)
 \brief Follow a support or advance the release fade.
 
 Inactive contact, an unreachable target, or a missing/replaced platform ID releases the lock. World locks do not require a support. Released targets never reacquire automatically; call a lock method on the next contact edge. A zero time step preserves fade progress but can still update a platform point or release a lock.
@@ -202,7 +195,7 @@ Inactive contact, an unreachable target, or a missing/replaced platform ID relea
 */
 
 /**
-\fn pdg::animationHasTag(object pose, string object, string tag)
+\fn pdg::animationHasTag(AnimationPose pose, string object, string tag)
 \brief Test sampled animation metadata for a tag.
 
 Reads an owned snapshot without changing playback. Object and tag names are exact and case-sensitive. Missing objects/tags return false; an invalid snapshot or non-string names throw.

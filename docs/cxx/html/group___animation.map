@@ -1,5 +1,5 @@
 <map id="Animation" name="Animation">
-<area shape="rect" id="Node000001" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="5,260,85,285"/>
+<area shape="rect" id="Node000001" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="5,259,85,285"/>
 <area shape="rect" id="Node000002" href="$group___animation_drawing.html" title="Shared Drawing artwork attached to the evaluated pose and authored slots." alt="" coords="320,5,472,46"/>
 <area shape="rect" id="Node000004" href="$group___animation_easing.html" title="Built&#45;in interpolation curves and the easing callback signature." alt="" coords="337,70,455,96"/>
 <area shape="rect" id="Node000005" href="$group___animation_modifiers.html" title="Ordered pose callbacks, animation sources, and two&#45;bone IK." alt="" coords="329,120,463,161"/>
@@ -7,7 +7,7 @@
 <area shape="rect" id="Node000006" href="$group___animation_poses.html" title="Rig structure, owned pose snapshots, coordinate spaces, and authored metadata." alt="" coords="303,234,489,260"/>
 <area shape="rect" id="Node000007" href="$group___animation_targets.html" title="Spring integration, recoil impulses, and world or platform contact locks." alt="" coords="331,284,461,325"/>
 <area shape="rect" id="Node000010" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="365,385,427,410"/>
-<area shape="rect" id="Node000009" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="359,550,432,576"/>
-<area shape="rect" id="Node000011" href="$group___physics.html" title="Things used for handling physics simulation." alt="" coords="362,626,430,652"/>
-<area shape="rect" id="Node000008" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="333,736,459,761"/>
+<area shape="rect" id="Node000009" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="359,581,432,606"/>
+<area shape="rect" id="Node000011" href="$group___physics.html" title="Things used for handling physics simulation." alt="" coords="362,657,430,682"/>
+<area shape="rect" id="Node000008" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="333,766,459,792"/>
 </map>

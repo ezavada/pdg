@@ -14,6 +14,7 @@
 // -----------------------------------------------
 
 #include "pdg_script_macros.h"
+#include "physics_impl_macros.h"
 
 %#include "pdg_project.h"
 
@@ -35,21 +36,27 @@ namespace pdg {
 //MARK: cpConstraint
 // ========================================================================================
 
-#define IF_CONSTRAINT_TYPE(type) \
-	if (strcmp((const char*)cpConstraintGetUserData(self), #type) == 0)
-
+// Native predicates avoid relying on user-data strings for joint dispatch.
+#define CONSTRAINT_PREDICATE_PinJoint cpConstraintIsPinJoint
+#define CONSTRAINT_PREDICATE_SlideJoint cpConstraintIsSlideJoint
+#define CONSTRAINT_PREDICATE_PivotJoint cpConstraintIsPivotJoint
+#define CONSTRAINT_PREDICATE_GrooveJoint cpConstraintIsGrooveJoint
+#define CONSTRAINT_PREDICATE_SpringJoint cpConstraintIsDampedSpring
+#define CONSTRAINT_PREDICATE_RotarySpring cpConstraintIsDampedRotarySpring
+#define CONSTRAINT_PREDICATE_RotaryLimit cpConstraintIsRotaryLimitJoint
+#define CONSTRAINT_PREDICATE_Ratchet cpConstraintIsRatchetJoint
+#define CONSTRAINT_PREDICATE_Gear cpConstraintIsGearJoint
+#define CONSTRAINT_PREDICATE_Motor cpConstraintIsSimpleMotor
+#define IF_CONSTRAINT_TYPE(type) if (PDG_NATIVE_C_CASE(CONSTRAINT_PREDICATE_##type))
 #define REQUIRE_CONSTRAINT_TYPE(prop, type) \
-	if (strcmp((const char*)cpConstraintGetUserData(self), #type) != 0) { CR \
-		std::ostringstream msg; CR \
-        msg << "cpConstraint.set" #prop "() not valid for constraint type "  CR \
-                << (const char*)cpConstraintGetUserData(self); CR \
-		THROW_TYPE_ERR(msg.str().c_str()) ; CR \
-	}
-
+    if (!PDG_NATIVE_C_CASE(CONSTRAINT_PREDICATE_##type)) { CR \
+        THROW_TYPE_ERR("cpConstraint.set" #prop "() not valid for this constraint type"); CR \
+        RETURN_UNDEFINED; CR \
+    }
 #define UNDEFINED_UNLESS_CONSTRAINT_TYPE(type) \
-	if (strcmp((const char*)cpConstraintGetUserData(self), #type) != 0) { CR \
-		RETURN_UNDEFINED; CR \
-	}
+    if (!PDG_NATIVE_C_CASE(CONSTRAINT_PREDICATE_##type)) { CR \
+        RETURN_UNDEFINED; CR \
+    }
 
 #define CONSTRAINT_CUSTOM_PROPERTY_IMPL(prop, type, contype, cpgetcode, cpsetcode) \
 CUSTOM_GETTER_IMPL(cpConstraint, prop, type, 0, , , \
@@ -60,7 +67,7 @@ CUSTOM_SETTER_IMPL(cpConstraint, prop, type, 1, , , \
 	cpsetcode)
 
 #define CONSTRAINT_PROPERTY_IMPL(prop, contype, cpgetcall, cpsetcall) \
-	CONSTRAINT_CUSTOM_PROPERTY_IMPL(prop, NUMBER, contype, cpFloat the##prop = cpgetcall(self), cpsetcall(self, the##prop))
+	CONSTRAINT_CUSTOM_PROPERTY_IMPL(prop, NUMBER, contype, cpFloat the##prop = PDG_NATIVE_C_CALL(cpgetcall, self), PDG_NATIVE_C_CALL(cpsetcall, self, the##prop))
 
 WRAPPER_INITIALIZER_IMPL_CUSTOM(cpConstraint, ) 
     EXPORT_CLASS_SYMBOLS("CpConstraint", cpConstraint, , ,
@@ -104,18 +111,18 @@ CP_PROPERTY_IMPL(cpConstraint, MaxBias, NUMBER)
 METHOD_IMPL(cpConstraint, ActivateBodies);
 	METHOD_SIGNATURE("", undefined, 0, ());
 	REQUIRE_ARG_COUNT(0);
-	cpConstraintActivateBodies(self);
+	PDG_NATIVE_C_CALL(cpConstraintActivateBodies, self);
 	NO_RETURN;
 	END
 METHOD_IMPL(cpConstraint, GetSprite);
-	METHOD_SIGNATURE("", [object Sprite], 0, ());
+	METHOD_SIGNATURE("", [object Sprite*], 0, ());
 	REQUIRE_ARG_COUNT(0);
 	cpBody* body = cpConstraintGetBodyA(self);
 	Sprite* sprite = (Sprite*) cpBodyGetUserData(body);
 	RETURN_CPP_OBJECT(sprite, Sprite);
 	END
 METHOD_IMPL(cpConstraint, GetOtherSprite);
-	METHOD_SIGNATURE("", [object Sprite], 0, ());
+	METHOD_SIGNATURE("", [object Sprite*], 0, ());
 	REQUIRE_ARG_COUNT(0);
 	cpBody* body = cpConstraintGetBodyB(self);
 	Sprite* otherSprite = (Sprite*) cpBodyGetUserData(body);
@@ -124,13 +131,13 @@ METHOD_IMPL(cpConstraint, GetOtherSprite);
 CUSTOM_GETTER_IMPL(cpConstraint, Anchor, OFFSET, 0, , ,
 	cpVect anchor; CR
 	IF_CONSTRAINT_TYPE(PinJoint) { CR
-		anchor = cpPinJointGetAnchorA(self);
+		anchor = PDG_NATIVE_C_CALL(cpPinJointGetAnchorA, self);
 	} else IF_CONSTRAINT_TYPE(SlideJoint) { CR
-		anchor = cpSlideJointGetAnchorA(self);
+		anchor = PDG_NATIVE_C_CALL(cpSlideJointGetAnchorA, self);
 	} else IF_CONSTRAINT_TYPE(PivotJoint) { CR
-		anchor = cpPivotJointGetAnchorA(self);
+		anchor = PDG_NATIVE_C_CALL(cpPivotJointGetAnchorA, self);
 	} else IF_CONSTRAINT_TYPE(SpringJoint) { CR
-		anchor = cpDampedSpringGetAnchorA(self);
+		anchor = PDG_NATIVE_C_CALL(cpDampedSpringGetAnchorA, self);
 	} else { CR
 		RETURN_UNDEFINED; CR
 	} CR
@@ -138,31 +145,31 @@ CUSTOM_GETTER_IMPL(cpConstraint, Anchor, OFFSET, 0, , ,
 CUSTOM_SETTER_IMPL(cpConstraint, Anchor, OFFSET, 1, , ,
 	cpVect anchor = cpv(theAnchor.x, theAnchor.y); CR
 	IF_CONSTRAINT_TYPE(PinJoint) { CR
-		cpPinJointSetAnchorA(self, anchor);
+		PDG_NATIVE_C_CALL(cpPinJointSetAnchorA, self, anchor);
 	} else IF_CONSTRAINT_TYPE(SlideJoint) { CR
-		cpSlideJointSetAnchorA(self, anchor);
+		PDG_NATIVE_C_CALL(cpSlideJointSetAnchorA, self, anchor);
 	} else IF_CONSTRAINT_TYPE(PivotJoint) { CR
-		cpPivotJointSetAnchorA(self, anchor);
+		PDG_NATIVE_C_CALL(cpPivotJointSetAnchorA, self, anchor);
 	} else IF_CONSTRAINT_TYPE(SpringJoint) { CR
-		cpDampedSpringSetAnchorA(self, anchor);
+		PDG_NATIVE_C_CALL(cpDampedSpringSetAnchorA, self, anchor);
 	} else { CR
 		std::ostringstream msg; CR
         msg << "cpConstraint.setAnchor() not valid for constraint type "  CR
-                << (const char*)cpConstraintGetUserData(self); CR
+                << "unsupported joint"; CR
 		THROW_TYPE_ERR(msg.str().c_str()) ; CR
 	})
 CUSTOM_GETTER_IMPL(cpConstraint, OtherAnchor, OFFSET, 0, , ,
 	cpVect anchor; CR
 	IF_CONSTRAINT_TYPE(PinJoint) { CR
-		anchor = cpPinJointGetAnchorB(self);
+		anchor = PDG_NATIVE_C_CALL(cpPinJointGetAnchorB, self);
 	} else IF_CONSTRAINT_TYPE(SlideJoint) { CR
-		anchor = cpSlideJointGetAnchorB(self);
+		anchor = PDG_NATIVE_C_CALL(cpSlideJointGetAnchorB, self);
 	} else IF_CONSTRAINT_TYPE(PivotJoint) { CR
-		anchor = cpPivotJointGetAnchorB(self);
+		anchor = PDG_NATIVE_C_CALL(cpPivotJointGetAnchorB, self);
 	} else IF_CONSTRAINT_TYPE(GrooveJoint) { CR
-		anchor = cpGrooveJointGetAnchorB(self);
+		anchor = PDG_NATIVE_C_CALL(cpGrooveJointGetAnchorB, self);
 	} else IF_CONSTRAINT_TYPE(SpringJoint) { CR
-		anchor = cpDampedSpringGetAnchorB(self);
+		anchor = PDG_NATIVE_C_CALL(cpDampedSpringGetAnchorB, self);
 	} else { CR
 		RETURN_UNDEFINED; CR
 	} CR
@@ -170,32 +177,32 @@ CUSTOM_GETTER_IMPL(cpConstraint, OtherAnchor, OFFSET, 0, , ,
 CUSTOM_SETTER_IMPL(cpConstraint, OtherAnchor, OFFSET, 1, , ,
 	cpVect anchor = cpv(theOtherAnchor.x, theOtherAnchor.y); CR
 	IF_CONSTRAINT_TYPE(PinJoint) { CR
-		cpPinJointSetAnchorB(self, anchor);
+		PDG_NATIVE_C_CALL(cpPinJointSetAnchorB, self, anchor);
 	} else IF_CONSTRAINT_TYPE(SlideJoint) { CR
-		cpSlideJointSetAnchorB(self, anchor);
+		PDG_NATIVE_C_CALL(cpSlideJointSetAnchorB, self, anchor);
 	} else IF_CONSTRAINT_TYPE(PivotJoint) { CR
-		cpPivotJointSetAnchorB(self, anchor);
+		PDG_NATIVE_C_CALL(cpPivotJointSetAnchorB, self, anchor);
 	} else IF_CONSTRAINT_TYPE(GrooveJoint) { CR
-		cpGrooveJointSetAnchorB(self, anchor);
+		PDG_NATIVE_C_CALL(cpGrooveJointSetAnchorB, self, anchor);
 	} else IF_CONSTRAINT_TYPE(SpringJoint) { CR
-		cpDampedSpringSetAnchorB(self, anchor);
+		PDG_NATIVE_C_CALL(cpDampedSpringSetAnchorB, self, anchor);
 	} else { CR
 		std::ostringstream msg; CR
         msg << "cpConstraint.setOtherAnchor() not valid for constraint type "  CR
-                << (const char*)cpConstraintGetUserData(self); CR
+                << "unsupported joint"; CR
 		THROW_TYPE_ERR(msg.str().c_str()) ; CR
 	})
 CONSTRAINT_PROPERTY_IMPL(PinDist, PinJoint, cpPinJointGetDist, cpPinJointSetDist)
 CONSTRAINT_PROPERTY_IMPL(SlideMinDist, SlideJoint, cpSlideJointGetMin, cpSlideJointSetMin)
 CONSTRAINT_PROPERTY_IMPL(SlideMaxDist, SlideJoint, cpSlideJointGetMax, cpSlideJointSetMax)
 CONSTRAINT_CUSTOM_PROPERTY_IMPL(GrooveStart, OFFSET, GrooveJoint, 
-	cpVect v = cpGrooveJointGetGrooveA(self); CR
+	cpVect v = PDG_NATIVE_C_CALL(cpGrooveJointGetGrooveA, self); CR
 	pdg::Offset theGrooveStart(v.x, v.y), 
-	cpGrooveJointSetGrooveA(self, cpv(theGrooveStart.x, theGrooveStart.y)))
+	PDG_NATIVE_C_CALL(cpGrooveJointSetGrooveA, self, cpv(theGrooveStart.x, theGrooveStart.y)))
 CONSTRAINT_CUSTOM_PROPERTY_IMPL(GrooveEnd, OFFSET, GrooveJoint,
-	cpVect v = cpGrooveJointGetGrooveB(self); CR
+	cpVect v = PDG_NATIVE_C_CALL(cpGrooveJointGetGrooveB, self); CR
 	pdg::Offset theGrooveEnd(v.x, v.y), 
-	cpGrooveJointSetGrooveB(self, cpv(theGrooveEnd.x, theGrooveEnd.y)))
+	PDG_NATIVE_C_CALL(cpGrooveJointSetGrooveB, self, cpv(theGrooveEnd.x, theGrooveEnd.y)))
 CONSTRAINT_PROPERTY_IMPL(SpringRestLength, SpringJoint, cpDampedSpringGetRestLength, cpDampedSpringSetRestLength)
 CONSTRAINT_PROPERTY_IMPL(RotarySpringRestAngle, RotarySpring, cpDampedRotarySpringGetRestAngle, cpDampedRotarySpringSetRestAngle)
 CONSTRAINT_PROPERTY_IMPL(MinAngle, RotaryLimit, cpRotaryLimitJointGetMin, cpRotaryLimitJointSetMin)
@@ -209,9 +216,9 @@ CONSTRAINT_PROPERTY_IMPL(MotorSpinRate, Motor, cpSimpleMotorGetRate, cpSimpleMot
 CUSTOM_GETTER_IMPL(cpConstraint, SpringStiffness, NUMBER, 0, , ,
 	cpFloat theSpringStiffness; CR
 	IF_CONSTRAINT_TYPE(SpringJoint) { CR
-		theSpringStiffness = cpDampedSpringGetStiffness(self);
+		theSpringStiffness = PDG_NATIVE_C_CALL(cpDampedSpringGetStiffness, self);
 	} else IF_CONSTRAINT_TYPE(RotarySpring) { CR
-		theSpringStiffness = cpDampedRotarySpringGetStiffness(self);
+		theSpringStiffness = PDG_NATIVE_C_CALL(cpDampedRotarySpringGetStiffness, self);
 	} else { CR
 		RETURN_UNDEFINED; CR
 		%#ifndef PDG_USING_JAVASCRIPT_CORE CR
@@ -220,21 +227,21 @@ CUSTOM_GETTER_IMPL(cpConstraint, SpringStiffness, NUMBER, 0, , ,
 	}, () )
 CUSTOM_SETTER_IMPL(cpConstraint, SpringStiffness, NUMBER, 1, , ,
 	IF_CONSTRAINT_TYPE(SpringJoint) { CR
-		cpDampedSpringSetStiffness(self, theSpringStiffness);
+		PDG_NATIVE_C_CALL(cpDampedSpringSetStiffness, self, theSpringStiffness);
 	} else IF_CONSTRAINT_TYPE(RotarySpring) { CR
-		cpDampedRotarySpringSetStiffness(self, theSpringStiffness);
+		PDG_NATIVE_C_CALL(cpDampedRotarySpringSetStiffness, self, theSpringStiffness);
 	} else { CR
 		std::ostringstream msg; CR
         msg << "cpConstraint.setSpringStiffness() not valid for constraint type "  CR
-                << (const char*)cpConstraintGetUserData(self); CR
+                << "unsupported joint"; CR
 		THROW_TYPE_ERR(msg.str().c_str()) ; CR
 	})
 CUSTOM_GETTER_IMPL(cpConstraint, SpringDamping, NUMBER, 0, , ,
 	cpFloat theSpringDamping; CR
 	IF_CONSTRAINT_TYPE(SpringJoint) { CR
-		theSpringDamping = cpDampedSpringGetDamping(self);
+		theSpringDamping = PDG_NATIVE_C_CALL(cpDampedSpringGetDamping, self);
 	} else IF_CONSTRAINT_TYPE(RotarySpring) { CR
-		theSpringDamping = cpDampedRotarySpringGetDamping(self);
+		theSpringDamping = PDG_NATIVE_C_CALL(cpDampedRotarySpringGetDamping, self);
 	} else { CR
 		RETURN_UNDEFINED; CR
 		%#ifndef PDG_USING_JAVASCRIPT_CORE CR
@@ -243,13 +250,13 @@ CUSTOM_GETTER_IMPL(cpConstraint, SpringDamping, NUMBER, 0, , ,
 	}, () )
 CUSTOM_SETTER_IMPL(cpConstraint, SpringDamping, NUMBER, 1, , ,
 	IF_CONSTRAINT_TYPE(SpringJoint) { CR
-		cpDampedSpringSetDamping(self, theSpringDamping);
+		PDG_NATIVE_C_CALL(cpDampedSpringSetDamping, self, theSpringDamping);
 	} else IF_CONSTRAINT_TYPE(RotarySpring) { CR
-		cpDampedRotarySpringSetDamping(self, theSpringDamping);
+		PDG_NATIVE_C_CALL(cpDampedRotarySpringSetDamping, self, theSpringDamping);
 	} else { CR
 		std::ostringstream msg; CR
         msg << "cpConstraint.setSpringDamping() not valid for constraint type "  CR
-                << (const char*)cpConstraintGetUserData(self); CR
+                << "unsupported joint"; CR
 		THROW_TYPE_ERR(msg.str().c_str()) ; CR
 	})
 
@@ -259,3 +266,10 @@ CPP_UNMANAGED_CONSTRUCTOR_IMPL(cpConstraint, cppPtr_ = nullptr; CR )
 	END
 
 } // end pdg namespace
+
+// @pdg-class {"name":"CpConstraint","construction":{"kind":"borrowed"},"native_binding":{"browser":{"generate":true,"type":"pdg::CpConstraint","base":null,"pointer_policy":"borrowed","defaults":{"arguments":"idl"}}}}
+
+// User-data recovery and borrowed owner/type queries remain separate adapters.
+// @pdg-member {"name":"CpConstraint.getOtherSprite","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"CpConstraint.getSprite","native_binding":{"browser":{"generate":false}}}
+// @pdg-member {"name":"CpConstraint.getType","native_binding":{"browser":{"generate":false}}}

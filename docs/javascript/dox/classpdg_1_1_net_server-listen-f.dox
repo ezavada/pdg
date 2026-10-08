@@ -1,25 +1,13 @@
 namespace pdg { /**
+\fn NetServer pdg::NetServer::listen(function callback)
+\brief Start configured listeners and receive authenticated PDG connections.
 
-\fn pdg::NetServer::listen
+Calls callback(connection) after the PDG key and version handshake. Return true
+to accept the connection; a false return or exception closes it. Native and
+WebSocket connections use this same callback. Call ready() to observe startup;
+see \ref websocket_server_options for listener settings and rollback behavior.
 
-\brief listen and call a function when new connections are established
-
-Starts a listening port for incoming connections, and with each new connection calls the provided callback with a newly created NetConnection.
-
-The callback will be invoked with one parameter, a NetConnection.
-
-\code
-
-    myServer.listen( function(myConnection) {
-        myConnection.send('sorry, too busy to talk');
-        myConnection.close();
-    });
-\endcode
-
-\param callback the callback function
-
-\returns itself for call chaining
-
-\sa NetConnection
-
+\param callback Function receiving a NetConnection and returning whether to accept it.
+\return This NetServer for chaining.
+\see ready(), NetConnection, shutdown()
 **/ }

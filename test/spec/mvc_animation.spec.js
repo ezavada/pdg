@@ -1,5 +1,5 @@
 require('./SpecHelper');
-const mvcPath = process.ios ? '../src/js/mvc-app' : '../../src/js/mvc-app';
+const mvcPath = process.env.PDG_MVC_MODULE || (process.ios ? '../src/js/mvc-app' : '../../src/js/mvc-app');
 const modules = require(mvcPath + '/index');
 const mvc = Object.fromEntries(Object.entries(modules).map(([name,value]) => [name, value && value[name] || value]));
 
@@ -21,6 +21,21 @@ class ProbeView extends mvc.View {
 }
 
 describe('MVC AnimatedAttributes views', function() {
+    if (pdg.hasGraphics) it('draws UI in screen coordinates on a camera port and restores drawing state on failure', function() {
+        const port=pdg.gfx.createOffscreenPort(new pdg.Rect(64,64)), c=controller(); c.port=port;
+        const camera=port.getCamera(); camera.setLocation(10,0); camera.setZoom(2);
+        const v=new ProbeView(c,new pdg.Rect(10,10,20,20));
+        v.drawSelf=function(p) { p.drawRect(new pdg.Rect(10,10,20,20),new pdg.Attributes().fillColor('red').lineStyle(pdg.lineStyle_None)); };
+        try {
+            port.clear(); v.draw(port,0); const image=new pdg.Image(port);
+            expect(image.getPixel(14,14).red).toBeGreaterThan(.9);
+            expect(image.getPixel(4,24).alpha).toBeLessThan(.1);
+            expect(port.getCameraDrawingEnabled()).toBe(true);
+            v.drawSelf=function() { throw new Error('draw failure'); };
+            expect(function() { v.draw(port,1); }).toThrow();
+            expect(port.getCameraDrawingEnabled()).toBe(true);
+        } finally { v._releaseRenderSurface(); pdg.gfx.closeGraphicsPort(port); }
+    });
     it('gives every visual control Animated behavior without a physics property', function() {
         for (const name of ['View','Button','Checkbox','RadioButton','PopupMenu',
             'ListBox','EditText','Scrollbar','ScrollingView','MessageView','MessageDialogView','MessageDialogBorderView']) {

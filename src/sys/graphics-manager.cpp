@@ -514,6 +514,7 @@ GraphicsManager::getAllActivePorts() {
     for (size_t i = 0; i < mActivePorts.size(); i++) {
         result.push_back(mActivePorts[i]);
     }
+    for (auto* port:mOffscreenPorts) if (!port->mLayers.empty()) result.push_back(port);
     return result;
 }
 

@@ -1,4 +1,4 @@
-.TH "Sound" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Sound" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -14,6 +14,9 @@ Inherits \fBEventEmitter\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBSound\fP (string filename)"
+.br
 .ti -1c
 .RI "\fBchangeOffsetX\fP (int targetOffset, int msDuration, int easing=\fBlinearTween\fP)"
 .br
@@ -111,6 +114,9 @@ Inherits \fBEventEmitter\fP\&.
 Public Member Functions inherited from \fBEventEmitter\fP
 .in +1c
 .ti -1c
+.RI "\fBEventEmitter\fP ()"
+.br
+.ti -1c
 .RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
 .br
 .RI "add a new handler for some event type, or for all events if no type specified\&. "
@@ -192,12 +198,25 @@ PDG terminal v0\&.9\&.4
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Sound (string filename)"
+
+.PP
+Referenced by \fBsetLooping()\fP, \fBsetOffsetX()\fP, \fBsetPitch()\fP, \fBsetVolume()\fP, \fBskip()\fP, and \fBskipTo()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "changeOffsetX (int targetOffset, int msDuration, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-change the left/right positioning of the sound's origin over time Adjust the apparent left/right positioning of the sound over a period of time to make the sound appear to be coming from a particular location in the view port\&.
+change the left/right positioning of the sound's origin over time 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Adjust the apparent left/right positioning of the sound over a period of time to make the sound appear to be coming from a particular location in the view port\&.
 
 .PP
 \fBNote\fP
@@ -238,11 +257,25 @@ References \fBpdg::linearTween\fP\&.
 .PP
 change the pitch of a sound over time (NOT IMPLEMENTED) 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+
+.PP
 References \fBpdg::easeInOutQuad\fP\&.
 .SS "changeVolume (number level, uint fadeMs, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-change sounds volume to target level over time The change can go in either direction, louder or quieter\&.
+change sounds volume to target level over time 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The change can go in either direction, louder or quieter\&.
 
 .PP
 \fBParameters\fP
@@ -269,6 +302,11 @@ References \fBpdg::linearTween\fP\&.
 
 .PP
 fade the sound in from zero to full volume over time 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
 .PP
 \fBParameters\fP
 .RS 4
@@ -297,7 +335,14 @@ References \fBpdg::linearTween\fP\&.
 .SS "fadeOut (uint fadeMs, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-fade the sound out to silence over time The sound is stopped once it fades out completely\&.
+fade the sound out to silence over time 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+The sound is stopped once it fades out completely\&.
 
 .PP
 \fBParameters\fP
@@ -377,9 +422,14 @@ a sound that was never started is not considered paused
 .PP
 set a handler for a particular sound event 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBSoundEventCallback\fP\&.
+.RE
+.PP
 \fBRemarks\fP
 .RS 4
-Generally you should use the specific on{Event} calls\&.
+Generally you should use the specific on{\fBEvent\fP} calls\&.
 .RE
 .PP
 \fBSee also\fP
@@ -398,14 +448,35 @@ Generally you should use the specific on{Event} calls\&.
 
 .PP
 set a handler for when the sound finishes playing 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBSoundEventCallback\fP\&. 
+.RE
+.PP
+
 .SS "\fBIEventHandler\fP onFailedToPlay (function func)"
 
 .PP
 set a handler for if the sound fails to play 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBSoundEventCallback\fP\&. 
+.RE
+.PP
+
 .SS "\fBIEventHandler\fP onLooping (function func)"
 
 .PP
 set a handler for when the sound reaches the end and loops 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBSoundEventCallback\fP\&. 
+.RE
+.PP
+
 .SS "pause ()"
 
 .PP
@@ -455,6 +526,8 @@ Sounds started with \fBplay()\fP never loop
 .RE
 .PP
 
+.PP
+References \fBSound()\fP\&.
 .SS "\fBSound\fP setOffsetX (int offsetX)"
 
 .PP
@@ -485,6 +558,8 @@ On Mac OS X this only works if the sound is in stereo, and the OS is version 10\
 .RE
 .PP
 
+.PP
+References \fBSound()\fP\&.
 .SS "\fBSound\fP setPitch (number pitchOffset)"
 
 .PP
@@ -502,6 +577,8 @@ set the pitch of a sound Raise or lower the pitch of a sound by up to an octave\
 .RE
 .PP
 
+.PP
+References \fBSound()\fP\&.
 .SS "\fBSound\fP setVolume (number inVolume)"
 
 .PP
@@ -525,6 +602,8 @@ set the volume level for a sound Sets the volume level for this specific sound\&
 .RE
 .PP
 
+.PP
+References \fBSound()\fP\&.
 .SS "\fBSound\fP skip (int skipMilliseconds)"
 
 .PP
@@ -536,6 +615,8 @@ skip ahead or back in a sound
 .RE
 .PP
 
+.PP
+References \fBSound()\fP\&.
 .SS "\fBSound\fP skipTo (uint timeMs)"
 
 .PP
@@ -547,6 +628,8 @@ skipTo a particular time position in a sound
 .RE
 .PP
 
+.PP
+References \fBSound()\fP\&.
 .SS "start ()"
 
 .PP

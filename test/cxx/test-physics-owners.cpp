@@ -9,12 +9,14 @@
 #include "pdg/sys/serializer.h"
 #include "pdg/sys/deserializer.h"
 #include "pdg/sys/drawing.h"
+#include "pdg/sys/font.h"
+#include "drawing-snapshot.h"
 #include "pdg/sys/image.h"
 #ifndef PDG_NO_GUI
 #include "image-opengl.h"
-#include "drawing-snapshot.h"
 #endif
 #include "spritemanager.h"
+#include "particletrail.h"
 #include "pdg-main.h"
 #include <cmath>
 #include <cstdlib>
@@ -35,10 +37,15 @@
 #undef small
 #endif
 
+static pdg::Camera* viewCamera(pdg::SpriteLayer* layer) {
+    if (!layer->getCamera()) layer->setCamera(new pdg::Camera());
+    return layer->getCamera();
+}
+
 namespace {
 static_assert(std::is_same_v<decltype(std::declval<pdg::Sprite&>().setLocation(1, 2).moveBy(1, 2, .5).andThen()), pdg::Sprite&>);
 static_assert(std::is_same_v<decltype(std::declval<pdg::Part&>().setLocation(1, 2).rotateTo(1, .5).andThen()), pdg::Part&>);
-static_assert(std::is_same_v<decltype(std::declval<pdg::SpriteLayer&>().setScale(2).grow(2, .5)), pdg::SpriteLayer&>);
+static_assert(std::is_same_v<decltype(std::declval<pdg::Camera&>().setScale(2).grow(2, .5)), pdg::Camera&>);
 int assertions = 0;
 void expect(bool ok, const char* message) {
     ++assertions;
@@ -923,7 +930,7 @@ void animatedOwners() {
     auto* layer=createSpriteLayer();
 #else
     auto* layer=createSpriteLayer(nullptr);
-    layer->setScale(2,-3);layer->setLocation(pdg::Point(4,6));layer->setRotation(.3);
+    viewCamera(layer)->setScale(2,-3);viewCamera(layer)->setLocation(pdg::Point(4,6));viewCamera(layer)->setRotation(.3);
     const pdg::Point point(10,20);const auto roundtrip=layer->portToLayer(layer->layerToPort(point));
     near(roundtrip.x,point.x,"scaled layer point inverse x");near(roundtrip.y,point.y,"scaled layer point inverse y");
     const Quad quad(pdg::Rect(0,0,10,20));const auto q=layer->portToLayer(layer->layerToPort(quad));
@@ -946,6 +953,29 @@ void animatedOwners() {
     restored->changeScaleTo(4,4,.125,linearTween);step(*restored,100);near(restored->getScale().x,2,"restored pending wait");
     step(*restored,150);near(restored->getScale().x,4,"restored delayed timed target");
     cleanupLayer(layer);
+}
+
+void semanticCommandSnapshots() {
+    using namespace pdg;
+    AnimatedBase::defineScript("snapshot-semantic-fade").series().fadeOut(1,linearTween)
+        .moveBy(10,0,.5,linearTween).endSeries().endScript();
+    for(double elapsed:{0.0,.25}) {
+        Animated<> source,restored; source.playScript("snapshot-semantic-fade");
+        if(elapsed) source.animate(elapsed);
+        Serializer writer; writer.setSendTags(false);
+        const auto size=source.getSerializedSize(&writer); source.serialize(&writer);
+        expect(size==writer.getDataSize(),"semantic arguments have exact snapshot size");
+        auto reader=snapshotReader(writer); restored.deserialize(reader.get());
+        int unsupported=0;
+        restored.on("unsupportedOp",[&](const AnimationEvent& event){
+            expect(event.operationName=="fadeOut","restored semantic command keeps its name");++unsupported;
+        });
+        restored.animate(.75-elapsed); near(restored.getLocation().x,0,"restored unsupported operation retains duration");
+        expect(unsupported==(elapsed?0:1),"active restored commands do not repeat their effects");
+        restored.animate(.5);near(restored.getLocation().x,5,"restored successor respects semantic duration");
+        restored.animate(.25);near(restored.getLocation().x,10,"restored successor finishes");
+    }
+    AnimatedBase::deleteScript("snapshot-semantic-fade");
 }
 
 void baseSnapshots() {
@@ -1056,7 +1086,7 @@ void sequencedSnapshots() {
         sprite.animate(.5);near(sprite.getOpacity(),.5,"fade-in midpoint");
         sprite.animate(.25);near(sprite.getOpacity(),1,"fade sequence endpoint");
 #ifndef PDG_NO_GUI
-        pdg::SpriteLayer layer;
+        pdg::Camera layer;
         layer.zoomTo(2,.5,pdg::linearTween);layer.andThen();layer.zoomTo(3,.5,pdg::linearTween);
         layer.animate(.75);near(layer.getZoom(),2.5,"queued zoom midpoint");
 #endif
@@ -1093,7 +1123,7 @@ void sequencedSnapshots() {
 #else
     auto* layer=createSpriteLayer(nullptr);auto* other=createSpriteLayer(nullptr);
 #endif
-    layer->setSerializationFlags(ser_Update);sequencedSnapshot(*layer,*other);
+    layer->setSerializationFlags(ser_Update);sequencedSnapshot(*viewCamera(layer),*viewCamera(other));
     auto* owner=layer->createSprite();sequencedSnapshot(*owner->createPart("a"),*owner->createPart("b"));
     cleanupLayer(other);cleanupLayer(layer);
 }
@@ -1157,7 +1187,7 @@ void compactTweenSnapshots() {
     auto* layer=createSpriteLayer(nullptr); auto* destination=createSpriteLayer(nullptr);
 #endif
     layer->setSerializationFlags(ser_Update);
-    compactTweenSnapshot(*layer,*destination);
+    compactTweenSnapshot(*viewCamera(layer),*viewCamera(destination));
     auto* owner=layer->createSprite();
     compactTweenSnapshot(*owner->createPart("source"),*owner->createPart("copy"));
     cleanupLayer(destination); cleanupLayer(layer);
@@ -1308,6 +1338,46 @@ void imageSnapshots() {
 }
 
 
+void drawingTextSnapshots() {
+    using namespace pdg;
+    struct TestFont : Font {
+        const char* getFontName() const override { return "Arial"; }
+        float getFontHeight(int,uint32) override { return 0; }
+        float getFontLeading(int,uint32) override { return 0; }
+        float getFontCapHeight(int,uint32) override { return 0; }
+        float getFontAscent(int,uint32) override { return 0; }
+        float getFontDescent(int,uint32) override { return 0; }
+    };
+    std::unique_ptr<Drawing> source(Drawing::create());
+    Attributes attrs;
+    auto* font=new TestFont();font->addRef();attrs.font(font);font->release();
+    attrs.textSize(23).textStyle(textStyle_Bold | textStyle_Centered).fillOpacity(.6);
+    delete source->addText("Hello, 世界\nCafé",pdg::Rect(2,3,120,65),attrs);
+    for(bool tags : {false,true}) {
+        Serializer writer;writer.setSendTags(tags);writer.serialize_4u(0x54455854);
+        const auto before=writer.getDataSize();
+        auto size=drawingSerializedSize(source.get(),&writer);serializeDrawing(source.get(),&writer);
+        expect(size==writer.getDataSize()-before,"text and font descriptor size is exact");
+        auto reader=snapshotReader(writer);expect(reader->deserialize_4u()==0x54455854,"text snapshot prefix");auto copy=deserializeDrawing(reader.get());
+        std::unique_ptr<ElementRef> text(copy->getElement(0));Attributes restored;text->getAttributes(restored);
+        expect(std::strcmp(text->getText(),"Hello, 世界\nCafé")==0,"Unicode text survives snapshots in GUI and headless builds");
+        expect(restored.getFont() && std::strcmp(restored.getFont()->getFontName(),"Arial")==0,"font name survives snapshots in GUI and headless builds");
+        expect(restored.getTextSize()==23 && restored.getTextStyle()==(textStyle_Bold | textStyle_Centered),"text layout style survives snapshots");
+        Serializer again;again.setSendTags(tags);again.serialize_4u(0x54455854);serializeDrawing(copy.get(),&again);
+        expect(again.getDataSize()==writer.getDataSize() && std::memcmp(again.getDataPtr(),writer.getDataPtr(),writer.getDataSize())==0,"font descriptor survives exact snapshot replay");
+        text->setText("Edited");expect(std::strcmp(text->getText(),"Edited")==0,"restored text remains editable");
+
+        // Default attributes have no font payload in either version: rewrite the
+        // version byte to exercise genuine version-4 geometry records.
+        std::unique_ptr<Drawing> legacy(Drawing::create());delete legacy->addRect(pdg::Rect(1,2,30,40),Attributes());
+        SnapshotTestWriter old;old.setSendTags(tags);bool versionChanged=false;
+        old.onByte=[&](uint8& byte){if(!versionChanged && byte==5){byte=4;versionChanged=true;}};
+        serializeDrawing(legacy.get(),&old);expect(versionChanged,"legacy Drawing version fixture rewritten");
+        auto oldReader=snapshotReader(old);auto oldCopy=deserializeDrawing(oldReader.get());
+        expect(oldCopy->getElementCount()==1 && oldCopy->getBounds()==pdg::Rect(1,2,30,40),"version-4 Drawing snapshots remain readable");
+    }
+}
+
 #ifndef PDG_NO_GUI
 void drawingSnapshots() {
     using namespace pdg;
@@ -1339,6 +1409,7 @@ void drawingSnapshots() {
     delete source->addImageStrip(pdg::Rect(0, 0, 4, 4), *pixels, attrs);
     delete nested->addLine(pdg::Point(0, 0), pdg::Point(5, 6), Attributes());
     delete source->addDrawing(pdg::Rect(20, 30, 40, 50), *nested, attrs);
+    delete source->addText("Hello, 世界\nCafé",pdg::Rect(2,3,120,45),attrs);
     auto sharedSource = source->share();
     for (bool tags : {false, true}) for (int mode : {serialization_Complete, serialization_ExternalReferences})
         for (int prefix=0; prefix<8; ++prefix) {
@@ -1365,11 +1436,12 @@ void drawingSnapshots() {
         readPrefix(reader);
         auto copy = deserializeDrawing(&reader), sharedCopy = deserializeDrawing(&reader), nestedCopy = deserializeDrawing(&reader);
         std::unique_ptr<Image, decltype(release)> restoredImage(dynamic_cast<Image*>(reader.deserialize_obj()), release);
-        expect(copy->getElementCount() == 10, "all Drawing primitive types survive");
+        expect(copy->getElementCount() == 11, "all Drawing primitive types survive");
         expect(restoredImage && restoredImage->getPixel(0, 0) == pixels->getPixel(0, 0), "Drawing pixels restored");
         for (size_t i = 0; i < copy->getElementCount(); ++i) {
             std::unique_ptr<ElementRef> original(source->getElement(i)), restored(copy->getElement(i));
             expect(original->type() == restored->type(), "Drawing element order and types preserved");
+            if(original->type()==type_Text) expect(std::strcmp(original->getText(),restored->getText())==0,"Drawing text preserved");
             expect(original->getControlPoints() == restored->getControlPoints(), "Drawing geometry preserved");
             Attributes a; restored->getAttributes(a);
             expect(a.getTexture() == restoredImage.get(), "Drawing attributes retain shared image identity");
@@ -1865,16 +1937,16 @@ void layerInitialSnapshots() {
 #else
         auto* source=createSpriteLayer(nullptr);auto* destination=createSpriteLayer(nullptr);
         auto* image=new ImageOpenGL();
-        source->setOrigin(pdg::Point(40,50));source->setZoom(2);
-        source->zoomTo(3,1,linearTween);
+        viewCamera(source)->setZoom(2);
+        viewCamera(source)->zoomTo(3,1,linearTween);
 #endif
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
         source->setUseChipmunkPhysics(chipmunk);source->setGravity(0);source->setDamping(1);
 #endif
         source->layerId=12345;
         source->mDoneFadingInAt=OS::getMilliseconds()+1000;
-        source->setLocation(pdg::Point(12,34));source->setRotation(.3);source->setScale(2,3);
-        source->changeScaleTo(4,5,1,linearTween);source->animate(.25);source->pauseSchedule();source->wait(.125);
+        viewCamera(source)->setLocation(pdg::Point(12,34));viewCamera(source)->setRotation(.3);viewCamera(source)->setScale(2,3);
+        viewCamera(source)->changeScaleTo(4,5,1,linearTween);viewCamera(source)->animate(.25);viewCamera(source)->pauseSchedule();viewCamera(source)->wait(.125);
         image->addRef();image->initEmpty(4,2,32);image->setNumFrames(2);std::memset(image->data,190,32);
         auto* first=source->createSprite();auto* second=source->createSprite();
         first->spriteId=101;second->spriteId=202;first->setFlipX(true);second->setFlipY(true);
@@ -1890,10 +1962,10 @@ void layerInitialSnapshots() {
         };
         destination->setSerializationFlags(ser_Positions);
         auto* original=destination->createSprite();original->spriteId=303;
-        destination->setScale(9);original->addRef();
+        viewCamera(destination)->setScale(9);original->addRef();
         bool rejected=false;try{load(writer.getDataSize()-1);}catch(const std::exception&){rejected=true;}
         expect(rejected && destination->getNthSprite(0)==original,"truncated Layer snapshot preserves existing membership");
-        near(destination->getScale().x,9,"invalid Layer leaves its transform intact");
+        near(viewCamera(destination)->getScale().x,9,"invalid Layer leaves its transform intact");
         expect(destination->mSerFlags==ser_Positions,"failed Layer load preserves the selected update flags");
         load(writer.getDataSize());
         expect(original->getLayer()==nullptr,"replaced retained Sprite is detached");original->release();
@@ -1906,17 +1978,17 @@ void layerInitialSnapshots() {
         expect(b->physics.isDriveEnabled(),"Layer snapshot preserves an active drive");
         expect(b->physics.getSolver()==(chipmunk ? physicsSolver_Chipmunk : physicsSolver_Basic),"restored bodies join the destination solver after validation");
         near(b->physics.getDriveState().maxForce,12,"Layer drive preserves force limit");
-        near(destination->getScale().x,2.5,"Layer snapshot restores sampled tween value");
+        near(viewCamera(destination)->getScale().x,2.5,"Layer snapshot restores sampled tween value");
         expect(destination->mDoneFadingInAt>OS::getMilliseconds() && destination->mDoneFadingOutAt==0,"Layer completion timers retain remaining time and inactive state");
-        expect(destination->isSchedulePaused() && destination->hasScheduledAnimations(),"Layer snapshot preserves paused tween state");
+        expect(viewCamera(destination)->isSchedulePaused() && viewCamera(destination)->hasScheduledAnimations(),"Layer snapshot preserves paused tween state");
 #ifndef PDG_NO_GUI
-        near(destination->getOrigin().x,40,"full Layer records include the draw origin");
-        near(destination->getZoom(),2.25,"full Layer records include current zoom");
+
+        near(viewCamera(destination)->getZoom(),2.25,"full Layer records include current zoom");
 #endif
-        destination->resumeSchedule();destination->animate(.75);
-        near(destination->getScale().x,4,"restored tween pointers belong to the destination Layer");
+        viewCamera(destination)->resumeSchedule();viewCamera(destination)->animate(.75);
+        near(viewCamera(destination)->getScale().x,4,"restored tween pointers belong to the destination Layer");
 #ifndef PDG_NO_GUI
-        near(destination->getZoom(),3,"restored zoom tween completes on destination");
+        near(viewCamera(destination)->getZoom(),3,"restored zoom tween completes on destination");
 #endif
         expect(destination->mSerFlags==ser_Positions,"successful load preserves caller's update selection");
         // Loading into an empty layer must work as well as replacing membership.
@@ -1933,22 +2005,22 @@ void layerTweenSnapshots() {
 #else
     auto* layer=createSpriteLayer(nullptr);
 #endif
-    layer->setSerializationFlags(ser_Update);
-    layer->setScale(1,2);layer->changeScaleTo(3,4,1,linearTween);
-    layer->changeMovementTo(8,0,1,linearTween);layer->rotateTo(1,1,linearTween,rotationDirection_Clockwise);
-    layer->animate(.25);layer->pauseSchedule();layer->wait(.125);
+    layer->setSerializationFlags(ser_Update | ser_LayerDraw);
+    viewCamera(layer)->setScale(1,2);viewCamera(layer)->changeScaleTo(3,4,1,linearTween);
+    viewCamera(layer)->changeMovementTo(8,0,1,linearTween);viewCamera(layer)->rotateTo(1,1,linearTween,rotationDirection_Clockwise);
+    viewCamera(layer)->animate(.25);viewCamera(layer)->pauseSchedule();viewCamera(layer)->wait(.125);
     Serializer data;data.setSendTags(false);const auto size=layer->getSerializedSize(&data);layer->serialize(&data);
     expect(data.getDataSize()==size,"Layer tween snapshot byte count");
     void* bytes=std::malloc(data.getDataSize());std::memcpy(bytes,data.getDataPtr(),data.getDataSize());
     Deserializer reader(bytes,data.getDataSize());
-    layer->cancelSchedule();layer->setScale(9);layer->resumeSchedule();layer->deserialize(&reader);
-    expect(layer->hasScheduledAnimations() && layer->isSchedulePaused(),"Layer snapshot restores paused tracks");
-    near(layer->getScale().x,1.5,"Layer restores sampled scale");
-    layer->animate(.5);near(layer->getScale().x,1.5,"Layer paused snapshot holds scale");
-    layer->resumeSchedule();layer->animate(.75);near(layer->getScale().x,3,"Layer resumes saved scale curve");
-    near(layer->getMovement().x,8,"Layer resumes eased movement rate");near(layer->getRotation(),1,"Layer resumes rotation route");
-    layer->changeScaleTo(5,5,.125,linearTween);layer->animate(.1);near(layer->getScale().x,3,"Layer restores pending wait");
-    layer->animate(.15);near(layer->getScale().x,5,"Layer applies delayed scale target");
+    viewCamera(layer)->cancelSchedule();viewCamera(layer)->setScale(9);viewCamera(layer)->resumeSchedule();layer->deserialize(&reader);
+    expect(viewCamera(layer)->hasScheduledAnimations() && viewCamera(layer)->isSchedulePaused(),"Layer snapshot restores paused tracks");
+    near(viewCamera(layer)->getScale().x,1.5,"Layer restores sampled scale");
+    viewCamera(layer)->animate(.5);near(viewCamera(layer)->getScale().x,1.5,"Layer paused snapshot holds scale");
+    viewCamera(layer)->resumeSchedule();viewCamera(layer)->animate(.75);near(viewCamera(layer)->getScale().x,3,"Layer resumes saved scale curve");
+    near(viewCamera(layer)->getMovement().x,8,"Layer resumes eased movement rate");near(viewCamera(layer)->getRotation(),1,"Layer resumes rotation route");
+    viewCamera(layer)->changeScaleTo(5,5,.125,linearTween);viewCamera(layer)->animate(.1);near(viewCamera(layer)->getScale().x,3,"Layer restores pending wait");
+    viewCamera(layer)->animate(.15);near(viewCamera(layer)->getScale().x,5,"Layer applies delayed scale target");
     cleanupLayer(layer);
 }
 
@@ -2344,10 +2416,11 @@ int main() {
         editableConstraintAnchors();
         spinningBoxContacts();
         partTransfers();rigPartTransfers();
+        drawingTextSnapshots();
         #ifndef PDG_NO_GUI
         drawingSnapshots();visualSnapshotCoordinates();
 #endif
-        partArtworkColliders();capsuleColliders();particles();angularSpeedBreaks();compactSnapshotRecords();compressedAuthoredAssets();authoredSnapshots();rigSnapshots();physicsGraphSnapshots();colliderSourcesAndPolygons();collidersAndConstraints();nativeContactReuse();nativeRestingStacks();physicalProperty();physicsSetup();physicalOwners();physicalDrives();physicalSnapshots();animatedOwners();kinematicMounts();physicalHierarchy();attachmentLayers();partAttachments();limitedPartIK();linkedPartIK();drivenPartIK();partIK();scheduledPartIK();partWorld();layerTweenSnapshots();baseSnapshots();compactTweenSnapshots();compactTweenObjectStreams();sequencedSnapshots();imageSnapshots();invalidPartSnapshots();invalidControllerSnapshots();partSnapshots();invalidMountSnapshots();mountSnapshots();spriteFrameSnapshots();layerInitialSnapshots();layerPartMotionUpdates();
+        partArtworkColliders();capsuleColliders();particles();angularSpeedBreaks();compactSnapshotRecords();compressedAuthoredAssets();authoredSnapshots();rigSnapshots();physicsGraphSnapshots();colliderSourcesAndPolygons();collidersAndConstraints();nativeContactReuse();nativeRestingStacks();physicalProperty();physicsSetup();physicalOwners();physicalDrives();physicalSnapshots();animatedOwners();kinematicMounts();physicalHierarchy();attachmentLayers();partAttachments();limitedPartIK();linkedPartIK();drivenPartIK();partIK();scheduledPartIK();partWorld();layerTweenSnapshots();semanticCommandSnapshots(); baseSnapshots();compactTweenSnapshots();compactTweenObjectStreams();sequencedSnapshots();imageSnapshots();invalidPartSnapshots();invalidControllerSnapshots();partSnapshots();invalidMountSnapshots();mountSnapshots();spriteFrameSnapshots();layerInitialSnapshots();layerPartMotionUpdates();
         std::cout << "Physics owners: " << assertions << " assertions passed\n";
     } catch (const std::exception& error) {
         std::cerr << "Physics owner regression failed: " << error.what() << '\n';

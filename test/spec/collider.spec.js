@@ -13,10 +13,7 @@ describe('Shared Collider and PhysicsConstraint APIs', function() {
             expect(joint.getAnchorB().y).toBe(4);
             for(const invalid of [null,{}, {x:0,y:NaN}, {x:Infinity,y:0}, {x:'1',y:0}]) {
                 expect(()=>joint.setAnchors(new pdg.Point(7,8),invalid)).toThrow();
-                // Native bindings reserve a single null argument for signature introspection.
-                if(invalid!==null) {
-                    expect(()=>joint.setAnchorA(invalid)).toThrow();expect(()=>joint.setAnchorB(invalid)).toThrow();
-                }
+                expect(()=>joint.setAnchorA(invalid)).toThrow();expect(()=>joint.setAnchorB(invalid)).toThrow();
                 expect(joint.getAnchorA().x).toBe(1);expect(joint.getAnchorB().x).toBe(-3);
             }
             expect(()=>joint.setAnchors(p)).toThrow();expect(()=>joint.setAnchorA()).toThrow();

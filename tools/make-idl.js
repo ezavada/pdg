@@ -41,6 +41,10 @@ var format_pdgidl = (pdg.argv[2] == "--pdg-i-format");
 var format_js = (pdg.argv[2] == "--js-format");
 var format_doxyc = (pdg.argv[2] == "--doxygen-h-format");
 var format_embind = (pdg.argv[2] == "--embind-format");
+var format_mvc = pdg.argv.indexOf("--mvc") >= 0;
+// Comparison mode for textual references. JSON already includes inherited
+// members; Embind keeps registering them through native base classes.
+var include_inherited = pdg.argv.indexOf("--include-inherited") >= 0;
 if (!format_webidl && !format_pdgidl && !format_json && !format_js && !format_doxyc && !format_embind) {
     // no format set, use default
     format_json = true;
@@ -67,766 +71,6 @@ function indent() {
     return "".lpad(" ", depth*2);
 }
 
-// ElementRef is a factory-only class, so we need to fake a create function for IDL generation
-pdg._fakeCreateElementRef = function() {
-    drawing = pdg.createDrawing();
-    element = drawing.addLine(new pdg.Point(0,0), new pdg.Point(100,100), new pdg.Attributes());
-    return element;
-}
-
-// garbage collecting some object (pdg singletons) can cause problems.
-// keep references here so we don't do that.
-
-var _objects_to_not_garbage_collect = [];
-
-// Part has an instance factory. Keep its Sprite alive for the whole inspection
-// so querying ownership/bindings never sees a Part detached by garbage collection.
-pdg._fakeSetupCollider = function() {
-    const owner = new pdg.Sprite(); _objects_to_not_garbage_collect.push(owner);
-    return owner.setupCollider();
-};
-pdg._fakeCreatePhysicsConstraint = function() {
-    const a = new pdg.Sprite(), b = new pdg.Sprite(); _objects_to_not_garbage_collect.push(a, b);
-    return a.setupPhysicsBody().createPinJoint(b.setupPhysicsBody());
-};
-pdg._fakeSetupPhysicsBody = function() {
-    const owner = new pdg.Sprite();
-    const body = owner.setupPhysicsBody();
-    pdg._idlPhysicsOwner = owner;
-    return body;
-};
-pdg._fakeCreatePart = function() {
-    var sprite = new pdg.Sprite();
-    _objects_to_not_garbage_collect.push(sprite);
-    return sprite.createPart('__idl_part__');
-};
-
-
-function inspect(obj, objname, skip, objclassinfo) {
-    var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-
-    if (typeof(skip)=="undefined") {
-        skip = [];
-    }
-
-    if (verbose) log( indent() + "Inspecting "+objname+": "+obj.toString());
-
-    // this just takes the argument name
-    function _get_script_param_info(arg) {
-        return {    "name": arg, 
-                    "type": _guess_type_from_param_name(arg), 
-                    "optional": false, 
-                    "default_value": undefined 
-                };
-    }
-
-    // this takes a single section of a method signature, something like:
-    // "[number uint] style = textStyle_Plain"
-    function _get_native_param_info(arg) {
-        arg = arg.trim();
-        var endblk = arg.indexOf(']');
-        var optblk = arg.indexOf("=");
-        var tname = "", pname = "";
-        var opt = (optblk > 0);
-        var default_val = undefined;
-        if (endblk > 0) {
-            tname = arg.slice(1, endblk).trim();
-        } else {
-            endblk = arg.indexOf(' ');
-            tname = arg.slice(0, endblk).trim();
-        }
-        pname = arg.slice(endblk+1, opt ? optblk : arg.length).trim();
-        if (opt) {
-            default_val = arg.slice(optblk+1, arg.length).trim();
-            default_val = default_val.replace(';', ',');  // put back any commas we changed
-        } else {
-            opt = undefined;
-        }
-        return {    "name": pname, 
-                    "type": tname.replace("_ARRAY_", "[]"), 
-                    "optional": opt, 
-                    "default_value": default_val 
-                };
-    }
-
- 
-    function _get_supers(inst) {
-        if (Object.getPrototypeOf(inst.constructor).name != "") {
-            // for javascript classes, we need to return the single constructorprototype name
-            return [Object.getPrototypeOf(inst.constructor).name];
-        }
-        var supers = [].concat(inst.constructor.superclass);  // make sure we have an array
-        var slist = [];
-        for (i in supers) {
-            if (typeof(supers[i]) === "function") {
-                var sname = supers[i].toString();
-                sname = sname.replace("function ", "");
-                sname = sname.replace("() { [native code] }", "");
-                slist.push(sname);
-            }
-        }
-        // Native FunctionTemplate inheritance (for example Part : Animated)
-        // lives on the instance prototype chain, without JS.Class's superclass
-        // metadata or JavaScript's constructor prototype inheritance.
-        if (slist.length === 0) {
-            var basePrototype = Object.getPrototypeOf(inst.constructor.prototype);
-            if (basePrototype && basePrototype.constructor !== Object &&
-                basePrototype.constructor !== inst.constructor && basePrototype.constructor.name &&
-                basePrototype.constructor.name !== "Object") {
-                slist.push(basePrototype.constructor.name);
-            }
-        }
-        return slist;
-    }
-    
-    function _get_function_inherited_from(name) {
-        var supers;
-        if (Object.getPrototypeOf(obj.constructor).name != "") {
-            supers = [Object.getPrototypeOf(obj.constructor).name];
-        } else {
-            supers = [].concat(obj.constructor.superclass);  // force an array
-        }
-        for (i in supers) {
-            if ((typeof(supers[i]) === "function") && (typeof(supers[i].prototype[name]) == "function")) {
-                var sname = supers[i].toString();
-                sname = sname.replace("function ", "");
-                sname = sname.replace("() { [native code] }", "");
-                return sname;
-            }
-        }
-        return undefined;
-    }
-
-    function _is_native(func) {
-        if (func._pdgNativeWrapper) return true;
-        var fnStr = func.toString().replace(STRIP_COMMENTS, '');
-        fnStr = fnStr.split('\n')[0];
-        return (fnStr.indexOf("[native code]") >= 0) ? true : undefined;
-    }
-    
-    function _is_read_only(pname) {
-        // Most native properties are inherited accessors on the class prototype.
-        let owner = obj;
-        while (owner) {
-            const props = Object.getOwnPropertyDescriptor(owner, pname);
-            if (props) {
-                if ("get" in props || "set" in props) return typeof props.set === "function" ? undefined : true;
-                return props.writable ? undefined : true;
-            }
-            owner = Object.getPrototypeOf(owner);
-        }
-        return undefined;
-    }
-
-    function _get_const_value(pname) {
-        var props = Object.getOwnPropertyDescriptor(obj, pname);
-        if (typeof props == "undefined" || props["writable"]) return undefined;
-        return props["value"];
-    }
-
-    function _get_method_signature(fname) {
-        let sig = "";
-        try {
-            sig = obj[fname](null);
-        }
-        catch(e) {
-            if (e.message.indexOf("cannot be invoked without 'new'") >= 0) {  
-                sig = new Function("{ return pdg._get"+fname+"ConstructorSignature() }")();
-            } else if (fname == obj.constructor.name && e.message.indexOf("obj[fname] is not a function") >= 0) {  
-                sig = new Function("{ return pdg._get"+fname+"ConstructorSignature() }")();
-            } else {
-                throw e; // rethrow the exception
-            }
-        }
-        return sig;
-    }
-
-    function _get_brief(func, fname) {
-        // Check if this function has documentation override
-        var fullName = objname + "." + fname;
-        if (excludedFunctionDocs && excludedFunctionDocs[fullName]) {
-            return excludedFunctionDocs[fullName].brief || "";
-        }
-        
-        try {
-            var sig = _get_method_signature(fname);
-            var fparts = sig.split(' - ');
-            return (fparts.length > 1) ? fparts[1] : "";
-        }
-        catch(e) {
-            if (verbose) {
-                log("**** (1) " + objname + "."+fname + " threw an exception when called with (null) to get method signature: "+e.message);
-            }
-            return "";
-        }
-    }
-    
-    function _get_return_type(func, fname) {
-        // Check if this function has documentation override
-        var fullName = objname + "." + fname;
-        if (excludedFunctionDocs && excludedFunctionDocs[fullName]) {
-            return excludedFunctionDocs[fullName].returns;
-        }
-        
-        try {
-            let sig = _get_method_signature(fname);
-            var tname = sig.split(' function')[0].replace("[]", "_ARRAY_").replace("[", "").replace("]", "").replace("CR ","").replace("_ARRAY_", "[]").trim();
-            if (tname == "undefined") {
-                return;
-            }
-            // these things have been a constant pain in my butt because
-            // of the case differences from C to JavaScript. >sigh<
-            if (tname == "object cpSpace") {
-                return "object CpSpace";
-            } else if (tname == "object cpConstraint") {
-                return "object CpConstraint";
-            } else if (tname == "object cpArbiter") {
-                return "object CpArbiter";
-            }
-
-            return tname;
-        }
-        catch(e) {
-            if (verbose) {
-                log("**** (2) " + objname + "."+fname + " threw an exception when called with (null) to get method signature: "+e.message);
-            }
-            return "undefined"
-        }
-    }
-    
-    function _guess_type_from_param_name(pname) {
-        if (pname == "func") {
-            return "function";
-        } else if (pname == "callback") {
-            return "function";
-        } else if (pname == "point") {
-            return "Point";
-        } else if (pname == "color") {
-            return "Color";
-        } else if (pname == "offset") {
-            return "number";
-        } else if (pname == "delta") {
-            return "number";
-        } else if (pname == "r") {
-            return "Rect";
-        } else if (pname == "r2") {
-            return "Rect";
-        }
-        return "value";
-    }
-
-    function _get_function_params(func, fname) {
-        
-        var params = [];
-
-        // Check if this function has documentation override
-        var fullName = objname + "." + fname;
-        if (excludedFunctionDocs && excludedFunctionDocs[fullName]) {
-            return excludedFunctionDocs[fullName].params;
-        }
-
-        if (true) { //_is_native(func)) {
-            // for native code, we have a calling convention in pdg
-            // where calling the function with a single param of null
-            // will return the method signature
-            
-            if (!_is_private_or_internal(fname)) {
-                try {
-                    let sig = _get_method_signature(fname);
-                    sig = sig.split(' - ')[0];
-                    var args = sig.slice(sig.indexOf('(')+1, sig.lastIndexOf(')')).replace("[]","_ARRAY_").trim();
-                    if (args.length > 0) {
-                    
-                        // replace all commas inside ( ) blocks with semicolons 
-                        // this handles cases where a default value for an optional param
-                        // is something like Point(0,0)
-                        var inside = 0;
-                        for (i = 0; i < args.length; i++) {
-                            var c = args.charAt(i);
-                            if (c == ',' && (inside > 0)) {
-                                args = args.replaceAt(i, ';');
-                            } else if (c == '(') {
-                                inside++;
-                            } else if (c == ')') {
-                                inside--;
-                            }
-                        }
-                        var VARIENTS = /[|{][^|}]*/g;
-                        var vlist = args.match(VARIENTS);
-                        if (vlist && vlist.length < 2) {
-                            vlist = null;
-                        } else {
-                            args = args.replace(/\{.*\}/, "_VLIST_");
-                        }
-                        var ARGUMENTS = /(_VLIST_(?=,)|\[\w+\s+\w+\]\s+[^,]+|\w+\s+[^,]+)/g;
-                        var plist = args.match(ARGUMENTS);
-                        
-                        if (vlist) {
-                         
-                            var all_params = (plist) ? plist.join(",") : "_VLIST_";  // whole thing might be variable
-
-                            // there are argument variants, so we must create multiple parameter sets
-                            for (variantIdx in vlist) {
-                                vparam = [];
-                                // need to reparse the arguments list since a VLIST
-                                // might contain multiple arguments
-                                var newargs = vlist[variantIdx];
-                                var nparams = all_params.replace("_VLIST_", newargs.substring(1, 10000));
-                                var nplist = nparams.match(ARGUMENTS);
-                                for (idx in nplist) {
-                                    var pinfo = _get_native_param_info(nplist[idx]);
-                                    vparam.push(pinfo)
-                                }
-                                
-                                params.push(vparam);
-                            }
-
-                        } else {
-                        
-                            // there are no argument list variants, so just go through and add all the names and types   
-                            for (idx in plist) {
-                                var pinfo = _get_native_param_info(plist[idx]);
-                                params.push(pinfo)
-                            }     
-
-                        }   
-                    }
-                }
-                catch(e) {
-                    if (verbose) {
-                        log("**** (3) " + fname + " threw an exception when called with (null) to get method signature: "+e.message);
-                    }
-                    return null;
-                }
-            }
-            
-        } else {
-
-            var ARGUMENT_NAMES = /(\w+)/g;
-            var fnStr = func.toString().replace(STRIP_COMMENTS, '');
-            fnStr = fnStr.split('\n')[0];
-            var plist = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
-            if (plist) {
-                for (idx in plist) {
-                    var pinfo = _get_script_param_info(plist[idx]);
-                    params.push(pinfo);
-                }
-            }
-        }
-        
-        return params;
-
-    }
-
-    function _class_info(name) {
-        // Check if there's a singleton instance we should use instead of creating a new one
-        var singletonInst = _get_singleton_instance(name, obj);
-        var inst;
-        
-        if (singletonInst) {
-            // Use the singleton instance for method inspection - this is the primary interface
-            inst = singletonInst;
-            if (verbose) {
-                log(indent() + "Using singleton instance for " + name + " instead of creating new instance");
-            }
-        } else if (_is_factory_only_class(name)) {
-            // Use factory function for factory-only classes
-            var factoryFunc = _get_factory_function(name, obj);
-            if (factoryFunc) {
-                try {
-                    inst = factoryFunc();
-                    if (verbose) {
-                        log(indent() + "Using factory function for " + name + " instead of constructor");
-                    }
-                } catch (e) {
-                    if (verbose) {
-                        log(indent() + "Factory function for " + name + " failed: " + e.message);
-                    }
-                    // If factory function fails, we can't inspect this class
-                    return {
-                        "name": name,
-                        "type": "class",
-                        "native": true,
-                        "implements": [],
-                        "interface": [],
-                        "note": "Factory-only class - cannot be instantiated for inspection"
-                    };
-                }
-            } else {
-                if (verbose) {
-                    log(indent() + "No factory function found for " + name);
-                }
-                // If no factory function found, we can't inspect this class
-                return {
-                    "name": name,
-                    "type": "class",
-                    "native": true,
-                    "implements": [],
-                    "interface": [],
-                    "note": "Factory-only class - no factory function available"
-                };
-            }
-        } else {
-            // Fallback to creating a new instance if no singleton exists and not factory-only
-            inst = new obj[name](null);
-        }
-        _objects_to_not_garbage_collect.push(inst);
-        
-        var classInfo = { 
-            "name": name,
-            "type": "class",
-            "native": _is_native(inst.constructor),
-            "implements": _get_supers(inst),
-        };
-        
-        // If this class has a singleton instance, document that as the primary access method
-        if (singletonInst) {
-            var singletonName = null;
-            // Find the singleton name by reverse lookup
-            for (var key in obj) {
-                if (obj[key] === singletonInst) {
-                    singletonName = key;
-                    break;
-                }
-            }
-            if (singletonName) {
-                classInfo.singleton = singletonName;
-                classInfo.note = "Primary access via singleton instance: " + objname + "." + singletonName;
-            }
-        } else if (_is_factory_only_class(name)) {
-            // Document that this is a factory-only class
-            var factoryMap = {
-                'SpriteLayer': 'createSpriteLayer',
-                'TileLayer': 'createTileLayer',
-                'Drawing': 'createDrawing',
-                'Part': 'Sprite.createPart',
-                'PhysicsBody': 'Sprite.setupPhysicsBody',
-                'Collider': 'Sprite.setupCollider',
-                'PhysicsConstraint': 'PhysicsBody.createPinJoint',
-                'ElementRef': 'Drawing.addLine'
-            };
-            var factoryName = factoryMap[name];
-            if (factoryName) {
-                classInfo.factory = factoryName;
-                classInfo.note = name === 'Part'
-                    ? "Factory-only class - call sprite.createPart(name) on a pdg.Sprite instance"
-                    : name === 'PhysicsBody'
-                    ? "Factory-only class - call setupPhysicsBody() on a Sprite or Part instance"
-                    : "Factory-only class - use factory function: " + objname + "." + factoryName + "()";
-            }
-        }
-        classInfo.interface = inspect(inst, name, skip, classInfo);   // recursively inspect object
-        // NoPhysics is a class-level object, so prototype inspection cannot find it.
-        if (name === 'Collider' && obj[name].NoCollider) classInfo.interface.unshift({name: 'NoCollider', type: 'object Collider', readonly: true, static: true});
-        if (name === 'PhysicsBody' && obj[name].NoPhysics) {
-            classInfo.interface.unshift({name: 'NoPhysics', type: 'object PhysicsBody', readonly: true, static: true});
-        }
-        
-        return classInfo;
-    }
-
-    function _constructor_info(obj) {
-        const func = obj.constructor;
-        const funcParams = _get_function_params(func, func.name);
-        if (funcParams == null) {
-            return undefined;
-        }
-        return {
-            "name": func.name,
-            "type": "constructor",
-            "native": _is_native(func),
-            "brief": _get_brief(func, func.name),
-            "returns": "object "+objname,
-            "params": funcParams
-        };
-    }
-
-    function _function_info(name) { 
-        const func = obj[name];
-        const funcParams = _get_function_params(func, name);
-        if (funcParams == null) {
-            return undefined;
-        }
-        return { 
-            "name": name,
-            "type": "function",
-            "native": _is_native(func),
-            "inherited_from": _get_function_inherited_from(name),
-            "brief": _get_brief(func, name),
-            "returns": _get_return_type(func, name),
-            "params": funcParams
-        };
-    }
-
-    function _member_info(name) {
-        var tname = typeof(obj[name]);
-        if (tname == 'object') {
-            if (obj[name] === null) {
-                tname = "object";
-            } else {
-                // Check for both actual Arrays and array-like objects (with length property)
-                var isArrayLike = (obj[name] instanceof Array) ||
-                                 (typeof(obj[name].length) === 'number' && obj[name].length >= 0);
-
-                if (isArrayLike) {
-                    var item = obj[name][0];
-                    var itype = typeof(item);
-                    if (itype=="string") {
-                        tname = "string[]";
-                    } else if (itype == "object") {
-                        if (item && item.toString().substring(0,5) == "Point") {
-                            tname = "object Point[]"
-                        } else {
-                            tname = "object[]";
-                        }
-                    } else if (itype == "undefined" && obj[name].length >= 0) {
-                        // Empty array - try to infer type from property name or default to generic array
-                        if (name == "connections") {
-                            tname = "object NetConnection[]";
-                        } else if (name == "points") {
-                            tname = "object Point[]";
-                        } else {
-                            tname = "[]";
-                        }
-                    } else {
-                        tname = "[]";
-                    }
-                } else {
-                    tname = obj[name].toString();
-                    if (tname.charAt(0) == '[') {
-                        tname = tname.slice(1, tname.indexOf(']')).trim();
-                    } else if (tname.indexOf('(')>0) {
-                        tname = "object "+tname.slice(0, tname.indexOf('(')).trim();
-                    } else {
-                        tname = "object";
-                    }
-                }
-            }
-        }
-        if (name === 'collider' && (objname === 'Sprite' || objname === 'Part' || objname === 'Particle')) { tname = 'object Collider'; }
-        if (name === 'physics' && (objname === 'Sprite' || objname === 'Part' || objname === 'Particle')) {
-            tname = 'object PhysicsBody';
-        }
-        if (name === 'emitter' && objname === 'Particle') { tname = 'object ParticleEmitter'; }
-        var ro = _is_read_only(name);
-        var value = _get_const_value(name);
-        return {
-            "name": name,
-            "type": tname,
-            "readonly": ro,
-            "value": value
-        };
-    }
-
-  
-    function _is_constructor(name) {
-        if (name == "constructor") {  // except these get filtered out by _is_private()
-            return true;
-        } else {
-            return (name == objname);
-        }
-    }
-
-    function _is_private_or_internal(name) {
-        return ((name.charAt(0) == '_') ||   // private if it starts with an underscore
-           // these are methods on the Object prototype, so exclude them
-            (name == "toString") || 
-            (name == "constructor") ||
-            (name == "hasOwnProperty") ||
-            (name == "isPrototypeOf") ||
-            (name == "propertyIsEnumerable") ||
-            (name == "toLocaleString") ||
-            (name == "valueOf"));
-    }
-
-    function _is_class(name) {
-        // Uppercase primitive constants (for example CopyPixels) are members.
-        if ((typeof obj[name] === 'function' || typeof obj[name] === 'object') && name.charAt(0).match(/[A-Z]/)) {
-            return obj[name] && obj[name].constructor;
-        } else {
-            return false;
-        }
-    }
-
-    function _all_properties_of(obj) {
-        let props = {};
-        for (var key in obj) {
-            if (props[key]) continue;
-            var item = obj[key];
-            props[key] = item;
-        }
-        const propDescs = Object.getOwnPropertyDescriptors(obj.constructor.prototype);
-        for (var key in propDescs) {
-            var item = propDescs[key];
-            props[key] = item.value;
-        }
-        return props;
-    }
-
-    function _all_members_of(obj) {
-        let props = _all_properties_of(obj);
-        let members = {}
-        for (var key in props) {
-            if (typeof(props[key]) !== "function" && !_is_class(key)) {
-               members[key] = props[key];
-            }
-        }
-        return members;
-    }
-
-    function _all_methods_of(obj) {
-        let props = _all_properties_of(obj);
-        let methods = {}
-        for (var key in props) {
-            if (typeof(props[key]) === "function" && !_is_class(key)) {
-                methods[key] = props[key];
-            }
-        }
-        return methods;
-    }
-
-    function _all_classes_of(obj) {
-        let props = _all_properties_of(obj);
-        let classes = {}
-        for (var key in props) {
-            if (typeof(props[key]) === "function" && _is_class(key)) {
-                classes[key] = props[key];
-            }
-        }
-        return classes;
-    }
-
-    var _api = [];
-    
-    depth++;
-    for (var name in _all_members_of(obj)) {
-        var fullname = objname+"."+name;
-        if (skip.indexOf(fullname) < 0 && !_is_private_or_internal(name)) {
-            if (superverbose) {
-                log(indent() + "- "+fullname);
-            }
-            try {
-                _api.push( _member_info(name) );
-            } catch (e) {
-                log(indent() + "Error: "+fullname+" threw an exception: "+e.message);
-            }
-        } else {
-            if (verbose) { 
-                log(indent() + "- "+fullname+" -- skipped");
-            }
-        }
-    }
-    if (objname != "pdg" &&
-        !_is_factory_only_class(objname) && 
-        !_get_singleton_instance(objname, pdg)) {
-        const constructorInfo = _constructor_info(obj); // this can return undefined
-        if (constructorInfo) {
-            _api.push( constructorInfo );
-        }
-    }
-    for (var name in _all_methods_of(obj)) {
-        var fullname = objname+"."+name;
-        //superverbose = fullname == "pdg.Point" || fullname == "pdg.xOffset" || fullname.startsWith("Point.") || fullname.startsWith("xOffset.");
-        //superverbose = obj === pdg;
-        if (skip.indexOf(fullname) < 0 && !_is_private_or_internal(name)) {
-            if (superverbose) {
-                log(indent() + "- "+fullname);
-            }
-            if (superverbose) {
-                log(indent() + "("+fullname+" appears to be a function)");
-            }
-            const functionInfo = _function_info(name); // this can return undefined
-            if (functionInfo) {
-                _api.push( functionInfo );
-            }
-        } else {
-            if (verbose) { 
-                log(indent() + "- "+fullname+" -- skipped");
-            }
-        }
-    }
-    for (var name in _all_classes_of(obj)) {
-        var fullname = objname+"."+name;
-        //superverbose = fullname == "pdg.Point" || fullname == "pdg.xOffset" || fullname.startsWith("Point.") || fullname.startsWith("xOffset.");
-        //superverbose = obj === pdg;
-        if (skip.indexOf(fullname) < 0 && !_is_private_or_internal(name)) {
-            if (superverbose) {
-                log(indent() + "- "+fullname);
-            }
-            if (superverbose) {
-                log(indent() + "("+fullname+" appears to be a class)");
-            }
-            _api.push( _class_info(name) );
-        } else {
-            if (verbose) { 
-                log(indent() + "- "+fullname+" -- skipped");
-            }
-        }
-    }
-    depth--;
-    return _api;
-}
-
-// Map constructor function names to their corresponding singleton instances in PDG
-function _get_singleton_instance(className, parentObj) {
-    var singletonMap = {
-        'TimerManager': 'tm',
-        'FileManager': 'fs', 
-        'EventManager': 'evt',
-        'ResourceManager': 'res',
-        'ConfigManager': 'cfg',
-        'LogManager': 'lm',
-        'GraphicsManager': 'gfx',
-        'SoundManager': 'snd',
-        'NetManager': 'net'
-    };
-    
-    var singletonName = singletonMap[className];
-    if (singletonName && parentObj[singletonName]) {
-        return parentObj[singletonName];
-    }
-    return null;
-}
-
-// Map factory-only classes to their corresponding factory functions
-function _get_factory_function(className, parentObj) {
-    var factoryMap = {
-        'SpriteLayer': 'createSpriteLayer',
-        'TileLayer': 'createTileLayer',
-        'Drawing': 'createDrawing',
-        'ElementRef': '_fakeCreateElementRef',
-        'Part': '_fakeCreatePart',
-        'PhysicsBody': '_fakeSetupPhysicsBody',
-        'Collider': '_fakeSetupCollider',
-        'PhysicsConstraint': '_fakeCreatePhysicsConstraint',
-        // Add other factory-only classes as needed
-    };
-    
-    var factoryName = factoryMap[className];
-    if (factoryName && parentObj[factoryName]) {
-        return parentObj[factoryName];
-    }
-    return null;
-}
-
-// Check if a class is factory-only (cannot be instantiated with 'new')
-function _is_factory_only_class(className) {
-    var factoryOnlyClasses = [
-        'SpriteLayer',
-        'TileLayer',
-        'Drawing',
-        'ElementRef',
-        'Part',
-        'PhysicsBody',
-        'Collider',
-        'PhysicsConstraint',
-        // Add other factory-only classes as needed
-    ];
-    
-    return factoryOnlyClasses.indexOf(className) >= 0;
-}
-
-
 String.prototype.lpad = function(padString, length) {
 	var str = this;
     while (str.length < length)
@@ -846,28 +90,6 @@ String.prototype.replaceAt = function(index, char) {
 }
 
 
-function embindAllowPtr(obj, v) {
-    var needAllow = false;
-    if (obj["returns"] && obj["returns"].indexOf("object ") == 0) {
-        needAllow = true;
-    } else if (obj["params"] && obj["params"].length > 0) {
-        var variants = obj["params"];
-        if (!Array.isArray(variants[0])) {
-            variants = [ variants ];
-        }
-        // check this variant to see if the params include an object
-        var params = variants[v];
-        for (p in params) {
-            if (params[p]["type"].indexOf("object ") == 0) {
-                needAllow = true;
-                break;
-            }
-        }
-    }
-    return (needAllow) ? ", emscripten::allow_raw_pointers()" : "";
-}
-
-
 function webidlType(typename, mode, context) {
     var prefix = "";
     if (typename == undefined) {
@@ -878,8 +100,7 @@ function webidlType(typename, mode, context) {
         typename = "float";
     } else if (typename == "string") {
         typename = "DOMString";
-    } else if (typename == "string Binary") {
-        typename = "DOMString";
+
     } else if (typename == "string[]") {
         typename = "DOMString[]";
     } else if (typename == "number int") {
@@ -936,8 +157,7 @@ function doxyType(typename, name) {
         typename = "int";
     } else if (typename == "number uint") {
         typename = "uint";
-    } else if (typename == "string Binary") {
-        typename = "BinaryString";
+
     } else if (typename == "[]" && name == "argv") {
         typename = "string[]";
     } else if (typename.substring(0, 7) == "object ") {
@@ -946,31 +166,56 @@ function doxyType(typename, name) {
     return typename;
 }
 
-// gather all the info, except for these particular problem things
-var exclude = [];
-var today = new Date();
-
-// Load documentation overrides for excluded functions
-var excludedFunctionDocs = {};
-try {
-    excludedFunctionDocs = require('../docs/javascript/excluded-function-docs.js');
-} catch (e) {
-    // If the file doesn't exist, continue without it
-    log("Warning: Could not load excluded-function-docs.js: " + e.message);
+function memberReturnType(member, owner) {
+    return member.returns === 'this' ? 'object '+owner : member.returns;
 }
 
-var api = inspect(pdg, "pdg", exclude, null);
-api = {
-    "name": "pdg", 
-    "type": "module",
-    "lang": "javascript",
-    "vers": require("fs").readFileSync(pdg_dir+"/VERSION", "utf8").replace("\n", ""),
-    "when": today.getFullYear().toString().rpad("0", 4)+"-"+(today.getMonth()+1).toString().lpad("0", 2)+"-"+today.getDate().toString().lpad("0", 2),
-    "interface": api
-};
+function doxyReturnType(member, owner) {
+    var type = apiContracts.parameterDocumentationType({type: memberReturnType(member, owner), contract: member.returns_contract}, api.schemas || {})
+        || doxyType(memberReturnType(member, owner));
+    // Null/sentinel alternatives belong in the return comment, not the type token.
+    return typeof type === 'string' ? type.split(' or ')[0] : type;
+}
 
+// Return contracts can differ between overloads, e.g. single-hit and buffered casts.
+function overloadMember(member, params) {
+    var byParameter = member.returns_contract && member.returns_contract.by_parameter || {};
+    var matches = params.map(function(param) { return byParameter[param.name]; }).filter(Boolean);
+    if (matches.length > 1) throw new Error('Ambiguous overload return for ' + member.name);
+    return Object.assign({}, member, {params: params}, matches.length ? {
+        returns: matches[0].items && matches[0].items.schema ? 'object ' + matches[0].items.schema + '[]' : matches[0].type || member.returns,
+        returns_contract: matches[0]
+    } : {});
+}
 
-if (format_json) {
+function headerResultComment(member) {
+    if (member.returns === 'this' || (member.returns_contract && member.returns_contract.type === 'this')) return '';
+    return apiContracts.memberResultComment(member);
+}
+
+// Consume the binding-owned structured inventory. No discovery executes API code.
+var today = new Date();
+var api = pdg.getInterfaceMetadata();
+api.when = today.getFullYear().toString().rpad("0", 4)+"-"+(today.getMonth()+1).toString().lpad("0", 2)+"-"+today.getDate().toString().lpad("0", 2);
+var apiContracts = require('./api-contracts');
+api = apiContracts.alphabeticalOrder(api);
+if (format_mvc) {
+    if (typeof pdg.AnimatedAttributes !== 'function') throw new Error('MVC inventory requires AnimatedAttributes');
+    var mvcApi = apiContracts.inventoryModule(require('../src/js/mvc-app'), 'mvc-app');
+    mvcApi.lang = api.lang;
+    mvcApi.vers = api.vers;
+    mvcApi.when = api.when;
+    mvcApi.contract_version = api.contract_version;
+    mvcApi = apiContracts.alphabeticalOrder(mvcApi);
+    if (format_json) {
+        write(JSON.stringify(mvcApi, null, "\t"));
+    } else if (format_doxyc) {
+        write('// this file was automatically generated by "pdg tools/make-idl.js --doxygen-h-format --mvc"\n\n');
+        write(apiContracts.moduleDocumentation(mvcApi));
+    } else {
+        throw new Error('MVC inventory supports --json-format and --doxygen-h-format');
+    }
+} else if (format_json) {
 
     write(JSON.stringify(api, null, "\t"));
 
@@ -1006,7 +251,7 @@ if (format_json) {
             }
             for (m in obj) {
                 if (obj[m]["type"] == "function" && obj[m]["native"]) {
-                    var ret = webidlType(obj[m]["returns"], "return", obj[m]);
+                    var ret = webidlType(memberReturnType(obj[m], root[i].name), "return", obj[m]);
                     var fstr = "\t"+ret.rpad(" ",fnamepad)+" "+obj[m]["name"]+"(";
                     
                     var variants = obj[m]["params"];
@@ -1065,17 +310,18 @@ if (format_json) {
     // simpler because there are no variant param lists in top level functions
     for (i in root) {
         if (root[i]["type"] == "function") {
-            var ret = doxyType(root[i]["returns"]);
+            var ret = doxyReturnType(root[i], api.name);
             if (ret) ret += " "; else ret = "";
             var fstr = "    "+ret+root[i]["name"]+" (";                    
             var plist = [];
             var params = root[i]["params"];
             for (p in params) {
                 var par = params[p];
-                plist.push(doxyType(par["type"])+" "+par["name"] + (par["optional"]? " = "+par["default_value"]:""));
+                plist.push((apiContracts.parameterDocumentationType(par, api.schemas || {}) || doxyType(par["type"]))+" "+par["name"] + (par["optional"]? " = "+par["default_value"]:""));
             }
             var pstr = plist.join(", ");
-            write( fstr + pstr + ");\n");
+            write(apiContracts.memberDocumentation(root[i]));
+            write( fstr + pstr + ");" + headerResultComment(root[i]) + "\n");
         }
     }
     // now dump all the classes
@@ -1094,63 +340,59 @@ if (format_json) {
             write( "\n    {\n        public:\n");
             var obj = root[i]["interface"];
             var haveConstructor = false;
-            // go through three times: 
-            // 1. member vars and consts  2. constructors  3. member functions
-            var find="_VARSANDCONSTS_";
-            while (find) {
-                for (m in obj) {
-                    const otype = obj[m]["type"];
-                    if (otype == find) {
-                        if (obj[m]["inherited_from"]) continue;  // skip inherited functions
-                        var ret = (otype == "constructor") ? false : doxyType(obj[m]["returns"]);
-                        if (ret) ret += " "; else ret = "";
-                        var fstr = "            "+(obj[m]["static"] ? "static " : "")+ret+obj[m]["name"]+" (";
-                        var variants = obj[m]["params"];
-                        if (variants.length == 0) {
-                            // no params
-                            write( fstr + ");\n");
-                        } else if (!Array.isArray(variants[0])) {
-                            // no variants, create array with one variant
-                            variants = [ variants ];
-                        }
-                        for (v in variants) {
-                            // write a full function for each variant
-                            var params = variants[v];
-                            var plist = [];
-                            for (p in params) {
-                                var par = params[p];
-                                plist.push(doxyType(par["type"])+" "+par["name"] + (par["optional"]? " = "+par["default_value"]:""));
-                            }
-                            var pstr = plist.join(", ");
-                            write( fstr + pstr + ");\n");
-                        }
-                    } else if ((find == "_VARSANDCONSTS_") && (otype != "undefined") && (otype != "function") && (otype != "constructor")) {
-                        if (obj[m]["value"] != undefined) {
-                            write("            const "+obj[m]["name"]+" = "+obj[m]["value"]+";\n");
-                        } else {
-                            if (obj[m]["readonly"] && !obj[m]["static"]) write("            /** Read-only property. */\n");
-                            var qualifiers = obj[m]["static"] ? "static " + (obj[m]["readonly"] ? "const " : "") : "";
-                            write("            "+qualifiers+doxyType(otype)+" "+obj[m]["name"]+";\n");
-                        }
-                
+            // Emit constants, properties, constructors, and methods in section order.
+            var previousSection;
+            for (m in obj) {
+                var section = apiContracts.memberSection(obj[m], 'class');
+                if (previousSection !== undefined && section !== previousSection) write("\n");
+                previousSection = section;
+                const otype = obj[m]["type"];
+                if (otype == "function" || otype == "constructor") {
+                    if (obj[m]["inherited_from"] && !include_inherited) continue;
+                    var ret = (otype == "constructor") ? false : doxyReturnType(obj[m], root[i].name);
+                    if (ret) ret += " "; else ret = "";
+                    var fstr = "            "+(obj[m]["static"] ? "static " : "")+ret+obj[m]["name"]+" (";
+                    var variants = obj[m]["params"];
+                    if (variants.length == 0) {
+                        // no params
+                        write(apiContracts.memberDocumentation(obj[m]));
+                        write( fstr + ");" + headerResultComment(obj[m]) + "\n");
+                    } else if (!Array.isArray(variants[0])) {
+                        // no variants, create array with one variant
+                        variants = [ variants ];
                     }
-                }
-                if (find=="_VARSANDCONSTS_") {
-                    find = "constructor";
-                } else if (find=="constructor") {
-                    find = "function";
-    //             if (!haveConstructor && (root[i]["name"].charAt(0) != "I")) {
-    //                 // we didn't have a constructor, so write one now
-    //                 // we don't create constructors for pure virtual classes (start with I)
-    //                 write( "\t"+"void".rpad(" ",fnamepad)+" "+root[i]["name"]+"();\n");
-    //             }
-                } else {
-                    find=false;
+                    for (v in variants) {
+                        // write a full function for each variant
+                        var params = variants[v];
+                        var variant = overloadMember(obj[m], params);
+                        var variantRet = (otype == "constructor") ? false : doxyReturnType(variant, root[i].name);
+                        var variantPrefix = "            " + (obj[m]["static"] ? "static " : "") +
+                            (variantRet ? variantRet + " " : "") + obj[m]["name"] + " (";
+                        var plist = [];
+                        for (p in params) {
+                            var par = params[p];
+                            plist.push((apiContracts.parameterDocumentationType(par, api.schemas || {}) || doxyType(par["type"]))+" "+par["name"] + (par["optional"]? " = "+par["default_value"]:""));
+                        }
+                        var pstr = plist.join(", ");
+                        write(apiContracts.memberDocumentation(variant));
+                        write( variantPrefix + pstr + ");" + headerResultComment(variant) + "\n");
+                    }
+                } else if (otype != "undefined") {
+                    if (obj[m]["value"] != undefined) {
+                        write("            const "+obj[m]["name"]+" = "+obj[m]["value"]+";\n");
+                    } else {
+                        write(apiContracts.memberDocumentation(obj[m]));
+                        if (obj[m]["readonly"] && !obj[m]["static"]) write("            /** Read-only property. */\n");
+                        var qualifiers = obj[m]["static"] ? "static " + (obj[m]["readonly"] ? "const " : "") : "";
+                        write("            "+qualifiers+doxyType(otype)+" "+obj[m]["name"]+";\n");
+                    }
+
                 }
             }
             write( "    };\n\n");
         }
     }
+    write(apiContracts.schemaDocumentation(api.schemas));
     write("}\n"); // close namespace
 
 } else if (format_js) {
@@ -1209,70 +451,58 @@ if (format_json) {
             }
             var obj = root[i]["interface"];
             var haveConstructor = false;
-            // go through three times: 
-            // 1. member vars and consts  2. constructors  3. member functions
-            var find="_VARSANDCONSTS_";
-            while (find) {
-                for (m in obj) {
-                    var otype = obj[m]["type"];
-                    if (otype == find) {
-                        if (obj[m]["inherited_from"]) continue;  // skip inherited functions
-                        if (obj[m]["brief"] && obj[m]["brief"].length) {
-                            brief = obj[m]["brief"].replace(/\\param/g, "\n\\param");
-                            brief = brief.replace(/\\return/g, "\n\\return");
-                            brief = brief.replace(/; /g, "\n");
-                            briefLines = brief.replace(/\n/g, "\n        // ");
-                            write( "        // "+obj[m]["name"]+": "+briefLines+"\n");
-                        }
-                        var fstr = "        "+obj[m]["name"]+" : (";
-                        var variants = obj[m]["params"];
-                        if (variants.length == 0) {
-                            variants = [ [ ] ];
-                        } else if (!Array.isArray(variants[0])) {
-                            // no variants, create array with one variant
-                            variants = [ variants ];
-                        }
-                        for (v in variants) {
-                            // write a full function for each variant
-                            var params = variants[v];
-                            var plist = [];
-                            for (p in params) {
-                                var par = params[p];
-                                plist.push(par["name"]);
-                            }
-                            var pstr = plist.join(", ");
-                            if (obj[m]["returns"]) {
-                                returnsStr = obj[m]["returns"].replace(/object /g, "")
-                                .replace(/ uint/g, " /* uint */")
-                                .replace(/ int/g, " /* int */")
-                                .replace(/ Binary/g, " /* Binary */")
-                                .replace(/string\[\]/g, "[\"\"] /* array of strings */");
-                                write( fstr + pstr + ") => { return "+returnsStr+"; }, ");
-                            } else {
-                                write( fstr + pstr + ") => {},");
-                            }
-                            write("\n");
-                        }
-                    } else if ((find == "_VARSANDCONSTS_") && (otype != "undefined") && (otype != "function") && (otype != "constructor")) {
-                        if (obj[m]["value"] != undefined) {
-                            write("        "+obj[m]["name"]+" : "+obj[m]["value"]+",\n");
-                        } else {
-                            write("        "+obj[m]["name"]+" : null,\n");
-                        }
-                
+            // Emit constants, properties, constructors, and methods in section order.
+            var previousSection;
+            for (m in obj) {
+                var section = apiContracts.memberSection(obj[m], 'class');
+                if (previousSection !== undefined && section !== previousSection) write("\n");
+                previousSection = section;
+                var otype = obj[m]["type"];
+                if (otype == "function" || otype == "constructor") {
+                    if (obj[m]["inherited_from"] && !include_inherited) continue;
+                    if (obj[m]["brief"] && obj[m]["brief"].length) {
+                        brief = obj[m]["brief"].replace(/\\param/g, "\n\\param");
+                        brief = brief.replace(/\\return/g, "\n\\return");
+                        brief = brief.replace(/; /g, "\n");
+                        brief = brief.replace(/[ \t]+(?=\n|$)/g, "");
+                        briefLines = brief.replace(/\n/g, "\n        // ");
+                        write( "        // "+obj[m]["name"]+": "+briefLines+"\n");
                     }
-                }
-                if (find=="_VARSANDCONSTS_") {
-                    find = "constructor";
-                } else if (find=="constructor") {
-                    find = "function";
-    //             if (!haveConstructor && (root[i]["name"].charAt(0) != "I")) {
-    //                 // we didn't have a constructor, so write one now
-    //                 // we don't create constructors for pure virtual classes (start with I)
-    //                 write( "\t"+"void".rpad(" ",fnamepad)+" "+root[i]["name"]+"();\n");
-    //             }
-                } else {
-                    find=false;
+                    var fstr = "        "+obj[m]["name"]+" : (";
+                    var variants = obj[m]["params"];
+                    if (variants.length == 0) {
+                        variants = [ [ ] ];
+                    } else if (!Array.isArray(variants[0])) {
+                        // no variants, create array with one variant
+                        variants = [ variants ];
+                    }
+                    for (v in variants) {
+                        // write a full function for each variant
+                        var params = variants[v];
+                        var plist = [];
+                        for (p in params) {
+                            var par = params[p];
+                            plist.push(par["name"]);
+                        }
+                        var pstr = plist.join(", ");
+                        if (obj[m]["returns"]) {
+                            returnsStr = obj[m]["returns"].replace(/object /g, "")
+                            .replace(/ uint/g, " /* uint */")
+                            .replace(/ int/g, " /* int */")
+                            .replace(/string\[\]/g, "[\"\"] /* array of strings */");
+                            write( fstr + pstr + ") => { return "+returnsStr+"; },");
+                        } else {
+                            write( fstr + pstr + ") => {},");
+                        }
+                        write("\n");
+                    }
+                } else if (otype != "undefined") {
+                    if (obj[m]["value"] != undefined) {
+                        write("        "+obj[m]["name"]+" : "+obj[m]["value"]+",\n");
+                    } else {
+                        write("        "+obj[m]["name"]+" : null,\n");
+                    }
+
                 }
             }
             write( "    }; },\n\n");
@@ -1281,260 +511,5 @@ if (format_json) {
     write("};\n"); // close main var
 
 } else if (format_embind) {
-
-    var root = api["interface"];
-    
-
-    var excludeNames = [
-            "FileManager.findFirst",
-            "FileManager.findNext",
-            "FileManager.findClose",
-            
- 			"ConfigManager",  // completely broken
- 			
-			"ResourceManager.getLanguage",
-			"ResourceManager.getString",
-			"ResourceManager.getResource",
-			"ResourceManager.getResourceSize",
-			"ResourceManager.openResourceFile",
-			
-			// many of these are failing because they are inline
-			"Serializer.serialize_8",
-			"Serializer.serialize_8u",
-			"Serializer.serialize_mem",
-			"Serializer.sizeof_mem",
-			"Serializer.sizeof_8",
-			"Serializer.sizeof_8u",
-			"Serializer.serialize_d",
-			"Serializer.serialize_f",
-			"Serializer.serialize_4",
-			"Serializer.serialize_2",
-			"Serializer.serialize_1",
-			"Serializer.serialize_point",
-			"Serializer.serialize_vector",
-			"Serializer.serialize_offset",
-			"Serializer.serialize_rect",
-			"Serializer.serialize_rotr",
-			"Serializer.serialize_quad",
-			"Serializer.serialize_str",
-			"Serializer.serialize_ref",
-			"Serializer.sizeof_d",
-			"Serializer.sizeof_f",
-			"Serializer.sizeof_4",
-			"Serializer.sizeof_4u",
-			"Serializer.sizeof_3u",
-			"Serializer.sizeof_2",
-			"Serializer.sizeof_2u",
-			"Serializer.sizeof_1",
-			"Serializer.sizeof_1u",
-			"Serializer.sizeof_point",
-			"Serializer.sizeof_vector",
-			"Serializer.sizeof_offset",
-			"Serializer.sizeof_rect",
-			"Serializer.sizeof_rotr",
-			"Serializer.sizeof_quad",
-			"Serializer.sizeof_str",
-			"Serializer.sizeof_ref",
-			"Serializer.sizeof_",
-			
-			"Deserializer.setDataPtr",
-			"Deserializer.deserialize_8",
-			"Deserializer.deserialize_d",
-			"Deserializer.deserialize_4",
-			"Deserializer.deserialize_2",
-			"Deserializer.deserialize_1",
-			"Deserializer.deserialize_f",
-			"Deserializer.deserialize_point",
-			"Deserializer.deserialize_vector",
-			"Deserializer.deserialize_offset",
-			"Deserializer.deserialize_rect",
-			"Deserializer.deserialize_rotr",
-			"Deserializer.deserialize_quad",
-			"Deserializer.deserialize_str",
-			"Deserializer.deserialize_ref",
-
-//			"ISerializable",
-//			"IEventHandler",
-// 			"EventEmitter",
-
-            // these are all failing because they call static OS::methods
-			"EventManager.isKeyDown",
-			"EventManager.isRawKeyDown",
-			"EventManager.isButtonDown",
-			"EventManager.getDeviceOrientation",
-
-			"TimerManager.getMilliseconds",
-			"TimerManager.startTimer",
-
-//			"IAnimationHelper",
-			"Animated.setVelocity",
-			"Animated.move",
-			"Animated.moveTo",
-			"Animated.accelerate",
-			"Animated.accelerateTo",
-			"Animated.",
-			"Animated.",
-			"Animated.",
-			"Animated.",
-			"Animated.",
-			"Animated.",
-			"Animated.",
-			"Animated.",
-			"Animated",
-
-			"LogManager",
-			"CpArbiter",
-			"CpConstraint",
-			"CpSpace",
-  			"ISpriteDrawHelper",
-			"Sprite",
-			"SpriteLayer",
-			"TileLayer",
-			"Image",
-			"ImageStrip",
-  			"Font",
-  			"Port",
-  			"GraphicsManager",
-  			"Sound",
-  			"SoundManager"
-    ];
-    
-    var guiOnlyNames = [
-            "getSoundManager", 
-            "getGraphicsManager",
-            "SoundManager", 
-            "GraphicsManager",
-            "Sound",
-            "Port",
-            "Font",
-            "ISpriteDrawHelper",
-        ];
-
-    write("// this file was automatically generated by \"pdg tools/make-idl.js --embind-format\"\n\n\n");
-
-    write("#include <emscripten/bind.h>\n\n");
-    
-    write("EMSCRIPTEN_BINDINGS("+api["name"]+") {\n\n");
-
-    var ns = api["name"]+"::"; // we are going to use the namespace a lot
-
-    // get all the top level constants
-    for (i in root) {
-        if (root[i]["readonly"]) {
-            var name = root[i]["name"];
-
-            var guiOnly = (guiOnlyNames.indexOf(fname) >= 0);
-
-            if (guiOnly) {
-                write("\n#ifndef PDG_NO_GUI\n  ");
-            }
-            var pdgName = name;
-            if (name.match(/linear\w+|ease(In|Out)\w+|customEasing[0-9]/)) {
-                pdgName = "EasingFuncIds::"+name;
-            }
-// not writing constants, they don't seem to show up in the interface properly
-//            write("emscripten::constant(\""+name+"\", "+ns+pdgName+");\n");
-            if (guiOnly) {
-                write("#endif\n\n");
-            }
-        }
-    }
-    write("\n\n");
-    // get all the top level functions
-    // simpler because there are no variant param lists in top level functions
-    for (i in root) {
-        if (root[i]["type"] == "function" && root[i]["native"]) {
-            var fname = root[i]["name"];
-
-            var guiOnly = (guiOnlyNames.indexOf(fname) >= 0);
-            // these functions don't work for yet various reasons, skip them
-            if (fname == "registerEasingFunction") continue;
-            if (fname == "registerSerializableClass") continue;
-
-            if (guiOnly) {
-                write("\n#ifndef PDG_NO_GUI\n  ");
-            }
-            write("emscripten::function(\""+fname+"\", &"+ns+fname +
-                ", emscripten::allow_raw_pointers());\n");
-            if (guiOnly) {
-                write("#endif\n\n");
-            }
-        }
-    }
-    // now dump all the classes
-    write("\n");
-    for (i in root) {
-        if (root[i]["type"] == "class" && root[i]["native"]) {
-            var oname = root[i]["name"];
-            
-            var guiOnly = (guiOnlyNames.indexOf(oname) >= 0);
-
-            if (guiOnly) {
-                write("\n#ifndef PDG_NO_GUI\n  ");
-            }
-            write("emscripten::class_<"+ns+oname+">(\""+oname+"\")\n    "+oname+"_Extra\n");
-            var obj = root[i]["interface"];
-            var haveConstructor = false;
-            // go through three times: 
-            // 1. member vars and consts  2. constructors  3. member functions
-            var find="_VARSANDCONSTS_";
-            while (find && (excludeNames.indexOf(oname) < 0)) {
-                for (m in obj) {
-                    var otype = obj[m]["type"];
-                    if (otype == find) {
-                        if (obj[m]["native"] != true) continue;  // skip JavaScript add-ins from pdg.js
-                        if (obj[m]["inherited_from"]) continue;  // skip inherited functions
-                        var fname = oname+"."+obj[m]["name"];
-                        if (excludeNames.indexOf(fname) >= 0) continue;   // skip any excluded functions
-                        var fstr = "    ."+otype;
-                        if (otype == "constructor") {
-                            fstr += "<";
-                        } else {
-                            fstr += "(\""+obj[m]["name"];
-                        }
-                        var variants = obj[m]["params"];
-                        if (variants.length == 0) {
-                            // no params
-                            write(fstr+"\", &"+ns+oname+"::"+obj[m]["name"]+embindAllowPtr(obj[m], 0)+")\n");
-                        } else if (!Array.isArray(variants[0])) {
-                            // no variants, create array with one variant
-                            write(fstr+"\", &"+ns+oname+"::"+obj[m]["name"]+embindAllowPtr(obj[m], 0)+")\n");
-                        } else {
-                            for (v in variants) {
-                                // variants, write one with a different number for each variant
-                                write(fstr+v+"\", &"+ns+oname+"::"+obj[m]["name"]+v+embindAllowPtr(obj[m], v)+")\n");
-                            }
-                        }
-                    } else if ((find == "_VARSANDCONSTS_") && (otype != "undefined") && (otype != "function") && (otype != "constructor")) {
-//                         if (obj[m]["value"] != undefined) {
-//                             write("            const "+obj[m]["name"]+" = "+obj[m]["value"]+";\n");
-//                         } else {
-//                             write("            "+doxyType(otype)+" "+obj[m]["name"]+";\n");
-//                         }
-//                 
-                    }
-                }
-                if (find=="_VARSANDCONSTS_") {
-                    find = "constructor";
-                } else if (find=="constructor") {
-                    find = "function";
-    //             if (!haveConstructor && (root[i]["name"].charAt(0) != "I")) {
-    //                 // we didn't have a constructor, so write one now
-    //                 // we don't create constructors for pure virtual classes (start with I)
-    //                 write( "\t"+"void".rpad(" ",fnamepad)+" "+root[i]["name"]+"();\n");
-    //             }
-                } else {
-                    find=false;
-                }
-            }
-            write("    ;\n");
-            if (guiOnly) {
-                write("#endif\n");
-            }
-            write("\n");
-        }
-    }
-
-    write("\n}\n"); // close EMSCRIPTEN_BINDINGS
-
+    throw new Error("Use node tools/emscripten/generate.js; Emscripten bindings are generated from source metadata without a PDG runtime.");
 }

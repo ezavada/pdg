@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -108,28 +108,45 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 </div><!--header-->
 <div class="contents">
 
-<p>holds arbitrary blocks of memory  
+<p>Hold native memory for exchange between PDG APIs.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a98424b3ce63a6899a93153a36d450070" id="r_a98424b3ce63a6899a93153a36d450070"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a98424b3ce63a6899a93153a36d450070">MemBlock</a> ()</td></tr>
 <tr class="memitem:a3434071f6f8368adbe200674d5e02d9c" id="r_a3434071f6f8368adbe200674d5e02d9c"><td class="memItemLeft">number&#160;</td><td class="memItemRight"><a class="el" href="#a3434071f6f8368adbe200674d5e02d9c">getByte</a> (uint i)</td></tr>
 <tr class="memdesc:a3434071f6f8368adbe200674d5e02d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a single byte from an specific location in the block  <br /></td></tr>
-<tr class="memitem:a12521e233406e0c65e0a92cca28952c5" id="r_a12521e233406e0c65e0a92cca28952c5"><td class="memItemLeft">BinaryString&#160;</td><td class="memItemRight"><a class="el" href="#a12521e233406e0c65e0a92cca28952c5">getBytes</a> (uint start, uint len)</td></tr>
-<tr class="memdesc:a12521e233406e0c65e0a92cca28952c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a subset of the memory block  <br /></td></tr>
-<tr class="memitem:aee42d5f99fa203630f1711108653423b" id="r_aee42d5f99fa203630f1711108653423b"><td class="memItemLeft">BinaryString&#160;</td><td class="memItemRight"><a class="el" href="#aee42d5f99fa203630f1711108653423b">getData</a> ()</td></tr>
-<tr class="memdesc:aee42d5f99fa203630f1711108653423b"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the data as a JavaScript string  <br /></td></tr>
+<tr class="memitem:a8df1f832aa9d3f2eaef2b9da3fc69ea3" id="r_a8df1f832aa9d3f2eaef2b9da3fc69ea3"><td class="memItemLeft">Uint8Array&#160;</td><td class="memItemRight"><a class="el" href="#a8df1f832aa9d3f2eaef2b9da3fc69ea3">getBytes</a> (uint start, uint len)</td></tr>
+<tr class="memdesc:a8df1f832aa9d3f2eaef2b9da3fc69ea3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a bounded byte range into a plain Uint8Array.  <br /></td></tr>
+<tr class="memitem:a8658c0fee49fe2d6b6d8f5140a3afebc" id="r_a8658c0fee49fe2d6b6d8f5140a3afebc"><td class="memItemLeft">Uint8Array&#160;</td><td class="memItemRight"><a class="el" href="#a8658c0fee49fe2d6b6d8f5140a3afebc">getData</a> ()</td></tr>
+<tr class="memdesc:a8658c0fee49fe2d6b6d8f5140a3afebc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy the block's bytes into a new plain Uint8Array.  <br /></td></tr>
 <tr class="memitem:ad30d5c216cfc25975e040c7d3754958e" id="r_ad30d5c216cfc25975e040c7d3754958e"><td class="memItemLeft">number&#160;</td><td class="memItemRight"><a class="el" href="#ad30d5c216cfc25975e040c7d3754958e">getDataSize</a> ()</td></tr>
 <tr class="memdesc:ad30d5c216cfc25975e040c7d3754958e"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of bytes in the block  <br /></td></tr>
-<tr class="memitem:ae02602816a91b2f3d4c2b21fabf7d090" id="r_ae02602816a91b2f3d4c2b21fabf7d090"><td class="memItemLeft">Buffer&#160;</td><td class="memItemRight"><a class="el" href="#ae02602816a91b2f3d4c2b21fabf7d090">toBuffer</a> ()</td></tr>
-<tr class="memdesc:ae02602816a91b2f3d4c2b21fabf7d090"><td class="mdescLeft">&#160;</td><td class="mdescRight">convert <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> to Node.js Buffer object  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>holds arbitrary blocks of memory </p>
+<div class="textblock"><p>Hold native memory for exchange between PDG APIs. </p>
 <dl class="section note"><dt>Note</dt><dd><b>API Stability: 2 — Evolving</b>. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See <a class="el" href="index.html#api_stability" title="API stability">API stability</a>.</dd></dl>
-<p>Many functions of PDG, such as <a class="el" href="classpdg_1_1_image.html" title="A bitmap image that can be blitted onto the screen.">Image</a> and Resource data, Streaming I/O, and Networking deal with blocks of memory. Since JavaScript has no way to natively deal with these, PDG adds the <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> class to pass those blocks of data between various parts of the PDG libraries.</p>
-<p>This class is very similar to the Node.js Buffer class, but has no Node.js dependencies. </p>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<p>A <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a> is either an owned block or a borrowed view of another native object's storage. <a class="el" href="classpdg_1_1_serializer.html#a29eca37a87cd79295ec15ced3fe6d9ed" title="get the serialized data">Serializer.getDataPtr()</a> returns a borrowed block: keep the serializer alive and do not modify or clear it while using that block.</p>
+<p><a class="el" href="#a8658c0fee49fe2d6b6d8f5140a3afebc" title="Copy the block&#39;s bytes into a new plain Uint8Array.">getData()</a> and <a class="el" href="#a8df1f832aa9d3f2eaef2b9da3fc69ea3" title="Copy a bounded byte range into a plain Uint8Array.">getBytes()</a> return independent Uint8Array copies. Use those snapshots when the data must outlive its native owner. See <a class="el" href="#a8658c0fee49fe2d6b6d8f5140a3afebc" title="Copy the block&#39;s bytes into a new plain Uint8Array.">getData()</a> for Node.js Buffer conversion and the copy cost of each conversion form. </p>
+</div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a98424b3ce63a6899a93153a36d450070" name="a98424b3ce63a6899a93153a36d450070"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98424b3ce63a6899a93153a36d450070">&#9670;&#160;</a></span>MemBlock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">MemBlock </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a3434071f6f8368adbe200674d5e02d9c" name="a3434071f6f8368adbe200674d5e02d9c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3434071f6f8368adbe200674d5e02d9c">&#9670;&#160;</a></span>getByte()</h2>
 
@@ -156,14 +173,14 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a12521e233406e0c65e0a92cca28952c5" name="a12521e233406e0c65e0a92cca28952c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12521e233406e0c65e0a92cca28952c5">&#9670;&#160;</a></span>getBytes()</h2>
+<a id="a8df1f832aa9d3f2eaef2b9da3fc69ea3" name="a8df1f832aa9d3f2eaef2b9da3fc69ea3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8df1f832aa9d3f2eaef2b9da3fc69ea3">&#9670;&#160;</a></span>getBytes()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">BinaryString getBytes </td>
+          <td class="memname">Uint8Array getBytes </td>
           <td>(</td>
           <td class="paramtype">uint</td>          <td class="paramname"><span class="paramname"><em>start</em></span>, </td>
         </tr>
@@ -175,28 +192,26 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>get a subset of the memory block </p>
-<p>The data is returned as a JavaScript string with binary data (values from 0..255 represented in JavaScript's native 2 byte per char string format). Use pdg.log.binaryDump() to see the data contents in a human readable hex-dump form.</p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Copy a bounded byte range into a plain Uint8Array. </p>
+<p>The requested length is clamped to the remaining bytes. An offset at or beyond the end returns an empty array. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>the offset in the block to start from </td></tr>
-    <tr><td class="paramname">len</td><td>the maximum number of bytes to fetch; clamped to the bytes remaining in the block</td></tr>
+    <tr><td class="paramname">start</td><td>Zero-based byte offset. </td></tr>
+    <tr><td class="paramname">len</td><td>Maximum number of bytes to copy. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>a JavaScript string with binary data, or an empty string if start is outside the block</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_log_manager.html#a1c790e5d5bb8ac38415e826b4d207f34" title="get hex and ascii representations in a hex dump format.">LogManager.binaryDump</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A fresh, independently owned Uint8Array. </dd></dl>
 
 </div>
 </div>
-<a id="aee42d5f99fa203630f1711108653423b" name="aee42d5f99fa203630f1711108653423b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aee42d5f99fa203630f1711108653423b">&#9670;&#160;</a></span>getData()</h2>
+<a id="a8658c0fee49fe2d6b6d8f5140a3afebc" name="a8658c0fee49fe2d6b6d8f5140a3afebc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8658c0fee49fe2d6b6d8f5140a3afebc">&#9670;&#160;</a></span>getData()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">BinaryString getData </td>
+          <td class="memname">Uint8Array getData </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -204,10 +219,21 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>get the data as a JavaScript string </p>
-<p>The data is returned as a JavaScript string with binary data (values from 0..255 represented in JavaScript's native 2 byte per char string format). Use pdg.log.binaryDump() to see the data contents in a human readable hex-dump form.</p>
-<dl class="section return"><dt>Returns</dt><dd>a JavaScript string with binary data</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_log_manager.html#a1c790e5d5bb8ac38415e826b4d207f34" title="get hex and ascii representations in a hex dump format.">LogManager.binaryDump</a> </dd></dl>
+<p>Copy the block's bytes into a new plain Uint8Array. </p>
+<p>Returns the same standard JavaScript array type on desktop native, Node, browser, and iOS runtimes. Each call copies all bytes without text decoding, including zero and values above 127. Changing the returned array does not change this <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a> or arrays returned by earlier calls.</p>
+<dl class="section return"><dt>Returns</dt><dd>An independently owned Uint8Array with <a class="el" href="#ad30d5c216cfc25975e040c7d3754958e" title="get the number of bytes in the block">getDataSize()</a> elements, or an empty Uint8Array for an empty block. The result is not a Node Buffer; slice() copies bytes and subarray() shares the returned array's memory.</dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line">const writer = new pdg.Serializer();</div>
+<div class="line">writer.serialize_1u(255);</div>
+<div class="line">const bytes = writer.getDataPtr().getData();</div>
+<div class="line">const copy = bytes.slice();</div>
+</div><!-- fragment --></dd></dl>
+<dl class="section user"><dt>Node.js Buffer conversion</dt><dd>Use this form when a Node.js API specifically requires a Buffer. <a class="el" href="#a8658c0fee49fe2d6b6d8f5140a3afebc" title="Copy the block&#39;s bytes into a new plain Uint8Array.">getData()</a> copies the native block once; the Buffer then shares that snapshot without another payload copy. Include the offset and length so only the array's visible bytes are exposed, even when converting a subarray.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>These examples require Node.js Buffer support. The shared Buffer and Uint8Array reflect each other's mutations, but neither changes the <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a>.</dd></dl>
+<div class="fragment"><div class="line">const bytes = writer.getDataPtr().getData();</div>
+<div class="line">const buffer = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);</div>
+</div><!-- fragment --><dl class="section warning"><dt>Warning</dt><dd>The shorter form below makes an additional full copy of the bytes: one copy from native memory into the Uint8Array, then another into the Buffer. For an N-byte block, it copies 2N bytes and needs storage for both N-byte payloads until the temporary array can be collected. This adds copy time and memory/garbage-collection pressure, especially for large or frequent transfers. Use it when an independent Buffer copy is intentional.</dd></dl>
+<div class="fragment"><div class="line">const bufferCopy = Buffer.from(writer.getDataPtr().getData());</div>
+</div><!-- fragment --><p>The removed MemBlock.toBuffer() method can be replaced by the shared-view form above with the same single payload copy. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="#a8df1f832aa9d3f2eaef2b9da3fc69ea3" title="Copy a bounded byte range into a plain Uint8Array.">getBytes()</a> </dd></dl>
 
 </div>
 </div>
@@ -228,26 +254,6 @@ Public Member Functions</h2></td></tr>
 
 <p>get the number of bytes in the block </p>
 <dl class="section return"><dt>Returns</dt><dd>the count of bytes in the block </dd></dl>
-
-</div>
-</div>
-<a id="ae02602816a91b2f3d4c2b21fabf7d090" name="ae02602816a91b2f3d4c2b21fabf7d090"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae02602816a91b2f3d4c2b21fabf7d090">&#9670;&#160;</a></span>toBuffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Buffer toBuffer </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>convert <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> to Node.js Buffer object </p>
-<p>Converts a <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> into a Node.js Buffer object. See Node.js docs for details on the Buffer class. This makes it easier to use a <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> with Node.js calls that work with Buffers. </p>
 
 </div>
 </div>

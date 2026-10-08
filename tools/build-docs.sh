@@ -10,7 +10,7 @@ usage() {
     echo
     echo "Doxygen always regenerates C++ HTML, JavaScript HTML, and JavaScript man pages."
     echo "--refresh-api also refreshes JavaScript API declarations using the built pdg executable."
-    echo "Generated pages also replace docs/cxx/html, docs/javascript/html, and docs/javascript/man."
+    echo "Generated pages also replace docs/cxx/html, docs/javascript/html, docs/javascript/man, and docs/typescript/html."
     echo "--no-local-copy keeps the generated pages only in the artifact site."
     echo "Artifacts default to artifacts/docs/; Doxygen logs are in its work/ directory."
 }
@@ -161,6 +161,16 @@ run_doxygen() {
     return 1
 }
 
+if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+    echo "Node.js and npm are required for the TypeScript reference." >&2
+    exit 1
+fi
+npm ci --prefix "$PDG_ROOT/tools/typescript" --ignore-scripts --no-audit --no-fund
+if [[ $REFRESH_API -eq 1 ]]; then
+    node "$PDG_ROOT/tools/typescript/generate.js"
+fi
+node "$PDG_ROOT/tools/typescript/build-docs.js" "$SITE_DIR/typescript/html"
+
 run_doxygen "$PDG_ROOT/docs/cxx" Doxyfile "$SITE_DIR/cxx" "$WORK_DIR/cxx-warnings.log" "C++ HTML"
 run_doxygen "$PDG_ROOT/docs/javascript" Doxyfile "$SITE_DIR/javascript" "$WORK_DIR/javascript-warnings.log" "JavaScript HTML"
 run_doxygen "$PDG_ROOT/docs/javascript" Doxyfile-man "$SITE_DIR/javascript" "$WORK_DIR/man-warnings.log" "JavaScript manual pages"
@@ -204,6 +214,7 @@ cat > "$SITE_DIR/index.html" <<EOF
   <ul>
     <li><a href="cxx/html/index.html">C++ API</a></li>
     <li><a href="javascript/html/index.html">JavaScript API</a></li>
+    <li><a href="typescript/html/index.html">TypeScript API and MVC</a></li>
     <li><a href="javascript/man/">JavaScript manual pages</a></li>
     <li><a href="third-party/chipmunk/API-Reference/index.html">Chipmunk reference</a></li>
     <li><a href="third-party/libjpeg-turbo/">libjpeg-turbo reference</a></li>
@@ -216,7 +227,8 @@ for required_file in \
     "$SITE_DIR/index.html" \
     "$SITE_DIR/cxx/html/index.html" \
     "$SITE_DIR/javascript/html/index.html" \
-    "$SITE_DIR/javascript/man/index.html"; do
+    "$SITE_DIR/javascript/man/index.html" \
+    "$SITE_DIR/typescript/html/index.html"; do
     if [[ ! -f "$required_file" ]]; then
         echo "Documentation output is missing: $required_file" >&2
         exit 1
@@ -231,7 +243,7 @@ fi
 if [[ $UPDATE_LOCAL_DOCS -eq 1 ]]; then
     echo "Refreshing the generated documentation under docs/..."
     # Replace each generated tree so removed API pages cannot survive a rebuild.
-    for generated_tree in cxx/html javascript/html javascript/man; do
+    for generated_tree in cxx/html javascript/html javascript/man typescript/html; do
         cmake -E remove_directory "$PDG_ROOT/docs/$generated_tree"
         cmake -E copy_directory "$SITE_DIR/$generated_tree" "$PDG_ROOT/docs/$generated_tree"
     done

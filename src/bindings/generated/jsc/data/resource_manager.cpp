@@ -27,6 +27,7 @@
 #include "pdg-lib.h"
 
 #include <cstdlib>
+#include <algorithm>
 
 namespace pdg
 {
@@ -170,7 +171,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""refNum"")");
-        int32 refNum = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 refNum = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->closeResourceFile(refNum);
         return JSValueMakeUndefined(ctx);
     }
@@ -182,10 +183,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""substring"")");
-        long substring = (argumentCount<2) ? -1 : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long substring = (argumentCount<2) ? -1 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         std::string ioStr;
         const char* outStr = self->getString(ioStr, id, substring);
         return JSC_MakeValueFromCString(ctx, outStr);
@@ -206,6 +207,7 @@ namespace pdg
         unsigned long resSize = self->getResourceSize(resourceName);
         return JSValueMakeNumber(ctx, resSize);
     }
+
     JSValueRef ResourceManager_GetResource(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         ResourceManager* self = static_cast<ResourceManager*>(JSObjectGetPrivate(thisObject));
@@ -221,16 +223,10 @@ namespace pdg
         JSStringRelease(resourceName_Str);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""maxSize"")");
-        long maxSize = (argumentCount<2) ? -1 : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
-        unsigned long bufferSize;
-        if (maxSize < 0)
-        {
-            bufferSize = self->getResourceSize(resourceName);
-        }
-        else
-        {
-            bufferSize = maxSize;
-        }
+        long maxSize = (argumentCount<2) ? -1 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
+        unsigned long resourceSize = self->getResourceSize(resourceName);
+        unsigned long bufferSize = maxSize < 0 ? resourceSize : std::min(resourceSize, static_cast<unsigned long>(maxSize));
+        if (!bufferSize) { return JSValueMakeBoolean(ctx, false); }
         uint8* buffer = (uint8*) std::malloc(bufferSize);
         bool loaded = self->getResource(resourceName, buffer, bufferSize);
         if (!loaded)
@@ -238,7 +234,7 @@ namespace pdg
             std::free(buffer);
             return JSValueMakeBoolean(ctx, false);
         }
-        JSValueRef resultVal = EncodeBinary(buffer, bufferSize);
+        JSValueRef resultVal = MakeUint8Array(buffer, bufferSize);
         std::free(buffer);
         return resultVal;
     }

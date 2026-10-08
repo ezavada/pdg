@@ -1,0 +1,71 @@
+/**
+\class pdg::Scene
+\ingroup Animation
+\brief Own layers, an isolated physics world, a camera, timers and simulation time.
+
+Create gameplay first and HUD second: scenes draw in construction order above
+legacy layers. Both can target the same Port. Pausing gameplay keeps drawing its
+held pose while the HUD continues to animate and receive its own timer events.
+Raw input is controlled separately with setInputEnabled(boolean).
+
+addLayer(layer) adopts a detached layer or a layer from the legacy factory.
+removeLayer(layer) detaches without destroying sprites or their physical state;
+the caller must attach it elsewhere or clean it up. disposeLayer(layer) destroys
+an attached layer. dispose() is idempotent, cancels timers and subscriptions, and
+destroys remaining attached layers. Detached layers survive. Cross-layer physics
+constraints must be disconnected before detachment. Mutation of layer membership
+must occur outside scene traversal. Deferred disposal is safe inside callbacks.
+
+The effective layer camera is its explicit override, otherwise its Scene camera,
+otherwise its Port camera. Scene cameras and layer overrides advance once on the
+owning scene clock. A camera cannot be automatically advanced by two scenes.
+
+advance(seconds), setFixedStep(seconds), getSimulationTime() and getDroppedTime()
+use seconds. setManual(true) disables automatic host advancement. Fixed step 0
+selects variable stepping; a positive value selects fixed stepping. Updates admit
+at most 0.25 seconds of host time and run at most eight fixed steps. Excess whole
+steps are discarded and reported by getDroppedTime(); discarded time does not
+fire logical timers. setTimeScale(scale) accepts finite nonnegative values. Zero
+freezes advancement without setting isPaused(). Resume adds no paused-time debt.
+
+setInterpolation(true) enables read-only interpolation of sprite root translation,
+scale and shortest-path rotation during fixed-step rendering. Mounted sprites
+inherit the parent correction. Queries and physics retain authoritative state;
+skeletal poses and camera poses use current state. A teleport resets presentation.
+
+Scene timer delays and intervals use milliseconds. IDs are positive and local to
+each scene. onTimeout(callback, delayMs) and onInterval(callback, intervalMs) return
+cancellable handles. Callbacks receive the timer event synchronously. Repeating
+intervals must be positive; zero-delay one-shots wait for the next update. Timers
+fire before animation at an update boundary, at most once per step, and newly
+created timers wait for a later boundary. Scene pause includes timers created
+while paused. Scene resume preserves individually paused timers. Scaling affects
+logical deadlines; getWhenTimerFiresNext(id) returns the logical deadline in
+milliseconds, or -1 for an absent or paused timer.
+
+subscribe(emitter, eventType, callback) returns a cancellable external registration
+and disconnects it on explicit dispose(). Pause does not suppress raw external
+events. Async work and sound servicing continue independently; applications decide
+when to apply late results and pause gameplay voices.
+
+\note Rendering requires a graphics-capable build. Manual simulation, timers and
+camera animation are available headlessly. Explicitly dispose scenes when leaving
+a level; garbage collection is not a lifecycle boundary.
+
+\code{.js}
+const gameplay = new pdg.Scene();
+gameplay.setFixedStep(1 / 60);
+gameplay.setInterpolation(true);
+const hud = new pdg.Scene();
+const worldLayer = gameplay.createSpriteLayer();
+const hudLayer = hud.createSpriteLayer();
+worldLayer.setSpritePort(port);
+hudLayer.setSpritePort(port);
+hud.onInterval(function () { caret.setOpacity(caret.getOpacity() ? 0 : 1); }, 500);
+gameplay.pause();     // HUD continues above the held gameplay image.
+gameplay.resume();
+// On leaving this level:
+gameplay.dispose();
+hud.dispose();
+\endcode
+*/

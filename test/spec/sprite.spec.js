@@ -307,7 +307,7 @@ describe("Sprite", function() {
       gotCollide = false;
       gotExitLayer = false;
       layer = pdg.createSpriteLayer();
-      layer.setSize(100, 100);
+      layer.setWorldBounds(new pdg.Rect(-50,-50,50,50));
       
       // init sprite 1
       sprite1 = layer.createSprite();

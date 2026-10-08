@@ -1,9 +1,9 @@
 <map id="Graphics" name="Graphics">
-<area shape="rect" id="Node000004" href="$group___animation.html" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="333,139,412,165"/>
-<area shape="rect" id="Node000002" href="$group___animation_drawing.html" title="Shared Drawing artwork attached to the evaluated pose and authored slots." alt="" coords="297,208,448,248"/>
-<area shape="rect" id="Node000005" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="341,295,404,321"/>
-<area shape="rect" id="Node000001" title="Things related to drawing graphics on screen." alt="" coords="5,326,79,352"/>
-<area shape="rect" id="Node000006" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="333,355,412,381"/>
-<area shape="rect" id="Node000007" href="$group___sound.html" title="Things used for audio (sound and music)." alt="" coords="343,405,402,430"/>
-<area shape="rect" id="Node000003" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="309,474,436,500"/>
+<area shape="rect" id="Node000004" href="$group___animation.html" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="333,169,412,195"/>
+<area shape="rect" id="Node000002" href="$group___animation_drawing.html" title="Shared Drawing artwork attached to the evaluated pose and authored slots." alt="" coords="297,238,448,278"/>
+<area shape="rect" id="Node000005" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="341,325,404,351"/>
+<area shape="rect" id="Node000001" title="Things related to drawing graphics on screen." alt="" coords="5,356,79,382"/>
+<area shape="rect" id="Node000006" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="333,385,412,411"/>
+<area shape="rect" id="Node000007" href="$group___sound.html" title="Things used for audio (sound and music)." alt="" coords="343,435,402,460"/>
+<area shape="rect" id="Node000003" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="309,504,436,530"/>
 </map>

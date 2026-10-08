@@ -1,0 +1,36 @@
+.TH "camera_controllers" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+camera_controllers \- Camera following, effects and split-screen 
+.PP
+Camera follows world-space Animated targets with optional exponential smoothing, a deadzone, offsets and sampled-velocity look-ahead\&. Following owns position until a manual position/movement command takes over\&. Zoom and rotation remain independently animated\&. Shared cameras still have one runtime update owner\&. Scripted zoom commands preserve on-camera zoom completion events: each forward tween emits when it completes, and until() on a single zoom emits the retained zoom when it finishes early\&. Reverse trajectory sampling does not synthesize another zoom command or completion event; until() on a compound group does not synthesize completions for its child operations\&.
+
+.PP
+Creating a Camera registers two reusable native script presets if their names are not already defined: shake (horizontal six-unit oscillation diminishing over 0\&.6 seconds) and impulse (twelve-unit upward kick and return over 0\&.08 seconds)\&. They use the same Animated recording and playback API as application definitions\&. Use getEffects()\&.playScript(name) to apply them without changing persistent controller pose; modifiers and playback controls apply to that stage\&. Custom presets may be defined before creating cameras\&.
+
+.PP
+Split-screen uses Camera-owned port-coordinate viewports\&. Attach each view's layers to its camera; the rendering engine clips the content and composites flash once within each camera output, before output opacity and crossfade composition\&. Managed offscreen layers also receive runtime frames\&. Unattached cameras require manual animate(seconds) updates\&. A single layer has one effective camera, so separate simultaneous views use separate layers\&.
+
+.PP
+See \fBCamera visibility, fades and transitions\fP for visibility, composed fades and crossfades\&.
+
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+// topWorld and bottomWorld are layers in the same port\&.
+var top = new pdg\&.Camera()\&.setViewport(new pdg\&.Rect(0, 0, 640, 240));
+var bottom = new pdg\&.Camera()\&.setViewport(new pdg\&.Rect(0, 240, 640, 480));
+topWorld\&.setCamera(top); bottomWorld\&.setCamera(bottom);
+top\&.follow(player)\&.setSmoothing(0\&.15);
+top\&.flash(1, 0\&.25); // rendered automatically inside the top viewport
+
+.fi
+.PP
+ 
+.RE
+.PP
+

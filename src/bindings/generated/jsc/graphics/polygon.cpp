@@ -191,7 +191,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
             };
             self->addPoint(point);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_AddSpline(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -217,7 +217,7 @@ namespace pdg
                 uStep = uStepArg;
             }
             self->addSpline(spline, uStep);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_InsertPoint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -228,7 +228,7 @@ namespace pdg
                 return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""index"")");
-            uint32 index = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+            uint32 index = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
             pdg::Point point;
             auto point_isPoint = JSC_ValueIsPoint(ctx, arguments[2 -1], point, exception);
             if (!point_isPoint.has_value()) { return JSValueMakeNull(ctx); }
@@ -237,7 +237,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 2, "Point", arguments[2 -1]);
             };
             self->insertPoint(index, point);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_RemovePoint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -248,7 +248,7 @@ namespace pdg
                 return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""index"")");
-            uint32 index = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+            uint32 index = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
             try
             {
                 self->removePoint(index);
@@ -260,7 +260,7 @@ namespace pdg
                 JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
                 return JSValueMakeNull(ctx);
             }
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_GetPointCount(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -281,7 +281,7 @@ namespace pdg
                 return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""index"")");
-            uint32 index = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+            uint32 index = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
             try
             {
                 Point point = self->getPoint(index);
@@ -304,7 +304,7 @@ namespace pdg
                 return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""index"")");
-            uint32 index = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+            uint32 index = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
             pdg::Point point;
             auto point_isPoint = JSC_ValueIsPoint(ctx, arguments[2 -1], point, exception);
             if (!point_isPoint.has_value()) { return JSValueMakeNull(ctx); }
@@ -315,7 +315,7 @@ namespace pdg
             try
             {
                 self->setPoint(index, point);
-                return JSValueMakeUndefined(ctx);
+                return thisObject;
             }
             catch (const std::out_of_range& e)
             {
@@ -333,7 +333,7 @@ namespace pdg
             if (argumentCount != 0)
                 return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
             self->clearPoints();
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_GetBounds(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -414,7 +414,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
             };
             self->move(offset);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_MoveLeft(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -427,7 +427,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""delta"")");
             double delta = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->moveLeft(delta);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_MoveRight(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -440,7 +440,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""delta"")");
             double delta = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->moveRight(delta);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_MoveUp(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -453,7 +453,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""delta"")");
             double delta = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->moveUp(delta);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_MoveDown(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -466,7 +466,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""delta"")");
             double delta = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->moveDown(delta);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_MoveXTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -479,7 +479,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
             double x = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->moveXTo(x);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_MoveYTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -492,23 +492,37 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""y"")");
             double y = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->moveYTo(y);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_MoveTo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
         {
             Polygon* self = static_cast<Polygon*>(JSObjectGetPrivate(thisObject));
             ;
-            if (argumentCount != 2)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
-            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-            double x = JSValueToNumber(ctx, arguments[1 -1], exception);
-            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
-                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-            double y = JSValueToNumber(ctx, arguments[2 -1], exception);
-            self->moveTo(x, y);
-            return JSValueMakeUndefined(ctx);
+            if (argumentCount < 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
+            pdg::Point point;
+            auto isPoint = JSC_ValueIsPoint(ctx, arguments[0], point, exception);
+            if (!isPoint.has_value()) { return JSValueMakeNull(ctx); }
+            if (*isPoint)
+            {
+                if (argumentCount != 1)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+                self->moveTo(point);
+            }
+            else
+            {
+                if (argumentCount != 2)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
+                if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
+                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
+                double x = JSValueToNumber(ctx, arguments[1 -1], exception);
+                if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
+                    return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
+                double y = JSValueToNumber(ctx, arguments[2 -1], exception);
+                self->moveTo(x, y);
+            }
+            return thisObject;
         }
 
         JSValueRef Polygon_Center(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -525,7 +539,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
             };
             self->center(point);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_Scale(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -538,7 +552,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""factor"")");
             double factor = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->scale(factor);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_HorzScale(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -551,7 +565,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""factor"")");
             double factor = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->horzScale(factor);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_VertScale(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -564,7 +578,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""factor"")");
             double factor = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->vertScale(factor);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_ScaleAround(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -584,7 +598,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 2, "Point", arguments[2 -1]);
             };
             self->scaleAround(factor, centerPoint);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_Rotate(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -597,7 +611,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""radians"")");
             double radians = JSValueToNumber(ctx, arguments[1 -1], exception);
             self->rotate(radians);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_RotateAround(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -617,7 +631,7 @@ namespace pdg
                 return JSC_ThrowArgTypeException(ctx, exception, 2, "Point", arguments[2 -1]);
             };
             self->rotateAround(radians, centerPoint);
-            return JSValueMakeUndefined(ctx);
+            return thisObject;
         }
 
         JSValueRef Polygon_Intersection(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

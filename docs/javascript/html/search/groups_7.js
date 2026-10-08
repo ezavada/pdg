@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['networking_0',['Networking',['../group___network.html',1,'']]]
+  ['managers_0',['Managers',['../group___managers.html',1,'']]]
 ];

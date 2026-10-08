@@ -94,13 +94,44 @@ function spawnAsync(command, args, opts) {
         child.on('exit', (code) => resolve(code === null ? 1 : code));
     });
 }
+async function networkHost(options, env, origin, suites) {
+    if (options.kind !== 'unit' || !suites.some(name=>name==='net_websocket' || name==='net_webtransport')) return null;
+    const endpointFile = path.join(env.tempDir, 'websocket-endpoint.json');
+    fs.rmSync(endpointFile, {force:true});
+    const fixture = path.join(testDir, 'spec/fixtures/websocket');
+    const child = cp.spawn(nativeExecutable(), [path.join(fixture, 'echo_host.js')], {
+        cwd:root, stdio:['ignore','pipe','pipe'],
+        env:Object.assign({}, process.env, {PDG_TEST_NETWORK_ORIGIN:origin, PDG_TEST_NETWORK_ENDPOINT_FILE:endpointFile})
+    });
+    const log = fs.createWriteStream(path.join(env.logDir, 'websocket-host.log'));
+    child.stdout.pipe(log, {end:false}); child.stderr.pipe(log, {end:false});
+    let failure;
+    child.on('error', error=>{failure=error;});
+    child.on('exit', code=>{failure=Error('Standalone WebSocket host exited: '+code);log.end();});
+    const deadline=Date.now()+15000;
+    try {
+        while (!fs.existsSync(endpointFile)) {
+            if (failure) throw failure;
+            if (Date.now()>deadline) throw Error('Standalone WebSocket host startup timed out; see websocket-host.log');
+            await new Promise(resolve=>setTimeout(resolve,50));
+        }
+        const endpoint=JSON.parse(fs.readFileSync(endpointFile,'utf8'));
+        const crypto=require('crypto');
+        const certificate=new crypto.X509Certificate(fs.readFileSync(path.join(fixture,'localhost.crt')));
+        const spki=crypto.createHash('sha256').update(certificate.publicKey.export({format:'der',type:'spki'})).digest('base64');
+        fs.writeFileSync(path.join(env.reportDir,'websocket-transport.json'),JSON.stringify(endpoint,null,2)+'\n');
+        return {endpoint:endpoint.webSocketUrl,webTransport:endpoint,spki,close:()=>{child.kill('SIGTERM');}};
+    } catch (error) {child.kill('SIGTERM');throw error;}
+}
 async function web(options, env, suites, pages) {
     buildWeb(options);
     const server = await serve();
     const base = 'http://127.0.0.1:' + server.address().port + '/test/';
+    var host, networkBrowser;
     try {
+        host = await networkHost(options, env, new URL(base).origin, suites);
         if (options.automated) {
-            const urls = options.kind === 'unit' ? [base + 'unit.html?specs=' + encodeURIComponent(suites.join(','))]
+            const urls = options.kind === 'unit' ? [base + 'unit.html?specs=' + encodeURIComponent(suites.join(',')) + (host ? '&webSocketEndpoint='+encodeURIComponent(host.endpoint)+'&webTransportEndpoint='+encodeURIComponent(JSON.stringify(host.webTransport)) : '')]
                 : suites.map(id => base + 'ui.html?test=' + encodeURIComponent(id) + '&automated=1');
             let failed = 0;
             for (let i = 0; i < urls.length; ++i) {
@@ -108,7 +139,7 @@ async function web(options, env, suites, pages) {
                 const entry = options.kind === 'unit' ? null : pages.find(page => page.suite === suites[i]).entry;
                 const timeout = Math.max(120000, entry && entry.smokeTimeoutMs ? entry.smokeTimeoutMs + 30000 : 0);
                 const code = await spawnAsync(process.execPath, [path.join(testDir, 'emscripten/run_ui_browser.js'),
-                    browserPath(), urls[i], report, options.kind === 'unit' ? 'pdg-result-json' : 'pdg-ui-result-json', String(timeout)]);
+                    browserPath(), urls[i], report, options.kind === 'unit' ? 'pdg-result-json' : 'pdg-ui-result-json', String(timeout), ...(host ? ['--certificate-spki='+host.spki] : [])]);
                 console.log((code ? 'FAIL ' : 'PASS ') + (options.kind === 'unit' ? 'browser unit suites' : suites[i]) + '\nReport: ' + report);
                 failed = failed || code;
             }
@@ -116,16 +147,21 @@ async function web(options, env, suites, pages) {
         }
         const query = options.kind === 'unit' ? new URLSearchParams({specs: suites.join(',')}) :
             new URLSearchParams({kind: options.kind, suites: suites.join(','), page: String(optionsAPI.pageIndex(pages, options.page) + 1), interactive: '1'});
+        if (host) {query.set('webSocketEndpoint',host.endpoint);query.set('webTransportEndpoint',JSON.stringify(host.webTransport));}
         const url = base + (options.kind === 'unit' ? 'unit.html?' : 'ui.html?') + query;
         console.log('Open ' + url + '\n' + (options.kind === 'unit' ? 'Results stay open for inspection. ' :
             'Left/Right: page. Space/background click: pause. ') + 'Ctrl+C stops the server.');
-        if (process.platform === 'darwin') run('open', [url]);
+        if (host) {
+            networkBrowser = cp.spawn(browserPath(), ['--user-data-dir='+path.join(env.tempDir,'websocket-browser'),
+                '--no-first-run', '--no-default-browser-check', '--ignore-certificate-errors-spki-list='+host.spki, url], {stdio:'ignore'});
+            networkBrowser.on('error', error=>console.error(error.message));
+        } else if (process.platform === 'darwin') run('open', [url]);
         else if (process.platform === 'win32') run('powershell.exe', ['-NoProfile', '-Command', 'Start-Process -FilePath $env:PDG_TEST_URL'],
             {env: Object.assign({}, process.env, {PDG_TEST_URL: url})});
         else run('xdg-open', [url]);
         await new Promise(resolve => { process.once('SIGINT', resolve); process.once('SIGTERM', resolve); });
         return 0;
-    } finally { server.close(); }
+    } finally { if (networkBrowser) networkBrowser.kill(); if (host) host.close(); server.close(); }
 }
 
 async function main(args) {

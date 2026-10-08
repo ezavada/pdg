@@ -1,4 +1,4 @@
-.TH "NetConnection" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "NetConnection" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,7 +13,7 @@ NetConnection \- sends data between two network endpoints
 
 .in +1c
 .ti -1c
-.RI "\fBNetConnection\fP (object socket)"
+.RI "\fBNetConnection\fP (\fBNetworkSocket\fP socket)"
 .br
 .RI "create a new net connection from a socket "
 .ti -1c
@@ -29,37 +29,37 @@ NetConnection \- sends data between two network endpoints
 .br
 .RI "set callback to handle receipt of a network message "
 .ti -1c
-.RI "\fBsend\fP (\fBISerializable\fP message)"
+.RI "\fBNetConnection\fP \fBsend\fP (\fBISerializable\fP message)"
 .br
 .RI "send a serializable object to the remote endpoint "
 .ti -1c
-.RI "\fBsend\fP (\fBMemBlock\fP message)"
+.RI "\fBNetConnection\fP \fBsend\fP (\fBMemBlock\fP message)"
 .br
 .RI "send a block of memory to the remote endpoint "
 .ti -1c
-.RI "\fBsend\fP (object message)"
+.RI "\fBNetConnection\fP \fBsend\fP (\fBNetworkData\fP message)"
 .br
-.RI "send a JavaScript object to the remote endpoint "
+.RI "Send binary bytes or JSON data to the remote endpoint over TCP\&. "
 .ti -1c
-.RI "\fBsend\fP (string message)"
+.RI "\fBNetConnection\fP \fBsend\fP (string message)"
 .br
 .RI "send a string to the remote endpoint "
 .ti -1c
-.RI "\fBsendDgram\fP (\fBISerializable\fP message)"
+.RI "\fBNetConnection\fP \fBsendDgram\fP (\fBISerializable\fP message)"
 .br
-.RI "send a serializable object to the remote endpoint via UDP "
+.RI "send a serializable object to the remote endpoint via an available unreliable transport "
 .ti -1c
-.RI "\fBsendDgram\fP (\fBMemBlock\fP message)"
+.RI "\fBNetConnection\fP \fBsendDgram\fP (\fBMemBlock\fP message)"
 .br
-.RI "send a block of memory to the remote endpoint via UDP "
+.RI "send a block of memory to the remote endpoint via an available unreliable transport "
 .ti -1c
-.RI "\fBsendDgram\fP (object message)"
+.RI "\fBNetConnection\fP \fBsendDgram\fP (\fBNetworkData\fP message)"
 .br
-.RI "send a JavaScript object to the remote endpoint via UDP "
+.RI "Send binary bytes or JSON data to the remote endpoint over an available unreliable transport\&. "
 .ti -1c
-.RI "\fBsendDgram\fP (string message)"
+.RI "\fBNetConnection\fP \fBsendDgram\fP (string message)"
 .br
-.RI "send a string to the remote endpoint via UDP "
+.RI "send a string to the remote endpoint via an available unreliable transport "
 .in -1c
 .SS "Public Attributes"
 
@@ -67,7 +67,7 @@ NetConnection \- sends data between two network endpoints
 .ti -1c
 .RI "boolean \fBhasDgram\fP"
 .br
-.RI "true if the connection supports UDP/Datagram communications "
+.RI "True when an established connection supports native UDP or WebTransport datagrams\&. "
 .ti -1c
 .RI "string \fBlocalAddr\fP"
 .br
@@ -84,6 +84,14 @@ NetConnection \- sends data between two network endpoints
 .RI "number \fBremotePort\fP"
 .br
 .RI "the port that the remote end of the connection is communicating over "
+.ti -1c
+.RI "boolean \fBsecure\fP"
+.br
+.RI "Read-only indication that the carrier uses TLS\&. "
+.ti -1c
+.RI "string \fBtransport\fP"
+.br
+.RI "Read-only carrier name: native or websocket\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -96,7 +104,7 @@ sends data between two network endpoints
 \fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
-\fBNetConnection\fP is part of the PDG Engine's custom protocol for games\&. It handles protocol negotiation\&. It manages communication over both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server\&.
+\fBNetConnection\fP is part of the PDG Engine's custom protocol for games\&. It handles protocol negotiation\&. It manages communication over both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server\&. WebSocket and WebTransport carry the same reliable PDG framing\&. WebTransport additionally supplies unreliable session datagrams\&. The transport property identifies the underlying connection; message callbacks retain the delivery labels "tcp" (reliable) and "udp" (unreliable)\&.
 
 .PP
 \fBNetConnection\fP only represents an established connection created by \fBNetClient\fP or \fBNetServer\fP\&.
@@ -124,14 +132,14 @@ sends data between two network endpoints
 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "NetConnection (object socket)"
+.SS "NetConnection (\fBNetworkSocket\fP socket)"
 
 .PP
 create a new net connection from a socket 
 .PP
 \fBParameters\fP
 .RS 4
-\fIsocket\fP a Node\&.js net\&.Socket object
+\fIsocket\fP A Node\&.js net\&.Socket; see \fBNetworkSocket\fP\&.
 .RE
 .PP
 \fBNote\fP
@@ -152,7 +160,7 @@ you generally won't have to call this directly since \fBNetClient\fP and \fBNetS
 .PP
 
 .PP
-Referenced by \fBonClose()\fP, and \fBonMessage()\fP\&.
+Referenced by \fBonClose()\fP, \fBonMessage()\fP, \fBsend()\fP, \fBsend()\fP, \fBsend()\fP, \fBsend()\fP, \fBsendDgram()\fP, \fBsendDgram()\fP, \fBsendDgram()\fP, and \fBsendDgram()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "close (boolean kill = \fRfalse\fP)"
@@ -175,7 +183,14 @@ close a connection The remote endpoint of the connection will get an \fBonClose(
 .SS "\fBNetConnection\fP onClose (function callback)"
 
 .PP
-set callback to handle connection closing Whenever a network connection is dropped by the remote end (whether cleanly or abrubtly), you will get an onClose callback to the function specified\&.
+set callback to handle connection closing 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBNetCloseCallback\fP\&.
+.RE
+.PP
+Whenever a network connection is dropped by the remote end (whether cleanly or abrubtly), you will get an onClose callback to the function specified\&.
 
 .PP
 \fBParameters\fP
@@ -189,18 +204,25 @@ References \fBNetConnection()\fP\&.
 .SS "\fBNetConnection\fP onMessage (function callback)"
 
 .PP
-set callback to handle receipt of a network message Whenever the remote end sends a message, you will get an onMessage callback to the function specified with the message that was sent\&.
+set callback to handle receipt of a network message 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBNetMessageCallback\fP\&.
+.RE
+.PP
+Whenever the remote end sends a message, you will get an onMessage callback to the function specified with the message that was sent\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fIcallback\fP the function that should be called when a message is received\&. The message is the first parameter passed to the callback function\&. Second parameter is the connection object\&. Third parameter is a string with the transport type (currently either 'upd' or 'tcp', where 'udp' means it was sent via \fBsendDgram()\fP and 'tcp' means it was sent via \fBsend()\fP ) 
+\fIcallback\fP the function that should be called when a message is received\&. The message is the first parameter passed to the callback function\&. Second parameter is the connection object\&. Third parameter is the delivery label: 'tcp' for reliable native TCP, WebSocket or WebTransport streams, and 'udp' for unreliable native UDP or WebTransport datagrams\&. \fBsendDgram()\fP uses the 'tcp' label when it falls back to reliable delivery\&. Inspect connection\&.transport for the actual transport\&. 
 .RE
 .PP
 
 .PP
 References \fBNetConnection()\fP\&.
-.SS "send (\fBISerializable\fP message)"
+.SS "\fBNetConnection\fP send (\fBISerializable\fP message)"
 
 .PP
 send a serializable object to the remote endpoint The object is sent guaranteed delivery (TCP), and will arrive in the order sent with other messages\&.
@@ -225,7 +247,9 @@ itself (for call chaining)
 .RE
 .PP
 
-.SS "send (\fBMemBlock\fP message)"
+.PP
+References \fBNetConnection()\fP\&.
+.SS "\fBNetConnection\fP send (\fBMemBlock\fP message)"
 
 .PP
 send a block of memory to the remote endpoint The block is sent guaranteed delivery (TCP), and will arrive in the order sent with other messages\&.
@@ -250,37 +274,45 @@ itself (for call chaining)
 .RE
 .PP
 
-.SS "send (object message)"
+.PP
+References \fBNetConnection()\fP\&.
+.SS "\fBNetConnection\fP send (\fBNetworkData\fP message)"
 
 .PP
-send a JavaScript object to the remote endpoint The object is sent guaranteed delivery (TCP), and will arrive in the order sent with other messages\&.
+Send binary bytes or JSON data to the remote endpoint over TCP\&. Messages use TCP and arrive in send order while the connection remains open\&. PDG handles packet framing\&.
 
-.PP
-\fBNetConnection\fP handles packet framing for you, so the \fBNetConnection\fP on the remote endpoint will receive an onMessage callback with the object you sent\&. If the message cannot be sent, you will eventually get an \fBonClose()\fP callback to indicate that the connection has been lost\&.
-
-.PP
-\fBNote\fP
-.RS 4
-the object is converted to JSON before being sent, then back again on the receiving side\&.
-.RE
 .PP
 \fBParameters\fP
 .RS 4
-\fImessage\fP the object to send
+\fImessage\fP A Uint8Array (including Node Buffer), a JSON-compatible object or array, or null\&. See \fBNetworkData\fP for the complete contract\&.
 .RE
+.PP
+Uint8Array inputs use binary serialization\&. Only the view's bytes are copied, respecting byteOffset and byteLength\&. The receiver gets a Node Buffer on the current Node-based networking runtimes\&. Plain objects, arrays and null use JSON serialization; they must be JSON-compatible and contain no circular references\&.
+
+.PP
+Strings, \fBMemBlock\fP and \fBISerializable\fP instances have separate overloads\&. Top-level numbers and booleans are not accepted by this method\&.
+
 .PP
 \fBReturns\fP
 .RS 4
-itself (for call chaining)
+The receiver for call chaining\&.
 .RE
 .PP
-\fBWarning\fP
+\fBSee also\fP
 .RS 4
-Only use this for native JavaScript objects\&. No PDG objects can be sent over the network this way\&. 
+\fBsend(string)\fP 
+
+.PP
+\fBsend(MemBlock)\fP 
+
+.PP
+\fBsend(ISerializable)\fP 
 .RE
 .PP
 
-.SS "send (string message)"
+.PP
+References \fBNetConnection()\fP\&.
+.SS "\fBNetConnection\fP send (string message)"
 
 .PP
 send a string to the remote endpoint The string is sent guaranteed delivery (TCP), and will arrive in the order sent with other messages\&.
@@ -305,10 +337,12 @@ itself (for call chaining)
 .RE
 .PP
 
-.SS "sendDgram (\fBISerializable\fP message)"
+.PP
+References \fBNetConnection()\fP\&.
+.SS "\fBNetConnection\fP sendDgram (\fBISerializable\fP message)"
 
 .PP
-send a serializable object to the remote endpoint via UDP The object will be sent using UDP if it is available\&. Delivery is not guaranteed and neither is in-order deliver of messages\&. This is ideal for small bits of information that are frequently resent, such as position or status updates\&.
+send a serializable object to the remote endpoint via an available unreliable transport The object will be sent using UDP if it is available\&. Delivery is not guaranteed and neither is in-order deliver of messages\&. This is ideal for small bits of information that are frequently resent, such as position or status updates\&.
 
 .PP
 \fBNetConnection\fP handles packet framing for you, so if the packet arrives, the \fBNetConnection\fP on the remote endpoint will receive an onMessage callback with the object you sent\&. If the message cannot be sent you will not get any notification\&. It will simply disappear into the ether\&.
@@ -337,19 +371,21 @@ To guard against out-of-order delivery, you should always use a sequence number 
 \fBsend(ISerializable)\fP 
 
 .PP
-\fBsendDgram(object)\fP
+\fBsendDgram(NetworkData)\fP
 .RE
 .PP
 \fBWarning\fP
 .RS 4
-Any object with a serialized size greater than MTU (generally 1500 bytes, but can be smaller) will always fail to send 
+Any object with a serialized size greater than MTU (generally 1500 bytes, but can be smaller) will always fail to send
 .RE
 .PP
-
-.SS "sendDgram (\fBMemBlock\fP message)"
+WebTransport uses session datagrams after handshake completion\&. Payloads larger than its confirmed datagram limit, disabled/unavailable datagrams, or rejected datagram writes use the reliable stream\&. Native UDP falls back to TCP above 1492 serialized bytes\&. WebSocket always uses reliable delivery\&. A successful datagram write still has no delivery guarantee\&. 
+.PP
+References \fBNetConnection()\fP\&.
+.SS "\fBNetConnection\fP sendDgram (\fBMemBlock\fP message)"
 
 .PP
-send a block of memory to the remote endpoint via UDP The block will be sent using UDP if it is available\&. Delivery is not guaranteed and neither is in-order deliver of messages\&. This is ideal for small bits of information that are frequently resent, such as position or status updates\&.
+send a block of memory to the remote endpoint via an available unreliable transport The block will be sent using UDP if it is available\&. Delivery is not guaranteed and neither is in-order deliver of messages\&. This is ideal for small bits of information that are frequently resent, such as position or status updates\&.
 
 .PP
 \fBNetConnection\fP handles packet framing for you, so if the packet arrives, the \fBNetConnection\fP on the remote endpoint will receive an onMessage callback with the object you sent\&. If the message cannot be sent you will not get any notification\&. It will simply disappear into the ether\&.
@@ -382,55 +418,52 @@ To guard against out-of-order delivery, you should always use a sequence number 
 .PP
 \fBWarning\fP
 .RS 4
-Any block longer than MTU (generally 1500 bytes, but can be smaller) will always fail to send\&. 
+Any block longer than MTU (generally 1500 bytes, but can be smaller) will always fail to send\&.
 .RE
 .PP
-
-.SS "sendDgram (object message)"
+WebTransport uses session datagrams after handshake completion\&. Payloads larger than its confirmed datagram limit, disabled/unavailable datagrams, or rejected datagram writes use the reliable stream\&. Native UDP falls back to TCP above 1492 serialized bytes\&. WebSocket always uses reliable delivery\&. A successful datagram write still has no delivery guarantee\&. 
+.PP
+References \fBNetConnection()\fP\&.
+.SS "\fBNetConnection\fP sendDgram (\fBNetworkData\fP message)"
 
 .PP
-send a JavaScript object to the remote endpoint via UDP The object will be sent using UDP if it is available\&. Delivery is not guaranteed and neither is in-order deliver of messages\&. This is ideal for small bits of information that are frequently resent, such as position or status updates\&.
-
-.PP
-\fBNetConnection\fP handles packet framing for you, so if the packet arrives, the \fBNetConnection\fP on the remote endpoint will receive an onMessage callback with the string you sent\&. If the message cannot be sent you will not get any notification\&. It will simply disappear into the ether\&.
+Send binary bytes or JSON data to the remote endpoint over an available unreliable transport\&. Messages use UDP when available\&. Delivery and arrival order are not guaranteed; include a sequence number when newer updates supersede older ones\&. PDG handles packet framing\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fImessage\fP the object to send
+\fImessage\fP A Uint8Array (including Node Buffer), a JSON-compatible object or array, or null\&. See \fBNetworkData\fP for the complete contract\&.
 .RE
+.PP
+Uint8Array inputs use binary serialization\&. Only the view's bytes are copied, respecting byteOffset and byteLength\&. The receiver gets a Node Buffer on the current Node-based networking runtimes\&. Plain objects, arrays and null use JSON serialization; they must be JSON-compatible and contain no circular references\&.
+
+.PP
+Strings, \fBMemBlock\fP and \fBISerializable\fP instances have separate overloads\&. Top-level numbers and booleans are not accepted by this method\&.
+
 .PP
 \fBReturns\fP
 .RS 4
-itself (for call chaining)
+The receiver for call chaining\&.
 .RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBsend(object)\fP 
+\fBsendDgram(string)\fP 
+
+.PP
+\fBsendDgram(MemBlock)\fP 
 
 .PP
 \fBsendDgram(ISerializable)\fP
 .RE
 .PP
-\fBRemarks\fP
-.RS 4
-To guard against out-of-order delivery, you should always use a sequence number so you can drop older updates that arrive after newer ones\&.
-.RE
+WebTransport uses session datagrams after handshake completion\&. Payloads larger than its confirmed datagram limit, disabled/unavailable datagrams, or rejected datagram writes use the reliable stream\&. Native UDP falls back to TCP above 1492 serialized bytes\&. WebSocket always uses reliable delivery\&. A successful datagram write still has no delivery guarantee\&. 
 .PP
-\fBWarning\fP
-.RS 4
-Any string longer than MTU (generally 1500 bytes, but can be smaller) will always fail to send
+References \fBNetConnection()\fP\&.
+.SS "\fBNetConnection\fP sendDgram (string message)"
 
 .PP
-Only use this for native JavaScript objects\&. No PDG objects can be sent over the network this way\&. 
-.RE
-.PP
-
-.SS "sendDgram (string message)"
-
-.PP
-send a string to the remote endpoint via UDP The string will be sent using UDP if it is available\&. Delivery is not guaranteed and neither is in-order deliver of messages\&. This is ideal for small bits of information that are frequently resent, such as position or status updates\&.
+send a string to the remote endpoint via an available unreliable transport The string will be sent using UDP if it is available\&. Delivery is not guaranteed and neither is in-order deliver of messages\&. This is ideal for small bits of information that are frequently resent, such as position or status updates\&.
 
 .PP
 \fBNetConnection\fP handles packet framing for you, so if the packet arrives, the \fBNetConnection\fP on the remote endpoint will receive an onMessage callback with the string you sent\&. If the message cannot be sent you will not get any notification\&. It will simply disappear into the ether\&.
@@ -461,18 +494,15 @@ itself (for call chaining)
 To guard against out-of-order delivery, you should always use a sequence number so you can drop older updates that arrive after newer ones\&.
 .RE
 .PP
-\fBWarning\fP
-.RS 4
-Any string longer than MTU (generally 1500 bytes, but can be smaller) will always fail to send 
-.RE
+WebTransport uses session datagrams after handshake completion\&. Payloads larger than its confirmed datagram limit, disabled/unavailable datagrams, or rejected datagram writes use the reliable stream\&. Native UDP falls back to TCP above 1492 serialized bytes\&. WebSocket always uses reliable delivery\&. A successful datagram write still has no delivery guarantee\&. 
 .PP
-
+References \fBNetConnection()\fP\&.
 .SH "Member Data Documentation"
 .PP 
 .SS "boolean hasDgram"
 
 .PP
-true if the connection supports UDP/Datagram communications 
+True when an established connection supports native UDP or WebTransport datagrams\&. 
 .SS "string localAddr"
 
 .PP
@@ -489,6 +519,14 @@ the ip address of the remote end of the connection
 
 .PP
 the port that the remote end of the connection is communicating over 
+.SS "boolean secure"
+
+.PP
+Read-only indication that the carrier uses TLS\&. True for wss://, false for ws:// and native TCP\&. Browser localAddr and remoteAddr are empty strings; localPort and remotePort are zero because browser APIs do not expose socket endpoints\&. Native runtimes populate the available endpoints\&. 
+.SS "string transport"
+
+.PP
+Read-only carrier name: native or websocket\&. \fBonMessage()\fP continues to report "tcp" for reliable messages and "udp" for native datagrams\&. Inspect transport to identify the carrier\&. WebSocket reports hasDgram as false, so \fBsendDgram()\fP uses \fBsend()\fP\&. 
 
 .SH "Author"
 .PP 

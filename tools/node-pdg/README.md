@@ -52,6 +52,14 @@ The node plugin version is aimed at game servers, so it leaves out the graphics
 and sound systems. However, it still includes all the Sprite and Physics capabilities
 for server side simulation.
 
+On macOS, the native WebTransport build uses Node 24's macOS 13.5 deployment
+target. If you build the addon for a different minimum macOS version, set
+`MACOSX_DEPLOYMENT_TARGET` to that same version for the WebTransport build.
+
+WebTransport's CMake configure step patches cJSON's policy-version declaration
+in a build-local source copy. Downloaded dependency sources and source overrides
+are preserved; the patch runs automatically for runtime and addon builds.
+
 
 Documentation
 -------------
@@ -59,4 +67,3 @@ Documentation
 Man Pages are included, and more API documentation can be found at:
 
 http://ezavada.com/pdg/javascript/html/
-

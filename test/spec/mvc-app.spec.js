@@ -9,7 +9,7 @@
 // -----------------------------------------------
 
 require('./SpecHelper');
-const mvcModulePath = process.ios ? '../src/js/mvc-app' : '../../src/js/mvc-app';
+const mvcModulePath = process.env.PDG_MVC_MODULE || (process.ios ? '../src/js/mvc-app' : '../../src/js/mvc-app');
 const framework = require(mvcModulePath + '/index');
 
 // Extract classes from the framework object
@@ -45,7 +45,7 @@ const MessageDialog = framework.MessageDialog.MessageDialog;
 const MessageDialogButtonText = framework.MessageDialog.MessageDialogButtonText;
 const MessageView = framework.MessageView.MessageView;
 
-const mocks = require(mvcModulePath + '/mocks');
+const mocks = require((process.ios ? '../src/js/mvc-app' : '../../src/js/mvc-app') + '/mocks');
 const MockPdg = mocks.MockPdg;
 const MockGraphicsManager = mocks.MockGraphicsManager;
 const MockPort = mocks.MockPort;
@@ -844,8 +844,8 @@ describe("MVC Application Framework", function() {
     it("should pass orientation as style and use themed image dimensions", function() {
       const app = new TestApplication();
       const controller = new ThemedController(app, app.graphicsMgr.getMainPort());
-      const decrement = { width: 13, height: 9 };
-      const increment = { width: 17, height: 9 };
+      const decrement = { width: 13, height: 9, getWidth: () => 13, getHeight: () => 9 };
+      const increment = { width: 17, height: 9, getWidth: () => 17, getHeight: () => 9 };
       controller.themeFactory = () => new ControlAttributes()
         .stateImage(ControlState.Decrement, decrement)
         .stateImage(ControlState.Increment, increment);

@@ -84,12 +84,56 @@ var colorValues = new Array(
 // -----------------------------------------------------------------------------------
 // An RGB Color with alpha
 
+// @pdg-class {"name":"Color","native_binding":{"browser":{"generate":true,"kind":"value_object","binding_name":"_ColorValue","type":"pdg::Color","fields":["red","green","blue","alpha"],"construct_from":["string","number"],"return_value":{"arguments":["red","green","blue","alpha"]}}}}
 class Color {
 	//! new Color() create black
 	//! new Color(c): create a color from a single 32 bit value
 	//! new Color(name): create a color from a css color name
 	//! new Color(r, g, b): create a color
 	//! new Color(r, g, b, a): create a color with alpha
+/* @pdg-member
+{
+  "name": "Color.Color",
+  "type": "constructor",
+  "brief": "create and color and set rgb values",
+  "returns": "object Color",
+  "params": [
+    [],
+    [
+      {
+        "name": "c",
+        "type": "number"
+      }
+    ],
+    [
+      {
+        "name": "colorstr",
+        "type": "string"
+      }
+    ],
+    [
+      {
+        "name": "r",
+        "type": "number"
+      },
+      {
+        "name": "g",
+        "type": "number"
+      },
+      {
+        "name": "b",
+        "type": "number"
+      },
+      {
+        "name": "alpha",
+        "type": "number",
+        "optional": true,
+        "default_value": "1"
+      }
+    ]
+  ]
+}
+*/
 	constructor(ir, ig, ib, ia) {
 			if (arguments.length == 1) {
 				var c = ir;
@@ -128,9 +172,13 @@ class Color {
 						}
 					}
 				}
+// @pdg-member {"name":"Color.alpha","type":"number"}
 				this.alpha = ((c>>24)&0xff)/255.0;
+// @pdg-member {"name":"Color.red","type":"number"}
 				this.red = ((c>>16)&0xff)/255.0; 
+// @pdg-member {"name":"Color.green","type":"number"}
 				this.green = ((c>>8)&0xff)/255.0; 
+// @pdg-member {"name":"Color.blue","type":"number"}
 				this.blue = (c&0xff)/255.0; 
 			} else {
 				// Check if all RGB values are integers and any are above 1
@@ -156,32 +204,24 @@ class Color {
 		}
 	// operators
 	//! return true if this point is equal to the other
+	// @pdg-member {"name":"Color.equals","type":"function","brief":"return true if this color is equal to the other (ignoring alpha)","params":[{"name":"color","type":"object Color"}],"returns":"boolean"}
 	equals(color) {
-			if ((arguments.length == 1) && (arguments[0] == null)) { 
-				return methodSignature("return true if this color is equal to the other (ignoring alpha)", arguments, "boolean", 1, "([object Color] color)");
-			}
 			return ((this.red == color.red) && (this.green == color.green) && (this.blue == color.blue));
 		}
+	// @pdg-member {"name":"Color.notEquals","type":"function","brief":"return true if this color is not equal to the other (ignoring alpha)","params":[{"name":"color","type":"object Color"}],"returns":"boolean"}
 	notEquals(color) {
-			if ((arguments.length == 1) && (arguments[0] == null)) { 
-				return methodSignature("return true if this color is not equal to the other (ignoring alpha)", arguments, "boolean", 1, "([object Color] color)");
-			}
 			return ((this.red != color.red) || (this.green != color.green) || (this.blue != color.blue));
 		}
+	// @pdg-member {"name":"Color.assign","type":"function","brief":"copy a color","params":[{"name":"color","type":"object Color"}],"returns":"this"}
 	assign(color) {
-			if ((arguments.length == 1) && (arguments[0] == null)) { 
-				return methodSignature("set this color equal to the given color", arguments, "[object Color]", 1, "([object Color] color)");
-			}
 			this.alpha = color.alpha; 
 			this.red = color.red; 
 			this.green = color.green;
 			this.blue = color.blue;
 			return this;
 		}
+	// @pdg-member {"name":"Color.convertToGrayscale","type":"function","brief":"convert this color to a matching shade of grey","params":[]}
 	convertToGrayscale() {
-			if ((arguments.length == 1) && (arguments[0] == null)) { 
-				return methodSignature("convert this color to a matching shade of grey", arguments, "undefined", 0, "()");
-			}
 			var v = (this.red + this.green + this.blue)/3; 
 			this.red = v;
 			this.green = v;
