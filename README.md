@@ -51,7 +51,8 @@ documentation and rebuild the release artifacts.
 Documentation
 -------------
 
-Read the [v1.1.1 release notes](docs/RELEASE_NOTES_1.1.1.md) for fixes since
+Read the [v1.2.0 release notes](docs/RELEASE_NOTES_1.2.md) for new features and
+upgrade guidance since v1.1.1. The [v1.1.1 release notes](docs/RELEASE_NOTES_1.1.1.md) cover fixes since
 v1.1.0. The [v1.1.0 release notes](docs/RELEASE_NOTES_1.1.md) cover features,
 changes from v1.0, and API migration guidance.
 
