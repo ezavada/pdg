@@ -28,7 +28,7 @@ EM_JS(void, pdg_em_init_text_canvases, (), {
     const create = () => {
         const canvas = typeof OffscreenCanvas !== 'undefined'
             ? new OffscreenCanvas(1, 1) : document.createElement('canvas');
-        return {canvas, context: canvas.getContext('2d'), font: ''};
+        return {canvas, context: canvas.getContext('2d'), font: ""};
     };
     Module['pdgTextCanvases'] = {measure: create(), raster: create()};
 });
@@ -37,7 +37,7 @@ EM_JS(double, pdg_em_measure_text, (const char* text, const char* family, int si
     const value = UTF8ToString(text);
     const state = Module['pdgTextCanvases'];
     if (!state) return value.length * size * 0.6;
-    const font = ((style & 2) ? 'italic ' : '') + ((style & 1) ? 'bold ' : '')
+    const font = ((style & 2) ? 'italic ' : "") + ((style & 1) ? 'bold ' : "")
         + size + 'px ' + (UTF8ToString(family) || 'Arial');
     if (state.measure.font !== font) {
         state.measure.context.font = font;
@@ -49,7 +49,7 @@ EM_JS(double, pdg_em_measure_text, (const char* text, const char* family, int si
 EM_JS(double, pdg_em_cap_height, (const char* family, int size, int style), {
     const state = Module['pdgTextCanvases'];
     if (!state) return size * 0.8;
-    const font = ((style & 2) ? 'italic ' : '') + ((style & 1) ? 'bold ' : '')
+    const font = ((style & 2) ? 'italic ' : "") + ((style & 1) ? 'bold ' : "")
         + size + 'px ' + (UTF8ToString(family) || 'Arial');
     if (state.measure.font !== font) {
         state.measure.context.font = font;
@@ -66,7 +66,7 @@ EM_JS(int, pdg_em_upload_text,
     if (canvas.width !== width) canvas.width = width;
     if (canvas.height !== height) canvas.height = height;
     context.clearRect(0, 0, width, height);
-    context.font = ((style & 2) ? 'italic ' : '') + ((style & 1) ? 'bold ' : '')
+    context.font = ((style & 2) ? 'italic ' : "") + ((style & 1) ? 'bold ' : "")
         + size + 'px ' + (UTF8ToString(family) || 'Arial');
     context.textBaseline = 'alphabetic';
     context.fillStyle = '#fff';

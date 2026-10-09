@@ -476,10 +476,11 @@ $(OUT_DIR)/platform-events-glfw.cpp.o: $(SRC_SYS_DIR)/glfw/platform-events-glfw.
 	@echo  'Compiling platform-events-glfw.cpp...'
 	@$(CXX) $(CXXFLAGS) -o $(OUT_DIR)/platform-events-glfw.cpp.o -c $(SRC_SYS_DIR)/glfw/platform-events-glfw.cpp
 
+# Match the native build's suppression for vendored string/null returns.
 $(OUT_DIR)/spriterengine/%.cpp.o: $(SRC_SPRITERPLUSPLUS_DIR)/spriterengine/%.cpp
 	@echo  'Compiling SpriterPlusPlus $*.cpp...'
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) -Wno-overloaded-virtual -o $@ -c $<
+	@$(CXX) $(CXXFLAGS) -Wno-overloaded-virtual -Wno-nonnull -o $@ -c $<
 
 $(OUT_DIR)/tinyxml2.cpp.o: $(SRC_SPRITERPLUSPLUS_DIR)/tinyxml2/tinyxml2.cpp
 	@echo  'Compiling tinyxml2.cpp...'
