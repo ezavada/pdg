@@ -76,6 +76,7 @@ struct FontCacheEntry {
 	FontCacheEntry( const char* inFontName, float inScalingFactor );
 
 	static FontCacheEntry*  findFontInCache(const char* inFontName, float inScalingFactor );
+	static void detachPort(Port* port);
 	
 private:
 	FontCacheEntry() {}

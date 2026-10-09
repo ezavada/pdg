@@ -55,5 +55,13 @@ void testTextCache() {
     }
     for (int size = 1; size <= TEXT_INFO_CACHE_SIZE + 20; ++size) font->getFontAscent(size);
     check(font->released >= 20, "font metric eviction releases platform resources");
+
+    auto* entry = pdg::FontCacheEntry::findFontInCache("cache-probe-detach", 1);
+    entry->mFont = font;
+    auto* closedPort = reinterpret_cast<pdg::Port*>(font);
+    font->mPort = closedPort;
+    pdg::FontCacheEntry::detachPort(closedPort);
+    check(font->mPort == nullptr, "closing a port detaches cached fonts");
+    entry->mFont = nullptr;
     font->release();
 }

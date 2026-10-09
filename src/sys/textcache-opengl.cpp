@@ -242,6 +242,12 @@ FontCacheEntry::findFontInCache(const char* inFontName, float inScalingFactor ) 
 	return new FontCacheEntry(inFontName, inScalingFactor);
 }
 
+void FontCacheEntry::detachPort(Port* port) {
+	for (FontCacheEntry* entry = sFirstFontCacheEntry; entry; entry = entry->nextEntry) {
+		if (entry->mFont && entry->mFont->mPort == port) entry->mFont->mPort = nullptr;
+	}
+}
+
 void
 FontCacheEntry::addEntryToCache(FontCacheEntry* fontInfo) {
 	// now add the new entry

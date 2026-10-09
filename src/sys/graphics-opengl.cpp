@@ -1480,6 +1480,7 @@ PortImpl::PortImpl(GraphicsManager* graphicsMgr)
 
 PortImpl::~PortImpl()
 {
+    FontCacheEntry::detachPort(this);
     // Window teardown invalidates texture IDs before destroying its context.
     // Offscreen teardown keeps that context current and releases textures here.
     mTextCache.clear();
