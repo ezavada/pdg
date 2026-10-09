@@ -13,11 +13,6 @@ namespace emscripten { namespace internal {
 template<> inline void raw_destructor<pdg::Part>(pdg::Part* part) { part->release(); }
 }}
 namespace pdg {
-template<class T> std::shared_ptr<T> browserRetain(T* value) {
-    if (!value) return nullptr;
-    value->addRef();
-    return std::shared_ptr<T>(value, [](T* object) { object->release(); });
-}
 template<class Operation> auto browserPartCall(Operation operation) -> decltype(operation()) {
     try { return operation(); }
     catch (const std::exception& error) {

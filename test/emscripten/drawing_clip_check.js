@@ -17,6 +17,11 @@ module.exports = function(pdg, port, gl, canvas) {
         gl.clear(gl.DEPTH_BUFFER_BIT);
     }
     function capture() {
+        // Text is batched until a drawing-state change or the end of the frame.
+        // Flush it before reading pixels, preserving the clip used by the oracle.
+        var clip = port.getClipRect();
+        port.setClipRect(new pdg.Rect());
+        port.setClipRect(clip);
         var pixels=new Uint8Array(width*height*4);
         gl.readPixels(0,canvas.height-height,width,height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
         return pixels;

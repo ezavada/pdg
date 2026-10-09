@@ -26,7 +26,13 @@ AnimationEventHandler browserAnimationEventHandler(emscripten::val callback);
 // Specializations are generated from native_binding.ownership, once per type.
 template<class T> struct EmscriptenRetained : std::false_type {};
 template<class T> struct EmscriptenBorrowedIdentity : std::false_type {};
-template<class T> std::shared_ptr<T> browserRetain(T* value);
+// Keep the definition visible wherever retention is instantiated, including
+// optimized adapter builds that cannot borrow an out-of-line instantiation.
+template<class T> std::shared_ptr<T> browserRetain(T* value) {
+    if (!value) return nullptr;
+    value->addRef();
+    return std::shared_ptr<T>(value, [](T* object) { object->release(); });
+}
 template<class T, class... Args> struct EmscriptenRetainedConstructor {
     static std::shared_ptr<T> create(Args... args) {
         return browserRetain(new T(std::forward<Args>(args)...));

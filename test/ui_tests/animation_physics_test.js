@@ -29,7 +29,7 @@ let ground, groundPreview=false;
 let blocker, blockerCheck=-1, blockedHandY=0;
 let ragdoll,ragdollCheck=-1;
 let pushes,pushCheck=-1;
-let handControl,controlCheck=-1,limpStartAngle=0,dragStart=null;
+let handControl,controlCheck=-1,limpStartAngle=0,limpMaxRotation=0,dragStart=null;
 let capsuleOverlay,showCapsules=false,membership;
 let poseControl,poseCheck=-1,posePoint;
 const groundMotion=new GroundMotion();
@@ -525,15 +525,22 @@ function advanceControlChecks() {
         // Let the paused seek reach the physical bodies before releasing one.
         if(elapsed<.1)return;
         limpStartAngle=sprite.getAnimationBoneTransform('left_hand',pdg.animationSpace_Local).rotation;
+        limpMaxRotation=0;
         toggleLimpHand();controlCheck=1;checkStarted=now();return;
     }
     verifyArmJoints();
     check(elapsed<10,'Hand control did not finish: '+handControl.mode);
+    if(controlCheck===1) {
+        const angle=sprite.getAnimationBoneTransform('left_hand',pdg.animationSpace_Local).rotation;
+        // A freely swinging wrist can return near its starting angle. Measure
+        // motion over the interval rather than only its final position.
+        limpMaxRotation=Math.max(limpMaxRotation,Math.abs(Math.atan2(Math.sin(angle-limpStartAngle),Math.cos(angle-limpStartAngle))));
+        stats.limpMaxRotation=limpMaxRotation;
+    }
     if(controlCheck===1 && elapsed>=.8) {
         check(sprite.getAnimationPhysicsMode('left_hand')===pdg.animationPhysics_Dynamic,'Limp hand must be Dynamic');
         for(const name of ['left_upper_arm','left_forearm'])check(sprite.getAnimationPhysicsMode(name)===pdg.animationPhysics_Kinematic,'Limp hand released its parent');
-        const angle=sprite.getAnimationBoneTransform('left_hand',pdg.animationSpace_Local).rotation;
-        check(Math.abs(Math.atan2(Math.sin(angle-limpStartAngle),Math.cos(angle-limpStartAngle)))>.15,'Limp wrist did not move');
+        check(limpMaxRotation>.15,'Limp wrist did not move');
         toggleLimpHand();controlCheck=2;checkStarted=now();
     } else if(controlCheck===2 && handControl.mode==='animation') {
         check(handControl.limpCompletions===1,'Hand recovery did not complete');stats.handChecks++;

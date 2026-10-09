@@ -118,8 +118,8 @@ var pageNames = {
 UI_TESTS.push({id: 'spriter', name: 'Grey Guy and Wonky Skeleton',
     scriptPath: 'js/main.js', workingDir: 'test', args: ['--ui-test']});
 UI_TESTS.push({id:'scene',name:'Scene pause/resume with animated HUD',scriptPath:'ui_tests/scene_test.js',workingDir:'test'});
-UI_TESTS.push({id:'bones',name:'Animated bone controls',scriptPath:'ui_tests/bone_test.js',workingDir:'test'});
-UI_TESTS.push({id:'bone-controls',name:'Interactive bone controls',scriptPath:'js/bone-controls-demo.js',workingDir:'test',args:['--ui-test']});
+UI_TESTS.push({id:'bones',smokeTimeoutMs:45000,name:'Animated bone controls',scriptPath:'ui_tests/bone_test.js',workingDir:'test'});
+UI_TESTS.push({id:'bone-controls',smokeTimeoutMs:45000,name:'Interactive bone controls',scriptPath:'js/bone-controls-demo.js',workingDir:'test',args:['--ui-test']});
 UI_TESTS.push({id: 'layer-serialization', name: 'Live layer serialization',
     scriptPath: 'test/js/layer-serialization-demo.js', workingDir: 'repo', args: ['--ui-test']});
 UI_TESTS.push({id:'jiggle',name:'Spring tide: chain and IK target jiggle',scriptPath:'js/jiggle-demo.js',workingDir:'test',args:['--ui-test']});

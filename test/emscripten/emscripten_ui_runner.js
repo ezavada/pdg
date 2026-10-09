@@ -355,10 +355,11 @@
             return;
         }
 
+        // Physics collisions and camera/particle sequences need real elapsed time.
         var nativeSetTimeout = window.setTimeout;
         window.setTimeout = function(callback, delay) {
             var args = Array.prototype.slice.call(arguments, 2);
-            var effectiveDelay = automated && testId !== "camera" && testId !== "particles" && delay >= 1000
+            var effectiveDelay = automated && testId !== "camera" && testId !== "particles" && testId !== "spriter-sound" && delay >= 1000
                 ? Math.max(50, delay * 0.02)
                 : delay;
             return nativeSetTimeout.apply(window, [callback, effectiveDelay].concat(args));
