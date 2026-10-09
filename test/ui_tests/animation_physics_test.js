@@ -47,7 +47,8 @@ const stats = {frames:0, steps:0, bones:0, drawings:0, handArtwork:'left_hand', 
 // delayed frames can advance the wall clock while the engine limits catch-up.
 // Recovery deadlines and clip checks must not run ahead of the simulation.
 let simulationSeconds = 0;
-layer.addAnimationHelper(new pdg.IAnimationHelper((owner, seconds) => {
+const simulationClock = layer.createSprite();
+simulationClock.addAnimationHelper(new pdg.IAnimationHelper((owner, seconds) => {
     simulationSeconds += seconds;
     return true;
 }));
@@ -265,8 +266,8 @@ layer.onPostDrawLayer(()=> {
     if (finished) return false;
     try {
         stats.frames++;
-        port.drawDrawing(membership, new pdg.Point(), new pdg.Attributes());
-        if(showCapsules)port.drawDrawing(capsuleOverlay, new pdg.Point(), new pdg.Attributes());
+        membership.draw(port);
+        if(showCapsules)capsuleOverlay.draw(port);
         if(showBones && ground.enabled && ragdoll.mode!=='ragdoll')for(const leg of ground.legs) {
             const x=origin.x+leg.target.x*scale,y=origin.y+leg.target.y*scale;
             port.drawLine(P(x-5,y),P(x+5,y),stroke('#db8a26'));

@@ -17,7 +17,11 @@ const source = pdg.createSpriteLayer(port), target = pdg.createSpriteLayer(port)
 source.setUseChipmunkPhysics(false);
 target.setUseChipmunkPhysics(false);
 const sceneTop = 238;
-source.setOrigin(P(24, sceneTop));
+const cameraFor = left => new pdg.Camera().setViewport(R(left, sceneTop, left + 528, 812))
+    .setLocation(264, (812 - sceneTop) / 2);
+const sourceCamera = cameraFor(24), targetCamera = cameraFor(608);
+source.setCamera(sourceCamera);
+target.setCamera(targetCamera);
 source.enableCollisions();
 const sprites = [];
 function sprite(x, y, drawing, name) {
@@ -79,9 +83,9 @@ const poseFlags = pdg.ser_Micro | pdg.ser_Sizes | pdg.ser_Animations;
 const fields = [
     { label: 'Positions', flag: pdg.ser_Positions, help: 'Sprite position / rotation / frame. Micro packets round positions to whole pixels.' },
     { label: 'Z-order', flag: pdg.ser_ZOrder, help: 'Sprite draw order. Without this field, source and target ordering must already match.' },
-    { label: 'Sizes', flag: pdg.ser_Sizes, help: 'Sprite and Layer logical size and transform scale.' },
+    { label: 'Sizes', flag: pdg.ser_Sizes, help: 'Sprite logical size and transform scale, and Layer world bounds.' },
     { label: 'Animations / Parts', flag: pdg.ser_Animations, help: 'Schedules, playback and sampled Part transforms/rates/schedules, including solved IK.' },
-    { label: 'Motion', flag: pdg.ser_Motion, help: 'Programmed movement, spin and growth rates on Sprites and the Layer.' },
+    { label: 'Motion', flag: pdg.ser_Motion, help: 'Programmed movement, spin and growth rates on Sprites.' },
     { label: 'Forces', flag: pdg.ser_Forces, help: 'Either Forces or Physics sends the root body record, including pose, velocity, settings and loads.' },
     { label: 'Physics', flag: pdg.ser_Physics, help: 'Either Physics or Forces sends the root body record. Disabling Positions alone does not exclude body poses.' }
 ];
@@ -156,7 +160,8 @@ function receive(initial) {
     const reader = new pdg.Deserializer();
     reader.setDataPtr(packet);
     target.deserialize(reader);
-    target.setOrigin(P(608, sceneTop));
+    // Keep the receiver in its own viewport after loading the source camera.
+    target.setCamera(targetCamera);
     // Layer records also contain processing flags. Always reapply the user's
     // receiver choices after loading, including after an initial snapshot.
     applyTargetProcessing();
